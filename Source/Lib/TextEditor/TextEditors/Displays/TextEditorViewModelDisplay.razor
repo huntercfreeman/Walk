@@ -1,0 +1,22 @@
+@if (ViewModelDisplayOptions is not null)
+{
+	var headerComponentType = ViewModelDisplayOptions.HeaderComponentType;
+	if (headerComponentType is not null)
+	{
+		<DynamicComponent Type="headerComponentType"
+						  Parameters="DependentComponentParameters"/>
+	}
+}
+
+<TextEditorViewModelSlimDisplay TextEditorViewModelKey="TextEditorViewModelKey"
+                                ViewModelDisplayOptions="ViewModelDisplayOptions"/>
+
+@if (ViewModelDisplayOptions is not null)
+{
+	var footerComponentType = ViewModelDisplayOptions.FooterComponentType;
+    if (footerComponentType is not null)
+    {
+		<DynamicComponent Type="footerComponentType"
+						  Parameters="DependentComponentParameters"/>
+    }
+}

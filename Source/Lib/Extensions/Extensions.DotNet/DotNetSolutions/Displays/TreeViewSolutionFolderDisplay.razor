@@ -1,0 +1,12 @@
+<div>
+	@{
+		var appOptionsState = AppOptionsService.GetAppOptionsState();
+	
+		var iconDriver = new IconDriver(
+			appOptionsState.Options.IconSizeInPixels,
+			appOptionsState.Options.IconSizeInPixels);
+	}
+	
+    @IconDotNetSolutionFolderFragment.Render(iconDriver)
+    @DotNetSolutionFolder.DisplayName
+</div>

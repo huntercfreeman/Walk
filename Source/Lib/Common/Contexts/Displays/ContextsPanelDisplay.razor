@@ -1,0 +1,70 @@
+@using Walk.Common.RazorLib.Contexts.Models;
+@using Walk.Common.RazorLib.Keys.Models;
+
+<ContextBoundary ContextRecord="ContextFacts.ActiveContextsContext"
+                 ClassCssString="di_ide_active-contexts"
+                 StyleCssString="height: 100%">
+
+    @{ var contextState = ContextService.GetContextState(); }
+
+	@*
+	This components title must always show because
+	the locking of inspected context is done from a button
+	in the title.
+	=======================================
+	@if (AppOptionsService.ShowPanelTitles)
+	{
+    }
+    *@
+    <div class="di_ide_section-title">
+        @{ var isInspecting = GetIsInspecting(contextState); }
+
+        <button class="di_button"
+                style="display: inline;"
+                @onclick="() => DispatchToggleInspectActionOnClick(isInspecting)">
+                
+            @{
+            	var iconDriver = new IconDriver(
+					AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels,
+					AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels);
+            }
+
+            @if (isInspecting)
+            {
+                @IconLockFragment.Render(iconDriver)
+            }
+            else
+            {
+                @IconInspectFragment.Render(iconDriver)
+            }
+        </button>
+
+        ActiveContextsDisplay
+    </div>
+
+    <div class="di_ide_section-body @AppOptionsService.ShowPanelTitlesCssClass">
+
+        @{
+            var contextKeysToRender = contextState.InspectedContextHeirarchy
+                ?? contextState.FocusedContextHeirarchy;
+                
+            var seenContextKeyList = new HashSet<Key<ContextRecord>>();
+        }
+
+
+		@foreach (var contextKey in contextKeysToRender.KeyList)
+        {
+        	if (seenContextKeyList.Add(contextKey))
+        	{
+        		<ContextDisplay @key="contextKey"
+                            	ContextKey="contextKey" />
+            	<hr />
+        	}
+            else
+            {
+            	<div>ERROR: duplicate key when rendering @(nameof(ContextDisplay))</div>
+            }
+        }
+        
+    </div>
+</ContextBoundary>

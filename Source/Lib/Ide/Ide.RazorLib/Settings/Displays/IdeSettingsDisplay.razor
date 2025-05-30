@@ -1,0 +1,64 @@
+@using Walk.Ide.RazorLib.Terminals.Models
+
+<div class="di_ide_ide-specific-settings">
+
+	<button class="di_button"
+			@onclick="WriteWalkDebugSomethingToConsole">
+		WriteWalkDebugSomethingToConsole
+	</button>
+	
+	<table>
+    	<tr>
+    		<td>Max Command Count History:</td>
+    		<td>@($"{TerminalOutputFacts.MAX_COMMAND_COUNT:N0}")</td>
+    	</tr>
+    	<tr>
+	    	<td>Max Character Length History:</td>
+    		<td>@($"{TerminalOutputFacts.MAX_OUTPUT_LENGTH:N0}")</td>
+    	</tr>
+    	<tr>
+    		<td>When Cleared Keep Last Command If Length Smaller:</td>
+    		<td>@($"{TerminalOutputFacts.OUTPUT_LENGTH_PADDING:N0}")</td>
+    	</tr>
+    	<tr>
+    		<td>HomeDirectoryAbsolutePath:</td>
+    		<td>@EnvironmentProvider.HomeDirectoryAbsolutePath.Value</td>
+    	</tr>
+    	<tr>
+    		<td>RootDirectoryAbsolutePath:</td>
+    		<td>@EnvironmentProvider.RootDirectoryAbsolutePath.Value</td>
+    	</tr>
+    	<tr>
+    		<td>ActualRoamingApplicationDataDirectoryAbsolutePath:</td>
+    		<td>@EnvironmentProvider.ActualRoamingApplicationDataDirectoryAbsolutePath.Value</td>
+    	</tr>
+    	<tr>
+    		<td>ActualLocalApplicationDataDirectoryAbsolutePath:</td>
+    		<td>@EnvironmentProvider.ActualLocalApplicationDataDirectoryAbsolutePath.Value</td>
+    	</tr>
+    	<tr>
+    		<td>SafeRoamingApplicationDataDirectoryAbsolutePath:</td>
+    		<td>@EnvironmentProvider.SafeRoamingApplicationDataDirectoryAbsolutePath.Value</td>
+    	</tr>
+    	<tr>
+    		<td>SafeLocalApplicationDataDirectoryAbsolutePath:</td>
+    		<td>@EnvironmentProvider.SafeLocalApplicationDataDirectoryAbsolutePath.Value</td>
+    	</tr>
+    	<tr>
+    		<td>DriveExecutingFromNoDirectorySeparator:</td>
+    		<td>@EnvironmentProvider.DriveExecutingFromNoDirectorySeparator</td>
+    	</tr>
+    	<tr>
+    		<td>DirectorySeparatorChar:</td>
+    		<td>@EnvironmentProvider.DirectorySeparatorChar</td>
+    	</tr>
+    	<tr>
+    		<td>AltDirectorySeparatorChar:</td>
+    		<td>@EnvironmentProvider.AltDirectorySeparatorChar</td>
+    	</tr>
+    	<tr>
+    		<td>AppDataService:</td>
+    		<td>@AppDataService.GetType().Name</td>
+    	</tr>
+    </table>
+</div>

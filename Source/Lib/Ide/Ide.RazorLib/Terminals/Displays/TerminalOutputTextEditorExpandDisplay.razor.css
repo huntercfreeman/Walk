@@ -1,0 +1,6 @@
+.di_ide_new-terminal-panel {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	font-family: monospace;
+}

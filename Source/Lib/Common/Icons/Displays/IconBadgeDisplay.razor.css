@@ -1,0 +1,15 @@
+.di_icon-badge {
+    position: absolute;
+	right: 0;
+	bottom: 0;
+	border-radius: 25px;
+	width: 1.2em;
+	height: 1.2em;
+	line-height: 1.4;
+}
+
+.di_icon-badge.di_active {
+    background-color: var(--di_active-button-background-color);
+	color: var(--di_active-button-primary-font-color);
+}
+

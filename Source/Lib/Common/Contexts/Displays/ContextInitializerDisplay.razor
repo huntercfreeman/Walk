@@ -1,0 +1,13 @@
+@{ var contextState = ContextService.GetContextState(); }
+
+<div class="di_ide_context-initializer">
+
+    @if (contextState.IsSelectingInspectionTarget)
+    {
+        foreach (var inspectableContext in contextState.InspectableContextList)
+        {
+            // TODO: App crashes when using: @key="inspectableContext.ContextHeirarchy.NearestAncestorKey"
+            <ContextBoundaryOverlay InspectableContext="inspectableContext" />
+        }
+    }
+</div>

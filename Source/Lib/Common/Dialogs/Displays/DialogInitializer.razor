@@ -1,0 +1,31 @@
+@using Walk.Common.RazorLib.Contexts.Models
+@using Walk.Common.RazorLib.Contexts.Displays
+
+@{ var dialogList = DialogService.GetDialogState().DialogList; }
+
+<ContextBoundary @ref="_dialogContextBoundary"
+				 ContextRecord="ContextFacts.DialogContext"
+                 ClassCssString="di_dialog-initializer">
+	<ChildContent></ChildContent>
+</ContextBoundary>
+
+@foreach (var dialog in dialogList)
+{
+    <DialogDisplay @key="dialog.DynamicViewModelKey" 
+                   Dialog="dialog"
+                   OnFocusInFunc="HandleOnFocusIn"
+                   OnFocusOutFunc="HandleOnFocusOut"/>
+}
+
+@*
+	TODO: Would wrapping the foreach in a div i.e.:
+		  
+		  <div class="di_dialog-initializer"></div>
+		  
+		  Cause the gaps between dialogs to create invisible walls
+		  or some other weird behaviors?
+		  
+		  It is (2024-05-26), I can't recall if I left out an encompassing
+		  div for a reason or not, but I don't have time to look into this
+		  at the moment.
+*@

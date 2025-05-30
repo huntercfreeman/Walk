@@ -1,0 +1,159 @@
+@using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
+
+@{ var renderBatchLocal = GetRenderBatch(); }
+
+@if (renderBatchLocal.IsValid &&
+	 renderBatchLocal.ViewModel.PersistentState.ShowFindOverlay)
+{
+	var appOptionsState = AppOptionsService.GetAppOptionsState();
+
+	var iconDriver = new IconDriver(
+		appOptionsState.Options.IconSizeInPixels,
+		appOptionsState.Options.IconSizeInPixels);
+
+	<div class="di_te_find-overlay"
+         @onmousedown:stopPropagation="true"
+         @onmousemove:stopPropagation="true"
+         @ondblclick:stopPropagation="true"
+         @onclick:stopPropagation="true"
+         @oncontextmenu:stopPropagation="true"
+         @onkeydown="HandleOnKeyDownAsync"
+         @onkeydown:stopPropagation="true">
+
+        <div class="di_te_find-overlay-top-row"
+             style="display: flex;">
+             
+        	@*
+        	Comment out the find and replace (2025-04-12)
+        	
+        	<button class="di_button"
+                    style="margin-left: 5px;"
+                    @onclick="ToggleShowReplace"
+                    @onclick:stopPropagation="true"
+                    @onmousedown:stopPropagation="true"
+                    @onmousemove:stopPropagation="true"
+                    @ondblclick:stopPropagation="true"
+                    @oncontextmenu:stopPropagation="true"
+                    @onkeydown:stopPropagation="true">
+                @if (renderBatchLocal.ViewModel.ShowReplaceButtonInFindOverlay)
+                {
+                	@IconChevronDownFragment.Render(iconDriver)
+                }
+                else
+                {
+                	@IconChevronRightFragment.Render(iconDriver)
+                }
+            </button>
+            *@
+        
+            <input @bind="InputValue"
+                   @bind:event="oninput"
+                   id="@renderBatchLocal.TextEditorRenderBatchPersistentState.ComponentData.FindOverlayId"
+                   class="di_ide_input di_ide_input-text"
+                   placeholder="Find..." />
+         </div>
+         
+        @*
+        Comment out the find and replace (2025-04-12)
+        
+        @if (renderBatchLocal.ViewModel.ShowReplaceButtonInFindOverlay)
+        {
+	        <div class="di_te_find-overlay-replace-row">
+	        	<input @bind="InputReplace"
+                       @bind:event="oninput"
+                       class="di_ide_input di_ide_input-text"
+                       placeholder="Replace..." />
+
+	        	<button class="di_button"
+                        style="margin-left: 5px;"
+                        @onclick="ReplaceCurrent"
+                        @onclick:stopPropagation="true"
+                        @onmousedown:stopPropagation="true"
+                        @onmousemove:stopPropagation="true"
+                        @ondblclick:stopPropagation="true"
+                        @oncontextmenu:stopPropagation="true"
+                        @onkeydown:stopPropagation="true">
+                    @IconUnlockFragment.Render(iconDriver)
+                </button>
+                
+                <button class="di_button"
+                        style="margin-left: 5px;"
+                        @onclick="ReplaceAll"
+                        @onclick:stopPropagation="true"
+                        @onmousedown:stopPropagation="true"
+                        @onmousemove:stopPropagation="true"
+                        @ondblclick:stopPropagation="true"
+                        @oncontextmenu:stopPropagation="true"
+                        @onkeydown:stopPropagation="true">
+                    @IconUnlockFragment.Render(iconDriver)
+                </button>
+	        </div>
+        }
+        *@
+
+        <div class="di_te_find-overlay-bottom-row">
+            @{
+                var findOverlayPresentationModel = renderBatchLocal.Model!.PresentationModelList.FirstOrDefault(
+                    x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
+
+                var completedCalculation = findOverlayPresentationModel?.CompletedCalculation;
+            }
+
+            @if (findOverlayPresentationModel is null)
+            {
+                <div title="@nameof(findOverlayPresentationModel) is null">
+                    null
+                </div>
+            }
+            else if (completedCalculation is null)
+            {
+                <div title="@nameof(completedCalculation) is null">
+                    null
+                </div>
+            }
+            else
+            {
+                <div style="display: flex;">
+
+                    @if (_activeIndexMatchedTextSpan is null)
+                    {
+                        @: ?
+                    }
+                    else
+                    {
+                        <text>@(_activeIndexMatchedTextSpan.Value + 1)</text>
+                    }
+
+                    of
+
+                    @completedCalculation.TextSpanList.Count
+
+                    <button class="di_button"
+                            style="margin-left: 5px;"
+                            @onclick="MoveActiveIndexMatchedTextSpanDown"
+                            @onclick:stopPropagation="true"
+                            @onmousedown:stopPropagation="true"
+                            @onmousemove:stopPropagation="true"
+                            @ondblclick:stopPropagation="true"
+                            @oncontextmenu:stopPropagation="true"
+                            @onkeydown:stopPropagation="true">
+                        @IconArrowDownFragment.Render(iconDriver)
+                    </button>
+
+					<button class="di_button"
+                            style="margin-left: 5px;"
+                            @onclick="MoveActiveIndexMatchedTextSpanUp"
+                            @onclick:stopPropagation="true"
+                            @onmousedown:stopPropagation="true"
+                            @onmousemove:stopPropagation="true"
+                            @ondblclick:stopPropagation="true"
+                            @oncontextmenu:stopPropagation="true"
+                            @onkeydown:stopPropagation="true">
+                        @IconArrowUpFragment.Render(iconDriver)
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+}
+

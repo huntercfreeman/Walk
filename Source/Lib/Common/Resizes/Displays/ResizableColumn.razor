@@ -1,0 +1,8 @@
+@using Walk.Common.RazorLib.Dimensions;
+@using Walk.Common.RazorLib.Dimensions.Models
+
+<div class="di_resize-column"
+     style="width: @(AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels.ToCssValue())px;"
+     @onmousedown="() => SubscribeToDragEvent(DragEventHandlerResizeHandleAsync)">
+    
+</div>

@@ -1,0 +1,317 @@
+@using Walk.Common.RazorLib.Installations.Models
+@using Walk.Common.RazorLib.Contexts.Displays
+@using Walk.Common.RazorLib.Contexts.Models;
+@using Walk.Common.RazorLib.CustomEvents.Models
+@using Walk.Common.RazorLib.Keyboards.Models;
+@using Walk.Common.RazorLib.Keys.Models
+@using Walk.Common.RazorLib.Icons.Models
+@using Walk.Common.RazorLib.Dimensions;
+@using Walk.Common.RazorLib.Dimensions.Models;
+@using Walk.Common.RazorLib.ShouldRenderBoundaries.Displays
+@using Walk.TextEditor.RazorLib.Keymaps.Models;
+@using Walk.TextEditor.RazorLib.Cursors.Models
+@using Walk.TextEditor.RazorLib.Lines.Models;
+@using Walk.TextEditor.RazorLib.Options.Models;
+@using Walk.TextEditor.RazorLib.Htmls.Models;
+@using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals
+@using Walk.TextEditor.RazorLib.TextEditors.Models;
+@using Walk.TextEditor.RazorLib.TextEditors.Models.Internals
+@using Walk.TextEditor.RazorLib.Virtualizations.Models
+@using Walk.TextEditor.RazorLib.Decorations.Models
+@using Walk.TextEditor.RazorLib.Lexers.Models
+
+<div @onclick="FocusTextEditorAsync"
+     @onkeydown="_onKeyDownNonRenderingEventHandler"
+     @onkeydown:preventDefault="true"
+     @oncontextmenu="_onContextMenuNonRenderingEventHandler"
+     @oncontextmenu:preventDefault="true"
+     @onmousedown="_onMouseDownNonRenderingEventHandler"
+     @onmousemove="_onMouseMoveNonRenderingEventHandler"
+     @onmouseout="_onMouseOutNonRenderingEventHandler"
+     @ondblclick="_onDblClickNonRenderingEventHandler"
+     @onwheel="_onWheelNonRenderingEventHandler"
+     @ontouchstart="ReceiveOnTouchStart"
+     @ontouchmove="ReceiveOnTouchMove"
+     @ontouchend="ClearTouch"
+     @ontouchcancel="ClearTouch"
+     @ontouchleave="ClearTouch"
+     id="@_componentData.RowSectionElementId"
+     style="@_componentData.PersonalWrapperCssStyle"
+     class="@_componentData.PersonalWrapperCssClass"
+     tabindex="-1">
+    
+	<div class="di_te_virtualization-boundary-display"
+		 style="@_componentData.BothVirtualizationBoundaryStyleCssString">
+	</div>
+    
+    @if (_componentData.RenderBatch.IsValid && _componentData.Css_LineIndexCache_EntryMap.Count != 0)
+    {
+    	<div class="di_te_three-dots-section">
+        	@for (int inlineUiIndex = 0; inlineUiIndex < _componentData.InlineUiStyleList.Count; inlineUiIndex++)
+        	{
+        		<div class="di_te_three-dots" style="@(_componentData.InlineUiStyleList[inlineUiIndex])">
+	    			...
+	    		</div>
+        	}
+        </div>
+					                           
+		<div class="di_te_first-render-presentation-layer-group">
+			@for (int groupIndex = 0; groupIndex < _componentData.FirstPresentationLayerGroupList.Count; groupIndex++)
+			{
+				<div class="@_componentData.FirstPresentationLayerGroupList[groupIndex].CssClassString">
+					@for (int textSpanIndex = _componentData.FirstPresentationLayerGroupList[groupIndex].StartInclusiveIndex;
+						  textSpanIndex < _componentData.FirstPresentationLayerGroupList[groupIndex].EndExclusiveIndex;
+						  textSpanIndex++)
+					{
+						<div class="@_componentData.FirstPresentationLayerTextSpanList[textSpanIndex].PresentationCssClass"
+                             style="@_componentData.FirstPresentationLayerTextSpanList[textSpanIndex].PresentationCssStyle">
+                        </div>
+					}
+				</div>
+			}
+		</div>
+		
+		<div class="di_te_text-selection-group">
+		    @for (var i = 0; i < _componentData.SelectionStyleList.Count; i++)
+	        {
+				<div class="di_te_text-selection"
+				     style="@_componentData.SelectionStyleList[i]">
+				</div>
+	        }
+		</div>
+		
+		<div class="di_te_last-render-presentation-layer-group">
+			@for (int groupIndex = 0; groupIndex < _componentData.LastPresentationLayerGroupList.Count; groupIndex++)
+			{
+				<div class="@_componentData.LastPresentationLayerGroupList[groupIndex].CssClassString">
+					@for (int textSpanIndex = _componentData.LastPresentationLayerGroupList[groupIndex].StartInclusiveIndex;
+						  textSpanIndex < _componentData.LastPresentationLayerGroupList[groupIndex].EndExclusiveIndex;
+						  textSpanIndex++)
+					{
+						<div class="@_componentData.LastPresentationLayerTextSpanList[textSpanIndex].PresentationCssClass"
+                             style="@_componentData.LastPresentationLayerTextSpanList[textSpanIndex].PresentationCssStyle">
+                        </div>
+					}
+				</div>
+			}
+		</div>
+    
+    	var collapsePoint = new CollapsePoint(-1, false, string.Empty, -1);
+    	
+    	if (ViewModelDisplayOptions.IncludeGutterComponent)
+    	{
+    		<div class="di_te_gutter-section"
+    			 style="@_componentData.Gutter_WidthCssStyle">
+	    		@for (int virtualizationResultIndex = 0;
+	    			  virtualizationResultIndex < _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count;
+	    			  virtualizationResultIndex++)
+			    {
+			        <div class="di_te_gutter"
+			             style="@(_componentData.GetGutterStyleCss(_componentData.Css_LineIndexCache_EntryMap[_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex].TopCssValue))">
+			             
+			            @(_componentData.Css_LineIndexCache_EntryMap[_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex].LineNumberString)
+			            
+			            @for (int i = 0; i < _componentData.VirtualizedCollapsePointList.Count; i++)
+		            	{
+		            		if (_componentData.VirtualizedCollapsePointList[i].AppendToLineIndex == _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex)
+		            		{
+		            			collapsePoint = _componentData.VirtualizedCollapsePointList[i];
+		            			break;
+		            		}
+		            	}
+		
+						@if (collapsePoint.AppendToLineIndex == _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex)
+						{
+						    <span class="di_te_gutter-chevron">
+						    	@if (collapsePoint.IsCollapsed)
+						    	{
+						    		@IconChevronRightFragment.Render(_iconDriver)
+						    	}
+						    	else
+						    	{
+						    		@IconChevronDownFragment.Render(_iconDriver)
+						    	}
+							</span>
+						}
+			        </div>
+		    	}
+		    	
+		    	@{
+			        var heightOfGutter = _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count *
+			                             _componentData.RenderBatch.ViewModel.CharAndLineMeasurements.LineHeight;
+			
+			        // The scrollbar is off when one uses the 'if (heightOfGutter...)' code to draw the rest of the gutter but empty.
+			        // To replicate this, one must scroll to the bottom of a file, then manage to have the gutter not fill the screen.
+			        //
+			        // But, there is a catch. The bug comes down to whether your virtualization result, has any 'overhang'
+			        // at the top of the text editor.
+			        //
+			        // Because this code just takes the virtualization result height as if it were centered
+			        // one ontop of the other with the visible content.
+			        //
+			        // The solution is to calculate the overhang for any virtualization elements that are rendered at the 'top-offscreen'.
+			        //
+			        // Editor scrolltop - 0th element's top == topOffscreenOverhang (2024-03-02)
+			        
+			        double topOffscreenOverhang;
+			        
+			        if (_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
+			        {
+			        	// TODO: It doesn't seem 'VirtualizationLine' ever will have a null value so it is no longer nullable...
+			        	// ...if any code breaks I think this is the only possible place. It is doing '?? -1' here.
+			        	topOffscreenOverhang = _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[0].TopInPixels;
+			        }
+			        else
+			        {
+			        	 topOffscreenOverhang = -1;
+			        }
+			
+			        if (topOffscreenOverhang != -1)
+			        {
+			            // If the 'topOffscreenOverhang' was measureable, then subtract from the height of the gutter,
+			            // however much of it overhangs the top offscreen.
+			            heightOfGutter -= topOffscreenOverhang;
+			        }
+			
+			        // '1' is added to the text editor's height in order to avoid rounding errors
+			        if (heightOfGutter < 1 + _componentData.RenderBatch.ViewModel.TextEditorDimensions.Height)
+			        {
+			            var remainingHeightToFill = _componentData.RenderBatch.ViewModel.TextEditorDimensions.Height -
+			                heightOfGutter +
+			                ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+			            
+			            var remainingHeightToFillInvariantCulture = remainingHeightToFill.ToCssValue();
+			            
+			            <div class="di_te_gutter"
+			                 style="@(_componentData.GetGutterStyleCssImaginary()) height: @(remainingHeightToFillInvariantCulture)px;">
+			            </div>
+			        }
+			    }
+			</div>
+    	}
+    	
+    	<div class="di_te_text-section">
+	    	@for (int virtualizationResultIndex = 0;
+	    		  virtualizationResultIndex < _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count;
+	    		  virtualizationResultIndex++)
+		    {
+		    	<div class="di_te_row"
+					 style="@_componentData.RowSection_GetRowStyleCss(_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex)">
+				
+					@*
+						'!= 0' because the struct's int property will default to '0',
+						and if there is no text then the property is unchanged from its default value.
+					*@
+					@if (_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].VirtualizationSpan_EndExclusiveIndex != 0)
+					{
+						for (int i = _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].VirtualizationSpan_StartInclusiveIndex; i < _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].VirtualizationSpan_EndExclusiveIndex; i++)
+						{
+							<span class="@_componentData.RenderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList[i].CssClass">
+					            @(_componentData.RenderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList[i].MarkupStringText)
+					        </span>
+					    }
+					}
+					
+					@if (GlobalShowNewlines && _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex < _componentData.RenderBatch.Model.LineCount)
+					{
+						// amountOfLeftInCharacterWidthUnits <= lengthOfLine
+						if (_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LeftInPixels / _componentData.RenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth <=
+							_componentData.RenderBatch.Model.GetLineLength(_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex, true))
+						{
+						    <span class="di_te_newline">
+						        @_componentData.RenderBatch.Model.LineEndList[_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex].LineEndKind.AsCharactersHtmlEscaped()
+						    </span>
+						}
+					}
+				</div>
+		    }
+	    </div>
+	    
+	    <textarea id="@_componentData.PrimaryCursorContentId"
+				  tabindex="@_componentData.RenderBatch.TextEditorRenderBatchPersistentState.ViewModelDisplayOptions.TabIndex"
+				  class="@_componentData.BlinkAnimationCssClass"
+				  style="@_componentData.CursorCssStyle">
+		</textarea>
+						
+		<div class="di_te_text-editor-caret-row"
+				style="@_componentData.CaretRowCssStyle">
+		</div>
+		
+		<div class="di_te_scrollbar-section" style="@_componentData.ScrollbarSection_LeftCssStyle">
+		
+			<div class="di_te_scrollbar di_te_scrollbar-horizontal"
+			     id="@HORIZONTAL_ScrollbarElementId"
+			     style="@_componentData.HORIZONTAL_ScrollbarCssStyle"
+			     @onmousedown:stopPropagation="true"
+			     @onmousedown="HORIZONTAL_HandleOnMouseDownAsync"
+			     @onmousemove:stopPropagation="true"
+			     @ondblclick:stopPropagation="true"
+			     @onclick:stopPropagation="true"
+			     @oncontextmenu:stopPropagation="true">
+			    
+			    <div class="di_te_scrollbar-slider"
+			         id="@HORIZONTAL_ScrollbarSliderElementId"
+			         style="@_componentData.HORIZONTAL_SliderCssStyle">
+			    </div>
+			</div>
+			
+			<div class="di_te_scrollbar di_te_scrollbar-vertical"
+			     id="@VERTICAL_ScrollbarElementId"
+			     @onmousedown:stopPropagation="true"
+			     @onmousedown="VERTICAL_HandleOnMouseDownAsync"
+			     @onmousemove:stopPropagation="true"
+			     @ondblclick:stopPropagation="true"
+			     @onclick:stopPropagation="true"
+			     @oncontextmenu:stopPropagation="true">
+			         
+			    <div class="di_te_scrollbar-slider"
+			         id="@VERTICAL_ScrollbarSliderElementId"
+			         style="@_componentData.VERTICAL_SliderCssStyle">
+			    </div>
+			</div>
+		    
+		    @* TODO: Color the di_te_scrollbar-connector differently and render the 'corner icon'? *@
+			<div class="di_te_scrollbar di_te_scrollbar-connector"
+			     @onmousedown:stopPropagation="true"
+			     @onmousemove:stopPropagation="true"
+			     @ondblclick:stopPropagation="true"
+			     @onclick:stopPropagation="true"
+			     @oncontextmenu:stopPropagation="true">
+			</div>
+		</div>
+	    
+	    var tooltipViewModel = _componentData.RenderBatch.ViewModel.PersistentState.TooltipViewModel;
+	    
+	    @if (tooltipViewModel is not null)
+	    {
+	        <div class="di_te_tooltip di_set-selectable @(tooltipViewModel.CssClassString ?? string.Empty)"
+	             style="left: @(_componentData.TooltipRelativeX)px; top: @(_componentData.TooltipRelativeY)px;"
+	             @onmouseover="tooltipViewModel.OnMouseOver"
+	             @onmousedown:stopPropagation="true"
+	             @onmousemove:stopPropagation="true"
+	             @ondblclick:stopPropagation="true"
+	             @onclick:stopPropagation="true"
+	             @oncontextmenu:stopPropagation="true">
+	
+	            <DynamicComponent Type="tooltipViewModel.RendererType"
+	                              Parameters="tooltipViewModel.ParameterMap" />
+	        </div>
+	    }
+	}
+	else
+    {
+    	if (_componentData.RenderBatch.Model is null)
+	    {
+	        <div>The @nameof(TextEditorModel) was null</div>
+	    }
+	    else if (_componentData.RenderBatch.ViewModel is null)
+	    {
+	        <div>The @nameof(TextEditorViewModel) was null</div>
+	    }
+	    else if (_componentData.RenderBatch.TextEditorRenderBatchPersistentState.TextEditorOptions is null)
+	    {
+	        <div>The @nameof(TextEditorOptions) was null</div>
+	    }
+    }
+</div>
+

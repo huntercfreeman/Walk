@@ -1,0 +1,82 @@
+<div class="di_progress-bar">
+	@{
+		var localProgressBarModel = ProgressBarModel;
+
+		// Don't bother with string formatting the double, just cast it to an int,
+		// and manually add the '%'.
+		//
+		// String formatting and css can break if the wrong culture is used,
+		// (i.e.: any locations that use a period in place of a comma to deliminate
+		//       1,000 and up.)
+		//
+		// If one uses the correct culture it would be fine, but I'm just not going
+		// to deal with it here, at the least for now.
+		var localDecimalPercentProgress = Math.Ceiling(localProgressBarModel.DecimalPercentProgress * 100);
+		var percentageComplete = $"{localDecimalPercentProgress}%";
+	}
+    
+    @{
+    	var fillWidthInPercentage = 100;
+    	var cancelButtonWidthInPercentage = 30;
+    	
+    	if (localProgressBarModel.IsCancellable)
+    		fillWidthInPercentage -= cancelButtonWidthInPercentage;
+    }
+    
+    <div class="di_progress-bar-time-elapsed">
+		@($"{localProgressBarModel.GetTimeElapsed().TotalSeconds:N3}") seconds
+	</div>
+    
+    <div class="di_progress-bar" style="display: flex;">
+    	<div class="di_progress-bar-fill"
+	         style="position: relative; height: 2em; width: @(fillWidthInPercentage)%;">
+	
+			<div class="di_progress-bar-fill-slider"
+				 style="background-color: var(--di_active-with-focus-background-color); width: @(percentageComplete); height: 100%;">
+			</div>
+	
+			<div class="di_progress-bar-fill-text"
+				 style="position: absolute; left: calc(50% - @(percentageComplete.Length)ch); top: calc(0.2em + 1px);">
+				@percentageComplete
+			</div>
+		</div>
+		
+		@if (localProgressBarModel.IsCancellable)
+		{
+			<div style="width: @(cancelButtonWidthInPercentage)%;">
+				<button class="di_button"
+						style="width: 100%; height: 100%;"
+					    disabled=@(localProgressBarModel.IsCancelled || localProgressBarModel.IntentToCancel || localProgressBarModel.IsDisposed)
+					    @onclick="localProgressBarModel.Cancel">
+					
+					@if (localProgressBarModel.IsCancelled)
+					{
+						<text>IsCancelled</text>
+					}
+					else if (localProgressBarModel.IntentToCancel)
+					{
+						<text>Cancelling</text>
+					}
+					else if (localProgressBarModel.IsDisposed)
+					{
+						<text>Disposed</text>
+					}
+					else
+					{
+						<text>Cancel</text>
+					}
+				</button>
+			</div>
+		}
+    </div>
+
+	@if (!string.IsNullOrWhiteSpace(localProgressBarModel.Message))
+	{
+		<div class="di_progress-bar-message">@localProgressBarModel.Message</div>
+	}
+
+	@if (!string.IsNullOrWhiteSpace(localProgressBarModel.SecondaryMessage))
+	{
+		<div class="di_progress-bar-message-secondary">@localProgressBarModel.SecondaryMessage</div>
+	}
+</div>

@@ -1,0 +1,15 @@
+.di_web_notifications-view-tabs {
+    margin-top: 8px;
+    display: flex;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    border-bottom: 2px solid var(--di_primary-border-color);
+}
+
+    .di_web_notifications-view-tabs .di_button {
+        margin-right: 8px !important;
+    }
+
+.di_web_notifications-view-tab-entry-count {
+    margin: 0 5px;
+}

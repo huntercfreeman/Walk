@@ -1,0 +1,17 @@
+<div class="di_tree-view-exception"
+     style="display: flex; align-items: center;">
+     
+    @{
+    	var appOptionsState = AppOptionsService.GetAppOptionsState();
+    
+    	var iconDriver = new IconDriver(
+			appOptionsState.Options.IconSizeInPixels,
+			appOptionsState.Options.IconSizeInPixels);
+    }
+
+    @IconErrorFragment.Render(iconDriver)
+
+    <span style="margin-left: 0.5ch;">
+        @TreeViewException.Item.Message
+    </span>
+</div>

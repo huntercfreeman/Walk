@@ -1,0 +1,12 @@
+@using Walk.Common.RazorLib.TreeViews.Displays
+
+<div class="di_ide_input-file-display-content"
+     style="@ElementDimensions.StyleString">
+    
+    <CascadingValue Name="SearchQuery" Value="InputFileState.SearchQuery">
+        <TreeViewContainerDisplay TreeViewContainerKey="TreeViewContainerKey"
+                                  CssStyleString="height: 100%;"
+                                  TreeViewMouseEventHandler="InputFileTreeViewMouseEventHandler"
+                                  TreeViewKeyboardEventHandler="InputFileTreeViewKeyboardEventHandler"/>
+    </CascadingValue>
+</div>

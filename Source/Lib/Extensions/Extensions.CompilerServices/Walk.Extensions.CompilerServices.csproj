@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Product>Walk CompilerService</Product>
+    <Description>An optional, opinionated implementation for various ICompilerService features.</Description>
+    <PackageId>Walk.ExtendCompilerServices</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Hunter Freeman</Authors>
+    <Company />
+    <PackageTags>DotNet CSharp Blazor RazorComponents</PackageTags>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TextEditor\Walk.TextEditor.RazorLib.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.4" />
+  </ItemGroup>
+
+</Project>

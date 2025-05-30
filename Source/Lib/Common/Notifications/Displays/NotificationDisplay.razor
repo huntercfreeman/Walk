@@ -1,0 +1,42 @@
+<div class="di_notification @(Notification.NotificationCssClass ?? string.Empty)"
+     style="@CssStyleString"
+     @onfocusin="HandleOnFocusIn"
+     @onfocusin:stopPropagation="true"
+     @onfocusout="HandleOnFocusOut"
+     @onfocusout:stopPropagation="true">
+     
+    <div class="di_notification-toolbar">
+        <div class="di_notification-title di_unselectable"
+             style="@NotificationTitleCssStyleString"
+             title="@Notification.Title">
+            @Notification.Title
+        </div>
+
+        <div class="di_notification-control-buttons">
+        
+        	@{
+        		var appOptionsState = AppOptionsService.GetAppOptionsState();
+        	
+				var iconDriver = new IconDriver(
+					appOptionsState.Options.IconSizeInPixels,
+					appOptionsState.Options.IconSizeInPixels);
+			}
+			
+            <button class="di_button di_notification-button-entry"
+            		@onclick="ChangeNotificationToDialog">
+                @IconEmptyWindowFragment.Render(iconDriver)
+            </button>
+            <button class="di_button di_notification-button-entry"
+            		@onclick="() => HandleShouldNoLongerRender(wasCausedByUiEvent: true)">
+                @IconCloseFragment.Render(iconDriver)
+            </button>
+        </div>
+    </div>
+
+    <div class="di_notification-body">
+        <CascadingValue Value="Notification">
+            <DynamicComponent Type="Notification.ComponentType"
+                              Parameters="Notification.ComponentParameterMap"/>
+        </CascadingValue>
+    </div>
+</div>

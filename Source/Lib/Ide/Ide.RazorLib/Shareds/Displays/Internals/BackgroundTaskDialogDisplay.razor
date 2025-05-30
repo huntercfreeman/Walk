@@ -1,0 +1,43 @@
+@*
+@{
+    var seenBackgroundTasks = GetThreadSafeCopyOfSeenBackgroundTasks();
+	seenBackgroundTasks.Reverse();
+
+    var executingBackgroundTask = BackgroundTaskService.ContinuousTaskWorker.ExecutingBackgroundTask;
+}
+
+<div class="di_ide_background-task">
+    <div>
+		Only tracking background tasks while this dialog is open.
+		Only showing the most recent @_countTracked.
+		Once more than @_countTracked items would be tracked, the list is cleared to the most recent @_clearTo entries.
+		Always will showthe active background task, even if it was started without the dialog open.
+	</div>
+    <div>Most recent is the first entry starting at the top.</div>
+    
+	Active:@(executingBackgroundTask?.Name ?? "null")
+
+    <hr />
+    @seenBackgroundTasks.Count
+    <div>
+        @for (var i = 0; i < seenBackgroundTasks.Count; i++)
+        {
+            var index = i;
+            var backgroundTask = seenBackgroundTasks[index];
+
+            if (backgroundTask.Name is not null && backgroundTask.Name.StartsWith("te_"))
+            {
+                <div class="di_te_keyword" title="@backgroundTask.BackgroundTaskKey.Guid">
+                    @backgroundTask.Name
+                </div>
+            }
+            else
+            {
+                <div title="@backgroundTask.BackgroundTaskKey.Guid">
+                    @(backgroundTask?.Name ?? "null")
+                </div>
+            }
+        }
+    </div>
+</div>
+*@

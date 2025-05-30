@@ -1,0 +1,18 @@
+.di_ide_project-template {
+    margin-bottom: 12px;
+    background-color: var(--di_tertiary-background-color);
+    color: var(--di_tertiary-foreground-color);
+}
+
+.di_ide_project-template-title {
+    background-color: var(--di_ide_section-title-background-color);
+    color: var(--di_primary-foreground-color);
+    cursor: pointer;
+}
+    .di_ide_project-template-title:hover {
+        background-color: var(--di_active-no-focus-background-color);
+    }
+
+    .di_ide_project-template-title.di_active {
+        background-color: var(--di_active-with-focus-background-color);
+    }

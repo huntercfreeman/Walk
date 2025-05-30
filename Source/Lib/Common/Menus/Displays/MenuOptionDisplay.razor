@@ -1,0 +1,53 @@
+@using Walk.Common.RazorLib.Dropdowns.Displays
+@using Walk.Common.RazorLib.Dropdowns.Models;
+
+<div class="di_menu-option-display di_unselectable @IsActiveCssClass @HasWidgetActiveCssClass"
+	 id="@_menuOptionHtmlElementId"
+     tabindex="-1"
+     @ref="_topmostElementReference"
+     @onclick="HandleOnClick"
+     @onclick:stopPropagation="true"
+     @onkeydown="HandleOnKeyDown"
+     @onkeydown:preventDefault="true"
+     @oncontextmenu:preventDefault="true"
+     @oncontextmenu:stopPropagation="true">
+    
+    @if (IconRenderFragment is not null)
+    {
+        <div class="di_menu-option-icon">
+            @IconRenderFragment(MenuOptionRecord)
+        </div>
+        
+    }
+    
+    @MenuOptionRecord.DisplayName
+    
+    @{
+    	var appOptionsState = AppOptionsService.GetAppOptionsState();
+    
+    	var iconDriver = new IconDriver(
+			appOptionsState.Options.IconSizeInPixels,
+			appOptionsState.Options.IconSizeInPixels);
+    }
+
+    @if (MenuOptionRecord.SubMenu is not null)
+    {
+        @IconChevronRightFragment.Render(iconDriver)
+    }
+
+    @if (DisplayWidget)
+    {
+        <div class="di_menu-option-widget"
+             @onclick:stopPropagation="true"
+             @ondblclick:stopPropagation="true"
+             @onkeydown:stopPropagation="true"
+             @onkeydownwithpreventscroll:stopPropagation="true"
+             @oncontextmenu:stopPropagation="true">
+
+            <CascadingValue Value="MenuOptionCallbacks">
+                <DynamicComponent Type="MenuOptionRecord.WidgetRendererType"
+                                  Parameters="MenuOptionRecord.WidgetParameterMap"/>
+            </CascadingValue>
+        </div>
+    }
+</div>

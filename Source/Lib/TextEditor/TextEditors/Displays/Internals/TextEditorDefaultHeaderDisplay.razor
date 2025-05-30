@@ -1,0 +1,142 @@
+@using Walk.TextEditor.RazorLib.TextEditors.Models
+@using Walk.TextEditor.RazorLib.TextEditors.Models.Internals
+
+@{
+	var renderBatch = GetRenderBatch();
+	var componentData = GetComponentData();
+}
+
+@if (!renderBatch.IsValid || componentData is null)
+{
+	<div class="di_te_text-editor-header @componentData?.WrapperCssClass @TextEditorService.ThemeCssClassString"
+	     style="@componentData?.WrapperCssStyle">
+    </div>
+}
+else
+{
+	<div class="di_te_text-editor-header @componentData.WrapperCssClass @TextEditorService.ThemeCssClassString"
+	     style="@componentData.WrapperCssStyle">
+	    <div class="di_te_text-editor-header-listing"
+	         style="overflow-y: hidden;">
+	        
+	        @{
+	            var model = TextEditorService.TextEditorState;
+	
+	            if (model is not null)
+	            {
+	            	var appOptionsState = AppOptionsService.GetAppOptionsState();
+	            
+	                /* (2024-08-09)
+	                var localHeaderButtonKindsList = HeaderButtonKinds;
+	
+	                if (localHeaderButtonKindsList is null)
+	                {
+	                    localHeaderButtonKindsList = Enum
+	                        .GetValues(typeof(HeaderButtonKind))
+	                        .Cast<HeaderButtonKind>()
+	                        .ToImmutableArray();
+	                }
+	                */
+	                
+	                var localHeaderButtonKindsList = Enum
+	                    .GetValues(typeof(HeaderButtonKind))
+	                    .Cast<HeaderButtonKind>();
+	                    
+	            	var iconDriver = new IconDriver(
+	            		appOptionsState.Options.IconSizeInPixels,
+	            		appOptionsState.Options.IconSizeInPixels);
+	
+	                foreach (var headerButtonKind in localHeaderButtonKindsList)
+	                {
+	                    <div class="di_te_text-editor-header-entry">
+	                        @switch (headerButtonKind)
+	                        {
+	                            case HeaderButtonKind.Cut:
+	                                <button title="@headerButtonKind.ToString()"
+	                                        class="di_button"
+	                                		@onclick="DoCutOnClick">
+	                                    @IconNoteFragment.Render(iconDriver)
+	                                </button>
+	                                break;
+	                            case HeaderButtonKind.Copy:
+	                                <button title="@headerButtonKind.ToString()"
+	                                        class="di_button"
+	                                		@onclick="DoCopyOnClick">
+	                                    @IconCopyFragment.Render(iconDriver)
+	                                </button>
+	                                break;
+	                            case HeaderButtonKind.Paste:
+	                                <button title="@headerButtonKind.ToString()"
+	                                        class="di_button"
+	                                		@onclick="DoPasteOnClick">
+	                                    @IconClippyFragment.Render(iconDriver)
+	                                </button>
+	                                break;
+	                            case HeaderButtonKind.Undo:
+	                                <button title="@headerButtonKind.ToString()"
+	                                        class="di_button"
+	                                        disabled=@GetUndoDisabledAttribute()
+	                                		@onclick="DoUndoOnClick">
+	                                    @IconArrowLeftFragment.Render(iconDriver)
+	                                </button>
+	                                break;
+	                            case HeaderButtonKind.Redo:
+	                                <button title="@headerButtonKind.ToString()"
+	                                        class="di_button"
+	                                        disabled=@GetRedoDisabledAttribute()
+	                                		@onclick="DoRedoOnClick">
+	                                    @IconArrowRightFragment.Render(iconDriver)
+	                                </button>
+	                                break;
+	                            case HeaderButtonKind.Save:
+	                                <button title="@headerButtonKind.ToString()"
+	                                        class="di_button"
+	                                		@onclick="DoSaveOnClick">
+	                                    @IconSaveFragment.Render(iconDriver)
+	                                </button>
+	                                break;
+	                            case HeaderButtonKind.SelectAll:
+	                                <button title="@headerButtonKind.ToString()"
+	                                        class="di_button"
+	                                		@onclick="DoSelectAllOnClick">
+	                                    @IconListSelectionFragment.Render(iconDriver)
+	                                </button>
+	                                break;
+	                            case HeaderButtonKind.PeekWindowDisplay:
+	                                <button title="@headerButtonKind.ToString()"
+	                                        class="di_button"
+	                                		@onclick="ShowWatchWindowDisplayDialogOnClick">
+	                                    @IconProjectDependenciesFragment.Render(iconDriver)
+	                                </button>
+	                                break;
+	                        }
+	                    </div>
+	                }
+	
+	                <div class="di_te_text-editor-header-entry">
+	                    <button title="Measure editor size"
+	                            class="di_button"
+	                    		@onclick="DoRemeasureOnClick">
+	                        @IconSymbolRulerFragment.Render(iconDriver)
+	                    </button>
+	                </div>
+	                
+	                <div class="di_te_text-editor-header-entry">
+	                    <button title="Reload"
+	                            class="di_button"
+	                            id="@_reloadButtonHtmlElementId"
+	                    		@onclick="DoReloadOnClick">
+	                        @IconRefreshFragment.Render(iconDriver)
+	                    </button>
+	                </div>
+	            }
+	            else
+	            {
+	                <div class="di_te_text-editor-header-entry di_te_text-editor-header-file-sizing">
+	                    <div>The @nameof(TextEditorModel) was null</div>
+	                </div>
+	            }
+	        }
+	    </div>
+	</div>
+}

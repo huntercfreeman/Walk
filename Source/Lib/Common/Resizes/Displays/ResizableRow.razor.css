@@ -1,0 +1,5 @@
+﻿.di_resize-row {
+    background-color: var(--di_resize-row-background-color);
+    width: 100%;
+    cursor: n-resize;
+}

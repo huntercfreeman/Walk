@@ -1,0 +1,63 @@
+<div class="di_menu-display"
+     tabindex="-1"
+     @ref="_menuDisplayElementReference"
+     @onclick:stopPropagation="true"
+     @ondblclick:stopPropagation="true"
+     @onkeydownwithpreventscroll:stopPropagation="true"
+     @onkeydown:stopPropagation="true"
+     @onkeydown:preventDefault="true"
+     @onkeydown="HandleOnKeyDownAsync"
+     @oncontextmenu:preventDefault="true"
+     @oncontextmenu:stopPropagation="true">
+     
+    <CascadingValue Value="RestoreFocusToThisMenuAsync" Name="ReturnFocusToParentFuncAsync">
+        @{
+            if (GroupByMenuOptionKind)
+            {
+                var menuOptionsGroupedByKindList = MenuRecord.MenuOptionList
+                    .GroupBy(x => x.MenuOptionKind)
+                    .ToList();
+
+                var cumulativeIndex = 0;
+                
+                for (int i = 0; i < menuOptionsGroupedByKindList.Count; i++)
+                {
+                    var groupIndex = i;
+                    
+                    var group = menuOptionsGroupedByKindList[groupIndex];
+                    
+                    var menuOptionList = group.ToList();
+                    
+                    for (var j = 0; j < menuOptionList.Count; j++)
+                    {
+                        var menuOptionIndex = j;
+                        var menuOption = menuOptionList[menuOptionIndex];
+
+                        <MenuOptionDisplay MenuOptionRecord="@menuOption"
+                                           ActiveMenuOptionRecordIndex="@_activeMenuOptionRecordIndex"
+                                           Index="cumulativeIndex++"
+                                           IconRenderFragment="IconRenderFragment"/>
+                    }
+
+                    if (groupIndex != menuOptionsGroupedByKindList.Count - 1)
+                    {
+                        <hr class="di_hr"/>
+                    }
+                }
+            }
+            else
+            {
+                for (var i = 0; i < MenuRecord.MenuOptionList.Count; i++)
+                {
+                    var index = i;
+                    var menuOption = MenuRecord.MenuOptionList[index];
+
+                    <MenuOptionDisplay MenuOptionRecord="@menuOption"
+                                       ActiveMenuOptionRecordIndex="@_activeMenuOptionRecordIndex"
+                                       Index="index"
+                                       IconRenderFragment="IconRenderFragment"/>
+                }
+            }
+        }
+    </CascadingValue>
+</div>

@@ -1,0 +1,16 @@
+@using Walk.TextEditor.RazorLib.Lexers.Models;
+
+<div class="di_ide_syntax-text-span">
+    <div>
+        Spans from
+        <span title="@nameof(TextSpan.StartInclusiveIndex)">@TextSpan.StartInclusiveIndex</span>
+        to
+        <span title="@nameof(TextSpan.EndExclusiveIndex)">@TextSpan.EndExclusiveIndex</span>
+    </div>
+
+    <input class="di_ide_input di_ide_input-text"
+           @bind="InputValue"
+           @bind:event="oninput"
+           @onfocusout="CompleteForm"
+           @onkeypress="HandleOnKeyDown" />
+</div>

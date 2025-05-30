@@ -1,0 +1,49 @@
+<div class="di_ide_nuget-package-display">
+    
+    @{
+        var dotNetSolutionState = DotNetBackgroundTaskApi.DotNetSolutionService.GetDotNetSolutionState();
+        var nuGetPackageManagerState = DotNetBackgroundTaskApi.NuGetPackageManagerService.GetNuGetPackageManagerState();
+    }
+
+    <div>
+        @NugetPackageRecord.Title
+        <span title="Total Downloads">(@($"{NugetPackageRecord.TotalDownloads:N0}") Downloads)</span>
+        
+        <div style="margin-left: 2ch; padding-left: 5px; border-left: 1px solid var(--di_primary-border-color)">
+            <select @onchange="SelectedNugetVersionChanged">
+                @foreach (var version in _nugetPackageVersionsOrdered)
+                {
+                    <option value="@version.Version"
+                            selected="@(_nugetPackageVersionString == version.Version)">
+                        @version.Version
+                    </option>
+                }
+            </select>
+            
+            @{
+                var buttonIsDisabled = !ValidateSolutionContainsSelectedProject(
+                    dotNetSolutionState,
+                    nuGetPackageManagerState);
+            }
+            
+            <button @onclick="() => AddNugetPackageReferenceOnClick(dotNetSolutionState, nuGetPackageManagerState)"
+                    class="di_button"
+                    style="display: inline-flex; margin-left: 5px;"
+                    disabled=@buttonIsDisabled>
+                
+                @if (buttonIsDisabled || nuGetPackageManagerState.SelectedProjectToModify is null)
+                {
+                    <text>
+                        Must select a Project to Modify
+                    </text>
+                }
+                else
+                {
+                    <text>
+                        Add to @nuGetPackageManagerState.SelectedProjectToModify.DisplayName
+                    </text>
+                }
+            </button>
+        </div>
+    </div>
+</div>

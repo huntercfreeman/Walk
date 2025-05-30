@@ -1,0 +1,16 @@
+﻿.di_tree-view-state {
+    height: 200px;
+    overflow: auto;
+}
+
+.di_tree-view-state:focus-within .di_tree-view-title.di_selected {
+    background-color: var(--di_active-with-focus-background-color);
+}
+
+.di_tree-view-state:focus:not(.di_active) {
+    outline: var(--di_outline-with-focus-color) inset;
+}
+
+.di_tree-view-state:focus .di_tree-view-title.di_active {
+    background-color: var(--di_active-with-focus-background-color);
+}

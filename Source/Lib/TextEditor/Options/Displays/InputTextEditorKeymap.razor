@@ -1,0 +1,21 @@
+@*@using Walk.Common.RazorLib.Keys.Models;
+@using Walk.Common.RazorLib.Keymaps.Models;
+@using Walk.TextEditor.RazorLib.Keymaps.Models;
+
+<select @onchange="SelectedKeymapChanged"
+        class="di_select di_te_text-editor-input-keymap @InputViewModel.CssClass"
+	    style="@InputViewModel.CssStyle">
+    @{
+        var keymapsList = TextEditorKeymapFacts.AllKeymapsList;
+        var chosenKeymap = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.Keymap;
+        
+        foreach (var keymap in keymapsList)
+        {
+            <option value="@keymap.Key.Guid.ToString()"
+                    selected="@((chosenKeymap?.Key ?? Key<Keymap>.Empty) == keymap.Key)">
+                @keymap.DisplayName
+            </option>
+        }
+    }
+</select>
+*@

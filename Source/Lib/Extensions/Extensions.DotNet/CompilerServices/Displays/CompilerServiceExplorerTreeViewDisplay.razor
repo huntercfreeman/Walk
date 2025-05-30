@@ -1,0 +1,35 @@
+@using Walk.Common.RazorLib.Dropdowns.Displays
+@using Walk.Common.RazorLib.Dropdowns.Models;
+@using Walk.Common.RazorLib.TreeViews.Displays
+@using Walk.Extensions.DotNet.CompilerServices.Models;
+@using Walk.Common.RazorLib.TreeViews.Models;
+
+<div class="di_ide_compiler-explorer-tree-view">
+    @{
+    	var appOptionsState = AppOptionsService.GetAppOptionsState();
+    
+        <div class="di_ide_compiler-explorer-tree-view-title">
+            Compiler Explorer
+            
+            <button class="di_button"
+                    style="display: inline;"
+                    @onclick="ReloadOnClick">
+                Reload
+            </button>
+        </div>
+
+        <div class="di_ide_compiler-explorer-tree-view-body">
+            <CascadingValue Name="WalkTreeViewIconWidth" Value="appOptionsState.Options.IconSizeInPixels">
+                <CascadingValue Name="WalkTreeViewIconHeight" Value="appOptionsState.Options.IconSizeInPixels">
+                    <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+                        <TreeViewContainerDisplay TreeViewContainerKey="CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey"
+                                                  CssStyleString="height: 100%;"
+                                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                                  TreeViewKeyboardEventHandler="_compilerServiceExplorerTreeViewKeymap"
+                                                  TreeViewMouseEventHandler="_compilerServiceExplorerTreeViewMouseEventHandler"/>
+                    </CascadingValue>
+                </CascadingValue>
+            </CascadingValue>
+        </div>
+    }
+</div>

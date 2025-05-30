@@ -1,0 +1,85 @@
+@using Walk.Common.RazorLib.Dimensions;
+@using Walk.Common.RazorLib.Dimensions.Models;
+
+<div class="di_tree-view">
+    @if (!TreeViewNoType.IsHidden)
+    {
+        <div id="@TreeViewService.GetNodeElementId(TreeViewNoType)"
+             class="di_tree-view-title @IsSelectedCssClass @IsActiveCssClass"
+             style="padding-left: @(OffsetInPixels.ToCssValue())px;"
+             tabindex="-1"
+             @onclick:stopPropagation="true"
+             @onclick="HandleOnClick"
+             @ondblclick:stopPropagation="true"
+             @ondblclick="HandleOnDoubleClick"
+             @onmousedown:stopPropagation="true"
+             @onmousedown="HandleOnMouseDown"
+             @oncontextmenu:preventDefault="true"
+             @oncontextmenu:stopPropagation="true"
+             @oncontextmenu="e => ManuallyPropagateOnContextMenu(e, TreeViewContainer, TreeViewNoType)"
+             @onkeydown="e => HandleOnKeyDown(e)"
+             @ref="_treeViewTitleElementReference">
+
+            <div class="di_tree-view-expansion-chevron @GetShowDefaultCursorCssClass(TreeViewNoType.IsExpandable)"
+                 @onclick:stopPropagation="TreeViewNoType.IsExpandable"
+                 @onmousedown:stopPropagation="TreeViewNoType.IsExpandable"
+                 @onmousedown="_ => HandleExpansionChevronOnMouseDown(TreeViewNoType)">
+                 
+                @{
+                	var appOptionsState = AppOptionsService.GetAppOptionsState();
+                
+                	var iconDriver = new IconDriver(
+						appOptionsState.Options.IconSizeInPixels,
+						appOptionsState.Options.IconSizeInPixels);
+                }
+
+                @if (TreeViewNoType.IsExpandable)
+                {
+                    if (TreeViewNoType.IsExpanded)
+                    {
+                        @IconChevronDownFragment.Render(iconDriver)
+                    }
+                    else
+                    {
+                        @IconChevronRightFragment.Render(iconDriver)
+                    }
+                }
+                else
+                {
+                    @IconBlankFragment.Render(iconDriver)
+                }
+            </div>
+
+            <div class="di_tree-view-title-content"
+                 style="width: calc(100% - @(WidthOfTitleExpansionChevron.ToCssValue())px); height:  100%;">
+                @{
+                    var treeViewRenderer = TreeViewNoType.GetTreeViewRenderer();
+                }
+
+                <DynamicComponent Type="treeViewRenderer.DynamicComponentType"
+                                  Parameters="treeViewRenderer.DynamicComponentParameters"/>
+            </div>
+        </div>
+    }
+
+    @if (TreeViewNoType.IsExpanded) 
+    {
+        <div class="di_tree-view-children">
+            
+            @{ var childList = TreeViewNoType.ChildList.ToArray(); }
+
+            @foreach (var child in childList)
+            {
+                <TreeViewNodeDisplay TreeViewNoType="child"
+                                     Depth="Depth + 1"/>
+            }
+        
+            @if (!TreeViewNoType.IsHidden)
+            {
+                <div style="margin-left: @((OffsetInPixels + WidthOfTitleExpansionChevron / 2).ToCssValue())px;"
+                     class="di_tree-view-children-border">
+                </div>
+            }
+        </div>
+    }
+</div>

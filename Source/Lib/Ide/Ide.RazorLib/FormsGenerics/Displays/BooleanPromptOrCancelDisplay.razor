@@ -1,0 +1,43 @@
+﻿<div class="di_ide_boolean-prompt-or-cancel"
+     @onkeydown="HandleOnKeyDown">
+
+    <div>
+        @Message
+    </div>
+
+    @{ var localListOfMessages = ListOfMessages?.ToArray() ?? Array.Empty<string>(); }
+    @if (ListOfMessages is not null)
+    {
+        <div>
+            <div>Length: @localListOfMessages.Length</div>
+
+            <ul>
+                @foreach (var message in localListOfMessages)
+                {
+                    <li>@message</li>
+                }
+            </ul>
+        </div>
+    }
+
+    <div style="display: flex; justify-content: space-between;">
+        <button class="di_button"
+                @onclick="AcceptAsync">
+            @(AcceptOptionTextOverride ?? "Accept")
+        </button>
+
+        <button class="di_button"
+                @ref="_declineButtonElementReference"
+                @onclick="DeclineAsync">
+            @(DeclineOptionTextOverride ?? "Decline")
+        </button>
+        
+        @if (IncludeCancelOption)
+        {
+            <button class="di_button"
+                    @onclick="CancelAsync">
+                Cancel
+            </button>
+        }
+    </div>
+</div>

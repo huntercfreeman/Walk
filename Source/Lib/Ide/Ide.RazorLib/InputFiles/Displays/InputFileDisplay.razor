@@ -1,0 +1,37 @@
+@using Walk.Common.RazorLib.Resizes.Displays
+
+<div class="di_ide_input-file-display">
+    @{
+        var inputFileState = InputFileService.GetInputFileState();
+        
+        _searchMatchTuples = new();
+    }
+    
+    <CascadingValue Value="inputFileState">
+        <CascadingValue Name="SetInputFileContentTreeViewRootFunc" Value="SetInputFileContentTreeViewRootFunc">
+            <CascadingValue Value="_inputFileTreeViewMouseEventHandler">
+                <CascadingValue Value="_inputFileTreeViewKeyboardEventHandler">
+                    <CascadingValue Name="SearchMatchTuples" Value="_searchMatchTuples">
+                        <InputFileTopNavBar @ref="_inputFileTopNavBarComponent"/>
+                        
+                        <div class="di_ide_input-file-display-body @BodyClassCssString"
+                             style="@BodyStyleCssString">
+
+                            <InputFileSidebar ElementDimensions="_sidebarElementDimensions"
+                                              SetSelectedAbsolutePath="tvm => _selectedAbsolutePath = tvm"/>
+                            
+                            <ResizableColumn LeftElementDimensions="_sidebarElementDimensions"
+                                             RightElementDimensions="_contentElementDimensions"
+                                             ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged).ConfigureAwait(false)" />
+                            
+                            <InputFileContent ElementDimensions="_contentElementDimensions"
+                                              SetSelectedAbsolutePath="tvm => _selectedAbsolutePath = tvm" />
+                        </div>
+                        
+                        <InputFileBottomControls />
+                    </CascadingValue>
+                </CascadingValue>
+            </CascadingValue>
+        </CascadingValue>
+    </CascadingValue>
+</div>

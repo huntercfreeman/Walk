@@ -1,0 +1,135 @@
+@using System.Text
+@using Walk.Common.RazorLib.Keyboards.Models
+@using Walk.TextEditor.RazorLib.TextEditors.Models
+@using Walk.TextEditor.RazorLib.TextEditors.Models.Internals
+@using Walk.TextEditor.RazorLib.Lines.Models
+@using Walk.TextEditor.RazorLib.Htmls.Models
+
+@{
+	var renderBatch = GetRenderBatch();
+	var componentData = GetComponentData();
+}
+
+@if (!renderBatch.IsValid || componentData is null)
+{
+	<div class="di_te_text-editor-footer @componentData?.WrapperCssClass @TextEditorService.ThemeCssClassString"
+		 style="@componentData?.WrapperCssStyle">
+    </div>
+}
+else
+{
+	<div class="di_te_text-editor-footer @componentData?.WrapperCssClass @TextEditorService.ThemeCssClassString"
+		 style="@componentData?.WrapperCssStyle">
+	    <div class="di_te_text-editor-footer-listing">
+	        @{
+	            var model = renderBatch.Model;
+	            var viewModel = renderBatch.ViewModel;
+	            var options = renderBatch.TextEditorRenderBatchPersistentState.TextEditorOptions;
+	
+	            if (model is not null && viewModel is not null)
+	            {
+	                if (!string.IsNullOrWhiteSpace(model.PersistentState.FileExtension))
+	                {
+	                    <div class="di_te_text-editor-footer-entry">
+	                        @model.PersistentState.FileExtension
+	                    </div>
+	                }
+	
+	                <div class="di_te_text-editor-footer-entry">
+	                    <div class="di_te_text-editor-footer-name-value-pair">
+	                        <div class="di_te_text-editor-footer-name">
+	                            length:
+	                        </div>
+	                        <div class="di_te_text-editor-footer-value"
+	                             style="@GetDocumentLengthCssStyle(model.DocumentLength)">
+	                            @model.DocumentLength
+	                        </div>
+	                    </div>
+	
+	                    <div class="di_te_text-editor-footer-name-value-pair">
+	                        <div class="di_te_text-editor-footer-name">
+	                            lines:
+	                        </div>
+	                        <div class="di_te_text-editor-footer-value"
+	                             style="@GetLineCountCssStyle(model.LineCount)">
+	                            @model.LineCount
+	                        </div>
+	                    </div>
+	                </div>
+	
+	                <div class="di_te_text-editor-footer-entry">
+	                    <div class="di_te_text-editor-footer-name-value-pair">
+	                        <div class="di_te_text-editor-footer-name">
+	                            Ln:
+	                        </div>
+	
+	                        @{
+	                            var rowNumber = viewModel.LineIndex + 1;
+	                        }
+	
+	                        <div class="di_te_text-editor-footer-value"
+	                             style="@GetLineCountCssStyle(model.LineCount)">
+	                            @rowNumber
+	                        </div>
+	                    </div>
+	
+	                    <div class="di_te_text-editor-footer-name-value-pair">
+	                        <div class="di_te_text-editor-footer-name">
+	                            Col:
+	                        </div>
+	
+	                        @{
+	                            var columnNumber = viewModel.ColumnIndex + 1;
+	                        }
+	
+	                        <div class="di_te_text-editor-footer-value"
+	                             style="@GetMostCharactersOnASingleLineTupleLineLengthCssStyle(model.MostCharactersOnASingleLineTuple.lineLength)">
+	                            @columnNumber
+	                        </div>
+	                    </div>
+	
+	                    <div class="di_te_text-editor-footer-name-value-pair">
+	                        <div class="di_te_text-editor-footer-name">
+	                            Pos:
+	                        </div>
+	
+	                        @{
+	                            var positionNumber = GetPositionNumber(model, viewModel);
+	                        }
+	
+	                        <div class="di_te_text-editor-footer-value"
+	                             style="@GetDocumentLengthCssStyle(model.DocumentLength)">
+	                            @positionNumber
+	                        </div>
+	                    </div>
+	                </div>
+	
+	                <div class="di_te_text-editor-footer-entry">
+	                    <select @bind="SelectedLineEndKindString"
+	                            title="Line ending kind">
+	                        @foreach (var lineEndKind in LineEndKind.LineFeed.GetLineEndKindsUserAllowedToUse())
+	                        {
+	                            <option value="@lineEndKind.AsEnumName()">
+	                                @lineEndKind.AsFriendlyName()
+	                            </option>
+	                        }
+	                    </select>
+	                </div>
+	            }
+	            else
+	            {
+	                <div class="di_te_text-editor-footer-entry di_te_text-editor-footer-file-sizing">
+	                    @if (model is null)
+	                    {
+	                        <div>The @nameof(TextEditorModel) was null</div>
+	                    }
+	                    else if (viewModel is not null)
+	                    {
+	                        <div>The @nameof(TextEditorViewModel) was null</div>
+	                    }
+	                </div>
+	            }
+	        }
+	    </div>
+	</div>
+}

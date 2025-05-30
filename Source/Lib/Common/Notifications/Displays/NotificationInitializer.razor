@@ -1,0 +1,36 @@
+@using Walk.Common.RazorLib.Contexts.Models
+@using Walk.Common.RazorLib.Contexts.Displays
+
+@{ var notificationState = NotificationService.GetNotificationState(); }
+
+<ContextBoundary @ref="_notificationContextBoundary"
+				 ContextRecord="ContextFacts.NotificationContext"
+                 ClassCssString="di_notification-initializer">
+	<ChildContent></ChildContent>
+</ContextBoundary>
+
+
+@for (int i = 0; i < notificationState.DefaultList.Count; i++)
+{
+    var index = i;
+    var notification = notificationState.DefaultList[index];
+    
+    <NotificationDisplay @key="notification.DynamicViewModelKey" 
+                         Notification="notification"
+                         Index="index"
+                         OnFocusInFunc="HandleOnFocusIn"
+                         OnFocusOutFunc="HandleOnFocusOut"/>
+}
+
+@*
+	TODO: Would wrapping the for-loop in a div i.e.:
+		  
+		  <div class="di_notification-initializer"></div>
+		  
+		  Cause the gaps between notifications to create invisible walls
+		  or some other weird behaviors?
+		  
+		  It is (2024-05-26), I can't recall if I left out an encompassing
+		  div for a reason or not, but I don't have time to look into this
+		  at the moment.
+*@

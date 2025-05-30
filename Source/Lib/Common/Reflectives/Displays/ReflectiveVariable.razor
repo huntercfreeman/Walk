@@ -1,0 +1,55 @@
+﻿<div class="di_reflective-property">
+    <span class="di_te_type">
+        @VariableType.Name
+    </span>
+    <span class="@VariableNameCssClass">
+        @VariableName
+    </span>
+
+    @if (VariableType.IsPrimitive || VariableType == typeof(string))
+    {
+        <ReflectivePrimitiveInput VariableName="@VariableName"
+                                  VariableType="@VariableType"
+                                  ParametersKey='@(ParametersKey)' />
+    }
+    else
+    {
+        var constructorList = VariableType.GetConstructors();
+
+        if (constructorList.Length == 0)
+        {
+            <span>The type '@VariableType.Name' is not supported.</span>
+        }
+        else
+        {
+            <div style="padding-left: 20px;">
+                <div style="border-left: 2px solid var(--di_primary-border-color); padding-left: 8px; margin-bottom: 4px;">
+
+                    @{
+                        var reflectiveParameter = GetParameter(Model);
+                    }
+
+                    @if (reflectiveParameter?.ChosenConstructorInfo is not null)
+                    {
+                        <ReflectiveConstructor ConstructorInfo="reflectiveParameter.ChosenConstructorInfo"
+                                               IsChosenConstructor="true"
+                                               OnClick="_ => {}"
+                                               OnUnsetChosenConstructorInfo="HandleOnUnsetChosenConstructorInfo"
+                                               ParametersKey="@ParametersKey" />
+                    }
+                    else
+                    {
+                        foreach (var constructor in constructorList)
+                        {
+                            <ReflectiveConstructor ConstructorInfo="constructor"
+                                                   IsChosenConstructor="false"
+                                                   OnClick="HandleConstructorOnClick"
+                                                   OnUnsetChosenConstructorInfo="() => {}"
+                                                   ParametersKey="@ParametersKey" />
+                        }
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>

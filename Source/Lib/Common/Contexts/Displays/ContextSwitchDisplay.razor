@@ -1,0 +1,45 @@
+@using Walk.Common.RazorLib.Menus.Displays
+
+<div class="di_context-switch"
+	 style="display: flex; justify-content: space-evenly;"
+	 @ref="_contextSwitchHtmlElement"
+     @onclick:stopPropagation="true"
+     @ondblclick:stopPropagation="true"
+     @onkeydown:preventDefault="true"
+     @onkeydown="HandleOnKeyDownAsync"
+     @oncontextmenu:preventDefault="true"
+     @oncontextmenu:stopPropagation="true">
+    
+    @{ var contextSwitchState = ContextService.GetContextSwitchState(); }
+    
+    @if (_hasCalculatedGroupMenuTupleList)
+    {
+    	var flatBadIndex = 0;
+    	
+    	foreach (var tuple in _groupMenuTupleList)
+    	{
+    		var groupEndExclusiveIndexFlatList = flatBadIndex + tuple.Menu.MenuOptionList.Count;
+    		
+    		<div>
+    			<div style="background-color: var(--di_ide_section-title-background-color);">
+    				@tuple.Title
+    			</div>
+    			
+    			<div>
+	    			@for (; flatBadIndex < groupEndExclusiveIndexFlatList; flatBadIndex++)
+		    		{
+		    			var index = flatBadIndex;
+		    			if (index >= _flatMenuOptionList.Count)
+		    				break;
+		    				
+		    			var menuOption = _flatMenuOptionList[index];
+		    			
+						<MenuOptionDisplay MenuOptionRecord="menuOption"
+			                               ActiveMenuOptionRecordIndex="_activeIndex"
+			                               Index="index"/>
+		    		}
+		    	</div>
+    		</div>
+    	}
+    }
+</div>

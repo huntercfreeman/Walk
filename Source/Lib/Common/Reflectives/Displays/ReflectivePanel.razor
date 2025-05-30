@@ -1,0 +1,21 @@
+@{ var reflectiveState = ReflectiveService.GetReflectiveState(); }
+
+<div class="di_reflective-panel">
+
+    <button class="di_button" @onclick="DispatchRegisterActionOnClick">
+        Add Component
+    </button>
+
+    @for (var i = 0; i < reflectiveState.ReflectiveModelList.Count; i++)
+    {
+        var index = i;
+        var model = reflectiveState.ReflectiveModelList[index];
+
+        <ReflectiveDisplay @key="model.Key"
+                                ReflectiveModelKey="model.Key"
+                                Index="index"
+                                ComponentTypeList="ComponentTypeList" />
+
+        <hr/>
+    }
+</div>

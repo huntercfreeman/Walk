@@ -1,0 +1,15 @@
+<div>
+
+	@{
+		var appOptionsState = AppOptionsService.GetAppOptionsState();
+	
+		var iconDriver = new IconDriver(
+			appOptionsState.Options.IconSizeInPixels,
+			appOptionsState.Options.IconSizeInPixels);
+	}
+
+    @IconPackageFragment.Render(iconDriver)
+    @CSharpProjectNugetPackageReference.LightWeightNugetPackageRecord.Title<!--
+    -->/<!--
+    -->@CSharpProjectNugetPackageReference.LightWeightNugetPackageRecord.Version
+</div>

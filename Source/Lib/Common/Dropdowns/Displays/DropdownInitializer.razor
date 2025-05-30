@@ -1,0 +1,25 @@
+@using Walk.Common.RazorLib.Contexts.Models
+@using Walk.Common.RazorLib.Contexts.Displays
+@using Walk.Common.RazorLib.OutOfBoundsClicks.Displays
+
+@{ var dropdownState = DropdownService.GetDropdownState(); }
+
+@if (dropdownState.DropdownList.Count > 0 && dropdownState.DropdownList.Any(x => x.ShouldShowOutOfBoundsClickDisplay))
+{
+	<OutOfBoundsClickDisplay ZIndex="15"
+	                         OnMouseDownCallback="ClearActiveKeyList" />
+}
+
+<ContextBoundary @ref="_dropdownContextBoundary"
+				 ContextRecord="ContextFacts.DropdownContext"
+                 ClassCssString="di_dropdown-initializer">
+	<ChildContent></ChildContent>
+</ContextBoundary>
+
+@foreach (var dropdown in dropdownState.DropdownList)
+{
+	<DropdownDisplay @key="dropdown.Key"
+					 Dropdown="dropdown"
+	                 OnFocusInFunc="HandleOnFocusIn"
+	                 OnFocusOutFunc="HandleOnFocusOut"/>
+}

@@ -1,0 +1,36 @@
+@using Walk.Common.RazorLib.Themes.Models;
+
+@{
+    var themeState = ThemeService.GetThemeState();
+    var appOptionsState = AppOptionsService.GetAppOptionsState();
+
+    var themesInScopeList = themeState.ThemeList
+        .Where(x => x.ThemeScopeList.Contains(ThemeScope.App))
+        .ToArray();
+        
+    var isActiveValid = CheckIsActiveValid(
+        themesInScopeList,
+        appOptionsState.Options.ThemeKey);
+}
+    
+<select @onchange="OnThemeSelectChanged"
+		class="di_select di_select-theme @InputViewModel.CssClass"
+	    style="@InputViewModel.CssStyle">
+
+    <option value="@Guid.Empty.ToString()"
+            selected="@isActiveValid">
+        Select a Theme
+    </option>
+    
+    @foreach (var theme in themesInScopeList)
+    {
+        var isActiveSelection = CheckIsActiveSelection(
+            theme.Key,
+            appOptionsState.Options.ThemeKey);
+
+        <option value="@theme.Key.Guid.ToString()"
+                selected="@isActiveSelection">
+            @theme.DisplayName
+        </option>
+    }
+</select>

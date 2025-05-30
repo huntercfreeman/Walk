@@ -1,0 +1,7 @@
+.di_dropdown {
+	position: fixed;
+	z-index: var(--di_dropdown-display-z-index);
+    color: var(--di_tertiary-foreground-color);
+    background-color: var(--di_tertiary-background-color);
+    box-shadow: 0 0 var(--di_dropdown-display-default-background-box-shadow-blur-radius) var(--di_primary-box-shadow-color);
+}

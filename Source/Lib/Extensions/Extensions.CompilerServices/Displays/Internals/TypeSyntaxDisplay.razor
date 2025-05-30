@@ -1,0 +1,153 @@
+@using System.Text
+@using Walk.TextEditor.RazorLib.TextEditors.Models.Internals
+@using Walk.Extensions.CompilerServices.Syntax
+@using Walk.Extensions.CompilerServices.Syntax.Nodes
+
+@{
+	var syntaxViewModelLocal = SyntaxViewModel;
+	
+	string? prefixText;
+	string? prefixTextCssClass;
+	string? text;
+	string? syntaxHighlightingClassCssString;
+	GenericParameterListing? genericParameterListing;
+	bool? hasQuestionMark;
+	int arrayRank;
+	
+	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null && TypeReference == default(TypeReference))
+	{
+		prefixText = "(null)";
+		prefixTextCssClass = null;
+		text = null;
+		syntaxHighlightingClassCssString = null;
+		genericParameterListing = null;
+		hasQuestionMark = null;
+		arrayRank = 0;
+	}
+	else if (syntaxViewModelLocal.DefinitionNode is not null && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+	{
+		var typeDefinitionNode = (TypeDefinitionNode)syntaxViewModelLocal.DefinitionNode;
+	
+		var prefixBuilder = new StringBuilder();
+		prefixBuilder.Append(typeDefinitionNode.AccessModifierKind.ToString().ToLower());
+		prefixBuilder.Append(' ');
+		prefixBuilder.Append(typeDefinitionNode.StorageModifierKind.ToString().ToLower());
+		
+		prefixText = prefixBuilder.ToString();
+		prefixTextCssClass = "di_te_keyword";
+		text = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText();
+		syntaxHighlightingClassCssString = "di_te_type";
+		genericParameterListing = typeDefinitionNode.GenericParameterListing;
+		hasQuestionMark = null;
+		arrayRank = 0;
+	}
+	else if (syntaxViewModelLocal.TargetNode is not null && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.TypeClauseNode)
+	{
+		var typeClauseNode = (TypeClauseNode)syntaxViewModelLocal.TargetNode;
+	
+		prefixText = "(reference)";
+		prefixTextCssClass = null;
+		text = typeClauseNode.TypeIdentifierToken.TextSpan.GetText();
+		
+		if (typeClauseNode.IsKeywordType)
+			syntaxHighlightingClassCssString = "di_te_keyword";
+		else
+			syntaxHighlightingClassCssString = "di_te_type";
+		
+		genericParameterListing = typeClauseNode.GenericParameterListing;
+		hasQuestionMark = typeClauseNode.HasQuestionMark;
+		arrayRank = typeClauseNode.ArrayRank;
+	}
+	else if (syntaxViewModelLocal.TargetSymbol is not null && syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.TypeSymbol)
+	{
+		prefixText = "(symbol)";
+		prefixTextCssClass = null;
+		text = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.GetText();
+		syntaxHighlightingClassCssString = "di_te_type";
+		genericParameterListing = null;
+		hasQuestionMark = null;
+		arrayRank = 0;
+	}
+	else if (TypeReference != default(TypeReference))
+	{
+		prefixText = "(reference)";
+		prefixTextCssClass = null;
+		text = TypeReference.TypeIdentifierToken.TextSpan.GetText();
+		
+		if (TypeReference.IsKeywordType)
+			syntaxHighlightingClassCssString = "di_te_keyword";
+		else
+			syntaxHighlightingClassCssString = "di_te_type";
+		
+		genericParameterListing = TypeReference.GenericParameterListing;
+		hasQuestionMark = TypeReference.HasQuestionMark;
+		arrayRank = TypeReference.ArrayRank;
+	}
+	else
+	{
+		prefixText = "(unrecognizable-state)";
+		prefixTextCssClass = null;
+		text = null;
+		syntaxHighlightingClassCssString = null;
+		genericParameterListing = null;
+		hasQuestionMark = null;
+		arrayRank = 0;
+	}
+}
+
+<span style="display: inline-flex;">
+	
+	@if (syntaxViewModelLocal.Depth == 0 && !string.IsNullOrWhiteSpace(prefixText))
+	{
+		<span class="@prefixTextCssClass">
+			@prefixText&nbsp;
+		</span>
+	}
+	
+	@if (!string.IsNullOrWhiteSpace(text))
+	{
+		var classCssString = syntaxViewModelLocal.DefinitionNode is null
+			? string.Empty
+			: "di_te_syntax-onclick";
+	
+		<span class="@classCssString @syntaxHighlightingClassCssString"
+			  @onclick="() => syntaxViewModelLocal.HandleOnClick(TextEditorService, SyntaxKind.TypeDefinitionNode)">
+			@text
+		</span>
+	}
+	
+	@if (genericParameterListing is not null)
+	{
+		if (TypeReference != default)
+		{
+			var syntaxViewModel = new SyntaxViewModel(
+				targetSymbol: null,
+				targetNode: null,
+				definitionNode: null,
+				depth: syntaxViewModelLocal.Depth + 1);
+			<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="TypeReference" />
+		}
+		else
+		{
+			var syntaxViewModel = new SyntaxViewModel(
+				targetSymbol: null,
+				targetNode: syntaxViewModelLocal.TargetNode,
+				definitionNode: syntaxViewModelLocal.DefinitionNode,
+				depth: syntaxViewModelLocal.Depth + 1);
+			<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" />
+		}
+	}
+	
+	@if (hasQuestionMark is not null && hasQuestionMark.Value)
+	{
+		<text>?</text>
+	}
+	
+	@if (arrayRank > 0)
+	{
+		for (int badIndex = 0; badIndex < arrayRank; badIndex++)
+		{
+			<text>[]</text>
+		}
+	}
+</span>

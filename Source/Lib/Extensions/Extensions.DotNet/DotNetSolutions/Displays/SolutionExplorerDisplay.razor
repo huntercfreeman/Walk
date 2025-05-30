@@ -1,0 +1,64 @@
+@using Walk.Common.RazorLib.Contexts.Displays
+@using Walk.Common.RazorLib.Contexts.Models;
+@using Walk.Common.RazorLib.Dropdowns.Displays
+@using Walk.Common.RazorLib.Dropdowns.Models;
+@using Walk.Common.RazorLib.TreeViews.Displays
+@using Walk.Common.RazorLib.TreeViews.Models;
+@using Walk.Extensions.DotNet.DotNetSolutions.Displays.Internals;
+@using Walk.Extensions.DotNet.DotNetSolutions.Models;
+
+<ContextBoundary ContextRecord="ContextFacts.SolutionExplorerContext"
+                 ClassCssString="di_ide_solution-explorer-display"
+                 StyleCssString="height: 100%">
+
+    @{
+    	var dotNetSolutionState = DotNetBackgroundTaskApi.DotNetSolutionService.GetDotNetSolutionState();
+    	var appOptionsState = AppOptionsService.GetAppOptionsState();
+    }
+
+	@if (appOptionsState.Options.ShowPanelTitles)
+	{
+	    <div class="di_ide_section-title">
+	        Solution Explorer
+	
+	        @if (dotNetSolutionState.IsExecutingAsyncTaskLinks > 0)
+	        {
+	        	var iconDriver = new IconDriver(
+					appOptionsState.Options.IconSizeInPixels,
+					appOptionsState.Options.IconSizeInPixels);
+	            @IconLoadingFragment.Render(iconDriver)
+	        }
+	    </div>
+    }
+
+    <div class="di_ide_section-body @AppOptionsService.ShowPanelTitlesCssClass">
+        @if (dotNetSolutionState.DotNetSolutionModel is null)
+        {
+            <button class="di_button"
+                    style="display: inline; margin-right: 12px; margin-bottom: 12px;"
+                    @onclick="() => DotNetSolutionState.ShowInputFile(IdeBackgroundTaskApi, DotNetBackgroundTaskApi)">
+                Open Solution
+            </button>
+
+            <button class="di_button"
+                    style="display: inline;"
+            @onclick="OpenNewDotNetSolutionDialog">
+                New Solution
+            </button>
+        }
+        else
+        {
+            <CascadingValue Name="WalkTreeViewIconWidth" Value="appOptionsState.Options.IconSizeInPixels">
+                <CascadingValue Name="WalkTreeViewIconHeight" Value="appOptionsState.Options.IconSizeInPixels">
+                    <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+                        <TreeViewContainerDisplay TreeViewContainerKey="DotNetSolutionState.TreeViewSolutionExplorerStateKey"
+                                                  CssStyleString="height: 100%;"
+                                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                                  TreeViewKeyboardEventHandler="_solutionExplorerTreeViewKeymap"
+                                                  TreeViewMouseEventHandler="_solutionExplorerTreeViewMouseEventHandler" />
+                    </CascadingValue>
+                </CascadingValue>
+            </CascadingValue>
+        }
+    </div>
+</ContextBoundary>

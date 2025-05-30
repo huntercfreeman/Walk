@@ -1,0 +1,467 @@
+.di_te_button:hover {
+    background-color: var(--di_button-hover-background-color);
+    box-shadow: 0 0 2px var(--di_primary-overlay-box-shadow-color);
+}
+
+.di_te_button:focus {
+    background-color: var(--di_button-hover-background-color);
+    box-shadow: 0 0 2px var(--di_primary-overlay-box-shadow-color);
+}
+
+.di_te_button:disabled {
+    color: var(--di_button-disabled-foreground-color);
+    background-color: var(--di_button-disabled-background-color);
+}
+
+.di_te_button:disabled {
+    color: var(--di_button-disabled-foreground-color);
+    background-color: var(--di_button-disabled-background-color);
+}
+
+.di_te_button:disabled:hover {
+    color: var(--di_button-disabled-foreground-color);
+    background-color: var(--di_button-disabled-hover-background-color);
+    box-shadow: 0 0 2px var(--di_primary-overlay-box-shadow-color);
+}
+
+.di_te_button:disabled:focus {
+    color: var(--di_button-disabled-foreground-color);
+    background-color: var(--di_button-disabled-hover-background-color);
+    box-shadow: 0 0 2px var(--di_primary-overlay-box-shadow-color);
+}
+
+.di_button {
+    color: var(--di_button-foreground-color);
+}
+
+.di_button:focus {
+    background-color: var(--di_button-hover-background-color);
+    box-shadow: 0 0 2px var(--di_primary-overlay-box-shadow-color);
+}
+
+.di_button.di_active {
+    background-color: var(--di_toggled-on-background-color);
+    box-shadow: 0 0 2px var(--di_primary-overlay-box-shadow-color);
+}
+
+.di_button.di_active:hover {
+    background-color: var(--di_toggled-on-hover-background-color);
+    box-shadow: 0 0 2px var(--di_primary-overlay-box-shadow-color);
+}
+
+.di_button.di_active:focus {
+    background-color: var(--di_toggled-on-hover-background-color);
+    box-shadow: 0 0 2px var(--di_primary-overlay-box-shadow-color);
+}
+
+.di_button.di_button-close {
+    background-color: var(--di_danger-general-use-color);
+    margin-left: 10px;
+}
+
+.di_button.di_button-close:hover {
+    background-color: var(--di_danger-hover-background-color);
+    box-shadow: 0 0 2px var(--di_primary-overlay-box-shadow-color);
+}
+
+.di_button.di_button-close:focus {
+    background-color: var(--di_danger-hover-background-color);
+    box-shadow: 0 0 2px var(--di_primary-overlay-box-shadow-color);
+}
+
+.di_button {
+    background-color: var(--di_button-background-color);
+    color: var(--di_button-foreground-color);
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.di_button:hover {
+    background-color: var(--di_button-hover-background-color);
+}
+
+.di_button:focus {
+    outline: solid var(--di_menu-option-display-focus-outline-size) var(--di_primary-emphasis-foreground-color);
+    background-color: var(--di_button-hover-background-color);
+}
+
+.di_button.di_active {
+    background-color: var(--di_active-button-background-color);
+    color: var(--di_active-button-primary-font-color);
+}
+
+.di_button:disabled {
+    background-color: var(--di_primary-disabled-background-color);
+    color: var(--di_primary-disabled-foreground-color);
+}
+
+.di_button:disabled:hover {
+    background-color: var(--di_primary-disabled-hover-background-color);
+    color: var(--di_primary-disabled-hover-foreground-color);
+}
+
+.di_button:disabled:focus {
+    background-color: var(--di_primary-disabled-hover-background-color);
+    color: var(--di_primary-disabled-hover-foreground-color);
+}
+
+.di_tab:not(:first-of-type) {
+    border-left: 2px solid var(--di_primary-border-color);
+}
+
+.di_link {
+    color: var(--di_link-foreground-color);
+    text-decoration: none;
+}
+
+.di_link:hover {
+    color: var(--di_link-hover-foreground-color);
+    box-shadow: 0 0 2px var(--di_primary-overlay-box-shadow-color);
+}
+
+.di_link:focus {
+    color: var(--di_link-hover-foreground-color);
+    box-shadow: 0 0 2px var(--di_primary-overlay-box-shadow-color);
+}
+
+em.di_em {
+    color: var(--di_primary-emphasis-foreground-color);
+    font-style: normal;
+}
+
+.di_primary {
+    background-color: var(--di_primary-general-use-color);
+}
+
+.di_secondary {
+    background-color: var(--di_secondary-general-use-color);
+}
+
+.di_success {
+    background-color: var(--di_success-general-use-color);
+}
+
+.di_info {
+    background-color: var(--di_info-general-use-color);
+}
+
+.di_warning {
+    background-color: var(--di_warning-general-use-color);
+}
+
+.di_danger {
+    background-color: var(--di_danger-general-use-color);
+}
+
+.di_primary:hover {
+    background-color: var(--di_primary-hover-background-color);
+}
+
+.di_secondary:hover {
+    background-color: var(--di_secondary-hover-background-color);
+}
+
+.di_success:hover {
+    background-color: var(--di_success-hover-background-color);
+}
+
+.di_info:hover {
+    background-color: var(--di_info-hover-background-color);
+}
+
+.di_warning:hover {
+    background-color: var(--di_warning-hover-background-color);
+}
+
+.di_danger:hover {
+    background-color: var(--di_danger-general-use-color);
+}
+
+.di_tree-view-exception {
+    color: var(--di_error-foreground-color);
+}
+
+.di_tree-view-warning {
+    color: var(--di_warning-foreground-color);
+}
+
+.di_tree-view-valid {
+    color: var(--di_primary-emphasis-foreground-color);
+}
+
+.di_context-menu-content {
+    z-index: var(--di_dropdown-display-z-index);
+    position: absolute;
+    min-width: 100%;
+    min-height: 100%;
+    color: var(--di_primary-font-color);
+}
+
+.di_context-menu {
+    position: fixed;
+    min-width: 15ch;
+    min-height:6em;
+}
+
+.di_unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.di_set-selectable {
+    /* 
+        "di_set-selectable" is for child elements of 
+        a "di_unselectable" where the child needs to
+        re-enable selectable when the parent turned it off.
+    */
+
+    -webkit-touch-callout: default;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    -o-user-select: text;
+    user-select: text;
+}
+
+ul.di_indent-child-content {
+    padding-left: 20px;
+}
+
+.di_resize-handle-north {
+    cursor: n-resize;
+}
+
+.di_resize-handle-east {
+    cursor: e-resize;
+}
+
+.di_resize-handle-south {
+    cursor: s-resize;
+}
+
+.di_resize-handle-west {
+    cursor: w-resize;
+}
+
+.di_resize-handle-north-east {
+    cursor: ne-resize;
+}
+
+.di_resize-handle-south-east {
+    cursor: se-resize;
+}
+
+.di_resize-handle-south-west {
+    cursor: sw-resize;
+}
+
+.di_resize-handle-north-west {
+    cursor: nw-resize;
+}
+
+:root {
+    /* Sizes Common */
+    --di_tabs-bar-height: 2.6rem;
+    --di_tabs-bar-margin-bottom: 10px;
+    --di_hr-height: 1.5px;
+    --di_hr-margin: 5px 0;
+    --di_hr-opacity: 0.7;
+    --di_tree-view-display-focus-outline-size: 10px;
+    --di_tree-view-display-focus-outline-offset: -5px;
+    --di_dialog-display-toolbar-height: 2rem;
+    --di_dialog-display-z-index: 10;
+    --di_dialog-display-active-z-index: 11;
+    --di_dialog-display-box-shadow-blur-radius: 2px;
+    --di_dialog-display-button-entry-margin-right: 5px;
+    --di_dialog-display-button-entry-padding: 3px;
+    --di_dialog-display-toolbar-padding: 0 7px;
+    --di_dialog-display-body-padding: 0 7px;
+    --di_widget-display-z-index: 13; /* dialog:10, active-dialog:11, widget-out-of-bounds-click:12, widget:13 */
+    --di_dropdown-display-z-index: 20;
+    --di_dropdown-display-default-background-box-shadow-blur-radius: 2px;
+    --di_drag-initializer-z-index: 30;
+    --di_menu-display-focus-outline-size: 2px;
+    --di_menu-option-display-padding-width: 10px;
+    --di_menu-option-display-focus-outline-size: 2px;
+    --di_notification-display-z-index: 15;
+    --di_notification-display-box-shadow-blur-radius: 2px;
+    --di_notification-display-toolbar-height: 2rem;
+    --di_notification-button-entry-margin-right: 5px;
+    --di_notification-button-entry-padding: 3px;
+    --di_notification-toolbar-padding: 0 3px;
+    --di_notification-body-padding: 0 3px;
+}
+
+/* Theme CSS */
+
+:root {
+    /* Colors (dark-theme) */
+
+    --di_primary-foreground-color: rgb(220, 220, 220);
+    --di_primary-background-color: #201c1c;
+    --di_secondary-foreground-color: rgb(220, 220, 220);
+    --di_secondary-background-color: #2d2d2d;
+    --di_tertiary-foreground-color: rgb(220, 220, 220);
+    --di_tertiary-background-color: #403c3c;
+    --di_primary-general-use-color: blue;
+    --di_secondary-general-use-color: gray;
+    --di_success-general-use-color: green;
+    --di_info-general-use-color: #58bebe;
+    --di_warning-general-use-color: yellow;
+    --di_secondary-hover-background-color: #aca2a2;
+    --di_success-hover-background-color: #86d686;
+    --di_info-hover-background-color: #65dede;
+    --di_warning-hover-background-color: #d6d698;
+    --di_outline-with-focus-color: #0646b4;
+    --di_outline-no-focus-color: #cec3c3;
+    --di_active-with-focus-background-color: #415d90;
+    --di_active-no-focus-background-color: #5c5757;
+    --di_primary-font-color: #d2d2d2;
+    --di_primary-border-color: #d7d7d7;
+    --di_dialog-toolbar-foreground-color: var(--di_primary-foreground-color);
+    --di_dialog-toolbar-background-color: #071c57;
+    --di_dialog-display-background-color: #2d2f34;
+    --di_primary-box-shadow-color: #f5f5f5;
+    --balc-primary-outline-color: #2d498b;
+    --balc-primary-active-not-focused-background-color: #566060;
+    --balc-primary-active-focused-background-color: #2d498b;
+    --di_dropdown-display-default-background-color: rgb(48, 51, 101);
+    --di_primary-emphasis-foreground-color: #4d8aea;
+    --di_primary-disabled-background-color: #5c5959;
+    --di_primary-disabled-foreground-color: #ba931e;
+    --di_primary-disabled-hover-background-color: #8f7015;
+    --di_primary-disabled-hover-foreground-color: #e6e6e6;
+    --di_notification-display-background-color: #2d2f34;
+    --di_notification-display-toolbar-background-color: #071c57;
+    --di_error-background-color: #5a0404;
+    --di_active-button-background-color: #753282;
+    --di_active-button-primary-font-color: var(--di_primary-font-color);
+    --di_hr-primary-background-color: currentColor;
+    --di_error-foreground-color: #e55d62;
+    --di_warning-foreground-color: #c0c03c;
+    --di_outline-color: var(--balc-primary-outline-color);
+    --di_active-but-not-focused-background-color: var(--balc-primary-active-not-focused-background-color);
+    --di_context-menu-background-color: red;
+    --di_context-menu-foreground-color: green;
+    --di_resize-column-background-color: #d7d7d7;
+    --di_resize-row-background-color: #d7d7d7;
+    --di_icon-solution-font-color: #a074c4;
+    --di_icon-dot-net-solution-folder-font-color: #5c7feb;
+    --di_icon-project-font-color: #88d184;
+    --di_icon-razor-font-color: #c586c0;
+    --di_icon-folder-font-color: #d7ab69;
+    --di_icon-json-font-color: #cbc638;
+    --di_icon-c-sharp-class-font-color: #519aba;
+    --di_icon-cshtml-font-color: #c586c0;
+    --di_icon-css-font-color: #e36a6e;
+    --di_icon-js-font-color: #519aba;
+    --di_icon-ts-font-color: #37b38b;
+    --di_icon-start-without-debugging-font-color: #37b38b;
+    --di_icon-start-with-debugging-font-color: #37b38b;
+    --di_toggled-on-background-color: #7f0eb8;
+    --di_toggled-on-hover-background-color: #bb56ac;
+    --di_danger-general-use-color: #b35252;
+    --di_danger-hover-background-color: #ef4949;
+    --di_button-foreground-color: #DCDCDC;
+    --di_button-background-color: #1e56a7;
+    --di_button-hover-background-color: #8e5a15;
+    --di_primary-overlay-box-shadow-color: #ffffff;
+    --di_button-disabled-foreground-color: #DCDCDC;
+    --di_button-disabled-background-color: #4a5a71;
+    --di_button-disabled-hover-background-color: #97a3b4;
+    --di_primary-hover-background-color: #2d568b;
+    --di_link-foreground-color: #1778e1;
+    --di_link-hover-foreground-color: #e49021;
+    --di_tree-view-expansion-chevron-color: currentColor;
+    --di_tree-view-children-border-color: currentColor;
+    --di_ide_context-boundary-overlay-background-color: var(--di_active-with-focus-background-color);
+}
+
+.di_visual-studio-light-theme-clone {
+    /* Colors (light-theme) */
+
+    --di_primary-foreground-color: black;
+    --di_primary-background-color: rgb(253, 253, 253);
+    --di_secondary-foreground-color: black;
+    --di_secondary-background-color: rgb(250 250 244);
+    --di_tertiary-foreground-color: black;
+    --di_tertiary-background-color: #f0ebd2;
+    --di_primary-general-use-color: blue;
+    --di_secondary-general-use-color: gray;
+    --di_success-general-use-color: green;
+    --di_info-general-use-color: #58bebe;
+    --di_warning-general-use-color: yellow;
+    --di_primary-hover-background-color: #afd3f4;
+    --di_secondary-hover-background-color: #aca2a2;
+    --di_success-hover-background-color: #86d686;
+    --di_info-hover-background-color: #65dede;
+    --di_warning-hover-background-color: #d6d698;
+    --di_danger-hover-background-color: #d96b6b;
+    --di_outline-with-focus-color: #0064ff;
+    --di_outline-no-focus-color: #2a2727;
+    --di_active-with-focus-background-color: #ADD6FF;
+    --di_active-no-focus-background-color: #c8c8c8;
+    --di_primary-font-color: black;
+    --di_primary-border-color: black;
+    --di_dialog-toolbar-foreground-color: var(--di_primary-foreground-color);
+    --di_dialog-toolbar-background-color: #aac1ee;
+    --di_dialog-display-background-color: rgb(252, 252, 245);
+    --di_primary-box-shadow-color: #000000;
+    --balc-primary-outline-color: #ADD6FF;
+    --di_dropdown-display-default-background-color: #e6e6e6;
+    --di_primary-emphasis-foreground-color: #124df9;
+    --di_primary-disabled-background-color: #cfcfcf;
+    --di_primary-disabled-foreground-color: #25180c;
+    --di_primary-disabled-hover-background-color: var(--di_primary-disabled-foreground-color);
+    --di_primary-disabled-hover-foreground-color: var(--di_primary-disabled-background-color);
+    --di_notification-display-background-color: rgb(252, 252, 245);
+    --di_notification-display-toolbar-background-color: rgb(192, 214, 247);
+    --di_error-background-color: rgb(253, 172, 183);
+    --di_active-button-background-color: #d889e8;
+    --di_active-button-primary-font-color: var(--di_primary-font-color);
+    --di_hr-primary-background-color: currentColor;
+    --di_error-foreground-color: red;
+    --di_warning-foreground-color: #8f00d7;
+    --di_outline-color: #33bcec;
+    --di_active-but-not-focused-background-color: #7f8e93;
+    --di_context-menu-background-color: red;
+    --di_context-menu-foreground-color: green;
+    --di_resize-column-background-color: black;
+    --di_resize-row-background-color: black;
+    --di_icon-solution-font-color: #8f38d6;
+    --di_icon-dot-net-solution-folder-font-color: #252ff1;
+    --di_icon-project-font-color: rgb(0, 150, 0);
+    --di_icon-razor-font-color: #c509db;
+    --di_icon-folder-font-color: #a46d00;
+    --di_icon-json-font-color: #beb106;
+    --di_icon-c-sharp-class-font-color: #2B91AF;
+    --di_icon-cshtml-font-color: #c509db;
+    --di_icon-css-font-color: #de4b50;
+    --di_icon-js-font-color: #519aba;
+    --di_icon-ts-font-color: #37b38b;
+    --di_icon-start-without-debugging-font-color: #37b38b;
+    --di_icon-start-with-debugging-font-color: #37b38b;
+    --di_toggled-on-background-color: #c4eaff;
+    --di_toggled-on-hover-background-color: rgb(255, 0, 255);
+    --di_danger-general-use-color: #ff8484;
+    --di_button-foreground-color: rgb(240, 240, 240);
+    --di_button-background-color: #0b30c7;
+    --di_button-hover-background-color: #c98800;
+    --di_primary-overlay-box-shadow-color: #000000;
+    --di_button-disabled-foreground-color: #000000;
+    --di_button-disabled-background-color: #d7dde6;
+    --di_button-disabled-hover-background-color: #eceff7;
+    --di_link-foreground-color: red;
+    --di_link-hover-foreground-color: red;
+    --di_tree-view-expansion-chevron-color: currentColor;
+    --di_tree-view-children-border-color: currentColor;
+    --di_ide_context-boundary-overlay-background-color: var(--di_active-with-focus-background-color);
+}

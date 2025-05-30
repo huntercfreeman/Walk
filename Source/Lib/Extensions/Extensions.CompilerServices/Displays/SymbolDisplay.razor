@@ -1,0 +1,117 @@
+@using Microsoft.AspNetCore.Components.Web
+@using Walk.TextEditor.RazorLib.TextEditors.Models.Internals
+@using Walk.TextEditor.RazorLib.CompilerServices
+@using Walk.Extensions.CompilerServices.Syntax
+@using Walk.Extensions.CompilerServices.Syntax.Nodes
+@using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces
+@using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums
+@using Walk.Extensions.CompilerServices.Displays.Internals
+
+@{
+	var symbolLocal = Symbol;
+	var targetNode = GetTargetNode(TextEditorService, symbolLocal);
+	var definitionNode = GetDefinitionNode(TextEditorService, symbolLocal, targetNode);
+	
+	var syntaxViewModel = new SyntaxViewModel(
+		symbolLocal,
+		targetNode,
+		definitionNode,
+		depth: 0);
+}
+
+<div class="di_te_symbol">
+	<ErrorBoundary>
+		<ChildContent>
+		    @switch (symbolLocal.SymbolKindString)
+		    {
+		        case "TypeSymbol":
+		        {
+			        <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+		            break;
+		        }
+		        case "FunctionSymbol":
+		        case "ConstructorSymbol":
+		        {
+		        	<FunctionSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+		            break;
+		        }
+		        case "LambdaSymbol":
+		        {
+		            <LambdaSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+		            break;
+		        }
+		        case "VariableSymbol":
+		        case "FieldSymbol":
+		        case "PropertySymbol":
+		        case "EnumMemberSymbol":
+		        {
+		        	<VariableSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+		            break;
+		        }
+		        case "StringInterpolationSymbol":
+		        case "StringVerbatimSymbol":
+		        case "InjectedLanguageComponentSymbol":
+				{
+		            <MiscSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+		            break;
+		        }
+		        case "NamespaceSymbol":
+		        {
+		            <text>
+		                <span class="di_te_keyword">
+		                    namespace
+		                </span>
+		
+		                <span class="@(string.Empty /* Namespaces do not have their own css class as of (2023-07-20) */)">
+		                    @symbolLocal.TextSpan.GetText()
+		                </span>
+		            </text>
+		            break;
+		        }
+		        case "DiscardSymbol":
+		        {
+		        	<text>
+		                <span class="di_te_keyword">
+		                    discard
+		                </span>
+		
+		                <span class="@(string.Empty /* Discards do not have their own css class as of (2023-07-20) */)">
+		                    @symbolLocal.TextSpan.GetText()
+		                </span>
+		            </text>
+		            break;
+		        }
+		        case "SourceFileSymbol":
+		        {
+		            <text>
+		                <span class="di_te_keyword">
+		                    Open in editor:
+		                </span>
+		
+		                <button class="di_button di_te_source-file"
+		                        @onclick="() => OpenInEditorOnClick(symbolLocal.TextSpan.GetText())">
+		                    @symbolLocal.TextSpan.GetText()
+		                </button>
+		            </text>
+		            break;
+		        }
+		        default:
+		        {
+		            <text>
+		                <span class="di_te_keyword">
+		                    unknown-symbol-kind
+		                </span>
+		
+		                <span class="@(string.Empty /* Unknown-symbol-kinds do not have their own css class as of (2023-07-20) */)">
+		                    @symbolLocal.TextSpan.GetText()
+		                </span>
+		            </text>
+		            break;
+		        }
+		    }
+		</ChildContent>
+		<ErrorContent Context="error">
+			@error.ToString()
+		</ErrorContent>
+	</ErrorBoundary>
+</div>

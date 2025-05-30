@@ -1,0 +1,78 @@
+@using Walk.Common.RazorLib.FileSystems.Models;
+
+@{
+	var appOptionsState = AppOptionsService.GetAppOptionsState();
+
+	var iconDriver = new IconDriver(
+		appOptionsState.Options.IconSizeInPixels,
+		appOptionsState.Options.IconSizeInPixels);
+}
+
+<div class="di_ide_input-file-display-top-nav-bar">
+    <div class="di_ide_input-file-display-top-nav-bar-buttons">
+        <button class="di_button"
+                disabled=@GetHandleBackButtonIsDisabled()
+                @onclick="HandleBackButtonOnClick">
+            @IconArrowLeftFragment.Render(iconDriver)
+        </button>
+        
+        <button class="di_button"
+                disabled=@GetHandleForwardButtonIsDisabled()
+                @onclick="HandleForwardButtonOnClick">
+            @IconArrowRightFragment.Render(iconDriver)
+        </button>
+    
+        <button class="di_button"
+                @onclick="HandleUpwardButtonOnClick">
+            @IconArrowUpFragment.Render(iconDriver)
+        </button>
+        
+        <button class="di_button"
+                @onclick="HandleRefreshButtonOnClick">
+            @IconRefreshFragment.Render(iconDriver)
+        </button>
+    </div>
+    
+    <div class="di_ide_input-file-display-top-nav-bar-address">
+        <div class="di_ide_input-file-display-top-nav-bar-address-hierarchy"
+             @onclick="() => _showInputTextEditForAddress = true">
+            
+            @if (InputFileState.IndexInHistory < InputFileState.OpenedTreeViewModelHistoryList.Count)
+            {
+                var openedTreeView = InputFileState.GetOpenedTreeView();
+
+                if (openedTreeView?.Item is not null)
+                {
+                    if (_showInputTextEditForAddress)
+                    {
+                        <InputFileEditAddress InitialInputValue="@openedTreeView.Item.Value"
+                                              OnFocusOutCallbackAsync="InputFileEditAddressOnFocusOutCallbackAsync"
+                                              OnEscapeKeyDownCallbackAsync="HideInputFileEditAddressAsync"/>
+                    }
+                    else
+                    {
+                        foreach (var directory in openedTreeView.Item.GetAncestorDirectoryList())
+                        {
+                            var directoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(directory, true);
+                            <InputFileAddressHierarchyEntry AbsolutePath="directoryAbsolutePath" />
+                        }
+
+                        <InputFileAddressHierarchyEntry AbsolutePath="openedTreeView.Item"/>
+                    }
+                }
+            }
+        </div>
+    </div>
+    
+    <div class="di_ide_input-file-display-top-nav-bar-search">
+        <button @onclick="FocusSearchElementReferenceOnClickAsync"
+                class="di_button di_ide_input-file-search-button">
+            @IconSearchFragment.Render(iconDriver)
+        </button>
+        
+        <input @ref="SearchElementReference"
+               @bind="SearchQuery"
+               @bind:event="oninput"
+               class="di_ide_input di_ide_input-file-search-input"/>
+    </div>
+</div>

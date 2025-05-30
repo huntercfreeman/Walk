@@ -1,0 +1,14 @@
+<div title="@TreeViewInterfaceImplementation.Key.Guid">
+
+	@{
+		var appOptionsService = AppOptionsService.GetAppOptionsState();
+	
+		var iconDriver = new IconDriver(
+			appOptionsService.Options.IconSizeInPixels,
+			appOptionsService.Options.IconSizeInPixels);
+	}
+
+    @IconSymbolInterfaceFragment.Render(iconDriver)
+    ConcreteType:
+    <span class="di_te_type">@TreeViewInterfaceImplementation.Item.ItemType.Name</span>
+</div>

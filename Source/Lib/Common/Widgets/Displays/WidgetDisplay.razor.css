@@ -1,0 +1,14 @@
+.di_widget {
+	position: fixed;
+	width: 60vw;
+	height: 60vh;
+	left: 20vw;
+	top: 20vh;
+	z-index: var(--di_widget-display-z-index);
+    color: var(--di_secondary-foreground-color);
+    background-color: var(--di_secondary-background-color);
+    box-shadow: 0 0 var(--di_dialog-display-box-shadow-blur-radius) var(--di_primary-box-shadow-color);
+}
+    .di_widget:focus {
+        outline: 4px solid var(--di_toggled-on-hover-background-color);
+    }

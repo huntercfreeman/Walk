@@ -1,0 +1,13 @@
+<div>
+
+	@{
+		var appOptionsState = AppOptionsService.GetAppOptionsState();
+	
+		var iconDriver = new IconDriver(
+			appOptionsState.Options.IconSizeInPixels,
+			appOptionsState.Options.IconSizeInPixels);
+	}
+
+    @IconGoToFileFragment.Render(iconDriver)
+    @CSharpProjectToProjectReference.ReferenceProjectAbsolutePath.NameWithExtension
+</div>

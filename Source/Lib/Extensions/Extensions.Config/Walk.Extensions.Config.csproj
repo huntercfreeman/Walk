@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Extensions.DotNet\Walk.Extensions.DotNet.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\CompilerServices\CSharpProject\Walk.CompilerServices.CSharpProject.csproj" />
+    <ProjectReference Include="..\..\CompilerServices\CSharp\Walk.CompilerServices.CSharp.csproj" />
+    <ProjectReference Include="..\..\CompilerServices\Css\Walk.CompilerServices.Css.csproj" />
+    <ProjectReference Include="..\..\CompilerServices\DotNetSolution\Walk.CompilerServices.DotNetSolution.csproj" />
+    <ProjectReference Include="..\..\CompilerServices\Json\Walk.CompilerServices.Json.csproj" />
+    <ProjectReference Include="..\..\CompilerServices\Razor\Walk.CompilerServices.Razor.csproj" />
+    <ProjectReference Include="..\..\CompilerServices\Xml\Walk.CompilerServices.Xml.csproj" />
+  </ItemGroup>
+
+</Project>

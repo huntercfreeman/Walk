@@ -1,0 +1,73 @@
+@using Walk.Common.RazorLib.Keys.Models;
+@using Walk.Common.RazorLib.Tabs.Displays
+@using Walk.Common.RazorLib.Reactives.Displays
+@using Walk.Common.RazorLib.TreeViews.Displays
+@using Walk.TextEditor.RazorLib.FindAlls.Models;
+
+@{
+    var findAllState = FindAllService.GetFindAllState();
+    var appOptionsState = AppOptionsService.GetAppOptionsState();
+}
+
+<div class="di_te_find-all">
+    <div class="di_te_find-all-body">
+
+		<div class="di_te_find-all-search-query">
+			SearchQuery:&nbsp;
+			<input class="di_ide_input di_ide_input-text"
+				   style="width: 100%;"
+				   placeholder="@nameof(SearchQuery)"
+				   @bind="SearchQuery"
+				   @bind:event="oninput" />
+		</div>
+
+		<div class="di_te_find-all-starting-directory-path">
+			StartingDirectoryPath:&nbsp;
+			<input class="di_ide_input di_ide_input-text"
+				   style="width: 100%;"
+				   placeholder="@nameof(StartingDirectoryPath)"
+				   @bind="StartingDirectoryPath"
+				   @bind:event="oninput" />
+		</div>
+
+		@if (findAllState.ProgressBarModel is null || findAllState.ProgressBarModel.IsDisposed)
+		{
+			<button class="di_button"
+	                @onclick="DoSearchOnClick">
+	            Find All
+	        </button>
+	        
+	        <div>Not Searching</div>
+	        
+	        if (findAllState.ProgressBarModel is not null)
+	        {
+	        	<ProgressBarDisplay ProgressBarModel="findAllState.ProgressBarModel"/>
+	        }
+		}
+		else
+		{
+			<button class="di_button"
+	                @onclick="CancelSearchOnClick">
+	            Cancel
+	        </button>
+	        
+	        <ProgressBarDisplay ProgressBarModel="findAllState.ProgressBarModel"/>
+		}
+		
+		<div>Results: @($"{findAllState.SearchResultList.Count:N0}")</div>
+	
+		<div class="di_te_search-engine-file-system-results">
+			<CascadingValue Name="WalkTreeViewIconWidth" Value="appOptionsState.Options.IconSizeInPixels">
+                <CascadingValue Name="WalkTreeViewIconHeight" Value="appOptionsState.Options.IconSizeInPixels">
+                    <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+                        <TreeViewContainerDisplay TreeViewContainerKey="TextEditorFindAllState.TreeViewFindAllContainerKey"
+                                                  CssStyleString="height: 100%;"
+                                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                                  TreeViewKeyboardEventHandler="_treeViewKeymap"
+                                                  TreeViewMouseEventHandler="_treeViewMouseEventHandler" />
+                    </CascadingValue>
+                </CascadingValue>
+            </CascadingValue>
+		</div>
+    </div>
+</div>

@@ -1,0 +1,44 @@
+<div class="di_resizable-display">
+
+    @* Cardinal Resize Handles *@
+    <div class="di_resize-handle di_resize-handle-north di_resize-handle-cardinal"
+         style="@GetNorthResizeHandleStyleCss()"
+         @onmousedown="async () => await SubscribeToDragEventAsync(DragEventHandlerNorthResizeHandleAsync)">
+    </div>
+
+    <div class="di_resize-handle di_resize-handle-east di_resize-handle-cardinal"
+         style="@GetEastResizeHandleStyleCss()"
+         @onmousedown="async () => await SubscribeToDragEventAsync(DragEventHandlerEastResizeHandleAsync)">
+    </div>
+
+    <div class="di_resize-handle di_resize-handle-south di_resize-handle-cardinal"
+         style="@GetSouthResizeHandleStyleCss()"
+         @onmousedown="async () => await SubscribeToDragEventAsync(DragEventHandlerSouthResizeHandleAsync)">
+    </div>
+
+    <div class="di_resize-handle di_resize-handle-west di_resize-handle-cardinal"
+         style="@GetWestResizeHandleStyleCss()"
+         @onmousedown="async () => await SubscribeToDragEventAsync(DragEventHandlerWestResizeHandleAsync)">
+    </div>
+    
+    @* Diagonal Resize Handles *@
+    <div class="di_resize-handle di_resize-handle-north-east di_resize-handle-diagonal"
+         style="@GetNorthEastResizeHandleStyleCss()"
+         @onmousedown="async () => await SubscribeToDragEventAsync(DragEventHandlerNorthEastResizeHandleAsync)">
+    </div>
+
+    <div class="di_resize-handle di_resize-handle-south-east di_resize-handle-diagonal"
+         style="@GetSouthEastResizeHandleStyleCss()"
+         @onmousedown="async () => await SubscribeToDragEventAsync(DragEventHandlerSouthEastResizeHandleAsync)">
+    </div>
+
+    <div class="di_resize-handle di_resize-handle-south-west di_resize-handle-diagonal"
+         style="@GetSouthWestResizeHandleStyleCss()"
+         @onmousedown="async () => await SubscribeToDragEventAsync(DragEventHandlerSouthWestResizeHandleAsync)">
+    </div>
+
+    <div class="di_resize-handle di_resize-handle-north-west di_resize-handle-diagonal"
+         style="@GetNorthWestResizeHandleStyleCss()"
+         @onmousedown="async () => await SubscribeToDragEventAsync(DragEventHandlerNorthWestResizeHandleAsync)">
+    </div>
+</div>

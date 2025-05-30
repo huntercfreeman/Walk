@@ -1,0 +1,14 @@
+﻿<div class="di_ide_project-template"
+@onclick="async () => await OnProjectTemplateSelectedEventCallback.InvokeAsync(ProjectTemplate).ConfigureAwait(false)">
+
+    <div class="di_ide_project-template-title @IsActiveCssClass">
+        @ProjectTemplate.TemplateName (@ProjectTemplate.ShortName)
+    </div>
+    
+    <div class="di_ide_project-template-body">
+        <div class="di_ide_project-template-body-entry">
+            <em class="di_em">@ProjectTemplate.Language</em>
+            @ProjectTemplate.Tags
+        </div>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+@using Walk.Common.RazorLib.Themes.Models;
+
+<select @onchange="SelectedThemeChanged"
+        class="di_select di_te_text-editor-input-theme @InputViewModel.CssClass"
+	   style="@InputViewModel.CssStyle">
+    @{
+        var themesList = ThemeService.GetThemeState().ThemeList;
+
+        var chosenThemeKey = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.CommonOptions?.ThemeKey
+            ?? ThemeFacts.VisualStudioDarkThemeClone.Key;
+        
+        foreach (var theme in themesList)
+        {
+            <option value="@theme.Key.Guid.ToString()"
+                    selected="@(chosenThemeKey == theme.Key)">
+                @theme.DisplayName
+            </option>
+        }
+    }
+</select>

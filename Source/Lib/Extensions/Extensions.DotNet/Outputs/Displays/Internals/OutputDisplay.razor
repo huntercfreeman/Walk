@@ -1,0 +1,35 @@
+@using Walk.Common.RazorLib.TreeViews.Displays
+@using Walk.Extensions.DotNet.Outputs.Models
+@using Walk.Extensions.DotNet.CommandLines.Models
+@using Walk.TextEditor.RazorLib.Lexers.Models
+
+<div class="di_output-display" style="height: 100%;">
+	
+	@{
+		var dotNetRunParseResult = DotNetCliOutputParser.GetDotNetRunParseResult();
+		var appOptionsState = AppOptionsService.GetAppOptionsState();
+	}
+	
+	<div class="di_output-display-top-row" style="height: 1.8em;">
+		@dotNetRunParseResult.Message
+	
+		(@dotNetRunParseResult.ErrorList.Count errors)
+		(@dotNetRunParseResult.WarningList.Count warnings)
+		(@dotNetRunParseResult.OtherList.Count other)
+	</div>
+
+	<div class="di_output-display-body" style="height: calc(100% - 1.8em);">
+	
+		<CascadingValue Name="WalkTreeViewIconWidth" Value="appOptionsState.Options.IconSizeInPixels">
+			<CascadingValue Name="WalkTreeViewIconHeight" Value="appOptionsState.Options.IconSizeInPixels">
+	            <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+	                <TreeViewContainerDisplay TreeViewContainerKey="OutputState.TreeViewContainerKey"
+	                                          CssStyleString="height: 100%;"
+	                                          OnContextMenuFunc="OnTreeViewContextMenuFunc"
+	                                          TreeViewKeyboardEventHandler="_treeViewKeyboardEventHandler"
+	                                          TreeViewMouseEventHandler="_treeViewMouseEventHandler" />
+	            </CascadingValue>
+	        </CascadingValue>
+		</CascadingValue>
+	</div>
+</div>

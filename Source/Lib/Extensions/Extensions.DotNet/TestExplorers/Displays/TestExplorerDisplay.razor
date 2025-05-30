@@ -1,0 +1,91 @@
+@using Walk.Common.RazorLib.Contexts.Displays
+@using Walk.Common.RazorLib.Contexts.Models
+@using Walk.Common.RazorLib.Resizes.Displays
+@using Walk.Extensions.DotNet.TestExplorers.Displays.Internals
+@using Walk.Extensions.DotNet.TestExplorers.Models
+
+@{
+	var testExplorerState = DotNetBackgroundTaskApi.TestExplorerService.GetTestExplorerState();
+	var appOptionsState = AppOptionsService.GetAppOptionsState();
+
+	if (!TreeViewService.TryGetTreeViewContainer(
+			TestExplorerState.TreeViewTestExplorerKey,
+			out var treeViewContainer))
+	{
+		treeViewContainer = null;
+	}
+
+	var renderBatch = new TestExplorerRenderBatch(
+		testExplorerState,
+		appOptionsState,
+		treeViewContainer);
+}
+
+<ContextBoundary ContextRecord="ContextFacts.TestExplorerContext"
+                 ClassCssString="di_ide_test-explorer"
+                 StyleCssString="height: 100%; width: 100%;">
+
+	@if (appOptionsState.Options.ShowPanelTitles)
+	{
+	    <div class="di_ide_section-title">
+	        Test Explorer
+	    </div>
+    }
+
+    <div class="di_ide_section-body @AppOptionsService.ShowPanelTitlesCssClass">
+
+		@if (renderBatch.TreeViewContainer is null)
+		{
+			<div>renderBatch.TreeViewContainer is null</div>
+		}
+		else
+		{
+			var renderBatchValidated = new TestExplorerRenderBatchValidated(renderBatch);
+			<CascadingValue Value="renderBatchValidated">
+
+				<div class="di_ide_test-explorer-top"
+				     style="height: 1.8em;"
+				     title="Sln: @(renderBatchValidated.TestExplorerState.SolutionFilePath ?? "null");">
+				     
+				    @{
+		            	var iconDriver = new IconDriver(
+							appOptionsState.Options.IconSizeInPixels,
+							appOptionsState.Options.IconSizeInPixels);
+		            }
+		            
+					<button class="di_button"
+							style="display: inline;"
+							title="Discover tests for all projects"
+							@onclick="DispatchShouldDiscoverTestsEffect">
+						@IconRefreshFragment.Render(iconDriver)
+					</button>
+					
+					<button class="di_button"
+							style="display: inline;"
+							title="Stop current test"
+							disabled=@GetIsKillProcessDisabled()
+							@onclick="KillExecutionProcessOnClick">
+						@IconStopCircleFragment.Render(iconDriver)
+					</button>
+					
+					Total: @(renderBatchValidated.TestExplorerState.TotalTestCount);
+					<span class="di_tree-view-warning">NotRan: @(renderBatchValidated.TestExplorerState.NotRanTestHashSet.Count);</span>
+					<em class="di_em">Passed: @(renderBatchValidated.TestExplorerState.PassedTestHashSet.Count);</em>
+					<span class="di_tree-view-exception">Failed: @(renderBatchValidated.TestExplorerState.FailedTestHashSet.Count);</span>
+				</div>
+
+				<div class="di_ide_test-explorer-bottom"
+					 style="display: flex; height: calc(100% - 1.8em);">
+
+					<TestExplorerTreeViewDisplay ElementDimensions="renderBatchValidated.TestExplorerState.TreeViewElementDimensions"/>
+
+					<ResizableColumn LeftElementDimensions="renderBatchValidated.TestExplorerState.TreeViewElementDimensions"
+									 RightElementDimensions="renderBatchValidated.TestExplorerState.DetailsElementDimensions"
+									 ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged).ConfigureAwait(false)" />
+
+					<TestExplorerDetailsDisplay ElementDimensions="renderBatchValidated.TestExplorerState.DetailsElementDimensions"/>
+				</div>
+			</CascadingValue>
+		}
+    </div>
+</ContextBoundary>

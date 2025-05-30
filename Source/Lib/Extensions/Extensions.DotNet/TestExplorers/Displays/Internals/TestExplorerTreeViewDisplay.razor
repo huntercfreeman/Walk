@@ -1,0 +1,22 @@
+@using Walk.Common.RazorLib.Dropdowns.Displays
+@using Walk.Common.RazorLib.Dropdowns.Models
+@using Walk.Common.RazorLib.TreeViews.Displays
+@using Walk.Common.RazorLib.TreeViews.Models
+@using Walk.Ide.RazorLib.Terminals.Models
+@using Walk.Extensions.DotNet.TestExplorers.Models
+
+<div class="di_ide_test-explorer-tree-view"
+	 style="@ElementDimensions.StyleString">
+
+	<CascadingValue Name="WalkTreeViewIconWidth" Value="RenderBatch.AppOptionsState.Options.IconSizeInPixels">
+        <CascadingValue Name="WalkTreeViewIconHeight" Value="RenderBatch.AppOptionsState.Options.IconSizeInPixels">
+            <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+                <TreeViewContainerDisplay TreeViewContainerKey="TestExplorerState.TreeViewTestExplorerKey"
+                                          CssStyleString="height: 100%;"
+                                          OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                          TreeViewKeyboardEventHandler="_treeViewKeyboardEventHandler"
+                                          TreeViewMouseEventHandler="_treeViewMouseEventHandler" />
+            </CascadingValue>
+        </CascadingValue>
+    </CascadingValue>
+</div>

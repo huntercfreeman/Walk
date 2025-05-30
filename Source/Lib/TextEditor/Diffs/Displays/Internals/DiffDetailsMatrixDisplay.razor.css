@@ -1,0 +1,13 @@
+.di_diff-details-visualization-cell {
+    position: absolute;
+    width: 2em;
+    height: 2em;
+    outline: 1px solid var(--di_primary-border-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .di_diff-details-visualization-cell.di_active {
+        background-color: green;
+    }

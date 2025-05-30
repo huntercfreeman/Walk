@@ -1,0 +1,15 @@
+@using Walk.Common.RazorLib.Dropdowns.Displays
+@using Walk.Common.RazorLib.Dropdowns.Models;
+@using Walk.Common.RazorLib.TreeViews.Displays
+
+<div class="di_ide_input-file-display-side-bar"
+     style="@ElementDimensions.StyleString">
+
+    <CascadingValue Name="SearchQuery" Value="InputFileState.SearchQuery">
+        <TreeViewContainerDisplay TreeViewContainerKey="TreeViewContainerKey"
+                                  CssStyleString="height: 100%;"
+                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                  TreeViewMouseEventHandler="InputFileTreeViewMouseEventHandler"
+                                  TreeViewKeyboardEventHandler="InputFileTreeViewKeyboardEventHandler"/>
+    </CascadingValue>
+</div>

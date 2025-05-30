@@ -1,0 +1,25 @@
+@using Walk.Common.RazorLib.Contexts.Models
+@using Walk.Common.RazorLib.Contexts.Displays
+@using Walk.Common.RazorLib.OutOfBoundsClicks.Displays
+
+@{ var widgetState = WidgetService.GetWidgetState(); }
+
+@if (widgetState.Widget is not null)
+{
+	<OutOfBoundsClickDisplay ZIndex="12"
+	                         OnMouseDownCallback="RemoveWidget" />
+}
+
+<ContextBoundary @ref="_widgetContextBoundary"
+				 ContextRecord="ContextFacts.WidgetContext"
+                 ClassCssString="di_widget-initializer">
+	<ChildContent></ChildContent>
+</ContextBoundary>
+
+@if (widgetState.Widget is not null)
+{
+	<WidgetDisplay @key="widgetState.Widget.Key"
+				   Widget="widgetState.Widget"
+	               OnFocusInFunc="HandleOnFocusIn"
+	               OnFocusOutFunc="HandleOnFocusOut"/>
+}

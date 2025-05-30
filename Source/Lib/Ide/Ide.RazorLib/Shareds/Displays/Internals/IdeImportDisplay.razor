@@ -1,0 +1,102 @@
+@using Microsoft.AspNetCore.Components.Forms
+
+<div>
+    Note:<br />
+    <ul>
+        <li>'Import' isn't working on the GitHub WASM app.</li>
+        <li><a href="https://github.com/isaacs/github/issues/330">github issues 'OAuth web flow endpoints don't support CORS'</a></li>
+        <li>In short: WASM is encountering CORS issues.</li>
+        <li>The solution requires me to host a server. Either to act as a proxy, or to securly store a client secret for OAuth. And I'm NOT going to host a server for this.</li>
+        <li>Running this in ServerSide locally however, the import is pretty cool.</li>
+        <li>Why not hide this button on WASM? I probably will. But for now I'm suffering from emotional damage, and need time to make a decision.</li>
+        <li>(import isn't part of the native IDE. Its only shown for WASM and ServerSide as to make a more interesting demo website)</li>
+    </ul>    
+</div>
+
+<hr />
+
+<h3>
+    Import from <a href="https://github.com/" target="_blank">GitHub</a>
+</h3>
+
+<div>
+    <input class="di_ide_input di_ide_input-text"
+           placeholder="Owner"
+           @bind="_owner"
+           @bind:event="oninput" />
+
+    <input class="di_ide_input di_ide_input-text"
+           placeholder="Repo"
+           @bind="_repo"
+           @bind:event="oninput" />
+
+    <input class="di_ide_input di_ide_input-text"
+           placeholder="Ref"
+           @bind="_ref"
+           @bind:event="oninput" />
+
+    <button class="di_button"
+            @onclick="LoadFromUrlOnClick">
+        Load from url
+    </button>
+
+    <button class="di_button"
+            disabled=@(_activeCancellationToken is null)
+            @onclick="CancelOnClick">
+        Cancel
+    </button>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(_activeQuery))
+{
+    <div>
+        <div>A request was made to:</div>
+        <em class="di_em">@_activeQuery</em>
+    </div>
+}
+
+@{
+	var appOptionsState = AppOptionsService.GetAppOptionsState();
+
+	var iconDriver = new IconDriver(
+		appOptionsState.Options.IconSizeInPixels,
+		appOptionsState.Options.IconSizeInPixels);
+}
+
+@switch (_activePhase)
+{
+    case ImportPhase.RequestRepoContents:
+        <div>Requesting repo as zip archive@IconLoadingFragment.Render(iconDriver)</div>
+        break;
+    case ImportPhase.ReadZipArchive:
+        <div>
+            Reading zip archive
+            (@_processedFilesInZipArchive/@_totalFilesInZipArchive)
+            processed:@_nameOfEntryMostRecentlyProcessed
+            @IconLoadingFragment.Render(iconDriver)
+        </div>
+        break;
+    case ImportPhase.Error:
+        <div>
+            @{ var localErrorMessage = _errorMessage; }
+            @if (_errorMessage is null)
+            {
+                <div class="di_tree-view-exception">
+                    There was an error, but the reason is unknown.
+                </div>
+            }
+            else
+            {
+                <div class="di_tree-view-exception">
+                    @_errorMessage
+                </div>
+            }
+        </div>
+        break;
+    case ImportPhase.Finished:
+        <div>
+            Successfully imported the repository:
+            <em class="di_em">@_parametersForFinishedQuery</em>
+        </div>
+        break;
+}
