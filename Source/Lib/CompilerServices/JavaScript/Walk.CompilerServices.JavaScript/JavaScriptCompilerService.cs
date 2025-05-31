@@ -145,16 +145,11 @@ public class JavaScriptCompilerService : ICompilerService
 
 	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
     {
-    	/*
     	var lexer = new JavaScriptLexer(
-    		modelModifier.PersistentState.ResourceUri,
-    		modelModifier.GetAllText(),
-            this,
-            _cSharpCompilerService,
-            _environmentProvider);
-            
-    	lexer.Lex();
-    	*/
+		    modelModifier.PersistentState.ResourceUri,
+		    modelModifier.GetAllText());
+		    
+		lexer.Lex();
     
     	lock (_resourceMapLock)
 		{
@@ -162,10 +157,10 @@ public class JavaScriptCompilerService : ICompilerService
 			{
 				var resource = _resourceMap[modelModifier.PersistentState.ResourceUri];
 				
-				/*resource.CompilationUnit = new ExtendedCompilationUnit
+				resource.CompilationUnit = new ExtendedCompilationUnit
 				{
 					TokenList = lexer.SyntaxTokenList,
-				};*/
+				};
 			}
 		}
 		
