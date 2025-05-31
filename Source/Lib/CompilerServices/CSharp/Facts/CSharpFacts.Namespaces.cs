@@ -13,13 +13,13 @@ public partial class CSharpFacts
         public const string TopLevelNamespaceIdentifier = "GetTopLevelNamespaceStatementNode";
 
         /// <summary>TODO: Implement the initial bound namespaces correctly. Until then just add the "System" namespace as a nonsensical node.</summary>
-        public static Dictionary<string, NamespaceGroup> GetInitialBoundNamespaceStatementNodes()
+        public static Dictionary<int, NamespaceGroup> GetInitialBoundNamespaceStatementNodes()
         {
-            return new Dictionary<string, NamespaceGroup>
+            return new Dictionary<int, NamespaceGroup>
             {
                 {
-                    SystemNamespaceIdentifier,
-                    new NamespaceGroup(SystemNamespaceIdentifier,
+                    0,// SystemNamespaceIdentifier,
+                    new NamespaceGroup(0,
                         new List<NamespaceStatementNode>
                         {
                             new NamespaceStatementNode(

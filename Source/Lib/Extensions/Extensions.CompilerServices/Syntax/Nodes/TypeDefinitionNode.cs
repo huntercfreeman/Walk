@@ -18,7 +18,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		GenericParameterListing genericParameterListing,
 		FunctionArgumentListing primaryConstructorFunctionArgumentListing,
 		TypeReference inheritedTypeReference,
-		string namespaceName
+		int namespaceHash
 		// FindAllReferences
 		// , HashSet<ResourceUri>? referenceHashSet
 		)
@@ -35,7 +35,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		GenericParameterListing = genericParameterListing;
 		FunctionArgumentListing = primaryConstructorFunctionArgumentListing;
 		InheritedTypeReference = inheritedTypeReference;
-		NamespaceName = namespaceName;
+		NamespaceHash = namespaceHash;
 		
 		// FindAllReferences
 		// ReferenceHashSet = referenceHashSet;
@@ -73,7 +73,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	/// Then: 'IPerson' is the <see cref="InheritedTypeClauseNode"/>
 	/// </summary>
 	public TypeReference InheritedTypeReference { get; private set; }
-	public string NamespaceName { get; }
+	public int NamespaceHash { get; }
 	public bool IsInterface => StorageModifierKind == StorageModifierKind.Interface;
 
 	public bool IsFabricated { get; init; }
@@ -84,7 +84,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	/// <summary>
 	/// TODO: Where is this used? ('NamespaceName' already exists and seems to be the one to keep).
 	/// </summary>
-	public string EncompassingNamespaceIdentifierString { get; set; }
+	public int EncompassingNamespaceIdentifierHash { get; set; }
 	
 	/// <summary>
 	/// Any files that contain a reference to this TypeDefinitionNode should

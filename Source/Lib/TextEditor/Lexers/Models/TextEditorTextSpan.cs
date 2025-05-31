@@ -148,6 +148,24 @@ public record struct TextEditorTextSpan(
         return Text;
     }
     
+    public ReadOnlySpan<char> ToSpan()
+    {
+    	return SourceText.AsSpan(StartInclusiveIndex, Length);
+    }
+    
+    public int ToHash()
+    {
+    	var span = ToSpan();
+    	var sum = 0;
+    	
+    	foreach (var character in span)
+    	{
+    		sum += (int)character;
+    	}
+    	
+    	return sum;
+    }
+    
     /// <summary>
     /// When using the record 'with' contextual keyword the <see cref="_text"/>
     /// might hold the cached value prior to the 'with' result.

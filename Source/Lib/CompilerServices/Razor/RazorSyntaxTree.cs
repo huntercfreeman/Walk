@@ -227,7 +227,7 @@ public class RazorSyntaxTree
 
         var text = textSpan.GetText();
         
-        var matchingKvps = allTypeDefinitions.Where(x => x.Key == text);
+        var matchingKvps = allTypeDefinitions.Where(x => false/*x.Key == text*/);
 
         foreach (var kvp in matchingKvps)
         {

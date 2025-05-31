@@ -359,7 +359,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		
 		// if (wordTextSpanTuple.ResultKind != GetWordTextSpanResultKind.None)
 		// {
-			// var strAaa = $"{wordTextSpanTuple.TextSpan.GetText()}";
+			// var strAaa = $"{wordTextSpanTuple.TextSpan.ToHash()}";
 			// _getAutocompleteMenuStringBuilder.Append(strAaa);
 		// }
 			
@@ -598,9 +598,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				
 				var typeClauseNode = (TypeClauseNode)syntaxNode;
 				
-				if (allTypeDefinitions.TryGetValue(typeClauseNode.TypeIdentifierToken.TextSpan.GetText(), out var typeDefinitionNode))
+				if (allTypeDefinitions.TryGetValue(typeClauseNode.TypeIdentifierToken.TextSpan.ToHash(), out var typeDefinitionNode))
 				{
-					var usingStatementText = $"using {typeDefinitionNode.NamespaceName};";
+					var usingStatementText = $"using {typeDefinitionNode.NamespaceHash};";
 						
 					menuOptionList.Add(new MenuOptionRecord(
 						$"Copy: {usingStatementText}",
@@ -1262,7 +1262,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         
 	        var allTypeDefinitions = __CSharpBinder.AllTypeDefinitions;
 	
-	        autocompleteEntryList.AddRange(
+	        /*autocompleteEntryList.AddRange(
 	            allTypeDefinitions
 	            .Where(x => x.Key.Contains(word, StringComparison.InvariantCulture))
 	            .Distinct()
@@ -1274,73 +1274,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	                    AutocompleteEntryKind.Type,
 	                    () =>
 	                    {
-	                    	// TODO: The namespace code is buggy at the moment.
-	                    	//       It is annoying how this keeps adding the wrong namespace.
-	                    	//       Just have it do nothing for now. (2024-08-24)
-	                    	// ===============================================================
-	                        /*if (boundScope.EncompassingNamespaceStatementNode.IdentifierToken.TextSpan.GetText() == x.Key.NamespaceIdentifier ||
-	                            boundScope.CurrentUsingStatementNodeList.Any(usn => usn.NamespaceIdentifier.TextSpan.GetText() == x.Key.NamespaceIdentifier))
-	                        {
-	                            return Task.CompletedTask;
-	                        }
-	
-	                        _textEditorService.PostUnique(
-	                            "Add using statement",
-	                            editContext =>
-	                            {
-	                                var modelModifier = editContext.GetModelModifier(textSpan.ResourceUri);
-	
-	                                if (modelModifier is null)
-	                                    return Task.CompletedTask;
-	
-	                                var viewModelList = _textEditorService.ModelApi.GetViewModelsOrEmpty(textSpan.ResourceUri);
-	
-	                                var cursor = new TextEditorCursor(0, 0, true);
-	                                var cursorModifierBag = new CursorModifierBagTextEditor(
-	                                    Key<TextEditorViewModel>.Empty,
-	                                    new List<TextEditorCursorModifier> { new(cursor) });
-	
-	                                var textToInsert = $"using {x.Key.NamespaceIdentifier};\n";
-	
-	                                modelModifier.Insert(
-	                                    textToInsert,
-	                                    cursorModifierBag,
-	                                    cancellationToken: CancellationToken.None);
-	
-	                                foreach (var unsafeViewModel in viewModelList)
-	                                {
-	                                    var viewModelModifier = editContext.GetViewModelModifier(unsafeViewModel.ViewModelKey);
-	                                    var viewModelCursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-	
-	                                    if (viewModelModifier is null || viewModelCursorModifierBag is null)
-	                                        continue;
-	
-	                                    foreach (var cursorModifier in viewModelCursorModifierBag.List)
-	                                    {
-	                                        for (int i = 0; i < textToInsert.Length; i++)
-	                                        {
-	                                            _textEditorService.ViewModelApi.MoveCursor(
-	                                            	new KeyboardEventArgs
-	                                                {
-	                                                    Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-	                                                },
-											        editContext,
-											        modelModifier,
-											        viewModelModifier,
-											        viewModelCursorModifierBag);
-	                                        }
-	                                    }
-	
-	                                    editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
-	                                        editContext,
-	                                        modelModifier);
-	                                }
-	
-	                                return Task.CompletedTask;
-	                            });*/
 							return Task.CompletedTask;
 	                    });
-	            }));
+	            }));*/
 	    }
             
         AddSnippets(autocompleteEntryList, word, textSpan);

@@ -1,8 +1,8 @@
 namespace Walk.Extensions.CompilerServices;
 
-public record struct NamespaceAndTypeIdentifiers(string NamespaceIdentifier, string TypeIdentifier)
+public record struct NamespaceAndTypeIdentifiers(int NamespaceHash, int TypeIdentifierHash)
 {
 	private const char MEMBER_ACCESS_TEXT = '.';
 
-	public string FullTypeName => NamespaceIdentifier + MEMBER_ACCESS_TEXT + TypeIdentifier;
+	public int FullTypeNameHash => NamespaceHash + MEMBER_ACCESS_TEXT + TypeIdentifierHash;
 }

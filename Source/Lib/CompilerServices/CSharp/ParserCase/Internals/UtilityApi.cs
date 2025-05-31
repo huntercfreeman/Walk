@@ -273,9 +273,7 @@ public static class UtilityApi
 
     public static StorageModifierKind GetStorageModifierKindFromToken(SyntaxToken consumedToken)
     {
-    	var span = consumedToken.TextSpan.SourceText.AsSpan(
-    		consumedToken.TextSpan.StartInclusiveIndex,
-    		consumedToken.TextSpan.Length);
+    	var span = consumedToken.TextSpan.ToSpan();
     	
     	if (span.SequenceEqual("enum"))
     		return StorageModifierKind.Enum;
@@ -293,9 +291,7 @@ public static class UtilityApi
     
     public static AccessModifierKind GetAccessModifierKindFromToken(SyntaxToken consumedToken)
     {
-    	var span = consumedToken.TextSpan.SourceText.AsSpan(
-    		consumedToken.TextSpan.StartInclusiveIndex,
-			consumedToken.TextSpan.Length);
+    	var span = consumedToken.TextSpan.ToSpan();
     		
     	if (span.SequenceEqual("public"))
     		return AccessModifierKind.Public;

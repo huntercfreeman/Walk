@@ -795,19 +795,14 @@ public static class CSharpLexer
 	        }
         }
         
-        var textSpan = new TextEditorTextSpan(
-	        entryPositionIndex,
-	        stringWalker.PositionIndex,
-	        decorationByte,
-	        stringWalker.ResourceUri,
-	        stringWalker.SourceText);
-	        
-        if (syntaxKind == SyntaxKind.IdentifierToken)
-        	_ = textSpan.GetText();
-        
         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(
         	syntaxKind,
-        	textSpan));
+        	new TextEditorTextSpan(
+		        entryPositionIndex,
+		        stringWalker.PositionIndex,
+		        decorationByte,
+		        stringWalker.ResourceUri,
+		        stringWalker.SourceText)));
     }
     
     public static void LexNumericLiteralToken(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker)

@@ -9,26 +9,26 @@ public partial class CSharpFacts
     {
         public static Scope GetInitialGlobalScope()
         {
-            var typeDefinitionMap = new Dictionary<string, TypeDefinitionNode>
+            var typeDefinitionMap = new Dictionary<int, TypeDefinitionNode>
 	        {
 	            {
-	                Types.Void.TypeIdentifierToken.TextSpan.GetText(),
+	                Types.Void.TypeIdentifierToken.TextSpan.ToHash(),
 	                Types.Void
 	            },
 	            {
-	                Types.Var.TypeIdentifierToken.TextSpan.GetText(),
+	                Types.Var.TypeIdentifierToken.TextSpan.ToHash(),
 	                Types.Var
 	            },
 	            {
-	                Types.Bool.TypeIdentifierToken.TextSpan.GetText(),
+	                Types.Bool.TypeIdentifierToken.TextSpan.ToHash(),
 	                Types.Bool
 	            },
 	            {
-	                Types.Int.TypeIdentifierToken.TextSpan.GetText(),
+	                Types.Int.TypeIdentifierToken.TextSpan.ToHash(),
 	                Types.Int
 	            },
 	            {
-	                Types.String.TypeIdentifierToken.TextSpan.GetText(),
+	                Types.String.TypeIdentifierToken.TextSpan.ToHash(),
 	                Types.String
 	            },
 	        };

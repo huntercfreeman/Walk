@@ -20,7 +20,7 @@ public partial class CSharpFacts
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty
+            0 //string.Empty
             // FindAllReferences
             // , referenceHashSet: new()
             )
@@ -37,7 +37,7 @@ public partial class CSharpFacts
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty
+            0//string.Empty
             // FindAllReferences
             // , referenceHashSet: new()
             )
@@ -54,7 +54,7 @@ public partial class CSharpFacts
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty
+            0//string.Empty
             // FindAllReferences
             // , referenceHashSet: new()
 			)
@@ -71,7 +71,7 @@ public partial class CSharpFacts
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty
+            0//string.Empty
 			// FindAllReferences
 			// ,referenceHashSet: new()
 			)
@@ -88,7 +88,7 @@ public partial class CSharpFacts
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty
+            0//string.Empty
 			// FindAllReferences
 			// ,referenceHashSet: new()
 			)
@@ -105,7 +105,7 @@ public partial class CSharpFacts
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty
+            0//string.Empty
             // FindAllReferences
             // ,referenceHashSet: new()
             )

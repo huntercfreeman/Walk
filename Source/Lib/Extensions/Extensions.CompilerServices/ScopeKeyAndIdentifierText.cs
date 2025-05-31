@@ -1,5 +1,5 @@
 namespace Walk.Extensions.CompilerServices;
 
-public record struct ScopeKeyAndIdentifierText(
+public record struct ScopeKeyAndIdentifierHash(
 	int ScopeIndexKey,
-	string IdentifierText);
+	int IdentifierHash);

@@ -815,7 +815,7 @@ public class ParseDefaultKeywords
             genericParameterListing,
             primaryConstructorFunctionArgumentListing: default,
             inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
-            namespaceName: parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText()
+            namespaceHash: parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.ToHash()
 			// FindAllReferences
 			// ,referenceHashSet: new()
 			);

@@ -83,12 +83,12 @@ public static class DiagnosticHelper
 	public static void ReportAlreadyDefinedType(
 		List<TextEditorDiagnostic> diagnosticList,
 		TextEditorTextSpan textSpan,
-		string alreadyDefinedTypeIdentifier)
+		int alreadyDefinedTypeIdentifierHash)
 	{
 		Report(
 			diagnosticList,
 			TextEditorDiagnosticLevel.Error,
-			$"Already defined type: '{alreadyDefinedTypeIdentifier}'",
+			$"Already defined type: '{alreadyDefinedTypeIdentifierHash}'",
 			textSpan,
 			Guid.Parse("9987db65-1054-4b64-ba64-761b75c4e5da"));
 	}
@@ -135,12 +135,12 @@ public static class DiagnosticHelper
 	public static void ReportAlreadyDefinedVariable(
 		List<TextEditorDiagnostic> diagnosticList,
 		TextEditorTextSpan textSpan,
-		string alreadyDefinedVariableIdentifier)
+		int alreadyDefinedVariableHash)
 	{
 		Report(
 			diagnosticList,
 			TextEditorDiagnosticLevel.Error,
-			$"Already defined variable: '{alreadyDefinedVariableIdentifier}'",
+			$"Already defined variable: '{alreadyDefinedVariableHash}'",
 			textSpan,
 			Guid.Parse("89b61fa8-541d-4154-9425-82c5667842a8"));
 	}
@@ -174,12 +174,12 @@ public static class DiagnosticHelper
 	public static void ReportAlreadyDefinedFunction(
 		List<TextEditorDiagnostic> diagnosticList,
 		TextEditorTextSpan textSpan,
-		string alreadyDefinedFunctionIdentifier)
+		int alreadyDefinedFunctionIdentifierHash)
 	{
 		Report(
 			diagnosticList,
 			TextEditorDiagnosticLevel.Error,
-			$"Already defined function: '{alreadyDefinedFunctionIdentifier}'",
+			$"Already defined function: '{alreadyDefinedFunctionIdentifierHash}'",
 			textSpan,
 			Guid.Parse("44193527-d94f-49bd-a588-cf75a18bc0f5"));
 	}

@@ -36,7 +36,7 @@ public static class TypeFacts
 		default,
 		primaryConstructorFunctionArgumentListing: default,
 		inheritedTypeReference: _notApplicableTypeReference,
-		string.Empty
+		0 //string.Empty
 		// FindAllReferences
 		// , referenceHashSet: new()
 		);
@@ -56,7 +56,7 @@ public static class TypeFacts
 		default,
 		primaryConstructorFunctionArgumentListing: default,
 		inheritedTypeReference: _notApplicableTypeReference,
-		string.Empty
+		0 //string.Empty
 		// FindAllReferences
 		// , referenceHashSet: new()
 		);
@@ -93,7 +93,7 @@ public static class TypeFacts
 		default,
 		primaryConstructorFunctionArgumentListing: default,
 		inheritedTypeReference: _notApplicableTypeReference,
-		string.Empty
+		0 //string.Empty
 		// FindAllReferences
 		// , referenceHashSet: new()
 		);

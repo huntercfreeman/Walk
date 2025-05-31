@@ -33,7 +33,7 @@ public static class ParseOthers
                 	
                 	// !StatementDelimiterToken because presumably the final namespace is already being handled.
                 	if (isNamespaceStatement && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
-                		parserModel.Binder.AddNamespaceToCurrentScope(textSpan.GetText(), compilationUnit, ref parserModel);
+                		parserModel.Binder.AddNamespaceToCurrentScope(textSpan.ToHash(), compilationUnit, ref parserModel);
                 }
                 else
                 {
@@ -45,7 +45,7 @@ public static class ParseOthers
 			        
 			        // !StatementDelimiterToken because presumably the final namespace is already being handled.
 			        if (isNamespaceStatement && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
-			        	parserModel.Binder.AddNamespaceToCurrentScope(textSpan.GetText(), compilationUnit, ref parserModel);
+			        	parserModel.Binder.AddNamespaceToCurrentScope(textSpan.ToHash(), compilationUnit, ref parserModel);
                 }
 
                 if (matchedToken.IsFabricated)
