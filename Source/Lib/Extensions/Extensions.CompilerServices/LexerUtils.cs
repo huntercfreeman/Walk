@@ -752,8 +752,11 @@ public static class LexerUtils
 
 	public static SyntaxKind GetSyntaxKindForKeyword(TextEditorTextSpan textSpan)
 	{
-		var text = textSpan.GetText();
-
+		return GetSyntaxKindForKeyword(textSpan.GetText());
+	}
+	
+	public static SyntaxKind GetSyntaxKindForKeyword(string text)
+	{
 		switch (text)
 		{
 			case "abstract":
@@ -917,8 +920,11 @@ public static class LexerUtils
 
 	public static SyntaxKind GetSyntaxKindForContextualKeyword(TextEditorTextSpan textSpan)
 	{
-		var text = textSpan.GetText();
-
+		return GetSyntaxKindForContextualKeyword(textSpan.GetText());
+	}
+	
+	public static SyntaxKind GetSyntaxKindForContextualKeyword(string text)
+	{
 		switch (text)
 		{
 			case "add":

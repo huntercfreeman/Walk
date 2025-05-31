@@ -60,7 +60,7 @@ public record struct TextEditorTextSpan(
     ResourceUri ResourceUri,
     string SourceText)
 {
-    private string? _text;
+    public string? Text;
 
     /// <summary>
     /// This constructor is used for text spans where their
@@ -126,21 +126,26 @@ public record struct TextEditorTextSpan(
               resourceUri,
               sourceText)
     {
-		_text = getTextPrecalculatedResult;
+		Text = getTextPrecalculatedResult;
     }
 
     public int Length => EndExclusiveIndex - StartInclusiveIndex;
     public bool ConstructorWasInvoked => ResourceUri.Value is not null;
 
+	/// <summary>
+	/// Be wary that this method will cache the string,
+	/// but that change propagation of structs needs to be considered
+	/// in order for the cache to propagate.
+	/// </summary>
     public string GetText()
     {
-    	if (_text is null)
+    	if (Text is null)
     	{
-    		_text = SourceText.Substring(StartInclusiveIndex, Length);
+    		Text = SourceText.Substring(StartInclusiveIndex, Length);
     		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
     	}
     	
-        return _text;
+        return Text;
     }
     
     /// <summary>
@@ -149,7 +154,7 @@ public record struct TextEditorTextSpan(
     /// </summary>
     public string ClearTextCache()
     {
-        return _text = null;
+        return Text = null;
     }
     
     /// <summary>
@@ -161,7 +166,7 @@ public record struct TextEditorTextSpan(
     /// </summary>
     public TextEditorTextSpan SetNullSourceText()
     {
-    	_text = GetText();
+    	Text = GetText();
     	SourceText = null;
     	return this;
     }
@@ -172,16 +177,10 @@ public record struct TextEditorTextSpan(
     /// </summary>
     public TextEditorTextSpan SetNullSourceText(string? text = null)
     {
-    	_text = text;
+    	Text = text;
     	SourceText = null;
     	return this;
     }
-
-#if DEBUG
-    /// <summary>This expression bound property is useful because it will evaluate <see cref="GetText"/> immediately upon inspecting the object instance in the debugger.</summary>
-    [Obsolete("This property is only meant for when running in 'DEBUG' mode and viewing the debugger. One should invoke the method: GetText() instead.")]
-    public string Text => GetText();
-#endif
 
     /// <summary>
     /// Preferably one would never use <see cref="FabricateTextSpan"/>.

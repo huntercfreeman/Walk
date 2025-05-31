@@ -753,38 +753,61 @@ public static class CSharpLexer
             _ = stringWalker.ReadCharacter();
         }
 
-        var textSpan = new TextEditorTextSpan(
-            entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None,
-            stringWalker.ResourceUri,
-            stringWalker.SourceText);
-
-        var textValue = textSpan.GetText();
-
-        if (CSharpKeywords.ALL_KEYWORDS_HASH_SET.Contains(textValue))
-        {
-        	var decorationByte = (byte)GenericDecorationKind.Keyword;
+        var span = stringWalker.SourceText.AsSpan(entryPositionIndex, stringWalker.PositionIndex - entryPositionIndex);
         
-            if (CSharpKeywords.LexerKeywords.ControlKeywords.Contains(textValue))
-            	decorationByte = (byte)GenericDecorationKind.KeywordControl;
-            
-            textSpan = textSpan with
-            {
-                DecorationByte = decorationByte,
-            };
-
-            if (CSharpKeywords.LexerKeywords.ContextualKeywords.Contains(textValue))
-            {
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(LexerUtils.GetSyntaxKindForContextualKeyword(textSpan), textSpan));
-                return;
-            }
-
-            lexerOutput.SyntaxTokenList.Add(new SyntaxToken(LexerUtils.GetSyntaxKindForKeyword(textSpan), textSpan));
-            return;
+        var foundKind = false;
+        var syntaxKind = SyntaxKind.IdentifierToken;
+        var decorationByte = (byte)GenericDecorationKind.None;
+        
+        foreach (var keyword in CSharpKeywords.CONTROL_KEYWORDS)
+        {
+        	if (span.SequenceEqual(keyword))
+        	{
+        		foundKind = true;
+        		syntaxKind = LexerUtils.GetSyntaxKindForKeyword(keyword);
+        	    decorationByte = (byte)GenericDecorationKind.KeywordControl;
+        	}
         }
-
-        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IdentifierToken, textSpan));
+        
+        if (!foundKind)
+        {
+	        foreach (var keyword in CSharpKeywords.LexerKeywords.ContextualKeywords)
+	        {
+	        	if (span.SequenceEqual(keyword))
+	        	{
+	        		foundKind = true;
+	        		syntaxKind = LexerUtils.GetSyntaxKindForContextualKeyword(keyword);
+	        	    decorationByte = (byte)GenericDecorationKind.Keyword;
+	        	}
+	        }
+        }
+        
+        if (!foundKind)
+        {
+	        foreach (var keyword in CSharpKeywords.LexerKeywords.NonContextualKeywords)
+	        {
+	        	if (span.SequenceEqual(keyword))
+	        	{
+	        	    foundKind = true;
+	        	    syntaxKind = LexerUtils.GetSyntaxKindForKeyword(keyword);
+	        	    decorationByte = (byte)GenericDecorationKind.Keyword;
+	        	}
+	        }
+        }
+        
+        var textSpan = new TextEditorTextSpan(
+	        entryPositionIndex,
+	        stringWalker.PositionIndex,
+	        decorationByte,
+	        stringWalker.ResourceUri,
+	        stringWalker.SourceText);
+	        
+        if (syntaxKind == SyntaxKind.IdentifierToken)
+        	_ = textSpan.GetText();
+        
+        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(
+        	syntaxKind,
+        	textSpan));
     }
     
     public static void LexNumericLiteralToken(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker)
