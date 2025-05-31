@@ -134,7 +134,13 @@ public record struct TextEditorTextSpan(
 
     public string GetText()
     {
-        return _text ??= SourceText.Substring(StartInclusiveIndex, Length);
+    	if (_text is null)
+    	{
+    		_text = SourceText.Substring(StartInclusiveIndex, Length);
+    		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
+    	}
+    	
+        return _text;
     }
     
     /// <summary>
