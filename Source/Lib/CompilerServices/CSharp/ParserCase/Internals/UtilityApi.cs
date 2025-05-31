@@ -271,44 +271,38 @@ public static class UtilityApi
         }
     }
 
-    /// <summary>
-    /// If the provided <see cref="KeywordToken"/> does not map to a <see cref="StorageModifierKind"/>,
-    /// then null is returned.
-    /// </summary>
     public static StorageModifierKind GetStorageModifierKindFromToken(SyntaxToken consumedToken)
     {
-        switch (consumedToken.TextSpan.GetText())
-        {
-            case "enum":
-                return StorageModifierKind.Enum;
-            case "struct":
-                return StorageModifierKind.Struct;
-            case "class":
-                return StorageModifierKind.Class;
-            case "interface":
-                return StorageModifierKind.Interface;
-            case "record":
-                return StorageModifierKind.Record;
-            default:
-                return StorageModifierKind.None;
-        }
+    	var span = consumedToken.TextSpan.ToSpan();
+    	
+    	if (span.SequenceEqual("enum"))
+    		return StorageModifierKind.Enum;
+    	else if (span.SequenceEqual("struct"))
+    		return StorageModifierKind.Struct;
+    	else if (span.SequenceEqual("class"))
+    		return StorageModifierKind.Class;
+    	else if (span.SequenceEqual("interface"))
+    		return StorageModifierKind.Interface;
+    	else if (span.SequenceEqual("record"))
+    		return StorageModifierKind.Record;
+    	else
+    		return StorageModifierKind.None;
     }
     
     public static AccessModifierKind GetAccessModifierKindFromToken(SyntaxToken consumedToken)
     {
-        switch (consumedToken.TextSpan.GetText())
-        {
-            case "public":
-                return AccessModifierKind.Public;
-            case "protected":
-                return AccessModifierKind.Protected;
-            case "internal":
-                return AccessModifierKind.Internal;
-            case "private":
-                return AccessModifierKind.Private;
-            default:
-                return AccessModifierKind.None;
-        }
+    	var span = consumedToken.TextSpan.ToSpan();
+    		
+    	if (span.SequenceEqual("public"))
+    		return AccessModifierKind.Public;
+    	else if (span.SequenceEqual("protected"))
+    		return AccessModifierKind.Protected;
+    	else if (span.SequenceEqual("internal"))
+    		return AccessModifierKind.Internal;
+    	else if (span.SequenceEqual("private"))
+    		return AccessModifierKind.Private;
+    	else
+    		return AccessModifierKind.None;
     }
     
     public static bool IsConvertibleToTypeClauseNode(SyntaxKind syntaxKind)

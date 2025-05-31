@@ -132,6 +132,11 @@ public record struct TextEditorTextSpan(
     public int Length => EndExclusiveIndex - StartInclusiveIndex;
     public bool ConstructorWasInvoked => ResourceUri.Value is not null;
 
+	/// <summary>
+	/// Be wary that this method will cache the string,
+	/// but that change propagation of structs needs to be considered
+	/// in order for the cache to propagate.
+	/// </summary>
     public string GetText()
     {
     	if (_text is null)
@@ -141,6 +146,11 @@ public record struct TextEditorTextSpan(
     	}
     	
         return _text;
+    }
+    
+    public ReadOnlySpan<char> ToSpan()
+    {
+    	return SourceText.AsSpan(StartInclusiveIndex, Length);
     }
     
     /// <summary>
