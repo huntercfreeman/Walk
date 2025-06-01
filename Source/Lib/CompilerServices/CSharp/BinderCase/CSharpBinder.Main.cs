@@ -1758,12 +1758,14 @@ public partial class CSharpBinder
 			}
 			
 			var str = span.ToString();
+			Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
 			stringList.Add(str);
 			return str;
 		}
 		else
 		{
 			var str = span.ToString();
+			Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
 			_stringMap.Add(key, new List<string> { str });
 			return str;
 		}
