@@ -1,0 +1,70 @@
+/* _content/Walk.TextEditor/Diffs/Displays/DiffDetailsDisplay.razor.rz.scp.css */
+.di_diff-details-visualization-grid[b-qj5hiz4jeq] {
+    position: relative;
+    width: 375px;
+    height: 375px;
+}
+
+[b-qj5hiz4jeq] .di_diff-details-visualization-character {
+    width: 2em;
+    height: 2em;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+/* _content/Walk.TextEditor/Diffs/Displays/Internals/DiffDetailsInTextDisplay.razor.rz.scp.css */
+.di_diff-details-visualization-in[b-lzy40og02b] {
+    position: absolute;
+    left: 0;
+    top: 2em;
+    height: calc(100% - 2em);
+    width: 2em;
+}
+/* _content/Walk.TextEditor/Diffs/Displays/Internals/DiffDetailsMatrixDisplay.razor.rz.scp.css */
+.di_diff-details-visualization-cell[b-vibpw9hjt3] {
+    position: absolute;
+    width: 2em;
+    height: 2em;
+    outline: 1px solid var(--di_primary-border-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .di_diff-details-visualization-cell.di_active[b-vibpw9hjt3] {
+        background-color: green;
+    }
+/* _content/Walk.TextEditor/Diffs/Displays/Internals/DiffDetailsOutTextDisplay.razor.rz.scp.css */
+.di_diff-details-visualization-out[b-dc531um4u3] {
+    position: absolute;
+    left: 2em;
+    top: 0;
+    height: 2em;
+    width: calc(100% - 2em);
+}
+/* _content/Walk.TextEditor/Edits/Displays/DirtyResourceUriInteractiveIconDisplay.razor.rz.scp.css */
+.di_web_dirty-text-editor-models-interactive-icon[b-cdo248k2wm] {
+    position: relative;
+}
+/* _content/Walk.TextEditor/TextEditors/Displays/Internals/AutocompleteMenu.razor.rz.scp.css */
+.di_ide_text-editor-autocomplete-menu:focus[b-2jzu4xes85] {
+
+	width: 500px;
+	height: 500px;
+	background-color: aqua;
+
+}
+/* _content/Walk.TextEditor/TextEditors/Displays/Internals/FindOverlayDisplay.razor.rz.scp.css */
+.di_te_find-overlay[b-t7akah1n4s] {
+    overflow: hidden;
+    position: absolute;
+    right: var(--di_te_scrollbar-size);
+    top: 0;
+    width: 25%;
+    min-width: calc(22ch + 16px);
+    padding: 7px;
+    z-index: 2;
+    cursor: default;
+    background-color: var(--di_te_scrollbar-background-color);
+}

@@ -1,0 +1,18 @@
+/* _content/Walk.ExtendCompilerServices/Displays/SymbolDisplay.razor.rz.scp.css */
+.di_te_syntax-onclick:hover[b-5h944jkojj]::deep {
+	text-decoration: underline;
+	cursor: pointer;
+}
+/* _content/Walk.ExtendCompilerServices/Displays/TextEditorCompilerServiceHeaderDisplay.razor.rz.scp.css */
+.di_te_compiler-service-header[b-wjwlpmeh4s] {
+    padding-left: var(--di_te_text-editor-header-padding-left);
+    overflow-y: hidden !important;
+    overflow: auto;
+    white-space: nowrap;
+    display: flex;
+    justify-content: space-between;
+}
+
+.di_te_compiler-service-header-select[b-wjwlpmeh4s] {
+	width: 33.3%;
+}

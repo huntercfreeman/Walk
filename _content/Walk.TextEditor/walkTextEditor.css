@@ -1,0 +1,884 @@
+.di_te_text-editor-css-wrapper {
+    height: 100%;
+}
+
+.di_te_text-editor {
+    min-height: var(--di_te_text-editor-content-min-height);
+    color: var(--di_te_primary-font-color);
+    background-color: var(--di_te_body-background-color);
+    cursor: text;
+    position: relative;
+    display: flex;
+    overflow: hidden;
+}
+
+.di_te_text-editor:focus-visible {
+	outline: none;
+}
+
+.di_te_text-editor-group {
+    height: 100%;
+}
+
+.di_te_text-editor-group-tabs-list {
+    height: var(--di_tabs-bar-height);
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    font-size: .8em;
+}
+
+.di_te_text-editor-group-active-view-model {
+    height: calc(100% - var(--di_tabs-bar-height));
+    position: relative;
+}
+
+.di_te_method {
+    color: var(--di_te_method-foreground-color);
+}
+
+.di_te_type {
+    color: var(--di_te_type-foreground-color);
+}
+
+.di_te_variable {
+    color: var(--di_te_variable-foreground-color);
+}
+
+.di_te_string-literal {
+    color: var(--di_te_string-literal-foreground-color);
+}
+
+.di_te_string-literal-escape-character {
+    color: var(--di_te_string-literal-escape-character-foreground-color);
+}
+
+.di_te_string-literal-escape-character-secondary {
+	color: var(--di_te_string-literal-escape-character-secondary-foreground-color);
+}
+
+.di_te_keyword {
+    color: var(--di_te_keyword-foreground-color);
+}
+
+.di_te_keyword-control {
+    color: var(--di_te_keyword-control-foreground-color);
+}
+
+.di_te_preprocessor-directive {
+    color: var(--di_te_preprocessor-directive-foreground-color);
+}
+
+.di_te_comment {
+    color: var(--di_te_comment-foreground-color);
+}
+
+.di_te_tag-name {
+    color: var(--di_te_tag-name-foreground-color);
+}
+
+.di_te_injected-language-fragment {
+    color: var(--di_te_injected-language-fragment-color);
+}
+
+.di_te_injected-language-component {
+    color: var(--di_te_injected-language-component-color);
+}
+
+.di_te_css-property-name {
+    color: var(--di_te_css-property-name-color);
+}
+
+.di_te_css-property-value {
+    color: var(--di_te_css-property-value-color);
+}
+
+.di_te_css-identifier {
+    color: var(--di_te_css-identifier-color);
+}
+
+.di_te_attribute-name {
+    color: var(--di_te_attribute-name-color);
+}
+
+.di_te_attribute-value {
+    color: var(--di_te_attribute-value-color);
+}
+
+.di_te_json-property-key {
+    color: var(--di_te_json-property-key-color);
+}
+
+.di_te_json-property-value {
+    color: var(--di_te_json-property-value-color);
+}
+
+.di_te_syntax-onclick:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.di_te_measure-character-width-and-line-height-wrapper {
+    top: 0;
+    left: 0;
+    visibility: hidden;
+    overflow: hidden;
+}
+
+.di_te_measure-character-width-and-line-height {
+    top: 0;
+    left: 0;
+    visibility: hidden;
+}
+
+.di_te_row {
+    white-space: nowrap;
+    position: absolute;
+    display: flex;
+}
+
+.di_te_gutter {
+    white-space: nowrap;
+    position: absolute;
+    display: flex;
+    box-shadow: -2px 0 0 var(--di_te_text-editor-gutter-border-color) inset;
+    background-color: var(--di_te_text-editor-gutter-background-color);
+}
+
+.di_te_gutter-chevron {
+	position: absolute;
+	z-index: 1;
+	bottom: 1px;
+	right: 2px;
+}
+
+.di_te_gutter-section {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    cursor: pointer;
+    overflow: none;
+}
+
+.di_te_body-section {
+    height: 100%;
+    position: absolute;
+    top: 0;
+}
+
+.di_te_three-dots {
+	border: 1px solid #a7c4c4;
+	color: #a7c4c4;
+}
+
+.di_te_command-bar {
+    height: var(--di_te_text-editor-command-bar-height);
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: aqua;
+    z-index: 1;
+}
+
+.di_te_command-bar-input {
+    width: 100%;
+}
+
+.di_te_row-section {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.di_te_scrollbar-section {
+    overflow: hidden;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.di_te_scrollbar {
+    position: absolute;
+    cursor: default;
+    opacity: var(--di_te_scrollbar-opacity);
+    background-color: var(--di_te_scrollbar-background-color);
+}
+
+.di_te_scrollbar-slider {
+    background-color: var(--di_te_scrollbar-slider-background-color);
+    position: absolute;
+}
+
+.di_te_scrollbar:hover {
+    opacity: var(--di_te_scrollbar-opacity-on-hover);
+}
+
+.di_te_scrollbar-horizontal {
+    top: calc(100% - var(--di_te_scrollbar-size));
+    height: var(--di_te_scrollbar-size);
+    right: var(--di_te_scrollbar-size);
+}
+
+.di_te_scrollbar-vertical {
+    right: 0;
+    top: 0;
+    width: var(--di_te_scrollbar-size);
+    height: calc(100% - var(--di_te_scrollbar-size));
+}
+
+.di_te_scrollbar-connector {
+    right: 0;
+    top: calc(100% - var(--di_te_scrollbar-size));
+    width: var(--di_te_scrollbar-size);
+    height: var(--di_te_scrollbar-size);
+}
+
+.di_te_text-editor-cursor {
+    position: absolute;
+    display: inline-block;
+    background-color: var(--di_te_text-editor-cursor-foreground-color);
+    margin: 0;
+    padding: 0;
+    outline: none !important;
+    resize: none;
+    border: none;
+    overflow: hidden;
+    color: transparent;
+}
+
+.di_te_text-editor-cursor:focus {
+    outline: none !important;
+    color: transparent;
+}
+
+.di_te_text-editor:not(.di_te_text-editor:focus-within) .di_te_text-editor-cursor {
+    width: 0;
+}
+
+.di_te_text-editor-cursor:not(.di_te_text-editor-cursor:focus) {
+    width: 0;
+}
+
+.di_te_text-editor-caret-row {
+    border-width: 1.5px;
+    border-style: solid;
+    border-color: var(--di_te_text-editor-caret-row-border-color-no-focus-within-editor);
+    border-left: none;
+    border-right: none;
+    position: absolute;
+    left: 0;
+    min-width: 100%;
+}
+
+.di_te_text-editor:focus-within .di_te_text-editor-caret-row {
+    border-color: var(--di_te_text-editor-caret-row-border-color-editor-focus-within);
+}
+
+.di_te_blink {
+    animation: di_te_blink-animation 1s infinite;
+}
+
+@keyframes di_te_blink-animation {
+    0% {
+        opacity: 0
+    }
+    49% {
+        opacity: 0
+    }
+    50% {
+        opacity: 1
+    }
+}
+
+.di_te_text-selection {
+    background-color: var(--di_te_text-selection-background-color);
+    position: absolute;
+}
+
+.di_te_brace_matching {
+    background-color: var(--di_te_brace_matching-background-color);
+    position: absolute;
+}
+
+.di_te_diff-longest-common-subsequence {
+    background-color: var(--di_te_diff-longest-common-subsequence-background-color);
+    position: absolute;
+}
+
+.di_te_diff-insertion {
+    background-color: var(--di_te_diff-insertion-background-color);
+    position: absolute;
+}
+
+.di_te_diff-insertion-line {
+    background-color: var(--di_te_diff-insertion-line-background-color);
+    position: absolute;
+    width: 100% !important;
+}
+
+.di_te_diff-deletion {
+    background-color: var(--di_te_diff-deletion-background-color);
+    position: absolute;
+}
+
+.di_te_diff-modification {
+    background-color: var(--di_te_diff-modification-background-color);
+    position: absolute;
+}
+
+.di_te_semantic-diagnostic-error {
+    border-bottom: 2px solid var(--di_te_semantic-diagnostic-error-background-color);
+    position: absolute;
+}
+
+.di_te_semantic-diagnostic-hint {
+    border-bottom: 2px solid var(--di_te_semantic-diagnostic-hint-background-color);
+    position: absolute;
+}
+
+.di_te_semantic-diagnostic-suggestion {
+    position: absolute;
+}
+
+.di_te_semantic-diagnostic-warning {
+    position: absolute;
+}
+
+.di_te_semantic-diagnostic-other {
+    position: absolute;
+}
+
+.di_te_newline {
+    color: var(--di_te_newline-foreground-color);
+    background-color: var(--di_te_newline-background-color);
+}
+
+.di_te_virtualization-boundary-display {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+}
+
+.di_te_text-editor-footer {
+    height: var(--di_te_text-editor-footer-height);
+    border-top: 2px solid var(--di_te_text-editor-gutter-border-color);
+    color: var(--di_te_primary-font-color);
+    background-color: var(--di_te_text-editor-gutter-background-color);
+}
+
+.di_te_text-editor-footer-listing {
+    height: 100%;
+    font-size: .8em;
+    display: flex;
+    padding-left: var(--di_te_text-editor-footer-padding-left);
+    align-items: center;
+    overflow: auto;
+    white-space: nowrap;
+}
+
+.di_te_text-editor-footer-entry {
+    padding-right: 5px;
+    display: flex;
+}
+
+.di_te_text-editor-footer-entry:not(:last-child) {
+    border-right: 2px solid var(--di_te_text-editor-caret-row-border-color-no-focus-within-editor);
+    margin-right: 5px;
+}
+
+.di_te_text-editor-footer-name-value-pair {
+    display: flex;
+}
+
+.di_te_text-editor-header {
+    height: var(--di_te_text-editor-header-height);
+    border-bottom: 2px solid var(--di_te_text-editor-gutter-border-color);
+    color: var(--di_te_primary-font-color);
+    background-color: var(--di_te_text-editor-gutter-background-color);
+}
+
+.di_te_text-editor-header-listing {
+    height: 100%;
+    font-size: .8em;
+    display: flex;
+    padding-left: var(--di_te_text-editor-header-padding-left);
+    align-items: center;
+    overflow: auto;
+    white-space: nowrap;
+}
+
+.di_te_text-editor-header-entry {
+    padding-right: 5px;
+}
+
+.di_te_text-editor-header-entry > .di_button {
+    padding: 5px;
+}
+
+.di_te_text-editor-header-entry:not(:last-child) {
+    border-right: 2px solid var(--di_te_text-editor-caret-row-border-color-no-focus-within-editor);
+    margin-right: 5px;
+}
+
+.di_te_button {
+    background-color: var(--di_te_button-background-color);
+    color: var(--di_te_button-foreground-color);
+}
+
+.di_te_button:disabled {
+    background-color: var(--di_te_button-disabled-background-color);
+    color: var(--di_te_button-disabled-foreground-color);
+}
+
+.di_te_resize-column {
+    background-color: var(--di_te_resize-column-background-color);
+    height: 100%;
+    cursor: e-resize;
+}
+
+.di_te_resize-row {
+    background-color: var(--di_te_resize-row-background-color);
+    width: 100%;
+    cursor: n-resize;
+}
+
+.di_te_add-margin-top {
+    margin: 10px 0;
+}
+
+.di_te_text-editor-input-height .di_te_child-input {
+    border-left: 2px solid var(--di_te_text-editor-caret-row-border-color-no-focus-within-editor);
+}
+
+.di_te_text-editor-input-height .di_te_disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.di_te_text-editor-input-height .di_te_disabled input {
+    cursor: not-allowed;
+}
+
+.di_te_text-editor-context-menu {
+    position: absolute;
+    z-index: 30;
+    background-color: var(--di_te_secondary-background-color);
+    color: var(--di_te_secondary-font-color);
+    box-shadow: 0 0 2px var(--di_te_primary-overlay-box-shadow-color);
+}
+
+.di_te_tooltip {
+    position: absolute;
+    z-index: 30;
+    background-color: var(--di_te_secondary-background-color);
+    color: var(--di_te_secondary-font-color);
+    box-shadow: 0 0 2px var(--di_te_primary-overlay-box-shadow-color);
+    padding: 20px;
+    cursor: default;
+}
+
+.di_te_use-vim-keymap {
+    height: calc(100% - 200px);
+}
+
+.di_te_text-editor-diff {
+    height: 100%;
+}
+
+.di_te_diff-longest-common-subsequence {
+    color: var(--di_te_primary-font-color);
+}
+
+.di_te_text-editor-diff-header {
+    display: flex;
+    height: var(--di_te_diff-header-height);
+}
+
+.di_te_text-editor-diff-body {
+    display: flex;
+    height: calc(100% - var(--di_te_diff-header-height));
+}
+
+.di_te_text-editor-diff-body-separator {
+    background-color: var(--di_primary-border-color);
+    width: var(--di_te_diff-body-separator-width);
+}
+
+.di_te_text-editor-diff-comparison-item {
+    width: calc(50% - var(--di_te_diff-body-separator-width) / 2);
+}
+
+.di_te_find-tabs {
+    display: flex;
+}
+
+.di_te_find-provider-tab {
+    display: flex;
+}
+
+:root {
+    /* Sizes Text Editor */
+    --di_te_text-editor-content-min-height: 100px;
+    --di_te_text-editor-footer-height: calc(1.2em + 5px);
+    --di_te_text-editor-footer-padding-left: 5px;
+    --di_te_text-editor-header-height: calc(1.2em + 5px);
+    --di_te_text-editor-header-padding-left: 5px;
+    --di_te_text-editor-command-bar-height: 2.2em;
+    --di_te_text-editor-command-bar-padding-left: 5px;
+    --di_te_scrollbar-size: 10px;
+    --di_te_diff-body-separator-width: 6px;
+    --di_te_diff-header-height: 2em;
+}
+
+.di_visual-studio-light-theme-clone {
+    /*
+        The colors are a close cloning of the
+        Light Theme found in Visual Studio.
+    */
+    --di_te_primary-font-color: #000000;
+    --di_te_text-editor-cursor-foreground-color: #000000;
+    --di_te_text-selection-background-color: #ADD6FF;
+    --di_te_brace_matching-background-color: #ffb3f1;
+    --di_te_diff-longest-common-subsequence-background-color: #ffb3f1;
+    --di_te_diff-insertion-background-color: #b5ff82;
+    --di_te_diff-insertion-line-background-color: #b5ff82;
+    --di_te_diff-deletion-background-color: blue;
+    --di_te_diff-modification-background-color: yellow;
+    --di_te_semantic-diagnostic-error-background-color: red;
+    --di_te_semantic-diagnostic-hint-background-color: purple;
+    --di_te_body-background-color: rgb(255, 255, 255);
+    --di_te_text-editor-caret-row-border-color-no-focus-within-editor: var(--di_te_text-editor-cursor-foreground-color);
+    --di_te_text-editor-caret-row-border-color-editor-focus-within: #ed9500;
+    --di_te_newline-foreground-color: #007F00;
+    --di_te_newline-background-color: #faeee2;
+    --di_te_method-foreground-color: rgb(116, 83, 31);
+    --di_te_type-foreground-color: rgb(43, 145, 175);
+    --di_te_variable-foreground-color: rgb(31, 55, 127);
+    --di_te_string-literal-foreground-color: rgb(163, 21, 21);
+    --di_te_string-literal-escape-character-foreground-color: rgb(183, 118, 251);
+    --di_te_string-literal-escape-character-secondary-foreground-color: var(--di_te_associated-key-color);
+    --di_te_keyword-foreground-color: rgb(0, 0, 255);
+    --di_te_keyword-control-foreground-color: rgb(143, 8, 196);
+    --di_te_preprocessor-directive-foreground-color: rgb(143, 8, 196);
+    --di_te_comment-foreground-color: rgb(0, 128, 0);
+    --di_te_tag-name-foreground-color: rgb(128, 0, 0);
+    --di_te_injected-language-fragment-color: rgb(225, 80, 220);
+    --di_te_injected-language-component-color: rgb(128, 0, 128);
+    --di_te_associated-key-color: rgb(255, 0, 0);
+    --di_te_associated-value-color: rgb(0, 0, 255);
+    --di_te_css-property-name-color: var(--di_te_associated-key-color);
+    --di_te_css-property-value-color: var(--di_te_associated-value-color);
+    --di_te_css-identifier-color: var(--di_te_keyword-foreground-color);
+    --di_te_attribute-name-color: var(--di_te_associated-key-color);
+    --di_te_attribute-value-color: var(--di_te_associated-value-color);
+    --di_te_json-property-key-color: var(--di_te_associated-key-color);
+    --di_te_json-property-value-color: var(--di_te_associated-value-color);
+    --di_te_text-editor-gutter-border-color: #28ae0c;
+    --di_te_text-editor-gutter-background-color: #F8F8EE;
+    --di_te_secondary-font-color: var(--di_te_primary-font-color);
+    --di_te_secondary-background-color: #fefef6;
+    --di_te_primary-overlay-box-shadow-color: #000000;
+    --di_te_button-background-color: #b2d1ff;
+    --di_te_button-foreground-color: var(--di_te_primary-font-color);
+    --di_te_button-disabled-background-color: #d7dde6;
+    --di_te_button-disabled-foreground-color: var(--di_te_primary-font-color);
+    --di_te_resize-column-background-color: black;
+    --di_te_resize-row-background-color: black;
+    --di_te_dialog-display-background-color: rgb(252, 252, 245);
+    --di_te_primary-box-shadow-color: #000000;
+    --di_te_dialog-display-toolbar-background-color: #cad5eb;
+    --di_te_primary-hover-background-color: #dda133;
+    --bte-primary-outline-color: #ADD6FF;
+    --bte-primary-active-not-focused-background-color: #d9dcdf;
+    --bte-primary-active-focused-background-color: #ADD6FF;
+    --di_dropdown-display-default-background-color: #e6e6e6;
+    --di_te_primary-emphasis-foreground-color: #124df9;
+    --di_te_primary-disabled-background-color: #cfcfcf;
+    --di_te_primary-disabled-foreground-color: #25180c;
+    --di_te_primary-disabled-hover-background-color: var(--di_te_primary-disabled-foreground-color);
+    --di_te_primary-disabled-hover-foreground-color: var(--di_te_primary-disabled-background-color);
+    --di_te_notification-display-background-color: rgb(252, 252, 245);
+    --di_te_notification-display-toolbar-background-color: rgb(192, 214, 247);
+    --di_te_active-button-background-color: #d889e8;
+    --di_te_active-button-primary-font-color: var(--di_te_primary-font-color);
+    --di_te_tertiary-background-color: #f3f0dc;
+    --di_te_tertiary-foreground-color: var(--di_te_primary-font-color);
+    --di_te_hr-primary-background-color: currentColor;
+    --di_te_error-foreground-color: red;
+    --di_te_scrollbar-opacity: 0.5;
+    --di_te_scrollbar-background-color: #9090af;
+    --di_te_scrollbar-opacity-on-hover: 0.8;
+    --di_te_scrollbar-slider-background-color: black;
+    --btv_outline-color: #33bcec;
+    --btv_active-but-not-focused-background-color: #7f8e93;
+    --btv_context-menu-background-color: red;
+    --btv_context-menu-foreground-color: green;
+    --btv-tree-view-expansion-chevron-color: currentColor;
+    --btv-tree-view-children-border-color: currentColor;
+}
+
+.di_visual-studio-dark-theme-clone {
+    /*
+        The colors are a close cloning of the
+        Dark Theme found in Visual Studio.
+    */
+    --di_te_primary-font-color: #DCDCDC;
+    --di_te_text-editor-cursor-foreground-color: #BBBBBB;
+    --di_te_text-selection-background-color: #245B82;
+    --di_te_brace_matching-background-color: rgb(110, 110, 0);
+    --di_te_diff-longest-common-subsequence-background-color: #7e0077;
+    --di_te_diff-insertion-background-color: green;
+    --di_te_diff-insertion-line-background-color: rgb(25 65 25);
+    --di_te_diff-deletion-background-color: blue;
+    --di_te_diff-modification-background-color: yellow;
+    --di_te_semantic-diagnostic-error-background-color: rgb(200, 70, 70);
+    --di_te_semantic-diagnostic-hint-background-color: #009aab;
+    --di_te_body-background-color: #1E1E1E;
+    --di_te_text-editor-caret-row-border-color-no-focus-within-editor: var(--di_te_text-editor-cursor-foreground-color);
+    --di_te_text-editor-caret-row-border-color-editor-focus-within: #977400;
+    --di_te_newline-foreground-color: #4e9a41;
+    --di_te_newline-background-color: #424242;
+    --di_te_method-foreground-color: rgb(220, 220, 170);
+    --di_te_type-foreground-color: rgb(78, 201, 176);
+    --di_te_variable-foreground-color: rgb(156, 220, 254);
+    --di_te_string-literal-foreground-color: rgb(206, 145, 120);
+    --di_te_string-literal-escape-character-foreground-color: rgb(215, 186, 125);
+    --di_te_string-literal-escape-character-secondary-foreground-color: var(--di_te_associated-key-color);
+    --di_te_keyword-foreground-color: rgb(86, 156, 214);
+    --di_te_keyword-control-foreground-color: rgb(197, 134, 192);
+    --di_te_preprocessor-directive-foreground-color: rgb(197, 134, 192);
+    --di_te_comment-foreground-color: rgb(106, 153, 85);
+    --di_te_tag-name-foreground-color: rgb(86, 156, 214);
+    --di_te_injected-language-fragment-color: rgb(197, 134, 192);
+    --di_te_injected-language-component-color: rgb(0, 150, 150);
+    --di_te_associated-key-color: var(--di_te_variable-foreground-color);
+    --di_te_associated-value-color: var(--di_te_string-literal-foreground-color);
+    --di_te_css-property-name-color: var(--di_te_associated-key-color);
+    --di_te_css-property-value-color: var(--di_te_associated-value-color);
+    --di_te_css-identifier-color: var(--di_te_keyword-foreground-color);
+    --di_te_attribute-name-color: var(--di_te_associated-key-color);
+    --di_te_attribute-value-color: var(--di_te_associated-value-color);
+    --di_te_json-property-key-color: var(--di_te_associated-key-color);
+    --di_te_json-property-value-color: var(--di_te_associated-value-color);
+    --di_te_text-editor-gutter-border-color: #273840;
+    --di_te_text-editor-gutter-background-color: rgb(43 41 55);
+    --di_te_secondary-font-color: #d1d2ca;
+    --di_te_secondary-background-color: #2d2f34;
+    --di_te_primary-overlay-box-shadow-color: #ffffff;
+    --di_te_button-background-color: #1e56a7;
+    --di_te_button-foreground-color: var(--di_te_primary-font-color);
+    --di_te_button-disabled-background-color: #4a5a71;
+    --di_te_button-disabled-foreground-color: var(--di_te_primary-font-color);
+    --di_te_resize-column-background-color: #d7d7d7;
+    --di_te_resize-row-background-color: #d7d7d7;
+    --di_te_dialog-display-background-color: #2d2f34;
+    --di_te_primary-box-shadow-color: #f5f5f5;
+    --di_te_dialog-display-toolbar-background-color: #071c57;
+    --di_te_primary-hover-background-color: #956100;
+    --bte-primary-outline-color: #2d498b;
+    --bte-primary-active-not-focused-background-color: #566060;
+    --bte-primary-active-focused-background-color: #2d498b;
+    --di_dropdown-display-default-background-color: rgb(48, 51, 101);
+    --di_te_primary-emphasis-foreground-color: #4d8aea;
+    --di_te_primary-disabled-background-color: #5c5959;
+    --di_te_primary-disabled-foreground-color: #ba931e;
+    --di_te_primary-disabled-hover-background-color: var(--di_te_primary-disabled-foreground-color);
+    --di_te_primary-disabled-hover-foreground-color: var(--di_te_primary-disabled-background-color);
+    --di_te_notification-display-background-color: #2d2f34;
+    --di_te_notification-display-toolbar-background-color: #071c57;
+    --di_te_active-button-background-color: #753282;
+    --di_te_active-button-primary-font-color: var(--di_te_primary-font-color);
+    --di_te_tertiary-background-color: var(--di_te_body-background-color);
+    --di_te_tertiary-foreground-color: var(--di_te_primary-font-color);
+    --di_te_hr-primary-background-color: currentColor;
+    --di_te_error-foreground-color: #e55d62;
+    --di_te_scrollbar-opacity: 0.5;
+    --di_te_scrollbar-background-color: #555566;
+    --di_te_scrollbar-opacity-on-hover: 0.8;
+    --di_te_scrollbar-slider-background-color: #ffffff;
+    --btv_outline-color: var(--bte-primary-outline-color);
+    --btv_active-but-not-focused-background-color: var(--bte-primary-active-not-focused-background-color);
+    --btv_context-menu-background-color: red;
+    --btv_context-menu-foreground-color: green;
+    --btv-tree-view-expansion-chevron-color: currentColor;
+    --btv-tree-view-children-border-color: currentColor;
+}
+
+.di_dark-theme {
+    /*
+        The colors are custom
+        dark themed so the Text Editor has its own theme
+    */
+    --di_te_primary-font-color: rgb(212, 212, 212);
+    --di_te_text-editor-cursor-foreground-color: rgb(215, 215, 215);
+    --di_te_text-selection-background-color: #1E557D;
+    --di_te_brace_matching-background-color: rgb(110, 110, 0);
+    --di_te_diff-longest-common-subsequence-background-color: #7e0077;
+    --di_te_diff-insertion-background-color: green;
+    --di_te_diff-insertion-line-background-color: rgb(25 65 25);
+    --di_te_diff-deletion-background-color: blue;
+    --di_te_diff-modification-background-color: yellow;
+    --di_te_semantic-diagnostic-error-background-color: rgb(200, 70, 70);
+    --di_te_semantic-diagnostic-hint-background-color: #009aab;
+    --di_te_body-background-color: rgb(30, 30, 30);
+    --di_te_text-editor-caret-row-border-color-no-focus-within-editor: var(--di_te_text-editor-cursor-foreground-color);
+    --di_te_text-editor-caret-row-border-color-editor-focus-within: #977400;
+    --di_te_newline-foreground-color: #4e9a41;
+    --di_te_newline-background-color: #424242;
+    --di_te_method-foreground-color: rgb(85, 193, 85);
+    --di_te_type-foreground-color: rgb(70, 165, 215);
+    --di_te_variable-foreground-color: rgb(170, 150, 215);
+    --di_te_string-literal-foreground-color: rgb(190, 190, 60);
+    --di_te_string-literal-escape-character-foreground-color: rgb(86, 156, 255);
+    --di_te_string-literal-escape-character-secondary-foreground-color: rgb(230, 110, 160);
+    --di_te_keyword-foreground-color: rgb(215, 150, 70);
+    --di_te_keyword-control-foreground-color: rgb(215, 100, 100);
+    --di_te_preprocessor-directive-foreground-color: rgb(215, 100, 100);
+    --di_te_comment-foreground-color: rgb(142, 142, 142);
+    --di_te_tag-name-foreground-color: var(--di_te_keyword-foreground-color);
+    --di_te_injected-language-fragment-color: rgb(215, 107, 179);
+    --di_te_injected-language-component-color: rgb(0, 150, 150);
+    --di_te_associated-key-color: rgb(120, 200, 210);
+    --di_te_associated-value-color: var(--di_te_string-literal-foreground-color);
+    --di_te_css-property-name-color: var(--di_te_associated-key-color);
+    --di_te_css-property-value-color: var(--di_te_associated-value-color);
+    --di_te_css-identifier-color: var(--di_te_keyword-foreground-color);
+    --di_te_attribute-name-color: var(--di_te_associated-key-color);
+    --di_te_attribute-value-color: var(--di_te_associated-value-color);
+    --di_te_json-property-key-color: var(--di_te_associated-key-color);
+    --di_te_json-property-value-color: var(--di_te_associated-value-color);
+    --di_te_text-editor-gutter-border-color: #273840;
+    --di_te_text-editor-gutter-background-color: rgb(43 41 55);
+    --di_te_secondary-font-color: #d1d2ca;
+    --di_te_secondary-background-color: #2d2f34;
+    --di_te_primary-overlay-box-shadow-color: #ffffff;
+    --di_te_button-background-color: #1e56a7;
+    --di_te_button-foreground-color: var(--di_te_primary-font-color);
+    --di_te_button-disabled-background-color: #4a5a71;
+    --di_te_button-disabled-foreground-color: var(--di_te_primary-font-color);
+    --di_te_resize-column-background-color: #d7d7d7;
+    --di_te_resize-row-background-color: #d7d7d7;
+    --di_te_dialog-display-background-color: #2d2f34;
+    --di_te_primary-box-shadow-color: #f5f5f5;
+    --di_te_dialog-display-toolbar-background-color: #071c57;
+    --di_te_primary-hover-background-color: #956100;
+    --bte-primary-outline-color: #2d498b;
+    --bte-primary-active-not-focused-background-color: #566060;
+    --bte-primary-active-focused-background-color: #2d498b;
+    --di_dropdown-display-default-background-color: rgb(48, 51, 101);
+    --di_te_primary-emphasis-foreground-color: #4d8aea;
+    --di_te_primary-disabled-background-color: #5c5959;
+    --di_te_primary-disabled-foreground-color: #ba931e;
+    --di_te_primary-disabled-hover-background-color: var(--di_te_primary-disabled-foreground-color);
+    --di_te_primary-disabled-hover-foreground-color: var(--di_te_primary-disabled-background-color);
+    --di_te_notification-display-background-color: #2d2f34;
+    --di_te_notification-display-toolbar-background-color: #071c57;
+    --di_te_active-button-background-color: #753282;
+    --di_te_active-button-primary-font-color: var(--di_te_primary-font-color);
+    --di_te_tertiary-background-color: var(--di_te_body-background-color);
+    --di_te_tertiary-foreground-color: var(--di_te_primary-font-color);
+    --di_te_hr-primary-background-color: currentColor;
+    --di_te_error-foreground-color: #e55d62;
+    --di_te_scrollbar-opacity: 0.5;
+    --di_te_scrollbar-background-color: #555566;
+    --di_te_scrollbar-opacity-on-hover: 0.8;
+    --di_te_scrollbar-slider-background-color: #ffffff;
+    --btv_outline-color: var(--bte-primary-outline-color);
+    --btv_active-but-not-focused-background-color: var(--bte-primary-active-not-focused-background-color);
+    --btv_context-menu-background-color: red;
+    --btv_context-menu-foreground-color: green;
+    --btv-tree-view-expansion-chevron-color: currentColor;
+    --btv-tree-view-children-border-color: currentColor;
+}
+
+.di_light-theme {
+    /*
+       The colors are custom
+       light themed so the Text Editor has its own theme
+   */
+    --di_te_primary-font-color: rgb(0, 0, 0);
+    --di_te_text-editor-cursor-foreground-color: rgb(0, 0, 0);
+    --di_te_text-selection-background-color: rgb(188, 217, 255);
+    --di_te_brace_matching-background-color: #ffb3f1;
+    --di_te_diff-longest-common-subsequence-background-color: #ffb3f1;
+    --di_te_diff-insertion-background-color: #b5ff82;
+    --di_te_diff-insertion-line-background-color: #b5ff82;
+    --di_te_diff-deletion-background-color: blue;
+    --di_te_diff-modification-background-color: yellow;
+    --di_te_semantic-diagnostic-error-background-color: red;
+    --di_te_semantic-diagnostic-hint-background-color: purple;
+    --di_te_body-background-color: rgb(255, 255, 255);
+    --di_te_text-editor-caret-row-border-color-no-focus-within-editor: var(--di_te_text-editor-cursor-foreground-color);
+    --di_te_text-editor-caret-row-border-color-editor-focus-within: #ed9500;
+    --di_te_newline-foreground-color: #007F00;
+    --di_te_newline-background-color: #faeee2;
+    --di_te_method-foreground-color: rgb(236, 158, 19);
+    --di_te_type-foreground-color: rgb(19,97,236);
+    --di_te_variable-foreground-color: rgb(50, 166, 52);
+    --di_te_string-literal-foreground-color: rgb(164,112,91);
+    --di_te_string-literal-escape-character-foreground-color: rgb(0, 0, 255);
+    --di_te_string-literal-escape-character-secondary-foreground-color: var(--di_te_associated-key-color);
+    --di_te_keyword-foreground-color: rgb(220, 0, 19);
+    --di_te_keyword-control-foreground-color: rgb(235,20,208);
+    --di_te_preprocessor-directive-foreground-color: rgb(235,20,208);
+    --di_te_comment-foreground-color: rgb(91,143,164);
+    --di_te_tag-name-foreground-color: var(--di_te_keyword-foreground-color);
+    --di_te_injected-language-fragment-color: rgb(196,59,193);
+    --di_te_injected-language-component-color: rgb(196,59,193);
+    --di_te_associated-key-color: rgb(0, 128, 128);
+    --di_te_associated-value-color: var(--di_te_string-literal-foreground-color);
+    --di_te_css-property-name-color: var(--di_te_associated-key-color);
+    --di_te_css-property-value-color: var(--di_te_associated-value-color);
+    --di_te_css-identifier-color: var(--di_te_keyword-foreground-color);
+    --di_te_attribute-name-color: var(--di_te_associated-key-color);
+    --di_te_attribute-value-color: var(--di_te_associated-value-color);
+    --di_te_json-property-key-color: var(--di_te_associated-key-color);
+    --di_te_json-property-value-color: var(--di_te_associated-value-color);
+    --di_te_text-editor-gutter-border-color: #28ae0c;
+    --di_te_text-editor-gutter-background-color: #F8F8EE;
+    --di_te_secondary-font-color: var(--di_te_primary-font-color);
+    --di_te_secondary-background-color: #fefef6;
+    --di_te_primary-overlay-box-shadow-color: #000000;
+    --di_te_button-background-color: #b2d1ff;
+    --di_te_button-foreground-color: var(--di_te_primary-font-color);
+    --di_te_button-disabled-background-color: #d7dde6;
+    --di_te_button-disabled-foreground-color: var(--di_te_primary-font-color);
+    --di_te_resize-column-background-color: black;
+    --di_te_resize-row-background-color: black;
+    --di_te_dialog-display-background-color: rgb(252, 252, 245);
+    --di_te_primary-box-shadow-color: #000000;
+    --di_te_dialog-display-toolbar-background-color: #cad5eb;
+    --di_te_primary-hover-background-color: #dda133;
+    --bte-primary-outline-color: #ADD6FF;
+    --bte-primary-active-not-focused-background-color: #d9dcdf;
+    --bte-primary-active-focused-background-color: #ADD6FF;
+    --di_dropdown-display-default-background-color: #e6e6e6;
+    --di_te_primary-emphasis-foreground-color: #124df9;
+    --di_te_primary-disabled-background-color: #cfcfcf;
+    --di_te_primary-disabled-foreground-color: #25180c;
+    --di_te_primary-disabled-hover-background-color: var(--di_te_primary-disabled-foreground-color);
+    --di_te_primary-disabled-hover-foreground-color: var(--di_te_primary-disabled-background-color);
+    --di_te_notification-display-background-color: rgb(252, 252, 245);
+    --di_te_notification-display-toolbar-background-color: rgb(192, 214, 247);
+    --di_te_active-button-background-color: #d889e8;
+    --di_te_active-button-primary-font-color: var(--di_te_primary-font-color);
+    --di_te_tertiary-background-color: #f3f0dc;
+    --di_te_tertiary-foreground-color: var(--di_te_primary-font-color);
+    --di_te_hr-primary-background-color: currentColor;
+    --di_te_error-foreground-color: red;
+    --di_te_scrollbar-opacity: 0.5;
+    --di_te_scrollbar-background-color: #9090af;
+    --di_te_scrollbar-opacity-on-hover: 0.8;
+    --di_te_scrollbar-slider-background-color: black;
+    --btv_outline-color: #33bcec;
+    --btv_active-but-not-focused-background-color: #7f8e93;
+    --btv_context-menu-background-color: red;
+    --btv_context-menu-foreground-color: green;
+    --btv-tree-view-expansion-chevron-color: currentColor;
+    --btv-tree-view-children-border-color: currentColor;
+}
