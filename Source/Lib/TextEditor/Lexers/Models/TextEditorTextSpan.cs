@@ -14,7 +14,7 @@ public record struct TextEditorTextSpan
 		this.DecorationByte = DecorationByte;
 		this.ResourceUri = ResourceUri;
 		
-		if (StartInclusiveIndex < SourceText.Length && EndExclusiveIndex <= SourceText.Length && EndExclusiveIndex >= StartInclusiveIndex)
+		if (Text is null && StartInclusiveIndex < SourceText.Length && EndExclusiveIndex <= SourceText.Length && EndExclusiveIndex >= StartInclusiveIndex)
 		{
 			Text = SourceText.Substring(StartInclusiveIndex, EndExclusiveIndex - StartInclusiveIndex);
 			Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
@@ -78,13 +78,11 @@ public record struct TextEditorTextSpan
 		    ResourceUri resourceUri,
 		    string sourceText,
 		    string getTextPrecalculatedResult)
-        : this(
-              startInclusiveIndex,
-              endExclusiveIndex,
-              decorationByte,
-              resourceUri,
-              sourceText)
     {
+    	StartInclusiveIndex = startInclusiveIndex;
+		EndExclusiveIndex = endExclusiveIndex;
+		DecorationByte = decorationByte;
+		ResourceUri = resourceUri;
 		Text = getTextPrecalculatedResult;
     }
 	
