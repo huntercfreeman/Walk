@@ -43,8 +43,8 @@ public static class ParseOthers
 		        {
 		        	if (textSpan.StartInclusiveIndex < compilationUnit.SourceText.Length && textSpan.EndExclusiveIndex <= compilationUnit.SourceText.Length)
 					{
-						textSpan.Text = compilationUnit.SourceText.Substring(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex);
-						Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
+						textSpan.Text = parserModel.Binder.GetText(
+        					compilationUnit.SourceText.AsSpan(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex));
 					}
 		        	
 		        	parserModel.Binder.AddNamespaceToCurrentScope(textSpan.Text, compilationUnit, ref parserModel);
@@ -72,8 +72,8 @@ public static class ParseOthers
 
 		if (textSpan.StartInclusiveIndex < compilationUnit.SourceText.Length && textSpan.EndExclusiveIndex <= compilationUnit.SourceText.Length)
 		{
-			textSpan.Text = compilationUnit.SourceText.Substring(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex);
-			Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
+			textSpan.Text = parserModel.Binder.GetText(
+				compilationUnit.SourceText.AsSpan(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex));
 		}
 
         return new SyntaxToken(SyntaxKind.IdentifierToken, textSpan);

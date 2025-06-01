@@ -766,8 +766,6 @@ public static class CSharpLexer
             stringWalker.ResourceUri,
             stringWalker.SourceText,
             textValue);
-
-        // var textValue = textSpan.Text;
         
         if (CSharpKeywords.ALL_KEYWORDS_HASH_SET.Contains(textValue))
         {

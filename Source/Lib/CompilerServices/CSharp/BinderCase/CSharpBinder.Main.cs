@@ -1740,8 +1740,8 @@ public partial class CSharpBinder
 	
 	private readonly Dictionary<int, List<string>> _stringMap = new();
 	
-	private int _listCount;
-	private int _collisionCount;
+	// private int _listCount;
+	// private int _collisionCount;
 	
 	public string GetText(ReadOnlySpan<char> span)
 	{
@@ -1762,8 +1762,8 @@ public partial class CSharpBinder
 			
 			var str = span.ToString();
 			Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
-			Console.Write("_collisionCount_");
-			Console.WriteLine(++_collisionCount);
+			// Console.Write("_collisionCount_");
+			// Console.WriteLine(++_collisionCount);
 			stringList.Add(str);
 			return str;
 		}
@@ -1771,8 +1771,8 @@ public partial class CSharpBinder
 		{
 			var str = span.ToString();
 			Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
-			Console.Write("_listCount_");
-			Console.WriteLine(++_listCount);
+			// Console.Write("_listCount_");
+			// Console.WriteLine(++_listCount);
 			_stringMap.Add(key, new List<string> { str });
 			return str;
 		}
