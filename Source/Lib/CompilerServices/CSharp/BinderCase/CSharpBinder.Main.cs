@@ -1761,7 +1761,7 @@ public partial class CSharpBinder
 			}
 			
 			var str = span.ToString();
-			Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
+			// Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
 			// Console.Write("_collisionCount_");
 			// Console.WriteLine(++_collisionCount);
 			stringList.Add(str);
@@ -1770,7 +1770,7 @@ public partial class CSharpBinder
 		else
 		{
 			var str = span.ToString();
-			Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
+			// Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
 			// Console.Write("_listCount_");
 			// Console.WriteLine(++_listCount);
 			_stringMap.Add(key, new List<string> { str });
