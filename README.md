@@ -5,7 +5,7 @@ I named it Walk because I like to go for a hour walk everyday.
 TODO: a gif
 
 ## Demo:
-https://luthetus.github.io/Luthetus.Ide/
+https://huntercfreeman.github.io/Walk/
 
 ## Installation:
 [INSTALLATION.md](./INSTALLATION.md)
