@@ -30,8 +30,8 @@ jobs:
           run: dotnet publish Source/Lib/Ide/Host.BlazorWebAssembly/Walk.Ide.Wasm.csproj -c:Release -p:GHPages=true -o dist/Web --nologo
           
         # changes the base-tag in index.html from '/' to 'Walk.Website' to match GitHub Pages repository subdirectory
-        - name: Change base-tag in index.html from / to Walk.Ide
-          run: sed -i 's/<base href="\/" \/>/<base href="\/Walk.Ide\/" \/>/g' dist/Web/wwwroot/index.html
+        - name: Change base-tag in index.html from / to Walk
+          run: sed -i 's/<base href="\/" \/>/<base href="\/Walk\/" \/>/g' dist/Web/wwwroot/index.html
           
         # add .nojekyll file to tell GitHub pages to not treat this as a Jekyll project. (Allow files and folders starting with an underscore)
         - name: Add .nojekyll file
