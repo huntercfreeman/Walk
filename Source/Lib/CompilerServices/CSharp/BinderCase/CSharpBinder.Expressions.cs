@@ -1304,7 +1304,7 @@ public partial class CSharpBinder
 			    token.TextSpan.EndExclusiveIndex,
 			    (byte)GenericDecorationKind.None,
 			    token.TextSpan.ResourceUri,
-			    token.TextSpan.SourceText);
+			    compilationUnit.SourceText);
 		
 			compilationUnit.__SymbolList.Add(new Symbol(SyntaxKind.LambdaSymbol, parserModel.GetNextSymbolId(), textSpan));
 		
@@ -2366,7 +2366,7 @@ public partial class CSharpBinder
 			    token.TextSpan.EndExclusiveIndex,
 			    default(byte),
 			    token.TextSpan.ResourceUri,
-			    token.TextSpan.SourceText));
+			    compilationUnit.SourceText));
 		
 		return parserModel.ConstructOrRecycleTypeClauseNode(
 			identifierToken,

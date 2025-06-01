@@ -103,7 +103,7 @@ public class RazorSyntaxTree
 
 		var cSharpBinder = new CSharpBinder();
 		
-        var compilationUnit = new CSharpCompilationUnit(_codebehindResourceUri);
+        var compilationUnit = new CSharpCompilationUnit(_codebehindResourceUri, classContents);
 			
 		var lexerOutput = CSharpLexer.Lex(_codebehindResourceUri, classContents);
 		

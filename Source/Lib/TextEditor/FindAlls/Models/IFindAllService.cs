@@ -30,7 +30,7 @@ public interface IFindAllService : IDisposable
     ///
     /// Then, the search will continue.
     /// </summary>
-    public void FlushSearchResults(List<TextEditorTextSpan> searchResultList);
+    public void FlushSearchResults(List<(string SourceText, TextEditorTextSpan TextSpan)> searchResultList);
 
     public void ClearSearch();
 	

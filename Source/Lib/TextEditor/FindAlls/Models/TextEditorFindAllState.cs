@@ -8,7 +8,7 @@ namespace Walk.TextEditor.RazorLib.FindAlls.Models;
 public record struct TextEditorFindAllState(
 	string SearchQuery,
 	string StartingDirectoryPath,
-	List<TextEditorTextSpan> SearchResultList,
+	List<(string SourceText, TextEditorTextSpan TextSpan)> SearchResultList,
 	ProgressBarModel? ProgressBarModel)
 {
 	public static readonly Key<TreeViewContainer> TreeViewFindAllContainerKey = Key<TreeViewContainer>.NewKey();

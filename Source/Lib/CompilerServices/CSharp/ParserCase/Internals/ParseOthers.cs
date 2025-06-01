@@ -41,9 +41,9 @@ public static class ParseOthers
 		        // !StatementDelimiterToken because presumably the final namespace is already being handled.
 		        if (isNamespaceStatement && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
 		        {
-		        	if (textSpan.StartInclusiveIndex < textSpan.SourceText.Length && textSpan.EndExclusiveIndex <= textSpan.SourceText.Length)
+		        	if (textSpan.StartInclusiveIndex < compilationUnit.SourceText.Length && textSpan.EndExclusiveIndex <= compilationUnit.SourceText.Length)
 					{
-						textSpan.Text = textSpan.SourceText.Substring(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex);
+						textSpan.Text = compilationUnit.SourceText.Substring(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex);
 						Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
 					}
 		        	
@@ -70,9 +70,9 @@ public static class ParseOthers
         if (count == 0)
             return default;
 
-		if (textSpan.StartInclusiveIndex < textSpan.SourceText.Length && textSpan.EndExclusiveIndex <= textSpan.SourceText.Length)
+		if (textSpan.StartInclusiveIndex < compilationUnit.SourceText.Length && textSpan.EndExclusiveIndex <= compilationUnit.SourceText.Length)
 		{
-			textSpan.Text = textSpan.SourceText.Substring(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex);
+			textSpan.Text = compilationUnit.SourceText.Substring(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex);
 			Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
 		}
 
