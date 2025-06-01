@@ -2,7 +2,11 @@ I named it Walk because I like to go for a hour walk everyday.
 
 # Walk Ide
 
-TODO: a gif
+Edit files:
+![person.gif](./Images/person.gif)
+
+Solution wide parse:
+![initialSolutionWideParse.gif](./Images/initialSolutionWideParse.gif)
 
 ## Demo:
 https://huntercfreeman.github.io/Walk/
