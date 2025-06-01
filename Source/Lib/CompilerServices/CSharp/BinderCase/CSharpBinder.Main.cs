@@ -2,6 +2,7 @@ using Walk.TextEditor.RazorLib.Exceptions;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
+using Walk.TextEditor.RazorLib;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Utility;
 using Walk.Extensions.CompilerServices.Syntax;
@@ -54,6 +55,13 @@ public partial class CSharpBinder
     
     public List<ISyntax> CSharpStatementBuilder_ChildList { get; } = new();
     public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> CSharpStatementBuilder_ParseChildScopeStack { get; } = new();
+    
+    public TextEditorService TextEditorService { get; set; }
+    
+    public CSharpBinder(TextEditorService textEditorService)
+    {
+    	TextEditorService = textEditorService;
+    }
     
 	/// <summary><see cref="FinalizeCompilationUnit"/></summary>
     public void StartCompilationUnit(ResourceUri resourceUri)
@@ -1736,45 +1744,5 @@ public partial class CSharpBinder
 
 		codeBlockOwner.CodeBlock = codeBlock;
 		return codeBlockOwner;
-	}
-	
-	private readonly Dictionary<int, List<string>> _stringMap = new();
-	
-	// private int _listCount;
-	// private int _collisionCount;
-	
-	public string GetText(ReadOnlySpan<char> span)
-	{
-		var key = 0;
-		
-		foreach (var character in span)
-		{
-			key += (int)character;
-		}
-		
-		if (_stringMap.TryGetValue(key, out var stringList))
-		{
-			foreach (var stringValue in stringList)
-			{
-				if (span.SequenceEqual(stringValue))
-					return stringValue;
-			}
-			
-			var str = span.ToString();
-			// Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
-			// Console.Write("_collisionCount_");
-			// Console.WriteLine(++_collisionCount);
-			stringList.Add(str);
-			return str;
-		}
-		else
-		{
-			var str = span.ToString();
-			// Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
-			// Console.Write("_listCount_");
-			// Console.WriteLine(++_listCount);
-			_stringMap.Add(key, new List<string> { str });
-			return str;
-		}
 	}
 }

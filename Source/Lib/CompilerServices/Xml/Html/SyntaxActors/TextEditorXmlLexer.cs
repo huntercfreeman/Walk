@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.Extensions.CompilerServices;
@@ -9,8 +10,12 @@ public class TextEditorXmlLexer
 {
 	public static readonly LexerKeywords LexerKeywords = LexerKeywords.Empty;
 	
-    public TextEditorXmlLexer(ResourceUri resourceUri, string sourceText)
+	private readonly TextEditorService _textEditorService;
+	
+    public TextEditorXmlLexer(TextEditorService textEditorService, ResourceUri resourceUri, string sourceText)
     {
+    	_textEditorService = textEditorService;
+    
     	ResourceUri = resourceUri;
     	SourceText = sourceText;
     }
@@ -23,6 +28,7 @@ public class TextEditorXmlLexer
     public void Lex()
     {
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
+        	_textEditorService,
             ResourceUri,
             SourceText);
 

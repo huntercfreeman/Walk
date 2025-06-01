@@ -182,7 +182,7 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
     
     	if (modelModifier.PersistentState.ResourceUri.Value.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
     	{
-	    	var lexer = new TextEditorXmlLexer(modelModifier.PersistentState.ResourceUri, modelModifier.GetAllText());
+	    	var lexer = new TextEditorXmlLexer(_textEditorService, modelModifier.PersistentState.ResourceUri, modelModifier.GetAllText());
 	    	lexer.Lex();
 	    	
 	    	syntaxTokenList = lexer.SyntaxTokenList;

@@ -1,5 +1,6 @@
 using System.Text;
 using Walk.Common.RazorLib.FileSystems.Models;
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
@@ -33,16 +34,19 @@ public class RazorSyntaxTree
     /// If no .razor.cs files exist, then one will be created behind the scenes.
     /// </summary>
     private readonly ResourceUri _codebehindResourceUri;
+    private readonly TextEditorService _textEditorService;
     private readonly RazorCompilerService _razorCompilerService;
     private readonly CSharpCompilerService _cSharpCompilerService;
     private readonly IEnvironmentProvider _environmentProvider;
 
     public RazorSyntaxTree(
+    	TextEditorService textEditorService,
         ResourceUri resourceUri,
         RazorCompilerService razorCompilerService,
         CSharpCompilerService cSharpCompilerService,
         IEnvironmentProvider environmentProvider)
     {
+    	_textEditorService = textEditorService;
         MarkupResourceUri = resourceUri;
         _razorCompilerService = razorCompilerService;
         _cSharpCompilerService = cSharpCompilerService;
@@ -101,19 +105,17 @@ public class RazorSyntaxTree
 
         var classContents = _codebehindClassBuilder.ToString();
 
-		var cSharpBinder = new CSharpBinder();
-		
         var compilationUnit = new CSharpCompilationUnit(_codebehindResourceUri, classContents);
 			
-		var lexerOutput = CSharpLexer.Lex(cSharpBinder, _codebehindResourceUri, classContents);
+		var lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, _codebehindResourceUri, classContents);
 		
-		cSharpBinder.StartCompilationUnit(_codebehindResourceUri);
+		_cSharpCompilerService.__CSharpBinder.StartCompilationUnit(_codebehindResourceUri);
 		
-		CSharpParser.Parse(compilationUnit, cSharpBinder, ref lexerOutput);
+		CSharpParser.Parse(compilationUnit, _cSharpCompilerService.__CSharpBinder, ref lexerOutput);
         
         SemanticResultRazor = new SemanticResultRazor(
             compilationUnit,
-            cSharpBinder,
+            _cSharpCompilerService.__CSharpBinder,
             _codebehindClassInsertions,
             _codebehindRenderFunctionInsertions,
             renderFunctionAdhocTextInsertion,
@@ -337,6 +339,7 @@ public class RazorSyntaxTree
                     var positionIndexPriorToHtmlTag = stringWalker.PositionIndex;
 
                     var tagSyntax = HtmlSyntaxTree.HtmlSyntaxTreeStateMachine.ParseTag(
+                    	_textEditorService,
                         stringWalker,
                         diagnosticList,
                         injectedLanguageDefinition);
@@ -1371,7 +1374,7 @@ public class RazorSyntaxTree
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
 
-        var lexerOutput = CSharpLexer.Lex(new CSharpBinder(), ResourceUri.Empty, cSharpText);
+        var lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, ResourceUri.Empty, cSharpText);
 
         foreach (var lexedTokenTextSpan in lexerOutput.SyntaxTokenList.Select(x => x.TextSpan).Union(lexerOutput.MiscTextSpanList))
         {

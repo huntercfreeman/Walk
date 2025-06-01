@@ -177,7 +177,7 @@ public sealed class XmlCompilerService : ICompilerService
     
 	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
     {
-    	var lexer = new TextEditorXmlLexer(modelModifier.PersistentState.ResourceUri, modelModifier.GetAllText());
+    	var lexer = new TextEditorXmlLexer(_textEditorService, modelModifier.PersistentState.ResourceUri, modelModifier.GetAllText());
     	lexer.Lex();
     
     	lock (_resourceMapLock)

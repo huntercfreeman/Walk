@@ -2,6 +2,7 @@ using System.Text;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.Decorations.Models;
+using Walk.TextEditor.RazorLib;
 using Walk.CompilerServices.Xml.Html.SyntaxObjects;
 using Walk.CompilerServices.Xml.Html.InjectedLanguage;
 using Walk.CompilerServices.Xml.Html.ExtensionMethods;
@@ -14,7 +15,19 @@ namespace Walk.CompilerServices.Xml.Html.SyntaxActors;
 
 public static class HtmlSyntaxTree
 {
+	/// <summary>
+	/// Very confusing: `textEditorService` is passed in
+	/// in order to permit use of TextEditorService.EditContext_GetText(...)
+	/// 
+	/// This method is only safe to invoke from a TextEditorEditContext however.
+	/// So, if this HtmlSyntaxTree is used from a non-TextEditorEditContext
+	/// then the textEditorService will be passed as null to avoid unsafe invocation of the method.
+	///
+	/// This needs to be rewritten, but the short term benefit of adding this hack
+	/// far outweights the cost of then having to rewrite this.
+	/// </summary>
     public static HtmlSyntaxUnit ParseText(
+    	TextEditorService? textEditorService,
         ResourceUri resourceUri,
         string content,
         InjectedLanguageDefinition? injectedLanguageDefinition = null)
@@ -36,6 +49,7 @@ public static class HtmlSyntaxTree
 
         rootTagSyntaxBuilder.Children = HtmlSyntaxTreeStateMachine
             .ParseTagChildContent(
+            	textEditorService,
                 stringWalker,
                 textEditorHtmlDiagnosticBag,
                 injectedLanguageDefinition);
@@ -51,6 +65,7 @@ public static class HtmlSyntaxTree
     {
         /// <summary>Invocation of this method requires the stringWalker to have <see cref="StringWalker.PeekCharacter" /> of 0 be equal to <see cref="HtmlFacts.OPEN_TAG_BEGINNING" /></summary>
         public static IHtmlSyntaxNode ParseTag(
+        	TextEditorService? textEditorService,
             StringWalker stringWalker,
             List<TextEditorDiagnostic> diagnosticList,
             InjectedLanguageDefinition? injectedLanguageDefinition)
@@ -59,6 +74,7 @@ public static class HtmlSyntaxTree
                     HtmlFacts.COMMENT_TAG_BEGINNING))
             {
                 return ParseComment(
+                	textEditorService,
                     stringWalker,
                     diagnosticList,
                     injectedLanguageDefinition);
@@ -81,6 +97,7 @@ public static class HtmlSyntaxTree
             }
 
             tagBuilder.OpenTagNameSyntax = ParseTagName(
+            	textEditorService,
                 stringWalker,
                 diagnosticList,
                 injectedLanguageDefinition);
@@ -120,6 +137,7 @@ public static class HtmlSyntaxTree
                     _ = stringWalker.ReadCharacter();
 
                     tagBuilder.Children = ParseTagChildContent(
+                		textEditorService,
                         stringWalker,
                         diagnosticList,
                         injectedLanguageDefinition);
@@ -189,7 +207,7 @@ public static class HtmlSyntaxTree
                 }
                 else
                 {
-                    var attributeSyntax = ParseAttribute(stringWalker, diagnosticList, injectedLanguageDefinition);
+                    var attributeSyntax = ParseAttribute(textEditorService, stringWalker, diagnosticList, injectedLanguageDefinition);
                     tagBuilder.AttributeSyntaxes.Add(attributeSyntax);
                 }
             }
@@ -197,6 +215,7 @@ public static class HtmlSyntaxTree
 
         /// <summary>Invocation of this method requires the stringWalker to have <see cref="StringWalker.PeekCharacter" /> of 0 be equal to the first character that is part of the tag's name</summary>
         public static TagNameNode ParseTagName(
+        	TextEditorService? textEditorService,
             StringWalker stringWalker,
             List<TextEditorDiagnostic> diagnosticList,
             InjectedLanguageDefinition? injectedLanguageDefinition)
@@ -246,12 +265,28 @@ public static class HtmlSyntaxTree
                 }
             }
 
-            var tagNameTextSpan = new TextEditorTextSpan(
-                startingPositionIndex,
-                stringWalker.PositionIndex,
-                (byte)HtmlDecorationKind.TagName,
-                stringWalker.ResourceUri,
-                stringWalker.SourceText);
+			TextEditorTextSpan tagNameTextSpan;
+
+			if (textEditorService is null)
+			{
+				tagNameTextSpan = new TextEditorTextSpan(
+	                startingPositionIndex,
+	                stringWalker.PositionIndex,
+	                (byte)HtmlDecorationKind.TagName,
+	                stringWalker.ResourceUri,
+	                stringWalker.SourceText);
+			}
+			else
+			{
+				tagNameTextSpan = new TextEditorTextSpan(
+	                startingPositionIndex,
+	                stringWalker.PositionIndex,
+	                (byte)HtmlDecorationKind.TagName,
+	                stringWalker.ResourceUri,
+	                stringWalker.SourceText,
+	                textEditorService.EditContext_GetText(
+	                	stringWalker.SourceText.AsSpan(startingPositionIndex, stringWalker.PositionIndex - startingPositionIndex)));
+			}
 
             injectedLanguageDefinition?.ParseTagName?.Invoke(
                 stringWalker,
@@ -263,6 +298,7 @@ public static class HtmlSyntaxTree
         }
 
         public static List<IHtmlSyntax> ParseTagChildContent(
+        	TextEditorService? textEditorService,
             StringWalker stringWalker,
             List<TextEditorDiagnostic> diagnosticList,
             InjectedLanguageDefinition? injectedLanguageDefinition)
@@ -279,15 +315,30 @@ public static class HtmlSyntaxTree
                 if (textNodeStartingPositionIndex is null)
                     return;
 
-                var tagTextSyntax = new TextNode(
-                    new TextEditorTextSpan(
-                        textNodeStartingPositionIndex.Value,
-                        stringWalker.PositionIndex,
-                        (byte)GenericDecorationKind.None,
-                        stringWalker.ResourceUri,
-                        stringWalker.SourceText));
+				var isWhiteSpace = true;
 
-                htmlSyntaxes.Add(tagTextSyntax);
+				for (int i = textNodeStartingPositionIndex.Value; i < stringWalker.PositionIndex; i++)
+				{
+					if (!char.IsWhiteSpace(stringWalker.SourceText[i]))
+					{
+						isWhiteSpace = false;
+						break;
+					}
+				}
+				
+				// TODO: Allow an option to include whitespace.
+				if (!isWhiteSpace)
+				{
+	                var tagTextSyntax = new TextNode(
+	                    new TextEditorTextSpan(
+	                        textNodeStartingPositionIndex.Value,
+	                        stringWalker.PositionIndex,
+	                        (byte)GenericDecorationKind.None,
+	                        stringWalker.ResourceUri,
+	                        stringWalker.SourceText));
+	
+	                htmlSyntaxes.Add(tagTextSyntax);
+                }
                 textNodeStartingPositionIndex = null;
             }
 
@@ -303,12 +354,12 @@ public static class HtmlSyntaxTree
 
                     if (stringWalker.PeekForSubstring(HtmlFacts.COMMENT_TAG_BEGINNING))
                     {
-                        var node = ParseComment(stringWalker, diagnosticList, injectedLanguageDefinition);
+                        var node = ParseComment(textEditorService, stringWalker, diagnosticList, injectedLanguageDefinition);
                         htmlSyntaxes.Add(node);
                     }
                     else
                     {
-                        var node = ParseTag(stringWalker, diagnosticList, injectedLanguageDefinition);
+                        var node = ParseTag(textEditorService, stringWalker, diagnosticList, injectedLanguageDefinition);
                         htmlSyntaxes.Add(node);
                     }
 
@@ -320,7 +371,7 @@ public static class HtmlSyntaxTree
                     // If there is text in textNodeBuilder add a new TextNode to the List of TagSyntax
                     AddTextNode();
 
-                    var nodeBag = ParseInjectedLanguageCodeBlock(stringWalker, diagnosticList, injectedLanguageDefinition);
+                    var nodeBag = ParseInjectedLanguageCodeBlock(textEditorService, stringWalker, diagnosticList, injectedLanguageDefinition);
                     htmlSyntaxes.AddRange(nodeBag);
 
                     continue;
@@ -341,6 +392,7 @@ public static class HtmlSyntaxTree
         }
 
         public static List<IHtmlSyntaxNode> ParseInjectedLanguageCodeBlock(
+        	TextEditorService? textEditorService,
             StringWalker stringWalker,
             List<TextEditorDiagnostic> diagnosticList,
             InjectedLanguageDefinition injectedLanguageDefinition)
@@ -371,16 +423,19 @@ public static class HtmlSyntaxTree
         }
 
         public static AttributeNode ParseAttribute(
+        	TextEditorService? textEditorService,
             StringWalker stringWalker,
             List<TextEditorDiagnostic> diagnosticList,
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             var attributeNameSyntax = ParseAttributeName(
+            	textEditorService,
                 stringWalker,
                 diagnosticList,
                 injectedLanguageDefinition);
 
             _ = TryReadAttributeValue(
+            		textEditorService,
                     stringWalker,
                     diagnosticList,
                     injectedLanguageDefinition,
@@ -399,6 +454,7 @@ public static class HtmlSyntaxTree
 
         /// <summary>currentCharacterIn:<br/> -Any character that can start an attribute name<br/> currentCharacterOut:<br/> -<see cref="WhitespaceFacts.ALL_LIST"/> (whitespace)<br/> -<see cref="HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE"/><br/> -<see cref="HtmlFacts.OPEN_TAG_ENDING_OPTIONS"/></summary>
         public static AttributeNameNode ParseAttributeName(
+        	TextEditorService? textEditorService,
             StringWalker stringWalker,
             List<TextEditorDiagnostic> diagnosticList,
             InjectedLanguageDefinition? injectedLanguageDefinition)
@@ -437,19 +493,36 @@ public static class HtmlSyntaxTree
                     break;
                 }
             }
-
-            var attributeNameTextSpan = new TextEditorTextSpan(
-                startingPositionIndex,
-                stringWalker.PositionIndex,
-                (byte)HtmlDecorationKind.AttributeName,
-                stringWalker.ResourceUri,
-                stringWalker.SourceText);
+            
+            TextEditorTextSpan attributeNameTextSpan;
+            
+            if (textEditorService is null)
+            {
+            	attributeNameTextSpan = new TextEditorTextSpan(
+	                startingPositionIndex,
+	                stringWalker.PositionIndex,
+	                (byte)HtmlDecorationKind.AttributeName,
+	                stringWalker.ResourceUri,
+	                stringWalker.SourceText);
+            }
+            else
+            {
+            	attributeNameTextSpan = new TextEditorTextSpan(
+	                startingPositionIndex,
+	                stringWalker.PositionIndex,
+	                (byte)HtmlDecorationKind.AttributeName,
+	                stringWalker.ResourceUri,
+	                stringWalker.SourceText,
+	                textEditorService.EditContext_GetText(
+	            		stringWalker.SourceText.AsSpan(startingPositionIndex, stringWalker.PositionIndex - startingPositionIndex)));
+        	}
 
             return new AttributeNameNode(attributeNameTextSpan);
         }
 
         /// <summary>Returns placeholder match attribute value if fails to read an attribute value<br/> <br/> currentCharacterIn:<br/> -<see cref="WhitespaceFacts.ALL_LIST"/> (whitespace)<br/> -<see cref="HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE"/><br/> -<see cref="HtmlFacts.OPEN_TAG_ENDING_OPTIONS"/><br/> currentCharacterOut:<br/> -<see cref="HtmlFacts.ATTRIBUTE_VALUE_ENDING"/><br/> -<see cref="HtmlFacts.OPEN_TAG_ENDING_OPTIONS"/></summary>
         private static bool TryReadAttributeValue(
+        	TextEditorService? textEditorService,
             StringWalker stringWalker,
             List<TextEditorDiagnostic> diagnosticList,
             InjectedLanguageDefinition? injectedLanguageDefinition,
@@ -470,6 +543,7 @@ public static class HtmlSyntaxTree
             if (HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE == stringWalker.CurrentCharacter)
             {
                 attributeValueSyntax = ParseAttributeValue(
+                	textEditorService,
                     stringWalker,
                     diagnosticList,
                     injectedLanguageDefinition);
@@ -477,14 +551,13 @@ public static class HtmlSyntaxTree
                 return true;
             }
 
-            // Set out variable as a 'matched attribute value' so there aren't any cascading error diagnostics due to having expected an attribute value.
-            var attributeValueTextSpan = new TextEditorTextSpan(
-                0,
-                0,
-                (byte)HtmlDecorationKind.AttributeValue,
-                stringWalker.ResourceUri,
-                stringWalker.SourceText);
-
+			// Set out variable as a 'matched attribute value' so there aren't any cascading error diagnostics due to having expected an attribute value.
+			var attributeValueTextSpan = new TextEditorTextSpan(
+	            0,
+	            0,
+	            (byte)HtmlDecorationKind.AttributeValue,
+	            stringWalker.ResourceUri,
+	            stringWalker.SourceText);
             attributeValueSyntax = new AttributeValueNode(attributeValueTextSpan);
 
             return false;
@@ -492,6 +565,7 @@ public static class HtmlSyntaxTree
 
         /// <summary> currentCharacterIn:<br/> -<see cref="HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE"/><br/> currentCharacterOut:<br/> -<see cref="HtmlFacts.ATTRIBUTE_VALUE_ENDING"/></summary>
         public static AttributeValueNode ParseAttributeValue(
+        	TextEditorService? textEditorService,
             StringWalker stringWalker,
             List<TextEditorDiagnostic> diagnosticList,
             InjectedLanguageDefinition? injectedLanguageDefinition)
@@ -565,17 +639,37 @@ public static class HtmlSyntaxTree
             if (!foundOpenTagEnding)
                 endingIndexExclusive++;
 
-            var attributeValueTextSpan = new TextEditorTextSpan(
-                startingPositionIndex,
-                endingIndexExclusive,
-                (byte)HtmlDecorationKind.AttributeValue,
-                stringWalker.ResourceUri,
-                stringWalker.SourceText);
+			TextEditorTextSpan attributeValueTextSpan;
+
+			if (textEditorService is null)
+			{
+				attributeValueTextSpan = new TextEditorTextSpan(
+	                startingPositionIndex,
+	                endingIndexExclusive,
+	                (byte)HtmlDecorationKind.AttributeValue,
+	                stringWalker.ResourceUri,
+	                stringWalker.SourceText);
+			}
+			else
+			{
+				// TODO: This is very questionable.
+				// Attribute values might be too unique to be a good idea to use EditContext_GetText with.
+				
+				attributeValueTextSpan = new TextEditorTextSpan(
+	                startingPositionIndex,
+	                endingIndexExclusive,
+	                (byte)HtmlDecorationKind.AttributeValue,
+	                stringWalker.ResourceUri,
+	                stringWalker.SourceText,
+	                textEditorService.EditContext_GetText(
+	                	stringWalker.SourceText.AsSpan(startingPositionIndex, stringWalker.PositionIndex - startingPositionIndex)));
+			}
 
             return new AttributeValueNode(attributeValueTextSpan);
         }
 
         public static CommentNode ParseComment(
+        	TextEditorService? textEditorService,
             StringWalker stringWalker,
             List<TextEditorDiagnostic> diagnosticList,
             InjectedLanguageDefinition? injectedLanguageDefinition)

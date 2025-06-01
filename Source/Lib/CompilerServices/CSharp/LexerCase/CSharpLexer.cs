@@ -756,7 +756,7 @@ public static class CSharpLexer
             _ = stringWalker.ReadCharacter();
         }
 
-		var textValue = binder.GetText(
+		var textValue = binder.TextEditorService.EditContext_GetText(
         	stringWalker.SourceText.AsSpan(entryPositionIndex, stringWalker.PositionIndex - entryPositionIndex));
 
         var textSpan = new TextEditorTextSpan(

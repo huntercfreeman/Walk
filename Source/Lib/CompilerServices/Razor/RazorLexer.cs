@@ -1,4 +1,5 @@
 using Walk.Common.RazorLib.FileSystems.Models;
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
@@ -22,15 +23,19 @@ public class RazorLexer
 	
 	private readonly List<SyntaxToken> _syntaxTokenList = new();
 	
+	private readonly TextEditorService _textEditorService;
+	
 	public List<SyntaxToken> SyntaxTokenList => _syntaxTokenList;
 
     public RazorLexer(
+    	TextEditorService textEditorService,
         ResourceUri resourceUri,
         string sourceText,
         RazorCompilerService razorCompilerService,
         CSharpCompilerService cSharpCompilerService,
         IEnvironmentProvider environmentProvider)
     {
+    	_textEditorService = textEditorService;
         _environmentProvider = environmentProvider;
         _razorCompilerService = razorCompilerService;
         _cSharpCompilerService = cSharpCompilerService;
@@ -38,7 +43,7 @@ public class RazorLexer
         ResourceUri = resourceUri;
         SourceText = sourceText;
 
-        RazorSyntaxTree = new RazorSyntaxTree(ResourceUri, _razorCompilerService, _cSharpCompilerService, _environmentProvider);
+        RazorSyntaxTree = new RazorSyntaxTree(_textEditorService, ResourceUri, _razorCompilerService, _cSharpCompilerService, _environmentProvider);
         
         _stringWalker = new(resourceUri, sourceText);
     }
@@ -50,7 +55,7 @@ public class RazorLexer
 
     public void Lex()
     {
-        RazorSyntaxTree = new RazorSyntaxTree(ResourceUri, _razorCompilerService, _cSharpCompilerService, _environmentProvider);
+        RazorSyntaxTree = new RazorSyntaxTree(_textEditorService, ResourceUri, _razorCompilerService, _cSharpCompilerService, _environmentProvider);
 
         InjectedLanguageDefinition razorInjectedLanguageDefinition = new(
             RazorFacts.TRANSITION_SUBSTRING,
@@ -61,6 +66,7 @@ public class RazorLexer
             RazorSyntaxTree.ParseAttributeValue);
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
+        	_textEditorService,
             ResourceUri,
             _stringWalker.SourceText,
             razorInjectedLanguageDefinition);

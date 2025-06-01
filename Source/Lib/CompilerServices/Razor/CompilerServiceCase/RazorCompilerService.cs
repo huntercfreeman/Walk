@@ -194,6 +194,7 @@ public sealed class RazorCompilerService : ICompilerService
 		}
     
     	var lexer = new RazorLexer(
+    		_textEditorService,
     		modelModifier.PersistentState.ResourceUri,
     		modelModifier.GetAllText(),
             this,
