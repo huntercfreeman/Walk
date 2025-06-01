@@ -1737,4 +1737,35 @@ public partial class CSharpBinder
 		codeBlockOwner.CodeBlock = codeBlock;
 		return codeBlockOwner;
 	}
+	
+	private readonly Dictionary<int, List<string>> _stringMap = new();
+	
+	public string GetText(ReadOnlySpan<char> span)
+	{
+		var key = 0;
+		
+		foreach (var character in span)
+		{
+			key += (int)character;
+		}
+		
+		if (_stringMap.TryGetValue(key, out var stringList))
+		{
+			foreach (var stringValue in stringList)
+			{
+				if (span.SequenceEqual(stringValue))
+					return stringValue;
+			}
+			
+			var str = span.ToString();
+			stringList.Add(str);
+			return str;
+		}
+		else
+		{
+			var str = span.ToString();
+			_stringMap.Add(key, new List<string> { str });
+			return str;
+		}
+	}
 }

@@ -17,9 +17,10 @@ namespace Walk.CompilerServices.CSharp.CompilerServiceCase;
 /// </summary>
 public sealed class CSharpCompilationUnit : IExtendedCompilationUnit
 {
-	public CSharpCompilationUnit(ResourceUri resourceUri)
+	public CSharpCompilationUnit(ResourceUri resourceUri, string sourceText)
 	{
 		ResourceUri = resourceUri;
+		SourceText = sourceText;
 	}
 	
 	public IEnumerable<TextEditorTextSpan> GetTextTextSpans()
@@ -33,6 +34,8 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit
     {
     	return DiagnosticList.Select(x => x.TextSpan);
     }
+    
+    public string SourceText { get; set; }
 
 	public ResourceUri ResourceUri { get; set; }
     public ISyntaxNode RootCodeBlockNode { get; set; }

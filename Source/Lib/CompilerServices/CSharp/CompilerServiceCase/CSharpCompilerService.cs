@@ -978,9 +978,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		var presentationModel = modelModifier.PresentationModelList.First(
 			x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 		
-		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri);
+		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri, presentationModel.PendingCalculation.ContentAtRequest);
 		
-		var lexerOutput = CSharpLexer.Lex(resourceUri, presentationModel.PendingCalculation.ContentAtRequest);
+		var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, presentationModel.PendingCalculation.ContentAtRequest);
 		cSharpCompilationUnit.TokenList = lexerOutput.SyntaxTokenList;
 		cSharpCompilationUnit.MiscTextSpanList = lexerOutput.MiscTextSpanList;
 
@@ -1037,9 +1037,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		if (!_resourceMap.ContainsKey(resourceUri))
 			return;
 
-		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri);
+		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri, content);
 		
-		var lexerOutput = CSharpLexer.Lex(resourceUri, content);
+		var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, content);
 		cSharpCompilationUnit.TokenList = lexerOutput.SyntaxTokenList;
 		cSharpCompilationUnit.MiscTextSpanList = lexerOutput.MiscTextSpanList;
 

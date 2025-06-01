@@ -29,11 +29,15 @@ public static class ParseOthers
                 if (textSpan == default)
                 {
                 	textSpan = matchedToken.TextSpan;
-                	textSpan.ClearTextCache();
                 	
                 	// !StatementDelimiterToken because presumably the final namespace is already being handled.
-                	if (isNamespaceStatement && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
-                		parserModel.Binder.AddNamespaceToCurrentScope(textSpan.GetText(), compilationUnit, ref parserModel);
+                	if (isNamespaceStatement)
+                	{
+                		textSpan.ClearTextCache();
+                		
+                		if (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
+	                		parserModel.Binder.AddNamespaceToCurrentScope(textSpan.GetText(), compilationUnit, ref parserModel);
+                	}
                 }
                 else
                 {
@@ -41,11 +45,15 @@ public static class ParseOthers
 			        {
 			            EndExclusiveIndex = matchedToken.TextSpan.EndExclusiveIndex
 			        };
-			        textSpan.ClearTextCache();
 			        
 			        // !StatementDelimiterToken because presumably the final namespace is already being handled.
-			        if (isNamespaceStatement && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
-			        	parserModel.Binder.AddNamespaceToCurrentScope(textSpan.GetText(), compilationUnit, ref parserModel);
+			        if (isNamespaceStatement)
+			        {
+			        	textSpan.ClearTextCache();
+			        	
+			        	if (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
+			        		parserModel.Binder.AddNamespaceToCurrentScope(textSpan.GetText(), compilationUnit, ref parserModel);
+	        	    }
                 }
 
                 if (matchedToken.IsFabricated)
