@@ -1740,6 +1740,8 @@ public partial class CSharpBinder
 	
 	private readonly Dictionary<int, List<string>> _stringMap = new();
 	
+	private int _listCount;
+	
 	public string GetText(ReadOnlySpan<char> span)
 	{
 		var key = 0;
@@ -1766,6 +1768,7 @@ public partial class CSharpBinder
 		{
 			var str = span.ToString();
 			Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
+			Console.WriteLine(++_listCount);
 			_stringMap.Add(key, new List<string> { str });
 			return str;
 		}
