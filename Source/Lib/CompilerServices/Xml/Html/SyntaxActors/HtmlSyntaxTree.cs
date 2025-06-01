@@ -172,7 +172,7 @@ public static class HtmlSyntaxTree
                         throw new NotImplementedException();
                     }
 
-                    if (tagBuilder.OpenTagNameSyntax.TextEditorTextSpan.GetText() != tagBuilder.CloseTagNameSyntax.TextEditorTextSpan.GetText())
+                    if (tagBuilder.OpenTagNameSyntax.TextEditorTextSpan.Text != tagBuilder.CloseTagNameSyntax.TextEditorTextSpan.Text)
                     {
                         /*diagnosticBag.ReportOpenTagWithUnMatchedCloseTag(
                             tagBuilder.OpenTagNameSyntax.TextEditorTextSpan.GetText(),

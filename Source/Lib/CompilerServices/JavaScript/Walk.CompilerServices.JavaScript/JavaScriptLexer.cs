@@ -128,7 +128,7 @@ public class JavaScriptLexer
 	        ResourceUri: _resourceUri,
 	        SourceText: _text);
 	    
-	    if (JavaScriptKeywords.ALL_KEYWORDS.Contains(textSpan.GetText()))
+	    if (JavaScriptKeywords.ALL_KEYWORDS.Contains(textSpan.Text))
 	    {
 	    	textSpan = textSpan with
 	    	{

@@ -12,23 +12,23 @@ public partial class CSharpFacts
             var typeDefinitionMap = new Dictionary<string, TypeDefinitionNode>
 	        {
 	            {
-	                Types.Void.TypeIdentifierToken.TextSpan.GetText(),
+	                Types.Void.TypeIdentifierToken.TextSpan.Text,
 	                Types.Void
 	            },
 	            {
-	                Types.Var.TypeIdentifierToken.TextSpan.GetText(),
+	                Types.Var.TypeIdentifierToken.TextSpan.Text,
 	                Types.Var
 	            },
 	            {
-	                Types.Bool.TypeIdentifierToken.TextSpan.GetText(),
+	                Types.Bool.TypeIdentifierToken.TextSpan.Text,
 	                Types.Bool
 	            },
 	            {
-	                Types.Int.TypeIdentifierToken.TextSpan.GetText(),
+	                Types.Int.TypeIdentifierToken.TextSpan.Text,
 	                Types.Int
 	            },
 	            {
-	                Types.String.TypeIdentifierToken.TextSpan.GetText(),
+	                Types.String.TypeIdentifierToken.TextSpan.Text,
 	                Types.String
 	            },
 	        };

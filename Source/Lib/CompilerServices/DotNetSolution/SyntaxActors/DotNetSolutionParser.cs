@@ -69,7 +69,7 @@ public class DotNetSolutionParser
 
         var globalSectionNestedProjects = DotNetSolutionGlobal.DotNetSolutionGlobalSectionList.FirstOrDefault(x =>
         {
-            return (x.GlobalSectionArgument?.TextSpan.GetText() ?? string.Empty) == 
+            return (x.GlobalSectionArgument?.TextSpan.Text ?? string.Empty) == 
                 LexSolutionFacts.GlobalSectionNestedProjects.START_TOKEN;
         });
 
@@ -82,10 +82,10 @@ public class DotNetSolutionParser
                     case AssociatedEntryKind.Pair:
                         var pair = (AssociatedEntryPair)associatedEntry;
 
-                        if (Guid.TryParse(pair.AssociatedNameToken.TextSpan.GetText(),
+                        if (Guid.TryParse(pair.AssociatedNameToken.TextSpan.Text,
                                 out var childProjectIdGuid))
                         {
-                            if (Guid.TryParse(pair.AssociatedValueToken.TextSpan.GetText(),
+                            if (Guid.TryParse(pair.AssociatedValueToken.TextSpan.Text,
                                     out var solutionFolderIdGuid))
                             {
                                 var nestedProjectEntry = new GuidNestedProjectEntry(
@@ -116,7 +116,7 @@ public class DotNetSolutionParser
         {
             foreach (var wellKnownAssociatedName in LexSolutionFacts.Header.WellKnownAssociatedNamesList)
             {
-                if (associatedNameToken.TextSpan.GetText() == wellKnownAssociatedName)
+                if (associatedNameToken.TextSpan.Text == wellKnownAssociatedName)
                 {
                     var associatedValueToken = _tokenWalker.Match(SyntaxKind.AssociatedValueToken);
 
@@ -169,7 +169,14 @@ public class DotNetSolutionParser
         // They are one value after another, no names involved.
 
         var associatedEntryPair = new AssociatedEntryPair(
-            new SyntaxToken(SyntaxKind.AssociatedNameToken, TextEditorTextSpan.FabricateTextSpan(string.Empty)),
+            new SyntaxToken(
+            	SyntaxKind.AssociatedNameToken,
+            	new TextEditorTextSpan(
+		            0,
+		            string.Empty.Length,
+		            0,
+		            new("aaa.cs"),
+		            string.Empty)),
             associatedValueToken);
 
         _associatedEntryGroupBuilderStack.Peek().AssociatedEntryList.Add(associatedEntryPair);
@@ -182,7 +189,7 @@ public class DotNetSolutionParser
 
         var success = _associatedEntryGroupBuilderStack.TryPeek(out var parent);
 
-        if (openAssociatedGroupToken.TextSpan.GetText() == LexSolutionFacts.Global.START_TOKEN)
+        if (openAssociatedGroupToken.TextSpan.Text == LexSolutionFacts.Global.START_TOKEN)
         {
             _dotNetSolutionGlobal = _dotNetSolutionGlobal with
             {
@@ -190,7 +197,7 @@ public class DotNetSolutionParser
                 OpenAssociatedGroupToken = openAssociatedGroupToken
             };
         }
-        else if (openAssociatedGroupToken.TextSpan.GetText() == LexSolutionFacts.GlobalSection.START_TOKEN)
+        else if (openAssociatedGroupToken.TextSpan.Text == LexSolutionFacts.GlobalSection.START_TOKEN)
         {
             // TODO: Should this be re-written without using a closure hack?
             var localDotNetSolutionGlobalSectionBuilder = new DotNetSolutionGlobalSectionBuilder();
@@ -211,7 +218,7 @@ public class DotNetSolutionParser
             localDotNetSolutionGlobalSectionBuilder.GlobalSectionOrder =
                 _tokenWalker.Match(SyntaxKind.AssociatedValueToken);
         }
-        else if (openAssociatedGroupToken.TextSpan.GetText() == LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN)
+        else if (openAssociatedGroupToken.TextSpan.Text == LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN)
         {
             _associatedEntryGroupBuilderStack.Push(new AssociatedEntryGroupBuilder(
                 openAssociatedGroupToken,
@@ -226,10 +233,10 @@ public class DotNetSolutionParser
                         var relativePathFromSolutionFileStringAssociatedPair = builtGroup.AssociatedEntryList[i++] as AssociatedEntryPair;
                         var projectIdGuidAssociatedPair = builtGroup.AssociatedEntryList[i++] as AssociatedEntryPair;
 
-                        _ = Guid.TryParse(projectTypeGuidAssociatedPair.AssociatedValueToken.TextSpan.GetText(), out var projectTypeGuid);
-                        var displayName = displayNameAssociatedPair.AssociatedValueToken.TextSpan.GetText();
-                        var relativePathFromSolutionFileString = relativePathFromSolutionFileStringAssociatedPair.AssociatedValueToken.TextSpan.GetText();
-                        _ = Guid.TryParse(projectIdGuidAssociatedPair.AssociatedValueToken.TextSpan.GetText(), out var projectIdGuid);
+                        _ = Guid.TryParse(projectTypeGuidAssociatedPair.AssociatedValueToken.TextSpan.Text, out var projectTypeGuid);
+                        var displayName = displayNameAssociatedPair.AssociatedValueToken.TextSpan.Text;
+                        var relativePathFromSolutionFileString = relativePathFromSolutionFileStringAssociatedPair.AssociatedValueToken.TextSpan.Text;
+                        _ = Guid.TryParse(projectIdGuidAssociatedPair.AssociatedValueToken.TextSpan.Text, out var projectIdGuid);
 
                         if (projectTypeGuid == SolutionFolder.SolutionFolderProjectTypeGuid)
                         {
@@ -270,14 +277,14 @@ public class DotNetSolutionParser
 
     private void ParseCloseAssociatedGroupToken(SyntaxToken closeAssociatedGroupToken)
     {
-        if (closeAssociatedGroupToken.TextSpan.GetText() == LexSolutionFacts.Global.END_TOKEN)
+        if (closeAssociatedGroupToken.TextSpan.Text == LexSolutionFacts.Global.END_TOKEN)
         {
             _dotNetSolutionGlobal = _dotNetSolutionGlobal with
             {
                 CloseAssociatedGroupToken = closeAssociatedGroupToken
             };
         }
-        else if (closeAssociatedGroupToken.TextSpan.GetText() == LexSolutionFacts.GlobalSection.END_TOKEN)
+        else if (closeAssociatedGroupToken.TextSpan.Text == LexSolutionFacts.GlobalSection.END_TOKEN)
         {
             var associatedEntryGroupBuilder = _associatedEntryGroupBuilderStack.Pop();
             associatedEntryGroupBuilder.CloseAssociatedGroupToken = closeAssociatedGroupToken;

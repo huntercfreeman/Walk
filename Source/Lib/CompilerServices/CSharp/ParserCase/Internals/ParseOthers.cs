@@ -29,11 +29,6 @@ public static class ParseOthers
                 if (textSpan == default)
                 {
                 	textSpan = matchedToken.TextSpan;
-                	textSpan.ClearTextCache();
-                	
-                	// !StatementDelimiterToken because presumably the final namespace is already being handled.
-                	if (isNamespaceStatement && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
-                		parserModel.Binder.AddNamespaceToCurrentScope(textSpan.GetText(), compilationUnit, ref parserModel);
                 }
                 else
                 {
@@ -41,12 +36,19 @@ public static class ParseOthers
 			        {
 			            EndExclusiveIndex = matchedToken.TextSpan.EndExclusiveIndex
 			        };
-			        textSpan.ClearTextCache();
-			        
-			        // !StatementDelimiterToken because presumably the final namespace is already being handled.
-			        if (isNamespaceStatement && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
-			        	parserModel.Binder.AddNamespaceToCurrentScope(textSpan.GetText(), compilationUnit, ref parserModel);
                 }
+
+		        // !StatementDelimiterToken because presumably the final namespace is already being handled.
+		        if (isNamespaceStatement && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
+		        {
+		        	if (textSpan.StartInclusiveIndex < textSpan.SourceText.Length && textSpan.EndExclusiveIndex <= textSpan.SourceText.Length)
+					{
+						textSpan.Text = textSpan.SourceText.Substring(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex);
+						Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
+					}
+		        	
+		        	parserModel.Binder.AddNamespaceToCurrentScope(textSpan.Text, compilationUnit, ref parserModel);
+		        }
 
                 if (matchedToken.IsFabricated)
                     break;
@@ -67,6 +69,12 @@ public static class ParseOthers
 
         if (count == 0)
             return default;
+
+		if (textSpan.StartInclusiveIndex < textSpan.SourceText.Length && textSpan.EndExclusiveIndex <= textSpan.SourceText.Length)
+		{
+			textSpan.Text = textSpan.SourceText.Substring(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex);
+			Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
+		}
 
         return new SyntaxToken(SyntaxKind.IdentifierToken, textSpan);
     }

@@ -75,6 +75,8 @@ public static class WalkDebugSomething
 	public static int WithExpressionNode { get; set; }
 	#endif
 	
+	public static int StringAllocation { get; set; }
+	
 	public static string CreateText()
 	{
 		var builder = new StringBuilder();
@@ -211,6 +213,8 @@ public static class WalkDebugSomething
 		#else
 		builder.AppendLine($"Run with 'DEBUG' mode to see output from '{nameof(WalkDebugSomething)}'.");
 		#endif
+		
+		builder.AppendLine($"{nameof(StringAllocation)}: {StringAllocation:N0}");
 		
 		builder.AppendLine();
 		

@@ -250,7 +250,7 @@ public static class LexerUtils
 			stringWalker.ResourceUri,
 			stringWalker.SourceText);
 
-		var textValue = textSpan.GetText();
+		var textValue = textSpan.Text;
 
 		if (lexerKeywords.AllKeywords.Contains(textValue))
 		{
@@ -752,7 +752,7 @@ public static class LexerUtils
 
 	public static SyntaxKind GetSyntaxKindForKeyword(TextEditorTextSpan textSpan)
 	{
-		var text = textSpan.GetText();
+		var text = textSpan.Text;
 
 		switch (text)
 		{
@@ -917,7 +917,7 @@ public static class LexerUtils
 
 	public static SyntaxKind GetSyntaxKindForContextualKeyword(TextEditorTextSpan textSpan)
 	{
-		var text = textSpan.GetText();
+		var text = textSpan.Text;
 
 		switch (text)
 		{

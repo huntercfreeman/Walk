@@ -39,7 +39,7 @@ public partial class TreeViewFindAllTextSpanDisplay : ComponentBase
 		    0,
 		    localTreeView.Item.ResourceUri,
 		    localTreeView.Item.SourceText);
-		localTreeView.PreviewEarlierNearbyText = earlierTextSpan.GetText();
+		localTreeView.PreviewEarlierNearbyText = earlierTextSpan.Text;
 		
 		var laterTextSpan = new TextEditorTextSpan(
 		    localTreeView.Item.EndExclusiveIndex,
@@ -47,6 +47,6 @@ public partial class TreeViewFindAllTextSpanDisplay : ComponentBase
 		    0,
 		    localTreeView.Item.ResourceUri,
 		    localTreeView.Item.SourceText);
-		localTreeView.PreviewLaterNearbyText = laterTextSpan.GetText();
+		localTreeView.PreviewLaterNearbyText = laterTextSpan.Text;
 	}
 }
