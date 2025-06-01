@@ -123,7 +123,7 @@ public class TokenWalker
 		var currentToken = Peek(0);
 
 		// TODO: Checking for the text 'args' is likely not a good solution. When parsing a main method, it might have the method arguments: 'string[] args'. The issue here is that 'args' comes up as a keyword while being the identifier for that method argument.
-		if (currentToken.TextSpan.GetText() == "args" && expectedSyntaxKind == SyntaxKind.IdentifierToken)
+		if (currentToken.TextSpan.Text == "args" && expectedSyntaxKind == SyntaxKind.IdentifierToken)
 		{
 			_ = Consume();
 			return new SyntaxToken(SyntaxKind.IdentifierToken, currentToken.TextSpan);

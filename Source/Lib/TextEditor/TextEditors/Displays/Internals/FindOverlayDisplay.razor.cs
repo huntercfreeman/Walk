@@ -366,7 +366,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
                 		if (x.StartInclusiveIndex == decorationByteChangedTargetTextSpanLocal.Value.StartInclusiveIndex &&
                             x.EndExclusiveIndex == decorationByteChangedTargetTextSpanLocal.Value.EndExclusiveIndex &&
                             x.ResourceUri == decorationByteChangedTargetTextSpanLocal.Value.ResourceUri &&
-                            x.GetText() == decorationByteChangedTargetTextSpanLocal.Value.GetText())
+                            x.Text == decorationByteChangedTargetTextSpanLocal.Value.Text)
                 		{
                 			needsColorResetSinceNoLongerActive = x;
                 			indexNeedsColorResetSinceNoLongerActive = i;

@@ -8,10 +8,12 @@ public class AttributeNode : IHtmlSyntaxNode
 {
     public AttributeNode(
         AttributeNameNode attributeNameSyntax,
-        AttributeValueNode attributeValueSyntax)
+        AttributeValueNode attributeValueSyntax,
+        TextEditorTextSpan textSpan)
     {
         AttributeNameSyntax = attributeNameSyntax;
         AttributeValueSyntax = attributeValueSyntax;
+        TextEditorTextSpan = textSpan;
 
         ChildContent = new List<IHtmlSyntax>
         {
@@ -28,12 +30,7 @@ public class AttributeNode : IHtmlSyntaxNode
     public IReadOnlyList<IHtmlSyntax> ChildContent { get; }
     public IReadOnlyList<IHtmlSyntax> Children { get; }
 
-    public TextEditorTextSpan TextEditorTextSpan => new(
-        AttributeNameSyntax.TextEditorTextSpan.StartInclusiveIndex,
-        AttributeValueSyntax.TextEditorTextSpan.EndExclusiveIndex,
-        (byte)GenericDecorationKind.None,
-        AttributeNameSyntax.TextEditorTextSpan.ResourceUri,
-        AttributeNameSyntax.TextEditorTextSpan.SourceText);
+    public TextEditorTextSpan TextEditorTextSpan { get; }
 
     public HtmlSyntaxKind HtmlSyntaxKind => HtmlSyntaxKind.AttributeNode;
 }

@@ -22,6 +22,7 @@
     <ProjectReference Include="..\..\CompilerServices\Json\Walk.CompilerServices.Json.csproj" />
     <ProjectReference Include="..\..\CompilerServices\Razor\Walk.CompilerServices.Razor.csproj" />
     <ProjectReference Include="..\..\CompilerServices\Xml\Walk.CompilerServices.Xml.csproj" />
+    <ProjectReference Include="..\..\CompilerServices\JavaScript\Walk.CompilerServices.JavaScript\Walk.CompilerServices.JavaScript.csproj" />
   </ItemGroup>
 
 </Project>

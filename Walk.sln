@@ -45,6 +45,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walk.Extensions.Config", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walk.Extensions.DotNet", "Source\Lib\Extensions\Extensions.DotNet\Walk.Extensions.DotNet.csproj", "{C38F13EE-DCEE-4D42-8827-3EFEAFF16638}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Walk.CompilerServices.JavaScript", "Source\Lib\CompilerServices\JavaScript\Walk.CompilerServices.JavaScript\Walk.CompilerServices.JavaScript.csproj", "{335CBC4A-CC94-4C5D-81DF-D853417F48E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -122,6 +124,10 @@ Global
 		{C38F13EE-DCEE-4D42-8827-3EFEAFF16638}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C38F13EE-DCEE-4D42-8827-3EFEAFF16638}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C38F13EE-DCEE-4D42-8827-3EFEAFF16638}.Release|Any CPU.Build.0 = Release|Any CPU
+		{335CBC4A-CC94-4C5D-81DF-D853417F48E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{335CBC4A-CC94-4C5D-81DF-D853417F48E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{335CBC4A-CC94-4C5D-81DF-D853417F48E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{335CBC4A-CC94-4C5D-81DF-D853417F48E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7AFA2C7B-6812-491C-8E14-FF60DEAE1944} = {C349E6FD-7612-4757-9534-1772DA3DEF22}
@@ -141,5 +147,6 @@ Global
 		{BCED8D7E-47DF-4B18-9795-A3D1EA4FA047} = {46ED0C8E-DD29-4326-B114-1D94C008F95E}
 		{4B489B4C-4BA5-4243-8DCC-41046CF59493} = {46ED0C8E-DD29-4326-B114-1D94C008F95E}
 		{C38F13EE-DCEE-4D42-8827-3EFEAFF16638} = {46ED0C8E-DD29-4326-B114-1D94C008F95E}
+		{335CBC4A-CC94-4C5D-81DF-D853417F48E5} = {C349E6FD-7612-4757-9534-1772DA3DEF22}
 	EndGlobalSection
 EndGlobal

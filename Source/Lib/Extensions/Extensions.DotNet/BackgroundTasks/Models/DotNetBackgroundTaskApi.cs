@@ -1018,11 +1018,11 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		var solutionFolderList = new List<SolutionFolder>();
 
 		var folderTagList = cSharpProjectSyntaxWalker.TagNodes
-			.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText() ?? string.Empty) == "Folder")
+			.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.Text ?? string.Empty) == "Folder")
 			.ToList();
     	
     	var projectTagList = cSharpProjectSyntaxWalker.TagNodes
-			.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText() ?? string.Empty) == "Project")
+			.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.Text ?? string.Empty) == "Project")
 			.ToList();
 		
 		var solutionFolderPathHashSet = new HashSet<string>();
@@ -1035,10 +1035,10 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				.AttributeNodes
 				.Select(x => (
 					x.AttributeNameSyntax.TextEditorTextSpan
-						.GetText()
+						.Text
 						.Trim(),
 					x.AttributeValueSyntax.TextEditorTextSpan
-						.GetText()
+						.Text
 						.Replace("\"", string.Empty)
 						.Replace("=", string.Empty)
 						.Trim()))
@@ -1077,10 +1077,10 @@ Execution Terminal".ReplaceLineEndings("\n")));
 						.AttributeNodes
 						.Select(x => (
 							x.AttributeNameSyntax.TextEditorTextSpan
-								.GetText()
+								.Text
 								.Trim(),
 							x.AttributeValueSyntax.TextEditorTextSpan
-								.GetText()
+								.Text
 								.Replace("\"", string.Empty)
 								.Replace("=", string.Empty)
 								.Trim()))
@@ -1119,10 +1119,10 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				.AttributeNodes
 				.Select(x => (
 					x.AttributeNameSyntax.TextEditorTextSpan
-						.GetText()
+						.Text
 						.Trim(),
 					x.AttributeValueSyntax.TextEditorTextSpan
-						.GetText()
+						.Text
 						.Replace("\"", string.Empty)
 						.Replace("=", string.Empty)
 						.Trim()))
@@ -1308,7 +1308,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
 	
 			var projectReferences = cSharpProjectSyntaxWalker.TagNodes
-				.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText() ?? string.Empty) == "ProjectReference")
+				.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.Text ?? string.Empty) == "ProjectReference")
 				.ToList();
 	
 			foreach (var projectReference in projectReferences)
@@ -1317,10 +1317,10 @@ Execution Terminal".ReplaceLineEndings("\n")));
 					.AttributeNodes
 					.Select(x => (
 						x.AttributeNameSyntax.TextEditorTextSpan
-							.GetText()
+							.Text
 							.Trim(),
 						x.AttributeValueSyntax.TextEditorTextSpan
-							.GetText()
+							.Text
 							.Replace("\"", string.Empty)
 							.Replace("=", string.Empty)
 							.Trim()))

@@ -56,7 +56,7 @@ public class CSharpEvaluator
         if (literalExpressionNode.ResultTypeReference.ValueType == typeof(int))
         {
             var value = int.Parse(
-                literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+                literalExpressionNode.LiteralSyntaxToken.TextSpan.Text);
 
             return new EvaluatorResult(
                 literalExpressionNode.ResultTypeReference.ValueType,
@@ -65,7 +65,7 @@ public class CSharpEvaluator
         else if (literalExpressionNode.ResultTypeReference.ValueType == typeof(string))
         {
             var value = new string(literalExpressionNode.LiteralSyntaxToken.TextSpan
-                .GetText()
+                .Text
                 .Skip(1)
                 .SkipLast(1)
                 .ToArray());

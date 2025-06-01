@@ -112,16 +112,16 @@ public class FindAllService : IFindAllService
         FindAllStateChanged?.Invoke();
     }
 
-    public void FlushSearchResults(List<TextEditorTextSpan> searchResultList)
+    public void FlushSearchResults(List<(string SourceText, TextEditorTextSpan TextSpan)> searchResultList)
     {
 		lock (_stateModificationLock)
 		{
 			var inState = GetFindAllState();
 
-			List<TextEditorTextSpan> localSearchResultList;
+			List<(string SourceText, TextEditorTextSpan TextSpan)> localSearchResultList;
 			lock (_flushSearchResultsLock)
 			{
-				localSearchResultList = new List<TextEditorTextSpan>(inState.SearchResultList);
+				localSearchResultList = new List<(string SourceText, TextEditorTextSpan TextSpan)>(inState.SearchResultList);
 				localSearchResultList.AddRange(searchResultList);
 				searchResultList.Clear();
 			}
@@ -202,7 +202,7 @@ public class FindAllService : IFindAllService
 		CancellationToken cancellationToken)
 	{
 		var filesProcessedCount = 0;
-		var textSpanList = new List<TextEditorTextSpan>();
+		var textSpanList = new List<(string SourceText, TextEditorTextSpan TextSpan)>();
 		var searchException = (Exception?)null;
 		
 		try
@@ -291,7 +291,7 @@ public class FindAllService : IFindAllService
 			var text = await fileSystemProvider.File.ReadAllTextAsync(filePath).ConfigureAwait(false);
 			var query = textEditorFindAllState.SearchQuery;
 				
-	        var matchedTextSpanList = new List<TextEditorTextSpan>();
+	        var matchedTextSpanList = new List<(string SourceText, TextEditorTextSpan TextSpan)>();
 	
 	        for (int outerI = 0; outerI < text.Length; outerI++)
 	        {
@@ -307,12 +307,16 @@ public class FindAllService : IFindAllService
 	                if (innerI == query.Length)
 	                {
 	                    // Then the entire query was matched
-	                    matchedTextSpanList.Add(new TextEditorTextSpan(
-	                        outerI,
-	                        outerI + innerI,
-	                        (byte)FindOverlayDecorationKind.LongestCommonSubsequence,
-	                        new ResourceUri(filePath),
-	                        text));
+	                    matchedTextSpanList.Add(
+	                    	(
+	                    		text,
+		                    	new TextEditorTextSpan(
+			                        outerI,
+			                        outerI + innerI,
+			                        (byte)FindOverlayDecorationKind.LongestCommonSubsequence,
+			                        new ResourceUri(filePath),
+			                        text)
+	                        ));
 	                }
 	            }
 	        }
@@ -346,7 +350,7 @@ public class FindAllService : IFindAllService
 	
 	private void ConstructTreeView(TextEditorFindAllState textEditorFindAllState)
 	{
-		var groupedResults = textEditorFindAllState.SearchResultList.GroupBy(x => x.ResourceUri);
+		var groupedResults = textEditorFindAllState.SearchResultList.GroupBy(x => x.TextSpan.ResourceUri);
 	
 	    var treeViewList = groupedResults.Select(group =>
 	    {

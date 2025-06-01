@@ -12,13 +12,13 @@ public static class ParseTokens
     public static void ParseIdentifierToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	if (parserModel.TokenWalker.Current.TextSpan.Length == 1 &&
-    		parserModel.TokenWalker.Current.TextSpan.GetText() == "_")
+    		parserModel.TokenWalker.Current.TextSpan.Text == "_")
     	{
     		if (!parserModel.Binder.TryGetVariableDeclarationHierarchically(
 			    	compilationUnit,
 			    	compilationUnit.ResourceUri,
 			    	parserModel.CurrentScopeIndexKey,
-			        parserModel.TokenWalker.Current.TextSpan.GetText(),
+			        parserModel.TokenWalker.Current.TextSpan.Text,
 			        out _))
 			{
 				parserModel.Binder.BindDiscard(parserModel.TokenWalker.Current, compilationUnit, ref parserModel);
@@ -164,8 +164,8 @@ public static class ParseTokens
 					parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
 				}
 				
-				if (variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText() ==
-				        CSharpFacts.Types.Var.TypeIdentifierToken.TextSpan.GetText())
+				if (variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.Text ==
+				        CSharpFacts.Types.Var.TypeIdentifierToken.TextSpan.Text)
 				{
 					if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode)
 					{
@@ -197,7 +197,7 @@ public static class ParseTokens
 		else if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
 				 UtilityApi.IsConvertibleToIdentifierToken(typeClauseNode.TypeIdentifierToken.SyntaxKind) &&
 				 parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken &&
-			     typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText() == typeClauseNode.TypeIdentifierToken.TextSpan.GetText())
+			     typeDefinitionNode.TypeIdentifierToken.TextSpan.Text == typeClauseNode.TypeIdentifierToken.TextSpan.Text)
 		{
 			// ConstructorDefinitionNode
 			
@@ -581,7 +581,7 @@ public static class ParseTokens
             	parserModel.TokenWalker);
 
             parserModel.Binder.AddNamespaceToCurrentScope(
-                namespaceStatementNode.IdentifierToken.TextSpan.GetText(),
+                namespaceStatementNode.IdentifierToken.TextSpan.Text,
                 compilationUnit,
                 ref parserModel);
         }

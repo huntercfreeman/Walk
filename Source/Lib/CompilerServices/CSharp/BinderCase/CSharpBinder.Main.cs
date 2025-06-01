@@ -96,7 +96,7 @@ public partial class CSharpBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-        var functionIdentifierText = functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText();
+        var functionIdentifierText = functionDefinitionNode.FunctionIdentifierToken.TextSpan.Text;
 
         var functionSymbol = new Symbol(
         	SyntaxKind.FunctionSymbol,
@@ -135,7 +135,7 @@ public partial class CSharpBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-        var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText();
+        var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.Text;
         
         compilationUnit.__SymbolList.Add(
         	new Symbol(
@@ -172,7 +172,7 @@ public partial class CSharpBinder
     	if (shouldCreateVariableSymbol)
         	CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
         	
-        var text = variableDeclarationNode.IdentifierToken.TextSpan.GetText();
+        var text = variableDeclarationNode.IdentifierToken.TextSpan.Text;
         
         if (TryGetVariableDeclarationNodeByScope(
         		compilationUnit,
@@ -214,7 +214,7 @@ public partial class CSharpBinder
     public bool RemoveVariableDeclarationNodeFromActiveCompilationUnit(
     	int scopeIndexKey, VariableDeclarationNode variableDeclarationNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	var text = variableDeclarationNode.IdentifierToken.TextSpan.GetText();
+    	var text = variableDeclarationNode.IdentifierToken.TextSpan.Text;
     	
     	if (TryGetVariableDeclarationNodeByScope(
         		compilationUnit,
@@ -235,7 +235,7 @@ public partial class CSharpBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-        var text = variableIdentifierToken.TextSpan.GetText();
+        var text = variableIdentifierToken.TextSpan.Text;
         VariableReferenceNode? variableReferenceNode;
 
         if (TryGetVariableDeclarationHierarchically(
@@ -296,7 +296,7 @@ public partial class CSharpBinder
         ref CSharpParserModel parserModel)
     {
         var functionInvocationIdentifierText = functionInvocationNode
-            .FunctionInvocationIdentifierToken.TextSpan.GetText();
+            .FunctionInvocationIdentifierToken.TextSpan.Text;
 
         var functionSymbol = new Symbol(
         	SyntaxKind.FunctionSymbol,
@@ -361,7 +361,7 @@ public partial class CSharpBinder
         }
 
         var matchingTypeDefintionNode = CSharpFacts.Types.TypeDefinitionNodes.SingleOrDefault(
-            x => x.TypeIdentifierToken.TextSpan.GetText() == typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+            x => x.TypeIdentifierToken.TextSpan.Text == typeClauseNode.TypeIdentifierToken.TextSpan.Text);
 
         if (matchingTypeDefintionNode is not null)
         {
@@ -434,7 +434,7 @@ public partial class CSharpBinder
         		parserModel.GetNextSymbolId(),
         		namespaceIdentifierToken.TextSpan));
         		
-        AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan.GetText(), compilationUnit, ref parserModel);
+        AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan.Text, compilationUnit, ref parserModel);
     }
     
     public void BindTypeDefinitionNode(
@@ -443,8 +443,8 @@ public partial class CSharpBinder
         ref CSharpParserModel parserModel,
         bool shouldOverwrite = false)
     {
-        var typeIdentifierText = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText();
-        var currentNamespaceStatementText = parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText();
+        var typeIdentifierText = typeDefinitionNode.TypeIdentifierToken.TextSpan.Text;
+        var currentNamespaceStatementText = parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.Text;
         var namespaceAndTypeIdentifiers = new NamespaceAndTypeIdentifiers(currentNamespaceStatementText, typeIdentifierText);
 
         typeDefinitionNode.EncompassingNamespaceIdentifierString = currentNamespaceStatementText;
@@ -625,7 +625,7 @@ public partial class CSharpBinder
         				compilationUnit,
 	            		compilationUnit.ResourceUri,
 	            		parserModel.CurrentScopeIndexKey,
-	            		typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(),
+	            		typeDefinitionNode.TypeIdentifierToken.TextSpan.Text,
 	            		typeDefinitionNode);
             }
         }
@@ -1269,7 +1269,7 @@ public partial class CSharpBinder
         				cSharpCompilationUnit,
         				textSpan.ResourceUri,
         				scope.IndexKey,
-		                getTextResult ?? textSpan.GetText(),
+		                getTextResult ?? textSpan.Text,
 		                out var variableDeclarationStatementNode)
 		            && variableDeclarationStatementNode is not null)
 		        {
@@ -1287,7 +1287,7 @@ public partial class CSharpBinder
 	        				 cSharpCompilationUnit,
 	        				 textSpan.ResourceUri,
         					 scope.IndexKey,
-		                     getTextResult ?? textSpan.GetText(),
+		                     getTextResult ?? textSpan.Text,
 		                     out var functionDefinitionNode)
 		                 && functionDefinitionNode is not null)
 		        {
@@ -1306,7 +1306,7 @@ public partial class CSharpBinder
 	        				 cSharpCompilationUnit,
 	        			     textSpan.ResourceUri,
         					 scope.IndexKey,
-		                     getTextResult ?? textSpan.GetText(),
+		                     getTextResult ?? textSpan.Text,
 		                     out var typeDefinitionNode)
 		                 && typeDefinitionNode is not null)
 		        {
@@ -1334,7 +1334,7 @@ public partial class CSharpBinder
 						    string.Empty,
 						    string.Empty),
 	        			externalSyntaxKind,
-	        			getTextResult: textSpan.GetText());
+	        			getTextResult: textSpan.Text);
 	        	}
 	        }
         }
@@ -1509,7 +1509,7 @@ public partial class CSharpBinder
         				cSharpCompilationUnit,
         				foundSymbol.Value.TextSpan.ResourceUri,
         				scope.IndexKey,
-		                foundSymbol.Value.TextSpan.GetText(),
+		                foundSymbol.Value.TextSpan.Text,
 		                out var variableDeclarationStatementNode)
 		            && variableDeclarationStatementNode is not null)
 		        {
@@ -1644,7 +1644,7 @@ public partial class CSharpBinder
     	{
     		case SyntaxKind.NamespaceStatementNode:
     			var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
-	    		var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText();
+	    		var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.Text;
 	        	parserModel.Binder.AddNamespaceToCurrentScope(namespaceString, cSharpCompilationUnit, ref parserModel);
 	        	return;
 	        case SyntaxKind.FunctionDefinitionNode:
@@ -1736,5 +1736,45 @@ public partial class CSharpBinder
 
 		codeBlockOwner.CodeBlock = codeBlock;
 		return codeBlockOwner;
+	}
+	
+	private readonly Dictionary<int, List<string>> _stringMap = new();
+	
+	// private int _listCount;
+	// private int _collisionCount;
+	
+	public string GetText(ReadOnlySpan<char> span)
+	{
+		var key = 0;
+		
+		foreach (var character in span)
+		{
+			key += (int)character;
+		}
+		
+		if (_stringMap.TryGetValue(key, out var stringList))
+		{
+			foreach (var stringValue in stringList)
+			{
+				if (span.SequenceEqual(stringValue))
+					return stringValue;
+			}
+			
+			var str = span.ToString();
+			// Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
+			// Console.Write("_collisionCount_");
+			// Console.WriteLine(++_collisionCount);
+			stringList.Add(str);
+			return str;
+		}
+		else
+		{
+			var str = span.ToString();
+			// Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
+			// Console.Write("_listCount_");
+			// Console.WriteLine(++_listCount);
+			_stringMap.Add(key, new List<string> { str });
+			return str;
+		}
 	}
 }

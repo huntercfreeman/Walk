@@ -36,7 +36,7 @@
 			var functionDefinitionNode = (FunctionDefinitionNode)syntaxViewModelLocal.DefinitionNode;
 			returnTypeClauseNode = functionDefinitionNode.ReturnTypeReference;
 			returnTypeClauseNodeText = null;
-			methodName = functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText();
+			methodName = functionDefinitionNode.FunctionIdentifierToken.TextSpan.Text;
 			genericParameterListing = functionDefinitionNode.GenericParameterListing;
 			functionArgumentListing = functionDefinitionNode.FunctionArgumentListing;
 		}
@@ -69,7 +69,7 @@
 			var functionInvocationNode = (FunctionInvocationNode)syntaxViewModelLocal.TargetNode;
 			returnTypeClauseNode = functionInvocationNode.ResultTypeReference;
 			returnTypeClauseNodeText = null;
-			methodName = functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.GetText();
+			methodName = functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Text;
 			genericParameterListing = functionInvocationNode.GenericParameterListing;
 			functionArgumentListing = null;
 		}
@@ -101,14 +101,14 @@
 		{
 			returnTypeClauseNode = default;
 			returnTypeClauseNodeText = null;
-			methodName = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.GetText();
+			methodName = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.Text;
 			genericParameterListing = null;
 			functionArgumentListing = null;
 		}
 		else if (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.ConstructorSymbol)
 		{
 			returnTypeClauseNode = default;
-			returnTypeClauseNodeText = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.GetText();
+			returnTypeClauseNodeText = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.Text;
 			methodName = null;
 			genericParameterListing = null;
 			functionArgumentListing = null;

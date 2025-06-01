@@ -27,26 +27,26 @@ public partial class TreeViewFindAllTextSpanDisplay : ComponentBase
 		
 		var distanceOffset = 15;
 		
-		var startingIndexInclusive = localTreeView.Item.StartInclusiveIndex - distanceOffset;
+		var startingIndexInclusive = localTreeView.Item.TextSpan.StartInclusiveIndex - distanceOffset;
 		startingIndexInclusive = Math.Max(0, startingIndexInclusive);
 		
-    	var endingIndexExclusive = localTreeView.Item.EndExclusiveIndex + distanceOffset;
+    	var endingIndexExclusive = localTreeView.Item.TextSpan.EndExclusiveIndex + distanceOffset;
   	  endingIndexExclusive = Math.Min(localTreeView.Item.SourceText.Length, endingIndexExclusive);
     	
     	var earlierTextSpan = new TextEditorTextSpan(
 		    startingIndexInclusive,
-		    startingIndexInclusive + localTreeView.Item.StartInclusiveIndex - startingIndexInclusive,
+		    startingIndexInclusive + localTreeView.Item.TextSpan.StartInclusiveIndex - startingIndexInclusive,
 		    0,
-		    localTreeView.Item.ResourceUri,
+		    localTreeView.Item.TextSpan.ResourceUri,
 		    localTreeView.Item.SourceText);
-		localTreeView.PreviewEarlierNearbyText = earlierTextSpan.GetText();
+		localTreeView.PreviewEarlierNearbyText = earlierTextSpan.Text;
 		
 		var laterTextSpan = new TextEditorTextSpan(
-		    localTreeView.Item.EndExclusiveIndex,
-		    localTreeView.Item.EndExclusiveIndex + endingIndexExclusive - localTreeView.Item.EndExclusiveIndex,
+		    localTreeView.Item.TextSpan.EndExclusiveIndex,
+		    localTreeView.Item.TextSpan.EndExclusiveIndex + endingIndexExclusive - localTreeView.Item.TextSpan.EndExclusiveIndex,
 		    0,
-		    localTreeView.Item.ResourceUri,
+		    localTreeView.Item.TextSpan.ResourceUri,
 		    localTreeView.Item.SourceText);
-		localTreeView.PreviewLaterNearbyText = laterTextSpan.GetText();
+		localTreeView.PreviewLaterNearbyText = laterTextSpan.Text;
 	}
 }

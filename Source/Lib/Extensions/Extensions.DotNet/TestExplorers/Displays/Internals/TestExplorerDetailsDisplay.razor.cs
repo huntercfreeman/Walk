@@ -122,10 +122,12 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 			for (int i = 0; i < newDecorationTextSpanList.Count; i++)
 			{
 				var textSpan = newDecorationTextSpanList[i];
-				newDecorationTextSpanList[i] = textSpan with
+				
+				// 2025-06-01
+				/*newDecorationTextSpanList[i] = textSpan with
 				{
 					SourceText = newContent
-				};
+				};*/
 			}
 
 			TextEditorService.WorkerArbitrary.PostUnique(editContext =>

@@ -172,7 +172,7 @@ public static class HtmlSyntaxTree
                         throw new NotImplementedException();
                     }
 
-                    if (tagBuilder.OpenTagNameSyntax.TextEditorTextSpan.GetText() != tagBuilder.CloseTagNameSyntax.TextEditorTextSpan.GetText())
+                    if (tagBuilder.OpenTagNameSyntax.TextEditorTextSpan.Text != tagBuilder.CloseTagNameSyntax.TextEditorTextSpan.Text)
                     {
                         /*diagnosticBag.ReportOpenTagWithUnMatchedCloseTag(
                             tagBuilder.OpenTagNameSyntax.TextEditorTextSpan.GetText(),
@@ -388,7 +388,13 @@ public static class HtmlSyntaxTree
 
             return new AttributeNode(
                 attributeNameSyntax,
-                attributeValueSyntax);
+                attributeValueSyntax,
+                new(
+			        attributeNameSyntax.TextEditorTextSpan.StartInclusiveIndex,
+			        attributeValueSyntax.TextEditorTextSpan.EndExclusiveIndex,
+			        (byte)GenericDecorationKind.None,
+			        attributeNameSyntax.TextEditorTextSpan.ResourceUri,
+			        stringWalker.SourceText));
         }
 
         /// <summary>currentCharacterIn:<br/> -Any character that can start an attribute name<br/> currentCharacterOut:<br/> -<see cref="WhitespaceFacts.ALL_LIST"/> (whitespace)<br/> -<see cref="HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE"/><br/> -<see cref="HtmlFacts.OPEN_TAG_ENDING_OPTIONS"/></summary>

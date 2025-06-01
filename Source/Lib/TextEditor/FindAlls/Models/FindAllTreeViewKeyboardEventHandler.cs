@@ -58,7 +58,7 @@ public class FindAllTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
     			editContext,
 				treeViewFindAllTextSpan.AbsolutePath.Value,
 				shouldSetFocusToEditor,
-				treeViewFindAllTextSpan.Item.StartInclusiveIndex,
+				treeViewFindAllTextSpan.Item.TextSpan.StartInclusiveIndex,
 				new Category("main"),
 				Key<TextEditorViewModel>.NewKey());
     	});

@@ -35,7 +35,7 @@
 		
 		prefixText = prefixBuilder.ToString();
 		prefixTextCssClass = "di_te_keyword";
-		text = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText();
+		text = typeDefinitionNode.TypeIdentifierToken.TextSpan.Text;
 		syntaxHighlightingClassCssString = "di_te_type";
 		genericParameterListing = typeDefinitionNode.GenericParameterListing;
 		hasQuestionMark = null;
@@ -47,7 +47,7 @@
 	
 		prefixText = "(reference)";
 		prefixTextCssClass = null;
-		text = typeClauseNode.TypeIdentifierToken.TextSpan.GetText();
+		text = typeClauseNode.TypeIdentifierToken.TextSpan.Text;
 		
 		if (typeClauseNode.IsKeywordType)
 			syntaxHighlightingClassCssString = "di_te_keyword";
@@ -62,7 +62,7 @@
 	{
 		prefixText = "(symbol)";
 		prefixTextCssClass = null;
-		text = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.GetText();
+		text = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.Text;
 		syntaxHighlightingClassCssString = "di_te_type";
 		genericParameterListing = null;
 		hasQuestionMark = null;
@@ -72,7 +72,7 @@
 	{
 		prefixText = "(reference)";
 		prefixTextCssClass = null;
-		text = TypeReference.TypeIdentifierToken.TextSpan.GetText();
+		text = TypeReference.TypeIdentifierToken.TextSpan.Text;
 		
 		if (TypeReference.IsKeywordType)
 			syntaxHighlightingClassCssString = "di_te_keyword";

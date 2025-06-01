@@ -84,12 +84,11 @@ public record SemanticResultRazor
             symbolSourceText_StartInclusiveIndex +
             (textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex);
 
-        return textSpan with
-        {
-            ResourceUri = sourceResourceUri,
-            SourceText = sourceText,
-            StartInclusiveIndex = symbolSourceText_StartInclusiveIndex,
-            EndExclusiveIndex = symbolSourceText_EndExclusiveIndex,
-        };
+        return new TextEditorTextSpan(
+        	symbolSourceText_StartInclusiveIndex,
+        	symbolSourceText_EndExclusiveIndex,
+        	textSpan.DecorationByte,
+        	sourceResourceUri,
+        	sourceText);
     }
 }

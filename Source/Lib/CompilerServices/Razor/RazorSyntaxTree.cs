@@ -103,9 +103,9 @@ public class RazorSyntaxTree
 
 		var cSharpBinder = new CSharpBinder();
 		
-        var compilationUnit = new CSharpCompilationUnit(_codebehindResourceUri);
+        var compilationUnit = new CSharpCompilationUnit(_codebehindResourceUri, classContents);
 			
-		var lexerOutput = CSharpLexer.Lex(_codebehindResourceUri, classContents);
+		var lexerOutput = CSharpLexer.Lex(cSharpBinder, _codebehindResourceUri, classContents);
 		
 		cSharpBinder.StartCompilationUnit(_codebehindResourceUri);
 		
@@ -225,7 +225,7 @@ public class RazorSyntaxTree
     {
         var allTypeDefinitions = _cSharpCompilerService.__CSharpBinder.AllTypeDefinitions;
 
-        var text = textSpan.GetText();
+        var text = textSpan.Text;
         
         var matchingKvps = allTypeDefinitions.Where(x => x.Key == text);
 
@@ -236,7 +236,7 @@ public class RazorSyntaxTree
             if (typeDefinitionNode is not null && typeDefinitionNode.InheritedTypeReference != TypeFacts.NotApplicable.ToTypeReference())
             {
                 var inheritanceIdentifierText = typeDefinitionNode
-                    .InheritedTypeReference.TypeIdentifierToken.TextSpan.GetText();
+                    .InheritedTypeReference.TypeIdentifierToken.TextSpan.Text;
 
                 if (inheritanceIdentifierText != "ComponentBase")
                     continue;
@@ -569,7 +569,7 @@ public class RazorSyntaxTree
             stringWalker.SourceText);
 
         ParseCSharpWithAdhocMethodWrapping(
-            textSpan.GetText(),
+            textSpan.Text,
             entryPositionIndex,
             stringWalker);
 
@@ -1371,7 +1371,7 @@ public class RazorSyntaxTree
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
 
-        var lexerOutput = CSharpLexer.Lex(ResourceUri.Empty, cSharpText);
+        var lexerOutput = CSharpLexer.Lex(new CSharpBinder(), ResourceUri.Empty, cSharpText);
 
         foreach (var lexedTokenTextSpan in lexerOutput.SyntaxTokenList.Select(x => x.TextSpan).Union(lexerOutput.MiscTextSpanList))
         {

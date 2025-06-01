@@ -114,7 +114,7 @@ public static class DiagnosticHelper
 		Report(
 			diagnosticList,
 			TextEditorDiagnosticLevel.Error,
-			$"'{textSpan.GetText()}' is not defined in the context '{contextString}'",
+			$"'{textSpan.Text}' is not defined in the context '{contextString}'",
 			textSpan,
 			Guid.Parse("89b61fa8-541d-4154-9425-82c5667842a8"));
 	}
