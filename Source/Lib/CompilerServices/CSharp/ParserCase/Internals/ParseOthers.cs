@@ -43,7 +43,7 @@ public static class ParseOthers
 		        {
 		        	if (textSpan.StartInclusiveIndex < compilationUnit.SourceText.Length && textSpan.EndExclusiveIndex <= compilationUnit.SourceText.Length)
 					{
-						textSpan.Text = parserModel.Binder.GetText(
+						textSpan.Text = parserModel.Binder.TextEditorService.EditContext_GetText(
         					compilationUnit.SourceText.AsSpan(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex));
 					}
 		        	
@@ -72,7 +72,7 @@ public static class ParseOthers
 
 		if (textSpan.StartInclusiveIndex < compilationUnit.SourceText.Length && textSpan.EndExclusiveIndex <= compilationUnit.SourceText.Length)
 		{
-			textSpan.Text = parserModel.Binder.GetText(
+			textSpan.Text = parserModel.Binder.TextEditorService.EditContext_GetText(
 				compilationUnit.SourceText.AsSpan(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex));
 		}
 

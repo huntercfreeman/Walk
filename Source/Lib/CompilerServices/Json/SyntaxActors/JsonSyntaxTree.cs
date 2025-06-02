@@ -9,6 +9,7 @@ namespace Walk.CompilerServices.Json.SyntaxActors;
 public class JsonSyntaxTree
 {
     public static JsonSyntaxUnit ParseText(
+    	StringWalker stringWalker,
         ResourceUri resourceUri,
         string content)
     {
@@ -17,7 +18,7 @@ public class JsonSyntaxTree
         var textEditorJsonDiagnosticBag = new List<TextEditorDiagnostic>();
 
         // Step through the string 'character by character'
-        var stringWalker = new StringWalker(resourceUri, content);
+        stringWalker.Initialize(resourceUri, content);
 
         // Order matters with the methods of pattern, 'Consume{Something}'
         // Example: 'ConsumeComment'

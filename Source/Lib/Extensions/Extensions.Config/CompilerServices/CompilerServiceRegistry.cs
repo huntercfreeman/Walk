@@ -30,7 +30,7 @@ public class ConfigCompilerServiceRegistry : ICompilerServiceRegistry
     {
         CSharpCompilerService = new CSharpCompilerService(textEditorService, clipboardService);
         CSharpProjectCompilerService = new CSharpProjectCompilerService(textEditorService);
-        JavaScriptCompilerService = new JavaScriptCompilerService(textEditorService);
+        // JavaScriptCompilerService = new JavaScriptCompilerService(textEditorService);
         CssCompilerService = new CssCompilerService(textEditorService);
         DotNetSolutionCompilerService = new DotNetSolutionCompilerService(textEditorService);
         JsonCompilerService = new JsonCompilerService(textEditorService);
@@ -43,7 +43,7 @@ public class ConfigCompilerServiceRegistry : ICompilerServiceRegistry
         _map.Add(ExtensionNoPeriodFacts.XML, XmlCompilerService);
         _map.Add(ExtensionNoPeriodFacts.C_SHARP_PROJECT, CSharpProjectCompilerService);
         _map.Add(ExtensionNoPeriodFacts.C_SHARP_CLASS, CSharpCompilerService);
-        _map.Add(ExtensionNoPeriodFacts.JAVA_SCRIPT, JavaScriptCompilerService);
+        // _map.Add(ExtensionNoPeriodFacts.JAVA_SCRIPT, JavaScriptCompilerService);
         _map.Add(ExtensionNoPeriodFacts.RAZOR_CODEBEHIND, CSharpCompilerService);
         _map.Add(ExtensionNoPeriodFacts.RAZOR_MARKUP, RazorCompilerService);
         _map.Add(ExtensionNoPeriodFacts.CSHTML_CLASS, RazorCompilerService);
@@ -56,7 +56,7 @@ public class ConfigCompilerServiceRegistry : ICompilerServiceRegistry
 
     public CSharpCompilerService CSharpCompilerService { get; }
     public CSharpProjectCompilerService CSharpProjectCompilerService { get; }
-    public JavaScriptCompilerService JavaScriptCompilerService { get; }
+    // public JavaScriptCompilerService JavaScriptCompilerService { get; }
     public CssCompilerService CssCompilerService { get; }
     public DotNetSolutionCompilerService DotNetSolutionCompilerService { get; }
     public JsonCompilerService JsonCompilerService { get; }

@@ -58,6 +58,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 			.ConfigureAwait(false);
 
 		var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
+			textEditorService: null,
 			new(Item.CSharpProjectNamespacePath.AbsolutePath.Value),
 			content);
 

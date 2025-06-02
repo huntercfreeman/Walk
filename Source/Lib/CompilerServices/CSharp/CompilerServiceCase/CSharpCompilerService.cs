@@ -29,7 +29,7 @@ namespace Walk.CompilerServices.CSharp.CompilerServiceCase;
 public sealed class CSharpCompilerService : IExtendedCompilerService
 {
 	// <summary>Public because the RazorCompilerService uses it.</summary>
-    public readonly CSharpBinder __CSharpBinder = new();
+    public readonly CSharpBinder __CSharpBinder;
     
     private readonly Dictionary<ResourceUri, CSharpResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
@@ -44,6 +44,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     {
     	_textEditorService = textEditorService;
     	_clipboardService = clipboardService;
+    	
+    	__CSharpBinder = new(_textEditorService);
     }
 
     public event Action? ResourceRegistered;

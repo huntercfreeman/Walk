@@ -134,6 +134,11 @@ public sealed class TextEditorService
 	/// </summary>
 	public StringBuilder __StringBuilder { get; } = new StringBuilder();
 	
+	/// <summary>
+	/// Do not touch this property, it is used for the ICompilerService implementations.
+	/// </summary>
+	public StringWalker __StringWalker { get; } = new StringWalker();
+	
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>
@@ -162,6 +167,50 @@ public sealed class TextEditorService
     public TextEditorViewModelLiason __TextEditorViewModelLiason { get; }
     
     public event Action? TextEditorStateChanged;
+    
+    private readonly Dictionary<int, List<string>> _stringMap = new();
+	
+	// private int _listCount;
+	// private int _collisionCount;
+	
+	/// <summary>
+	/// This is only safe to use if you're in a TextEditorEditContext.
+	/// (i.e.: there is an instance of TextEditorEditContext in scope)
+	/// </summary>
+	public string EditContext_GetText(ReadOnlySpan<char> span)
+	{
+		var key = 0;
+		
+		foreach (var character in span)
+		{
+			key += (int)character;
+		}
+		
+		if (_stringMap.TryGetValue(key, out var stringList))
+		{
+			foreach (var stringValue in stringList)
+			{
+				if (span.SequenceEqual(stringValue))
+					return stringValue;
+			}
+			
+			var str = span.ToString();
+			// Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
+			// Console.Write("_collisionCount_");
+			// Console.WriteLine(++_collisionCount);
+			stringList.Add(str);
+			return str;
+		}
+		else
+		{
+			var str = span.ToString();
+			// Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
+			// Console.Write("_listCount_");
+			// Console.WriteLine(++_listCount);
+			_stringMap.Add(key, new List<string> { str });
+			return str;
+		}
+	}
 
 	public async ValueTask FinalizePost(TextEditorEditContext editContext)
 	{
