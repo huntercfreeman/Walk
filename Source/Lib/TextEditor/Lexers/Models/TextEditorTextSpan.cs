@@ -14,6 +14,7 @@ public record struct TextEditorTextSpan
 		this.DecorationByte = DecorationByte;
 		this.ResourceUri = ResourceUri;
 		
+		// !!! WARNING THIS CODE IS DUPLICATED IN OTHER CONSTRUCTORS. !!!
 		if (Text is null && StartInclusiveIndex < SourceText.Length && EndExclusiveIndex <= SourceText.Length && EndExclusiveIndex >= StartInclusiveIndex)
 		{
 			Text = SourceText.Substring(StartInclusiveIndex, EndExclusiveIndex - StartInclusiveIndex);
@@ -53,18 +54,46 @@ public record struct TextEditorTextSpan
     /// otherwise.
     /// </summary>
     public TextEditorTextSpan(
-            int startInclusiveIndex,
-		    int endExclusiveIndex,
-		    byte decorationByte,
-		    ResourceUri resourceUri,
-		    string sourceText,
-		    string getTextPrecalculatedResult)
+	    int startInclusiveIndex,
+	    int endExclusiveIndex,
+	    byte decorationByte,
+	    ResourceUri resourceUri,
+	    string sourceText,
+	    string getTextPrecalculatedResult)
     {
     	StartInclusiveIndex = startInclusiveIndex;
 		EndExclusiveIndex = endExclusiveIndex;
 		DecorationByte = decorationByte;
 		ResourceUri = resourceUri;
 		Text = getTextPrecalculatedResult;
+    }
+    
+    public TextEditorTextSpan(
+        int startInclusiveIndex,
+	    int endExclusiveIndex,
+	    byte decorationByte,
+	    ResourceUri resourceUri,
+	    string sourceText,
+	    TextEditorService textEditorService)
+    {
+    	StartInclusiveIndex = startInclusiveIndex;
+		EndExclusiveIndex = endExclusiveIndex;
+		DecorationByte = decorationByte;
+		ResourceUri = resourceUri;
+		
+		if (textEditorService is null)
+		{
+			if (Text is null && StartInclusiveIndex < sourceText.Length && EndExclusiveIndex <= sourceText.Length && EndExclusiveIndex >= StartInclusiveIndex)
+			{
+				Text = sourceText.Substring(StartInclusiveIndex, EndExclusiveIndex - StartInclusiveIndex);
+				Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
+			}
+		}
+		else
+		{
+			Text = textEditorService.EditContext_GetText(
+	        	sourceText.AsSpan(StartInclusiveIndex, EndExclusiveIndex - StartInclusiveIndex));
+		}
     }
 	
 	public int StartInclusiveIndex { get; set; }

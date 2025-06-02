@@ -28,21 +28,12 @@ public static class HtmlSyntaxTree
 	/// </summary>
     public static HtmlSyntaxUnit ParseText(
     	TextEditorService? textEditorService,
+    	StringWalker stringWalker,
         ResourceUri resourceUri,
         string content,
         InjectedLanguageDefinition? injectedLanguageDefinition = null)
     {
-    	StringWalker stringWalker;
-    	
-    	if (textEditorService is null)
-    	{
-        	stringWalker = new StringWalker(resourceUri, content);
-        }
-        else
-        {
-        	stringWalker = textEditorService.__StringWalker;
-        	stringWalker.Initialize(resourceUri, content);
-        }
+    	stringWalker.Initialize(resourceUri, content);
 
         var rootTagSyntaxBuilder = new TagNodeBuilder
         {
@@ -275,28 +266,13 @@ public static class HtmlSyntaxTree
                 }
             }
 
-			TextEditorTextSpan tagNameTextSpan;
-
-			if (textEditorService is null)
-			{
-				tagNameTextSpan = new TextEditorTextSpan(
-	                startingPositionIndex,
-	                stringWalker.PositionIndex,
-	                (byte)HtmlDecorationKind.TagName,
-	                stringWalker.ResourceUri,
-	                stringWalker.SourceText);
-			}
-			else
-			{
-				tagNameTextSpan = new TextEditorTextSpan(
-	                startingPositionIndex,
-	                stringWalker.PositionIndex,
-	                (byte)HtmlDecorationKind.TagName,
-	                stringWalker.ResourceUri,
-	                stringWalker.SourceText,
-	                textEditorService.EditContext_GetText(
-	                	stringWalker.SourceText.AsSpan(startingPositionIndex, stringWalker.PositionIndex - startingPositionIndex)));
-			}
+			var tagNameTextSpan = new TextEditorTextSpan(
+	            startingPositionIndex,
+	            stringWalker.PositionIndex,
+	            (byte)HtmlDecorationKind.TagName,
+	            stringWalker.ResourceUri,
+	            stringWalker.SourceText,
+	            textEditorService);
 
             injectedLanguageDefinition?.ParseTagName?.Invoke(
                 stringWalker,
@@ -504,29 +480,14 @@ public static class HtmlSyntaxTree
                 }
             }
             
-            TextEditorTextSpan attributeNameTextSpan;
+            var attributeNameTextSpan = new TextEditorTextSpan(
+                startingPositionIndex,
+                stringWalker.PositionIndex,
+                (byte)HtmlDecorationKind.AttributeName,
+                stringWalker.ResourceUri,
+                stringWalker.SourceText,
+                textEditorService);
             
-            if (textEditorService is null)
-            {
-            	attributeNameTextSpan = new TextEditorTextSpan(
-	                startingPositionIndex,
-	                stringWalker.PositionIndex,
-	                (byte)HtmlDecorationKind.AttributeName,
-	                stringWalker.ResourceUri,
-	                stringWalker.SourceText);
-            }
-            else
-            {
-            	attributeNameTextSpan = new TextEditorTextSpan(
-	                startingPositionIndex,
-	                stringWalker.PositionIndex,
-	                (byte)HtmlDecorationKind.AttributeName,
-	                stringWalker.ResourceUri,
-	                stringWalker.SourceText,
-	                textEditorService.EditContext_GetText(
-	            		stringWalker.SourceText.AsSpan(startingPositionIndex, stringWalker.PositionIndex - startingPositionIndex)));
-        	}
-
             return new AttributeNameNode(attributeNameTextSpan);
         }
 

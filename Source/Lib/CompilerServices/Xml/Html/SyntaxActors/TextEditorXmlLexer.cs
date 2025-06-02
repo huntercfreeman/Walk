@@ -29,6 +29,7 @@ public class TextEditorXmlLexer
     {
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
         	_textEditorService,
+        	_textEditorService.__StringWalker,
             ResourceUri,
             SourceText);
 

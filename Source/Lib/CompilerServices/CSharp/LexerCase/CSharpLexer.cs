@@ -766,16 +766,15 @@ public static class CSharpLexer
             _ = stringWalker.ReadCharacter();
         }
 
-		var textValue = binder.TextEditorService.EditContext_GetText(
-        	stringWalker.SourceText.AsSpan(entryPositionIndex, stringWalker.PositionIndex - entryPositionIndex));
-
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             stringWalker.PositionIndex,
             (byte)GenericDecorationKind.None,
             stringWalker.ResourceUri,
             stringWalker.SourceText,
-            textValue);
+            binder.TextEditorService);
+        
+        var textValue = textSpan.Text;
         
         if (CSharpKeywords.ALL_KEYWORDS_HASH_SET.Contains(textValue))
         {

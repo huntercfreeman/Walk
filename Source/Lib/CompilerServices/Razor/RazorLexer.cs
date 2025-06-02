@@ -19,7 +19,7 @@ public class RazorLexer
 
 	private static readonly LexerKeywords LexerKeywords = LexerKeywords.Empty;
 	
-	private readonly StringWalker _stringWalker;
+	private readonly StringWalker _htmlStringWalker;
 	
 	private readonly List<SyntaxToken> _syntaxTokenList = new();
 	
@@ -29,6 +29,7 @@ public class RazorLexer
 
     public RazorLexer(
     	TextEditorService textEditorService,
+    	StringWalker htmlStringWalker,
         ResourceUri resourceUri,
         string sourceText,
         RazorCompilerService razorCompilerService,
@@ -36,6 +37,7 @@ public class RazorLexer
         IEnvironmentProvider environmentProvider)
     {
     	_textEditorService = textEditorService;
+    	_htmlStringWalker = htmlStringWalker;
         _environmentProvider = environmentProvider;
         _razorCompilerService = razorCompilerService;
         _cSharpCompilerService = cSharpCompilerService;
@@ -44,8 +46,6 @@ public class RazorLexer
         SourceText = sourceText;
 
         RazorSyntaxTree = new RazorSyntaxTree(_textEditorService, ResourceUri, _razorCompilerService, _cSharpCompilerService, _environmentProvider);
-        
-        _stringWalker = new(resourceUri, sourceText);
     }
     
     public ResourceUri ResourceUri { get; }
@@ -67,8 +67,9 @@ public class RazorLexer
 
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
         	_textEditorService,
+        	_htmlStringWalker,
             ResourceUri,
-            _stringWalker.SourceText,
+            SourceText,
             razorInjectedLanguageDefinition);
 
         var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
