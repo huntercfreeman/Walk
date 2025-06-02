@@ -11,11 +11,20 @@ public static class CSharpLexer
 	/// <summary>
 	/// Initialize the CSharpLexerOutput here, then start the while loop with 'Lex_Frame(...)'.
 	/// </summary>
-    public static CSharpLexerOutput Lex(CSharpBinder binder, ResourceUri resourceUri, string sourceText)
+    public static CSharpLexerOutput Lex(CSharpBinder binder, ResourceUri resourceUri, string sourceText, bool shouldUseSharedStringWalker)
     {
     	var lexerOutput = new CSharpLexerOutput();
-    	var stringWalker = binder.TextEditorService.__StringWalker;
-    	stringWalker.Initialize(resourceUri, sourceText);
+    	StringWalker stringWalker;
+    	
+    	if (shouldUseSharedStringWalker)
+    	{
+    		stringWalker = binder.TextEditorService.__StringWalker;
+    		stringWalker.Initialize(resourceUri, sourceText);
+    	}
+    	else
+    	{
+    		stringWalker = new(resourceUri, sourceText);
+    	}
     	
     	var previousEscapeCharacterTextSpan = new TextEditorTextSpan(
     		0,

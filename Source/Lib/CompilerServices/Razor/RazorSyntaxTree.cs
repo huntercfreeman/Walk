@@ -107,7 +107,7 @@ public class RazorSyntaxTree
 
         var compilationUnit = new CSharpCompilationUnit(_codebehindResourceUri, classContents);
 			
-		var lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, _codebehindResourceUri, classContents);
+		var lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, _codebehindResourceUri, classContents, shouldUseSharedStringWalker: false);
 		
 		_cSharpCompilerService.__CSharpBinder.StartCompilationUnit(_codebehindResourceUri);
 		
@@ -1374,7 +1374,7 @@ public class RazorSyntaxTree
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
 
-        var lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, ResourceUri.Empty, cSharpText);
+        var lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, ResourceUri.Empty, cSharpText, shouldUseSharedStringWalker: false);
 
         foreach (var lexedTokenTextSpan in lexerOutput.SyntaxTokenList.Select(x => x.TextSpan).Union(lexerOutput.MiscTextSpanList))
         {

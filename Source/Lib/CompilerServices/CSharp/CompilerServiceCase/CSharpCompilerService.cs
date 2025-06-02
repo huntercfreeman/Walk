@@ -982,7 +982,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		
 		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri, presentationModel.PendingCalculation.ContentAtRequest);
 		
-		var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, presentationModel.PendingCalculation.ContentAtRequest);
+		var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, presentationModel.PendingCalculation.ContentAtRequest, shouldUseSharedStringWalker: true);
 		cSharpCompilationUnit.TokenList = lexerOutput.SyntaxTokenList;
 		cSharpCompilationUnit.MiscTextSpanList = lexerOutput.MiscTextSpanList;
 
@@ -1041,7 +1041,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
 		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri, content);
 		
-		var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, content);
+		var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, content, shouldUseSharedStringWalker: true);
 		cSharpCompilationUnit.TokenList = lexerOutput.SyntaxTokenList;
 		cSharpCompilationUnit.MiscTextSpanList = lexerOutput.MiscTextSpanList;
 
