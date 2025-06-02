@@ -172,7 +172,7 @@ public sealed class TextEditorService
 	
 	// private int _listCount;
 	// private int _collisionCount;
-	private int _stringAllocationCount;
+	// private int _stringAllocationCount;
 	
 	/// <summary>
 	/// This is only safe to use if you're in a TextEditorEditContext.
@@ -198,7 +198,6 @@ public sealed class TextEditorService
 			var str = span.ToString();
 			// Console.Write("_stringAllocationCount_");
 			// Console.WriteLine(++_stringAllocationCount);
-			// Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
 			// Console.Write("_collisionCount_");
 			// Console.WriteLine(++_collisionCount);
 			stringList.Add(str);
@@ -209,7 +208,6 @@ public sealed class TextEditorService
 			var str = span.ToString();
 			// Console.Write("_stringAllocationCount_");
 			// Console.WriteLine(++_stringAllocationCount);
-			// Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
 			// Console.Write("_listCount_");
 			// Console.WriteLine(++_listCount);
 			_stringMap.Add(key, new List<string> { str });
