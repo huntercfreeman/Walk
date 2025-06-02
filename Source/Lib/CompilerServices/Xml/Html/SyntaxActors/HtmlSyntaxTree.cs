@@ -32,7 +32,17 @@ public static class HtmlSyntaxTree
         string content,
         InjectedLanguageDefinition? injectedLanguageDefinition = null)
     {
-        var stringWalker = new StringWalker(resourceUri, content);
+    	StringWalker stringWalker;
+    	
+    	if (textEditorService is null)
+    	{
+        	stringWalker = new StringWalker(resourceUri, content);
+        }
+        else
+        {
+        	stringWalker = textEditorService.__StringWalker;
+        	stringWalker.Initialize(resourceUri, content);
+        }
 
         var rootTagSyntaxBuilder = new TagNodeBuilder
         {
@@ -639,7 +649,7 @@ public static class HtmlSyntaxTree
             if (!foundOpenTagEnding)
                 endingIndexExclusive++;
 
-			TextEditorTextSpan attributeValueTextSpan;
+			/*TextEditorTextSpan attributeValueTextSpan;
 
 			if (textEditorService is null)
 			{
@@ -663,7 +673,15 @@ public static class HtmlSyntaxTree
 	                stringWalker.SourceText,
 	                textEditorService.EditContext_GetText(
 	                	stringWalker.SourceText.AsSpan(startingPositionIndex, stringWalker.PositionIndex - startingPositionIndex)));
-			}
+			}*/
+			
+			// Not currently worth it using `EditContext_GetText` for an attribute value, too distinct.
+			var attributeValueTextSpan = new TextEditorTextSpan(
+	            startingPositionIndex,
+	            endingIndexExclusive,
+	            (byte)HtmlDecorationKind.AttributeValue,
+	            stringWalker.ResourceUri,
+	            stringWalker.SourceText);
 
             return new AttributeValueNode(attributeValueTextSpan);
         }

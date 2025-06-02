@@ -8,23 +8,27 @@ namespace Walk.TextEditor.RazorLib.Lexers.Models;
 /// <summary>Provides common API that can be used when implementing an <see cref="ITextEditorLexer" /> for the <see cref="TextEditorModel" />.<br /><br />The marker for an out of bounds read is <see cref="ParserFacts.END_OF_FILE" />.</summary>
 public class StringWalker
 {
-	private static List<char> _emptyAdditionalCharactersToBreakOnList = new();
+	private readonly StringBuilder _stringBuilder = new();
+
+	/// <summary>See: Initialize(...)</summary>
+	public StringWalker()
+	{
+	}
 
 	/// <summary>Pass in the <see cref="ResourceUri"/> of a file, and its text. One can pass in <see cref="string.Empty"/> for the <see cref="ResourceUri"/> if they are only working with the text itself.</summary>
 	public StringWalker(ResourceUri resourceUri, string sourceText)
 	{
-		ResourceUri = resourceUri;
-		SourceText = sourceText;
+		Initialize(resourceUri, sourceText);
 	}
 
 	/// <summary>The character index within the <see cref="SourceText" />.</summary>
 	public int PositionIndex { get; private set; }
 
 	/// <summary>The file that the <see cref="SourceText"/> came from.</summary>
-	public ResourceUri ResourceUri { get; }
+	public ResourceUri ResourceUri { get; private set; }
 
 	/// <summary>The text which is to be stepped through.</summary>
-	public string SourceText { get; }
+	public string SourceText { get; private set; }
 
 	/// <summary>Returns <see cref="PeekCharacter" /> invoked with the value of zero</summary>
 	public char CurrentCharacter => PeekCharacter(0);
@@ -37,6 +41,13 @@ public class StringWalker
 
 	/// <summary>Returns if the current character is the end of file character</summary>
 	public bool IsEof => CurrentCharacter == ParserFacts.END_OF_FILE;
+	
+	public void Initialize(ResourceUri resourceUri, string sourceText)
+	{
+		PositionIndex = 0;
+		ResourceUri = resourceUri;
+		SourceText = sourceText;
+	}
 
 	/// <summary>If <see cref="PositionIndex" /> is within bounds of the <see cref="SourceText" />.<br /><br />Then the character within the string <see cref="SourceText" /> at index of <see cref="PositionIndex" /> is returned and <see cref="PositionIndex" /> is incremented by one.<br /><br />Otherwise, <see cref="ParserFacts.END_OF_FILE" /> is returned and the value of <see cref="PositionIndex" /> is unchanged.</summary>
 	public char ReadCharacter()
@@ -73,66 +84,66 @@ public class StringWalker
 	/// <summary>Iterates a counter from 0 until the counter is equal to <see cref="length" />.<br /><br />Each iteration <see cref="ReadCharacter" /> will be invoked.<br /><br />If an iteration's invocation of <see cref="ReadCharacter" /> returned <see cref="ParserFacts.END_OF_FILE" /> then the method will short circuit and return regardless of whether it finished iterating to <see cref="length" /> or not.</summary>
 	public string ReadRange(int length)
 	{
-		var consumeBuilder = new StringBuilder();
+		_stringBuilder.Clear();
 
 		for (var i = 0; i < length; i++)
 		{
 			var currentCharacter = ReadCharacter();
 
-			consumeBuilder.Append(currentCharacter);
+			_stringBuilder.Append(currentCharacter);
 
 			if (currentCharacter == ParserFacts.END_OF_FILE)
 				break;
 		}
 
-		return consumeBuilder.ToString();
+		return _stringBuilder.ToString();
 	}
 
 	/// <summary>Iterates a counter from 0 until the counter is equal to <see cref="length" />.<br /><br />Each iteration <see cref="PeekCharacter" /> will be invoked using the (<see cref="offset" /> + counter).<br /><br />If an iteration's invocation of <see cref="PeekCharacter" /> returned <see cref="ParserFacts.END_OF_FILE" /> then the method will short circuit and return regardless of whether it finished iterating to <see cref="length" /> or not.</summary>
 	public string PeekRange(int offset, int length)
 	{
-		var peekBuilder = new StringBuilder();
+		_stringBuilder.Clear();
 
 		for (var i = 0; i < length; i++)
 		{
 			var currentCharacter = PeekCharacter(offset + i);
 
-			peekBuilder.Append(currentCharacter);
+			_stringBuilder.Append(currentCharacter);
 
 			if (currentCharacter == ParserFacts.END_OF_FILE)
 				break;
 		}
 
-		return peekBuilder.ToString();
+		return _stringBuilder.ToString();
 	}
 
 	/// <summary>Iterates a counter from 0 until the counter is equal to <see cref="length" />.<br /><br />Each iteration <see cref="BacktrackCharacter" /> will be invoked using the.<br /><br />If an iteration's invocation of <see cref="BacktrackCharacter" /> returned <see cref="ParserFacts.END_OF_FILE" /> then the method will short circuit and return regardless of whether it finished iterating to <see cref="length" /> or not.</summary>
 	public string BacktrackRange(int length)
 	{
-		var backtrackBuilder = new StringBuilder();
+		_stringBuilder.Clear();
 
 		for (var i = 0; i < length; i++)
 		{
 			if (PositionIndex == 0)
 			{
-				backtrackBuilder.Append(ParserFacts.END_OF_FILE);
-				return backtrackBuilder.ToString();
+				_stringBuilder.Append(ParserFacts.END_OF_FILE);
+				return _stringBuilder.ToString();
 			}
 
 			var currentCharacter = BacktrackCharacter();
 
-			backtrackBuilder.Append(currentCharacter);
+			_stringBuilder.Append(currentCharacter);
 
 			if (currentCharacter == ParserFacts.END_OF_FILE)
 				break;
 		}
 
-		return backtrackBuilder.ToString();
+		return _stringBuilder.ToString();
 	}
 
 	public string PeekNextWord()
 	{
-		var nextWordBuilder = new StringBuilder();
+		_stringBuilder.Clear();
 
 		var i = 0;
 
@@ -148,10 +159,10 @@ public class StringWalker
 				break;
 			}
 
-			nextWordBuilder.Append(peekedChar);
+			_stringBuilder.Append(peekedChar);
 		} while (peekedChar != ParserFacts.END_OF_FILE);
 
-		return nextWordBuilder.ToString();
+		return _stringBuilder.ToString();
 	}
 
 	/// <summary>Form a substring of the <see cref="SourceText" /> that starts inclusively at the index <see cref="PositionIndex" /> and has a maximum length of <see cref="substring" />.Length.<br /><br />This method uses <see cref="PeekRange" /> internally and therefore will return a string that ends with <see cref="ParserFacts.END_OF_FILE" /> if an index out of bounds read was performed on <see cref="SourceText" /></summary>
@@ -184,19 +195,19 @@ public class StringWalker
 	{
 		var whitespaceCharacterList = whitespaceOverrideList ?? WhitespaceFacts.ALL_LIST;
 
-		var whitespaceBuilder = new StringBuilder();
+		_stringBuilder.Clear();
 
 		while (whitespaceCharacterList.Contains(CurrentCharacter))
 		{
 			var currentCharacter = ReadCharacter();
 
-			whitespaceBuilder.Append(currentCharacter);
+			_stringBuilder.Append(currentCharacter);
 
 			if (currentCharacter == ParserFacts.END_OF_FILE)
 				break;
 		}
 
-		return whitespaceBuilder.ToString();
+		return _stringBuilder.ToString();
 	}
 
 	/// <Summary>
@@ -226,17 +237,17 @@ public class StringWalker
 
 	public string ReadUntil(char deliminator)
 	{
-		var textBuilder = new StringBuilder();
+		_stringBuilder.Clear();
 
 		while (!IsEof)
 		{
 			if (CurrentCharacter == deliminator)
 				break;
 
-			textBuilder.Append(ReadCharacter());
+			_stringBuilder.Append(ReadCharacter());
 		}
 
-		return textBuilder.ToString();
+		return _stringBuilder.ToString();
 	}
 
 	/// <summary>
@@ -244,17 +255,17 @@ public class StringWalker
 	/// </summary>
 	public string ReadLine()
 	{
-		var textBuilder = new StringBuilder();
+		_stringBuilder.Clear();
 
 		while (!IsEof)
 		{
 			if (WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(CurrentCharacter))
 				break;
 
-			textBuilder.Append(ReadCharacter());
+			_stringBuilder.Append(ReadCharacter());
 		}
 
-		return textBuilder.ToString();
+		return _stringBuilder.ToString();
 	}
 
 	/// <summary>
@@ -263,10 +274,10 @@ public class StringWalker
 	/// </summary>
 	public (TextEditorTextSpan textSpan, string value) ReadWordTuple(IReadOnlyList<char>? additionalCharactersToBreakOnList = null)
 	{
-		additionalCharactersToBreakOnList ??= _emptyAdditionalCharactersToBreakOnList;
+		additionalCharactersToBreakOnList ??= Array.Empty<char>();
 
 		// The wordBuilder is appended to everytime a character is consumed.
-		var wordBuilder = new StringBuilder();
+		_stringBuilder.Clear();
 
 		// wordBuilderStartInclusiveIndex == -1 is to mean that wordBuilder is empty.
 		var wordBuilderStartInclusiveIndex = -1;
@@ -285,7 +296,7 @@ public class StringWalker
 				wordBuilderStartInclusiveIndex = PositionIndex;
 			}
 
-			wordBuilder.Append(CurrentCharacter);
+			_stringBuilder.Append(CurrentCharacter);
 
 			_ = ReadCharacter();
 		}
@@ -296,6 +307,6 @@ public class StringWalker
 				0,
 				ResourceUri,
 				SourceText),
-			wordBuilder.ToString());
+			_stringBuilder.ToString());
 	}
 }

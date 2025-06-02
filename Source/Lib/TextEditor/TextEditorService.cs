@@ -134,6 +134,11 @@ public sealed class TextEditorService
 	/// </summary>
 	public StringBuilder __StringBuilder { get; } = new StringBuilder();
 	
+	/// <summary>
+	/// Do not touch this property, it is used for the ICompilerService implementations.
+	/// </summary>
+	public StringWalker __StringWalker { get; } = new StringWalker();
+	
     /// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.
 	/// </summary>

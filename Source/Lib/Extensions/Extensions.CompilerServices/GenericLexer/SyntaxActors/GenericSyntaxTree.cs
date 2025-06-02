@@ -16,12 +16,15 @@ public class GenericSyntaxTree
 
 	public GenericLanguageDefinition GenericLanguageDefinition { get; }
 
-	public virtual GenericSyntaxUnit ParseText(ResourceUri resourceUri, string content)
+	public virtual GenericSyntaxUnit ParseText(
+    	StringWalker stringWalker,
+    	ResourceUri resourceUri,
+    	string content)
 	{
 		var documentChildList = new List<IGenericSyntax>();
 		var diagnosticList = new List<TextEditorDiagnostic>();
 
-		var stringWalker = new StringWalker(resourceUri, content);
+		stringWalker.Initialize(resourceUri, content);
 
 		while (!stringWalker.IsEof)
 		{

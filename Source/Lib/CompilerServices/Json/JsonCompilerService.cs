@@ -177,7 +177,7 @@ public sealed class JsonCompilerService : ICompilerService
 
 	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
     {
-    	var lexer = new TextEditorJsonLexer(modelModifier.PersistentState.ResourceUri, modelModifier.GetAllText());
+    	var lexer = new TextEditorJsonLexer(_textEditorService, modelModifier.PersistentState.ResourceUri, modelModifier.GetAllText());
     	lexer.Lex();
     
     	lock (_resourceMapLock)

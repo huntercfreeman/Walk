@@ -11,6 +11,7 @@ namespace Walk.CompilerServices.Css.SyntaxActors;
 public class CssSyntaxTree
 {
     public static CssSyntaxUnit ParseText(
+    	StringWalker stringWalker,
         ResourceUri resourceUri,
         string sourceText)
     {
@@ -19,7 +20,7 @@ public class CssSyntaxTree
         var textEditorCssDiagnosticBag = new List<TextEditorDiagnostic>();
 
         // Step through the string 'character by character'
-        var stringWalker = new StringWalker(resourceUri, sourceText);
+        stringWalker.Initialize(resourceUri, sourceText);
 
         // Order matters with the methods of pattern, 'Consume{Something}'
         // Example: 'ConsumeComment'

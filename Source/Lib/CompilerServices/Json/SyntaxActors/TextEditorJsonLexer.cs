@@ -1,5 +1,6 @@
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.RenderStates.Models;
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
@@ -9,9 +10,16 @@ namespace Walk.CompilerServices.Json.SyntaxActors;
 public class TextEditorJsonLexer
 {
 	public static LexerKeywords LexerKeyWords = LexerKeywords.Empty;
+	
+	private readonly TextEditorService _textEditorService;
 
-    public TextEditorJsonLexer(ResourceUri resourceUri, string sourceText)
+    public TextEditorJsonLexer(
+    	TextEditorService textEditorService,
+    	ResourceUri resourceUri,
+    	string sourceText)
     {
+    	_textEditorService = textEditorService;
+    	
     	ResourceUri = resourceUri;
     	SourceText = sourceText;
     }
@@ -25,6 +33,7 @@ public class TextEditorJsonLexer
     public void Lex()
     {
         var jsonSyntaxUnit = JsonSyntaxTree.ParseText(
+        	_textEditorService.__StringWalker,
             ResourceUri,
             SourceText);
         
