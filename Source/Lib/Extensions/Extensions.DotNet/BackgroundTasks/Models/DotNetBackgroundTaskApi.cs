@@ -1196,6 +1196,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		string content)
 	{
 		var lexer = new DotNetSolutionLexer(
+			new StringWalker(),
 			resourceUri,
 			content);
 

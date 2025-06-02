@@ -191,7 +191,7 @@ public class StringWalker
 	/// default of what qualifies as whitespace.
 	/// The default whitespace chars are: <see cref="WhitespaceFacts.ALL_LIST"/>
 	/// </summary>
-	public string ReadWhitespace(IEnumerable<char>? whitespaceOverrideList = null)
+	public string ReadWhitespace(bool shouldReturnReadWhitespace, IEnumerable<char>? whitespaceOverrideList = null)
 	{
 		var whitespaceCharacterList = whitespaceOverrideList ?? WhitespaceFacts.ALL_LIST;
 
@@ -201,13 +201,17 @@ public class StringWalker
 		{
 			var currentCharacter = ReadCharacter();
 
-			_stringBuilder.Append(currentCharacter);
+			if (shouldReturnReadWhitespace)
+				_stringBuilder.Append(currentCharacter);
 
 			if (currentCharacter == ParserFacts.END_OF_FILE)
 				break;
 		}
 
-		return _stringBuilder.ToString();
+		if (shouldReturnReadWhitespace)
+			return _stringBuilder.ToString();
+		else
+			return string.Empty;
 	}
 
 	/// <Summary>

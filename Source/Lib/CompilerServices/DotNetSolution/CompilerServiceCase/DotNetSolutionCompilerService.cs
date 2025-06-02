@@ -189,7 +189,7 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
     	}
     	else
     	{
-	    	var lexer = new DotNetSolutionLexer(modelModifier.PersistentState.ResourceUri, modelModifier.GetAllText());
+	    	var lexer = new DotNetSolutionLexer(_textEditorService.__StringWalker, modelModifier.PersistentState.ResourceUri, modelModifier.GetAllText());
 	    	lexer.Lex();
 	    	
 	        var parser = new DotNetSolutionParser(lexer);
