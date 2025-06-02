@@ -107,7 +107,7 @@ public class RazorSyntaxTree
 
         var compilationUnit = new CSharpCompilationUnit(_codebehindResourceUri, classContents);
 			
-		var lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, _codebehindResourceUri, classContents, shouldUseSharedStringWalker: false);
+		var lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, _codebehindResourceUri, classContents, shouldUseSharedStringWalker: true);
 		
 		_cSharpCompilerService.__CSharpBinder.StartCompilationUnit(_codebehindResourceUri);
 		
@@ -602,8 +602,7 @@ public class RazorSyntaxTree
                         stringWalker.ResourceUri,
                         stringWalker.SourceText)));
 
-            _ = stringWalker
-                .ReadRange(matchedOn.Length);
+            stringWalker.SkipRange(matchedOn.Length);
         }
 
         switch (matchedOn)
@@ -868,8 +867,7 @@ public class RazorSyntaxTree
                         stringWalker.ResourceUri,
                         stringWalker.SourceText)));
 
-            _ = stringWalker
-                .ReadRange(matchedOn.Length);
+            stringWalker.SkipRange(matchedOn.Length);
         }
 
         switch (matchedOn)
@@ -1151,8 +1149,7 @@ public class RazorSyntaxTree
                                 stringWalker.SourceText)));
 
                     // -1 is in the case that "else{" instead of a space between "else" and "{"
-                    _ = stringWalker
-                        .ReadRange(elseIfKeywordCombo.Length - 1);
+                    stringWalker.SkipRange(elseIfKeywordCombo.Length - 1);
                 }
 
                 if (!TryReadExplicitInlineExpression(
@@ -1225,8 +1222,7 @@ public class RazorSyntaxTree
                                 stringWalker.SourceText)));
 
                     // -1 is in the case that "else{" instead of a space between "else" and "{"
-                    _ = stringWalker
-                        .ReadRange(CSharpRazorKeywords.ELSE_KEYWORD.Length - 1);
+                    stringWalker.SkipRange(CSharpRazorKeywords.ELSE_KEYWORD.Length - 1);
                 }
 
                 if (TryReadCodeBlock(
@@ -1283,8 +1279,7 @@ public class RazorSyntaxTree
                                 stringWalker.SourceText)));
 
                     // -1 is in the case that "while()" instead of a space between "while" and "("
-                    _ = stringWalker
-                        .ReadRange(CSharpRazorKeywords.WHILE_KEYWORD.Length - 1);
+                    stringWalker.SkipRange(CSharpRazorKeywords.WHILE_KEYWORD.Length - 1);
                 }
 
                 if (TryReadExplicitInlineExpression(
@@ -1374,7 +1369,7 @@ public class RazorSyntaxTree
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
 
-        var lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, ResourceUri.Empty, cSharpText, shouldUseSharedStringWalker: false);
+        var lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, ResourceUri.Empty, cSharpText, shouldUseSharedStringWalker: true);
 
         foreach (var lexedTokenTextSpan in lexerOutput.SyntaxTokenList.Select(x => x.TextSpan).Union(lexerOutput.MiscTextSpanList))
         {

@@ -1006,6 +1006,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 	{
     	var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
     		_textEditorService,
+    		_textEditorService.__StringWalker,
 			new(solutionAbsolutePath.Value),
 			content);
 
@@ -1301,6 +1302,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 	
 			var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
 				_textEditorService,
+				_textEditorService.__StringWalker,
 				new(projectTuple.Project.AbsolutePath.Value),
 				content);
 	

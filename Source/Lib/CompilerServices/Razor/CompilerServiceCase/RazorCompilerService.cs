@@ -23,6 +23,11 @@ public sealed class RazorCompilerService : ICompilerService
     
     private readonly Dictionary<ResourceUri, RazorResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
+    
+    /// <summary>
+    /// Cannot use shared for both the razor and the C#.
+    /// </summary>
+    private readonly StringWalker _htmlStringWalker = new();
 
     public RazorCompilerService(
         TextEditorService textEditorService,
@@ -195,6 +200,7 @@ public sealed class RazorCompilerService : ICompilerService
     
     	var lexer = new RazorLexer(
     		_textEditorService,
+    		_htmlStringWalker,
     		modelModifier.PersistentState.ResourceUri,
     		modelModifier.GetAllText(),
             this,

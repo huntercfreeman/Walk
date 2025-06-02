@@ -766,16 +766,15 @@ public static class CSharpLexer
             _ = stringWalker.ReadCharacter();
         }
 
-		var textValue = binder.TextEditorService.EditContext_GetText(
-        	stringWalker.SourceText.AsSpan(entryPositionIndex, stringWalker.PositionIndex - entryPositionIndex));
-
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             stringWalker.PositionIndex,
             (byte)GenericDecorationKind.None,
             stringWalker.ResourceUri,
             stringWalker.SourceText,
-            textValue);
+            binder.TextEditorService);
+        
+        var textValue = textSpan.Text;
         
         if (CSharpKeywords.ALL_KEYWORDS_HASH_SET.Contains(textValue))
         {
@@ -929,7 +928,7 @@ public static class CSharpLexer
         var entryPositionIndex = stringWalker.PositionIndex;
 
         // Move past the initial "/*"
-        _ = stringWalker.ReadRange(2);
+        stringWalker.SkipRange(2);
 
         // Declare outside the while loop to avoid overhead of redeclaring each loop? not sure
         var possibleClosingText = false;

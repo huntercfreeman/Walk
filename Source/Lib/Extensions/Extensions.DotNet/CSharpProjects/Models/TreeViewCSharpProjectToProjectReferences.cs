@@ -1,6 +1,7 @@
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.CompilerServices.Xml.Html.SyntaxActors;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
@@ -58,6 +59,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 
 		var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
 			textEditorService: null,
+			new StringWalker(),
 			new(Item.CSharpProjectNamespacePath.AbsolutePath.Value),
 			content);
 

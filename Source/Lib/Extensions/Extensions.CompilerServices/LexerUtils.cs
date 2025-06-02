@@ -190,7 +190,7 @@ public static class LexerUtils
 		var entryPositionIndex = stringWalker.PositionIndex;
 
 		// Move past the initial "/*"
-		_ = stringWalker.ReadRange(2);
+		stringWalker.SkipRange(2);
 
 		// Declare outside the while loop to avoid overhead of redeclaring each loop? not sure
 		var possibleClosingText = false;

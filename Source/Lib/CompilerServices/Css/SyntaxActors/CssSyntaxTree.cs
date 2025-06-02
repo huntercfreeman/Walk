@@ -76,7 +76,7 @@ public class CssSyntaxTree
             if (closingOfCommentTextFound)
             {
                 // Skip the rest of the comment closing text
-                _ = stringWalker.ReadRange(CssFacts.COMMENT_END.Length - 1);
+                stringWalker.SkipRange(CssFacts.COMMENT_END.Length - 1);
 
                 var commentTextSpan = new TextEditorTextSpan(
                     commentStartingPositionIndex,

@@ -28,21 +28,12 @@ public static class HtmlSyntaxTree
 	/// </summary>
     public static HtmlSyntaxUnit ParseText(
     	TextEditorService? textEditorService,
+    	StringWalker stringWalker,
         ResourceUri resourceUri,
         string content,
         InjectedLanguageDefinition? injectedLanguageDefinition = null)
     {
-    	StringWalker stringWalker;
-    	
-    	if (textEditorService is null)
-    	{
-        	stringWalker = new StringWalker(resourceUri, content);
-        }
-        else
-        {
-        	stringWalker = textEditorService.__StringWalker;
-        	stringWalker.Initialize(resourceUri, content);
-        }
+    	stringWalker.Initialize(resourceUri, content);
 
         var rootTagSyntaxBuilder = new TagNodeBuilder
         {
@@ -156,7 +147,7 @@ public static class HtmlSyntaxTree
                 }
                 else if (stringWalker.PeekForSubstring(HtmlFacts.OPEN_TAG_SELF_CLOSING_ENDING))
                 {
-                    _ = stringWalker.ReadRange(
+                    stringWalker.SkipRange(
                             HtmlFacts.OPEN_TAG_SELF_CLOSING_ENDING
                                 .Length);
 
@@ -169,7 +160,7 @@ public static class HtmlSyntaxTree
                 {
                     tagBuilder.HtmlSyntaxKind = HtmlSyntaxKind.TagClosingNode;
 
-                    _ = stringWalker.ReadRange(
+                    stringWalker.SkipRange(
                         HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_BEGINNING
                             .Length);
 
@@ -184,7 +175,7 @@ public static class HtmlSyntaxTree
                             tagBuilder.CloseTagNameSyntax = new TagNameNode(
                                 new(closeTagNameStartingPositionIndex, stringWalker, (byte)HtmlDecorationKind.TagName));
 
-                            _ = stringWalker.ReadRange(HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_ENDING.Length);
+                            stringWalker.SkipRange(HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_ENDING.Length);
 
                             break;
                         }
@@ -275,28 +266,13 @@ public static class HtmlSyntaxTree
                 }
             }
 
-			TextEditorTextSpan tagNameTextSpan;
-
-			if (textEditorService is null)
-			{
-				tagNameTextSpan = new TextEditorTextSpan(
-	                startingPositionIndex,
-	                stringWalker.PositionIndex,
-	                (byte)HtmlDecorationKind.TagName,
-	                stringWalker.ResourceUri,
-	                stringWalker.SourceText);
-			}
-			else
-			{
-				tagNameTextSpan = new TextEditorTextSpan(
-	                startingPositionIndex,
-	                stringWalker.PositionIndex,
-	                (byte)HtmlDecorationKind.TagName,
-	                stringWalker.ResourceUri,
-	                stringWalker.SourceText,
-	                textEditorService.EditContext_GetText(
-	                	stringWalker.SourceText.AsSpan(startingPositionIndex, stringWalker.PositionIndex - startingPositionIndex)));
-			}
+			var tagNameTextSpan = new TextEditorTextSpan(
+	            startingPositionIndex,
+	            stringWalker.PositionIndex,
+	            (byte)HtmlDecorationKind.TagName,
+	            stringWalker.ResourceUri,
+	            stringWalker.SourceText,
+	            textEditorService);
 
             injectedLanguageDefinition?.ParseTagName?.Invoke(
                 stringWalker,
@@ -504,29 +480,14 @@ public static class HtmlSyntaxTree
                 }
             }
             
-            TextEditorTextSpan attributeNameTextSpan;
+            var attributeNameTextSpan = new TextEditorTextSpan(
+                startingPositionIndex,
+                stringWalker.PositionIndex,
+                (byte)HtmlDecorationKind.AttributeName,
+                stringWalker.ResourceUri,
+                stringWalker.SourceText,
+                textEditorService);
             
-            if (textEditorService is null)
-            {
-            	attributeNameTextSpan = new TextEditorTextSpan(
-	                startingPositionIndex,
-	                stringWalker.PositionIndex,
-	                (byte)HtmlDecorationKind.AttributeName,
-	                stringWalker.ResourceUri,
-	                stringWalker.SourceText);
-            }
-            else
-            {
-            	attributeNameTextSpan = new TextEditorTextSpan(
-	                startingPositionIndex,
-	                stringWalker.PositionIndex,
-	                (byte)HtmlDecorationKind.AttributeName,
-	                stringWalker.ResourceUri,
-	                stringWalker.SourceText,
-	                textEditorService.EditContext_GetText(
-	            		stringWalker.SourceText.AsSpan(startingPositionIndex, stringWalker.PositionIndex - startingPositionIndex)));
-        	}
-
             return new AttributeNameNode(attributeNameTextSpan);
         }
 
@@ -707,7 +668,7 @@ public static class HtmlSyntaxTree
             }
 
             // Skip the remaining characters in the comment tag ending string
-            _ = stringWalker.ReadRange(HtmlFacts.COMMENT_TAG_ENDING.Length - 1);
+            stringWalker.SkipRange(HtmlFacts.COMMENT_TAG_ENDING.Length - 1);
 
             var commentTagTextSpan = new TextEditorTextSpan(
                 startingPositionIndex,

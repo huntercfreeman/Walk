@@ -120,7 +120,7 @@ public class TerminalInteractive : ITerminalInteractive
 			}
 			
 			// Get arguments
-			stringWalker.ReadWhitespace(shouldReturnReadWhitespace: false);
+			stringWalker.SkipWhitespace();
 			var arguments = stringWalker.RemainingText;
 		
 			return new TerminalCommandParsed(
