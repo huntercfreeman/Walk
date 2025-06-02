@@ -147,7 +147,7 @@ public static class HtmlSyntaxTree
                 }
                 else if (stringWalker.PeekForSubstring(HtmlFacts.OPEN_TAG_SELF_CLOSING_ENDING))
                 {
-                    _ = stringWalker.ReadRange(
+                    stringWalker.SkipRange(
                             HtmlFacts.OPEN_TAG_SELF_CLOSING_ENDING
                                 .Length);
 
@@ -160,7 +160,7 @@ public static class HtmlSyntaxTree
                 {
                     tagBuilder.HtmlSyntaxKind = HtmlSyntaxKind.TagClosingNode;
 
-                    _ = stringWalker.ReadRange(
+                    stringWalker.SkipRange(
                         HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_BEGINNING
                             .Length);
 
@@ -175,7 +175,7 @@ public static class HtmlSyntaxTree
                             tagBuilder.CloseTagNameSyntax = new TagNameNode(
                                 new(closeTagNameStartingPositionIndex, stringWalker, (byte)HtmlDecorationKind.TagName));
 
-                            _ = stringWalker.ReadRange(HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_ENDING.Length);
+                            stringWalker.SkipRange(HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_ENDING.Length);
 
                             break;
                         }
@@ -668,7 +668,7 @@ public static class HtmlSyntaxTree
             }
 
             // Skip the remaining characters in the comment tag ending string
-            _ = stringWalker.ReadRange(HtmlFacts.COMMENT_TAG_ENDING.Length - 1);
+            stringWalker.SkipRange(HtmlFacts.COMMENT_TAG_ENDING.Length - 1);
 
             var commentTagTextSpan = new TextEditorTextSpan(
                 startingPositionIndex,

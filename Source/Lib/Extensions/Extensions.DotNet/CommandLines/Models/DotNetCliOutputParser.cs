@@ -336,7 +336,7 @@ public class DotNetCliOutputParser
 						if (stringWalker.PeekForSubstring(keywordTags))
 						{
 							// The '-1' is due to the while loop always reading a character at the end.
-							_ = stringWalker.ReadRange(keywordTags.Length - 1);
+							stringWalker.SkipRange(keywordTags.Length - 1);
 
 							NewListModelSession.ShouldLocateKeywordTags = false;
 						}
@@ -418,7 +418,7 @@ public class DotNetCliOutputParser
 				if (isFirstColumn)
 					isFirstColumn = false;
 				else
-					stringWalker.ReadRange(spaceBetweenColumnsCount);
+					stringWalker.SkipRange(spaceBetweenColumnsCount);
 
 				/*			
 				// Skip whitespace

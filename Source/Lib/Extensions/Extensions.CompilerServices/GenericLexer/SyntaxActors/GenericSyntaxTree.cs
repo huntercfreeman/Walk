@@ -284,7 +284,7 @@ public class GenericSyntaxTree
 		{
 			genericFunctionSyntax = null;
 
-			_ = stringWalker.ReadRange(rememberPositionIndex - stringWalker.PositionIndex);
+			stringWalker.SkipRange(rememberPositionIndex - stringWalker.PositionIndex);
 			return false;
 		}
 
@@ -296,7 +296,7 @@ public class GenericSyntaxTree
 				stringWalker.ResourceUri,
 				stringWalker.SourceText));
 
-		_ = stringWalker.ReadRange(rememberPositionIndex - stringWalker.PositionIndex);
+		stringWalker.SkipRange(rememberPositionIndex - stringWalker.PositionIndex);
 		return true;
 	}
 
@@ -306,7 +306,7 @@ public class GenericSyntaxTree
 	{
 		var startingPositionIndex = stringWalker.PositionIndex;
 
-		_ = stringWalker.ReadRange(
+		stringWalker.SkipRange(
 			GenericLanguageDefinition.PreprocessorDefinition.TransitionSubstring.Length);
 
 		while (!stringWalker.IsEof)

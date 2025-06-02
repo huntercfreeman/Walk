@@ -76,6 +76,7 @@ public static class WalkDebugSomething
 	#endif
 	
 	public static int StringAllocation { get; set; }
+	public static int StringWalker_StringAllocation { get; set; }
 	
 	public static string CreateText()
 	{
@@ -215,6 +216,7 @@ public static class WalkDebugSomething
 		#endif
 		
 		builder.AppendLine($"{nameof(StringAllocation)}: {StringAllocation:N0}");
+		builder.AppendLine($"{nameof(StringWalker_StringAllocation)}: {StringWalker_StringAllocation:N0}");
 		
 		builder.AppendLine();
 		

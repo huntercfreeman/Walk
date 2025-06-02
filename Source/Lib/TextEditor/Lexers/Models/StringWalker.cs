@@ -82,21 +82,15 @@ public class StringWalker
 	}
 
 	/// <summary>Iterates a counter from 0 until the counter is equal to <see cref="length" />.<br /><br />Each iteration <see cref="ReadCharacter" /> will be invoked.<br /><br />If an iteration's invocation of <see cref="ReadCharacter" /> returned <see cref="ParserFacts.END_OF_FILE" /> then the method will short circuit and return regardless of whether it finished iterating to <see cref="length" /> or not.</summary>
-	public string ReadRange(int length)
+	public void SkipRange(int length)
 	{
-		_stringBuilder.Clear();
-
 		for (var i = 0; i < length; i++)
 		{
-			var currentCharacter = ReadCharacter();
-
-			_stringBuilder.Append(currentCharacter);
-
-			if (currentCharacter == ParserFacts.END_OF_FILE)
+			if (ReadCharacter() == ParserFacts.END_OF_FILE)
 				break;
 		}
 
-		return _stringBuilder.ToString();
+		// 180 of 9,997 allocations.
 	}
 
 	/// <summary>Iterates a counter from 0 until the counter is equal to <see cref="length" />.<br /><br />Each iteration <see cref="PeekCharacter" /> will be invoked using the (<see cref="offset" /> + counter).<br /><br />If an iteration's invocation of <see cref="PeekCharacter" /> returned <see cref="ParserFacts.END_OF_FILE" /> then the method will short circuit and return regardless of whether it finished iterating to <see cref="length" /> or not.</summary>
@@ -114,6 +108,8 @@ public class StringWalker
 				break;
 		}
 
+		// 9,586 of 9,997 allocations
+		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
 		return _stringBuilder.ToString();
 	}
 
@@ -127,6 +123,8 @@ public class StringWalker
 			if (PositionIndex == 0)
 			{
 				_stringBuilder.Append(ParserFacts.END_OF_FILE);
+				// 0 of 9,997 allocations
+				Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
 				return _stringBuilder.ToString();
 			}
 
@@ -138,6 +136,8 @@ public class StringWalker
 				break;
 		}
 
+		// 0 of 9,997 allocations
+		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
 		return _stringBuilder.ToString();
 	}
 
@@ -161,14 +161,27 @@ public class StringWalker
 
 			_stringBuilder.Append(peekedChar);
 		} while (peekedChar != ParserFacts.END_OF_FILE);
-
+		
+		// 0 of 9,997 allocations
+		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
 		return _stringBuilder.ToString();
 	}
 
 	/// <summary>Form a substring of the <see cref="SourceText" /> that starts inclusively at the index <see cref="PositionIndex" /> and has a maximum length of <see cref="substring" />.Length.<br /><br />This method uses <see cref="PeekRange" /> internally and therefore will return a string that ends with <see cref="ParserFacts.END_OF_FILE" /> if an index out of bounds read was performed on <see cref="SourceText" /></summary>
 	public bool PeekForSubstring(string substring)
 	{
-		return PeekRange(0, substring.Length) == substring;
+		var isMatch = true;
+	
+		for (var i = 0; i < substring.Length; i++)
+		{
+			if (PeekCharacter(i) != substring[i])
+			{
+				isMatch = false;
+				break;
+			}
+		}
+
+		return isMatch;
 	}
 
 	public bool PeekForSubstringRange(List<string> substringsList, out string? matchedOn)
@@ -209,9 +222,15 @@ public class StringWalker
 		}
 
 		if (shouldReturnReadWhitespace)
+		{
+			// 0 of 9,997 allocations
+			Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
 			return _stringBuilder.ToString();
+		}
 		else
+		{
 			return string.Empty;
+		}
 	}
 
 	/// <Summary>
@@ -236,6 +255,8 @@ public class StringWalker
 			_ = ReadCharacter();
 		}
 
+		// 6 of 9,997 allocations
+		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
 		return new TextEditorTextSpan(startingPosition, this, 0);
 	}
 
@@ -251,6 +272,8 @@ public class StringWalker
 			_stringBuilder.Append(ReadCharacter());
 		}
 
+		// 147 of 9,997 allocations
+		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
 		return _stringBuilder.ToString();
 	}
 
@@ -268,7 +291,9 @@ public class StringWalker
 
 			_stringBuilder.Append(ReadCharacter());
 		}
-
+		
+		// 69 of 9,997 allocations
+		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
 		return _stringBuilder.ToString();
 	}
 
@@ -304,7 +329,9 @@ public class StringWalker
 
 			_ = ReadCharacter();
 		}
-
+		
+		// 9 of 9,997 allocations
+		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
 		return (new TextEditorTextSpan(
 				wordBuilderStartInclusiveIndex,
 				PositionIndex,

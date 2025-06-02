@@ -602,8 +602,7 @@ public class RazorSyntaxTree
                         stringWalker.ResourceUri,
                         stringWalker.SourceText)));
 
-            _ = stringWalker
-                .ReadRange(matchedOn.Length);
+            stringWalker.SkipRange(matchedOn.Length);
         }
 
         switch (matchedOn)
@@ -868,8 +867,7 @@ public class RazorSyntaxTree
                         stringWalker.ResourceUri,
                         stringWalker.SourceText)));
 
-            _ = stringWalker
-                .ReadRange(matchedOn.Length);
+            stringWalker.SkipRange(matchedOn.Length);
         }
 
         switch (matchedOn)
@@ -1151,8 +1149,7 @@ public class RazorSyntaxTree
                                 stringWalker.SourceText)));
 
                     // -1 is in the case that "else{" instead of a space between "else" and "{"
-                    _ = stringWalker
-                        .ReadRange(elseIfKeywordCombo.Length - 1);
+                    stringWalker.SkipRange(elseIfKeywordCombo.Length - 1);
                 }
 
                 if (!TryReadExplicitInlineExpression(
@@ -1225,8 +1222,7 @@ public class RazorSyntaxTree
                                 stringWalker.SourceText)));
 
                     // -1 is in the case that "else{" instead of a space between "else" and "{"
-                    _ = stringWalker
-                        .ReadRange(CSharpRazorKeywords.ELSE_KEYWORD.Length - 1);
+                    stringWalker.SkipRange(CSharpRazorKeywords.ELSE_KEYWORD.Length - 1);
                 }
 
                 if (TryReadCodeBlock(
@@ -1283,8 +1279,7 @@ public class RazorSyntaxTree
                                 stringWalker.SourceText)));
 
                     // -1 is in the case that "while()" instead of a space between "while" and "("
-                    _ = stringWalker
-                        .ReadRange(CSharpRazorKeywords.WHILE_KEYWORD.Length - 1);
+                    stringWalker.SkipRange(CSharpRazorKeywords.WHILE_KEYWORD.Length - 1);
                 }
 
                 if (TryReadExplicitInlineExpression(
