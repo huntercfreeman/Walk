@@ -89,56 +89,19 @@ public class StringWalker
 			if (ReadCharacter() == ParserFacts.END_OF_FILE)
 				break;
 		}
-
-		// 180 of 9,997 allocations.
-	}
-
-	/// <summary>Iterates a counter from 0 until the counter is equal to <see cref="length" />.<br /><br />Each iteration <see cref="PeekCharacter" /> will be invoked using the (<see cref="offset" /> + counter).<br /><br />If an iteration's invocation of <see cref="PeekCharacter" /> returned <see cref="ParserFacts.END_OF_FILE" /> then the method will short circuit and return regardless of whether it finished iterating to <see cref="length" /> or not.</summary>
-	public string PeekRange(int offset, int length)
-	{
-		_stringBuilder.Clear();
-
-		for (var i = 0; i < length; i++)
-		{
-			var currentCharacter = PeekCharacter(offset + i);
-
-			_stringBuilder.Append(currentCharacter);
-
-			if (currentCharacter == ParserFacts.END_OF_FILE)
-				break;
-		}
-
-		// 9,586 of 9,997 allocations
-		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
-		return _stringBuilder.ToString();
 	}
 
 	/// <summary>Iterates a counter from 0 until the counter is equal to <see cref="length" />.<br /><br />Each iteration <see cref="BacktrackCharacter" /> will be invoked using the.<br /><br />If an iteration's invocation of <see cref="BacktrackCharacter" /> returned <see cref="ParserFacts.END_OF_FILE" /> then the method will short circuit and return regardless of whether it finished iterating to <see cref="length" /> or not.</summary>
-	public string BacktrackRange(int length)
+	public void BacktrackRange(int length)
 	{
-		_stringBuilder.Clear();
-
 		for (var i = 0; i < length; i++)
 		{
 			if (PositionIndex == 0)
-			{
-				_stringBuilder.Append(ParserFacts.END_OF_FILE);
-				// 0 of 9,997 allocations
-				Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
-				return _stringBuilder.ToString();
-			}
+				return;
 
-			var currentCharacter = BacktrackCharacter();
-
-			_stringBuilder.Append(currentCharacter);
-
-			if (currentCharacter == ParserFacts.END_OF_FILE)
+			if (BacktrackCharacter() == ParserFacts.END_OF_FILE)
 				break;
 		}
-
-		// 0 of 9,997 allocations
-		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
-		return _stringBuilder.ToString();
 	}
 
 	public string PeekNextWord()
@@ -204,32 +167,14 @@ public class StringWalker
 	/// default of what qualifies as whitespace.
 	/// The default whitespace chars are: <see cref="WhitespaceFacts.ALL_LIST"/>
 	/// </summary>
-	public string ReadWhitespace(bool shouldReturnReadWhitespace, IEnumerable<char>? whitespaceOverrideList = null)
+	public void SkipWhitespace(IEnumerable<char>? whitespaceOverrideList = null)
 	{
 		var whitespaceCharacterList = whitespaceOverrideList ?? WhitespaceFacts.ALL_LIST;
 
-		_stringBuilder.Clear();
-
 		while (whitespaceCharacterList.Contains(CurrentCharacter))
 		{
-			var currentCharacter = ReadCharacter();
-
-			if (shouldReturnReadWhitespace)
-				_stringBuilder.Append(currentCharacter);
-
-			if (currentCharacter == ParserFacts.END_OF_FILE)
+			if (ReadCharacter() == ParserFacts.END_OF_FILE)
 				break;
-		}
-
-		if (shouldReturnReadWhitespace)
-		{
-			// 0 of 9,997 allocations
-			Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
-			return _stringBuilder.ToString();
-		}
-		else
-		{
-			return string.Empty;
 		}
 	}
 
@@ -275,6 +220,17 @@ public class StringWalker
 		// 147 of 9,997 allocations
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
 		return _stringBuilder.ToString();
+	}
+	
+	public void SkipUntil(char deliminator)
+	{
+		while (!IsEof)
+		{
+			if (CurrentCharacter == deliminator)
+				break;
+
+			ReadCharacter();
+		}
 	}
 
 	/// <summary>

@@ -67,7 +67,7 @@ public class DotNetSolutionLexer
         var formatVersionTextSpan = new TextEditorTextSpan(startingPosition, _stringWalker, (byte)HtmlDecorationKind.AttributeName);
         _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.AssociatedNameToken, formatVersionTextSpan));
 
-        _ = _stringWalker.ReadWhitespace(shouldReturnReadWhitespace: false);
+        _stringWalker.SkipWhitespace();
 
         var numericLiteralTextSpan = _stringWalker.ReadUnsignedNumericLiteral();
         var associatedValueToken = new SyntaxToken(SyntaxKind.AssociatedValueToken, numericLiteralTextSpan with
@@ -87,7 +87,7 @@ public class DotNetSolutionLexer
         var vSVersionTextSpan = new TextEditorTextSpan(startingPosition, _stringWalker, (byte)HtmlDecorationKind.AttributeName);
         _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.AssociatedNameToken, vSVersionTextSpan));
 
-        _ = _stringWalker.ReadWhitespace(shouldReturnReadWhitespace: false);
+        _stringWalker.SkipWhitespace();
 
         var numericLiteralTextSpan = _stringWalker.ReadUnsignedNumericLiteral();
         var associatedValueToken = new SyntaxToken(SyntaxKind.AssociatedValueToken, numericLiteralTextSpan with
@@ -107,7 +107,7 @@ public class DotNetSolutionLexer
         var versionStringTextSpan = new TextEditorTextSpan(stringStartingPosition, _stringWalker, (byte)HtmlDecorationKind.AttributeName);
         _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.AssociatedNameToken, versionStringTextSpan));
 
-        _ = _stringWalker.ReadWhitespace(shouldReturnReadWhitespace: false);
+        _stringWalker.SkipWhitespace();
 
         var versionIdentifierStartingPosition = _stringWalker.PositionIndex;
 
@@ -135,7 +135,7 @@ public class DotNetSolutionLexer
         var versionStringTextSpan = new TextEditorTextSpan(stringStartingPosition, _stringWalker, (byte)HtmlDecorationKind.AttributeName);
         _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.AssociatedNameToken, versionStringTextSpan));
 
-        _ = _stringWalker.ReadWhitespace(shouldReturnReadWhitespace: false);
+        _stringWalker.SkipWhitespace();
 
         var versionIdentifierStartingPosition = _stringWalker.PositionIndex;
 
@@ -195,7 +195,7 @@ public class DotNetSolutionLexer
         // "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
         //   ^
         var startPosition = _stringWalker.PositionIndex;
-        _ = _stringWalker.ReadUntil('}');
+        _stringWalker.SkipUntil('}');
 
         // "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
         //                                       ^
@@ -220,7 +220,7 @@ public class DotNetSolutionLexer
         // "ConsoleApp2"
         //  ^
         var startPosition = _stringWalker.PositionIndex;
-        _ = _stringWalker.ReadUntil('"');
+        _stringWalker.SkipUntil('"');
 
         // "ConsoleApp2"
         //             ^
@@ -301,13 +301,13 @@ public class DotNetSolutionLexer
 
                 // START_TOKEN_ORDER: 'preSolution' OR 'postSolution'
                 {
-                    _ = _stringWalker.ReadUntil('=');
+                    _stringWalker.SkipUntil('=');
 
                     if (_stringWalker.IsEof)
                         break;
 
                     _ = _stringWalker.ReadCharacter();
-                    _ = _stringWalker.ReadWhitespace(shouldReturnReadWhitespace: false);
+                    _stringWalker.SkipWhitespace();
 
                     var startOrderTuple = _stringWalker.ReadWordTuple();
                     _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.AssociatedValueToken, startOrderTuple.textSpan with
@@ -327,7 +327,7 @@ public class DotNetSolutionLexer
     {
         while (!_stringWalker.IsEof)
         {
-            _ = _stringWalker.ReadWhitespace(shouldReturnReadWhitespace: false);
+            _stringWalker.SkipWhitespace();
 
             if (outerLoopBreakPredicate.Invoke())
             {
@@ -354,7 +354,7 @@ public class DotNetSolutionLexer
                 return;
 
             _ = _stringWalker.ReadCharacter();
-            _ = _stringWalker.ReadWhitespace(shouldReturnReadWhitespace: false);
+            _stringWalker.SkipWhitespace();
 
             var propertyValueStartPosition = _stringWalker.PositionIndex;
             var value = _stringWalker.ReadLine();

@@ -83,6 +83,7 @@ public record struct TextEditorTextSpan
 		
 		if (textEditorService is null)
 		{
+			// !!! WARNING THIS CODE IS DUPLICATED IN OTHER CONSTRUCTORS. !!!
 			if (Text is null && StartInclusiveIndex < sourceText.Length && EndExclusiveIndex <= sourceText.Length && EndExclusiveIndex >= StartInclusiveIndex)
 			{
 				Text = sourceText.Substring(StartInclusiveIndex, EndExclusiveIndex - StartInclusiveIndex);
@@ -104,37 +105,4 @@ public record struct TextEditorTextSpan
 	
     public int Length => EndExclusiveIndex - StartInclusiveIndex;
     public bool ConstructorWasInvoked => ResourceUri.Value is not null;
-
-    /// <summary>
-    /// When using the record 'with' contextual keyword the <see cref="_text"/>
-    /// might hold the cached value prior to the 'with' result.
-    /// </summary>
-    public string ClearTextCache()
-    {
-        return Text = null;
-    }
-    
-    /// <summary>
-    /// The method 'GetText()' will be invoked and cached prior to
-    /// setting the 'SourceText' to null.
-    ///
-    /// This allows one to still get the text from the text span,
-    /// but without holding a reference to the original text.
-    /// </summary>
-    public TextEditorTextSpan SetNullSourceText()
-    {
-    	// SourceText = null;
-    	return this;
-    }
-    
-    /// <summary>
-    /// Argument 'text': The pre-calculated text to return when one invokes 'GetText()'
-    /// instead of returning a null reference exception.
-    /// </summary>
-    public TextEditorTextSpan SetNullSourceText(string? text = null)
-    {
-    	Text = text;
-    	// SourceText = null;
-    	return this;
-    }
 }
