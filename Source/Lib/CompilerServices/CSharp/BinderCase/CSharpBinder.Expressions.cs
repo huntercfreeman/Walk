@@ -933,36 +933,56 @@ public partial class CSharpBinder
 				constructorInvocationExpressionNode, ref token, compilationUnit, ref parserModel);
 		}
 		
-		switch (token.SyntaxKind)
+		if (constructorInvocationExpressionNode.ResultTypeReference == default )
 		{
-			// TODO: This is wrong, it doesn't account for contextual keywords.
-			case SyntaxKind.IdentifierToken:
-				if (constructorInvocationExpressionNode.ResultTypeReference == default)
+			if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind))
+			{
+				parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
+				
+				TypeClauseNode typeClauseNode;
+				
+				var maybeTypeClauseNode = ForceDecisionAmbiguousIdentifier(
+					EmptyExpressionNode.Empty,
+					new AmbiguousIdentifierExpressionNode(
+						token,
+						genericParameterListing: default,
+						resultTypeReference: default),
+					compilationUnit,
+					ref parserModel);
+				
+				if (maybeTypeClauseNode.SyntaxKind != SyntaxKind.TypeClauseNode)
 				{
-					if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind))
-					{
-						_ = parserModel.TokenWalker.Consume(); // Consume the IdentifierToken
-						var typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, compilationUnit, ref parserModel);
+					// Superstitous check, rather than parser throwing an exception in the upcoming explicit cast and no chance to recover.
+					
+					typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, compilationUnit, ref parserModel);
 						
-						BindTypeClauseNode(
-					        typeClauseNode,
-					        compilationUnit,
-					        ref parserModel);
-						
-						if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
-						{
-							constructorInvocationExpressionNode.ResultTypeReference = new TypeReference(typeClauseNode);
-							return constructorInvocationExpressionNode;
-						}
-						
-						constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.GenericParameters;
-						var openAngleBracketToken = parserModel.TokenWalker.Consume();
-						
-						return ParseGenericParameterNode_Start(
-							typeClauseNode, ref openAngleBracketToken, compilationUnit, ref parserModel, nodeToRestoreAtCloseAngleBracketToken: constructorInvocationExpressionNode);
-					}
+					BindTypeClauseNode(
+				        typeClauseNode,
+				        compilationUnit,
+				        ref parserModel);
+				}
+				else
+				{
+					typeClauseNode = (TypeClauseNode)maybeTypeClauseNode;
+				}
+			
+				if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
+				{
+					constructorInvocationExpressionNode.ResultTypeReference = new TypeReference(typeClauseNode);
+					return constructorInvocationExpressionNode;
 				}
 				
+				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.GenericParameters;
+				var openAngleBracketToken = parserModel.TokenWalker.Consume();
+				
+				return ParseGenericParameterNode_Start(
+					typeClauseNode, ref openAngleBracketToken, compilationUnit, ref parserModel, nodeToRestoreAtCloseAngleBracketToken: constructorInvocationExpressionNode);
+			}
+		}
+		
+		switch (token.SyntaxKind)
+		{
+			case SyntaxKind.IdentifierToken:
 				goto default;
 			case SyntaxKind.OpenParenthesisToken:
 			    constructorInvocationExpressionNode.FunctionParameterListing = new FunctionParameterListing(
@@ -2262,8 +2282,6 @@ public partial class CSharpBinder
 		// TODO: Transition from 'ConstructorInvocationNode' to GenericParameters / FunctionParameters
 		// TODO: Method group if next token is not '<' or '('
 		// TODO: return new Aaa.Bbb(); // is a very good test case.
-		
-		
 		
 		return expressionPrimary;
 	}
