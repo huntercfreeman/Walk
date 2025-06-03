@@ -35,7 +35,7 @@ public class UnitTest1
 			appDimensionService: null,
 			serviceProvider: null));
     	var resourceUri = new ResourceUri("/luthetusUnitTest1.cs");
-    	var content = "return 1 + 1;";
+    	var content = "Aaa.Bbb;";
 		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri, content);
 		var lexerOutput = CSharpLexer.Lex(binder, resourceUri, content, shouldUseSharedStringWalker: true);
 		cSharpCompilationUnit.TokenList = lexerOutput.SyntaxTokenList;

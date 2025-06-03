@@ -591,6 +591,9 @@ public partial class CSharpBinder
 		bool forceVariableReferenceNode = false,
 		bool allowFabricatedUndefinedNode = true)
 	{
+		IExpressionNode result;
+	
+		// WARNING: Duplicated code in ParseMemberAccessToken_UndefinedNode(...)
 		if (parserModel.ParserContextKind == CSharpParserContextKind.ForceStatementExpression)
 		{
 			parserModel.ParserContextKind = CSharpParserContextKind.None;
@@ -600,6 +603,11 @@ public partial class CSharpBinder
 				 parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.MemberAccessToken)
 			{
 				parserModel.ParserContextKind = CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode;
+			}
+			
+			if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken)
+			{
+				parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
 			}
 		}
 	
@@ -621,7 +629,8 @@ public partial class CSharpBinder
 					compilationUnit,
 					ref parserModel);
     			
-    			return variableReferenceNode;
+    			result = variableReferenceNode;
+    			goto finalize;
 			}
 		}
 		
@@ -650,7 +659,8 @@ public partial class CSharpBinder
 				// FindAllReferences
 				// BindTypeClauseNodeSuccessfully(typeClauseNode, typeDefinitionNode, compilationUnit, ref parserModel);
 				
-			    return typeClauseNode;
+			    result = typeClauseNode;
+    			goto finalize;
 	        }
 		}
 		
@@ -666,7 +676,8 @@ public partial class CSharpBinder
 			        out _))
 			{
 				parserModel.Binder.BindDiscard(ambiguousIdentifierExpressionNode.Token, compilationUnit, ref parserModel);
-	    		return ambiguousIdentifierExpressionNode;
+	    		result = ambiguousIdentifierExpressionNode;
+    			goto finalize;
 			}
     	}
     	
@@ -697,7 +708,8 @@ public partial class CSharpBinder
 			        compilationUnit,
 			        ref parserModel);
     			
-    			return functionInvocationNode;
+    			result = functionInvocationNode;
+    			goto finalize;
 	        }
 		}
 		
@@ -718,7 +730,8 @@ public partial class CSharpBinder
 	            
 	            typeClauseNode.HasQuestionMark = ambiguousIdentifierExpressionNode.HasQuestionMark;
 				BindTypeClauseNode(typeClauseNode, compilationUnit, ref parserModel);
-			    return typeClauseNode;
+			    result = typeClauseNode;
+    			goto finalize;
 			}
 			
 			// Bind an undefined-variable
@@ -732,11 +745,26 @@ public partial class CSharpBinder
 					compilationUnit,
 					ref parserModel);
 				
-				return variableReferenceNode;
+				result = variableReferenceNode;
+    			goto finalize;
 			}
 		}
 		
-		return ambiguousIdentifierExpressionNode;
+		result = ambiguousIdentifierExpressionNode;
+		goto finalize;
+		
+		finalize:
+		
+		if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken)
+		{
+			_ = parserModel.TokenWalker.Consume();
+			var token = parserModel.TokenWalker.Current;
+			result = ParseMemberAccessToken(result, ref token, compilationUnit, ref parserModel);
+			
+			Console.WriteLine(result.SyntaxKind);
+		}
+		
+		return result;
 	}
 		
 	public IExpressionNode BadMergeToken(
@@ -2124,16 +2152,22 @@ public partial class CSharpBinder
 				
 			if (typeReference == default)
 			{
-				expressionPrimary = Aaa(memberIdentifierToken, compilationUnit, ref parserModel);
+				Console.WriteLine("zzz");
+				expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, compilationUnit, ref parserModel);
 				continue;
 			}
+			
+			Console.WriteLine("lll");
 			
 			var maybeTypeDefinitionNode = GetDefinitionNode(compilationUnit, typeReference.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
 			if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
 			{
-				expressionPrimary = Aaa(memberIdentifierToken, compilationUnit, ref parserModel);
+				Console.WriteLine("ooo");
+				expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, compilationUnit, ref parserModel);
 				continue;
 			}
+			
+			Console.WriteLine("jjj");
 				
 			var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
 			var memberList = typeDefinitionNode.GetMemberList();
@@ -2170,7 +2204,7 @@ public partial class CSharpBinder
 			
 			if (foundDefinitionNode is null)
 			{
-				expressionPrimary = Aaa(memberIdentifierToken, compilationUnit, ref parserModel);
+				expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, compilationUnit, ref parserModel);
 				continue;
 			}
 				 
@@ -2234,8 +2268,22 @@ public partial class CSharpBinder
 		return expressionPrimary;
 	}
 	
-	private IExpressionNode Aaa(SyntaxToken memberIdentifierToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	private IExpressionNode ParseMemberAccessToken_UndefinedNode(
+		IExpressionNode expressionPrimary, SyntaxToken memberIdentifierToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
+		// WARNING: Duplicated code in ForceDecisionAmbiguousIdentifier(...)
+		if (parserModel.ParserContextKind == CSharpParserContextKind.ForceStatementExpression)
+		{
+			return ForceDecisionAmbiguousIdentifier(
+				expressionPrimary,
+				new AmbiguousIdentifierExpressionNode(
+					memberIdentifierToken,
+					genericParameterListing: default,
+					resultTypeReference: default),
+				compilationUnit,
+				ref parserModel);
+		}
+		
 		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
 			parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
 		{
