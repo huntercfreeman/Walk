@@ -133,9 +133,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     {
     	var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
 
-        if (model is null)
-            return null;
-
         lock (_resourceMapLock)
         {
             if (!_resourceMap.ContainsKey(resourceUri))
@@ -339,42 +336,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		            break;
 		    }
 		}
-		
-		// _getAutocompleteMenuStringBuilder.Clear();
-		
-		// var operatingWordText = string.Empty;
-		
-		// if (foundMemberAccessToken && operatingWordEndExclusiveIndex != -1)
-		// {
-		    // operatingWordText = renderBatch.Model.GetString(i + 1, operatingWordEndExclusiveIndex - i);
-		    // 
-		    // var strAaa = $"{operatingWordText}.";
-		    // _getAutocompleteMenuStringBuilder.Append(strAaa);
-		// }
-		// else
-		// {
-			// var strAaa = "LocalAndParentScopes -- ";
-			// _getAutocompleteMenuStringBuilder.Append(strAaa);
-		// }
-		
-		// var wordTextSpanTuple = renderBatch.Model.GetWordTextSpan(positionIndex);
-		
-		// if (wordTextSpanTuple.ResultKind != GetWordTextSpanResultKind.None)
-		// {
-			// var strAaa = $"{wordTextSpanTuple.TextSpan.GetText()}";
-			// _getAutocompleteMenuStringBuilder.Append(strAaa);
-		// }
 			
 		if (foundMemberAccessToken && operatingWordEndExclusiveIndex != -1)
 		{
-			// var query = _getAutocompleteMenuStringBuilder.ToString();
 			var autocompleteEntryList = new List<AutocompleteEntry>();
 			
-			// autocompleteEntryList.Add(new AutocompleteEntry(
-				// $"query: {query}",
-                // AutocompleteEntryKind.Snippet,
-                // null));
-                
 			var operatingWordAmongPositionIndex = operatingWordEndExclusiveIndex - 1;
        	
 			if (operatingWordAmongPositionIndex < 0)
@@ -443,7 +409,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 					if (typeReference != default)
 					{
 						Symbol innerFoundSymbol = default;
-	
+
+						if (typeReference.TypeIdentifierToken.TextSpan.ResourceUri != textEditorModel.PersistentState.ResourceUri)
+						{
+							var innerCompilerServiceResource = extendedCompilerService.GetResource(typeReference.TypeIdentifierToken.TextSpan.ResourceUri);
+							if (innerCompilerServiceResource is not null)
+								symbols = ((CSharpCompilationUnit)innerCompilerServiceResource.CompilationUnit).SymbolList;
+						}
+						
 				        if (symbols.Count != 0)
 				        {
 				            foreach (var symbol in symbols)
