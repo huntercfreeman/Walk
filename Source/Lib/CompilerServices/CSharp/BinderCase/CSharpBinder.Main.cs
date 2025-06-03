@@ -1745,4 +1745,22 @@ public partial class CSharpBinder
 		codeBlockOwner.CodeBlock = codeBlock;
 		return codeBlockOwner;
 	}
+	
+	public string GetName(ISyntaxNode node)
+	{
+		switch (node.SyntaxKind)
+		{
+			case SyntaxKind.VariableDeclarationNode:
+				var variableDeclarationNode = (VariableDeclarationNode)node;
+				return variableDeclarationNode.IdentifierToken.TextSpan.Text;
+			case SyntaxKind.FunctionDefinitionNode:
+				var functionDefinitionNode = (FunctionDefinitionNode)node;
+				return functionDefinitionNode.FunctionIdentifierToken.TextSpan.Text;
+			case SyntaxKind.TypeDefinitionNode:
+				var innerTypeDefinitionNode = (TypeDefinitionNode)node;
+				return innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.Text;
+			default:
+				return string.Empty;
+		}
+	}
 }

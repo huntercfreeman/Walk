@@ -163,6 +163,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		// 'banana' is the operating word
 		var operatingWordEndExclusiveIndex = -1;
 		
+		var filteringWordEndExclusiveIndex = -1;
+		var filteringWordStartInclusiveIndex = -1;
+		
 		// '|' indicates cursor position:
 		//
 		// "apple banana.Pri|ce"
@@ -243,7 +246,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		            }
 		            else
 		            {
-		                notParsingButTouchingletterOrDigit = true;
+		            	if (!notParsingButTouchingletterOrDigit)
+		            	{
+		            		notParsingButTouchingletterOrDigit = true;
+		            		
+		            		if (filteringWordEndExclusiveIndex == -1)
+		                		filteringWordEndExclusiveIndex = i + 1;
+		            	}
 		            }
 		            break;
 		        case '0':
@@ -268,7 +277,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		            }
 		            else
 		            {
-		                notParsingButTouchingletterOrDigit = true;
+		                if (!notParsingButTouchingletterOrDigit)
+		            	{
+		            		notParsingButTouchingletterOrDigit = true;
+		            		
+		            		if (filteringWordEndExclusiveIndex == -1)
+		                		filteringWordEndExclusiveIndex = i + 1;
+		            	}
 		            }
 		            break;
 		        case '\r':
@@ -293,6 +308,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		        case '.':
 		            if (!foundMemberAccessToken)
 		            {
+		            	if (notParsingButTouchingletterOrDigit && filteringWordStartInclusiveIndex == -1)
+	                    	filteringWordStartInclusiveIndex = i + 1;
+		            
 		                foundMemberAccessToken = true;
 		                notParsingButTouchingletterOrDigit = false;
 		                letterOrDigitIntoNonMatchingCharacterKindOccurred = false;
@@ -335,6 +353,20 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		            isParsingIdentifier = false;
 		            break;
 		    }
+		}
+		
+		var filteringWord = string.Empty;
+		
+		if (filteringWordStartInclusiveIndex != -1 && filteringWordEndExclusiveIndex != -1)
+		{
+			var textSpan = new TextEditorTextSpan(
+				filteringWordStartInclusiveIndex,
+				filteringWordEndExclusiveIndex,
+				DecorationByte: 0,
+				renderBatch.Model.PersistentState.ResourceUri,
+				renderBatch.Model.GetAllText());
+				
+			filteringWord = textSpan.Text;
 		}
 			
 		if (foundMemberAccessToken && operatingWordEndExclusiveIndex != -1)
@@ -439,7 +471,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 								var memberList = typeDefinitionNode.GetMemberList();
 								ISyntaxNode? foundDefinitionNode = null;
 					    		
-					    		foreach (var member in memberList.Take(25))
+					    		foreach (var member in memberList.Where(x => __CSharpBinder.GetName(x).Contains(filteringWord)).Take(25))
 			        			{
 			        				switch (member.SyntaxKind)
 			        				{
