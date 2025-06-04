@@ -761,7 +761,9 @@ public partial class CSharpBinder
 			var token = parserModel.TokenWalker.Current;
 			result = ParseMemberAccessToken(result, ref token, compilationUnit, ref parserModel);
 			
-			Console.WriteLine(result.SyntaxKind);
+			// parserModel.ConstructOrRecycleVariableReferenceNode(result);
+			// parserModel.AaaConstructOrRecycleVariableReferenceNode(result);
+			// Console.WriteLine(result.SyntaxKind);
 		}
 		
 		return result;
@@ -2183,22 +2185,16 @@ public partial class CSharpBinder
 				
 			if (typeReference == default)
 			{
-				Console.WriteLine("zzz");
 				expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, compilationUnit, ref parserModel);
 				continue;
 			}
-			
-			Console.WriteLine("lll");
 			
 			var maybeTypeDefinitionNode = GetDefinitionNode(compilationUnit, typeReference.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
 			if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
 			{
-				Console.WriteLine("ooo");
 				expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, compilationUnit, ref parserModel);
 				continue;
 			}
-			
-			Console.WriteLine("jjj");
 				
 			var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
 			var memberList = typeDefinitionNode.GetMemberList();
@@ -2303,6 +2299,12 @@ public partial class CSharpBinder
 		// WARNING: Duplicated code in ForceDecisionAmbiguousIdentifier(...)
 		if (parserModel.ParserContextKind == CSharpParserContextKind.ForceStatementExpression)
 		{
+			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
+				parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+			{
+				parserModel.ParserContextKind = CSharpParserContextKind.None;
+			}
+			
 			return ForceDecisionAmbiguousIdentifier(
 				expressionPrimary,
 				new AmbiguousIdentifierExpressionNode(
