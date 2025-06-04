@@ -1,6 +1,7 @@
 using System.Text;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
+using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Walk.CompilerServices.CSharp.LexerCase;
@@ -36,16 +37,40 @@ public class UnitTest1
 			serviceProvider: null));
     	var resourceUri = new ResourceUri("/luthetusUnitTest1.cs");
     	
-    	var content = @"public Task WriteAppDataAsync<AppData>(AppData appData)
-		where AppData : IAppData
-	{
-		return Task.CompletedTask;
-	}";
-	
-		// var content = @"<AppData>";
+    	// var content = @"$"""";";
+    	// "";
+    	
+    	// var content = @"$""aaa"";";
+    	// $"aaa";
+    	
+    	// var content = @"$""a{bbb}a"";";
+    	// $"a{bbb}a;"
+    	
+    	var content =
+    	""""
+    	$$"""{The point {s{{X * X}}s, s{{Y}}s} is s{{sMath.Sqrt(X * X + Y * Y):F3s}}s from the origin}"""
+    	"""";
 	
 		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri, content);
 		var lexerOutput = CSharpLexer.Lex(binder, resourceUri, content, shouldUseSharedStringWalker: true);
+		
+		Console.WriteLine("lexerOutput.SyntaxTokenList:");
+		foreach (var syntaxToken in lexerOutput.SyntaxTokenList)
+		{
+			Console.WriteLine($"\t{syntaxToken.SyntaxKind}");
+			Console.WriteLine($"\t\t{syntaxToken.TextSpan.StartInclusiveIndex}");
+			Console.WriteLine($"\t\t{syntaxToken.TextSpan.EndExclusiveIndex}");
+			Console.WriteLine($"\t\t{(GenericDecorationKind)syntaxToken.TextSpan.DecorationByte}");
+		}
+		
+		Console.WriteLine("lexerOutput.MiscTextSpanList:");
+		foreach (var textSpan in lexerOutput.MiscTextSpanList)
+		{
+			Console.WriteLine($"\t{textSpan.StartInclusiveIndex}");
+			Console.WriteLine($"\t{textSpan.EndExclusiveIndex}");
+			Console.WriteLine($"\t{(GenericDecorationKind)textSpan.DecorationByte}");
+		}
+		
 		cSharpCompilationUnit.TokenList = lexerOutput.SyntaxTokenList;
 		cSharpCompilationUnit.MiscTextSpanList = lexerOutput.MiscTextSpanList;
 		binder.StartCompilationUnit(resourceUri);

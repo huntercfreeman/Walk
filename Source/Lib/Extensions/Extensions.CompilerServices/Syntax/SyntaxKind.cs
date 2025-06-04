@@ -143,6 +143,7 @@ public enum SyntaxKind
 	VoidTokenKeyword,
 	VolatileTokenKeyword,
 	WhileTokenKeyword,
+	KeywordFunctionOperatorNode,
 	UnrecognizedTokenKeyword,
 
 	// Token Contextual-Keywords

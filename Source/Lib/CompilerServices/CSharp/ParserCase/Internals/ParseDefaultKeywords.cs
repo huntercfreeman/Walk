@@ -412,7 +412,7 @@ public class ParseDefaultKeywords
 
     public static void HandleSizeofTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    	ParseOthers.StartStatement_Expression(compilationUnit, ref parserModel);
     }
 
     public static void HandleStackallocTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -501,7 +501,7 @@ public class ParseDefaultKeywords
 
     public static void HandleTypeofTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    	ParseOthers.StartStatement_Expression(compilationUnit, ref parserModel);
     }
 
     public static void HandleUintTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)

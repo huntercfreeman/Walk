@@ -73,6 +73,8 @@ public static class WalkDebugSomething
 	public static int VariableReferenceNode { get; set; }
 	public static int WhileStatementNode { get; set; }
 	public static int WithExpressionNode { get; set; }
+	
+	public static int KeywordFunctionOperatorNode { get; set; }
 	#endif
 	
 	public static int StringAllocation { get; set; }
@@ -150,6 +152,8 @@ public static class WalkDebugSomething
 			("VariableReferenceNode", VariableReferenceNode),
 			("WhileStatementNode", WhileStatementNode),
 			("WithExpressionNode", WithExpressionNode),
+			
+			("KeywordFunctionOperatorNode", KeywordFunctionOperatorNode),
 		};
 		
 		nodeCountList = nodeCountList.OrderByDescending(x => x.NodeCount).ToList();
@@ -207,7 +211,8 @@ public static class WalkDebugSomething
 			VariableDeclarationNode +
 			VariableReferenceNode +
 			WhileStatementNode +
-			WithExpressionNode;
+			WithExpressionNode +
+			KeywordFunctionOperatorNode;
 			
 		builder.AppendLine("----------------");
 		builder.AppendLine($"totalNodeCount: {totalNodeCount:N0}");
