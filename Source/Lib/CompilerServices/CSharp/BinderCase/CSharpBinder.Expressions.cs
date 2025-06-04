@@ -184,6 +184,8 @@ public partial class CSharpBinder
 				return AmbiguousIdentifierMergeToken((AmbiguousIdentifierExpressionNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
 			else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
 				return FunctionInvocationMergeToken((FunctionInvocationNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
+			else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+				return FunctionDefinitionMergeToken((FunctionDefinitionNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
 		}
 		
 		var expressionAntecedent = GetParentNode(expressionPrimary, compilationUnit, ref parserModel);
@@ -2678,6 +2680,14 @@ public partial class CSharpBinder
 	{
 		switch (token.SyntaxKind)
 		{
+			case SyntaxKind.OpenAngleBracketToken:
+				if (functionDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode && ((FunctionDefinitionNode)functionDefinitionNode).IsParsingGenericParameters)
+					return GenericParametersListingMergeToken((FunctionDefinitionNode)functionDefinitionNode, ref token, compilationUnit, ref parserModel);
+				goto default;
+			case SyntaxKind.CloseAngleBracketToken:
+				if (functionDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode && ((FunctionDefinitionNode)functionDefinitionNode).IsParsingGenericParameters)
+					return functionDefinitionNode;
+				goto default;
 			case SyntaxKind.CommaToken:
 				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, functionDefinitionNode));
 				return EmptyExpressionNode.Empty;
