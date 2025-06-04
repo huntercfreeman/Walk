@@ -25,7 +25,7 @@ public partial class CSharpBinder
 		if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
 		{
 			var variableReferenceNode = (VariableReferenceNode)expressionPrimary;
-			Console.Write($"{variableReferenceNode.VariableIdentifierToken.TextSpan.GetText()}____");
+			Console.Write($"{variableReferenceNode.VariableIdentifierToken.TextSpan.Text}____");
 		}
 		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {token.SyntaxKind}:{parserModel.TokenWalker.Index}");
 		#else
@@ -171,19 +171,19 @@ public partial class CSharpBinder
 				ref parserModel);
 		}
 		
-		if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode &&
-			(token.SyntaxKind == SyntaxKind.OpenAngleBracketToken || token.SyntaxKind == SyntaxKind.CloseAngleBracketToken))
-		{
-			return TypeClauseMergeToken((TypeClauseNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
-		}
-		
 		// TODO: This isn't great. The ConstructorInvocationExpressionNode after reading 'new'...
 		// if then has to read the TypeClauseNode, it actually does this inside of the 'ConstructorInvocationExpressionNode'.
 		// It is sort of duplicated logic, and this case for the 'TypeClauseNode' needs repeating too.
-		if (expressionPrimary.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode &&
-			(token.SyntaxKind == SyntaxKind.OpenAngleBracketToken || token.SyntaxKind == SyntaxKind.CloseAngleBracketToken))
+		if (token.SyntaxKind == SyntaxKind.OpenAngleBracketToken || token.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
 		{
-			return ConstructorInvocationMergeToken((ConstructorInvocationExpressionNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
+			if (expressionPrimary.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
+				return ConstructorInvocationMergeToken((ConstructorInvocationExpressionNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
+			else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
+				return TypeClauseMergeToken((TypeClauseNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
+			else if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+				return AmbiguousIdentifierMergeToken((AmbiguousIdentifierExpressionNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
+			else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+				return FunctionInvocationMergeToken((FunctionInvocationNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
 		}
 		
 		var expressionAntecedent = GetParentNode(expressionPrimary, compilationUnit, ref parserModel);
@@ -429,9 +429,6 @@ public partial class CSharpBinder
 			}
 			case SyntaxKind.OpenAngleBracketToken:
 			{
-				// TODO: As of (2024-12-21) is this conditional branch no longer hit?...
-				//       ...The 'AmbiguousIdentifierExpressionNode' merging with 'OpenAngleBracketToken'
-				//       code was moved to 'HandleBinaryOperator(...)'
 				return ParseGenericParameterNode_Start(
 					ambiguousIdentifierExpressionNode, ref token, compilationUnit, ref parserModel);
 			}
@@ -931,13 +928,15 @@ public partial class CSharpBinder
 				constructorInvocationExpressionNode, ref token, compilationUnit, ref parserModel);
 		}
 		
-		if (constructorInvocationExpressionNode.ResultTypeReference == default )
+		if (constructorInvocationExpressionNode.ResultTypeReference == default)
 		{
 			if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind))
 			{
 				parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
 				
 				TypeClauseNode typeClauseNode;
+				
+				var beforeTokenIndex = parserModel.TokenWalker.Index;
 				
 				var maybeTypeClauseNode = ForceDecisionAmbiguousIdentifier(
 					EmptyExpressionNode.Empty,
@@ -947,6 +946,9 @@ public partial class CSharpBinder
 						resultTypeReference: default),
 					compilationUnit,
 					ref parserModel);
+					
+				if (beforeTokenIndex == parserModel.TokenWalker.Index)
+					_ = parserModel.TokenWalker.Consume();
 				
 				if (maybeTypeClauseNode.SyntaxKind != SyntaxKind.TypeClauseNode)
 				{
@@ -983,6 +985,10 @@ public partial class CSharpBinder
 			case SyntaxKind.IdentifierToken:
 				goto default;
 			case SyntaxKind.OpenParenthesisToken:
+			
+				// Constructor parameters parse as TypeClauseNode(s) without this.
+				parserModel.ParserContextKind = CSharpParserContextKind.None;
+			
 			    constructorInvocationExpressionNode.FunctionParameterListing = new FunctionParameterListing(
 					token,
 			        new List<FunctionParameterEntry>(),
@@ -1806,18 +1812,12 @@ public partial class CSharpBinder
 					if (functionInvocationNode.GenericParameterListing.ConstructorWasInvoked)
 						goto default;
 					
-					functionInvocationNode.GenericParameterListing =
-						new GenericParameterListing(
-							token,
-					        new List<GenericParameterEntry>(),
-					        closeAngleBracketToken: default);
-					
-				    parserModel.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, functionInvocationNode));
-					parserModel.ExpressionList.Add((SyntaxKind.CommaToken, functionInvocationNode));
-					return functionInvocationNode;
+					return ParseGenericParameterNode_Start(functionInvocationNode, ref token, compilationUnit, ref parserModel);
 				}
 				
 				goto default;
+			case SyntaxKind.CloseAngleBracketToken:
+				return functionInvocationNode;
 			case SyntaxKind.OpenParenthesisToken:
 				if (!functionInvocationNode.FunctionParameterListing.ConstructorWasInvoked)
 				{
@@ -2452,7 +2452,7 @@ public partial class CSharpBinder
 	
 	private IExpressionNode AmbiguousParenthesizedExpressionTransformTo_LambdaExpressionNode(
 		AmbiguousParenthesizedExpressionNode ambiguousParenthesizedExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
-	{	
+	{
 		var lambdaExpressionNode = new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeReference());
 					
 		if (ambiguousParenthesizedExpressionNode.NodeList is not null)
@@ -2760,7 +2760,13 @@ public partial class CSharpBinder
 		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
 			genericParameterNode.IsParsingGenericParameters = false;
 	
-		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		if (genericParameterNode == expressionSecondary)
+		{
+			// If the generic parameters are empty: "List<>" then this is an infinite loop
+			// if you ever show on the UI the tooltip, without this case.
+			return genericParameterNode;
+		}
+		else if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
 		{
 			var expressionSecondaryTyped = (AmbiguousIdentifierExpressionNode)expressionSecondary;
 			
