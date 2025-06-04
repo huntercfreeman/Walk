@@ -1316,11 +1316,22 @@ public partial class CSharpBinder
 				explicitCastNode.CloseParenthesisToken = token;
 				return explicitCastNode;
 			case SyntaxKind.IdentifierToken:
-				var ambiguousExpressionNode = new AmbiguousIdentifierExpressionNode(
-					token,
-			        genericParameterListing: default,
-			        CSharpFacts.Types.Void.ToTypeReference());
-			    return ambiguousExpressionNode;
+				var expressionNode = ForceDecisionAmbiguousIdentifier(
+					EmptyExpressionNode.Empty,
+					new AmbiguousIdentifierExpressionNode(
+						token,
+						genericParameterListing: default,
+						resultTypeReference: default),
+					compilationUnit,
+					ref parserModel);
+				
+			    return new VariableReferenceNode(
+			    	token,
+					new VariableDeclarationNode(
+						explicitCastNode.ResultTypeReference,
+						token,
+						VariableKind.Local,
+						isInitialized: true));
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeReference(), explicitCastNode, token);
 		}
