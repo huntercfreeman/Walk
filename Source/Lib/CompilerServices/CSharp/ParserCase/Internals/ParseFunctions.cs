@@ -15,31 +15,39 @@ public class ParseFunctions
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-    	GenericParameterListing genericParameterListing = default;
+    	var functionDefinitionNode = new FunctionDefinitionNode(
+            AccessModifierKind.Public,
+            consumedTypeReference,
+            consumedIdentifierToken,
+            genericParameterListing: default,
+            functionArgumentListing: default,
+            default);
     
     	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
     	{
-    		parserModel.ParserContextKind = CSharpParserContextKind.ForceParseGenericParameters;
+			parserModel.ForceParseExpressionInitialPrimaryExpression = functionDefinitionNode;
+
+			var openAngleBracketToken = parserModel.TokenWalker.Consume();
+    		
+    		parserModel.Binder.ParseGenericParameterNode_Start(
+    			functionDefinitionNode, ref openAngleBracketToken, compilationUnit, ref parserModel);
+    		
     		var successGenericParametersListingNode = ParseOthers.TryParseExpression(
-    			SyntaxKind.GenericParametersListingNode,
+    			SyntaxKind.FunctionDefinitionNode,
     			compilationUnit,
     			ref parserModel,
     			out var expressionNode);
-    			
-    		if (successGenericParametersListingNode)
-    			genericParameterListing = ((IGenericParameterNode)expressionNode).GenericParameterListing;
+    		
+    		if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.CloseAngleBracketToken &&
+    			parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+    		{
+    			_ = parserModel.TokenWalker.Consume();
+    			_ = parserModel.TokenWalker.Consume();
+    		}
     	}
     
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
             return;
-
-		var functionDefinitionNode = new FunctionDefinitionNode(
-            AccessModifierKind.Public,
-            consumedTypeReference,
-            consumedIdentifierToken,
-            genericParameterListing,
-            functionArgumentListing: default,
-            default);
 
         HandleFunctionArguments(functionDefinitionNode, compilationUnit, ref parserModel);
 

@@ -423,6 +423,25 @@ public (TextEditorModel? Model, TextEditorViewModel? ViewModel) GetModelAndViewM
 {
 }*/
 
+public class DoNothingAppDataService : IAppDataService
+{
+	public Task WriteAppDataAsync<AppData>(AppData appData)
+		where AppData : IAppData
+	{
+		return Task.CompletedTask;
+	}
+	
+	public Task<AppData?> ReadAppDataAsync<AppData>(
+			string assemblyName,
+			string typeName,
+			string? uniqueIdentifier,
+			bool forceRefreshCache)
+		where AppData : IAppData
+	{
+		return Task.FromResult(default(AppData));
+	}
+}
+
 /*
 Not everything in this file works perfectly yet.
 I am laying it all out so I see what is and isn't working.

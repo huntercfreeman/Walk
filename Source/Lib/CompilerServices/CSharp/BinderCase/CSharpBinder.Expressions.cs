@@ -25,7 +25,7 @@ public partial class CSharpBinder
 		if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
 		{
 			var variableReferenceNode = (VariableReferenceNode)expressionPrimary;
-			Console.Write($"{variableReferenceNode.VariableIdentifierToken.TextSpan.GetText()}____");
+			Console.Write($"{variableReferenceNode.VariableIdentifierToken.TextSpan.Text}____");
 		}
 		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {token.SyntaxKind}:{parserModel.TokenWalker.Index}");
 		#else
@@ -171,19 +171,21 @@ public partial class CSharpBinder
 				ref parserModel);
 		}
 		
-		if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode &&
-			(token.SyntaxKind == SyntaxKind.OpenAngleBracketToken || token.SyntaxKind == SyntaxKind.CloseAngleBracketToken))
-		{
-			return TypeClauseMergeToken((TypeClauseNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
-		}
-		
 		// TODO: This isn't great. The ConstructorInvocationExpressionNode after reading 'new'...
 		// if then has to read the TypeClauseNode, it actually does this inside of the 'ConstructorInvocationExpressionNode'.
 		// It is sort of duplicated logic, and this case for the 'TypeClauseNode' needs repeating too.
-		if (expressionPrimary.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode &&
-			(token.SyntaxKind == SyntaxKind.OpenAngleBracketToken || token.SyntaxKind == SyntaxKind.CloseAngleBracketToken))
+		if (token.SyntaxKind == SyntaxKind.OpenAngleBracketToken || token.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
 		{
-			return ConstructorInvocationMergeToken((ConstructorInvocationExpressionNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
+			if (expressionPrimary.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
+				return ConstructorInvocationMergeToken((ConstructorInvocationExpressionNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
+			else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
+				return TypeClauseMergeToken((TypeClauseNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
+			else if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+				return AmbiguousIdentifierMergeToken((AmbiguousIdentifierExpressionNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
+			else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+				return FunctionInvocationMergeToken((FunctionInvocationNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
+			else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+				return FunctionDefinitionMergeToken((FunctionDefinitionNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
 		}
 		
 		var expressionAntecedent = GetParentNode(expressionPrimary, compilationUnit, ref parserModel);
@@ -429,9 +431,6 @@ public partial class CSharpBinder
 			}
 			case SyntaxKind.OpenAngleBracketToken:
 			{
-				// TODO: As of (2024-12-21) is this conditional branch no longer hit?...
-				//       ...The 'AmbiguousIdentifierExpressionNode' merging with 'OpenAngleBracketToken'
-				//       code was moved to 'HandleBinaryOperator(...)'
 				return ParseGenericParameterNode_Start(
 					ambiguousIdentifierExpressionNode, ref token, compilationUnit, ref parserModel);
 			}
@@ -591,6 +590,9 @@ public partial class CSharpBinder
 		bool forceVariableReferenceNode = false,
 		bool allowFabricatedUndefinedNode = true)
 	{
+		IExpressionNode result;
+	
+		// WARNING: Duplicated code in ParseMemberAccessToken_UndefinedNode(...)
 		if (parserModel.ParserContextKind == CSharpParserContextKind.ForceStatementExpression)
 		{
 			parserModel.ParserContextKind = CSharpParserContextKind.None;
@@ -600,6 +602,11 @@ public partial class CSharpBinder
 				 parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.MemberAccessToken)
 			{
 				parserModel.ParserContextKind = CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode;
+			}
+			
+			if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken)
+			{
+				parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
 			}
 		}
 	
@@ -621,7 +628,8 @@ public partial class CSharpBinder
 					compilationUnit,
 					ref parserModel);
     			
-    			return variableReferenceNode;
+    			result = variableReferenceNode;
+    			goto finalize;
 			}
 		}
 		
@@ -650,7 +658,8 @@ public partial class CSharpBinder
 				// FindAllReferences
 				// BindTypeClauseNodeSuccessfully(typeClauseNode, typeDefinitionNode, compilationUnit, ref parserModel);
 				
-			    return typeClauseNode;
+			    result = typeClauseNode;
+    			goto finalize;
 	        }
 		}
 		
@@ -666,7 +675,8 @@ public partial class CSharpBinder
 			        out _))
 			{
 				parserModel.Binder.BindDiscard(ambiguousIdentifierExpressionNode.Token, compilationUnit, ref parserModel);
-	    		return ambiguousIdentifierExpressionNode;
+	    		result = ambiguousIdentifierExpressionNode;
+    			goto finalize;
 			}
     	}
     	
@@ -697,7 +707,8 @@ public partial class CSharpBinder
 			        compilationUnit,
 			        ref parserModel);
     			
-    			return functionInvocationNode;
+    			result = functionInvocationNode;
+    			goto finalize;
 	        }
 		}
 		
@@ -718,7 +729,8 @@ public partial class CSharpBinder
 	            
 	            typeClauseNode.HasQuestionMark = ambiguousIdentifierExpressionNode.HasQuestionMark;
 				BindTypeClauseNode(typeClauseNode, compilationUnit, ref parserModel);
-			    return typeClauseNode;
+			    result = typeClauseNode;
+    			goto finalize;
 			}
 			
 			// Bind an undefined-variable
@@ -732,11 +744,24 @@ public partial class CSharpBinder
 					compilationUnit,
 					ref parserModel);
 				
-				return variableReferenceNode;
+				result = variableReferenceNode;
+    			goto finalize;
 			}
 		}
 		
-		return ambiguousIdentifierExpressionNode;
+		result = ambiguousIdentifierExpressionNode;
+		goto finalize;
+		
+		finalize:
+		
+		if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken)
+		{
+			_ = parserModel.TokenWalker.Consume();
+			var token = parserModel.TokenWalker.Current;
+			result = ParseMemberAccessToken(result, ref token, compilationUnit, ref parserModel);
+		}
+		
+		return result;
 	}
 		
 	public IExpressionNode BadMergeToken(
@@ -905,38 +930,67 @@ public partial class CSharpBinder
 				constructorInvocationExpressionNode, ref token, compilationUnit, ref parserModel);
 		}
 		
-		switch (token.SyntaxKind)
+		if (constructorInvocationExpressionNode.ResultTypeReference == default)
 		{
-			// TODO: This is wrong, it doesn't account for contextual keywords.
-			case SyntaxKind.IdentifierToken:
-				if (constructorInvocationExpressionNode.ResultTypeReference == default)
+			if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind))
+			{
+				parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
+				
+				TypeClauseNode typeClauseNode;
+				
+				var beforeTokenIndex = parserModel.TokenWalker.Index;
+				
+				var maybeTypeClauseNode = ForceDecisionAmbiguousIdentifier(
+					EmptyExpressionNode.Empty,
+					new AmbiguousIdentifierExpressionNode(
+						token,
+						genericParameterListing: default,
+						resultTypeReference: default),
+					compilationUnit,
+					ref parserModel);
+					
+				if (beforeTokenIndex == parserModel.TokenWalker.Index)
+					_ = parserModel.TokenWalker.Consume();
+				
+				if (maybeTypeClauseNode.SyntaxKind != SyntaxKind.TypeClauseNode)
 				{
-					if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind))
-					{
-						_ = parserModel.TokenWalker.Consume(); // Consume the IdentifierToken
-						var typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, compilationUnit, ref parserModel);
+					// Superstitous check, rather than parser throwing an exception in the upcoming explicit cast and no chance to recover.
+					
+					typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, compilationUnit, ref parserModel);
 						
-						BindTypeClauseNode(
-					        typeClauseNode,
-					        compilationUnit,
-					        ref parserModel);
-						
-						if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
-						{
-							constructorInvocationExpressionNode.ResultTypeReference = new TypeReference(typeClauseNode);
-							return constructorInvocationExpressionNode;
-						}
-						
-						constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.GenericParameters;
-						var openAngleBracketToken = parserModel.TokenWalker.Consume();
-						
-						return ParseGenericParameterNode_Start(
-							typeClauseNode, ref openAngleBracketToken, compilationUnit, ref parserModel, nodeToRestoreAtCloseAngleBracketToken: constructorInvocationExpressionNode);
-					}
+					BindTypeClauseNode(
+				        typeClauseNode,
+				        compilationUnit,
+				        ref parserModel);
+				}
+				else
+				{
+					typeClauseNode = (TypeClauseNode)maybeTypeClauseNode;
+				}
+			
+				if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
+				{
+					constructorInvocationExpressionNode.ResultTypeReference = new TypeReference(typeClauseNode);
+					return constructorInvocationExpressionNode;
 				}
 				
+				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.GenericParameters;
+				var openAngleBracketToken = parserModel.TokenWalker.Consume();
+				
+				return ParseGenericParameterNode_Start(
+					typeClauseNode, ref openAngleBracketToken, compilationUnit, ref parserModel, nodeToRestoreAtCloseAngleBracketToken: constructorInvocationExpressionNode);
+			}
+		}
+		
+		switch (token.SyntaxKind)
+		{
+			case SyntaxKind.IdentifierToken:
 				goto default;
 			case SyntaxKind.OpenParenthesisToken:
+			
+				// Constructor parameters parse as TypeClauseNode(s) without this.
+				parserModel.ParserContextKind = CSharpParserContextKind.None;
+			
 			    constructorInvocationExpressionNode.FunctionParameterListing = new FunctionParameterListing(
 					token,
 			        new List<FunctionParameterEntry>(),
@@ -1268,11 +1322,22 @@ public partial class CSharpBinder
 				explicitCastNode.CloseParenthesisToken = token;
 				return explicitCastNode;
 			case SyntaxKind.IdentifierToken:
-				var ambiguousExpressionNode = new AmbiguousIdentifierExpressionNode(
-					token,
-			        genericParameterListing: default,
-			        CSharpFacts.Types.Void.ToTypeReference());
-			    return ambiguousExpressionNode;
+				var expressionNode = ForceDecisionAmbiguousIdentifier(
+					EmptyExpressionNode.Empty,
+					new AmbiguousIdentifierExpressionNode(
+						token,
+						genericParameterListing: default,
+						resultTypeReference: default),
+					compilationUnit,
+					ref parserModel);
+				
+			    return new VariableReferenceNode(
+			    	token,
+					new VariableDeclarationNode(
+						explicitCastNode.ResultTypeReference,
+						token,
+						VariableKind.Local,
+						isInitialized: true));
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeReference(), explicitCastNode, token);
 		}
@@ -1749,18 +1814,12 @@ public partial class CSharpBinder
 					if (functionInvocationNode.GenericParameterListing.ConstructorWasInvoked)
 						goto default;
 					
-					functionInvocationNode.GenericParameterListing =
-						new GenericParameterListing(
-							token,
-					        new List<GenericParameterEntry>(),
-					        closeAngleBracketToken: default);
-					
-				    parserModel.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, functionInvocationNode));
-					parserModel.ExpressionList.Add((SyntaxKind.CommaToken, functionInvocationNode));
-					return functionInvocationNode;
+					return ParseGenericParameterNode_Start(functionInvocationNode, ref token, compilationUnit, ref parserModel);
 				}
 				
 				goto default;
+			case SyntaxKind.CloseAngleBracketToken:
+				return functionInvocationNode;
 			case SyntaxKind.OpenParenthesisToken:
 				if (!functionInvocationNode.FunctionParameterListing.ConstructorWasInvoked)
 				{
@@ -2124,14 +2183,14 @@ public partial class CSharpBinder
 				
 			if (typeReference == default)
 			{
-				expressionPrimary = Aaa(memberIdentifierToken, compilationUnit, ref parserModel);
+				expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, compilationUnit, ref parserModel);
 				continue;
 			}
 			
 			var maybeTypeDefinitionNode = GetDefinitionNode(compilationUnit, typeReference.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
 			if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
 			{
-				expressionPrimary = Aaa(memberIdentifierToken, compilationUnit, ref parserModel);
+				expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, compilationUnit, ref parserModel);
 				continue;
 			}
 				
@@ -2170,7 +2229,7 @@ public partial class CSharpBinder
 			
 			if (foundDefinitionNode is null)
 			{
-				expressionPrimary = Aaa(memberIdentifierToken, compilationUnit, ref parserModel);
+				expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, compilationUnit, ref parserModel);
 				continue;
 			}
 				 
@@ -2229,13 +2288,31 @@ public partial class CSharpBinder
 		// TODO: Method group if next token is not '<' or '('
 		// TODO: return new Aaa.Bbb(); // is a very good test case.
 		
-		
-		
 		return expressionPrimary;
 	}
 	
-	private IExpressionNode Aaa(SyntaxToken memberIdentifierToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	private IExpressionNode ParseMemberAccessToken_UndefinedNode(
+		IExpressionNode expressionPrimary, SyntaxToken memberIdentifierToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
+		// WARNING: Duplicated code in ForceDecisionAmbiguousIdentifier(...)
+		if (parserModel.ParserContextKind == CSharpParserContextKind.ForceStatementExpression)
+		{
+			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
+				parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+			{
+				parserModel.ParserContextKind = CSharpParserContextKind.None;
+			}
+			
+			return ForceDecisionAmbiguousIdentifier(
+				expressionPrimary,
+				new AmbiguousIdentifierExpressionNode(
+					memberIdentifierToken,
+					genericParameterListing: default,
+					resultTypeReference: default),
+				compilationUnit,
+				ref parserModel);
+		}
+		
 		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
 			parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
 		{
@@ -2377,7 +2454,7 @@ public partial class CSharpBinder
 	
 	private IExpressionNode AmbiguousParenthesizedExpressionTransformTo_LambdaExpressionNode(
 		AmbiguousParenthesizedExpressionNode ambiguousParenthesizedExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
-	{	
+	{
 		var lambdaExpressionNode = new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeReference());
 					
 		if (ambiguousParenthesizedExpressionNode.NodeList is not null)
@@ -2603,6 +2680,14 @@ public partial class CSharpBinder
 	{
 		switch (token.SyntaxKind)
 		{
+			case SyntaxKind.OpenAngleBracketToken:
+				if (functionDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode && ((FunctionDefinitionNode)functionDefinitionNode).IsParsingGenericParameters)
+					return GenericParametersListingMergeToken((FunctionDefinitionNode)functionDefinitionNode, ref token, compilationUnit, ref parserModel);
+				goto default;
+			case SyntaxKind.CloseAngleBracketToken:
+				if (functionDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode && ((FunctionDefinitionNode)functionDefinitionNode).IsParsingGenericParameters)
+					return functionDefinitionNode;
+				goto default;
 			case SyntaxKind.CommaToken:
 				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, functionDefinitionNode));
 				return EmptyExpressionNode.Empty;
@@ -2685,7 +2770,13 @@ public partial class CSharpBinder
 		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
 			genericParameterNode.IsParsingGenericParameters = false;
 	
-		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		if (genericParameterNode == expressionSecondary)
+		{
+			// If the generic parameters are empty: "List<>" then this is an infinite loop
+			// if you ever show on the UI the tooltip, without this case.
+			return genericParameterNode;
+		}
+		else if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
 		{
 			var expressionSecondaryTyped = (AmbiguousIdentifierExpressionNode)expressionSecondary;
 			
