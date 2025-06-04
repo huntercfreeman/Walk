@@ -718,13 +718,13 @@ public static class CSharpLexer
 		// it is useful for the Lexer to decorate the interpolated expressions
 		// with the text color '(byte)GenericDecorationKind.None'
 		// so they are distinct from the string itself.
-		lexerOutput.MiscTextSpanList.Add(new TextEditorTextSpan(
+		/*lexerOutput.MiscTextSpanList.Add(new TextEditorTextSpan(
 			startInclusiveOpenDelimiter,
 			stringWalker.PositionIndex,
 			(byte)GenericDecorationKind.None,
 			stringWalker.ResourceUri,
 			stringWalker.SourceText,
-            string.Empty));
+            string.Empty));*/
 		
 		lexerOutput.SyntaxTokenList.Add(new SyntaxToken(
 			SyntaxKind.StringInterpolatedContinueToken,
