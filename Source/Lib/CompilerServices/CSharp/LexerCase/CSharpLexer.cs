@@ -695,6 +695,14 @@ public static class CSharpLexer
     private static void LexInterpolatedExpression(
     	CSharpBinder binder, ref CSharpLexerOutput lexerOutput, StringWalker stringWalker, ref TextEditorTextSpan previousEscapeCharacterTextSpan, int startInclusiveOpenDelimiter, int countDollarSign)
     {
+    	lexerOutput.MiscTextSpanList.Add(new TextEditorTextSpan(
+			stringWalker.PositionIndex,
+			stringWalker.PositionIndex + 1,
+			(byte)GenericDecorationKind.None,
+			stringWalker.ResourceUri,
+			stringWalker.SourceText,
+            string.Empty));
+    
     	var readOpenDelimiterCount = stringWalker.PositionIndex - startInclusiveOpenDelimiter;
     	
     	for (; readOpenDelimiterCount < countDollarSign; readOpenDelimiterCount++)
@@ -714,22 +722,10 @@ public static class CSharpLexer
         	
         _ = stringWalker.ReadCharacter(); // This consumes the final '}'.
 
-		// In the event that the C# Parser throws an exception,
-		// it is useful for the Lexer to decorate the interpolated expressions
-		// with the text color '(byte)GenericDecorationKind.None'
-		// so they are distinct from the string itself.
-		/*lexerOutput.MiscTextSpanList.Add(new TextEditorTextSpan(
-			startInclusiveOpenDelimiter,
-			stringWalker.PositionIndex,
-			(byte)GenericDecorationKind.None,
-			stringWalker.ResourceUri,
-			stringWalker.SourceText,
-            string.Empty));*/
-		
 		lexerOutput.SyntaxTokenList.Add(new SyntaxToken(
 			SyntaxKind.StringInterpolatedContinueToken,
 			new TextEditorTextSpan(
-	            stringWalker.PositionIndex,
+	            stringWalker.PositionIndex - 1,
 			    stringWalker.PositionIndex,
 			    (byte)GenericDecorationKind.None,
 			    stringWalker.ResourceUri,
