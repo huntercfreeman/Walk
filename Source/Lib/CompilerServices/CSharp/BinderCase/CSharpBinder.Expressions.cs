@@ -79,6 +79,8 @@ public partial class CSharpBinder
 				return TypeClauseMergeToken((TypeClauseNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
 			case SyntaxKind.ReturnStatementNode:
 				return ReturnStatementMergeToken((ReturnStatementNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
+			case SyntaxKind.KeywordFunctionOperatorNode:
+				return KeywordFunctionOperatorMergeToken((KeywordFunctionOperatorNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
 			case SyntaxKind.BadExpressionNode:
 				return BadMergeToken((BadExpressionNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
 			default:
@@ -136,6 +138,8 @@ public partial class CSharpBinder
 				return TypeClauseMergeExpression((TypeClauseNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			case SyntaxKind.ReturnStatementNode:
 				return ReturnStatementMergeExpression((ReturnStatementNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
+			case SyntaxKind.KeywordFunctionOperatorNode:
+				return KeywordFunctionOperatorMergeExpression((KeywordFunctionOperatorNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			case SyntaxKind.BadExpressionNode:
 				return BadMergeExpression((BadExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			default:
@@ -1167,10 +1171,50 @@ public partial class CSharpBinder
 		return EmptyExpressionNode.Empty;
 	}
 	
+	public IExpressionNode HandleKeywordFunctionOperator(
+		EmptyExpressionNode emptyExpressionNode, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		if (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.OpenParenthesisToken)
+			return emptyExpressionNode;
+		
+		token = parserModel.TokenWalker.Consume(); // keyword
+		_ = parserModel.TokenWalker.Consume(); // OpenParenthesisToken
+		
+		TypeReference typeReference;
+		
+		if (token.SyntaxKind == SyntaxKind.SizeofTokenKeyword)
+		{
+			typeReference = CSharpFacts.Types.Int.ToTypeReference();
+		}
+		else if (token.SyntaxKind == SyntaxKind.TypeofTokenKeyword)
+		{
+			typeReference = CSharpFacts.Types.Var.ToTypeReference();
+		}
+		else if (token.SyntaxKind == SyntaxKind.NameofTokenContextualKeyword)
+		{
+			typeReference = CSharpFacts.Types.String.ToTypeReference();
+		}
+		else
+		{
+			typeReference = CSharpFacts.Types.Var.ToTypeReference();
+		}
+		
+		var variableDeclarationNode = new VariableDeclarationNode(
+			typeReference,
+			token,
+			VariableKind.Local,
+			isInitialized: true);
+		
+		var keywordFunctionOperatorNode = new KeywordFunctionOperatorNode(token, variableDeclarationNode);
+		
+		parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, keywordFunctionOperatorNode));
+		return EmptyExpressionNode.Empty;
+	}
+	
 	public IExpressionNode EmptyMergeToken(
 		EmptyExpressionNode emptyExpressionNode, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind))
+		if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind) && token.SyntaxKind != SyntaxKind.NameofTokenContextualKeyword)
 		{
 			parserModel.AmbiguousIdentifierExpressionNode.SetSharedInstance(
 				token,
@@ -1248,6 +1292,10 @@ public partial class CSharpBinder
 			case SyntaxKind.ParamsTokenKeyword:
 			case SyntaxKind.ThisTokenKeyword:
 				return emptyExpressionNode;
+			case SyntaxKind.SizeofTokenKeyword:
+			case SyntaxKind.TypeofTokenKeyword:
+			case SyntaxKind.NameofTokenContextualKeyword:
+				return HandleKeywordFunctionOperator(emptyExpressionNode, ref token, compilationUnit, ref parserModel);
 			case SyntaxKind.OpenAngleBracketToken:
 				// TODO: If text is "<Apple>" it no longer parses as generic parameters...
 				// ...now there needs to be something prior to the OpenAngleBracketToken that opens the possibility
@@ -1357,6 +1405,30 @@ public partial class CSharpBinder
 		ReturnStatementNode returnStatementNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeReference(), returnStatementNode, expressionSecondary);
+	}
+	
+	public IExpressionNode KeywordFunctionOperatorMergeToken(
+		KeywordFunctionOperatorNode keywordFunctionOperatorNode, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		if (token.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+			_ = parserModel.TokenWalker.Consume();
+		
+		return keywordFunctionOperatorNode.ExpressionNodeToMakePrimary;
+	}
+	
+	public IExpressionNode KeywordFunctionOperatorMergeExpression(
+		KeywordFunctionOperatorNode keywordFunctionOperatorNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		{
+			ForceDecisionAmbiguousIdentifier(
+				EmptyExpressionNode.Empty,
+				(AmbiguousIdentifierExpressionNode)expressionSecondary,
+				compilationUnit,
+				ref parserModel);
+		}
+	
+		return keywordFunctionOperatorNode;
 	}
 	
 	public IExpressionNode LambdaMergeToken(

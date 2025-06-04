@@ -36,13 +36,7 @@ public class UnitTest1
 			serviceProvider: null));
     	var resourceUri = new ResourceUri("/luthetusUnitTest1.cs");
     	
-    	var content = @"public Task WriteAppDataAsync<AppData>(AppData appData)
-		where AppData : IAppData
-	{
-		return Task.CompletedTask;
-	}";
-	
-		// var content = @"<AppData>";
+    	var content = @"nameof(aaa);";
 	
 		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri, content);
 		var lexerOutput = CSharpLexer.Lex(binder, resourceUri, content, shouldUseSharedStringWalker: true);
