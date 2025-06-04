@@ -760,10 +760,6 @@ public partial class CSharpBinder
 			_ = parserModel.TokenWalker.Consume();
 			var token = parserModel.TokenWalker.Current;
 			result = ParseMemberAccessToken(result, ref token, compilationUnit, ref parserModel);
-			
-			// parserModel.ConstructOrRecycleVariableReferenceNode(result);
-			// parserModel.AaaConstructOrRecycleVariableReferenceNode(result);
-			// Console.WriteLine(result.SyntaxKind);
 		}
 		
 		return result;
