@@ -1188,25 +1188,15 @@ public partial class CSharpBinder
 		TypeReference typeReference;
 		
 		if (token.SyntaxKind == SyntaxKind.SizeofTokenKeyword)
-		{
 			typeReference = CSharpFacts.Types.Int.ToTypeReference();
-		}
 		else if (token.SyntaxKind == SyntaxKind.TypeofTokenKeyword)
-		{
 			typeReference = CSharpFacts.Types.Var.ToTypeReference();
-		}
 		else if (token.SyntaxKind == SyntaxKind.DefaultTokenKeyword)
-		{
 			typeReference = CSharpFacts.Types.Var.ToTypeReference();
-		}
 		else if (token.SyntaxKind == SyntaxKind.NameofTokenContextualKeyword)
-		{
 			typeReference = CSharpFacts.Types.String.ToTypeReference();
-		}
 		else
-		{
 			typeReference = CSharpFacts.Types.Var.ToTypeReference();
-		}
 		
 		var variableDeclarationNode = new VariableDeclarationNode(
 			typeReference,

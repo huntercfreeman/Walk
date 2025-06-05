@@ -19,35 +19,51 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 		IdentifierToken = identifierToken;
 		CodeBlock = codeBlock;
 	}
+	
+	private bool _isDirtytypeDefinitionNodeList = true;
+	private List<TypeDefinitionNode> _typeDefinitionNodeList;
+	
+	private CodeBlock _codeBlock;
 
 	public SyntaxToken KeywordToken { get; }
 	public SyntaxToken IdentifierToken { get; }
+	
+	public List<TypeDefinitionNode> TypeDefinitionNodeList
+	{
+		get
+		{
+			if (_isDirtytypeDefinitionNodeList)
+			{
+				_typeDefinitionNodeList = CodeBlock.ChildList
+					.Where(innerC => innerC.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+					.Select(td => (TypeDefinitionNode)td)
+					.ToList();
+				_isDirtytypeDefinitionNodeList = false;
+			}
+			
+			return _typeDefinitionNodeList;
+		}
+	}
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
-	public CodeBlock CodeBlock { get; set; }
+	
+	public CodeBlock CodeBlock
+	{
+		get => _codeBlock;
+		set
+		{
+			_codeBlock = value;
+			_isDirtytypeDefinitionNodeList = true;
+		}
+	}
+	
 	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
 	public int ScopeIndexKey { get; set; } = -1;
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.NamespaceStatementNode;
-
-	/// <summary>
-	/// <see cref="GetTopLevelTypeDefinitionNodes"/> provides a collection
-	/// which contains all top level type definitions of the <see cref="NamespaceStatementNode"/>.
-	/// </summary>
-	public IEnumerable<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes()
-	{
-		var localCodeBlockNode = CodeBlock;
-
-		if (!localCodeBlockNode.ConstructorWasInvoked)
-			return Array.Empty<TypeDefinitionNode>();
-
-		return localCodeBlockNode.ChildList
-			.Where(innerC => innerC.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-			.Select(td => (TypeDefinitionNode)td);
-	}
 
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()
@@ -55,7 +71,7 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 		return TypeFacts.Empty.ToTypeReference();
 	}
 	#endregion
-
+	
 	#if DEBUG	
 	~NamespaceStatementNode()
 	{

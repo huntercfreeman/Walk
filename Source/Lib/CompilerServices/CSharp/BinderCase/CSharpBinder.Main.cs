@@ -27,6 +27,9 @@ public partial class CSharpBinder
     private readonly Dictionary<string, TypeDefinitionNode> _allTypeDefinitions = new();
     private readonly NamespaceStatementNode _topLevelNamespaceStatementNode = CSharpFacts.Namespaces.GetTopLevelNamespaceStatementNode();
     
+    /// <summary>
+	/// This is not thread safe to access because 'BindNamespaceStatementNode(...)' will directly modify the NamespaceGroup's List.
+	/// </summary>
     public IReadOnlyDictionary<string, NamespaceGroup> NamespaceGroupMap => _namespaceGroupMap;
     public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions;
     
@@ -623,8 +626,6 @@ public partial class CSharpBinder
         if (_namespaceGroupMap.TryGetValue(namespaceString, out var namespaceGroupNode) &&
             namespaceGroupNode.ConstructorWasInvoked)
         {
-        	// Bad (2025-02-07)
-        	// Wow this gets invoked for every using statement, yeah I agree with myself from the past, this is bad. (2025-03-08)
             var typeDefinitionNodes = namespaceGroupNode.GetTopLevelTypeDefinitionNodes();
 
             foreach (var typeDefinitionNode in typeDefinitionNodes)
