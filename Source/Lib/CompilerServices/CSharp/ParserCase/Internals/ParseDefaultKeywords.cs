@@ -153,7 +153,27 @@ public class ParseDefaultKeywords
 
     public static void HandleElseTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    	if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.IfTokenKeyword)
+    	{
+    		parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    		return;
+    	}
+    
+    	var elseTokenKeyword = parserModel.TokenWalker.Consume();
+    	
+        var ifStatementNode = new IfStatementNode(
+            elseTokenKeyword,
+            EmptyExpressionNode.Empty,
+            default);
+        
+        parserModel.Binder.NewScopeAndBuilderFromOwner(
+        	ifStatementNode,
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
+	    
+	    if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleEnumTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
