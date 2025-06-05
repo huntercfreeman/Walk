@@ -41,9 +41,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		// ReferenceHashSet = referenceHashSet;
 	}
 
-	private ISyntaxNode[] _memberList = Array.Empty<ISyntaxNode>();
-	private bool _memberListIsDirty = true;
-
 	private TypeClauseNode? _toTypeClauseResult;
 	
 	private bool _hasCalculatedToTypeReference = false;
@@ -111,7 +108,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	public void SetFunctionArgumentListing(FunctionArgumentListing functionArgumentListing)
 	{
 		FunctionArgumentListing = functionArgumentListing;
-		_memberListIsDirty = true;
 	}
 
 	public FunctionDefinitionNode[] GetFunctionDefinitionNodes()
@@ -125,20 +121,16 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 			.ToArray();
 	}
 
-	public ISyntaxNode[] GetMemberList()
+	public IEnumerable<ISyntaxNode> GetMemberList()
 	{
 		if (!CodeBlock.ConstructorWasInvoked)
 			return Array.Empty<ISyntaxNode>();
 
-		if (!_memberListIsDirty)
-			return _memberList;
-
-		return _memberList = CodeBlock.ChildList
+		return CodeBlock.ChildList
 			.Where(child => child.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
 							child.SyntaxKind == SyntaxKind.VariableDeclarationNode ||
 							child.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-			.Select(x => (ISyntaxNode)x)
-			.ToArray();
+			.Select(x => (ISyntaxNode)x);
 	}
 
 	public TypeClauseNode ToTypeClause()
@@ -168,8 +160,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	public ICodeBlockOwner SetInheritedTypeReference(TypeReference typeReference)
 	{
 		InheritedTypeReference = typeReference;
-
-		_memberListIsDirty = true;
 		return this;
 	}
 
