@@ -129,7 +129,7 @@ public class Person : IPerson
 	public string LastName { get; set; }
 	
 	// Most interpolated expressions work now, try hovering these interpolated expressions.
-	public string DisplayName => $"{FirstName} {LastName}";
+	public string DisplayName => $"{FirstName} {nameof(LastName)}";
 }
 
 public interface IPerson { }
@@ -441,6 +441,17 @@ public class DoNothingAppDataService : IAppDataService
 		return Task.FromResult(default(AppData));
 	}
 }
+
+public void SomeGenericMethod<TItem>(TItem mmm) => mmm;
+var person = new();
+SomeGenericMethod<Person>(person);
+return SomeGenericMethod<Person>(person);
+
+default(int);
+default(Person);
+
+return default(int);
+return default(Person);
 
 /*
 Not everything in this file works perfectly yet.

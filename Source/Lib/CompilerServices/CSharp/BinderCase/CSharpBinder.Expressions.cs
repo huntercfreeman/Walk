@@ -1019,8 +1019,6 @@ public partial class CSharpBinder
 					goto default;
 				}
 			case SyntaxKind.CloseAngleBracketToken:
-				// Anything after this point parses as TypeClauseNode(s) without this.
-				parserModel.ParserContextKind = CSharpParserContextKind.None;
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
 				return constructorInvocationExpressionNode;
 			case SyntaxKind.OpenBraceToken:
@@ -2847,7 +2845,11 @@ public partial class CSharpBinder
 			return genericParameterNode;
 			
 		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+		{
 			genericParameterNode.IsParsingGenericParameters = false;
+			// Anything after this point parses as TypeClauseNode(s) without this.
+			parserModel.ParserContextKind = CSharpParserContextKind.None;
+		}
 	
 		if (genericParameterNode == expressionSecondary)
 		{
