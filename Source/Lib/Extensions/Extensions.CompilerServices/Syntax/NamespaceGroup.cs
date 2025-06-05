@@ -9,48 +9,24 @@ public record struct NamespaceGroup
 		List<NamespaceStatementNode> namespaceStatementNodeList)
 	{
 		NamespaceString = namespaceString;
-		_namespaceStatementNodeList = namespaceStatementNodeList;
+		NamespaceStatementNodeList = namespaceStatementNodeList;
 	}
-	
-	private bool _isDirtyTypeDefinitionNodeList = true;
-	private List<TypeDefinitionNode> _typeDefinitionNodeList;
-	
-	private List<NamespaceStatementNode> _namespaceStatementNodeList = new();
 
 	public string NamespaceString { get; }
-	public IReadOnlyList<NamespaceStatementNode> NamespaceStatementNodeList => _namespaceStatementNodeList;
-	
-	public IReadOnlyList<TypeDefinitionNode> TypeDefinitionNodeList
-	{
-		get
-		{
-			if (_isDirtyTypeDefinitionNodeList)
-			{
-				_typeDefinitionNodeList = NamespaceStatementNodeList
-					.SelectMany(x => x.GetTopLevelTypeDefinitionNodes())
-					.ToList();
-				_isDirtyTypeDefinitionNodeList = false;
-			}
-			
-			return _typeDefinitionNodeList;
-		}
-	}
+	public List<NamespaceStatementNode> NamespaceStatementNodeList { get; }
 
 	public bool ConstructorWasInvoked => NamespaceStatementNodeList is not null;
 
 	/// <summary>
-	/// TODO: Ensure the namespace statements are only added after the codeblock is parsed.
-	/// Otherwise the `_isDirtyTypeDefinitionNodeList` won't properly reflect the state.
+	/// <see cref="GetTopLevelTypeDefinitionNodes"/> provides a collection
+	/// which contains all top level type definitions of the namespace.
+	/// <br/><br/>
+	/// This is to say that, any type definitions which are nested, would not
+	/// be in this collection.
 	/// </summary>
-	public void AddNamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
+	public IEnumerable<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes()
 	{
-		_namespaceStatementNodeList.Add(namespaceStatementNode);
-		_isDirtyTypeDefinitionNodeList = true;
-	}
-	
-	public void RemoveAtNamespaceStatementNode(int index)
-	{
-		_namespaceStatementNodeList.RemoveAt(index);
-		_isDirtyTypeDefinitionNodeList = true;
+		return NamespaceStatementNodeList
+			.SelectMany(x => x.GetTopLevelTypeDefinitionNodes());
 	}
 }

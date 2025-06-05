@@ -19,10 +19,10 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 		IdentifierToken = identifierToken;
 		CodeBlock = codeBlock;
 	}
-	
+
 	public SyntaxToken KeywordToken { get; }
 	public SyntaxToken IdentifierToken { get; }
-	
+
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
@@ -33,13 +33,6 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.NamespaceStatementNode;
 
-	#region ICodeBlockOwner_Methods
-	public TypeReference GetReturnTypeReference()
-	{
-		return TypeFacts.Empty.ToTypeReference();
-	}
-	#endregion
-	
 	/// <summary>
 	/// <see cref="GetTopLevelTypeDefinitionNodes"/> provides a collection
 	/// which contains all top level type definitions of the <see cref="NamespaceStatementNode"/>.
@@ -55,7 +48,14 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 			.Where(innerC => innerC.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 			.Select(td => (TypeDefinitionNode)td);
 	}
-	
+
+	#region ICodeBlockOwner_Methods
+	public TypeReference GetReturnTypeReference()
+	{
+		return TypeFacts.Empty.ToTypeReference();
+	}
+	#endregion
+
 	#if DEBUG	
 	~NamespaceStatementNode()
 	{
