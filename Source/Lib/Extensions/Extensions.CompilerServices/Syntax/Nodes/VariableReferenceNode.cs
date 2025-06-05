@@ -23,7 +23,6 @@ public sealed class VariableReferenceNode : IExpressionNode
 		#endif
 	
 		VariableIdentifierToken = variableReference.VariableIdentifierToken;
-		VariableDeclarationNode = variableReference.VariableDeclarationNode;
 		IsFabricated = variableReference.IsFabricated;
 	}
 
