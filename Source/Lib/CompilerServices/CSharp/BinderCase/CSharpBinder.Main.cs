@@ -76,7 +76,7 @@ public partial class CSharpBinder
         		var x = namespaceGroupNodeKvp.Value.NamespaceStatementNodeList[i];
         		
         		if (x.IdentifierToken.TextSpan.ResourceUri == resourceUri)
-        			namespaceGroupNodeKvp.Value.NamespaceStatementNodeList.RemoveAt(i);
+        			namespaceGroupNodeKvp.Value.RemoveAtNamespaceStatementNode(i);
         	}
         }
     }
@@ -156,7 +156,7 @@ public partial class CSharpBinder
 
         if (_namespaceGroupMap.TryGetValue(namespaceString, out var inNamespaceGroupNode))
         {
-        	inNamespaceGroupNode.NamespaceStatementNodeList.Add(namespaceStatementNode);
+        	inNamespaceGroupNode.AddNamespaceStatementNode(namespaceStatementNode);
         }
         else
         {
@@ -626,7 +626,7 @@ public partial class CSharpBinder
         if (_namespaceGroupMap.TryGetValue(namespaceString, out var namespaceGroupNode) &&
             namespaceGroupNode.ConstructorWasInvoked)
         {
-            var typeDefinitionNodes = namespaceGroupNode.GetTopLevelTypeDefinitionNodes();
+            var typeDefinitionNodes = namespaceGroupNode.TypeDefinitionNodeList;
 
             foreach (var typeDefinitionNode in typeDefinitionNodes)
             {
@@ -1654,7 +1654,9 @@ public partial class CSharpBinder
     		case SyntaxKind.NamespaceStatementNode:
     			var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
 	    		var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.Text;
-	        	parserModel.Binder.AddNamespaceToCurrentScope(namespaceString, cSharpCompilationUnit, ref parserModel);
+	    		
+	    		parserModel.Binder.AddNamespaceToCurrentScope(namespaceString, cSharpCompilationUnit, ref parserModel);
+	        	
 	        	return;
 	        case SyntaxKind.FunctionDefinitionNode:
 	        	var functionDefinitionNode = (FunctionDefinitionNode)codeBlockOwner;
