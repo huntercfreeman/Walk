@@ -117,7 +117,7 @@ public class ParseDefaultKeywords
         if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.ColonToken)
         	_ = parserModel.TokenWalker.Consume();
 		else
-			parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+			ParseOthers.StartStatement_Expression(compilationUnit, ref parserModel);
     }
 
     public static void HandleDelegateTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
