@@ -1195,6 +1195,10 @@ public partial class CSharpBinder
 		{
 			typeReference = CSharpFacts.Types.Var.ToTypeReference();
 		}
+		else if (token.SyntaxKind == SyntaxKind.DefaultTokenKeyword)
+		{
+			typeReference = CSharpFacts.Types.Var.ToTypeReference();
+		}
 		else if (token.SyntaxKind == SyntaxKind.NameofTokenContextualKeyword)
 		{
 			typeReference = CSharpFacts.Types.String.ToTypeReference();
@@ -1298,6 +1302,7 @@ public partial class CSharpBinder
 			case SyntaxKind.ThisTokenKeyword:
 				return emptyExpressionNode;
 			case SyntaxKind.SizeofTokenKeyword:
+			case SyntaxKind.DefaultTokenKeyword:
 			case SyntaxKind.TypeofTokenKeyword:
 			case SyntaxKind.NameofTokenContextualKeyword:
 				return HandleKeywordFunctionOperator(emptyExpressionNode, ref token, compilationUnit, ref parserModel);
