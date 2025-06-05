@@ -27,6 +27,15 @@ public partial class CSharpBinder
 			var variableReferenceNode = (VariableReferenceNode)expressionPrimary;
 			Console.Write($"{variableReferenceNode.VariableIdentifierToken.TextSpan.Text}____");
 		}
+		else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
+		{
+			var typeClauseNode = (TypeClauseNode)expressionPrimary;
+			Console.Write($"{typeClauseNode.TypeIdentifierToken.TextSpan.Text}____");
+		}
+		if (token.SyntaxKind == SyntaxKind.IdentifierToken)
+		{
+			Console.Write($"____token-{token.TextSpan.Text}____");
+		}
 		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {token.SyntaxKind}:{parserModel.TokenWalker.Index}");
 		#else
 		Console.WriteLine($"{nameof(AnyMergeToken)} has debug 'Console.Write...' that needs commented out.");
@@ -991,10 +1000,6 @@ public partial class CSharpBinder
 			case SyntaxKind.IdentifierToken:
 				goto default;
 			case SyntaxKind.OpenParenthesisToken:
-			
-				// Constructor parameters parse as TypeClauseNode(s) without this.
-				parserModel.ParserContextKind = CSharpParserContextKind.None;
-			
 			    constructorInvocationExpressionNode.FunctionParameterListing = new FunctionParameterListing(
 					token,
 			        new List<FunctionParameterEntry>(),
@@ -1014,9 +1019,11 @@ public partial class CSharpBinder
 					goto default;
 				}
 			case SyntaxKind.CloseAngleBracketToken:
+				// Anything after this point parses as TypeClauseNode(s) without this.
+				parserModel.ParserContextKind = CSharpParserContextKind.None;
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
 				return constructorInvocationExpressionNode;
-			case SyntaxKind.OpenBraceToken:				
+			case SyntaxKind.OpenBraceToken:
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.ObjectInitializationParameters;
 				parserModel.ExpressionList.Add((SyntaxKind.CloseBraceToken, constructorInvocationExpressionNode));
 				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
