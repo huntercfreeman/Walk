@@ -56,12 +56,12 @@ public struct VirtualizationGrid
     public VirtualizationGrid(
         List<VirtualizationLine> entries,
         List<VirtualizationSpan> virtualizationSpanList,
-        double totalWidth,
-        double totalHeight,
-        double resultWidth,
-        double resultHeight,
+        int totalWidth,
+        int totalHeight,
+        int resultWidth,
+        int resultHeight,
         double left,
-        double top)
+        int top)
     {
         EntryList = entries;
         VirtualizationSpanList = virtualizationSpanList;
@@ -81,25 +81,25 @@ public struct VirtualizationGrid
     ///
     /// Width (including non-rendered elements).
     /// </summary>
-    public double TotalWidth { get; init; }
+    public int TotalWidth { get; init; }
     /// <summary>
     /// Measurements are in pixels
     ///
     /// Height (including non-rendered elements).
     /// </summary>
-    public double TotalHeight { get; init; }
+    public int TotalHeight { get; init; }
     /// <summary>
     /// Measurements are in pixels
     ///
     /// Width (only rendered elements).
     /// </summary>
-    public double VirtualWidth { get; init; }
+    public int VirtualWidth { get; init; }
     /// <summary>
     /// Measurements are in pixels
     ///
     /// Height (only rendered elements).
     /// </summary>
-    public double VirtualHeight { get; init; }
+    public int VirtualHeight { get; init; }
     /// <summary>
     /// Measurements are in pixels
     ///
@@ -111,5 +111,5 @@ public struct VirtualizationGrid
     ///
     /// Lowest 'top' point where a rendered element is displayed.
     /// </summary>
-    public double VirtualTop { get; init; }
+    public int VirtualTop { get; init; }
 }

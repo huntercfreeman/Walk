@@ -7,5 +7,5 @@ namespace Walk.TextEditor.RazorLib.Virtualizations.Models;
 //  (back when this was nullable))
 /// </summary>
 public record struct VirtualizationBoundary(
-    double WidthInPixels,
-    double HeightInPixels);
+    int WidthInPixels,
+    int HeightInPixels);

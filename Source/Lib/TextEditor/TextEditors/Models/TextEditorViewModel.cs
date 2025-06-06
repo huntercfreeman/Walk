@@ -40,11 +40,11 @@ public sealed class TextEditorViewModel : IDisposable
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         VirtualizationGrid virtualizationResult,
 		TextEditorDimensions textEditorDimensions,
-		double scrollLeft,
-	    double scrollTop,
-	    double scrollWidth,
-	    double scrollHeight,
-	    double marginScrollHeight,
+		int scrollLeft,
+	    int scrollTop,
+	    int scrollWidth,
+	    int scrollHeight,
+	    int marginScrollHeight,
 		Category category)
     {
     	PersistentState = new TextEditorViewModelPersistentState(
@@ -132,13 +132,13 @@ public sealed class TextEditorViewModel : IDisposable
     public VirtualizationGrid VirtualizationResult { get; set; }
 	public TextEditorDimensions TextEditorDimensions { get; set; }
 	
-	public double ScrollLeft { get; set; }
-    public double ScrollTop { get; set; }
-    public double ScrollWidth { get; set; }
-    public double ScrollHeight { get; set; }
-    public double MarginScrollHeight { get; set; }
+	public int ScrollLeft { get; set; }
+    public int ScrollTop { get; set; }
+    public int ScrollWidth { get; set; }
+    public int ScrollHeight { get; set; }
+    public int MarginScrollHeight { get; set; }
     
-    public double GutterWidthInPixels { get; set; }
+    public int GutterWidthInPixels { get; set; }
 	
 	/// <summary>
 	/// TODO: Rename 'CharAndLineMeasurements' to 'CharAndLineDimensions'...
@@ -184,7 +184,7 @@ public sealed class TextEditorViewModel : IDisposable
     }
     
     public void MutateScrollLeft(int pixels, TextEditorDimensions textEditorDimensions) =>
-		SetScrollLeft((int)Math.Ceiling(ScrollLeft + pixels), textEditorDimensions);
+		SetScrollLeft(ScrollLeft + pixels, textEditorDimensions);
 
 	public void SetScrollLeft(int pixels, TextEditorDimensions textEditorDimensions)
 	{
@@ -198,7 +198,7 @@ public sealed class TextEditorViewModel : IDisposable
 	}
 
 	public void MutateScrollTop(int pixels, TextEditorDimensions textEditorDimensions) =>
-		SetScrollTop((int)Math.Ceiling(ScrollTop + pixels), textEditorDimensions);
+		SetScrollTop(ScrollTop + pixels, textEditorDimensions);
 
 	public void SetScrollTop(int pixels, TextEditorDimensions textEditorDimensions)
 	{
