@@ -12,10 +12,10 @@ public record struct VirtualizationLine
 	    int position_EndExclusiveIndex,
 	    int virtualizationSpan_StartInclusiveIndex,
 	    int virtualizationSpan_EndExclusiveIndex,
-	    double widthInPixels,
-	    double heightInPixels,
+	    int widthInPixels,
+	    int heightInPixels,
 	    double leftInPixels,
-	    double topInPixels)
+	    int topInPixels)
 	{
 		LineIndex = lineIndex;
 	    Position_StartInclusiveIndex = position_StartInclusiveIndex;
@@ -33,8 +33,8 @@ public record struct VirtualizationLine
     public int Position_EndExclusiveIndex { get; }
     public int VirtualizationSpan_StartInclusiveIndex { get; set; }
     public int VirtualizationSpan_EndExclusiveIndex { get; set; }
-    public double WidthInPixels { get; }
-    public double HeightInPixels { get; }
+    public int WidthInPixels { get; }
+    public int HeightInPixels { get; }
     public double LeftInPixels { get; }
-    public double TopInPixels { get; }
+    public int TopInPixels { get; }
 }

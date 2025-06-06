@@ -1,6 +1,6 @@
-﻿namespace Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
+namespace Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 public static class ScrollbarFacts
 {
-    public const double SCROLLBAR_SIZE_IN_PIXELS = 10;
+    public const int SCROLLBAR_SIZE_IN_PIXELS = 10;
 }

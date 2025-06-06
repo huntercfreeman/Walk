@@ -9,7 +9,7 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Models;
 /// <param name="BoundingClientRectLeft">The unit of measurement is Pixels (px)</param>
 /// <param name="BoundingClientRectTop">The unit of measurement is Pixels (px)</param>
 public record struct TextEditorDimensions(
-    double Width,
-    double Height,
+    int Width,
+    int Height,
 	double BoundingClientRectLeft,
 	double BoundingClientRectTop);

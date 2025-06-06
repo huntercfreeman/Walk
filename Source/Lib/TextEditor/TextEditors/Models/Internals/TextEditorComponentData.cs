@@ -157,21 +157,21 @@ public sealed class TextEditorComponentData
     private List<TextEditorTextSpan> OutTextSpansList { get; set; } = new();
     
     /// <summary>Pixels (px)</summary>
-	public double LineHeight { get; set; }
+	public int LineHeight { get; set; }
 	
 	/// <summary>Pixels (px)</summary>
-	public double TextEditor_Width { get; set; }
+	public int TextEditor_Width { get; set; }
 	/// <summary>Pixels (px)</summary>
-	public double TextEditor_Height { get; set; }
+	public int TextEditor_Height { get; set; }
 	
 	/// <summary>Pixels (px)</summary>
-	public double Scroll_Width { get; set; }
+	public int Scroll_Width { get; set; }
 	/// <summary>Pixels (px)</summary>
-	public double Scroll_Height { get; set; }
+	public int Scroll_Height { get; set; }
 	/// <summary>Pixels (px)</summary>
-	public double Scroll_Left { get; set; }
+	public int Scroll_Left { get; set; }
 	/// <summary>Pixels (px)</summary>
-	public double Scroll_Top { get; set; }
+	public int Scroll_Top { get; set; }
 	
 	public bool Scroll_LeftChanged { get; set; }
     public bool Scroll_TopChanged { get; set; }
@@ -202,14 +202,14 @@ public sealed class TextEditorComponentData
     /// The initial value cannot be 0 else any text editor without a gutter cannot detect change on the initial render.
     /// Particularly, whatever the double subtraction -- absolute value precision -- check is, it has to be greater a difference than that.
     /// </summary>
-    private double ViewModelGutterWidth { get; set; } = -2;
+    private int ViewModelGutterWidth { get; set; } = -2;
     /// <summary>Pixels (px)</summary>
-    private double ViewModelScrollLeft { get; set; }
+    private int ViewModelScrollLeft { get; set; }
     
     public string ScrollbarSection_LeftCssStyle { get; set; }
     
     /// <summary>If the scroll left changes you have to discard the virtualized line cache.</summary>
-    public double Virtualized_LineIndexCache_CreatedWithScrollLeft { get; set; } = -1;
+    public int Virtualized_LineIndexCache_CreatedWithScrollLeft { get; set; } = -1;
     /// <summary></summary>
     public Dictionary<int, VirtualizationLine> Virtualized_LineIndexCache_LineMap { get; set; } = new();
     /// <summary>
@@ -255,8 +255,8 @@ public sealed class TextEditorComponentData
 	public string HorizontalVirtualizationBoundaryStyleCssString { get; set; } = "width: 0px;";
 	public string BothVirtualizationBoundaryStyleCssString { get; set; } = "width: 0px; height: 0px;";
 	
-	public double TotalWidth { get; set; }
-	public double TotalHeight { get; set; }
+	public int TotalWidth { get; set; }
+	public int TotalHeight { get; set; }
     
     public string PersonalWrapperCssClass { get; set; }
     public string PersonalWrapperCssStyle { get; set; }
@@ -362,7 +362,7 @@ public sealed class TextEditorComponentData
         	Console.WriteLine("inner " + e);
         }
         
-    	if (Math.Abs(LineHeight - RenderBatch.ViewModel.CharAndLineMeasurements.LineHeight) >= 0.1)
+    	if (LineHeight != RenderBatch.ViewModel.CharAndLineMeasurements.LineHeight)
     	{
     		LineHeight = RenderBatch.ViewModel.CharAndLineMeasurements.LineHeight;
 			
@@ -383,39 +383,39 @@ public sealed class TextEditorComponentData
 		bool shouldCalculateHorizontalSlider = false;
 		bool shouldCalculateHorizontalScrollbar = false;
 		
-    	if (Math.Abs(TextEditor_Height - RenderBatch.ViewModel.TextEditorDimensions.Height) >= 0.1)
+    	if (TextEditor_Height != RenderBatch.ViewModel.TextEditorDimensions.Height)
     	{
     		TextEditor_Height = RenderBatch.ViewModel.TextEditorDimensions.Height;
     		shouldCalculateVerticalSlider = true;
 	    }
 		
-    	if (Math.Abs(Scroll_Height - RenderBatch.ViewModel.ScrollHeight) >= 0.1)
+    	if (Scroll_Height != RenderBatch.ViewModel.ScrollHeight)
     	{
     		Scroll_Height = RenderBatch.ViewModel.ScrollHeight;
     		shouldCalculateVerticalSlider = true;
 	    }
 		
-    	if (Math.Abs(Scroll_Top - RenderBatch.ViewModel.ScrollTop) >= 0.1)
+    	if (Scroll_Top != RenderBatch.ViewModel.ScrollTop)
     	{
     		Scroll_Top = RenderBatch.ViewModel.ScrollTop;
     		Scroll_TopChanged = true;
     		shouldCalculateVerticalSlider = true;
 	    }
 		
-    	if (Math.Abs(TextEditor_Width - RenderBatch.ViewModel.TextEditorDimensions.Width) >= 0.1)
+    	if (TextEditor_Width != RenderBatch.ViewModel.TextEditorDimensions.Width)
     	{
     		TextEditor_Width = RenderBatch.ViewModel.TextEditorDimensions.Width;
     		shouldCalculateHorizontalSlider = true;
     		shouldCalculateHorizontalScrollbar = true;
 	    }
 		
-    	if (Math.Abs(Scroll_Width - RenderBatch.ViewModel.ScrollWidth) >= 0.1)
+    	if (Scroll_Width != RenderBatch.ViewModel.ScrollWidth)
     	{
     		Scroll_Width = RenderBatch.ViewModel.ScrollWidth;
     		shouldCalculateHorizontalSlider = true;
 	    }
 		
-    	if (Math.Abs(Scroll_Left - RenderBatch.ViewModel.ScrollLeft) >= 0.1)
+    	if (Scroll_Left != RenderBatch.ViewModel.ScrollLeft)
     	{
     		Scroll_Left = RenderBatch.ViewModel.ScrollLeft;
     		Scroll_LeftChanged = true;
@@ -474,7 +474,7 @@ public sealed class TextEditorComponentData
     
     private void Css_LineIndexCache_Create()
     {
-    	if (Math.Abs(ViewModelGutterWidth - RenderBatch.ViewModel.GutterWidthInPixels) > 0.1)
+    	if (ViewModelGutterWidth != RenderBatch.ViewModel.GutterWidthInPixels)
     	{
     		ViewModelGutterWidth = RenderBatch.ViewModel.GutterWidthInPixels;
     		Css_LineIndexCache_Clear();
@@ -512,7 +512,7 @@ public sealed class TextEditorComponentData
     		UiStringBuilder.Append("px;");
     		ScrollbarSection_LeftCssStyle = UiStringBuilder.ToString();
     	}
-    	else if (Math.Abs(ViewModelScrollLeft - RenderBatch.ViewModel.ScrollLeft) > 0.1)
+    	else if (ViewModelScrollLeft != RenderBatch.ViewModel.ScrollLeft)
     	{
     		ViewModelScrollLeft = RenderBatch.ViewModel.ScrollLeft;
     		Css_LineIndexCache_Clear();
@@ -716,7 +716,7 @@ public sealed class TextEditorComponentData
     {
     	var shouldAppearAfterCollapsePoint = CursorIsOnHiddenLine;
     	
-    	var leftInPixels = RenderBatch.ViewModel.GutterWidthInPixels;
+    	double leftInPixels = RenderBatch.ViewModel.GutterWidthInPixels;
     	var topInPixelsInvariantCulture = string.Empty;
 	
 		if (CursorIsOnHiddenLine)
@@ -905,6 +905,10 @@ public sealed class TextEditorComponentData
 
     public void HORIZONTAL_GetSliderHorizontalStyleCss()
     {
+    	// Divide by 0 exception
+    	if (RenderBatch.ViewModel.ScrollWidth == 0)
+    		return;
+    
     	var scrollbarWidthInPixels = RenderBatch.ViewModel.TextEditorDimensions.Width -
 						             ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS -
 						             RenderBatch.ViewModel.GutterWidthInPixels;
@@ -940,6 +944,10 @@ public sealed class TextEditorComponentData
 	
     public void VERTICAL_GetSliderVerticalStyleCss()
     {
+    	// Divide by zero exception
+    	if (RenderBatch.ViewModel.ScrollHeight == 0)
+    		return;
+    
         var scrollbarHeightInPixels = RenderBatch.ViewModel.TextEditorDimensions.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 
         // Proportional Top

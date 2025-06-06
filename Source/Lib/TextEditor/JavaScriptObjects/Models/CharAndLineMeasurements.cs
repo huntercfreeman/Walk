@@ -7,4 +7,4 @@ namespace Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 /// <param name="LineHeight">The unit of measurement is Pixels (px)</param>
 public record struct CharAndLineMeasurements(
     double CharacterWidth,
-    double LineHeight);
+    int LineHeight);
