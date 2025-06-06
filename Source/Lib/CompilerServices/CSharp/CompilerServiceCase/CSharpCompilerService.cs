@@ -783,7 +783,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
     {
-    	var success = __CSharpBinder.TryGetCompilationUnit(
+    	return;
+    	/*var success = __CSharpBinder.TryGetCompilationUnit(
     		cSharpCompilationUnit: null,
     		resourceUri,
     		out CSharpCompilationUnit compilationUnit);
@@ -897,6 +898,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         {
 			viewModelModifier.PersistentState.TooltipViewModel = null;
         }
+        */
     }
     
     public async ValueTask GoToDefinition(

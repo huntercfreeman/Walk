@@ -149,7 +149,6 @@ public class ParseFunctions
             
 				var functionInvocationNode = new FunctionInvocationNode(
 					consumedIdentifierToken,
-			        functionDefinitionNode: null,
 			        genericParameterListing: default,
 			        new FunctionParameterListing(
 						openParenthesisToken,

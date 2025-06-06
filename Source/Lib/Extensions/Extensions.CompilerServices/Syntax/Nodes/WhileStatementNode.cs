@@ -9,7 +9,6 @@ public sealed class WhileStatementNode : ICodeBlockOwner
 	public WhileStatementNode(
 		SyntaxToken keywordToken,
 		SyntaxToken openParenthesisToken,
-		IExpressionNode expressionNode,
 		SyntaxToken closeParenthesisToken,
 		CodeBlock codeBlock)
 	{
@@ -19,14 +18,12 @@ public sealed class WhileStatementNode : ICodeBlockOwner
 	
 		KeywordToken = keywordToken;
 		OpenParenthesisToken = openParenthesisToken;
-		ExpressionNode = expressionNode;
 		CloseParenthesisToken = closeParenthesisToken;
 		CodeBlock = codeBlock;
 	}
 
 	public SyntaxToken KeywordToken { get; }
 	public SyntaxToken OpenParenthesisToken { get; }
-	public IExpressionNode ExpressionNode { get; set; }
 	public SyntaxToken CloseParenthesisToken { get; }
 
 	// ICodeBlockOwner properties.

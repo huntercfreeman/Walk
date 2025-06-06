@@ -11,12 +11,14 @@ public sealed class ReturnStatementNode : IExpressionNode
 		#endif
 	
 		KeywordToken = keywordToken;
-		ExpressionNode = expressionNode;
+		// ExpressionNode = expressionNode;
+		
+		ResultTypeReference = expressionNode.ResultTypeReference;
 	}
 
 	public SyntaxToken KeywordToken { get; }
-	public IExpressionNode ExpressionNode { get; set; }
-	public TypeReference ResultTypeReference => ExpressionNode.ResultTypeReference;
+	// public IExpressionNode ExpressionNode { get; set; }
+	public TypeReference ResultTypeReference { get; }
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ReturnStatementNode;

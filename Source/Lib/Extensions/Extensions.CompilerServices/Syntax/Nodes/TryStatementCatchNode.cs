@@ -7,7 +7,7 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 public sealed class TryStatementCatchNode : ICodeBlockOwner
 {
 	public TryStatementCatchNode(
-		TryStatementNode? parent,
+		// TryStatementNode? parent,
 		SyntaxToken keywordToken,
 		SyntaxToken openParenthesisToken,
 		SyntaxToken closeParenthesisToken,
@@ -17,7 +17,7 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TryStatementCatchNode++;
 		#endif
 	
-		Parent = parent;
+		// Parent = parent;
 		KeywordToken = keywordToken;
 		CodeBlock = codeBlock;
 		OpenParenthesisToken = openParenthesisToken;
@@ -37,7 +37,7 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
 	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
 	public int ScopeIndexKey { get; set; } = -1;
 
-	public ISyntaxNode? Parent { get; }
+	// public ISyntaxNode? Parent { get; }
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TryStatementCatchNode;

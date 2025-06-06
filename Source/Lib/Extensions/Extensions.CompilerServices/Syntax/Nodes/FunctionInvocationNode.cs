@@ -6,7 +6,6 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 {
 	public FunctionInvocationNode(
 		SyntaxToken functionInvocationIdentifierToken,
-		FunctionDefinitionNode? functionDefinitionNode,
 		GenericParameterListing genericParameterListing,
 		FunctionParameterListing functionParameterListing,
 		TypeReference resultTypeReference)
@@ -16,14 +15,12 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 		#endif
 	
 		FunctionInvocationIdentifierToken = functionInvocationIdentifierToken;
-		FunctionDefinitionNode = functionDefinitionNode;
 		GenericParameterListing = genericParameterListing;
 		FunctionParameterListing = functionParameterListing;
 		ResultTypeReference = resultTypeReference;
 	}
 
 	public SyntaxToken FunctionInvocationIdentifierToken { get; }
-	public FunctionDefinitionNode? FunctionDefinitionNode { get; }
 	public GenericParameterListing GenericParameterListing { get; set; }
 	public FunctionParameterListing FunctionParameterListing { get; set; }
 	public TypeReference ResultTypeReference { get; set; }

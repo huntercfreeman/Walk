@@ -423,7 +423,6 @@ public partial class CSharpBinder
 					// TODO: ContextualKeywords as the function identifier?
 					var functionInvocationNode = new FunctionInvocationNode(
 						ambiguousIdentifierExpressionNode.Token,
-				        functionDefinitionNode: null,
 				        ambiguousIdentifierExpressionNode.GenericParameterListing,
 				        new FunctionParameterListing(
 							token,
@@ -709,7 +708,6 @@ public partial class CSharpBinder
 				
 				var functionInvocationNode = new FunctionInvocationNode(
 					ambiguousIdentifierExpressionNode.Token,
-			        functionDefinitionNode: null,
 			        genericParameterListing: default,
 			        functionParameterListing: default,
 			        CSharpFacts.Types.Void.ToTypeReference());
@@ -1641,7 +1639,7 @@ public partial class CSharpBinder
 		{
 			parserModel.NoLongerRelevantExpressionNode = parenthesizedExpressionNode;
 			var tupleExpressionNode = new TupleExpressionNode();
-			tupleExpressionNode.InnerExpressionList.Add(expressionSecondary);
+			// tupleExpressionNode.InnerExpressionList.Add(expressionSecondary);
 			// tupleExpressionNode never saw the 'OpenParenthesisToken' so the 'ParenthesizedExpressionNode'
 			// has to create the ExpressionList entry on behalf of the 'TupleExpressionNode'.
 			parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, tupleExpressionNode));
@@ -1709,7 +1707,7 @@ public partial class CSharpBinder
 				
 				if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken || parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
 				{
-					tupleExpressionNode.InnerExpressionList.Add(expressionSecondary);
+					// tupleExpressionNode.InnerExpressionList.Add(expressionSecondary);
 					return tupleExpressionNode;
 				}
 			
@@ -1754,7 +1752,6 @@ public partial class CSharpBinder
 					var typeClauseToken = typeClauseNode.TypeIdentifierToken;
 					var functionInvocationNode = new FunctionInvocationNode(
 						UtilityApi.ConvertToIdentifierToken(ref typeClauseToken, compilationUnit, ref parserModel),
-				        functionDefinitionNode: null,
 				        typeClauseNode.GenericParameterListing,
 				        new FunctionParameterListing(
 							token,
@@ -2329,7 +2326,6 @@ public partial class CSharpBinder
 		            memberIdentifierToken,
 		            // TODO: Don't store a reference to definitons.
 		            // TODO: Type -> "<...>" -> "(" -> FunctionInvocationNode, but will FunctionInvocationNode -> "<...>"?
-			        functionDefinitionNode,
 			        // TODO: Bind the named arguments to their declaration within the definition.
 			        genericParameterListing: default,
 			        functionParameterListing: default,
@@ -2390,7 +2386,6 @@ public partial class CSharpBinder
 		{
 			var functionInvocationNode = new FunctionInvocationNode(
 	            memberIdentifierToken,
-		        functionDefinitionNode: null,
 		        genericParameterListing: default,
 		        functionParameterListing: default,
 		        TypeFacts.Empty.ToTypeReference());
@@ -2451,12 +2446,12 @@ public partial class CSharpBinder
 						ref parserModel);
 				}
 				
-				tupleExpressionNode.InnerExpressionList.Add(expressionNode);
+				// tupleExpressionNode.InnerExpressionList.Add(expressionNode);
 			}
 		}
 		
-		if (expressionSecondary is not null)
-			tupleExpressionNode.InnerExpressionList.Add(expressionSecondary);
+		// if (expressionSecondary is not null)
+		//	tupleExpressionNode.InnerExpressionList.Add(expressionSecondary);
 		
 		parserModel.NoLongerRelevantExpressionNode = ambiguousParenthesizedExpressionNode;
 		
