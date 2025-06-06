@@ -9,11 +9,8 @@ public sealed class ForStatementNode : ICodeBlockOwner
 	public ForStatementNode(
 		SyntaxToken keywordToken,
 		SyntaxToken openParenthesisToken,
-		IReadOnlyList<ISyntax> initializationSyntaxList,
 		SyntaxToken initializationStatementDelimiterToken,
-		IExpressionNode conditionExpressionNode,
 		SyntaxToken conditionStatementDelimiterToken,
-		IExpressionNode updationExpressionNode,
 		SyntaxToken closeParenthesisToken,
 		CodeBlock codeBlock)
 	{
@@ -23,22 +20,16 @@ public sealed class ForStatementNode : ICodeBlockOwner
 	
 		KeywordToken = keywordToken;
 		OpenParenthesisToken = openParenthesisToken;
-		InitializationSyntaxList = initializationSyntaxList;
 		InitializationStatementDelimiterToken = initializationStatementDelimiterToken;
-		ConditionExpressionNode = conditionExpressionNode;
 		ConditionStatementDelimiterToken = conditionStatementDelimiterToken;
-		UpdationExpressionNode = updationExpressionNode;
 		CloseParenthesisToken = closeParenthesisToken;
 		CodeBlock = codeBlock;
 	}
 
 	public SyntaxToken KeywordToken { get; }
 	public SyntaxToken OpenParenthesisToken { get; }
-	public IReadOnlyList<ISyntax> InitializationSyntaxList { get; }
 	public SyntaxToken InitializationStatementDelimiterToken { get; }
-	public IExpressionNode ConditionExpressionNode { get; }
 	public SyntaxToken ConditionStatementDelimiterToken { get; }
-	public IExpressionNode UpdationExpressionNode { get; }
 	public SyntaxToken CloseParenthesisToken { get; }
 
 	// ICodeBlockOwner properties.

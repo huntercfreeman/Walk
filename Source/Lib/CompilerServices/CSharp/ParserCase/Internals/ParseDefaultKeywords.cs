@@ -133,7 +133,6 @@ public class ParseDefaultKeywords
 	    	doKeywordToken,
 	        whileKeywordToken: default,
 	        openParenthesisToken: default,
-	        expressionNode: null,
 	        closeParenthesisToken: default);
 		
         parserModel.Binder.NewScopeAndBuilderFromOwner(
@@ -247,11 +246,8 @@ public class ParseDefaultKeywords
     	var forStatementNode = new ForStatementNode(
 	        forKeywordToken,
 	        openParenthesisToken,
-	        Array.Empty<ISyntax>(),
 	        initializationStatementDelimiterToken: default,
-	        conditionExpressionNode: null,
 	        conditionStatementDelimiterToken: default,
-	        updationExpressionNode: null,
 	        closeParenthesisToken: default,
 	        codeBlock: default);
 	        
@@ -298,7 +294,7 @@ public class ParseDefaultKeywords
     	var inKeywordToken = parserModel.TokenWalker.Match(SyntaxKind.InTokenKeyword);
     	
     	parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-    	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+    	_ = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
 		var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
 		var foreachStatementNode = new ForeachStatementNode(
@@ -306,7 +302,6 @@ public class ParseDefaultKeywords
 	        openParenthesisToken,
 	        variableDeclarationStatementNode,
 	        inKeywordToken,
-	        expressionNode,
 	        closeParenthesisToken,
 	        codeBlock: default);
 	        
