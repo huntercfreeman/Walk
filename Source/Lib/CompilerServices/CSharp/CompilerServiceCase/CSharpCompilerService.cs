@@ -534,6 +534,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	        renderBatch.ViewModel.LineIndex,
 	        renderBatch.ViewModel.ColumnIndex);
 	
+		if (word is null)
+		{
+			var testingNamespaceAutocompletionMenu = Testing_NamespaceAutocompletion(renderBatch, autocompleteMenu);
+			if (testingNamespaceAutocompletionMenu is not null)
+				return testingNamespaceAutocompletionMenu;
+		}
+		
 		// The cursor is 1 character ahead.
         var textSpan = new TextEditorTextSpan(
             positionIndex - 1,
@@ -547,6 +554,32 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             textSpan);
 	
 		return autocompleteMenu.GetDefaultMenuRecord(compilerServiceAutocompleteEntryList);
+	}
+	
+	private MenuRecord? Testing_NamespaceAutocompletion(TextEditorRenderBatch renderBatch, AutocompleteMenu autocompleteMenu)
+	{
+		var autocompleteEntryList = new List<AutocompleteEntry>();
+		
+		autocompleteEntryList.Add(new AutocompleteEntry(
+			"Testing_NamespaceAutocompletion",
+	        AutocompleteEntryKind.Namespace,
+	        () => MemberAutocomplete("Testing_NamespaceAutocompletion", renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+	
+		return new MenuRecord(
+			autocompleteEntryList.Select(entry => new MenuOptionRecord(
+				    entry.DisplayName,
+				    MenuOptionKind.Other,
+				    () => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask,
+				    widgetParameterMap: new Dictionary<string, object?>
+				    {
+				        {
+				            nameof(AutocompleteEntry),
+				            entry
+				        }
+				    }))
+				.ToList());
+	
+		return null;
 	}
 	
 	private Task MemberAutocomplete(string text, ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)
