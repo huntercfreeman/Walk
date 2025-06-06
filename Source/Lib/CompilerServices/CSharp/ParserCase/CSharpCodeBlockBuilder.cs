@@ -3,6 +3,7 @@ using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
+using Walk.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Walk.CompilerServices.CSharp.ParserCase;
 
@@ -166,13 +167,20 @@ public class CSharpCodeBlockBuilder
 		return syntax;
 	}
 
-    public CodeBlock Build()
+    public CodeBlock Build(CSharpCompilationUnit compilationUnit)
     {
     	if (CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData &&
     		CodeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
     		CodeBlockOwner.SyntaxKind == SyntaxKind.ArbitraryCodeBlockNode)
     	{
     		ChildList.Clear();
+    		
+    		// TODO: This is quite inefficient.
+    		foreach (var kvp in compilationUnit.ScopeVariableDeclarationMap)
+    		{
+    			if (kvp.Key.ScopeIndexKey == CodeBlockOwner.ScopeIndexKey)
+    				compilationUnit.ScopeVariableDeclarationMap.Remove(kvp.Key);
+    		}
     	}
     
     	return new CodeBlock(ChildList);

@@ -682,7 +682,7 @@ public partial class CSharpBinder
     	{
 	        SetCodeBlockNode(
 	        	inOwner,
-	        	inBuilder.Build(),
+	        	inBuilder.Build(compilationUnit),
 	        	compilationUnit.__DiagnosticList,
 	        	parserModel.TokenWalker);
 			
