@@ -182,9 +182,9 @@ public sealed class TextEditorService
 	{
 		var key = 0;
 		
-		foreach (var character in span)
+		for (int i = 0; i < span.Length && i < 11; i++)
 		{
-			key += (int)character;
+			key += (int)span[i];
 		}
 		
 		if (_stringMap.TryGetValue(key, out var stringList))
