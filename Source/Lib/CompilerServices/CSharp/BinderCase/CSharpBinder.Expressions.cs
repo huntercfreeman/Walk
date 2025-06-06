@@ -2671,7 +2671,6 @@ public partial class CSharpBinder
 		
 		invocationNode.FunctionParameterListing.FunctionParameterEntryList.Add(
 			new FunctionParameterEntry(
-		        expressionSecondary,
 		        hasOutKeyword: false,
 		        hasInKeyword: false,
 		        hasRefKeyword: false));
