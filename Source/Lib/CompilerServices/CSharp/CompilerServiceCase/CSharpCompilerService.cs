@@ -1160,14 +1160,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             return null;
         
         var autocompleteEntryList = new List<AutocompleteEntry>();
-        
-		foreach (var namespaceGroupKvp in __CSharpBinder.NamespaceGroupMap.Where(x => x.Key.Contains(word)).Take(5))
-		{
-			autocompleteEntryList.Add(new AutocompleteEntry(
-				namespaceGroupKvp.Key,
-		        AutocompleteEntryKind.Namespace,
-		        () => MemberAutocomplete(namespaceGroupKvp.Key, renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
-		}
 
         var targetScope = boundScope;
         
@@ -1388,6 +1380,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	                    });
 	            }));
 	    }
+	    
+	    foreach (var namespaceGroupKvp in __CSharpBinder.NamespaceGroupMap.Where(x => x.Key.Contains(word)).Take(5))
+		{
+			autocompleteEntryList.Add(new AutocompleteEntry(
+				namespaceGroupKvp.Key,
+		        AutocompleteEntryKind.Namespace,
+		        () => Task.CompletedTask));
+		}
             
         AddSnippets(autocompleteEntryList, word, textSpan);
 
