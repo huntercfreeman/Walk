@@ -173,7 +173,7 @@ public static class ParseTokens
 						
 						if (binaryExpressionNode.OperatorToken.SyntaxKind == SyntaxKind.EqualsToken)
 						{
-							var typeReference = binaryExpressionNode.RightExpressionNode.ResultTypeReference;
+							var typeReference = binaryExpressionNode.RightExpressionResultTypeReference;
 							typeReference.IsImplicit = true;
 							variableDeclarationNode.SetTypeReference(typeReference);
 						}

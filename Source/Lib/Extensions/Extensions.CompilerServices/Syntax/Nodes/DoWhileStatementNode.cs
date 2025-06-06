@@ -10,7 +10,6 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 		SyntaxToken doKeywordToken,
 		SyntaxToken whileKeywordToken,
 		SyntaxToken openParenthesisToken,
-		IExpressionNode? expressionNode,
 		SyntaxToken closeParenthesisToken)
 	{
 		#if DEBUG
@@ -20,14 +19,12 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 		DoKeywordToken = doKeywordToken;
 		WhileKeywordToken = whileKeywordToken;
 		OpenParenthesisToken = openParenthesisToken;
-		ExpressionNode = expressionNode;
 		CloseParenthesisToken = closeParenthesisToken;
 	}
 
 	public SyntaxToken DoKeywordToken { get; }
 	public SyntaxToken WhileKeywordToken { get; set; }
 	public SyntaxToken OpenParenthesisToken { get; set; }
-	public IExpressionNode? ExpressionNode { get; set; }
 	public SyntaxToken CloseParenthesisToken { get; set; }
 
 	// ICodeBlockOwner properties.

@@ -153,34 +153,6 @@ public class CSharpCodeBlockBuilder
 	{
 		switch (syntax.SyntaxKind)
 		{
-			case SyntaxKind.BinaryExpressionNode:
-			{
-				var binaryExpressionNode = (BinaryExpressionNode)syntax;
-		
-				if (binaryExpressionNode.LeftExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode &&
-				    binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
-				{
-					syntax = new BinaryExpressionLeftAndRightVariableReference(binaryExpressionNode);
-				}
-				else if (binaryExpressionNode.LeftExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
-				{
-					var binaryExpressionLeftVariableReference = new BinaryExpressionLeftVariableReference(binaryExpressionNode);
-					syntax = binaryExpressionLeftVariableReference;
-					
-					binaryExpressionLeftVariableReference.SetRightExpressionNode(
-						TryOptimizeStorageExpression(binaryExpressionLeftVariableReference.RightExpressionNode));
-				}
-				else if (binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
-				{
-					var binaryExpressionRightVariableReference = new BinaryExpressionRightVariableReference(binaryExpressionNode);
-					syntax = binaryExpressionRightVariableReference;
-					
-					binaryExpressionRightVariableReference.SetLeftExpressionNode(
-						TryOptimizeStorageExpression(binaryExpressionRightVariableReference.LeftExpressionNode));
-				}
-				
-				break;
-			}
 			default:
 			{
 				break;

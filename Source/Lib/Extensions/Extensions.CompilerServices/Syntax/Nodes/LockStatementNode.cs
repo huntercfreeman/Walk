@@ -9,7 +9,6 @@ public sealed class LockStatementNode : ICodeBlockOwner
 	public LockStatementNode(
 		SyntaxToken keywordToken,
 		SyntaxToken openParenthesisToken,
-		IExpressionNode expressionNode,
 		SyntaxToken closeParenthesisToken,
 		CodeBlock codeBlock)
 	{
@@ -19,14 +18,12 @@ public sealed class LockStatementNode : ICodeBlockOwner
 	
 		KeywordToken = keywordToken;
 		OpenParenthesisToken = openParenthesisToken;
-		ExpressionNode = expressionNode;
 		CloseParenthesisToken = closeParenthesisToken;
 		CodeBlock = codeBlock;
 	}
 
 	public SyntaxToken KeywordToken { get; }
 	public SyntaxToken OpenParenthesisToken { get; }
-	public IExpressionNode ExpressionNode { get; }
 	public SyntaxToken CloseParenthesisToken { get; }
 
 	// ICodeBlockOwner properties.

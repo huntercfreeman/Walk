@@ -48,7 +48,7 @@ public class ParseDefaultKeywords
     	var openParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
     	var catchNode = new TryStatementCatchNode(
-        	parent: null,
+        	// parent: null,
 	        catchKeywordToken,
 	        openParenthesisToken,
 	        closeParenthesisToken: default,
@@ -133,7 +133,6 @@ public class ParseDefaultKeywords
 	    	doKeywordToken,
 	        whileKeywordToken: default,
 	        openParenthesisToken: default,
-	        expressionNode: null,
 	        closeParenthesisToken: default);
 		
         parserModel.Binder.NewScopeAndBuilderFromOwner(
@@ -163,7 +162,6 @@ public class ParseDefaultKeywords
     	
         var ifStatementNode = new IfStatementNode(
             elseTokenKeyword,
-            EmptyExpressionNode.Empty,
             default);
         
         parserModel.Binder.NewScopeAndBuilderFromOwner(
@@ -210,10 +208,10 @@ public class ParseDefaultKeywords
     {
     	var finallyKeywordToken = parserModel.TokenWalker.Consume();
     	
-    	TryStatementNode? tryStatementNode = null;
+    	// TryStatementNode? tryStatementNode = null;
     	
 		var finallyNode = new TryStatementFinallyNode(
-			tryStatementNode,
+			// tryStatementNode,
         	finallyKeywordToken,
         	codeBlock: default);
     
@@ -248,11 +246,8 @@ public class ParseDefaultKeywords
     	var forStatementNode = new ForStatementNode(
 	        forKeywordToken,
 	        openParenthesisToken,
-	        Array.Empty<ISyntax>(),
 	        initializationStatementDelimiterToken: default,
-	        conditionExpressionNode: null,
 	        conditionStatementDelimiterToken: default,
-	        updationExpressionNode: null,
 	        closeParenthesisToken: default,
 	        codeBlock: default);
 	        
@@ -299,7 +294,7 @@ public class ParseDefaultKeywords
     	var inKeywordToken = parserModel.TokenWalker.Match(SyntaxKind.InTokenKeyword);
     	
     	parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-    	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+    	_ = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
 		var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
 		var foreachStatementNode = new ForeachStatementNode(
@@ -307,7 +302,6 @@ public class ParseDefaultKeywords
 	        openParenthesisToken,
 	        variableDeclarationStatementNode,
 	        inKeywordToken,
-	        expressionNode,
 	        closeParenthesisToken,
 	        codeBlock: default);
 	        
@@ -353,14 +347,13 @@ public class ParseDefaultKeywords
     	var openParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
     	parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-    	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+    	_ = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
 		
 		var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
 		var lockStatementNode = new LockStatementNode(
 			lockKeywordToken,
 	        openParenthesisToken,
-	        expressionNode,
 	        closeParenthesisToken,
 	        codeBlock: default);
 	        
@@ -495,19 +488,19 @@ public class ParseDefaultKeywords
     {
     	var tryKeywordToken = parserModel.TokenWalker.Consume();
     	
-    	var tryStatementNode = new TryStatementNode(
+    	/*var tryStatementNode = new TryStatementNode(
 			tryNode: null,
 	        catchNode: null,
-	        finallyNode: null);
+	        finallyNode: null);*/
     
 	    var tryStatementTryNode = new TryStatementTryNode(
-	    	tryStatementNode,
+	    	// tryStatementNode,
         	tryKeywordToken,
         	codeBlock: default);
         	
-		tryStatementNode.TryNode = tryStatementTryNode;
+		// tryStatementNode.TryNode = tryStatementTryNode;
 	        
-	    parserModel.CurrentCodeBlockBuilder.AddChild(tryStatementNode);
+	    parserModel.CurrentCodeBlockBuilder.AddChild(tryStatementTryNode);
         
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	tryStatementTryNode,
@@ -566,7 +559,7 @@ public class ParseDefaultKeywords
     	var openParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
     	parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-        var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+        _ = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
 		
 		var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
@@ -584,7 +577,6 @@ public class ParseDefaultKeywords
 		var whileStatementNode = new WhileStatementNode(
 			whileKeywordToken,
 	        openParenthesisToken,
-	        expressionNode,
 	        closeParenthesisToken,
 	        codeBlock: default);
 	        
@@ -683,13 +675,12 @@ public class ParseDefaultKeywords
             return;
 
 		parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-		var expression = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+		_ = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
 		
 		var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 
         var ifStatementNode = new IfStatementNode(
             ifTokenKeyword,
-            expression,
             default);
         
         parserModel.Binder.NewScopeAndBuilderFromOwner(

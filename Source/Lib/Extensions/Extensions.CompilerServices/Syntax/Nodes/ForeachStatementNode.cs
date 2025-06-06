@@ -11,7 +11,6 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
 		SyntaxToken openParenthesisToken,
 		VariableDeclarationNode variableDeclarationNode,
 		SyntaxToken inKeywordToken,
-		IExpressionNode expressionNode,
 		SyntaxToken closeParenthesisToken,
 		CodeBlock codeBlock)
 	{
@@ -23,7 +22,6 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
 		OpenParenthesisToken = openParenthesisToken;
 		VariableDeclarationNode = variableDeclarationNode;
 		InKeywordToken = inKeywordToken;
-		ExpressionNode = expressionNode;
 		CloseParenthesisToken = closeParenthesisToken;
 		CodeBlock = codeBlock;
 	}
@@ -32,7 +30,6 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
 	public SyntaxToken OpenParenthesisToken { get; }
 	public VariableDeclarationNode VariableDeclarationNode { get; }
 	public SyntaxToken InKeywordToken { get; }
-	public IExpressionNode ExpressionNode { get; }
 	public SyntaxToken CloseParenthesisToken { get; }
 
 	// ICodeBlockOwner properties.

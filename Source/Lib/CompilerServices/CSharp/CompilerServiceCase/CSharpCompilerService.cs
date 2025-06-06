@@ -544,9 +544,40 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	
 		var compilerServiceAutocompleteEntryList = OBSOLETE_GetAutocompleteEntries(
 			word,
-            textSpan);
+            textSpan,
+            renderBatch);
 	
 		return autocompleteMenu.GetDefaultMenuRecord(compilerServiceAutocompleteEntryList);
+	}
+	
+	private MenuRecord? Testing_NamespaceAutocompletion(TextEditorRenderBatch renderBatch, AutocompleteMenu autocompleteMenu)
+	{
+		var autocompleteEntryList = new List<AutocompleteEntry>();
+		
+		// .Where(x => x.NamespaceString.Contains(filteringWord))
+		foreach (var namespaceGroupKvp in __CSharpBinder.NamespaceGroupMap.Take(25))
+		{
+			autocompleteEntryList.Add(new AutocompleteEntry(
+				namespaceGroupKvp.Key,
+		        AutocompleteEntryKind.Namespace,
+		        () => MemberAutocomplete(namespaceGroupKvp.Key, renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+		}
+
+		return new MenuRecord(
+			autocompleteEntryList.Select(entry => new MenuOptionRecord(
+				    entry.DisplayName,
+				    MenuOptionKind.Other,
+				    () => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask,
+				    widgetParameterMap: new Dictionary<string, object?>
+				    {
+				        {
+				            nameof(AutocompleteEntry),
+				            entry
+				        }
+				    }))
+				.ToList());
+	
+		return null;
 	}
 	
 	private Task MemberAutocomplete(string text, ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)
@@ -752,7 +783,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
     {
-    	var success = __CSharpBinder.TryGetCompilationUnit(
+    	return;
+    	/*var success = __CSharpBinder.TryGetCompilationUnit(
     		cSharpCompilationUnit: null,
     		resourceUri,
     		out CSharpCompilationUnit compilationUnit);
@@ -866,6 +898,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         {
 			viewModelModifier.PersistentState.TooltipViewModel = null;
         }
+        */
     }
     
     public async ValueTask GoToDefinition(
@@ -1118,7 +1151,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     	return __CSharpBinder.GetScopeByPositionIndex(null, resourceUri, positionIndex);
     }
     
-    public List<AutocompleteEntry>? OBSOLETE_GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
+    public List<AutocompleteEntry>? OBSOLETE_GetAutocompleteEntries(string word, TextEditorTextSpan textSpan, TextEditorRenderBatch renderBatch)
     {
     	if (word is null)
 			return null;
@@ -1349,6 +1382,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	                    });
 	            }));
 	    }
+	    
+	    foreach (var namespaceGroupKvp in __CSharpBinder.NamespaceGroupMap.Where(x => x.Key.Contains(word)).Take(5))
+		{
+			autocompleteEntryList.Add(new AutocompleteEntry(
+				namespaceGroupKvp.Key,
+		        AutocompleteEntryKind.Namespace,
+		        () => Task.CompletedTask));
+		}
             
         AddSnippets(autocompleteEntryList, word, textSpan);
 

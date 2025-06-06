@@ -209,17 +209,17 @@ public partial class CSharpBinder
 			var precedenceAntecedent = UtilityApi.GetOperatorPrecedence(binaryExpressionAntecedent.OperatorToken.SyntaxKind);
 			var precedencePrecedent = UtilityApi.GetOperatorPrecedence(token.SyntaxKind);
 			
-			if (binaryExpressionAntecedent.RightExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)
+			if (!binaryExpressionAntecedent.RightExpressionNodeWasSet)
 			{
 				if (precedenceAntecedent >= precedencePrecedent)
 				{
 					// Antecedent takes 'primaryExpression' as its right node.
 		            // Precedent takes antecedent as its left node.
 		            // Precedent becomes "subtree-root".
-					binaryExpressionAntecedent.RightExpressionNode = expressionPrimary;
+					binaryExpressionAntecedent.RightExpressionResultTypeReference = expressionPrimary.ResultTypeReference;
 					
 					var typeClauseNode = expressionPrimary.ResultTypeReference;
-					var binaryExpressionPrecedent = new BinaryExpressionNode(binaryExpressionAntecedent, typeClauseNode, token, typeClauseNode, typeClauseNode);
+					var binaryExpressionPrecedent = new BinaryExpressionNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
 					
 					// It is important that the primitive recursion does not
 		            // set 'binaryExpressionAntecedent' as the primaryExpression in the future
@@ -235,9 +235,9 @@ public partial class CSharpBinder
 					// Precedent takes 'primaryExpression' as its left node.
 	            	// Antecedent takes precedent as its right node.
 					var typeClauseNode = expressionPrimary.ResultTypeReference;
-					var binaryExpressionNodePrecedent = new BinaryExpressionNode(expressionPrimary, typeClauseNode, token, typeClauseNode, typeClauseNode);
+					var binaryExpressionNodePrecedent = new BinaryExpressionNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
 					
-					binaryExpressionAntecedent.RightExpressionNode = binaryExpressionNodePrecedent;
+					binaryExpressionAntecedent.RightExpressionResultTypeReference = binaryExpressionNodePrecedent.ResultTypeReference;
 					
 					parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNodePrecedent));
 					return EmptyExpressionNode.Empty;
@@ -274,7 +274,7 @@ public partial class CSharpBinder
 		else
 		{
 			var typeClauseNode = expressionPrimary.ResultTypeReference;
-			var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, typeClauseNode, token, typeClauseNode, typeClauseNode);
+			var binaryExpressionNode = new BinaryExpressionNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
 			
 			parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
 			return EmptyExpressionNode.Empty;
@@ -423,7 +423,6 @@ public partial class CSharpBinder
 					// TODO: ContextualKeywords as the function identifier?
 					var functionInvocationNode = new FunctionInvocationNode(
 						ambiguousIdentifierExpressionNode.Token,
-				        functionDefinitionNode: null,
 				        ambiguousIdentifierExpressionNode.GenericParameterListing,
 				        new FunctionParameterListing(
 							token,
@@ -709,7 +708,6 @@ public partial class CSharpBinder
 				
 				var functionInvocationNode = new FunctionInvocationNode(
 					ambiguousIdentifierExpressionNode.Token,
-			        functionDefinitionNode: null,
 			        genericParameterListing: default,
 			        functionParameterListing: default,
 			        CSharpFacts.Types.Void.ToTypeReference());
@@ -862,10 +860,6 @@ public partial class CSharpBinder
 					goto default;
 					
 				var tokenTypeReferenceText = tokenTypeReference.TypeIdentifierToken.TextSpan.Text;
-			
-				var leftExpressionTypeClauseNodeText = binaryExpressionNode.LeftExpressionNode.ResultTypeReference.TypeIdentifierToken.TextSpan.Text;
-				if (leftExpressionTypeClauseNodeText != tokenTypeReferenceText)
-					goto default;
 				
 				IExpressionNode rightExpressionNode;
 					
@@ -882,7 +876,7 @@ public partial class CSharpBinder
 					rightExpressionNode = new LiteralExpressionNode(token, tokenTypeReference);
 				}
 				
-				binaryExpressionNode.RightExpressionNode = rightExpressionNode;
+				binaryExpressionNode.RightExpressionResultTypeReference = rightExpressionNode.ResultTypeReference;
 				
 				if (token.SyntaxKind == SyntaxKind.StringInterpolatedStartToken)
 				{
@@ -898,10 +892,10 @@ public partial class CSharpBinder
 		    case SyntaxKind.EqualsEqualsToken:
 				// TODO: More generally, the result will be a number, so all that matters is what operators a number can interact with instead of duplicating this code.
 				// RETROSPECTIVE: This code reads like nonsense to me. Shouldn't you check '==' not '!='? This 'if' is backwards?
-				if (binaryExpressionNode.RightExpressionNode.SyntaxKind != SyntaxKind.EmptyExpressionNode)
+				if (binaryExpressionNode.RightExpressionNodeWasSet)
 	    		{
 	    			var typeClauseNode = binaryExpressionNode.ResultTypeReference;
-    				return new BinaryExpressionNode(binaryExpressionNode, typeClauseNode, token, typeClauseNode, typeClauseNode, EmptyExpressionNode.Empty);
+    				return new BinaryExpressionNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
 	    		}
 	    		else
 	    		{
@@ -915,7 +909,7 @@ public partial class CSharpBinder
 	public IExpressionNode BinaryMergeExpression(
 		BinaryExpressionNode binaryExpressionNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		if (binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)
+		if (!binaryExpressionNode.RightExpressionNodeWasSet)
 		{
 			if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
 			{
@@ -926,7 +920,7 @@ public partial class CSharpBinder
 					ref parserModel);
 			}
 				
-			binaryExpressionNode.RightExpressionNode = expressionSecondary;
+			binaryExpressionNode.RightExpressionResultTypeReference = expressionSecondary.ResultTypeReference;
 			
 			return binaryExpressionNode;
 		}
@@ -1641,7 +1635,7 @@ public partial class CSharpBinder
 		{
 			parserModel.NoLongerRelevantExpressionNode = parenthesizedExpressionNode;
 			var tupleExpressionNode = new TupleExpressionNode();
-			tupleExpressionNode.InnerExpressionList.Add(expressionSecondary);
+			// tupleExpressionNode.InnerExpressionList.Add(expressionSecondary);
 			// tupleExpressionNode never saw the 'OpenParenthesisToken' so the 'ParenthesizedExpressionNode'
 			// has to create the ExpressionList entry on behalf of the 'TupleExpressionNode'.
 			parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, tupleExpressionNode));
@@ -1709,7 +1703,7 @@ public partial class CSharpBinder
 				
 				if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken || parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
 				{
-					tupleExpressionNode.InnerExpressionList.Add(expressionSecondary);
+					// tupleExpressionNode.InnerExpressionList.Add(expressionSecondary);
 					return tupleExpressionNode;
 				}
 			
@@ -1754,7 +1748,6 @@ public partial class CSharpBinder
 					var typeClauseToken = typeClauseNode.TypeIdentifierToken;
 					var functionInvocationNode = new FunctionInvocationNode(
 						UtilityApi.ConvertToIdentifierToken(ref typeClauseToken, compilationUnit, ref parserModel),
-				        functionDefinitionNode: null,
 				        typeClauseNode.GenericParameterListing,
 				        new FunctionParameterListing(
 							token,
@@ -2329,7 +2322,6 @@ public partial class CSharpBinder
 		            memberIdentifierToken,
 		            // TODO: Don't store a reference to definitons.
 		            // TODO: Type -> "<...>" -> "(" -> FunctionInvocationNode, but will FunctionInvocationNode -> "<...>"?
-			        functionDefinitionNode,
 			        // TODO: Bind the named arguments to their declaration within the definition.
 			        genericParameterListing: default,
 			        functionParameterListing: default,
@@ -2390,7 +2382,6 @@ public partial class CSharpBinder
 		{
 			var functionInvocationNode = new FunctionInvocationNode(
 	            memberIdentifierToken,
-		        functionDefinitionNode: null,
 		        genericParameterListing: default,
 		        functionParameterListing: default,
 		        TypeFacts.Empty.ToTypeReference());
@@ -2451,12 +2442,12 @@ public partial class CSharpBinder
 						ref parserModel);
 				}
 				
-				tupleExpressionNode.InnerExpressionList.Add(expressionNode);
+				// tupleExpressionNode.InnerExpressionList.Add(expressionNode);
 			}
 		}
 		
-		if (expressionSecondary is not null)
-			tupleExpressionNode.InnerExpressionList.Add(expressionSecondary);
+		// if (expressionSecondary is not null)
+		//	tupleExpressionNode.InnerExpressionList.Add(expressionSecondary);
 		
 		parserModel.NoLongerRelevantExpressionNode = ambiguousParenthesizedExpressionNode;
 		
@@ -2671,7 +2662,6 @@ public partial class CSharpBinder
 		
 		invocationNode.FunctionParameterListing.FunctionParameterEntryList.Add(
 			new FunctionParameterEntry(
-		        expressionSecondary,
 		        hasOutKeyword: false,
 		        hasInKeyword: false,
 		        hasRefKeyword: false));

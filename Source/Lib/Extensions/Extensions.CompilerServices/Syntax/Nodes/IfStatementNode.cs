@@ -8,7 +8,6 @@ public sealed class IfStatementNode : ICodeBlockOwner
 {
 	public IfStatementNode(
 		SyntaxToken keywordToken,
-		IExpressionNode expressionNode,
 		CodeBlock codeBlock)
 	{
 		#if DEBUG
@@ -16,12 +15,10 @@ public sealed class IfStatementNode : ICodeBlockOwner
 		#endif
 	
 		KeywordToken = keywordToken;
-		ExpressionNode = expressionNode;
 		CodeBlock = codeBlock;
 	}
 
 	public SyntaxToken KeywordToken { get; }
-	public IExpressionNode ExpressionNode { get; set; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;

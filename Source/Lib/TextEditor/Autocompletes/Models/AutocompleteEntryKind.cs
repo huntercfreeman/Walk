@@ -7,4 +7,5 @@ public enum AutocompleteEntryKind
     Variable,
     Function,
     Type,
+    Namespace,
 }
