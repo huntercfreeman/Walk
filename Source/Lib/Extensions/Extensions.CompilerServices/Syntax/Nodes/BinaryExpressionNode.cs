@@ -5,47 +5,56 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 public sealed class BinaryExpressionNode : IExpressionNode
 {
 	public BinaryExpressionNode(
-		IExpressionNode leftExpressionNode,
 		TypeReference leftOperandTypeReference,
 		SyntaxToken operatorToken,
 		TypeReference rightOperandTypeReference,
 		TypeReference resultTypeReference,
-		IExpressionNode rightExpressionNode)
+		TypeReference rightExpressionResultTypeReference)
 	{
 		#if DEBUG
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.BinaryExpressionNode++;
 		#endif
 	
-		LeftExpressionNode = leftExpressionNode;
 		LeftOperandTypeReference = leftOperandTypeReference;
 		OperatorToken = operatorToken;
 		RightOperandTypeReference = rightOperandTypeReference;
 		ResultTypeReference = resultTypeReference;
-		RightExpressionNode = rightExpressionNode;
+		RightExpressionResultTypeReference = rightExpressionResultTypeReference;
 	}
 
 	public BinaryExpressionNode(
-			IExpressionNode leftExpressionNode,
-			TypeReference leftOperandTypeReference,
-			SyntaxToken operatorToken,
-			TypeReference rightOperandTypeReference,
-			TypeReference resultTypeReference)
-		: this(
-			leftExpressionNode,
-			leftOperandTypeReference,
-			operatorToken,
-			rightOperandTypeReference,
-			resultTypeReference,
-			EmptyExpressionNode.Empty)
+		TypeReference leftOperandTypeReference,
+		SyntaxToken operatorToken,
+		TypeReference rightOperandTypeReference,
+		TypeReference resultTypeReference)
 	{
+		#if DEBUG
+		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.BinaryExpressionNode++;
+		#endif
+	
+		LeftOperandTypeReference = leftOperandTypeReference;
+		OperatorToken = operatorToken;
+		RightOperandTypeReference = rightOperandTypeReference;
+		ResultTypeReference = resultTypeReference;
 	}
 
-	public IExpressionNode LeftExpressionNode { get; }
+	private TypeReference _rightExpressionResultTypeReference;
+
 	public TypeReference LeftOperandTypeReference { get; }
 	public SyntaxToken OperatorToken { get; }
 	public TypeReference RightOperandTypeReference { get; }
 	public TypeReference ResultTypeReference { get; }
-	public IExpressionNode RightExpressionNode { get; set; }
+	
+	public TypeReference RightExpressionResultTypeReference
+	{
+		get => _rightExpressionResultTypeReference;
+		set
+		{
+			_rightExpressionResultTypeReference = value;
+			RightExpressionNodeWasSet = true;
+		}
+	}
+	public bool RightExpressionNodeWasSet { get; set; }
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionNode;
