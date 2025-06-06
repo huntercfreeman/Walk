@@ -560,10 +560,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	{
 		var autocompleteEntryList = new List<AutocompleteEntry>();
 		
-		autocompleteEntryList.Add(new AutocompleteEntry(
-			"Testing_NamespaceAutocompletion",
-	        AutocompleteEntryKind.Namespace,
-	        () => MemberAutocomplete("Testing_NamespaceAutocompletion", renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+		// .Where(x => x.NamespaceString.Contains(filteringWord))
+		foreach (var namespaceGroupKvp in __CSharpBinder.NamespaceGroupMap.Take(25))
+		{
+			autocompleteEntryList.Add(new AutocompleteEntry(
+				namespaceGroupKvp.Key,
+		        AutocompleteEntryKind.Namespace,
+		        () => MemberAutocomplete(namespaceGroupKvp.Key, renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+		}
 	
 		return new MenuRecord(
 			autocompleteEntryList.Select(entry => new MenuOptionRecord(
