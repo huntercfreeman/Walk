@@ -992,8 +992,8 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		_textEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(
 			new UniqueTextEditorWork(_textEditorService, async editContext =>
             {
-            	await ParseSolution(editContext, dotNetSolutionModel.Key);
-            	await ParseSolution(editContext, dotNetSolutionModel.Key);
+            	await ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_DefinitionsOnly);
+            	await ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_MinimumLocalsData);
         	}));
 
 		await Do_SetDotNetSolutionTreeView(dotNetSolutionModel.Key).ConfigureAwait(false);
@@ -1405,7 +1405,10 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		}
 	}
 
-	private async ValueTask ParseSolution(TextEditorEditContext editContext, Key<DotNetSolutionModel> dotNetSolutionModelKey)
+	private async ValueTask ParseSolution(
+		TextEditorEditContext editContext,
+		Key<DotNetSolutionModel> dotNetSolutionModelKey,
+		CompilationUnitKind compilationUnitKind)
 	{
 		var dotNetSolutionState = DotNetSolutionService.GetDotNetSolutionState();
 
@@ -1518,7 +1521,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				
 				cancellationToken.ThrowIfCancellationRequested();
 
-				await DiscoverClassesInProject(editContext, project, progressBarModel, currentProgress, maximumProgressAvailableToProject);
+				await DiscoverClassesInProject(editContext, project, progressBarModel, currentProgress, maximumProgressAvailableToProject, compilationUnitKind);
 				projectsParsedCount++;
 			}
 
@@ -1544,7 +1547,8 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		IDotNetProject dotNetProject,
 		ProgressBarModel progressBarModel,
 		double currentProgress,
-		double maximumProgressAvailableToProject)
+		double maximumProgressAvailableToProject,
+		CompilationUnitKind compilationUnitKind)
 	{
 		if (!await _fileSystemProvider.File.ExistsAsync(dotNetProject.AbsolutePath.Value))
 			return; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
@@ -1566,7 +1570,8 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			progressBarModel,
 			currentProgress,
 			maximumProgressAvailableToProject,
-			discoveredFileList);
+			discoveredFileList,
+			compilationUnitKind);
 
 		async Task DiscoverFilesRecursively(string directoryPathParent, List<string> discoveredFileList, bool isFirstInvocation)
 		{
@@ -1615,7 +1620,8 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		ProgressBarModel progressBarModel,
 		double currentProgress,
 		double maximumProgressAvailableToProject,
-		List<string> discoveredFileList)
+		List<string> discoveredFileList,
+		CompilationUnitKind compilationUnitKind)
 	{
 		var fileParsedCount = 0;
 		
@@ -1635,7 +1641,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				resourceUri,
 				shouldTriggerResourceWasModified: false);
 				
-			await compilerService.FastParseAsync(editContext, resourceUri, _fileSystemProvider)
+			await compilerService.FastParseAsync(editContext, resourceUri, _fileSystemProvider, compilationUnitKind)
 				.ConfigureAwait(false);
 				
 			fileParsedCount++;

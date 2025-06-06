@@ -544,7 +544,10 @@ public partial class CSharpBinder
         
         codeBlockOwner.ScopeIndexKey = scope.IndexKey;
         
-        var nextCodeBlockBuilder = new CSharpCodeBlockBuilder(parent: parserModel.CurrentCodeBlockBuilder, codeBlockOwner: codeBlockOwner);
+        var nextCodeBlockBuilder = new CSharpCodeBlockBuilder(
+        	parent: parserModel.CurrentCodeBlockBuilder,
+        	codeBlockOwner: codeBlockOwner,
+        	compilationUnit.CompilationUnitKind);
         
         parserModel.CurrentCodeBlockBuilder = nextCodeBlockBuilder;
         
@@ -587,7 +590,7 @@ public partial class CSharpBinder
         
         codeBlockOwner.ScopeIndexKey = scope.IndexKey;
         
-        return new CSharpCodeBlockBuilder(parent: null, codeBlockOwner: codeBlockOwner)
+        return new CSharpCodeBlockBuilder(parent: null, codeBlockOwner: codeBlockOwner, compilationUnit.CompilationUnitKind)
         {
         	IsImplicitOpenCodeBlockTextSpan = true
         };

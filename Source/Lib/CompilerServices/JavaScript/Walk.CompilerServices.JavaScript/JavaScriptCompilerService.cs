@@ -173,7 +173,7 @@ public class JavaScriptCompilerService : ICompilerService
 		return ValueTask.CompletedTask;
     }
 	
-	public ValueTask FastParseAsync(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider)
+	public ValueTask FastParseAsync(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
 	{
 		return ValueTask.CompletedTask;
 	}

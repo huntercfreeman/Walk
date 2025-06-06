@@ -105,7 +105,7 @@ public class RazorSyntaxTree
 
         var classContents = _codebehindClassBuilder.ToString();
 
-        var compilationUnit = new CSharpCompilationUnit(_codebehindResourceUri, classContents);
+        var compilationUnit = new CSharpCompilationUnit(_codebehindResourceUri, classContents, CompilationUnitKind.IndividualFile_AllData);
 			
 		var lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, _codebehindResourceUri, classContents, shouldUseSharedStringWalker: true);
 		
