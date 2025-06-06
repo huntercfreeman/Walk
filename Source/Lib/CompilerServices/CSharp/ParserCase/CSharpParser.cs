@@ -276,7 +276,7 @@ public static class CSharpParser
             parserModel.Binder.CloseScope(parserModel.TokenWalker.Current.TextSpan, compilationUnit, ref parserModel);
         }
 		
-        var topLevelStatementsCodeBlock = parserModel.CurrentCodeBlockBuilder.Build();
+        var topLevelStatementsCodeBlock = parserModel.CurrentCodeBlockBuilder.Build(compilationUnit);
                 
         parserModel.Binder.SetCodeBlockNode(
         	globalCodeBlockNode,

@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.Extensions.CompilerServices.Utility;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -90,6 +91,13 @@ internal static class TokenWalkerExtensionMethods
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
 		#endif
 
+		if (compilationUnit.CompilationUnitKind == CompilationUnitKind.SolutionWide_DefinitionsOnly &&
+			deferredCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+    		deferredCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.ArbitraryCodeBlockNode)
+		{
+			return;
+		}
+		
 		parserModel.ParseChildScopeStack.Push(
 			(
 				parserModel.CurrentCodeBlockBuilder.CodeBlockOwner,

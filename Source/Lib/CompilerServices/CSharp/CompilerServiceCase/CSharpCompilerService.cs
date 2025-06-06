@@ -1018,7 +1018,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		var presentationModel = modelModifier.PresentationModelList.First(
 			x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 		
-		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri, presentationModel.PendingCalculation.ContentAtRequest);
+		var cSharpCompilationUnit = new CSharpCompilationUnit(
+			resourceUri,
+			presentationModel.PendingCalculation.ContentAtRequest,
+			CompilationUnitKind.IndividualFile_AllData);
 		
 		var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, presentationModel.PendingCalculation.ContentAtRequest, shouldUseSharedStringWalker: true);
 		cSharpCompilationUnit.TokenList = lexerOutput.SyntaxTokenList;
@@ -1068,7 +1071,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         return ValueTask.CompletedTask;
 	}
     
-    public async ValueTask FastParseAsync(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider)
+    public async ValueTask FastParseAsync(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
 	{
 		var content = await fileSystemProvider.File
             .ReadAllTextAsync(resourceUri.Value)
@@ -1077,7 +1080,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		if (!_resourceMap.ContainsKey(resourceUri))
 			return;
 
-		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri, content);
+		var cSharpCompilationUnit = new CSharpCompilationUnit(
+			resourceUri,
+			content,
+			compilationUnitKind);
 		
 		var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, content, shouldUseSharedStringWalker: true);
 		cSharpCompilationUnit.TokenList = lexerOutput.SyntaxTokenList;

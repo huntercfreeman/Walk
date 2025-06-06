@@ -109,5 +109,9 @@ public interface ICompilerService
 
 	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting);
 	
-	public ValueTask FastParseAsync(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider);
+	public ValueTask FastParseAsync(
+		TextEditorEditContext editContext,
+		ResourceUri resourceUri,
+		IFileSystemProvider fileSystemProvider,
+		CompilationUnitKind compilationUnitKind);
 }

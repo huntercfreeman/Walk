@@ -677,7 +677,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
     public async Task Editor_FastParseFunc(FastParseArgs fastParseArgs)
     {
-        var resourceUri = fastParseArgs.ResourceUri;
+        /*var resourceUri = fastParseArgs.ResourceUri;
 
         var compilerService = _compilerServiceRegistry.GetCompilerService(fastParseArgs.ExtensionNoPeriod);
 
@@ -688,7 +688,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 		var uniqueTextEditorWork = new UniqueTextEditorWork(_textEditorService, editContext =>
 			compilerService.FastParseAsync(editContext, fastParseArgs.ResourceUri, _fileSystemProvider));
 		
-		_textEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);
+		_textEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);*/
     }
     
     public async Task Editor_RegisterModelFunc(RegisterModelArgs registerModelArgs)

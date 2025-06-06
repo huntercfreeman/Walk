@@ -135,22 +135,6 @@ public partial class WalkWebsiteInitializer : ComponentBase
         	WorkKind = DotNetBackgroundTaskApiWorkKind.SetDotNetSolution,
         	DotNetSolutionAbsolutePath = solutionAbsolutePath,
     	});
-
-        // Display a file from the get-go so the user is less confused on what the website is.
-        var absolutePath = EnvironmentProvider.AbsolutePathFactory(
-            InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
-            false);
-
-		TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
-		{
-			await TextEditorService.OpenInEditorAsync(
-				editContext,
-	            absolutePath.Value,
-	            false,
-	            null,
-	            new Category("main"),
-	        	Key<TextEditorViewModel>.NewKey());
-		});
     }
 
     private async Task ParseSolutionAsync()
@@ -230,5 +214,21 @@ public partial class WalkWebsiteInitializer : ComponentBase
                 return ValueTask.CompletedTask;
             });
         }
+        
+		TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+		{
+			// Display a file from the get-go so the user is less confused on what the website is.
+	        var absolutePath = EnvironmentProvider.AbsolutePathFactory(
+	            InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
+	            false);
+		
+			await TextEditorService.OpenInEditorAsync(
+				editContext,
+	            absolutePath.Value,
+	            false,
+	            null,
+	            new Category("main"),
+	        	Key<TextEditorViewModel>.NewKey());
+		});
     }
 }

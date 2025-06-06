@@ -1,16 +1,19 @@
+using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
+using Walk.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Walk.CompilerServices.CSharp.ParserCase;
 
 public class CSharpCodeBlockBuilder
 {
-    public CSharpCodeBlockBuilder(CSharpCodeBlockBuilder? parent, ICodeBlockOwner codeBlockOwner)
+    public CSharpCodeBlockBuilder(CSharpCodeBlockBuilder? parent, ICodeBlockOwner codeBlockOwner, CompilationUnitKind compilationUnitKind)
     {
         Parent = parent;
         CodeBlockOwner = codeBlockOwner;
+        CompilationUnitKind = compilationUnitKind;
         
         var parentScopeDirection = parent?.CodeBlockOwner.ScopeDirectionKind
         	?? ScopeDirectionKind.Both;
@@ -29,6 +32,8 @@ public class CSharpCodeBlockBuilder
     /// Identifier is equal to the constructor's identifier.
     /// </summary>
     public ICodeBlockOwner CodeBlockOwner { get; }
+    
+    public CompilationUnitKind CompilationUnitKind { get; }
     
 	public bool PermitCodeBlockParsing { get; set; } = true;
 	
@@ -162,8 +167,22 @@ public class CSharpCodeBlockBuilder
 		return syntax;
 	}
 
-    public CodeBlock Build()
+    public CodeBlock Build(CSharpCompilationUnit compilationUnit)
     {
-        return new CodeBlock(ChildList);
+    	if (CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData &&
+    		CodeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+    		CodeBlockOwner.SyntaxKind == SyntaxKind.ArbitraryCodeBlockNode)
+    	{
+    		ChildList.Clear();
+    		
+    		// TODO: This is quite inefficient.
+    		foreach (var kvp in compilationUnit.ScopeVariableDeclarationMap)
+    		{
+    			if (kvp.Key.ScopeIndexKey == CodeBlockOwner.ScopeIndexKey)
+    				compilationUnit.ScopeVariableDeclarationMap.Remove(kvp.Key);
+    		}
+    	}
+    
+    	return new CodeBlock(ChildList);
     }
 }
