@@ -568,7 +568,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		        AutocompleteEntryKind.Namespace,
 		        () => MemberAutocomplete(namespaceGroupKvp.Key, renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
 		}
-	
+
 		return new MenuRecord(
 			autocompleteEntryList.Select(entry => new MenuOptionRecord(
 				    entry.DisplayName,
