@@ -8,12 +8,10 @@ public record struct VariableReference
 
 	public VariableReference(
 		SyntaxToken variableIdentifierToken,
-		VariableDeclarationNode variableDeclarationNode,
 		TypeReference resultTypeReference,
 		bool isFabricated)
 	{
 		VariableIdentifierToken = variableIdentifierToken;
-		VariableDeclarationNode = variableDeclarationNode;
 		ResultTypeReference = resultTypeReference;
 		IsFabricated = isFabricated;
 	}
@@ -23,13 +21,11 @@ public record struct VariableReference
 		variableReferenceNode.IsBeingUsed = false;
 	
 		VariableIdentifierToken = variableReferenceNode.VariableIdentifierToken;
-		VariableDeclarationNode = variableReferenceNode.VariableDeclarationNode;
 		ResultTypeReference = variableReferenceNode.ResultTypeReference;
 		IsFabricated = variableReferenceNode.IsFabricated;
 	}
 
 	public SyntaxToken VariableIdentifierToken { get; }
-	public VariableDeclarationNode VariableDeclarationNode { get; }
 	public TypeReference ResultTypeReference { get; }
 	public bool IsFabricated { get; }
 }

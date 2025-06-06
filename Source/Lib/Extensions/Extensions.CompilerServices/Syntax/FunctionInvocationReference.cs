@@ -8,14 +8,12 @@ public record struct FunctionInvocationReference
 
 	public FunctionInvocationReference(
 		SyntaxToken functionInvocationIdentifierToken,
-		FunctionDefinitionNode? functionDefinitionNode,
 		GenericParameterListing genericParameterListing,
 		FunctionParameterListing functionParameterListing,
 		TypeReference resultTypeReference,
 		bool isFabricated)
 	{
 		FunctionInvocationIdentifierToken = functionInvocationIdentifierToken;
-		FunctionDefinitionNode = functionDefinitionNode;
 		GenericParameterListing = genericParameterListing;
 		FunctionParameterListing = functionParameterListing;
 		ResultTypeReference = resultTypeReference;
@@ -27,7 +25,6 @@ public record struct FunctionInvocationReference
 		// functionInvocationNode.IsBeingUsed = false;
 	
 		FunctionInvocationIdentifierToken = functionInvocationNode.FunctionInvocationIdentifierToken;
-		FunctionDefinitionNode = functionInvocationNode.FunctionDefinitionNode;
 		GenericParameterListing = functionInvocationNode.GenericParameterListing;
 		FunctionParameterListing = functionInvocationNode.FunctionParameterListing;
 		ResultTypeReference = functionInvocationNode.ResultTypeReference;
@@ -35,7 +32,6 @@ public record struct FunctionInvocationReference
 	}
 
 	public SyntaxToken FunctionInvocationIdentifierToken { get; set; }
-	public FunctionDefinitionNode? FunctionDefinitionNode { get; set; }
 	public GenericParameterListing GenericParameterListing { get; set; }
 	public FunctionParameterListing FunctionParameterListing { get; set; }
 	public TypeReference ResultTypeReference { get; set; }
