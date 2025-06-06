@@ -534,13 +534,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	        renderBatch.ViewModel.LineIndex,
 	        renderBatch.ViewModel.ColumnIndex);
 	
-		if (word is null)
-		{
-			var testingNamespaceAutocompletionMenu = Testing_NamespaceAutocompletion(renderBatch, autocompleteMenu);
-			if (testingNamespaceAutocompletionMenu is not null)
-				return testingNamespaceAutocompletionMenu;
-		}
-		
 		// The cursor is 1 character ahead.
         var textSpan = new TextEditorTextSpan(
             positionIndex - 1,
@@ -551,7 +544,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	
 		var compilerServiceAutocompleteEntryList = OBSOLETE_GetAutocompleteEntries(
 			word,
-            textSpan);
+            textSpan,
+            renderBatch);
 	
 		return autocompleteMenu.GetDefaultMenuRecord(compilerServiceAutocompleteEntryList);
 	}
@@ -1155,7 +1149,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     	return __CSharpBinder.GetScopeByPositionIndex(null, resourceUri, positionIndex);
     }
     
-    public List<AutocompleteEntry>? OBSOLETE_GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
+    public List<AutocompleteEntry>? OBSOLETE_GetAutocompleteEntries(string word, TextEditorTextSpan textSpan, TextEditorRenderBatch renderBatch)
     {
     	if (word is null)
 			return null;
@@ -1166,6 +1160,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             return null;
         
         var autocompleteEntryList = new List<AutocompleteEntry>();
+        
+		foreach (var namespaceGroupKvp in __CSharpBinder.NamespaceGroupMap.Where(x => x.Key.Contains(word)).Take(5))
+		{
+			autocompleteEntryList.Add(new AutocompleteEntry(
+				namespaceGroupKvp.Key,
+		        AutocompleteEntryKind.Namespace,
+		        () => MemberAutocomplete(namespaceGroupKvp.Key, renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+		}
 
         var targetScope = boundScope;
         
