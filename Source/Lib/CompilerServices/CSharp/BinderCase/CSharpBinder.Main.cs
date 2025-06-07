@@ -38,6 +38,7 @@ public partial class CSharpBinder
     public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> CSharpParserModel_ParseChildScopeStack { get; } = new();
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> CSharpParserModel_ExpressionList { get; set; } = new();
     public List<SyntaxKind> CSharpParserModel_TryParseExpressionSyntaxKindList { get; } = new();
+    public HashSet<int> SolutionWide_MinimumLocalsData_ScopeIndexKey_HashSet { get; } = new();
     
     public TokenWalker CSharpParserModel_TokenWalker { get; } = new(Array.Empty<SyntaxToken>(), useDeferredParsing: true);
     
@@ -682,7 +683,7 @@ public partial class CSharpBinder
     	{
 	        SetCodeBlockNode(
 	        	inOwner,
-	        	inBuilder.Build(compilationUnit),
+	        	inBuilder.Build(parserModel.Binder),
 	        	compilationUnit.__DiagnosticList,
 	        	parserModel.TokenWalker);
 			
