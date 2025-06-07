@@ -484,6 +484,8 @@ public sealed class TextEditorModel
 
         List<RichCharacter> richCharacterList = new();
         var richCharacterIndex = 0;
+        
+        PersistentState.IsMixedLineEndings = false;
 
         for (var contentIndex = 0; contentIndex < content.Length; contentIndex++)
         {
@@ -521,6 +523,12 @@ public sealed class TextEditorModel
 				if (charactersOnLine > MostCharactersOnASingleLineTuple.lineLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
 					MostCharactersOnASingleLineTuple = (rowIndex, charactersOnLine + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
 
+            	if (LineEndKindPreference != currentLineEndKind)
+            	{
+            	    PersistentState.IsMixedLineEndings = true;
+            	    // Console.WriteLine("PersistentState.IsMixedLineEndings = true;");
+            	}
+            	
             	if (LineEndKindPreference == LineEndKind.CarriageReturnLineFeed)
             	{
             		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 2, lineEndKind: LineEndKind.CarriageReturnLineFeed, lineEndKindOriginal: currentLineEndKind));
@@ -1907,6 +1915,9 @@ public sealed class TextEditorModel
     
     public string GetAllText_WithOriginalLineEndings()
     {
+        if (!PersistentState.IsMixedLineEndings)
+            return AllText;
+       
        return AllText;
        // _allText = new string(RichCharacterList.Select(x => x.Value).ToArray());
     }
