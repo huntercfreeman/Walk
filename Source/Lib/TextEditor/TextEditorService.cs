@@ -166,6 +166,9 @@ public sealed class TextEditorService
 	/// </summary>
     public TextEditorViewModelLiason __TextEditorViewModelLiason { get; }
     
+    public int SeenTabWidth { get; set; }
+    public string TabKeyOutput { get; set; }
+    
     public event Action? TextEditorStateChanged;
     
     private readonly Dictionary<int, List<string>> _stringMap = new();

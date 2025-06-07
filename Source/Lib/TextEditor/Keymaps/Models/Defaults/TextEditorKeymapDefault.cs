@@ -15,6 +15,9 @@ namespace Walk.TextEditor.RazorLib.Keymaps.Models.Defaults;
 public class TextEditorKeymapDefault : ITextEditorKeymap
 {
 	private readonly StringBuilder _indentationBuilder = new();
+	
+	private int _seenTabWidth;
+	private string _tabSpaces;
 
     public string DisplayName { get; } = nameof(TextEditorKeymapDefault);
     
@@ -637,9 +640,13 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			                }
 			                else
 			                {
-			                	// TODO: TabWidth amount of space characters.
+			                	if (_seenTabWidth != componentData.TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetOptions().TabWidth)
+			                	{
+			                	    _seenTabWidth = componentData.TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetOptions().TabWidth;
+			                	    _tabSpaces = new string('.', _seenTabWidth);
+			                	}
 			                	modelModifier.Insert(
-				                    "    ",
+				                    _tabSpaces,
 				                    viewModel);
 			                }
 			                

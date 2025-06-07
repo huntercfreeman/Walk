@@ -1052,7 +1052,12 @@ public sealed class TextEditorViewModelApi
 	
 			if (_textEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowWhitespace)
 		    {
-		        tabKeyOutput = "--->";
+		        if (_textEditorService.SeenTabWidth != _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.TabWidth)
+		        {
+		            _textEditorService.SeenTabWidth = _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.TabWidth;
+		            _textEditorService.TabKeyOutput = new string('-', _textEditorService.SeenTabWidth - 1) + '>';
+		        }
+		        tabKeyOutput = _textEditorService.TabKeyOutput;
 		        spaceKeyOutput = "·";
 		    }
 			
