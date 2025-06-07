@@ -19,6 +19,7 @@ public record struct TextEditorOptionsState
                 ShowPanelTitles: false),
             false,
             false,
+            TabKeyBehavior: true,
             null,
             DEFAULT_CURSOR_WIDTH_IN_PIXELS,
             true,

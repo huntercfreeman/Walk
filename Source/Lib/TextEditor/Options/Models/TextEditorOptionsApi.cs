@@ -175,6 +175,24 @@ public sealed class TextEditorOptionsApi
         if (updateStorage)
             WriteToStorage();
     }
+    
+    public void SetTabKeyBehavior(bool tabKeyBehavior, bool updateStorage = true)
+    {
+    	var inState = GetTextEditorOptionsState();
+    
+		_textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                TabKeyBehavior = tabKeyBehavior,
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        StaticStateChanged?.Invoke();
+        
+        if (updateStorage)
+            WriteToStorage();
+    }
 
     public void SetKeymap(ITextEditorKeymap keymap, bool updateStorage = true)
     {
@@ -368,7 +386,10 @@ public sealed class TextEditorOptionsApi
             SetHeight(optionsJson.TextEditorHeightInPixels.Value, false);
 
         if (optionsJson.ShowNewlines is not null)
-            SetShowNewlines(optionsJson.ShowNewlines.Value, false);
+        	SetShowNewlines(optionsJson.ShowNewlines.Value, false);
+        
+        if (optionsJson.TabKeyBehavior is not null)
+            SetTabKeyBehavior(optionsJson.TabKeyBehavior.Value, false);
 
         // TODO: OptionsSetUseMonospaceOptimizations will always get set to false (default for bool)
         // for a first time user. This leads to a bad user experience since the proportional
