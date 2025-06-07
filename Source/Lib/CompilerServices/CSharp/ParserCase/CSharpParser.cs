@@ -300,6 +300,8 @@ public static class CSharpParser
 				if (binder.SolutionWide_MinimumLocalsData_ScopeIndexKey_HashSet.Contains(kvp.Key.ScopeIndexKey))
 					compilationUnit.ScopeVariableDeclarationMap.Remove(kvp.Key);
 			}
+			
+			binder.SolutionWide_MinimumLocalsData_ScopeIndexKey_HashSet.Clear();
 		}
 		
 		parserModel.Binder.FinalizeCompilationUnit(compilationUnit);
