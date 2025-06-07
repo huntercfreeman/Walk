@@ -629,10 +629,20 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			        	}
 			        	else
 			        	{
-			            	modelModifier.Insert(
-			                    "\t",
-			                    viewModel);
-			                    
+			        		if (componentData.TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetOptions().TabKeyBehavior)
+			        		{
+				            	modelModifier.Insert(
+				                    "\t",
+				                    viewModel);
+			                }
+			                else
+			                {
+			                	// TODO: TabWidth amount of space characters.
+			                	modelModifier.Insert(
+				                    "    ",
+				                    viewModel);
+			                }
+			                
 			                menuKind = MenuKind.None;
 			                shouldClearTooltip = true;
 		            		shouldApplySyntaxHighlighting = true;
