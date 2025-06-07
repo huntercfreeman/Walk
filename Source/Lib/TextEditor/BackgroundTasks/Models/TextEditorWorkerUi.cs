@@ -189,7 +189,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 			
 			            // 1 of the character width is already accounted for
 			
-			            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+			            var extraWidthPerTabKey = _textEditorService.OptionsApi.GetOptions().TabWidth - 1;
 			
 			            lastValidColumnLeft += extraWidthPerTabKey *
 			                tabsOnSameLineBeforeCursor *

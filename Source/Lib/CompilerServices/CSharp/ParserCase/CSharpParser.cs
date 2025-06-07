@@ -1,5 +1,6 @@
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Exceptions;
+using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.CompilerServices.CSharp.LexerCase;
@@ -276,7 +277,7 @@ public static class CSharpParser
             parserModel.Binder.CloseScope(parserModel.TokenWalker.Current.TextSpan, compilationUnit, ref parserModel);
         }
 		
-        var topLevelStatementsCodeBlock = parserModel.CurrentCodeBlockBuilder.Build(compilationUnit);
+        var topLevelStatementsCodeBlock = parserModel.CurrentCodeBlockBuilder.Build(parserModel.Binder);
                 
         parserModel.Binder.SetCodeBlockNode(
         	globalCodeBlockNode,
@@ -291,6 +292,17 @@ public static class CSharpParser
 			++TotalAmbiguousIdentifierExpressionNodeFailCount;
 			Console.WriteLine($"AmbiguousIdentifierExpressionNode !_wasDecided FailCount:{parserModel.AmbiguousIdentifierExpressionNode.FailCount} SuccessCount:{parserModel.AmbiguousIdentifierExpressionNode.SuccessCount} ResourceUri:{compilationUnit.ResourceUri.Value}; TotalAmbiguousIdentifierExpressionNodeFailCount:{TotalAmbiguousIdentifierExpressionNodeFailCount}");
 		}*/
+		
+		if (compilationUnit.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData)
+		{
+			foreach (var kvp in compilationUnit.ScopeVariableDeclarationMap)
+			{
+				if (binder.SolutionWide_MinimumLocalsData_ScopeIndexKey_HashSet.Contains(kvp.Key.ScopeIndexKey))
+					compilationUnit.ScopeVariableDeclarationMap.Remove(kvp.Key);
+			}
+			
+			binder.SolutionWide_MinimumLocalsData_ScopeIndexKey_HashSet.Clear();
+		}
 		
 		parserModel.Binder.FinalizeCompilationUnit(compilationUnit);
 	}

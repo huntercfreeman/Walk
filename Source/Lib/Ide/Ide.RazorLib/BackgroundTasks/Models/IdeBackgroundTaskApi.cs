@@ -804,7 +804,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     
     private void Editor_HandleOnSaveRequested(TextEditorModel innerTextEditor)
     {
-        var innerContent = innerTextEditor.GetAllText();
+        var innerContent = innerTextEditor.GetAllText_WithOriginalLineEndings();
         
         var absolutePath = _environmentProvider.AbsolutePathFactory(
             innerTextEditor.PersistentState.ResourceUri.Value,

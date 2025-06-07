@@ -62,4 +62,5 @@ public class TextEditorModelPersistentState
     
     public int EditBlockIndex { get; set; }
     public List<TextEditorEdit> EditBlockList { get; set; }
+    public bool IsMixedLineEndings { get; set; }
 }

@@ -331,14 +331,6 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 			componentData.Virtualized_LineIndexCache_IsInvalid = true;
 		});
 	}
-
-    public void Dispose()
-    {
-    	TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
-    	{
-    		DisposeComponentData(editContext, ComponentData);
-    	});
-    }
     #endregion
     
     #region DynamicViewModelAdapterTextEditor
@@ -745,4 +737,12 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         }
     }
     #endregion
+    
+    public void Dispose()
+    {
+    	TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+    	{
+    		DisposeComponentData(editContext, ComponentData);
+    	});
+    }
 }

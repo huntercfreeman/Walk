@@ -166,6 +166,10 @@ public sealed class TextEditorService
 	/// </summary>
     public TextEditorViewModelLiason __TextEditorViewModelLiason { get; }
     
+    public int SeenTabWidth { get; set; }
+    public string TabKeyOutput_ShowWhitespaceTrue { get; set; }
+    public string TabKeyOutput_ShowWhitespaceFalse { get; set; }
+    
     public event Action? TextEditorStateChanged;
     
     private readonly Dictionary<int, List<string>> _stringMap = new();
@@ -380,6 +384,7 @@ public sealed class TextEditorService
 		
 		var originalScrollWidth = viewModelModifier.ScrollWidth;
 		var originalScrollHeight = viewModelModifier.ScrollHeight;
+		var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
 	
 		var totalWidth = (int)Math.Ceiling(modelModifier.MostCharactersOnASingleLineTuple.lineLength *
 			viewModelModifier.CharAndLineMeasurements.CharacterWidth);
@@ -400,7 +405,7 @@ public sealed class TextEditorService
 				longestLineInformation.LastValidColumnIndex);
 
 			// 1 of the character width is already accounted for
-			var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+			var extraWidthPerTabKey = tabWidth - 1;
 
 			totalWidth += (int)Math.Ceiling(extraWidthPerTabKey *
 				tabCountOnLongestLine *

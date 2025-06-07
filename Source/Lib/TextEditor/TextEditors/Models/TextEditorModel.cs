@@ -275,7 +275,6 @@ public sealed class TextEditorModel
 
     public int DocumentLength => RichCharacterList.Length;
     
-    public const int TAB_WIDTH = 4;
     public const int GUTTER_PADDING_LEFT_IN_PIXELS = 3;
     public const int GUTTER_PADDING_RIGHT_IN_PIXELS = 17;
     public const int MAXIMUM_EDIT_BLOCKS = 6;
@@ -485,6 +484,8 @@ public sealed class TextEditorModel
 
         List<RichCharacter> richCharacterList = new();
         var richCharacterIndex = 0;
+        
+        PersistentState.IsMixedLineEndings = false;
 
         for (var contentIndex = 0; contentIndex < content.Length; contentIndex++)
         {
@@ -522,22 +523,28 @@ public sealed class TextEditorModel
 				if (charactersOnLine > MostCharactersOnASingleLineTuple.lineLength - TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN)
 					MostCharactersOnASingleLineTuple = (rowIndex, charactersOnLine + TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
 
+            	if (LineEndKindPreference != currentLineEndKind)
+            	{
+            	    PersistentState.IsMixedLineEndings = true;
+            	    // Console.WriteLine("PersistentState.IsMixedLineEndings = true;");
+            	}
+            	
             	if (LineEndKindPreference == LineEndKind.CarriageReturnLineFeed)
             	{
-            		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 2, LineEndKind.CarriageReturnLineFeed));
+            		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 2, lineEndKind: LineEndKind.CarriageReturnLineFeed, lineEndKindOriginal: currentLineEndKind));
 	            	richCharacterList.Add(new(character, default));
 	            	richCharacterList.Add(new('\n', default));
 	            	richCharacterIndex += 2;
             	}
             	else if (LineEndKindPreference == LineEndKind.CarriageReturn)
             	{
-            		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 1, LineEndKind.CarriageReturn));
+            		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 1, lineEndKind: LineEndKind.CarriageReturn, lineEndKindOriginal: currentLineEndKind));
 					richCharacterList.Add(new(character, default));
 	            	richCharacterIndex++;
             	}
             	else if (LineEndKindPreference == LineEndKind.LineFeed)
             	{
-            		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 1, LineEndKind.LineFeed));
+            		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 1, lineEndKind: LineEndKind.LineFeed, lineEndKindOriginal: currentLineEndKind));
 					richCharacterList.Add(new(character, default));
 	            	richCharacterIndex++;
             	}
@@ -1904,6 +1911,15 @@ public sealed class TextEditorModel
     public string GetAllText()
     {
         return AllText;
+    }
+    
+    public string GetAllText_WithOriginalLineEndings()
+    {
+        if (!PersistentState.IsMixedLineEndings)
+            return AllText;
+       
+       return AllText;
+       // _allText = new string(RichCharacterList.Select(x => x.Value).ToArray());
     }
 
     public int GetPositionIndex(TextEditorViewModel viewModel)

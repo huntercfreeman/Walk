@@ -6,10 +6,13 @@ using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 
 namespace Walk.TextEditor.RazorLib.Options.Models;
 
+/// <param name="TabKeyBehavior">Tab key inserts:(true:tab, false:spaces):</param>
 public record TextEditorOptions(
     CommonOptions CommonOptions,
     bool ShowWhitespace,
     bool ShowNewlines,
+    bool TabKeyBehavior,
+    int TabWidth,
     int? TextEditorHeightInPixels,
     double CursorWidthInPixels,
     bool UseMonospaceOptimizations,

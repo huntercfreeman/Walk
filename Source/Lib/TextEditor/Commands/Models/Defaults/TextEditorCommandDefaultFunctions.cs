@@ -331,13 +331,14 @@ public class TextEditorCommandDefaultFunctions
 		viewModel.SelectionEndingPositionIndex = 0;
 
         bool isFirstLoop = true;
+        var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
 
         for (var i = selectionBoundsInLineIndexUnits.Line_LowerIndexInclusive;
              i < selectionBoundsInLineIndexUnits.Line_UpperIndexExclusive;
              i++)
         {
             var rowPositionIndex = modelModifier.GetPositionIndex(i, 0);
-            var characterReadCount = TextEditorModel.TAB_WIDTH;
+            var characterReadCount = tabWidth;
             var lengthOfLine = modelModifier.GetLineLength(i);
 
             characterReadCount = Math.Min(lengthOfLine, characterReadCount);
@@ -1257,6 +1258,7 @@ public class TextEditorCommandDefaultFunctions
         Dictionary<string, object?>? componentParameters)
     {
         var dropdownKey = new Key<DropdownRecord>(viewModel.PersistentState.ViewModelKey.Guid);
+        var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
         
         if (leftOffset is null)
         {
@@ -1270,7 +1272,7 @@ public class TextEditorCommandDefaultFunctions
                 viewModel.ColumnIndex);
 
             // 1 of the character width is already accounted for
-            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+            var extraWidthPerTabKey = tabWidth - 1;
 
             leftOffset += extraWidthPerTabKey *
                 tabsOnSameLineBeforeCursor *
