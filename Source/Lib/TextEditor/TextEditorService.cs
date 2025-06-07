@@ -488,33 +488,21 @@ public sealed class TextEditorService
 			shouldSetFocusToEditor,
 			category,
 			preferredViewModelKey);
-			
-		// Move cursor
-		if (cursorPositionIndex is null)
-			return; // Leave the cursor unchanged if the argument is null
+		
 		var modelModifier = editContext.GetModelModifier(resourceUri);
 		var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
-
 		if (modelModifier is null || viewModelModifier is null)
 			return;
-	
-		var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex.Value);
 			
-		viewModelModifier.LineIndex = lineAndColumnIndices.lineIndex;
-		viewModelModifier.ColumnIndex = lineAndColumnIndices.columnIndex;
+		if (cursorPositionIndex is not null)
+		{
+		    var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex.Value);
+			viewModelModifier.LineIndex = lineAndColumnIndices.lineIndex;
+			viewModelModifier.ColumnIndex = lineAndColumnIndices.columnIndex;
+		}
 		
 		viewModelModifier.PersistentState.ShouldRevealCursor = true;
-		
-		_ = Task.Run(async () =>
-		{
-			await Task.Delay(200).ConfigureAwait(false);
-			WorkerArbitrary.PostUnique(editContext =>
-			{
-				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
-				viewModelModifier.PersistentState.ShouldRevealCursor = true;
-				return ValueTask.CompletedTask;
-			});
-		});
+		FireAndForgetTask_OpenInTextEditor(actualViewModelKey, shouldSetFocusToEditor);
 	}
 	
 	public async Task OpenInEditorAsync(
@@ -543,15 +531,12 @@ public sealed class TextEditorService
 			category,
 			preferredViewModelKey);
 			
-		// Move cursor
-		if (lineIndex is null && columnIndex is null)
-			return; // Leave the cursor unchanged if the argument is null
 		var modelModifier = editContext.GetModelModifier(resourceUri);
 		var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
 
 		if (modelModifier is null || viewModelModifier is null)
 			return;
-	
+	    
 		if (lineIndex is not null)
 			viewModelModifier.LineIndex = lineIndex.Value;
 		if (columnIndex is not null)
@@ -566,14 +551,21 @@ public sealed class TextEditorService
 			viewModelModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
 			
 		viewModelModifier.PersistentState.ShouldRevealCursor = true;
-		
-		_ = Task.Run(async () =>
+		FireAndForgetTask_OpenInTextEditor(actualViewModelKey, shouldSetFocusToEditor);
+	}
+	
+	private void FireAndForgetTask_OpenInTextEditor(Key<TextEditorViewModel> actualViewModelKey, bool shouldSetFocusToEditor)
+	{
+	    _ = Task.Run(async () =>
 		{
 			await Task.Delay(200).ConfigureAwait(false);
 			WorkerArbitrary.PostUnique(editContext =>
 			{
 				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
 				viewModelModifier.PersistentState.ShouldRevealCursor = true;
+				
+				if (shouldSetFocusToEditor)
+				    return viewModelModifier.FocusAsync();
 				return ValueTask.CompletedTask;
 			});
 		});
