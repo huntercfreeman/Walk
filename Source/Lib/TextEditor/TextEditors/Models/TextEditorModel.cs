@@ -523,20 +523,20 @@ public sealed class TextEditorModel
 
             	if (LineEndKindPreference == LineEndKind.CarriageReturnLineFeed)
             	{
-            		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 2, LineEndKind.CarriageReturnLineFeed));
+            		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 2, lineEndKind: LineEndKind.CarriageReturnLineFeed, lineEndKindOriginal: currentLineEndKind));
 	            	richCharacterList.Add(new(character, default));
 	            	richCharacterList.Add(new('\n', default));
 	            	richCharacterIndex += 2;
             	}
             	else if (LineEndKindPreference == LineEndKind.CarriageReturn)
             	{
-            		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 1, LineEndKind.CarriageReturn));
+            		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 1, lineEndKind: LineEndKind.CarriageReturn, lineEndKindOriginal: currentLineEndKind));
 					richCharacterList.Add(new(character, default));
 	            	richCharacterIndex++;
             	}
             	else if (LineEndKindPreference == LineEndKind.LineFeed)
             	{
-            		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 1, LineEndKind.LineFeed));
+            		LineEndList.Insert(rowIndex, new(richCharacterIndex, richCharacterIndex + 1, lineEndKind: LineEndKind.LineFeed, lineEndKindOriginal: currentLineEndKind));
 					richCharacterList.Add(new(character, default));
 	            	richCharacterIndex++;
             	}
@@ -1903,6 +1903,12 @@ public sealed class TextEditorModel
     public string GetAllText()
     {
         return AllText;
+    }
+    
+    public string GetAllText_WithOriginalLineEndings()
+    {
+       return AllText;
+       // _allText = new string(RichCharacterList.Select(x => x.Value).ToArray());
     }
 
     public int GetPositionIndex(TextEditorViewModel viewModel)
