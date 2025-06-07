@@ -83,6 +83,7 @@ public sealed class TextEditorComponentData
 	}
 	
 	public string? InlineUiWidthStyleCssString { get; set; }
+	public bool InlineUiWidthStyleCssStringIsOutdated { get; set; }
 	
 	public bool CursorIsOnHiddenLine { get; set; } = false;
 
@@ -1446,7 +1447,7 @@ public sealed class TextEditorComponentData
     
     public void ConstructVirtualizationStyleCssStrings()
     {
-    	if (Math.Abs(TotalWidth - RenderBatch.ViewModel.VirtualizationResult.TotalWidth) > 0.1)
+    	if (TotalWidth != RenderBatch.ViewModel.VirtualizationResult.TotalWidth)
     	{
     		TotalWidth = RenderBatch.ViewModel.VirtualizationResult.TotalWidth;
     		
@@ -1457,7 +1458,7 @@ public sealed class TextEditorComponentData
 	        HorizontalVirtualizationBoundaryStyleCssString = UiStringBuilder.ToString();
     	}
 	    	
-    	if (Math.Abs(TotalHeight - RenderBatch.ViewModel.VirtualizationResult.TotalHeight) > 0.1)
+    	if (TotalHeight != RenderBatch.ViewModel.VirtualizationResult.TotalHeight)
     	{
     		TotalHeight = RenderBatch.ViewModel.VirtualizationResult.TotalHeight;
     	
@@ -1555,7 +1556,7 @@ public sealed class TextEditorComponentData
     
     private void GetInlineUiStyleList()
     {
-    	if (InlineUiWidthStyleCssString is null)
+    	if (InlineUiWidthStyleCssString is null || InlineUiWidthStyleCssStringIsOutdated)
     	{
 	    	var widthPixels = RenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth * 3;
 			var widthCssValue = widthPixels.ToCssValue();

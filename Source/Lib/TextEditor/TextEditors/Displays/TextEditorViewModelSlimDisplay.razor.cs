@@ -633,6 +633,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         if (viewModel is null)
             return;
 
+        _componentData.InlineUiWidthStyleCssStringIsOutdated = true;
+
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
         	var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
@@ -642,9 +644,12 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 				return ValueTask.CompletedTask;
         	
         	viewModelModifier.CharAndLineMeasurements = TextEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
+    	    viewModelModifier.ShouldCalculateVirtualizationResult = true;
+    	    _componentData.InlineUiWidthStyleCssStringIsOutdated = true;
         	
         	TextEditorService.FinalizePost(editContext);
 		    return ValueTask.CompletedTask;
+		    // viewModelModifier.PersistentState.PostScrollAndRemeasure();
         });
     }
     
