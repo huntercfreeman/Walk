@@ -16,6 +16,9 @@ namespace Walk.TextEditor.RazorLib.Options.Models;
 
 public sealed class TextEditorOptionsApi
 {
+	public const int TAB_WIDTH_MIN = 2;
+	public const int TAB_WIDTH_MAX = 4;
+
     private readonly TextEditorService _textEditorService;
     private readonly WalkTextEditorConfig _textEditorConfig;
     private readonly IStorageService _storageService;
@@ -185,6 +188,27 @@ public sealed class TextEditorOptionsApi
             Options = inState.Options with
             {
                 TabKeyBehavior = tabKeyBehavior,
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        StaticStateChanged?.Invoke();
+        
+        if (updateStorage)
+            WriteToStorage();
+    }
+    
+    public void SetTabWidth(int tabWidth, bool updateStorage = true)
+    {
+    	if (tabWidth < TAB_WIDTH_MIN || tabWidth > TAB_WIDTH_MAX)
+    		return;
+    
+    	var inState = GetTextEditorOptionsState();
+    
+		_textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                TabWidth = tabWidth,
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
@@ -390,6 +414,9 @@ public sealed class TextEditorOptionsApi
         
         if (optionsJson.TabKeyBehavior is not null)
             SetTabKeyBehavior(optionsJson.TabKeyBehavior.Value, false);
+        
+        if (optionsJson.TabWidth is not null)
+            SetTabWidth(optionsJson.TabWidth.Value, false);
 
         // TODO: OptionsSetUseMonospaceOptimizations will always get set to false (default for bool)
         // for a first time user. This leads to a bad user experience since the proportional

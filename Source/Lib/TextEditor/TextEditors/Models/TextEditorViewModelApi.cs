@@ -932,6 +932,7 @@ public sealed class TextEditorViewModelApi
     	
         try
 		{
+			var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
 			viewModel.ShouldCalculateVirtualizationResult = false;
 		
 			var verticalStartingIndex = viewModel.ScrollTop /
@@ -999,7 +1000,7 @@ public sealed class TextEditorViewModelApi
 					longestLineInformation.LastValidColumnIndex);
 
 				// 1 of the character width is already accounted for
-				var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+				var extraWidthPerTabKey = tabWidth - 1;
 
 				totalWidth += (int)Math.Ceiling(extraWidthPerTabKey *
 					tabCountOnLongestLine *
@@ -1059,7 +1060,7 @@ public sealed class TextEditorViewModelApi
 			
 			{
 				// 1 of the character width is already accounted for
-				var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+				var extraWidthPerTabKey = tabWidth - 1;
 				
 				var minLineWidthToTriggerVirtualizationExclusive = 2 * viewModel.TextEditorDimensions.Width;
 					

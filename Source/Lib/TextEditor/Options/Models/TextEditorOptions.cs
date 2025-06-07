@@ -12,6 +12,7 @@ public record TextEditorOptions(
     bool ShowWhitespace,
     bool ShowNewlines,
     bool TabKeyBehavior,
+    int TabWidth,
     int? TextEditorHeightInPixels,
     double CursorWidthInPixels,
     bool UseMonospaceOptimizations,
