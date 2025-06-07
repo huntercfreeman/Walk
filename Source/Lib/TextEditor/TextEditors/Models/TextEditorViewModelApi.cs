@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
@@ -1047,19 +1048,42 @@ public sealed class TextEditorViewModelApi
 			var emptyLines = 0;
 			var calculatedLines = 0;*/
 			
-			var tabKeyOutput = "&nbsp;&nbsp;&nbsp;&nbsp;";
-		    var spaceKeyOutput = "&nbsp;";
-	
-			if (_textEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowWhitespace)
-		    {
-		        if (_textEditorService.SeenTabWidth != _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.TabWidth)
-		        {
-		            _textEditorService.SeenTabWidth = _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.TabWidth;
-		            _textEditorService.TabKeyOutput = new string('-', _textEditorService.SeenTabWidth - 1) + '>';
-		        }
-		        tabKeyOutput = _textEditorService.TabKeyOutput;
+			
+		       
+             
+		        
+		        
+			
+	     
+	     if (_textEditorService.SeenTabWidth != _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.TabWidth)
+        {
+            _textEditorService.SeenTabWidth = _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.TabWidth;
+             _textEditorService.TabKeyOutput_ShowWhitespaceTrue = new string('-', _textEditorService.SeenTabWidth - 1) + '>';
+             
+             var stringBuilder = new StringBuilder();
+             
+             for (int i = 0; i < _textEditorService.SeenTabWidth; i++)
+             {
+                stringBuilder.Append("&nbsp;");
+             }
+             _textEditorService.TabKeyOutput_ShowWhitespaceFalse = stringBuilder.ToString();
+        }
+        
+           string tabKeyOutput;
+		    string spaceKeyOutput;
+        
+        if (_textEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowWhitespace)
+			{
+			   tabKeyOutput = _textEditorService.TabKeyOutput_ShowWhitespaceTrue;
 		        spaceKeyOutput = "·";
+			
 		    }
+		    else
+		    {
+		       tabKeyOutput = _textEditorService.TabKeyOutput_ShowWhitespaceFalse;
+		    spaceKeyOutput = "&nbsp;";
+		    }
+			
 			
 			_textEditorService.__StringBuilder.Clear();
 			

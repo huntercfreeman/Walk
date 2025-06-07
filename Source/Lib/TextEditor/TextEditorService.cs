@@ -167,7 +167,8 @@ public sealed class TextEditorService
     public TextEditorViewModelLiason __TextEditorViewModelLiason { get; }
     
     public int SeenTabWidth { get; set; }
-    public string TabKeyOutput { get; set; }
+    public string TabKeyOutput_ShowWhitespaceTrue { get; set; }
+    public string TabKeyOutput_ShowWhitespaceFalse { get; set; }
     
     public event Action? TextEditorStateChanged;
     
