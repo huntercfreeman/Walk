@@ -49,8 +49,22 @@ public sealed class TextEditorOptionsApi
 
     private IDialog? _findAllDialog;
 
+    /// <summary>
+    /// Step 1: Notifies the TextEditorViewModelDisplay to recalculate `_componentData.SetWrapperCssAndStyle();`
+    ///         and invoke `StateHasChanged()`.
+    /// </summary>
 	public event Action? StaticStateChanged;
+	/// <summary>
+    /// Step 1: Notifies the WalkTextEditorInitializer to measure a tiny UI element that has the options applied to it.
+    /// Step 2: WalkTextEditorInitializer then invokes `MeasuredStateChanged`.
+    /// Step 3: TextEditorViewModelDisplay sees that second event fire, it enqueues a re-calculation of the virtualization result.
+    /// Step 4: Eventually that virtualization result is finished and the editor re-renders.
+    /// </summary>
 	public event Action? NeedsMeasured;
+	/// <summary>
+	/// Step 1: Notifies TextEditorViewModelDisplay to enqueue a re-calculation of the virtualization result.
+	/// Step 2: Eventually that virtualization result is finished and the editor re-renders.
+	/// </summary>
     public event Action? MeasuredStateChanged;
 
 	public TextEditorOptionsState GetTextEditorOptionsState() => _textEditorOptionsState;
