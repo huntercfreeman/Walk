@@ -257,6 +257,8 @@ public static class EventUtils
 
         if (modelModifier is null || viewModel is null)
             return (0, 0, 0, 0);
+            
+        var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
     
         var positionX = mouseEventArgs.ClientX - viewModel.TextEditorDimensions.BoundingClientRectLeft;
         var positionY = mouseEventArgs.ClientY - viewModel.TextEditorDimensions.BoundingClientRectTop;
@@ -387,7 +389,7 @@ public static class EventUtils
 		int GetCharacterWidth(char character)
 		{
 		    if (character == '\t')
-		        return 4;
+		        return tabWidth;
 		
 		    return 1;
 		}

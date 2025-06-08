@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
@@ -932,6 +933,7 @@ public sealed class TextEditorViewModelApi
     	
         try
 		{
+			var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
 			viewModel.ShouldCalculateVirtualizationResult = false;
 		
 			var verticalStartingIndex = viewModel.ScrollTop /
@@ -999,7 +1001,7 @@ public sealed class TextEditorViewModelApi
 					longestLineInformation.LastValidColumnIndex);
 
 				// 1 of the character width is already accounted for
-				var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+				var extraWidthPerTabKey = tabWidth - 1;
 
 				totalWidth += (int)Math.Ceiling(extraWidthPerTabKey *
 					tabCountOnLongestLine *
@@ -1045,21 +1047,40 @@ public sealed class TextEditorViewModelApi
 			/*var reUsedLines = 0;
 			var emptyLines = 0;
 			var calculatedLines = 0;*/
+
+			if (_textEditorService.SeenTabWidth != _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.TabWidth)
+			{
+				_textEditorService.SeenTabWidth = _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.TabWidth;
+				_textEditorService.TabKeyOutput_ShowWhitespaceTrue = new string('-', _textEditorService.SeenTabWidth - 1) + '>';
+				
+				var stringBuilder = new StringBuilder();
+				
+				for (int i = 0; i < _textEditorService.SeenTabWidth; i++)
+				{
+					stringBuilder.Append("&nbsp;");
+				}
+				_textEditorService.TabKeyOutput_ShowWhitespaceFalse = stringBuilder.ToString();
+			}
 			
-			var tabKeyOutput = "&nbsp;&nbsp;&nbsp;&nbsp;";
-		    var spaceKeyOutput = "&nbsp;";
-	
+			string tabKeyOutput;
+			string spaceKeyOutput;
+			
 			if (_textEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowWhitespace)
-		    {
-		        tabKeyOutput = "--->";
-		        spaceKeyOutput = "·";
-		    }
+			{
+				tabKeyOutput = _textEditorService.TabKeyOutput_ShowWhitespaceTrue;
+				spaceKeyOutput = "·";
+			}
+			else
+			{
+				tabKeyOutput = _textEditorService.TabKeyOutput_ShowWhitespaceFalse;
+				spaceKeyOutput = "&nbsp;";
+			}
 			
 			_textEditorService.__StringBuilder.Clear();
 			
 			{
 				// 1 of the character width is already accounted for
-				var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+				var extraWidthPerTabKey = tabWidth - 1;
 				
 				var minLineWidthToTriggerVirtualizationExclusive = 2 * viewModel.TextEditorDimensions.Width;
 					

@@ -54,6 +54,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 	protected override void OnInitialized()
     {
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
+        TextEditorService.OptionsApi.TextEditorWrapperCssStateChanged += OnTextEditorWrapperCssStateChanged;
         OnCursorShouldBlinkChanged();
         
         base.OnInitialized();
@@ -84,6 +85,11 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     }
 
 	private async void OnCursorShouldBlinkChanged()
+    {
+    	await InvokeAsync(StateHasChanged);
+    }
+    
+    private async void OnTextEditorWrapperCssStateChanged()
     {
     	await InvokeAsync(StateHasChanged);
     }
@@ -412,5 +418,6 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 	public void Dispose()
     {
     	TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
+    	TextEditorService.OptionsApi.TextEditorWrapperCssStateChanged -= OnTextEditorWrapperCssStateChanged;
     }
 }

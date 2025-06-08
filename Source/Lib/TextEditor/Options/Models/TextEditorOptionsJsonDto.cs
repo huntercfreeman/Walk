@@ -12,13 +12,15 @@ public record TextEditorOptionsJsonDto(
     CommonOptionsJsonDto? CommonOptionsJsonDto,
     bool? ShowWhitespace,
     bool? ShowNewlines,
+    bool? TabKeyBehavior,
+    int? TabWidth,
     int? TextEditorHeightInPixels,
     double? CursorWidthInPixels,
     //ITextEditorKeymap? Keymap,
     bool? UseMonospaceOptimizations)
 {
     public TextEditorOptionsJsonDto()
-        : this(null, null, null, null, null, null)
+        : this(null, null, null, null, null, null, null, null)
     {
     }
     
@@ -27,6 +29,8 @@ public record TextEditorOptionsJsonDto(
               new CommonOptionsJsonDto(options.CommonOptions),
               options.ShowWhitespace,
               options.ShowNewlines,
+              options.TabKeyBehavior,
+              options.TabWidth,
               options.TextEditorHeightInPixels,
               options.CursorWidthInPixels,
               //options.Keymap,

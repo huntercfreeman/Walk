@@ -38,6 +38,7 @@ public partial class CSharpBinder
     public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> CSharpParserModel_ParseChildScopeStack { get; } = new();
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> CSharpParserModel_ExpressionList { get; set; } = new();
     public List<SyntaxKind> CSharpParserModel_TryParseExpressionSyntaxKindList { get; } = new();
+    public HashSet<int> SolutionWide_MinimumLocalsData_ScopeIndexKey_HashSet { get; } = new();
     
     public TokenWalker CSharpParserModel_TokenWalker { get; } = new(Array.Empty<SyntaxToken>(), useDeferredParsing: true);
     
@@ -682,7 +683,7 @@ public partial class CSharpBinder
     	{
 	        SetCodeBlockNode(
 	        	inOwner,
-	        	inBuilder.Build(compilationUnit),
+	        	inBuilder.Build(parserModel.Binder),
 	        	compilationUnit.__DiagnosticList,
 	        	parserModel.TokenWalker);
 			
@@ -1763,8 +1764,44 @@ public partial class CSharpBinder
 			case SyntaxKind.TypeDefinitionNode:
 				var innerTypeDefinitionNode = (TypeDefinitionNode)node;
 				return innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.Text;
+			case SyntaxKind.TypeClauseNode:
+				var innerTypeClauseNode = (TypeClauseNode)node;
+				return innerTypeClauseNode.TypeIdentifierToken.TextSpan.Text;
+			case SyntaxKind.VariableReferenceNode:
+				var innerVariableReferenceNode = (VariableReferenceNode)node;
+				return innerVariableReferenceNode.VariableIdentifierToken.TextSpan.Text;
+			case SyntaxKind.FunctionInvocationNode:
+				var innerFunctionInvocationNode = (FunctionInvocationNode)node;
+				return innerFunctionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Text;
 			default:
 				return string.Empty;
+		}
+	}
+	
+	public SyntaxToken GetNameToken(ISyntaxNode node)
+	{
+		switch (node.SyntaxKind)
+		{
+			case SyntaxKind.VariableDeclarationNode:
+				var variableDeclarationNode = (VariableDeclarationNode)node;
+				return variableDeclarationNode.IdentifierToken;
+			case SyntaxKind.FunctionDefinitionNode:
+				var functionDefinitionNode = (FunctionDefinitionNode)node;
+				return functionDefinitionNode.FunctionIdentifierToken;
+			case SyntaxKind.TypeDefinitionNode:
+				var innerTypeDefinitionNode = (TypeDefinitionNode)node;
+				return innerTypeDefinitionNode.TypeIdentifierToken;
+			case SyntaxKind.TypeClauseNode:
+				var innerTypeClauseNode = (TypeClauseNode)node;
+				return innerTypeClauseNode.TypeIdentifierToken;
+			case SyntaxKind.VariableReferenceNode:
+				var innerVariableReferenceNode = (VariableReferenceNode)node;
+				return innerVariableReferenceNode.VariableIdentifierToken;
+			case SyntaxKind.FunctionInvocationNode:
+				var innerFunctionInvocationNode = (FunctionInvocationNode)node;
+				return innerFunctionInvocationNode.FunctionInvocationIdentifierToken;
+			default:
+				return default;
 		}
 	}
 }

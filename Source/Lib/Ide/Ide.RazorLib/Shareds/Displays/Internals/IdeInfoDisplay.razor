@@ -172,14 +172,35 @@
         Recent Changes:
 		<div>
 			<div>
-                <div>v <em class="di_em">7.0.0 </em> (WIP_DATE)</div>
+                <div>v <em class="di_em">7.0.0 </em> (2025-06-08)</div>
                 <ul>
-                	<li>
-                		Fix: code search bug
-        			</li>
-                	<li>
+                    <li>
+                		Tab Width
+            		</li>
+            		<li>
+                		Setting to have tab puts a tab key or tab width count of space characters option to pick.
+            		</li>
+            		<li>
                 		Double to int progress
                     </li>
+                    <li>
+                		SolutionWide_MinimumLocalsData remove variable declarations in a single loop.
+            		</li>
+                    <li>
+                        FixBug: Opening a file with "should set focus to text editor" bool doesn't always work (i.e.: set focus to a treeview node in the solution explorer and hit 'Enter' vs 'Space'. Enter should set focus, space shouldn't.)
+                    </li>
+                    <li>
+                        FixBug: Changing a panel from null panel tab to having one and vice versa doesn't always result in the text editor re-measuring properly and requires a manual re-measure to be triggered.
+                    </li>
+                    <li>
+                        FixBug: Font size changes don't trigger a text editor remeasure automatically and require a manual trigger.
+                    </li>
+                    <li>
+                        FixBug: "undefined" member access identifiers are parsed as types by default 
+                    </li>
+                	<li>
+                		FixBug: code search bug
+        			</li>
                 </ul>
             </div>
             <div>

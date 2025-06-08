@@ -12,12 +12,14 @@ using Walk.Common.RazorLib.JsRuntimes.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
+using Walk.Common.RazorLib.Reactives.Models;
 using Walk.TextEditor.RazorLib.Lines.Models;
 using Walk.TextEditor.RazorLib.Diffs.Models;
 using Walk.TextEditor.RazorLib.FindAlls.Models;
 using Walk.TextEditor.RazorLib.Groups.Models;
 using Walk.TextEditor.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.Installations.Models;
@@ -64,6 +66,15 @@ public sealed class TextEditorService
 		IServiceProvider serviceProvider)
     {
     	__TextEditorViewModelLiason = new(this);
+    	
+    	PostScrollAndRemeasure_DebounceExtraEvent = new(
+        	TimeSpan.FromMilliseconds(500),
+        	CancellationToken.None,
+        	(persistentState, _) =>
+        	{
+        	    persistentState.PostScrollAndRemeasure(useExtraEvent: false);
+        	    return Task.CompletedTask;
+    	    });
     
     	WorkerUi = new(this);
     	WorkerArbitrary = new(this);
@@ -166,6 +177,21 @@ public sealed class TextEditorService
 	/// </summary>
     public TextEditorViewModelLiason __TextEditorViewModelLiason { get; }
     
+    public int SeenTabWidth { get; set; }
+    public string TabKeyOutput_ShowWhitespaceTrue { get; set; }
+    public string TabKeyOutput_ShowWhitespaceFalse { get; set; }
+    
+    public int TabKeyBehavior_SeenTabWidth { get; set; }
+	public string TabKeyBehavior_TabSpaces { get; set; }
+	
+	/// <summary>
+    /// To avoid unexpected HTML movements when responding to a PostScrollAndRemeasure(...)
+    /// this debounce will add 1 extra event after everything has "settled".
+    ///
+    /// `byte` is just a throwaway generic type, it isn't used.
+    /// </summary>
+    public Debounce<TextEditorViewModelPersistentState> PostScrollAndRemeasure_DebounceExtraEvent { get; }
+    
     public event Action? TextEditorStateChanged;
     
     private readonly Dictionary<int, List<string>> _stringMap = new();
@@ -213,6 +239,27 @@ public sealed class TextEditorService
 			_stringMap.Add(key, new List<string> { str });
 			return str;
 		}
+	}
+	
+	public void InsertTab(TextEditorEditContext editContext, TextEditorModel modelModifier, TextEditorViewModel viewModel)
+	{
+	    if (OptionsApi.GetOptions().TabKeyBehavior)
+		{
+        	modelModifier.Insert(
+                "\t",
+                viewModel);
+        }
+        else
+        {
+        	if (TabKeyBehavior_SeenTabWidth != OptionsApi.GetOptions().TabWidth)
+        	{
+        	    TabKeyBehavior_SeenTabWidth = OptionsApi.GetOptions().TabWidth;
+        	    TabKeyBehavior_TabSpaces = new string(' ', TabKeyBehavior_SeenTabWidth);
+        	}
+        	modelModifier.Insert(
+                TabKeyBehavior_TabSpaces,
+                viewModel);
+        }
 	}
 
 	public async ValueTask FinalizePost(TextEditorEditContext editContext)
@@ -380,6 +427,7 @@ public sealed class TextEditorService
 		
 		var originalScrollWidth = viewModelModifier.ScrollWidth;
 		var originalScrollHeight = viewModelModifier.ScrollHeight;
+		var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
 	
 		var totalWidth = (int)Math.Ceiling(modelModifier.MostCharactersOnASingleLineTuple.lineLength *
 			viewModelModifier.CharAndLineMeasurements.CharacterWidth);
@@ -400,7 +448,7 @@ public sealed class TextEditorService
 				longestLineInformation.LastValidColumnIndex);
 
 			// 1 of the character width is already accounted for
-			var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+			var extraWidthPerTabKey = tabWidth - 1;
 
 			totalWidth += (int)Math.Ceiling(extraWidthPerTabKey *
 				tabCountOnLongestLine *
@@ -483,33 +531,21 @@ public sealed class TextEditorService
 			shouldSetFocusToEditor,
 			category,
 			preferredViewModelKey);
-			
-		// Move cursor
-		if (cursorPositionIndex is null)
-			return; // Leave the cursor unchanged if the argument is null
+		
 		var modelModifier = editContext.GetModelModifier(resourceUri);
 		var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
-
 		if (modelModifier is null || viewModelModifier is null)
 			return;
-	
-		var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex.Value);
 			
-		viewModelModifier.LineIndex = lineAndColumnIndices.lineIndex;
-		viewModelModifier.ColumnIndex = lineAndColumnIndices.columnIndex;
+		if (cursorPositionIndex is not null)
+		{
+		    var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex.Value);
+			viewModelModifier.LineIndex = lineAndColumnIndices.lineIndex;
+			viewModelModifier.ColumnIndex = lineAndColumnIndices.columnIndex;
+		}
 		
 		viewModelModifier.PersistentState.ShouldRevealCursor = true;
-		
-		_ = Task.Run(async () =>
-		{
-			await Task.Delay(200).ConfigureAwait(false);
-			WorkerArbitrary.PostUnique(editContext =>
-			{
-				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
-				viewModelModifier.PersistentState.ShouldRevealCursor = true;
-				return ValueTask.CompletedTask;
-			});
-		});
+		FireAndForgetTask_OpenInTextEditor(actualViewModelKey, shouldSetFocusToEditor);
 	}
 	
 	public async Task OpenInEditorAsync(
@@ -538,15 +574,12 @@ public sealed class TextEditorService
 			category,
 			preferredViewModelKey);
 			
-		// Move cursor
-		if (lineIndex is null && columnIndex is null)
-			return; // Leave the cursor unchanged if the argument is null
 		var modelModifier = editContext.GetModelModifier(resourceUri);
 		var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
 
 		if (modelModifier is null || viewModelModifier is null)
 			return;
-	
+	    
 		if (lineIndex is not null)
 			viewModelModifier.LineIndex = lineIndex.Value;
 		if (columnIndex is not null)
@@ -561,14 +594,21 @@ public sealed class TextEditorService
 			viewModelModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
 			
 		viewModelModifier.PersistentState.ShouldRevealCursor = true;
-		
-		_ = Task.Run(async () =>
+		FireAndForgetTask_OpenInTextEditor(actualViewModelKey, shouldSetFocusToEditor);
+	}
+	
+	private void FireAndForgetTask_OpenInTextEditor(Key<TextEditorViewModel> actualViewModelKey, bool shouldSetFocusToEditor)
+	{
+	    _ = Task.Run(async () =>
 		{
 			await Task.Delay(200).ConfigureAwait(false);
 			WorkerArbitrary.PostUnique(editContext =>
 			{
 				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
 				viewModelModifier.PersistentState.ShouldRevealCursor = true;
+				
+				if (shouldSetFocusToEditor)
+				    return viewModelModifier.FocusAsync();
 				return ValueTask.CompletedTask;
 			});
 		});

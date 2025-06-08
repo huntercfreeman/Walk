@@ -6,5 +6,5 @@ public enum CSharpParserContextKind
 	ForceParseNextIdentifierAsTypeClauseNode,
 	ForceParseNextIdentifierAsVariableReferenceNode,
     ForceParseGenericParameters,
-    ForceStatementExpression
+    ForceStatementExpression,
 }

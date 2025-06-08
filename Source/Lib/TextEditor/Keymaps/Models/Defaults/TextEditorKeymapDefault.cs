@@ -629,10 +629,8 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			        	}
 			        	else
 			        	{
-			            	modelModifier.Insert(
-			                    "\t",
-			                    viewModel);
-			                    
+			        		editContext.TextEditorService.InsertTab(editContext, modelModifier,  viewModel);
+			                
 			                menuKind = MenuKind.None;
 			                shouldClearTooltip = true;
 		            		shouldApplySyntaxHighlighting = true;

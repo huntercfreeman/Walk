@@ -8,6 +8,7 @@ using Walk.Common.RazorLib.JavaScriptObjects.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Tabs.Displays;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Reactives.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.Groups.Models;
@@ -21,7 +22,7 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 /// </summary>
 public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, IDialog, IDrag
 {
-	public TextEditorViewModelPersistentState(
+    public TextEditorViewModelPersistentState(
 	    Key<TextEditorViewModel> viewModelKey,
 	    ResourceUri resourceUri,
 	    TextEditorService textEditorService,
@@ -235,7 +236,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 		TextEditorService.AppDimensionService.AppDimensionStateChanged += AppDimensionStateWrap_StateChanged;
 
 		// Tell the view model what the (already known) font-size measurements and text-editor measurements are.
-		PostScrollAndRemeasure();
+		PostScrollAndRemeasure(useExtraEvent: false);
 		
 		if (!_hasBeenDisplayedAtLeastOnceBefore)
 		{
@@ -290,10 +291,10 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     	//
     	// The font-size is theoretically un-changed,
     	// but will be measured anyway just because its part of the same method that does the text-editor measurements.
-		PostScrollAndRemeasure();
+		PostScrollAndRemeasure(useExtraEvent: false);
     }
 
-	public void PostScrollAndRemeasure()
+	public void PostScrollAndRemeasure(bool useExtraEvent = true)
 	{
 		var model = TextEditorService.ModelApi.GetOrDefault(ResourceUri);
         var viewModel = TextEditorService.ViewModelApi.GetOrDefault(ViewModelKey);
@@ -323,22 +324,34 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 				.ConfigureAwait(false);
 	
 			viewModelModifier.TextEditorDimensions = textEditorDimensions;
+			viewModelModifier.CharAndLineMeasurements = TextEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
 			viewModelModifier.ShouldCalculateVirtualizationResult = true;
 			
 			// TODO: Where does the method: 'ValidateMaximumScrollLeftAndScrollTop(...)' belong?
 			TextEditorService.ValidateMaximumScrollLeftAndScrollTop(editContext, modelModifier, viewModelModifier, textEditorDimensionsChanged: true);
 			
 			componentData.Virtualized_LineIndexCache_IsInvalid = true;
+			
+			if (!componentData.ViewModelDisplayOptions.IncludeGutterComponent)
+	        {
+	            // TODO: Consider using the font-size for an indication that various CSS needs to be re-calculated?...
+	            // ...at the moment the gutter width in pixels is used. But if you choose not to render a gutter
+	            // then there is no width difference to see.
+	            //
+	            // The initial value cannot be 0 else any text editor without a gutter cannot detect change on the initial render.
+                // Particularly, whatever the double subtraction -- absolute value precision -- check is, it has to be greater a difference than that.
+	            componentData.ViewModelGutterWidth = -2;
+	        }
+			
+			if (useExtraEvent)
+			{
+			    // TODO: Opening a file for the first time is hitting this twice...
+			    // ...this is a very minor issue but I am noting it here.
+			    
+			    TextEditorService.PostScrollAndRemeasure_DebounceExtraEvent.Run(this);
+		    }
 		});
 	}
-
-    public void Dispose()
-    {
-    	TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
-    	{
-    		DisposeComponentData(editContext, ComponentData);
-    	});
-    }
     #endregion
     
     #region DynamicViewModelAdapterTextEditor
@@ -745,4 +758,12 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         }
     }
     #endregion
+    
+    public void Dispose()
+    {
+    	TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+    	{
+    		DisposeComponentData(editContext, ComponentData);
+    	});
+    }
 }

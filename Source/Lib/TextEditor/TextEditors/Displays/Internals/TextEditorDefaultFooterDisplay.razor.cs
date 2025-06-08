@@ -67,6 +67,7 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
 	protected override void OnInitialized()
     {
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
+        TextEditorService.OptionsApi.TextEditorWrapperCssStateChanged += OnTextEditorWrapperCssStateChanged;
         OnCursorShouldBlinkChanged();
         
         base.OnInitialized();
@@ -119,6 +120,11 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
     	}
     
     	await InvokeAsync(StateHasChanged);
+    }
+    
+    private async void OnTextEditorWrapperCssStateChanged()
+    {
+        await InvokeAsync(StateHasChanged);
     }
     
     private static int CountDigits(int argumentNumber)
@@ -208,5 +214,6 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
 	public void Dispose()
     {
     	TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
+    	TextEditorService.OptionsApi.TextEditorWrapperCssStateChanged -= OnTextEditorWrapperCssStateChanged;
     }
 }

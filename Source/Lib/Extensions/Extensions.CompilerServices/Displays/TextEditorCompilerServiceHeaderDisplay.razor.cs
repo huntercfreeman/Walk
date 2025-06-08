@@ -41,6 +41,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	protected override void OnInitialized()
     {
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
+        TextEditorService.OptionsApi.TextEditorWrapperCssStateChanged += OnTextEditorWrapperCssStateChanged;
         OnCursorShouldBlinkChanged();
         
         base.OnInitialized();
@@ -214,10 +215,16 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 			await InvokeAsync(StateHasChanged);
     	});
     }
+    
+    private async void OnTextEditorWrapperCssStateChanged()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 
 	public void Dispose()
     {
     	TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
+    	TextEditorService.OptionsApi.TextEditorWrapperCssStateChanged -= OnTextEditorWrapperCssStateChanged;
     	
     	_cancellationTokenSource.Cancel();
     	_cancellationTokenSource.Dispose();

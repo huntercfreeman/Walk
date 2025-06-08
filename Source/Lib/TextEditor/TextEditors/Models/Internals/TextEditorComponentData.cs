@@ -83,6 +83,7 @@ public sealed class TextEditorComponentData
 	}
 	
 	public string? InlineUiWidthStyleCssString { get; set; }
+	public bool InlineUiWidthStyleCssStringIsOutdated { get; set; }
 	
 	public bool CursorIsOnHiddenLine { get; set; } = false;
 
@@ -202,7 +203,7 @@ public sealed class TextEditorComponentData
     /// The initial value cannot be 0 else any text editor without a gutter cannot detect change on the initial render.
     /// Particularly, whatever the double subtraction -- absolute value precision -- check is, it has to be greater a difference than that.
     /// </summary>
-    private int ViewModelGutterWidth { get; set; } = -2;
+    public int ViewModelGutterWidth { get; set; } = -2;
     /// <summary>Pixels (px)</summary>
     private int ViewModelScrollLeft { get; set; }
     
@@ -715,6 +716,7 @@ public sealed class TextEditorComponentData
     public void GetCursorAndCaretRowStyleCss()
     {
     	var shouldAppearAfterCollapsePoint = CursorIsOnHiddenLine;
+    	var tabWidth = TextEditorService.OptionsApi.GetOptions().TabWidth;
     	
     	double leftInPixels = RenderBatch.ViewModel.GutterWidthInPixels;
     	var topInPixelsInvariantCulture = string.Empty;
@@ -744,7 +746,7 @@ public sealed class TextEditorComponentData
 			
 			            // 1 of the character width is already accounted for
 			
-			            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+			            var extraWidthPerTabKey = tabWidth - 1;
 			
 			            leftInPixels += extraWidthPerTabKey *
 			                tabsOnSameLineBeforeCursor *
@@ -786,7 +788,7 @@ public sealed class TextEditorComponentData
 	
 	            // 1 of the character width is already accounted for
 	
-	            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+	            var extraWidthPerTabKey = tabWidth - 1;
 	
 	            leftInPixels += extraWidthPerTabKey *
 	                tabsOnSameLineBeforeCursor *
@@ -990,6 +992,7 @@ public sealed class TextEditorComponentData
             return string.Empty;
 
         var line = RenderBatch.Model.GetLineInformation(lineIndex);
+        var tabWidth = TextEditorService.OptionsApi.GetOptions().TabWidth;
 
         var startingColumnIndex = 0;
         var endingColumnIndex = line.Position_EndExclusiveIndex - 1;
@@ -1035,7 +1038,7 @@ public sealed class TextEditorComponentData
                 startingColumnIndex);
 
             // 1 of the character width is already accounted for
-            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+            var extraWidthPerTabKey = tabWidth - 1;
 
             startInPixels += extraWidthPerTabKey * tabsOnSameLineBeforeCursor * RenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
         }
@@ -1054,7 +1057,7 @@ public sealed class TextEditorComponentData
                 line.LastValidColumnIndex);
 
             // 1 of the character width is already accounted for
-            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+            var extraWidthPerTabKey = tabWidth - 1;
 
             widthInPixels += extraWidthPerTabKey * tabsOnSameLineBeforeCursor * RenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
         }
@@ -1204,6 +1207,7 @@ public sealed class TextEditorComponentData
             return string.Empty;
 
         var line = RenderBatch.Model.GetLineInformation(lineIndex);
+        var tabWidth = TextEditorService.OptionsApi.GetOptions().TabWidth;
 
         var selectionStartingColumnIndex = 0;
         var selectionEndingColumnIndex = line.Position_EndExclusiveIndex - 1;
@@ -1242,7 +1246,7 @@ public sealed class TextEditorComponentData
                 selectionStartingColumnIndex);
 
             // 1 of the character width is already accounted for
-            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+            var extraWidthPerTabKey = tabWidth - 1;
 
             selectionStartInPixels += 
                 extraWidthPerTabKey * tabsOnSameLineBeforeCursor * charMeasurements.CharacterWidth;
@@ -1269,7 +1273,7 @@ public sealed class TextEditorComponentData
                 selectionEndingColumnIndex);
 
             // 1 of the character width is already accounted for
-            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+            var extraWidthPerTabKey = tabWidth - 1;
 
             selectionWidthInPixels += extraWidthPerTabKey * tabsOnSameLineBeforeCursor * charMeasurements.CharacterWidth;
         }
@@ -1439,11 +1443,13 @@ public sealed class TextEditorComponentData
     	PersonalWrapperCssStyle = stringBuilder.ToString();
     	
     	TextEditorViewModelSlimDisplay.SetRenderBatchConstants();
+    	
+    	TextEditorService.OptionsApi.InvokeTextEditorWrapperCssStateChanged();
     }
     
     public void ConstructVirtualizationStyleCssStrings()
     {
-    	if (Math.Abs(TotalWidth - RenderBatch.ViewModel.VirtualizationResult.TotalWidth) > 0.1)
+    	if (TotalWidth != RenderBatch.ViewModel.VirtualizationResult.TotalWidth)
     	{
     		TotalWidth = RenderBatch.ViewModel.VirtualizationResult.TotalWidth;
     		
@@ -1454,7 +1460,7 @@ public sealed class TextEditorComponentData
 	        HorizontalVirtualizationBoundaryStyleCssString = UiStringBuilder.ToString();
     	}
 	    	
-    	if (Math.Abs(TotalHeight - RenderBatch.ViewModel.VirtualizationResult.TotalHeight) > 0.1)
+    	if (TotalHeight != RenderBatch.ViewModel.VirtualizationResult.TotalHeight)
     	{
     		TotalHeight = RenderBatch.ViewModel.VirtualizationResult.TotalHeight;
     	
@@ -1552,7 +1558,7 @@ public sealed class TextEditorComponentData
     
     private void GetInlineUiStyleList()
     {
-    	if (InlineUiWidthStyleCssString is null)
+    	if (InlineUiWidthStyleCssString is null || InlineUiWidthStyleCssStringIsOutdated)
     	{
 	    	var widthPixels = RenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth * 3;
 			var widthCssValue = widthPixels.ToCssValue();
@@ -1561,6 +1567,7 @@ public sealed class TextEditorComponentData
 		}
     
     	InlineUiStyleList.Clear();
+        var tabWidth = TextEditorService.OptionsApi.GetOptions().TabWidth;
     	
     	for (int inlineUiIndex = 0; inlineUiIndex < RenderBatch.ViewModel.PersistentState.InlineUiList.Count; inlineUiIndex++)
     	{
@@ -1580,7 +1587,7 @@ public sealed class TextEditorComponentData
 				    lineAndColumnIndices.columnIndex);
 				
 				// 1 of the character width is already accounted for
-				var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+				var extraWidthPerTabKey = tabWidth - 1;
 				
 				leftInPixels += extraWidthPerTabKey *
 				    tabsOnSameLineBeforeCursor *
