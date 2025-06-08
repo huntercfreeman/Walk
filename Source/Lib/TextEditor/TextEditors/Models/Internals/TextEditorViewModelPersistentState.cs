@@ -323,6 +323,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 				.ConfigureAwait(false);
 	
 			viewModelModifier.TextEditorDimensions = textEditorDimensions;
+			viewModelModifier.CharAndLineMeasurements = TextEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
 			viewModelModifier.ShouldCalculateVirtualizationResult = true;
 			
 			// TODO: Where does the method: 'ValidateMaximumScrollLeftAndScrollTop(...)' belong?
