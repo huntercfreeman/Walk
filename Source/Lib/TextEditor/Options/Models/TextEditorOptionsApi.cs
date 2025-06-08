@@ -160,7 +160,8 @@ public sealed class TextEditorOptionsApi
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        StaticStateChanged?.Invoke();
+        // ShowWhitespace needs virtualization result to be re-calculated.
+        MeasuredStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();

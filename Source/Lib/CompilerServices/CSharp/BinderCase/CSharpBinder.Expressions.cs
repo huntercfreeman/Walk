@@ -982,8 +982,6 @@ public partial class CSharpBinder
 				{
 					typeClauseNode = (TypeClauseNode)maybeTypeClauseNode;
 				}
-				
-				parserModel.ParserContextKind = CSharpParserContextKind.ConstructorInvocation;
 			
 				if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
 				{

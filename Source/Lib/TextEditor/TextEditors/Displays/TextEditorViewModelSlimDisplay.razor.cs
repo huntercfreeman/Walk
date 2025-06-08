@@ -646,6 +646,10 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         	viewModelModifier.CharAndLineMeasurements = TextEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
     	    viewModelModifier.ShouldCalculateVirtualizationResult = true;
     	    _componentData.InlineUiWidthStyleCssStringIsOutdated = true;
+    	    
+    	    var componentData = viewModelModifier.PersistentState.ComponentData;
+    	    if (componentData is not null)
+    	        componentData.Virtualized_LineIndexCache_IsInvalid = true;
         	
         	TextEditorService.FinalizePost(editContext);
 		    return ValueTask.CompletedTask;
