@@ -12,12 +12,14 @@ using Walk.Common.RazorLib.JsRuntimes.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
+using Walk.Common.RazorLib.Reactives.Models;
 using Walk.TextEditor.RazorLib.Lines.Models;
 using Walk.TextEditor.RazorLib.Diffs.Models;
 using Walk.TextEditor.RazorLib.FindAlls.Models;
 using Walk.TextEditor.RazorLib.Groups.Models;
 using Walk.TextEditor.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.Installations.Models;
@@ -64,6 +66,15 @@ public sealed class TextEditorService
 		IServiceProvider serviceProvider)
     {
     	__TextEditorViewModelLiason = new(this);
+    	
+    	PostScrollAndRemeasure_DebounceExtraEvent = new(
+        	TimeSpan.FromMilliseconds(500),
+        	CancellationToken.None,
+        	(persistentState, _) =>
+        	{
+        	    persistentState.PostScrollAndRemeasure(useExtraEvent: false);
+        	    return Task.CompletedTask;
+    	    });
     
     	WorkerUi = new(this);
     	WorkerArbitrary = new(this);
@@ -172,6 +183,14 @@ public sealed class TextEditorService
     
     public int TabKeyBehavior_SeenTabWidth { get; set; }
 	public string TabKeyBehavior_TabSpaces { get; set; }
+	
+	/// <summary>
+    /// To avoid unexpected HTML movements when responding to a PostScrollAndRemeasure(...)
+    /// this debounce will add 1 extra event after everything has "settled".
+    ///
+    /// `byte` is just a throwaway generic type, it isn't used.
+    /// </summary>
+    public Debounce<TextEditorViewModelPersistentState> PostScrollAndRemeasure_DebounceExtraEvent { get; }
     
     public event Action? TextEditorStateChanged;
     

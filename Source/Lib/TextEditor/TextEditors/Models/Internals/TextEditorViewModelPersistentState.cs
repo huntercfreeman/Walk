@@ -8,6 +8,7 @@ using Walk.Common.RazorLib.JavaScriptObjects.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Tabs.Displays;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Reactives.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.Groups.Models;
@@ -21,7 +22,7 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 /// </summary>
 public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, IDialog, IDrag
 {
-	public TextEditorViewModelPersistentState(
+    public TextEditorViewModelPersistentState(
 	    Key<TextEditorViewModel> viewModelKey,
 	    ResourceUri resourceUri,
 	    TextEditorService textEditorService,
@@ -235,7 +236,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 		TextEditorService.AppDimensionService.AppDimensionStateChanged += AppDimensionStateWrap_StateChanged;
 
 		// Tell the view model what the (already known) font-size measurements and text-editor measurements are.
-		PostScrollAndRemeasure();
+		PostScrollAndRemeasure(useExtraEvent: false);
 		
 		if (!_hasBeenDisplayedAtLeastOnceBefore)
 		{
@@ -290,10 +291,10 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     	//
     	// The font-size is theoretically un-changed,
     	// but will be measured anyway just because its part of the same method that does the text-editor measurements.
-		PostScrollAndRemeasure();
+		PostScrollAndRemeasure(useExtraEvent: false);
     }
 
-	public void PostScrollAndRemeasure()
+	public void PostScrollAndRemeasure(bool useExtraEvent = true)
 	{
 		var model = TextEditorService.ModelApi.GetOrDefault(ResourceUri);
         var viewModel = TextEditorService.ViewModelApi.GetOrDefault(ViewModelKey);
@@ -330,6 +331,14 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 			TextEditorService.ValidateMaximumScrollLeftAndScrollTop(editContext, modelModifier, viewModelModifier, textEditorDimensionsChanged: true);
 			
 			componentData.Virtualized_LineIndexCache_IsInvalid = true;
+			
+			if (useExtraEvent)
+			{
+			    // TODO: Opening a file for the first time is hitting this twice...
+			    // ...this is a very minor issue but I am noting it here.
+			    
+			    TextEditorService.PostScrollAndRemeasure_DebounceExtraEvent.Run(this);
+		    }
 		});
 	}
     #endregion
