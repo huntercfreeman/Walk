@@ -66,20 +66,21 @@ public sealed class TextEditorService
 		IServiceProvider serviceProvider)
     {
     	__TextEditorViewModelLiason = new(this);
-    	
-    	PostScrollAndRemeasure_DebounceExtraEvent = new(
-        	TimeSpan.FromMilliseconds(500),
-        	CancellationToken.None,
-        	(persistentState, _) =>
-        	{
-        	    persistentState.PostScrollAndRemeasure(useExtraEvent: false);
-        	    return Task.CompletedTask;
-    	    });
     
     	WorkerUi = new(this);
     	WorkerArbitrary = new(this);
     
 		AppDimensionService = appDimensionService;
+		
+		PostScrollAndRemeasure_DebounceExtraEvent = new(
+        	TimeSpan.FromMilliseconds(500),
+        	CancellationToken.None,
+        	(_, _) =>
+        	{
+        	    AppDimensionService.NotifyIntraAppResize(useExtraEvent: false);
+        	    return Task.CompletedTask;
+    	    });
+		
 		_serviceProvider = serviceProvider;
 
         FindAllService = findAllService;
@@ -184,14 +185,6 @@ public sealed class TextEditorService
     public int TabKeyBehavior_SeenTabWidth { get; set; }
 	public string TabKeyBehavior_TabSpaces { get; set; }
 	
-	/// <summary>
-    /// To avoid unexpected HTML movements when responding to a PostScrollAndRemeasure(...)
-    /// this debounce will add 1 extra event after everything has "settled".
-    ///
-    /// `byte` is just a throwaway generic type, it isn't used.
-    /// </summary>
-    public Debounce<TextEditorViewModelPersistentState> PostScrollAndRemeasure_DebounceExtraEvent { get; }
-    
     public event Action? TextEditorStateChanged;
     
     private readonly Dictionary<int, List<string>> _stringMap = new();
@@ -199,6 +192,14 @@ public sealed class TextEditorService
 	// private int _listCount;
 	// private int _collisionCount;
 	// private int _stringAllocationCount;
+	
+	/// <summary>
+    /// To avoid unexpected HTML movements when responding to a PostScrollAndRemeasure(...)
+    /// this debounce will add 1 extra event after everything has "settled".
+    ///
+    /// `byte` is just a throwaway generic type, it isn't used.
+    /// </summary>
+    public Debounce<byte> PostScrollAndRemeasure_DebounceExtraEvent { get; }
 	
 	/// <summary>
 	/// This is only safe to use if you're in a TextEditorEditContext.
