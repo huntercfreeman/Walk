@@ -649,7 +649,20 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     	    
     	    var componentData = viewModelModifier.PersistentState.ComponentData;
     	    if (componentData is not null)
+    	    {
     	        componentData.Virtualized_LineIndexCache_IsInvalid = true;
+    	        
+    	        if (!componentData.ViewModelDisplayOptions.IncludeGutterComponent)
+    	        {
+    	            // TODO: Consider using the font-size for an indication that various CSS needs to be re-calculated?...
+    	            // ...at the moment the gutter width in pixels is used. But if you choose not to render a gutter
+    	            // then there is no width difference to see.
+    	            //
+    	            // The initial value cannot be 0 else any text editor without a gutter cannot detect change on the initial render.
+                    // Particularly, whatever the double subtraction -- absolute value precision -- check is, it has to be greater a difference than that.
+    	            componentData.ViewModelGutterWidth = -2;
+    	        }
+    	    }
         	
         	TextEditorService.FinalizePost(editContext);
 		    return ValueTask.CompletedTask;

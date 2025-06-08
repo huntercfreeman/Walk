@@ -203,7 +203,7 @@ public sealed class TextEditorComponentData
     /// The initial value cannot be 0 else any text editor without a gutter cannot detect change on the initial render.
     /// Particularly, whatever the double subtraction -- absolute value precision -- check is, it has to be greater a difference than that.
     /// </summary>
-    private int ViewModelGutterWidth { get; set; } = -2;
+    public int ViewModelGutterWidth { get; set; } = -2;
     /// <summary>Pixels (px)</summary>
     private int ViewModelScrollLeft { get; set; }
     

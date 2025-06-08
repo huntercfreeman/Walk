@@ -332,6 +332,17 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 			
 			componentData.Virtualized_LineIndexCache_IsInvalid = true;
 			
+			if (!componentData.ViewModelDisplayOptions.IncludeGutterComponent)
+	        {
+	            // TODO: Consider using the font-size for an indication that various CSS needs to be re-calculated?...
+	            // ...at the moment the gutter width in pixels is used. But if you choose not to render a gutter
+	            // then there is no width difference to see.
+	            //
+	            // The initial value cannot be 0 else any text editor without a gutter cannot detect change on the initial render.
+                // Particularly, whatever the double subtraction -- absolute value precision -- check is, it has to be greater a difference than that.
+	            componentData.ViewModelGutterWidth = -2;
+	        }
+			
 			if (useExtraEvent)
 			{
 			    // TODO: Opening a file for the first time is hitting this twice...
