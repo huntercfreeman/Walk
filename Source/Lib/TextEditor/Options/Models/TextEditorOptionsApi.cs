@@ -236,7 +236,7 @@ public sealed class TextEditorOptionsApi
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        StaticStateChanged?.Invoke();
+        MeasuredStateChanged?.Invoke();
         
         if (updateStorage)
             WriteToStorage();
