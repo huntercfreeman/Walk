@@ -1443,6 +1443,8 @@ public sealed class TextEditorComponentData
     	PersonalWrapperCssStyle = stringBuilder.ToString();
     	
     	TextEditorViewModelSlimDisplay.SetRenderBatchConstants();
+    	
+    	TextEditorService.OptionsApi.InvokeTextEditorWrapperCssStateChanged();
     }
     
     public void ConstructVirtualizationStyleCssStrings()

@@ -66,12 +66,21 @@ public sealed class TextEditorOptionsApi
 	/// Step 2: Eventually that virtualization result is finished and the editor re-renders.
 	/// </summary>
     public event Action? MeasuredStateChanged;
+    /// <summary>
+    /// This event communicates from the text editor UI to the header and footer.
+    /// </summary>
+    public event Action? TextEditorWrapperCssStateChanged;
 
 	public TextEditorOptionsState GetTextEditorOptionsState() => _textEditorOptionsState;
 
     public TextEditorOptions GetOptions()
     {
         return _textEditorService.OptionsApi.GetTextEditorOptionsState().Options;
+    }
+    
+    public void InvokeTextEditorWrapperCssStateChanged()
+    {
+        TextEditorWrapperCssStateChanged?.Invoke();
     }
 
     public void ShowSettingsDialog(bool? isResizableOverride = null, string? cssClassString = null)
