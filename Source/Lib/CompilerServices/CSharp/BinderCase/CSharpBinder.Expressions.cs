@@ -604,7 +604,6 @@ public partial class CSharpBinder
 	{
 		IExpressionNode result;
 	
-		// WARNING: Duplicated code in ParseMemberAccessToken_UndefinedNode(...)
 		if (parserModel.ParserContextKind == CSharpParserContextKind.ForceStatementExpression)
 		{
 			parserModel.ParserContextKind = CSharpParserContextKind.None;
@@ -614,11 +613,6 @@ public partial class CSharpBinder
 				 parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.MemberAccessToken)
 			{
 				parserModel.ParserContextKind = CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode;
-			}
-			
-			if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken)
-			{
-				parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
 			}
 		}
 	
@@ -955,7 +949,7 @@ public partial class CSharpBinder
 						resultTypeReference: default),
 					compilationUnit,
 					ref parserModel);
-					
+
 				if (beforeTokenIndex == parserModel.TokenWalker.Index)
 					_ = parserModel.TokenWalker.Consume();
 				
@@ -963,17 +957,33 @@ public partial class CSharpBinder
 				{
 					// Superstitous check, rather than parser throwing an exception in the upcoming explicit cast and no chance to recover.
 					
-					typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, compilationUnit, ref parserModel);
+					var maybeToken = GetNameToken(maybeTypeClauseNode);
+					
+					if (maybeToken.ConstructorWasInvoked)
+					    typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref maybeToken, compilationUnit, ref parserModel);
+					else
+					    typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, compilationUnit, ref parserModel);
 						
 					BindTypeClauseNode(
 				        typeClauseNode,
 				        compilationUnit,
 				        ref parserModel);
+				        
+			        var typeSymbol = new Symbol(
+        	        	SyntaxKind.TypeSymbol,
+        	        	parserModel.GetNextSymbolId(),
+        	        	typeClauseNode.TypeIdentifierToken.TextSpan with
+        		        {
+        		            DecorationByte = (byte)GenericDecorationKind.Type
+    		            });
+    	            compilationUnit.__SymbolList.Add(typeSymbol);
 				}
 				else
 				{
 					typeClauseNode = (TypeClauseNode)maybeTypeClauseNode;
 				}
+				
+				parserModel.ParserContextKind = CSharpParserContextKind.ConstructorInvocation;
 			
 				if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
 				{
@@ -2358,25 +2368,6 @@ public partial class CSharpBinder
 	private IExpressionNode ParseMemberAccessToken_UndefinedNode(
 		IExpressionNode expressionPrimary, SyntaxToken memberIdentifierToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		// WARNING: Duplicated code in ForceDecisionAmbiguousIdentifier(...)
-		if (parserModel.ParserContextKind == CSharpParserContextKind.ForceStatementExpression)
-		{
-			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
-				parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-			{
-				parserModel.ParserContextKind = CSharpParserContextKind.None;
-			}
-			
-			return ForceDecisionAmbiguousIdentifier(
-				expressionPrimary,
-				new AmbiguousIdentifierExpressionNode(
-					memberIdentifierToken,
-					genericParameterListing: default,
-					resultTypeReference: default),
-				compilationUnit,
-				ref parserModel);
-		}
-		
 		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
 			parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
 		{
