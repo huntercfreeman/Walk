@@ -271,34 +271,58 @@ public class TextEditorCommandDefaultFunctions
         	viewModel.LineIndex = i;
         	viewModel.SetColumnIndexAndPreferred(0);
 
-            modelModifier.Insert(
-                "\t",
-                viewModel);
+            editContext.TextEditorService.InsertTab(editContext, modelModifier,  viewModel);
         }
 
-        var lowerBoundPositionIndexChange = 1;
-
-        var upperBoundPositionIndexChange = selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex -
-            selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex;
-
-		viewModel.LineIndex = before_LineIndex;
+        viewModel.LineIndex = before_LineIndex;
 		viewModel.ColumnIndex = before_ColumnIndex;
 		viewModel.PreferredColumnIndex = before_PreferredColumnIndex;
 		viewModel.SelectionAnchorPositionIndex = before_SelectionAnchorPositionIndex;
 		viewModel.SelectionEndingPositionIndex = before_SelectionEndingPositionIndex;
-
-        if (viewModel.SelectionAnchorPositionIndex < viewModel.SelectionEndingPositionIndex)
+        
+        int lowerBoundPositionIndexChange;
+        if (editContext.TextEditorService.OptionsApi.GetOptions().TabKeyBehavior)
         {
-            viewModel.SelectionAnchorPositionIndex += lowerBoundPositionIndexChange;
-            viewModel.SelectionEndingPositionIndex += upperBoundPositionIndexChange;
-        }
+		    lowerBoundPositionIndexChange = 1;
+		    
+		    var upperBoundPositionIndexChange = selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex -
+	            selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex;
+	
+	        if (viewModel.SelectionAnchorPositionIndex < viewModel.SelectionEndingPositionIndex)
+	        {
+	            viewModel.SelectionAnchorPositionIndex += lowerBoundPositionIndexChange;
+	            viewModel.SelectionEndingPositionIndex += upperBoundPositionIndexChange;
+	        }
+	        else
+	        {
+	            viewModel.SelectionAnchorPositionIndex += upperBoundPositionIndexChange;
+	            viewModel.SelectionEndingPositionIndex += lowerBoundPositionIndexChange;
+	        }
+	
+	        viewModel.SetColumnIndexAndPreferred(1 + viewModel.ColumnIndex);
+		}
         else
         {
-            viewModel.SelectionAnchorPositionIndex += upperBoundPositionIndexChange;
-            viewModel.SelectionEndingPositionIndex += lowerBoundPositionIndexChange;
+            lowerBoundPositionIndexChange = editContext.TextEditorService.TabKeyBehavior_TabSpaces.Length;
+            
+            var upperBoundPositionIndexChange = selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex -
+	            selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex;
+	            
+	        upperBoundPositionIndexChange *= editContext.TextEditorService.TabKeyBehavior_TabSpaces.Length;
+	
+	        if (viewModel.SelectionAnchorPositionIndex < viewModel.SelectionEndingPositionIndex)
+	        {
+	            viewModel.SelectionAnchorPositionIndex += lowerBoundPositionIndexChange;
+	            viewModel.SelectionEndingPositionIndex += upperBoundPositionIndexChange;
+	        }
+	        else
+	        {
+	            viewModel.SelectionAnchorPositionIndex += upperBoundPositionIndexChange;
+	            viewModel.SelectionEndingPositionIndex += lowerBoundPositionIndexChange;
+	        }
+	
+	        viewModel.SetColumnIndexAndPreferred(editContext.TextEditorService.TabKeyBehavior_TabSpaces.Length + viewModel.ColumnIndex);
         }
-
-        viewModel.SetColumnIndexAndPreferred(1 + viewModel.ColumnIndex);
     }
 
     public static void IndentLess(

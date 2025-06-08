@@ -15,9 +15,6 @@ namespace Walk.TextEditor.RazorLib.Keymaps.Models.Defaults;
 public class TextEditorKeymapDefault : ITextEditorKeymap
 {
 	private readonly StringBuilder _indentationBuilder = new();
-	
-	private int _seenTabWidth;
-	private string _tabSpaces;
 
     public string DisplayName { get; } = nameof(TextEditorKeymapDefault);
     
@@ -632,23 +629,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			        	}
 			        	else
 			        	{
-			        		if (componentData.TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetOptions().TabKeyBehavior)
-			        		{
-				            	modelModifier.Insert(
-				                    "\t",
-				                    viewModel);
-			                }
-			                else
-			                {
-			                	if (_seenTabWidth != componentData.TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetOptions().TabWidth)
-			                	{
-			                	    _seenTabWidth = componentData.TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetOptions().TabWidth;
-			                	    _tabSpaces = new string(' ', _seenTabWidth);
-			                	}
-			                	modelModifier.Insert(
-				                    _tabSpaces,
-				                    viewModel);
-			                }
+			        		editContext.TextEditorService.InsertTab(editContext, modelModifier,  viewModel);
 			                
 			                menuKind = MenuKind.None;
 			                shouldClearTooltip = true;

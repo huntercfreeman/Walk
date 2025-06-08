@@ -170,6 +170,9 @@ public sealed class TextEditorService
     public string TabKeyOutput_ShowWhitespaceTrue { get; set; }
     public string TabKeyOutput_ShowWhitespaceFalse { get; set; }
     
+    public int TabKeyBehavior_SeenTabWidth { get; set; }
+	public string TabKeyBehavior_TabSpaces { get; set; }
+    
     public event Action? TextEditorStateChanged;
     
     private readonly Dictionary<int, List<string>> _stringMap = new();
@@ -217,6 +220,27 @@ public sealed class TextEditorService
 			_stringMap.Add(key, new List<string> { str });
 			return str;
 		}
+	}
+	
+	public void InsertTab(TextEditorEditContext editContext, TextEditorModel modelModifier, TextEditorViewModel viewModel)
+	{
+	    if (OptionsApi.GetOptions().TabKeyBehavior)
+		{
+        	modelModifier.Insert(
+                "\t",
+                viewModel);
+        }
+        else
+        {
+        	if (TabKeyBehavior_SeenTabWidth != OptionsApi.GetOptions().TabWidth)
+        	{
+        	    TabKeyBehavior_SeenTabWidth = OptionsApi.GetOptions().TabWidth;
+        	    TabKeyBehavior_TabSpaces = new string(' ', TabKeyBehavior_SeenTabWidth);
+        	}
+        	modelModifier.Insert(
+                TabKeyBehavior_TabSpaces,
+                viewModel);
+        }
 	}
 
 	public async ValueTask FinalizePost(TextEditorEditContext editContext)
