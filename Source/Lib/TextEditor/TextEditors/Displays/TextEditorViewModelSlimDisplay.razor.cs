@@ -374,16 +374,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     [JSInvokable]
     public void ReceiveOnKeyDown(KeyboardEventArgsClass keyboardEventArgsClass)
     {
-    	// Inlining: 'EventUtils.IsKeyboardEventArgsNoise(keyboardEventArgs)'
-    	if (keyboardEventArgsClass.Key == "Shift" ||
-            keyboardEventArgsClass.Key == "Control" ||
-            keyboardEventArgsClass.Key == "Alt" ||
-            keyboardEventArgsClass.Key == "Meta")
-        {
-            return;
-        }
-        
-        TextEditorService.WorkerUi.Enqueue(
+    	TextEditorService.WorkerUi.Enqueue(
         	new TextEditorWorkerUiArgs(
 	        	_componentData,
 	        	TextEditorViewModelKey,

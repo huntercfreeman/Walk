@@ -38,15 +38,26 @@ window.walkTextEditor = {
             });*/
         
             contentElement.addEventListener('keydown', (event) => {
-                dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown",
-                {
-                    Key: event.key,
-                    Code: event.code,
-                    CtrlKey: event.ctrlKey,
-                    ShiftKey: event.shiftKey,
-                    AltKey: event.altKey,
-                    MetaKey: event.metaKey,
-                });
+            
+                switch(event.key) {
+                    case "Shift":
+                    case "Control":
+                    case "Alt":
+                    case "Meta":
+                        break;
+                    default:
+                        dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown",
+                        {
+                            Key: event.key,
+                            Code: event.code,
+                            CtrlKey: event.ctrlKey,
+                            ShiftKey: event.shiftKey,
+                            AltKey: event.altKey,
+                            MetaKey: event.metaKey,
+                        });
+                        break;
+                }
+                
                 event.preventDefault();
             });
             
