@@ -132,9 +132,15 @@
 }
 
 .di_te_row {
+    /* This is needed for WalkTextEditorInitializer.razor */
     white-space: nowrap;
     position: absolute;
-    display: flex;
+}
+
+.di_te_text-section > div {
+    /* WARNING: 'di_te_row' needs to match the CSS in here. */
+    white-space: nowrap;
+    position: absolute;
 }
 
 .di_te_gutter {

@@ -49,9 +49,9 @@
     	<div class="di_te_three-dots-section">
         	@for (int inlineUiIndex = 0; inlineUiIndex < _componentData.InlineUiStyleList.Count; inlineUiIndex++)
         	{
-        		<div class="di_te_three-dots" style="@(_componentData.InlineUiStyleList[inlineUiIndex])">
-	    			...
-	    		</div>
+        		<div class="di_te_three-dots" style="@(_componentData.InlineUiStyleList[inlineUiIndex])"><!--
+	    			-->...<!--
+	    		--></div>
         	}
         </div>
 					                           
@@ -195,8 +195,7 @@
 	    		  virtualizationResultIndex < _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count;
 	    		  virtualizationResultIndex++)
 		    {
-		    	<div class="di_te_row"
-					 style="@_componentData.RowSection_GetRowStyleCss(_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex)">
+		    	<div style="@_componentData.RowSection_GetRowStyleCss(_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex)">
 				
 					@*
 						'!= 0' because the struct's int property will default to '0',
