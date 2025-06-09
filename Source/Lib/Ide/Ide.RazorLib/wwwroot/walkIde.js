@@ -1,3 +1,6 @@
+// The way JS Interop is done here is a bit outdated see export syntax:
+// https://learn.microsoft.com/en-us/aspnet/core/blazor/javascript-interoperability/
+
 window.walkIde = {
     preventDefaultBrowserKeybindings: function (elementId) {
     	// This function is intended to only be invoked

@@ -12,11 +12,11 @@ public struct TextEditorWorkerUiArgs
 	public TextEditorWorkerUiArgs(
 		TextEditorComponentData componentData,
 		Key<TextEditorViewModel> viewModelKey,
-		KeyboardEventArgs keyboardEventArgs)
+		KeyboardEventArgsClass keyboardEventArgsClass)
 	{
 		ComponentData = componentData;
 		ViewModelKey = viewModelKey;
-		EventArgs = keyboardEventArgs;
+		EventArgs = keyboardEventArgsClass;
 	
 		TextEditorWorkUiKind = TextEditorWorkUiKind.OnKeyDown;
 	}

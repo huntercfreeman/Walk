@@ -372,13 +372,13 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	}
     
     [JSInvokable]
-    public void ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    public void ReceiveOnKeyDown(KeyboardEventArgsClass keyboardEventArgsClass)
     {
     	// Inlining: 'EventUtils.IsKeyboardEventArgsNoise(keyboardEventArgs)'
-    	if (keyboardEventArgs.Key == "Shift" ||
-            keyboardEventArgs.Key == "Control" ||
-            keyboardEventArgs.Key == "Alt" ||
-            keyboardEventArgs.Key == "Meta")
+    	if (keyboardEventArgsClass.Key == "Shift" ||
+            keyboardEventArgsClass.Key == "Control" ||
+            keyboardEventArgsClass.Key == "Alt" ||
+            keyboardEventArgsClass.Key == "Meta")
         {
             return;
         }
@@ -387,7 +387,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         	new TextEditorWorkerUiArgs(
 	        	_componentData,
 	        	TextEditorViewModelKey,
-		        keyboardEventArgs));
+		        keyboardEventArgsClass));
 	}
 
     [JSInvokable]
