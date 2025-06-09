@@ -40,11 +40,11 @@ window.walkTextEditor = {
             });
             
             contentElement.addEventListener('click', (event) => {
-                dotNetHelper.invokeMethodAsync("FocusTextEditorAsync", event);
+                dotNetHelper.invokeMethodAsync("FocusTextEditorAsync");
             });
             
             contentElement.addEventListener('contextmenu', (event) => {
-                dotNetHelper.invokeMethodAsync("ReceiveOnContextMenu", event);
+                dotNetHelper.invokeMethodAsync("ReceiveOnContextMenu");
                 event.preventDefault();
             });
             
@@ -59,15 +59,33 @@ window.walkTextEditor = {
             });
             
             contentElement.addEventListener('mousemove', (event) => {
-                dotNetHelper.invokeMethodAsync("ReceiveContentOnMouseMove", event);
+                dotNetHelper.invokeMethodAsync("ReceiveContentOnMouseMove", 
+                {
+                    Buttons: event.buttons,
+                    ClientX: event.clientX,
+                    ClientY: event.clientY,
+                    ShiftKey: event.shiftKey,
+                });
             });
             
             contentElement.addEventListener('mouseout', (event) => {
-                dotNetHelper.invokeMethodAsync("ReceiveContentOnMouseOut", event);
+                dotNetHelper.invokeMethodAsync("ReceiveContentOnMouseOut", 
+                {
+                    Buttons: event.buttons,
+                    ClientX: event.clientX,
+                    ClientY: event.clientY,
+                    ShiftKey: event.shiftKey,
+                });
             });
             
             contentElement.addEventListener('dblclick', (event) => {
-                dotNetHelper.invokeMethodAsync("ReceiveOnDoubleClick", event);
+                dotNetHelper.invokeMethodAsync("ReceiveOnDoubleClick",
+                {
+                    Buttons: event.buttons,
+                    ClientX: event.clientX,
+                    ClientY: event.clientY,
+                    ShiftKey: event.shiftKey,
+                });
             });
             
             contentElement.addEventListener('wheel', (event) => {
