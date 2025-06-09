@@ -39,11 +39,11 @@ public struct TextEditorWorkerUiArgs
 	public TextEditorWorkerUiArgs(
 		TextEditorComponentData componentData,
 		Key<TextEditorViewModel> viewModelKey,
-		WheelEventArgs wheelEventArgs)
+		WheelEventArgsClass wheelEventArgsClass)
 	{
 		ComponentData = componentData;
 		ViewModelKey = viewModelKey;
-		EventArgs = wheelEventArgs;
+		EventArgs = wheelEventArgsClass;
 		
 		TextEditorWorkUiKind = TextEditorWorkUiKind.OnWheel;
 	}

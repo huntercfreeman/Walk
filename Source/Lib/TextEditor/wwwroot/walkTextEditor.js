@@ -100,7 +100,12 @@ window.walkTextEditor = {
             });
             
             contentElement.addEventListener('wheel', (event) => {
-                dotNetHelper.invokeMethodAsync("ReceiveOnWheel", event);
+                dotNetHelper.invokeMethodAsync("ReceiveOnWheel",
+                {
+                    DeltaX: event.deltaX,
+                    DeltaY: event.deltaY,
+                    ShiftKey: event.shiftKey,
+                });
             });
             
             contentElement.addEventListener('touchmove', (event) => {

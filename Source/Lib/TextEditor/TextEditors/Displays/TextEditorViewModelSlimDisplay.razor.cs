@@ -532,13 +532,13 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     }
     
     [JSInvokable]
-    public void ReceiveOnWheel(WheelEventArgs wheelEventArgs)
+    public void ReceiveOnWheel(WheelEventArgsClass wheelEventArgsClass)
     {
 	    TextEditorService.WorkerUi.Enqueue(
         	new TextEditorWorkerUiArgs(
 	        	_componentData,
 	        	TextEditorViewModelKey,
-		        wheelEventArgs));
+		        wheelEventArgsClass));
     }
 
     [JSInvokable]

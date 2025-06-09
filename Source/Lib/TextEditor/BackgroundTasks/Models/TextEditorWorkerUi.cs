@@ -388,7 +388,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 		        if (viewModelModifier is null)
 		            return;
 		            
-		        var wheelEventArgs = (WheelEventArgs)workArgs.EventArgs;
+		        var wheelEventArgs = (WheelEventArgsClass)workArgs.EventArgs;
 		
 				// TODO: Why was this made as 'if' 'else' whereas the OnWheelBatch...
 				//       ...is doing 'if' 'if'.
@@ -400,7 +400,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 		            editContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
 		            	editContext,
 				        viewModelModifier,
-				        wheelEventArgs.DeltaX);
+				        wheelEventArgs.DeltaY / 2);
 		        }
 		        else
 		        {
