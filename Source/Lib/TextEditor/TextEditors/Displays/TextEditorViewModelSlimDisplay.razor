@@ -34,52 +34,47 @@
     	<div class="di_te_three-dots-section">
         	@for (int inlineUiIndex = 0; inlineUiIndex < _componentData.InlineUiStyleList.Count; inlineUiIndex++)
         	{
-        		<div class="di_te_three-dots" style="@(_componentData.InlineUiStyleList[inlineUiIndex])"><!--
+        		<div style="@(_componentData.InlineUiStyleList[inlineUiIndex])"><!--
 	    			-->...<!--
 	    		--></div>
         	}
         </div>
 					                           
-		<div class="di_te_first-render-presentation-layer-group">
-			@for (int groupIndex = 0; groupIndex < _componentData.FirstPresentationLayerGroupList.Count; groupIndex++)
-			{
-				<div class="@_componentData.FirstPresentationLayerGroupList[groupIndex].CssClassString">
-					@for (int textSpanIndex = _componentData.FirstPresentationLayerGroupList[groupIndex].StartInclusiveIndex;
-						  textSpanIndex < _componentData.FirstPresentationLayerGroupList[groupIndex].EndExclusiveIndex;
-						  textSpanIndex++)
-					{
-						<div class="@_componentData.FirstPresentationLayerTextSpanList[textSpanIndex].PresentationCssClass"
-                             style="@_componentData.FirstPresentationLayerTextSpanList[textSpanIndex].PresentationCssStyle">
-                        </div>
-					}
-				</div>
-			}
-		</div>
+		for (int groupIndex = 0; groupIndex < _componentData.FirstPresentationLayerGroupList.Count; groupIndex++)
+		{
+			<div class="@_componentData.FirstPresentationLayerGroupList[groupIndex].CssClassString">
+				@for (int textSpanIndex = _componentData.FirstPresentationLayerGroupList[groupIndex].StartInclusiveIndex;
+					  textSpanIndex < _componentData.FirstPresentationLayerGroupList[groupIndex].EndExclusiveIndex;
+					  textSpanIndex++)
+				{
+					<div class="@_componentData.FirstPresentationLayerTextSpanList[textSpanIndex].PresentationCssClass"
+                         style="@_componentData.FirstPresentationLayerTextSpanList[textSpanIndex].PresentationCssStyle">
+                    </div>
+				}
+			</div>
+		}
 		
 		<div class="di_te_text-selection-group">
 		    @for (var i = 0; i < _componentData.SelectionStyleList.Count; i++)
 	        {
-				<div class="di_te_text-selection"
-				     style="@_componentData.SelectionStyleList[i]">
+				<div style="@_componentData.SelectionStyleList[i]">
 				</div>
 	        }
 		</div>
 		
-		<div class="di_te_last-render-presentation-layer-group">
-			@for (int groupIndex = 0; groupIndex < _componentData.LastPresentationLayerGroupList.Count; groupIndex++)
-			{
-				<div class="@_componentData.LastPresentationLayerGroupList[groupIndex].CssClassString">
-					@for (int textSpanIndex = _componentData.LastPresentationLayerGroupList[groupIndex].StartInclusiveIndex;
-						  textSpanIndex < _componentData.LastPresentationLayerGroupList[groupIndex].EndExclusiveIndex;
-						  textSpanIndex++)
-					{
-						<div class="@_componentData.LastPresentationLayerTextSpanList[textSpanIndex].PresentationCssClass"
-                             style="@_componentData.LastPresentationLayerTextSpanList[textSpanIndex].PresentationCssStyle">
-                        </div>
-					}
-				</div>
-			}
-		</div>
+		@for (int groupIndex = 0; groupIndex < _componentData.LastPresentationLayerGroupList.Count; groupIndex++)
+		{
+			<div class="@_componentData.LastPresentationLayerGroupList[groupIndex].CssClassString">
+				@for (int textSpanIndex = _componentData.LastPresentationLayerGroupList[groupIndex].StartInclusiveIndex;
+					  textSpanIndex < _componentData.LastPresentationLayerGroupList[groupIndex].EndExclusiveIndex;
+					  textSpanIndex++)
+				{
+					<div class="@_componentData.LastPresentationLayerTextSpanList[textSpanIndex].PresentationCssClass"
+                         style="@_componentData.LastPresentationLayerTextSpanList[textSpanIndex].PresentationCssStyle">
+                    </div>
+				}
+			</div>
+		}
     
     	var collapsePoint = new CollapsePoint(-1, false, string.Empty, -1);
     	
@@ -166,8 +161,7 @@
 			            
 			            var remainingHeightToFillInvariantCulture = remainingHeightToFill.ToCssValue();
 			            
-			            <div class="di_te_gutter"
-			                 style="@(_componentData.GetGutterStyleCssImaginary()) height: @(remainingHeightToFillInvariantCulture)px;">
+			            <div style="@(_componentData.GetGutterStyleCssImaginary()) height: @(remainingHeightToFillInvariantCulture)px;">
 			            </div>
 			        }
 			    }

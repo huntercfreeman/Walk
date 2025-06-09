@@ -172,7 +172,7 @@
     top: 0;
 }
 
-.di_te_three-dots {
+.di_te_three-dots-section > div {
 	border: 1px solid #a7c4c4;
 	color: #a7c4c4;
 }
@@ -301,7 +301,7 @@
     }
 }
 
-.di_te_text-selection {
+.di_te_text-selection-group > div {
     background-color: var(--di_te_text-selection-background-color);
     position: absolute;
 }
