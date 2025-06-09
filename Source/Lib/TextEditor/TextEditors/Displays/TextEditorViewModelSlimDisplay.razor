@@ -80,8 +80,25 @@
     	
     	if (ViewModelDisplayOptions.IncludeGutterComponent)
     	{
+    	    string gutterColumnTopCssValue;
+    	
+    	    if (_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
+	        {
+	        	gutterColumnTopCssValue = _componentData.Css_LineIndexCache_EntryMap[_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[0].LineIndex].TopCssValue;
+	        }
+	        else
+	        {
+	            gutterColumnTopCssValue = "0";
+	        }
+    	
     		<div class="di_te_gutter-section"
     			 style="@_componentData.Gutter_WidthCssStyle">
+    			 
+    			<div class="di_te_gutter-column"
+    			     style="top: @(gutterColumnTopCssValue)px; height: 100%;">
+    			</div>
+    			
+    			 
 	    		@for (int virtualizationResultIndex = 0;
 	    			  virtualizationResultIndex < _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count;
 	    			  virtualizationResultIndex++)
@@ -114,57 +131,6 @@
 						}
 			        </div>
 		    	}
-		    	
-		    	@{
-			        var heightOfGutter = _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count *
-			                             _componentData.RenderBatch.ViewModel.CharAndLineMeasurements.LineHeight;
-			
-			        // The scrollbar is off when one uses the 'if (heightOfGutter...)' code to draw the rest of the gutter but empty.
-			        // To replicate this, one must scroll to the bottom of a file, then manage to have the gutter not fill the screen.
-			        //
-			        // But, there is a catch. The bug comes down to whether your virtualization result, has any 'overhang'
-			        // at the top of the text editor.
-			        //
-			        // Because this code just takes the virtualization result height as if it were centered
-			        // one ontop of the other with the visible content.
-			        //
-			        // The solution is to calculate the overhang for any virtualization elements that are rendered at the 'top-offscreen'.
-			        //
-			        // Editor scrolltop - 0th element's top == topOffscreenOverhang (2024-03-02)
-			        
-			        int topOffscreenOverhang;
-			        
-			        if (_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
-			        {
-			        	// TODO: It doesn't seem 'VirtualizationLine' ever will have a null value so it is no longer nullable...
-			        	// ...if any code breaks I think this is the only possible place. It is doing '?? -1' here.
-			        	topOffscreenOverhang = _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[0].TopInPixels;
-			        }
-			        else
-			        {
-			        	 topOffscreenOverhang = -1;
-			        }
-			
-			        if (topOffscreenOverhang != -1)
-			        {
-			            // If the 'topOffscreenOverhang' was measureable, then subtract from the height of the gutter,
-			            // however much of it overhangs the top offscreen.
-			            heightOfGutter -= topOffscreenOverhang;
-			        }
-			
-			        // '1' is added to the text editor's height in order to avoid rounding errors
-			        if (heightOfGutter < 1 + _componentData.RenderBatch.ViewModel.TextEditorDimensions.Height)
-			        {
-			            var remainingHeightToFill = _componentData.RenderBatch.ViewModel.TextEditorDimensions.Height -
-			                heightOfGutter +
-			                ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
-			            
-			            var remainingHeightToFillInvariantCulture = remainingHeightToFill.ToCssValue();
-			            
-			            <div style="@(_componentData.GetGutterStyleCssImaginary()) height: @(remainingHeightToFillInvariantCulture)px;">
-			            </div>
-			        }
-			    }
 			</div>
     	}
     	

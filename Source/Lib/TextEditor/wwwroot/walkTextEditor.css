@@ -158,12 +158,15 @@
     overflow: none;
 }
 
+.di_te_gutter-column {
+    box-shadow: 2px 0 0 var(--di_te_text-editor-gutter-border-color);
+    background-color: var(--di_te_text-editor-gutter-background-color);
+    width: 100%;
+}
+
 .di_te_gutter-section > div {
     white-space: nowrap;
     position: absolute;
-    display: flex;
-    box-shadow: -2px 0 0 var(--di_te_text-editor-gutter-border-color) inset;
-    background-color: var(--di_te_text-editor-gutter-background-color);
 }
 
 .di_te_body-section {
