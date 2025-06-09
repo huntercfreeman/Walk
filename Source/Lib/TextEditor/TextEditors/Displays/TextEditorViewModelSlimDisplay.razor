@@ -20,22 +20,7 @@
 @using Walk.TextEditor.RazorLib.Decorations.Models
 @using Walk.TextEditor.RazorLib.Lexers.Models
 
-<div @onclick="FocusTextEditorAsync"
-     @onkeydown="_onKeyDownNonRenderingEventHandler"
-     @onkeydown:preventDefault="true"
-     @oncontextmenu="_onContextMenuNonRenderingEventHandler"
-     @oncontextmenu:preventDefault="true"
-     @onmousedown="_onMouseDownNonRenderingEventHandler"
-     @onmousemove="_onMouseMoveNonRenderingEventHandler"
-     @onmouseout="_onMouseOutNonRenderingEventHandler"
-     @ondblclick="_onDblClickNonRenderingEventHandler"
-     @onwheel="_onWheelNonRenderingEventHandler"
-     @ontouchstart="ReceiveOnTouchStart"
-     @ontouchmove="ReceiveOnTouchMove"
-     @ontouchend="ClearTouch"
-     @ontouchcancel="ClearTouch"
-     @ontouchleave="ClearTouch"
-     id="@_componentData.RowSectionElementId"
+<div id="@_componentData.RowSectionElementId"
      style="@_componentData.PersonalWrapperCssStyle"
      class="@_componentData.PersonalWrapperCssClass"
      tabindex="-1">
@@ -240,42 +225,25 @@
 		
 			<div class="di_te_scrollbar di_te_scrollbar-horizontal"
 			     id="@HORIZONTAL_ScrollbarElementId"
-			     style="@_componentData.HORIZONTAL_ScrollbarCssStyle"
-			     @onmousedown:stopPropagation="true"
-			     @onmousedown="HORIZONTAL_HandleOnMouseDownAsync"
-			     @onmousemove:stopPropagation="true"
-			     @ondblclick:stopPropagation="true"
-			     @onclick:stopPropagation="true"
-			     @oncontextmenu:stopPropagation="true">
+			     style="@_componentData.HORIZONTAL_ScrollbarCssStyle">
 			    
 			    <div class="di_te_scrollbar-slider"
 			         id="@HORIZONTAL_ScrollbarSliderElementId"
 			         style="@_componentData.HORIZONTAL_SliderCssStyle">
 			    </div>
-			</div>
+			</div><!--
 			
-			<div class="di_te_scrollbar di_te_scrollbar-vertical"
-			     id="@VERTICAL_ScrollbarElementId"
-			     @onmousedown:stopPropagation="true"
-			     @onmousedown="VERTICAL_HandleOnMouseDownAsync"
-			     @onmousemove:stopPropagation="true"
-			     @ondblclick:stopPropagation="true"
-			     @onclick:stopPropagation="true"
-			     @oncontextmenu:stopPropagation="true">
+			--><div class="di_te_scrollbar di_te_scrollbar-vertical"
+			        id="@VERTICAL_ScrollbarElementId">
 			         
 			    <div class="di_te_scrollbar-slider"
 			         id="@VERTICAL_ScrollbarSliderElementId"
 			         style="@_componentData.VERTICAL_SliderCssStyle">
 			    </div>
-			</div>
+			</div><!--
 		    
-		    @* TODO: Color the di_te_scrollbar-connector differently and render the 'corner icon'? *@
-			<div class="di_te_scrollbar di_te_scrollbar-connector"
-			     @onmousedown:stopPropagation="true"
-			     @onmousemove:stopPropagation="true"
-			     @ondblclick:stopPropagation="true"
-			     @onclick:stopPropagation="true"
-			     @oncontextmenu:stopPropagation="true">
+			--><div class="di_te_scrollbar di_te_scrollbar-connector"
+			        id="@CONNECTOR_ScrollbarElementId">
 			</div>
 		</div>
 	    

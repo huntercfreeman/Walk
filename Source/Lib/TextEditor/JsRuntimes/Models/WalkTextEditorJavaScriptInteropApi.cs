@@ -2,6 +2,7 @@ using Microsoft.JSInterop;
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.TextEditor.RazorLib.TextEditors.Displays;
 
 namespace Walk.TextEditor.RazorLib.JsRuntimes.Models;
 
@@ -27,12 +28,23 @@ public class WalkTextEditorJavaScriptInteropApi
             "walkTextEditor.scrollElementIntoView",
             elementId);
     }
-
-    public ValueTask PreventDefaultOnWheelEvents(string elementId)
+    
+    public ValueTask SetPreventDefaultsAndStopPropagations(
+        DotNetObjectReference<TextEditorViewModelSlimDisplay> dotNetHelper,
+        string contentElementId,
+        string rowSectionElementId,
+        string HORIZONTAL_ScrollbarElementId,
+        string VERTICAL_ScrollbarElementId,
+        string CONNECTOR_ScrollbarElementId)
     {
         return _jsRuntime.InvokeVoidAsync(
-            "walkTextEditor.preventDefaultOnWheelEvents",
-            elementId);
+            "walkTextEditor.setPreventDefaultsAndStopPropagations",
+            dotNetHelper,
+            contentElementId,
+            rowSectionElementId,
+            HORIZONTAL_ScrollbarElementId,
+            VERTICAL_ScrollbarElementId,
+            CONNECTOR_ScrollbarElementId);
     }
 
     public ValueTask<CharAndLineMeasurements> GetCharAndLineMeasurementsInPixelsById(

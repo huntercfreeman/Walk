@@ -11,6 +11,7 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
+using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.Cursors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -958,7 +959,7 @@ public class TextEditorCommandDefaultFunctions
         		editContext,
         		modelModifier,
         		viewModel,
-				new MouseEventArgs
+				new MouseEventArgsClass
 	            {
 	                ClientX = elementPositionInPixels.Left,
 	                ClientY = elementPositionInPixels.Top
@@ -1250,7 +1251,7 @@ public class TextEditorCommandDefaultFunctions
 		TextEditorEditContext editContext,
 		TextEditorModel modelModifier,
 		TextEditorViewModel viewModel,
-		MouseEventArgs mouseEventArgs,
+		MouseEventArgsClass mouseEventArgsClass,
 		TextEditorComponentData componentData,
 		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
@@ -1259,7 +1260,7 @@ public class TextEditorCommandDefaultFunctions
 			editContext,
 			modelModifier,
 			viewModel,
-			mouseEventArgs,
+			mouseEventArgsClass,
 			componentData,
 			textEditorComponentRenderers,
 	        resourceUri);

@@ -21,6 +21,8 @@
         <SupportedPlatform Include="browser" />
     </ItemGroup>
     
-    
+    <PropertyGroup>
+    	<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    </PropertyGroup>
 
 </Project>

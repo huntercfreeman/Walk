@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 
 namespace Walk.TextEditor.RazorLib.BackgroundTasks.Models;
 
@@ -24,12 +25,12 @@ public struct TextEditorWorkerUiArgs
 	public TextEditorWorkerUiArgs(
 		TextEditorComponentData componentData,
 		Key<TextEditorViewModel> viewModelKey,
-		MouseEventArgs mouseEventArgs,
+		MouseEventArgsClass mouseEventArgsClass,
 		TextEditorWorkUiKind workUiKind)
 	{
 		ComponentData = componentData;
 		ViewModelKey = viewModelKey;
-		EventArgs = mouseEventArgs;
+		EventArgs = mouseEventArgsClass;
 	
 		TextEditorWorkUiKind = workUiKind;
 	}
