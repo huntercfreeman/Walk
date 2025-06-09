@@ -38,7 +38,15 @@ window.walkTextEditor = {
             });
         
             contentElement.addEventListener('keydown', (event) => {
-                dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown", event);
+                dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown",
+                {
+                    Key: event.key,
+                    Code: event.code,
+                    CtrlKey: event.ctrlKey,
+                    ShiftKey: event.shiftKey,
+                    AltKey: event.altKey,
+                    MetaKey: event.metaKey,
+                });
                 event.preventDefault();
             });
             

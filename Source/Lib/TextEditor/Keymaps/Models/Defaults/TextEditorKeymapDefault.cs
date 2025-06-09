@@ -9,6 +9,7 @@ using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Cursors.Models;
 using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
 using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
+using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 
 namespace Walk.TextEditor.RazorLib.Keymaps.Models.Defaults;
 
@@ -44,7 +45,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
     public async ValueTask HandleEvent(
     	TextEditorComponentData componentData,
 	    Key<TextEditorViewModel> viewModelKey,
-	    KeyboardEventArgs keyboardEventArgs)
+	    KeyboardEventArgsClass keyboardEventArgsClass)
     {
     	var editContext = new TextEditorEditContext(componentData.TextEditorViewModelSlimDisplay.TextEditorService);
 
@@ -61,27 +62,27 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		
 		TextEditorModel? modelModifier;
 
-		if (keyboardEventArgs.MetaKey)
+		if (keyboardEventArgsClass.MetaKey)
 		{
-			switch (keyboardEventArgs.Code)
+			switch (keyboardEventArgsClass.Code)
 			{
 				default:
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
 			    	break;
 	    	}
 		}
-		else if (keyboardEventArgs.CtrlKey && keyboardEventArgs.AltKey)
+		else if (keyboardEventArgsClass.CtrlKey && keyboardEventArgsClass.AltKey)
 		{
-			switch (keyboardEventArgs.Code)
+			switch (keyboardEventArgsClass.Code)
 			{
 				default:
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
 			    	break;
 			}
 		}
-		else if (keyboardEventArgs.CtrlKey)
+		else if (keyboardEventArgsClass.CtrlKey)
 		{
-		    switch (keyboardEventArgs.Code)
+		    switch (keyboardEventArgsClass.Code)
 		    {
 		    	case "KeyR":
 		    		modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
@@ -228,7 +229,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            break;
 		        case "KeyF":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
-		        	if (keyboardEventArgs.ShiftKey)
+		        	if (keyboardEventArgsClass.ShiftKey)
 		        	{
 		        		TextEditorCommandDefaultFunctions.PopulateSearchFindAll(
 			                editContext,
@@ -248,7 +249,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            break;
 	            case "KeyH":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
-		        	if (keyboardEventArgs.ShiftKey)
+		        	if (keyboardEventArgsClass.ShiftKey)
 		        	{
 		        		/*TextEditorCommandDefaultFunctions.PopulateSearchFindAll(
 			                editContext,
@@ -274,7 +275,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	            case "End":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
 					editContext.TextEditorService.ViewModelApi.MoveCursor(
-                		new KeymapArgs(keyboardEventArgs),
+                		keyboardEventArgsClass.ToKeymapArgs(),
 				        editContext,
 				        modelModifier,
 				        viewModel);
@@ -293,7 +294,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					modelModifier.Delete(
 	                    viewModel,
 	                    1,
-	                    keyboardEventArgs.CtrlKey,
+	                    keyboardEventArgsClass.CtrlKey,
 	                    TextEditorModel.DeleteKind.Backspace);
 	                shouldRevealCursor = true;
 					break;
@@ -302,7 +303,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					modelModifier.Delete(
 	                    viewModel,
 	                    1,
-	                    keyboardEventArgs.CtrlKey,
+	                    keyboardEventArgsClass.CtrlKey,
 	                    TextEditorModel.DeleteKind.Delete);
 	                shouldRevealCursor = true;
 	                break;
@@ -354,12 +355,12 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                editContext,
 		                modelModifier,
 		                viewModel,
-		                shouldSelectText: keyboardEventArgs.ShiftKey);
+		                shouldSelectText: keyboardEventArgsClass.ShiftKey);
 	            	shouldRevealCursor = true;
 	            	break;
 	            case "Space":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
-	            	if (keyboardEventArgs.ShiftKey)
+	            	if (keyboardEventArgsClass.ShiftKey)
 	            	{
 	            		await modelModifier.PersistentState.CompilerService.ShowCallingSignature(
 							editContext,
@@ -396,9 +397,9 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		    		break;
 		    }
 		}
-		else if (keyboardEventArgs.AltKey)
+		else if (keyboardEventArgsClass.AltKey)
 		{
-			switch (keyboardEventArgs.Code)
+			switch (keyboardEventArgsClass.Code)
 			{
 				case "F12":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
@@ -415,7 +416,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		}
 		else
 		{
-			switch (keyboardEventArgs.Code)
+			switch (keyboardEventArgsClass.Code)
 			{
 				case "PageDown":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
@@ -438,7 +439,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	            case "Home":
 	            case "End":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
-	            	if (("ArrowDown" == keyboardEventArgs.Code || "ArrowUp" == keyboardEventArgs.Code) &&
+	            	if (("ArrowDown" == keyboardEventArgsClass.Code || "ArrowUp" == keyboardEventArgsClass.Code) &&
 	                    viewModel.PersistentState.MenuKind == MenuKind.AutoCompleteMenu)
 	                {
 	                	// TODO: Focusing the menu from here isn't working?
@@ -454,7 +455,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                else
 	                {
 						editContext.TextEditorService.ViewModelApi.MoveCursor(
-	                		new KeymapArgs(keyboardEventArgs),
+	                		keyboardEventArgsClass.ToKeymapArgs(),
 					        editContext,
 					        modelModifier,
 					        viewModel);
@@ -471,7 +472,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            }
 		        case "F12":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
-		        	if (keyboardEventArgs.ShiftKey)
+		        	if (keyboardEventArgsClass.ShiftKey)
 		        	{
 		        		await ShiftF12Func.Invoke(
 		        			editContext,
@@ -489,7 +490,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			        break;
 		        case "F10":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
-		        	if (keyboardEventArgs.ShiftKey)
+		        	if (keyboardEventArgsClass.ShiftKey)
 		        	{
 		        		menuKind = MenuKind.ContextMenu;
 	                	shouldRevealCursor = true;
@@ -522,7 +523,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 						event.code == CapsLock
 						event.key == Escape
 					*/
-					if (keyboardEventArgs.Key == "Escape")
+					if (keyboardEventArgsClass.Key == "Escape")
 					{
 						menuKind = MenuKind.None;
 						shouldClearTooltip = true;
@@ -539,7 +540,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					modelModifier.Delete(
 	                    viewModel,
 	                    1,
-	                    keyboardEventArgs.CtrlKey,
+	                    keyboardEventArgsClass.CtrlKey,
 	                    TextEditorModel.DeleteKind.Backspace);
 	                shouldRevealCursor = true;
 	                menuKind = MenuKind.None;
@@ -550,7 +551,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					modelModifier.Delete(
 	                    viewModel,
 	                    1,
-	                    keyboardEventArgs.CtrlKey,
+	                    keyboardEventArgsClass.CtrlKey,
 	                    TextEditorModel.DeleteKind.Delete);
 					shouldRevealCursor = true;
 					menuKind = MenuKind.None;
@@ -580,7 +581,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		
 					valueToInsert += _indentationBuilder.ToString();
 					
-					if (keyboardEventArgs.ShiftKey)
+					if (keyboardEventArgsClass.ShiftKey)
 					{
 						viewModel.SelectionAnchorPositionIndex = -1;
 						viewModel.LineIndex = viewModel.LineIndex;
@@ -600,7 +601,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
 					if (TextEditorSelectionHelper.HasSelectedText(viewModel))
 		        	{
-		        		if (keyboardEventArgs.ShiftKey)
+		        		if (keyboardEventArgsClass.ShiftKey)
 			        	{
 			        		TextEditorCommandDefaultFunctions.IndentLess(
 				                editContext,
@@ -620,7 +621,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        	}
 					else
 					{
-						if (keyboardEventArgs.ShiftKey)
+						if (keyboardEventArgsClass.ShiftKey)
 			        	{
 			        		TextEditorCommandDefaultFunctions.IndentLess(
 				                editContext,
@@ -663,12 +664,12 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				case "Equal":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
 					modelModifier.Insert(
-	                    keyboardEventArgs.Key,
+	                    keyboardEventArgsClass.Key,
 	                    viewModel);
 	                
-	                if (keyboardEventArgs.Code == "Minus" && keyboardEventArgs.ShiftKey)
+	                if (keyboardEventArgsClass.Code == "Minus" && keyboardEventArgsClass.ShiftKey)
 	                	menuKind = MenuKind.AutoCompleteMenu;
-	                else if (keyboardEventArgs.Code == "Period" && !keyboardEventArgs.ShiftKey)
+	                else if (keyboardEventArgsClass.Code == "Period" && !keyboardEventArgsClass.ShiftKey)
 	                	menuKind = MenuKind.AutoCompleteMenu;
 	                else
 	                	menuKind = MenuKind.None;
@@ -714,7 +715,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	            case "KeyZ":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
 	            	modelModifier.Insert(
-	                    keyboardEventArgs.Key,
+	                    keyboardEventArgsClass.Key,
 	                    viewModel);
 	                shouldRevealCursor = true;
 	                menuKind = MenuKind.AutoCompleteMenu;

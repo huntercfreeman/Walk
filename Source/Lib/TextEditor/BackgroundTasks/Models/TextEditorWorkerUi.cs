@@ -123,7 +123,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 				await workArgs.ComponentData.Options.Keymap.HandleEvent(
 					workArgs.ComponentData,
 					workArgs.ViewModelKey,
-					(KeyboardEventArgs)workArgs.EventArgs);
+					(KeyboardEventArgsClass)workArgs.EventArgs);
 				return;
 			}
 			case TextEditorWorkUiKind.OnMouseDown:

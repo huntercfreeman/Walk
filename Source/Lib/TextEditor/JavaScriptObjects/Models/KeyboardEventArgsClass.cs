@@ -1,3 +1,5 @@
+using Walk.Common.RazorLib.Keymaps.Models;
+
 namespace Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 
 public class KeyboardEventArgsClass
@@ -24,4 +26,17 @@ public class KeyboardEventArgsClass
     public bool ShiftKey { get; set; }
     public bool AltKey { get; set; }
     public bool MetaKey { get; set; }
+    
+    public KeymapArgs ToKeymapArgs()
+    {
+        return new()
+        {
+            Key = Key,
+            Code = Code,
+            CtrlKey = CtrlKey,
+            ShiftKey = ShiftKey,
+            AltKey = AltKey,
+            MetaKey = MetaKey,
+        };
+    }
 }

@@ -30,7 +30,7 @@ public struct KeymapArgs : ICommandArgs
 	    MetaKey = keyboardEventArgs.MetaKey;
 	    Type = keyboardEventArgs.Type;
     }
-
+    
     public Key<KeymapLayer> LayerKey { get; set; }
     
     public string? Key { get; set; }
