@@ -30,12 +30,12 @@ window.walkTextEditor = {
             }, {
                 passive: false,
             });
-            contentElement.addEventListener('touchstart', (event) => {
+            /*contentElement.addEventListener('touchstart', (event) => {
                 dotNetHelper.invokeMethodAsync("ReceiveOnTouchStart", event);
                 event.preventDefault();
             }, {
                 passive: false,
-            });
+            });*/
         
             contentElement.addEventListener('keydown', (event) => {
                 dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown",
@@ -108,7 +108,7 @@ window.walkTextEditor = {
                 });
             });
             
-            contentElement.addEventListener('touchmove', (event) => {
+            /*contentElement.addEventListener('touchmove', (event) => {
                 dotNetHelper.invokeMethodAsync("ReceiveOnTouchMove", event);
             });
             
@@ -122,10 +122,9 @@ window.walkTextEditor = {
             
             contentElement.addEventListener('touchleave', (event) => {
                 dotNetHelper.invokeMethodAsync("ClearTouch", event);
-            });
+            });*/
         }
         
-        /*
         let HORIZONTAL_ScrollbarElement = document.getElementById(HORIZONTAL_ScrollbarElementId);
         if (HORIZONTAL_ScrollbarElement) {
         
@@ -146,10 +145,15 @@ window.walkTextEditor = {
             });
             
             HORIZONTAL_ScrollbarElement.addEventListener('onmousedown', (event) => {
-                dotNetHelper.invokeMethodAsync("HORIZONTAL_HandleOnMouseDownAsync", event);
+                dotNetHelper.invokeMethodAsync("HORIZONTAL_HandleOnMouseDownAsync", 
+                {
+                    Buttons: event.buttons,
+                    ClientX: event.clientX,
+                    ClientY: event.clientY,
+                    ShiftKey: event.shiftKey,
+                });
                 event.stopPropagation();
             });
-            
         }
         
         let VERTICAL_ScrollbarElement = document.getElementById(VERTICAL_ScrollbarElementId);
@@ -172,10 +176,15 @@ window.walkTextEditor = {
             });
             
             VERTICAL_ScrollbarElement.addEventListener('onmousedown', (event) => {
-                dotNetHelper.invokeMethodAsync("VERTICAL_HandleOnMouseDownAsync", event);
+                dotNetHelper.invokeMethodAsync("VERTICAL_HandleOnMouseDownAsync", 
+                {
+                    Buttons: event.buttons,
+                    ClientX: event.clientX,
+                    ClientY: event.clientY,
+                    ShiftKey: event.shiftKey,
+                });
                 event.stopPropagation();
             });
-            
         }
         
         let CONNECTOR_ScrollbarElement = document.getElementById(CONNECTOR_ScrollbarElementId);
@@ -201,7 +210,6 @@ window.walkTextEditor = {
                 event.stopPropagation();
             });
         }
-        */
     },
     getCharAndLineMeasurementsInPixelsById: function (elementId, amountOfCharactersRendered) {
         let element = document.getElementById(elementId);

@@ -143,14 +143,6 @@
     position: absolute;
 }
 
-.di_te_gutter {
-    white-space: nowrap;
-    position: absolute;
-    display: flex;
-    box-shadow: -2px 0 0 var(--di_te_text-editor-gutter-border-color) inset;
-    background-color: var(--di_te_text-editor-gutter-background-color);
-}
-
 .di_te_gutter-chevron {
 	position: absolute;
 	z-index: 1;
@@ -164,6 +156,14 @@
     z-index: 1;
     cursor: pointer;
     overflow: none;
+}
+
+.di_te_gutter-section > div {
+    white-space: nowrap;
+    position: absolute;
+    display: flex;
+    box-shadow: -2px 0 0 var(--di_te_text-editor-gutter-border-color) inset;
+    background-color: var(--di_te_text-editor-gutter-background-color);
 }
 
 .di_te_body-section {

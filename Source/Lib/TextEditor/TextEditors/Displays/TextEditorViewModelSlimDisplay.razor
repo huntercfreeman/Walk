@@ -91,8 +91,7 @@
 	    			  virtualizationResultIndex < _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count;
 	    			  virtualizationResultIndex++)
 			    {
-			        <div class="di_te_gutter"
-			             style="@(_componentData.GetGutterStyleCss(_componentData.Css_LineIndexCache_EntryMap[_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex].TopCssValue))">
+			        <div style="@(_componentData.GetGutterStyleCss(_componentData.Css_LineIndexCache_EntryMap[_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex].TopCssValue))">
 			             
 			            @(_componentData.Css_LineIndexCache_EntryMap[_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex].LineNumberString)
 			            
