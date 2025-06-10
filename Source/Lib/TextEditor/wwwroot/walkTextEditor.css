@@ -162,6 +162,7 @@
     box-shadow: 2px 0 0 var(--di_te_text-editor-gutter-border-color);
     background-color: var(--di_te_text-editor-gutter-background-color);
     width: 100%;
+    height: 100%;
 }
 
 .di_te_gutter-section > div {

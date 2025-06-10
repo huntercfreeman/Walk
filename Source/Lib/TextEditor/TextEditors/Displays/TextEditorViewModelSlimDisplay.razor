@@ -83,21 +83,21 @@
     	    string gutterColumnTopCssValue;
     	
     	    if (_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
-	        {
 	        	gutterColumnTopCssValue = _componentData.Css_LineIndexCache_EntryMap[_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[0].LineIndex].TopCssValue;
-	        }
 	        else
-	        {
 	            gutterColumnTopCssValue = "0";
-	        }
+	        
+	        _componentData.UiStringBuilder.Clear();
+	        _componentData.UiStringBuilder.Append("top: ");
+	        _componentData.UiStringBuilder.Append(gutterColumnTopCssValue);
+	        _componentData.UiStringBuilder.Append("px;");
     	
     		<div class="di_te_gutter-section"
     			 style="@_componentData.Gutter_WidthCssStyle">
     			 
     			<div class="di_te_gutter-column"
-    			     style="top: @(gutterColumnTopCssValue)px; height: 100%;">
+    			     style="@(_componentData.UiStringBuilder.ToString())">
     			</div>
-    			
     			 
 	    		@for (int virtualizationResultIndex = 0;
 	    			  virtualizationResultIndex < _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count;
