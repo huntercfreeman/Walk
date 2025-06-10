@@ -133,6 +133,12 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	
 	private bool _hasRenderedAtLeastOnce = false;
 	
+	private bool _focusIn;
+	
+	private string CaretRowCssClass => _focusIn
+	    ? "di_te_text-editor-caret-row di_te_focus"
+	    : "di_te_text-editor-caret-row";
+	
     protected override void OnInitialized()
     {
         // TODO: Does the object used here matter? Should it be a "smaller" object or is this just reference?
@@ -370,6 +376,34 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	  if (nextViewModel is not null)
 	  	await nextViewModel.FocusAsync();
 	}
+	
+	/// <summary>
+	/// I checked when this fires.
+	/// For keyboard events it does NOT re-fire as you type.
+	/// Clicking and dragging does NOT re-fire as you move the cursor.
+	///
+	/// But, for an onclick it does re-fire back and forth between focusin and focusout about two times.
+	/// </summary>
+	[JSInvokable]
+    public Task HandleFocusIn()
+    {
+        _focusIn = true;
+        return InvokeAsync(StateHasChanged);
+    }
+    
+    /// <summary>
+	/// I checked when this fires.
+	/// For keyboard events it does NOT re-fire as you type.
+	/// Clicking and dragging does NOT re-fire as you move the cursor.
+	///
+	/// But, for an onclick it does re-fire back and forth between focusin and focusout about two times.
+	/// </summary>
+    [JSInvokable]
+    public Task HandleFocusOut()
+    {
+        _focusIn = false;
+        return InvokeAsync(StateHasChanged);
+    }
     
     [JSInvokable]
     public void ReceiveOnKeyDown(KeyboardEventArgsClass keyboardEventArgsClass)
@@ -520,6 +554,68 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     public void ReceiveContentOnMouseOut(MouseEventArgsClass mouseEventArgsClass)
     {
         _userMouseIsInside = false;
+    }
+    
+    [JSInvokable]
+    public async Task HORIZONTAL_HandleOnMouseDownAsync(MouseEventArgsClass mouseEventArgsClass)
+    {
+    	var renderBatchLocal = ComponentData.RenderBatch;
+    	if (!renderBatchLocal.IsValid)
+    		return;
+    		
+    	HORIZONTAL_thinksLeftMouseButtonIsDown = true;
+		HORIZONTAL_scrollLeftOnMouseDown = _componentData.RenderBatch.ViewModel.ScrollLeft;
+
+		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
+			.MeasureElementById(HORIZONTAL_ScrollbarElementId)
+			.ConfigureAwait(false);
+
+		// Drag far up to reset scroll to original
+		var textEditorDimensions = _componentData.RenderBatch.ViewModel.TextEditorDimensions;
+		var distanceBetweenTopEditorAndTopScrollbar = scrollbarBoundingClientRect.TopInPixels - textEditorDimensions.BoundingClientRectTop;
+		HORIZONTAL_clientYThresholdToResetScrollLeftPosition = scrollbarBoundingClientRect.TopInPixels - DISTANCE_TO_RESET_SCROLL_POSITION;
+
+		// Subscribe to the drag events
+		//
+		// NOTE: '_mouseDownEventArgs' being non-null is what indicates that the subscription is active.
+		//       So be wary if one intends to move its assignment elsewhere.
+		{
+			_mouseDownEventArgsClass = mouseEventArgsClass;
+			_dragEventHandler = HORIZONTAL_DragEventHandlerScrollAsync;
+	
+			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, null);
+		}
+    }
+    
+    [JSInvokable]
+    public async Task VERTICAL_HandleOnMouseDownAsync(MouseEventArgsClass mouseEventArgsClass)
+    {
+    	var renderBatchLocal = _componentData.RenderBatch;
+    	if (!renderBatchLocal.IsValid)
+    		return;
+    
+    	VERTICAL_thinksLeftMouseButtonIsDown = true;
+		VERTICAL_scrollTopOnMouseDown = renderBatchLocal.ViewModel.ScrollTop;
+
+		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
+			.MeasureElementById(VERTICAL_ScrollbarElementId)
+			.ConfigureAwait(false);
+
+		// Drag far left to reset scroll to original
+		var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
+		var distanceBetweenLeftEditorAndLeftScrollbar = scrollbarBoundingClientRect.LeftInPixels - textEditorDimensions.BoundingClientRectLeft;
+		VERTICAL_clientXThresholdToResetScrollTopPosition = scrollbarBoundingClientRect.LeftInPixels - DISTANCE_TO_RESET_SCROLL_POSITION;
+
+		// Subscribe to the drag events
+		//
+		// NOTE: '_mouseDownEventArgs' being non-null is what indicates that the subscription is active.
+		//       So be wary if one intends to move its assignment elsewhere.
+		{
+			_mouseDownEventArgsClass = mouseEventArgsClass;
+			_dragEventHandler = VERTICAL_DragEventHandlerScrollAsync;
+	
+			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, null);
+		}     
     }
     
     [JSInvokable]
@@ -674,68 +770,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 		    return ValueTask.CompletedTask;
 		    // viewModelModifier.PersistentState.PostScrollAndRemeasure();
         });
-    }
-    
-    [JSInvokable]
-    public async Task HORIZONTAL_HandleOnMouseDownAsync(MouseEventArgsClass mouseEventArgsClass)
-    {
-    	var renderBatchLocal = ComponentData.RenderBatch;
-    	if (!renderBatchLocal.IsValid)
-    		return;
-    		
-    	HORIZONTAL_thinksLeftMouseButtonIsDown = true;
-		HORIZONTAL_scrollLeftOnMouseDown = _componentData.RenderBatch.ViewModel.ScrollLeft;
-
-		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
-			.MeasureElementById(HORIZONTAL_ScrollbarElementId)
-			.ConfigureAwait(false);
-
-		// Drag far up to reset scroll to original
-		var textEditorDimensions = _componentData.RenderBatch.ViewModel.TextEditorDimensions;
-		var distanceBetweenTopEditorAndTopScrollbar = scrollbarBoundingClientRect.TopInPixels - textEditorDimensions.BoundingClientRectTop;
-		HORIZONTAL_clientYThresholdToResetScrollLeftPosition = scrollbarBoundingClientRect.TopInPixels - DISTANCE_TO_RESET_SCROLL_POSITION;
-
-		// Subscribe to the drag events
-		//
-		// NOTE: '_mouseDownEventArgs' being non-null is what indicates that the subscription is active.
-		//       So be wary if one intends to move its assignment elsewhere.
-		{
-			_mouseDownEventArgsClass = mouseEventArgsClass;
-			_dragEventHandler = HORIZONTAL_DragEventHandlerScrollAsync;
-	
-			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, null);
-		}
-    }
-    
-    [JSInvokable]
-    public async Task VERTICAL_HandleOnMouseDownAsync(MouseEventArgsClass mouseEventArgsClass)
-    {
-    	var renderBatchLocal = _componentData.RenderBatch;
-    	if (!renderBatchLocal.IsValid)
-    		return;
-    
-    	VERTICAL_thinksLeftMouseButtonIsDown = true;
-		VERTICAL_scrollTopOnMouseDown = renderBatchLocal.ViewModel.ScrollTop;
-
-		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
-			.MeasureElementById(VERTICAL_ScrollbarElementId)
-			.ConfigureAwait(false);
-
-		// Drag far left to reset scroll to original
-		var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
-		var distanceBetweenLeftEditorAndLeftScrollbar = scrollbarBoundingClientRect.LeftInPixels - textEditorDimensions.BoundingClientRectLeft;
-		VERTICAL_clientXThresholdToResetScrollTopPosition = scrollbarBoundingClientRect.LeftInPixels - DISTANCE_TO_RESET_SCROLL_POSITION;
-
-		// Subscribe to the drag events
-		//
-		// NOTE: '_mouseDownEventArgs' being non-null is what indicates that the subscription is active.
-		//       So be wary if one intends to move its assignment elsewhere.
-		{
-			_mouseDownEventArgsClass = mouseEventArgsClass;
-			_dragEventHandler = VERTICAL_DragEventHandlerScrollAsync;
-	
-			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, null);
-		}     
     }
 
     private async void DragStateWrapOnStateChanged()
