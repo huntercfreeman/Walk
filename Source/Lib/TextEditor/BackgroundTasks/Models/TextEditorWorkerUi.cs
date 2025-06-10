@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
 using Walk.TextEditor.RazorLib.Cursors.Models;
 using Walk.TextEditor.RazorLib.Events.Models;
@@ -48,7 +49,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 		        if (modelModifier is null || viewModel is null)
 		            return;
 		            
-		        var mouseEventArgs = (MouseEventArgs)workArgs.EventArgs;
+		        var mouseEventArgs = (MouseEventArgsClass)workArgs.EventArgs;
 		
 		        var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(viewModel);
 		
@@ -122,7 +123,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 				await workArgs.ComponentData.Options.Keymap.HandleEvent(
 					workArgs.ComponentData,
 					workArgs.ViewModelKey,
-					(KeyboardEventArgs)workArgs.EventArgs);
+					(KeyboardEventArgsClass)workArgs.EventArgs);
 				return;
 			}
 			case TextEditorWorkUiKind.OnMouseDown:
@@ -139,7 +140,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 		
 		        var hasSelectedText = TextEditorSelectionHelper.HasSelectedText(viewModel);
 		        
-		        var mouseEventArgs = (MouseEventArgs)workArgs.EventArgs;
+		        var mouseEventArgs = (MouseEventArgsClass)workArgs.EventArgs;
 		
 		        if ((mouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
 		            return; // Not pressing the left mouse button so assume ContextMenu is desired result.
@@ -273,7 +274,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 		        if (modelModifier is null || viewModel is null)
 	            	return;
 		            
-		        var mouseEventArgs = (MouseEventArgs)workArgs.EventArgs;
+		        var mouseEventArgs = (MouseEventArgsClass)workArgs.EventArgs;
 		
 				// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.
 				// Reason being, these are likely to be huge optimizations (2024-05-29).
@@ -387,7 +388,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 		        if (viewModelModifier is null)
 		            return;
 		            
-		        var wheelEventArgs = (WheelEventArgs)workArgs.EventArgs;
+		        var wheelEventArgs = (WheelEventArgsClass)workArgs.EventArgs;
 		
 				// TODO: Why was this made as 'if' 'else' whereas the OnWheelBatch...
 				//       ...is doing 'if' 'if'.
@@ -399,7 +400,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 		            editContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
 		            	editContext,
 				        viewModelModifier,
-				        wheelEventArgs.DeltaX);
+				        wheelEventArgs.DeltaY / 2);
 		        }
 		        else
 		        {

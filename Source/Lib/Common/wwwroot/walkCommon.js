@@ -1,3 +1,6 @@
+// The way JS Interop is done here is a bit outdated see export syntax:
+// https://learn.microsoft.com/en-us/aspnet/core/blazor/javascript-interoperability/
+
 // https://stackoverflow.com/questions/75988682/debounce-in-javascript
 // https://stackoverflow.com/a/75988895/19310517
 const walkCommonDebounce = (callback, wait) => {

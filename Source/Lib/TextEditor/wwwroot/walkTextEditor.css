@@ -132,17 +132,15 @@
 }
 
 .di_te_row {
+    /* This is needed for WalkTextEditorInitializer.razor */
     white-space: nowrap;
     position: absolute;
-    display: flex;
 }
 
-.di_te_gutter {
+.di_te_text-section > div {
+    /* WARNING: 'di_te_row' needs to match the CSS in here. */
     white-space: nowrap;
     position: absolute;
-    display: flex;
-    box-shadow: -2px 0 0 var(--di_te_text-editor-gutter-border-color) inset;
-    background-color: var(--di_te_text-editor-gutter-background-color);
 }
 
 .di_te_gutter-chevron {
@@ -160,13 +158,25 @@
     overflow: none;
 }
 
+.di_te_gutter-column {
+    box-shadow: 2px 0 0 var(--di_te_text-editor-gutter-border-color);
+    background-color: var(--di_te_text-editor-gutter-background-color);
+    width: 100%;
+    height: 100%;
+}
+
+.di_te_gutter-section > div {
+    white-space: nowrap;
+    position: absolute;
+}
+
 .di_te_body-section {
     height: 100%;
     position: absolute;
     top: 0;
 }
 
-.di_te_three-dots {
+.di_te_three-dots-section > div {
 	border: 1px solid #a7c4c4;
 	color: #a7c4c4;
 }
@@ -295,7 +305,7 @@
     }
 }
 
-.di_te_text-selection {
+.di_te_text-selection-group > div {
     background-color: var(--di_te_text-selection-background-color);
     position: absolute;
 }

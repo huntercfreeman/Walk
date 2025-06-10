@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 
 namespace Walk.TextEditor.RazorLib.BackgroundTasks.Models;
 
@@ -11,16 +12,29 @@ public struct TextEditorWorkerUiArgs
 	public TextEditorWorkerUiArgs(
 		TextEditorComponentData componentData,
 		Key<TextEditorViewModel> viewModelKey,
-		KeyboardEventArgs keyboardEventArgs)
+		KeyboardEventArgsClass keyboardEventArgsClass)
 	{
 		ComponentData = componentData;
 		ViewModelKey = viewModelKey;
-		EventArgs = keyboardEventArgs;
+		EventArgs = keyboardEventArgsClass;
 	
 		TextEditorWorkUiKind = TextEditorWorkUiKind.OnKeyDown;
 	}
 	
 	// Can't distinguish the event kind without accepting it as argument.
+	public TextEditorWorkerUiArgs(
+		TextEditorComponentData componentData,
+		Key<TextEditorViewModel> viewModelKey,
+		MouseEventArgsClass mouseEventArgsClass,
+		TextEditorWorkUiKind workUiKind)
+	{
+		ComponentData = componentData;
+		ViewModelKey = viewModelKey;
+		EventArgs = mouseEventArgsClass;
+	
+		TextEditorWorkUiKind = workUiKind;
+	}
+	
 	public TextEditorWorkerUiArgs(
 		TextEditorComponentData componentData,
 		Key<TextEditorViewModel> viewModelKey,
@@ -38,11 +52,11 @@ public struct TextEditorWorkerUiArgs
 	public TextEditorWorkerUiArgs(
 		TextEditorComponentData componentData,
 		Key<TextEditorViewModel> viewModelKey,
-		WheelEventArgs wheelEventArgs)
+		WheelEventArgsClass wheelEventArgsClass)
 	{
 		ComponentData = componentData;
 		ViewModelKey = viewModelKey;
-		EventArgs = wheelEventArgs;
+		EventArgs = wheelEventArgsClass;
 		
 		TextEditorWorkUiKind = TextEditorWorkUiKind.OnWheel;
 	}

@@ -8,6 +8,7 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
+using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -114,7 +115,7 @@ public class JavaScriptCompilerService : ICompilerService
 		TextEditorEditContext editContext,
 		TextEditorModel modelModifier,
 		TextEditorViewModel viewModelModifier,
-		MouseEventArgs mouseEventArgs,
+		MouseEventArgsClass mouseEventArgsClass,
 		TextEditorComponentData componentData,
 		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)

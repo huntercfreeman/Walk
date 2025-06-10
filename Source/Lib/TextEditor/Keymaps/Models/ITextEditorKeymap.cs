@@ -4,6 +4,7 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 
 namespace Walk.TextEditor.RazorLib.Keymaps.Models;
 
@@ -28,5 +29,5 @@ public interface ITextEditorKeymap
 	public ValueTask HandleEvent(
     	TextEditorComponentData componentData,
 	    Key<TextEditorViewModel> viewModelKey,
-	    KeyboardEventArgs keyboardEventArgs);
+	    KeyboardEventArgsClass keyboardEventArgsClass);
 }

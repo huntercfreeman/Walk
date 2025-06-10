@@ -16,6 +16,7 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Events.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models.Defaults;
+using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -679,7 +680,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		TextEditorEditContext editContext,
 		TextEditorModel modelModifier,
 		TextEditorViewModel viewModelModifier,
-		MouseEventArgs mouseEventArgs,
+		MouseEventArgsClass mouseEventArgsClass,
 		TextEditorComponentData componentData,
 		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
@@ -688,14 +689,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var lineAndColumnIndex = await EventUtils.CalculateLineAndColumnIndex(
 				modelModifier,
 				viewModelModifier,
-				mouseEventArgs,
+				mouseEventArgsClass,
 				componentData,
 				editContext)
 			.ConfigureAwait(false);
 	
 		var relativeCoordinatesOnClick = new RelativeCoordinates(
-		    mouseEventArgs.ClientX - viewModelModifier.TextEditorDimensions.BoundingClientRectLeft,
-		    mouseEventArgs.ClientY - viewModelModifier.TextEditorDimensions.BoundingClientRectTop,
+		    mouseEventArgsClass.ClientX - viewModelModifier.TextEditorDimensions.BoundingClientRectLeft,
+		    mouseEventArgsClass.ClientY - viewModelModifier.TextEditorDimensions.BoundingClientRectTop,
 		    viewModelModifier.ScrollLeft,
 		    viewModelModifier.ScrollTop);
 

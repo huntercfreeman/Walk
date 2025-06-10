@@ -1,3 +1,6 @@
+// The way JS Interop is done here is a bit outdated see export syntax:
+// https://learn.microsoft.com/en-us/aspnet/core/blazor/javascript-interoperability/
+
 window.walkTextEditor = {
     scrollElementIntoView: function (elementId) {
 
@@ -12,25 +15,212 @@ window.walkTextEditor = {
             inline: "nearest"
         });
     },
-    preventDefaultOnWheelEvents: function (elementId) {
+    setPreventDefaultsAndStopPropagations: function (dotNetHelper, contentElementId, rowSectionElementId, HORIZONTAL_ScrollbarElementId, VERTICAL_ScrollbarElementId, CONNECTOR_ScrollbarElementId) {
+        let contentElement = document.getElementById(contentElementId);
         
-        let element = document.getElementById(elementId);
-
-        if (!element) {
+        if (!contentElement)
             return;
+            
+        // contentElement.dotNetHelper = dotNetHelper;
+        
+        if (contentElement) {
+        
+            contentElement.addEventListener('wheel', (event) => {
+                event.preventDefault();
+            }, {
+                passive: false,
+            });
+            /*contentElement.addEventListener('touchstart', (event) => {
+                dotNetHelper.invokeMethodAsync("ReceiveOnTouchStart", event);
+                event.preventDefault();
+            }, {
+                passive: false,
+            });*/
+        
+            contentElement.addEventListener('keydown', (event) => {
+            
+                switch(event.key) {
+                    case "Shift":
+                    case "Control":
+                    case "Alt":
+                    case "Meta":
+                        break;
+                    default:
+                        dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown",
+                        {
+                            Key: event.key,
+                            Code: event.code,
+                            CtrlKey: event.ctrlKey,
+                            ShiftKey: event.shiftKey,
+                            AltKey: event.altKey,
+                            MetaKey: event.metaKey,
+                        });
+                        break;
+                }
+                
+                event.preventDefault();
+            });
+            
+            contentElement.addEventListener('click', (event) => {
+                dotNetHelper.invokeMethodAsync("FocusTextEditorAsync");
+            });
+            
+            contentElement.addEventListener('contextmenu', (event) => {
+                dotNetHelper.invokeMethodAsync("ReceiveOnContextMenu");
+                event.preventDefault();
+            });
+            
+            contentElement.addEventListener('mousedown', (event) => {
+                dotNetHelper.invokeMethodAsync("ReceiveContentOnMouseDown", 
+                {
+                    Buttons: event.buttons,
+                    ClientX: event.clientX,
+                    ClientY: event.clientY,
+                    ShiftKey: event.shiftKey,
+                });
+            });
+            
+            contentElement.addEventListener('mousemove', (event) => {
+                dotNetHelper.invokeMethodAsync("ReceiveContentOnMouseMove", 
+                {
+                    Buttons: event.buttons,
+                    ClientX: event.clientX,
+                    ClientY: event.clientY,
+                    ShiftKey: event.shiftKey,
+                });
+            });
+            
+            contentElement.addEventListener('mouseout', (event) => {
+                dotNetHelper.invokeMethodAsync("ReceiveContentOnMouseOut", 
+                {
+                    Buttons: event.buttons,
+                    ClientX: event.clientX,
+                    ClientY: event.clientY,
+                    ShiftKey: event.shiftKey,
+                });
+            });
+            
+            contentElement.addEventListener('dblclick', (event) => {
+                dotNetHelper.invokeMethodAsync("ReceiveOnDoubleClick",
+                {
+                    Buttons: event.buttons,
+                    ClientX: event.clientX,
+                    ClientY: event.clientY,
+                    ShiftKey: event.shiftKey,
+                });
+            });
+            
+            contentElement.addEventListener('wheel', (event) => {
+                dotNetHelper.invokeMethodAsync("ReceiveOnWheel",
+                {
+                    DeltaX: event.deltaX,
+                    DeltaY: event.deltaY,
+                    ShiftKey: event.shiftKey,
+                });
+            });
+            
+            /*contentElement.addEventListener('touchmove', (event) => {
+                dotNetHelper.invokeMethodAsync("ReceiveOnTouchMove", event);
+            });
+            
+            contentElement.addEventListener('touchend', (event) => {
+                dotNetHelper.invokeMethodAsync("ClearTouch", event);
+            });
+            
+            contentElement.addEventListener('touchcancel', (event) => {
+                dotNetHelper.invokeMethodAsync("ClearTouch", event);
+            });
+            
+            contentElement.addEventListener('touchleave', (event) => {
+                dotNetHelper.invokeMethodAsync("ClearTouch", event);
+            });*/
         }
         
-        element.addEventListener('wheel', (event) => {
-            event.preventDefault();
-        }, {
-            passive: false,
-        });
+        let HORIZONTAL_ScrollbarElement = document.getElementById(HORIZONTAL_ScrollbarElementId);
+        if (HORIZONTAL_ScrollbarElement) {
         
-        element.addEventListener('touchstart', (event) => {
-            event.preventDefault();
-        }, {
-            passive: false,
-        });
+            HORIZONTAL_ScrollbarElement.addEventListener('mousemove', (event) => {
+                event.stopPropagation();
+            });
+            
+            HORIZONTAL_ScrollbarElement.addEventListener('dblclick', (event) => {
+                event.stopPropagation();
+            });
+            
+            HORIZONTAL_ScrollbarElement.addEventListener('click', (event) => {
+                event.stopPropagation();
+            });
+            
+            HORIZONTAL_ScrollbarElement.addEventListener('contextmenu', (event) => {
+                event.stopPropagation();
+            });
+            
+            HORIZONTAL_ScrollbarElement.addEventListener('mousedown', (event) => {
+                dotNetHelper.invokeMethodAsync("HORIZONTAL_HandleOnMouseDownAsync", 
+                {
+                    Buttons: event.buttons,
+                    ClientX: event.clientX,
+                    ClientY: event.clientY,
+                    ShiftKey: event.shiftKey,
+                });
+                event.stopPropagation();
+            });
+        }
+        
+        let VERTICAL_ScrollbarElement = document.getElementById(VERTICAL_ScrollbarElementId);
+        if (VERTICAL_ScrollbarElement) {
+        
+            VERTICAL_ScrollbarElement.addEventListener('mousemove', (event) => {
+                event.stopPropagation();
+            });
+            
+            VERTICAL_ScrollbarElement.addEventListener('dblclick', (event) => {
+                event.stopPropagation();
+            });
+            
+            VERTICAL_ScrollbarElement.addEventListener('click', (event) => {
+                event.stopPropagation();
+            });
+            
+            VERTICAL_ScrollbarElement.addEventListener('contextmenu', (event) => {
+                event.stopPropagation();
+            });
+            
+            VERTICAL_ScrollbarElement.addEventListener('mousedown', (event) => {
+                dotNetHelper.invokeMethodAsync("VERTICAL_HandleOnMouseDownAsync", 
+                {
+                    Buttons: event.buttons,
+                    ClientX: event.clientX,
+                    ClientY: event.clientY,
+                    ShiftKey: event.shiftKey,
+                });
+                event.stopPropagation();
+            });
+        }
+        
+        let CONNECTOR_ScrollbarElement = document.getElementById(CONNECTOR_ScrollbarElementId);
+        if (CONNECTOR_ScrollbarElement) {
+            
+            CONNECTOR_ScrollbarElement.addEventListener('mousemove', (event) => {
+                event.stopPropagation();
+            });
+            
+            CONNECTOR_ScrollbarElement.addEventListener('dblclick', (event) => {
+                event.stopPropagation();
+            });
+            
+            CONNECTOR_ScrollbarElement.addEventListener('click', (event) => {
+                event.stopPropagation();
+            });
+            
+            CONNECTOR_ScrollbarElement.addEventListener('contextmenu', (event) => {
+                event.stopPropagation();
+            });
+            
+            CONNECTOR_ScrollbarElement.addEventListener('mousedown', (event) => {
+                event.stopPropagation();
+            });
+        }
     },
     getCharAndLineMeasurementsInPixelsById: function (elementId, amountOfCharactersRendered) {
         let element = document.getElementById(elementId);

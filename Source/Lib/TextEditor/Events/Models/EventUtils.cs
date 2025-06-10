@@ -3,6 +3,7 @@ using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Displays;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
@@ -249,7 +250,7 @@ public static class EventUtils
 	public static async Task<(int LineIndex, int ColumnIndex, double PositionX, double PositionY)> CalculateLineAndColumnIndex(
 		TextEditorModel modelModifier,
 		TextEditorViewModel viewModel,
-		MouseEventArgs mouseEventArgs,
+		MouseEventArgsClass mouseEventArgsClass,
 		TextEditorComponentData componentData,
 		TextEditorEditContext editContext)
     {
@@ -260,8 +261,8 @@ public static class EventUtils
             
         var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
     
-        var positionX = mouseEventArgs.ClientX - viewModel.TextEditorDimensions.BoundingClientRectLeft;
-        var positionY = mouseEventArgs.ClientY - viewModel.TextEditorDimensions.BoundingClientRectTop;
+        var positionX = mouseEventArgsClass.ClientX - viewModel.TextEditorDimensions.BoundingClientRectLeft;
+        var positionY = mouseEventArgsClass.ClientY - viewModel.TextEditorDimensions.BoundingClientRectTop;
     
         // Scroll position offset
         positionX += viewModel.ScrollLeft;
