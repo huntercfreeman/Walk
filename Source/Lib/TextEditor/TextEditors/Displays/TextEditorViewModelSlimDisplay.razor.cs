@@ -676,7 +676,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         });
     }
     
-    private async Task HORIZONTAL_HandleOnMouseDownAsync(MouseEventArgsClass mouseEventArgsClass)
+    [JSInvokable]
+    public async Task HORIZONTAL_HandleOnMouseDownAsync(MouseEventArgsClass mouseEventArgsClass)
     {
     	var renderBatchLocal = ComponentData.RenderBatch;
     	if (!renderBatchLocal.IsValid)
@@ -706,7 +707,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 		}
     }
     
-    private async Task VERTICAL_HandleOnMouseDownAsync(MouseEventArgsClass mouseEventArgsClass)
+    [JSInvokable]
+    public async Task VERTICAL_HandleOnMouseDownAsync(MouseEventArgsClass mouseEventArgsClass)
     {
     	var renderBatchLocal = _componentData.RenderBatch;
     	if (!renderBatchLocal.IsValid)
@@ -803,13 +805,12 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			// that is only used for the scrolling events.
 			//
 			// Thus MouseEventArgs.ClientX will be used to store the scrollLeft.
-			localMouseDownEventArgsClass.ClientX = scrollLeft;
-			
+			onDragMouseEventArgs.ClientX = scrollLeft;
 			TextEditorService.WorkerUi.Enqueue(
 	        	new TextEditorWorkerUiArgs(
 		        	_componentData,
 		        	TextEditorViewModelKey,
-			        localMouseDownEventArgsClass,
+			        onDragMouseEventArgs,
 			        TextEditorWorkUiKind.OnScrollHorizontal));
         }
         else
@@ -868,12 +869,12 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			// that is only used for the scrolling events.
 			//
 			// Thus MouseEventArgs.ClientY will be used to store the scrollTop.
-			localMouseDownEventArgsClass.ClientY = scrollTop;
+			onDragMouseEventArgs.ClientY = scrollTop;
 			TextEditorService.WorkerUi.Enqueue(
 	        	new TextEditorWorkerUiArgs(
 		        	_componentData,
 		        	TextEditorViewModelKey,
-			        localMouseDownEventArgsClass,
+			        onDragMouseEventArgs,
 			        TextEditorWorkUiKind.OnScrollVertical));
         }
         else

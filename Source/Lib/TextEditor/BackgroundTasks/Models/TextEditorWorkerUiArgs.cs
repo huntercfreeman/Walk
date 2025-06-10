@@ -35,6 +35,19 @@ public struct TextEditorWorkerUiArgs
 		TextEditorWorkUiKind = workUiKind;
 	}
 	
+	public TextEditorWorkerUiArgs(
+		TextEditorComponentData componentData,
+		Key<TextEditorViewModel> viewModelKey,
+		MouseEventArgs mouseEventArgs,
+		TextEditorWorkUiKind workUiKind)
+	{
+		ComponentData = componentData;
+		ViewModelKey = viewModelKey;
+		EventArgs = mouseEventArgs;
+	
+		TextEditorWorkUiKind = workUiKind;
+	}
+	
 	// Can't distinguish the event kind without accepting it as argument.
 	public TextEditorWorkerUiArgs(
 		TextEditorComponentData componentData,

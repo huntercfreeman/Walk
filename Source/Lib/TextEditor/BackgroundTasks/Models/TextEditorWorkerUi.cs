@@ -346,7 +346,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 		        if (viewModelModifier is null)
 		            return;
 		
-		        var mouseEventArgs = (MouseEventArgsClass)workArgs.EventArgs;
+		        var mouseEventArgs = (MouseEventArgs)workArgs.EventArgs;
 		        
 		        editContext.TextEditorService.ViewModelApi.SetScrollPositionLeft(
 		        	editContext,
@@ -367,7 +367,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 		        if (viewModelModifier is null)
 		            return;
 		
-		        var mouseEventArgs = (MouseEventArgsClass)workArgs.EventArgs;
+		        var mouseEventArgs = (MouseEventArgs)workArgs.EventArgs;
 		        
 		        editContext.TextEditorService.ViewModelApi.SetScrollPositionTop(
 		        	editContext,
