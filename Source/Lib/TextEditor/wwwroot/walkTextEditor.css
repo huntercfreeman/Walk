@@ -10,6 +10,7 @@
     position: relative;
     display: flex;
     overflow: hidden;
+    outline: none;
 }
 
 .di_te_text-editor-group {
@@ -269,7 +270,7 @@
     min-width: 100%;
 }
 
-.di_te_text-editor:focus-within .di_te_text-editor-caret-row {
+.di_te_text-editor-caret-row.di_te_focus {
     border-color: var(--di_te_text-editor-caret-row-border-color-editor-focus-within);
 }
 
