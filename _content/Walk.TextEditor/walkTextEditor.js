@@ -61,6 +61,14 @@ window.walkTextEditor = {
                 event.preventDefault();
             });
             
+            contentElement.addEventListener('focusin', (event) => {
+                dotNetHelper.invokeMethodAsync("HandleFocusIn");
+            });
+            
+            contentElement.addEventListener('focusout', (event) => {
+                dotNetHelper.invokeMethodAsync("HandleFocusOut");
+            });
+            
             contentElement.addEventListener('click', (event) => {
                 dotNetHelper.invokeMethodAsync("FocusTextEditorAsync");
             });
