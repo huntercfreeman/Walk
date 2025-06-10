@@ -38,7 +38,6 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
     private string _wrapperCssClass;
     private string _wrapperCssStyle;
     
-    
     protected override void OnInitialized()
     {
     	_countOfTestCharacters = TEST_STRING_REPEAT_COUNT * TEST_STRING_FOR_MEASUREMENT.Length;
