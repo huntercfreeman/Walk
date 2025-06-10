@@ -139,23 +139,23 @@ window.walkTextEditor = {
         let HORIZONTAL_ScrollbarElement = document.getElementById(HORIZONTAL_ScrollbarElementId);
         if (HORIZONTAL_ScrollbarElement) {
         
-            HORIZONTAL_ScrollbarElement.addEventListener('onmousemove', (event) => {
+            HORIZONTAL_ScrollbarElement.addEventListener('mousemove', (event) => {
                 event.stopPropagation();
             });
             
-            HORIZONTAL_ScrollbarElement.addEventListener('ondblclick', (event) => {
+            HORIZONTAL_ScrollbarElement.addEventListener('dblclick', (event) => {
                 event.stopPropagation();
             });
             
-            HORIZONTAL_ScrollbarElement.addEventListener('onclick', (event) => {
+            HORIZONTAL_ScrollbarElement.addEventListener('click', (event) => {
                 event.stopPropagation();
             });
             
-            HORIZONTAL_ScrollbarElement.addEventListener('oncontextmenu', (event) => {
+            HORIZONTAL_ScrollbarElement.addEventListener('contextmenu', (event) => {
                 event.stopPropagation();
             });
             
-            HORIZONTAL_ScrollbarElement.addEventListener('onmousedown', (event) => {
+            HORIZONTAL_ScrollbarElement.addEventListener('mousedown', (event) => {
                 dotNetHelper.invokeMethodAsync("HORIZONTAL_HandleOnMouseDownAsync", 
                 {
                     Buttons: event.buttons,
@@ -170,23 +170,23 @@ window.walkTextEditor = {
         let VERTICAL_ScrollbarElement = document.getElementById(VERTICAL_ScrollbarElementId);
         if (VERTICAL_ScrollbarElement) {
         
-            VERTICAL_ScrollbarElement.addEventListener('onmousemove', (event) => {
+            VERTICAL_ScrollbarElement.addEventListener('mousemove', (event) => {
                 event.stopPropagation();
             });
             
-            VERTICAL_ScrollbarElement.addEventListener('ondblclick', (event) => {
+            VERTICAL_ScrollbarElement.addEventListener('dblclick', (event) => {
                 event.stopPropagation();
             });
             
-            VERTICAL_ScrollbarElement.addEventListener('onclick', (event) => {
+            VERTICAL_ScrollbarElement.addEventListener('click', (event) => {
                 event.stopPropagation();
             });
             
-            VERTICAL_ScrollbarElement.addEventListener('oncontextmenu', (event) => {
+            VERTICAL_ScrollbarElement.addEventListener('contextmenu', (event) => {
                 event.stopPropagation();
             });
             
-            VERTICAL_ScrollbarElement.addEventListener('onmousedown', (event) => {
+            VERTICAL_ScrollbarElement.addEventListener('mousedown', (event) => {
                 dotNetHelper.invokeMethodAsync("VERTICAL_HandleOnMouseDownAsync", 
                 {
                     Buttons: event.buttons,
@@ -201,23 +201,23 @@ window.walkTextEditor = {
         let CONNECTOR_ScrollbarElement = document.getElementById(CONNECTOR_ScrollbarElementId);
         if (CONNECTOR_ScrollbarElement) {
             
-            CONNECTOR_ScrollbarElement.addEventListener('onmousemove', (event) => {
+            CONNECTOR_ScrollbarElement.addEventListener('mousemove', (event) => {
                 event.stopPropagation();
             });
             
-            CONNECTOR_ScrollbarElement.addEventListener('ondblclick', (event) => {
+            CONNECTOR_ScrollbarElement.addEventListener('dblclick', (event) => {
                 event.stopPropagation();
             });
             
-            CONNECTOR_ScrollbarElement.addEventListener('onclick', (event) => {
+            CONNECTOR_ScrollbarElement.addEventListener('click', (event) => {
                 event.stopPropagation();
             });
             
-            CONNECTOR_ScrollbarElement.addEventListener('oncontextmenu', (event) => {
+            CONNECTOR_ScrollbarElement.addEventListener('contextmenu', (event) => {
                 event.stopPropagation();
             });
             
-            CONNECTOR_ScrollbarElement.addEventListener('onmousedown', (event) => {
+            CONNECTOR_ScrollbarElement.addEventListener('mousedown', (event) => {
                 event.stopPropagation();
             });
         }
