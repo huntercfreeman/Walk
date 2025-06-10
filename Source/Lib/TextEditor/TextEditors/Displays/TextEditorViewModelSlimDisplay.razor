@@ -179,32 +179,6 @@
 		<div class="di_te_text-editor-caret-row"
 				style="@_componentData.CaretRowCssStyle">
 		</div>
-		
-		<div class="di_te_scrollbar-section" style="@_componentData.ScrollbarSection_LeftCssStyle">
-		
-			<div class="di_te_scrollbar di_te_scrollbar-horizontal"
-			     id="@HORIZONTAL_ScrollbarElementId"
-			     style="@_componentData.HORIZONTAL_ScrollbarCssStyle">
-			    
-			    <div class="di_te_scrollbar-slider"
-			         id="@HORIZONTAL_ScrollbarSliderElementId"
-			         style="@_componentData.HORIZONTAL_SliderCssStyle">
-			    </div>
-			</div><!--
-			
-			--><div class="di_te_scrollbar di_te_scrollbar-vertical"
-			        id="@VERTICAL_ScrollbarElementId">
-			         
-			    <div class="di_te_scrollbar-slider"
-			         id="@VERTICAL_ScrollbarSliderElementId"
-			         style="@_componentData.VERTICAL_SliderCssStyle">
-			    </div>
-			</div><!--
-		    
-			--><div class="di_te_scrollbar di_te_scrollbar-connector"
-			        id="@CONNECTOR_ScrollbarElementId">
-			</div>
-		</div>
 	    
 	    var tooltipViewModel = _componentData.RenderBatch.ViewModel.PersistentState.TooltipViewModel;
 	    
@@ -239,5 +213,31 @@
 	        <div>The @nameof(TextEditorOptions) was null</div>
 	    }
     }
+    
+    <div class="di_te_scrollbar-section" style="@_componentData.ScrollbarSection_LeftCssStyle">
+		
+		<div class="di_te_scrollbar di_te_scrollbar-horizontal"
+		     id="@HORIZONTAL_ScrollbarElementId"
+		     style="@_componentData.HORIZONTAL_ScrollbarCssStyle">
+		    
+		    <div class="di_te_scrollbar-slider"
+		         id="@HORIZONTAL_ScrollbarSliderElementId"
+		         style="@_componentData.HORIZONTAL_SliderCssStyle">
+		    </div>
+		</div><!--
+		
+		--><div class="di_te_scrollbar di_te_scrollbar-vertical"
+		        id="@VERTICAL_ScrollbarElementId">
+		         
+		    <div class="di_te_scrollbar-slider"
+		         id="@VERTICAL_ScrollbarSliderElementId"
+		         style="@_componentData.VERTICAL_SliderCssStyle">
+		    </div>
+		</div><!--
+	    
+		--><div class="di_te_scrollbar di_te_scrollbar-connector"
+		        id="@CONNECTOR_ScrollbarElementId">
+		</div>
+	</div>
 </div>
 
