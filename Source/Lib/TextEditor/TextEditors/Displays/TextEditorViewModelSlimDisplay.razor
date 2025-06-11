@@ -82,7 +82,7 @@
     	{
     	    string gutterColumnTopCssValue;
     	
-    	    if (_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
+    	    if (_componentData.RenderBatch.ViewModel.VirtualizationResultCount > 0)
 	        	gutterColumnTopCssValue = _componentData.Css_LineIndexCache_EntryMap[_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[0].LineIndex].TopCssValue;
 	        else
 	            gutterColumnTopCssValue = "0";
@@ -100,7 +100,7 @@
     			</div>
     			 
 	    		@for (int virtualizationResultIndex = 0;
-	    			  virtualizationResultIndex < _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count;
+	    			  virtualizationResultIndex < _componentData.RenderBatch.ViewModel.VirtualizationResultCount;
 	    			  virtualizationResultIndex++)
 			    {
 			        <div style="@(_componentData.GetGutterStyleCss(_componentData.Css_LineIndexCache_EntryMap[_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex].TopCssValue))">
@@ -136,7 +136,7 @@
     	
     	<div class="di_te_text-section">
 	    	@for (int virtualizationResultIndex = 0;
-	    		  virtualizationResultIndex < _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList.Count;
+	    		  virtualizationResultIndex < _componentData.RenderBatch.ViewModel.VirtualizationResultCount;
 	    		  virtualizationResultIndex++)
 		    {
 		    	<div style="@_componentData.RowSection_GetRowStyleCss(_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex)">

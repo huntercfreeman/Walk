@@ -140,7 +140,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 				
 				var showingFinalLine = false;
 				
-				if (viewModelModifier.VirtualizationResult.EntryList.Count > 0)
+				if (viewModelModifier.VirtualizationResultCount > 0)
 				{
 					var last = viewModelModifier.VirtualizationResult.EntryList.Last();
 					if (last.LineIndex == modelModifier.LineCount - 1)
