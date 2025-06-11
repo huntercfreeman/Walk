@@ -855,10 +855,9 @@ public sealed class TextEditorViewModelApi
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel)
     {
-        if (viewModel.VirtualizationResult.EntryList.Any())
+        if (viewModel.VirtualizationResultCount > 0)
         {
-            var firstEntry = viewModel.VirtualizationResult.EntryList.First();
-
+            var firstEntry = viewModel.VirtualizationResult.EntryList[0];
             viewModel.LineIndex = firstEntry.LineIndex;
             viewModel.ColumnIndex = 0;
         }
@@ -880,9 +879,9 @@ public sealed class TextEditorViewModelApi
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
-        if ((viewModel.VirtualizationResult.EntryList.Any()))
+        if (viewModel.VirtualizationResultCount > 0)
         {
-            var lastEntry = viewModel.VirtualizationResult.EntryList.Last();
+            var lastEntry = viewModel.VirtualizationResult.EntryList[viewModel.VirtualizationResultCount - 1];
             var lastEntriesLineLength = modelModifier.GetLineLength(lastEntry.LineIndex);
 
             viewModel.LineIndex = lastEntry.LineIndex;

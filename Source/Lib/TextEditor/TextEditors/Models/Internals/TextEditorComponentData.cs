@@ -656,7 +656,7 @@ public sealed class TextEditorComponentData
 					
 		if (RenderBatch.ViewModel.VirtualizationResultCount > 0)
 		{
-			lastIndex = RenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
+			lastIndex = RenderBatch.ViewModel.VirtualizationResult.EntryList[RenderBatch.ViewModel.VirtualizationResultCount - 1].LineIndex;
 		}
 		else
 		{
@@ -764,7 +764,7 @@ public sealed class TextEditorComponentData
 			        {
 			        	if (RenderBatch.ViewModel.VirtualizationResultCount > 0)
 			        	{
-			        		var firstEntry = RenderBatch.ViewModel.VirtualizationResult.EntryList.First();
+			        		var firstEntry = RenderBatch.ViewModel.VirtualizationResult.EntryList[0];
 			        		topInPixelsInvariantCulture = Css_LineIndexCache_EntryMap[firstEntry.LineIndex].TopCssValue;
 			        	}
 			        	else
@@ -1110,10 +1110,10 @@ public sealed class TextEditorComponentData
     	OutTextSpansList.Clear();
     
         // Virtualize the text spans
-        if (RenderBatch.ViewModel.VirtualizationResult.EntryList.Any())
+        if (RenderBatch.ViewModel.VirtualizationResultCount > 0)
         {
-            var lowerLineIndexInclusive = RenderBatch.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
-            var upperLineIndexInclusive = RenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
+            var lowerLineIndexInclusive = RenderBatch.ViewModel.VirtualizationResult.EntryList[0].LineIndex;
+            var upperLineIndexInclusive = RenderBatch.ViewModel.VirtualizationResult.EntryList[RenderBatch.ViewModel.VirtualizationResultCount - 1].LineIndex;
 
             var lowerLine = RenderBatch.Model.GetLineInformation(lowerLineIndexInclusive);
             var upperLine = RenderBatch.Model.GetLineInformation(upperLineIndexInclusive);
@@ -1327,8 +1327,8 @@ public sealed class TextEditorComponentData
                 RenderBatch.Model,
                 SelectionBoundsInPositionIndexUnits);
 	
-	        var virtualLowerBoundInclusiveLineIndex = RenderBatch.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
-	        var virtualUpperBoundExclusiveLineIndex = 1 + RenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
+	        var virtualLowerBoundInclusiveLineIndex = RenderBatch.ViewModel.VirtualizationResult.EntryList[0].LineIndex;
+	        var virtualUpperBoundExclusiveLineIndex = 1 + RenderBatch.ViewModel.VirtualizationResult.EntryList[RenderBatch.ViewModel.VirtualizationResultCount - 1].LineIndex;
 	
 	        UseLowerBoundInclusiveLineIndex = virtualLowerBoundInclusiveLineIndex >= selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex
 	            ? virtualLowerBoundInclusiveLineIndex

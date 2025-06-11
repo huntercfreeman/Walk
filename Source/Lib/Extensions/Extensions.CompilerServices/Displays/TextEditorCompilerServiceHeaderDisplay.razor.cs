@@ -184,10 +184,10 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				TextEditorDevToolsPresentationFacts.EmptyPresentationModel,
 				diagnosticTextSpans);
 			
-			if (viewModelModifier.VirtualizationResult.EntryList.Any())
+			if (viewModelModifier.VirtualizationResultCount > 0)
 			{
-				var lowerLineIndexInclusive = viewModelModifier.VirtualizationResult.EntryList.First().LineIndex;
-	            var upperLineIndexInclusive = viewModelModifier.VirtualizationResult.EntryList.Last().LineIndex;
+				var lowerLineIndexInclusive = viewModelModifier.VirtualizationResult.EntryList[0].LineIndex;
+	            var upperLineIndexInclusive = viewModelModifier.VirtualizationResult.EntryList[viewModelModifier.VirtualizationResultCount - 1].LineIndex;
 	            
 	            var lowerLine = modelModifier.GetLineInformation(lowerLineIndexInclusive);
 	            var upperLine = modelModifier.GetLineInformation(upperLineIndexInclusive);

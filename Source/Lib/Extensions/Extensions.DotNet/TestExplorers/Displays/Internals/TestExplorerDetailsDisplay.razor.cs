@@ -142,7 +142,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 				
 				if (viewModelModifier.VirtualizationResultCount > 0)
 				{
-					var last = viewModelModifier.VirtualizationResult.EntryList.Last();
+					var last = viewModelModifier.VirtualizationResult.EntryList[viewModelModifier.VirtualizationResultCount - 1];
 					if (last.LineIndex == modelModifier.LineCount - 1)
 						showingFinalLine = true;
 				}
