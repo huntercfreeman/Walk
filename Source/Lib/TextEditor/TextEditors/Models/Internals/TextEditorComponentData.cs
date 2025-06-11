@@ -524,7 +524,7 @@ public sealed class TextEditorComponentData
     	var handledCursor = false;
     	var isHandlingCursor = false;
     	
-    	for (int i = 0; i < RenderBatch.ViewModel.VirtualizationResult.EntryList.Count; i++)
+    	for (int i = 0; i < RenderBatch.ViewModel.VirtualizationResultCount; i++)
     	{
     		int lineIndex = RenderBatch.ViewModel.VirtualizationResult.EntryList[i].LineIndex;
     		
@@ -654,7 +654,7 @@ public sealed class TextEditorComponentData
     {
     	int lastIndex;
 					
-		if (RenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
+		if (RenderBatch.ViewModel.VirtualizationResultCount > 0)
 		{
 			lastIndex = RenderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
 		}
@@ -762,7 +762,7 @@ public sealed class TextEditorComponentData
 			        }
 			        else
 			        {
-			        	if (RenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
+			        	if (RenderBatch.ViewModel.VirtualizationResultCount > 0)
 			        	{
 			        		var firstEntry = RenderBatch.ViewModel.VirtualizationResult.EntryList.First();
 			        		topInPixelsInvariantCulture = Css_LineIndexCache_EntryMap[firstEntry.LineIndex].TopCssValue;
@@ -1318,7 +1318,7 @@ public sealed class TextEditorComponentData
     	SelectionStyleList.Clear();
     
     	if (TextEditorSelectionHelper.HasSelectedText(RenderBatch.ViewModel) &&
-	         RenderBatch.ViewModel.VirtualizationResult.EntryList.Count > 0)
+	         RenderBatch.ViewModel.VirtualizationResultCount > 0)
 	    {
 	        SelectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
 	            RenderBatch.ViewModel);

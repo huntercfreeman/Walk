@@ -111,6 +111,8 @@ public sealed class TextEditorViewModel : IDisposable
 	    CharAndLineMeasurements = other.CharAndLineMeasurements;
 		
 		ShouldCalculateVirtualizationResult = other.ShouldCalculateVirtualizationResult;
+		
+		VirtualizationResultCount = other.VirtualizationResultCount;
 	    
 	    /*
 	    // Don't copy these properties
@@ -139,6 +141,8 @@ public sealed class TextEditorViewModel : IDisposable
     public int MarginScrollHeight { get; set; }
     
     public int GutterWidthInPixels { get; set; }
+    
+    public int VirtualizationResultCount { get; set; }
 	
 	/// <summary>
 	/// TODO: Rename 'CharAndLineMeasurements' to 'CharAndLineDimensions'...

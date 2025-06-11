@@ -43,7 +43,7 @@ namespace Walk.TextEditor.RazorLib.Virtualizations.Models;
 public struct VirtualizationGrid
 {
 	public static VirtualizationGrid Empty { get; } = new(
-        new(),
+        Array.Empty<VirtualizationLine>(),
         new List<VirtualizationSpan>(),
         totalWidth: 0,
         totalHeight: 0,
@@ -54,7 +54,7 @@ public struct VirtualizationGrid
 
 	/// <summary>Measurements are in pixels</summary>
     public VirtualizationGrid(
-        List<VirtualizationLine> entries,
+        VirtualizationLine[] entries,
         List<VirtualizationSpan> virtualizationSpanList,
         int totalWidth,
         int totalHeight,
@@ -73,7 +73,13 @@ public struct VirtualizationGrid
         VirtualTop = top;
     }
 
-    public List<VirtualizationLine> EntryList { get; init; }
+    /// <summary>
+    /// Do NOT use EntryList.Length.
+    /// Use TextEditorViewModel.VirtualizationResultCount,
+    /// because this array is allocated at a predicted size
+    /// but it is possible that the count does not reach capacity.
+    /// </summary>
+    public VirtualizationLine[] EntryList { get; init; }
     public List<VirtualizationSpan> VirtualizationSpanList { get; init; }
     
     /// <summary>

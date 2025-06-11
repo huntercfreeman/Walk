@@ -212,7 +212,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 				
 				var showingFinalLine = false;
 
-			    if (viewModelModifier.VirtualizationResult.EntryList.Count > 0)
+			    if (viewModelModifier.VirtualizationResultCount > 0)
 			    {
 			        var last = viewModelModifier.VirtualizationResult.EntryList.Last();
 			        if (last.LineIndex == modelModifier.LineCount - 1)
