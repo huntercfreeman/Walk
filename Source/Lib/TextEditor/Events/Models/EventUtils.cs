@@ -250,7 +250,8 @@ public static class EventUtils
 	public static async Task<(int LineIndex, int ColumnIndex, double PositionX, double PositionY)> CalculateLineAndColumnIndex(
 		TextEditorModel modelModifier,
 		TextEditorViewModel viewModel,
-		MouseEventArgsClass mouseEventArgsClass,
+		double clientX,
+		double clientY,
 		TextEditorComponentData componentData,
 		TextEditorEditContext editContext)
     {
@@ -261,8 +262,8 @@ public static class EventUtils
             
         var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
     
-        var positionX = mouseEventArgsClass.ClientX - viewModel.TextEditorDimensions.BoundingClientRectLeft;
-        var positionY = mouseEventArgsClass.ClientY - viewModel.TextEditorDimensions.BoundingClientRectTop;
+        var positionX = clientX - viewModel.TextEditorDimensions.BoundingClientRectLeft;
+        var positionY = clientY - viewModel.TextEditorDimensions.BoundingClientRectTop;
     
         // Scroll position offset
         positionX += viewModel.ScrollLeft;

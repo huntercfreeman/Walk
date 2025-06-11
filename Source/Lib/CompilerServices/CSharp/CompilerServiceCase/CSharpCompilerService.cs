@@ -680,7 +680,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		TextEditorEditContext editContext,
 		TextEditorModel modelModifier,
 		TextEditorViewModel viewModelModifier,
-		MouseEventArgsClass mouseEventArgsClass,
+		double clientX,
+		double clientY,
+		bool shiftKey,
+        bool ctrlKey,
+        bool altKey,
 		TextEditorComponentData componentData,
 		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
@@ -689,14 +693,15 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var lineAndColumnIndex = await EventUtils.CalculateLineAndColumnIndex(
 				modelModifier,
 				viewModelModifier,
-				mouseEventArgsClass,
+				clientX,
+				clientY,
 				componentData,
 				editContext)
 			.ConfigureAwait(false);
 	
 		var relativeCoordinatesOnClick = new RelativeCoordinates(
-		    mouseEventArgsClass.ClientX - viewModelModifier.TextEditorDimensions.BoundingClientRectLeft,
-		    mouseEventArgsClass.ClientY - viewModelModifier.TextEditorDimensions.BoundingClientRectTop,
+		    clientX - viewModelModifier.TextEditorDimensions.BoundingClientRectLeft,
+		    clientY - viewModelModifier.TextEditorDimensions.BoundingClientRectTop,
 		    viewModelModifier.ScrollLeft,
 		    viewModelModifier.ScrollTop);
 

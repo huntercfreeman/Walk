@@ -6,3 +6,5 @@ public class WheelEventArgsClass
 	public double DeltaY { get; set; }
 	public bool ShiftKey { get; set; }
 }
+
+

@@ -29,5 +29,10 @@ public interface ITextEditorKeymap
 	public ValueTask HandleEvent(
     	TextEditorComponentData componentData,
 	    Key<TextEditorViewModel> viewModelKey,
-	    KeyboardEventArgsClass keyboardEventArgsClass);
+	    string key,
+        string code,
+        bool ctrlKey,
+        bool shiftKey,
+        bool altKey,
+        bool metaKey);
 }

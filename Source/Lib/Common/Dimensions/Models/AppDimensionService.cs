@@ -17,7 +17,7 @@ public class AppDimensionService : IAppDimensionService
     public AppDimensionService()
     {
         _debounceExtraEvent = new(
-	    	TimeSpan.FromMilliseconds(500),
+	    	TimeSpan.FromMilliseconds(250),
 	    	CancellationToken.None,
 	    	(_, _) =>
 	    	{

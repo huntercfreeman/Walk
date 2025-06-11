@@ -73,7 +73,7 @@ public sealed class TextEditorService
 		AppDimensionService = appDimensionService;
 		
 		PostScrollAndRemeasure_DebounceExtraEvent = new(
-        	TimeSpan.FromMilliseconds(500),
+        	TimeSpan.FromMilliseconds(250),
         	CancellationToken.None,
         	(_, _) =>
         	{
@@ -602,7 +602,7 @@ public sealed class TextEditorService
 	{
 	    _ = Task.Run(async () =>
 		{
-			await Task.Delay(200).ConfigureAwait(false);
+			await Task.Delay(150).ConfigureAwait(false);
 			WorkerArbitrary.PostUnique(editContext =>
 			{
 				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);

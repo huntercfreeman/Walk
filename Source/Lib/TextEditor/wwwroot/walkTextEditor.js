@@ -82,8 +82,8 @@ window.walkTextEditor = {
                 dotNetHelper.invokeMethodAsync("ReceiveContentOnMouseDown", 
                 {
                     Buttons: event.buttons,
-                    ClientX: event.clientX,
-                    ClientY: event.clientY,
+                    X: event.clientX,
+                    Y: event.clientY,
                     ShiftKey: event.shiftKey,
                 });
             });
@@ -92,8 +92,8 @@ window.walkTextEditor = {
                 dotNetHelper.invokeMethodAsync("ReceiveContentOnMouseMove", 
                 {
                     Buttons: event.buttons,
-                    ClientX: event.clientX,
-                    ClientY: event.clientY,
+                    X: event.clientX,
+                    Y: event.clientY,
                     ShiftKey: event.shiftKey,
                 });
             });
@@ -102,8 +102,8 @@ window.walkTextEditor = {
                 dotNetHelper.invokeMethodAsync("ReceiveContentOnMouseOut", 
                 {
                     Buttons: event.buttons,
-                    ClientX: event.clientX,
-                    ClientY: event.clientY,
+                    X: event.clientX,
+                    Y: event.clientY,
                     ShiftKey: event.shiftKey,
                 });
             });
@@ -112,8 +112,8 @@ window.walkTextEditor = {
                 dotNetHelper.invokeMethodAsync("ReceiveOnDoubleClick",
                 {
                     Buttons: event.buttons,
-                    ClientX: event.clientX,
-                    ClientY: event.clientY,
+                    X: event.clientX,
+                    Y: event.clientY,
                     ShiftKey: event.shiftKey,
                 });
             });
@@ -121,8 +121,8 @@ window.walkTextEditor = {
             contentElement.addEventListener('wheel', (event) => {
                 dotNetHelper.invokeMethodAsync("ReceiveOnWheel",
                 {
-                    DeltaX: event.deltaX,
-                    DeltaY: event.deltaY,
+                    X: event.deltaX,
+                    Y: event.deltaY,
                     ShiftKey: event.shiftKey,
                 });
             });
@@ -167,8 +167,8 @@ window.walkTextEditor = {
                 dotNetHelper.invokeMethodAsync("HORIZONTAL_HandleOnMouseDownAsync", 
                 {
                     Buttons: event.buttons,
-                    ClientX: event.clientX,
-                    ClientY: event.clientY,
+                    X: event.clientX,
+                    Y: event.clientY,
                     ShiftKey: event.shiftKey,
                 });
                 event.stopPropagation();
@@ -198,8 +198,8 @@ window.walkTextEditor = {
                 dotNetHelper.invokeMethodAsync("VERTICAL_HandleOnMouseDownAsync", 
                 {
                     Buttons: event.buttons,
-                    ClientX: event.clientX,
-                    ClientY: event.clientY,
+                    X: event.clientX,
+                    Y: event.clientY,
                     ShiftKey: event.shiftKey,
                 });
                 event.stopPropagation();
