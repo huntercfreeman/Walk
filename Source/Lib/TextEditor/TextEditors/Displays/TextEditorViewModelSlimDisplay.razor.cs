@@ -97,7 +97,10 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	/// </summary>
 	private const int DISTANCE_TO_RESET_SCROLL_POSITION = 300;
 
-	private MouseEventArgsClass? _mouseDownEventArgsClass;
+	private TextEditorEventArgs _mouseDownEventArgsStruct = new TextEditorEventArgs
+    {
+        Buttons = -1
+    };
 
     private readonly Guid VERTICAL_scrollbarGuid = Guid.NewGuid();
 	private readonly Guid HORIZONTAL_scrollbarGuid = Guid.NewGuid();
@@ -119,12 +122,15 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     private string CONNECTOR_ScrollbarElementId;
 	
-	private Func<MouseEventArgsClass, MouseEventArgs, Task>? _dragEventHandler = null;
+	private Func<TextEditorEventArgs, MouseEventArgs, Task>? _dragEventHandler = null;
 	
 	public bool GlobalShowNewlines => TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowNewlines;
 	
     private readonly CancellationTokenSource _onMouseMoveCancellationTokenSource = new();
-    private MouseEventArgsClass? _onMouseMoveMouseEventArgsClass;
+    private TextEditorEventArgs _onMouseMoveMouseEventArgsStruct = new TextEditorEventArgs
+    {
+        Buttons = -1
+    };
     private Task _onMouseMoveTask = Task.CompletedTask;
 
 	public TextEditorComponentData ComponentData => _componentData;
@@ -406,13 +412,13 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     }
     
     [JSInvokable]
-    public void ReceiveOnKeyDown(KeyboardEventArgsClass keyboardEventArgsClass)
+    public void ReceiveOnKeyDown(TextEditorEventArgs eventArgs)
     {
     	TextEditorService.WorkerUi.Enqueue(
-        	new TextEditorWorkerUiArgs(
-	        	_componentData,
-	        	TextEditorViewModelKey,
-		        keyboardEventArgsClass));
+    	    eventArgs,
+    	    _componentData,
+        	TextEditorViewModelKey,
+	        TextEditorWorkUiKind.OnKeyDown);
 	}
 
     [JSInvokable]
@@ -440,45 +446,44 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     }
 
     [JSInvokable]
-    public void ReceiveOnDoubleClick(MouseEventArgsClass mouseEventArgsClass)
+    public void ReceiveOnDoubleClick(TextEditorEventArgs eventArgs)
     {
         TextEditorService.WorkerUi.Enqueue(
-        	new TextEditorWorkerUiArgs(
-	        	_componentData,
-	        	TextEditorViewModelKey,
-		        mouseEventArgsClass,
-		        TextEditorWorkUiKind.OnDoubleClick));
+    	    eventArgs,
+        	_componentData,
+        	TextEditorViewModelKey,
+	        TextEditorWorkUiKind.OnDoubleClick);
     }
 
     [JSInvokable]
-    public void ReceiveContentOnMouseDown(MouseEventArgsClass mouseEventArgsClass)
+    public void ReceiveContentOnMouseDown(TextEditorEventArgs eventArgs)
     {
-        // Console.WriteLine($"({mouseEventArgsStruct.ClientX}, {mouseEventArgsStruct.ClientY})");
-    
         _componentData.ThinksLeftMouseButtonIsDown = true;
-        _onMouseMoveMouseEventArgsClass = null;
+        _onMouseMoveMouseEventArgsStruct = new TextEditorEventArgs
+        {
+            Buttons = -1
+        };
 
         TextEditorService.WorkerUi.Enqueue(
-        	new TextEditorWorkerUiArgs(
-	        	_componentData,
-	        	TextEditorViewModelKey,
-		        mouseEventArgsClass,
-		        TextEditorWorkUiKind.OnMouseDown));
+            eventArgs,
+        	_componentData,
+        	TextEditorViewModelKey,
+	        TextEditorWorkUiKind.OnMouseDown);
     }
 
     [JSInvokable]
-    public void ReceiveContentOnMouseMove(MouseEventArgsClass mouseEventArgsClass)
+    public void ReceiveContentOnMouseMove(TextEditorEventArgs eventArgs)
 	{
 	    _userMouseIsInside = true;
 	
 	    // Buttons is a bit flag '& 1' gets if left mouse button is held
-	    if ((mouseEventArgsClass.Buttons & 1) == 0)
+	    if ((eventArgs.Buttons & 1) == 0)
 	        _componentData.ThinksLeftMouseButtonIsDown = false;
 	
 	    var localThinksLeftMouseButtonIsDown = _componentData.ThinksLeftMouseButtonIsDown;
 	
 	    // MouseStoppedMovingTask
-	    _onMouseMoveMouseEventArgsClass = mouseEventArgsClass;
+	    _onMouseMoveMouseEventArgsStruct = eventArgs;
             
         if (_onMouseMoveTask.IsCompleted)
         {
@@ -488,9 +493,9 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                	var mouseMoveMouseEventArgs = _onMouseMoveMouseEventArgsClass;
+                	var mouseMoveMouseEventArgs = _onMouseMoveMouseEventArgsStruct;
                 	
-                	if (!_userMouseIsInside || _componentData.ThinksLeftMouseButtonIsDown || mouseMoveMouseEventArgs is null)
+                	if (!_userMouseIsInside || _componentData.ThinksLeftMouseButtonIsDown || mouseMoveMouseEventArgs.Buttons == -1)
                 	{
                 		TextEditorService.WorkerArbitrary.PostUnique(editContext =>
 						{
@@ -508,7 +513,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                 	
                     await Task.Delay(400).ConfigureAwait(false);
                     
-                    if (mouseMoveMouseEventArgs == _onMouseMoveMouseEventArgsClass)
+                    if (mouseMoveMouseEventArgs.X == _onMouseMoveMouseEventArgsStruct.X && mouseMoveMouseEventArgs.Y == _onMouseMoveMouseEventArgsStruct.Y)
                     {
                         await _componentData.ContinueRenderingTooltipAsync().ConfigureAwait(false);
 
@@ -524,7 +529,11 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			                    editContext,
 			                    modelModifier,
 			                    viewModelModifier,
-			                    mouseMoveMouseEventArgs,
+			                    mouseMoveMouseEventArgs.X,
+                        		mouseMoveMouseEventArgs.Y,
+                        		mouseMoveMouseEventArgs.ShiftKey,
+                                mouseMoveMouseEventArgs.CtrlKey,
+                                mouseMoveMouseEventArgs.AltKey,
 			                    _componentData,
 			                    TextEditorComponentRenderers,
 			                    viewModelModifier.PersistentState.ResourceUri);
@@ -542,11 +551,10 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	    if (localThinksLeftMouseButtonIsDown)
 	    {
 	    	TextEditorService.WorkerUi.Enqueue(
-	        	new TextEditorWorkerUiArgs(
-		        	_componentData,
-		        	TextEditorViewModelKey,
-			        mouseEventArgsClass,
-		        	TextEditorWorkUiKind.OnMouseMove));
+	    	    eventArgs,
+	        	_componentData,
+	        	TextEditorViewModelKey,
+	        	TextEditorWorkUiKind.OnMouseMove);
 	    }
 	}
 
@@ -557,7 +565,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     }
     
     [JSInvokable]
-    public async Task HORIZONTAL_HandleOnMouseDownAsync(MouseEventArgsClass mouseEventArgsClass)
+    public async Task HORIZONTAL_HandleOnMouseDownAsync(TextEditorEventArgs eventArgs)
     {
     	var renderBatchLocal = ComponentData.RenderBatch;
     	if (!renderBatchLocal.IsValid)
@@ -577,10 +585,10 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
 		// Subscribe to the drag events
 		//
-		// NOTE: '_mouseDownEventArgs' being non-null is what indicates that the subscription is active.
+		// NOTE: '_mouseDownEventArgs' Buttons != -1 is what indicates that the subscription is active.
 		//       So be wary if one intends to move its assignment elsewhere.
 		{
-			_mouseDownEventArgsClass = mouseEventArgsClass;
+			_mouseDownEventArgsStruct = eventArgs;
 			_dragEventHandler = HORIZONTAL_DragEventHandlerScrollAsync;
 	
 			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, null);
@@ -588,7 +596,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     }
     
     [JSInvokable]
-    public async Task VERTICAL_HandleOnMouseDownAsync(MouseEventArgsClass mouseEventArgsClass)
+    public async Task VERTICAL_HandleOnMouseDownAsync(TextEditorEventArgs eventArgs)
     {
     	var renderBatchLocal = _componentData.RenderBatch;
     	if (!renderBatchLocal.IsValid)
@@ -611,7 +619,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 		// NOTE: '_mouseDownEventArgs' being non-null is what indicates that the subscription is active.
 		//       So be wary if one intends to move its assignment elsewhere.
 		{
-			_mouseDownEventArgsClass = mouseEventArgsClass;
+			_mouseDownEventArgsStruct = eventArgs;
 			_dragEventHandler = VERTICAL_DragEventHandlerScrollAsync;
 	
 			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, null);
@@ -619,13 +627,13 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     }
     
     [JSInvokable]
-    public void ReceiveOnWheel(WheelEventArgsClass wheelEventArgsClass)
+    public void ReceiveOnWheel(TextEditorEventArgs eventArgs)
     {
 	    TextEditorService.WorkerUi.Enqueue(
-        	new TextEditorWorkerUiArgs(
-	        	_componentData,
-	        	TextEditorViewModelKey,
-		        wheelEventArgsClass));
+	        eventArgs,
+        	_componentData,
+        	TextEditorViewModelKey,
+	        TextEditorWorkUiKind.OnWheel);
     }
 
     [JSInvokable]
@@ -699,11 +707,11 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             if (startTouchPoint is null)
                 return;
 
-            ReceiveContentOnMouseDown(new MouseEventArgsClass
+            ReceiveContentOnMouseDown(new TextEditorEventArgs
             {
                 Buttons = 1,
-                ClientX = startTouchPoint.ClientX,
-                ClientY = startTouchPoint.ClientY,
+                X = startTouchPoint.ClientX,
+                Y = startTouchPoint.ClientY,
             });
         }
     }
@@ -778,20 +786,23 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         {
             // NOTE: '_mouseDownEventArgs' being non-null is what indicates that the subscription is active.
 			//       So be wary if one intends to move its assignment elsewhere.
-            _mouseDownEventArgsClass = null;
+            _mouseDownEventArgsStruct = new TextEditorEventArgs
+            {
+                Buttons = -1
+            };
         }
         else
         {
-            var localMouseDownEventArgs = _mouseDownEventArgsClass;
+            var localMouseDownEventArgs = _mouseDownEventArgsStruct;
             var dragEventArgs = DragService.GetDragState().MouseEventArgs;
 			var localDragEventHandler = _dragEventHandler;
 
-            if (localMouseDownEventArgs is not null && dragEventArgs is not null)
+            if (localMouseDownEventArgs.Buttons != -1 && dragEventArgs is not null)
                 await localDragEventHandler.Invoke(localMouseDownEventArgs, dragEventArgs).ConfigureAwait(false);
         }
     }
 
-    private Task HORIZONTAL_DragEventHandlerScrollAsync(MouseEventArgsClass localMouseDownEventArgsClass, MouseEventArgs onDragMouseEventArgs)
+    private Task HORIZONTAL_DragEventHandlerScrollAsync(TextEditorEventArgs localMouseDownEventArgsStruct, MouseEventArgs onDragMouseEventArgs)
     {
     	var renderBatchLocal = _componentData.RenderBatch;
     	if (!renderBatchLocal.IsValid)
@@ -816,7 +827,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			}
 			else
 			{
-				var diffX = onDragMouseEventArgs.ClientX - localMouseDownEventArgsClass.ClientX;
+				var diffX = onDragMouseEventArgs.ClientX - localMouseDownEventArgsStruct.X;
 	
 	            var scrollbarWidthInPixels = textEditorDimensions.Width - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 	
@@ -832,20 +843,14 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 					scrollLeft = 0;
 			}
 
-			// Hack: I want all the events in a shared queue. All events other than scrolling events...
-			// ...can be stored in the same property as an 'object' type.
-			//
-			// Scrolling is a pain since it would mean copying around a double at all times
-			// that is only used for the scrolling events.
-			//
-			// Thus MouseEventArgs.ClientX will be used to store the scrollLeft.
-			onDragMouseEventArgs.ClientX = scrollLeft;
 			TextEditorService.WorkerUi.Enqueue(
-	        	new TextEditorWorkerUiArgs(
-		        	_componentData,
-		        	TextEditorViewModelKey,
-			        onDragMouseEventArgs,
-			        TextEditorWorkUiKind.OnScrollHorizontal));
+			    new TextEditorEventArgs
+			    {
+			        X = scrollLeft
+			    },
+	        	_componentData,
+	        	TextEditorViewModelKey,
+		        TextEditorWorkUiKind.OnScrollHorizontal);
         }
         else
         {
@@ -855,7 +860,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         return Task.CompletedTask;
     }
     
-    private Task VERTICAL_DragEventHandlerScrollAsync(MouseEventArgsClass localMouseDownEventArgsClass, MouseEventArgs onDragMouseEventArgs)
+    private Task VERTICAL_DragEventHandlerScrollAsync(TextEditorEventArgs localMouseDownEventArgsStruct, MouseEventArgs onDragMouseEventArgs)
     {
     	var renderBatchLocal = _componentData.RenderBatch;
     	if (!renderBatchLocal.IsValid)
@@ -880,7 +885,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			}
 			else
 			{
-	    		var diffY = onDragMouseEventArgs.ClientY - localMouseDownEventArgsClass.ClientY;
+	    		var diffY = onDragMouseEventArgs.ClientY - localMouseDownEventArgsStruct.Y;
 	
 	            var scrollbarHeightInPixels = textEditorDimensions.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 	
@@ -896,20 +901,14 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 					scrollTop = 0;
 			}
 
-			// Hack: I want all the events in a shared queue. All events other than scrolling events...
-			// ...can be stored in the same property as an 'object' type.
-			//
-			// Scrolling is a pain since it would mean copying around a double at all times
-			// that is only used for the scrolling events.
-			//
-			// Thus MouseEventArgs.ClientY will be used to store the scrollTop.
-			onDragMouseEventArgs.ClientY = scrollTop;
 			TextEditorService.WorkerUi.Enqueue(
-	        	new TextEditorWorkerUiArgs(
-		        	_componentData,
-		        	TextEditorViewModelKey,
-			        onDragMouseEventArgs,
-			        TextEditorWorkUiKind.OnScrollVertical));
+			    new TextEditorEventArgs
+			    {
+			        Y = scrollTop
+			    },
+	        	_componentData,
+	        	TextEditorViewModelKey,
+		        TextEditorWorkUiKind.OnScrollVertical);
         }
         else
         {

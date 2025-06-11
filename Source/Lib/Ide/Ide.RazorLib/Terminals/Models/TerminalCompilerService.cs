@@ -148,7 +148,11 @@ public sealed class TerminalCompilerService : ICompilerService
 		TextEditorEditContext editContext,
 		TextEditorModel modelModifier,
 		TextEditorViewModel viewModelModifier,
-		MouseEventArgsClass mouseEventArgsClass,
+		double clientX,
+		double clientY,
+		bool shiftKey,
+        bool ctrlKey,
+        bool altKey,
 		TextEditorComponentData componentData,
 		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)

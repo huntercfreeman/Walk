@@ -704,7 +704,11 @@ public class TextEditorCommandDefaultFunctions
             }
 
             editContext.TextEditorService.ViewModelApi.MoveCursorUnsafe(
-        		keymapArgs,
+        		keymapArgs.Key,
+                keymapArgs.Code,
+                keymapArgs.CtrlKey,
+                keymapArgs.ShiftKey,
+                keymapArgs.AltKey,
 		        editContext,
 		        modelModifier,
 		        viewModel);
@@ -959,11 +963,11 @@ public class TextEditorCommandDefaultFunctions
         		editContext,
         		modelModifier,
         		viewModel,
-				new MouseEventArgsClass
-	            {
-	                ClientX = elementPositionInPixels.Left,
-	                ClientY = elementPositionInPixels.Top
-	            },
+        		elementPositionInPixels.Left,
+        		elementPositionInPixels.Top,
+        		shiftKey: false,
+        		ctrlKey: false,
+        		altKey: false,
 				componentData,
 				textEditorComponentRenderers,
 				modelModifier.PersistentState.ResourceUri)
@@ -1251,7 +1255,11 @@ public class TextEditorCommandDefaultFunctions
 		TextEditorEditContext editContext,
 		TextEditorModel modelModifier,
 		TextEditorViewModel viewModel,
-		MouseEventArgsClass mouseEventArgsClass,
+		double clientX,
+		double clientY,
+		bool shiftKey,
+        bool ctrlKey,
+        bool altKey,
 		TextEditorComponentData componentData,
 		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
@@ -1260,7 +1268,11 @@ public class TextEditorCommandDefaultFunctions
 			editContext,
 			modelModifier,
 			viewModel,
-			mouseEventArgsClass,
+			clientX,
+    		clientY,
+    		shiftKey,
+            ctrlKey,
+            altKey,
 			componentData,
 			textEditorComponentRenderers,
 	        resourceUri);

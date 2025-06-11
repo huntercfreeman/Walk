@@ -311,13 +311,21 @@ public sealed class TextEditorViewModelApi
     }
 
     public void MoveCursor(
-        KeymapArgs keymapArgs,
+        string? key,
+        string? code,
+        bool ctrlKey,
+        bool shiftKey,
+        bool altKey,
 		TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
         MoveCursorUnsafe(
-            keymapArgs,
+            key,
+            code,
+            ctrlKey,
+            shiftKey,
+            altKey,
 	        editContext,
 	        modelModifier,
 	        viewModel);
@@ -326,14 +334,18 @@ public sealed class TextEditorViewModelApi
     }
 
     public void MoveCursorUnsafe(
-        KeymapArgs keymapArgs,
+        string? key,
+        string? code,
+        bool ctrlKey,
+        bool shiftKey,
+        bool altKey,
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
         var shouldClearSelection = false;
 
-        if (keymapArgs.ShiftKey)
+        if (shiftKey)
         {
             if (viewModel.SelectionAnchorPositionIndex == -1 ||
                 viewModel.SelectionEndingPositionIndex == viewModel.SelectionAnchorPositionIndex)
@@ -352,11 +364,11 @@ public sealed class TextEditorViewModelApi
 
         int lengthOfLine = 0; // This variable is used in multiple switch cases.
 
-        switch (keymapArgs.Key)
+        switch (key)
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
                 if (TextEditorSelectionHelper.HasSelectedText(viewModel) &&
-                    !keymapArgs.ShiftKey)
+                    !shiftKey)
                 {
                     var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(viewModel);
 
@@ -387,7 +399,7 @@ public sealed class TextEditorViewModelApi
                     }
                     else
                     {
-                        if (keymapArgs.CtrlKey)
+                        if (ctrlKey)
                         {
                         	var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
                                 viewModel.LineIndex,
@@ -400,7 +412,7 @@ public sealed class TextEditorViewModelApi
                             }
                             else
                             {
-                            	if (!keymapArgs.AltKey) // Move by character kind
+                            	if (!altKey) // Move by character kind
                             	{
                             		viewModel.SetColumnIndexAndPreferred(columnIndexOfCharacterWithDifferingKind);
                             	}
@@ -482,7 +494,7 @@ public sealed class TextEditorViewModelApi
             	{
             		viewModel.PersistentState.VirtualAssociativityKind = VirtualAssociativityKind.Right;
             	}
-                else if (TextEditorSelectionHelper.HasSelectedText(viewModel) && !keymapArgs.ShiftKey)
+                else if (TextEditorSelectionHelper.HasSelectedText(viewModel) && !shiftKey)
                 {
                     var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(viewModel);
 
@@ -517,7 +529,7 @@ public sealed class TextEditorViewModelApi
                     }
                     else if (viewModel.ColumnIndex != lengthOfLine)
                     {
-                        if (keymapArgs.CtrlKey)
+                        if (ctrlKey)
                         {
                         	var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
                                 viewModel.LineIndex,
@@ -530,7 +542,7 @@ public sealed class TextEditorViewModelApi
                             }
                             else
                             {
-                            	if (!keymapArgs.AltKey) // Move by character kind
+                            	if (!altKey) // Move by character kind
                             	{
                             		viewModel.SetColumnIndexAndPreferred(
                                     	columnIndexOfCharacterWithDifferingKind);
@@ -585,7 +597,7 @@ public sealed class TextEditorViewModelApi
 
                 break;
             case KeyboardKeyFacts.MovementKeys.HOME:
-                if (keymapArgs.CtrlKey)
+                if (ctrlKey)
                 {
                     viewModel.LineIndex = 0;
                     viewModel.SetColumnIndexAndPreferred(0);
@@ -628,7 +640,7 @@ public sealed class TextEditorViewModelApi
 
                 break;
             case KeyboardKeyFacts.MovementKeys.END:
-                if (keymapArgs.CtrlKey)
+                if (ctrlKey)
                     viewModel.LineIndex = modelModifier.LineCount - 1;
 
                 lengthOfLine = modelModifier.GetLineLength(viewModel.LineIndex);
@@ -640,7 +652,7 @@ public sealed class TextEditorViewModelApi
         
         if (viewModel.PersistentState.HiddenLineIndexHashSet.Contains(viewModel.LineIndex))
         {
-        	switch (keymapArgs.Key)
+        	switch (key)
         	{
         		case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
         		{
@@ -816,13 +828,13 @@ public sealed class TextEditorViewModelApi
 		if (inlineUi.InlineUiKind == InlineUiKind.None)
 			viewModel.PersistentState.VirtualAssociativityKind = VirtualAssociativityKind.None;
 
-        if (keymapArgs.ShiftKey)
+        if (shiftKey)
         {
             viewModel.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(
                 viewModel.LineIndex,
                 viewModel.ColumnIndex);
         }
-        else if (!keymapArgs.ShiftKey && shouldClearSelection)
+        else if (!shiftKey && shouldClearSelection)
         {
             // The active selection is needed, and cannot be touched until the end.
             viewModel.SelectionAnchorPositionIndex = -1;

@@ -91,7 +91,11 @@ public class CompilerServiceDoNothing : ICompilerService
 		TextEditorEditContext editContext,
 		TextEditorModel modelModifier,
 		TextEditorViewModel viewModel,
-		MouseEventArgsClass mouseEventArgsClass,
+		double clientX,
+		double clientY,
+		bool shiftKey,
+        bool ctrlKey,
+        bool altKey,
 		TextEditorComponentData componentData,
 		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
