@@ -135,6 +135,11 @@
     	}
     	
     	<div class="di_te_text-section">
+    	
+    	    @{
+    	        var entireSpan = System.Runtime.InteropServices.CollectionsMarshal.AsSpan(_componentData.RenderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList);
+    	    }
+    	
 	    	@for (int virtualizationResultIndex = 0;
 	    		  virtualizationResultIndex < _componentData.RenderBatch.ViewModel.VirtualizationResultCount;
 	    		  virtualizationResultIndex++)
@@ -147,10 +152,15 @@
 					*@
 					@if (_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].VirtualizationSpan_EndExclusiveIndex != 0)
 					{
-						for (int i = _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].VirtualizationSpan_StartInclusiveIndex; i < _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].VirtualizationSpan_EndExclusiveIndex; i++)
+					    var smallSpan = entireSpan.Slice(
+					        _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].VirtualizationSpan_StartInclusiveIndex,
+					        _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].VirtualizationSpan_EndExclusiveIndex -
+					            _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].VirtualizationSpan_StartInclusiveIndex);
+					
+						foreach (var virtualizationSpan in smallSpan)
 						{
-							<span class="@_componentData.RenderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList[i].CssClass">
-					            @(_componentData.RenderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList[i].MarkupStringText)
+							<span class="@virtualizationSpan.CssClass">
+					            @(virtualizationSpan.MarkupStringText)
 					        </span>
 					    }
 					}
