@@ -1089,6 +1089,8 @@ public sealed class TextEditorViewModelApi
 					
 				int lineOffset = -1;
 				
+				var entireSpan = System.Runtime.InteropServices.CollectionsMarshal.AsSpan(componentData.Virtualized_LineIndexCache_SpanList);
+				
 				while (true)
 				{
 					lineOffset++;
@@ -1230,7 +1232,8 @@ public sealed class TextEditorViewModelApi
 							linesTaken - 1,
 							tabKeyOutput,
 							spaceKeyOutput,
-							useAll);
+							useAll,
+							ref entireSpan);
 					}
 					else
 					{
@@ -1278,7 +1281,8 @@ public sealed class TextEditorViewModelApi
 							linesTaken - 1,
 							tabKeyOutput,
 							spaceKeyOutput,
-							useAll);
+							useAll,
+							ref entireSpan);
 					}
 				}
 			}
@@ -1378,7 +1382,8 @@ public sealed class TextEditorViewModelApi
     	int entryIndex,
     	string tabKeyOutput,
 		string spaceKeyOutput,
-		bool useAll)
+		bool useAll,
+		ref Span<VirtualizationSpan> entireSpan)
     {
     	var virtualizationEntry = viewModel.VirtualizationResult.EntryList[entryIndex];
     	
@@ -1418,9 +1423,13 @@ public sealed class TextEditorViewModelApi
 			{
 				var previous = componentData.Virtualized_LineIndexCache_LineMap[virtualizationEntry.LineIndex];
 				
-				for (int i = previous.VirtualizationSpan_StartInclusiveIndex; i < previous.VirtualizationSpan_EndExclusiveIndex; i++)
+				var smallSpan = entireSpan.Slice(
+				    previous.VirtualizationSpan_StartInclusiveIndex,
+				    previous.VirtualizationSpan_EndExclusiveIndex - previous.VirtualizationSpan_StartInclusiveIndex);
+				
+				foreach (var virtualizedSpan in smallSpan)
 				{
-					viewModel.VirtualizationResult.VirtualizationSpanList.Add(componentData.Virtualized_LineIndexCache_SpanList[i]);
+					viewModel.VirtualizationResult.VirtualizationSpanList.Add(virtualizedSpan);
 				}
 				
 				// WARNING CODE DUPLICATION (this also exists at the bottom of this for loop).
