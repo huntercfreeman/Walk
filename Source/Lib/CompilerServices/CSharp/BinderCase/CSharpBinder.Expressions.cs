@@ -2398,6 +2398,28 @@ public partial class CSharpBinder
 		}
 		else
 		{
+		    if (expressionPrimary.SyntaxKind == SyntaxKind.NamespaceClauseNode)
+		    {
+		        var firstNamespaceClauseNode = (NamespaceClauseNode)expressionPrimary;
+		        
+		        if (NamespacePrefixTree.__Root.Children.TryGetValue(
+            		    firstNamespaceClauseNode.IdentifierToken.TextSpan.Text,
+            		    out var firstNamespacePrefixNode))
+		        {
+		            if (firstNamespacePrefixNode.Children.TryGetValue(
+                		    memberIdentifierToken.TextSpan.Text,
+                		    out var secondNamespacePrefixNode))
+		            {
+		                compilationUnit.__SymbolList.Add(new Symbol(
+            	        	SyntaxKind.NamespaceSymbol,
+            	        	parserModel.GetNextSymbolId(),
+            	        	memberIdentifierToken.TextSpan));
+		                return new NamespaceClauseNode(
+		                    memberIdentifierToken);
+		            }
+		        }
+		    }
+		
 			var variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(
 	            memberIdentifierToken,
 	            variableDeclarationNode: null);
