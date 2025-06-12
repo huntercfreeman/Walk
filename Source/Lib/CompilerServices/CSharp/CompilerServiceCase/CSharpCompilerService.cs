@@ -418,12 +418,23 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     		    foundSymbol.TextSpan.Text, // This is the same value as the definition's TextSpan.
                     		    out var namespacePrefixNode))
                 		{
-                		    foreach (var kvp in namespacePrefixNode.Children)
+                		    foreach (var kvp in namespacePrefixNode.Children.Take(5))
                 		    {
         						autocompleteEntryList.Add(new AutocompleteEntry(
     								kvp.Key,
     				                AutocompleteEntryKind.Namespace,
     				                () => MemberAutocomplete(kvp.Key, renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+                		    }
+                		    
+                		    if (__CSharpBinder.NamespaceGroupMap.TryGetValue(foundSymbol.TextSpan.Text, out var namespaceGroup))
+                		    {
+                		        foreach (var typeDefinitionNode in namespaceGroup.GetTopLevelTypeDefinitionNodes().Take(5))
+                		        {
+	        						autocompleteEntryList.Add(new AutocompleteEntry(
+										typeDefinitionNode.TypeIdentifierToken.TextSpan.Text,
+						                AutocompleteEntryKind.Type,
+						                () => MemberAutocomplete(typeDefinitionNode.TypeIdentifierToken.TextSpan.Text, renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+                		        }
                 		    }
                 		    
                 		    return new MenuRecord(
