@@ -150,12 +150,6 @@ public partial class CSharpBinder
         ref CSharpParserModel parserModel)
     {
         var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.Text;
-        
-        compilationUnit.__SymbolList.Add(
-        	new Symbol(
-        		SyntaxKind.NamespaceSymbol,
-        		parserModel.GetNextSymbolId(),
-        		namespaceStatementNode.IdentifierToken.TextSpan));
 
         if (_namespaceGroupMap.TryGetValue(namespaceString, out var inNamespaceGroupNode))
         {

@@ -37,7 +37,21 @@ public static class ParseOthers
 			            EndExclusiveIndex = matchedToken.TextSpan.EndExclusiveIndex
 			        };
                 }
-
+                
+                // NamespaceStatements will add the final symbol themselves.
+                
+				textSpan.Text = parserModel.Binder.TextEditorService.EditContext_GetText(
+					compilationUnit.SourceText.AsSpan(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex));
+                
+                compilationUnit.__SymbolList.Add(
+                	new Symbol(
+                		SyntaxKind.NamespaceSymbol,
+                		parserModel.GetNextSymbolId(),
+                		matchedToken.TextSpan with
+                		{
+                		    Text = textSpan.Text
+                		}));
+                
                 if (isNamespaceStatement)
                 {
                     // !StatementDelimiterToken because presumably the final namespace is already being handled.
@@ -47,12 +61,6 @@ public static class ParseOthers
     		        // 
     		        if (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
     		        {
-    		        	if (textSpan.StartInclusiveIndex < compilationUnit.SourceText.Length && textSpan.EndExclusiveIndex <= compilationUnit.SourceText.Length)
-    					{
-    						textSpan.Text = parserModel.Binder.TextEditorService.EditContext_GetText(
-            					compilationUnit.SourceText.AsSpan(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex));
-    					}
-    		        	
     		        	parserModel.Binder.AddNamespaceToCurrentScope(textSpan.Text, compilationUnit, ref parserModel);
     		        }
 		        }
