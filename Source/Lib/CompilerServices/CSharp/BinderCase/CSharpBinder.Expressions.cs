@@ -2424,19 +2424,54 @@ public partial class CSharpBinder
             				compilationUnit.SourceText.AsSpan(
             				    firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex,
             				    memberIdentifierToken.TextSpan.EndExclusiveIndex - firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex));
+		                
+		                memberIdentifierToken.TextSpan = memberIdentifierToken.TextSpan with
+        	        	{
+        	        	    Text = text
+        	        	};
+		                
 		                compilationUnit.__SymbolList.Add(new Symbol(
             	        	SyntaxKind.NamespaceSymbol,
             	        	parserModel.GetNextSymbolId(),
-            	        	memberIdentifierToken.TextSpan with
-            	        	{
-            	        	    Text = text
-            	        	}));
+            	        	memberIdentifierToken.TextSpan));
+
 		                return new NamespaceClauseNode(
 		                    memberIdentifierToken,
 		                    secondNamespacePrefixNode,
 		                    firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex);
 		            }
                 }
+                
+                if (NamespaceGroupMap.TryGetValue(firstNamespaceClauseNode.IdentifierToken.TextSpan.Text, out var namespaceGroup))
+    		    {
+    		        foreach (var typeDefinitionNode in namespaceGroup.GetTopLevelTypeDefinitionNodes())
+    		        {
+    		            if (typeDefinitionNode.TypeIdentifierToken.TextSpan.Text == memberIdentifierToken.TextSpan.Text)
+    		            {
+            				var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
+            		            memberIdentifierToken,
+            		            valueType: null,
+            		            genericParameterListing: default,
+            		            isKeywordType: false);
+            		        
+            		        var typeSymbol = new Symbol(
+                	        	SyntaxKind.TypeSymbol,
+                	        	parserModel.GetNextSymbolId(),
+                	        	typeClauseNode.TypeIdentifierToken.TextSpan with
+                		        {
+                		            DecorationByte = (byte)GenericDecorationKind.Type
+                		        });
+                	        compilationUnit.__SymbolList.Add(typeSymbol);
+            		        
+            		        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
+            		        	typeSymbol.SymbolId,
+            		        	(typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri, typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex));
+            		        
+            		    	expressionPrimary = typeClauseNode;
+            		    	return typeClauseNode;
+    		            }
+    		        }
+    		    }
 		    }
 		
 			var variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(

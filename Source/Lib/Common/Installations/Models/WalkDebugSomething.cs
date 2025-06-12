@@ -81,6 +81,8 @@ public static class WalkDebugSomething
 	public static int StringAllocation { get; set; }
 	public static int StringWalker_StringAllocation { get; set; }
 	
+	public static int NamespacePrefixNode { get; set; }
+	
 	public static string CreateText()
 	{
 		var builder = new StringBuilder();
@@ -225,6 +227,7 @@ public static class WalkDebugSomething
 		
 		builder.AppendLine($"{nameof(StringAllocation)}: {StringAllocation:N0}");
 		builder.AppendLine($"{nameof(StringWalker_StringAllocation)}: {StringWalker_StringAllocation:N0}");
+		builder.AppendLine($"{nameof(NamespacePrefixNode)}: {NamespacePrefixNode:N0}");
 		
 		builder.AppendLine();
 		
