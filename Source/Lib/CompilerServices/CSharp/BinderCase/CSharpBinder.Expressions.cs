@@ -717,8 +717,16 @@ public partial class CSharpBinder
 	        }
 		}
 		
+		if (parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
+    		    ambiguousIdentifierExpressionNode.Token.TextSpan.Text,
+    		    out var namespacePrefixNode))
 		{
-		    
+		    result = new NamespaceClauseNode(ambiguousIdentifierExpressionNode.Token);
+            compilationUnit.__SymbolList.Add(new Symbol(
+	        	SyntaxKind.NamespaceSymbol,
+	        	parserModel.GetNextSymbolId(),
+	        	ambiguousIdentifierExpressionNode.Token.TextSpan));
+			goto finalize;
 		}
 		
 		if (allowFabricatedUndefinedNode)

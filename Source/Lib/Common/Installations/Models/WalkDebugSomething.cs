@@ -49,6 +49,7 @@ public static class WalkDebugSomething
 	public static int LambdaExpressionNode { get; set; }
 	public static int LiteralExpressionNode { get; set; }
 	public static int LockStatementNode { get; set; }
+	public static int NamespaceClauseNode { get; set; }
 	public static int NamespaceStatementNode { get; set; }
 	public static int ObjectInitializationNode { get; set; }
 	public static int ObjectInitializationParameterEntryNode { get; set; }
@@ -128,6 +129,7 @@ public static class WalkDebugSomething
 			("LambdaExpressionNode", LambdaExpressionNode),
 			("LiteralExpressionNode", LiteralExpressionNode),
 			("LockStatementNode", LockStatementNode),
+			("NamespaceClauseNode", NamespaceClauseNode),
 			("NamespaceStatementNode", NamespaceStatementNode),
 			("ObjectInitializationNode", ObjectInitializationNode),
 			("ObjectInitializationParameterEntryNode", ObjectInitializationParameterEntryNode),
@@ -188,6 +190,7 @@ public static class WalkDebugSomething
 			LambdaExpressionNode +
 			LiteralExpressionNode +
 			LockStatementNode +
+			NamespaceClauseNode +
 			NamespaceStatementNode +
 			ObjectInitializationNode +
 			ObjectInitializationParameterEntryNode +

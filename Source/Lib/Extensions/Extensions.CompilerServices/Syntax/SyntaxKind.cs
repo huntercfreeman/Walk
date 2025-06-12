@@ -235,6 +235,7 @@ public enum SyntaxKind
 	TryStatementNode,
 	LockStatementNode,
 	ReturnStatementNode,
+	NamespaceClauseNode,
 	NamespaceStatementNode,
 	NamespaceGroupNode,
 	UsingStatementListingNode,
