@@ -1342,6 +1342,16 @@ public partial class CSharpBinder
 		        externalSyntaxKind = SyntaxKind.TypeDefinitionNode;
 		        break;
 	        }
+	        case SyntaxKind.NamespaceSymbol:
+	        {
+	            if (NamespacePrefixTree.__Root.Children.TryGetValue(
+            		    textSpan.Text,
+            		    out var namespacePrefixNode))
+        		{
+        		    return new NamespaceClauseNode(new SyntaxToken(SyntaxKind.IdentifierToken, textSpan));
+        		}
+        		break;
+	        }
         }
 
 		if (symbol is not null)

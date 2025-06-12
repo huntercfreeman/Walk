@@ -403,7 +403,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	        }
 	        
 	        if (foundMatch)
-	        {		        	
+	        {
 	        	var textEditorModel = _textEditorService.ModelApi.GetOrDefault(foundSymbol.TextSpan.ResourceUri);
 		    	var extendedCompilerService = (IExtendedCompilerService)textEditorModel.PersistentState.CompilerService;
 		    	var compilerServiceResource = extendedCompilerService.GetResource(textEditorModel.PersistentState.ResourceUri);
@@ -412,6 +412,38 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		    	
 		    	if (definitionNode is not null)
 		    	{
+		    	    if (definitionNode.SyntaxKind == SyntaxKind.NamespaceClauseNode)
+		    	    {
+		    	        if (__CSharpBinder.NamespacePrefixTree.__Root.Children.TryGetValue(
+                    		    foundSymbol.TextSpan.Text, // This is the same value as the definition's TextSpan.
+                    		    out var namespacePrefixNode))
+                		{
+                		    foreach (var kvp in namespacePrefixNode.Children)
+                		    {
+        						autocompleteEntryList.Add(new AutocompleteEntry(
+    								kvp.Key,
+    				                AutocompleteEntryKind.Namespace,
+    				                () => MemberAutocomplete(kvp.Key, renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+                		    }
+                		    
+                		    return new MenuRecord(
+                				autocompleteEntryList.Select(entry => new MenuOptionRecord(
+                					    entry.DisplayName,
+                					    MenuOptionKind.Other,
+                					    () => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask,
+                					    widgetParameterMap: new Dictionary<string, object?>
+                					    {
+                					        {
+                					            nameof(AutocompleteEntry),
+                					            entry
+                					        }
+                					    }))
+                					.ToList());
+                		}
+		    	        
+		    	        return null;
+		    	    }
+		    	
 		    		TypeReference typeReference = default;
 		    		
 					if (definitionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
