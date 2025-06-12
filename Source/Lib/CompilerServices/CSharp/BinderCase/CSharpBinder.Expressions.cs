@@ -2250,6 +2250,7 @@ public partial class CSharpBinder
 			}
 		
 			TypeReference typeReference = default;
+			TextEditorTextSpan explicitDefinitionTextSpan = default;
 		
 			if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
 			{
@@ -2263,7 +2264,13 @@ public partial class CSharpBinder
 			}
 			else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
 			{
-				typeReference = new TypeReference((TypeClauseNode)expressionPrimary);
+			    var typeClauseNode = (TypeClauseNode)expressionPrimary;
+			    explicitDefinitionTextSpan = typeClauseNode.ExplicitDefinitionTextSpan;
+				typeReference = new TypeReference(typeClauseNode);
+			}
+			else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+			{
+				typeReference = ((TypeDefinitionNode)expressionPrimary).ToTypeReference();
 			}
 				
 			if (typeReference == default)
@@ -2272,7 +2279,23 @@ public partial class CSharpBinder
 				continue;
 			}
 			
-			var maybeTypeDefinitionNode = GetDefinitionNode(compilationUnit, typeReference.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
+			ISyntaxNode? maybeTypeDefinitionNode;
+			
+			if (explicitDefinitionTextSpan.ConstructorWasInvoked)
+			{
+			    maybeTypeDefinitionNode = GetDefinitionNode(
+			        cSharpCompilationUnit: null,
+			        explicitDefinitionTextSpan,
+			        SyntaxKind.TypeClauseNode);
+			}
+			else
+			{
+			    maybeTypeDefinitionNode = GetDefinitionNode(
+			        compilationUnit,
+			        typeReference.TypeIdentifierToken.TextSpan,
+			        SyntaxKind.TypeClauseNode);
+			}
+			
 			if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
 			{
 				expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, compilationUnit, ref parserModel);
@@ -2466,8 +2489,11 @@ public partial class CSharpBinder
             		        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
             		        	typeSymbol.SymbolId,
             		        	(typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri, typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex));
-            		        
+            		     
+            		        typeClauseNode.ExplicitDefinitionTextSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
+            		           
             		    	expressionPrimary = typeClauseNode;
+            		    	
             		    	return typeClauseNode;
     		            }
     		        }
