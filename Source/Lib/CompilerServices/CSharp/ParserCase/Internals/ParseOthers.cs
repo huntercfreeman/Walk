@@ -52,17 +52,14 @@ public static class ParseOthers
                 		    Text = textSpan.Text
                 		}));
                 
-                if (isNamespaceStatement)
+                if (isNamespaceStatement && (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken))
                 {
                     // !StatementDelimiterToken because presumably the final namespace is already being handled.
     		        //
     		        // (I don't think the above statement is true... the final namespace gets handled only after the codeblock is parsed.
     		        //  so you should probably bring the other contributors of the namespace into scope immediately).
     		        // 
-    		        if (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
-    		        {
-    		        	parserModel.Binder.AddNamespaceToCurrentScope(textSpan.Text, compilationUnit, ref parserModel);
-    		        }
+		        	parserModel.Binder.AddNamespaceToCurrentScope(textSpan.Text, compilationUnit, ref parserModel);
 		        }
 
                 if (matchedToken.IsFabricated)
@@ -84,12 +81,6 @@ public static class ParseOthers
 
         if (count == 0)
             return default;
-
-		if (textSpan.StartInclusiveIndex < compilationUnit.SourceText.Length && textSpan.EndExclusiveIndex <= compilationUnit.SourceText.Length)
-		{
-			textSpan.Text = parserModel.Binder.TextEditorService.EditContext_GetText(
-				compilationUnit.SourceText.AsSpan(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex));
-		}
 
         return new SyntaxToken(SyntaxKind.IdentifierToken, textSpan);
     }

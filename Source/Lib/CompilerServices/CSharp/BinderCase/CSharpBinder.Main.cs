@@ -447,12 +447,6 @@ public partial class CSharpBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-        compilationUnit.__SymbolList.Add(
-        	new Symbol(
-        		SyntaxKind.NamespaceSymbol,
-        		parserModel.GetNextSymbolId(),
-        		namespaceIdentifierToken.TextSpan));
-        		
         AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan.Text, compilationUnit, ref parserModel);
     }
     
