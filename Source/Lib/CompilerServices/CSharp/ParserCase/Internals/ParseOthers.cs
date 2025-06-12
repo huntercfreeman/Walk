@@ -16,8 +16,6 @@ public static class ParseOthers
 	/// </summary>
 	public static SyntaxToken HandleNamespaceIdentifier(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel, bool isNamespaceStatement)
     {
-        NamespacePrefixNode? namespacePrefixNode = null;
-    
         TextEditorTextSpan textSpan = default;
         int count = 0;
 
@@ -42,9 +40,7 @@ public static class ParseOthers
 
                 if (isNamespaceStatement)
                 {
-                    namespacePrefixNode = parserModel.Binder.NamespacePrefixTree.AddNamespacePrefix(matchedToken.TextSpan.Text, namespacePrefixNode);
-                
-    		        // !StatementDelimiterToken because presumably the final namespace is already being handled.
+                    // !StatementDelimiterToken because presumably the final namespace is already being handled.
     		        //
     		        // (I don't think the above statement is true... the final namespace gets handled only after the codeblock is parsed.
     		        //  so you should probably bring the other contributors of the namespace into scope immediately).

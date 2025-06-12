@@ -166,6 +166,17 @@ public partial class CSharpBinder
             _namespaceGroupMap.Add(namespaceString, new NamespaceGroup(
                 namespaceString,
                 new List<NamespaceStatementNode> { namespaceStatementNode }));
+                
+            var fullNamespaceName = namespaceStatementNode.IdentifierToken.TextSpan.Text;
+            
+            var splitResult = fullNamespaceName.Split('.');
+            
+            NamespacePrefixNode? namespacePrefixNode = null;
+            
+            foreach (var namespacePrefix in splitResult)
+            {
+                namespacePrefixNode = parserModel.Binder.NamespacePrefixTree.AddNamespacePrefix(namespacePrefix, namespacePrefixNode);
+            }
         }
     }
 
