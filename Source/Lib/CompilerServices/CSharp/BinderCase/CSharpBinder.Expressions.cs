@@ -2401,23 +2401,42 @@ public partial class CSharpBinder
 		    if (expressionPrimary.SyntaxKind == SyntaxKind.NamespaceClauseNode)
 		    {
 		        var firstNamespaceClauseNode = (NamespaceClauseNode)expressionPrimary;
+		        NamespacePrefixNode? firstNamespacePrefixNode = firstNamespaceClauseNode.NamespacePrefixNode;
 		        
-		        if (NamespacePrefixTree.__Root.Children.TryGetValue(
-            		    firstNamespaceClauseNode.IdentifierToken.TextSpan.Text,
-            		    out var firstNamespacePrefixNode))
+		        if (firstNamespacePrefixNode is null)
 		        {
-		            if (firstNamespacePrefixNode.Children.TryGetValue(
+		            if(NamespacePrefixTree.__Root.Children.TryGetValue(
+            		    firstNamespaceClauseNode.IdentifierToken.TextSpan.Text,
+            		    out firstNamespacePrefixNode))
+        		    {
+        		        firstNamespaceClauseNode.NamespacePrefixNode = firstNamespacePrefixNode;
+        		        firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex = firstNamespaceClauseNode.IdentifierToken.TextSpan.StartInclusiveIndex;
+        		    }
+                }
+                
+                if (firstNamespacePrefixNode is not null)
+                {
+                    if (firstNamespacePrefixNode.Children.TryGetValue(
                 		    memberIdentifierToken.TextSpan.Text,
                 		    out var secondNamespacePrefixNode))
 		            {
+		                var text = parserModel.Binder.TextEditorService.EditContext_GetText(
+            				compilationUnit.SourceText.AsSpan(
+            				    firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex,
+            				    memberIdentifierToken.TextSpan.EndExclusiveIndex - firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex));
 		                compilationUnit.__SymbolList.Add(new Symbol(
             	        	SyntaxKind.NamespaceSymbol,
             	        	parserModel.GetNextSymbolId(),
-            	        	memberIdentifierToken.TextSpan));
+            	        	memberIdentifierToken.TextSpan with
+            	        	{
+            	        	    Text = text
+            	        	}));
 		                return new NamespaceClauseNode(
-		                    memberIdentifierToken);
+		                    memberIdentifierToken,
+		                    secondNamespacePrefixNode,
+		                    firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex);
 		            }
-		        }
+                }
 		    }
 		
 			var variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(
