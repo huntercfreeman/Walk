@@ -33,6 +33,8 @@ public partial class CSharpBinder
     public IReadOnlyDictionary<string, NamespaceGroup> NamespaceGroupMap => _namespaceGroupMap;
     public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions;
     
+    public NamespacePrefixTree NamespacePrefixTree { get; } = new();
+    
     public NamespaceStatementNode TopLevelNamespaceStatementNode => _topLevelNamespaceStatementNode;
     
     public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> CSharpParserModel_ParseChildScopeStack { get; } = new();

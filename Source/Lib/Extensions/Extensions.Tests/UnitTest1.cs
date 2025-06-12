@@ -2,6 +2,7 @@ using System.Text;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
+using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Walk.CompilerServices.CSharp.LexerCase;
@@ -37,48 +38,39 @@ public class UnitTest1
 			serviceProvider: null));
     	var resourceUri = new ResourceUri("/luthetusUnitTest1.cs");
     	
-    	// var content = @"$"""";";
-    	// "";
-    	
-    	// var content = @"$""aaa"";";
-    	// $"aaa";
-    	
-    	// var content = @"$""a{bbb}a"";";
-    	// $"a{bbb}a;"
-    	
-    	var content =
-    	""""
-    	$$"""{The point {s{{X * X}}s, s{{Y}}s} is s{{sMath.Sqrt(X * X + Y * Y):F3s}}s from the origin}"""
-    	"""";
+    	var content = 
+@"
+namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
+namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
+namespace Walk.Extensions.CompilerServices.Syntax;
+";
 	
-		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri, content);
+		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri, content, CompilationUnitKind.IndividualFile_AllData);
 		var lexerOutput = CSharpLexer.Lex(binder, resourceUri, content, shouldUseSharedStringWalker: true);
-		
-		Console.WriteLine("lexerOutput.SyntaxTokenList:");
-		foreach (var syntaxToken in lexerOutput.SyntaxTokenList)
-		{
-			Console.WriteLine($"\t{syntaxToken.SyntaxKind}");
-			Console.WriteLine($"\t\t{syntaxToken.TextSpan.StartInclusiveIndex}");
-			Console.WriteLine($"\t\t{syntaxToken.TextSpan.EndExclusiveIndex}");
-			Console.WriteLine($"\t\t{(GenericDecorationKind)syntaxToken.TextSpan.DecorationByte}");
-		}
-		
-		Console.WriteLine("lexerOutput.MiscTextSpanList:");
-		foreach (var textSpan in lexerOutput.MiscTextSpanList)
-		{
-			Console.WriteLine($"\t{textSpan.StartInclusiveIndex}");
-			Console.WriteLine($"\t{textSpan.EndExclusiveIndex}");
-			Console.WriteLine($"\t{(GenericDecorationKind)textSpan.DecorationByte}");
-		}
 		
 		cSharpCompilationUnit.TokenList = lexerOutput.SyntaxTokenList;
 		cSharpCompilationUnit.MiscTextSpanList = lexerOutput.MiscTextSpanList;
 		binder.StartCompilationUnit(resourceUri);
 		CSharpParser.Parse(cSharpCompilationUnit, binder, ref lexerOutput);
 		
-		WriteChildrenIndentedRecursive(cSharpCompilationUnit.RootCodeBlockNode);
-		
-		Console.WriteLine(((ICodeBlockOwner)cSharpCompilationUnit.RootCodeBlockNode).CodeBlock.ChildList.Count);
+		Console.WriteLine();
+		WriteNamespacePrefixTree(binder.NamespacePrefixTree);
+    }
+    
+    public void WriteNamespacePrefixTree(NamespacePrefixTree namespacePrefixTree)
+    {
+        WriteNamespacePrefixNode(namespacePrefixTree.__Root, depth: 0);
+    }
+    
+    public void WriteNamespacePrefixNode(NamespacePrefixNode namespacePrefixNode, int depth)
+    {
+        var indentation = new string(' ', depth);
+    
+        foreach (var kvp in namespacePrefixNode.Children)
+        {
+            Console.WriteLine($"{indentation} {kvp.Key} ({kvp.Value.Links})");
+            WriteNamespacePrefixNode(kvp.Value, depth + 1);
+        }
     }
     
     public void WriteChildrenIndented(ISyntaxNode node, string name = "node")

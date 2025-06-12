@@ -717,6 +717,10 @@ public partial class CSharpBinder
 	        }
 		}
 		
+		{
+		    
+		}
+		
 		if (allowFabricatedUndefinedNode)
 		{
 			// Bind an undefined-TypeClauseNode

@@ -16,6 +16,8 @@ public static class ParseOthers
 	/// </summary>
 	public static SyntaxToken HandleNamespaceIdentifier(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel, bool isNamespaceStatement)
     {
+        NamespacePrefixNode? namespacePrefixNode = null;
+    
         TextEditorTextSpan textSpan = default;
         int count = 0;
 
@@ -38,16 +40,25 @@ public static class ParseOthers
 			        };
                 }
 
-		        // !StatementDelimiterToken because presumably the final namespace is already being handled.
-		        if (isNamespaceStatement && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
-		        {
-		        	if (textSpan.StartInclusiveIndex < compilationUnit.SourceText.Length && textSpan.EndExclusiveIndex <= compilationUnit.SourceText.Length)
-					{
-						textSpan.Text = parserModel.Binder.TextEditorService.EditContext_GetText(
-        					compilationUnit.SourceText.AsSpan(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex));
-					}
-		        	
-		        	parserModel.Binder.AddNamespaceToCurrentScope(textSpan.Text, compilationUnit, ref parserModel);
+                if (isNamespaceStatement)
+                {
+                    namespacePrefixNode = parserModel.Binder.NamespacePrefixTree.AddNamespacePrefix(matchedToken.TextSpan.Text, namespacePrefixNode);
+                
+    		        // !StatementDelimiterToken because presumably the final namespace is already being handled.
+    		        //
+    		        // (I don't think the above statement is true... the final namespace gets handled only after the codeblock is parsed.
+    		        //  so you should probably bring the other contributors of the namespace into scope immediately).
+    		        // 
+    		        if (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
+    		        {
+    		        	if (textSpan.StartInclusiveIndex < compilationUnit.SourceText.Length && textSpan.EndExclusiveIndex <= compilationUnit.SourceText.Length)
+    					{
+    						textSpan.Text = parserModel.Binder.TextEditorService.EditContext_GetText(
+            					compilationUnit.SourceText.AsSpan(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex));
+    					}
+    		        	
+    		        	parserModel.Binder.AddNamespaceToCurrentScope(textSpan.Text, compilationUnit, ref parserModel);
+    		        }
 		        }
 
                 if (matchedToken.IsFabricated)
