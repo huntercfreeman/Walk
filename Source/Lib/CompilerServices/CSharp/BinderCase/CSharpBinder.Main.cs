@@ -1338,6 +1338,35 @@ public partial class CSharpBinder
         		{
         		    return new NamespaceClauseNode(new SyntaxToken(SyntaxKind.IdentifierToken, textSpan));
         		}
+                
+        		if (symbol is not null)
+        		{
+        		    var fullNamespaceName = symbol.Value.TextSpan.Text;
+                    var splitResult = fullNamespaceName.Split('.');
+                    
+                    int position = 0;
+                    
+                    namespacePrefixNode = NamespacePrefixTree.__Root;
+                    
+                    var success = true;
+                    
+                    while (position < splitResult.Length)
+                    {
+                        if (!namespacePrefixNode.Children.TryGetValue(splitResult[position++], out namespacePrefixNode))
+                        {
+                            success = false;
+                            break;
+                        }
+                    }
+                    
+                    if (success)
+                    {
+                        return new NamespaceClauseNode(
+                            new SyntaxToken(SyntaxKind.IdentifierToken, textSpan),
+                            namespacePrefixNode,
+                            startOfMemberAccessChainPositionIndex: textSpan.StartInclusiveIndex);
+                    }
+        		}
         		break;
 	        }
         }

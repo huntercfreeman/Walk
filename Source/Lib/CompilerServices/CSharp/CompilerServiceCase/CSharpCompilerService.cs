@@ -414,9 +414,22 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		    	{
 		    	    if (definitionNode.SyntaxKind == SyntaxKind.NamespaceClauseNode)
 		    	    {
-		    	        if (__CSharpBinder.NamespacePrefixTree.__Root.Children.TryGetValue(
+		    	        var namespaceClauseNode = (NamespaceClauseNode)definitionNode;
+		    	    
+		    	        NamespacePrefixNode? namespacePrefixNode;
+		    	        
+		    	        if (namespaceClauseNode.NamespacePrefixNode is not null)
+		    	        {
+		    	            namespacePrefixNode = namespaceClauseNode.NamespacePrefixNode;
+		    	        }
+		    	        else
+		    	        {
+		    	            _ = __CSharpBinder.NamespacePrefixTree.__Root.Children.TryGetValue(
                     		    foundSymbol.TextSpan.Text, // This is the same value as the definition's TextSpan.
-                    		    out var namespacePrefixNode))
+                    		    out namespacePrefixNode);
+		    	        }
+
+                        if (namespaceClauseNode is not null)
                 		{
                 		    foreach (var kvp in namespacePrefixNode.Children.Take(5))
                 		    {
