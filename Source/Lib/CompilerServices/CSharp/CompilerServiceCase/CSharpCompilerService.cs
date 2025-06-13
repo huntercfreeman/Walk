@@ -431,7 +431,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
                         if (namespaceClauseNode is not null)
                 		{
-                		    foreach (var kvp in namespacePrefixNode.Children.Take(5))
+                		    foreach (var kvp in namespacePrefixNode.Children.Where(kvp => kvp.Key.Contains(filteringWord)).Take(5))
                 		    {
         						autocompleteEntryList.Add(new AutocompleteEntry(
     								kvp.Key,
@@ -441,7 +441,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 		    
                 		    if (__CSharpBinder.NamespaceGroupMap.TryGetValue(foundSymbol.TextSpan.Text, out var namespaceGroup))
                 		    {
-                		        foreach (var typeDefinitionNode in namespaceGroup.GetTopLevelTypeDefinitionNodes().Take(5))
+                		        foreach (var typeDefinitionNode in namespaceGroup.GetTopLevelTypeDefinitionNodes().Where(x => x.TypeIdentifierToken.TextSpan.Text.Contains(filteringWord)).Take(5))
                 		        {
 	        						autocompleteEntryList.Add(new AutocompleteEntry(
 										typeDefinitionNode.TypeIdentifierToken.TextSpan.Text,
