@@ -33,6 +33,8 @@ public partial class CSharpBinder
     public IReadOnlyDictionary<string, NamespaceGroup> NamespaceGroupMap => _namespaceGroupMap;
     public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions;
     
+    public NamespacePrefixTree NamespacePrefixTree { get; } = new();
+    
     public NamespaceStatementNode TopLevelNamespaceStatementNode => _topLevelNamespaceStatementNode;
     
     public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> CSharpParserModel_ParseChildScopeStack { get; } = new();
@@ -148,12 +150,6 @@ public partial class CSharpBinder
         ref CSharpParserModel parserModel)
     {
         var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.Text;
-        
-        compilationUnit.__SymbolList.Add(
-        	new Symbol(
-        		SyntaxKind.NamespaceSymbol,
-        		parserModel.GetNextSymbolId(),
-        		namespaceStatementNode.IdentifierToken.TextSpan));
 
         if (_namespaceGroupMap.TryGetValue(namespaceString, out var inNamespaceGroupNode))
         {
@@ -164,6 +160,17 @@ public partial class CSharpBinder
             _namespaceGroupMap.Add(namespaceString, new NamespaceGroup(
                 namespaceString,
                 new List<NamespaceStatementNode> { namespaceStatementNode }));
+                
+            var fullNamespaceName = namespaceStatementNode.IdentifierToken.TextSpan.Text;
+            
+            var splitResult = fullNamespaceName.Split('.');
+            
+            NamespacePrefixNode? namespacePrefixNode = null;
+            
+            foreach (var namespacePrefix in splitResult)
+            {
+                namespacePrefixNode = parserModel.Binder.NamespacePrefixTree.AddNamespacePrefix(namespacePrefix, namespacePrefixNode);
+            }
         }
     }
 
@@ -440,12 +447,6 @@ public partial class CSharpBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-        compilationUnit.__SymbolList.Add(
-        	new Symbol(
-        		SyntaxKind.NamespaceSymbol,
-        		parserModel.GetNextSymbolId(),
-        		namespaceIdentifierToken.TextSpan));
-        		
         AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan.Text, compilationUnit, ref parserModel);
     }
     
@@ -1328,6 +1329,45 @@ public partial class CSharpBinder
 		        
 		        externalSyntaxKind = SyntaxKind.TypeDefinitionNode;
 		        break;
+	        }
+	        case SyntaxKind.NamespaceSymbol:
+	        {
+	            if (NamespacePrefixTree.__Root.Children.TryGetValue(
+            		    textSpan.Text,
+            		    out var namespacePrefixNode))
+        		{
+        		    return new NamespaceClauseNode(new SyntaxToken(SyntaxKind.IdentifierToken, textSpan));
+        		}
+                
+        		if (symbol is not null)
+        		{
+        		    var fullNamespaceName = symbol.Value.TextSpan.Text;
+                    var splitResult = fullNamespaceName.Split('.');
+                    
+                    int position = 0;
+                    
+                    namespacePrefixNode = NamespacePrefixTree.__Root;
+                    
+                    var success = true;
+                    
+                    while (position < splitResult.Length)
+                    {
+                        if (!namespacePrefixNode.Children.TryGetValue(splitResult[position++], out namespacePrefixNode))
+                        {
+                            success = false;
+                            break;
+                        }
+                    }
+                    
+                    if (success)
+                    {
+                        return new NamespaceClauseNode(
+                            new SyntaxToken(SyntaxKind.IdentifierToken, textSpan),
+                            namespacePrefixNode,
+                            startOfMemberAccessChainPositionIndex: textSpan.StartInclusiveIndex);
+                    }
+        		}
+        		break;
 	        }
         }
 

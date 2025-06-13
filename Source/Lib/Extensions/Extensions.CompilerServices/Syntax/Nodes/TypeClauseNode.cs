@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -81,6 +82,8 @@ public sealed class TypeClauseNode : IGenericParameterNode
 	public int ArrayRank { get; set; }
 	
 	public bool IsBeingUsed { get; set; } = false;
+	
+	public TextEditorTextSpan ExplicitDefinitionTextSpan { get; set; }
 
 	public bool IsFabricated
 	{

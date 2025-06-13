@@ -403,7 +403,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	        }
 	        
 	        if (foundMatch)
-	        {		        	
+	        {
 	        	var textEditorModel = _textEditorService.ModelApi.GetOrDefault(foundSymbol.TextSpan.ResourceUri);
 		    	var extendedCompilerService = (IExtendedCompilerService)textEditorModel.PersistentState.CompilerService;
 		    	var compilerServiceResource = extendedCompilerService.GetResource(textEditorModel.PersistentState.ResourceUri);
@@ -412,6 +412,62 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		    	
 		    	if (definitionNode is not null)
 		    	{
+		    	    if (definitionNode.SyntaxKind == SyntaxKind.NamespaceClauseNode)
+		    	    {
+		    	        var namespaceClauseNode = (NamespaceClauseNode)definitionNode;
+		    	    
+		    	        NamespacePrefixNode? namespacePrefixNode;
+		    	        
+		    	        if (namespaceClauseNode.NamespacePrefixNode is not null)
+		    	        {
+		    	            namespacePrefixNode = namespaceClauseNode.NamespacePrefixNode;
+		    	        }
+		    	        else
+		    	        {
+		    	            _ = __CSharpBinder.NamespacePrefixTree.__Root.Children.TryGetValue(
+                    		    foundSymbol.TextSpan.Text, // This is the same value as the definition's TextSpan.
+                    		    out namespacePrefixNode);
+		    	        }
+
+                        if (namespaceClauseNode is not null)
+                		{
+                		    foreach (var kvp in namespacePrefixNode.Children.Where(kvp => kvp.Key.Contains(filteringWord)).Take(5))
+                		    {
+        						autocompleteEntryList.Add(new AutocompleteEntry(
+    								kvp.Key,
+    				                AutocompleteEntryKind.Namespace,
+    				                () => MemberAutocomplete(kvp.Key, renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+                		    }
+                		    
+                		    if (__CSharpBinder.NamespaceGroupMap.TryGetValue(foundSymbol.TextSpan.Text, out var namespaceGroup))
+                		    {
+                		        foreach (var typeDefinitionNode in namespaceGroup.GetTopLevelTypeDefinitionNodes().Where(x => x.TypeIdentifierToken.TextSpan.Text.Contains(filteringWord)).Take(5))
+                		        {
+	        						autocompleteEntryList.Add(new AutocompleteEntry(
+										typeDefinitionNode.TypeIdentifierToken.TextSpan.Text,
+						                AutocompleteEntryKind.Type,
+						                () => MemberAutocomplete(typeDefinitionNode.TypeIdentifierToken.TextSpan.Text, renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+                		        }
+                		    }
+                		    
+                		    return new MenuRecord(
+                				autocompleteEntryList.Select(entry => new MenuOptionRecord(
+                					    entry.DisplayName,
+                					    MenuOptionKind.Other,
+                					    () => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask,
+                					    widgetParameterMap: new Dictionary<string, object?>
+                					    {
+                					        {
+                					            nameof(AutocompleteEntry),
+                					            entry
+                					        }
+                					    }))
+                					.ToList());
+                		}
+		    	        
+		    	        return null;
+		    	    }
+		    	
 		    		TypeReference typeReference = default;
 		    		
 					if (definitionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
@@ -549,36 +605,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             renderBatch);
 	
 		return autocompleteMenu.GetDefaultMenuRecord(compilerServiceAutocompleteEntryList);
-	}
-	
-	private MenuRecord? Testing_NamespaceAutocompletion(TextEditorRenderBatch renderBatch, AutocompleteMenu autocompleteMenu)
-	{
-		var autocompleteEntryList = new List<AutocompleteEntry>();
-		
-		// .Where(x => x.NamespaceString.Contains(filteringWord))
-		foreach (var namespaceGroupKvp in __CSharpBinder.NamespaceGroupMap.Take(25))
-		{
-			autocompleteEntryList.Add(new AutocompleteEntry(
-				namespaceGroupKvp.Key,
-		        AutocompleteEntryKind.Namespace,
-		        () => MemberAutocomplete(namespaceGroupKvp.Key, renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
-		}
-
-		return new MenuRecord(
-			autocompleteEntryList.Select(entry => new MenuOptionRecord(
-				    entry.DisplayName,
-				    MenuOptionKind.Other,
-				    () => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask,
-				    widgetParameterMap: new Dictionary<string, object?>
-				    {
-				        {
-				            nameof(AutocompleteEntry),
-				            entry
-				        }
-				    }))
-				.ToList());
-	
-		return null;
 	}
 	
 	private Task MemberAutocomplete(string text, ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)
@@ -1395,7 +1421,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	            }));
 	    }
 	    
-	    foreach (var namespaceGroupKvp in __CSharpBinder.NamespaceGroupMap.Where(x => x.Key.Contains(word)).Take(5))
+	    foreach (var namespaceGroupKvp in __CSharpBinder.NamespacePrefixTree.__Root.Children.Where(x => x.Key.Contains(word)).Take(5))
 		{
 			autocompleteEntryList.Add(new AutocompleteEntry(
 				namespaceGroupKvp.Key,

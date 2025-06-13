@@ -717,6 +717,18 @@ public partial class CSharpBinder
 	        }
 		}
 		
+		if (parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
+    		    ambiguousIdentifierExpressionNode.Token.TextSpan.Text,
+    		    out var namespacePrefixNode))
+		{
+		    result = new NamespaceClauseNode(ambiguousIdentifierExpressionNode.Token);
+            compilationUnit.__SymbolList.Add(new Symbol(
+	        	SyntaxKind.NamespaceSymbol,
+	        	parserModel.GetNextSymbolId(),
+	        	ambiguousIdentifierExpressionNode.Token.TextSpan));
+			goto finalize;
+		}
+		
 		if (allowFabricatedUndefinedNode)
 		{
 			// Bind an undefined-TypeClauseNode
@@ -2238,6 +2250,7 @@ public partial class CSharpBinder
 			}
 		
 			TypeReference typeReference = default;
+			TextEditorTextSpan explicitDefinitionTextSpan = default;
 		
 			if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
 			{
@@ -2251,7 +2264,13 @@ public partial class CSharpBinder
 			}
 			else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
 			{
-				typeReference = new TypeReference((TypeClauseNode)expressionPrimary);
+			    var typeClauseNode = (TypeClauseNode)expressionPrimary;
+			    explicitDefinitionTextSpan = typeClauseNode.ExplicitDefinitionTextSpan;
+				typeReference = new TypeReference(typeClauseNode);
+			}
+			else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+			{
+				typeReference = ((TypeDefinitionNode)expressionPrimary).ToTypeReference();
 			}
 				
 			if (typeReference == default)
@@ -2260,7 +2279,23 @@ public partial class CSharpBinder
 				continue;
 			}
 			
-			var maybeTypeDefinitionNode = GetDefinitionNode(compilationUnit, typeReference.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
+			ISyntaxNode? maybeTypeDefinitionNode;
+			
+			if (explicitDefinitionTextSpan.ConstructorWasInvoked)
+			{
+			    maybeTypeDefinitionNode = GetDefinitionNode(
+			        cSharpCompilationUnit: null,
+			        explicitDefinitionTextSpan,
+			        SyntaxKind.TypeClauseNode);
+			}
+			else
+			{
+			    maybeTypeDefinitionNode = GetDefinitionNode(
+			        compilationUnit,
+			        typeReference.TypeIdentifierToken.TextSpan,
+			        SyntaxKind.TypeClauseNode);
+			}
+			
 			if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
 			{
 				expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, compilationUnit, ref parserModel);
@@ -2386,6 +2421,85 @@ public partial class CSharpBinder
 		}
 		else
 		{
+		    if (expressionPrimary.SyntaxKind == SyntaxKind.NamespaceClauseNode)
+		    {
+		        var firstNamespaceClauseNode = (NamespaceClauseNode)expressionPrimary;
+		        NamespacePrefixNode? firstNamespacePrefixNode = firstNamespaceClauseNode.NamespacePrefixNode;
+		        
+		        if (firstNamespacePrefixNode is null)
+		        {
+		            if(NamespacePrefixTree.__Root.Children.TryGetValue(
+            		    firstNamespaceClauseNode.IdentifierToken.TextSpan.Text,
+            		    out firstNamespacePrefixNode))
+        		    {
+        		        firstNamespaceClauseNode.NamespacePrefixNode = firstNamespacePrefixNode;
+        		        firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex = firstNamespaceClauseNode.IdentifierToken.TextSpan.StartInclusiveIndex;
+        		    }
+                }
+                
+                if (firstNamespacePrefixNode is not null)
+                {
+                    if (firstNamespacePrefixNode.Children.TryGetValue(
+                		    memberIdentifierToken.TextSpan.Text,
+                		    out var secondNamespacePrefixNode))
+		            {
+		                var text = parserModel.Binder.TextEditorService.EditContext_GetText(
+            				compilationUnit.SourceText.AsSpan(
+            				    firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex,
+            				    memberIdentifierToken.TextSpan.EndExclusiveIndex - firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex));
+		                
+		                memberIdentifierToken.TextSpan = memberIdentifierToken.TextSpan with
+        	        	{
+        	        	    Text = text
+        	        	};
+		                
+		                compilationUnit.__SymbolList.Add(new Symbol(
+            	        	SyntaxKind.NamespaceSymbol,
+            	        	parserModel.GetNextSymbolId(),
+            	        	memberIdentifierToken.TextSpan));
+
+		                return new NamespaceClauseNode(
+		                    memberIdentifierToken,
+		                    secondNamespacePrefixNode,
+		                    firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex);
+		            }
+                }
+                
+                if (NamespaceGroupMap.TryGetValue(firstNamespaceClauseNode.IdentifierToken.TextSpan.Text, out var namespaceGroup))
+    		    {
+    		        foreach (var typeDefinitionNode in namespaceGroup.GetTopLevelTypeDefinitionNodes())
+    		        {
+    		            if (typeDefinitionNode.TypeIdentifierToken.TextSpan.Text == memberIdentifierToken.TextSpan.Text)
+    		            {
+            				var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
+            		            memberIdentifierToken,
+            		            valueType: null,
+            		            genericParameterListing: default,
+            		            isKeywordType: false);
+            		        
+            		        var typeSymbol = new Symbol(
+                	        	SyntaxKind.TypeSymbol,
+                	        	parserModel.GetNextSymbolId(),
+                	        	typeClauseNode.TypeIdentifierToken.TextSpan with
+                		        {
+                		            DecorationByte = (byte)GenericDecorationKind.Type
+                		        });
+                	        compilationUnit.__SymbolList.Add(typeSymbol);
+            		        
+            		        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
+            		        	typeSymbol.SymbolId,
+            		        	(typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri, typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex));
+            		     
+            		        typeClauseNode.ExplicitDefinitionTextSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
+            		           
+            		    	expressionPrimary = typeClauseNode;
+            		    	
+            		    	return typeClauseNode;
+    		            }
+    		        }
+    		    }
+		    }
+		
 			var variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(
 	            memberIdentifierToken,
 	            variableDeclarationNode: null);

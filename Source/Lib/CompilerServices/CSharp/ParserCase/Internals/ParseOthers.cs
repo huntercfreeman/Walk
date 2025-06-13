@@ -37,16 +37,28 @@ public static class ParseOthers
 			            EndExclusiveIndex = matchedToken.TextSpan.EndExclusiveIndex
 			        };
                 }
-
-		        // !StatementDelimiterToken because presumably the final namespace is already being handled.
-		        if (isNamespaceStatement && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
-		        {
-		        	if (textSpan.StartInclusiveIndex < compilationUnit.SourceText.Length && textSpan.EndExclusiveIndex <= compilationUnit.SourceText.Length)
-					{
-						textSpan.Text = parserModel.Binder.TextEditorService.EditContext_GetText(
-        					compilationUnit.SourceText.AsSpan(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex));
-					}
-		        	
+                
+                // NamespaceStatements will add the final symbol themselves.
+                
+				textSpan.Text = parserModel.Binder.TextEditorService.EditContext_GetText(
+					compilationUnit.SourceText.AsSpan(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex));
+                
+                compilationUnit.__SymbolList.Add(
+                	new Symbol(
+                		SyntaxKind.NamespaceSymbol,
+                		parserModel.GetNextSymbolId(),
+                		matchedToken.TextSpan with
+                		{
+                		    Text = textSpan.Text
+                		}));
+                
+                if (isNamespaceStatement && (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken))
+                {
+                    // !StatementDelimiterToken because presumably the final namespace is already being handled.
+    		        //
+    		        // (I don't think the above statement is true... the final namespace gets handled only after the codeblock is parsed.
+    		        //  so you should probably bring the other contributors of the namespace into scope immediately).
+    		        // 
 		        	parserModel.Binder.AddNamespaceToCurrentScope(textSpan.Text, compilationUnit, ref parserModel);
 		        }
 
@@ -69,12 +81,6 @@ public static class ParseOthers
 
         if (count == 0)
             return default;
-
-		if (textSpan.StartInclusiveIndex < compilationUnit.SourceText.Length && textSpan.EndExclusiveIndex <= compilationUnit.SourceText.Length)
-		{
-			textSpan.Text = parserModel.Binder.TextEditorService.EditContext_GetText(
-				compilationUnit.SourceText.AsSpan(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex));
-		}
 
         return new SyntaxToken(SyntaxKind.IdentifierToken, textSpan);
     }
