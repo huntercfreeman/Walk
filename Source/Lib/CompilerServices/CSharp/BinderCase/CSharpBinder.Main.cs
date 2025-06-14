@@ -174,14 +174,6 @@ public partial class CSharpBinder
         }
     }
 
-    public void BindEnumMember(
-        VariableDeclarationNode variableDeclarationNode,
-        CSharpCompilationUnit compilationUnit,
-        ref CSharpParserModel parserModel)
-    {
-    	CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
-    }
-
     public void BindVariableDeclarationNode(
         VariableDeclarationNode variableDeclarationNode,
         CSharpCompilationUnit compilationUnit,
