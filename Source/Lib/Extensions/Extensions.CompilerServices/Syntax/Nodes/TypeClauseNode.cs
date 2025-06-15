@@ -118,6 +118,7 @@ public sealed class TypeClauseNode : IGenericParameterNode
 		ArrayRank = 0;
 		_isFabricated = false;
 		IsParsingGenericParameters = false;
+		ExplicitDefinitionTextSpan = default;
 	}
 
 	public TypeClauseNode SetValueType(Type? valueType)
