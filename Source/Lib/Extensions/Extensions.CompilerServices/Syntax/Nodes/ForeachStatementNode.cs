@@ -9,7 +9,6 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
 	public ForeachStatementNode(
 		SyntaxToken foreachKeywordToken,
 		SyntaxToken openParenthesisToken,
-		VariableDeclarationNode variableDeclarationNode,
 		SyntaxToken inKeywordToken,
 		SyntaxToken closeParenthesisToken,
 		CodeBlock codeBlock)
@@ -20,7 +19,6 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
 	
 		ForeachKeywordToken = foreachKeywordToken;
 		OpenParenthesisToken = openParenthesisToken;
-		VariableDeclarationNode = variableDeclarationNode;
 		InKeywordToken = inKeywordToken;
 		CloseParenthesisToken = closeParenthesisToken;
 		CodeBlock = codeBlock;
@@ -28,7 +26,6 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
 
 	public SyntaxToken ForeachKeywordToken { get; }
 	public SyntaxToken OpenParenthesisToken { get; }
-	public VariableDeclarationNode VariableDeclarationNode { get; }
 	public SyntaxToken InKeywordToken { get; }
 	public SyntaxToken CloseParenthesisToken { get; }
 

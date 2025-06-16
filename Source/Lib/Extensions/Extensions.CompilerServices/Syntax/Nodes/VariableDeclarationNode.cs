@@ -21,7 +21,7 @@ public sealed class VariableDeclarationNode : IExpressionNode
 		IsInitialized = isInitialized;
 	}
 
-	public TypeReference TypeReference { get; private set; }
+	public TypeReference TypeReference { get; set; }
 
 	public SyntaxToken IdentifierToken { get; }
 	/// <summary>
