@@ -321,7 +321,7 @@ public class ParseDefaultKeywords
     	    variableDeclarationNode is not null)
     	{
     	    if (enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList.Count == 1)
-    	        variableDeclarationNode.TypeReference = enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList[0].TypeReference;
+    	        variableDeclarationNode.SetImplicitTypeReference(enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList[0].TypeReference);
     	}
     	
 		var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);

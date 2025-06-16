@@ -1299,9 +1299,14 @@ public partial class CSharpBinder
 			case SyntaxKind.AtToken:
 				return emptyExpressionNode;
 			case SyntaxKind.OutTokenKeyword:
+			    parserModel.ParameterModifierSyntaxKind = SyntaxKind.OutTokenKeyword;
 				return emptyExpressionNode;
 			case SyntaxKind.InTokenKeyword:
+			    parserModel.ParameterModifierSyntaxKind = SyntaxKind.InTokenKeyword;
+			    return emptyExpressionNode;
 			case SyntaxKind.RefTokenKeyword:
+			    parserModel.ParameterModifierSyntaxKind = SyntaxKind.RefTokenKeyword;
+		        return emptyExpressionNode;
 			case SyntaxKind.ParamsTokenKeyword:
 			case SyntaxKind.ThisTokenKeyword:
 				return emptyExpressionNode;
@@ -2763,12 +2768,40 @@ public partial class CSharpBinder
 				ref parserModel);
 		}
 		
+		if (expressionSecondary.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
+		    parserModel.ParameterModifierSyntaxKind == SyntaxKind.OutTokenKeyword)
+		{
+		    if (invocationNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+		    {
+		        var functionInvocationNode = (FunctionInvocationNode)invocationNode;
+		        
+		        if (TryGetFunctionHierarchically(
+			    	compilationUnit,
+			        compilationUnit.ResourceUri,
+			    	parserModel.CurrentScopeIndexKey,
+			        functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Text,
+			        out var functionDefinitionNode))
+		        {
+		            if (functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList.Count > invocationNode.FunctionParameterListing.FunctionParameterEntryList.Count)
+		            {
+		                var matchingArgument = functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList[
+		                    invocationNode.FunctionParameterListing.FunctionParameterEntryList.Count];
+		                
+		                var variableDeclarationNode = (VariableDeclarationNode)expressionSecondary;
+		                variableDeclarationNode.SetImplicitTypeReference(matchingArgument.VariableDeclarationNode.TypeReference);
+		            }
+		        }
+		    }
+		}
+		
 		invocationNode.FunctionParameterListing.FunctionParameterEntryList.Add(
 			new FunctionParameterEntry(
-		        hasOutKeyword: false,
-		        hasInKeyword: false,
-		        hasRefKeyword: false));
+		        hasOutKeyword: parserModel.ParameterModifierSyntaxKind == SyntaxKind.OutTokenKeyword,
+		        hasInKeyword: parserModel.ParameterModifierSyntaxKind == SyntaxKind.InTokenKeyword,
+		        hasRefKeyword: parserModel.ParameterModifierSyntaxKind == SyntaxKind.RefTokenKeyword));
 		
+		// Just needs to be set to anything other than out, in, ref.
+		parserModel.ParameterModifierSyntaxKind = SyntaxKind.CommentMultiLineToken;
 		return invocationNode;
 	}
 	

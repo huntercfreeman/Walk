@@ -23,9 +23,13 @@ public struct FunctionArgumentEntry
 		HasRefKeyword = hasRefKeyword;
 	}
 
+    /// <summary>
+    /// TODO: Don't store the VariableDeclarationNode here. Bring any properties needed here directly inline. (avoids struct containing a reference to reference type.
+    /// <summary/>
 	public VariableDeclarationNode VariableDeclarationNode { get; }
 	public SyntaxToken? OptionalCompileTimeConstantToken { get; }
 	public bool IsOptional { get; }
+	public bool HasThisKeyword { get; }
 	public bool HasParamsKeyword { get; }
 	public bool HasOutKeyword { get; }
 	public bool HasInKeyword { get; }

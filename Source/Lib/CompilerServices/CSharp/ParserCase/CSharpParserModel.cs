@@ -133,6 +133,8 @@ public struct CSharpParserModel
     /// </summary>
     public TypeClauseNode TypeClauseNode { get; }
     
+    public SyntaxKind ParameterModifierSyntaxKind { get; set; }
+    
     public TypeClauseNode ConstructOrRecycleTypeClauseNode(
     	SyntaxToken typeIdentifier,
 		Type? valueType,

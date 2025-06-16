@@ -21,7 +21,7 @@ public sealed class VariableDeclarationNode : IExpressionNode
 		IsInitialized = isInitialized;
 	}
 
-	public TypeReference TypeReference { get; set; }
+	public TypeReference TypeReference { get; private set; }
 
 	public SyntaxToken IdentifierToken { get; }
 	/// <summary>
@@ -51,8 +51,9 @@ public sealed class VariableDeclarationNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;
 
-	public VariableDeclarationNode SetTypeReference(TypeReference typeReference)
+	public VariableDeclarationNode SetImplicitTypeReference(TypeReference typeReference)
 	{
+		typeReference.IsImplicit = true;
 		TypeReference = typeReference;
 		return this;
 	}
