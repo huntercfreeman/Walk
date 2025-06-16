@@ -318,7 +318,9 @@ public class ParseDefaultKeywords
     	var enumerable = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
     	
     	if (enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList is not null &&
-    	    variableDeclarationNode is not null)
+    	    variableDeclarationNode is not null &&
+    	    variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.Text ==
+		        Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Var.TypeIdentifierToken.TextSpan.Text)
     	{
     	    if (enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList.Count == 1)
     	        variableDeclarationNode.SetImplicitTypeReference(enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList[0].TypeReference);

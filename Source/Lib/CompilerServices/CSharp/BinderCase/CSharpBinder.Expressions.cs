@@ -2771,27 +2771,32 @@ public partial class CSharpBinder
 		if (expressionSecondary.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
 		    parserModel.ParameterModifierSyntaxKind == SyntaxKind.OutTokenKeyword)
 		{
-		    if (invocationNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
-		    {
-		        var functionInvocationNode = (FunctionInvocationNode)invocationNode;
-		        
-		        if (TryGetFunctionHierarchically(
-			    	compilationUnit,
-			        compilationUnit.ResourceUri,
-			    	parserModel.CurrentScopeIndexKey,
-			        functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Text,
-			        out var functionDefinitionNode))
-		        {
-		            if (functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList.Count > invocationNode.FunctionParameterListing.FunctionParameterEntryList.Count)
-		            {
-		                var matchingArgument = functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList[
-		                    invocationNode.FunctionParameterListing.FunctionParameterEntryList.Count];
-		                
-		                var variableDeclarationNode = (VariableDeclarationNode)expressionSecondary;
-		                variableDeclarationNode.SetImplicitTypeReference(matchingArgument.VariableDeclarationNode.TypeReference);
-		            }
-		        }
-		    }
+		    var variableDeclarationNode = (VariableDeclarationNode)expressionSecondary;
+		    
+		    if (variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.Text ==
+		        CSharpFacts.Types.Var.TypeIdentifierToken.TextSpan.Text)
+	        {
+	            if (invocationNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+    		    {
+    		        var functionInvocationNode = (FunctionInvocationNode)invocationNode;
+    		        
+    		        if (TryGetFunctionHierarchically(
+    			    	compilationUnit,
+    			        compilationUnit.ResourceUri,
+    			    	parserModel.CurrentScopeIndexKey,
+    			        functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Text,
+    			        out var functionDefinitionNode))
+    		        {
+    		            if (functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList.Count > invocationNode.FunctionParameterListing.FunctionParameterEntryList.Count)
+    		            {
+    		                var matchingArgument = functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList[
+    		                    invocationNode.FunctionParameterListing.FunctionParameterEntryList.Count];
+    		                
+    		                variableDeclarationNode.SetImplicitTypeReference(matchingArgument.VariableDeclarationNode.TypeReference);
+    		            }
+    		        }
+    		    }
+	        }
 		}
 		
 		invocationNode.FunctionParameterListing.FunctionParameterEntryList.Add(
