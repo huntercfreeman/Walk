@@ -267,7 +267,7 @@
 			            <span class="di_te_keyword">@argumentEntry.OptionalCompileTimeConstantToken.TextSpan.Text</span>
 			            break;
 			        case SyntaxKind.StringLiteralToken:
-			            <span class="di_te_string-literal">"@argumentEntry.OptionalCompileTimeConstantToken.TextSpan.Text"</span>
+			            <span class="di_te_string-literal">@(GetTextFromStringLiteralToken(argumentEntry.OptionalCompileTimeConstantToken))</span>
 			            break;
 		            default:
 			            <text>...</text>

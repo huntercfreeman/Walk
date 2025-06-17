@@ -1579,4 +1579,21 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			}
 		}
     }
+    
+    public string GetTextFromStringLiteralToken(SyntaxToken stringLiteralToken)
+    {
+        var resource = GetResource(stringLiteralToken.TextSpan.ResourceUri);
+        var cSharpCompilationUnit = (CSharpCompilationUnit)resource.CompilationUnit;
+        
+        if (stringLiteralToken.TextSpan.StartInclusiveIndex < cSharpCompilationUnit.SourceText.Length &&
+            stringLiteralToken.TextSpan.EndExclusiveIndex <= cSharpCompilationUnit.SourceText.Length &&
+            stringLiteralToken.TextSpan.EndExclusiveIndex >= stringLiteralToken.TextSpan.StartInclusiveIndex)
+        {
+            return cSharpCompilationUnit.SourceText.Substring(
+                stringLiteralToken.TextSpan.StartInclusiveIndex,
+                stringLiteralToken.TextSpan.EndExclusiveIndex - stringLiteralToken.TextSpan.StartInclusiveIndex);
+        }
+        
+        return stringLiteralToken.TextSpan.Text;
+    }
 }
