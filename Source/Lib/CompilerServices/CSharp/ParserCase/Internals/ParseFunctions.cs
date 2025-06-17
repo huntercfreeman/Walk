@@ -291,8 +291,8 @@ public class ParseFunctions
                     
                     if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
         			{
-        			    optionalCompileTimeConstantToken = new SyntaxToken(SyntaxKind.NotProvided, textSpan: default);
         				_ = parserModel.TokenWalker.Consume();
+        				optionalCompileTimeConstantToken = parserModel.TokenWalker.Current;
         				
         				parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
         				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, null));

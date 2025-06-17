@@ -11,7 +11,7 @@ public struct FunctionArgumentEntry
 		VariableDeclarationNode variableDeclarationNode,
 		SyntaxToken optionalCompileTimeConstantToken,
 		ArgumentModifierKind argumentModifierKind)
-	{	
+	{
 		VariableDeclarationNode = variableDeclarationNode;
 		OptionalCompileTimeConstantToken = optionalCompileTimeConstantToken;
 		ArgumentModifierKind = argumentModifierKind;
