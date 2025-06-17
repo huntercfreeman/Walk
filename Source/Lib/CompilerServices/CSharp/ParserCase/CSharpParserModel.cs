@@ -1,6 +1,7 @@
 using Walk.Extensions.CompilerServices.Utility;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Walk.CompilerServices.CSharp.BinderCase;
 using Walk.CompilerServices.CSharp.Facts;
@@ -133,7 +134,9 @@ public struct CSharpParserModel
     /// </summary>
     public TypeClauseNode TypeClauseNode { get; }
     
-    public SyntaxKind ParameterModifierSyntaxKind { get; set; }
+    public SyntaxKind ParameterModifierSyntaxKind { get; set; } = SyntaxKind.CommentMultiLineToken;
+    
+    public ArgumentModifierKind ArgumentModifierKind { get; set; } = ArgumentModifierKind.None;
     
     public TypeClauseNode ConstructOrRecycleTypeClauseNode(
     	SyntaxToken typeIdentifier,

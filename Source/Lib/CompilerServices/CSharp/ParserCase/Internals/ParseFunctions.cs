@@ -226,14 +226,65 @@ public class ParseFunctions
             }
             else if (!corruptState)
             {
-            	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OutTokenKeyword ||
-            		parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.InTokenKeyword ||
-            		parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.RefTokenKeyword ||
-            		parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ParamsTokenKeyword ||
-            		parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ThisTokenKeyword)
-            	{
-            		_ = parserModel.TokenWalker.Consume();
-            	}
+                parserModel.ArgumentModifierKind = ArgumentModifierKind.None;
+                
+                checkModifier:
+                switch (parserModel.TokenWalker.Current.SyntaxKind)
+                {
+                    case SyntaxKind.OutTokenKeyword:
+            		    _ = parserModel.TokenWalker.Consume();
+            		    parserModel.ArgumentModifierKind = ArgumentModifierKind.Out;
+            		    break;
+            		case SyntaxKind.InTokenKeyword:
+            		    _ = parserModel.TokenWalker.Consume();
+            		    parserModel.ArgumentModifierKind = ArgumentModifierKind.In;
+            		    break;
+            		case SyntaxKind.RefTokenKeyword:
+            		    _ = parserModel.TokenWalker.Consume();
+            		    if (parserModel.ArgumentModifierKind == ArgumentModifierKind.This)
+            		    {
+            		        parserModel.ArgumentModifierKind = ArgumentModifierKind.ThisRef;
+            		        break;
+            		    }
+            		    else if (parserModel.ArgumentModifierKind == ArgumentModifierKind.Readonly)
+            		    {
+            		        parserModel.ArgumentModifierKind = ArgumentModifierKind.ReadonlyRef;
+            		        break;
+            		    }
+            		    else
+            		    {
+            		        parserModel.ArgumentModifierKind = ArgumentModifierKind.Ref;
+            		        goto checkModifier;
+            		    }
+            		case SyntaxKind.ThisTokenKeyword:
+            		    _ = parserModel.TokenWalker.Consume();
+            		    if (parserModel.ArgumentModifierKind == ArgumentModifierKind.Ref)
+            		    {
+            		        parserModel.ArgumentModifierKind = ArgumentModifierKind.RefThis;
+            		        break;
+            		    }
+            		    else
+            		    {
+            		        parserModel.ArgumentModifierKind = ArgumentModifierKind.This;
+            		        goto checkModifier;
+            		    }
+        		    case SyntaxKind.ReadonlyTokenKeyword:
+            		    _ = parserModel.TokenWalker.Consume();
+            		    if (parserModel.ArgumentModifierKind == ArgumentModifierKind.Ref)
+            		    {
+            		        parserModel.ArgumentModifierKind = ArgumentModifierKind.RefReadonly;
+            		        break;
+            		    }
+            		    else
+            		    {
+            		        parserModel.ArgumentModifierKind = ArgumentModifierKind.Readonly;
+            		        goto checkModifier;
+            		    }
+        		    case SyntaxKind.ParamsTokenKeyword:
+            		    _ = parserModel.TokenWalker.Consume();
+            		    parserModel.ArgumentModifierKind = ArgumentModifierKind.Params;
+            		    break;
+                }
             
             	var tokenIndexOriginal = parserModel.TokenWalker.Index;
             	
@@ -271,10 +322,7 @@ public class ParseFunctions
 						        variableDeclarationNode,
 						        optionalCompileTimeConstantToken: null,
 						        isOptional: false,
-						        hasParamsKeyword: false,
-						        hasOutKeyword: false,
-						        hasInKeyword: false,
-						        hasRefKeyword: false));
+						        parserModel.ArgumentModifierKind));
 		    			
 		    			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
 		    				_ = parserModel.TokenWalker.Consume();

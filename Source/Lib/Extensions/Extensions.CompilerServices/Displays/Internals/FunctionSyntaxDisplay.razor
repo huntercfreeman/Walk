@@ -1,6 +1,7 @@
 @using Walk.TextEditor.RazorLib.TextEditors.Models.Internals
 @using Walk.Extensions.CompilerServices.Syntax
 @using Walk.Extensions.CompilerServices.Syntax.Nodes
+@using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums
 
 @{
 	var syntaxViewModelLocal = SyntaxViewModel;
@@ -193,6 +194,51 @@
 		{
 			var index = badIndex;
 			var argumentEntry = functionArgumentListing.Value.FunctionArgumentEntryList[index];
+			
+			string? argumentModifierText;
+			switch (argumentEntry.ArgumentModifierKind)
+			{
+            	case ArgumentModifierKind.Out:
+                    argumentModifierText = "out";
+                    break;
+                case ArgumentModifierKind.In:
+                    argumentModifierText = "in";
+                    break;
+                case ArgumentModifierKind.Ref:
+                    argumentModifierText = "ref";
+                    break;
+                case ArgumentModifierKind.Params:
+                    argumentModifierText = "params";
+                    break;
+                case ArgumentModifierKind.This:
+                    argumentModifierText = "this";
+                    break;
+                case ArgumentModifierKind.Readonly:
+                    argumentModifierText = "readonly";
+                    break;
+                case ArgumentModifierKind.RefReadonly:
+                    argumentModifierText = "ref readonly";
+                    break;
+                case ArgumentModifierKind.ReadonlyRef:
+                    argumentModifierText = "readonly ref";
+                    break;
+                case ArgumentModifierKind.ThisRef:
+                    argumentModifierText = "this ref";
+                    break;
+                case ArgumentModifierKind.RefThis:
+                    argumentModifierText = "ref this";
+                    break;
+                default:
+                    argumentModifierText = null;
+                    break;
+			}
+			
+			if (argumentModifierText is not null)
+			{
+			    <span class="di_te_keyword">
+			        @(argumentModifierText)&nbsp;
+			    </span>
+			}
 			
 			var syntaxViewModel = new SyntaxViewModel(
 				targetSymbol: null,

@@ -2913,16 +2913,14 @@ public partial class CSharpBinder
 				compilationUnit,
 				ref parserModel);
 		}
-			
+		
+		// TODO: Where is this containing-method invoked from?
 		functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList.Add(
 			new FunctionArgumentEntry(
 		        variableDeclarationNode: null,
 		        optionalCompileTimeConstantToken: null,
 		        isOptional: false,
-		        hasParamsKeyword: false,
-		        hasOutKeyword: false,
-		        hasInKeyword: false,
-		        hasRefKeyword: false));
+		        ArgumentModifierKind.None));
 		
 		return functionDefinitionNode;
 	}
