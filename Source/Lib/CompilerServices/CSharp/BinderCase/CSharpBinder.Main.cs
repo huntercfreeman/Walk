@@ -1692,13 +1692,6 @@ public partial class CSharpBinder
 	    		var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.Text;
 	        	parserModel.Binder.AddNamespaceToCurrentScope(namespaceString, cSharpCompilationUnit, ref parserModel);
 	        	return;
-    		case SyntaxKind.ConstructorDefinitionNode:
-    			var constructorDefinitionNode = (ConstructorDefinitionNode)codeBlockOwner;
-	    		foreach (var argument in constructorDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList)
-				{
-					parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, cSharpCompilationUnit, ref parserModel);
-				}
-		    	return;
 			case SyntaxKind.LambdaExpressionNode:
 				var lambdaExpressionNode = (LambdaExpressionNode)codeBlockOwner;
 	    		foreach (var variableDeclarationNode in lambdaExpressionNode.VariableDeclarationNodeList)

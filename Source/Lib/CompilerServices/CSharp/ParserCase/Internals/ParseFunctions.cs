@@ -84,15 +84,15 @@ public class ParseFunctions
             functionArgumentListing: default,
             default);
     
-    	HandleFunctionArguments(constructorDefinitionNode, compilationUnit, ref parserModel);
-
-        parserModel.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, compilationUnit, ref parserModel);
-        
-        parserModel.Binder.NewScopeAndBuilderFromOwner(
+    	parserModel.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, compilationUnit, ref parserModel);
+    	
+    	parserModel.Binder.NewScopeAndBuilderFromOwner(
         	constructorDefinitionNode,
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
+    	
+    	HandleFunctionArguments(constructorDefinitionNode, compilationUnit, ref parserModel);
 
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
         {
