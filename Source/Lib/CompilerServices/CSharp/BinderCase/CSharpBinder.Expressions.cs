@@ -2396,6 +2396,8 @@ public partial class CSharpBinder
 		        	symbolId,
 		        	(functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri, functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex));
 		        
+		        functionInvocationNode.ExplicitDefinitionTextSpan = functionDefinitionNode.FunctionIdentifierToken.TextSpan;
+		        
 		        // TODO: Transition from 'FunctionInvocationNode' to GenericParameters / FunctionParameters
 		        // TODO: Method group if next token is not '<' or '('
 		    	expressionPrimary = functionInvocationNode;
@@ -2787,13 +2789,28 @@ public partial class CSharpBinder
     		    {
     		        var functionInvocationNode = (FunctionInvocationNode)invocationNode;
     		        
-    		        if (TryGetFunctionHierarchically(
-    			    	compilationUnit,
-    			        compilationUnit.ResourceUri,
-    			    	parserModel.CurrentScopeIndexKey,
-    			        functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Text,
-    			        out var functionDefinitionNode))
+    		        ISyntaxNode? maybeFunctionDefinitionNode;
+    		        
+    		        if (functionInvocationNode.ExplicitDefinitionTextSpan.ConstructorWasInvoked)
+        			{
+        			    maybeFunctionDefinitionNode = GetDefinitionNode(
+        			        cSharpCompilationUnit: null,
+        			        functionInvocationNode.ExplicitDefinitionTextSpan,
+        			        SyntaxKind.FunctionInvocationNode);
+        			}
+        			else
+        			{
+        			    maybeFunctionDefinitionNode = GetDefinitionNode(
+        			        compilationUnit,
+        			        functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan,
+        			        SyntaxKind.FunctionInvocationNode);
+        			}
+    		        
+    		        if (maybeFunctionDefinitionNode is not null &&
+    		            maybeFunctionDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
     		        {
+    		            var functionDefinitionNode = (FunctionDefinitionNode)maybeFunctionDefinitionNode;
+    		        
     		            if (functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList.Count > invocationNode.FunctionParameterListing.FunctionParameterEntryList.Count)
     		            {
     		                var matchingArgument = functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList[
