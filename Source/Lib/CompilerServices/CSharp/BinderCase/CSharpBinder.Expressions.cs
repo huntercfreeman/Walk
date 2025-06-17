@@ -2938,8 +2938,7 @@ public partial class CSharpBinder
 		functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList.Add(
 			new FunctionArgumentEntry(
 		        variableDeclarationNode: null,
-		        optionalCompileTimeConstantToken: null,
-		        isOptional: false,
+		        optionalCompileTimeConstantToken: new SyntaxToken(SyntaxKind.NotApplicable, textSpan: default),
 		        ArgumentModifierKind.None));
 		
 		return functionDefinitionNode;

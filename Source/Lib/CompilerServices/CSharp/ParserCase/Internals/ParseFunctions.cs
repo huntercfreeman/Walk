@@ -287,20 +287,26 @@ public class ParseFunctions
                     variableDeclarationNode = (VariableDeclarationNode)expressionNode;
                     parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserModel);
                     
+                    SyntaxToken optionalCompileTimeConstantToken;
+                    
                     if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
         			{
+        			    optionalCompileTimeConstantToken = new SyntaxToken(SyntaxKind.NotProvided, textSpan: default);
         				_ = parserModel.TokenWalker.Consume();
         				
         				parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
         				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, null));
         				_ = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
         			}
+        			else
+        			{
+        			    optionalCompileTimeConstantToken = new SyntaxToken(SyntaxKind.NotApplicable, textSpan: default);
+        			}
         			
         			functionArgumentEntryList.Add(
         				new FunctionArgumentEntry(
     				        variableDeclarationNode,
-    				        optionalCompileTimeConstantToken: null,
-    				        isOptional: false,
+    				        optionalCompileTimeConstantToken,
     				        parserModel.ArgumentModifierKind));
         			
         			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)

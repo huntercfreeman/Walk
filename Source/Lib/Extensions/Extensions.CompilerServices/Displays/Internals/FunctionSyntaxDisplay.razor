@@ -190,10 +190,14 @@
 	else
 	{
 		<text>(</text>
-		@for (int badIndex = 0; badIndex < functionArgumentListing.Value.FunctionArgumentEntryList.Count; badIndex++)
+		@for (int index = 0; index < functionArgumentListing.Value.FunctionArgumentEntryList.Count; index++)
 		{
-			var index = badIndex;
 			var argumentEntry = functionArgumentListing.Value.FunctionArgumentEntryList[index];
+			
+			if (argumentEntry.OptionalCompileTimeConstantToken.SyntaxKind != SyntaxKind.NotApplicable)
+			{
+			    <text>[</text>
+			}
 			
 			string? argumentModifierText;
 			switch (argumentEntry.ArgumentModifierKind)
@@ -247,7 +251,12 @@
 				depth: syntaxViewModelLocal.Depth + 1);
 			<VariableSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
 			
-			if (badIndex < functionArgumentListing.Value.FunctionArgumentEntryList.Count - 1)
+			if (argumentEntry.OptionalCompileTimeConstantToken.SyntaxKind != SyntaxKind.NotApplicable)
+			{
+			    <text>=...]</text>
+			}
+			
+			if (index < functionArgumentListing.Value.FunctionArgumentEntryList.Count - 1)
 			{
 				<text>, </text>
 			}
