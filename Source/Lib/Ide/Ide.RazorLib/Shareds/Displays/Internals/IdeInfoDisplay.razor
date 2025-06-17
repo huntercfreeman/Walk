@@ -172,10 +172,21 @@
         Recent Changes:
 		<div>
 		    <div>
-                <div>v <em class="di_em">14.0.0 </em> (WIP_DATE)</div>
+                <div>v <em class="di_em">14.0.0 </em> (2025-06-16)</div>
                 <ul>
                     <li>
-                        Draft PR
+                        out type inference
+                    </li>
+                    <li>
+                        ParameterModifierKind
+                    </li>
+                    <li>
+                        ArgumentModifierKind
+                    </li>
+                    <li>
+                        Foreach inaccurate but precise quality of life,
+                        if right hand side is a type with 1 generic parameter, and left hand side is 'var' then presume
+                        the inferred type is the generic parameter's type.
                     </li>
                 </ul>
             </div>
