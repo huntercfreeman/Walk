@@ -315,6 +315,7 @@ public class ParseDefaultKeywords
     	var inKeywordToken = parserModel.TokenWalker.Match(SyntaxKind.InTokenKeyword);
     	
     	parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+    	parserModel.ParserContextKind = CSharpParserContextKind.None;
     	var enumerable = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
     	
     	if (enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList is not null &&

@@ -657,7 +657,6 @@ public partial class CSharpBinder
 	        	else
 	        		typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, compilationUnit, ref parserModel);
 	        	
-	            
 	            typeClauseNode.HasQuestionMark = ambiguousIdentifierExpressionNode.HasQuestionMark;
 				BindTypeClauseNode(typeClauseNode, compilationUnit, ref parserModel);
 				
@@ -2939,8 +2938,7 @@ public partial class CSharpBinder
 		functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList.Add(
 			new FunctionArgumentEntry(
 		        variableDeclarationNode: null,
-		        optionalCompileTimeConstantToken: null,
-		        isOptional: false,
+		        optionalCompileTimeConstantToken: new SyntaxToken(SyntaxKind.NotApplicable, textSpan: default),
 		        ArgumentModifierKind.None));
 		
 		return functionDefinitionNode;

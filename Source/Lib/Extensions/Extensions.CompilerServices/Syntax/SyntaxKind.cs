@@ -5,6 +5,10 @@ namespace Walk.Extensions.CompilerServices.Syntax;
 /// </summary>
 public enum SyntaxKind
 {
+    // Used to avoid nullable SyntaxToken(s).
+    NotApplicable,
+    NotProvided,
+
 	// Tokens Normal
 	CommentMultiLineToken,
 	CommentSingleLineToken,
