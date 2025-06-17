@@ -1580,20 +1580,23 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		}
     }
     
-    public string GetTextFromStringLiteralToken(SyntaxToken stringLiteralToken)
+    public string GetTextFromToken(SyntaxToken token)
     {
-        var resource = GetResource(stringLiteralToken.TextSpan.ResourceUri);
-        var cSharpCompilationUnit = (CSharpCompilationUnit)resource.CompilationUnit;
-        
-        if (stringLiteralToken.TextSpan.StartInclusiveIndex < cSharpCompilationUnit.SourceText.Length &&
-            stringLiteralToken.TextSpan.EndExclusiveIndex <= cSharpCompilationUnit.SourceText.Length &&
-            stringLiteralToken.TextSpan.EndExclusiveIndex >= stringLiteralToken.TextSpan.StartInclusiveIndex)
+        if (token.TextSpan.Text == string.Empty)
         {
-            return cSharpCompilationUnit.SourceText.Substring(
-                stringLiteralToken.TextSpan.StartInclusiveIndex,
-                stringLiteralToken.TextSpan.EndExclusiveIndex - stringLiteralToken.TextSpan.StartInclusiveIndex);
+            var resource = GetResource(token.TextSpan.ResourceUri);
+            var cSharpCompilationUnit = (CSharpCompilationUnit)resource.CompilationUnit;
+            
+            if (token.TextSpan.StartInclusiveIndex < cSharpCompilationUnit.SourceText.Length &&
+                token.TextSpan.EndExclusiveIndex <= cSharpCompilationUnit.SourceText.Length &&
+                token.TextSpan.EndExclusiveIndex >= token.TextSpan.StartInclusiveIndex)
+            {
+                return cSharpCompilationUnit.SourceText.Substring(
+                    token.TextSpan.StartInclusiveIndex,
+                    token.TextSpan.EndExclusiveIndex - token.TextSpan.StartInclusiveIndex);
+            }
         }
         
-        return stringLiteralToken.TextSpan.Text;
+        return token.TextSpan.Text;
     }
 }

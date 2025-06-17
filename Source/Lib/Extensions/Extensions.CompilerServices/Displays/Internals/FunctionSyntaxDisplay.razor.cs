@@ -12,13 +12,13 @@ public partial class FunctionSyntaxDisplay : ComponentBase
 	[Parameter, EditorRequired]
 	public SyntaxViewModel SyntaxViewModel { get; set; } = default!;
 	
-	private string GetTextFromStringLiteralToken(SyntaxToken stringLiteralToken)
+	private string GetTextFromToken(SyntaxToken token)
 	{
-	    var model = TextEditorService.ModelApi.GetOrDefault(stringLiteralToken.TextSpan.ResourceUri);
+	    var model = TextEditorService.ModelApi.GetOrDefault(token.TextSpan.ResourceUri);
 	    
 	    if (model.PersistentState.CompilerService is IExtendedCompilerService extendedCompilerService)
-	        return extendedCompilerService.GetTextFromStringLiteralToken(stringLiteralToken);
+	        return extendedCompilerService.GetTextFromToken(token);
 	    
-	    return stringLiteralToken.TextSpan.Text;
+	    return token.TextSpan.Text;
 	}
 }
