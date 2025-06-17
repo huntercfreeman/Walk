@@ -269,6 +269,12 @@
 			        case SyntaxKind.StringLiteralToken:
 			            <span class="di_te_string-literal">@(GetTextFromStringLiteralToken(argumentEntry.OptionalCompileTimeConstantToken))</span>
 			            break;
+		            case SyntaxKind.CharLiteralToken:
+			            <span class="di_te_string-literal">@argumentEntry.OptionalCompileTimeConstantToken.TextSpan.Text</span>
+			            break;
+		            case SyntaxKind.NumericLiteralToken:
+			            <span class="di_te_numeric-literal">@argumentEntry.OptionalCompileTimeConstantToken.TextSpan.Text</span>
+			            break;
 		            default:
 			            <text>...</text>
 			            break;

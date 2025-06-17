@@ -912,7 +912,7 @@ public static class CSharpLexer
             (byte)GenericDecorationKind.None,
             stringWalker.ResourceUri,
             stringWalker.SourceText,
-            binder.TextEditorService);
+            string.Empty);
 
         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NumericLiteralToken, textSpan));
     }
@@ -942,7 +942,7 @@ public static class CSharpLexer
 		            (byte)GenericDecorationKind.EscapeCharacterPrimary,
 		            stringWalker.ResourceUri,
 		            stringWalker.SourceText,
-		            binder.TextEditorService));
+		            string.Empty));
 
 				// Presuming the escaped text is 2 characters,
 				// then read an extra character.
@@ -958,7 +958,7 @@ public static class CSharpLexer
             (byte)GenericDecorationKind.StringLiteral,
             stringWalker.ResourceUri,
             stringWalker.SourceText,
-            binder.TextEditorService);
+            string.Empty);
 
         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CharLiteralToken, textSpan));
     }
