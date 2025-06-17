@@ -1299,17 +1299,24 @@ public partial class CSharpBinder
 			case SyntaxKind.AtToken:
 				return emptyExpressionNode;
 			case SyntaxKind.OutTokenKeyword:
-			    parserModel.ParameterModifierSyntaxKind = SyntaxKind.OutTokenKeyword;
+			    parserModel.ParameterModifierKind = ParameterModifierKind.Out;
 				return emptyExpressionNode;
 			case SyntaxKind.InTokenKeyword:
-			    parserModel.ParameterModifierSyntaxKind = SyntaxKind.InTokenKeyword;
+			    parserModel.ParameterModifierKind = ParameterModifierKind.In;
 			    return emptyExpressionNode;
 			case SyntaxKind.RefTokenKeyword:
-			    parserModel.ParameterModifierSyntaxKind = SyntaxKind.RefTokenKeyword;
+			    parserModel.ParameterModifierKind = ParameterModifierKind.Ref;
 		        return emptyExpressionNode;
 			case SyntaxKind.ParamsTokenKeyword:
+			    parserModel.ParameterModifierKind = ParameterModifierKind.Params;
+		        return emptyExpressionNode;
 			case SyntaxKind.ThisTokenKeyword:
-				return emptyExpressionNode;
+				parserModel.ParameterModifierKind = ParameterModifierKind.This;
+		        return emptyExpressionNode;
+	        case SyntaxKind.ReadonlyTokenKeyword:
+	            // TODO: Is the readonly keyword valid C# here?
+				parserModel.ParameterModifierKind = ParameterModifierKind.Readonly;
+		        return emptyExpressionNode;
 			case SyntaxKind.SizeofTokenKeyword:
 			case SyntaxKind.DefaultTokenKeyword:
 			case SyntaxKind.TypeofTokenKeyword:
@@ -2769,7 +2776,7 @@ public partial class CSharpBinder
 		}
 		
 		if (expressionSecondary.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
-		    parserModel.ParameterModifierSyntaxKind == SyntaxKind.OutTokenKeyword)
+		    parserModel.ParameterModifierKind == ParameterModifierKind.Out)
 		{
 		    var variableDeclarationNode = (VariableDeclarationNode)expressionSecondary;
 		    
@@ -2800,13 +2807,10 @@ public partial class CSharpBinder
 		}
 		
 		invocationNode.FunctionParameterListing.FunctionParameterEntryList.Add(
-			new FunctionParameterEntry(
-		        hasOutKeyword: parserModel.ParameterModifierSyntaxKind == SyntaxKind.OutTokenKeyword,
-		        hasInKeyword: parserModel.ParameterModifierSyntaxKind == SyntaxKind.InTokenKeyword,
-		        hasRefKeyword: parserModel.ParameterModifierSyntaxKind == SyntaxKind.RefTokenKeyword));
+			new FunctionParameterEntry(parserModel.ParameterModifierKind));
 		
 		// Just needs to be set to anything other than out, in, ref.
-		parserModel.ParameterModifierSyntaxKind = SyntaxKind.CommentMultiLineToken;
+		parserModel.ParameterModifierKind = ParameterModifierKind.None;
 		return invocationNode;
 	}
 	

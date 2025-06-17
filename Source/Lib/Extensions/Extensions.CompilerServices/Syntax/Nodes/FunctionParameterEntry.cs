@@ -1,3 +1,4 @@
+using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -7,17 +8,10 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 /// </summary>
 public struct FunctionParameterEntry
 {
-	public FunctionParameterEntry(
-		bool hasOutKeyword,
-		bool hasInKeyword,
-		bool hasRefKeyword)
+	public FunctionParameterEntry(ParameterModifierKind parameterModifierKind)
 	{
-		HasOutKeyword = hasOutKeyword;
-		HasInKeyword = hasInKeyword;
-		HasRefKeyword = hasRefKeyword;
+		ParameterModifierKind = parameterModifierKind;
 	}
 
-	public bool HasOutKeyword { get; }
-	public bool HasInKeyword { get; }
-	public bool HasRefKeyword { get; }
+	public ParameterModifierKind ParameterModifierKind { get; }
 }

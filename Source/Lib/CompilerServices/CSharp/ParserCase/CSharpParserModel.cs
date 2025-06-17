@@ -134,7 +134,7 @@ public struct CSharpParserModel
     /// </summary>
     public TypeClauseNode TypeClauseNode { get; }
     
-    public SyntaxKind ParameterModifierSyntaxKind { get; set; } = SyntaxKind.CommentMultiLineToken;
+    public ParameterModifierKind ParameterModifierKind { get; set; } = ParameterModifierKind.None;
     
     public ArgumentModifierKind ArgumentModifierKind { get; set; } = ArgumentModifierKind.None;
     
