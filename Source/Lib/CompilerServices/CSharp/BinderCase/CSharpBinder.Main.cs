@@ -1699,10 +1699,6 @@ public partial class CSharpBinder
 		    		parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, cSharpCompilationUnit, ref parserModel);
 		    	}
 		    	return;
-		    case SyntaxKind.ForeachStatementNode:
-		    	var foreachStatementNode = (ForeachStatementNode)codeBlockOwner;
-    			parserModel.Binder.BindVariableDeclarationNode(foreachStatementNode.VariableDeclarationNode, cSharpCompilationUnit, ref parserModel);
-    			return;
     		case SyntaxKind.ConstructorDefinitionNode:
     			var constructorDefinitionNode = (ConstructorDefinitionNode)codeBlockOwner;
 	    		foreach (var argument in constructorDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList)

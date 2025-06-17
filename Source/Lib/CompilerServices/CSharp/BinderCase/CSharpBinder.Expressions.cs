@@ -1299,12 +1299,24 @@ public partial class CSharpBinder
 			case SyntaxKind.AtToken:
 				return emptyExpressionNode;
 			case SyntaxKind.OutTokenKeyword:
+			    parserModel.ParameterModifierKind = ParameterModifierKind.Out;
 				return emptyExpressionNode;
 			case SyntaxKind.InTokenKeyword:
+			    parserModel.ParameterModifierKind = ParameterModifierKind.In;
+			    return emptyExpressionNode;
 			case SyntaxKind.RefTokenKeyword:
+			    parserModel.ParameterModifierKind = ParameterModifierKind.Ref;
+		        return emptyExpressionNode;
 			case SyntaxKind.ParamsTokenKeyword:
+			    parserModel.ParameterModifierKind = ParameterModifierKind.Params;
+		        return emptyExpressionNode;
 			case SyntaxKind.ThisTokenKeyword:
-				return emptyExpressionNode;
+				parserModel.ParameterModifierKind = ParameterModifierKind.This;
+		        return emptyExpressionNode;
+	        case SyntaxKind.ReadonlyTokenKeyword:
+	            // TODO: Is the readonly keyword valid C# here?
+				parserModel.ParameterModifierKind = ParameterModifierKind.Readonly;
+		        return emptyExpressionNode;
 			case SyntaxKind.SizeofTokenKeyword:
 			case SyntaxKind.DefaultTokenKeyword:
 			case SyntaxKind.TypeofTokenKeyword:
@@ -2384,6 +2396,8 @@ public partial class CSharpBinder
 		        	symbolId,
 		        	(functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri, functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex));
 		        
+		        functionInvocationNode.ExplicitDefinitionTextSpan = functionDefinitionNode.FunctionIdentifierToken.TextSpan;
+		        
 		        // TODO: Transition from 'FunctionInvocationNode' to GenericParameters / FunctionParameters
 		        // TODO: Method group if next token is not '<' or '('
 		    	expressionPrimary = functionInvocationNode;
@@ -2763,12 +2777,57 @@ public partial class CSharpBinder
 				ref parserModel);
 		}
 		
-		invocationNode.FunctionParameterListing.FunctionParameterEntryList.Add(
-			new FunctionParameterEntry(
-		        hasOutKeyword: false,
-		        hasInKeyword: false,
-		        hasRefKeyword: false));
+		if (expressionSecondary.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
+		    parserModel.ParameterModifierKind == ParameterModifierKind.Out)
+		{
+		    var variableDeclarationNode = (VariableDeclarationNode)expressionSecondary;
+		    
+		    if (variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.Text ==
+		        CSharpFacts.Types.Var.TypeIdentifierToken.TextSpan.Text)
+	        {
+	            if (invocationNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+    		    {
+    		        var functionInvocationNode = (FunctionInvocationNode)invocationNode;
+    		        
+    		        ISyntaxNode? maybeFunctionDefinitionNode;
+    		        
+    		        if (functionInvocationNode.ExplicitDefinitionTextSpan.ConstructorWasInvoked)
+        			{
+        			    maybeFunctionDefinitionNode = GetDefinitionNode(
+        			        cSharpCompilationUnit: null,
+        			        functionInvocationNode.ExplicitDefinitionTextSpan,
+        			        SyntaxKind.FunctionInvocationNode);
+        			}
+        			else
+        			{
+        			    maybeFunctionDefinitionNode = GetDefinitionNode(
+        			        compilationUnit,
+        			        functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan,
+        			        SyntaxKind.FunctionInvocationNode);
+        			}
+    		        
+    		        if (maybeFunctionDefinitionNode is not null &&
+    		            maybeFunctionDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+    		        {
+    		            var functionDefinitionNode = (FunctionDefinitionNode)maybeFunctionDefinitionNode;
+    		        
+    		            if (functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList.Count > invocationNode.FunctionParameterListing.FunctionParameterEntryList.Count)
+    		            {
+    		                var matchingArgument = functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList[
+    		                    invocationNode.FunctionParameterListing.FunctionParameterEntryList.Count];
+    		                
+    		                variableDeclarationNode.SetImplicitTypeReference(matchingArgument.VariableDeclarationNode.TypeReference);
+    		            }
+    		        }
+    		    }
+	        }
+		}
 		
+		invocationNode.FunctionParameterListing.FunctionParameterEntryList.Add(
+			new FunctionParameterEntry(parserModel.ParameterModifierKind));
+		
+		// Just needs to be set to anything other than out, in, ref.
+		parserModel.ParameterModifierKind = ParameterModifierKind.None;
 		return invocationNode;
 	}
 	
@@ -2875,16 +2934,14 @@ public partial class CSharpBinder
 				compilationUnit,
 				ref parserModel);
 		}
-			
+		
+		// TODO: Where is this containing-method invoked from?
 		functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList.Add(
 			new FunctionArgumentEntry(
 		        variableDeclarationNode: null,
 		        optionalCompileTimeConstantToken: null,
 		        isOptional: false,
-		        hasParamsKeyword: false,
-		        hasOutKeyword: false,
-		        hasInKeyword: false,
-		        hasRefKeyword: false));
+		        ArgumentModifierKind.None));
 		
 		return functionDefinitionNode;
 	}

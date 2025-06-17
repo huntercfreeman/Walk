@@ -1,6 +1,7 @@
 using Walk.Extensions.CompilerServices.Utility;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Walk.CompilerServices.CSharp.BinderCase;
 using Walk.CompilerServices.CSharp.Facts;
@@ -132,6 +133,10 @@ public struct CSharpParserModel
     /// TODO: Consider the case where you have just a TypeClauseNode then StatementDelimiterToken.
     /// </summary>
     public TypeClauseNode TypeClauseNode { get; }
+    
+    public ParameterModifierKind ParameterModifierKind { get; set; } = ParameterModifierKind.None;
+    
+    public ArgumentModifierKind ArgumentModifierKind { get; set; } = ArgumentModifierKind.None;
     
     public TypeClauseNode ConstructOrRecycleTypeClauseNode(
     	SyntaxToken typeIdentifier,
