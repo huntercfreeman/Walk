@@ -22,6 +22,14 @@ public class ParseFunctions
             genericParameterListing: default,
             functionArgumentListing: default,
             default);
+            
+        parserModel.Binder.BindFunctionDefinitionNode(functionDefinitionNode, compilationUnit, ref parserModel);
+        
+        parserModel.Binder.NewScopeAndBuilderFromOwner(
+        	functionDefinitionNode,
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
     
     	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
     	{
@@ -50,32 +58,11 @@ public class ParseFunctions
             return;
 
         HandleFunctionArguments(functionDefinitionNode, compilationUnit, ref parserModel);
-
-        parserModel.Binder.BindFunctionDefinitionNode(functionDefinitionNode, compilationUnit, ref parserModel);
-        
-        parserModel.Binder.NewScopeAndBuilderFromOwner(
-        	functionDefinitionNode,
-	        parserModel.TokenWalker.Current.TextSpan,
-	        compilationUnit,
-	        ref parserModel);
-        
-        // (2025-01-13)
-		// ========================================================
-		//
-		// - FunctionDefinitionNode checks encompassing CodeBlockOwner, if it is an interface.
-		
-		// (2025-02-06)
-		// ============
-		// 'where' clause / other secondary syntax if there is more.
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
-        {
         	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
-        }
         else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
-        {
         	ParseTokens.MoveToExpressionBody(compilationUnit, ref parserModel);
-        }
     }
 
     public static void HandleConstructorDefinition(
@@ -288,56 +275,45 @@ public class ParseFunctions
             
             	var tokenIndexOriginal = parserModel.TokenWalker.Index;
             	
-            	parserModel.ParserContextKind = CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode;
-				var successTypeClauseNode = ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, compilationUnit, ref parserModel, out var typeClauseNode);
-		    	var successName = false;
-		    	
-		    	if (successTypeClauseNode)
-		    	{
-		    		var successNameableToken = false;
-		    		
-		    		if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind))
-		    		{
-		    			var token = parserModel.TokenWalker.Consume();
-		    			var identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, compilationUnit, ref parserModel);
-		    			successNameableToken = true;
-		    			
-		    			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
-		    			{
-		    				_ = parserModel.TokenWalker.Consume();
-		    				
-		    				parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-		    				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, null));
-		    				var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-		    			}
-					        
-					    var variableDeclarationNode = new VariableDeclarationNode(
-					        new TypeReference((TypeClauseNode)typeClauseNode),
-					        identifierToken,
-					        VariableKind.Local,
-					        false);
-		    			
-		    			functionArgumentEntryList.Add(
-		    				new FunctionArgumentEntry(
-						        variableDeclarationNode,
-						        optionalCompileTimeConstantToken: null,
-						        isOptional: false,
-						        parserModel.ArgumentModifierKind));
-		    			
-		    			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
-		    				_ = parserModel.TokenWalker.Consume();
-		    				
-		    			if (tokenIndexOriginal < parserModel.TokenWalker.Index)
-		    				continue; // Already consumed so avoid the one at the end of the while loop
-		    		}
-		    		
-		    		if (!successNameableToken)
-		    			corruptState = true;
-		    	}
-		    	else
-		    	{
-		    		corruptState = true;
-		    	}
+            	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.TypeClauseNode);
+            	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableDeclarationNode);
+            	parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
+            	var successParse = ParseOthers.TryParseExpression(null, compilationUnit, ref parserModel, out var expressionNode);
+            	
+            	VariableDeclarationNode? variableDeclarationNode;
+            	
+            	if (expressionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+            	{
+                    variableDeclarationNode = (VariableDeclarationNode)expressionNode;
+                    parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserModel);
+                    
+                    if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+        			{
+        				_ = parserModel.TokenWalker.Consume();
+        				
+        				parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+        				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, null));
+        				_ = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+        			}
+        			
+        			functionArgumentEntryList.Add(
+        				new FunctionArgumentEntry(
+    				        variableDeclarationNode,
+    				        optionalCompileTimeConstantToken: null,
+    				        isOptional: false,
+    				        parserModel.ArgumentModifierKind));
+        			
+        			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
+        				_ = parserModel.TokenWalker.Consume();
+            	}
+            	else
+            	{
+            	    variableDeclarationNode = null;
+            	    corruptState = true;
+            	}
+            	
+            	if (tokenIndexOriginal < parserModel.TokenWalker.Index)
+    				continue; // Already consumed so avoid the one at the end of the while loop
             }
 
             _ = parserModel.TokenWalker.Consume();

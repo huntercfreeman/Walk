@@ -657,7 +657,6 @@ public partial class CSharpBinder
 	        	else
 	        		typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, compilationUnit, ref parserModel);
 	        	
-	            
 	            typeClauseNode.HasQuestionMark = ambiguousIdentifierExpressionNode.HasQuestionMark;
 				BindTypeClauseNode(typeClauseNode, compilationUnit, ref parserModel);
 				
