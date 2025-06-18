@@ -227,7 +227,9 @@ public partial class Counter : ComponentBase
 	{
 		for (int i = stringList.Count - 1; i >= 0; i--)
 		{
-			if (stringList[i] == stringToRemove)
+		    var entry = stringList[i];
+		    
+			if (entry == stringToRemove)
 				stringList.RemoveAt(i);
 		}
 		
