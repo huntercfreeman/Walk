@@ -825,9 +825,16 @@ public partial class CSharpBinder
 		//
 		// But, as for a fix, the bad expression node needs to 'match' the Parenthesis tokens so that
 		// the statement loop picks back up at the second 'CloseParenthesisToken'.
-		// 
-		if (token.SyntaxKind == SyntaxKind.OpenParenthesisToken)
-			parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, badExpressionNode));
+		//
+		switch (token.SyntaxKind)
+		{
+		    case SyntaxKind.OpenParenthesisToken:
+		        parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, badExpressionNode));
+		        break;
+	        case SyntaxKind.OpenBraceToken:
+	            parserModel.ExpressionList.Add((SyntaxKind.CloseBraceToken, badExpressionNode));
+	            break;
+		}
 		
 		badExpressionNode.ClobberCount++;
 		return badExpressionNode;
