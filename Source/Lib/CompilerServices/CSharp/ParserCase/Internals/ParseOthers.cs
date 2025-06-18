@@ -109,7 +109,7 @@ public static class ParseOthers
     	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableDeclarationNode);
     	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.AmbiguousParenthesizedExpressionNode);
     	parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
-    	var successParse = ParseOthers.TryParseExpression(null, compilationUnit, ref parserModel, out var expressionNode);
+    	var successParse = ParseOthers.TryParseExpression(compilationUnit, ref parserModel, out var expressionNode);
     	
     	if (expressionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
     	{
@@ -188,12 +188,9 @@ public static class ParseOthers
 	/// At that point, go on to move the 'TypeClauseNode' to be a function identifier, and the
 	/// generic arguments for the function invocation, and go on from there.
     /// </summary>
-    public static bool TryParseExpression(SyntaxKind? syntaxKind, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel, out IExpressionNode expressionNode)
+    public static bool TryParseExpression(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel, out IExpressionNode expressionNode)
     {
     	var originalTokenIndex = parserModel.TokenWalker.Index;
-    	
-    	if (syntaxKind is not null)
-    		parserModel.TryParseExpressionSyntaxKindList.Add(syntaxKind.Value);
     	
 		expressionNode = ParseExpression(compilationUnit, ref parserModel);
 		

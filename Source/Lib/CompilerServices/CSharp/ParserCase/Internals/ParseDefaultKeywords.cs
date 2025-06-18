@@ -298,7 +298,7 @@ public class ParseDefaultKeywords
     	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.TypeClauseNode);
     	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableDeclarationNode);
     	parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
-    	var successParse = ParseOthers.TryParseExpression(null, compilationUnit, ref parserModel, out var expressionNode);
+    	var successParse = ParseOthers.TryParseExpression(compilationUnit, ref parserModel, out var expressionNode);
     	
     	VariableDeclarationNode? variableDeclarationNode;
     	

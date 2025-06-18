@@ -57,7 +57,7 @@ public static class ParseTokens
     	
     	parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
     	
-		var successParse = ParseOthers.TryParseExpression(null, compilationUnit, ref parserModel, out var expressionNode);
+		var successParse = ParseOthers.TryParseExpression(compilationUnit, ref parserModel, out var expressionNode);
 		
 		if (!successParse)
 		{
@@ -424,7 +424,7 @@ public static class ParseTokens
     	
     	parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
     	
-		var successParse = ParseOthers.TryParseExpression(null, compilationUnit, ref parserModel, out var expressionNode);
+		var successParse = ParseOthers.TryParseExpression(compilationUnit, ref parserModel, out var expressionNode);
 		
 		if (!successParse)
 		{

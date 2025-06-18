@@ -40,8 +40,8 @@ public class ParseFunctions
     		parserModel.Binder.ParseGenericParameterNode_Start(
     			functionDefinitionNode, ref openAngleBracketToken, compilationUnit, ref parserModel);
     		
+    		parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.FunctionDefinitionNode);
     		var successGenericParametersListingNode = ParseOthers.TryParseExpression(
-    			SyntaxKind.FunctionDefinitionNode,
     			compilationUnit,
     			ref parserModel,
     			out var expressionNode);

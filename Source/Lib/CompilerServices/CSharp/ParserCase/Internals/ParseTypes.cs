@@ -60,7 +60,8 @@ public static class ParseTypes
 
     public static TypeClauseNode MatchTypeClause(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	if (ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, compilationUnit, ref parserModel, out var expressionNode))
+        parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.TypeClauseNode);
+    	if (ParseOthers.TryParseExpression(compilationUnit, ref parserModel, out var expressionNode))
     	{
     		return (TypeClauseNode)expressionNode;
     	}
