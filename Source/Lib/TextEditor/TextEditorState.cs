@@ -17,7 +17,7 @@ public record TextEditorState
 	public readonly Dictionary<ResourceUri, TextEditorModel> _modelMap = new();
 	public readonly Dictionary<Key<TextEditorViewModel>, TextEditorViewModel> _viewModelMap = new();
 	public readonly Dictionary<Key<TextEditorComponentData>, TextEditorComponentData> _componentDataMap = new();
-	
+
 	public (TextEditorModel? TextEditorModel, TextEditorViewModel? TextEditorViewModel)
 		GetModelAndViewModelOrDefault(ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)
 	{

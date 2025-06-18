@@ -60,7 +60,8 @@ public static class ParseTypes
 
     public static TypeClauseNode MatchTypeClause(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	if (ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, compilationUnit, ref parserModel, out var expressionNode))
+        parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.TypeClauseNode);
+    	if (ParseOthers.TryParseExpression(compilationUnit, ref parserModel, out var expressionNode))
     	{
     		return (TypeClauseNode)expressionNode;
     	}
@@ -151,18 +152,7 @@ public static class ParseTypes
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-    	ParseFunctions.HandleFunctionArguments(typeDefinitionNode, compilationUnit, ref parserModel);
-    	
-    	if (typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.ConstructorWasInvoked)
-    	{
-    		foreach (var argument in typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList)
-	    	{
-	    		parserModel.Binder.CreateVariableSymbol(argument.VariableDeclarationNode.IdentifierToken, argument.VariableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
-	    		argument.VariableDeclarationNode.VariableKind = VariableKind.Property;
-	    		parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit, ref parserModel, shouldCreateVariableSymbol: false);
-	    		parserModel.CurrentCodeBlockBuilder.AddChild(argument.VariableDeclarationNode);
-	    	}
-    	}
+    	ParseFunctions.HandleFunctionArguments(typeDefinitionNode, compilationUnit, ref parserModel, variableKind: VariableKind.Property);
     }
     
     public static void HandleEnumDefinitionNode(

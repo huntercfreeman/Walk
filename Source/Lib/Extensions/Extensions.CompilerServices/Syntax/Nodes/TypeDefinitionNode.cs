@@ -126,11 +126,19 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		if (!CodeBlock.ConstructorWasInvoked)
 			return Array.Empty<ISyntaxNode>();
 
-		return CodeBlock.ChildList
+		var query = CodeBlock.ChildList
 			.Where(child => child.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
 							child.SyntaxKind == SyntaxKind.VariableDeclarationNode ||
 							child.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 			.Select(x => (ISyntaxNode)x);
+	
+        if (PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList is not null)
+        {
+            query = query.Concat(PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList.Select(
+                x => x.VariableDeclarationNode));
+        }
+        
+        return query;
 	}
 
 	public TypeClauseNode ToTypeClause()

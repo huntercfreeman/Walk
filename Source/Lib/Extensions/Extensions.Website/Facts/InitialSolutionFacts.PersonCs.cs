@@ -407,21 +407,8 @@ public bool OnRenderBatchChanged() => true;
 TextEditorViewModelDisplay.RenderBatchChanged += OnRenderBatchChanged;
 TextEditorViewModelDisplay.RenderBatchChanged -= OnRenderBatchChanged;
 
-
+var viewModel = 2;
 var viewModelModifier = viewModel is null ? null : new(viewModel);
-
-/*public (Ddd? TextEditorModel, Fff? TextEditorViewModel)
-	Aaa(ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)
-{
-	
-	var inViewModel = (TextEditorViewModel?)null;
-}
-
-
-public (TextEditorModel? Model, TextEditorViewModel? ViewModel) GetModelAndViewModelOrDefault(
-	Key<TextEditorViewModel> viewModelKey)
-{
-}*/
 
 public class DoNothingAppDataService : IAppDataService
 {
@@ -452,6 +439,69 @@ default(Person);
 
 return default(int);
 return default(Person);
+
+public (TextEditorModel? TextEditorModel, TextEditorViewModel? TextEditorViewModel)
+	GetModelAndViewModelOrDefault(
+	    (ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey) tuple1,
+	    (ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)? tuple2,
+		int aaa)
+{
+	var inModel = (TextEditorModel?)null;
+	var inViewModel = (TextEditorViewModel?)null;
+	
+	try
+	{
+		_ = _modelMap.TryGetValue(resourceUri, out inModel);
+		_ = _viewModelMap.TryGetValue(viewModelKey, out inViewModel);
+	}
+	catch (Exception e)
+	{
+		Console.WriteLine(e);
+	}
+	
+	return (inModel, inViewModel);
+}
+
+/// <summary>
+/// This overload will lookup the model for the given view model, in the case that one only has access to the viewModelKey.
+/// </summary>
+public (TextEditorModel? Model, TextEditorViewModel? ViewModel) GetModelAndViewModelOrDefault(
+	Key<TextEditorViewModel> viewModelKey)
+{
+	var inModel = (TextEditorModel?)null;
+	var inViewModel = (TextEditorViewModel?)null;
+}
+
+try
+{
+	return new Dictionary<ResourceUri, TextEditorModel>(_modelMap);
+}
+catch ((int Number, string Value) e)
+{
+   Console.WriteLine(e);
+}
+
+int i = 0;
+
+if (i is (int aaa, string bbb) someValueTuple)
+{
+   
+}
+
+void Asdfg(out (int nnn, string mmmm) sss)
+{
+}
+
+Asdfg(out var jjj);
+
+Asdfg(out (int nnn, string mmmm) zebra);
+
+foreach ((Person hhh, int ggg) gfdsa in new List<Apple>())
+{
+}
+
+(int ddd, string fff) vTuple;
+(int ddd, string fff) xTuple;
 
 /*
 Not everything in this file works perfectly yet.

@@ -1805,6 +1805,7 @@ public partial class CSharpBinder
 				{
 					var identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, compilationUnit, ref parserModel);
 					var isRootExpression = true;
+					var hasAmbiguousParenthesizedExpressionNode = false;
 					
 					foreach (var tuple in parserModel.ExpressionList)
 					{
@@ -1812,7 +1813,12 @@ public partial class CSharpBinder
 							continue;
 						
 						isRootExpression = false;
-						break;
+						
+						if (tuple.ExpressionNode.SyntaxKind == SyntaxKind.AmbiguousParenthesizedExpressionNode)
+						{
+						    hasAmbiguousParenthesizedExpressionNode = true;
+						    break;
+						}
 					}
 					
 					VariableDeclarationNode variableDeclarationNode;
@@ -1836,12 +1842,24 @@ public partial class CSharpBinder
 					}
 					else
 					{
-						variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
-					        typeClauseNode,
-					        identifierToken,
-					        VariableKind.Local,
-					        compilationUnit,
-					        ref parserModel);
+					    if (hasAmbiguousParenthesizedExpressionNode)
+					    {
+					        variableDeclarationNode = new VariableDeclarationNode(
+    					        new TypeReference(typeClauseNode),
+    					        identifierToken,
+    					        VariableKind.Local,
+    					        false);
+					        parserModel.Binder.CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
+					    }
+					    else
+					    {
+    						variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
+    					        typeClauseNode,
+    					        identifierToken,
+    					        VariableKind.Local,
+    					        compilationUnit,
+    					        ref parserModel);
+				        }
 					}
 				        
 				    return variableDeclarationNode;

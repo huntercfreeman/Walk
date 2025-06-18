@@ -129,10 +129,10 @@ public partial class CSharpBinder
         		functionIdentifierText,
                 functionDefinitionNode))
         {
-            DiagnosticHelper.ReportAlreadyDefinedFunction(
+            /*DiagnosticHelper.ReportAlreadyDefinedFunction(
             	compilationUnit.__DiagnosticList,
                 functionDefinitionNode.FunctionIdentifierToken.TextSpan,
-                functionIdentifierText);
+                functionIdentifierText);*/
         }
     }
 
@@ -472,10 +472,10 @@ public partial class CSharpBinder
         	}
         	else
         	{
-        		DiagnosticHelper.ReportAlreadyDefinedType(
+        		/*DiagnosticHelper.ReportAlreadyDefinedType(
 	            	compilationUnit.__DiagnosticList,
 	                typeDefinitionNode.TypeIdentifierToken.TextSpan,
-	                typeIdentifierText);
+	                typeIdentifierText);*/
         	}
         }
         else
