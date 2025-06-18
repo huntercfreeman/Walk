@@ -84,6 +84,8 @@ public partial class CSharpBinder
 				return AmbiguousParenthesizedMergeToken((AmbiguousParenthesizedExpressionNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
 			case SyntaxKind.AmbiguousIdentifierExpressionNode:
 				return AmbiguousIdentifierMergeToken((AmbiguousIdentifierExpressionNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
+			case SyntaxKind.VariableReferenceNode:
+				return VariableReferenceMergeToken((VariableReferenceNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
 			case SyntaxKind.TypeClauseNode:
 				return TypeClauseMergeToken((TypeClauseNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
 			case SyntaxKind.ReturnStatementNode:
@@ -143,6 +145,8 @@ public partial class CSharpBinder
 				return AmbiguousParenthesizedMergeExpression((AmbiguousParenthesizedExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			case SyntaxKind.AmbiguousIdentifierExpressionNode:
 				return AmbiguousIdentifierMergeExpression((AmbiguousIdentifierExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
+			case SyntaxKind.VariableReferenceNode:
+			    return VariableReferenceMergeExpression((VariableReferenceNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			case SyntaxKind.TypeClauseNode:
 				return TypeClauseMergeExpression((TypeClauseNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			case SyntaxKind.ReturnStatementNode:
@@ -478,12 +482,21 @@ public partial class CSharpBinder
 			}
 			case SyntaxKind.IsTokenKeyword:
 			{
-				ForceDecisionAmbiguousIdentifier(
+				var decidedNode = ForceDecisionAmbiguousIdentifier(
 					EmptyExpressionNode.Empty,
 					ambiguousIdentifierExpressionNode,
 					compilationUnit,
 					ref parserModel);
 					
+				if (decidedNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+				    return VariableReferenceMergeToken((VariableReferenceNode)decidedNode, ref token, compilationUnit, ref parserModel);
+				
+				// The goal is to move all the code to VariableReferenceMergeToken(...)
+				// when ForceDecisionAmbiguousIdentifier(...) a VariableReferenceNode.
+				//
+				// I'm keeping this Consume() logic here for now though because
+				// I have to fully understand what the result of removing it would be.
+				
 				_ = parserModel.TokenWalker.Consume(); // Consume the IsTokenKeyword
 				
 				if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.NotTokenContextualKeyword)
@@ -503,36 +516,56 @@ public partial class CSharpBinder
 					ambiguousIdentifierExpressionNode,
 					compilationUnit,
 					ref parserModel);
-					
-				if (decidedNode.SyntaxKind != SyntaxKind.VariableReferenceNode)
-					goto default;
 				
-				return new WithExpressionNode(
-					new VariableReference((VariableReferenceNode)decidedNode));
+				if (decidedNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+				    return VariableReferenceMergeToken((VariableReferenceNode)decidedNode, ref token, compilationUnit, ref parserModel);
+				
+				goto default;
 			}
 			case SyntaxKind.PlusPlusToken:
 			{
-				var decidedExpression = ForceDecisionAmbiguousIdentifier(
+				var decidedNode = ForceDecisionAmbiguousIdentifier(
 					EmptyExpressionNode.Empty,
 					ambiguousIdentifierExpressionNode,
 					compilationUnit,
 					ref parserModel);
+				
+				if (decidedNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+				    return VariableReferenceMergeToken((VariableReferenceNode)decidedNode, ref token, compilationUnit, ref parserModel);
 				
 				goto default;
 			}
 			case SyntaxKind.MinusMinusToken:
 			{
-				var decidedExpression = ForceDecisionAmbiguousIdentifier(
+				var decidedNode = ForceDecisionAmbiguousIdentifier(
 					EmptyExpressionNode.Empty,
 					ambiguousIdentifierExpressionNode,
 					compilationUnit,
 					ref parserModel);
 					
+				if (decidedNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+				    return VariableReferenceMergeToken((VariableReferenceNode)decidedNode, ref token, compilationUnit, ref parserModel);
+				
 				goto default;
 			}
 			case SyntaxKind.BangToken:
 			case SyntaxKind.QuestionMarkToken:
 			{
+			    var decidedNode = ForceDecisionAmbiguousIdentifier(
+					EmptyExpressionNode.Empty,
+					ambiguousIdentifierExpressionNode,
+					compilationUnit,
+					ref parserModel);
+			
+				if (decidedNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+				    return VariableReferenceMergeToken((VariableReferenceNode)decidedNode, ref token, compilationUnit, ref parserModel);
+				
+				// The goal is to move all the code to VariableReferenceMergeToken(...)
+				// when ForceDecisionAmbiguousIdentifier(...) a VariableReferenceNode.
+				//
+				// I'm keeping this Consume() logic here for now though because
+				// I have to fully understand what the result of removing it would be.
+				
 				if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken)
 					return ambiguousIdentifierExpressionNode;
 				
@@ -779,6 +812,60 @@ public partial class CSharpBinder
 		
 		return result;
 	}
+	
+	public IExpressionNode VariableReferenceMergeToken(
+		VariableReferenceNode variableReferenceNode, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+	    switch (token.SyntaxKind)
+		{
+			case SyntaxKind.EqualsToken:
+			{
+				// TODO: Is this code ever hit?
+				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, variableReferenceNode));
+				return EmptyExpressionNode.Empty;
+			}
+			case SyntaxKind.IsTokenKeyword:
+			{
+				_ = parserModel.TokenWalker.Consume(); // Consume the IsTokenKeyword
+				
+				if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.NotTokenContextualKeyword)
+					_ = parserModel.TokenWalker.Consume(); // Consume the NotTokenKeyword
+					
+				if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.NullTokenKeyword)
+				{
+					_ = parserModel.TokenWalker.Consume(); // Consume the NullTokenKeyword
+				}
+				
+				return EmptyExpressionNode.Empty;
+			}
+			case SyntaxKind.WithTokenContextualKeyword:
+			{
+				return new WithExpressionNode(
+					new VariableReference(variableReferenceNode));
+			}
+			case SyntaxKind.PlusPlusToken:
+			{
+				return variableReferenceNode;
+			}
+			case SyntaxKind.MinusMinusToken:
+			{
+				return variableReferenceNode;
+			}
+			case SyntaxKind.BangToken:
+			case SyntaxKind.QuestionMarkToken:
+			{
+				return variableReferenceNode;
+			}
+			default:
+				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeReference(), variableReferenceNode, token);
+		}
+	}
+	
+	public IExpressionNode VariableReferenceMergeExpression(
+		VariableReferenceNode variableReferenceNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+	    return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeReference(), variableReferenceNode, expressionSecondary);
+	}
 		
 	public IExpressionNode BadMergeToken(
 		BadExpressionNode badExpressionNode, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -825,9 +912,16 @@ public partial class CSharpBinder
 		//
 		// But, as for a fix, the bad expression node needs to 'match' the Parenthesis tokens so that
 		// the statement loop picks back up at the second 'CloseParenthesisToken'.
-		// 
-		if (token.SyntaxKind == SyntaxKind.OpenParenthesisToken)
-			parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, badExpressionNode));
+		//
+		switch (token.SyntaxKind)
+		{
+		    case SyntaxKind.OpenParenthesisToken:
+		        parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, badExpressionNode));
+		        break;
+	        case SyntaxKind.OpenBraceToken:
+	            parserModel.ExpressionList.Add((SyntaxKind.CloseBraceToken, badExpressionNode));
+	            break;
+		}
 		
 		badExpressionNode.ClobberCount++;
 		return badExpressionNode;
