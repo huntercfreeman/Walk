@@ -460,6 +460,19 @@ public partial class CSharpBinder
 			
 				goto default;
 			}
+			case SyntaxKind.OpenSquareBracketToken:
+			{
+			    var decidedNode = ForceDecisionAmbiguousIdentifier(
+					EmptyExpressionNode.Empty,
+					ambiguousIdentifierExpressionNode,
+					compilationUnit,
+					ref parserModel);
+					
+				if (decidedNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+				    return VariableReferenceMergeToken((VariableReferenceNode)decidedNode, ref token, compilationUnit, ref parserModel);
+			
+			    goto default;
+			}
 			case SyntaxKind.EqualsToken:
 			{
 				// TODO: Is this code ever hit?
@@ -856,6 +869,41 @@ public partial class CSharpBinder
 			{
 				return variableReferenceNode;
 			}
+			case SyntaxKind.CommaToken:
+			{
+			    parserModel.ExpressionList.Add((SyntaxKind.CommaToken, variableReferenceNode));
+			    return EmptyExpressionNode.Empty;
+			}
+			case SyntaxKind.OpenSquareBracketToken:
+			{
+			    parserModel.ExpressionList.Add((SyntaxKind.CloseSquareBracketToken, variableReferenceNode));
+			    parserModel.ExpressionList.Add((SyntaxKind.CommaToken, variableReferenceNode));
+			    return EmptyExpressionNode.Empty;
+			}
+			case SyntaxKind.CloseSquareBracketToken:
+			{
+			    if (variableReferenceNode.ResultTypeReference.GenericParameterListing.GenericParameterEntryList is not null &&
+			        variableReferenceNode.ResultTypeReference.GenericParameterListing.GenericParameterEntryList.Count == 1)
+            	{
+            	    return new VariableReferenceNode(
+    			    	token,
+    					new VariableDeclarationNode(
+            				variableReferenceNode.ResultTypeReference.GenericParameterListing.GenericParameterEntryList[0].TypeReference,
+            				token,
+            				VariableKind.Local,
+            				isInitialized: true));
+            	}
+            	else
+            	{
+            	    return new VariableReferenceNode(
+    			    	token,
+    					new VariableDeclarationNode(
+            				CSharpFacts.Types.Var.ToTypeReference(),
+            				token,
+            				VariableKind.Local,
+            				isInitialized: true));
+            	}
+			}
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeReference(), variableReferenceNode, token);
 		}
@@ -864,6 +912,12 @@ public partial class CSharpBinder
 	public IExpressionNode VariableReferenceMergeExpression(
 		VariableReferenceNode variableReferenceNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
+	    if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseSquareBracketToken ||
+	        parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
+	    {
+	        return variableReferenceNode;
+	    }
+	
 	    return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeReference(), variableReferenceNode, expressionSecondary);
 	}
 		
