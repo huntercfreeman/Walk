@@ -505,7 +505,7 @@ void Asdfg(out (int nnn, string mmmm) sss)
 {
 }
 
-Asdfg(out jjj);
+Asdfg(out var jjj);
 
 Asdfg(out (int nnn, string mmmm) zebra);
 
