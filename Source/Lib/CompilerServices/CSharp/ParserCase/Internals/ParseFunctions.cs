@@ -181,7 +181,8 @@ public class ParseFunctions
     public static void HandleFunctionArguments(
     	IFunctionDefinitionNode functionDefinitionNode,
     	CSharpCompilationUnit compilationUnit,
-    	ref CSharpParserModel parserModel)
+    	ref CSharpParserModel parserModel,
+    	VariableKind variableKind = VariableKind.Local)
     {
     	var openParenthesisToken = parserModel.TokenWalker.Consume();
     	var functionArgumentEntryList = new List<FunctionArgumentEntry>();
@@ -285,7 +286,10 @@ public class ParseFunctions
             	if (expressionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             	{
                     variableDeclarationNode = (VariableDeclarationNode)expressionNode;
-                    parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserModel);
+                    
+                    parserModel.Binder.CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
+    	    		variableDeclarationNode.VariableKind = variableKind;
+    	    		parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserModel, shouldCreateVariableSymbol: false);
                     
                     SyntaxToken optionalCompileTimeConstantToken;
                     
