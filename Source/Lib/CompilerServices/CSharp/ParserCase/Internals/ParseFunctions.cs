@@ -191,9 +191,10 @@ public class ParseFunctions
     	
     	while (!parserModel.TokenWalker.IsEof)
         {
-        	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+        	if (corruptState)
         	{
-        		openParenthesisCount++;
+        	    if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+        		    openParenthesisCount++;
         	}
         	else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
         	{
@@ -276,17 +277,10 @@ public class ParseFunctions
             
             	var tokenIndexOriginal = parserModel.TokenWalker.Index;
             	
-            	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.TypeClauseNode);
-            	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableDeclarationNode);
-            	parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
-            	var successParse = ParseOthers.TryParseExpression(null, compilationUnit, ref parserModel, out var expressionNode);
+            	var successParse = ParseOthers.TryParseVariableDeclarationNode(compilationUnit, ref parserModel, out var variableDeclarationNode);
             	
-            	VariableDeclarationNode? variableDeclarationNode;
-            	
-            	if (expressionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+            	if (successParse)
             	{
-                    variableDeclarationNode = (VariableDeclarationNode)expressionNode;
-                    
                     parserModel.Binder.CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
     	    		variableDeclarationNode.VariableKind = variableKind;
     	    		parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserModel, shouldCreateVariableSymbol: false);

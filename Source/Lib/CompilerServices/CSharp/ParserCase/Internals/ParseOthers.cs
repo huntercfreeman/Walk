@@ -92,6 +92,48 @@ public static class ParseOthers
     }
     
     /// <summary>
+    /// WARNING: If this parses a TypeClauseNode, it will return false, but not revert the TokenWalker's TokenIndex...
+    /// ...in all other cases where this returns false, the TokenWalker's TokenIndex is reverted.
+    /// This is done to preserve the way VariableDeclarationNode(s) were being parsed prior to this method's creation.
+    /// Whether it would make more sense to revert in the case of a TypeClauseNode needs to be investigated.
+    /// 
+    /// This method handles all VariableDeclarationNode cases including ValueTupleType(s).
+    ///
+    /// This method does NOT invoke parserModel.Binder.BindVariableDeclarationNode(...), and does NOT create a Symbol.
+    /// </summary>
+    public static bool TryParseVariableDeclarationNode(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel, out VariableDeclarationNode? variableDeclarationNode)
+    {
+    	var originalTokenIndex = parserModel.TokenWalker.Index;
+    	
+    	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.TypeClauseNode);
+    	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableDeclarationNode);
+    	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.AmbiguousParenthesizedExpressionNode);
+    	parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
+    	var successParse = ParseOthers.TryParseExpression(null, compilationUnit, ref parserModel, out var expressionNode);
+    	
+    	if (expressionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+    	{
+    	    variableDeclarationNode = (VariableDeclarationNode)expressionNode;
+            return true;
+    	}
+    	else
+    	{
+    	    if (expressionNode.SyntaxKind == SyntaxKind.AmbiguousParenthesizedExpressionNode)
+    	    {
+    	        var distance = parserModel.TokenWalker.Index - originalTokenIndex;
+		    		
+    			for (int i = 0; i < distance; i++)
+    			{
+    				_ = parserModel.TokenWalker.Backtrack();
+    			}
+    	    }
+    	
+    	    variableDeclarationNode = null;
+    	    return false;
+    	}
+    }
+    
+    /// <summary>
     /// ParseExpression while expressionPrimary.SyntaxKind == syntaxKind
     /// 
     /// if (expressionPrimary.SyntaxKind != syntaxKind)
@@ -153,28 +195,21 @@ public static class ParseOthers
     	if (syntaxKind is not null)
     		parserModel.TryParseExpressionSyntaxKindList.Add(syntaxKind.Value);
     	
-    	try
-    	{
-    		expressionNode = ParseExpression(compilationUnit, ref parserModel);
-    		
-    		/*#if DEBUG
-    		Console.WriteLine($"try => {expressionNode.SyntaxKind}\n");
-    		#else
-			Console.WriteLine($"{nameof(TryParseExpression)} has debug 'Console.Write...' that needs commented out.");
-    		#endif*/
-    		
-    		if (parserModel.TryParseExpressionSyntaxKindList.Count == 0)
-    			return true;
-    		else
-    			return parserModel.TryParseExpressionSyntaxKindList.Contains(expressionNode.SyntaxKind);
-    	}
-    	finally
-    	{
-    		parserModel.TryParseExpressionSyntaxKindList.Clear();
-    		parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
-    		
-    		parserModel.ParserContextKind = CSharpParserContextKind.None;
-    	}
+		expressionNode = ParseExpression(compilationUnit, ref parserModel);
+		
+		/*#if DEBUG
+		Console.WriteLine($"try => {expressionNode.SyntaxKind}\n");
+		#else
+		Console.WriteLine($"{nameof(TryParseExpression)} has debug 'Console.Write...' that needs commented out.");
+		#endif*/
+		
+		var success = parserModel.TryParseExpressionSyntaxKindList.Contains(expressionNode.SyntaxKind);
+		
+		parserModel.TryParseExpressionSyntaxKindList.Clear();
+		parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
+		parserModel.ParserContextKind = CSharpParserContextKind.None;
+		
+		return success;
     }
     
     public static bool SyntaxIsEndDelimiter(SyntaxKind syntaxKind)
