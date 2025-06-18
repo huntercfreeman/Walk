@@ -912,6 +912,15 @@ public partial class CSharpBinder
 	public IExpressionNode VariableReferenceMergeExpression(
 		VariableReferenceNode variableReferenceNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
+	    if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+        {
+            expressionSecondary = ForceDecisionAmbiguousIdentifier(
+				EmptyExpressionNode.Empty,
+				(AmbiguousIdentifierExpressionNode)expressionSecondary,
+				compilationUnit,
+				ref parserModel);
+        }
+	
 	    if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseSquareBracketToken ||
 	        parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
 	    {
