@@ -407,21 +407,8 @@ public bool OnRenderBatchChanged() => true;
 TextEditorViewModelDisplay.RenderBatchChanged += OnRenderBatchChanged;
 TextEditorViewModelDisplay.RenderBatchChanged -= OnRenderBatchChanged;
 
-
+var viewModel = 2;
 var viewModelModifier = viewModel is null ? null : new(viewModel);
-
-/*public (Ddd? TextEditorModel, Fff? TextEditorViewModel)
-	Aaa(ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)
-{
-	
-	var inViewModel = (TextEditorViewModel?)null;
-}
-
-
-public (TextEditorModel? Model, TextEditorViewModel? ViewModel) GetModelAndViewModelOrDefault(
-	Key<TextEditorViewModel> viewModelKey)
-{
-}*/
 
 public class DoNothingAppDataService : IAppDataService
 {

@@ -295,23 +295,10 @@ public class ParseDefaultKeywords
 	        compilationUnit,
 	        ref parserModel);
 	        
-    	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.TypeClauseNode);
-    	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableDeclarationNode);
-    	parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
-    	var successParse = ParseOthers.TryParseExpression(compilationUnit, ref parserModel, out var expressionNode);
-    	
-    	VariableDeclarationNode? variableDeclarationNode;
-    	
-    	if (expressionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-    	{
-            variableDeclarationNode = (VariableDeclarationNode)expressionNode;
-            parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserModel);
-    	}
-    	else
-    	{
-    	    variableDeclarationNode = null;
-    	}
-    	
+        var successParse = ParseOthers.TryParseVariableDeclarationNode(compilationUnit, ref parserModel, out var variableDeclarationNode);
+    	if (successParse)
+    	    parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserModel);
+        
     	var inKeywordToken = parserModel.TokenWalker.Match(SyntaxKind.InTokenKeyword);
     	
     	parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));

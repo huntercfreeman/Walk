@@ -382,6 +382,7 @@ public static class ParseOthers
     	// 	Example: 'parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));'
     	parserModel.ExpressionList.Clear();
     	parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, null));
+    	parserModel.ExpressionList.Add((SyntaxKind.CloseBraceToken, null));
     	parserModel.ExpressionList.Add((SyntaxKind.StatementDelimiterToken, null));
     	
     	if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
