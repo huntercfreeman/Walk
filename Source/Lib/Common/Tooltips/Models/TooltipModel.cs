@@ -1,8 +1,8 @@
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
 
-namespace Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
+namespace Walk.Common.RazorLib.Tooltips.Models;
 
-public sealed record TooltipViewModel(
+public sealed record TooltipModel(
     Type RendererType,
     Dictionary<string, object?>? ParameterMap,
     RelativeCoordinates RelativeCoordinates,

@@ -9,6 +9,7 @@ using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Tabs.Displays;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Reactives.Models;
+using Walk.Common.RazorLib.Tooltips.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.Groups.Models;
@@ -37,7 +38,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 	    string findOverlayValue,
 	    bool findOverlayValueExternallyChangedMarker,
 	    MenuKind menuKind,
-	    TooltipViewModel tooltipViewModel,
+	    TooltipModel tooltipModel,
 	    bool shouldRevealCursor,
 		VirtualAssociativityKind virtualAssociativityKind,
 		IPanelService panelService,
@@ -60,7 +61,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 	    FindOverlayValueExternallyChangedMarker = findOverlayValueExternallyChangedMarker;
 	    
 	    MenuKind = menuKind;
-	    TooltipViewModel = tooltipViewModel;
+	    TooltipModel = tooltipModel;
 
 	    ShouldRevealCursor = shouldRevealCursor;
 		VirtualAssociativityKind = virtualAssociativityKind;
@@ -169,7 +170,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 	/// <summary>
 	/// This property determines the tooltip that is shown in the text editor.
 	/// </summary>
-    public TooltipViewModel? TooltipViewModel { get; set; }
+    public TooltipModel? TooltipModel { get; set; }
     
     public bool ShouldRevealCursor { get; set; }
     public VirtualAssociativityKind VirtualAssociativityKind { get; set; } = VirtualAssociativityKind.None;

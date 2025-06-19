@@ -771,9 +771,10 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		
 		if (shouldClearTooltip)
 		{
-			if (viewModel.PersistentState.TooltipViewModel is not null)
+			if (viewModel.PersistentState.TooltipModel is not null)
 			{
-				viewModel.PersistentState.TooltipViewModel = null;
+				viewModel.PersistentState.TooltipModel = null;
+		        componentData.TextEditorViewModelSlimDisplay.TooltipService.SetTooltipModel(viewModel.PersistentState.TooltipModel);
 			}
 		}
 		

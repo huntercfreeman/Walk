@@ -189,24 +189,6 @@
 		<div class="@CaretRowCssClass"
 			 style="@_componentData.CaretRowCssStyle">
 		</div>
-	    
-	    var tooltipViewModel = _componentData.RenderBatch.ViewModel.PersistentState.TooltipViewModel;
-	    
-	    @if (tooltipViewModel is not null)
-	    {
-	        <div class="di_te_tooltip di_set-selectable @(tooltipViewModel.CssClassString ?? string.Empty)"
-	             style="left: @(_componentData.TooltipRelativeX)px; top: @(_componentData.TooltipRelativeY)px;"
-	             @onmouseover="tooltipViewModel.OnMouseOver"
-	             @onmousedown:stopPropagation="true"
-	             @onmousemove:stopPropagation="true"
-	             @ondblclick:stopPropagation="true"
-	             @onclick:stopPropagation="true"
-	             @oncontextmenu:stopPropagation="true">
-	
-	            <DynamicComponent Type="tooltipViewModel.RendererType"
-	                              Parameters="tooltipViewModel.ParameterMap" />
-	        </div>
-	    }
 	}
 	else
     {

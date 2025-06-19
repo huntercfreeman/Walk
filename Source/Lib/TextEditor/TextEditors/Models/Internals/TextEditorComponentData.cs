@@ -267,12 +267,6 @@ public sealed class TextEditorComponentData
     
     public string CursorCssClassBlinkAnimationOn { get; set; }
     public string CursorCssClassBlinkAnimationOff { get; set; }
-    
-    public double ValueTooltipRelativeX { get; set; }
-    public double ValueTooltipRelativeY { get; set; }
-	
-	public string TooltipRelativeX { get; set; } = string.Empty;
-	public string TooltipRelativeY { get; set; } = string.Empty;
 	
 	// _ = "di_te_text-editor-cursor " + BlinkAnimationCssClass + " " + _activeRenderBatch.Options.Keymap.GetCursorCssClassString();
 	public string BlinkAnimationCssClass => TextEditorService.ViewModelApi.CursorShouldBlink
@@ -433,27 +427,6 @@ public sealed class TextEditorComponentData
 			HORIZONTAL_GetScrollbarHorizontalStyleCss();
     
     	ConstructVirtualizationStyleCssStrings();
-    	
-    	if (RenderBatch.ViewModel.PersistentState.TooltipViewModel is not null)
-		{
-			var x = RenderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeX +
-					RenderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeScrollLeft;
-					
-			var y = RenderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeY +
-					RenderBatch.ViewModel.PersistentState.TooltipViewModel.RelativeCoordinates.RelativeScrollTop;
-		
-			if (Math.Abs(ValueTooltipRelativeX - x) >= 0.1)
-			{
-				ValueTooltipRelativeX = x;
-				TooltipRelativeX = x.ToString(System.Globalization.CultureInfo.InvariantCulture);
-			}
-		
-			if (Math.Abs(ValueTooltipRelativeY - y) >= 0.1)
-			{
-				ValueTooltipRelativeY = y;
-				TooltipRelativeY = y.ToString(System.Globalization.CultureInfo.InvariantCulture);
-			}
-		}
 		
 		for (int i = Css_LineIndexCache_KeyList.Count - 1; i >= 0; i--)
 		{
