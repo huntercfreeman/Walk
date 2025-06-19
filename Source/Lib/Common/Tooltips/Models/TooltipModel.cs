@@ -5,6 +5,7 @@ namespace Walk.Common.RazorLib.Tooltips.Models;
 public sealed record TooltipModel(
     Type RendererType,
     Dictionary<string, object?>? ParameterMap,
-    RelativeCoordinates RelativeCoordinates,
+    double X,
+    double Y,
     string? CssClassString,
     Func<Task> OnMouseOver);

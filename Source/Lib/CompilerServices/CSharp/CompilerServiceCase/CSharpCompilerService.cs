@@ -725,12 +725,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				editContext)
 			.ConfigureAwait(false);
 	
-		var relativeCoordinatesOnClick = new RelativeCoordinates(
-		    clientX - viewModelModifier.TextEditorDimensions.BoundingClientRectLeft,
-		    clientY - viewModelModifier.TextEditorDimensions.BoundingClientRectTop,
-		    viewModelModifier.ScrollLeft,
-		    viewModelModifier.ScrollTop);
-
         var cursorPositionIndex = modelModifier.GetPositionIndex(
         	lineAndColumnIndex.LineIndex,
             lineAndColumnIndex.ColumnIndex);
@@ -764,7 +758,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     viewModelModifier.PersistentState.TooltipModel = new(
 	                    modelModifier.PersistentState.CompilerService.DiagnosticRendererType ?? textEditorComponentRenderers.DiagnosticRendererType,
 	                    parameterMap,
-	                    relativeCoordinatesOnClick,
+	                    clientX,
+	                    clientY,
 	                    null,
                         componentData.ContinueRenderingTooltipAsync);
                     componentData.TextEditorViewModelSlimDisplay.TooltipService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
@@ -792,7 +787,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     viewModelModifier.PersistentState.TooltipModel = new(
                         typeof(Walk.Extensions.CompilerServices.Displays.SymbolDisplay),
                         parameters,
-                        relativeCoordinatesOnClick,
+                        clientX,
+                        clientY,
                         null,
                         componentData.ContinueRenderingTooltipAsync);
                     componentData.TextEditorViewModelSlimDisplay.TooltipService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);

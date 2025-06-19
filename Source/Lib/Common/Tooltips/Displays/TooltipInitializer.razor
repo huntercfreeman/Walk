@@ -5,11 +5,8 @@
     
     if (tooltipModel is not null)
 	{
-		var x = tooltipModel.RelativeCoordinates.RelativeX +
-				tooltipModel.RelativeCoordinates.RelativeScrollLeft;
-				
-		var y = tooltipModel.RelativeCoordinates.RelativeY +
-				tooltipModel.RelativeCoordinates.RelativeScrollTop;
+		var x = tooltipModel.X;
+		var y = tooltipModel.Y;
 	
 		if (Math.Abs(ValueTooltipRelativeX - x) >= 0.1)
 		{
