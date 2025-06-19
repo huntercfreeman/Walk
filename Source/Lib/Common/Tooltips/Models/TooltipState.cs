@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Walk.Common.RazorLib.Tooltips.Models;
 
 public record struct TooltipState

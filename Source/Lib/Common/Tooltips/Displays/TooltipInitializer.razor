@@ -26,6 +26,7 @@
 {
     <div class="di_te_tooltip di_set-selectable @(tooltipModel.CssClassString ?? string.Empty)"
          style="left: @(TooltipRelativeX)px; top: @(TooltipRelativeY)px;"
+         id="@TooltipService.HtmlElementId"
          @onmouseover="tooltipModel.OnMouseOver"
          @onmousedown:stopPropagation="true"
          @onmousemove:stopPropagation="true"
