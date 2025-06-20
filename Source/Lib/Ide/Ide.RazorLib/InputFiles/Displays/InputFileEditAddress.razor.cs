@@ -45,8 +45,6 @@ public partial class InputFileEditAddress : ComponentBase
                 //             on an ElementReference.
             }
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task InputTextEditForAddressOnFocusOutAsync()

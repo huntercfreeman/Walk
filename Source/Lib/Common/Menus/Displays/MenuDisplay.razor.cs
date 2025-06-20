@@ -64,8 +64,6 @@ public partial class MenuDisplay : ComponentBase
                 await InvokeAsync(StateHasChanged);
             }
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
 
     public async Task SetFocusToFirstOptionInMenuAsync()

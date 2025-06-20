@@ -77,8 +77,6 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 		{
 			await ReadProjectTemplates().ConfigureAwait(false);
 		}
-
-		await base.OnAfterRenderAsync(firstRender);
 	}
 
 	private string GetIsActiveCssClassString(CSharpProjectFormPanelKind panelKind) =>

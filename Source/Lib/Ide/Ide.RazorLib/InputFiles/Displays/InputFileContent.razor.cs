@@ -38,7 +38,5 @@ public partial class InputFileContent : ComponentBase
                 .Invoke(EnvironmentProvider.HomeDirectoryAbsolutePath)
                 .ConfigureAwait(false);
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
 }

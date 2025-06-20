@@ -53,8 +53,6 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
 				}
 			}
 		}
-
-		await base.OnAfterRenderAsync(firstRender);
 	}
 
 	private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)

@@ -60,8 +60,6 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         		
         	await _autocompleteMenuComponent.SetFocusToFirstOptionInMenuAsync();
     	}
-    	
-    	await base.OnAfterRenderAsync(firstRender);
     }
     
     private TextEditorRenderBatch GetRenderBatch()

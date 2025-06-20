@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.Drags.Models;
+using Walk.Common.RazorLib.Keys.Models;
 
 namespace Walk.Common.RazorLib.Drags.Displays;
 
@@ -11,7 +11,8 @@ public partial class DragInitializer : ComponentBase, IDisposable
 {
     [Inject]
     private IDragService DragService { get; set; } = null!;
-
+    
+    /* Start DragInitializer */
     private string StyleCss => DragService.GetDragState().ShouldDisplay
         ? string.Empty
         : "display: none;";
@@ -31,17 +32,16 @@ public partial class DragInitializer : ComponentBase, IDisposable
     }
 
     private IDropzone? _onMouseOverDropzone = null;
+    /* End DragInitializer */
     
     protected override void OnInitialized()
     {
-    	DragService.DragStateChanged += OnDragStateChanged;
-    
-    	_throttle = new(ThrottleFacts.TwentyFour_Frames_Per_Second, async (args, _) =>
+        _throttle = new(ThrottleFacts.TwentyFour_Frames_Per_Second, async (args, _) =>
 	    {
 	    	if (args.IsOnMouseMove)
 	    	{
 	    		if ((args.MouseEventArgs.Buttons & 1) != 1)
-	                DispatchClearDragStateAction();
+	                DRAG_DispatchClearDragStateAction();
 	            else
 	                DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, args.MouseEventArgs);
 	
@@ -52,7 +52,7 @@ public partial class DragInitializer : ComponentBase, IDisposable
 	    		var dragState = DragService.GetDragState();
 				var localOnMouseOverDropzone = _onMouseOverDropzone;
 	    	
-	    		DispatchClearDragStateAction();
+	    		DRAG_DispatchClearDragStateAction();
 	
 	            var draggableViewModel = dragState.Drag;
 	            if (draggableViewModel is not null)
@@ -63,16 +63,18 @@ public partial class DragInitializer : ComponentBase, IDisposable
 	            }
 	    	}
 	    });
-    	
-    	base.OnInitialized();
+    
+        DragService.DragStateChanged += OnDragStateChanged;
     }
     
+    /* Start DragInitializer */
     private async void OnDragStateChanged()
     {
     	await InvokeAsync(StateHasChanged);
     }
-
-    private void DispatchClearDragStateAction()
+    /* End DragInitializer */
+    
+    private void DRAG_DispatchClearDragStateAction()
     {
 		_onMouseOverDropzone = null;
 		
@@ -82,17 +84,17 @@ public partial class DragInitializer : ComponentBase, IDisposable
 			null);
     }
 
-    private void DispatchSetDragStateActionOnMouseMove(MouseEventArgs mouseEventArgs)
+    private void DRAG_DispatchSetDragStateActionOnMouseMove(MouseEventArgs mouseEventArgs)
     {
         _throttle.Run(new(isOnMouseMove: true, mouseEventArgs));
     }
 
-    private void DispatchSetDragStateActionOnMouseUp(MouseEventArgs mouseEventArgs)
+    private void DRAG_DispatchSetDragStateActionOnMouseUp(MouseEventArgs mouseEventArgs)
     {
         _throttle.Run(new(isOnMouseMove: false, mouseEventArgs));
     }
 
-	private string GetIsActiveCssClass(IDropzone dropzone)
+	private string DRAG_GetIsActiveCssClass(IDropzone dropzone)
 	{
 		var onMouseOverDropzoneKey = _onMouseOverDropzone?.DropzoneKey ?? Key<IDropzone>.Empty;
 
@@ -100,9 +102,9 @@ public partial class DragInitializer : ComponentBase, IDisposable
             ? "di_active"
 			: string.Empty;
 	}
-	
-	public void Dispose()
-	{
-		DragService.DragStateChanged -= OnDragStateChanged;
-	}
+    
+    public void Dispose()
+    {
+        DragService.DragStateChanged -= OnDragStateChanged;
+    }
 }

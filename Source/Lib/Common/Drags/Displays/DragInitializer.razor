@@ -1,7 +1,8 @@
+@* Start DragInitializer *@
 <div class="di_drag-initializer"
      style="@StyleCss"
-     @onmousemove="DispatchSetDragStateActionOnMouseMove"
-     @onmouseup="DispatchSetDragStateActionOnMouseUp">
+     @onmousemove="DRAG_DispatchSetDragStateActionOnMouseMove"
+     @onmouseup="DRAG_DispatchSetDragStateActionOnMouseUp">
     
 	@{
 		var dragState = DragService.GetDragState();
@@ -23,10 +24,11 @@
 		foreach (var dropzone in dropzoneViewModelList)
 		{
 			<div style="z-index: @dropzone.MeasuredHtmlElementDimensions.ZIndex; @dropzone.ElementDimensions.StyleString"
-				 class="di_dropzone @GetIsActiveCssClass(dropzone) @dropzone.CssClass"
+				 class="di_dropzone @DRAG_GetIsActiveCssClass(dropzone) @dropzone.CssClass"
 				 @onmouseover="() => _onMouseOverDropzone = dropzone"
 				 @onmouseover:stopPropagation="true">
 			</div>
 		}
 	}
 </div>
+@* End DragInitializer *@

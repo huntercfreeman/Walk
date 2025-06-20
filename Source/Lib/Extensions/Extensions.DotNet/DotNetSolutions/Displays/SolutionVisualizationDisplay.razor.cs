@@ -68,8 +68,6 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 			OnDotNetSolutionStateChanged();
 			OnCompilerServiceChanged();
 		}
-
-		await base.OnAfterRenderAsync(firstRender);
 	}
 
 	private async void OnAppDimensionStateWrapChanged()

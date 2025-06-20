@@ -80,8 +80,8 @@ public partial class InputFileSidebar : ComponentBase
                         : new List<TreeViewNoType> { directoryHomeNode }));
             }
         }
-
-        return base.OnAfterRenderAsync(firstRender);
+        
+        return Task.CompletedTask;
     }
 
     private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)

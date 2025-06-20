@@ -94,8 +94,6 @@ public partial class ContextSwitchDisplay : ComponentBase
 				// Eat this exception
             }
 		}
-
-		base.OnAfterRenderAsync(firstRender);
 	}
 	
 	private int GetActiveGroupIndex()

@@ -34,8 +34,8 @@ public partial class ReflectivePanel : ComponentBase, IDisposable
 
             ReflectiveService.Register(model, 0);
         }
-
-        return base.OnAfterRenderAsync(firstRender);
+        
+        return Task.CompletedTask;
     }
 
     private void DispatchRegisterActionOnClick()

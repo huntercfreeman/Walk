@@ -41,7 +41,5 @@ public partial class WalkIdeInitializer : ComponentBase
 					.PreventDefaultBrowserKeybindings();
 			}
 		}
-		
-		await base.OnAfterRenderAsync(firstRender);
 	}
 }

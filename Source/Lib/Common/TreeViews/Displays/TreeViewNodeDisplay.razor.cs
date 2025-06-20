@@ -71,8 +71,6 @@ public partial class TreeViewNodeDisplay : ComponentBase
             if (localIsActive)
                 await FocusAsync().ConfigureAwait(false);
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task FocusAsync()

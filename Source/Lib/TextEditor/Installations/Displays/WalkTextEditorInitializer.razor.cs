@@ -59,8 +59,6 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
     		await Ready();
     		QueueRemeasureBackgroundTask();
     	}
-    	
-    	base.OnAfterRender(firstRender);
     }
     
     private async Task Ready()

@@ -63,8 +63,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 .SetFromLocalStorageAsync()
                 .ConfigureAwait(false);
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async void AppOptionsStateWrapOnStateChanged()

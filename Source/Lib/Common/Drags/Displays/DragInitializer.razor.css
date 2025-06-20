@@ -1,3 +1,4 @@
+/* Start DragInitializer */
 .di_drag-initializer {
     z-index: var(--di_drag-initializer-z-index);
     width: 100vw;
@@ -24,3 +25,4 @@
     opacity: 0;
 	cursor: pointer;
 }
+/* End DragInitializer */

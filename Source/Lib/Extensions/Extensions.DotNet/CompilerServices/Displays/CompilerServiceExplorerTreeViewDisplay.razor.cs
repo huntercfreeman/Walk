@@ -73,8 +73,8 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 				ReloadOnClick();
 			}
 		}
-
-		return base.OnAfterRenderAsync(firstRender);
+        
+        return Task.CompletedTask;
 	}
 
 	private async void RerenderAfterEvent()

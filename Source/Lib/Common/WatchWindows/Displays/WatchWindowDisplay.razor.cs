@@ -59,8 +59,8 @@ public partial class WatchWindowDisplay : ComponentBase
                     new List<TreeViewNoType>() { rootNode }));
             }
         }
-
-        return base.OnAfterRenderAsync(firstRender);
+        
+        return Task.CompletedTask;
     }
 
     private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)

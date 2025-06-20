@@ -18,8 +18,10 @@ public class ElementDimensions
     {
         var styleBuilder = new StringBuilder();
 
-        styleBuilder.Append($"position: {ElementPositionKind.ToString().ToLower()}; ");
-
+        styleBuilder.Append($"position: ");
+        styleBuilder.Append(ElementPositionKind.GetStyleString());
+        styleBuilder.Append("; ");
+        
         styleBuilder.Append(WidthDimensionAttribute.StyleString);
         styleBuilder.Append(HeightDimensionAttribute.StyleString);
         styleBuilder.Append(LeftDimensionAttribute.StyleString);

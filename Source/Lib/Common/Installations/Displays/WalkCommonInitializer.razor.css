@@ -1,0 +1,40 @@
+/* Start DialogInitializer */
+/* empty */
+/* End DialogInitializer */
+
+
+
+/* Start WidgetInitializer */
+/* empty */
+/* End WidgetInitializer */
+
+
+
+/* Start NotificationInitializer */
+/* empty */
+/* End NotificationInitializer */
+
+
+
+/* Start DropdownInitializer */
+/* empty */
+/* End DropdownInitializer */
+
+
+
+/* Start OutlineInitializer */
+.di_outline {
+	position: fixed;
+	z-index: 1;
+	background-color: var(--di_toggled-on-hover-background-color);
+}
+/* End OutlineInitializer */
+
+
+
+/* Start TooltipInitializer */
+TooltipInitializer
+/* End TooltipInitializer */
+    
+    
+    

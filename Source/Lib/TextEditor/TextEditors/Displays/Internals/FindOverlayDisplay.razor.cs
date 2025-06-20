@@ -168,8 +168,6 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
         	InputValue = renderBatchLocal.ViewModel.PersistentState.FindOverlayValue;
         	InputReplace = renderBatchLocal.ViewModel.PersistentState.ReplaceValueInFindOverlay;
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
     
     private TextEditorRenderBatch GetRenderBatch()

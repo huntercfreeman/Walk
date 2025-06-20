@@ -27,9 +27,9 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public int Index { get; set; }
     [Parameter, EditorRequired]
-    public Func<INotification, Task> OnFocusInFunc { get; set; } = null!;
+    public Func<Task> OnFocusInFunc { get; set; } = null!;
 	[Parameter, EditorRequired]
-    public Func<INotification, Task> OnFocusOutFunc { get; set; } = null!;
+    public Func<Task> OnFocusOutFunc { get; set; } = null!;
 
 	//private const int WIDTH_IN_PIXELS = 350;
 	private const int WIDTH_IN_FONT_WIDTH = 40;
@@ -92,8 +92,8 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
                 }, CancellationToken.None);
             }
         }
-
-        return base.OnAfterRenderAsync(firstRender);
+        
+        return Task.CompletedTask;
     }
 
     private string GetCssStyleString()
@@ -185,12 +185,12 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     
     private Task HandleOnFocusIn()
     {
-    	return OnFocusInFunc.Invoke(Notification);
+    	return OnFocusInFunc.Invoke();
     }
 	
 	private Task HandleOnFocusOut()
     {
-    	return OnFocusOutFunc.Invoke(Notification);
+    	return OnFocusOutFunc.Invoke();
     }
 
     public void Dispose()
