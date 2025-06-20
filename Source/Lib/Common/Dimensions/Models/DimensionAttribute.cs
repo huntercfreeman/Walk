@@ -91,7 +91,8 @@ public struct DimensionAttribute
 	        if (!DimensionUnitList.Any())
 	            return _styleString = string.Empty;
 	
-	        var styleBuilder = new StringBuilder($"{DimensionAttributeKind.ToString().ToLower()}: calc(");
+	        var styleBuilder = new StringBuilder(DimensionAttributeKind.GetStyleString());
+	        styleBuilder.Append(": calc(");
 	
 	        for (var index = 0; index < DimensionUnitList.Count; index++)
 	        {

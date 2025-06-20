@@ -111,6 +111,11 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     
     private CancellationTokenSource _workerCancellationTokenSource = new();
     
+    /// <summary>
+    /// Only use this from the "UI thread".
+    /// </summary>
+    private readonly StringBuilder _styleBuilder = new();
+    
     
     /* Start DialogInitializer */
     private ContextBoundary? _dialogContextBoundary;
@@ -200,7 +205,8 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     	        yLarge = true;
     	    }
     	    
-    	    Console.WriteLine($"xLarge:{xLarge} yLarge:{yLarge}");
+    	    Console.WriteLine("tooltip was repositioned");
+    	    // Console.WriteLine($"xLarge:{xLarge} yLarge:{yLarge}");
     	    
     	    tooltipModel.WasRepositioned = true;
     	    
@@ -318,14 +324,25 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 		
 		var top = localOutlineState.MeasuredHtmlElementDimensions.TopInPixels;
 		
-		var styleBuilder = new StringBuilder();
+		_styleBuilder.Clear();
 		
-		styleBuilder.Append($"width: {width.ToCssValue()}px; ");
-		styleBuilder.Append($"height: {height.ToCssValue()}px; ");
-		styleBuilder.Append($"left: {left.ToCssValue()}px; ");
-		styleBuilder.Append($"top: {top.ToCssValue()}px; ");
+		_styleBuilder.Append("width: ");
+		_styleBuilder.Append(width.ToCssValue());
+		_styleBuilder.Append("px; ");
 		
-		return styleBuilder.ToString();
+		_styleBuilder.Append("height: ");
+		_styleBuilder.Append(height.ToCssValue());
+		_styleBuilder.Append("px; ");
+		
+		_styleBuilder.Append($"left: ");
+		_styleBuilder.Append(left.ToCssValue());
+		_styleBuilder.Append("px; ");
+		
+		_styleBuilder.Append("top: ");
+		_styleBuilder.Append(top.ToCssValue());
+		_styleBuilder.Append("px; ");
+		
+		return _styleBuilder.ToString();
 	}
 	
 	public string OUTLINE_GetStyleCssRight(OutlineState localOutlineState)
@@ -340,14 +357,25 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 		
 		var top = localOutlineState.MeasuredHtmlElementDimensions.TopInPixels;
 			
-		var styleBuilder = new StringBuilder();
+		_styleBuilder.Clear();
 		
-		styleBuilder.Append($"width: {width.ToCssValue()}px; ");
-		styleBuilder.Append($"height: {height.ToCssValue()}px; ");
-		styleBuilder.Append($"left: {left.ToCssValue()}px; ");
-		styleBuilder.Append($"top: {top.ToCssValue()}px; ");
+		_styleBuilder.Append("width: ");
+		_styleBuilder.Append(width.ToCssValue());
+		_styleBuilder.Append("px; ");
 		
-		return styleBuilder.ToString();
+		_styleBuilder.Append("height: ");
+		_styleBuilder.Append(height.ToCssValue());
+		_styleBuilder.Append("px; ");
+		
+		_styleBuilder.Append("left: ");
+		_styleBuilder.Append(left.ToCssValue());
+		_styleBuilder.Append("px; ");
+		
+		_styleBuilder.Append("top: ");
+		_styleBuilder.Append(top.ToCssValue());
+		_styleBuilder.Append("px; ");
+		
+		return _styleBuilder.ToString();
 	}
 	
 	public string OUTLINE_GetStyleCssTop(OutlineState localOutlineState)
@@ -360,14 +388,25 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 		
 		var top = localOutlineState.MeasuredHtmlElementDimensions.TopInPixels;
 		
-		var styleBuilder = new StringBuilder();
+		_styleBuilder.Clear();
 		
-		styleBuilder.Append($"width: {width.ToCssValue()}px; ");
-		styleBuilder.Append($"height: {height.ToCssValue()}px; ");
-		styleBuilder.Append($"left: {left.ToCssValue()}px; ");
-		styleBuilder.Append($"top: {top.ToCssValue()}px; ");
+		_styleBuilder.Append("width: ");
+		_styleBuilder.Append(width.ToCssValue());
+		_styleBuilder.Append("px; ");
 		
-		return styleBuilder.ToString();
+		_styleBuilder.Append("height: ");
+		_styleBuilder.Append(height.ToCssValue());
+		_styleBuilder.Append("px; ");
+		
+		_styleBuilder.Append("left: ");
+		_styleBuilder.Append(left.ToCssValue());
+		_styleBuilder.Append("px; ");
+		
+		_styleBuilder.Append("top: ");
+		_styleBuilder.Append(top.ToCssValue());
+		_styleBuilder.Append("px; ");
+		
+		return _styleBuilder.ToString();
 	}
 	
 	public string OUTLINE_GetStyleCssBottom(OutlineState localOutlineState)
@@ -382,14 +421,25 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 			localOutlineState.MeasuredHtmlElementDimensions.HeightInPixels -
 			OUTLINE_THICKNESS;
 			
-		var styleBuilder = new StringBuilder();
+		_styleBuilder.Clear();
 		
-		styleBuilder.Append($"width: {width.ToCssValue()}px; ");
-		styleBuilder.Append($"height: {height.ToCssValue()}px; ");
-		styleBuilder.Append($"left: {left.ToCssValue()}px; ");
-		styleBuilder.Append($"top: {top.ToCssValue()}px; ");
+		_styleBuilder.Append($"width: ");
+		_styleBuilder.Append(width.ToCssValue());
+		_styleBuilder.Append("px; ");
 		
-		return styleBuilder.ToString();
+		_styleBuilder.Append($"height: ");
+		_styleBuilder.Append(height.ToCssValue());
+		_styleBuilder.Append("px; ");
+		
+		_styleBuilder.Append($"left: ");
+		_styleBuilder.Append(left.ToCssValue());
+		_styleBuilder.Append("px; ");
+		
+		_styleBuilder.Append($"top: ");
+		_styleBuilder.Append(top.ToCssValue());
+		_styleBuilder.Append("px; ");
+		
+		return _styleBuilder.ToString();
 	}
     /* End of misc */
     
