@@ -87,7 +87,6 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	protected override void OnAfterRender(bool firstRender)
 	{
 		CodeSearchService._updateContentThrottle.Run(_ => CodeSearchService.UpdateContent(ResourceUri.Empty));
-		base.OnAfterRender(firstRender);
 	}
 	
 	private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)

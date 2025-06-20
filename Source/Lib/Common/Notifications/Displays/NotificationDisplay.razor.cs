@@ -92,8 +92,8 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
                 }, CancellationToken.None);
             }
         }
-
-        return base.OnAfterRenderAsync(firstRender);
+        
+        return Task.CompletedTask;
     }
 
     private string GetCssStyleString()

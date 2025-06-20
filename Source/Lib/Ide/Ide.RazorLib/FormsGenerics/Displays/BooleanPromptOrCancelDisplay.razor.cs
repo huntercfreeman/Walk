@@ -1,4 +1,4 @@
-﻿using Walk.Common.RazorLib.Keyboards.Models;
+using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Microsoft.AspNetCore.Components;
@@ -58,8 +58,6 @@ public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromp
                 }
             }
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)

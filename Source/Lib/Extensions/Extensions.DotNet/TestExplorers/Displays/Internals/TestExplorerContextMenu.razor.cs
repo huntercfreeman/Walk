@@ -68,8 +68,6 @@ public partial class TestExplorerContextMenu : ComponentBase
 			_htmlElementDimensionsChanged = false;
 			localDropdown.OnHtmlElementDimensionsChanged();
 		}
-		
-		base.OnAfterRender(firstRender);
 	}
 
 	private async Task<MenuRecord> GetMenuRecord(TreeViewCommandArgs commandArgs, bool isRecursiveCall = false)

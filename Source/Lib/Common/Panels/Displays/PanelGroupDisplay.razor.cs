@@ -47,8 +47,6 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
             await PassAlongSizeIfNoActiveTab()
                 .ConfigureAwait(false);
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
 
 	private List<IPanelTab> GetTabList(PanelGroup panelGroup)

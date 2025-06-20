@@ -52,7 +52,5 @@ public partial class TextEditorSettingsPreview : ComponentBase
 	            await InvokeAsync(StateHasChanged);
         	});
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
 }

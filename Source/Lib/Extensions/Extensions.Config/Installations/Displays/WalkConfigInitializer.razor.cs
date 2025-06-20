@@ -57,8 +57,6 @@ public partial class WalkConfigInitializer : ComponentBase
         		
         	await SetSolution(dotNetAppData).ConfigureAwait(false);
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
     
     public ValueTask Do_InitializeFooterJustifyEndComponents()

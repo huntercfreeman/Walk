@@ -29,8 +29,6 @@ public partial class WidgetDisplay : ComponentBase
                 .FocusHtmlElementById(WIDGET_HTML_ELEMENT_ID)
                 .ConfigureAwait(false);
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
 
 	private Task HandleOnFocusIn()

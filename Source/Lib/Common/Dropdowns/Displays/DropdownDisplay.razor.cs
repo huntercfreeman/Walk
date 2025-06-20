@@ -116,8 +116,6 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 				DropdownService.ReduceFitOnScreenAction(outDropdown);
 			}
 		}
-
-		await base.OnAfterRenderAsync(firstRender);
 	}
 
 	private async void OnHtmlElementDimensionsChanged()

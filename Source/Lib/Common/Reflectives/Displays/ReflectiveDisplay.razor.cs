@@ -36,8 +36,6 @@ public partial class ReflectiveDisplay : ComponentBase
 
             await _selectElementReference.FocusAsync().ConfigureAwait(false);
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
 
     private void OnSelectChanged(ChangeEventArgs changeEventArgs)

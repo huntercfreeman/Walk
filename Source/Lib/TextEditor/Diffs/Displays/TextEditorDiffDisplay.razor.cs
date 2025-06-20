@@ -72,8 +72,6 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
         {
             TextEditorModelsCollectionWrapOnStateChanged();
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async void TextEditorDiffWrapOnStateChanged() =>

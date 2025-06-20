@@ -51,8 +51,6 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 			_htmlElementDimensionsChanged = false;
 			localDropdown.OnHtmlElementDimensionsChanged();
 		}
-		
-		base.OnAfterRender(firstRender);
 	}
 
 	private Task<MenuRecord> GetMenuRecord(MouseEventArgs mouseEventArgs)

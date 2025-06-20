@@ -62,8 +62,6 @@ public partial class ContextBoundaryMeasurer : ComponentBase, IDisposable
                         measuredHtmlElementDimensions));
             }
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
     
     public async void OnContextStateChanged()

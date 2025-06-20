@@ -1,4 +1,4 @@
-﻿using Walk.Common.RazorLib.Keyboards.Models;
+using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
@@ -63,8 +63,6 @@ public partial class FileFormDisplay : ComponentBase, IFileFormRendererType
                 }
             }
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)

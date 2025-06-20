@@ -64,8 +64,6 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
                 }
             }
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
     
     private TextEditorRenderBatch GetRenderBatch()

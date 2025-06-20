@@ -31,8 +31,6 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
 				.FocusHtmlElementById(CommandBarDisplay.INPUT_HTML_ELEMENT_ID)
 	            .ConfigureAwait(false);
 		}
-        			
-		await base.OnAfterRenderAsync(firstRender);
 	}
 	
 	private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)

@@ -36,8 +36,6 @@ public partial class CommandBarDisplay : ComponentBase
                 //             on an ElementReference.
             }
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)

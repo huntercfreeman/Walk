@@ -62,8 +62,6 @@ public partial class DialogDisplay : ComponentBase, IDisposable
                 .FocusHtmlElementById(Dialog.DialogFocusPointHtmlElementId)
                 .ConfigureAwait(false);
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async void OnActiveDialogKeyChanged()

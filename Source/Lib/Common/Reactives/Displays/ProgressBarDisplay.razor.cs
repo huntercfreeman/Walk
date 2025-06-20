@@ -40,8 +40,8 @@ public partial class ProgressBarDisplay : ComponentBase, IDisposable
 		            NotificationService.ReduceMakeReadAction(Notification.DynamicViewModelKey);
 			});
 		}
-
-		return base.OnAfterRenderAsync(firstRender);
+        
+        return Task.CompletedTask;
 	}
 
 	public async void OnProgressChanged(bool isDisposing)

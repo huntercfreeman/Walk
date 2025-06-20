@@ -72,8 +72,6 @@ public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRende
                 }
             }
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
