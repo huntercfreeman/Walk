@@ -911,13 +911,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		if (parentDirectory is not null)
 		{
 			_environmentProvider.DeletionPermittedRegister(new(parentDirectory, true));
-			
-			foreach (var project in dotNetSolutionModel.DotNetProjectList)
-			{
-				var innerParentDirectory = project.AbsolutePath.ParentDirectory;
-				if (innerParentDirectory is not null)
-					_environmentProvider.DeletionPermittedRegister(new(innerParentDirectory, true));
-			}
 
 			_findAllService.SetStartingDirectoryPath(parentDirectory);
 
@@ -925,46 +918,42 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 			{
 				StartingAbsolutePathForSearch = parentDirectory
 			});
+			
+			TerminalCommandRequest terminalCommandRequest;
 
 			// Set 'generalTerminal' working directory
-			{
-				var terminalCommandRequest = new TerminalCommandRequest(
-		        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetBackgroundTaskApi),
-		        	parentDirectory)
-		        {
-		        	BeginWithFunc = parsedCommand =>
-		        	{
-		        		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
-							parsedCommand,
-							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
+			terminalCommandRequest = new TerminalCommandRequest(
+	        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetBackgroundTaskApi),
+	        	parentDirectory)
+	        {
+	        	BeginWithFunc = parsedCommand =>
+	        	{
+	        		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
+						parsedCommand,
+						new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
 Sln-Directory: '{parentDirectory}'
 General Terminal".ReplaceLineEndings("\n")));
-		        		return Task.CompletedTask;
-		        	}
-		        };
-		        	
-		        _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-			}
+	        		return Task.CompletedTask;
+	        	}
+	        };
+	        _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 
 			// Set 'executionTerminal' working directory
-			{
-				var terminalCommandRequest = new TerminalCommandRequest(
-		        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetBackgroundTaskApi),
-		        	parentDirectory)
-		        {
-		        	BeginWithFunc = parsedCommand =>
-		        	{
-		        		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
-							parsedCommand,
-							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
+			terminalCommandRequest = new TerminalCommandRequest(
+	        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetBackgroundTaskApi),
+	        	parentDirectory)
+	        {
+	        	BeginWithFunc = parsedCommand =>
+	        	{
+	        		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
+						parsedCommand,
+						new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
 Sln-Directory: '{parentDirectory}'
 Execution Terminal".ReplaceLineEndings("\n")));
-		        		return Task.CompletedTask;
-		        	}
-		        };
-
-				_terminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
-			}
+	        		return Task.CompletedTask;
+	        	}
+	        };
+			_terminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 		}
 		
 		// _appDataService.WriteAppDataAsync
@@ -1230,32 +1219,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		List<StringNestedProjectEntry>? stringNestedProjectEntryList,
 		DotNetSolutionGlobal dotNetSolutionGlobal)
 	{
-		foreach (var project in dotNetProjectList)
-		{
-			var relativePathFromSolutionFileString = project.RelativePathFromSolutionFileString;
-
-			// Debugging Linux-Ubuntu (2024-04-28)
-			// -----------------------------------
-			// It is believed, that Linux-Ubuntu is not fully working correctly,
-			// due to the directory separator character at the os level being '/',
-			// meanwhile the .NET solution has as its directory separator character '\'.
-			//
-			// Will perform a string.Replace("\\", "/") here. And if it solves the issue,
-			// then some standard way of doing this needs to be made available in the IEnvironmentProvider.
-			//
-			// Okay, this single replacement fixes 99% of the solution explorer issue.
-			// And I say 99% instead of 100% just because I haven't tested every single part of it yet.
-			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-				relativePathFromSolutionFileString = relativePathFromSolutionFileString.Replace("\\", "/");
-
-			var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
-				solutionAbsolutePath,
-				relativePathFromSolutionFileString,
-				_environmentProvider);
-
-			project.AbsolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, false);
-		}
-
 		return new DotNetSolutionModel(
 			solutionAbsolutePath,
 			dotNetSolutionHeader,
@@ -1283,19 +1246,42 @@ Execution Terminal".ReplaceLineEndings("\n")));
 	{
 		List<(IDotNetProject Project, List<AbsolutePath> ReferenceProjectAbsolutePathList)> enumeratingProjectTupleList = dotNetSolutionModel.DotNetProjectList
 			.Select(project => (project, new List<AbsolutePath>()))
-			.OrderBy(projectTuple => projectTuple.project.AbsolutePath.Value)
 			.ToList();
 		
 		for (int i = enumeratingProjectTupleList.Count - 1; i >= 0; i--)
 		{
 			var projectTuple = enumeratingProjectTupleList[i];
+			
+			// Debugging Linux-Ubuntu (2024-04-28)
+			// -----------------------------------
+			// It is believed, that Linux-Ubuntu is not fully working correctly,
+			// due to the directory separator character at the os level being '/',
+			// meanwhile the .NET solution has as its directory separator character '\'.
+			//
+			// Will perform a string.Replace("\\", "/") here. And if it solves the issue,
+			// then some standard way of doing this needs to be made available in the IEnvironmentProvider.
+			//
+			// Okay, this single replacement fixes 99% of the solution explorer issue.
+			// And I say 99% instead of 100% just because I haven't tested every single part of it yet.
+			var relativePathFromSolutionFileString = projectTuple.Project.RelativePathFromSolutionFileString;
+			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				relativePathFromSolutionFileString = relativePathFromSolutionFileString.Replace("\\", "/");
+			var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
+				dotNetSolutionModel.AbsolutePath,
+				relativePathFromSolutionFileString,
+				_environmentProvider);
+			projectTuple.Project.AbsolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, false);
 		
 			if (!await _fileSystemProvider.File.ExistsAsync(projectTuple.Project.AbsolutePath.Value))
 			{
 				enumeratingProjectTupleList.RemoveAt(i);
 				continue;
 			}
-				
+			
+			var innerParentDirectory = projectTuple.Project.AbsolutePath.ParentDirectory;
+			if (innerParentDirectory is not null)
+				_environmentProvider.DeletionPermittedRegister(new(innerParentDirectory, true));
+			
 			var content = await _fileSystemProvider.File.ReadAllTextAsync(
 					projectTuple.Project.AbsolutePath.Value)
 				.ConfigureAwait(false);
