@@ -468,7 +468,7 @@
 }
 
 .di_te_tooltip {
-    position: absolute;
+    position: fixed;
     z-index: 30;
     background-color: var(--di_te_secondary-background-color);
     color: var(--di_te_secondary-font-color);
