@@ -24,9 +24,9 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public IDialog Dialog { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Func<IDialog, Task> OnFocusInFunc { get; set; } = null!;
+    public Func<Task> OnFocusInFunc { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Func<IDialog, Task> OnFocusOutFunc { get; set; } = null!;
+    public Func<Task> OnFocusOutFunc { get; set; } = null!;
 
 	private const int COUNT_OF_CONTROL_BUTTONS = 2;
 
@@ -114,12 +114,12 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     private Task HandleOnFocusIn()
     {
         DialogService.ReduceSetActiveDialogKeyAction(Dialog.DynamicViewModelKey);
-        return OnFocusInFunc.Invoke(Dialog);
+        return OnFocusInFunc.Invoke();
     }
     
 	private Task HandleOnFocusOut()
     {
-    	return OnFocusOutFunc.Invoke(Dialog);
+    	return OnFocusOutFunc.Invoke();
     }
 
     private void HandleOnMouseDown()

@@ -15,9 +15,9 @@ public partial class WidgetDisplay : ComponentBase
 	[Parameter, EditorRequired]
 	public WidgetModel Widget { get; set; } = null!;
 	[Parameter, EditorRequired]
-    public Func<WidgetModel, Task> OnFocusInFunc { get; set; } = null!;
+    public Func<Task> OnFocusInFunc { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Func<WidgetModel, Task> OnFocusOutFunc { get; set; } = null!;
+    public Func<Task> OnFocusOutFunc { get; set; } = null!;
     
     private const string WIDGET_HTML_ELEMENT_ID = "di_widget-id";
     
@@ -35,12 +35,12 @@ public partial class WidgetDisplay : ComponentBase
 
 	private Task HandleOnFocusIn()
     {
-        return OnFocusInFunc.Invoke(Widget);
+        return OnFocusInFunc.Invoke();
     }
     
 	private Task HandleOnFocusOut()
     {
-    	return OnFocusOutFunc.Invoke(Widget);
+    	return OnFocusOutFunc.Invoke();
     }
     
     private async Task HandleOnMouseDown()

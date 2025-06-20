@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.Drags.Models;
-/*namespace*/ using Walk.Common.RazorLib.Drags.Displays;
 /* End DragInitializer */
 
 
@@ -48,13 +47,11 @@ using Walk.Common.RazorLib.Contexts.Displays;
 /* Start OutlineInitializer */
 using System.Text;
 using Walk.Common.RazorLib.Outlines.Models;
-/*namespace*/ using Walk.Common.RazorLib.Outlines.Displays;
 /* End OutlineInitializer */
 
 
 /* Start TooltipInitializer */
 using Walk.Common.RazorLib.Tooltips.Models;
-/*namespace*/ using Walk.Common.RazorLib.Tooltips.Displays;
 /* End TooltipInitializer */
 
 
@@ -118,8 +115,6 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     /* Start TooltipInitializer */
     [Inject]
 	private ITooltipService TooltipService { get; set; } = null!;
-	[Inject]
-	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
     /* End TooltipInitializer */
     
     
@@ -156,21 +151,6 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     /* End DialogInitializer */
     
     
-    /* Start WidgetInitializer */
-    private ContextBoundary? _widgetContextBoundary;
-    /* End WidgetInitializer */
-    
-    
-    /* Start NotificationInitializer */
-    private ContextBoundary? _notificationContextBoundary;
-    /* End NotificationInitializer */
-    
-    
-    /* Start DropdownInitializer */
-    private ContextBoundary? _dropdownContextBoundary;
-    /* End DropdownInitializer */
-    
-    
     /* Start OutlineInitializer */
     /// <summary>The unit of measurement is Pixels (px)</summary>
 	public const double OUTLINE_THICKNESS = 4;
@@ -195,7 +175,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 	    	if (args.IsOnMouseMove)
 	    	{
 	    		if ((args.MouseEventArgs.Buttons & 1) != 1)
-	                DispatchClearDragStateAction();
+	                DRAG_DispatchClearDragStateAction();
 	            else
 	                DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, args.MouseEventArgs);
 	
@@ -206,7 +186,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 	    		var dragState = DragService.GetDragState();
 				var localOnMouseOverDropzone = _onMouseOverDropzone;
 	    	
-	    		DispatchClearDragStateAction();
+	    		DRAG_DispatchClearDragStateAction();
 	
 	            var draggableViewModel = dragState.Drag;
 	            if (draggableViewModel is not null)
@@ -233,7 +213,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 	}
 	
 
-	protected override void OnAfterRender(bool firstRender)
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
 		{
@@ -348,7 +328,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     
     
     /* Start DialogInitializer */
-    private Task HandleOnFocusIn(IDialog dialog)
+    private Task HandleOnFocusIn()
     {
     	var localDialogContextBoundary = _dialogContextBoundary;
     	
@@ -358,7 +338,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     	return Task.CompletedTask;
     }
     
-    private Task HandleOnFocusOut(IDialog dialog)
+    private Task HandleOnFocusOut()
     {
     	return Task.CompletedTask;
     }
@@ -371,31 +351,6 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     
     
     /* Start WidgetInitializer */
-    private Task HandleOnFocusIn(WidgetModel widget)
-    {
-    	var localWidgetContextBoundary = _widgetContextBoundary;
-    	
-    	if (localWidgetContextBoundary is not null)
-	    	localWidgetContextBoundary.HandleOnFocusIn();
-    
-    	return Task.CompletedTask;
-    }
-    
-    private Task HandleOnFocusOut(WidgetModel widget)
-    {
-    	// TODO: neither onfocusout or onblur fit the use case.
-    	//       I need to detect when focus leaves either the widget itself
-    	//       or leaves its descendents (this part sounds like onfocusout).
-    	//       |
-    	//       BUT
-    	//       |
-    	//       I furthermore, ONLY want to have this fire if the newly focused
-    	//       HTML element is neither the widget itself or one of its descendents.
-    	//       |
-    	//       When this event occurs, the widget should no longer render.
-    	return Task.CompletedTask;
-    }
-    
     private async void OnWidgetStateChanged()
     {
     	await InvokeAsync(StateHasChanged);
@@ -404,21 +359,6 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     
     
     /* Start NotificationInitializer */
-    private Task HandleOnFocusIn(INotification notification)
-    {
-    	var localNotificationContextBoundary = _notificationContextBoundary;
-    	
-    	if (localNotificationContextBoundary is not null)
-	    	localNotificationContextBoundary.HandleOnFocusIn();
-	    	
-	    return Task.CompletedTask;
-    }
-    
-    private Task HandleOnFocusOut(INotification notification)
-    {
-    	return Task.CompletedTask;
-    }
-    
     public async void OnNotificationStateChanged()
     {
     	await InvokeAsync(StateHasChanged);
@@ -427,21 +367,6 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     
     
     /* Start DropdownInitializer */
-    private Task HandleOnFocusIn(DropdownRecord dropdown)
-    {
-    	var localDropdownContextBoundary = _dropdownContextBoundary;
-    	
-    	if (localDropdownContextBoundary is not null)
-	    	localDropdownContextBoundary.HandleOnFocusIn();
-    
-    	return Task.CompletedTask;
-    }
-    
-    private Task HandleOnFocusOut(DropdownRecord dropdown)
-    {
-    	return Task.CompletedTask;
-    }
-    
     public async void OnDropdownStateChanged()
     {
     	await InvokeAsync(StateHasChanged);
