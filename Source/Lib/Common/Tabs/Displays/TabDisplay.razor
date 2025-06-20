@@ -33,7 +33,7 @@
 		@oncontextmenu:stopPropagation="true"
 		@oncontextmenu="e => ManuallyPropagateOnContextMenu(e, localTabViewModel)">
 
-	<span>@localTabViewModel.Title</span>
+	<span class="di_polymorphic-tab-text">@localTabViewModel.Title</span>
 
 	@if (ShouldDisplayCloseButton)
 	{
