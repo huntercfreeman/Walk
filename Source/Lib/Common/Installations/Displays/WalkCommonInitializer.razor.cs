@@ -217,6 +217,8 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 	
 	public string TooltipRelativeX { get; set; } = string.Empty;
 	public string TooltipRelativeY { get; set; } = string.Empty;
+	
+	private TooltipModel? _tooltipModelPrevious = null;
     /* End TooltipInitializer */
     
     
@@ -292,60 +294,18 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 
 			BrowserResizeInterop.SubscribeWindowSizeChanged(CommonBackgroundTaskApi.JsRuntimeCommonApi);
 		}
-
-		base.OnAfterRender(firstRender);
-	}
-	
-	
-    
-    /* Start DragInitializer */
-    /* empty OnAfterRenderAsync(...) */
-    /* End DragInitializer */
-    
-    
-    
-    /* Start DialogInitializer */
-    /* empty OnAfterRenderAsync(...) */
-    /* End DialogInitializer */
-    
-    
-    
-    /* Start WidgetInitializer */
-    /* empty OnAfterRenderAsync(...) */
-    /* End WidgetInitializer */
-    
-    
-    
-    /* Start NotificationInitializer */
-    /* empty OnAfterRenderAsync(...) */
-    /* End NotificationInitializer */
-    
-    
-    
-    /* Start DropdownInitializer */
-    /* empty OnAfterRenderAsync(...) */
-    /* End DropdownInitializer */
-    
-    
-    
-    /* Start OutlineInitializer */
-    /* empty OnAfterRenderAsync(...) */
-    /* End OutlineInitializer */
-    
-    
-    
-    /* Start TooltipInitializer */
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-	    TooltipService.HtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi.MeasureElementById(
-	        TooltipService.HtmlElementId);
-        TooltipService.GlobalHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi.MeasureElementById(
-	        ContextFacts.RootHtmlElementId);
 	    
 	    var tooltipModel = TooltipService.GetTooltipState().TooltipModel;
 	    
-	    if (tooltipModel is not null && !tooltipModel.WasRepositioned)
+	    if (tooltipModel is not null && !tooltipModel.WasRepositioned && _tooltipModelPrevious != tooltipModel)
 	    {
+	        _tooltipModelPrevious = tooltipModel;
+	        
+	        TooltipService.HtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi.MeasureElementById(
+    	        TooltipService.HtmlElementId);
+            TooltipService.GlobalHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi.MeasureElementById(
+    	        ContextFacts.RootHtmlElementId);
+	    
     	    var xLarge = false;
     	    var yLarge = false;
     	    
@@ -379,10 +339,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     	    
 	        await InvokeAsync(StateHasChanged);
 	    }
-	    
-	    await base.OnAfterRenderAsync(firstRender);
 	}
-    /* End TooltipInitializer */
     
     
     
