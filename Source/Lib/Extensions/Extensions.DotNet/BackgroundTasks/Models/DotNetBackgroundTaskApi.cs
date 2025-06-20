@@ -870,8 +870,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		else
 			dotNetSolutionModel = ParseSln(solutionAbsolutePath, resourceUri, content);
 		
-		var sortedByProjectReferenceDependenciesDotNetProjectList = await SortProjectReferences(dotNetSolutionModel);
-		dotNetSolutionModel.DotNetProjectList = sortedByProjectReferenceDependenciesDotNetProjectList;
+		dotNetSolutionModel.DotNetProjectList = await SortProjectReferences(dotNetSolutionModel);
 		
 		/*	
 		// FindAllReferences
@@ -956,27 +955,22 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			_terminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 		}
 		
-		// _appDataService.WriteAppDataAsync
-		_ = Task.Run(() =>
+		try
 		{
-			try
+			await _appDataService.WriteAppDataAsync(new DotNetAppData
 			{
-				return _appDataService.WriteAppDataAsync(new DotNetAppData
-				{
-					SolutionMostRecent = solutionAbsolutePath.Value
-				});
-			}
-			catch (Exception e)
-			{
-				NotificationHelper.DispatchError(
-			        $"ERROR: nameof(_appDataService.WriteAppDataAsync)",
-			        e.ToString(),
-			        _commonComponentRenderers,
-			        _notificationService,
-			        TimeSpan.FromSeconds(5));
-			    return Task.CompletedTask;
-			}
-		});
+				SolutionMostRecent = solutionAbsolutePath.Value
+			});
+		}
+		catch (Exception e)
+		{
+			NotificationHelper.DispatchError(
+		        $"ERROR: nameof(_appDataService.WriteAppDataAsync)",
+		        e.ToString(),
+		        _commonComponentRenderers,
+		        _notificationService,
+		        TimeSpan.FromSeconds(5));
+		}
 		
 		_textEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(
 			new UniqueTextEditorWork(_textEditorService, async editContext =>
@@ -1162,22 +1156,16 @@ Execution Terminal".ReplaceLineEndings("\n")));
 	    		}
 	    	}
     	}
-    	
-    	/*foreach (var stringNestedProjectEntry in stringNestedProjectEntryList)
-    	{
-    		Console.WriteLine($"ci_{stringNestedProjectEntry.ChildIdentifier} -- {stringNestedProjectEntry.SolutionFolderActualName}");
-    	}*/
 	
-		return ParseSharedSteps(
+		return new DotNetSolutionModel(
+			solutionAbsolutePath,
+			dotNetSolutionHeader,
 			dotNetProjectList,
 			solutionFolderList,
-			solutionAbsolutePath,
-			resourceUri,
-			content,
-			dotNetSolutionHeader,
 			guidNestedProjectEntryList: null,
-			stringNestedProjectEntryList: stringNestedProjectEntryList,
-			dotNetSolutionGlobal);
+			stringNestedProjectEntryList,
+			dotNetSolutionGlobal,
+			content);
 	}
 		
 	public DotNetSolutionModel ParseSln(
@@ -1196,37 +1184,14 @@ Execution Terminal".ReplaceLineEndings("\n")));
 
 		var compilationUnit = parser.Parse();
 
-		return ParseSharedSteps(
-			parser.DotNetProjectList,
-			parser.SolutionFolderList,
-			solutionAbsolutePath,
-			resourceUri,
-			content,
-			parser.DotNetSolutionHeader,
-			guidNestedProjectEntryList: parser.NestedProjectEntryList,
-			stringNestedProjectEntryList: null,
-			parser.DotNetSolutionGlobal);
-	}
-	
-	public DotNetSolutionModel ParseSharedSteps(
-		List<IDotNetProject> dotNetProjectList,
-		List<SolutionFolder> solutionFolderList,
-		AbsolutePath solutionAbsolutePath,
-		ResourceUri resourceUri,
-		string content,
-		DotNetSolutionHeader dotNetSolutionHeader,
-		List<GuidNestedProjectEntry>? guidNestedProjectEntryList,
-		List<StringNestedProjectEntry>? stringNestedProjectEntryList,
-		DotNetSolutionGlobal dotNetSolutionGlobal)
-	{
 		return new DotNetSolutionModel(
 			solutionAbsolutePath,
-			dotNetSolutionHeader,
-			dotNetProjectList,
-			solutionFolderList,
-			guidNestedProjectEntryList,
-			stringNestedProjectEntryList,
-			dotNetSolutionGlobal,
+			parser.DotNetSolutionHeader,
+			parser.DotNetProjectList,
+			parser.SolutionFolderList,
+			guidNestedProjectEntryList: parser.NestedProjectEntryList,
+			null,
+			parser.DotNetSolutionGlobal,
 			content);
 	}
 	
@@ -1424,37 +1389,8 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			_notificationService,
 			TimeSpan.FromMilliseconds(-1));
 			
-		// var progressThrottle = new Throttle(TimeSpan.FromMilliseconds(100));
-		/*var progressThrottle = new ThrottleOptimized<(ParseSolutionStageKind StageKind, double? Progress, string? MessageOne, string? MessageTwo)>(TimeSpan.FromMilliseconds(1_000), (tuple, _) =>
-		{
-			switch (tuple.StageKind)
-			{
-				case ParseSolutionStageKind.A:
-					progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne);
-					return Task.CompletedTask;
-				case ParseSolutionStageKind.B:
-					progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne, tuple.MessageTwo);
-					progressBarModel.Dispose();
-					return Task.CompletedTask;
-				case ParseSolutionStageKind.C:
-					progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne);
-					progressBarModel.Dispose();
-					return Task.CompletedTask;
-				case ParseSolutionStageKind.D:
-					progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne, tuple.MessageTwo);
-					return Task.CompletedTask;
-				case ParseSolutionStageKind.E:
-					progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne, tuple.MessageTwo);
-					return Task.CompletedTask;
-				default:
-					return Task.CompletedTask;
-			}
-		});*/
-	
 		try
 		{
-			// progressThrottle.Run((ParseSolutionStageKind.A, 0.05, "Discovering projects...", null));
-			
 			foreach (var project in dotNetSolutionModel.DotNetProjectList)
 			{
 				RegisterStartupControl(project);
@@ -1463,14 +1399,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 
 				if (!await _fileSystemProvider.File.ExistsAsync(resourceUri.Value))
 					continue; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
-
-				/*var registerModelArgs = new RegisterModelArgs(resourceUri, _serviceProvider)
-				{
-					ShouldBlockUntilBackgroundTaskIsCompleted = true,
-				};
-
-				await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(registerModelArgs)
-					.ConfigureAwait(false);*/
 			}
 
 			var previousStageProgress = 0.05;
@@ -1577,23 +1505,10 @@ Execution Terminal".ReplaceLineEndings("\n")));
 					discoveredFileList.Add(filePathChild);
 			}
 
-			//var progressMessage = progressBarModel.Message ?? string.Empty;
-
 			foreach (var directoryPathChild in directoryPathChildList)
 			{
 				if (IFileSystemProvider.IsDirectoryIgnored(directoryPathChild))
 					continue;
-
-				//if (isFirstInvocation)
-				//{
-				//	var currentProgress = progressBarModel.GetProgress();
-				// progressThrottle.Run(_ => 
-				// {
-				//	progressBarModel.SetProgress(currentProgress, $"{directoryPathChild} " + progressMessage);
-				//	return Task.CompletedTask;
-				// });
-				//	
-				//}
 
 				await DiscoverFilesRecursively(directoryPathChild, discoveredFileList, isFirstInvocation: false).ConfigureAwait(false);
 			}
@@ -1614,13 +1529,8 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		foreach (var file in discoveredFileList)
 		{
 			var fileAbsolutePath = _environmentProvider.AbsolutePathFactory(file, false);
-
 			var progress = currentProgress + maximumProgressAvailableToProject * (fileParsedCount / (double)discoveredFileList.Count);
-
-			// progressThrottle.Run((ParseSolutionStageKind.E, progress, null, $"{fileParsedCount + 1}/{discoveredFileList.Count}: {fileAbsolutePath.NameWithExtension}"));
-
 			var resourceUri = new ResourceUri(file);
-			
 	        var compilerService = _compilerServiceRegistry.GetCompilerService(fileAbsolutePath.ExtensionNoPeriod);
 			
 			compilerService.RegisterResource(
