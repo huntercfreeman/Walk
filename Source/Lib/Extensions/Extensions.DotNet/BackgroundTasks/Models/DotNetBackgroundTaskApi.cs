@@ -870,8 +870,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		else
 			dotNetSolutionModel = ParseSln(solutionAbsolutePath, resourceUri, content);
 		
-		var sortedByProjectReferenceDependenciesDotNetProjectList = await SortProjectReferences(dotNetSolutionModel);
-		dotNetSolutionModel.DotNetProjectList = sortedByProjectReferenceDependenciesDotNetProjectList;
+		dotNetSolutionModel.DotNetProjectList = await SortProjectReferences(dotNetSolutionModel);
 		
 		/*	
 		// FindAllReferences
@@ -911,13 +910,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		if (parentDirectory is not null)
 		{
 			_environmentProvider.DeletionPermittedRegister(new(parentDirectory, true));
-			
-			foreach (var project in dotNetSolutionModel.DotNetProjectList)
-			{
-				var innerParentDirectory = project.AbsolutePath.ParentDirectory;
-				if (innerParentDirectory is not null)
-					_environmentProvider.DeletionPermittedRegister(new(innerParentDirectory, true));
-			}
 
 			_findAllService.SetStartingDirectoryPath(parentDirectory);
 
@@ -925,69 +917,60 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 			{
 				StartingAbsolutePathForSearch = parentDirectory
 			});
+			
+			TerminalCommandRequest terminalCommandRequest;
 
 			// Set 'generalTerminal' working directory
-			{
-				var terminalCommandRequest = new TerminalCommandRequest(
-		        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetBackgroundTaskApi),
-		        	parentDirectory)
-		        {
-		        	BeginWithFunc = parsedCommand =>
-		        	{
-		        		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
-							parsedCommand,
-							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
+			terminalCommandRequest = new TerminalCommandRequest(
+	        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetBackgroundTaskApi),
+	        	parentDirectory)
+	        {
+	        	BeginWithFunc = parsedCommand =>
+	        	{
+	        		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
+						parsedCommand,
+						new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
 Sln-Directory: '{parentDirectory}'
 General Terminal".ReplaceLineEndings("\n")));
-		        		return Task.CompletedTask;
-		        	}
-		        };
-		        	
-		        _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-			}
+	        		return Task.CompletedTask;
+	        	}
+	        };
+	        _terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 
 			// Set 'executionTerminal' working directory
-			{
-				var terminalCommandRequest = new TerminalCommandRequest(
-		        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetBackgroundTaskApi),
-		        	parentDirectory)
-		        {
-		        	BeginWithFunc = parsedCommand =>
-		        	{
-		        		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
-							parsedCommand,
-							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
+			terminalCommandRequest = new TerminalCommandRequest(
+	        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetBackgroundTaskApi),
+	        	parentDirectory)
+	        {
+	        	BeginWithFunc = parsedCommand =>
+	        	{
+	        		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
+						parsedCommand,
+						new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
 Sln-Directory: '{parentDirectory}'
 Execution Terminal".ReplaceLineEndings("\n")));
-		        		return Task.CompletedTask;
-		        	}
-		        };
-
-				_terminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
-			}
+	        		return Task.CompletedTask;
+	        	}
+	        };
+			_terminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 		}
 		
-		// _appDataService.WriteAppDataAsync
-		_ = Task.Run(() =>
+		try
 		{
-			try
+			await _appDataService.WriteAppDataAsync(new DotNetAppData
 			{
-				return _appDataService.WriteAppDataAsync(new DotNetAppData
-				{
-					SolutionMostRecent = solutionAbsolutePath.Value
-				});
-			}
-			catch (Exception e)
-			{
-				NotificationHelper.DispatchError(
-			        $"ERROR: nameof(_appDataService.WriteAppDataAsync)",
-			        e.ToString(),
-			        _commonComponentRenderers,
-			        _notificationService,
-			        TimeSpan.FromSeconds(5));
-			    return Task.CompletedTask;
-			}
-		});
+				SolutionMostRecent = solutionAbsolutePath.Value
+			});
+		}
+		catch (Exception e)
+		{
+			NotificationHelper.DispatchError(
+		        $"ERROR: nameof(_appDataService.WriteAppDataAsync)",
+		        e.ToString(),
+		        _commonComponentRenderers,
+		        _notificationService,
+		        TimeSpan.FromSeconds(5));
+		}
 		
 		_textEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(
 			new UniqueTextEditorWork(_textEditorService, async editContext =>
@@ -1173,22 +1156,16 @@ Execution Terminal".ReplaceLineEndings("\n")));
 	    		}
 	    	}
     	}
-    	
-    	/*foreach (var stringNestedProjectEntry in stringNestedProjectEntryList)
-    	{
-    		Console.WriteLine($"ci_{stringNestedProjectEntry.ChildIdentifier} -- {stringNestedProjectEntry.SolutionFolderActualName}");
-    	}*/
 	
-		return ParseSharedSteps(
+		return new DotNetSolutionModel(
+			solutionAbsolutePath,
+			dotNetSolutionHeader,
 			dotNetProjectList,
 			solutionFolderList,
-			solutionAbsolutePath,
-			resourceUri,
-			content,
-			dotNetSolutionHeader,
 			guidNestedProjectEntryList: null,
-			stringNestedProjectEntryList: stringNestedProjectEntryList,
-			dotNetSolutionGlobal);
+			stringNestedProjectEntryList,
+			dotNetSolutionGlobal,
+			content);
 	}
 		
 	public DotNetSolutionModel ParseSln(
@@ -1207,33 +1184,26 @@ Execution Terminal".ReplaceLineEndings("\n")));
 
 		var compilationUnit = parser.Parse();
 
-		return ParseSharedSteps(
+		return new DotNetSolutionModel(
+			solutionAbsolutePath,
+			parser.DotNetSolutionHeader,
 			parser.DotNetProjectList,
 			parser.SolutionFolderList,
-			solutionAbsolutePath,
-			resourceUri,
-			content,
-			parser.DotNetSolutionHeader,
 			guidNestedProjectEntryList: parser.NestedProjectEntryList,
-			stringNestedProjectEntryList: null,
-			parser.DotNetSolutionGlobal);
+			null,
+			parser.DotNetSolutionGlobal,
+			content);
 	}
 	
-	public DotNetSolutionModel ParseSharedSteps(
-		List<IDotNetProject> dotNetProjectList,
-		List<SolutionFolder> solutionFolderList,
-		AbsolutePath solutionAbsolutePath,
-		ResourceUri resourceUri,
-		string content,
-		DotNetSolutionHeader dotNetSolutionHeader,
-		List<GuidNestedProjectEntry>? guidNestedProjectEntryList,
-		List<StringNestedProjectEntry>? stringNestedProjectEntryList,
-		DotNetSolutionGlobal dotNetSolutionGlobal)
+	/// <summary>
+	/// This solution is incomplete, the current code for this was just to get a "feel" for things.
+	/// </summary>
+	private async ValueTask<List<IDotNetProject>> SortProjectReferences(DotNetSolutionModel dotNetSolutionModel)
 	{
-		foreach (var project in dotNetProjectList)
+		for (int i = dotNetSolutionModel.DotNetProjectList.Count - 1; i >= 0; i--)
 		{
-			var relativePathFromSolutionFileString = project.RelativePathFromSolutionFileString;
-
+			var projectTuple = dotNetSolutionModel.DotNetProjectList[i];
+			
 			// Debugging Linux-Ubuntu (2024-04-28)
 			// -----------------------------------
 			// It is believed, that Linux-Ubuntu is not fully working correctly,
@@ -1245,65 +1215,35 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			//
 			// Okay, this single replacement fixes 99% of the solution explorer issue.
 			// And I say 99% instead of 100% just because I haven't tested every single part of it yet.
+			var relativePathFromSolutionFileString = projectTuple.RelativePathFromSolutionFileString;
 			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				relativePathFromSolutionFileString = relativePathFromSolutionFileString.Replace("\\", "/");
-
 			var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
-				solutionAbsolutePath,
+				dotNetSolutionModel.AbsolutePath,
 				relativePathFromSolutionFileString,
 				_environmentProvider);
-
-			project.AbsolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, false);
-		}
-
-		return new DotNetSolutionModel(
-			solutionAbsolutePath,
-			dotNetSolutionHeader,
-			dotNetProjectList,
-			solutionFolderList,
-			guidNestedProjectEntryList,
-			stringNestedProjectEntryList,
-			dotNetSolutionGlobal,
-			content);
-	}
-	
-	private enum ParseSolutionStageKind
-	{
-		A,
-		B,
-		C,
-		D,
-		E,
-	}
-	
-	/// <summary>
-	/// This solution is incomplete, the current code for this was just to get a "feel" for things.
-	/// </summary>
-	private async ValueTask<List<IDotNetProject>> SortProjectReferences(DotNetSolutionModel dotNetSolutionModel)
-	{
-		List<(IDotNetProject Project, List<AbsolutePath> ReferenceProjectAbsolutePathList)> enumeratingProjectTupleList = dotNetSolutionModel.DotNetProjectList
-			.Select(project => (project, new List<AbsolutePath>()))
-			.OrderBy(projectTuple => projectTuple.project.AbsolutePath.Value)
-			.ToList();
+			projectTuple.AbsolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, false);
 		
-		for (int i = enumeratingProjectTupleList.Count - 1; i >= 0; i--)
-		{
-			var projectTuple = enumeratingProjectTupleList[i];
-		
-			if (!await _fileSystemProvider.File.ExistsAsync(projectTuple.Project.AbsolutePath.Value))
+			if (!await _fileSystemProvider.File.ExistsAsync(projectTuple.AbsolutePath.Value))
 			{
-				enumeratingProjectTupleList.RemoveAt(i);
+				dotNetSolutionModel.DotNetProjectList.RemoveAt(i);
 				continue;
 			}
-				
+			
+			projectTuple.ReferencedAbsolutePathList = new List<AbsolutePath>();
+			
+			var innerParentDirectory = projectTuple.AbsolutePath.ParentDirectory;
+			if (innerParentDirectory is not null)
+				_environmentProvider.DeletionPermittedRegister(new(innerParentDirectory, true));
+			
 			var content = await _fileSystemProvider.File.ReadAllTextAsync(
-					projectTuple.Project.AbsolutePath.Value)
+					projectTuple.AbsolutePath.Value)
 				.ConfigureAwait(false);
 	
 			var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
 				_textEditorService,
 				_textEditorService.__StringWalker,
-				new(projectTuple.Project.AbsolutePath.Value),
+				new(projectTuple.AbsolutePath.Value),
 				content);
 	
 			var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
@@ -1334,7 +1274,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				var includeAttribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Include");
 	
 				var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
-					projectTuple.Project.AbsolutePath,
+					projectTuple.AbsolutePath,
 					includeAttribute.Item2,
 					_environmentProvider);
 	
@@ -1342,21 +1282,23 @@ Execution Terminal".ReplaceLineEndings("\n")));
 					referenceProjectAbsolutePathString,
 					false);
 	
-				projectTuple.ReferenceProjectAbsolutePathList.Add(referenceProjectAbsolutePath);
+				projectTuple.ReferencedAbsolutePathList.Add(referenceProjectAbsolutePath);
 			}
 		}
 		
-		var upperLimit = enumeratingProjectTupleList.Count;
+		var upperLimit = dotNetSolutionModel.DotNetProjectList.Count > 4 // Extremely arbitrary number being used here.
+		    ? 4
+		    : dotNetSolutionModel.DotNetProjectList.Count;
 		for (int outerIndex = 0; outerIndex < upperLimit; outerIndex++)
 		{
-			for (int i = 0; i < enumeratingProjectTupleList.Count; i++)
+			for (int i = 0; i < dotNetSolutionModel.DotNetProjectList.Count; i++)
 			{
-				var projectTuple = enumeratingProjectTupleList[i];
+				var projectTuple = dotNetSolutionModel.DotNetProjectList[i];
 				
-				foreach (var referenceAbsolutePath in projectTuple.ReferenceProjectAbsolutePathList)
+				foreach (var referenceAbsolutePath in projectTuple.ReferencedAbsolutePathList)
 				{
-					var referenceIndex = enumeratingProjectTupleList
-						.FindIndex(x => x.Project.AbsolutePath.Value == referenceAbsolutePath.Value);
+					var referenceIndex = dotNetSolutionModel.DotNetProjectList
+						.FindIndex(x => x.AbsolutePath.Value == referenceAbsolutePath.Value);
 				
 					if (referenceIndex > i)
 					{
@@ -1365,7 +1307,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 							indexDestination = 0;
 					
 						MoveAndShiftList(
-							enumeratingProjectTupleList,
+							dotNetSolutionModel.DotNetProjectList,
 							indexSource: referenceIndex,
 							indexDestination);
 					}
@@ -1373,15 +1315,11 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			}
 		}
 		
-		return enumeratingProjectTupleList.Select(x =>
-		{
-			x.Project.ReferencedAbsolutePathList = x.ReferenceProjectAbsolutePathList;
-			return x.Project;
-		}).ToList();
+		return dotNetSolutionModel.DotNetProjectList;
 	}
 	
 	private void MoveAndShiftList(
-		List<(IDotNetProject Project, List<AbsolutePath> ReferenceProjectAbsolutePathList)> enumeratingProjectTupleList,
+		List<IDotNetProject> enumeratingProjectTupleList,
 		int indexSource,
 		int indexDestination)
 	{
@@ -1438,37 +1376,8 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			_notificationService,
 			TimeSpan.FromMilliseconds(-1));
 			
-		// var progressThrottle = new Throttle(TimeSpan.FromMilliseconds(100));
-		/*var progressThrottle = new ThrottleOptimized<(ParseSolutionStageKind StageKind, double? Progress, string? MessageOne, string? MessageTwo)>(TimeSpan.FromMilliseconds(1_000), (tuple, _) =>
-		{
-			switch (tuple.StageKind)
-			{
-				case ParseSolutionStageKind.A:
-					progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne);
-					return Task.CompletedTask;
-				case ParseSolutionStageKind.B:
-					progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne, tuple.MessageTwo);
-					progressBarModel.Dispose();
-					return Task.CompletedTask;
-				case ParseSolutionStageKind.C:
-					progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne);
-					progressBarModel.Dispose();
-					return Task.CompletedTask;
-				case ParseSolutionStageKind.D:
-					progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne, tuple.MessageTwo);
-					return Task.CompletedTask;
-				case ParseSolutionStageKind.E:
-					progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne, tuple.MessageTwo);
-					return Task.CompletedTask;
-				default:
-					return Task.CompletedTask;
-			}
-		});*/
-	
 		try
 		{
-			// progressThrottle.Run((ParseSolutionStageKind.A, 0.05, "Discovering projects...", null));
-			
 			foreach (var project in dotNetSolutionModel.DotNetProjectList)
 			{
 				RegisterStartupControl(project);
@@ -1477,14 +1386,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 
 				if (!await _fileSystemProvider.File.ExistsAsync(resourceUri.Value))
 					continue; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
-
-				/*var registerModelArgs = new RegisterModelArgs(resourceUri, _serviceProvider)
-				{
-					ShouldBlockUntilBackgroundTaskIsCompleted = true,
-				};
-
-				await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(registerModelArgs)
-					.ConfigureAwait(false);*/
 			}
 
 			var previousStageProgress = 0.05;
@@ -1525,7 +1426,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				projectsParsedCount++;
 			}
 
-			// progressThrottle.Run((ParseSolutionStageKind.B, 1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty));
 			progressBarModel.SetProgress(1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty);
 			progressBarModel.Dispose();
 		}
@@ -1536,7 +1436,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				
 			var currentProgress = progressBarModel.GetProgress();
 			
-			// progressThrottle.Run((ParseSolutionStageKind.C, currentProgress, e.ToString(), null));
 			progressBarModel.SetProgress(currentProgress, e.ToString());
 			progressBarModel.Dispose();
 		}
@@ -1559,8 +1458,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 
 		var startingAbsolutePathForSearch = parentDirectory;
 		var discoveredFileList = new List<string>();
-
-		// progressThrottle.Run((ParseSolutionStageKind.D, null, null, "discovering files"));
 		
 		await DiscoverFilesRecursively(startingAbsolutePathForSearch, discoveredFileList, true).ConfigureAwait(false);
 
@@ -1591,23 +1488,10 @@ Execution Terminal".ReplaceLineEndings("\n")));
 					discoveredFileList.Add(filePathChild);
 			}
 
-			//var progressMessage = progressBarModel.Message ?? string.Empty;
-
 			foreach (var directoryPathChild in directoryPathChildList)
 			{
 				if (IFileSystemProvider.IsDirectoryIgnored(directoryPathChild))
 					continue;
-
-				//if (isFirstInvocation)
-				//{
-				//	var currentProgress = progressBarModel.GetProgress();
-				// progressThrottle.Run(_ => 
-				// {
-				//	progressBarModel.SetProgress(currentProgress, $"{directoryPathChild} " + progressMessage);
-				//	return Task.CompletedTask;
-				// });
-				//	
-				//}
 
 				await DiscoverFilesRecursively(directoryPathChild, discoveredFileList, isFirstInvocation: false).ConfigureAwait(false);
 			}
@@ -1628,13 +1512,8 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		foreach (var file in discoveredFileList)
 		{
 			var fileAbsolutePath = _environmentProvider.AbsolutePathFactory(file, false);
-
 			var progress = currentProgress + maximumProgressAvailableToProject * (fileParsedCount / (double)discoveredFileList.Count);
-
-			// progressThrottle.Run((ParseSolutionStageKind.E, progress, null, $"{fileParsedCount + 1}/{discoveredFileList.Count}: {fileAbsolutePath.NameWithExtension}"));
-
 			var resourceUri = new ResourceUri(file);
-			
 	        var compilerService = _compilerServiceRegistry.GetCompilerService(fileAbsolutePath.ExtensionNoPeriod);
 			
 			compilerService.RegisterResource(

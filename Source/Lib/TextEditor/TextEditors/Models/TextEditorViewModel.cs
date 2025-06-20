@@ -62,7 +62,7 @@ public sealed class TextEditorViewModel : IDisposable
 		    findOverlayValue: string.Empty,
 		    findOverlayValueExternallyChangedMarker: false,
 		    menuKind: MenuKind.None,
-	    	tooltipViewModel: null,
+	    	tooltipModel: null,
 		    shouldRevealCursor: false,
 			virtualAssociativityKind: VirtualAssociativityKind.None,
 			panelService,

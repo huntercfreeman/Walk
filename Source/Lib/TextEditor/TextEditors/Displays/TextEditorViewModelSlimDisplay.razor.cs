@@ -14,6 +14,7 @@ using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Icons.Displays;
 using Walk.Common.RazorLib.CustomEvents.Models;
+using Walk.Common.RazorLib.Tooltips.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.TextEditor.RazorLib.Autocompletes.Models;
@@ -59,6 +60,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     public IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     public IDialogService DialogService { get; set; } = null!;
+    [Inject]
+    public ITooltipService TooltipService { get; set; } = null!;
     [Inject]
     public IDropdownService DropdownService { get; set; } = null!;
     [Inject]
@@ -504,7 +507,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                             if (viewModelModifier is null)
                                 return ValueTask.CompletedTask;
 
-                            viewModelModifier.PersistentState.TooltipViewModel = null;
+                            viewModelModifier.PersistentState.TooltipModel = null;
+                            TooltipService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
 
 							return ValueTask.CompletedTask;
 						});

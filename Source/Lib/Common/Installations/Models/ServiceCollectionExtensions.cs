@@ -22,6 +22,7 @@ using Walk.Common.RazorLib.Clipboards.Models;
 using Walk.Common.RazorLib.Storages.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Themes.Models;
+using Walk.Common.RazorLib.Tooltips.Models;
 
 namespace Walk.Common.RazorLib.Installations.Models;
 
@@ -89,7 +90,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<IAppOptionsService, AppOptionsService>()
             .AddScoped<IStorageService, LocalStorageService>()
             .AddScoped<IThemeService, ThemeService>()
-            .AddScoped<ITreeViewService, TreeViewService>();
+            .AddScoped<ITreeViewService, TreeViewService>()
+            .AddScoped<ITooltipService, TooltipService>();
 
         switch (hostingInformation.WalkHostingKind)
         {

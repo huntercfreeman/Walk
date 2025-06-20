@@ -1441,6 +1441,17 @@ public partial class CSharpBinder
 				return new LiteralExpressionNode(token, tokenTypeReference);
 			case SyntaxKind.OpenParenthesisToken:
 				return ShareEmptyExpressionNodeIntoOpenParenthesisTokenCase(ref token, compilationUnit, ref parserModel);
+			case SyntaxKind.OpenBraceToken:
+			{
+			    parserModel.ExpressionList.Add((SyntaxKind.CloseBraceToken, emptyExpressionNode));
+			    parserModel.ExpressionList.Add((SyntaxKind.CommaToken, emptyExpressionNode));
+			    return emptyExpressionNode;
+			}
+			case SyntaxKind.CommaToken:
+			{
+			    parserModel.ExpressionList.Add((SyntaxKind.CommaToken, emptyExpressionNode));
+			    return emptyExpressionNode;
+			}
 			case SyntaxKind.NewTokenKeyword:
 				return new ConstructorInvocationExpressionNode(
 					token,
