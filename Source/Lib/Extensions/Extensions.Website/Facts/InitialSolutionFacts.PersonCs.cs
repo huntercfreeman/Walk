@@ -29,6 +29,12 @@ public class PersonRepository
 	
 	public List<Person> GetPeople()
 	{
+        var dragTabComponentParameterMap = new()
+        {
+            { nameof(TabDisplay.Tab), this },
+            { nameof(TabDisplay.IsBeingDragged), true }
+        };
+	
 		// Return a shallow copy.
 		return new List<Person>(_people);
 		return new(_people);

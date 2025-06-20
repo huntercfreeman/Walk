@@ -1286,7 +1286,9 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			}
 		}
 		
-		var upperLimit = 4; // Extremely arbitrary number being used here.
+		var upperLimit = dotNetSolutionModel.DotNetProjectList.Count > 4 // Extremely arbitrary number being used here.
+		    ? 4
+		    : dotNetSolutionModel.DotNetProjectList.Count;
 		for (int outerIndex = 0; outerIndex < upperLimit; outerIndex++)
 		{
 			for (int i = 0; i < dotNetSolutionModel.DotNetProjectList.Count; i++)
