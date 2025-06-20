@@ -1,5 +1,0 @@
-.di_outline {
-	position: fixed;
-	z-index: 1;
-	background-color: var(--di_toggled-on-hover-background-color);
-}
