@@ -21,7 +21,7 @@ public partial class CSharpBinder
 	public IExpressionNode AnyMergeToken(
 		IExpressionNode expressionPrimary, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		/*#if DEBUG
+		#if DEBUG
 		if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
 		{
 			var variableReferenceNode = (VariableReferenceNode)expressionPrimary;
@@ -39,7 +39,7 @@ public partial class CSharpBinder
 		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {token.SyntaxKind}:{parserModel.TokenWalker.Index}");
 		#else
 		Console.WriteLine($"{nameof(AnyMergeToken)} has debug 'Console.Write...' that needs commented out.");
-		#endif*/
+		#endif
 		
 		if (parserModel.ParserContextKind != CSharpParserContextKind.ForceParseGenericParameters &&
 			UtilityApi.IsBinaryOperatorSyntaxKind(token.SyntaxKind))
@@ -1441,6 +1441,17 @@ public partial class CSharpBinder
 				return new LiteralExpressionNode(token, tokenTypeReference);
 			case SyntaxKind.OpenParenthesisToken:
 				return ShareEmptyExpressionNodeIntoOpenParenthesisTokenCase(ref token, compilationUnit, ref parserModel);
+			case SyntaxKind.OpenBraceToken:
+			{
+			    parserModel.ExpressionList.Add((SyntaxKind.CloseBraceToken, emptyExpressionNode));
+			    parserModel.ExpressionList.Add((SyntaxKind.CommaToken, emptyExpressionNode));
+			    return emptyExpressionNode;
+			}
+			case SyntaxKind.CommaToken:
+			{
+			    parserModel.ExpressionList.Add((SyntaxKind.CommaToken, emptyExpressionNode));
+			    return emptyExpressionNode;
+			}
 			case SyntaxKind.NewTokenKeyword:
 				return new ConstructorInvocationExpressionNode(
 					token,

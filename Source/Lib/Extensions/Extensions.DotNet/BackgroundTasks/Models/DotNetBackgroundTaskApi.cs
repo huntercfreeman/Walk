@@ -1200,13 +1200,9 @@ Execution Terminal".ReplaceLineEndings("\n")));
 	/// </summary>
 	private async ValueTask<List<IDotNetProject>> SortProjectReferences(DotNetSolutionModel dotNetSolutionModel)
 	{
-		List<(IDotNetProject Project, List<AbsolutePath> ReferenceProjectAbsolutePathList)> enumeratingProjectTupleList = dotNetSolutionModel.DotNetProjectList
-			.Select(project => (project, new List<AbsolutePath>()))
-			.ToList();
-		
-		for (int i = enumeratingProjectTupleList.Count - 1; i >= 0; i--)
+		for (int i = dotNetSolutionModel.DotNetProjectList.Count - 1; i >= 0; i--)
 		{
-			var projectTuple = enumeratingProjectTupleList[i];
+			var projectTuple = dotNetSolutionModel.DotNetProjectList[i];
 			
 			// Debugging Linux-Ubuntu (2024-04-28)
 			// -----------------------------------
@@ -1219,33 +1215,35 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			//
 			// Okay, this single replacement fixes 99% of the solution explorer issue.
 			// And I say 99% instead of 100% just because I haven't tested every single part of it yet.
-			var relativePathFromSolutionFileString = projectTuple.Project.RelativePathFromSolutionFileString;
+			var relativePathFromSolutionFileString = projectTuple.RelativePathFromSolutionFileString;
 			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				relativePathFromSolutionFileString = relativePathFromSolutionFileString.Replace("\\", "/");
 			var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
 				dotNetSolutionModel.AbsolutePath,
 				relativePathFromSolutionFileString,
 				_environmentProvider);
-			projectTuple.Project.AbsolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, false);
+			projectTuple.AbsolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, false);
 		
-			if (!await _fileSystemProvider.File.ExistsAsync(projectTuple.Project.AbsolutePath.Value))
+			if (!await _fileSystemProvider.File.ExistsAsync(projectTuple.AbsolutePath.Value))
 			{
-				enumeratingProjectTupleList.RemoveAt(i);
+				dotNetSolutionModel.DotNetProjectList.RemoveAt(i);
 				continue;
 			}
 			
-			var innerParentDirectory = projectTuple.Project.AbsolutePath.ParentDirectory;
+			projectTuple.ReferencedAbsolutePathList = new List<AbsolutePath>();
+			
+			var innerParentDirectory = projectTuple.AbsolutePath.ParentDirectory;
 			if (innerParentDirectory is not null)
 				_environmentProvider.DeletionPermittedRegister(new(innerParentDirectory, true));
 			
 			var content = await _fileSystemProvider.File.ReadAllTextAsync(
-					projectTuple.Project.AbsolutePath.Value)
+					projectTuple.AbsolutePath.Value)
 				.ConfigureAwait(false);
 	
 			var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
 				_textEditorService,
 				_textEditorService.__StringWalker,
-				new(projectTuple.Project.AbsolutePath.Value),
+				new(projectTuple.AbsolutePath.Value),
 				content);
 	
 			var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
@@ -1276,7 +1274,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				var includeAttribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Include");
 	
 				var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
-					projectTuple.Project.AbsolutePath,
+					projectTuple.AbsolutePath,
 					includeAttribute.Item2,
 					_environmentProvider);
 	
@@ -1284,21 +1282,21 @@ Execution Terminal".ReplaceLineEndings("\n")));
 					referenceProjectAbsolutePathString,
 					false);
 	
-				projectTuple.ReferenceProjectAbsolutePathList.Add(referenceProjectAbsolutePath);
+				projectTuple.ReferencedAbsolutePathList.Add(referenceProjectAbsolutePath);
 			}
 		}
 		
-		var upperLimit = 4; // enumeratingProjectTupleList.Count;
+		var upperLimit = 4; // Extremely arbitrary number being used here.
 		for (int outerIndex = 0; outerIndex < upperLimit; outerIndex++)
 		{
-			for (int i = 0; i < enumeratingProjectTupleList.Count; i++)
+			for (int i = 0; i < dotNetSolutionModel.DotNetProjectList.Count; i++)
 			{
-				var projectTuple = enumeratingProjectTupleList[i];
+				var projectTuple = dotNetSolutionModel.DotNetProjectList[i];
 				
-				foreach (var referenceAbsolutePath in projectTuple.ReferenceProjectAbsolutePathList)
+				foreach (var referenceAbsolutePath in projectTuple.ReferencedAbsolutePathList)
 				{
-					var referenceIndex = enumeratingProjectTupleList
-						.FindIndex(x => x.Project.AbsolutePath.Value == referenceAbsolutePath.Value);
+					var referenceIndex = dotNetSolutionModel.DotNetProjectList
+						.FindIndex(x => x.AbsolutePath.Value == referenceAbsolutePath.Value);
 				
 					if (referenceIndex > i)
 					{
@@ -1307,7 +1305,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 							indexDestination = 0;
 					
 						MoveAndShiftList(
-							enumeratingProjectTupleList,
+							dotNetSolutionModel.DotNetProjectList,
 							indexSource: referenceIndex,
 							indexDestination);
 					}
@@ -1315,15 +1313,11 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			}
 		}
 		
-		return enumeratingProjectTupleList.Select(x =>
-		{
-			x.Project.ReferencedAbsolutePathList = x.ReferenceProjectAbsolutePathList;
-			return x.Project;
-		}).ToList();
+		return dotNetSolutionModel.DotNetProjectList;
 	}
 	
 	private void MoveAndShiftList(
-		List<(IDotNetProject Project, List<AbsolutePath> ReferenceProjectAbsolutePathList)> enumeratingProjectTupleList,
+		List<IDotNetProject> enumeratingProjectTupleList,
 		int indexSource,
 		int indexDestination)
 	{
