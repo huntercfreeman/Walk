@@ -56,6 +56,8 @@ public partial class WalkWebsiteInitializer : ComponentBase
         		Key<IBackgroundTaskGroup>.Empty,
         		Do_WalkWebsiteInitializerOnAfterRenderAsync));
         }
+        
+        return Task.CompletedTask;
     }
     
     public async ValueTask Do_WalkWebsiteInitializerOnAfterRenderAsync()
