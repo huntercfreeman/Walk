@@ -256,8 +256,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	                .ConfigureAwait(false);
         	}
         }
-
-        await base.OnAfterRenderAsync(firstRender);
     }
     
     private void CssOnInitialized()
