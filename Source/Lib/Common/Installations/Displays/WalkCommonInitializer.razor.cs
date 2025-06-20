@@ -358,77 +358,22 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     	
     	BackgroundTaskService.ContinuousWorker.StartAsyncTask = null;
     	BackgroundTaskService.IndefiniteWorker.StartAsyncTask = null;
-    }
-    
-    
-    
-    /* Start DragInitializer */
-    public void Dispose()
-	{
-		DragService.DragStateChanged -= OnDragStateChanged;
-	}
-    /* End DragInitializer */
-    
-    
-    
-    /* Start DialogInitializer */
-    public void Dispose()
-    {
-    	DialogService.DialogStateChanged -= OnDialogStateChanged;
-    }
-    /* End DialogInitializer */
-    
-    
-    
-    /* Start WidgetInitializer */
-    public void Dispose()
-    {
+    	
+    	DragService.DragStateChanged -= OnDragStateChanged;
+		DialogService.DialogStateChanged -= OnDialogStateChanged;
     	WidgetService.WidgetStateChanged -= OnWidgetStateChanged;
-    }
-    /* End WidgetInitializer */
-    
-    
-    
-    /* Start NotificationInitializer */
-    public void Dispose()
-	{
-		NotificationService.NotificationStateChanged -= OnNotificationStateChanged;
-	
+    	NotificationService.NotificationStateChanged -= OnNotificationStateChanged;
+        DropdownService.DropdownStateChanged -= OnDropdownStateChanged;
+    	OutlineService.OutlineStateChanged -= OnOutlineStateChanged;
+		TooltipService.TooltipStateChanged -= OnTooltipStateChanged;
+		
 		var notificationState = NotificationService.GetNotificationState();
 
         foreach (var notification in notificationState.DefaultList)
         {
             NotificationService.ReduceDisposeAction(notification.DynamicViewModelKey);
         }
-	}
-    /* End NotificationInitializer */
-    
-    
-    
-    /* Start DropdownInitializer */
-    public void Dispose()
-    {
-    	DropdownService.DropdownStateChanged -= OnDropdownStateChanged;
     }
-    /* End DropdownInitializer */
-    
-    
-    
-    /* Start OutlineInitializer */
-    public void Dispose()
-	{
-		OutlineService.OutlineStateChanged -= OnOutlineStateChanged;
-	}
-    /* End OutlineInitializer */
-    
-    
-    
-    /* Start TooltipInitializer */
-    public void Dispose()
-	{
-	    TooltipService.TooltipStateChanged -= OnTooltipStateChanged;
-	}
-    /* End TooltipInitializer */
     
     
     
