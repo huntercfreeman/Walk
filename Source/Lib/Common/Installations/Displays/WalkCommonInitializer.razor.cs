@@ -6,11 +6,8 @@ using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 
 
-
 /* Start DragInitializer */
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.Drags.Models;
@@ -18,9 +15,7 @@ using Walk.Common.RazorLib.Drags.Models;
 /* End DragInitializer */
 
 
-
 /* Start DialogInitializer */
-using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Contexts.Displays;
 using Walk.Common.RazorLib.Dynamics.Models;
@@ -28,18 +23,14 @@ using Walk.Common.RazorLib.Dynamics.Models;
 /* End DialogInitializer */
 
 
-
 /* Start WidgetInitializer */
-using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Widgets.Models;
 using Walk.Common.RazorLib.Contexts.Displays;
 /*namespace*/ using Walk.Common.RazorLib.Widgets.Displays;
 /* End WidgetInitializer */
 
 
-
 /* Start NotificationInitializer */
-using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Contexts.Displays;
 using Walk.Common.RazorLib.Dynamics.Models;
@@ -47,34 +38,24 @@ using Walk.Common.RazorLib.Dynamics.Models;
 /* End NotificationInitializer */
 
 
-
 /* Start DropdownInitializer */
-using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Contexts.Displays;
 /*namespace*/ using Walk.Common.RazorLib.Dropdowns.Displays;
 /* End DropdownInitializer */
 
 
-
 /* Start OutlineInitializer */
 using System.Text;
-using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Outlines.Models;
-using Walk.Common.RazorLib.Dimensions.Models;
 /*namespace*/ using Walk.Common.RazorLib.Outlines.Displays;
 /* End OutlineInitializer */
 
 
-
 /* Start TooltipInitializer */
-using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Tooltips.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
 /*namespace*/ using Walk.Common.RazorLib.Tooltips.Displays;
 /* End TooltipInitializer */
-
 
 
 namespace Walk.Common.RazorLib.Installations.Displays;
@@ -98,12 +79,10 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
     
     
-    
     /* Start DragInitializer */
     [Inject]
     private IDragService DragService { get; set; } = null!;
     /* End DragInitializer */
-    
     
     
     /* Start DialogInitializer */
@@ -112,12 +91,10 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     /* End DialogInitializer */
     
     
-    
     /* Start WidgetInitializer */
     [Inject]
     private IWidgetService WidgetService { get; set; } = null!;
     /* End WidgetInitializer */
-    
     
     
     /* Start NotificationInitializer */
@@ -126,19 +103,16 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     /* End NotificationInitializer */
     
     
-    
     /* Start DropdownInitializer */
     [Inject]
     private IDropdownService DropdownService { get; set; } = null!;
     /* End DropdownInitializer */
     
     
-    
     /* Start OutlineInitializer */
     [Inject]
 	public IOutlineService OutlineService { get; set; } = null!;
     /* End OutlineInitializer */
-    
     
     
     /* Start TooltipInitializer */
@@ -149,11 +123,9 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     /* End TooltipInitializer */
     
     
-    
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     
     private CancellationTokenSource _workerCancellationTokenSource = new();
-    
     
     
     /* Start DragInitializer */
@@ -179,11 +151,9 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     /* End DragInitializer */
     
     
-    
     /* Start DialogInitializer */
     private ContextBoundary? _dialogContextBoundary;
     /* End DialogInitializer */
-    
     
     
     /* Start WidgetInitializer */
@@ -191,11 +161,9 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     /* End WidgetInitializer */
     
     
-    
     /* Start NotificationInitializer */
     private ContextBoundary? _notificationContextBoundary;
     /* End NotificationInitializer */
-    
     
     
     /* Start DropdownInitializer */
@@ -203,12 +171,10 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     /* End DropdownInitializer */
     
     
-    
     /* Start OutlineInitializer */
     /// <summary>The unit of measurement is Pixels (px)</summary>
 	public const double OUTLINE_THICKNESS = 4;
     /* End OutlineInitializer */
-    
     
     
     /* Start TooltipInitializer */
@@ -220,7 +186,6 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 	
 	private TooltipModel? _tooltipModelPrevious = null;
     /* End TooltipInitializer */
-    
     
     
 	protected override void OnInitialized()
@@ -266,7 +231,6 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
         	WorkKind = CommonWorkKind.WalkCommonInitializerWork
     	});
 	}
-	
 	
 
 	protected override void OnAfterRender(bool firstRender)
@@ -342,7 +306,6 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 	}
     
     
-    
     /// <summary>
     /// Presumptions:
 	/// - Dispose is invoked from UI thread
@@ -376,14 +339,12 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     }
     
     
-    
     /* Start DragInitializer */
     private async void OnDragStateChanged()
     {
     	await InvokeAsync(StateHasChanged);
     }
     /* End DragInitializer */
-    
     
     
     /* Start DialogInitializer */
@@ -407,7 +368,6 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     	await InvokeAsync(StateHasChanged);
     }
     /* End DialogInitializer */
-    
     
     
     /* Start WidgetInitializer */
@@ -443,7 +403,6 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     /* End WidgetInitializer */
     
     
-    
     /* Start NotificationInitializer */
     private Task HandleOnFocusIn(INotification notification)
     {
@@ -465,7 +424,6 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     	await InvokeAsync(StateHasChanged);
     }
     /* End NotificationInitializer */
-    
     
     
     /* Start DropdownInitializer */
@@ -491,7 +449,6 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     /* End DropdownInitializer */
     
     
-    
     /* Start OutlineInitializer */
     private async void OnOutlineStateChanged()
 	{
@@ -500,13 +457,13 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     /* End OutlineInitializer */
     
     
-    
     /* Start TooltipInitializer */
     private async void OnTooltipStateChanged()
 	{
 	    await InvokeAsync(StateHasChanged);
 	}
     /* End TooltipInitializer */
+    
     
     /* Start of misc */
     private void DRAG_DispatchClearDragStateAction()
