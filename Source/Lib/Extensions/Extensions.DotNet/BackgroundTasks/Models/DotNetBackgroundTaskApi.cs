@@ -1346,7 +1346,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			}
 		}
 		
-		var upperLimit = enumeratingProjectTupleList.Count;
+		var upperLimit = 4; // enumeratingProjectTupleList.Count;
 		for (int outerIndex = 0; outerIndex < upperLimit; outerIndex++)
 		{
 			for (int i = 0; i < enumeratingProjectTupleList.Count; i++)
