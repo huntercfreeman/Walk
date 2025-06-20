@@ -1195,15 +1195,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			content);
 	}
 	
-	private enum ParseSolutionStageKind
-	{
-		A,
-		B,
-		C,
-		D,
-		E,
-	}
-	
 	/// <summary>
 	/// This solution is incomplete, the current code for this was just to get a "feel" for things.
 	/// </summary>
@@ -1439,7 +1430,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				projectsParsedCount++;
 			}
 
-			// progressThrottle.Run((ParseSolutionStageKind.B, 1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty));
 			progressBarModel.SetProgress(1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty);
 			progressBarModel.Dispose();
 		}
@@ -1450,7 +1440,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				
 			var currentProgress = progressBarModel.GetProgress();
 			
-			// progressThrottle.Run((ParseSolutionStageKind.C, currentProgress, e.ToString(), null));
 			progressBarModel.SetProgress(currentProgress, e.ToString());
 			progressBarModel.Dispose();
 		}
@@ -1473,8 +1462,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 
 		var startingAbsolutePathForSearch = parentDirectory;
 		var discoveredFileList = new List<string>();
-
-		// progressThrottle.Run((ParseSolutionStageKind.D, null, null, "discovering files"));
 		
 		await DiscoverFilesRecursively(startingAbsolutePathForSearch, discoveredFileList, true).ConfigureAwait(false);
 
