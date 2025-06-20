@@ -84,6 +84,7 @@ TODO: Decide if 'OutlineInitializer.razor' is an improvement,
     padding: var(--di_dialog-display-body-padding);
 }
 /* _content/Walk.Common/Drags/Displays/DragInitializer.razor.rz.scp.css */
+/* Start DragInitializer */
 .di_drag-initializer[b-xzhefc0ojs] {
     z-index: var(--di_drag-initializer-z-index);
     width: 100vw;
@@ -110,6 +111,7 @@ TODO: Decide if 'OutlineInitializer.razor' is an improvement,
     opacity: 0;
 	cursor: pointer;
 }
+/* End DragInitializer */
 /* _content/Walk.Common/Dropdowns/Displays/DropdownDisplay.razor.rz.scp.css */
 .di_dropdown[b-713cro0tdc] {
 	position: fixed;
@@ -168,6 +170,47 @@ TODO: Decide if 'OutlineInitializer.razor' is an improvement,
         transform: rotate(360deg);
     }
 }
+/* _content/Walk.Common/Installations/Displays/WalkCommonInitializer.razor.rz.scp.css */
+/* Start DialogInitializer */
+/* empty */
+/* End DialogInitializer */
+
+
+
+/* Start WidgetInitializer */
+/* empty */
+/* End WidgetInitializer */
+
+
+
+/* Start NotificationInitializer */
+/* empty */
+/* End NotificationInitializer */
+
+
+
+/* Start DropdownInitializer */
+/* empty */
+/* End DropdownInitializer */
+
+
+
+/* Start OutlineInitializer */
+.di_outline[b-9j8mmytdbx] {
+	position: fixed;
+	z-index: 1;
+	background-color: var(--di_toggled-on-hover-background-color);
+}
+/* End OutlineInitializer */
+
+
+
+/* Start TooltipInitializer */
+TooltipInitializer[b-9j8mmytdbx]
+/* End TooltipInitializer */
+    
+    
+    
 /* _content/Walk.Common/Keymaps/Displays/KeymapDisplay.razor.rz.scp.css */
 .di_ide_keymap[b-7ykvgl7no9] {
     margin-left: 10px;
@@ -283,12 +326,6 @@ td[b-7ykvgl7no9] {
 
 .di_web_notifications-view-tab-entry-count[b-6pb15jkl2o] {
     margin: 0 5px;
-}
-/* _content/Walk.Common/Outlines/Displays/OutlineInitializer.razor.rz.scp.css */
-.di_outline[b-go785m3u71] {
-	position: fixed;
-	z-index: 1;
-	background-color: var(--di_toggled-on-hover-background-color);
 }
 /* _content/Walk.Common/OutOfBoundsClicks/Displays/OutOfBoundsClickDisplay.razor.rz.scp.css */
 .di_out-of-bounds-click-display[b-qua0kiz5gx] {
