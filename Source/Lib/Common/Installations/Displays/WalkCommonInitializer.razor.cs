@@ -223,21 +223,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     
 	protected override void OnInitialized()
 	{
-        CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
-        {
-        	WorkKind = CommonWorkKind.WalkCommonInitializerWork
-    	});
-        base.OnInitialized();
-	}
-	
-	
-
-    /* Start DragInitializer */
-    protected override void OnInitialized()
-    {
-    	DragService.DragStateChanged += OnDragStateChanged;
-    
-    	_throttle = new(ThrottleFacts.TwentyFour_Frames_Per_Second, async (args, _) =>
+	    _throttle = new(ThrottleFacts.TwentyFour_Frames_Per_Second, async (args, _) =>
 	    {
 	    	if (args.IsOnMouseMove)
 	    	{
@@ -264,72 +250,22 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 	            }
 	    	}
 	    });
-    	
-    	base.OnInitialized();
-    }
-    /* End DragInitializer */
     
-    
-    
-    /* Start DialogInitializer */
-    protected override void OnInitialized()
-    {
+        DragService.DragStateChanged += OnDragStateChanged;
     	DialogService.DialogStateChanged += OnDialogStateChanged;
-    	base.OnInitialized();
-    }
-    /* End DialogInitializer */
-    
-    
-    
-    /* Start WidgetInitializer */
-    protected override void OnInitialized()
-    {
     	WidgetService.WidgetStateChanged += OnWidgetStateChanged;
-    	base.OnInitialized();
-    }
-    /* End WidgetInitializer */
-    
-    
-    
-    /* Start NotificationInitializer */
-    protected override void OnInitialized()
-    {
     	NotificationService.NotificationStateChanged += OnNotificationStateChanged;
-    	base.OnInitialized();
-    }
-    /* End NotificationInitializer */
-    
-    
-    
-    /* Start DropdownInitializer */
-    protected override void OnInitialized()
-	{
-		DropdownService.DropdownStateChanged += OnDropdownStateChanged;
-		base.OnInitialized();
-	}
-    /* End DropdownInitializer */
-    
-    
-    
-    /* Start OutlineInitializer */
-    protected override void OnInitialized()
-	{
+    	DropdownService.DropdownStateChanged += OnDropdownStateChanged;
 		OutlineService.OutlineStateChanged += OnOutlineStateChanged;
-		base.OnInitialized();
+		TooltipService.TooltipStateChanged += OnTooltipStateChanged;
+	
+        CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+        {
+        	WorkKind = CommonWorkKind.WalkCommonInitializerWork
+    	});
 	}
-    /* End OutlineInitializer */
-    
-    
-    
-    /* Start TooltipInitializer */
-    protected override void OnInitialized()
-	{
-	    TooltipService.TooltipStateChanged += OnTooltipStateChanged;
-	    base.OnInitialized();
-	}
-    /* End TooltipInitializer */
-
-
+	
+	
 
 	protected override void OnAfterRender(bool firstRender)
 	{
