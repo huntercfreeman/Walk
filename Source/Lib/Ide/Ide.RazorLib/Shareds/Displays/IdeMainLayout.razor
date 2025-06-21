@@ -11,9 +11,30 @@
 
 @inherits LayoutComponentBase
 
+@{
+    var uiStringBuilder = CommonBackgroundTaskApi.UiStringBuilder;
+    
+    uiStringBuilder.Clear();
+    uiStringBuilder.Append("di_ide_main-layout ");
+    uiStringBuilder.Append(UnselectableClassCss);
+    uiStringBuilder.Append(" ");
+    uiStringBuilder.Append(AppOptionsService.ThemeCssClassString);
+    uiStringBuilder.Append(" ");
+    uiStringBuilder.Append(TextEditorService.ThemeCssClassString);
+    var classCssString = uiStringBuilder.ToString();
+    
+    uiStringBuilder.Clear();
+    uiStringBuilder.Append(AppOptionsService.FontSizeCssStyleString);
+    uiStringBuilder.Append(" ");
+    uiStringBuilder.Append(AppOptionsService.FontFamilyCssStyleString);
+    uiStringBuilder.Append(" ");
+    uiStringBuilder.Append(AppOptionsService.ColorSchemeCssStyleString);
+    var styleCssString = uiStringBuilder.ToString();
+}
+
 <ContextBoundary ContextRecord="ContextFacts.GlobalContext"
-                 ClassCssString="@($"di_ide_main-layout {UnselectableClassCss} {AppOptionsService.ThemeCssClassString} {TextEditorService.ThemeCssClassString}")"
-                 StyleCssString="@($"{AppOptionsService.FontSizeCssStyleString} {AppOptionsService.FontFamilyCssStyleString} {AppOptionsService.ColorSchemeCssStyleString}")">
+                 ClassCssString="@classCssString"
+                 StyleCssString="@styleCssString">
 
     <Walk.Common.RazorLib.Drags.Displays.DragInitializer />
     <WalkCommonInitializer />

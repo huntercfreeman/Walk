@@ -3,7 +3,7 @@ using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Drags.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Panels.Models;
-using Walk.Common.RazorLib.StateHasChangedBoundaries.Displays;
+using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.Ide.RazorLib.Shareds.Models;
 
@@ -21,6 +21,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
+    [Inject]
+    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 
     private bool _previousDragStateWrapShouldDisplay;
     private ElementDimensions _bodyElementDimensions = new();
