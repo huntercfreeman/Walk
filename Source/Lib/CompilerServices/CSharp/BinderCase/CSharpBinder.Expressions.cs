@@ -51,6 +51,8 @@ public partial class CSharpBinder
 		{
 			case SyntaxKind.EmptyExpressionNode:
 				return EmptyMergeToken((EmptyExpressionNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
+			case SyntaxKind.CollectionInitializationNode:
+				return CollectionInitializationMergeToken((CollectionInitializationNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
 			case SyntaxKind.LiteralExpressionNode:
 				return LiteralMergeToken((LiteralExpressionNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
 			case SyntaxKind.InterpolatedStringNode:
@@ -114,6 +116,8 @@ public partial class CSharpBinder
 	
 		switch (expressionPrimary.SyntaxKind)
 		{
+			case SyntaxKind.CollectionInitializationNode:
+				return CollectionInitializationMergeExpression((CollectionInitializationNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);   
 			case SyntaxKind.BinaryExpressionNode:
 				return BinaryMergeExpression((BinaryExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			case SyntaxKind.InterpolatedStringNode:
@@ -983,14 +987,20 @@ public partial class CSharpBinder
 	            break;
 		}
 		
+		#if DEBUG
 		badExpressionNode.ClobberCount++;
+		#endif
+		
 		return badExpressionNode;
 	}
 
 	public IExpressionNode BadMergeExpression(
 		BadExpressionNode badExpressionNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
+	    #if DEBUG
 		badExpressionNode.ClobberCount++;
+		#endif
+		
 		return badExpressionNode;
 	}
 
@@ -1085,6 +1095,40 @@ public partial class CSharpBinder
 		}
 	
 		return ToBadExpressionNode(binaryExpressionNode, expressionSecondary);
+	}
+	
+	public IExpressionNode CollectionInitializationMergeToken(
+		CollectionInitializationNode collectionInitializationNode, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+	    switch (token.SyntaxKind)
+	    {
+    		case SyntaxKind.CloseBraceToken:
+    		{
+    		    collectionInitializationNode.IsClosed = true;
+    		    return collectionInitializationNode;
+    		}
+    		case SyntaxKind.CommaToken:
+    		{
+    		    if (collectionInitializationNode.IsClosed)
+    		        goto default;
+    		    
+    		    parserModel.ExpressionList.Add((SyntaxKind.CommaToken, collectionInitializationNode));
+    		    return EmptyExpressionNode.Empty;
+    		}
+    		default:
+    		{
+    		    return ToBadExpressionNode(collectionInitializationNode, token);
+    		}
+		}
+	}
+	
+	public IExpressionNode CollectionInitializationMergeExpression(
+		CollectionInitializationNode collectionInitializationNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+	    if (collectionInitializationNode.IsClosed)
+	        return ToBadExpressionNode(collectionInitializationNode, expressionSecondary);
+
+	    return collectionInitializationNode;
 	}
 	
 	public IExpressionNode ConstructorInvocationMergeToken(
@@ -1439,16 +1483,10 @@ public partial class CSharpBinder
 			case SyntaxKind.OpenParenthesisToken:
 				return ShareEmptyExpressionNodeIntoOpenParenthesisTokenCase(ref token, compilationUnit, ref parserModel);
 			case SyntaxKind.OpenBraceToken:
-			{
-			    parserModel.ExpressionList.Add((SyntaxKind.CloseBraceToken, emptyExpressionNode));
-			    parserModel.ExpressionList.Add((SyntaxKind.CommaToken, emptyExpressionNode));
-			    return emptyExpressionNode;
-			}
-			case SyntaxKind.CommaToken:
-			{
-			    parserModel.ExpressionList.Add((SyntaxKind.CommaToken, emptyExpressionNode));
-			    return emptyExpressionNode;
-			}
+			    var collectionInitializationNode = new CollectionInitializationNode();
+			    parserModel.ExpressionList.Add((SyntaxKind.CloseBraceToken, collectionInitializationNode));
+    		    parserModel.ExpressionList.Add((SyntaxKind.CommaToken, collectionInitializationNode));
+			    return EmptyExpressionNode.Empty;
 			case SyntaxKind.NewTokenKeyword:
 				return new ConstructorInvocationExpressionNode(
 					token,

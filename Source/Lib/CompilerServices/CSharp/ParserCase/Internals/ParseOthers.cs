@@ -380,6 +380,9 @@ public static class ParseOthers
     	
     	// It is vital that this 'clear' and 'add' are done in a way that permits an invoker of the 'ParseExpression' method to 'add' a similar 'forceExit' delimiter
     	// 	Example: 'parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));'
+    	//
+    	// CSharpParserModel constructor needs to duplicate the same additions for the first parse.
+    	//
     	parserModel.ExpressionList.Clear();
     	parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, null));
     	parserModel.ExpressionList.Add((SyntaxKind.CloseBraceToken, null));
