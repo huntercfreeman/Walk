@@ -1998,8 +1998,36 @@ public partial class CSharpBinder
 				}
 				
 				goto default;
+			case SyntaxKind.CommaToken:
+			    if (typeClauseNode.ArrayRank == 1)
+			    {
+			        typeClauseNode.TypeKind = TypeKind.ArrayMultiDimensional;
+			    }
+			    
+			    if (typeClauseNode.TypeKind == TypeKind.ArrayMultiDimensional)
+			    {
+    			    ++typeClauseNode.ArrayRank;
+    			    parserModel.ExpressionList.Add((SyntaxKind.CommaToken, typeClauseNode));
+			    }
+			    
+			    return typeClauseNode;
 			case SyntaxKind.OpenSquareBracketToken:
-				typeClauseNode.ArrayRank++;
+			    if (typeClauseNode.ArrayRank == 0)
+			    {
+			        typeClauseNode.TypeKind = TypeKind.ArrayJagged;
+			        
+    			    if (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.CloseSquareBracketToken)
+    				{
+    				    parserModel.ExpressionList.Add((SyntaxKind.CloseSquareBracketToken, typeClauseNode));
+    				    parserModel.ExpressionList.Add((SyntaxKind.CommaToken, typeClauseNode));
+    				}
+				}
+			
+			    if (typeClauseNode.TypeKind != TypeKind.ArrayMultiDimensional)
+			    {
+			        ++typeClauseNode.ArrayRank;
+			    }
+				
 				return typeClauseNode;
 			case SyntaxKind.CloseSquareBracketToken:
 				return typeClauseNode;
@@ -2090,7 +2118,15 @@ public partial class CSharpBinder
 					return typeClauseNode;
 				}
 				
-				goto default;
+			    goto default;
+			case SyntaxKind.TypeClauseNode:
+			    if (typeClauseNode == expressionSecondary)
+			    {
+			        // When parsing multi-dimensional arrays.
+			        return typeClauseNode;
+			    }
+			    
+			    goto default;
 			default:
 				return ToBadExpressionNode(typeClauseNode, expressionSecondary);
 		}
