@@ -58,6 +58,11 @@ public partial class CSharpBinder
 	public VariableReferenceNode CSharpParserModel_VariableReferenceNode { get; } = new VariableReferenceNode(
 		variableIdentifierToken: default,
 		variableDeclarationNode: null);
+	
+	public BadExpressionNode Shared_BadExpressionNode { get; } = new BadExpressionNode(
+		CSharpFacts.Types.Void.ToTypeReference(),
+		EmptyExpressionNode.Empty,
+		EmptyExpressionNode.Empty);
     
     public List<ISyntax> CSharpStatementBuilder_ChildList { get; } = new();
     public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> CSharpStatementBuilder_ParseChildScopeStack { get; } = new();

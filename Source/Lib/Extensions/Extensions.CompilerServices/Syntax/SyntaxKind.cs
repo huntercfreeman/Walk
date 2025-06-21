@@ -216,6 +216,7 @@ public enum SyntaxKind
 	WithExpressionNode,
 	PropertyDefinitionNode,
 	FieldDefinitionNode,
+	CollectionInitializationNode,
 	ConstructorDefinitionNode,
 	ConstructorInvocationExpressionNode,
 	FunctionDefinitionNode,
