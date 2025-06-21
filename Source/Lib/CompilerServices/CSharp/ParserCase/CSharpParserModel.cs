@@ -48,8 +48,9 @@ public struct CSharpParserModel
         
         ExpressionList = Binder.CSharpParserModel_ExpressionList;
         ExpressionList.Clear();
-        ExpressionList.Add((SyntaxKind.StatementDelimiterToken, null));
         ExpressionList.Add((SyntaxKind.EndOfFileToken, null));
+    	ExpressionList.Add((SyntaxKind.CloseBraceToken, null));
+    	ExpressionList.Add((SyntaxKind.StatementDelimiterToken, null));
         
         TryParseExpressionSyntaxKindList = Binder.CSharpParserModel_TryParseExpressionSyntaxKindList;
         TryParseExpressionSyntaxKindList.Clear();
