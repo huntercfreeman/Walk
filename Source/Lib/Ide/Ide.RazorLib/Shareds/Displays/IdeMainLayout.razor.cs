@@ -272,13 +272,13 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public Task RenderRunDropdownOnClick()
     {
         return DropdownHelper.RenderDropdownAsync(
-           DropdownService,
-           CommonBackgroundTaskApi.JsRuntimeCommonApi,
-           IdeHeaderState.ButtonRunId,
-           DropdownOrientation.Bottom,
-           IdeHeaderState.DropdownKeyRun,
-           IdeHeaderService.GetIdeHeaderState().MenuRun,
-           _buttonRunElementReference);
+            DropdownService,
+            CommonBackgroundTaskApi.JsRuntimeCommonApi,
+            IdeHeaderState.ButtonRunId,
+            DropdownOrientation.Bottom,
+            IdeHeaderState.DropdownKeyRun,
+            IdeHeaderService.GetIdeHeaderState().MenuRun,
+            _buttonRunElementReference);
     }
     
     public void InitializeMenuView()
