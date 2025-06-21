@@ -140,7 +140,11 @@ public void LR_Arrays_B()
         }
         System.Console.WriteLine();
     }
+}
     
+// Wrapping with a code block will show me if the array syntax breaks code block parsing.
+public void LR_Arrays_C()
+{
     static void Print2DArray(int[,] arr)
     {
         for (int i = 0; i < arr.GetLength(0); i++)
