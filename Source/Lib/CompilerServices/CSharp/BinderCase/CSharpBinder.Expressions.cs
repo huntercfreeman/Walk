@@ -1146,8 +1146,8 @@ public partial class CSharpBinder
 		    constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Type;
 			parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
 			
-			parserModel.ExpressionList.Add((SyntaxKind.OpenBraceToken, constructorInvocationExpressionNode));
 			parserModel.ExpressionList.Add((SyntaxKind.OpenParenthesisToken, constructorInvocationExpressionNode));
+			parserModel.ExpressionList.Add((SyntaxKind.OpenBraceToken, constructorInvocationExpressionNode));
 			return EmptyMergeToken(EmptyExpressionNode.Empty, ref token, compilationUnit, ref parserModel);
 		}
 		
@@ -1251,6 +1251,11 @@ public partial class CSharpBinder
 			        constructorInvocationExpressionNode.ResultTypeReference = CSharpFacts.Types.Void.ToTypeReference();
 			
 			    constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
+			    parserModel.ParserContextKind = CSharpParserContextKind.None;
+			    
+			    if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+			        ClearFromExpressionList(constructorInvocationExpressionNode, compilationUnit, ref parserModel);
+			    
 			    return constructorInvocationExpressionNode;
 			}
 			default:
