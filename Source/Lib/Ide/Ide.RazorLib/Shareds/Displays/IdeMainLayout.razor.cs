@@ -95,6 +95,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     private string _classCssString;
     private string _styleCssString;
+    private string _headerCssStyle;
     
     /* Start Header */
     private static readonly Key<IDynamicViewModel> _infoDialogKey = Key<IDynamicViewModel>.NewKey();
@@ -220,6 +221,12 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             uiStringBuilder.Append(" ");
             uiStringBuilder.Append(AppOptionsService.ColorSchemeCssStyleString);
             _styleCssString = uiStringBuilder.ToString();
+            
+        	uiStringBuilder.Clear();
+            uiStringBuilder.Append("display: flex; justify-content: space-between; border-bottom: ");
+            uiStringBuilder.Append(AppOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels);
+            uiStringBuilder.Append("px solid var(--di_primary-border-color);");
+            _headerCssStyle = uiStringBuilder.ToString();
         }
     }
     

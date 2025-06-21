@@ -47,14 +47,9 @@
     <WalkIdeInitializer />
 
     @* Start Header *@
-    @{
-    	var borderBottomHeight =  AppOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels;
-    	var contextBoundaryCssStyle = $"display: flex; justify-content: space-between; border-bottom: {borderBottomHeight}px solid var(--di_primary-border-color);";
-    }
-    
     <ContextBoundary ContextRecord="ContextFacts.MainLayoutHeaderContext"
                      ClassCssString="di_ide_header"
-                     StyleCssString="@contextBoundaryCssStyle">
+                     StyleCssString="@_headerCssStyle">
         
         <div class="di_ide_header-left-content"
              style="display: flex;">
