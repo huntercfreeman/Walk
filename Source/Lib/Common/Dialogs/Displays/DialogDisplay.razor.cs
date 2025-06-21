@@ -32,8 +32,6 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     private ResizableDisplay? _resizableDisplay;
 
-    private string ElementDimensionsStyleCssString => Dialog.DialogElementDimensions.StyleString;
-
     private string IsMaximizedStyleCssString => Dialog.DialogIsMaximized
         ? CommonConfig.IsMaximizedStyleCssString
         : string.Empty;

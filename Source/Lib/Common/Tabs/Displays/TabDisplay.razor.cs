@@ -275,7 +275,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 	private string GetDraggableCssStyleString()
 	{
 		if (IsBeingDragged && Tab is IDrag draggable)
-			return draggable.DragElementDimensions.StyleString;
+			return draggable.DragElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder);
 
 		return string.Empty;
 	}

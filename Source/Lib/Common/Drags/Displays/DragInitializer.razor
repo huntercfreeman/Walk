@@ -23,7 +23,7 @@
 
 		foreach (var dropzone in dropzoneViewModelList)
 		{
-			<div style="z-index: @dropzone.MeasuredHtmlElementDimensions.ZIndex; @dropzone.ElementDimensions.StyleString"
+			<div style="z-index: @dropzone.MeasuredHtmlElementDimensions.ZIndex; @dropzone.ElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder)"
 				 class="di_dropzone @DRAG_GetIsActiveCssClass(dropzone) @dropzone.CssClass"
 				 @onmouseover="() => _onMouseOverDropzone = dropzone"
 				 @onmouseover:stopPropagation="true">

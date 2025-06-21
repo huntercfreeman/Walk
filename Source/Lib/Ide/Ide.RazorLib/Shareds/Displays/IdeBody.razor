@@ -8,7 +8,7 @@
 @{ var panelState = PanelService.GetPanelState(); }
 
 <div class="di_ide_body"
-     style="@BodyElementDimensions.StyleString">
+     style="@BodyElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder)">
 
     <PanelGroupDisplay PanelGroupKey="PanelFacts.LeftPanelGroupKey"
                        AdjacentElementDimensions="_editorElementDimensions"

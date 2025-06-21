@@ -3,6 +3,7 @@ using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.StateHasChangedBoundaries.Displays;
 using Walk.Common.RazorLib.Options.Models;
+using Walk.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Ide.RazorLib.Shareds.Displays;
 
@@ -12,6 +13,8 @@ public partial class IdeBody : ComponentBase
     private IPanelService PanelService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
+    [Inject]
+    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions BodyElementDimensions { get; set; } = null!;

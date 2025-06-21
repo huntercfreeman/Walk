@@ -33,6 +33,8 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
+    [Inject]
+    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 	
 	private CodeSearchTreeViewKeyboardEventHandler _treeViewKeymap = null!;
 	private CodeSearchTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;

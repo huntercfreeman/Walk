@@ -11,7 +11,7 @@
 <div class="di_ide_find-all">
 
     <div class="di_ide_find-all-top-content"
-         style="@codeSearchState.TopContentElementDimensions.StyleString">
+         style="@codeSearchState.TopContentElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder)">
 		
 		@* <!-- Comment out currently unimplemented code -->
 	        <div class="di_ide_find-all-filter-list">
@@ -62,7 +62,7 @@
                   ReRenderFuncAsync="HandleResizableRowReRenderAsync"/>
     
     <div class="di_ide_find-all-bottom-content"
-         style="@codeSearchState.BottomContentElementDimensions.StyleString">
+         style="@codeSearchState.BottomContentElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder)">
          
          <TextEditorViewModelDisplay TextEditorViewModelKey="codeSearchState.PreviewViewModelKey"
                                      ViewModelDisplayOptions="_textEditorViewModelDisplayOptions" />
