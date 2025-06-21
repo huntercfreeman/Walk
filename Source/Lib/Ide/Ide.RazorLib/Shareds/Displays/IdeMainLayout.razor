@@ -23,51 +23,29 @@
     <WalkIdeInitializer />
 
     <ShouldRenderBoundary>
-        @{
-            // The 'useDevelopmentDisplay' boolean is odd.
-            // 
-            // I want to isolate a component that I'm developing,
-            // yet maintain much of the existing Ide logic.
-            // 
-            // There are various ways that can accomplish something similar to this.
-            // 
-            // But, this is a simple way, and the if statement evaluation
-            // when this UI StateHasChanged, is expected to be negligible.
-            var useDevelopmentDisplay = false;
-        }
+        <IdeHeader/>
+        
+        <IdeBody BodyElementDimensions="_bodyElementDimensions" />
 
-        @if (!useDevelopmentDisplay)
-        {        
-            <IdeHeader/>
+        <ResizableRow TopElementDimensions="_bodyElementDimensions"
+                      BottomElementDimensions="PanelFacts.GetBottomPanelGroup(PanelService.GetPanelState()).ElementDimensions"
+                      ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)" />
 
-            <StateHasChangedBoundary @ref="_bodyAndFooterStateHasChangedBoundaryComponent">
-                <IdeBody BodyElementDimensions="_bodyElementDimensions" />
+        <PanelGroupDisplay PanelGroupKey="PanelFacts.BottomPanelGroupKey"
+                      CssClassString="di_ide_footer"
+                      AdjacentElementDimensions="_bodyElementDimensions"
+                      DimensionAttributeKind="DimensionAttributeKind.Height"
+                      ReRenderSelfAndAdjacentElementDimensionsFunc="() => InvokeAsync(StateHasChanged)">
 
-                <ResizableRow TopElementDimensions="_bodyElementDimensions"
-                              BottomElementDimensions="PanelFacts.GetBottomPanelGroup(PanelService.GetPanelState()).ElementDimensions"
-                              ReRenderFuncAsync="_bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync" />
-
-                <PanelGroupDisplay PanelGroupKey="PanelFacts.BottomPanelGroupKey"
-                              CssClassString="di_ide_footer"
-                              AdjacentElementDimensions="_bodyElementDimensions"
-                              DimensionAttributeKind="DimensionAttributeKind.Height"
-                              ReRenderSelfAndAdjacentElementDimensionsFunc="_bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync">
-
-                    <JustifyEndRenderFragment>
-                    	@{ var ideMainLayoutState = IdeMainLayoutService.GetIdeMainLayoutState(); }
-                    	
-                    	@foreach (var footerJustifyEndComponent in ideMainLayoutState.FooterJustifyEndComponentList)
-                    	{
-                    		<DynamicComponent Type="footerJustifyEndComponent.ComponentType"
-                    						  Parameters="footerJustifyEndComponent.ComponentParameterMap"/>
-                    	}
-                    </JustifyEndRenderFragment>
-                </PanelGroupDisplay>
-            </StateHasChangedBoundary>
-        }
-        else
-        {
-            <IdeDevelopmentDisplay/>
-        }
+            <JustifyEndRenderFragment>
+            	@{ var ideMainLayoutState = IdeMainLayoutService.GetIdeMainLayoutState(); }
+            	
+            	@foreach (var footerJustifyEndComponent in ideMainLayoutState.FooterJustifyEndComponentList)
+            	{
+            		<DynamicComponent Type="footerJustifyEndComponent.ComponentType"
+            						  Parameters="footerJustifyEndComponent.ComponentParameterMap"/>
+            	}
+            </JustifyEndRenderFragment>
+        </PanelGroupDisplay>
     </ShouldRenderBoundary>
 </ContextBoundary>

@@ -24,7 +24,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     private bool _previousDragStateWrapShouldDisplay;
     private ElementDimensions _bodyElementDimensions = new();
-    private StateHasChangedBoundary _bodyAndFooterStateHasChangedBoundaryComponent = null!;
 
     private string UnselectableClassCss => DragService.GetDragState().ShouldDisplay ? "di_unselectable" : string.Empty;
 
@@ -67,7 +66,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     private async void AppOptionsStateWrapOnStateChanged()
     {
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private async void DragStateWrapOnStateChanged()
@@ -75,24 +74,18 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         if (_previousDragStateWrapShouldDisplay != DragService.GetDragState().ShouldDisplay)
         {
             _previousDragStateWrapShouldDisplay = DragService.GetDragState().ShouldDisplay;
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
     }
 
     private async void OnIdeMainLayoutStateChanged()
     {
-    	var bodyAndFooterStateHasChangedBoundaryComponentLocal = _bodyAndFooterStateHasChangedBoundaryComponent;
-    	if (bodyAndFooterStateHasChangedBoundaryComponentLocal is not null)
-    	{
-    		await bodyAndFooterStateHasChangedBoundaryComponentLocal
-	        	.InvokeStateHasChangedAsync()
-	        	.ConfigureAwait(false);
-    	}
+    	await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private async void TextEditorOptionsStateWrap_StateChanged()
     {
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     public void Dispose()
