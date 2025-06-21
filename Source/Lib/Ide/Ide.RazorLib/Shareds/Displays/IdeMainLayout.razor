@@ -5,8 +5,6 @@
 @using Walk.Common.RazorLib.Panels.Displays
 @using Walk.Common.RazorLib.Panels.Models;
 @using Walk.Common.RazorLib.Resizes.Displays
-@using Walk.Common.RazorLib.StateHasChangedBoundaries.Displays;
-@using Walk.Common.RazorLib.ShouldRenderBoundaries.Displays
 @using Walk.Ide.RazorLib.Installations.Displays
 @using Walk.Ide.RazorLib.Shareds.Displays.Internals
 @using Walk.TextEditor.RazorLib.Installations.Displays
@@ -22,30 +20,28 @@
     <WalkTextEditorInitializer />
     <WalkIdeInitializer />
 
-    <ShouldRenderBoundary>
-        <IdeHeader/>
-        
-        <IdeBody BodyElementDimensions="_bodyElementDimensions" />
+    <IdeHeader/>
+    
+    <IdeBody BodyElementDimensions="_bodyElementDimensions" />
 
-        <ResizableRow TopElementDimensions="_bodyElementDimensions"
-                      BottomElementDimensions="PanelFacts.GetBottomPanelGroup(PanelService.GetPanelState()).ElementDimensions"
-                      ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)" />
+    <ResizableRow TopElementDimensions="_bodyElementDimensions"
+                  BottomElementDimensions="PanelFacts.GetBottomPanelGroup(PanelService.GetPanelState()).ElementDimensions"
+                  ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)" />
 
-        <PanelGroupDisplay PanelGroupKey="PanelFacts.BottomPanelGroupKey"
-                      CssClassString="di_ide_footer"
-                      AdjacentElementDimensions="_bodyElementDimensions"
-                      DimensionAttributeKind="DimensionAttributeKind.Height"
-                      ReRenderSelfAndAdjacentElementDimensionsFunc="() => InvokeAsync(StateHasChanged)">
+    <PanelGroupDisplay PanelGroupKey="PanelFacts.BottomPanelGroupKey"
+                  CssClassString="di_ide_footer"
+                  AdjacentElementDimensions="_bodyElementDimensions"
+                  DimensionAttributeKind="DimensionAttributeKind.Height"
+                  ReRenderSelfAndAdjacentElementDimensionsFunc="() => InvokeAsync(StateHasChanged)">
 
-            <JustifyEndRenderFragment>
-            	@{ var ideMainLayoutState = IdeMainLayoutService.GetIdeMainLayoutState(); }
-            	
-            	@foreach (var footerJustifyEndComponent in ideMainLayoutState.FooterJustifyEndComponentList)
-            	{
-            		<DynamicComponent Type="footerJustifyEndComponent.ComponentType"
-            						  Parameters="footerJustifyEndComponent.ComponentParameterMap"/>
-            	}
-            </JustifyEndRenderFragment>
-        </PanelGroupDisplay>
-    </ShouldRenderBoundary>
+        <JustifyEndRenderFragment>
+        	@{ var ideMainLayoutState = IdeMainLayoutService.GetIdeMainLayoutState(); }
+        	
+        	@foreach (var footerJustifyEndComponent in ideMainLayoutState.FooterJustifyEndComponentList)
+        	{
+        		<DynamicComponent Type="footerJustifyEndComponent.ComponentType"
+        						  Parameters="footerJustifyEndComponent.ComponentParameterMap"/>
+        	}
+        </JustifyEndRenderFragment>
+    </PanelGroupDisplay>
 </ContextBoundary>
