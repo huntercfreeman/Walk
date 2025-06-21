@@ -7,9 +7,6 @@ namespace Walk.Common.RazorLib.Dimensions.Models;
 /// </summary>
 public struct DimensionAttribute
 {
-	private bool _styleStringIsDirty = true;
-	private string _styleString = string.Empty;
-
 	public DimensionAttribute(DimensionAttributeKind dimensionAttributeKind)
 	{
         DimensionAttributeKind = dimensionAttributeKind;
@@ -18,7 +15,6 @@ public struct DimensionAttribute
 
     public List<DimensionUnit> DimensionUnitList { get; }
     public DimensionAttributeKind DimensionAttributeKind { get; }
-    public string StyleString => GetStyleString();
     
     public void Increment(double amount, DimensionUnitKind dimensionUnitKind, DimensionUnit defaultIfNotExists)
     {    
@@ -37,8 +33,6 @@ public struct DimensionAttribute
         {
         	Value = dimensionUnit.Value + amount
         };
-        
-        _styleStringIsDirty = true;
     }
     
     public void Decrement(double amount, DimensionUnitKind dimensionUnitKind, DimensionUnit defaultIfNotExists)
@@ -58,8 +52,6 @@ public struct DimensionAttribute
         {
         	Value = dimensionUnit.Value - amount
         };
-        
-        _styleStringIsDirty = true;
     }
     
     public void Set(double amount, DimensionUnitKind dimensionUnitKind)
@@ -75,55 +67,33 @@ public struct DimensionAttribute
         {
         	Value = amount
         };
-        
-        _styleStringIsDirty = true;
     }
 
-    private string GetStyleString()
+    public void AppendStyleString(StringBuilder styleBuilder)
     {
-    	if (!_styleStringIsDirty)
-    		return _styleString;
-    
-    	_styleStringIsDirty = false;
-    
-    	try
-    	{
-	        if (!DimensionUnitList.Any())
-	            return _styleString = string.Empty;
-	
-	        var styleBuilder = new StringBuilder(DimensionAttributeKind.GetStyleString());
-	        styleBuilder.Append(": calc(");
-	
-	        for (var index = 0; index < DimensionUnitList.Count; index++)
-	        {
-	            var dimensionUnit = DimensionUnitList[index];
-	
-	            if (index != 0)
-	            {
-	                styleBuilder
-	                    .Append(' ')
-	                    .Append(dimensionUnit.DimensionOperatorKind.GetStyleString())
-	                    .Append(' ');
-	            }
-	
-	            var dimensionUnitInvariantCulture = dimensionUnit.Value
-	                .ToCssValue();
-	
-	            styleBuilder.Append(
-	                $"{dimensionUnitInvariantCulture}" +
-	                $"{dimensionUnit.DimensionUnitKind.GetStyleString()}");
-	        }
-	
-	        styleBuilder.Append(");");
-	
-	         _styleString = styleBuilder.ToString();
-    	}
-    	catch (Exception e)
-    	{
-    		_styleStringIsDirty = true;
-    		Console.WriteLine(e);
-    	}
-    	
-    	return _styleString;
+        if (!DimensionUnitList.Any())
+            return;
+
+        styleBuilder.Append(DimensionAttributeKind.GetStyleString());
+        styleBuilder.Append(": calc(");
+
+        for (var index = 0; index < DimensionUnitList.Count; index++)
+        {
+            var dimensionUnit = DimensionUnitList[index];
+
+            if (index != 0)
+            {
+                styleBuilder
+                    .Append(' ')
+                    .Append(dimensionUnit.DimensionOperatorKind.GetStyleString())
+                    .Append(' ');
+            }
+
+            styleBuilder.Append(
+                dimensionUnit.Value.ToCssValue() +
+                dimensionUnit.DimensionUnitKind.GetStyleString());
+        }
+
+        styleBuilder.Append(");");
     }
 }

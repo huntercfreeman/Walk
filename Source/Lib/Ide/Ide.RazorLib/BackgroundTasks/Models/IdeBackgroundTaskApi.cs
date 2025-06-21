@@ -412,13 +412,13 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         }
     }
 
-    public ValueTask Do_IdeHeaderOnInit(IdeHeader ideHeader)
+    public ValueTask Do_IdeHeaderOnInit(IdeMainLayout ideMainLayout)
     {
         InitializeMenuFile();
         InitializeMenuTools();
-        ideHeader.InitializeMenuView();
+        ideMainLayout.InitializeMenuView();
 
-        AddAltKeymap(ideHeader);
+        AddAltKeymap(ideMainLayout);
         return ValueTask.CompletedTask;
     }
 
@@ -583,7 +583,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     /// <summary>
     /// Add option to allow a user to disable the alt keymap to access to the header button dropdowns.
     /// </summary>
-    private void AddAltKeymap(IdeHeader ideHeader)
+    private void AddAltKeymap(IdeMainLayout ideMainLayout)
     {
         _ = ContextFacts.GlobalContext.Keymap.TryRegister(
                 new KeymapArgs()
@@ -596,7 +596,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                     MetaKey = false,
                     LayerKey = Key<KeymapLayer>.Empty,
                 },
-                new CommonCommand("Open File Dropdown", "open-file-dropdown", false, async _ => await ideHeader.RenderFileDropdownOnClick()));
+                new CommonCommand("Open File Dropdown", "open-file-dropdown", false, async _ => await ideMainLayout.RenderFileDropdownOnClick()));
 
         _ = ContextFacts.GlobalContext.Keymap.TryRegister(
                 new KeymapArgs
@@ -609,7 +609,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                     MetaKey = false,
                     LayerKey = Key<KeymapLayer>.Empty,
                 },
-                new CommonCommand("Open Tools Dropdown", "open-tools-dropdown", false, async _ => await ideHeader.RenderToolsDropdownOnClick()));
+                new CommonCommand("Open Tools Dropdown", "open-tools-dropdown", false, async _ => await ideMainLayout.RenderToolsDropdownOnClick()));
 
         _ = ContextFacts.GlobalContext.Keymap.TryRegister(
                 new KeymapArgs
@@ -622,7 +622,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                     MetaKey = false,
                     LayerKey = Key<KeymapLayer>.Empty,
                 },
-                new CommonCommand("Open View Dropdown", "open-view-dropdown", false, async _ => await ideHeader.RenderViewDropdownOnClick()));
+                new CommonCommand("Open View Dropdown", "open-view-dropdown", false, async _ => await ideMainLayout.RenderViewDropdownOnClick()));
 
         _ = ContextFacts.GlobalContext.Keymap.TryRegister(
             new KeymapArgs
@@ -635,7 +635,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                 MetaKey = false,
                 LayerKey = Key<KeymapLayer>.Empty,
             },
-            new CommonCommand("Open Run Dropdown", "open-run-dropdown", false, async _ => await ideHeader.RenderRunDropdownOnClick()));
+            new CommonCommand("Open Run Dropdown", "open-run-dropdown", false, async _ => await ideMainLayout.RenderRunDropdownOnClick()));
     }
     
     public void Editor_ShowInputFile()
@@ -1124,7 +1124,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             case IdeBackgroundTaskApiWorkKind.WalkIdeInitializerOnInit:
                 return Do_WalkIdeInitializerOnInit();
             case IdeBackgroundTaskApiWorkKind.IdeHeaderOnInit:
-            	return Do_IdeHeaderOnInit(workArgs.IdeHeader);
+            	return Do_IdeHeaderOnInit(workArgs.IdeMainLayout);
             case IdeBackgroundTaskApiWorkKind.FileContentsWereModifiedOnDisk:
 	            return Editor_Do_FileContentsWereModifiedOnDisk(
 	                workArgs.InputFileAbsolutePathString, workArgs.TextEditorModel, workArgs.FileLastWriteTime, workArgs.NotificationInformativeKey);

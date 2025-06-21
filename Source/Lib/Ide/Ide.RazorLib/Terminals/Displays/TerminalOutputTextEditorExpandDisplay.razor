@@ -1,5 +1,4 @@
 @using Walk.Common.RazorLib.Keys.Models
-@using Walk.Common.RazorLib.ShouldRenderBoundaries.Displays
 @using Walk.TextEditor.RazorLib.TextEditors.Displays
 @using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals
 @using Walk.TextEditor.RazorLib.TextEditors.Models
@@ -27,10 +26,8 @@
 	else
 	{
 		<div style="height: calc(100% - 2em);">
-			<ShouldRenderBoundary>
-				<TextEditorViewModelSlimDisplay TextEditorViewModelKey="terminalOutputFormatterExpand.TextEditorViewModelKey"
-											    ViewModelDisplayOptions="_textEditorViewModelDisplayOptions" />
-			</ShouldRenderBoundary>
+			<TextEditorViewModelSlimDisplay TextEditorViewModelKey="terminalOutputFormatterExpand.TextEditorViewModelKey"
+										    ViewModelDisplayOptions="_textEditorViewModelDisplayOptions" />
 		</div>
 	
 		<div style="height: 2em; display: flex;">

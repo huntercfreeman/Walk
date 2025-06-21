@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Text;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Storages.Models;
@@ -68,6 +69,11 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
     
     public bool __TaskCompletionSourceWasCreated { get; set; }
+    
+    /// <summary>
+    /// A shared StringBuilder, but only use this if you know for certain you are on the "UI thread".
+    /// </summary>
+    public StringBuilder UiStringBuilder { get; } = new();
 
     public void Enqueue(CommonWorkArgs commonWorkArgs)
     {

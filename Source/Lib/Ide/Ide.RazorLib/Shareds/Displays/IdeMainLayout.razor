@@ -5,69 +5,152 @@
 @using Walk.Common.RazorLib.Panels.Displays
 @using Walk.Common.RazorLib.Panels.Models;
 @using Walk.Common.RazorLib.Resizes.Displays
-@using Walk.Common.RazorLib.StateHasChangedBoundaries.Displays;
-@using Walk.Common.RazorLib.ShouldRenderBoundaries.Displays
 @using Walk.Ide.RazorLib.Installations.Displays
 @using Walk.Ide.RazorLib.Shareds.Displays.Internals
 @using Walk.TextEditor.RazorLib.Installations.Displays
 
+@* Start Body *@
+@using Walk.Common.RazorLib.Dimensions.Models
+@using Walk.Common.RazorLib.Panels.Displays
+@using Walk.Common.RazorLib.Panels.Models
+@using Walk.Common.RazorLib.Resizes.Displays
+@using Walk.Common.RazorLib.StateHasChangedBoundaries.Displays
+@using Walk.Ide.RazorLib.Editors.Displays
+@* End Body *@
+
+@* Start Header *@
+@using Walk.Common.RazorLib.Contexts.Displays
+@using Walk.Common.RazorLib.Contexts.Models;
+@using Walk.Common.RazorLib.Dropdowns.Displays
+@using Walk.Common.RazorLib.Dropdowns.Models;
+@using Walk.Common.RazorLib.Installations.Models;
+@using Walk.Common.RazorLib.Menus.Displays
+@using Walk.Ide.RazorLib.Settings.Displays
+@using Walk.Ide.RazorLib.Shareds.Displays.Internals
+@using Walk.Ide.RazorLib.StartupControls.Displays
+@using Walk.Ide.RazorLib.Shareds.Models;
+@* End Header *@
+
 @inherits LayoutComponentBase
 
+@{
+    CreateCssStrings();
+}
+
 <ContextBoundary ContextRecord="ContextFacts.GlobalContext"
-                 ClassCssString="@($"di_ide_main-layout {UnselectableClassCss} {AppOptionsService.ThemeCssClassString} {TextEditorService.ThemeCssClassString}")"
-                 StyleCssString="@($"{AppOptionsService.FontSizeCssStyleString} {AppOptionsService.FontFamilyCssStyleString} {AppOptionsService.ColorSchemeCssStyleString}")">
+                 ClassCssString="@_classCssString"
+                 StyleCssString="@_styleCssString">
 
     <Walk.Common.RazorLib.Drags.Displays.DragInitializer />
     <WalkCommonInitializer />
     <WalkTextEditorInitializer />
     <WalkIdeInitializer />
 
-    <ShouldRenderBoundary>
-        @{
-            // The 'useDevelopmentDisplay' boolean is odd.
-            // 
-            // I want to isolate a component that I'm developing,
-            // yet maintain much of the existing Ide logic.
-            // 
-            // There are various ways that can accomplish something similar to this.
-            // 
-            // But, this is a simple way, and the if statement evaluation
-            // when this UI StateHasChanged, is expected to be negligible.
-            var useDevelopmentDisplay = false;
-        }
+    @* Start Header *@
+    <ContextBoundary ContextRecord="ContextFacts.MainLayoutHeaderContext"
+                     ClassCssString="di_ide_header"
+                     StyleCssString="@_headerCssStyle">
+        
+        <div class="di_ide_header-left-content"
+             style="display: flex;">
+            
+            <SettingsDialogEntryPoint/>
+    
+            <button @ref="_buttonFileElementReference"
+                    @onclick="RenderFileDropdownOnClick"
+    			    id="@IdeHeaderState.ButtonFileId"
+                    class="di_button"
+                    style="margin-left: 15px;">
+                File
+            </button>
+    
+    		<button @ref="_buttonToolsElementReference"
+                    @onclick="RenderToolsDropdownOnClick"
+    			    id="@IdeHeaderState.ButtonToolsId"
+                    class="di_button"
+                    style="margin-left: 15px;">
+                Tools
+            </button>
+    
+    		<button @ref="_buttonViewElementReference"
+                    @onclick="RenderViewDropdownOnClick"
+    			    id="@IdeHeaderState.ButtonViewId"
+                    class="di_button"
+                    style="margin-left: 15px;">
+    			View
+             </button>
+    
+    		<button @ref="_buttonRunElementReference"
+                    @onclick="RenderRunDropdownOnClick"
+    			    id="@IdeHeaderState.ButtonRunId"
+    				class="di_button"
+                    style="margin-left: 15px;">
+                Run
+            </button>
+    
+            <button class="di_button"
+                    style="margin-left: 15px;"
+                    @onclick="OpenInfoDialogOnClick">
+                Info
+            </button>
+    
+            @if (WalkHostingInformation.WalkHostingKind == WalkHostingKind.ServerSide)
+            {
+                <IdeImportExportButtons/>
+            }
+    
+            <StartupControlDisplay/>
+        </div>
+    </ContextBoundary>
+    @* End Header *@
+    <IdeHeader/>
+    
+    @* Start Body *@
+    @{ var panelState = PanelService.GetPanelState(); }
+    
+    <div class="di_ide_body"
+         style="@_bodyElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder)">
+    
+        <PanelGroupDisplay PanelGroupKey="PanelFacts.LeftPanelGroupKey"
+                           AdjacentElementDimensions="_editorElementDimensions"
+                           DimensionAttributeKind="DimensionAttributeKind.Width"
+                           ReRenderSelfAndAdjacentElementDimensionsFunc="() => InvokeAsync(StateHasChanged)" />
+    
+        <ResizableColumn LeftElementDimensions="PanelFacts.GetTopLeftPanelGroup(panelState).ElementDimensions"
+                         RightElementDimensions="_editorElementDimensions"
+                         ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)" />
+    
+        <EditorDisplay EditorElementDimensions="_editorElementDimensions" />
+        
+        <ResizableColumn LeftElementDimensions="_editorElementDimensions"
+                         RightElementDimensions="PanelFacts.GetTopRightPanelGroup(panelState).ElementDimensions"
+                         ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)" />
+    
+        <PanelGroupDisplay PanelGroupKey="PanelFacts.RightPanelGroupKey"
+                           AdjacentElementDimensions="_editorElementDimensions"
+                           DimensionAttributeKind="DimensionAttributeKind.Width"
+                           ReRenderSelfAndAdjacentElementDimensionsFunc="() => InvokeAsync(StateHasChanged)" />
+    </div>
+    @* End Body *@
 
-        @if (!useDevelopmentDisplay)
-        {        
-            <IdeHeader/>
+    <ResizableRow TopElementDimensions="_bodyElementDimensions"
+                  BottomElementDimensions="PanelFacts.GetBottomPanelGroup(PanelService.GetPanelState()).ElementDimensions"
+                  ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)" />
 
-            <StateHasChangedBoundary @ref="_bodyAndFooterStateHasChangedBoundaryComponent">
-                <IdeBody BodyElementDimensions="_bodyElementDimensions" />
+    <PanelGroupDisplay PanelGroupKey="PanelFacts.BottomPanelGroupKey"
+                  CssClassString="di_ide_footer"
+                  AdjacentElementDimensions="_bodyElementDimensions"
+                  DimensionAttributeKind="DimensionAttributeKind.Height"
+                  ReRenderSelfAndAdjacentElementDimensionsFunc="() => InvokeAsync(StateHasChanged)">
 
-                <ResizableRow TopElementDimensions="_bodyElementDimensions"
-                              BottomElementDimensions="PanelFacts.GetBottomPanelGroup(PanelService.GetPanelState()).ElementDimensions"
-                              ReRenderFuncAsync="_bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync" />
-
-                <PanelGroupDisplay PanelGroupKey="PanelFacts.BottomPanelGroupKey"
-                              CssClassString="di_ide_footer"
-                              AdjacentElementDimensions="_bodyElementDimensions"
-                              DimensionAttributeKind="DimensionAttributeKind.Height"
-                              ReRenderSelfAndAdjacentElementDimensionsFunc="_bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync">
-
-                    <JustifyEndRenderFragment>
-                    	@{ var ideMainLayoutState = IdeMainLayoutService.GetIdeMainLayoutState(); }
-                    	
-                    	@foreach (var footerJustifyEndComponent in ideMainLayoutState.FooterJustifyEndComponentList)
-                    	{
-                    		<DynamicComponent Type="footerJustifyEndComponent.ComponentType"
-                    						  Parameters="footerJustifyEndComponent.ComponentParameterMap"/>
-                    	}
-                    </JustifyEndRenderFragment>
-                </PanelGroupDisplay>
-            </StateHasChangedBoundary>
-        }
-        else
-        {
-            <IdeDevelopmentDisplay/>
-        }
-    </ShouldRenderBoundary>
+        <JustifyEndRenderFragment>
+        	@{ var ideMainLayoutState = IdeMainLayoutService.GetIdeMainLayoutState(); }
+        	
+        	@foreach (var footerJustifyEndComponent in ideMainLayoutState.FooterJustifyEndComponentList)
+        	{
+        		<DynamicComponent Type="footerJustifyEndComponent.ComponentType"
+        						  Parameters="footerJustifyEndComponent.ComponentParameterMap"/>
+        	}
+        </JustifyEndRenderFragment>
+    </PanelGroupDisplay>
 </ContextBoundary>

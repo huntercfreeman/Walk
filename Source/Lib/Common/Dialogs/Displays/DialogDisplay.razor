@@ -7,7 +7,7 @@
 }
 
 <div class="di_dialog-display @Dialog.DialogCssClass @GetCssClassForDialogStateIsActiveSelection(dialogStateIsActiveSelection)"
-     style="@ElementDimensionsStyleCssString @IsMaximizedStyleCssString"
+     style="@Dialog.DialogElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder) @IsMaximizedStyleCssString"
      id="@Dialog.DialogFocusPointHtmlElementId"
      tabindex="-1"
      @onfocusin="HandleOnFocusIn"

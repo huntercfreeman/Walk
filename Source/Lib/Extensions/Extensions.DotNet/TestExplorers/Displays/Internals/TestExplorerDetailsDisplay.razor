@@ -1,5 +1,4 @@
 @using Walk.Common.RazorLib.Keys.Models
-@using Walk.Common.RazorLib.ShouldRenderBoundaries.Displays
 @using Walk.TextEditor.RazorLib.TextEditors.Displays
 @using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals
 @using Walk.TextEditor.RazorLib.TextEditors.Models
@@ -7,10 +6,8 @@
 @using Walk.Ide.RazorLib.Terminals.Displays;
 
 <div class="di_ide_test-explorer-details"
-	 style="@ElementDimensions.StyleString">
+	 style="@ElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder)">
 
-	<ShouldRenderBoundary>
-		<TextEditorViewModelSlimDisplay TextEditorViewModelKey="DetailsTextEditorViewModelKey"
-									    ViewModelDisplayOptions="_textEditorViewModelDisplayOptions" />
-	</ShouldRenderBoundary>
+	<TextEditorViewModelSlimDisplay TextEditorViewModelKey="DetailsTextEditorViewModelKey"
+								    ViewModelDisplayOptions="_textEditorViewModelDisplayOptions" />
 </div>
