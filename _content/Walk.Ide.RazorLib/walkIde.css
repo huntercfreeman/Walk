@@ -292,10 +292,6 @@ button.di_ide_input-file-address-hierarchy-entry {
     border: 2px solid var(--di_primary-border-color);
 }
 
-.di_te_text-editor-input-cursor-size .di_te_text-editor {
-    min-height: initial;
-}
-
 .di_ide_panel-tabs {
     position: relative;
     background-color: var(--di_ide_panel-background-color);
@@ -346,7 +342,7 @@ button.di_ide_input-file-address-hierarchy-entry {
     color: var(--di_tertiary-foreground-color);
 }
 
-.di_ide_panel_left .di_ide_panel-tabs .di_ide_panel-tab span {
+.di_ide_panel_left .di_ide_panel-tabs .di_ide_panel-tab .di_polymorphic-tab-text {
     writing-mode: vertical-rl;
     text-orientation: mixed;
     -webkit-transform: rotate(180deg);
@@ -360,7 +356,7 @@ button.di_ide_input-file-address-hierarchy-entry {
     flex-direction: row-reverse;
 }
 
-.di_ide_panel_right .di_ide_panel-tabs .di_ide_panel-tab span {
+.di_ide_panel_right .di_ide_panel-tabs .di_ide_panel-tab .di_polymorphic-tab-text {
     writing-mode: vertical-rl;
     text-orientation: mixed;
 }
