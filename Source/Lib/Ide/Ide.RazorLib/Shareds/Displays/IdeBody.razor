@@ -1,38 +1,32 @@
-@using Walk.Common.RazorLib.Dimensions.Models;
+@using Walk.Common.RazorLib.Dimensions.Models
 @using Walk.Common.RazorLib.Panels.Displays
-@using Walk.Common.RazorLib.Panels.Models;
+@using Walk.Common.RazorLib.Panels.Models
 @using Walk.Common.RazorLib.Resizes.Displays
-@using Walk.Ide.RazorLib.Editors.Displays
 @using Walk.Common.RazorLib.StateHasChangedBoundaries.Displays
+@using Walk.Ide.RazorLib.Editors.Displays
 
 @{ var panelState = PanelService.GetPanelState(); }
 
 <div class="di_ide_body"
      style="@BodyElementDimensions.StyleString">
 
-    <StateHasChangedBoundary @ref="_leftPanelStateHasChangedBoundaryComponent">
-        <PanelGroupDisplay PanelGroupKey="PanelFacts.LeftPanelGroupKey"
-                      AdjacentElementDimensions="_editorElementDimensions"
-                      DimensionAttributeKind="DimensionAttributeKind.Width"
-                      ReRenderSelfAndAdjacentElementDimensionsFunc="ReRenderLeftPanelAndEditor" />
-     </StateHasChangedBoundary>
+    <PanelGroupDisplay PanelGroupKey="PanelFacts.LeftPanelGroupKey"
+                       AdjacentElementDimensions="_editorElementDimensions"
+                       DimensionAttributeKind="DimensionAttributeKind.Width"
+                       ReRenderSelfAndAdjacentElementDimensionsFunc="() => InvokeAsync(StateHasChanged)" />
 
     <ResizableColumn LeftElementDimensions="PanelFacts.GetTopLeftPanelGroup(panelState).ElementDimensions"
                      RightElementDimensions="_editorElementDimensions"
-                     ReRenderFuncAsync="ReRenderLeftPanelAndEditor" />
+                     ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)" />
 
-    <StateHasChangedBoundary @ref="_editorStateHasChangedBoundaryComponent">
-        <EditorDisplay EditorElementDimensions="_editorElementDimensions" />
-    </StateHasChangedBoundary>
+    <EditorDisplay EditorElementDimensions="_editorElementDimensions" />
     
     <ResizableColumn LeftElementDimensions="_editorElementDimensions"
                      RightElementDimensions="PanelFacts.GetTopRightPanelGroup(panelState).ElementDimensions"
-                     ReRenderFuncAsync="ReRenderEditorAndRightPanel" />
+                     ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)" />
 
-    <StateHasChangedBoundary @ref="_rightPanelStateHasChangedBoundaryComponent">
-        <PanelGroupDisplay PanelGroupKey="PanelFacts.RightPanelGroupKey"
-                      AdjacentElementDimensions="_editorElementDimensions"
-                      DimensionAttributeKind="DimensionAttributeKind.Width"
-                      ReRenderSelfAndAdjacentElementDimensionsFunc="ReRenderEditorAndRightPanel" />
-    </StateHasChangedBoundary>
+    <PanelGroupDisplay PanelGroupKey="PanelFacts.RightPanelGroupKey"
+                       AdjacentElementDimensions="_editorElementDimensions"
+                       DimensionAttributeKind="DimensionAttributeKind.Width"
+                       ReRenderSelfAndAdjacentElementDimensionsFunc="() => InvokeAsync(StateHasChanged)" />
 </div>

@@ -17,9 +17,6 @@ public partial class IdeBody : ComponentBase
     public ElementDimensions BodyElementDimensions { get; set; } = null!;
 
     private ElementDimensions _editorElementDimensions = new();
-    private StateHasChangedBoundary? _leftPanelStateHasChangedBoundaryComponent;
-    private StateHasChangedBoundary? _editorStateHasChangedBoundaryComponent;
-    private StateHasChangedBoundary? _rightPanelStateHasChangedBoundaryComponent;
 
     protected override void OnInitialized()
     {
@@ -35,17 +32,5 @@ public partial class IdeBody : ComponentBase
         });
 
         base.OnInitialized();
-    }
-
-    private async Task ReRenderLeftPanelAndEditor()
-    {
-        await (_leftPanelStateHasChangedBoundaryComponent?.InvokeStateHasChangedAsync() ?? Task.CompletedTask);
-        await (_editorStateHasChangedBoundaryComponent?.InvokeStateHasChangedAsync() ?? Task.CompletedTask);
-    }
-
-    private async Task ReRenderEditorAndRightPanel()
-    {
-        await (_editorStateHasChangedBoundaryComponent?.InvokeStateHasChangedAsync() ?? Task.CompletedTask);
-        await (_rightPanelStateHasChangedBoundaryComponent?.InvokeStateHasChangedAsync() ?? Task.CompletedTask);
     }
 }
