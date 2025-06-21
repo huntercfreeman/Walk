@@ -7,6 +7,15 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.Ide.RazorLib.Shareds.Models;
 
+/* Start Body */
+using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib.Dimensions.Models;
+using Walk.Common.RazorLib.Panels.Models;
+using Walk.Common.RazorLib.StateHasChangedBoundaries.Displays;
+using Walk.Common.RazorLib.Options.Models;
+using Walk.Common.RazorLib.BackgroundTasks.Models;
+/* End Body */
+
 namespace Walk.Ide.RazorLib.Shareds.Displays;
 
 public partial class IdeMainLayout : LayoutComponentBase, IDisposable
@@ -26,6 +35,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     private bool _previousDragStateWrapShouldDisplay;
     private ElementDimensions _bodyElementDimensions = new();
+    private ElementDimensions _editorElementDimensions = new();
 
     private string UnselectableClassCss => _previousDragStateWrapShouldDisplay ? "di_unselectable" : string.Empty;
     
@@ -39,11 +49,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        DragService.DragStateChanged += DragStateWrapOnStateChanged;
-        AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
-        IdeMainLayoutService.IdeMainLayoutStateChanged += OnIdeMainLayoutStateChanged;
-        TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrap_StateChanged;
-
         _bodyElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(78, DimensionUnitKind.Percentage),
@@ -56,6 +61,22 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             	SizeFacts.Ide.Header.Height.DimensionUnitKind,
             	DimensionOperatorKind.Subtract)
         });
+        
+        _editorElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
+        {
+            new DimensionUnit(
+            	33.3333,
+            	DimensionUnitKind.Percentage),
+            new DimensionUnit(
+            	AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+            	DimensionUnitKind.Pixels,
+            	DimensionOperatorKind.Subtract)
+        });
+    
+        DragService.DragStateChanged += DragStateWrapOnStateChanged;
+        AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
+        IdeMainLayoutService.IdeMainLayoutStateChanged += OnIdeMainLayoutStateChanged;
+        TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrap_StateChanged;
 
         base.OnInitialized();
     }
