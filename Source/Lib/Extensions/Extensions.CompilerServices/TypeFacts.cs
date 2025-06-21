@@ -1,7 +1,7 @@
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax;
+using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 
 namespace Walk.Extensions.CompilerServices;
@@ -13,7 +13,7 @@ public static class TypeFacts
 		valueType: typeof(void),
 		genericParameterListing: default,
 		isKeywordType: false,
-		isTuple: false,
+		typeKind: TypeKind.None,
 		hasQuestionMark: false,
 		arrayRank: 0,
 		isFabricated: false);

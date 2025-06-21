@@ -1,4 +1,5 @@
 using Walk.TextEditor.RazorLib.Lexers.Models;
+using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -74,7 +75,7 @@ public sealed class TypeClauseNode : IGenericParameterNode
 
 	public bool IsKeywordType { get; set; }
 
-	public bool IsTuple { get; set; }
+	public TypeKind TypeKind { get; set; }
 
 	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
@@ -113,7 +114,7 @@ public sealed class TypeClauseNode : IGenericParameterNode
 		ValueType = valueType;
 		GenericParameterListing = genericParameterListing;
 		IsKeywordType = isKeywordType;
-		IsTuple = false;
+		TypeKind = TypeKind.None;
 		HasQuestionMark = false;
 		ArrayRank = 0;
 		_isFabricated = false;

@@ -213,6 +213,7 @@ public static class ParseOthers
     {
     	switch (syntaxKind)
     	{
+    		case SyntaxKind.OpenParenthesisToken:
     		case SyntaxKind.CloseParenthesisToken:
 			case SyntaxKind.CommaToken:
 			case SyntaxKind.CloseAngleBracketToken:
