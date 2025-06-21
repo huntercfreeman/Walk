@@ -18,6 +18,19 @@
 @using Walk.Ide.RazorLib.Editors.Displays
 @* End Body *@
 
+@* Start Header *@
+@using Walk.Common.RazorLib.Contexts.Displays
+@using Walk.Common.RazorLib.Contexts.Models;
+@using Walk.Common.RazorLib.Dropdowns.Displays
+@using Walk.Common.RazorLib.Dropdowns.Models;
+@using Walk.Common.RazorLib.Installations.Models;
+@using Walk.Common.RazorLib.Menus.Displays
+@using Walk.Ide.RazorLib.Settings.Displays
+@using Walk.Ide.RazorLib.Shareds.Displays.Internals
+@using Walk.Ide.RazorLib.StartupControls.Displays
+@using Walk.Ide.RazorLib.Shareds.Models;
+@* End Header *@
+
 @inherits LayoutComponentBase
 
 @{
@@ -33,6 +46,68 @@
     <WalkTextEditorInitializer />
     <WalkIdeInitializer />
 
+    @* Start Header *@
+    @{
+    	var borderBottomHeight =  AppOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels;
+    	var contextBoundaryCssStyle = $"display: flex; justify-content: space-between; border-bottom: {borderBottomHeight}px solid var(--di_primary-border-color);";
+    }
+    
+    <ContextBoundary ContextRecord="ContextFacts.MainLayoutHeaderContext"
+                     ClassCssString="di_ide_header"
+                     StyleCssString="@contextBoundaryCssStyle">
+        
+        <div class="di_ide_header-left-content"
+             style="display: flex;">
+            
+            <SettingsDialogEntryPoint/>
+    
+            <button @ref="_buttonFileElementReference"
+                    @onclick="RenderFileDropdownOnClick"
+    			    id="@IdeHeaderState.ButtonFileId"
+                    class="di_button"
+                    style="margin-left: 15px;">
+                File
+            </button>
+    
+    		<button @ref="_buttonToolsElementReference"
+                    @onclick="RenderToolsDropdownOnClick"
+    			    id="@IdeHeaderState.ButtonToolsId"
+                    class="di_button"
+                    style="margin-left: 15px;">
+                Tools
+            </button>
+    
+    		<button @ref="_buttonViewElementReference"
+                    @onclick="RenderViewDropdownOnClick"
+    			    id="@IdeHeaderState.ButtonViewId"
+                    class="di_button"
+                    style="margin-left: 15px;">
+    			View
+             </button>
+    
+    		<button @ref="_buttonRunElementReference"
+                    @onclick="RenderRunDropdownOnClick"
+    			    id="@IdeHeaderState.ButtonRunId"
+    				class="di_button"
+                    style="margin-left: 15px;">
+                Run
+            </button>
+    
+            <button class="di_button"
+                    style="margin-left: 15px;"
+                    @onclick="OpenInfoDialogOnClick">
+                Info
+            </button>
+    
+            @if (WalkHostingInformation.WalkHostingKind == WalkHostingKind.ServerSide)
+            {
+                <IdeImportExportButtons/>
+            }
+    
+            <StartupControlDisplay/>
+        </div>
+    </ContextBoundary>
+    @* End Header *@
     <IdeHeader/>
     
     @* Start Body *@
@@ -62,7 +137,6 @@
                            ReRenderSelfAndAdjacentElementDimensionsFunc="() => InvokeAsync(StateHasChanged)" />
     </div>
     @* End Body *@
-    <IdeBody BodyElementDimensions="_bodyElementDimensions" />
 
     <ResizableRow TopElementDimensions="_bodyElementDimensions"
                   BottomElementDimensions="PanelFacts.GetBottomPanelGroup(PanelService.GetPanelState()).ElementDimensions"
