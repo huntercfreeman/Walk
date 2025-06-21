@@ -27,7 +27,15 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private bool _previousDragStateWrapShouldDisplay;
     private ElementDimensions _bodyElementDimensions = new();
 
-    private string UnselectableClassCss => DragService.GetDragState().ShouldDisplay ? "di_unselectable" : string.Empty;
+    private string UnselectableClassCss => _previousDragStateWrapShouldDisplay ? "di_unselectable" : string.Empty;
+    
+    /// <summary>
+    /// This can only be set from the "UI thread".
+    /// </summary>
+    private bool _shouldRecalculateCssStrings = true;
+    
+    private string _classCssString;
+    private string _styleCssString;
 
     protected override void OnInitialized()
     {
@@ -68,7 +76,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     private async void AppOptionsStateWrapOnStateChanged()
     {
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(() =>
+        {
+            _shouldRecalculateCssStrings = true;
+            StateHasChanged();
+        }).ConfigureAwait(false);
     }
 
     private async void DragStateWrapOnStateChanged()
@@ -76,7 +88,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         if (_previousDragStateWrapShouldDisplay != DragService.GetDragState().ShouldDisplay)
         {
             _previousDragStateWrapShouldDisplay = DragService.GetDragState().ShouldDisplay;
-            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+            await InvokeAsync(() =>
+            {
+                _shouldRecalculateCssStrings = true;
+                StateHasChanged();
+            }).ConfigureAwait(false);
         }
     }
 
@@ -87,7 +103,41 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     private async void TextEditorOptionsStateWrap_StateChanged()
     {
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(() =>
+        {
+            _shouldRecalculateCssStrings = true;
+            StateHasChanged();
+        }).ConfigureAwait(false);
+    }
+    
+    /// <summary>
+    /// This can only be invoked from the UI thread due to the usage of `CommonBackgroundTaskApi.UiStringBuilder`.
+    /// </summary>
+    private void CreateCssStrings()
+    {
+        if (_shouldRecalculateCssStrings)
+        {
+            _shouldRecalculateCssStrings = false;
+        
+            var uiStringBuilder = CommonBackgroundTaskApi.UiStringBuilder;
+            
+            uiStringBuilder.Clear();
+            uiStringBuilder.Append("di_ide_main-layout ");
+            uiStringBuilder.Append(UnselectableClassCss);
+            uiStringBuilder.Append(" ");
+            uiStringBuilder.Append(AppOptionsService.ThemeCssClassString);
+            uiStringBuilder.Append(" ");
+            uiStringBuilder.Append(TextEditorService.ThemeCssClassString);
+            _classCssString = uiStringBuilder.ToString();
+            
+            uiStringBuilder.Clear();
+            uiStringBuilder.Append(AppOptionsService.FontSizeCssStyleString);
+            uiStringBuilder.Append(" ");
+            uiStringBuilder.Append(AppOptionsService.FontFamilyCssStyleString);
+            uiStringBuilder.Append(" ");
+            uiStringBuilder.Append(AppOptionsService.ColorSchemeCssStyleString);
+            _styleCssString = uiStringBuilder.ToString();
+        }
     }
 
     public void Dispose()
