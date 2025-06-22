@@ -3,7 +3,7 @@
 @using Walk.Extensions.DotNet.CompilerServices.Models;
 
 @* ContextRecord="ContextFacts.CompilerServiceExplorerContext" *@
-<div class="di_ide_compiler-service-explorer" style="height: 100%">
+<div id="@ContextFacts.CompilerServiceExplorerContext.ContextElementId" class="di_ide_compiler-service-explorer" style="height: 100%">
     @if (AppOptionsService.ShowPanelTitles)
     {
 	    <div class="di_ide_section-title">
