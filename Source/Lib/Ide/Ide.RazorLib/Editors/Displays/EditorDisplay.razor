@@ -6,10 +6,9 @@
 @using Walk.TextEditor.RazorLib.Groups.Displays
 @using Walk.Ide.RazorLib.BackgroundTasks.Models
 
-<ContextBoundary ContextRecord="_viewModelDisplayOptions.ContextRecord"
-                 ClassCssString="di_ide_editor-display"
-                 StyleCssString="@EditorElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder)">
+@* ContextRecord="_viewModelDisplayOptions.ContextRecord" *@
 
+<div class="di_ide_editor-display" style="@EditorElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder)">
 	@if (AppOptionsService.ShowPanelTitles)
 	{
 	    <div class="di_ide_section-title">
@@ -64,4 +63,4 @@
 	        </div>
 	    }
     </div>
-</ContextBoundary>
+</div>

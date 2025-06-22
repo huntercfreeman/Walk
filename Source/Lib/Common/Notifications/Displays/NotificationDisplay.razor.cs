@@ -26,10 +26,6 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     public INotification Notification  { get; set; } = null!;
     [Parameter, EditorRequired]
     public int Index { get; set; }
-    [Parameter, EditorRequired]
-    public Func<Task> OnFocusInFunc { get; set; } = null!;
-	[Parameter, EditorRequired]
-    public Func<Task> OnFocusOutFunc { get; set; } = null!;
 
 	//private const int WIDTH_IN_PIXELS = 350;
 	private const int WIDTH_IN_FONT_WIDTH = 40;
@@ -181,16 +177,6 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
         DialogService.ReduceRegisterAction(dialogRecord);
 
         return HandleShouldNoLongerRender(wasCausedByUiEvent: false);
-    }
-    
-    private Task HandleOnFocusIn()
-    {
-    	return OnFocusInFunc.Invoke();
-    }
-	
-	private Task HandleOnFocusOut()
-    {
-    	return OnFocusOutFunc.Invoke();
     }
 
     public void Dispose()

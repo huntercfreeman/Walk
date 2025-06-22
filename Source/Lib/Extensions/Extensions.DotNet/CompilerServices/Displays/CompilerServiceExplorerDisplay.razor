@@ -2,10 +2,8 @@
 @using Walk.Common.RazorLib.Contexts.Models;
 @using Walk.Extensions.DotNet.CompilerServices.Models;
 
-<ContextBoundary ContextRecord="ContextFacts.CompilerServiceExplorerContext"
-                 ClassCssString="di_ide_compiler-service-explorer"
-                 StyleCssString="height: 100%">
-                 
+@* ContextRecord="ContextFacts.CompilerServiceExplorerContext" *@
+<div class="di_ide_compiler-service-explorer" style="height: 100%">
     @if (AppOptionsService.ShowPanelTitles)
     {
 	    <div class="di_ide_section-title">
@@ -16,4 +14,4 @@
     <div class="di_ide_section-body @AppOptionsService.ShowPanelTitlesCssClass">
         <CompilerServiceExplorerTreeViewDisplay />
     </div>
-</ContextBoundary>
+</div>

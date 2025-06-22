@@ -290,20 +290,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                 DimensionOperatorKind.Subtract,
                 DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
 
-        // activeContextsPanel
-        var activeContextsPanel = new Panel(
-            "Active Contexts",
-            Key<Panel>.NewKey(),
-            Key<IDynamicViewModel>.NewKey(),
-            ContextFacts.ActiveContextsContext.ContextKey,
-            typeof(ContextsPanelDisplay),
-            null,
-            _panelService,
-            _dialogService,
-            _commonBackgroundTaskApi);
-        _panelService.RegisterPanel(activeContextsPanel);
-        _panelService.RegisterPanelTab(bottomPanel.Key, activeContextsPanel, false);
-
         // SetActivePanelTabAction
         //_panelService.SetActivePanelTab(bottomPanel.Key, terminalGroupPanel.Key);
     }

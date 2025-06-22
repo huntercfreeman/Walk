@@ -7,10 +7,9 @@
 @using Walk.Extensions.DotNet.DotNetSolutions.Displays.Internals;
 @using Walk.Extensions.DotNet.DotNetSolutions.Models;
 
-<ContextBoundary ContextRecord="ContextFacts.SolutionExplorerContext"
-                 ClassCssString="di_ide_solution-explorer-display"
-                 StyleCssString="height: 100%">
+@* ContextRecord="ContextFacts.SolutionExplorerContext" *@
 
+<div class="di_ide_solution-explorer-display" style="height: 100%">
     @{
     	var dotNetSolutionState = DotNetBackgroundTaskApi.DotNetSolutionService.GetDotNetSolutionState();
     	var appOptionsState = AppOptionsService.GetAppOptionsState();
@@ -61,4 +60,4 @@
             </CascadingValue>
         }
     </div>
-</ContextBoundary>
+</div>

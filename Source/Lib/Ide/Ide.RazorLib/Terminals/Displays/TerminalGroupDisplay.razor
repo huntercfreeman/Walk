@@ -3,10 +3,8 @@
 @using Walk.Common.RazorLib.Keys.Models
 @using Walk.Ide.RazorLib.Terminals.Models;
 
-<ContextBoundary ContextRecord="ContextFacts.TerminalContext"
-                 ClassCssString="di_ide_terminal"
-                 StyleCssString="height: 100%; width: 100%; overflow: auto;">
-
+@* ContextRecord="ContextFacts.TerminalContext" *@
+<div class="di_ide_terminal" style="height: 100%; width: 100%; overflow: auto;">
     @{
         var terminalGroupDisplayState = TerminalGroupService.GetTerminalGroupState();
         var terminalState = TerminalService.GetTerminalState();
@@ -124,4 +122,4 @@
             }
         </div>
     </div>
-</ContextBoundary>
+</div>

@@ -37,20 +37,17 @@
     CreateCssStrings();
 }
 
-<ContextBoundary ContextRecord="ContextFacts.GlobalContext"
-                 ClassCssString="@_classCssString"
-                 StyleCssString="@_styleCssString">
+@* ContextRecord="ContextFacts.GlobalContext" *@
 
+<div class="@_classCssString" style="@_styleCssString">
     <Walk.Common.RazorLib.Drags.Displays.DragInitializer />
     <WalkCommonInitializer />
     <WalkTextEditorInitializer />
     <WalkIdeInitializer />
 
     @* Start Header *@
-    <ContextBoundary ContextRecord="ContextFacts.MainLayoutHeaderContext"
-                     ClassCssString="di_ide_header"
-                     StyleCssString="@_headerCssStyle">
-        
+    @* ContextRecord="ContextFacts.MainLayoutHeaderContext" *@
+    <div class="di_ide_header" style="@_headerCssStyle">
         <div class="di_ide_header-left-content"
              style="display: flex;">
             
@@ -101,7 +98,7 @@
     
             <StartupControlDisplay/>
         </div>
-    </ContextBoundary>
+    </div>
     @* End Header *@
     <IdeHeader/>
     
@@ -153,4 +150,4 @@
         	}
         </JustifyEndRenderFragment>
     </PanelGroupDisplay>
-</ContextBoundary>
+</div>

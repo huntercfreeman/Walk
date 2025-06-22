@@ -13,11 +13,7 @@ public interface IContextService
     
     public ContextSwitchState GetContextSwitchState();
     
-    public void SetFocusedContextHeirarchy(ContextHeirarchy focusedContextHeirarchy);
-    public void ToggleSelectInspectedContextHeirarchy();
-    public void IsSelectingInspectableContextHeirarchy(bool value);
-    public void SetInspectedContextHeirarchy(ContextHeirarchy? inspectedContextHeirarchy);
-    public void AddInspectableContext(InspectableContext inspectableContext);
+    public void SetFocusedContextKey(Key<ContextRecord> contextKey);
     public void SetContextKeymap(Key<ContextRecord> contextKey, IKeymap keymap);
     
     public void RegisterContextSwitchGroup(ContextSwitchGroup contextSwitchGroup);

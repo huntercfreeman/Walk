@@ -8,23 +8,13 @@ namespace Walk.Common.RazorLib.Contexts.Models;
 /// </summary>
 public record struct ContextState(
     IReadOnlyList<ContextRecord> AllContextsList,
-    ContextHeirarchy FocusedContextHeirarchy,
-    ContextHeirarchy? InspectedContextHeirarchy,
-    IReadOnlyList<InspectableContext> InspectableContextList,
-    bool IsSelectingInspectionTarget)
+    Key<ContextRecord> FocusedContextKey)
 {
     public ContextState() : this(
         Array.Empty<ContextRecord>(),
-        new(Array.Empty<Key<ContextRecord>>()),
-        null,
-        Array.Empty<InspectableContext>(),
-        false)
+        Key<ContextRecord>.Empty)
     {
-        FocusedContextHeirarchy = new ContextHeirarchy(new List<Key<ContextRecord>>
-        {
-            ContextFacts.GlobalContext.ContextKey
-        });
-
         AllContextsList = ContextFacts.AllContextsList;
+        FocusedContextKey = ContextFacts.GlobalContext.ContextKey;
     }
 }

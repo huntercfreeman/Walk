@@ -1,10 +1,9 @@
 @using Walk.Common.RazorLib.Contexts.Displays
 @using Walk.Common.RazorLib.Contexts.Models;
 
-<ContextBoundary ContextRecord="ContextFacts.NuGetPackageManagerContext"
-                 ClassCssString="di_ide_nu-get-package-manager-display"
-                 StyleCssString="height: 100%; width: 100%;">
-    
+@* ContextRecord="ContextFacts.NuGetPackageManagerContext" *@
+
+<div class="di_ide_nu-get-package-manager-display" style="height: 100%; width: 100%;">
     @if (AppOptionsService.ShowPanelTitles)
     {
 	    <div class="di_ide_section-title">
@@ -172,4 +171,4 @@
             </div>
         }
     </div>
-</ContextBoundary>
+</div>
