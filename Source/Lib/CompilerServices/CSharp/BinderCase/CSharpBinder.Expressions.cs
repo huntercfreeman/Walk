@@ -1976,9 +1976,12 @@ public partial class CSharpBinder
 			    {
     			    ++typeClauseNode.ArrayRank;
     			    parserModel.ExpressionList.Add((SyntaxKind.CommaToken, typeClauseNode));
+    			    return typeClauseNode;
 			    }
-			    
-			    return typeClauseNode;
+			    else
+			    {
+			        goto default;
+			    }
 			case SyntaxKind.OpenSquareBracketToken:
 			    if (typeClauseNode.ArrayRank == 0)
 			    {
