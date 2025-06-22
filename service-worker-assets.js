@@ -101,7 +101,7 @@
       "url": "_framework\/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-P2FIWDU4Xu1omwZJxJszZP5MTPcn2Ns6Rq\/r2EvWfYs=",
+      "hash": "sha256-QT6tIKLj9LhXFPiI3gGlTVQ0UyPtdeUVmjEniu0oI9A=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -309,71 +309,71 @@
       "url": "_framework\/System.Web.HttpUtility.wasm"
     },
     {
-      "hash": "sha256-FiRxG0ybf1yWnnjLZdhNVntQKIcVTwkAgntAM+fyVHY=",
+      "hash": "sha256-42byWQlccgMKR4Y+YpTK5l4Mv0jY2azakwrg0jPRrZc=",
       "url": "_framework\/Walk.Common.RazorLib.wasm"
     },
     {
-      "hash": "sha256-TmLe1LB1nb\/HaWO5NMupKJweIA\/dfs\/jkAF5dEJCcZM=",
+      "hash": "sha256-G8Ev0SAM+TIhoSdlDctjss+oqzoVvXJPnkQE2JA4VPU=",
       "url": "_framework\/Walk.CompilerServices.CSharp.wasm"
     },
     {
-      "hash": "sha256-Lsk48k4wIH10RcDFSi\/ELHjbOqP09jwsduUpOjxlmQY=",
+      "hash": "sha256-jev+YkJ2+Gqy2RlYFe6jxE92ggVZwfFMgkOymyOAd4A=",
       "url": "_framework\/Walk.CompilerServices.CSharpProject.wasm"
     },
     {
-      "hash": "sha256-Lq\/lAdi1izIExmogemdoYkz3Xbtt5tnJyR4tvgVl+co=",
+      "hash": "sha256-FmSrDudgkhoJ5UxyZfyE4lcRxLc9FlDO1mtQYTGaTiw=",
       "url": "_framework\/Walk.CompilerServices.Css.wasm"
     },
     {
-      "hash": "sha256-ajr9YHLAu9J6VgrfEVYGqYCJqy3cikL3BA61x8liljU=",
+      "hash": "sha256-e\/JD\/Jm91SXLiXDYLRfj7Sa61Rfg\/JqflHI+3XjiDSY=",
       "url": "_framework\/Walk.CompilerServices.DotNetSolution.wasm"
     },
     {
-      "hash": "sha256-Iw0kuPFCNZ4uQaJTwI\/i3JHwgvJWLXwG8J6kFVIm7V0=",
+      "hash": "sha256-lE2Z+BGifFgcL7pO0xfwg1cM0S4Z6XuRHgBgUBvOU\/4=",
       "url": "_framework\/Walk.CompilerServices.JavaScript.wasm"
     },
     {
-      "hash": "sha256-cauZN\/ImjRgmT0y+dVROVEOBCLG04w+zeU+hJaR5qJ4=",
+      "hash": "sha256-aGysAlTLNKSvg3MC26zGC3ISMytHBNM8iMGVFZoydEU=",
       "url": "_framework\/Walk.CompilerServices.Json.wasm"
     },
     {
-      "hash": "sha256-NaEENN+SuZ0VNbrC+bX7HaiWXYrQvkJzWG9Bj0eefTE=",
+      "hash": "sha256-AaDzpHgL00wd\/c0APuGyqlQJuXdmbOpgXZZTFi0h1QY=",
       "url": "_framework\/Walk.CompilerServices.Razor.wasm"
     },
     {
-      "hash": "sha256-p0IU+EucOy0cPGlQnnCwC2bLKX+PD0fhi8CP74TWKxE=",
+      "hash": "sha256-p6w+UwjFmp7TJU7N\/FBeqTljM4EoluhNmWabAqw6FXw=",
       "url": "_framework\/Walk.CompilerServices.Xml.wasm"
     },
     {
-      "hash": "sha256-kqDQoKuElcNmKkpq5d1NFbDFuh4TjY1FE\/H5EtlX760=",
+      "hash": "sha256-fmQw1cU8uoq1PUhLsk2Vx7twCuTjNunfOQI49l6SlTo=",
       "url": "_framework\/Walk.Extensions.CompilerServices.wasm"
     },
     {
-      "hash": "sha256-pSTEhD6TA+GeO\/oVN2xoo4dFegNxtebJHtjscfQhttY=",
+      "hash": "sha256-pvt4w6l6wzUCe0OcNGqg1Lh5Tq3YzfELqUEWZw+uvBg=",
       "url": "_framework\/Walk.Extensions.Config.wasm"
     },
     {
-      "hash": "sha256-1h4thZyVRjNWMlfeh9U2KIc7+VxXbLs2wX8BpEa6OMw=",
+      "hash": "sha256-tenso+Pm8PvqQgMLywGwPJHc9XCqf\/rMlKCoxvQ\/veA=",
       "url": "_framework\/Walk.Extensions.DotNet.wasm"
     },
     {
-      "hash": "sha256-MnhrYl7+gq\/Xnw04yKwPrBRW\/V8\/FinvcObVOt+qzcY=",
+      "hash": "sha256-yG1TH9R+9ooAIXUSAFOs2lyzzZK9aub+nL5g3gzm05A=",
       "url": "_framework\/Walk.Ide.RazorLib.wasm"
     },
     {
-      "hash": "sha256-JTL1s9GurEzFJwEYZybMYUv+e6O+NgewhbGvCDFxGl0=",
+      "hash": "sha256-t0xwK4zQOxMNeOmMSLuFFIQ8FZRFQJRd69q47Rhwqes=",
       "url": "_framework\/Walk.Ide.Wasm.wasm"
     },
     {
-      "hash": "sha256-4ZYmP9ylod6sJBHyrts3zFkJDULji749qtk6+tWcI1g=",
+      "hash": "sha256-81z5ZCMxeKNFnCPmSAAwIZV2iVFWj\/0k+eG0GIMcWs8=",
       "url": "_framework\/Walk.TextEditor.RazorLib.wasm"
     },
     {
-      "hash": "sha256-+Fj4v1PPjJQ7TVh1ypWJ+8LmN67QExnGchRpgxof8RU=",
+      "hash": "sha256-fduZF7QZD\/dkEqLzOiEJUasIP5+j5jAznlHqS2vHq6c=",
       "url": "_framework\/Walk.Website.RazorLib.wasm"
     },
     {
-      "hash": "sha256-HFVV35dpKmdfSwZ4NURuCgzFD3GM8KJsDRCvq3ghrXk=",
+      "hash": "sha256-+VCZdfjAKpjdoilVhXBkkp8x8gUSBE\/O+C2jqIu4qQw=",
       "url": "_content\/Walk.Common\/Walk.Common.bundle.scp.css"
     },
     {
@@ -433,5 +433,5 @@
       "url": "_content\/Walk.TextEditor\/walkTextEditor.js"
     }
   ],
-  "version": "MBR5tySE"
+  "version": "q20AffLq"
 };

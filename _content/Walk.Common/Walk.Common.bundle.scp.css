@@ -1,31 +1,3 @@
-/* _content/Walk.Common/Contexts/Displays/ContextBoundary.razor.rz.scp.css */
-/* 
-The component 'OutlineInitializer.razor' is in development as a replacement
-to the '.di_ide_context-boundary:focus' css in this file.
-
-TODO: Decide if 'OutlineInitializer.razor' is an improvement,
-      and if so delete this css block or file entirely if its empty.
-*/
-/*
-.di_ide_context-boundary:focus {
-    box-shadow: 0 0 8px var(--di_primary-overlay-box-shadow-color) inset;
-    outline: 5px solid var(--di_toggled-on-hover-background-color);
-    outline-offset: -5px;
-}
-*/
-
-/* _content/Walk.Common/Contexts/Displays/ContextBoundaryOverlay.razor.rz.scp.css */
-.di_ide_context-boundary-overlay[b-q0m6sbyeh8] {
-    position: fixed;
-    left: 0;
-    top: 0;
-}
-
-    .di_ide_context-boundary-overlay:hover[b-q0m6sbyeh8] {
-        background-color: var(--di_ide_context-boundary-overlay-background-color);
-        opacity: 0.6;
-        cursor: default;
-    }
 /* _content/Walk.Common/Dialogs/Displays/DialogDisplay.razor.rz.scp.css */
 .di_dialog-display[b-5vjm5l4fmf] {
     z-index: var(--di_dialog-display-z-index);
