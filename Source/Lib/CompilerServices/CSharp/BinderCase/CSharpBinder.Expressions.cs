@@ -1140,70 +1140,15 @@ public partial class CSharpBinder
 				constructorInvocationExpressionNode, ref token, compilationUnit, ref parserModel);
 		}
 		
-		if (constructorInvocationExpressionNode.ResultTypeReference == default)
+		if (constructorInvocationExpressionNode.ResultTypeReference == default &&
+		    token.SyntaxKind != SyntaxKind.OpenParenthesisToken)
 		{
-			if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind))
-			{
-				parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
-				
-				TypeClauseNode typeClauseNode;
-				
-				var beforeTokenIndex = parserModel.TokenWalker.Index;
-				
-				var maybeTypeClauseNode = ForceDecisionAmbiguousIdentifier(
-					EmptyExpressionNode.Empty,
-					new AmbiguousIdentifierExpressionNode(
-						token,
-						genericParameterListing: default,
-						resultTypeReference: default),
-					compilationUnit,
-					ref parserModel);
-
-				if (beforeTokenIndex == parserModel.TokenWalker.Index)
-					_ = parserModel.TokenWalker.Consume();
-				
-				if (maybeTypeClauseNode.SyntaxKind != SyntaxKind.TypeClauseNode)
-				{
-					// Superstitous check, rather than parser throwing an exception in the upcoming explicit cast and no chance to recover.
-					
-					var maybeToken = GetNameToken(maybeTypeClauseNode);
-					
-					if (maybeToken.ConstructorWasInvoked)
-					    typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref maybeToken, compilationUnit, ref parserModel);
-					else
-					    typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, compilationUnit, ref parserModel);
-						
-					BindTypeClauseNode(
-				        typeClauseNode,
-				        compilationUnit,
-				        ref parserModel);
-				        
-			        var typeSymbol = new Symbol(
-        	        	SyntaxKind.TypeSymbol,
-        	        	parserModel.GetNextSymbolId(),
-        	        	typeClauseNode.TypeIdentifierToken.TextSpan with
-        		        {
-        		            DecorationByte = (byte)GenericDecorationKind.Type
-    		            });
-    	            compilationUnit.__SymbolList.Add(typeSymbol);
-				}
-				else
-				{
-					typeClauseNode = (TypeClauseNode)maybeTypeClauseNode;
-				}
+		    constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Type;
+			parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
 			
-				if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
-				{
-					constructorInvocationExpressionNode.ResultTypeReference = new TypeReference(typeClauseNode);
-					return constructorInvocationExpressionNode;
-				}
-				
-				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.GenericParameters;
-				var openAngleBracketToken = parserModel.TokenWalker.Consume();
-				
-				return ParseGenericParameterNode_Start(
-					typeClauseNode, ref openAngleBracketToken, compilationUnit, ref parserModel, nodeToRestoreAtCloseAngleBracketToken: constructorInvocationExpressionNode);
-			}
+			parserModel.ExpressionList.Add((SyntaxKind.OpenParenthesisToken, constructorInvocationExpressionNode));
+			parserModel.ExpressionList.Add((SyntaxKind.OpenBraceToken, constructorInvocationExpressionNode));
+			return EmptyMergeToken(EmptyExpressionNode.Empty, ref token, compilationUnit, ref parserModel);
 		}
 		
 		switch (token.SyntaxKind)
@@ -1277,6 +1222,7 @@ public partial class CSharpBinder
 		switch (constructorInvocationExpressionNode.ConstructorInvocationStageKind)
 		{
 			case ConstructorInvocationStageKind.GenericParameters:
+			{
 				if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseAngleBracketToken &&
 					expressionSecondary is TypeClauseNode typeClauseNode)
 				{
@@ -1286,14 +1232,36 @@ public partial class CSharpBinder
 				}
 				
 				goto default;
+			}
 			case ConstructorInvocationStageKind.FunctionParameters:
+			{
 				if (constructorInvocationExpressionNode.FunctionParameterListing.ConstructorWasInvoked)
 					return constructorInvocationExpressionNode;
 				goto default;
+			}
 			case ConstructorInvocationStageKind.ObjectInitializationParameters:
-				return constructorInvocationExpressionNode;
+			{
+			    return constructorInvocationExpressionNode;
+			}
+			case ConstructorInvocationStageKind.Type:
+			{
+			    if (expressionSecondary is TypeClauseNode typeClauseNode)
+			        constructorInvocationExpressionNode.ResultTypeReference = new(typeClauseNode);
+			    else
+			        constructorInvocationExpressionNode.ResultTypeReference = CSharpFacts.Types.Void.ToTypeReference();
+			
+			    constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
+			    parserModel.ParserContextKind = CSharpParserContextKind.None;
+			    
+			    if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+			        ClearFromExpressionList(constructorInvocationExpressionNode, compilationUnit, ref parserModel);
+			    
+			    return constructorInvocationExpressionNode;
+			}
 			default:
+			{
 				return ToBadExpressionNode(constructorInvocationExpressionNode, expressionSecondary);
+		    }
 		}
 	}
 	
@@ -1998,8 +1966,39 @@ public partial class CSharpBinder
 				}
 				
 				goto default;
+			case SyntaxKind.CommaToken:
+			    if (typeClauseNode.ArrayRank == 1)
+			    {
+			        typeClauseNode.TypeKind = TypeKind.ArrayMultiDimensional;
+			    }
+			    
+			    if (typeClauseNode.TypeKind == TypeKind.ArrayMultiDimensional)
+			    {
+    			    ++typeClauseNode.ArrayRank;
+    			    parserModel.ExpressionList.Add((SyntaxKind.CommaToken, typeClauseNode));
+    			    return typeClauseNode;
+			    }
+			    else
+			    {
+			        goto default;
+			    }
 			case SyntaxKind.OpenSquareBracketToken:
-				typeClauseNode.ArrayRank++;
+			    if (typeClauseNode.ArrayRank == 0)
+			    {
+			        typeClauseNode.TypeKind = TypeKind.ArrayJagged;
+			        
+    			    if (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.CloseSquareBracketToken)
+    				{
+    				    parserModel.ExpressionList.Add((SyntaxKind.CloseSquareBracketToken, typeClauseNode));
+    				    parserModel.ExpressionList.Add((SyntaxKind.CommaToken, typeClauseNode));
+    				}
+				}
+			
+			    if (typeClauseNode.TypeKind != TypeKind.ArrayMultiDimensional)
+			    {
+			        ++typeClauseNode.ArrayRank;
+			    }
+				
 				return typeClauseNode;
 			case SyntaxKind.CloseSquareBracketToken:
 				return typeClauseNode;
@@ -2090,7 +2089,15 @@ public partial class CSharpBinder
 					return typeClauseNode;
 				}
 				
-				goto default;
+			    goto default;
+			case SyntaxKind.TypeClauseNode:
+			    if (typeClauseNode == expressionSecondary)
+			    {
+			        // When parsing multi-dimensional arrays.
+			        return typeClauseNode;
+			    }
+			    
+			    goto default;
 			default:
 				return ToBadExpressionNode(typeClauseNode, expressionSecondary);
 		}
