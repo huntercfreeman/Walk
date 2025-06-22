@@ -21,7 +21,7 @@ public class ContextService : IContextService
     
     public ContextSwitchState GetContextSwitchState() => _contextSwitchState;
     
-    public void SetFocusedContextHeirarchy(ContextHeirarchy focusedContextHeirarchy)
+    public void SetFocusedContextKey(Key<ContextRecord> contextKey)
     {
     	lock (_stateModificationLock)
     	{
@@ -29,121 +29,13 @@ public class ContextService : IContextService
     	
 	        _contextState = inState with
 	        {
-	            FocusedContextHeirarchy = focusedContextHeirarchy
+	            FocusedContextKey = contextKey
 	        };
 
 			goto finalize;
     	}
 
 		finalize:
-        ContextStateChanged?.Invoke();
-    }
-    
-    public void ToggleSelectInspectedContextHeirarchy()
-    {
-    	lock (_stateModificationLock)
-    	{
-	    	var inState = GetContextState();
-	    	
-	        var outIsSelectingInspectionTarget = !inState.IsSelectingInspectionTarget;
-	
-	        var outInspectableContextList = inState.InspectableContextList;
-	        var outInspectedContextHeirarchy = inState.InspectedContextHeirarchy;
-	
-	        if (!outIsSelectingInspectionTarget)
-	        {
-	            outInspectableContextList = new List<InspectableContext>();
-	            outInspectedContextHeirarchy = null;
-	        }
-	
-	        _contextState = inState with
-	        {
-	            IsSelectingInspectionTarget = !inState.IsSelectingInspectionTarget,
-	            InspectableContextList = outInspectableContextList,
-	            InspectedContextHeirarchy = outInspectedContextHeirarchy,
-	        };
-	        
-	        goto finalize;
-	    }
-
-        finalize:
-        ContextStateChanged?.Invoke();
-    }
-
-    public void IsSelectingInspectableContextHeirarchy(bool value)
-    {
-    	lock (_stateModificationLock)
-    	{
-	    	var inState = GetContextState();
-	    	
-	        if (value)
-	        {
-	            _contextState = inState with
-	            {
-	                IsSelectingInspectionTarget = true
-	            };
-
-                goto finalize;
-            }
-	        else
-	        {
-	        	var outInspectableContextList = new List<InspectableContext>();
-	        	
-	            _contextState = inState with
-	            {
-	                IsSelectingInspectionTarget = false,
-	                InspectedContextHeirarchy = null,
-	                InspectableContextList = outInspectableContextList,
-	            };
-
-				goto finalize;
-	        }
-	    }
-
-        finalize:
-        ContextStateChanged?.Invoke();
-    }
-    
-    public void SetInspectedContextHeirarchy(ContextHeirarchy? inspectedContextHeirarchy)
-    {
-    	lock (_stateModificationLock)
-    	{
-	    	var inState = GetContextState();
-	    	
-	    	var outInspectableContextList = new List<InspectableContext>();
-	    
-	        _contextState = inState with
-	        {
-	            IsSelectingInspectionTarget = false,
-	            InspectedContextHeirarchy = inspectedContextHeirarchy,
-	            InspectableContextList = outInspectableContextList,
-	        };
-
-			goto finalize;
-        }
-
-        finalize:
-        ContextStateChanged?.Invoke();
-    }
-    
-    public void AddInspectableContext(InspectableContext inspectableContext)
-    {
-    	lock (_stateModificationLock)
-    	{
-	    	var inState = GetContextState();
-	
-	    	var outInspectableContextList = new List<InspectableContext>(inState.InspectableContextList);
-	        outInspectableContextList.Add(inspectableContext);
-	
-	        _contextState = inState with
-	        {
-	        	InspectableContextList = outInspectableContextList
-	        };
-	        
-	        goto finalize;
-	    }
-
-        finalize:
         ContextStateChanged?.Invoke();
     }
     

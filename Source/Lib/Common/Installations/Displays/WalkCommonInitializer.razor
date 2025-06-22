@@ -5,18 +5,10 @@
 
 @{ var dialogList = DialogService.GetDialogState().DialogList; }
 
-<ContextBoundary @ref="_dialogContextBoundary"
-				 ContextRecord="ContextFacts.DialogContext"
-                 ClassCssString="di_dialog-initializer">
-	<ChildContent></ChildContent>
-</ContextBoundary>
-
 @foreach (var dialog in dialogList)
 {
     <DialogDisplay @key="dialog.DynamicViewModelKey" 
-                   Dialog="dialog"
-                   OnFocusInFunc="HandleOnFocusIn"
-                   OnFocusOutFunc="HandleOnFocusOut"/>
+                   Dialog="dialog"/>
 }
 
 @*
@@ -52,9 +44,7 @@
 @if (widgetState.Widget is not null)
 {
 	<WidgetDisplay @key="widgetState.Widget.Key"
-				   Widget="widgetState.Widget"
-	               OnFocusInFunc="HandleOnFocusIn"
-	               OnFocusOutFunc="HandleOnFocusOut"/>
+				   Widget="widgetState.Widget"/>
 }
 @* End WidgetInitializer *@
 
@@ -74,9 +64,7 @@
     
     <NotificationDisplay @key="notification.DynamicViewModelKey" 
                          Notification="notification"
-                         Index="index"
-                         OnFocusInFunc="HandleOnFocusIn"
-                         OnFocusOutFunc="HandleOnFocusOut"/>
+                         Index="index"/>
 }
 
 @*
@@ -112,9 +100,7 @@
 @foreach (var dropdown in dropdownState.DropdownList)
 {
 	<DropdownDisplay @key="dropdown.Key"
-					 Dropdown="dropdown"
-	                 OnFocusInFunc="HandleOnFocusIn"
-	                 OnFocusOutFunc="HandleOnFocusOut"/>
+					 Dropdown="dropdown"/>
 }
 @* End DropdownInitializer *@
 

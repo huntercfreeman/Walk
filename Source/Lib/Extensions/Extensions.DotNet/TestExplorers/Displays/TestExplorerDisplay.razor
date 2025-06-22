@@ -21,10 +21,9 @@
 		treeViewContainer);
 }
 
-<ContextBoundary ContextRecord="ContextFacts.TestExplorerContext"
-                 ClassCssString="di_ide_test-explorer"
-                 StyleCssString="height: 100%; width: 100%;">
+@* ContextRecord="ContextFacts.TestExplorerContext" *@
 
+<div class="di_ide_test-explorer" style="height: 100%; width: 100%;">
 	@if (appOptionsState.Options.ShowPanelTitles)
 	{
 	    <div class="di_ide_section-title">
@@ -88,4 +87,4 @@
 			</CascadingValue>
 		}
     </div>
-</ContextBoundary>
+</div>

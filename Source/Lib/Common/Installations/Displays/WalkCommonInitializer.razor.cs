@@ -117,11 +117,6 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     private readonly StringBuilder _styleBuilder = new();
     
     
-    /* Start DialogInitializer */
-    private ContextBoundary? _dialogContextBoundary;
-    /* End DialogInitializer */
-    
-    
     /* Start OutlineInitializer */
     /// <summary>The unit of measurement is Pixels (px)</summary>
 	public const double OUTLINE_THICKNESS = 4;
@@ -230,21 +225,6 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     
     
     /* Start DialogInitializer */
-    private Task HandleOnFocusIn()
-    {
-    	var localDialogContextBoundary = _dialogContextBoundary;
-    	
-    	if (localDialogContextBoundary is not null)
-	    	localDialogContextBoundary.HandleOnFocusIn();
-    
-    	return Task.CompletedTask;
-    }
-    
-    private Task HandleOnFocusOut()
-    {
-    	return Task.CompletedTask;
-    }
-    
     private async void OnDialogStateChanged()
     {
     	await InvokeAsync(StateHasChanged);

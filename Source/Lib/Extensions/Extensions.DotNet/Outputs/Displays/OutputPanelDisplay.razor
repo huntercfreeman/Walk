@@ -2,10 +2,9 @@
 @using Walk.Common.RazorLib.Contexts.Displays
 @using Walk.Common.RazorLib.Contexts.Models
 
-<ContextBoundary ContextRecord="ContextFacts.OutputContext"
-                 ClassCssString="di_output-panel-display"
-                 StyleCssString="height: 100%; width: 100%; overflow: auto;">
+@* ContextRecord="ContextFacts.OutputContext" *@
 
+<div class="di_output-panel-display" style="height: 100%; width: 100%; overflow: auto;">
 	@if (AppOptionsService.ShowPanelTitles)
 	{
 		<div class="di_ide_section-title">
@@ -16,4 +15,4 @@
 	<div class="di_ide_section-body @AppOptionsService.ShowPanelTitlesCssClass">
 		<OutputDisplay/>
 	</div>
-</ContextBoundary>
+</div>

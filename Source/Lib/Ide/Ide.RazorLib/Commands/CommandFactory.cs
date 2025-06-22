@@ -432,8 +432,7 @@ public class CommandFactory : ICommandFactory
 			
 			        // _dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
 			        
-			        if (_contextService.GetContextState().FocusedContextHeirarchy.NearestAncestorKey ==
-			        	    ContextFacts.TextEditorContext.ContextKey)
+			        if (_contextService.GetContextState().FocusedContextKey == ContextFacts.TextEditorContext.ContextKey)
 			        {
 			        	_contextService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = WalkTextEditorInitializer.ContextSwitchGroupKey;
 			        }

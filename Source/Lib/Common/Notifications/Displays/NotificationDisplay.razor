@@ -1,9 +1,5 @@
 <div class="di_notification @(Notification.NotificationCssClass ?? string.Empty)"
-     style="@CssStyleString"
-     @onfocusin="HandleOnFocusIn"
-     @onfocusin:stopPropagation="true"
-     @onfocusout="HandleOnFocusOut"
-     @onfocusout:stopPropagation="true">
+     style="@CssStyleString">
      
     <div class="di_notification-toolbar">
         <div class="di_notification-title di_unselectable"
