@@ -10,21 +10,8 @@ namespace Walk.Common.RazorLib.TreeViews.Displays;
 
 public partial class TreeViewNodeDisplay : ComponentBase
 {
-    [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
-	[Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-
     [CascadingParameter]
-    public TreeViewContainer TreeViewContainer { get; set; } = null!;
-    [CascadingParameter(Name="HandleTreeViewOnContextMenu")]
-    public Func<MouseEventArgs?, Key<TreeViewContainer>, TreeViewNoType?, Task> HandleTreeViewOnContextMenu { get; set; } = null!;
-    [CascadingParameter(Name="TreeViewMouseEventHandler")]
-    public TreeViewMouseEventHandler TreeViewMouseEventHandler { get; set; } = null!;
-    [CascadingParameter(Name="TreeViewKeyboardEventHandler")]
-    public TreeViewKeyboardEventHandler TreeViewKeyboardEventHandler { get; set; } = null!;
+    public TreeViewCascadingValueBatch RenderBatch { get; set; } = null!;
     [CascadingParameter(Name="OffsetPerDepthInPixels")]
     public int OffsetPerDepthInPixels { get; set; } = 12;
     [CascadingParameter(Name="WalkTreeViewIconWidth")]
@@ -41,10 +28,10 @@ public partial class TreeViewNodeDisplay : ComponentBase
 
     private int OffsetInPixels => OffsetPerDepthInPixels * Depth;
 
-    private bool IsSelected => TreeViewContainer.SelectedNodeList.Any(x => x.Key == TreeViewNoType.Key);
+    private bool IsSelected => RenderBatch.TreeViewContainer.SelectedNodeList.Any(x => x.Key == TreeViewNoType.Key);
 
-    private bool IsActive => TreeViewContainer.ActiveNode is not null &&
-                             TreeViewContainer.ActiveNode.Key == TreeViewNoType.Key;
+    private bool IsActive => RenderBatch.TreeViewContainer.ActiveNode is not null &&
+                             RenderBatch.TreeViewContainer.ActiveNode.Key == TreeViewNoType.Key;
 
     private string IsSelectedCssClass => IsSelected ? "di_selected" : string.Empty;
     private string IsActiveCssClass => IsActive ? "di_active" : string.Empty;
@@ -104,16 +91,16 @@ public partial class TreeViewNodeDisplay : ComponentBase
 
         if (localTreeViewNoType.IsExpanded)
         {
-            CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+            RenderBatch.CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
             {
     			WorkKind = CommonWorkKind.TreeView_HandleExpansionChevronOnMouseDown,
             	TreeViewNoType = localTreeViewNoType,
-            	TreeViewContainer = TreeViewContainer
+            	TreeViewContainer = RenderBatch.TreeViewContainer
             });
         }
         else
         {
-            TreeViewService.ReduceReRenderNodeAction(TreeViewContainer.Key, localTreeViewNoType);
+            RenderBatch.TreeViewService.ReduceReRenderNodeAction(RenderBatch.TreeViewContainer.Key, localTreeViewNoType);
         }
     }
 
@@ -123,22 +110,22 @@ public partial class TreeViewNodeDisplay : ComponentBase
         TreeViewNoType treeViewNoType)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            TreeViewService,
-            TreeViewContainer,
+            RenderBatch.TreeViewService,
+            RenderBatch.TreeViewContainer,
             TreeViewNoType,
             FocusAsync,
             null,
             mouseEventArgs,
             null);
 
-        await TreeViewMouseEventHandler
+        await RenderBatch.TreeViewMouseEventHandler
             .OnMouseDownAsync(treeViewCommandArgs)
             .ConfigureAwait(false);
 
-        CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+        RenderBatch.CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
         {
     		WorkKind = CommonWorkKind.TreeView_ManuallyPropagateOnContextMenu,
-        	HandleTreeViewOnContextMenu = HandleTreeViewOnContextMenu,
+        	HandleTreeViewOnContextMenu = RenderBatch.HandleTreeViewOnContextMenu,
             MouseEventArgs = mouseEventArgs,
             ContainerKey = treeViewContainer.Key,
             TreeViewNoType = treeViewNoType,
@@ -148,15 +135,15 @@ public partial class TreeViewNodeDisplay : ComponentBase
     private async Task HandleOnClick(MouseEventArgs? mouseEventArgs)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            TreeViewService,
-            TreeViewContainer,
+            RenderBatch.TreeViewService,
+            RenderBatch.TreeViewContainer,
             TreeViewNoType,
             FocusAsync,
             null,
             mouseEventArgs,
             null);
 
-        await TreeViewMouseEventHandler
+        await RenderBatch.TreeViewMouseEventHandler
             .OnClickAsync(treeViewCommandArgs)
             .ConfigureAwait(false);
     }
@@ -164,15 +151,15 @@ public partial class TreeViewNodeDisplay : ComponentBase
     private async Task HandleOnDoubleClick(MouseEventArgs? mouseEventArgs)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            TreeViewService,
-            TreeViewContainer,
+            RenderBatch.TreeViewService,
+            RenderBatch.TreeViewContainer,
             TreeViewNoType,
             FocusAsync,
             null,
             mouseEventArgs,
             null);
 
-        await TreeViewMouseEventHandler
+        await RenderBatch.TreeViewMouseEventHandler
             .OnDoubleClickAsync(treeViewCommandArgs)
             .ConfigureAwait(false);
     }
@@ -180,15 +167,15 @@ public partial class TreeViewNodeDisplay : ComponentBase
     private async Task HandleOnMouseDown(MouseEventArgs? mouseEventArgs)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            TreeViewService,
-            TreeViewContainer,
+            RenderBatch.TreeViewService,
+            RenderBatch.TreeViewContainer,
             TreeViewNoType,
             FocusAsync,
             null,
             mouseEventArgs,
             null);
 
-        await TreeViewMouseEventHandler
+        await RenderBatch.TreeViewMouseEventHandler
             .OnMouseDownAsync(treeViewCommandArgs)
             .ConfigureAwait(false);
     }
@@ -200,14 +187,14 @@ public partial class TreeViewNodeDisplay : ComponentBase
     		case "ContextMenu":
     		{
     			var mouseEventArgs = new MouseEventArgs { Button = -1 };
-	            return ManuallyPropagateOnContextMenu(mouseEventArgs, TreeViewContainer, TreeViewNoType);
+	            return ManuallyPropagateOnContextMenu(mouseEventArgs, RenderBatch.TreeViewContainer, TreeViewNoType);
     		}
     		case ".":
     		{
     			if (keyboardEventArgs.CtrlKey)
     			{
     				var mouseEventArgs = new MouseEventArgs { Button = -1 };
-	            	return ManuallyPropagateOnContextMenu(mouseEventArgs, TreeViewContainer, TreeViewNoType);
+	            	return ManuallyPropagateOnContextMenu(mouseEventArgs, RenderBatch.TreeViewContainer, TreeViewNoType);
     			}
     			break;
     		}

@@ -6,6 +6,7 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.TreeViews.Displays;
 
@@ -19,6 +20,8 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
+    [Inject]
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<TreeViewContainer> TreeViewContainerKey { get; set; } = Key<TreeViewContainer>.Empty;
@@ -40,6 +43,8 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 
     private TreeViewCommandArgs _treeViewContextMenuCommandArgs;
     private ElementReference? _treeViewStateDisplayElementReference;
+    
+    private readonly TreeViewCascadingValueBatch _treeViewCascadingValueBatch = new();
 
     protected override void OnInitialized()
     {

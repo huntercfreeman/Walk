@@ -3,6 +3,14 @@
 
 @{
     var treeViewContainer = TreeViewService.GetTreeViewContainer(TreeViewContainerKey);
+    
+    _treeViewCascadingValueBatch.TreeViewContainer = treeViewContainer;
+    _treeViewCascadingValueBatch.HandleTreeViewOnContextMenu = HandleTreeViewOnContextMenu;
+    _treeViewCascadingValueBatch.TreeViewMouseEventHandler = TreeViewMouseEventHandler;
+    _treeViewCascadingValueBatch.TreeViewKeyboardEventHandler = TreeViewKeyboardEventHandler;
+    _treeViewCascadingValueBatch.TreeViewService = TreeViewService;
+    _treeViewCascadingValueBatch.CommonBackgroundTaskApi = CommonBackgroundTaskApi;
+    _treeViewCascadingValueBatch.AppOptionsService = AppOptionsService;
 
     <div id="@TreeViewService.GetTreeViewContainerElementId(treeViewContainer?.Key ?? Key<TreeViewContainer>.Empty)"
          class="di_tree-view-state di_unselectable @GetHasActiveNodeCssClass(treeViewContainer) @CssClassString"
@@ -20,15 +28,10 @@
         }
         else
         {
-            <CascadingValue Value="treeViewContainer">
-                <CascadingValue Name="@nameof(TreeViewNodeDisplay.TreeViewMouseEventHandler)" Value="TreeViewMouseEventHandler">
-                    <CascadingValue Name="@nameof(TreeViewNodeDisplay.TreeViewKeyboardEventHandler)" Value="TreeViewKeyboardEventHandler">
-                        <CascadingValue Name="@nameof(TreeViewNodeDisplay.HandleTreeViewOnContextMenu)" Value="HandleTreeViewOnContextMenu">
-                            <TreeViewNodeDisplay TreeViewNoType="treeViewContainer.RootNode"
-                                                 Depth="GetRootDepth(treeViewContainer.RootNode)"/>
-                        </CascadingValue>
-                    </CascadingValue>
-                </CascadingValue>
+            <CascadingValue Value="_treeViewCascadingValueBatch"
+                            IsFixed="true">
+                <TreeViewNodeDisplay TreeViewNoType="treeViewContainer.RootNode"
+                                     Depth="GetRootDepth(treeViewContainer.RootNode)"/>
             </CascadingValue>
         }
     </div>
