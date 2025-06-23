@@ -1,4 +1,6 @@
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Icons.Displays;
+using Walk.Common.RazorLib.Icons.Displays.Codicon;
 
 namespace Walk.Common.RazorLib.TreeViews.Models;
 
@@ -26,7 +28,10 @@ public abstract class TreeViewNoType
     public Key<TreeViewChanged> TreeViewChangedKey { get; set; } = Key<TreeViewChanged>.NewKey();
     public Key<TreeViewNoType> Key { get; set; } = Key<TreeViewNoType>.NewKey();
 
-	public abstract TreeViewRenderer GetTreeViewRenderer();
+	public virtual string GetDisplayText() => "TODO: TreeViewNoType.GetDisplayText()";
+	public virtual string GetHoverText() => GetDisplayText();
+	public virtual Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => IconBlankFragment.Render;
+	
     public abstract Task LoadChildListAsync();
 
     /// <summary>

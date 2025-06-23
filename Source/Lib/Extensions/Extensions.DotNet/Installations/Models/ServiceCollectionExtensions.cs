@@ -30,17 +30,7 @@ public static class ServiceCollectionExtensions
 			.AddScoped<IDotNetComponentRenderers>(_ => _dotNetComponentRenderers);
 	}
 
-	private static readonly CompilerServicesTreeViews _dotNetTreeViews = new(
-		typeof(TreeViewCSharpProjectDependenciesDisplay),
-		typeof(TreeViewCSharpProjectNugetPackageReferencesDisplay),
-		typeof(TreeViewCSharpProjectToProjectReferencesDisplay),
-		typeof(TreeViewCSharpProjectNugetPackageReferenceDisplay),
-		typeof(TreeViewCSharpProjectToProjectReferenceDisplay),
-		typeof(TreeViewSolutionFolderDisplay),
-        typeof(TreeViewCompilerServiceDisplay));
-
 	private static readonly DotNetComponentRenderers _dotNetComponentRenderers = new(
 		typeof(NuGetPackageManager),
-		typeof(RemoveCSharpProjectFromSolutionDisplay),
-		_dotNetTreeViews);
+		typeof(RemoveCSharpProjectFromSolutionDisplay));
 }

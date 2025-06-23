@@ -38,15 +38,73 @@ public class TreeViewCompilerService : TreeViewWithType<ICompilerService>
 
 	public override int GetHashCode() => Item.GetHashCode();
 
-	public override TreeViewRenderer GetTreeViewRenderer()
+	/*public override TreeViewRenderer GetTreeViewRenderer()
 	{
+	
+	    using Walk.Extensions.DotNet.CompilerServices.Models;
+        using Walk.Extensions.DotNet.ComponentRenderers.Models;
+        using Microsoft.AspNetCore.Components;
+        
+        namespace Walk.Extensions.DotNet.CompilerServices.Displays;
+        
+        public partial class TreeViewCompilerServiceDisplay : ComponentBase, ITreeViewCompilerServiceRendererType
+        {
+        	[Parameter, EditorRequired]
+        	public TreeViewCompilerService TreeViewCompilerService { get; set; } = null!;
+        }
+	
+	
+		
+		@using Walk.CompilerServices.CSharp.CompilerServiceCase;
+        @using Walk.CompilerServices.CSharpProject.CompilerServiceCase;
+        @using Walk.CompilerServices.Css;
+        @using Walk.CompilerServices.DotNetSolution.CompilerServiceCase;
+        @using Walk.CompilerServices.Json;
+        @using Walk.CompilerServices.Razor.CompilerServiceCase;
+        @using Walk.CompilerServices.Xml;
+        
+        @if (TreeViewCompilerService.Item is XmlCompilerService xmlCompilerService)
+        {
+            @: TODO: XmlCompilerService
+        }
+        else if (TreeViewCompilerService.Item is DotNetSolutionCompilerService dotNetSolutionCompilerService)
+        {
+            @: TODO: DotNetSolutionCompilerService
+        }
+        else if (TreeViewCompilerService.Item is CSharpProjectCompilerService cSharpProjectCompilerService)
+        {
+            @: TODO: CSharpProjectCompilerService
+        }
+        else if (TreeViewCompilerService.Item is CSharpCompilerService cSharpCompilerService)
+        {
+            <div>
+                @cSharpCompilerService.__CSharpBinder.NamespaceGroupMap
+            </div>
+        }
+        else if (TreeViewCompilerService.Item is RazorCompilerService razorCompilerService)
+        {
+            @: TODO: RazorCompilerService
+        }
+        else if (TreeViewCompilerService.Item is CssCompilerService cssCompilerService)
+        {
+            @: TODO: CssCompilerService
+        }
+        else if (TreeViewCompilerService.Item is JsonCompilerService jsonCompilerService)
+        {
+            @: TODO: JsonCompilerService
+        }
+
+		
+		
+		
+		
 		return new TreeViewRenderer(
             DotNetComponentRenderers.CompilerServicesTreeViews.TreeViewCompilerServiceRendererType,
 			new Dictionary<string, object?>
 			{
 				{ nameof(ITreeViewCompilerServiceRendererType.TreeViewCompilerService), this },
 			});
-	}
+	}*/
 
 	public override Task LoadChildListAsync()
 	{

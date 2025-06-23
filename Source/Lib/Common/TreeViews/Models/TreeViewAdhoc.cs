@@ -1,6 +1,4 @@
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.TreeViews.Displays.Utils;
-
 namespace Walk.Common.RazorLib.TreeViews.Models;
 
 /// <summary>
@@ -61,8 +59,23 @@ public class TreeViewAdhoc : TreeViewWithType<byte>
         return treeViewAdhoc;
     }
 
-    public override TreeViewRenderer GetTreeViewRenderer()
+    /*public override TreeViewRenderer GetTreeViewRenderer()
     {
+    
+    
+        using Walk.Common.RazorLib.TreeViews.Models;
+        using Microsoft.AspNetCore.Components;
+        
+        namespace Walk.Common.RazorLib.TreeViews.Displays.Utils;
+        
+        public partial class TreeViewAdhocDisplay : ComponentBase
+        {
+            [Parameter, EditorRequired]
+            public TreeViewNoType TreeViewNoTypeAdhoc { get; set; } = null!;
+        }
+    
+    
+    
         return new TreeViewRenderer(
             typeof(TreeViewAdhocDisplay),
             new Dictionary<string, object?>
@@ -72,7 +85,7 @@ public class TreeViewAdhoc : TreeViewWithType<byte>
                     this
                 },
             });
-    }
+    }*/
 
     public override Task LoadChildListAsync()
     {

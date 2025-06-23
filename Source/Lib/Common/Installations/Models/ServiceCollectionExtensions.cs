@@ -8,7 +8,6 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Widgets.Models;
 using Walk.Common.RazorLib.Notifications.Displays;
-using Walk.Common.RazorLib.TreeViews.Displays.Utils;
 using Walk.Common.RazorLib.WatchWindows.Displays;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Outlines.Models;
@@ -108,20 +107,8 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    private static readonly CommonTreeViews _commonTreeViews = new(
-        typeof(TreeViewExceptionDisplay),
-        typeof(TreeViewMissingRendererFallbackDisplay),
-        typeof(TreeViewTextDisplay),
-        typeof(TreeViewReflectionDisplay),
-        typeof(TreeViewPropertiesDisplay),
-        typeof(TreeViewInterfaceImplementationDisplay),
-        typeof(TreeViewFieldsDisplay),
-        typeof(TreeViewExceptionDisplay),
-        typeof(TreeViewEnumerableDisplay));
-
     private static readonly CommonComponentRenderers _commonRendererTypes = new(
         typeof(CommonErrorNotificationDisplay),
         typeof(CommonInformativeNotificationDisplay),
-        typeof(CommonProgressNotificationDisplay),
-        _commonTreeViews);
+        typeof(CommonProgressNotificationDisplay));
 }

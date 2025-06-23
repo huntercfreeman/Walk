@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Common.RazorLib.TreeViews.Displays.Utils;
-
 namespace Walk.Common.RazorLib.TreeViews.Models.Utils;
 
 public class TreeViewMarkupString : TreeViewWithType<MarkupString>
@@ -36,8 +34,28 @@ public class TreeViewMarkupString : TreeViewWithType<MarkupString>
         return Path.GetRandomFileName().GetHashCode();
     }
 
-    public override TreeViewRenderer GetTreeViewRenderer()
+    /*public override TreeViewRenderer GetTreeViewRenderer()
     {
+        using Microsoft.AspNetCore.Components;
+
+        namespace Walk.Common.RazorLib.TreeViews.Displays.Utils;
+        
+        public partial class TreeViewMarkupStringDisplay : ComponentBase
+        {
+            [Parameter, EditorRequired]
+            public MarkupString MarkupString { get; set; }
+        }
+        
+        
+        
+        
+        <div>
+            @MarkupString
+        </div>
+        
+        
+        
+        
         return new TreeViewRenderer(
             typeof(TreeViewMarkupStringDisplay),
             new Dictionary<string, object?>
@@ -47,7 +65,7 @@ public class TreeViewMarkupString : TreeViewWithType<MarkupString>
                     Item
                 },
             });
-    }
+    }*/
 
     public override Task LoadChildListAsync()
     {

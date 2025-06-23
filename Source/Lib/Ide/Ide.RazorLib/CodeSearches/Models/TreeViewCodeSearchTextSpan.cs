@@ -34,8 +34,31 @@ public class TreeViewCodeSearchTextSpan : TreeViewWithType<TextEditorTextSpan>
 
 	public override int GetHashCode() => Item.ResourceUri.Value.GetHashCode();
 	
-	public override TreeViewRenderer GetTreeViewRenderer()
+	/*public override TreeViewRenderer GetTreeViewRenderer()
 	{
+	
+        using Microsoft.AspNetCore.Components;
+        using Walk.Ide.RazorLib.CodeSearches.Models;
+        
+        namespace Walk.Ide.RazorLib.CodeSearches.Displays;
+        
+        public partial class TreeViewCodeSearchTextSpanDisplay : ComponentBase
+        {
+        	[Parameter, EditorRequired]
+        	public TreeViewCodeSearchTextSpan TreeViewCodeSearchTextSpan { get; set; } = null!;
+        }
+	
+	
+	
+	    <div title="@TreeViewCodeSearchTextSpan.AbsolutePath.Value">
+        	@(TreeViewCodeSearchTextSpan.AbsolutePath.NameWithExtension)
+        </div>
+
+	
+	
+	
+	
+	
 		return new TreeViewRenderer(
 			typeof(TreeViewCodeSearchTextSpanDisplay),
 			new Dictionary<string, object?>
@@ -45,7 +68,7 @@ public class TreeViewCodeSearchTextSpan : TreeViewWithType<TextEditorTextSpan>
 					this
 				}
 			});
-	}
+	}*/
 	
 	public override Task LoadChildListAsync()
 	{

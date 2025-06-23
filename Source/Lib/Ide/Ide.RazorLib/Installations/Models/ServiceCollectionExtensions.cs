@@ -21,7 +21,6 @@ using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.FolderExplorers.Models;
-using Walk.Ide.RazorLib.Namespaces.Displays;
 using Walk.Ide.RazorLib.AppDatas.Models;
 
 namespace Walk.Ide.RazorLib.Installations.Models;
@@ -149,14 +148,9 @@ public static class ServiceCollectionExtensions
         return Task.FromResult(absolutePathString);
     }
 
-    private static readonly IdeTreeViews _ideTreeViews = new(
-        typeof(TreeViewNamespacePathDisplay),
-        typeof(TreeViewAbsolutePathDisplay));
-
     private static readonly IdeComponentRenderers _ideComponentRenderers = new(
         typeof(BooleanPromptOrCancelDisplay),
         typeof(FileFormDisplay),
         typeof(DeleteFileFormDisplay),
-        typeof(InputFileDisplay),
-        _ideTreeViews);
+        typeof(InputFileDisplay));
 }

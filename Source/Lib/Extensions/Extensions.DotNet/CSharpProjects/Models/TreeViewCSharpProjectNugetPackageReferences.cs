@@ -43,12 +43,43 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 
 	public override int GetHashCode() => Item.CSharpProjectNamespacePath.AbsolutePath.Value.GetHashCode();
 
-	public override TreeViewRenderer GetTreeViewRenderer()
+	/*public override TreeViewRenderer GetTreeViewRenderer()
 	{
+	
+	    using Microsoft.AspNetCore.Components;
+        using Walk.Common.RazorLib.Options.Models;
+        
+        namespace Walk.Extensions.DotNet.CSharpProjects.Displays;
+        
+        public partial class TreeViewCSharpProjectNugetPackageReferencesDisplay : ComponentBase
+        {
+            [Inject]
+            private IAppOptionsService AppOptionsService { get; set; } = null!;
+        }
+	
+	
+		
+		<div>
+
+        	@{
+        		var appOptionsState = AppOptionsService.GetAppOptionsState();
+        	
+        		var iconDriver = new IconDriver(
+        			appOptionsState.Options.IconSizeInPixels,
+        			appOptionsState.Options.IconSizeInPixels);
+        	}
+        
+            @IconNuGetPackagesFragment.Render(iconDriver)
+            NuGet Packages
+        </div>
+		
+		
+		
+		
 		return new TreeViewRenderer(
 			DotNetComponentRenderers.CompilerServicesTreeViews.TreeViewCSharpProjectNugetPackageReferencesRendererType,
 			null);
-	}
+	}*/
 
 	public override async Task LoadChildListAsync()
 	{

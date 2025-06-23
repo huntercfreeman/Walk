@@ -30,8 +30,43 @@ public class TreeViewText : TreeViewWithType<string>
         return Item.GetHashCode();
     }
 
-    public override TreeViewRenderer GetTreeViewRenderer()
+    /*public override TreeViewRenderer GetTreeViewRenderer()
     {
+    
+        using Microsoft.AspNetCore.Components;
+        using Walk.Common.RazorLib.WatchWindows.Models;
+        using Walk.Common.RazorLib.Options.Models;
+        
+        namespace Walk.Common.RazorLib.WatchWindows.Displays;
+        
+        public partial class TreeViewTextDisplay : ComponentBase
+        {
+            [Inject]
+            private IAppOptionsService AppOptionsService { get; set; } = null!;
+            
+            [Parameter, EditorRequired]
+            public TreeViewText TreeViewText { get; set; } = null!;
+        }
+        
+    
+    
+        <div title="@TreeViewText.Key.Guid">
+        
+        	@{
+        		var appOptionsState = AppOptionsService.GetAppOptionsState();
+        	
+        		var iconDriver = new IconDriver(
+        			appOptionsState.Options.IconSizeInPixels,
+        			appOptionsState.Options.IconSizeInPixels);
+        	}
+        
+            @IconSymbolKeyFragment.Render(iconDriver)
+            @TreeViewText.Item
+        </div>
+    
+    
+    
+    
         return new TreeViewRenderer(
             _commonComponentRenderers.CommonTreeViews.TreeViewTextRenderer,
             new Dictionary<string, object?>
@@ -41,7 +76,7 @@ public class TreeViewText : TreeViewWithType<string>
                     this
                 },
             });
-    }
+    }*/
 
     public override Task LoadChildListAsync()
     {

@@ -40,12 +40,42 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 
 	public override int GetHashCode() => Item.CSharpProjectNamespacePath.AbsolutePath.Value.GetHashCode();
 
-	public override TreeViewRenderer GetTreeViewRenderer()
+	/*public override TreeViewRenderer GetTreeViewRenderer()
 	{
+	
+	
+	    using Microsoft.AspNetCore.Components;
+        using Walk.Common.RazorLib.Options.Models;
+        
+        namespace Walk.Extensions.DotNet.CSharpProjects.Displays;
+        
+        public partial class TreeViewCSharpProjectDependenciesDisplay : ComponentBase
+        {
+            [Inject]
+            private IAppOptionsService AppOptionsService { get; set; } = null!;
+        }
+	    
+	
+	
+        <div>
+
+        	@{
+        		var appOptionsState = AppOptionsService.GetAppOptionsState();
+        	
+        		var iconDriver = new IconDriver(
+        			appOptionsState.Options.IconSizeInPixels,
+        			appOptionsState.Options.IconSizeInPixels);
+        	}
+        
+            @IconProjectDependenciesFragment.Render(iconDriver)
+            Dependencies
+        </div>
+	
+	
 		return new TreeViewRenderer(
 			DotNetComponentRenderers.CompilerServicesTreeViews.TreeViewCSharpProjectDependenciesRendererType,
 			null);
-	}
+	}*/
 
 	public override Task LoadChildListAsync()
 	{

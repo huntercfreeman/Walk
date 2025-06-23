@@ -48,8 +48,51 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
 
     public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
 
-    public override TreeViewRenderer GetTreeViewRenderer()
+    /*public override TreeViewRenderer GetTreeViewRenderer()
     {
+        
+        using Microsoft.AspNetCore.Components;
+        using Walk.Common.RazorLib.Namespaces.Models;
+        using Walk.Common.RazorLib.Options.Models;
+        using Walk.Ide.RazorLib.ComponentRenderers.Models;
+        
+        namespace Walk.Ide.RazorLib.Namespaces.Displays;
+        
+        public partial class TreeViewNamespacePathDisplay : ComponentBase, ITreeViewNamespacePathRendererType
+        {
+        	[Inject]
+            private IAppOptionsService AppOptionsService { get; set; } = null!;
+        
+            [CascadingParameter(Name="WalkCommonIconWidthOverride")]
+            public int? WalkCommonIconWidthOverride { get; set; }
+            [CascadingParameter(Name="WalkCommonIconHeightOverride")]
+            public int? WalkCommonIconHeightOverride { get; set; }
+        
+        	[Parameter, EditorRequired]
+            public NamespacePath NamespacePath { get; set; }
+            [Parameter]
+            public string CssStyleString { get; set; } = string.Empty;
+            
+            public int WidthInPixels => WalkCommonIconWidthOverride ??
+                AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels;
+        
+            public int HeightInPixels => WalkCommonIconHeightOverride ??
+                AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels;
+        }
+        
+        
+        @using Walk.Common.RazorLib.Icons.Models
+        @using Walk.Ide.RazorLib.FileSystems.Displays
+        
+        <div title="@NamespacePath.AbsolutePath.Value">
+        	
+        	@{ var iconDriver = new IconDriver(WidthInPixels, HeightInPixels); }
+        	
+        	@FileIconStaticRenderFragments.GetRenderFragment((iconDriver, NamespacePath.AbsolutePath))
+            @NamespacePath.AbsolutePath.NameWithExtension
+        </div>
+        
+        
         return new TreeViewRenderer(
             IdeComponentRenderers.IdeTreeViews.TreeViewNamespacePathRendererType,
             new Dictionary<string, object?>
@@ -59,7 +102,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                     Item
                 },
             });
-    }
+    }*/
 
     public override async Task LoadChildListAsync()
     {

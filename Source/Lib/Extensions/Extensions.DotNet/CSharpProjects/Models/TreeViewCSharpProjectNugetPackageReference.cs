@@ -44,8 +44,44 @@ public class TreeViewCSharpProjectNugetPackageReference : TreeViewWithType<CShar
 		return uniqueString.GetHashCode();
 	}
 
-	public override TreeViewRenderer GetTreeViewRenderer()
+	/*public override TreeViewRenderer GetTreeViewRenderer()
 	{
+	
+	    using Microsoft.AspNetCore.Components;
+        using Walk.Common.RazorLib.Options.Models;
+        using Walk.Extensions.DotNet.Nugets.Models;
+        using Walk.Extensions.DotNet.ComponentRenderers.Models;
+        
+        namespace Walk.Extensions.DotNet.CSharpProjects.Displays;
+        
+        public partial class TreeViewCSharpProjectNugetPackageReferenceDisplay : ComponentBase, ITreeViewCSharpProjectNugetPackageReferenceRendererType
+        {
+            [Inject]
+            private IAppOptionsService AppOptionsService { get; set; } = null!;
+            
+        	[Parameter, EditorRequired]
+        	public CSharpProjectNugetPackageReference CSharpProjectNugetPackageReference { get; set; } = null!;
+        }
+	
+	
+	    <div>
+        
+        	@{
+        		var appOptionsState = AppOptionsService.GetAppOptionsState();
+        	
+        		var iconDriver = new IconDriver(
+        			appOptionsState.Options.IconSizeInPixels,
+        			appOptionsState.Options.IconSizeInPixels);
+        	}
+        
+            @IconPackageFragment.Render(iconDriver)
+            @CSharpProjectNugetPackageReference.LightWeightNugetPackageRecord.Title<!--
+            -->/<!--
+            -->@CSharpProjectNugetPackageReference.LightWeightNugetPackageRecord.Version
+        </div>
+	
+	
+	
 		return new TreeViewRenderer(
 			DotNetComponentRenderers.CompilerServicesTreeViews.TreeViewCSharpProjectNugetPackageReferenceRendererType,
 			new Dictionary<string, object?>
@@ -55,7 +91,7 @@ public class TreeViewCSharpProjectNugetPackageReference : TreeViewWithType<CShar
 					Item
 				},
 			});
-	}
+	}*/
 
 	public override Task LoadChildListAsync()
 	{

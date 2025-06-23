@@ -32,8 +32,40 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObject>
         return Item.GetHashCode();
     }
 
-    public override TreeViewRenderer GetTreeViewRenderer()
+    /*public override TreeViewRenderer GetTreeViewRenderer()
     {
+    
+        using Microsoft.AspNetCore.Components;
+        using Walk.Common.RazorLib.WatchWindows.Models;
+        using Walk.Common.RazorLib.Options.Models;
+        
+        namespace Walk.Common.RazorLib.WatchWindows.Displays;
+        
+        public partial class TreeViewEnumerableDisplay : ComponentBase
+        {
+            [Inject]
+            private IAppOptionsService AppOptionsService { get; set; } = null!;
+            
+            [Parameter, EditorRequired]
+            public TreeViewEnumerable TreeViewEnumerable { get; set; } = null!;
+        }
+    
+        <div title="@TreeViewEnumerable.Key.Guid">
+
+    	@{
+    		var appOptionsState = AppOptionsService.GetAppOptionsState();
+    	
+    		var iconDriver = new IconDriver(
+    			appOptionsState.Options.IconSizeInPixels,
+    			appOptionsState.Options.IconSizeInPixels);
+    	}
+    
+        @IconListUnorderedFragment.Render(iconDriver)
+        Enumerable
+    </div>
+    
+    
+    
         return new TreeViewRenderer(
             _commonComponentRenderers.CommonTreeViews.TreeViewEnumerableRenderer,
             new Dictionary<string, object?>
@@ -43,7 +75,7 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObject>
                     this
                 },
             });
-    }
+    }*/
 
     public override Task LoadChildListAsync()
     {
