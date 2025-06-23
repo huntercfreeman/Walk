@@ -39,6 +39,14 @@ using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.Shareds.Models;
 /* End Header */
 
+/* Start IdeMainLayout */
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using Walk.Common.RazorLib.Installations.Models;
+using Walk.Ide.RazorLib.JsRuntimes.Models;
+using Walk.Ide.RazorLib.BackgroundTasks.Models;
+/* End IdeMainLayout */
+
 namespace Walk.Ide.RazorLib.Shareds.Displays;
 
 public partial class IdeMainLayout : LayoutComponentBase, IDisposable
@@ -81,7 +89,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
     /* End Header */
-
+    
     private bool _previousDragStateWrapShouldDisplay;
     private ElementDimensions _bodyElementDimensions = new();
     private ElementDimensions _editorElementDimensions = new();
@@ -142,6 +150,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     		WorkKind = IdeBackgroundTaskApiWorkKind.IdeHeaderOnInit,
     		IdeMainLayout = this,
     	});
+    	
+    	IdeBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
+        {
+        	WorkKind = IdeBackgroundTaskApiWorkKind.WalkIdeInitializerOnInit,
+        });
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -155,6 +168,13 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             await AppOptionsService
                 .SetFromLocalStorageAsync()
                 .ConfigureAwait(false);
+                
+            if (WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
+			{
+				await JsRuntime.GetWalkIdeApi()
+					.PreventDefaultBrowserKeybindings()
+					.ConfigureAwait(false);
+			}
         }
     }
 
