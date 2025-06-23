@@ -4,10 +4,10 @@ namespace Walk.Common.RazorLib.Tooltips.Models;
 
 public record struct TooltipState
 {
-    public TooltipState(TooltipModel tooltipModel)
+    public TooltipState(ITooltipModel tooltipModel)
     {
         TooltipModel = tooltipModel;
     }
 
-	public TooltipModel TooltipModel { get; }
+	public ITooltipModel TooltipModel { get; }
 }

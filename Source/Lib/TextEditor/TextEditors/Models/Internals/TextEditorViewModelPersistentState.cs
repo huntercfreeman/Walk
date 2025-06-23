@@ -38,7 +38,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 	    string findOverlayValue,
 	    bool findOverlayValueExternallyChangedMarker,
 	    MenuKind menuKind,
-	    TooltipModel tooltipModel,
+	    ITooltipModel tooltipModel,
 	    bool shouldRevealCursor,
 		VirtualAssociativityKind virtualAssociativityKind,
 		IPanelService panelService,
@@ -170,7 +170,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 	/// <summary>
 	/// This property determines the tooltip that is shown in the text editor.
 	/// </summary>
-    public TooltipModel? TooltipModel { get; set; }
+    public ITooltipModel? TooltipModel { get; set; }
     
     public bool ShouldRevealCursor { get; set; }
     public VirtualAssociativityKind VirtualAssociativityKind { get; set; } = VirtualAssociativityKind.None;

@@ -1459,4 +1459,36 @@ public class TextEditorCommandDefaultFunctions
 			
 		findAllService.SetSearchQuery(selectedText);
     }
+    
+    public static Task OnWheel(Walk.Common.RazorLib.Tooltips.Models.ITooltipModel tooltipModel, WheelEventArgs wheelEventArgs)
+    {
+        // (TextEditorService TextEditorService, Key<TextEditorViewModel> ViewModelKey) tuple
+        // ValueTuple<TextEditorService, Key<TextEditorViewModel>> tuple
+        if (tooltipModel.ItemUntyped is not ValueTuple<TextEditorService, Key<TextEditorViewModel>> tuple)
+            return Task.CompletedTask;
+        
+        tuple.Item1.WorkerArbitrary.PostUnique(editContext =>
+        {
+            var viewModel = editContext.GetViewModelModifier(tuple.Item2);
+        
+            var componentData = viewModel.PersistentState.ComponentData;
+            if (componentData is null)
+                return ValueTask.CompletedTask;
+                
+            tuple.Item1.WorkerUi.Enqueue(
+    	        new TextEditorEventArgs
+    	        {
+    	            X = wheelEventArgs.DeltaX,
+                    Y = wheelEventArgs.DeltaY,
+                    ShiftKey = wheelEventArgs.ShiftKey,
+    	        },
+            	componentData,
+            	viewModel.PersistentState.ViewModelKey,
+    	        Walk.TextEditor.RazorLib.BackgroundTasks.Models.TextEditorWorkUiKind.OnWheel);
+        
+            return ValueTask.CompletedTask;
+        });
+        
+        return Task.CompletedTask;
+    }
 }

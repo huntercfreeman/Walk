@@ -1,8 +1,9 @@
+using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
 
 namespace Walk.Common.RazorLib.Tooltips.Models;
 
-public sealed class TooltipModel
+public sealed class TooltipModel<T> : ITooltipModel
 {
     /// <summary>
     /// -1 to left and top inside this, it is kind of odd behavior.
@@ -17,7 +18,9 @@ public sealed class TooltipModel
         double x,
         double y,
         string? cssClassString,
-        Func<Task> onMouseOver)
+        Func<Task> onMouseOver,
+        Func<ITooltipModel, WheelEventArgs, Task> onWheel,
+        T item)
     {
         RendererType = rendererType;
         ParameterMap = parameterMap;
@@ -25,6 +28,8 @@ public sealed class TooltipModel
         Y = y - 1;
         CssClassString = cssClassString;
         OnMouseOver = onMouseOver;
+        OnWheel = onWheel;
+        Item = item;
     }
 
     public Type RendererType { get; set; }
@@ -33,5 +38,9 @@ public sealed class TooltipModel
     public double Y { get; set; }
     public string? CssClassString { get; set; }
     public Func<Task> OnMouseOver { get; set; }
+    public Func<ITooltipModel, WheelEventArgs, Task> OnWheel { get; set; }
+    public object ItemUntyped => Item;
     public bool WasRepositioned { get; set; }
+    
+    public T Item { get; set; }
 }

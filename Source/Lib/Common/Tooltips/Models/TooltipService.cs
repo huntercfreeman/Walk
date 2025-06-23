@@ -22,7 +22,7 @@ public class TooltipService : ITooltipService
 	
 	public TooltipState GetTooltipState() => _tooltipState;
 	
-	public void SetTooltipModel(TooltipModel tooltipModel)
+	public void SetTooltipModel(ITooltipModel tooltipModel)
 	{
 	    _tooltipState = new TooltipState(tooltipModel);
 	    TooltipStateChanged?.Invoke();
