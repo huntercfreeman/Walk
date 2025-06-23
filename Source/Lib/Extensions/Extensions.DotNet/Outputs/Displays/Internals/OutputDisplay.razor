@@ -19,17 +19,12 @@
 	</div>
 
 	<div class="di_output-display-body" style="height: calc(100% - 1.8em);">
-	
-		<CascadingValue Name="WalkTreeViewIconWidth" Value="appOptionsState.Options.IconSizeInPixels">
-			<CascadingValue Name="WalkTreeViewIconHeight" Value="appOptionsState.Options.IconSizeInPixels">
-	            <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
-	                <TreeViewContainerDisplay TreeViewContainerKey="OutputState.TreeViewContainerKey"
-	                                          CssStyleString="height: 100%;"
-	                                          OnContextMenuFunc="OnTreeViewContextMenuFunc"
-	                                          TreeViewKeyboardEventHandler="_treeViewKeyboardEventHandler"
-	                                          TreeViewMouseEventHandler="_treeViewMouseEventHandler" />
-	            </CascadingValue>
-	        </CascadingValue>
-		</CascadingValue>
+        <TreeViewContainerDisplay TreeViewContainerKey="OutputState.TreeViewContainerKey"
+                                  CssStyleString="height: 100%;"
+                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                  TreeViewKeyboardEventHandler="_treeViewKeyboardEventHandler"
+                                  TreeViewMouseEventHandler="_treeViewMouseEventHandler"
+                                  WalkTreeViewIconWidth="appOptionsState.Options.IconSizeInPixels"
+                                  OffsetPerDepthInPixels="OffsetPerDepthInPixels"/>
 	</div>
 </div>

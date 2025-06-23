@@ -6,6 +6,7 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.TreeViews.Displays;
 
@@ -19,6 +20,8 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
+    [Inject]
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<TreeViewContainer> TreeViewContainerKey { get; set; } = Key<TreeViewContainer>.Empty;
@@ -37,9 +40,15 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     /// <summary>If a consumer of the TreeView component does not have logic for their own DropdownComponent, then it is recommended to use <see cref="OnContextMenuRenderFragment"/><br/><br/> <see cref="OnContextMenuFunc"/> allows one to be notified of the ContextMenu event along with the necessary parameters by being given <see cref="TreeViewCommandArgs"/></summary>
     [Parameter]
     public Func<TreeViewCommandArgs, Task>? OnContextMenuFunc { get; set; }
+    [Parameter]
+    public int OffsetPerDepthInPixels { get; set; } = 12;
+    [Parameter]
+    public int WalkTreeViewIconWidth { get; set; } = 16;
 
     private TreeViewCommandArgs _treeViewContextMenuCommandArgs;
     private ElementReference? _treeViewStateDisplayElementReference;
+    
+    private readonly TreeViewCascadingValueBatch _treeViewCascadingValueBatch = new();
 
     protected override void OnInitialized()
     {

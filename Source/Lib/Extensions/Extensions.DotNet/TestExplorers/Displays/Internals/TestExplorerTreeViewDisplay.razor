@@ -8,15 +8,11 @@
 <div class="di_ide_test-explorer-tree-view"
 	 style="@ElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder)">
 
-	<CascadingValue Name="WalkTreeViewIconWidth" Value="RenderBatch.AppOptionsState.Options.IconSizeInPixels">
-        <CascadingValue Name="WalkTreeViewIconHeight" Value="RenderBatch.AppOptionsState.Options.IconSizeInPixels">
-            <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
-                <TreeViewContainerDisplay TreeViewContainerKey="TestExplorerState.TreeViewTestExplorerKey"
-                                          CssStyleString="height: 100%;"
-                                          OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                                          TreeViewKeyboardEventHandler="_treeViewKeyboardEventHandler"
-                                          TreeViewMouseEventHandler="_treeViewMouseEventHandler" />
-            </CascadingValue>
-        </CascadingValue>
-    </CascadingValue>
+    <TreeViewContainerDisplay TreeViewContainerKey="TestExplorerState.TreeViewTestExplorerKey"
+                              CssStyleString="height: 100%;"
+                              OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                              TreeViewKeyboardEventHandler="_treeViewKeyboardEventHandler"
+                              TreeViewMouseEventHandler="_treeViewMouseEventHandler"
+                              WalkTreeViewIconWidth="RenderBatch.AppOptionsState.Options.IconSizeInPixels"
+                              OffsetPerDepthInPixels="OffsetPerDepthInPixels"/>
 </div>

@@ -19,17 +19,13 @@
         </div>
 
         <div class="di_ide_compiler-explorer-tree-view-body">
-            <CascadingValue Name="WalkTreeViewIconWidth" Value="appOptionsState.Options.IconSizeInPixels">
-                <CascadingValue Name="WalkTreeViewIconHeight" Value="appOptionsState.Options.IconSizeInPixels">
-                    <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
-                        <TreeViewContainerDisplay TreeViewContainerKey="CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey"
-                                                  CssStyleString="height: 100%;"
-                                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                                                  TreeViewKeyboardEventHandler="_compilerServiceExplorerTreeViewKeymap"
-                                                  TreeViewMouseEventHandler="_compilerServiceExplorerTreeViewMouseEventHandler"/>
-                    </CascadingValue>
-                </CascadingValue>
-            </CascadingValue>
+            <TreeViewContainerDisplay TreeViewContainerKey="CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey"
+                                      CssStyleString="height: 100%;"
+                                      OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                      TreeViewKeyboardEventHandler="_compilerServiceExplorerTreeViewKeymap"
+                                      TreeViewMouseEventHandler="_compilerServiceExplorerTreeViewMouseEventHandler"
+                                      WalkTreeViewIconWidth="appOptionsState.Options.IconSizeInPixels"
+                                      OffsetPerDepthInPixels="OffsetPerDepthInPixels"/>
         </div>
     }
 </div>
