@@ -1729,6 +1729,15 @@ public partial class CSharpBinder
 	public IExpressionNode LambdaMergeExpression(
 		LambdaExpressionNode lambdaExpressionNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
+	    if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		{
+			ForceDecisionAmbiguousIdentifier(
+				EmptyExpressionNode.Empty,
+				(AmbiguousIdentifierExpressionNode)expressionSecondary,
+				compilationUnit,
+				ref parserModel);
+		}
+	
 		switch (expressionSecondary.SyntaxKind)
 		{
 			default:
