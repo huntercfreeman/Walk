@@ -30,7 +30,7 @@ public abstract class TreeViewNoType
 
 	public virtual string GetDisplayText() => this.GetType().Name;
 	public virtual string GetHoverText() => GetDisplayText();
-	public virtual Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => IconBlankFragment.Render;
+	public virtual Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => IconNoneFragment.Render;
 	
     public abstract Task LoadChildListAsync();
 

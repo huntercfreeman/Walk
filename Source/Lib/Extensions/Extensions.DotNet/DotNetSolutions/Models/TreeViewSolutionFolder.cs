@@ -4,6 +4,8 @@ using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Icons.Displays;
+using Walk.Common.RazorLib.Icons.Displays.Codicon;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.ComponentRenderers.Models;
@@ -60,6 +62,8 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 	}
 
     public override string GetDisplayText() => Item.DisplayName;
+    
+    public override Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => IconDotNetSolutionFolderFragment.Render;
 
     /*public override TreeViewRenderer GetTreeViewRenderer()
 	{

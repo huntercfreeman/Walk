@@ -1,6 +1,8 @@
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.Icons.Displays;
+using Walk.Common.RazorLib.Icons.Displays.Codicon;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.Nugets.Models;
 using Walk.Extensions.DotNet.ComponentRenderers.Models;
@@ -45,6 +47,8 @@ public class TreeViewCSharpProjectNugetPackageReference : TreeViewWithType<CShar
 	}
 
 	public override string GetDisplayText() => $"{Item.LightWeightNugetPackageRecord.Title}/{Item.LightWeightNugetPackageRecord.Version}";
+	
+	public override Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => IconPackageFragment.Render;
 
     /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
