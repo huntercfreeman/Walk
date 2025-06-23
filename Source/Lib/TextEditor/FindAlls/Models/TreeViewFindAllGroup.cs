@@ -28,8 +28,38 @@ public class TreeViewFindAllGroup : TreeViewWithType<List<TreeViewFindAllTextSpa
 
 	public override int GetHashCode() => AbsolutePath.Value.GetHashCode();
 	
-	public override TreeViewRenderer GetTreeViewRenderer()
+	public override string GetDisplayText() => AbsolutePath.Value;
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
+	
+	    using Microsoft.AspNetCore.Components;
+        using Walk.TextEditor.RazorLib.FindAlls.Models;
+        
+        namespace Walk.TextEditor.RazorLib.FindAlls.Displays;
+        
+        public partial class TreeViewFindAllGroupDisplay : ComponentBase
+        {
+        	[Parameter, EditorRequired]
+        	public TreeViewFindAllGroup TreeViewFindAllGroup { get; set; } = null!;
+        }
+	
+	
+	
+	
+	    <div title="@TreeViewFindAllGroup.AbsolutePath.Value">
+        	<span class="di_te_keyword">
+        		@(TreeViewFindAllGroup.AbsolutePath.NameWithExtension)
+        	</span>
+        	
+        	<span title="matches">
+        		@($"{TreeViewFindAllGroup.Item.Count:N0}")
+        	</span>
+        </div>
+
+	
+	
+	
 		return new TreeViewRenderer(
 			typeof(TreeViewFindAllGroupDisplay),
 			new Dictionary<string, object?>
@@ -39,7 +69,7 @@ public class TreeViewFindAllGroup : TreeViewWithType<List<TreeViewFindAllTextSpa
 					this
 				}
 			});
-	}
+	}*/
 	
 	public override Task LoadChildListAsync()
 	{

@@ -6,5 +6,4 @@ public interface IIdeComponentRenderers
     public Type FileFormRendererType { get; }
     public Type DeleteFileFormRendererType { get; }
     public Type InputFileRendererType { get; }
-    public IdeTreeViews IdeTreeViews { get; }
 }

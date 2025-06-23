@@ -39,6 +39,23 @@ using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.Shareds.Models;
 /* End Header */
 
+/* Start IdeMainLayout */
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using Walk.Common.RazorLib.Installations.Models;
+using Walk.Ide.RazorLib.JsRuntimes.Models;
+using Walk.Ide.RazorLib.BackgroundTasks.Models;
+/* End IdeMainLayout */
+
+/* Start SettingsDialogEntryPoint */
+using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib.Dialogs.Models;
+using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
+/*namespace*/ using Walk.Ide.RazorLib.Settings.Displays;
+/* End SettingsDialogEntryPoint */
+
 namespace Walk.Ide.RazorLib.Shareds.Displays;
 
 public partial class IdeMainLayout : LayoutComponentBase, IDisposable
@@ -81,7 +98,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
     /* End Header */
-
+    
     private bool _previousDragStateWrapShouldDisplay;
     private ElementDimensions _bodyElementDimensions = new();
     private ElementDimensions _editorElementDimensions = new();
@@ -105,6 +122,17 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public ElementReference? _buttonViewElementReference;
     public ElementReference? _buttonRunElementReference;
     /* End Header */
+    
+    /* Start SettingsDialogEntryPoint */
+    private IDialog _dialogRecord = new DialogViewModel(
+        Key<IDynamicViewModel>.NewKey(),
+        "Settings",
+        typeof(SettingsDisplay),
+        null,
+        null,
+		true,
+		null);
+    /* End SettingsDialogEntryPoint */
 
     protected override void OnInitialized()
     {
@@ -142,6 +170,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     		WorkKind = IdeBackgroundTaskApiWorkKind.IdeHeaderOnInit,
     		IdeMainLayout = this,
     	});
+    	
+    	IdeBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
+        {
+        	WorkKind = IdeBackgroundTaskApiWorkKind.WalkIdeInitializerOnInit,
+        });
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -155,6 +188,13 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             await AppOptionsService
                 .SetFromLocalStorageAsync()
                 .ConfigureAwait(false);
+                
+            if (WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
+			{
+				await JsRuntime.GetWalkIdeApi()
+					.PreventDefaultBrowserKeybindings()
+					.ConfigureAwait(false);
+			}
         }
     }
 
@@ -377,6 +417,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         return Task.CompletedTask;
     }
     /* End Header */
+
+    /* Start SettingsDialogEntryPoint */
+    public void DispatchRegisterDialogRecordAction() =>
+        DialogService.ReduceRegisterAction(_dialogRecord);
+    /* End SettingsDialogEntryPoint */
 
     public void Dispose()
     {

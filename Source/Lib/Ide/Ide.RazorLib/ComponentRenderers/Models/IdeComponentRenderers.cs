@@ -6,19 +6,16 @@ public class IdeComponentRenderers : IIdeComponentRenderers
         Type booleanPromptOrCancelRendererType,
         Type fileFormRendererType,
         Type deleteFileFormRendererType,
-        Type inputFileRendererType,
-        IdeTreeViews ideTreeViews)
+        Type inputFileRendererType)
     {
         BooleanPromptOrCancelRendererType = booleanPromptOrCancelRendererType;
         FileFormRendererType = fileFormRendererType;
         DeleteFileFormRendererType = deleteFileFormRendererType;
         InputFileRendererType = inputFileRendererType;
-        IdeTreeViews = ideTreeViews;
     }
 
     public Type BooleanPromptOrCancelRendererType { get; }
     public Type FileFormRendererType { get; }
     public Type DeleteFileFormRendererType { get; }
     public Type InputFileRendererType { get; }
-    public IdeTreeViews IdeTreeViews { get; }
 }

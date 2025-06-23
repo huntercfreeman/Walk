@@ -24,8 +24,45 @@ public class TreeViewDiagnosticLine : TreeViewWithType<DiagnosticLine>
 
 	public override int GetHashCode() => Item.GetHashCode();
 
-	public override TreeViewRenderer GetTreeViewRenderer()
+	public override string GetDisplayText() => Item.TextShort;
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
+	
+	    using Microsoft.AspNetCore.Components;
+        using Walk.Extensions.DotNet.Outputs.Models;
+        
+        namespace Walk.Extensions.DotNet.Outputs.Displays.Internals;
+        
+        public partial class TreeViewDiagnosticLineDisplay : ComponentBase
+        {
+        	[Parameter, EditorRequired]
+        	public TreeViewDiagnosticLine TreeViewDiagnosticLine { get; set; } = null!;
+        }
+	
+	
+	    @using Walk.Extensions.DotNet.CommandLines.Models;
+
+        @{ var cssClass = string.Empty; }
+        
+        @if (TreeViewDiagnosticLine.Item.DiagnosticLineKind == DiagnosticLineKind.Warning)
+        {
+        	cssClass = "di_tree-view-warning";
+        }
+        else if (TreeViewDiagnosticLine.Item.DiagnosticLineKind == DiagnosticLineKind.Error)
+        {
+        	cssClass = "di_tree-view-exception";
+        }
+        else if (TreeViewDiagnosticLine.Item.DiagnosticLineKind == DiagnosticLineKind.Other)
+        {
+        	cssClass = string.Empty;
+        }
+        
+        <span class="@cssClass di_set-selectable">
+        	@TreeViewDiagnosticLine.Item.TextShort
+        </span>
+	    
+	
 		return new TreeViewRenderer(
 			typeof(TreeViewDiagnosticLineDisplay),
 			new Dictionary<string, object?>
@@ -35,7 +72,7 @@ public class TreeViewDiagnosticLine : TreeViewWithType<DiagnosticLine>
 					this
 				},
 			});
-	}
+	}*/
 
 	public override Task LoadChildListAsync()
 	{

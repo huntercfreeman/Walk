@@ -1,6 +1,4 @@
 using Walk.Common.RazorLib.ComponentRenderers.Models;
-using Walk.Common.RazorLib.TreeViews.Displays.Utils;
-
 namespace Walk.Common.RazorLib.TreeViews.Models.Utils;
 
 public class TreeViewSpinner : TreeViewWithType<Guid>
@@ -27,8 +25,44 @@ public class TreeViewSpinner : TreeViewWithType<Guid>
 
     public override int GetHashCode() => Item.GetHashCode();
 
-    public override TreeViewRenderer GetTreeViewRenderer()
+    public override string GetDisplayText() => string.Empty;
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
     {
+        
+        using Microsoft.AspNetCore.Components;
+        using Walk.Common.RazorLib.TreeViews.Models.Utils;
+        using Walk.Common.RazorLib.Options.Models;
+        
+        namespace Walk.Common.RazorLib.TreeViews.Displays.Utils;
+        
+        public partial class TreeViewSpinnerDisplay : ComponentBase
+        {
+            [Inject]
+            private IAppOptionsService AppOptionsService { get; set; } = null!;
+            
+        	[Parameter, EditorRequired]
+        	public TreeViewSpinner TreeViewSpinner { get; set; } = null!;
+        }
+    
+    
+    
+        
+        @{
+        	var appOptionsState = AppOptionsService.GetAppOptionsState();
+        
+        	var iconDriver = new IconDriver(
+        		appOptionsState.Options.IconSizeInPixels,
+        		appOptionsState.Options.IconSizeInPixels);
+        }
+        
+        @IconLoadingFragment.Render(iconDriver)
+
+        
+        
+        
+        
+        
         return new TreeViewRenderer(
             typeof(TreeViewSpinnerDisplay),
             new Dictionary<string, object?>
@@ -38,7 +72,7 @@ public class TreeViewSpinner : TreeViewWithType<Guid>
                     this
                 },
             });
-    }
+    }*/
 
     public override Task LoadChildListAsync()
     {

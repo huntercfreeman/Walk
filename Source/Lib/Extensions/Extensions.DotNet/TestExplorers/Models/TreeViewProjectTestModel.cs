@@ -31,8 +31,28 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 
 	public override int GetHashCode() => Item.ProjectIdGuid.GetHashCode();
 
-	public override TreeViewRenderer GetTreeViewRenderer()
+	public override string GetDisplayText() => Item.AbsolutePath.NameWithExtension;
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
+	
+	    using Microsoft.AspNetCore.Components;
+        using Walk.Extensions.DotNet.TestExplorers.Models;
+        
+        namespace Walk.Extensions.DotNet.TestExplorers.Displays.Internals;
+        
+        public partial class TreeViewProjectTestModelDisplay : ComponentBase
+        {
+        	[Parameter, EditorRequired]
+        	public TreeViewProjectTestModel TreeViewProjectTestModel { get; set; } = null!;
+        }
+	
+	
+	    @TreeViewProjectTestModel.Item.AbsolutePath.NameWithExtension
+        &nbsp;
+        (@(TreeViewProjectTestModel.Item.TestNameFullyQualifiedList?.Count.ToString() ?? "?"))
+
+	
 		return new TreeViewRenderer(
 			typeof(TreeViewProjectTestModelDisplay),
 			new Dictionary<string, object?>
@@ -42,7 +62,7 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 					this
 				},
 			});
-	}
+	}*/
 
 	public override Task LoadChildListAsync()
 	{

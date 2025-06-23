@@ -1,5 +1,3 @@
-using Walk.Common.RazorLib.TreeViews.Displays.Utils;
-
 namespace Walk.Common.RazorLib.TreeViews.Models.Utils;
 
 public class TreeViewGroup : TreeViewWithType<string>
@@ -24,8 +22,28 @@ public class TreeViewGroup : TreeViewWithType<string>
 
 	public override int GetHashCode() => Item.GetHashCode();
 
-	public override TreeViewRenderer GetTreeViewRenderer()
+	public override string GetDisplayText() => Item;
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
+	
+	    using Microsoft.AspNetCore.Components;
+        using Walk.Common.RazorLib.TreeViews.Models.Utils;
+        
+        namespace Walk.Common.RazorLib.TreeViews.Displays.Utils;
+        
+        public partial class TreeViewGroupDisplay : ComponentBase
+        {
+        	[Parameter, EditorRequired]
+        	public TreeViewGroup TreeViewGroup { get; set; } = null!;
+        }
+	    
+	
+	    <div title="@TreeViewGroup.TitleText">
+        	@TreeViewGroup.Item (@(TreeViewGroup.ChildList?.Count.ToString() ?? "0"))
+        </div>
+	
+	
 		return new TreeViewRenderer(
 			typeof(TreeViewGroupDisplay),
 			new Dictionary<string, object?>
@@ -35,7 +53,7 @@ public class TreeViewGroup : TreeViewWithType<string>
 					this
 				},
 			});
-	}
+	}*/
 
 	public override Task LoadChildListAsync()
 	{

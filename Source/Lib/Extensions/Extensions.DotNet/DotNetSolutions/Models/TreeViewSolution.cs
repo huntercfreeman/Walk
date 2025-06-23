@@ -46,8 +46,12 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
 
 	public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
 
-	public override TreeViewRenderer GetTreeViewRenderer()
+	public override string GetDisplayText() => Item.AbsolutePath.NameWithExtension;
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
+	    
+	
 		return new TreeViewRenderer(
 			IdeComponentRenderers.IdeTreeViews.TreeViewNamespacePathRendererType,
 			new Dictionary<string, object?>
@@ -57,7 +61,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
 					Item.NamespacePath
 				},
 			});
-	}
+	}*/
 
 	public override async Task LoadChildListAsync()
 	{

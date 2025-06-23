@@ -31,8 +31,42 @@ public class TreeViewProperties : TreeViewWithType<WatchWindowObject>
         return Item.GetHashCode();
     }
 
-    public override TreeViewRenderer GetTreeViewRenderer()
+    public override string GetDisplayText() => "Properties";
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
     {
+        
+        using Microsoft.AspNetCore.Components;
+        using Walk.Common.RazorLib.WatchWindows.Models;
+        using Walk.Common.RazorLib.Options.Models;
+        
+        namespace Walk.Common.RazorLib.WatchWindows.Displays;
+        
+        public partial class TreeViewPropertiesDisplay : ComponentBase
+        {
+            [Inject]
+            private IAppOptionsService AppOptionsService { get; set; } = null!;
+            
+            [Parameter, EditorRequired]
+            public TreeViewProperties TreeViewProperties { get; set; } = null!;
+        }
+        
+        
+        <div title="@TreeViewProperties.Key.Guid">
+            <span>
+            	@{
+            		var appOptionsState = AppOptionsService.GetAppOptionsState();
+            	
+            		var iconDriver = new IconDriver(
+        				appOptionsState.Options.IconSizeInPixels,
+        				appOptionsState.Options.IconSizeInPixels);
+            	}
+                @IconSymbolPropertyFragment.Render(iconDriver)
+                Properties
+            </span>
+        </div>
+    
+    
         return new TreeViewRenderer(
             _commonComponentRenderers.CommonTreeViews.TreeViewPropertiesRenderer,
             new Dictionary<string, object?>
@@ -42,7 +76,7 @@ public class TreeViewProperties : TreeViewWithType<WatchWindowObject>
                     this
                 },
             });
-    }
+    }*/
 
     public override Task LoadChildListAsync()
     {

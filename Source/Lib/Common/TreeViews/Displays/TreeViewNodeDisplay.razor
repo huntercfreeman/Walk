@@ -51,13 +51,10 @@
             </div>
 
             <div class="di_tree-view-title-content"
-                 style="width: calc(100% - @(WidthOfTitleExpansionChevron.ToCssValue())px); height:  100%;">
-                @{
-                    var treeViewRenderer = TreeViewNoType.GetTreeViewRenderer();
-                }
-
-                <DynamicComponent Type="treeViewRenderer.DynamicComponentType"
-                                  Parameters="treeViewRenderer.DynamicComponentParameters"/>
+                 style="width: calc(100% - @(WidthOfTitleExpansionChevron.ToCssValue())px); height:  100%;"
+                 title="@TreeViewNoType.GetHoverText()">
+                
+                @TreeViewNoType.GetDisplayText()
             </div>
         </div>
     }

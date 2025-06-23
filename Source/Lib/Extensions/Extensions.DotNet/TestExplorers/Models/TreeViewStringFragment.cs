@@ -30,8 +30,110 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
 
 	public override int GetHashCode() => Item.Value.GetHashCode();
 
-	public override TreeViewRenderer GetTreeViewRenderer()
+	public override string GetDisplayText() => Item.Value;
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
+	    using Microsoft.AspNetCore.Components;
+        using Walk.Common.RazorLib.Options.Models;
+        using Walk.Ide.RazorLib.Terminals.Models;
+        using Walk.Extensions.DotNet.TestExplorers.Models;
+        
+        namespace Walk.Extensions.DotNet.TestExplorers.Displays.Internals;
+        
+        public partial class TreeViewStringFragmentDisplay : ComponentBase, IDisposable
+        {
+        	[Inject]
+        	private ITerminalService TerminalService { get; set; } = null!;
+            [Inject]
+            private IAppOptionsService AppOptionsService { get; set; } = null!;
+        
+        	[Parameter, EditorRequired]
+        	public TreeViewStringFragment TreeViewStringFragment { get; set; } = null!;
+        
+        	protected override void OnInitialized()
+        	{
+        		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
+        		base.OnInitialized();
+        	}
+        
+        	private string? GetTerminalCommandRequestOutput(ITerminal terminal)
+        	{
+        		return TreeViewStringFragment.Item.TerminalCommandParsed?.OutputCache.ToString() ?? null;
+        	}
+        	
+        	private async void OnTerminalStateChanged()
+        	{
+        		await InvokeAsync(StateHasChanged);
+        	}
+        	
+        	public void Dispose()
+        	{
+        		TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
+        	}
+        }
+	
+	
+	
+	
+	    @using Walk.Ide.RazorLib.Terminals.Models
+
+        @{ var terminal = TerminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY]; }
+        
+        @if (terminal is null)
+        {
+        	<text>@nameof(terminal) was null</text>
+        }
+        else
+        {
+        	var output = GetTerminalCommandRequestOutput(terminal);
+        
+        	RenderFragment renderFragment = @<text>?</text>;
+        
+        	if (output is null)
+        	{
+        		renderFragment = @<text>?</text>;
+        	}
+        	else if (!output.Contains("Duration:"))
+        	{
+        		var appOptionsState = AppOptionsService.GetAppOptionsState();
+        	
+        		var iconDriver = new IconDriver(
+        			appOptionsState.Options.IconSizeInPixels,
+        			appOptionsState.Options.IconSizeInPixels);
+        		
+        		renderFragment = IconLoadingFragment.Render(iconDriver);
+        	}
+        	else
+        	{
+        		if (output.Contains("Passed!"))
+        		{
+        			renderFragment = @<em class="di_em">Passed!</em>;
+        		}
+        		else
+        		{
+        			renderFragment = @<span class="di_tree-view-exception">Failed!</span>;
+        		}
+        	}
+        
+        	<div style="display: flex;">
+        		@renderFragment&nbsp;
+        		@TreeViewStringFragment.Item.Value
+        
+        		@if (TreeViewStringFragment.ChildList.Count > 0)
+        		{
+        			<span title="Count of child nodes">
+        				&nbsp;(@(TreeViewStringFragment.ChildList.Count))
+        			</span>
+        		}
+        	</div>
+        }
+        
+
+	
+	
+	
+	
 		return new TreeViewRenderer(
 			typeof(TreeViewStringFragmentDisplay),
 			new Dictionary<string, object?>
@@ -41,7 +143,7 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
 					this
 				},
 			});
-	}
+	}*/
 
 	public override async Task LoadChildListAsync()
 	{
