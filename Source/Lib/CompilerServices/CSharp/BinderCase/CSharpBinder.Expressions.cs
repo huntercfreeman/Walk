@@ -32,11 +32,12 @@ public partial class CSharpBinder
 			var typeClauseNode = (TypeClauseNode)expressionPrimary;
 			Console.Write($"{typeClauseNode.TypeIdentifierToken.TextSpan.Text}____");
 		}
+		Console.Write($"{expressionPrimary.SyntaxKind} + {token.SyntaxKind}:{parserModel.TokenWalker.Index}");
 		if (token.SyntaxKind == SyntaxKind.IdentifierToken)
 		{
-			Console.Write($"____token-{token.TextSpan.Text}____");
+			Console.Write($"____{token.TextSpan.Text}");
 		}
-		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {token.SyntaxKind}:{parserModel.TokenWalker.Index}");
+		Console.WriteLine();
 		#else
 		Console.WriteLine($"{nameof(AnyMergeToken)} has debug 'Console.Write...' that needs commented out.");
 		#endif*/
@@ -649,7 +650,7 @@ public partial class CSharpBinder
 		bool forceVariableReferenceNode = false,
 		bool allowFabricatedUndefinedNode = true)
 	{
-		IExpressionNode result;
+	    IExpressionNode result;
 	
 		if (parserModel.ParserContextKind == CSharpParserContextKind.ForceStatementExpression)
 		{
@@ -817,7 +818,8 @@ public partial class CSharpBinder
 		
 		finalize:
 		
-		if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken)
+		if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken &&
+		    UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind))
 		{
 			_ = parserModel.TokenWalker.Consume();
 			var token = parserModel.TokenWalker.Current;
