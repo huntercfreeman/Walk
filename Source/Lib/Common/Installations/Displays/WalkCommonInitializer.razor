@@ -163,13 +163,21 @@
          id="@TooltipService.HtmlElementId"
          @onmouseover="tooltipModel.OnMouseOver"
          @onmousedown:stopPropagation="true"
+         @onwheel="x => tooltipModel.OnWheel?.Invoke(tooltipModel, x) ?? Task.CompletedTask"
          @onmousemove:stopPropagation="true"
          @ondblclick:stopPropagation="true"
          @onclick:stopPropagation="true"
          @oncontextmenu:stopPropagation="true">
 
-        <DynamicComponent Type="tooltipModel.RendererType"
-                          Parameters="tooltipModel.ParameterMap" />
+        @if (tooltipModel.RendererType is null)
+        {
+            <text>tooltipModel.RendererType is null</text>
+        }
+        else
+        {
+            <DynamicComponent Type="tooltipModel.RendererType"
+                              Parameters="tooltipModel.ParameterMap" />
+        }
     </div>
 }
 @* End TooltipInitializer *@

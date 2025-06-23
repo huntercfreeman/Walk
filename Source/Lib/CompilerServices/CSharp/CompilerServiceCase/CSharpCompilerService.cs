@@ -755,13 +755,15 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                     };
 
-                    viewModelModifier.PersistentState.TooltipModel = new(
+                    viewModelModifier.PersistentState.TooltipModel = new Walk.Common.RazorLib.Tooltips.Models.TooltipModel<(TextEditorService TextEditorService, Key<TextEditorViewModel> ViewModelKey)>(
 	                    modelModifier.PersistentState.CompilerService.DiagnosticRendererType ?? textEditorComponentRenderers.DiagnosticRendererType,
 	                    parameterMap,
 	                    clientX,
 	                    clientY,
-	                    null,
-                        componentData.ContinueRenderingTooltipAsync);
+	                    cssClassString: null,
+                        componentData.ContinueRenderingTooltipAsync,
+                        Walk.TextEditor.RazorLib.Commands.Models.Defaults.TextEditorCommandDefaultFunctions.OnWheel,
+                        (_textEditorService, viewModelModifier.PersistentState.ViewModelKey));
                     componentData.TextEditorViewModelSlimDisplay.TooltipService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
                 }
             }
@@ -784,13 +786,15 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                     };
 
-                    viewModelModifier.PersistentState.TooltipModel = new(
+                    viewModelModifier.PersistentState.TooltipModel = new Walk.Common.RazorLib.Tooltips.Models.TooltipModel<(TextEditorService TextEditorService, Key<TextEditorViewModel> ViewModelKey)>(
                         typeof(Walk.Extensions.CompilerServices.Displays.SymbolDisplay),
                         parameters,
                         clientX,
                         clientY,
-                        null,
-                        componentData.ContinueRenderingTooltipAsync);
+                        cssClassString: null,
+                        componentData.ContinueRenderingTooltipAsync,
+                        Walk.TextEditor.RazorLib.Commands.Models.Defaults.TextEditorCommandDefaultFunctions.OnWheel,
+                        (_textEditorService, viewModelModifier.PersistentState.ViewModelKey));
                     componentData.TextEditorViewModelSlimDisplay.TooltipService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
                 }
             }

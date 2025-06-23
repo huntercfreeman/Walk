@@ -18,5 +18,5 @@ public interface ITooltipService
 	
 	public TooltipState GetTooltipState();
 	
-	public void SetTooltipModel(TooltipModel tooltipModel);
+	public void SetTooltipModel(ITooltipModel tooltipModel);
 }

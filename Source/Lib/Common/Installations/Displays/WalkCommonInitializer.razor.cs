@@ -130,7 +130,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 	public string TooltipRelativeX { get; set; } = string.Empty;
 	public string TooltipRelativeY { get; set; } = string.Empty;
 	
-	private TooltipModel? _tooltipModelPrevious = null;
+	private ITooltipModel? _tooltipModelPrevious = null;
     /* End TooltipInitializer */
     
     
