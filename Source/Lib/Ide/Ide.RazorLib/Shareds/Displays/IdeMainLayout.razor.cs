@@ -47,6 +47,15 @@ using Walk.Ide.RazorLib.JsRuntimes.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 /* End IdeMainLayout */
 
+/* Start SettingsDialogEntryPoint */
+using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib.Dialogs.Models;
+using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
+/*namespace*/ using Walk.Ide.RazorLib.Settings.Displays;
+/* End SettingsDialogEntryPoint */
+
 namespace Walk.Ide.RazorLib.Shareds.Displays;
 
 public partial class IdeMainLayout : LayoutComponentBase, IDisposable
@@ -113,6 +122,17 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public ElementReference? _buttonViewElementReference;
     public ElementReference? _buttonRunElementReference;
     /* End Header */
+    
+    /* Start SettingsDialogEntryPoint */
+    private IDialog _dialogRecord = new DialogViewModel(
+        Key<IDynamicViewModel>.NewKey(),
+        "Settings",
+        typeof(SettingsDisplay),
+        null,
+        null,
+		true,
+		null);
+    /* End SettingsDialogEntryPoint */
 
     protected override void OnInitialized()
     {
@@ -397,6 +417,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         return Task.CompletedTask;
     }
     /* End Header */
+
+    /* Start SettingsDialogEntryPoint */
+    public void DispatchRegisterDialogRecordAction() =>
+        DialogService.ReduceRegisterAction(_dialogRecord);
+    /* End SettingsDialogEntryPoint */
 
     public void Dispose()
     {
