@@ -1,6 +1,8 @@
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Icons.Displays;
+using Walk.Common.RazorLib.Icons.Displays.Codicon;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.CompilerServices.Xml.Html.SyntaxActors;
@@ -44,6 +46,8 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 	public override int GetHashCode() => Item.CSharpProjectNamespacePath.AbsolutePath.Value.GetHashCode();
 
 	public override string GetDisplayText() => "NuGet Packages";
+	
+	public override Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => IconNuGetPackagesFragment.Render;
 
     /*public override TreeViewRenderer GetTreeViewRenderer()
 	{

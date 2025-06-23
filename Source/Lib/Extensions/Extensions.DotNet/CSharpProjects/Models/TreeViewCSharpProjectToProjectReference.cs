@@ -1,6 +1,8 @@
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.Icons.Displays;
+using Walk.Common.RazorLib.Icons.Displays.Codicon;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.Extensions.DotNet.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
@@ -48,6 +50,8 @@ public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpPr
 	}
 
 	public override string GetDisplayText() => Item.ReferenceProjectAbsolutePath.NameWithExtension;
+	
+	public override Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => IconGoToFileFragment.Render;
 
     /*public override TreeViewRenderer GetTreeViewRenderer()
 	{

@@ -4,7 +4,10 @@ using Walk.Common.RazorLib.WatchWindows.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Icons.Displays;
+using Walk.Common.RazorLib.Icons.Displays.Codicon;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.Ide.RazorLib.FileSystems.Displays;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.Namespaces.Models;
 using Walk.Extensions.DotNet.ComponentRenderers.Models;
@@ -49,6 +52,9 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
     public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
     
     public override string GetDisplayText() => Item.AbsolutePath.NameWithExtension;
+    
+    public override Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => 
+        iconDriver => FileIconStaticRenderFragments.GetRenderFragment((iconDriver, Item.AbsolutePath));
 
     /*public override TreeViewRenderer GetTreeViewRenderer()
     {
