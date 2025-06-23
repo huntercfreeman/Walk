@@ -51,7 +51,7 @@
             </div>
 
             <div class="di_tree-view-title-content"
-                 style="width: calc(100% - @(WidthOfTitleExpansionChevron.ToCssValue())px); height:  100%;"
+                 style="width: calc(100% - @(RenderBatch.WalkTreeViewIconWidth.ToCssValue())px); height:  100%;"
                  title="@TreeViewNoType.GetHoverText()">
                 
                 @TreeViewNoType.GetIcon(iconDriver)
@@ -75,7 +75,7 @@
         
             @if (!TreeViewNoType.IsHidden)
             {
-                <div style="margin-left: @((OffsetInPixels + WidthOfTitleExpansionChevron / 2).ToCssValue())px;"
+                <div style="margin-left: @((OffsetInPixels + RenderBatch.WalkTreeViewIconWidth / 2).ToCssValue())px;"
                      class="di_tree-view-children-border">
                 </div>
             }

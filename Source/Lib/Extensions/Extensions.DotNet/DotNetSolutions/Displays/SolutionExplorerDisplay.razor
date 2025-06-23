@@ -47,17 +47,13 @@
         }
         else
         {
-            <CascadingValue Name="WalkTreeViewIconWidth" Value="appOptionsState.Options.IconSizeInPixels">
-                <CascadingValue Name="WalkTreeViewIconHeight" Value="appOptionsState.Options.IconSizeInPixels">
-                    <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
-                        <TreeViewContainerDisplay TreeViewContainerKey="DotNetSolutionState.TreeViewSolutionExplorerStateKey"
-                                                  CssStyleString="height: 100%;"
-                                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                                                  TreeViewKeyboardEventHandler="_solutionExplorerTreeViewKeymap"
-                                                  TreeViewMouseEventHandler="_solutionExplorerTreeViewMouseEventHandler" />
-                    </CascadingValue>
-                </CascadingValue>
-            </CascadingValue>
+            <TreeViewContainerDisplay TreeViewContainerKey="DotNetSolutionState.TreeViewSolutionExplorerStateKey"
+                                      CssStyleString="height: 100%;"
+                                      OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                      TreeViewKeyboardEventHandler="_solutionExplorerTreeViewKeymap"
+                                      TreeViewMouseEventHandler="_solutionExplorerTreeViewMouseEventHandler"
+                                      WalkTreeViewIconWidth="appOptionsState.Options.IconSizeInPixels"
+                                      OffsetPerDepthInPixels="OffsetPerDepthInPixels"/>
         }
     </div>
 </div>

@@ -12,10 +12,6 @@ public partial class TreeViewNodeDisplay : ComponentBase
 {
     [CascadingParameter]
     public TreeViewCascadingValueBatch RenderBatch { get; set; } = null!;
-    [CascadingParameter(Name="OffsetPerDepthInPixels")]
-    public int OffsetPerDepthInPixels { get; set; } = 12;
-    [CascadingParameter(Name="WalkTreeViewIconWidth")]
-    public int WidthOfTitleExpansionChevron { get; set; } = 16;
 
     [Parameter, EditorRequired]
     public TreeViewNoType TreeViewNoType { get; set; } = null!;
@@ -26,7 +22,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
     private Key<TreeViewChanged> _previousTreeViewChangedKey = Key<TreeViewChanged>.Empty;
     private bool _previousIsActive;
 
-    private int OffsetInPixels => OffsetPerDepthInPixels * Depth;
+    private int OffsetInPixels => RenderBatch.OffsetPerDepthInPixels * Depth;
 
     private bool IsSelected => RenderBatch.TreeViewContainer.SelectedNodeList.Any(x => x.Key == TreeViewNoType.Key);
 

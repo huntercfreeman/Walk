@@ -14,4 +14,6 @@ public class TreeViewCascadingValueBatch
     public ITreeViewService TreeViewService { get; set; } = null!;
     public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
     public IAppOptionsService AppOptionsService { get; set; } = null!;
+    public int OffsetPerDepthInPixels { get; set; }
+    public int WalkTreeViewIconWidth { get; set; }
 }

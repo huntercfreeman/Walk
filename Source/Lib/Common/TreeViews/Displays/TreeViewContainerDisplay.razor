@@ -11,6 +11,8 @@
     _treeViewCascadingValueBatch.TreeViewService = TreeViewService;
     _treeViewCascadingValueBatch.CommonBackgroundTaskApi = CommonBackgroundTaskApi;
     _treeViewCascadingValueBatch.AppOptionsService = AppOptionsService;
+    _treeViewCascadingValueBatch.OffsetPerDepthInPixels = OffsetPerDepthInPixels;
+    _treeViewCascadingValueBatch.WalkTreeViewIconWidth = WalkTreeViewIconWidth;
 
     <div id="@TreeViewService.GetTreeViewContainerElementId(treeViewContainer?.Key ?? Key<TreeViewContainer>.Empty)"
          class="di_tree-view-state di_unselectable @GetHasActiveNodeCssClass(treeViewContainer) @CssClassString"

@@ -44,17 +44,13 @@
 
         <div>Results: @($"{codeSearchState.ResultList.Count:N0}")</div>
         
-        <CascadingValue Name="WalkTreeViewIconWidth" Value="appOptionsState.Options.IconSizeInPixels">
-            <CascadingValue Name="WalkTreeViewIconHeight" Value="appOptionsState.Options.IconSizeInPixels">
-                <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
-                    <TreeViewContainerDisplay TreeViewContainerKey="CodeSearchState.TreeViewCodeSearchContainerKey"
-                                              CssStyleString="height: 100%;"
-                                              OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                                              TreeViewKeyboardEventHandler="_treeViewKeymap"
-                                              TreeViewMouseEventHandler="_treeViewMouseEventHandler" />
-                </CascadingValue>
-            </CascadingValue>
-        </CascadingValue>
+        <TreeViewContainerDisplay TreeViewContainerKey="CodeSearchState.TreeViewCodeSearchContainerKey"
+                                  CssStyleString="height: 100%;"
+                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                  TreeViewKeyboardEventHandler="_treeViewKeymap"
+                                  TreeViewMouseEventHandler="_treeViewMouseEventHandler"
+                                  WalkTreeViewIconWidth="appOptionsState.Options.IconSizeInPixels"
+                                  OffsetPerDepthInPixels="OffsetPerDepthInPixels"/>
     </div>
 
     <ResizableRow TopElementDimensions="codeSearchState.TopContentElementDimensions"

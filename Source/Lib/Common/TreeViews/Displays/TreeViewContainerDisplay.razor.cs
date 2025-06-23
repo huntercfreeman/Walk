@@ -40,6 +40,10 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     /// <summary>If a consumer of the TreeView component does not have logic for their own DropdownComponent, then it is recommended to use <see cref="OnContextMenuRenderFragment"/><br/><br/> <see cref="OnContextMenuFunc"/> allows one to be notified of the ContextMenu event along with the necessary parameters by being given <see cref="TreeViewCommandArgs"/></summary>
     [Parameter]
     public Func<TreeViewCommandArgs, Task>? OnContextMenuFunc { get; set; }
+    [Parameter]
+    public int OffsetPerDepthInPixels { get; set; } = 12;
+    [Parameter]
+    public int WalkTreeViewIconWidth { get; set; } = 16;
 
     private TreeViewCommandArgs _treeViewContextMenuCommandArgs;
     private ElementReference? _treeViewStateDisplayElementReference;
