@@ -31,6 +31,8 @@ public class TreeViewReflection : TreeViewWithType<WatchWindowObject>
         return Item.GetHashCode();
     }
 
+    public override string GetDisplayText() => "TreeViewReflection";
+
     /*public override TreeViewRenderer GetTreeViewRenderer()
     {
     

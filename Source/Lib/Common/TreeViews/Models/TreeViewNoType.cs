@@ -28,7 +28,7 @@ public abstract class TreeViewNoType
     public Key<TreeViewChanged> TreeViewChangedKey { get; set; } = Key<TreeViewChanged>.NewKey();
     public Key<TreeViewNoType> Key { get; set; } = Key<TreeViewNoType>.NewKey();
 
-	public virtual string GetDisplayText() => "TODO: TreeViewNoType.GetDisplayText()";
+	public virtual string GetDisplayText() => this.GetType().Name;
 	public virtual string GetHoverText() => GetDisplayText();
 	public virtual Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => IconBlankFragment.Render;
 	

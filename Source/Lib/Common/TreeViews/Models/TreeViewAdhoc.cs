@@ -58,6 +58,8 @@ public class TreeViewAdhoc : TreeViewWithType<byte>
 
         return treeViewAdhoc;
     }
+    
+    public override string GetDisplayText() => string.Empty;
 
     /*public override TreeViewRenderer GetTreeViewRenderer()
     {

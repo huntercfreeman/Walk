@@ -31,6 +31,8 @@ public class TreeViewFields : TreeViewWithType<WatchWindowObject>
         return Item.GetHashCode();
     }
 
+    public override string GetDisplayText() => "Fields";
+
     /*public override TreeViewRenderer GetTreeViewRenderer()
     {
     

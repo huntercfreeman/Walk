@@ -43,7 +43,9 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 
 	public override int GetHashCode() => Item.CSharpProjectNamespacePath.AbsolutePath.Value.GetHashCode();
 
-	/*public override TreeViewRenderer GetTreeViewRenderer()
+	public override string GetDisplayText() => "NuGet Packages";
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
 	
 	    using Microsoft.AspNetCore.Components;

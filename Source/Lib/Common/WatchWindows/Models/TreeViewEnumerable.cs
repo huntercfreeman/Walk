@@ -32,6 +32,8 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObject>
         return Item.GetHashCode();
     }
 
+    public override string GetDisplayText() => "Enumerable";
+
     /*public override TreeViewRenderer GetTreeViewRenderer()
     {
     

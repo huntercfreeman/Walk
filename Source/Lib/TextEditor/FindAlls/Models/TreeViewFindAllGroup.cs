@@ -28,7 +28,9 @@ public class TreeViewFindAllGroup : TreeViewWithType<List<TreeViewFindAllTextSpa
 
 	public override int GetHashCode() => AbsolutePath.Value.GetHashCode();
 	
-	/*public override TreeViewRenderer GetTreeViewRenderer()
+	public override string GetDisplayText() => AbsolutePath.Value;
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
 	
 	    using Microsoft.AspNetCore.Components;

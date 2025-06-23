@@ -25,6 +25,8 @@ public class TreeViewSpinner : TreeViewWithType<Guid>
 
     public override int GetHashCode() => Item.GetHashCode();
 
+    public override string GetDisplayText() => string.Empty;
+
     /*public override TreeViewRenderer GetTreeViewRenderer()
     {
         

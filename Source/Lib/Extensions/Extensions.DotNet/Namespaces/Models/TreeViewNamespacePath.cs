@@ -47,6 +47,8 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
     }
 
     public override int GetHashCode() => Item.AbsolutePath.Value.GetHashCode();
+    
+    public override string GetDisplayText() => Item.AbsolutePath.NameWithExtension;
 
     /*public override TreeViewRenderer GetTreeViewRenderer()
     {

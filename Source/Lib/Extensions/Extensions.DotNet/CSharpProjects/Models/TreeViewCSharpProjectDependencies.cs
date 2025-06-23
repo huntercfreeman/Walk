@@ -40,7 +40,9 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 
 	public override int GetHashCode() => Item.CSharpProjectNamespacePath.AbsolutePath.Value.GetHashCode();
 
-	/*public override TreeViewRenderer GetTreeViewRenderer()
+	public override string GetDisplayText() => "Dependencies";
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
 	
 	

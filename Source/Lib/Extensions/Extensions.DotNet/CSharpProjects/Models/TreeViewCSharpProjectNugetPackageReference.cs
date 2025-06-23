@@ -44,7 +44,9 @@ public class TreeViewCSharpProjectNugetPackageReference : TreeViewWithType<CShar
 		return uniqueString.GetHashCode();
 	}
 
-	/*public override TreeViewRenderer GetTreeViewRenderer()
+	public override string GetDisplayText() => $"{Item.LightWeightNugetPackageRecord.Title}/{Item.LightWeightNugetPackageRecord.Version}";
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
 	
 	    using Microsoft.AspNetCore.Components;

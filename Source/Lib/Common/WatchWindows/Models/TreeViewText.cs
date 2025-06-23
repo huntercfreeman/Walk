@@ -30,6 +30,8 @@ public class TreeViewText : TreeViewWithType<string>
         return Item.GetHashCode();
     }
 
+    public override string GetDisplayText() => Item;
+
     /*public override TreeViewRenderer GetTreeViewRenderer()
     {
     

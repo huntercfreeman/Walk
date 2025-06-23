@@ -59,7 +59,9 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 			return Item.ProjectIdGuid.GetHashCode();
 	}
 
-	/*public override TreeViewRenderer GetTreeViewRenderer()
+    public override string GetDisplayText() => Item.DisplayName;
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
 		
 		using Microsoft.AspNetCore.Components;

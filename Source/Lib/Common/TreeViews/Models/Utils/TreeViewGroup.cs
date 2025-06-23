@@ -22,7 +22,9 @@ public class TreeViewGroup : TreeViewWithType<string>
 
 	public override int GetHashCode() => Item.GetHashCode();
 
-	/*public override TreeViewRenderer GetTreeViewRenderer()
+	public override string GetDisplayText() => Item;
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
 	
 	    using Microsoft.AspNetCore.Components;

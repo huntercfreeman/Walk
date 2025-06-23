@@ -30,7 +30,9 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
 
 	public override int GetHashCode() => Item.Value.GetHashCode();
 
-	/*public override TreeViewRenderer GetTreeViewRenderer()
+	public override string GetDisplayText() => Item.Value;
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
 	    using Microsoft.AspNetCore.Components;
         using Walk.Common.RazorLib.Options.Models;

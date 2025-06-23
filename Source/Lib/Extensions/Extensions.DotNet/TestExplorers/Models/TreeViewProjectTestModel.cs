@@ -31,7 +31,9 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 
 	public override int GetHashCode() => Item.ProjectIdGuid.GetHashCode();
 
-	/*public override TreeViewRenderer GetTreeViewRenderer()
+	public override string GetDisplayText() => Item.AbsolutePath.NameWithExtension;
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
 	
 	    using Microsoft.AspNetCore.Components;

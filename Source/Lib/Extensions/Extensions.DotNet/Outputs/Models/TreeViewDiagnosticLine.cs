@@ -24,7 +24,9 @@ public class TreeViewDiagnosticLine : TreeViewWithType<DiagnosticLine>
 
 	public override int GetHashCode() => Item.GetHashCode();
 
-	/*public override TreeViewRenderer GetTreeViewRenderer()
+	public override string GetDisplayText() => Item.TextShort;
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
 	
 	    using Microsoft.AspNetCore.Components;

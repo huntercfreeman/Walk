@@ -26,7 +26,9 @@ public class TreeViewFindAllReferences : TreeViewWithType<ResourceUri>
 
 	public override int GetHashCode() => Item.GetHashCode();
 
-	public override TreeViewRenderer GetTreeViewRenderer()
+	public override string GetDisplayText() => aaa;
+
+    public override TreeViewRenderer GetTreeViewRenderer()
 	{
 		return new TreeViewRenderer(
 			typeof(TreeViewFindAllReferencesDisplay),

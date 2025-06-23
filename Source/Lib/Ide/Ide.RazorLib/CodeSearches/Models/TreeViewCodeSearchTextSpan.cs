@@ -34,7 +34,9 @@ public class TreeViewCodeSearchTextSpan : TreeViewWithType<TextEditorTextSpan>
 
 	public override int GetHashCode() => Item.ResourceUri.Value.GetHashCode();
 	
-	/*public override TreeViewRenderer GetTreeViewRenderer()
+	public override string GetDisplayText() => AbsolutePath.NameWithExtension;
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
 	
         using Microsoft.AspNetCore.Components;

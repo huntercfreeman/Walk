@@ -47,7 +47,9 @@ public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpPr
 		return uniqueAbsolutePathString.GetHashCode();
 	}
 
-	/*public override TreeViewRenderer GetTreeViewRenderer()
+	public override string GetDisplayText() => Item.ReferenceProjectAbsolutePath.NameWithExtension;
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
 		
 		

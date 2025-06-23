@@ -34,6 +34,8 @@ public class TreeViewMarkupString : TreeViewWithType<MarkupString>
         return Path.GetRandomFileName().GetHashCode();
     }
 
+    public override string GetDisplayText() => Item.Value;
+
     /*public override TreeViewRenderer GetTreeViewRenderer()
     {
         using Microsoft.AspNetCore.Components;

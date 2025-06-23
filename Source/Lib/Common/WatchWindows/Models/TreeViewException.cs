@@ -30,6 +30,8 @@ public class TreeViewException : TreeViewWithType<Exception>
         return Item.GetHashCode();
     }
 
+    public override string GetDisplayText() => Item.Message;
+
     /*public override TreeViewRenderer GetTreeViewRenderer()
     {
       

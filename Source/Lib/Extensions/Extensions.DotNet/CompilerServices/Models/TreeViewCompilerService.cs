@@ -38,7 +38,9 @@ public class TreeViewCompilerService : TreeViewWithType<ICompilerService>
 
 	public override int GetHashCode() => Item.GetHashCode();
 
-	/*public override TreeViewRenderer GetTreeViewRenderer()
+	public override string GetDisplayText() => "TreeViewCompilerService";
+
+    /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
 	
 	    using Walk.Extensions.DotNet.CompilerServices.Models;
