@@ -41,6 +41,12 @@ public class AppOptionsService : IAppOptionsService
 
     public string FontSizeCssStyleString { get; set; }
     
+    public string ResizeHandleCssWidth { get; set; } =
+        $"width: {AppOptionsState.DEFAULT_RESIZE_HANDLE_WIDTH_IN_PIXELS.ToCssValue()}px";
+        
+    public string ResizeHandleCssHeight { get; set; } =
+        $"height: {AppOptionsState.DEFAULT_RESIZE_HANDLE_HEIGHT_IN_PIXELS.ToCssValue()}px";
+    
     public bool ShowPanelTitles => GetAppOptionsState().Options.ShowPanelTitles;
     
     public string ShowPanelTitlesCssClass => GetAppOptionsState().Options.ShowPanelTitles
@@ -161,6 +167,8 @@ public class AppOptionsService : IAppOptionsService
             }
         };
         
+        ResizeHandleCssWidth = $"width: {GetAppOptionsState().Options.ResizeHandleWidthInPixels.ToCssValue()}px";
+        
         AppOptionsStateChanged?.Invoke();
 
         if (updateStorage)
@@ -178,6 +186,8 @@ public class AppOptionsService : IAppOptionsService
                 ResizeHandleHeightInPixels = resizeHandleHeightInPixels
             }
         };
+        
+        ResizeHandleCssHeight = $"height: {GetAppOptionsState().Options.ResizeHandleHeightInPixels.ToCssValue()}px";
         
         AppOptionsStateChanged?.Invoke();
 
