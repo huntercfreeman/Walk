@@ -8,8 +8,6 @@ public interface IDrag : IDynamicViewModel
     public List<IDropzone> DropzoneList { get; set; }
 
 	public Type DragComponentType { get; }
-	public Dictionary<string, object?>? DragComponentParameterMap { get; }
-	public ElementDimensions DragElementDimensions { get; set; }
 	public string? DragCssClass { get; set; }
 	public string? DragCssStyle { get; set; }
 
