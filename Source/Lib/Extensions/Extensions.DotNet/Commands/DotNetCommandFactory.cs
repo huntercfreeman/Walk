@@ -112,7 +112,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 							false,
 							false);
 
-						var elementId = _treeViewService.GetNodeElementId(localNodeOfViewModel);
+						var elementId = _treeViewService.GetActiveNodeElementId(DotNetSolutionState.TreeViewSolutionExplorerStateKey);
 
 						await focusSolutionExplorerCommand.CommandFunc
 							.Invoke(commandArgs)

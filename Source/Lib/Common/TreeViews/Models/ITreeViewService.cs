@@ -22,10 +22,8 @@ public interface ITreeViewService
 		bool addSelectedNodes,
 		bool selectNodesBetweenCurrentAndNextActiveNode);
 
-    public string GetNodeElementId(TreeViewNoType node);
+    public string GetActiveNodeElementId(Key<TreeViewContainer> containerKey);
 
-    public string GetTreeViewContainerElementId(Key<TreeViewContainer> containerKey);
-		
 	// Reducer methods
     public void ReduceRegisterContainerAction(TreeViewContainer container);
 
@@ -76,5 +74,9 @@ public interface ITreeViewService
     public void ReduceMoveEndAction(
 		Key<TreeViewContainer> containerKey,
 		bool addSelectedNodes,
-		bool selectNodesBetweenCurrentAndNextActiveNode);
+	    bool selectNodesBetweenCurrentAndNextActiveNode);
+		
+	public string GetNodeElementStyle(int offsetInPixels);
+	public string GetNodeTextStyle(int walkTreeViewIconWidth);
+	public string GetNodeBorderStyle(int offsetInPixels, int walkTreeViewIconWidth);
 }

@@ -4,9 +4,9 @@
 <div class="di_tree-view">
     @if (!TreeViewNoType.IsHidden)
     {
-        <div id="@RenderBatch.TreeViewService.GetNodeElementId(TreeViewNoType)"
+        <div id="@IsActiveId"
              class="di_tree-view-title @IsSelectedCssClass @IsActiveCssClass"
-             style="padding-left: @(OffsetInPixels.ToCssValue())px;"
+             style="@RenderBatch.TreeViewService.GetNodeElementStyle(OffsetInPixels)"
              tabindex="-1"
              @onclick:stopPropagation="true"
              @onclick="HandleOnClick"
@@ -51,7 +51,7 @@
             </div>
 
             <div class="di_tree-view-title-content"
-                 style="width: calc(100% - @(RenderBatch.WalkTreeViewIconWidth.ToCssValue())px); height:  100%;"
+                 style="@RenderBatch.TreeViewService.GetNodeTextStyle(RenderBatch.WalkTreeViewIconWidth)"
                  title="@TreeViewNoType.GetHoverText()">
                 
                 @TreeViewNoType.GetIcon(iconDriver)
@@ -61,7 +61,7 @@
         </div>
     }
 
-    @if (TreeViewNoType.IsExpanded) 
+    @if (TreeViewNoType.IsExpanded)
     {
         <div class="di_tree-view-children">
             
@@ -75,7 +75,7 @@
         
             @if (!TreeViewNoType.IsHidden)
             {
-                <div style="margin-left: @((OffsetInPixels + RenderBatch.WalkTreeViewIconWidth / 2).ToCssValue())px;"
+                <div style="@RenderBatch.TreeViewService.GetNodeBorderStyle(OffsetInPixels, RenderBatch.WalkTreeViewIconWidth)"
                      class="di_tree-view-children-border">
                 </div>
             }

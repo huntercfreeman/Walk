@@ -28,6 +28,8 @@ public partial class TreeViewNodeDisplay : ComponentBase
 
     private bool IsActive => RenderBatch.TreeViewContainer.ActiveNode is not null &&
                              RenderBatch.TreeViewContainer.ActiveNode.Key == TreeViewNoType.Key;
+                             
+    private string IsActiveId => IsActive ? RenderBatch.TreeViewContainer.ActiveNodeElementId : string.Empty;
 
     private string IsSelectedCssClass => IsSelected ? "di_selected" : string.Empty;
     private string IsActiveCssClass => IsActive ? "di_active" : string.Empty;
