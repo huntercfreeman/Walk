@@ -228,6 +228,17 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     	await InvokeAsync(StateHasChanged);
     }
     
+    private string GetContainerElementCssClass(TreeViewContainer treeViewContainer)
+    {
+        CommonBackgroundTaskApi.UiStringBuilder.Clear();
+        CommonBackgroundTaskApi.UiStringBuilder.Append("di_tree-view-state di_unselectable ");
+        CommonBackgroundTaskApi.UiStringBuilder.Append(GetHasActiveNodeCssClass(treeViewContainer));
+        CommonBackgroundTaskApi.UiStringBuilder.Append(" ");
+        CommonBackgroundTaskApi.UiStringBuilder.Append(CssClassString);
+        
+        return CommonBackgroundTaskApi.UiStringBuilder.ToString();
+    }
+    
     public void Dispose()
     {
     	TreeViewService.TreeViewStateChanged -= OnTreeViewStateChanged;
