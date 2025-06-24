@@ -228,6 +228,20 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     	await InvokeAsync(StateHasChanged);
     }
     
+    /// <summary>
+    /// This method should only be invoked from the "UI thread" due to the usage of `CommonBackgroundTaskApi.UiStringBuilder`.
+    /// </summary>
+    private string GetContainerElementCssClass(TreeViewContainer treeViewContainer)
+    {
+        CommonBackgroundTaskApi.UiStringBuilder.Clear();
+        CommonBackgroundTaskApi.UiStringBuilder.Append("di_tree-view-state di_unselectable ");
+        CommonBackgroundTaskApi.UiStringBuilder.Append(GetHasActiveNodeCssClass(treeViewContainer));
+        CommonBackgroundTaskApi.UiStringBuilder.Append(" ");
+        CommonBackgroundTaskApi.UiStringBuilder.Append(CssClassString);
+        
+        return CommonBackgroundTaskApi.UiStringBuilder.ToString();
+    }
+    
     public void Dispose()
     {
     	TreeViewService.TreeViewStateChanged -= OnTreeViewStateChanged;

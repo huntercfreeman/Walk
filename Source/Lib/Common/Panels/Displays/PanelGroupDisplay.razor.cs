@@ -249,6 +249,20 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     	await InvokeAsync(StateHasChanged);
     }
     
+    /// <summary>
+    /// This method should only be invoked from the "UI thread" due to the usage of `CommonBackgroundTaskApi.UiStringBuilder`.
+    /// </summary>
+    private string GetPanelElementCssClass()
+    {
+        CommonBackgroundTaskApi.UiStringBuilder.Clear();
+        CommonBackgroundTaskApi.UiStringBuilder.Append("di_ide_panel ");
+        CommonBackgroundTaskApi.UiStringBuilder.Append(PanelPositionCssClass);
+        CommonBackgroundTaskApi.UiStringBuilder.Append(" ");
+        CommonBackgroundTaskApi.UiStringBuilder.Append(CssClassString);
+    
+        return CommonBackgroundTaskApi.UiStringBuilder.ToString();
+    }
+    
     public void Dispose()
     {
     	PanelService.PanelStateChanged -= OnPanelStateChanged;

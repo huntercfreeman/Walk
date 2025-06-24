@@ -18,6 +18,9 @@ public interface IAppOptionsService
     public bool ShowPanelTitles { get; }
     public string ShowPanelTitlesCssClass { get; }
     
+    public string ResizeHandleCssWidth { get; set; }
+    public string ResizeHandleCssHeight { get; set; }
+    
     /// <summary>
     /// Very hacky property to avoid circular services while I work out the details of things.
     /// </summary>

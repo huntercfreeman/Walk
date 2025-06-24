@@ -5,7 +5,7 @@
     @if (!TreeViewNoType.IsHidden)
     {
         <div id="@IsActiveId"
-             class="di_tree-view-title @IsSelectedCssClass @IsActiveCssClass"
+             class="@GetNodeElementCssClass()"
              style="@RenderBatch.TreeViewService.GetNodeElementStyle(OffsetInPixels)"
              tabindex="-1"
              @onclick:stopPropagation="true"
@@ -20,7 +20,7 @@
              @onkeydown="e => HandleOnKeyDown(e)"
              @ref="_treeViewTitleElementReference">
 
-            <div class="di_tree-view-expansion-chevron @GetShowDefaultCursorCssClass(TreeViewNoType.IsExpandable)"
+            <div class="@GetNodeChevronCssClass()"
                  @onclick:stopPropagation="TreeViewNoType.IsExpandable"
                  @onmousedown:stopPropagation="TreeViewNoType.IsExpandable"
                  @onmousedown="_ => HandleExpansionChevronOnMouseDown(TreeViewNoType)">

@@ -2,7 +2,7 @@
 @using Walk.Common.RazorLib.Dimensions.Models
 
 <div class="di_resize-row"
-     style="height: @(AppOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels.ToCssValue())px;"
+     style="@AppOptionsService.ResizeHandleCssHeight"
      @onmousedown="() => SubscribeToDragEvent(DragEventHandlerResizeHandleAsync)">
     
 </div>
