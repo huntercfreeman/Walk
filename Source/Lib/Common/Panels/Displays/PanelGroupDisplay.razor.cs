@@ -48,10 +48,24 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
 
     public string DimensionAttributeModificationPurpose => $"take_size_of_adjacent_hidden_panel_{PanelGroupKey}";
 
-    private string PanelPositionCssClass => GetPanelPositionCssClass();
-    
+    private string _panelPositionCss;
+    private string _htmlIdTabs;
+
     protected override void OnInitialized()
     {
+        var position = string.Empty;
+
+        if (PanelFacts.LeftPanelGroupKey == PanelGroupKey)
+            position = "left";
+        else if (PanelFacts.RightPanelGroupKey == PanelGroupKey)
+            position = "right";
+        else if (PanelFacts.BottomPanelGroupKey == PanelGroupKey)
+            position = "bottom";
+
+        _panelPositionCss = $"di_ide_panel_{position}";
+        
+        _htmlIdTabs = _panelPositionCss + "_tabs";
+    
     	PanelService.PanelStateChanged += OnPanelStateChanged;
     
     	base.OnInitialized();
@@ -79,25 +93,6 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
 
 		return tabList;
 	}
-
-    private string GetHtmlId()
-	{
-		return GetPanelPositionCssClass();
-	}
-
-    private string GetPanelPositionCssClass()
-    {
-        var position = string.Empty;
-
-        if (PanelFacts.LeftPanelGroupKey == PanelGroupKey)
-            position = "left";
-        else if (PanelFacts.RightPanelGroupKey == PanelGroupKey)
-            position = "right";
-        else if (PanelFacts.BottomPanelGroupKey == PanelGroupKey)
-            position = "bottom";
-
-        return $"di_ide_panel_{position}";
-    }
 
     private async Task PassAlongSizeIfNoActiveTab()
     {
@@ -256,7 +251,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     {
         CommonBackgroundTaskApi.UiStringBuilder.Clear();
         CommonBackgroundTaskApi.UiStringBuilder.Append("di_ide_panel ");
-        CommonBackgroundTaskApi.UiStringBuilder.Append(PanelPositionCssClass);
+        CommonBackgroundTaskApi.UiStringBuilder.Append(_panelPositionCss);
         CommonBackgroundTaskApi.UiStringBuilder.Append(" ");
         CommonBackgroundTaskApi.UiStringBuilder.Append(CssClassString);
     
