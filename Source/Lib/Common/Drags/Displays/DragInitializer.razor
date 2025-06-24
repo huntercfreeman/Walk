@@ -15,7 +15,7 @@
 
 		if (draggableViewModel.DragComponentType is not null)
 		{
-			<div style="draggableViewModel.ElementDimensions.StyleString">
+			<div style="@draggableViewModel.DragElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder)">
 				<DragDisplay/>
 			</div>
 		}

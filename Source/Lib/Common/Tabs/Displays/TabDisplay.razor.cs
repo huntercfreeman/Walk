@@ -133,11 +133,19 @@ public partial class TabDisplay : ComponentBase
 			// Left
 			{
 				draggable.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
+				
+				draggable.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+	            	mouseEventArgs.ClientX,
+	            	DimensionUnitKind.Pixels));
 			}
 
 			// Top
 			{
 				draggable.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
+				
+				draggable.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+	            	mouseEventArgs.ClientY,
+	            	DimensionUnitKind.Pixels));
 			}
 
             draggable.DragElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
