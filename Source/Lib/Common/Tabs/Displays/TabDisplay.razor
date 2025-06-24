@@ -14,11 +14,12 @@
 	        TimeSpan.FromSeconds(6));
 	}
 	
-	var dynamicCss = localTabGroup?.GetDynamicCss(localTabViewModel);
+	CalculateCssClass(localTabGroup, localTabViewModel);
+	CalculateCssStyle();
 }
 
-<button class="di_polymorphic-tab di_button di_unselectable @IsActiveCssClass @dynamicCss @GetIsBeingDraggedCssClassString() @CssClassString"
-		style="@GetDraggableCssStyleString() @CssStyleString"
+<button class="@_cssClass"
+		style="@_cssStyle"
 		id="@HtmlId"
         title="@localTabViewModel.TitleVerbose"
 		@ref="_tabButtonElementReference"

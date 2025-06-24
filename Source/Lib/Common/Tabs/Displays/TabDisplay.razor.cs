@@ -48,6 +48,9 @@ public partial class TabDisplay : ComponentBase, IDisposable
 	private string _htmlId = null;
 
 	private ElementReference? _tabButtonElementReference;
+	
+	private string _cssClass = string.Empty;
+	private string _cssStyle = string.Empty;
 
 	private string HtmlId => IsBeingDragged
 		? _htmlId ??= $"di_polymorphic-tab_{Tab.DynamicViewModelKey.Guid}"
@@ -285,6 +288,37 @@ public partial class TabDisplay : ComponentBase, IDisposable
 		return IsBeingDragged
 			? "di_drag"
 			: string.Empty;
+	}
+	
+	/// <summary>
+	/// This method can only be invoked from the "UI thread" due to the shared `UiStringBuilder` usage.
+	/// </summary>
+	private void CalculateCssClass(ITabGroup localTabGroup, ITab localTabViewModel)
+	{
+	    var uiStringBuilder = CommonBackgroundTaskApi.UiStringBuilder;
+	    
+	    uiStringBuilder.Clear();
+	    uiStringBuilder.Append("di_polymorphic-tab di_button di_unselectable ");
+	    uiStringBuilder.Append(IsActiveCssClass);
+	    uiStringBuilder.Append(" ");
+	    uiStringBuilder.Append(localTabGroup?.GetDynamicCss(localTabViewModel));
+	    uiStringBuilder.Append(" ");
+	    uiStringBuilder.Append(GetIsBeingDraggedCssClassString());
+	    uiStringBuilder.Append(" ");
+	    uiStringBuilder.Append(CssClassString);
+	
+	    _cssClass = uiStringBuilder.ToString();
+	}
+	
+	private void CalculateCssStyle()
+	{
+	    var uiStringBuilder = CommonBackgroundTaskApi.UiStringBuilder;
+	    
+	    uiStringBuilder.Clear();
+	    uiStringBuilder.Append(GetDraggableCssStyleString());
+	    uiStringBuilder.Append(CssStyleString);
+	    
+	    _cssStyle = uiStringBuilder.ToString();
 	}
 
 	public void Dispose()
