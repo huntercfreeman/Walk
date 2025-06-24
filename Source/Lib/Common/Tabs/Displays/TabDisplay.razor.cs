@@ -116,9 +116,15 @@ public partial class TabDisplay : ComponentBase
     
     private async Task HandleOnMouseOutAsync(MouseEventArgs mouseEventArgs)
     {
+        if ((mouseEventArgs.Buttons & 1) == 0)
+	        _thinksLeftMouseButtonIsDown = false;
+    
         if (_thinksLeftMouseButtonIsDown && Tab is IDrag draggable)
         {
-            // This needs to run synchronously to guarantee `dragState.DragElementDimensions` is in a threadsafe state (keep any awaits after it).
+            _thinksLeftMouseButtonIsDown = false;
+        
+            // This needs to run synchronously to guarantee `dragState.DragElementDimensions` is in a threadsafe state
+            // (keep any awaits after it).
             // (only the "UI thread" touches `dragState.DragElementDimensions`).
             var dragState = RenderBatch.DragService.GetDragState();
 
