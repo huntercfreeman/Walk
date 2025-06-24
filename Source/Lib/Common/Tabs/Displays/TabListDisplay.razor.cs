@@ -32,9 +32,6 @@ public partial class TabListDisplay : ComponentBase
 	[Parameter, EditorRequired]
 	public List<ITab> TabList { get; set; } = null!;
 	
-	[Parameter]
-	public string CssClassString { get; set; } = string.Empty;
-	
 	private TabCascadingValueBatch _tabCascadingValueBatch = new();
 	
     public async Task NotifyStateChangedAsync()

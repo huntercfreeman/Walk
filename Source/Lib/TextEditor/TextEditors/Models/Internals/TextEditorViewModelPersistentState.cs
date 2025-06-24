@@ -77,11 +77,6 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         };
 
         _dragTabComponentType = typeof(TabDisplay);
-        _dragTabComponentParameterMap = new()
-        {
-            { nameof(TabDisplay.Tab), this },
-            { nameof(TabDisplay.IsBeingDragged), true }
-        };
 
         DialogFocusPointHtmlElementId = $"di_dialog-focus-point_{DynamicViewModelKey.Guid}";
 	
@@ -349,7 +344,6 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 	/// This type contains all data, and logic, necessary to render a text editor from within a dialog, a panel tab, or a text editor group tab.
 	/// </summary>
     private readonly Type _dragTabComponentType;
-    private readonly Dictionary<string, object?>? _dragTabComponentParameterMap;
 
     private readonly Type? _dragDialogComponentType = null;
     private readonly Dictionary<string, object?>? _dragDialogComponentParameterMap = null;
@@ -392,7 +386,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 
     public Dictionary<string, object?>? DragComponentParameterMap => TabGroup is null
         ? _dragDialogComponentParameterMap
-        : _dragTabComponentParameterMap;
+        : null;
 
     public string? DragCssClass { get; set; }
     public string? DragCssStyle { get; set; }

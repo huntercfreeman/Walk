@@ -16,10 +16,8 @@
 	}
 	
 	CalculateCssClass(localTabGroup, localTabViewModel);
-	CalculateCssStyle();
     
     <button class="@_cssClass"
-    		style="@_cssStyle"
     		id="@HtmlId"
             title="@localTabViewModel.TitleVerbose"
     		@ref="_tabButtonElementReference"
@@ -29,7 +27,6 @@
     		@onmousedown:preventDefault="true"
             @onmousedown="HandleOnMouseDownAsync"
             @onmouseup="HandleOnMouseUp"
-            @onmouseout="HandleOnMouseOutAsync"
     		@oncontextmenu:preventDefault="true"
     		@oncontextmenu:stopPropagation="true"
     		@oncontextmenu="e => ManuallyPropagateOnContextMenu(e, localTabViewModel)">
