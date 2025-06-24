@@ -14,19 +14,8 @@ namespace Walk.Common.RazorLib.Tabs.Displays;
 
 public partial class TabDisplay : ComponentBase, IDisposable
 {
-	[Inject]
-    private IDragService DragService { get; set; } = null!;
-    [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-
-	[CascadingParameter(Name=nameof(HandleTabButtonOnContextMenu)), EditorRequired]
-	public Func<TabContextMenuEventArgs, Task>? HandleTabButtonOnContextMenu { get; set; }
+    [CascadingParameter, EditorRequired]
+    public TabCascadingValueBatch RenderBatch { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public ITab Tab { get; set; } = null!;
@@ -62,7 +51,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
     {
-        DragService.DragStateChanged += DragStateWrapOnStateChanged;
+        // RenderBatch.DragService.DragStateChanged += DragStateWrapOnStateChanged;
 
         base.OnInitialized();
     }
@@ -72,7 +61,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 		if (IsBeingDragged)
 			return;
 
-        if (!DragService.GetDragState().ShouldDisplay)
+        if (!RenderBatch.DragService.GetDragState().ShouldDisplay)
         {
             _dragEventHandler = null;
             _previousDragMouseEventArgs = null;
@@ -80,7 +69,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
         }
         else
         {
-            var mouseEventArgs = DragService.GetDragState().MouseEventArgs;
+            var mouseEventArgs = RenderBatch.DragService.GetDragState().MouseEventArgs;
 
             if (_dragEventHandler is not null)
             {
@@ -140,12 +129,12 @@ public partial class TabDisplay : ComponentBase, IDisposable
         MouseEventArgs mouseEventArgs,
         ITab tab)
     {
-		var localHandleTabButtonOnContextMenu = HandleTabButtonOnContextMenu;
+		var localHandleTabButtonOnContextMenu = RenderBatch.HandleTabButtonOnContextMenu;
 
 		if (localHandleTabButtonOnContextMenu is null)
 			return;
 
-		CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+		RenderBatch.CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
 		{
     		WorkKind = CommonWorkKind.Tab_ManuallyPropagateOnContextMenu,
 			HandleTabButtonOnContextMenu = localHandleTabButtonOnContextMenu,
@@ -190,7 +179,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
         if (_thinksLeftMouseButtonIsDown && Tab is IDrag draggable)
         {
-			var measuredHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi
+			var measuredHtmlElementDimensions = await RenderBatch.CommonBackgroundTaskApi.JsRuntimeCommonApi
                 .MeasureElementById(HtmlId)
                 .ConfigureAwait(false);
 
@@ -241,7 +230,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
         _dragEventHandler = DragEventHandlerAsync;
 
-		DragService.ReduceShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, draggable);
+		RenderBatch.DragService.ReduceShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, draggable);
     }
 
 	private Task DragEventHandlerAsync(
@@ -278,7 +267,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 	private string GetDraggableCssStyleString()
 	{
 		if (IsBeingDragged && Tab is IDrag draggable)
-			return draggable.DragElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder);
+			return draggable.DragElementDimensions.GetStyleString(RenderBatch.CommonBackgroundTaskApi.UiStringBuilder);
 
 		return string.Empty;
 	}
@@ -295,7 +284,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 	/// </summary>
 	private void CalculateCssClass(ITabGroup localTabGroup, ITab localTabViewModel)
 	{
-	    var uiStringBuilder = CommonBackgroundTaskApi.UiStringBuilder;
+	    var uiStringBuilder = RenderBatch.CommonBackgroundTaskApi.UiStringBuilder;
 	    
 	    uiStringBuilder.Clear();
 	    uiStringBuilder.Append("di_polymorphic-tab di_button di_unselectable ");
@@ -312,7 +301,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 	
 	private void CalculateCssStyle()
 	{
-	    var uiStringBuilder = CommonBackgroundTaskApi.UiStringBuilder;
+	    var uiStringBuilder = RenderBatch.CommonBackgroundTaskApi.UiStringBuilder;
 	    
 	    uiStringBuilder.Clear();
 	    uiStringBuilder.Append(GetDraggableCssStyleString());
@@ -323,6 +312,6 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
 	public void Dispose()
     {
-        DragService.DragStateChanged -= DragStateWrapOnStateChanged;
+        // RenderBatch.DragService.DragStateChanged -= DragStateWrapOnStateChanged;
     }
 }

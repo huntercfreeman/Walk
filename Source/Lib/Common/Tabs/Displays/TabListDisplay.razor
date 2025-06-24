@@ -4,9 +4,19 @@
 
 <div class="di_polymorphic-tab-list @CssClassString">
 
-	@{ var localTabList = TabList; }
+	@{
+	    var localTabList = TabList;
+	    
+	    _tabCascadingValueBatch.DragService = DragService;
+        _tabCascadingValueBatch.NotificationService = NotificationService;
+        _tabCascadingValueBatch.AppOptionsService = AppOptionsService;
+    	_tabCascadingValueBatch.CommonBackgroundTaskApi = CommonBackgroundTaskApi;
+    	_tabCascadingValueBatch.CommonComponentRenderers = CommonComponentRenderers;
+    	_tabCascadingValueBatch.HandleTabButtonOnContextMenu = HandleTabButtonOnContextMenu;
+    }
 
-	<CascadingValue Name="@nameof(TabDisplay.HandleTabButtonOnContextMenu)" Value="HandleTabButtonOnContextMenu">
+	<CascadingValue Value="_tabCascadingValueBatch"
+	                IsFixed="true">
 		@foreach (var tab in localTabList)
 		{
 			<TabDisplay @key="tab.DynamicViewModelKey"

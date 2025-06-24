@@ -27,15 +27,25 @@
         @if (panelGroup is not null)
         {
 			var tabList = GetTabList(panelGroup);
-
-			foreach (var panelTab in tabList)
-            {
-                <TabDisplay @key="panelTab.Key"
-                            Tab="panelTab"
-							CssClassString="di_ide_panel-tab"
-							CssStyleString=""
-							ShouldDisplayCloseButton="false" />
-            }
+			
+			_tabCascadingValueBatch.DragService = DragService;
+            _tabCascadingValueBatch.NotificationService = NotificationService;
+            _tabCascadingValueBatch.AppOptionsService = AppOptionsService;
+        	_tabCascadingValueBatch.CommonBackgroundTaskApi = CommonBackgroundTaskApi;
+        	_tabCascadingValueBatch.CommonComponentRenderers = CommonComponentRenderers;
+        	_tabCascadingValueBatch.HandleTabButtonOnContextMenu = null;
+			
+			<CascadingValue Value="_tabCascadingValueBatch"
+        	                IsFixed="true">
+    			@foreach (var panelTab in tabList)
+                {
+                    <TabDisplay @key="panelTab.Key"
+                                Tab="panelTab"
+    							CssClassString="di_ide_panel-tab"
+    							CssStyleString=""
+    							ShouldDisplayCloseButton="false" />
+                }
+            </CascadingValue>
         }
 
         <div class="di_ide_panel-tabs-justify-end"

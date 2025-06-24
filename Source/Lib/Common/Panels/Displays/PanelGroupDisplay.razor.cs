@@ -5,6 +5,11 @@ using Walk.Common.RazorLib.Drags.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Dropdowns.Models;
+using Walk.Common.RazorLib.Notifications.Models;
+using Walk.Common.RazorLib.Options.Models;
+using Walk.Common.RazorLib.ComponentRenderers.Models;
+using Walk.Common.RazorLib.Tabs.Models;
 
 namespace Walk.Common.RazorLib.Panels.Displays;
 
@@ -16,6 +21,14 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     private IDragService DragService { get; set; } = null!;
     [Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
+    [Inject]
+	private IDropdownService DropdownService { get; set; } = null!;
+    [Inject]
+    private INotificationService NotificationService { get; set; } = null!;
+    [Inject]
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
+	[Inject]
+	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<PanelGroup> PanelGroupKey { get; set; } = Key<PanelGroup>.Empty;
@@ -30,6 +43,8 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     public string CssClassString { get; set; } = null!;
     [Parameter]
     public RenderFragment? JustifyEndRenderFragment { get; set; } = null;
+    
+    private TabCascadingValueBatch _tabCascadingValueBatch = new();
 
     public string DimensionAttributeModificationPurpose => $"take_size_of_adjacent_hidden_panel_{PanelGroupKey}";
 
