@@ -9,24 +9,14 @@ using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Tabs.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
+using Walk.Common.RazorLib.Keys.Models;
 
 namespace Walk.Common.RazorLib.Tabs.Displays;
 
-public partial class TabDisplay : ComponentBase, IDisposable
+public partial class TabDisplay : ComponentBase
 {
-	[Inject]
-    private IDragService DragService { get; set; } = null!;
-    [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-
-	[CascadingParameter(Name=nameof(HandleTabButtonOnContextMenu)), EditorRequired]
-	public Func<TabContextMenuEventArgs, Task>? HandleTabButtonOnContextMenu { get; set; }
+    [CascadingParameter, EditorRequired]
+    public TabCascadingValueBatch RenderBatch { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public ITab Tab { get; set; } = null!;
@@ -35,70 +25,23 @@ public partial class TabDisplay : ComponentBase, IDisposable
 	public string? CssClassString { get; set; }
 	[Parameter]
 	public bool ShouldDisplayCloseButton { get; set; } = true;
-	[Parameter]
-	public string? CssStyleString { get; set; }
-	[Parameter]
-	public bool IsBeingDragged { get; set; }
 
     private bool _thinksLeftMouseButtonIsDown;
-	private Func<(MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;
-    private MouseEventArgs? _previousDragMouseEventArgs;
 
-	private string _htmlIdDragged = null;
-	private string _htmlId = null;
+	private Key<IDynamicViewModel> _dynamicViewModelKeyPrevious;
 
 	private ElementReference? _tabButtonElementReference;
+	
+	private string _cssClass = string.Empty;
 
-	private string HtmlId => IsBeingDragged
-		? _htmlId ??= $"di_polymorphic-tab_{Tab.DynamicViewModelKey.Guid}"
-		: _htmlIdDragged ??= $"di_polymorphic-tab-drag_{Tab.DynamicViewModelKey.Guid}";
+	private string HtmlId { get; set; } = string.Empty;
 
 	private string IsActiveCssClass => (Tab.TabGroup?.GetIsActive(Tab) ?? false)
 		? "di_active"
 	    : string.Empty;
 
-	protected override void OnInitialized()
-    {
-        DragService.DragStateChanged += DragStateWrapOnStateChanged;
-
-        base.OnInitialized();
-    }
-
-    private async void DragStateWrapOnStateChanged()
-    {
-		if (IsBeingDragged)
-			return;
-
-        if (!DragService.GetDragState().ShouldDisplay)
-        {
-            _dragEventHandler = null;
-            _previousDragMouseEventArgs = null;
-            _thinksLeftMouseButtonIsDown = false;
-        }
-        else
-        {
-            var mouseEventArgs = DragService.GetDragState().MouseEventArgs;
-
-            if (_dragEventHandler is not null)
-            {
-                if (_previousDragMouseEventArgs is not null && mouseEventArgs is not null)
-                {
-                    await _dragEventHandler
-                        .Invoke((_previousDragMouseEventArgs, mouseEventArgs))
-                        .ConfigureAwait(false);
-                }
-
-                _previousDragMouseEventArgs = mouseEventArgs;
-                await InvokeAsync(StateHasChanged);
-            }
-        }
-    }
-    
     private async Task OnClick(ITab localTabViewModel, MouseEventArgs e)
     {
-    	if (IsBeingDragged)
-			return;
-		
 		var localTabGroup = localTabViewModel.TabGroup;
 		if (localTabGroup is null)
 			return;
@@ -108,9 +51,6 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
 	private async Task CloseTabOnClickAsync()
 	{
-		if (IsBeingDragged)
-			return;
-			
 		var localTabViewModel = Tab;
 
         var localTabGroup = localTabViewModel.TabGroup;
@@ -122,9 +62,6 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
 	private async Task HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)
 	{
-		if (IsBeingDragged)
-			return;
-
 		if (mouseEventArgs.Button == 0)
 	        _thinksLeftMouseButtonIsDown = true;
 		if (mouseEventArgs.Button == 1)
@@ -137,12 +74,12 @@ public partial class TabDisplay : ComponentBase, IDisposable
         MouseEventArgs mouseEventArgs,
         ITab tab)
     {
-		var localHandleTabButtonOnContextMenu = HandleTabButtonOnContextMenu;
+		var localHandleTabButtonOnContextMenu = RenderBatch.HandleTabButtonOnContextMenu;
 
 		if (localHandleTabButtonOnContextMenu is null)
 			return;
 
-		CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+		RenderBatch.CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
 		{
     		WorkKind = CommonWorkKind.Tab_ManuallyPropagateOnContextMenu,
 			HandleTabButtonOnContextMenu = localHandleTabButtonOnContextMenu,
@@ -174,45 +111,30 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
 	private void HandleOnMouseUp()
     {
-		if (IsBeingDragged)
-			return;
-
         _thinksLeftMouseButtonIsDown = false;
     }
-
-	private async Task HandleOnMouseOutAsync(MouseEventArgs mouseEventArgs)
+    
+    private async Task HandleOnMouseOutAsync(MouseEventArgs mouseEventArgs)
     {
-		if (IsBeingDragged)
-			return;
-
         if (_thinksLeftMouseButtonIsDown && Tab is IDrag draggable)
         {
-			var measuredHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi
-                .MeasureElementById(HtmlId)
-                .ConfigureAwait(false);
-
 			await draggable.OnDragStartAsync().ConfigureAwait(false);
 
 			// Width
 			{
 				draggable.DragElementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
-	            draggable.DragElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-	            	measuredHtmlElementDimensions.WidthInPixels,
-	            	DimensionUnitKind.Pixels));
 			}
 
 			// Height
 			{
 				draggable.DragElementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
-	            draggable.DragElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-	            	measuredHtmlElementDimensions.HeightInPixels,
-	            	DimensionUnitKind.Pixels));
 			}
 
 			// Left
 			{
 				draggable.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
-	            draggable.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+				
+				draggable.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
 	            	mouseEventArgs.ClientX,
 	            	DimensionUnitKind.Pixels));
 			}
@@ -220,7 +142,8 @@ public partial class TabDisplay : ComponentBase, IDisposable
 			// Top
 			{
 				draggable.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
-	            draggable.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+				
+				draggable.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
 	            	mouseEventArgs.ClientY,
 	            	DimensionUnitKind.Pixels));
 			}
@@ -230,65 +153,33 @@ public partial class TabDisplay : ComponentBase, IDisposable
             SubscribeToDragEventForScrolling(draggable);
         }
     }
-
-	public void SubscribeToDragEventForScrolling(IDrag draggable)
+    
+    public void SubscribeToDragEventForScrolling(IDrag draggable)
     {
-		if (IsBeingDragged)
-			return;
-
-        _dragEventHandler = DragEventHandlerAsync;
-
-		DragService.ReduceShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, draggable);
+		RenderBatch.DragService.ReduceShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, draggable);
     }
 
-	private Task DragEventHandlerAsync(
-        (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs) mouseEventArgsTuple)
-    {
-		if (IsBeingDragged)
-			return Task.CompletedTask;
-
-        var localThinksLeftMouseButtonIsDown = _thinksLeftMouseButtonIsDown;
-
-        if (!localThinksLeftMouseButtonIsDown)
-            return Task.CompletedTask;
-
-        // Buttons is a bit flag '& 1' gets if left mouse button is held
-        if (Tab is IDrag draggable &&
-			localThinksLeftMouseButtonIsDown &&
-            (mouseEventArgsTuple.secondMouseEventArgs.Buttons & 1) == 1)
-        {
-            ResizeHelper.Move(
-                draggable.DragElementDimensions,
-                mouseEventArgsTuple.firstMouseEventArgs,
-                mouseEventArgsTuple.secondMouseEventArgs);
-        }
-        else
-        {
-            _dragEventHandler = null;
-            _previousDragMouseEventArgs = null;
-            _thinksLeftMouseButtonIsDown = false;
-        }
-
-        return Task.CompletedTask;
-    }
-
-	private string GetDraggableCssStyleString()
+	/// <summary>
+	/// This method can only be invoked from the "UI thread" due to the shared `UiStringBuilder` usage.
+	/// </summary>
+	private void CalculateCssClass(ITabGroup localTabGroup, ITab localTabViewModel)
 	{
-		if (IsBeingDragged && Tab is IDrag draggable)
-			return draggable.DragElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder);
-
-		return string.Empty;
+	    var uiStringBuilder = RenderBatch.CommonBackgroundTaskApi.UiStringBuilder;
+	    
+	    uiStringBuilder.Clear();
+	    uiStringBuilder.Append("di_polymorphic-tab di_button di_unselectable ");
+	    uiStringBuilder.Append(IsActiveCssClass);
+	    uiStringBuilder.Append(" ");
+	    uiStringBuilder.Append(localTabGroup?.GetDynamicCss(localTabViewModel));
+	    uiStringBuilder.Append(" ");
+	    uiStringBuilder.Append(CssClassString);
+	
+	    _cssClass = uiStringBuilder.ToString();
+	    
+	    if (_dynamicViewModelKeyPrevious != Tab.DynamicViewModelKey)
+	    {
+	        _dynamicViewModelKeyPrevious = Tab.DynamicViewModelKey;
+	        HtmlId = $"di_polymorphic-tab_{Tab.DynamicViewModelKey.Guid}";
+	    }
 	}
-
-	private string GetIsBeingDraggedCssClassString()
-	{
-		return IsBeingDragged
-			? "di_drag"
-			: string.Empty;
-	}
-
-	public void Dispose()
-    {
-        DragService.DragStateChanged -= DragStateWrapOnStateChanged;
-    }
 }

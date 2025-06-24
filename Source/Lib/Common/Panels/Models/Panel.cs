@@ -7,13 +7,13 @@ using Walk.Common.RazorLib.JavaScriptObjects.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Tabs.Displays;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Drags.Displays;
 
 namespace Walk.Common.RazorLib.Panels.Models;
 
 public record Panel : IPanelTab, IDialog, IDrag
 {
     private readonly Type _dragTabComponentType;
-    private readonly Dictionary<string, object?>? _dragTabComponentParameterMap;
 
     private readonly Type? _dragDialogComponentType = null;
     private readonly Dictionary<string, object?>? _dragDialogComponentParameterMap = null;
@@ -40,12 +40,7 @@ public record Panel : IPanelTab, IDialog, IDrag
         DialogService = dialogService;
         CommonBackgroundTaskApi = commonBackgroundTaskApi;
 
-        _dragTabComponentType = typeof(TabDisplay);
-        _dragTabComponentParameterMap = new()
-        {
-            { nameof(TabDisplay.Tab), this },
-            { nameof(TabDisplay.IsBeingDragged), true }
-        };
+        _dragTabComponentType = typeof(DragDisplay);
 
         DialogFocusPointHtmlElementId = $"di_dialog-focus-point_{DynamicViewModelKey.Guid}";
     }
@@ -81,7 +76,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 
     public Dictionary<string, object?>? DragComponentParameterMap => TabGroup is null
         ? _dragDialogComponentParameterMap
-        : _dragTabComponentParameterMap;
+        : null;
 
     public string? DragCssClass { get; set; }
 	public string? DragCssStyle { get; set; }

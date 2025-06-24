@@ -1,5 +1,7 @@
-﻿@using Walk.Common.RazorLib.Menus.Displays
+@using Walk.Common.RazorLib.Menus.Displays
 
-<CascadingValue Name="@nameof(MenuDisplay.ReturnFocusToParentFuncAsync)" Value="TabContextMenuEventArgs.RestoreFocusFunc.Invoke">
+<CascadingValue Name="@nameof(MenuDisplay.ReturnFocusToParentFuncAsync)"
+                Value="TabContextMenuEventArgs.RestoreFocusFunc.Invoke"
+                IsFixed="true">
     <MenuDisplay MenuRecord="GetMenuRecord(TabContextMenuEventArgs)"/>
 </CascadingValue>

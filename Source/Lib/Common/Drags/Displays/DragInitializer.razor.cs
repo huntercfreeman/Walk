@@ -5,6 +5,7 @@ using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.Drags.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Dimensions.Models;
 
 namespace Walk.Common.RazorLib.Drags.Displays;
 
@@ -47,6 +48,21 @@ public partial class DragInitializer : ComponentBase, IDisposable
 	                DRAG_DispatchClearDragStateAction();
 	            else
 	                DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, args.MouseEventArgs);
+	            
+	            var drag = DragService.GetDragState().Drag;
+	            
+	            if (drag?.DragComponentType is not null)
+	            {
+    				drag.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
+    				drag.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+    	            	args.MouseEventArgs.ClientX,
+    	            	DimensionUnitKind.Pixels));
+    
+    				drag.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
+    				drag.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+    	            	args.MouseEventArgs.ClientY,
+    	            	DimensionUnitKind.Pixels));
+	            }
 	
 	            return;
 	    	}
