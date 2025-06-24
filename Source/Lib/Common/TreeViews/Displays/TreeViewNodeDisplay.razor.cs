@@ -207,4 +207,30 @@ public partial class TreeViewNodeDisplay : ComponentBase
             ? string.Empty
             : "di_tree-view-use-default-cursor";
     }
+    
+    /// <summary>
+    /// This method should only be invoked from the "UI thread" due to the usage of `CommonBackgroundTaskApi.UiStringBuilder`.
+    /// </summary>
+    private string GetNodeElementCssClass()
+    {
+        RenderBatch.CommonBackgroundTaskApi.UiStringBuilder.Clear();
+        RenderBatch.CommonBackgroundTaskApi.UiStringBuilder.Append("di_tree-view-title ");
+        RenderBatch.CommonBackgroundTaskApi.UiStringBuilder.Append(IsSelectedCssClass);
+        RenderBatch.CommonBackgroundTaskApi.UiStringBuilder.Append(" ");
+        RenderBatch.CommonBackgroundTaskApi.UiStringBuilder.Append(IsActiveCssClass);
+        
+        return RenderBatch.CommonBackgroundTaskApi.UiStringBuilder.ToString();
+    }
+    
+    /// <summary>
+    /// This method should only be invoked from the "UI thread" due to the usage of `CommonBackgroundTaskApi.UiStringBuilder`.
+    /// </summary>
+    private string GetNodeChevronCssClass()
+    {
+        RenderBatch.CommonBackgroundTaskApi.UiStringBuilder.Clear();
+        RenderBatch.CommonBackgroundTaskApi.UiStringBuilder.Append("di_tree-view-expansion-chevron ");
+        RenderBatch.CommonBackgroundTaskApi.UiStringBuilder.Append(GetShowDefaultCursorCssClass(TreeViewNoType.IsExpandable));
+        
+        return RenderBatch.CommonBackgroundTaskApi.UiStringBuilder.ToString();
+    }
 }
