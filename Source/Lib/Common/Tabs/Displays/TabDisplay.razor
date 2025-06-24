@@ -27,6 +27,7 @@
     		@onmousedown:preventDefault="true"
             @onmousedown="HandleOnMouseDownAsync"
             @onmouseup="HandleOnMouseUp"
+            @onmouseout="HandleOnMouseOutAsync"
     		@oncontextmenu:preventDefault="true"
     		@oncontextmenu:stopPropagation="true"
     		@oncontextmenu="e => ManuallyPropagateOnContextMenu(e, localTabViewModel)">

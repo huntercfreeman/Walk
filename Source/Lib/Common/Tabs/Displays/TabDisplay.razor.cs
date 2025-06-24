@@ -113,6 +113,43 @@ public partial class TabDisplay : ComponentBase
     {
         _thinksLeftMouseButtonIsDown = false;
     }
+    
+    private async Task HandleOnMouseOutAsync(MouseEventArgs mouseEventArgs)
+    {
+        if (_thinksLeftMouseButtonIsDown && Tab is IDrag draggable)
+        {
+			await draggable.OnDragStartAsync().ConfigureAwait(false);
+
+			// Width
+			{
+				draggable.DragElementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
+			}
+
+			// Height
+			{
+				draggable.DragElementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
+			}
+
+			// Left
+			{
+				draggable.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
+			}
+
+			// Top
+			{
+				draggable.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
+			}
+
+            draggable.DragElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
+
+            SubscribeToDragEventForScrolling(draggable);
+        }
+    }
+    
+    public void SubscribeToDragEventForScrolling(IDrag draggable)
+    {
+		RenderBatch.DragService.ReduceShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, draggable);
+    }
 
 	/// <summary>
 	/// This method can only be invoked from the "UI thread" due to the shared `UiStringBuilder` usage.
