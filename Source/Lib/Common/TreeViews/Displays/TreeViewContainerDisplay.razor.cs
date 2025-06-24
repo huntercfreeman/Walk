@@ -228,6 +228,9 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     	await InvokeAsync(StateHasChanged);
     }
     
+    /// <summary>
+    /// This method should only be invoked from the "UI thread" due to the usage of `CommonBackgroundTaskApi.UiStringBuilder`.
+    /// </summary>
     private string GetContainerElementCssClass(TreeViewContainer treeViewContainer)
     {
         CommonBackgroundTaskApi.UiStringBuilder.Clear();
