@@ -116,39 +116,35 @@ public partial class TabDisplay : ComponentBase
     
     private async Task HandleOnMouseOutAsync(MouseEventArgs mouseEventArgs)
     {
+        if ((mouseEventArgs.Buttons & 1) == 0)
+	        _thinksLeftMouseButtonIsDown = false;
+    
         if (_thinksLeftMouseButtonIsDown && Tab is IDrag draggable)
         {
-			await draggable.OnDragStartAsync().ConfigureAwait(false);
+            _thinksLeftMouseButtonIsDown = false;
+        
+            // This needs to run synchronously to guarantee `dragState.DragElementDimensions` is in a threadsafe state
+            // (keep any awaits after it).
+            // (only the "UI thread" touches `dragState.DragElementDimensions`).
+            var dragState = RenderBatch.DragService.GetDragState();
 
-			// Width
-			{
-				draggable.DragElementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
-			}
+			dragState.DragElementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
 
-			// Height
-			{
-				draggable.DragElementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
-			}
+			dragState.DragElementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
 
-			// Left
-			{
-				draggable.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
-				
-				draggable.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-	            	mouseEventArgs.ClientX,
-	            	DimensionUnitKind.Pixels));
-			}
+			dragState.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
+			dragState.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+            	mouseEventArgs.ClientX,
+            	DimensionUnitKind.Pixels));
 
-			// Top
-			{
-				draggable.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
-				
-				draggable.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-	            	mouseEventArgs.ClientY,
-	            	DimensionUnitKind.Pixels));
-			}
+			dragState.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
+			dragState.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+            	mouseEventArgs.ClientY,
+            	DimensionUnitKind.Pixels));
 
-            draggable.DragElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
+            dragState.DragElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
+            
+            await draggable.OnDragStartAsync().ConfigureAwait(false);
 
             SubscribeToDragEventForScrolling(draggable);
         }

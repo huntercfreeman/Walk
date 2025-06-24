@@ -1,6 +1,7 @@
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.ListExtensions;
+using Walk.Common.RazorLib.Dimensions.Models;
 
 namespace Walk.Common.RazorLib.TreeViews.Models;
 
@@ -52,14 +53,17 @@ public class TreeViewService : ITreeViewService
             });
     }
 
-    public string GetNodeElementId(TreeViewNoType node)
+    public string GetActiveNodeElementId(Key<TreeViewContainer> containerKey)
     {
-        return $"di_node-{node.Key}";
-    }
-
-    public string GetTreeViewContainerElementId(Key<TreeViewContainer> containerKey)
-    {
-        return $"di_tree-container-{containerKey.Guid}";
+        var inState = GetTreeViewState();
+        
+        var inContainer = inState.ContainerList.FirstOrDefault(
+            x => x.Key == containerKey);
+            
+        if (inContainer is not null)
+            return inContainer.ActiveNodeElementId;
+        
+        return string.Empty;
     }
 		
 	// Reducer methods
@@ -888,5 +892,51 @@ public class TreeViewService : ITreeViewService
             target,
 			addSelectedNodes,
 			selectNodesBetweenCurrentAndNextActiveNode);
+	}
+	
+	private Dictionary<int, string> _intToCssValueCache = new();
+	
+	/// <summary>This method should only be invoked by the "UI thread"</summary>
+	public string GetNodeElementStyle(int offsetInPixels)
+	{
+	    if (!_intToCssValueCache.ContainsKey(offsetInPixels))
+	        _intToCssValueCache.Add(offsetInPixels, offsetInPixels.ToCssValue());
+        
+        CommonBackgroundTaskApi.UiStringBuilder.Clear();
+        CommonBackgroundTaskApi.UiStringBuilder.Append("padding-left: ");
+        CommonBackgroundTaskApi.UiStringBuilder.Append(_intToCssValueCache[offsetInPixels]);
+        CommonBackgroundTaskApi.UiStringBuilder.Append("px;");
+        
+        return CommonBackgroundTaskApi.UiStringBuilder.ToString();
+	}
+	
+	/// <summary>This method should only be invoked by the "UI thread"</summary>
+	public string GetNodeTextStyle(int walkTreeViewIconWidth)
+	{
+	    if (!_intToCssValueCache.ContainsKey(walkTreeViewIconWidth))
+	        _intToCssValueCache.Add(walkTreeViewIconWidth, walkTreeViewIconWidth.ToCssValue());
+	    
+	    CommonBackgroundTaskApi.UiStringBuilder.Clear();
+	    CommonBackgroundTaskApi.UiStringBuilder.Append("width: calc(100% - ");
+	    CommonBackgroundTaskApi.UiStringBuilder.Append(_intToCssValueCache[walkTreeViewIconWidth]);
+	    CommonBackgroundTaskApi.UiStringBuilder.Append("px); height:  100%;");
+	    
+	    return CommonBackgroundTaskApi.UiStringBuilder.ToString();
+	}
+	
+	/// <summary>This method should only be invoked by the "UI thread"</summary>
+	public string GetNodeBorderStyle(int offsetInPixels, int walkTreeViewIconWidth)
+	{
+	    var result = offsetInPixels + walkTreeViewIconWidth / 2;
+	    
+	    if (!_intToCssValueCache.ContainsKey(result))
+	        _intToCssValueCache.Add(result, result.ToCssValue());
+	
+	    CommonBackgroundTaskApi.UiStringBuilder.Clear();
+	    CommonBackgroundTaskApi.UiStringBuilder.Append("margin-left: ");
+	    CommonBackgroundTaskApi.UiStringBuilder.Append(result);
+	    CommonBackgroundTaskApi.UiStringBuilder.Append("px;");
+	    
+	    return CommonBackgroundTaskApi.UiStringBuilder.ToString();
 	}
 }

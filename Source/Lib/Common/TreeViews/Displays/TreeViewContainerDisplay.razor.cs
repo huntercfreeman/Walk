@@ -129,7 +129,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             // If dedicated context menu button or shift + F10 was pressed as opposed to
             // a mouse RightClick then use JavaScript to determine the ContextMenu position.
             contextMenuFixedPosition = await CommonBackgroundTaskApi.JsRuntimeCommonApi
-                .GetTreeViewContextMenuFixedPosition(TreeViewService.GetNodeElementId(treeViewContainer.ActiveNode))
+                .GetTreeViewContextMenuFixedPosition(treeViewContainer.ActiveNodeElementId)
                 .ConfigureAwait(false);
 
             contextMenuTargetTreeViewNoType = treeViewContainer.ActiveNode;

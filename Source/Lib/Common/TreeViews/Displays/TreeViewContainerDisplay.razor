@@ -14,8 +14,7 @@
     _treeViewCascadingValueBatch.OffsetPerDepthInPixels = OffsetPerDepthInPixels;
     _treeViewCascadingValueBatch.WalkTreeViewIconWidth = WalkTreeViewIconWidth;
 
-    <div id="@TreeViewService.GetTreeViewContainerElementId(treeViewContainer?.Key ?? Key<TreeViewContainer>.Empty)"
-         class="di_tree-view-state di_unselectable @GetHasActiveNodeCssClass(treeViewContainer) @CssClassString"
+    <div class="di_tree-view-state di_unselectable @GetHasActiveNodeCssClass(treeViewContainer) @CssClassString"
          style="@CssStyleString"
          tabindex="0"
          @ref="_treeViewStateDisplayElementReference"

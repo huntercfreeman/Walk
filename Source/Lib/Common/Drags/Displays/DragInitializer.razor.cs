@@ -49,17 +49,17 @@ public partial class DragInitializer : ComponentBase, IDisposable
 	            else
 	                DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, args.MouseEventArgs);
 	            
-	            var drag = DragService.GetDragState().Drag;
+	            var dragState = DragService.GetDragState();
 	            
-	            if (drag?.DragComponentType is not null)
+	            if (dragState.Drag?.DragComponentType is not null)
 	            {
-    				drag.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
-    				drag.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+    				dragState.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
+    				dragState.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
     	            	args.MouseEventArgs.ClientX,
     	            	DimensionUnitKind.Pixels));
     
-    				drag.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
-    				drag.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+    				dragState.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
+    				dragState.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
     	            	args.MouseEventArgs.ClientY,
     	            	DimensionUnitKind.Pixels));
 	            }

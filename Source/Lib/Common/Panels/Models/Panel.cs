@@ -67,8 +67,6 @@ public record Panel : IPanelTab, IDialog, IDrag
 	public ElementDimensions DialogElementDimensions { get; set; } = DialogHelper.ConstructDefaultElementDimensions();
 
     public List<IDropzone> DropzoneList { get; set; } = new();
-
-	public ElementDimensions DragElementDimensions { get; set; } = DialogHelper.ConstructDefaultElementDimensions();
     
 	public Type DragComponentType => TabGroup is null
         ? _dragDialogComponentType

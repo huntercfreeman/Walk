@@ -22,6 +22,8 @@ public record TreeViewContainer
         Key = key;
         RootNode = rootNode;
         SelectedNodeList = selectedNodeList;
+        
+        ActiveNodeElementId = $"di_node-{Key.Guid}";
     }
 
     public Key<TreeViewContainer> Key { get; init; }
@@ -32,4 +34,5 @@ public record TreeViewContainer
     public TreeViewNoType? ActiveNode => SelectedNodeList.FirstOrDefault();
     public IReadOnlyList<TreeViewNoType> SelectedNodeList { get; init; }
     public Guid StateId { get; init; } = Guid.NewGuid();
+    public string ActiveNodeElementId { get; }
 }
