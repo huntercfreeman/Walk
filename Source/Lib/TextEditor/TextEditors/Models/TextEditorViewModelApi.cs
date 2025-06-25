@@ -945,417 +945,378 @@ public sealed class TextEditorViewModelApi
     	if (!viewModel.ShouldCalculateVirtualizationResult)
     		return;
     	
-        try
-		{
-			var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
-			viewModel.ShouldCalculateVirtualizationResult = false;
+		var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
+		viewModel.ShouldCalculateVirtualizationResult = false;
+	
+		var verticalStartingIndex = viewModel.ScrollTop /
+			viewModel.CharAndLineMeasurements.LineHeight;
+
+		var verticalTake = viewModel.TextEditorDimensions.Height /
+			viewModel.CharAndLineMeasurements.LineHeight;
+
+		// Vertical Padding (render some offscreen data)
+		verticalTake += 1;
+
+		var horizontalStartingIndex = (int)Math.Floor(
+			viewModel.ScrollLeft /
+			viewModel.CharAndLineMeasurements.CharacterWidth);
+
+		var horizontalTake = (int)Math.Ceiling(
+			viewModel.TextEditorDimensions.Width /
+			viewModel.CharAndLineMeasurements.CharacterWidth);
 		
-			var verticalStartingIndex = viewModel.ScrollTop /
-				viewModel.CharAndLineMeasurements.LineHeight;
-
-			var verticalTake = viewModel.TextEditorDimensions.Height /
-				viewModel.CharAndLineMeasurements.LineHeight;
-
-			// Vertical Padding (render some offscreen data)
-			verticalTake += 1;
-
-			var horizontalStartingIndex = (int)Math.Floor(
-				viewModel.ScrollLeft /
-				viewModel.CharAndLineMeasurements.CharacterWidth);
-
-			var horizontalTake = (int)Math.Ceiling(
-				viewModel.TextEditorDimensions.Width /
-				viewModel.CharAndLineMeasurements.CharacterWidth);
-			
-			var hiddenCount = 0;
-			
-			for (int i = 0; i < verticalStartingIndex; i++)
+		var hiddenCount = 0;
+		
+		for (int i = 0; i < verticalStartingIndex; i++)
+		{
+			if (viewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
 			{
-				if (viewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
+				hiddenCount++;
+				verticalStartingIndex++;
+			}
+		}
+		
+		verticalStartingIndex = Math.Max(0, verticalStartingIndex);
+		
+		if (verticalStartingIndex + verticalTake > modelModifier.LineEndList.Count)
+		    verticalTake = modelModifier.LineEndList.Count - verticalStartingIndex;
+		
+		verticalTake = Math.Max(0, verticalTake);
+		
+		var lineCountAvailable = modelModifier.LineEndList.Count - verticalStartingIndex;
+		
+		var lineCountToReturn = verticalTake < lineCountAvailable
+		    ? verticalTake
+		    : lineCountAvailable;
+		
+		var endingLineIndexExclusive = verticalStartingIndex + lineCountToReturn;
+		
+		if (lineCountToReturn < 0 || verticalStartingIndex < 0 || endingLineIndexExclusive < 0)
+		    return;
+		    
+		var totalWidth = (int)Math.Ceiling(modelModifier.MostCharactersOnASingleLineTuple.lineLength *
+			viewModel.CharAndLineMeasurements.CharacterWidth);
+
+		// Account for any tab characters on the 'MostCharactersOnASingleLineTuple'
+		//
+		// TODO: This code is not fully correct...
+		//       ...if the longest line is 50 non-tab characters,
+		//       and the second longest line is 49 tab characters,
+		//       this code will erroneously take the '50' non-tab characters
+		//       to be the longest line.
+		{
+			var lineIndex = modelModifier.MostCharactersOnASingleLineTuple.lineIndex;
+			var longestLineInformation = modelModifier.GetLineInformation(lineIndex);
+
+			var tabCountOnLongestLine = modelModifier.GetTabCountOnSameLineBeforeCursor(
+				longestLineInformation.Index,
+				longestLineInformation.LastValidColumnIndex);
+
+			// 1 of the character width is already accounted for
+			var extraWidthPerTabKey = tabWidth - 1;
+
+			totalWidth += (int)Math.Ceiling(extraWidthPerTabKey *
+				tabCountOnLongestLine *
+				viewModel.CharAndLineMeasurements.CharacterWidth);
+		}
+
+		var totalHeight = (modelModifier.LineEndList.Count - viewModel.PersistentState.HiddenLineIndexHashSet.Count) *
+			viewModel.CharAndLineMeasurements.LineHeight;
+
+		// Add vertical margin so the user can scroll beyond the final line of content
+		var percentOfMarginScrollHeightByPageUnit = 0.4;
+		int marginScrollHeight = (int)Math.Ceiling(viewModel.TextEditorDimensions.Height * percentOfMarginScrollHeightByPageUnit);
+		totalHeight += marginScrollHeight;
+		
+		var virtualizedLineList = new VirtualizationLine[lineCountToReturn];
+		
+		viewModel.VirtualizationResultCount = 0;
+					
+		viewModel.VirtualizationResult = new VirtualizationGrid(
+			virtualizedLineList,
+    		new List<VirtualizationSpan>(),
+			totalWidth: totalWidth,
+	        totalHeight: totalHeight,
+	        resultWidth: (int)Math.Ceiling(horizontalTake * viewModel.CharAndLineMeasurements.CharacterWidth),
+	        resultHeight: verticalTake * viewModel.CharAndLineMeasurements.LineHeight,
+	        left: (int)(horizontalStartingIndex * viewModel.CharAndLineMeasurements.CharacterWidth),
+	        top: verticalStartingIndex * viewModel.CharAndLineMeasurements.LineHeight);
+		
+		viewModel.ScrollWidth = totalWidth;
+		viewModel.ScrollHeight = totalHeight;
+		viewModel.MarginScrollHeight = marginScrollHeight;
+		
+		viewModel.GutterWidthInPixels = GetGutterWidthInPixels(modelModifier, viewModel, componentData);
+		
+		if (componentData.Virtualized_LineIndexCache_IsInvalid)
+			componentData.Virtualized_LineIndexCache_Clear();
+		else
+			componentData.Virtualized_LineIndexCache_LineIndexUsageHashSet.Clear();
+		
+		var absDiffScrollLeft = Math.Abs(componentData.Virtualized_LineIndexCache_CreatedWithScrollLeft - viewModel.ScrollLeft);
+		var useAll = absDiffScrollLeft < 0.01 && componentData.Virtualized_LineIndexCache_ViewModelKey == viewModel.PersistentState.ViewModelKey;
+		
+		/*var reUsedLines = 0;
+		var emptyLines = 0;
+		var calculatedLines = 0;*/
+
+		if (_textEditorService.SeenTabWidth != _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.TabWidth)
+		{
+			_textEditorService.SeenTabWidth = _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.TabWidth;
+			_textEditorService.TabKeyOutput_ShowWhitespaceTrue = new string('-', _textEditorService.SeenTabWidth - 1) + '>';
+			
+			var stringBuilder = new StringBuilder();
+			
+			for (int i = 0; i < _textEditorService.SeenTabWidth; i++)
+			{
+				stringBuilder.Append("&nbsp;");
+			}
+			_textEditorService.TabKeyOutput_ShowWhitespaceFalse = stringBuilder.ToString();
+		}
+		
+		string tabKeyOutput;
+		string spaceKeyOutput;
+		
+		if (_textEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowWhitespace)
+		{
+			tabKeyOutput = _textEditorService.TabKeyOutput_ShowWhitespaceTrue;
+			spaceKeyOutput = "·";
+		}
+		else
+		{
+			tabKeyOutput = _textEditorService.TabKeyOutput_ShowWhitespaceFalse;
+			spaceKeyOutput = "&nbsp;";
+		}
+		
+		_textEditorService.__StringBuilder.Clear();
+		
+		int linesTaken = 0;
+		
+		{
+			// 1 of the character width is already accounted for
+			var extraWidthPerTabKey = tabWidth - 1;
+			
+			var minLineWidthToTriggerVirtualizationExclusive = 2 * viewModel.TextEditorDimensions.Width;
+				
+			int lineOffset = -1;
+			
+			var entireSpan = System.Runtime.InteropServices.CollectionsMarshal.AsSpan(componentData.Virtualized_LineIndexCache_SpanList);
+			
+			while (true)
+			{
+				lineOffset++;
+			
+				if (linesTaken >= lineCountToReturn)
+					break;
+				// TODO: Is this '>' or '>='?
+				if (verticalStartingIndex + lineOffset >= modelModifier.LineEndList.Count)
+					break;
+			
+				var lineIndex = verticalStartingIndex + lineOffset;
+
+				if (viewModel.PersistentState.HiddenLineIndexHashSet.Contains(lineIndex))
 				{
 					hiddenCount++;
-					verticalStartingIndex++;
+					continue;
 				}
-			}
-			
-			verticalStartingIndex = Math.Max(0, verticalStartingIndex);
-			
-			if (verticalStartingIndex + verticalTake > modelModifier.LineEndList.Count)
-			    verticalTake = modelModifier.LineEndList.Count - verticalStartingIndex;
-			
-			verticalTake = Math.Max(0, verticalTake);
-			
-			var lineCountAvailable = modelModifier.LineEndList.Count - verticalStartingIndex;
-			
-			var lineCountToReturn = verticalTake < lineCountAvailable
-			    ? verticalTake
-			    : lineCountAvailable;
-			
-			var endingLineIndexExclusive = verticalStartingIndex + lineCountToReturn;
-			
-			if (lineCountToReturn < 0 || verticalStartingIndex < 0 || endingLineIndexExclusive < 0)
-			    return;
-			    
-			var totalWidth = (int)Math.Ceiling(modelModifier.MostCharactersOnASingleLineTuple.lineLength *
-				viewModel.CharAndLineMeasurements.CharacterWidth);
-
-			// Account for any tab characters on the 'MostCharactersOnASingleLineTuple'
-			//
-			// TODO: This code is not fully correct...
-			//       ...if the longest line is 50 non-tab characters,
-			//       and the second longest line is 49 tab characters,
-			//       this code will erroneously take the '50' non-tab characters
-			//       to be the longest line.
-			{
-				var lineIndex = modelModifier.MostCharactersOnASingleLineTuple.lineIndex;
-				var longestLineInformation = modelModifier.GetLineInformation(lineIndex);
-
-				var tabCountOnLongestLine = modelModifier.GetTabCountOnSameLineBeforeCursor(
-					longestLineInformation.Index,
-					longestLineInformation.LastValidColumnIndex);
-
-				// 1 of the character width is already accounted for
-				var extraWidthPerTabKey = tabWidth - 1;
-
-				totalWidth += (int)Math.Ceiling(extraWidthPerTabKey *
-					tabCountOnLongestLine *
-					viewModel.CharAndLineMeasurements.CharacterWidth);
-			}
-
-			var totalHeight = (modelModifier.LineEndList.Count - viewModel.PersistentState.HiddenLineIndexHashSet.Count) *
-				viewModel.CharAndLineMeasurements.LineHeight;
-
-			// Add vertical margin so the user can scroll beyond the final line of content
-			var percentOfMarginScrollHeightByPageUnit = 0.4;
-			int marginScrollHeight = (int)Math.Ceiling(viewModel.TextEditorDimensions.Height * percentOfMarginScrollHeightByPageUnit);
-			totalHeight += marginScrollHeight;
-			
-			var virtualizedLineList = new VirtualizationLine[lineCountToReturn];
-			
-			viewModel.VirtualizationResultCount = 0;
-						
-			viewModel.VirtualizationResult = new VirtualizationGrid(
-				virtualizedLineList,
-        		new List<VirtualizationSpan>(),
-				totalWidth: totalWidth,
-		        totalHeight: totalHeight,
-		        resultWidth: (int)Math.Ceiling(horizontalTake * viewModel.CharAndLineMeasurements.CharacterWidth),
-		        resultHeight: verticalTake * viewModel.CharAndLineMeasurements.LineHeight,
-		        left: (int)(horizontalStartingIndex * viewModel.CharAndLineMeasurements.CharacterWidth),
-		        top: verticalStartingIndex * viewModel.CharAndLineMeasurements.LineHeight);
-			
-			viewModel.ScrollWidth = totalWidth;
-			viewModel.ScrollHeight = totalHeight;
-			viewModel.MarginScrollHeight = marginScrollHeight;
-			
-			viewModel.GutterWidthInPixels = GetGutterWidthInPixels(modelModifier, viewModel, componentData);
-			
-			if (componentData.Virtualized_LineIndexCache_IsInvalid)
-				componentData.Virtualized_LineIndexCache_Clear();
-			else
-				componentData.Virtualized_LineIndexCache_LineIndexUsageHashSet.Clear();
-			
-			var absDiffScrollLeft = Math.Abs(componentData.Virtualized_LineIndexCache_CreatedWithScrollLeft - viewModel.ScrollLeft);
-			var useAll = absDiffScrollLeft < 0.01 && componentData.Virtualized_LineIndexCache_ViewModelKey == viewModel.PersistentState.ViewModelKey;
-			
-			/*var reUsedLines = 0;
-			var emptyLines = 0;
-			var calculatedLines = 0;*/
-
-			if (_textEditorService.SeenTabWidth != _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.TabWidth)
-			{
-				_textEditorService.SeenTabWidth = _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.TabWidth;
-				_textEditorService.TabKeyOutput_ShowWhitespaceTrue = new string('-', _textEditorService.SeenTabWidth - 1) + '>';
 				
-				var stringBuilder = new StringBuilder();
+				var lineInformation = modelModifier.GetLineInformation(lineIndex);
+							    
+				var line_PositionStartInclusiveIndex = lineInformation.Position_StartInclusiveIndex;
+				var lineEnd = modelModifier.LineEndList[lineIndex];
 				
-				for (int i = 0; i < _textEditorService.SeenTabWidth; i++)
+				// TODO: Was this code using length including line ending or excluding? (2024-12-29)
+				var lineLength = lineInformation.Position_EndExclusiveIndex - lineInformation.Position_StartInclusiveIndex;
+				
+				// Don't bother with the extra width due to tabs until the very end.
+				// It is thought to be too costly on average to get the tab count for the line in order to take less text overall
+				// than to just take the estimated amount of characters.
+				
+				var widthInPixels = (int)Math.Ceiling(lineLength * viewModel.CharAndLineMeasurements.CharacterWidth);
+
+				if (widthInPixels > minLineWidthToTriggerVirtualizationExclusive)
 				{
-					stringBuilder.Append("&nbsp;");
-				}
-				_textEditorService.TabKeyOutput_ShowWhitespaceFalse = stringBuilder.ToString();
-			}
-			
-			string tabKeyOutput;
-			string spaceKeyOutput;
-			
-			if (_textEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowWhitespace)
-			{
-				tabKeyOutput = _textEditorService.TabKeyOutput_ShowWhitespaceTrue;
-				spaceKeyOutput = "·";
-			}
-			else
-			{
-				tabKeyOutput = _textEditorService.TabKeyOutput_ShowWhitespaceFalse;
-				spaceKeyOutput = "&nbsp;";
-			}
-			
-			_textEditorService.__StringBuilder.Clear();
-			
-			int linesTaken = 0;
-			
-			{
-				// 1 of the character width is already accounted for
-				var extraWidthPerTabKey = tabWidth - 1;
-				
-				var minLineWidthToTriggerVirtualizationExclusive = 2 * viewModel.TextEditorDimensions.Width;
+					var localHorizontalStartingIndex = horizontalStartingIndex;
+					var localHorizontalTake = horizontalTake;
 					
-				int lineOffset = -1;
-				
-				var entireSpan = System.Runtime.InteropServices.CollectionsMarshal.AsSpan(componentData.Virtualized_LineIndexCache_SpanList);
-				
-				while (true)
-				{
-					lineOffset++;
-				
-					if (linesTaken >= lineCountToReturn)
-						break;
-					// TODO: Is this '>' or '>='?
-					if (verticalStartingIndex + lineOffset >= modelModifier.LineEndList.Count)
-						break;
-				
-					var lineIndex = verticalStartingIndex + lineOffset;
-
-					if (viewModel.PersistentState.HiddenLineIndexHashSet.Contains(lineIndex))
+					// Tab key adjustments
+					var line = modelModifier.GetLineInformation(lineIndex);
+					var firstInlineUiOnLineIndex = -1;
+					var foundLine = false;
+					var tabCharPositionIndexListCount = modelModifier.TabCharPositionIndexList.Count;
+			
+					// Move the horizontal starting index based on the extra character width from 'tab' characters.
+					for (int i = 0; i < tabCharPositionIndexListCount; i++)
 					{
-						hiddenCount++;
-						continue;
+						var tabCharPositionIndex = modelModifier.TabCharPositionIndexList[i];
+						var tabKeyColumnIndex = tabCharPositionIndex - line.Position_StartInclusiveIndex;
+					
+						if (!foundLine)
+						{
+							if (tabCharPositionIndex >= line.Position_StartInclusiveIndex)
+							{
+								firstInlineUiOnLineIndex = i;
+								foundLine = true;
+							}
+						}
+						
+						if (foundLine)
+						{
+							if (tabKeyColumnIndex >= localHorizontalStartingIndex + localHorizontalTake)
+								break;
+						
+							localHorizontalStartingIndex -= extraWidthPerTabKey;
+						}
 					}
-					
-					var lineInformation = modelModifier.GetLineInformation(lineIndex);
-								    
-					var line_PositionStartInclusiveIndex = lineInformation.Position_StartInclusiveIndex;
-					var lineEnd = modelModifier.LineEndList[lineIndex];
-					
-					// TODO: Was this code using length including line ending or excluding? (2024-12-29)
-					var lineLength = lineInformation.Position_EndExclusiveIndex - lineInformation.Position_StartInclusiveIndex;
-					
-					// Don't bother with the extra width due to tabs until the very end.
-					// It is thought to be too costly on average to get the tab count for the line in order to take less text overall
-					// than to just take the estimated amount of characters.
-					
-					var widthInPixels = (int)Math.Ceiling(lineLength * viewModel.CharAndLineMeasurements.CharacterWidth);
 
-					if (widthInPixels > minLineWidthToTriggerVirtualizationExclusive)
+					if (localHorizontalStartingIndex + localHorizontalTake > lineLength)
+						localHorizontalTake = lineLength - localHorizontalStartingIndex;
+
+					localHorizontalStartingIndex = Math.Max(0, localHorizontalStartingIndex);
+					localHorizontalTake = Math.Max(0, localHorizontalTake);
+					
+					var foundSplit = false;
+					var unrenderedTabCount = 0;
+					var resultTabCount = 0;
+					
+					// Count the 'tab' characters that preceed the text to display so that the 'left' can be modified by the extra width.
+					// Count the 'tab' characters that are among the text to display so that the 'width' can be modified by the extra width.
+					if (firstInlineUiOnLineIndex != -1)
 					{
-						var localHorizontalStartingIndex = horizontalStartingIndex;
-						var localHorizontalTake = horizontalTake;
-						
-						// Tab key adjustments
-						var line = modelModifier.GetLineInformation(lineIndex);
-						var firstInlineUiOnLineIndex = -1;
-						var foundLine = false;
-						var tabCharPositionIndexListCount = modelModifier.TabCharPositionIndexList.Count;
-				
-						// Move the horizontal starting index based on the extra character width from 'tab' characters.
-						for (int i = 0; i < tabCharPositionIndexListCount; i++)
+						for (int i = firstInlineUiOnLineIndex; i < tabCharPositionIndexListCount; i++)
 						{
 							var tabCharPositionIndex = modelModifier.TabCharPositionIndexList[i];
 							var tabKeyColumnIndex = tabCharPositionIndex - line.Position_StartInclusiveIndex;
+							
+							if (tabKeyColumnIndex >= localHorizontalStartingIndex + localHorizontalTake)
+								break;
 						
-							if (!foundLine)
+							if (!foundSplit)
 							{
-								if (tabCharPositionIndex >= line.Position_StartInclusiveIndex)
-								{
-									firstInlineUiOnLineIndex = i;
-									foundLine = true;
-								}
+								if (tabKeyColumnIndex < localHorizontalStartingIndex)
+									unrenderedTabCount++;
+								else
+									foundSplit = true;
 							}
 							
-							if (foundLine)
-							{
-								if (tabKeyColumnIndex >= localHorizontalStartingIndex + localHorizontalTake)
-									break;
-							
-								localHorizontalStartingIndex -= extraWidthPerTabKey;
-							}
-						}
-	
-						if (localHorizontalStartingIndex + localHorizontalTake > lineLength)
-							localHorizontalTake = lineLength - localHorizontalStartingIndex;
-	
-						localHorizontalStartingIndex = Math.Max(0, localHorizontalStartingIndex);
-						localHorizontalTake = Math.Max(0, localHorizontalTake);
-						
-						var foundSplit = false;
-						var unrenderedTabCount = 0;
-						var resultTabCount = 0;
-						
-						// Count the 'tab' characters that preceed the text to display so that the 'left' can be modified by the extra width.
-						// Count the 'tab' characters that are among the text to display so that the 'width' can be modified by the extra width.
-						if (firstInlineUiOnLineIndex != -1)
-						{
-							for (int i = firstInlineUiOnLineIndex; i < tabCharPositionIndexListCount; i++)
-							{
-								var tabCharPositionIndex = modelModifier.TabCharPositionIndexList[i];
-								var tabKeyColumnIndex = tabCharPositionIndex - line.Position_StartInclusiveIndex;
-								
-								if (tabKeyColumnIndex >= localHorizontalStartingIndex + localHorizontalTake)
-									break;
-							
-								if (!foundSplit)
-								{
-									if (tabKeyColumnIndex < localHorizontalStartingIndex)
-										unrenderedTabCount++;
-									else
-										foundSplit = true;
-								}
-								
-								if (foundSplit)
-									resultTabCount++;
-							}
-						}
-						
-						widthInPixels = (int)Math.Ceiling(((localHorizontalTake - localHorizontalStartingIndex) + (extraWidthPerTabKey * resultTabCount)) *
-							viewModel.CharAndLineMeasurements.CharacterWidth);
-	
-						double leftInPixels = localHorizontalStartingIndex *
-							viewModel.CharAndLineMeasurements.CharacterWidth;
-	
-						// Adjust the unrendered for tab key width
-						leftInPixels += (extraWidthPerTabKey *
-							unrenderedTabCount *
-							viewModel.CharAndLineMeasurements.CharacterWidth);
-	
-						leftInPixels = Math.Max(0, leftInPixels);
-	
-						var topInPixels = lineIndex * viewModel.CharAndLineMeasurements.LineHeight;
-						var positionStartInclusiveIndex = line_PositionStartInclusiveIndex + localHorizontalStartingIndex;
-						
-						var positionEndExclusiveIndex = positionStartInclusiveIndex + localHorizontalTake;
-						if (positionEndExclusiveIndex > lineInformation.UpperLineEnd.Position_StartInclusiveIndex)
-							positionEndExclusiveIndex = lineInformation.UpperLineEnd.Position_StartInclusiveIndex;
-						
-						
-						virtualizedLineList[linesTaken++] = new VirtualizationLine(
-							lineIndex,
-							position_StartInclusiveIndex: positionStartInclusiveIndex,
-							position_EndExclusiveIndex: positionEndExclusiveIndex,
-							virtualizationSpan_StartInclusiveIndex: 0,
-							virtualizationSpan_EndExclusiveIndex: 0,
-							widthInPixels,
-							viewModel.CharAndLineMeasurements.LineHeight,
-							viewModel.GutterWidthInPixels + leftInPixels,
-							topInPixels - (viewModel.CharAndLineMeasurements.LineHeight * hiddenCount));
-						
-						_createCacheEachSharedParameters.Model = modelModifier;
-                    	_createCacheEachSharedParameters.ViewModel = viewModel;
-                    	_createCacheEachSharedParameters.ComponentData = componentData;
-                    	_createCacheEachSharedParameters.TabKeyOutput = tabKeyOutput;
-                    	_createCacheEachSharedParameters.SpaceKeyOutput = spaceKeyOutput;
-						
-						CreateCacheEach(
-							linesTaken - 1,
-							ref entireSpan);
-					}
-					else
-					{
-						var line = modelModifier.GetLineInformation(lineIndex);
-				
-						var foundLine = false;
-						var resultTabCount = 0;
-				
-						// Count the tabs that are among the rendered content.
-						foreach (var tabCharPositionIndex in modelModifier.TabCharPositionIndexList)
-						{
-							if (!foundLine)
-							{
-								if (tabCharPositionIndex >= line.Position_StartInclusiveIndex)
-									foundLine = true;
-							}
-							
-							if (foundLine)
-							{
-								if (tabCharPositionIndex >= line.LastValidColumnIndex)
-									break;
-							
+							if (foundSplit)
 								resultTabCount++;
-							}
+						}
+					}
+					
+					widthInPixels = (int)Math.Ceiling(((localHorizontalTake - localHorizontalStartingIndex) + (extraWidthPerTabKey * resultTabCount)) *
+						viewModel.CharAndLineMeasurements.CharacterWidth);
+
+					double leftInPixels = localHorizontalStartingIndex *
+						viewModel.CharAndLineMeasurements.CharacterWidth;
+
+					// Adjust the unrendered for tab key width
+					leftInPixels += (extraWidthPerTabKey *
+						unrenderedTabCount *
+						viewModel.CharAndLineMeasurements.CharacterWidth);
+
+					leftInPixels = Math.Max(0, leftInPixels);
+
+					var topInPixels = lineIndex * viewModel.CharAndLineMeasurements.LineHeight;
+					var positionStartInclusiveIndex = line_PositionStartInclusiveIndex + localHorizontalStartingIndex;
+					
+					var positionEndExclusiveIndex = positionStartInclusiveIndex + localHorizontalTake;
+					if (positionEndExclusiveIndex > lineInformation.UpperLineEnd.Position_StartInclusiveIndex)
+						positionEndExclusiveIndex = lineInformation.UpperLineEnd.Position_StartInclusiveIndex;
+					
+					virtualizedLineList[linesTaken++] = new VirtualizationLine(
+						lineIndex,
+						position_StartInclusiveIndex: positionStartInclusiveIndex,
+						position_EndExclusiveIndex: positionEndExclusiveIndex,
+						virtualizationSpan_StartInclusiveIndex: 0,
+						virtualizationSpan_EndExclusiveIndex: 0,
+						widthInPixels,
+						viewModel.CharAndLineMeasurements.LineHeight,
+						viewModel.GutterWidthInPixels + leftInPixels,
+						topInPixels - (viewModel.CharAndLineMeasurements.LineHeight * hiddenCount));
+					
+					_createCacheEachSharedParameters.Model = modelModifier;
+                	_createCacheEachSharedParameters.ViewModel = viewModel;
+                	_createCacheEachSharedParameters.ComponentData = componentData;
+                	_createCacheEachSharedParameters.TabKeyOutput = tabKeyOutput;
+                	_createCacheEachSharedParameters.SpaceKeyOutput = spaceKeyOutput;
+					
+					CreateCacheEach(
+						linesTaken - 1,
+						ref entireSpan);
+				}
+				else
+				{
+					var line = modelModifier.GetLineInformation(lineIndex);
+			
+					var foundLine = false;
+					var resultTabCount = 0;
+			
+					// Count the tabs that are among the rendered content.
+					foreach (var tabCharPositionIndex in modelModifier.TabCharPositionIndexList)
+					{
+						if (!foundLine)
+						{
+							if (tabCharPositionIndex >= line.Position_StartInclusiveIndex)
+								foundLine = true;
 						}
 						
-						widthInPixels += (int)Math.Ceiling((extraWidthPerTabKey * resultTabCount) *
-							viewModel.CharAndLineMeasurements.CharacterWidth);
-					
-						virtualizedLineList[linesTaken++]= new VirtualizationLine(
-							lineIndex,
-							position_StartInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
-							position_EndExclusiveIndex: lineInformation.UpperLineEnd.Position_StartInclusiveIndex,
-							virtualizationSpan_StartInclusiveIndex: 0,
-							virtualizationSpan_EndExclusiveIndex: 0,
-							widthInPixels,
-							viewModel.CharAndLineMeasurements.LineHeight,
-							leftInPixels: viewModel.GutterWidthInPixels,
-							topInPixels: (lineIndex * viewModel.CharAndLineMeasurements.LineHeight) - (viewModel.CharAndLineMeasurements.LineHeight * hiddenCount));
+						if (foundLine)
+						{
+							if (tabCharPositionIndex >= line.LastValidColumnIndex)
+								break;
 						
-						_createCacheEachSharedParameters.Model = modelModifier;
-                    	_createCacheEachSharedParameters.ViewModel = viewModel;
-                    	_createCacheEachSharedParameters.ComponentData = componentData;
-                    	_createCacheEachSharedParameters.TabKeyOutput = tabKeyOutput;
-                    	_createCacheEachSharedParameters.SpaceKeyOutput = spaceKeyOutput;
-						
-						CreateCacheEach(
-							linesTaken - 1,
-							ref entireSpan);
+							resultTabCount++;
+						}
 					}
+					
+					widthInPixels += (int)Math.Ceiling((extraWidthPerTabKey * resultTabCount) *
+						viewModel.CharAndLineMeasurements.CharacterWidth);
+				
+					virtualizedLineList[linesTaken++]= new VirtualizationLine(
+						lineIndex,
+						position_StartInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
+						position_EndExclusiveIndex: lineInformation.UpperLineEnd.Position_StartInclusiveIndex,
+						virtualizationSpan_StartInclusiveIndex: 0,
+						virtualizationSpan_EndExclusiveIndex: 0,
+						widthInPixels,
+						viewModel.CharAndLineMeasurements.LineHeight,
+						leftInPixels: viewModel.GutterWidthInPixels,
+						topInPixels: (lineIndex * viewModel.CharAndLineMeasurements.LineHeight) - (viewModel.CharAndLineMeasurements.LineHeight * hiddenCount));
+					
+					_createCacheEachSharedParameters.Model = modelModifier;
+                	_createCacheEachSharedParameters.ViewModel = viewModel;
+                	_createCacheEachSharedParameters.ComponentData = componentData;
+                	_createCacheEachSharedParameters.TabKeyOutput = tabKeyOutput;
+                	_createCacheEachSharedParameters.SpaceKeyOutput = spaceKeyOutput;
+					
+					CreateCacheEach(
+						linesTaken - 1,
+						ref entireSpan);
 				}
 			}
-			
-			viewModel.VirtualizationResultCount = linesTaken;
-
-			componentData.Virtualized_LineIndexCache_LineIndexWithModificationList.Clear();
+		}
 		
-			componentData.Virtualized_LineIndexCache_ViewModelKey = viewModel.PersistentState.ViewModelKey;
-			componentData.Virtualized_LineIndexCache_SpanList = viewModel.VirtualizationResult.VirtualizationSpanList;
-			componentData.Virtualized_LineIndexCache_CreatedWithScrollLeft = viewModel.ScrollLeft;
-			
-			for (var i = componentData.Virtualized_LineIndexCache_LineIndexKeyList.Count - 1; i >= 0; i--)
-			{
-				if (!componentData.Virtualized_LineIndexCache_LineIndexUsageHashSet.Contains(componentData.Virtualized_LineIndexCache_LineIndexKeyList[i]))
-				{
-					componentData.Virtualized_LineIndexCache_LineMap.Remove(componentData.Virtualized_LineIndexCache_LineIndexKeyList[i]);
-					componentData.Virtualized_LineIndexCache_LineIndexKeyList.RemoveAt(i);
-				}
-			}
-			
-			#if DEBUG
-			WalkDebugSomething.SetTextEditorViewModelApi(Stopwatch.GetElapsedTime(startTime));
-			#endif
-		}
-		catch (WalkTextEditorException exception)
-		{
-			/*
-			 Got an exception from lineIndex being out of range (2024-05-12).
-			 |
-			 Move the cursor to the closest valid positionIndex in this situation.
-			 =============================================================================
-			 fail: Walk.Common.RazorLib.BackgroundTasks.Models.BackgroundTaskWorker[0]
-			 Error occurred executing Cut_d6b3a112-449b-44c1-9466-837a98fbf941_sb.
-			 Walk.TextEditor.RazorLib.Exceptions.WalkTextEditorException: 'lineIndex:8' >= model.LineCount:1
-			 at Walk.TextEditor.RazorLib.TextEditors.Models.TextEditorModelExtensionMethods.AssertLineIndex(ITextEditorModel model, Int32 lineIndex) in C:\Users\hunte\Repos\Walk.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorModelExtensionMethods.cs:line 564
-			 at Walk.TextEditor.RazorLib.TextEditors.Models.TextEditorModelExtensionMethods.GetLineInformation(ITextEditorModel model, Int32 lineIndex) in C:\Users\hunte\Repos\Walk.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorModelExtensionMethods.cs:line 306
-			 at Walk.TextEditor.RazorLib.TextEditors.Models.TextEditorViewModelApi.<>c__DisplayClass39_0.<<CalculateVirtualizationResultFactory>b__0>d.MoveNext() in C:\Users\hunte\Repos\Walk.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorViewModelApi.cs:line 889
-			 --- End of stack trace from previous location ---
-			 at Walk.TextEditor.RazorLib.TextEditorServiceTask.HandleEvent(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Walk.Ide_Fork\Source\Lib\TextEditor\TextEditorServiceTask.cs:line 113
-			 at Walk.Common.RazorLib.BackgroundTasks.Models.BackgroundTaskWorker.ExecuteAsync(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Walk.Ide_Fork\Source\Lib\Common\BackgroundTasks\Models\BackgroundTaskWorker.cs:line 49
-			 */
-			
-			if (viewModel is not null)
-			{
-				if (viewModel.LineIndex >= modelModifier.LineCount)
-					viewModel.LineIndex = modelModifier.LineCount - 1;
-	
-				var lineInformation = modelModifier.GetLineInformation(viewModel.LineIndex);
-	
-				viewModel.ColumnIndex = lineInformation.LastValidColumnIndex;
-			}
+		viewModel.VirtualizationResultCount = linesTaken;
 
-#if DEBUG
-			// This exception happens a lot while using the editor.
-			// It is believed that the published demo WASM app is being slowed down
-			// in part from logging this a lot.
-			Console.WriteLine(exception);
-#endif
+		componentData.Virtualized_LineIndexCache_LineIndexWithModificationList.Clear();
+	
+		componentData.Virtualized_LineIndexCache_ViewModelKey = viewModel.PersistentState.ViewModelKey;
+		componentData.Virtualized_LineIndexCache_SpanList = viewModel.VirtualizationResult.VirtualizationSpanList;
+		componentData.Virtualized_LineIndexCache_CreatedWithScrollLeft = viewModel.ScrollLeft;
+		
+		for (var i = componentData.Virtualized_LineIndexCache_LineIndexKeyList.Count - 1; i >= 0; i--)
+		{
+			if (!componentData.Virtualized_LineIndexCache_LineIndexUsageHashSet.Contains(componentData.Virtualized_LineIndexCache_LineIndexKeyList[i]))
+			{
+				componentData.Virtualized_LineIndexCache_LineMap.Remove(componentData.Virtualized_LineIndexCache_LineIndexKeyList[i]);
+				componentData.Virtualized_LineIndexCache_LineIndexKeyList.RemoveAt(i);
+			}
 		}
+		
+		#if DEBUG
+		WalkDebugSomething.SetTextEditorViewModelApi(Stopwatch.GetElapsedTime(startTime));
+		#endif
     }
     
     private static int CountDigits(int argumentNumber)
