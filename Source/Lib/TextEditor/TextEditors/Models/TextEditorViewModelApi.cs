@@ -942,9 +942,6 @@ public sealed class TextEditorViewModelApi
     	var startTime = Stopwatch.GetTimestamp();
     	#endif
     	
-    	if (!viewModel.ShouldCalculateVirtualizationResult)
-    		return;
-    	
 		var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
 		viewModel.ShouldCalculateVirtualizationResult = false;
 	
