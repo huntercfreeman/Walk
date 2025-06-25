@@ -1088,6 +1088,12 @@ public sealed class TextEditorViewModelApi
 			spaceKeyOutput = "&nbsp;";
 		}
 		
+		_createCacheEachSharedParameters.Model = modelModifier;
+    	_createCacheEachSharedParameters.ViewModel = viewModel;
+    	_createCacheEachSharedParameters.ComponentData = componentData;
+    	_createCacheEachSharedParameters.TabKeyOutput = tabKeyOutput;
+    	_createCacheEachSharedParameters.SpaceKeyOutput = spaceKeyOutput;
+		
 		_textEditorService.__StringBuilder.Clear();
 		
 		int linesTaken = 0;
@@ -1235,12 +1241,6 @@ public sealed class TextEditorViewModelApi
 						viewModel.GutterWidthInPixels + leftInPixels,
 						topInPixels - (viewModel.CharAndLineMeasurements.LineHeight * hiddenCount));
 					
-					_createCacheEachSharedParameters.Model = modelModifier;
-                	_createCacheEachSharedParameters.ViewModel = viewModel;
-                	_createCacheEachSharedParameters.ComponentData = componentData;
-                	_createCacheEachSharedParameters.TabKeyOutput = tabKeyOutput;
-                	_createCacheEachSharedParameters.SpaceKeyOutput = spaceKeyOutput;
-					
 					CreateCacheEach(
 						linesTaken - 1,
 						ref entireSpan);
@@ -1283,12 +1283,6 @@ public sealed class TextEditorViewModelApi
 						viewModel.CharAndLineMeasurements.LineHeight,
 						leftInPixels: viewModel.GutterWidthInPixels,
 						topInPixels: (lineIndex * viewModel.CharAndLineMeasurements.LineHeight) - (viewModel.CharAndLineMeasurements.LineHeight * hiddenCount));
-					
-					_createCacheEachSharedParameters.Model = modelModifier;
-                	_createCacheEachSharedParameters.ViewModel = viewModel;
-                	_createCacheEachSharedParameters.ComponentData = componentData;
-                	_createCacheEachSharedParameters.TabKeyOutput = tabKeyOutput;
-                	_createCacheEachSharedParameters.SpaceKeyOutput = spaceKeyOutput;
 					
 					CreateCacheEach(
 						linesTaken - 1,
