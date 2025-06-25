@@ -5,9 +5,132 @@ public partial class InitialSolutionFacts
     public const string PERSON_CS_ABSOLUTE_FILE_PATH = @"/BlazorCrudApp/BlazorCrudApp.Wasm/Persons/Person.cs";
     public const string PERSON_CS_CONTENTS =
 """""""""
-// https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/arrays
-
 namespace Walk.CompilerServices.CSharp;
+
+// https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/switch-expression
+public static class SwitchExample
+{
+    public enum Direction
+    {
+        Up,
+        Down,
+        Right,
+        Left
+    }
+
+    public enum Orientation
+    {
+        North,
+        South,
+        East,
+        West
+    }
+
+    public static Orientation ToOrientation(Direction direction) => direction switch
+    {
+        Direction.Up    => Orientation.North,
+        Direction.Right => Orientation.East,
+        Direction.Down  => Orientation.South,
+        Direction.Left  => Orientation.West,
+        _ => throw new ArgumentOutOfRangeException(nameof(direction), $"Not expected direction value: {direction}"),
+    };
+
+    public static void Main()
+    {
+        var direction = Direction.Right;
+        Console.WriteLine($"Map view direction is {direction}");
+        Console.WriteLine($"Cardinal orientation is {ToOrientation(direction)}");
+        // Output:
+        // Map view direction is Right
+        // Cardinal orientation is East
+    }
+}
+
+public readonly struct Point
+{
+    public Point(int x, int y) => (X, Y) = (x, y);
+    
+    public int X { get; }
+    public int Y { get; }
+}
+
+static Point Transform(Point point) => point switch
+{
+    { X: 0, Y: 0 }                    => new Point(0, 0),
+    { X: var x, Y: var y } when x < y => new Point(x + y, y),
+    { X: var x, Y: var y } when x > y => new Point(x - y, y),
+    { X: var x, Y: var y }            => new Point(2 * x, 2 * y),
+};
+
+// https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/selection-statements#the-switch-statement
+DisplayMeasurement(-4);  // Output: Measured value is -4; too low.
+DisplayMeasurement(5);  // Output: Measured value is 5.
+DisplayMeasurement(30);  // Output: Measured value is 30; too high.
+DisplayMeasurement(double.NaN);  // Output: Failed measurement.
+
+void DisplayMeasurement(double measurement)
+{
+    switch (measurement)
+    {
+        case < 0.0:
+            Console.WriteLine($"Measured value is {measurement}; too low.");
+            break;
+
+        case > 15.0:
+            Console.WriteLine($"Measured value is {measurement}; too high.");
+            break;
+
+        case double.NaN:
+            Console.WriteLine("Failed measurement.");
+            break;
+
+        default:
+            Console.WriteLine($"Measured value is {measurement}.");
+            break;
+    }
+}
+
+DisplayMeasurement(-4);  // Output: Measured value is -4; out of an acceptable range.
+DisplayMeasurement(50);  // Output: Measured value is 50.
+DisplayMeasurement(132);  // Output: Measured value is 132; out of an acceptable range.
+
+void DisplayMeasurement(int measurement)
+{
+    switch (measurement)
+    {
+        case < 0:
+        case > 100:
+            Console.WriteLine($"Measured value is {measurement}; out of an acceptable range.");
+            break;
+        
+        default:
+            Console.WriteLine($"Measured value is {measurement}.");
+            break;
+    }
+}
+
+DisplayMeasurements(3, 4);  // Output: First measurement is 3, second measurement is 4.
+DisplayMeasurements(5, 5);  // Output: Both measurements are valid and equal to 5.
+
+void DisplayMeasurements(int a, int b)
+{
+    switch ((a, b))
+    {
+        case (> 0, > 0) when a == b:
+            Console.WriteLine($"Both measurements are valid and equal to {a}.");
+            break;
+
+        case (> 0, > 0):
+            Console.WriteLine($"First measurement is {a}, second measurement is {b}.");
+            break;
+
+        default:
+            Console.WriteLine("One or both measurements are not valid.");
+            break;
+    }
+}
+
+// https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/arrays
 
 // Wrapping with a code block will show me if the array syntax breaks code block parsing.
 public void LR_Arrays_A()
@@ -257,6 +380,10 @@ public void LR_Arrays_C()
         }
     };
 }
+
+
+
+
 
 """"""""";
 }
