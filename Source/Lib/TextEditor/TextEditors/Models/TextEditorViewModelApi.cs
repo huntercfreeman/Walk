@@ -1120,6 +1120,35 @@ public sealed class TextEditorViewModelApi
 					continue;
 				}
 				
+				var useCache = _createCacheEachSharedParameters.ComponentData.Virtualized_LineIndexCache_LineMap.ContainsKey(lineIndex) &&
+					          !_createCacheEachSharedParameters.ComponentData.Virtualized_LineIndexCache_LineIndexWithModificationList.Contains(lineIndex);
+				
+				if (useCache)
+				{
+        			var previous = _createCacheEachSharedParameters.ComponentData.Virtualized_LineIndexCache_LineMap[lineIndex];
+        			
+        			var virtualizationEntry = _createCacheEachSharedParameters.ComponentData.Virtualized_LineIndexCache_LineMap[lineIndex];
+        			virtualizationEntry.VirtualizationSpan_StartInclusiveIndex = _createCacheEachSharedParameters.ViewModel.VirtualizationResult.VirtualizationSpanList.Count;
+		
+		            _createCacheEachSharedParameters.ComponentData.Virtualized_LineIndexCache_LineIndexUsageHashSet.Add(virtualizationEntry.LineIndex);
+        			
+        			var smallSpan = entireSpan.Slice(
+        			    previous.VirtualizationSpan_StartInclusiveIndex,
+        			    previous.VirtualizationSpan_EndExclusiveIndex - previous.VirtualizationSpan_StartInclusiveIndex);
+        			
+        			foreach (var virtualizedSpan in smallSpan)
+        			{
+        				_createCacheEachSharedParameters.ViewModel.VirtualizationResult.VirtualizationSpanList.Add(virtualizedSpan);
+        			}
+        			
+        			// WARNING CODE DUPLICATION
+        			virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = _createCacheEachSharedParameters.ViewModel.VirtualizationResult.VirtualizationSpanList.Count;
+        			virtualizedLineList[linesTaken++] = virtualizationEntry;
+        			
+        			_createCacheEachSharedParameters.ComponentData.Virtualized_LineIndexCache_LineMap[virtualizationEntry.LineIndex] = virtualizationEntry;
+				    continue;
+				}
+				
 				var lineInformation = modelModifier.GetLineInformation(lineIndex);
 							    
 				var line_PositionStartInclusiveIndex = lineInformation.Position_StartInclusiveIndex;
@@ -1347,145 +1376,115 @@ public sealed class TextEditorViewModelApi
 		
 		_createCacheEachSharedParameters.ComponentData.Virtualized_LineIndexCache_LineIndexUsageHashSet.Add(virtualizationEntry.LineIndex);
 		
-		var wasCached = false;
-		
-		var useThis = _createCacheEachSharedParameters.ComponentData.Virtualized_LineIndexCache_LineMap.ContainsKey(virtualizationEntry.LineIndex) &&
-					  !_createCacheEachSharedParameters.ComponentData.Virtualized_LineIndexCache_LineIndexWithModificationList.Contains(virtualizationEntry.LineIndex);
-		
-		if (useThis)
-		{
-			var previous = _createCacheEachSharedParameters.ComponentData.Virtualized_LineIndexCache_LineMap[virtualizationEntry.LineIndex];
-			
-			var smallSpan = entireSpan.Slice(
-			    previous.VirtualizationSpan_StartInclusiveIndex,
-			    previous.VirtualizationSpan_EndExclusiveIndex - previous.VirtualizationSpan_StartInclusiveIndex);
-			
-			foreach (var virtualizedSpan in smallSpan)
-			{
-				_createCacheEachSharedParameters.ViewModel.VirtualizationResult.VirtualizationSpanList.Add(virtualizedSpan);
-			}
-			
-			// WARNING CODE DUPLICATION (this also exists at the bottom of this for loop).
-			virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = _createCacheEachSharedParameters.ViewModel.VirtualizationResult.VirtualizationSpanList.Count;
-			_createCacheEachSharedParameters.ViewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
-			
-			_createCacheEachSharedParameters.ComponentData.Virtualized_LineIndexCache_LineMap[virtualizationEntry.LineIndex] = virtualizationEntry;
-			
-			wasCached = true;
-		}
-		
-		if (!wasCached)
-		{
-		    var richCharacterSpan = new Span<RichCharacter>(
-		        _createCacheEachSharedParameters.Model.RichCharacterList,
-		        virtualizationEntry.Position_StartInclusiveIndex,
-		        virtualizationEntry.Position_EndExclusiveIndex - virtualizationEntry.Position_StartInclusiveIndex);
-		
-			var currentDecorationByte = richCharacterSpan[0].DecorationByte;
-		    
-		    foreach (var richCharacter in richCharacterSpan)
+	    var richCharacterSpan = new Span<RichCharacter>(
+	        _createCacheEachSharedParameters.Model.RichCharacterList,
+	        virtualizationEntry.Position_StartInclusiveIndex,
+	        virtualizationEntry.Position_EndExclusiveIndex - virtualizationEntry.Position_StartInclusiveIndex);
+	
+		var currentDecorationByte = richCharacterSpan[0].DecorationByte;
+	    
+	    foreach (var richCharacter in richCharacterSpan)
+	    {
+			if (currentDecorationByte == richCharacter.DecorationByte)
 		    {
-				if (currentDecorationByte == richCharacter.DecorationByte)
-			    {
-			        // AppendTextEscaped(textEditorService.__StringBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
-			        switch (richCharacter.Value)
-			        {
-			            case '\t':
-			                _textEditorService.__StringBuilder.Append(_createCacheEachSharedParameters.TabKeyOutput);
-			                break;
-			            case ' ':
-			                _textEditorService.__StringBuilder.Append(_createCacheEachSharedParameters.SpaceKeyOutput);
-			                break;
-			            case '\r':
-			                break;
-			            case '\n':
-			                break;
-			            case '<':
-			                _textEditorService.__StringBuilder.Append("&lt;");
-			                break;
-			            case '>':
-			                _textEditorService.__StringBuilder.Append("&gt;");
-			                break;
-			            case '"':
-			                _textEditorService.__StringBuilder.Append("&quot;");
-			                break;
-			            case '\'':
-			                _textEditorService.__StringBuilder.Append("&#39;");
-			                break;
-			            case '&':
-			                _textEditorService.__StringBuilder.Append("&amp;");
-			                break;
-			            default:
-			                _textEditorService.__StringBuilder.Append(richCharacter.Value);
-			                break;
-			        }
-			        // END OF INLINING AppendTextEscaped
-			    }
-			    else
-			    {
-			    	_createCacheEachSharedParameters.ViewModel.VirtualizationResult.VirtualizationSpanList.Add(new VirtualizationSpan(
-			    		cssClass: _createCacheEachSharedParameters.Model.PersistentState.DecorationMapper.Map(currentDecorationByte),
-			    		text: _textEditorService.__StringBuilder.ToString()));
-			        _textEditorService.__StringBuilder.Clear();
-			        
-			        // AppendTextEscaped(textEditorService.__StringBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
-			        switch (richCharacter.Value)
-			        {
-			            case '\t':
-			                _textEditorService.__StringBuilder.Append(_createCacheEachSharedParameters.TabKeyOutput);
-			                break;
-			            case ' ':
-			                _textEditorService.__StringBuilder.Append(_createCacheEachSharedParameters.SpaceKeyOutput);
-			                break;
-			            case '\r':
-			                break;
-			            case '\n':
-			                break;
-			            case '<':
-			                _textEditorService.__StringBuilder.Append("&lt;");
-			                break;
-			            case '>':
-			                _textEditorService.__StringBuilder.Append("&gt;");
-			                break;
-			            case '"':
-			                _textEditorService.__StringBuilder.Append("&quot;");
-			                break;
-			            case '\'':
-			                _textEditorService.__StringBuilder.Append("&#39;");
-			                break;
-			            case '&':
-			                _textEditorService.__StringBuilder.Append("&amp;");
-			                break;
-			            default:
-			                _textEditorService.__StringBuilder.Append(richCharacter.Value);
-			                break;
-			        }
-			        // END OF INLINING AppendTextEscaped
-			        
-					currentDecorationByte = richCharacter.DecorationByte;
-			    }
+		        // AppendTextEscaped(textEditorService.__StringBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+		        switch (richCharacter.Value)
+		        {
+		            case '\t':
+		                _textEditorService.__StringBuilder.Append(_createCacheEachSharedParameters.TabKeyOutput);
+		                break;
+		            case ' ':
+		                _textEditorService.__StringBuilder.Append(_createCacheEachSharedParameters.SpaceKeyOutput);
+		                break;
+		            case '\r':
+		                break;
+		            case '\n':
+		                break;
+		            case '<':
+		                _textEditorService.__StringBuilder.Append("&lt;");
+		                break;
+		            case '>':
+		                _textEditorService.__StringBuilder.Append("&gt;");
+		                break;
+		            case '"':
+		                _textEditorService.__StringBuilder.Append("&quot;");
+		                break;
+		            case '\'':
+		                _textEditorService.__StringBuilder.Append("&#39;");
+		                break;
+		            case '&':
+		                _textEditorService.__StringBuilder.Append("&amp;");
+		                break;
+		            default:
+		                _textEditorService.__StringBuilder.Append(richCharacter.Value);
+		                break;
+		        }
+		        // END OF INLINING AppendTextEscaped
 		    }
-		    
-		    /* Final grouping of contiguous characters */
-			_createCacheEachSharedParameters.ViewModel.VirtualizationResult.VirtualizationSpanList.Add(new VirtualizationSpan(
-	    		cssClass: _createCacheEachSharedParameters.Model.PersistentState.DecorationMapper.Map(currentDecorationByte),
-	    		text: _textEditorService.__StringBuilder.ToString()));
-			_textEditorService.__StringBuilder.Clear();
-			
-			// WARNING CODE DUPLICATION (this also exists when copying a virtualizationEntry from cache).
-			virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = _createCacheEachSharedParameters.ViewModel.VirtualizationResult.VirtualizationSpanList.Count;
-			_createCacheEachSharedParameters.ViewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
-			
-			if (_createCacheEachSharedParameters.ComponentData.Virtualized_LineIndexCache_LineMap.ContainsKey(virtualizationEntry.LineIndex))
-			{
-				_createCacheEachSharedParameters.ComponentData.Virtualized_LineIndexCache_LineMap[virtualizationEntry.LineIndex] = virtualizationEntry;
-			}
-			else
-			{
-				_createCacheEachSharedParameters.ComponentData.Virtualized_LineIndexCache_LineIndexKeyList.Add(virtualizationEntry.LineIndex);
-				_createCacheEachSharedParameters.ComponentData.Virtualized_LineIndexCache_LineMap.Add(virtualizationEntry.LineIndex, virtualizationEntry);
-			}
+		    else
+		    {
+		    	_createCacheEachSharedParameters.ViewModel.VirtualizationResult.VirtualizationSpanList.Add(new VirtualizationSpan(
+		    		cssClass: _createCacheEachSharedParameters.Model.PersistentState.DecorationMapper.Map(currentDecorationByte),
+		    		text: _textEditorService.__StringBuilder.ToString()));
+		        _textEditorService.__StringBuilder.Clear();
+		        
+		        // AppendTextEscaped(textEditorService.__StringBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+		        switch (richCharacter.Value)
+		        {
+		            case '\t':
+		                _textEditorService.__StringBuilder.Append(_createCacheEachSharedParameters.TabKeyOutput);
+		                break;
+		            case ' ':
+		                _textEditorService.__StringBuilder.Append(_createCacheEachSharedParameters.SpaceKeyOutput);
+		                break;
+		            case '\r':
+		                break;
+		            case '\n':
+		                break;
+		            case '<':
+		                _textEditorService.__StringBuilder.Append("&lt;");
+		                break;
+		            case '>':
+		                _textEditorService.__StringBuilder.Append("&gt;");
+		                break;
+		            case '"':
+		                _textEditorService.__StringBuilder.Append("&quot;");
+		                break;
+		            case '\'':
+		                _textEditorService.__StringBuilder.Append("&#39;");
+		                break;
+		            case '&':
+		                _textEditorService.__StringBuilder.Append("&amp;");
+		                break;
+		            default:
+		                _textEditorService.__StringBuilder.Append(richCharacter.Value);
+		                break;
+		        }
+		        // END OF INLINING AppendTextEscaped
+		        
+				currentDecorationByte = richCharacter.DecorationByte;
+		    }
 	    }
+	    
+	    /* Final grouping of contiguous characters */
+		_createCacheEachSharedParameters.ViewModel.VirtualizationResult.VirtualizationSpanList.Add(new VirtualizationSpan(
+    		cssClass: _createCacheEachSharedParameters.Model.PersistentState.DecorationMapper.Map(currentDecorationByte),
+    		text: _textEditorService.__StringBuilder.ToString()));
+		_textEditorService.__StringBuilder.Clear();
+		
+		// WARNING CODE DUPLICATION (this also exists when copying a virtualizationEntry from cache).
+		virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = _createCacheEachSharedParameters.ViewModel.VirtualizationResult.VirtualizationSpanList.Count;
+		_createCacheEachSharedParameters.ViewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
+		
+		if (_createCacheEachSharedParameters.ComponentData.Virtualized_LineIndexCache_LineMap.ContainsKey(virtualizationEntry.LineIndex))
+		{
+			_createCacheEachSharedParameters.ComponentData.Virtualized_LineIndexCache_LineMap[virtualizationEntry.LineIndex] = virtualizationEntry;
+		}
+		else
+		{
+			_createCacheEachSharedParameters.ComponentData.Virtualized_LineIndexCache_LineIndexKeyList.Add(virtualizationEntry.LineIndex);
+			_createCacheEachSharedParameters.ComponentData.Virtualized_LineIndexCache_LineMap.Add(virtualizationEntry.LineIndex, virtualizationEntry);
+		}
     }
     
     /// <summary>
