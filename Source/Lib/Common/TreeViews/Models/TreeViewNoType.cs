@@ -29,6 +29,12 @@ public abstract class TreeViewNoType
     public Key<TreeViewNoType> Key { get; set; } = Key<TreeViewNoType>.NewKey();
 
 	public virtual string GetDisplayText() => this.GetType().Name;
+	/// <summary>
+	/// You have to hardcode `di_tree-view-title-content` as the first "class entry" in the string.
+	/// This is annoying, but I have other things I'm triaging at higher priority and this will avoid
+	/// string concatenation for the short term.
+	/// </summary>
+	public virtual string GetDisplayTextCssClass() => "di_tree-view-title-content";
 	public virtual string GetHoverText() => GetDisplayText();
 	public virtual Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => IconNoneFragment.Render;
 	
