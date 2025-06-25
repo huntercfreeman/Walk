@@ -33,7 +33,7 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Displays;
 public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    public IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     public IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]
@@ -67,9 +67,9 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     [Inject]
     public WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
-    private IFindAllService FindAllService { get; set; } = null!;
+    public IFindAllService FindAllService { get; set; } = null!;
     [Inject]
-    private IDragService DragService { get; set; } = null!;
+    public IDragService DragService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<TextEditorViewModel> TextEditorViewModelKey { get; set; } = Key<TextEditorViewModel>.Empty;
@@ -288,17 +288,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			_textEditorHtmlElementId,
 			ViewModelDisplayOptions,
 			TextEditorService.OptionsApi.GetTextEditorOptionsState().Options,
-			this,
-			DropdownService,
-			ClipboardService,
-			CommonComponentRenderers,
-			NotificationService,
-			TextEditorService,
-			TextEditorComponentRenderers,
-			FindAllService,
-			EnvironmentProvider,
-			FileSystemProvider,
-			ServiceProvider);
+			this);
 			
 		SetRenderBatchConstants();
     }

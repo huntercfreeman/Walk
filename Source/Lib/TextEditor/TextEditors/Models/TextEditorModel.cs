@@ -1125,8 +1125,12 @@ public sealed class TextEditorModel
         var initialCursorPositionIndex = this.GetPositionIndex(viewModel);
         var initialCursorLineIndex = viewModel.LineIndex;
 
-        this.AssertPositionIndex(initialCursorPositionIndex);
-
+        if (initialCursorPositionIndex < 0)
+            throw new WalkTextEditorException($"'{nameof(initialCursorPositionIndex)}:{initialCursorPositionIndex}' < 0");
+        // NOTE: DocumentLength is a valid position for the cursor to be at.
+        if (initialCursorPositionIndex > CharCount)
+            throw new WalkTextEditorException($"'{nameof(initialCursorPositionIndex)}:{initialCursorPositionIndex}' > {nameof(CharCount)}:{CharCount}");
+        
         bool isTab = false;
         bool isCarriageReturn = false;
         bool isLineFeed = false;
@@ -1537,8 +1541,12 @@ public sealed class TextEditorModel
             viewModel.SelectionAnchorPositionIndex = -1;
             viewModel.SelectionEndingPositionIndex = 0;
 		}
-
-        this.AssertPositionIndex(positionIndex);
+		
+		if (positionIndex < 0)
+            throw new WalkTextEditorException($"'{nameof(positionIndex)}:{positionIndex}' < 0");
+        // NOTE: DocumentLength is a valid position for the cursor to be at.
+        if (positionIndex > CharCount)
+            throw new WalkTextEditorException($"'{nameof(positionIndex)}:{positionIndex}' > {nameof(CharCount)}:{CharCount}");
 
         (int? index, int count) lineEndPositionLazyRemoveRange = (null, 0);
         (int? index, int count) tabPositionLazyRemoveRange = (null, 0);
@@ -1883,8 +1891,6 @@ public sealed class TextEditorModel
     public int GetTabCountOnSameLineBeforeCursor(int lineIndex, int columnIndex)
     {
         var line = GetLineInformation(lineIndex);
-
-        AssertColumnIndex(line, columnIndex);
         
         var count = 0;
         var foundSpan = false;
@@ -1931,8 +1937,6 @@ public sealed class TextEditorModel
     {
         var line = GetLineInformation(lineIndex);
 
-        AssertColumnIndex(line, columnIndex);
-
         return line.Position_StartInclusiveIndex + columnIndex;
     }
 
@@ -1951,8 +1955,6 @@ public sealed class TextEditorModel
     /// </summary>
     public char GetCharacter(int positionIndex)
     {
-        AssertPositionIndex(positionIndex);
-
         if (positionIndex == CharCount)
             return ParserFacts.END_OF_FILE;
 
@@ -1964,9 +1966,6 @@ public sealed class TextEditorModel
     /// </summary>
     public string GetString(int positionIndex, int count)
     {
-        AssertPositionIndex(positionIndex);
-        AssertCount(count);
-
         return new string(RichCharacterList
             .Skip(positionIndex)
             .Take(count)
@@ -1976,8 +1975,6 @@ public sealed class TextEditorModel
 
     public string GetLineTextRange(int lineIndex, int count)
     {
-        AssertCount(count);
-
         var startPositionIndexInclusive = GetPositionIndex(lineIndex, 0);
         var lastLineIndexExclusive = lineIndex + count;
         int endPositionIndexExclusive;
@@ -2124,8 +2121,6 @@ public sealed class TextEditorModel
     /// </remarks>
     public LineInformation GetLineInformation(int lineIndex)
     {
-        AssertLineIndex(lineIndex);
-
         LineEnd GetLineEndLower(int lineIndex)
         {
             // Large index? Then set the index to the last index.
@@ -2165,8 +2160,6 @@ public sealed class TextEditorModel
 
     public LineInformation GetLineInformationFromPositionIndex(int positionIndex)
     {
-        AssertPositionIndex(positionIndex);
-
         int GetLineIndexFromPositionIndex()
         {
             // StartOfFile
@@ -2263,8 +2256,6 @@ public sealed class TextEditorModel
 
     public CharacterKind GetCharacterKind(int positionIndex)
     {
-        AssertPositionIndex(positionIndex);
-
         if (positionIndex == CharCount)
             return CharacterKind.Bad;
 
@@ -2363,40 +2354,6 @@ public sealed class TextEditorModel
         var lengthOfLine = GetLineLength(lineIndex, true);
 
         return GetString(lineStartPositionIndexInclusive, lengthOfLine);
-    }
-
-    public void AssertColumnIndex(LineInformation line, int columnIndex)
-    {
-        if (columnIndex < 0)
-            throw new WalkTextEditorException($"'{nameof(columnIndex)}:{columnIndex}' < 0");
-        
-        if (columnIndex > line.LastValidColumnIndex)
-            throw new WalkTextEditorException($"'{nameof(columnIndex)}:{columnIndex}' > {nameof(line)}.{nameof(line.LastValidColumnIndex)}:{line.LastValidColumnIndex}");
-    }
-    
-    public void AssertLineIndex(int lineIndex)
-    {
-        if (lineIndex < 0)
-            throw new WalkTextEditorException($"'{nameof(lineIndex)}:{lineIndex}' < 0");
-        
-        if (lineIndex >= LineCount)
-            throw new WalkTextEditorException($"'{nameof(lineIndex)}:{lineIndex}' >= {nameof(LineCount)}:{LineCount}");
-    }
-
-    public void AssertPositionIndex(int positionIndex)
-    {
-        if (positionIndex < 0)
-            throw new WalkTextEditorException($"'{nameof(positionIndex)}:{positionIndex}' < 0");
-        
-        // NOTE: DocumentLength is a valid position for the cursor to be at.
-        if (positionIndex > CharCount)
-            throw new WalkTextEditorException($"'{nameof(positionIndex)}:{positionIndex}' > {nameof(CharCount)}:{CharCount}");
-    }
-    
-    public void AssertCount(int count)
-    {
-        if (count < 0)
-            throw new WalkTextEditorException($"'{nameof(count)}:{count}' < 0");
     }
     #endregion
     
