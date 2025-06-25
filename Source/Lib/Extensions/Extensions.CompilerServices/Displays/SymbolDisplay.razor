@@ -68,6 +68,19 @@
 		            </text>
 		            break;
 		        }
+		        case "LabelSymbol":
+		        {
+		            <text>
+		                <span class="di_te_keyword">
+		                    label
+		                </span>
+		
+		                <span class="@(string.Empty /* Labels do not have their own css class as of (2023-07-20) */)">
+		                    @symbolLocal.TextSpan.Text
+		                </span>
+		            </text>
+		            break;
+		        }
 		        case "DiscardSymbol":
 		        {
 		        	<text>
