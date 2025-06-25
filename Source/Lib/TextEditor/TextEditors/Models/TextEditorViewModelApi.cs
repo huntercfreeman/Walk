@@ -1243,7 +1243,6 @@ public sealed class TextEditorViewModelApi
 							linesTaken - 1,
 							tabKeyOutput,
 							spaceKeyOutput,
-							useAll,
 							ref entireSpan);
 					}
 					else
@@ -1292,7 +1291,6 @@ public sealed class TextEditorViewModelApi
 							linesTaken - 1,
 							tabKeyOutput,
 							spaceKeyOutput,
-							useAll,
 							ref entireSpan);
 					}
 				}
@@ -1314,8 +1312,6 @@ public sealed class TextEditorViewModelApi
 					componentData.Virtualized_LineIndexCache_LineIndexKeyList.RemoveAt(i);
 				}
 			}
-			
-			// CreateCache(editContext.TextEditorService, modelModifier, viewModel);
 			
 			#if DEBUG
 			WalkDebugSomething.SetTextEditorViewModelApi(Stopwatch.GetElapsedTime(startTime));
@@ -1393,7 +1389,6 @@ public sealed class TextEditorViewModelApi
     	int entryIndex,
     	string tabKeyOutput,
 		string spaceKeyOutput,
-		bool useAll,
 		ref Span<VirtualizationSpan> entireSpan)
     {
     	var virtualizationEntry = viewModel.VirtualizationResult.EntryList[entryIndex];
@@ -1407,17 +1402,6 @@ public sealed class TextEditorViewModelApi
 		}
 		
 		(int lineIndex, int columnIndex) lineAndColumnIndices = (0, 0);
-		var inlineUi = new InlineUi(0, InlineUiKind.None);
-		
-		for (int inlineUiIndex = 0; inlineUiIndex < viewModel.PersistentState.InlineUiList.Count; inlineUiIndex++)
-		{
-			var inlineUiTuple = viewModel.PersistentState.InlineUiList[inlineUiIndex];
-			
-			lineAndColumnIndices = model.GetLineAndColumnIndicesFromPositionIndex(inlineUiTuple.InlineUi.PositionIndex);
-			
-			if (lineAndColumnIndices.lineIndex == virtualizationEntry.LineIndex)
-				inlineUi = inlineUiTuple.InlineUi;
-		}
 		
 		virtualizationEntry.VirtualizationSpan_StartInclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
 		
@@ -1425,34 +1409,31 @@ public sealed class TextEditorViewModelApi
 		
 		var wasCached = false;
 		
-		if (useAll && inlineUi.InlineUiKind == InlineUiKind.None)
+		var useThis = componentData.Virtualized_LineIndexCache_LineMap.ContainsKey(virtualizationEntry.LineIndex) &&
+					  !componentData.Virtualized_LineIndexCache_LineIndexWithModificationList.Contains(virtualizationEntry.LineIndex);
+		
+		if (useThis)
 		{
-			var useThis = componentData.Virtualized_LineIndexCache_LineMap.ContainsKey(virtualizationEntry.LineIndex) &&
-						  !componentData.Virtualized_LineIndexCache_LineIndexWithModificationList.Contains(virtualizationEntry.LineIndex);
+			var previous = componentData.Virtualized_LineIndexCache_LineMap[virtualizationEntry.LineIndex];
 			
-			if (useThis)
+			var smallSpan = entireSpan.Slice(
+			    previous.VirtualizationSpan_StartInclusiveIndex,
+			    previous.VirtualizationSpan_EndExclusiveIndex - previous.VirtualizationSpan_StartInclusiveIndex);
+			
+			foreach (var virtualizedSpan in smallSpan)
 			{
-				var previous = componentData.Virtualized_LineIndexCache_LineMap[virtualizationEntry.LineIndex];
-				
-				var smallSpan = entireSpan.Slice(
-				    previous.VirtualizationSpan_StartInclusiveIndex,
-				    previous.VirtualizationSpan_EndExclusiveIndex - previous.VirtualizationSpan_StartInclusiveIndex);
-				
-				foreach (var virtualizedSpan in smallSpan)
-				{
-					viewModel.VirtualizationResult.VirtualizationSpanList.Add(virtualizedSpan);
-				}
-				
-				// WARNING CODE DUPLICATION (this also exists at the bottom of this for loop).
-				virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
-				viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
-				
-				componentData.Virtualized_LineIndexCache_LineMap[virtualizationEntry.LineIndex] = virtualizationEntry;
-				
-				// Console.WriteLine("r");
-				
-				wasCached = true;
+				viewModel.VirtualizationResult.VirtualizationSpanList.Add(virtualizedSpan);
 			}
+			
+			// WARNING CODE DUPLICATION (this also exists at the bottom of this for loop).
+			virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
+			viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
+			
+			componentData.Virtualized_LineIndexCache_LineMap[virtualizationEntry.LineIndex] = virtualizationEntry;
+			
+			// Console.WriteLine("r");
+			
+			wasCached = true;
 		}
 		
 		if (!wasCached)
