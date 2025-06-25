@@ -47,6 +47,8 @@ public static class WalkDebugSomething
 	public static int IfStatementNode { get; set; }
 	public static int InheritanceStatementNode { get; set; }
 	public static int InterpolatedStringNode { get; set; }
+	public static int LabelDeclarationNode { get; set; }
+	public static int LabelReferenceNode { get; set; }
 	public static int LambdaExpressionNode { get; set; }
 	public static int LiteralExpressionNode { get; set; }
 	public static int LockStatementNode { get; set; }
@@ -130,6 +132,8 @@ public static class WalkDebugSomething
 			("IfStatementNode", IfStatementNode),
 			("InheritanceStatementNode", InheritanceStatementNode),
 			("InterpolatedStringNode", InterpolatedStringNode),
+			("LabelDeclarationNode", LabelDeclarationNode),
+			("LabelReferenceNode", LabelReferenceNode),
 			("LambdaExpressionNode", LambdaExpressionNode),
 			("LiteralExpressionNode", LiteralExpressionNode),
 			("LockStatementNode", LockStatementNode),
@@ -192,6 +196,8 @@ public static class WalkDebugSomething
 			IfStatementNode +
 			InheritanceStatementNode +
 			InterpolatedStringNode +
+			LabelDeclarationNode +
+			LabelReferenceNode +
 			LambdaExpressionNode +
 			LiteralExpressionNode +
 			LockStatementNode +

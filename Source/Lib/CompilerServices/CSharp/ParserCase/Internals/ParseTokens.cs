@@ -33,6 +33,12 @@ public static class ParseTokens
 			}
     	}
     	
+    	if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.ColonToken)
+		{
+		    ParseOthers.HandleLabelDeclaration(compilationUnit, ref parserModel);
+		    return;
+		}
+    	
     	var originalTokenIndex = parserModel.TokenWalker.Index;
     	
     	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.TypeClauseNode);
@@ -869,6 +875,12 @@ public static class ParseTokens
 
     public static void ParseKeywordContextualToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
+        if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.ColonToken)
+		{
+		    ParseOthers.HandleLabelDeclaration(compilationUnit, ref parserModel);
+		    return;
+		}
+    
         switch (parserModel.TokenWalker.Current.SyntaxKind)
         {
             case SyntaxKind.VarTokenContextualKeyword:

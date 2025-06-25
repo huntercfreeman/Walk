@@ -95,6 +95,8 @@ public partial class CSharpBinder
 				return ReturnStatementMergeToken((ReturnStatementNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
 			case SyntaxKind.KeywordFunctionOperatorNode:
 				return KeywordFunctionOperatorMergeToken((KeywordFunctionOperatorNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
+			case SyntaxKind.SwitchExpressionNode:
+				return SwitchExpressionMergeToken((SwitchExpressionNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
 			case SyntaxKind.BadExpressionNode:
 				return BadMergeToken((BadExpressionNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
 			default:
@@ -158,6 +160,8 @@ public partial class CSharpBinder
 				return ReturnStatementMergeExpression((ReturnStatementNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			case SyntaxKind.KeywordFunctionOperatorNode:
 				return KeywordFunctionOperatorMergeExpression((KeywordFunctionOperatorNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
+			case SyntaxKind.SwitchExpressionNode:
+				return SwitchExpressionMergeExpression((SwitchExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			case SyntaxKind.BadExpressionNode:
 				return BadMergeExpression((BadExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			default:
@@ -422,7 +426,7 @@ public partial class CSharpBinder
 	
 		switch (token.SyntaxKind)
 		{
-			case SyntaxKind.OpenParenthesisToken:
+		    case SyntaxKind.OpenParenthesisToken:
 			{
 				if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken)
 				{
@@ -537,6 +541,19 @@ public partial class CSharpBinder
 				
 				goto default;
 			}
+			case SyntaxKind.SwitchTokenKeyword:
+		    {
+		        var decidedNode = ForceDecisionAmbiguousIdentifier(
+					EmptyExpressionNode.Empty,
+					ambiguousIdentifierExpressionNode,
+					compilationUnit,
+					ref parserModel);
+				
+				if (decidedNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+				    return VariableReferenceMergeToken((VariableReferenceNode)decidedNode, ref token, compilationUnit, ref parserModel);
+				
+				goto default;
+		    }
 			case SyntaxKind.PlusPlusToken:
 			{
 				var decidedNode = ForceDecisionAmbiguousIdentifier(
@@ -762,18 +779,39 @@ public partial class CSharpBinder
     			result = functionInvocationNode;
     			goto finalize;
 	        }
-		}
-		
-		if (parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
+	        
+	        if (parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
     		    ambiguousIdentifierExpressionNode.Token.TextSpan.Text,
     		    out var namespacePrefixNode))
-		{
-		    result = new NamespaceClauseNode(ambiguousIdentifierExpressionNode.Token);
-            compilationUnit.__SymbolList.Add(new Symbol(
-	        	SyntaxKind.NamespaceSymbol,
-	        	parserModel.GetNextSymbolId(),
-	        	ambiguousIdentifierExpressionNode.Token.TextSpan));
-			goto finalize;
+    		{
+    		    result = new NamespaceClauseNode(ambiguousIdentifierExpressionNode.Token);
+                compilationUnit.__SymbolList.Add(new Symbol(
+    	        	SyntaxKind.NamespaceSymbol,
+    	        	parserModel.GetNextSymbolId(),
+    	        	ambiguousIdentifierExpressionNode.Token.TextSpan));
+    			goto finalize;
+    		}
+    		
+    		if (TryGetLabelDeclarationHierarchically(
+    		    	compilationUnit,
+    		        compilationUnit.ResourceUri,
+    		    	parserModel.CurrentScopeIndexKey,
+    		        ambiguousIdentifierExpressionNode.Token.TextSpan.Text,
+    		        out var labelDefinitionNode))
+            {
+            	var token = ambiguousIdentifierExpressionNode.Token;
+    			var identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, compilationUnit, ref parserModel);
+    			
+    			var labelReferenceNode = new LabelReferenceNode(ambiguousIdentifierExpressionNode.Token);
+    			
+    			BindLabelReferenceNode(
+    		        labelReferenceNode,
+    		        compilationUnit,
+    		        ref parserModel);
+    			
+    			result = labelReferenceNode;
+    			goto finalize;
+            }
 		}
 		
 		if (allowFabricatedUndefinedNode)
@@ -858,6 +896,10 @@ public partial class CSharpBinder
 			{
 				return new WithExpressionNode(
 					new VariableReference(variableReferenceNode));
+			}
+			case SyntaxKind.SwitchTokenKeyword:
+			{
+			    return new SwitchExpressionNode();
 			}
 			case SyntaxKind.PlusPlusToken:
 			{
@@ -1509,6 +1551,28 @@ public partial class CSharpBinder
 				
 				return genericParameterListing;*/
 				goto default;
+			case SyntaxKind.GotoTokenKeyword:
+			{
+			    if (parserModel.TokenWalker.Peek(2).SyntaxKind == SyntaxKind.StatementDelimiterToken)
+			    {
+			        _ = parserModel.TokenWalker.Consume(); // Consume 'goto'
+			        
+			        if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind))
+			        {
+			            var nameableToken = parserModel.TokenWalker.Consume(); // Consume 'NameableToken'
+            			var identifierToken = UtilityApi.ConvertToIdentifierToken(ref nameableToken, compilationUnit, ref parserModel);
+            			
+            			var labelReferenceNode = new LabelReferenceNode(identifierToken);
+            			
+            			BindLabelReferenceNode(
+            		        labelReferenceNode,
+            		        compilationUnit,
+            		        ref parserModel);
+			        }
+			    }
+			    
+			    return EmptyExpressionNode.Empty;
+			}
 			case SyntaxKind.ReturnTokenKeyword:
 				var returnStatementNode = new ReturnStatementNode(token, EmptyExpressionNode.Empty);
 				parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, returnStatementNode));
@@ -1627,6 +1691,36 @@ public partial class CSharpBinder
 		}
 	
 		return keywordFunctionOperatorNode;
+	}
+	
+	public IExpressionNode SwitchExpressionMergeToken(
+		SwitchExpressionNode switchExpressionNode, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		if (token.SyntaxKind == SyntaxKind.OpenBraceToken)
+		{
+		    parserModel.ExpressionList.Add((SyntaxKind.CloseBraceToken, switchExpressionNode));
+		    return EmptyExpressionNode.Empty;
+		}
+		
+		return ToBadExpressionNode(switchExpressionNode, token);
+	}
+	
+	public IExpressionNode SwitchExpressionMergeExpression(
+		SwitchExpressionNode switchExpressionNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		{
+			ForceDecisionAmbiguousIdentifier(
+				EmptyExpressionNode.Empty,
+				(AmbiguousIdentifierExpressionNode)expressionSecondary,
+				compilationUnit,
+				ref parserModel);
+		}
+		
+		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
+		    return switchExpressionNode;
+	
+		return ToBadExpressionNode(switchExpressionNode, expressionSecondary);
 	}
 	
 	public IExpressionNode LambdaMergeToken(

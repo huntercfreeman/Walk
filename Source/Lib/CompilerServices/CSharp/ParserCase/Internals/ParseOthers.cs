@@ -92,6 +92,26 @@ public static class ParseOthers
     }
     
     /// <summary>
+    /// parserModel.TokenWalker.Current is a NameableToken
+    /// parserModel.TokenWalker.Next is a ColonToken
+    /// </summary>
+    public static void HandleLabelDeclaration(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    {
+        var labelDeclarationNode = new LabelDeclarationNode(parserModel.TokenWalker.Current);
+		
+	    parserModel.Binder.BindLabelDeclarationNode(
+            labelDeclarationNode,
+            compilationUnit,
+            ref parserModel);
+            
+        var labelReferenceNode = new LabelReferenceNode(labelDeclarationNode.IdentifierToken);
+        
+        parserModel.TokenWalker.Consume(); // Consume 'NameableToken'
+        parserModel.TokenWalker.Consume(); // Consume 'ColonToken'
+		return;
+    }
+    
+    /// <summary>
     /// WARNING: If this parses a TypeClauseNode, it will return false, but not revert the TokenWalker's TokenIndex...
     /// ...in all other cases where this returns false, the TokenWalker's TokenIndex is reverted.
     /// This is done to preserve the way VariableDeclarationNode(s) were being parsed prior to this method's creation.

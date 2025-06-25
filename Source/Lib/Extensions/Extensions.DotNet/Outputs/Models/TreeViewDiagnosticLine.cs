@@ -25,6 +25,16 @@ public class TreeViewDiagnosticLine : TreeViewWithType<DiagnosticLine>
 	public override int GetHashCode() => Item.GetHashCode();
 
 	public override string GetDisplayText() => Item.TextShort;
+	
+	public override string GetDisplayTextCssClass()
+	{
+	    if (Item.DiagnosticLineKind == DiagnosticLineKind.Warning)
+        	return "di_tree-view-title-content di_tree-view-warning";
+        else if (Item.DiagnosticLineKind == DiagnosticLineKind.Error)
+        	return "di_tree-view-title-content di_tree-view-exception";
+        else
+        	return "di_tree-view-title-content";
+     }
 
     /*public override TreeViewRenderer GetTreeViewRenderer()
 	{
