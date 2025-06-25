@@ -227,6 +227,56 @@ public partial class CSharpBinder
         }
     }
     
+    public void BindLabelDeclarationNode(
+        LabelDeclarationNode labelDeclarationNode,
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserModel parserModel)
+    {
+    	compilationUnit.__SymbolList.Add(
+        	new Symbol(
+        		SyntaxKind.LabelSymbol,
+            	parserModel.GetNextSymbolId(),
+            	labelDeclarationNode.IdentifierToken.TextSpan));
+        	
+        var text = labelDeclarationNode.IdentifierToken.TextSpan.Text;
+        
+        if (TryGetLabelDeclarationNodeByScope(
+        		compilationUnit,
+        		compilationUnit.ResourceUri,
+        		parserModel.CurrentScopeIndexKey,
+        		text,
+        		out var existingLabelDeclarationNode))
+        {
+            if (existingLabelDeclarationNode.IsFabricated)
+            {
+                // Overwrite the fabricated definition with a real one
+                //
+                // TODO: Track one or many declarations?...
+                // (if there is an error where something is defined twice for example)
+                SetLabelDeclarationNodeByScope(
+        			compilationUnit,
+                	compilationUnit.ResourceUri,
+        			parserModel.CurrentScopeIndexKey,
+                	text,
+                	labelDeclarationNode);
+            }
+
+            DiagnosticHelper.ReportAlreadyDefinedLabel(
+            	compilationUnit.__DiagnosticList,
+                labelDeclarationNode.IdentifierToken.TextSpan,
+                text);
+        }
+        else
+        {
+        	_ = TryAddLabelDeclarationNodeByScope(
+        		compilationUnit,
+        		compilationUnit.ResourceUri,
+    			parserModel.CurrentScopeIndexKey,
+            	text,
+            	labelDeclarationNode);
+        }
+    }
+    
     public bool RemoveVariableDeclarationNodeFromActiveCompilationUnit(
     	int scopeIndexKey, VariableDeclarationNode variableDeclarationNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
@@ -288,6 +338,18 @@ public partial class CSharpBinder
 
         CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
         return variableReferenceNode;
+    }
+    
+    public void BindLabelReferenceNode(
+        LabelReferenceNode labelReferenceNode,
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserModel parserModel)
+    {
+        compilationUnit.__SymbolList.Add(
+        	new Symbol(
+        		SyntaxKind.LabelSymbol,
+            	parserModel.GetNextSymbolId(),
+            	labelReferenceNode.IdentifierToken.TextSpan));
     }
 
     public void BindConstructorDefinitionIdentifierToken(
@@ -905,6 +967,37 @@ public partial class CSharpBinder
         variableDeclarationStatementNode = null;
         return false;
     }
+    
+    public bool TryGetLabelDeclarationHierarchically(
+    	CSharpCompilationUnit? compilationUnit,
+    	ResourceUri resourceUri,
+    	int initialScopeIndexKey,
+        string identifierText,
+        out LabelDeclarationNode? labelDeclarationNode)
+    {
+        var localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, initialScopeIndexKey);
+
+        while (localScope.ConstructorWasInvoked)
+        {
+            if (TryGetLabelDeclarationNodeByScope(
+	        		compilationUnit,
+            		resourceUri,
+            		localScope.IndexKey,
+            		identifierText,
+                    out labelDeclarationNode))
+            {
+                return true;
+            }
+
+            if (localScope.ParentIndexKey == -1)
+				localScope = default;
+			else
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.ParentIndexKey);
+        }
+
+        labelDeclarationNode = null;
+        return false;
+    }
 
     public Scope GetScope(CSharpCompilationUnit? compilationUnit, TextEditorTextSpan textSpan)
     {
@@ -1176,6 +1269,51 @@ public partial class CSharpBinder
     		
 		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, variableIdentifierText);
     	binderSession.ScopeVariableDeclarationMap[scopeKeyAndIdentifierText] = variableDeclarationNode;
+    }
+    
+    public bool TryGetLabelDeclarationNodeByScope(
+    	CSharpCompilationUnit? cSharpCompilationUnit,
+    	ResourceUri resourceUri,
+    	int scopeIndexKey,
+    	string labelIdentifierText,
+    	out LabelDeclarationNode labelDeclarationNode)
+    {
+    	if (!TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var binderSession))
+    	{
+    		labelDeclarationNode = null;
+    		return false;
+    	}
+    		
+    	var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, labelIdentifierText);
+    	return binderSession.ScopeLabelDeclarationMap.TryGetValue(scopeKeyAndIdentifierText, out labelDeclarationNode);
+    }
+    
+    public bool TryAddLabelDeclarationNodeByScope(
+    	CSharpCompilationUnit? cSharpCompilationUnit,
+    	ResourceUri resourceUri,
+    	int scopeIndexKey,
+    	string labelIdentifierText,
+        LabelDeclarationNode labelDeclarationNode)
+    {
+    	if (!TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var binderSession))
+    		return false;
+    		
+		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, labelIdentifierText);
+    	return binderSession.ScopeLabelDeclarationMap.TryAdd(scopeKeyAndIdentifierText, labelDeclarationNode);
+    }
+    
+    public void SetLabelDeclarationNodeByScope(
+    	CSharpCompilationUnit? cSharpCompilationUnit,
+    	ResourceUri resourceUri,
+    	int scopeIndexKey,
+    	string labelIdentifierText,
+        LabelDeclarationNode labelDeclarationNode)
+    {
+    	if (!TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var binderSession))
+    		return;
+    		
+		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, labelIdentifierText);
+    	binderSession.ScopeLabelDeclarationMap[scopeKeyAndIdentifierText] = labelDeclarationNode;
     }
 
     public TypeClauseNode? GetReturnTypeClauseNodeByScope(

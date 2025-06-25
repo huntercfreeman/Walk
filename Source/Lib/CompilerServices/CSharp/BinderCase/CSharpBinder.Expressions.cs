@@ -673,6 +673,19 @@ public partial class CSharpBinder
 		{
 			parserModel.ParserContextKind = CSharpParserContextKind.None;
 			
+			if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.ColonToken)
+			{
+			    var labelDeclarationNode = new LabelDeclarationNode(ambiguousIdentifierExpressionNode.Token);
+			
+			    BindLabelDeclarationNode(
+                    labelDeclarationNode,
+                    compilationUnit,
+                    ref parserModel);
+                    
+                var labelReferenceNode = new LabelReferenceNode(labelDeclarationNode.IdentifierToken);
+				return labelReferenceNode;
+			}
+			
 			if ((parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenAngleBracketToken ||
 			 		UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Next.SyntaxKind)) &&
 				 parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.MemberAccessToken)
@@ -779,18 +792,39 @@ public partial class CSharpBinder
     			result = functionInvocationNode;
     			goto finalize;
 	        }
-		}
-		
-		if (parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
+	        
+	        if (parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
     		    ambiguousIdentifierExpressionNode.Token.TextSpan.Text,
     		    out var namespacePrefixNode))
-		{
-		    result = new NamespaceClauseNode(ambiguousIdentifierExpressionNode.Token);
-            compilationUnit.__SymbolList.Add(new Symbol(
-	        	SyntaxKind.NamespaceSymbol,
-	        	parserModel.GetNextSymbolId(),
-	        	ambiguousIdentifierExpressionNode.Token.TextSpan));
-			goto finalize;
+    		{
+    		    result = new NamespaceClauseNode(ambiguousIdentifierExpressionNode.Token);
+                compilationUnit.__SymbolList.Add(new Symbol(
+    	        	SyntaxKind.NamespaceSymbol,
+    	        	parserModel.GetNextSymbolId(),
+    	        	ambiguousIdentifierExpressionNode.Token.TextSpan));
+    			goto finalize;
+    		}
+    		
+    		if (TryGetLabelDeclarationHierarchically(
+    		    	compilationUnit,
+    		        compilationUnit.ResourceUri,
+    		    	parserModel.CurrentScopeIndexKey,
+    		        ambiguousIdentifierExpressionNode.Token.TextSpan.Text,
+    		        out var labelDefinitionNode))
+            {
+            	var token = ambiguousIdentifierExpressionNode.Token;
+    			var identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, compilationUnit, ref parserModel);
+    			
+    			var labelReferenceNode = new LabelReferenceNode(ambiguousIdentifierExpressionNode.Token);
+    			
+    			BindLabelReferenceNode(
+    		        labelReferenceNode,
+    		        compilationUnit,
+    		        ref parserModel);
+    			
+    			result = labelReferenceNode;
+    			goto finalize;
+            }
 		}
 		
 		if (allowFabricatedUndefinedNode)

@@ -144,6 +144,19 @@ public static class DiagnosticHelper
 			textSpan,
 			Guid.Parse("89b61fa8-541d-4154-9425-82c5667842a8"));
 	}
+	
+	public static void ReportAlreadyDefinedLabel(
+		List<TextEditorDiagnostic> diagnosticList,
+		TextEditorTextSpan textSpan,
+		string alreadyDefinedLabelIdentifier)
+	{
+		Report(
+			diagnosticList,
+			TextEditorDiagnosticLevel.Error,
+			$"Already defined variable: '{alreadyDefinedLabelIdentifier}'",
+			textSpan,
+			Guid.Parse("7478d96b-cb43-4dd9-898c-c3b0077966c2"));
+	}
 
 	public static void ReportAlreadyDefinedProperty(
 		List<TextEditorDiagnostic> diagnosticList,

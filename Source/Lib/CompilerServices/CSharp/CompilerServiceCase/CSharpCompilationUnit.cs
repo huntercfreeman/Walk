@@ -49,6 +49,7 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit
     public Dictionary<ScopeKeyAndIdentifierText, TypeDefinitionNode> ScopeTypeDefinitionMap { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, FunctionDefinitionNode> ScopeFunctionDefinitionMap { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, VariableDeclarationNode> ScopeVariableDeclarationMap { get; } = new();
+    public Dictionary<ScopeKeyAndIdentifierText, LabelDeclarationNode> ScopeLabelDeclarationMap { get; } = new();
     public Dictionary<int, TypeClauseNode> ScopeReturnTypeClauseNodeMap { get; } = new();
     
     public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => __DiagnosticList;
