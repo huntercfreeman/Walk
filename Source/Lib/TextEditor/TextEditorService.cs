@@ -289,8 +289,7 @@ public sealed class TextEditorService
                     _dirtyResourceUriService.RemoveDirtyResourceUri(modelModifier.PersistentState.ResourceUri);
             }
             
-            if (TextEditorState._modelMap.ContainsKey(modelModifier.PersistentState.ResourceUri))
-				TextEditorState._modelMap[modelModifier.PersistentState.ResourceUri] = modelModifier;
+			TextEditorState._modelMap[modelModifier.PersistentState.ResourceUri] = modelModifier;
         }
 		
         for (int viewModelIndex = 0; viewModelIndex < __ViewModelList.Count; viewModelIndex++)
@@ -381,8 +380,7 @@ public sealed class TextEditorService
 				}
 			}
 			
-			if (TextEditorState._viewModelMap.ContainsKey(viewModelModifier.PersistentState.ViewModelKey))
-				TextEditorState._viewModelMap[viewModelModifier.PersistentState.ViewModelKey] = viewModelModifier;
+			TextEditorState._viewModelMap[viewModelModifier.PersistentState.ViewModelKey] = viewModelModifier;
         }
 	    
 	    // __DiffModelCache.Clear();
@@ -667,6 +665,13 @@ public sealed class TextEditorService
 	    TextEditorStateChanged?.Invoke();
 	}
 
+    /// <summary>
+    /// WARNING/TODO: This method needs to remove from the TextEditorEditContext the removed model...
+    /// ...because FinalizePost(...) writes back to the Dictionary but the key won't exist.
+    ///
+    /// The app doesn't have a case where this is a thing, since an edit context that solely is used to invoke DisposeModel(...)
+    /// would throw a caught exception and then things just "move on".
+    /// </summary>
 	public void DisposeModel(TextEditorEditContext editContext, ResourceUri resourceUri)
 	{
 	    var inState = TextEditorState;
@@ -705,6 +710,13 @@ public sealed class TextEditorService
         TextEditorStateChanged?.Invoke();
     }
 	
+	/// <summary>
+    /// WARNING/TODO: This method needs to remove from the TextEditorEditContext the removed viewmodel...
+    /// ...because FinalizePost(...) writes back to the Dictionary but the key won't exist.
+    ///
+    /// The app doesn't have a case where this is a thing, since an edit context that solely is used to invoke DisposeModel(...)
+    /// would throw a caught exception and then things just "move on".
+    /// </summary>
 	public void RegisterViewModel(TextEditorEditContext editContext, TextEditorViewModel viewModel)
 	{
 	    var inState = TextEditorState;
