@@ -1145,7 +1145,7 @@ public class TextEditorCommandDefaultFunctions
         		editContext,
 		        modelModifier,
 		        viewModel,
-		        componentData.DropdownService,
+		        componentData.TextEditorViewModelSlimDisplay.DropdownService,
 		        componentData);
         }
         else if (EventUtils.IsSyntaxHighlightingInvoker(keymapArgs))
@@ -1240,7 +1240,7 @@ public class TextEditorCommandDefaultFunctions
         		editContext,
 		        modelModifier,
 		        viewModel,
-		        componentData.DropdownService,
+		        componentData.TextEditorViewModelSlimDisplay.DropdownService,
 		        componentData);
         }
 

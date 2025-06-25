@@ -47,32 +47,12 @@ public sealed class TextEditorComponentData
 		Guid textEditorHtmlElementId,
 		ViewModelDisplayOptions viewModelDisplayOptions,
 		TextEditorOptions options,
-		TextEditorViewModelSlimDisplay textEditorViewModelSlimDisplay,
-		IDropdownService dropdownService,
-		IClipboardService clipboardService,
-		ICommonComponentRenderers commonComponentRenderers,
-		INotificationService notificationService,
-		TextEditorService textEditorService,
-		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
-		IFindAllService findAllService,
-		IEnvironmentProvider environmentProvider,
-		IFileSystemProvider fileSystemProvider,
-		IServiceProvider serviceProvider)
+		TextEditorViewModelSlimDisplay textEditorViewModelSlimDisplay)
 	{
 		TextEditorHtmlElementId = textEditorHtmlElementId;
 		ViewModelDisplayOptions = viewModelDisplayOptions;
 		Options = options;
 		TextEditorViewModelSlimDisplay = textEditorViewModelSlimDisplay;
-		DropdownService = dropdownService;
-		ClipboardService = clipboardService;
-		CommonComponentRenderers = commonComponentRenderers;
-		NotificationService = notificationService;
-		TextEditorService = textEditorService;
-		TextEditorComponentRenderers = textEditorComponentRenderers;
-		FindAllService = findAllService;
-		EnvironmentProvider = environmentProvider;
-		FileSystemProvider = fileSystemProvider;
-		ServiceProvider = serviceProvider;
 		
 		ComponentDataKey = new Key<TextEditorComponentData>(TextEditorHtmlElementId);
 		
@@ -112,16 +92,6 @@ public sealed class TextEditorComponentData
 	public Key<TextEditorComponentData> ComponentDataKey { get; }
 	public ViewModelDisplayOptions ViewModelDisplayOptions { get; }
 	public TextEditorViewModelSlimDisplay TextEditorViewModelSlimDisplay { get; }
-	public IDropdownService DropdownService { get; }
-	public IClipboardService ClipboardService { get; }
-	public ICommonComponentRenderers CommonComponentRenderers { get; }
-	public INotificationService NotificationService { get; }
-	public TextEditorService TextEditorService { get; }
-	public IWalkTextEditorComponentRenderers TextEditorComponentRenderers { get; }
-	public IFindAllService FindAllService { get; }
-	public IEnvironmentProvider EnvironmentProvider { get; }
-	public IFileSystemProvider FileSystemProvider { get; }
-	public IServiceProvider ServiceProvider { get; }
 	public Task MouseStoppedMovingTask { get; set; } = Task.CompletedTask;
     public Task MouseNoLongerOverTooltipTask { get; set; } = Task.CompletedTask;
     public CancellationTokenSource MouseNoLongerOverTooltipCancellationTokenSource { get; set; } = new();
@@ -269,7 +239,7 @@ public sealed class TextEditorComponentData
     public string CursorCssClassBlinkAnimationOff { get; set; }
 	
 	// _ = "di_te_text-editor-cursor " + BlinkAnimationCssClass + " " + _activeRenderBatch.Options.Keymap.GetCursorCssClassString();
-	public string BlinkAnimationCssClass => TextEditorService.ViewModelApi.CursorShouldBlink
+	public string BlinkAnimationCssClass => TextEditorViewModelSlimDisplay.TextEditorService.ViewModelApi.CursorShouldBlink
         ? CursorCssClassBlinkAnimationOn
         : CursorCssClassBlinkAnimationOff;
 
@@ -291,8 +261,8 @@ public sealed class TextEditorComponentData
     	
     	try
     	{
-    		viewModel = TextEditorService.TextEditorState._viewModelMap[TextEditorViewModelSlimDisplay.TextEditorViewModelKey];
-			model = TextEditorService.TextEditorState._modelMap[viewModel.PersistentState.ResourceUri];
+    		viewModel = TextEditorViewModelSlimDisplay.TextEditorService.TextEditorState._viewModelMap[TextEditorViewModelSlimDisplay.TextEditorViewModelKey];
+			model = TextEditorViewModelSlimDisplay.TextEditorService.TextEditorState._modelMap[viewModel.PersistentState.ResourceUri];
     	}
     	catch (Exception e)
     	{
@@ -689,7 +659,7 @@ public sealed class TextEditorComponentData
     public void GetCursorAndCaretRowStyleCss()
     {
     	var shouldAppearAfterCollapsePoint = CursorIsOnHiddenLine;
-    	var tabWidth = TextEditorService.OptionsApi.GetOptions().TabWidth;
+    	var tabWidth = TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetOptions().TabWidth;
     	
     	double leftInPixels = RenderBatch.ViewModel.GutterWidthInPixels;
     	var topInPixelsInvariantCulture = string.Empty;
@@ -965,7 +935,7 @@ public sealed class TextEditorComponentData
             return string.Empty;
 
         var line = RenderBatch.Model.GetLineInformation(lineIndex);
-        var tabWidth = TextEditorService.OptionsApi.GetOptions().TabWidth;
+        var tabWidth = TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetOptions().TabWidth;
 
         var startingColumnIndex = 0;
         var endingColumnIndex = line.Position_EndExclusiveIndex - 1;
@@ -1180,7 +1150,7 @@ public sealed class TextEditorComponentData
             return string.Empty;
 
         var line = RenderBatch.Model.GetLineInformation(lineIndex);
-        var tabWidth = TextEditorService.OptionsApi.GetOptions().TabWidth;
+        var tabWidth = TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetOptions().TabWidth;
 
         var selectionStartingColumnIndex = 0;
         var selectionEndingColumnIndex = line.Position_EndExclusiveIndex - 1;
@@ -1345,7 +1315,7 @@ public sealed class TextEditorComponentData
     {
     	var stringBuilder = new StringBuilder();
     	
-    	WrapperCssClass = TextEditorService.ThemeCssClassString;
+    	WrapperCssClass = TextEditorViewModelSlimDisplay.TextEditorService.ThemeCssClassString;
     	
     	stringBuilder.Append("di_te_text-editor di_unselectable di_te_text-editor-css-wrapper ");
     	stringBuilder.Append(WrapperCssClass);
@@ -1355,7 +1325,7 @@ public sealed class TextEditorComponentData
     	
     	stringBuilder.Clear();
     	
-    	var options = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
+    	var options = TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
     	
     	var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
     	if (options.CommonOptions?.FontSizeInPixels is not null)
@@ -1379,7 +1349,7 @@ public sealed class TextEditorComponentData
     	stringBuilder.Append(" ");
     	// string GetGlobalHeightInPixelsStyling()
 	    {
-	        var heightInPixels = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.TextEditorHeightInPixels;
+	        var heightInPixels = TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.TextEditorHeightInPixels;
 	
 	        if (heightInPixels is not null)
 	        {
@@ -1417,7 +1387,7 @@ public sealed class TextEditorComponentData
     	
     	TextEditorViewModelSlimDisplay.SetRenderBatchConstants();
     	
-    	TextEditorService.OptionsApi.InvokeTextEditorWrapperCssStateChanged();
+    	TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.InvokeTextEditorWrapperCssStateChanged();
     }
     
     public void ConstructVirtualizationStyleCssStrings()
@@ -1540,7 +1510,7 @@ public sealed class TextEditorComponentData
 		}
     
     	InlineUiStyleList.Clear();
-        var tabWidth = TextEditorService.OptionsApi.GetOptions().TabWidth;
+        var tabWidth = TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetOptions().TabWidth;
     	
     	for (int inlineUiIndex = 0; inlineUiIndex < RenderBatch.ViewModel.PersistentState.InlineUiList.Count; inlineUiIndex++)
     	{
