@@ -991,9 +991,6 @@ public sealed class TextEditorViewModelApi
 		
 		var endingLineIndexExclusive = verticalStartingIndex + lineCountToReturn;
 		
-		if (lineCountToReturn < 0 || verticalStartingIndex < 0 || endingLineIndexExclusive < 0)
-		    return;
-		    
 		var totalWidth = (int)Math.Ceiling(modelModifier.MostCharactersOnASingleLineTuple.lineLength *
 			viewModel.CharAndLineMeasurements.CharacterWidth);
 
