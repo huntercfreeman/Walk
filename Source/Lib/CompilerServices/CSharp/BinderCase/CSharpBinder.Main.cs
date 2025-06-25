@@ -236,7 +236,10 @@ public partial class CSharpBinder
         	new Symbol(
         		SyntaxKind.LabelSymbol,
             	parserModel.GetNextSymbolId(),
-            	labelDeclarationNode.IdentifierToken.TextSpan));
+            	labelDeclarationNode.IdentifierToken.TextSpan with
+            	{
+            	    DecorationByte = (byte)GenericDecorationKind.None
+            	}));
         	
         var text = labelDeclarationNode.IdentifierToken.TextSpan.Text;
         
@@ -349,7 +352,10 @@ public partial class CSharpBinder
         	new Symbol(
         		SyntaxKind.LabelSymbol,
             	parserModel.GetNextSymbolId(),
-            	labelReferenceNode.IdentifierToken.TextSpan));
+            	labelReferenceNode.IdentifierToken.TextSpan with
+            	{
+            	    DecorationByte = (byte)GenericDecorationKind.None
+            	}));
     }
 
     public void BindConstructorDefinitionIdentifierToken(

@@ -70,7 +70,7 @@ public static class CSharpParser
             var token = parserModel.TokenWalker.Current;
            
 			/*#if DEBUG
-			Console.WriteLine(token.SyntaxKind + "___" + token.TextSpan.GetText() + "___" + parserModel.TokenWalker.Index);
+			Console.WriteLine(token.SyntaxKind + "___" + token.TextSpan.Text + "___" + parserModel.TokenWalker.Index);
 			#else
 			Console.WriteLine($"{nameof(CSharpParser)}.{nameof(Parse)} has debug 'Console.Write...' that needs commented out.");
 			#endif*/

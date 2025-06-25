@@ -673,19 +673,6 @@ public partial class CSharpBinder
 		{
 			parserModel.ParserContextKind = CSharpParserContextKind.None;
 			
-			if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.ColonToken)
-			{
-			    var labelDeclarationNode = new LabelDeclarationNode(ambiguousIdentifierExpressionNode.Token);
-			
-			    BindLabelDeclarationNode(
-                    labelDeclarationNode,
-                    compilationUnit,
-                    ref parserModel);
-                    
-                var labelReferenceNode = new LabelReferenceNode(labelDeclarationNode.IdentifierToken);
-				return labelReferenceNode;
-			}
-			
 			if ((parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenAngleBracketToken ||
 			 		UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Next.SyntaxKind)) &&
 				 parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.MemberAccessToken)
@@ -1564,6 +1551,28 @@ public partial class CSharpBinder
 				
 				return genericParameterListing;*/
 				goto default;
+			case SyntaxKind.GotoTokenKeyword:
+			{
+			    if (parserModel.TokenWalker.Peek(2).SyntaxKind == SyntaxKind.StatementDelimiterToken)
+			    {
+			        _ = parserModel.TokenWalker.Consume(); // Consume 'goto'
+			        
+			        if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind))
+			        {
+			            var nameableToken = parserModel.TokenWalker.Consume(); // Consume 'NameableToken'
+            			var identifierToken = UtilityApi.ConvertToIdentifierToken(ref nameableToken, compilationUnit, ref parserModel);
+            			
+            			var labelReferenceNode = new LabelReferenceNode(identifierToken);
+            			
+            			BindLabelReferenceNode(
+            		        labelReferenceNode,
+            		        compilationUnit,
+            		        ref parserModel);
+			        }
+			    }
+			    
+			    return EmptyExpressionNode.Empty;
+			}
 			case SyntaxKind.ReturnTokenKeyword:
 				var returnStatementNode = new ReturnStatementNode(token, EmptyExpressionNode.Empty);
 				parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, returnStatementNode));

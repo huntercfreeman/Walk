@@ -322,7 +322,7 @@ public class ParseDefaultKeywords
 
     public static void HandleGotoTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    	ParseOthers.StartStatement_Expression(compilationUnit, ref parserModel);
     }
 
     public static void HandleImplicitTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
