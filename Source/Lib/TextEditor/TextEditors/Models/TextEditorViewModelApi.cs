@@ -68,10 +68,7 @@ public sealed class TextEditorViewModelApi
             CursorShouldBlinkChanged?.Invoke();
         }
         
-        var localId = _stopCursorBlinkingId;
-        _stopCursorBlinkingId = localId == int.MaxValue
-	        ? 0
-	        : localId + 1;
+        var localId = ++_stopCursorBlinkingId;
         
         if (!_intentStopCursorBlinking)
         {
