@@ -40,8 +40,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     [Inject]
     public IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
     [Inject]
-    public IAutocompleteIndexer AutocompleteIndexer { get; set; } = null!;
-    [Inject]
     public IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
     public IClipboardService ClipboardService { get; set; } = null!;

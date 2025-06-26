@@ -19,8 +19,6 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private IAutocompleteService AutocompleteService { get; set; } = null!;
-    [Inject]
     private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
@@ -168,7 +166,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
                 if (word is not null)
                 {
-                    var autocompleteWordsList = AutocompleteService.GetAutocompleteOptions(word);
+                    List<string> autocompleteWordsList = new();
 
                     var autocompleteEntryList = autocompleteWordsList
                         .Select(aw => new AutocompleteEntry(aw, AutocompleteEntryKind.Word, null))

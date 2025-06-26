@@ -59,8 +59,6 @@ public sealed class TextEditorService
         IContextService contextService,
         IKeymapService keymapService,
         IEnvironmentProvider environmentProvider,
-		IAutocompleteIndexer autocompleteIndexer,
-		IAutocompleteService autocompleteService,
 		IAppDimensionService appDimensionService,
 		IServiceProvider serviceProvider)
     {
@@ -97,9 +95,6 @@ public sealed class TextEditorService
         _keymapService = keymapService;
         _environmentProvider = environmentProvider;
 
-		AutocompleteIndexer = autocompleteIndexer;
-		AutocompleteService = autocompleteService;
-
         ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService);
         ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _commonBackgroundTaskApi, _dialogService, _panelService);
         GroupApi = new TextEditorGroupApi(this, _panelService, _dialogService, _commonBackgroundTaskApi);
@@ -115,8 +110,6 @@ public sealed class TextEditorService
 
 	public WalkTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
 	public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi => _commonBackgroundTaskApi.JsRuntimeCommonApi;
-	public IAutocompleteIndexer AutocompleteIndexer { get; }
-	public IAutocompleteService AutocompleteService { get; }
 	public WalkTextEditorConfig TextEditorConfig { get; }
 
 #if DEBUG
