@@ -17,26 +17,21 @@ public class StartupControlService : IStartupControlService
 	{
 		lock (_stateModificationLock)
 		{
-			var inState = _startupControlState;
-
-			var indexOfStartupControl = inState.StartupControlList.FindIndex(
+			var indexOfStartupControl = _startupControlState.StartupControlList.FindIndex(
 				x => x.Key == startupControl.Key);
 
 			if (indexOfStartupControl != -1)
-				goto finalize;
-
-			var outStartupControlList = new List<IStartupControlModel>(inState.StartupControlList);
-			outStartupControlList.Add(startupControl);
-
-			_startupControlState = inState with
 			{
-				StartupControlList = outStartupControlList
-			};
-
-            goto finalize;
+    			var outStartupControlList = new List<IStartupControlModel>(_startupControlState.StartupControlList);
+    			outStartupControlList.Add(startupControl);
+    
+    			_startupControlState = _startupControlState with
+    			{
+    				StartupControlList = outStartupControlList
+    			};
+    	    }
         }
 
-		finalize:
         StartupControlStateChanged?.Invoke();
     }
 	
@@ -44,31 +39,26 @@ public class StartupControlService : IStartupControlService
 	{
 		lock (_stateModificationLock)
 		{
-			var inState = _startupControlState;
-
-			var indexOfStartupControl = inState.StartupControlList.FindIndex(
+			var indexOfStartupControl = _startupControlState.StartupControlList.FindIndex(
 				x => x.Key == startupControlKey);
 
-			if (indexOfStartupControl == -1)
-                goto finalize;
-
-            var outActiveStartupControlKey = inState.ActiveStartupControlKey;
-			if (inState.ActiveStartupControlKey == startupControlKey)
-				outActiveStartupControlKey = Key<IStartupControlModel>.Empty;
-
-			var outStartupControlList = new List<IStartupControlModel>(inState.StartupControlList);
-			outStartupControlList.RemoveAt(indexOfStartupControl);
-
-			_startupControlState = inState with
-			{
-				StartupControlList = outStartupControlList,
-				ActiveStartupControlKey = outActiveStartupControlKey
-			};
-
-            goto finalize;
+			if (indexOfStartupControl != -1)
+            {
+                var outActiveStartupControlKey = _startupControlState.ActiveStartupControlKey;
+    			if (_startupControlState.ActiveStartupControlKey == startupControlKey)
+    				outActiveStartupControlKey = Key<IStartupControlModel>.Empty;
+    
+    			var outStartupControlList = new List<IStartupControlModel>(_startupControlState.StartupControlList);
+    			outStartupControlList.RemoveAt(indexOfStartupControl);
+    
+    			_startupControlState = _startupControlState with
+    			{
+    				StartupControlList = outStartupControlList,
+    				ActiveStartupControlKey = outActiveStartupControlKey
+    			};
+            }
         }
 
-        finalize:
         StartupControlStateChanged?.Invoke();
     }
 	
@@ -76,31 +66,26 @@ public class StartupControlService : IStartupControlService
 	{
 		lock (_stateModificationLock)
 		{
-			var inState = _startupControlState;
-
-			var startupControl = inState.StartupControlList.FirstOrDefault(
+			var startupControl = _startupControlState.StartupControlList.FirstOrDefault(
 				x => x.Key == startupControlKey);
 
 			if (startupControlKey == Key<IStartupControlModel>.Empty ||
 				startupControl is null)
 			{
-				_startupControlState = inState with
+				_startupControlState = _startupControlState with
 				{
 					ActiveStartupControlKey = Key<IStartupControlModel>.Empty
 				};
-
-                goto finalize;
             }
-
-			_startupControlState = inState with
-			{
-				ActiveStartupControlKey = startupControl.Key
-			};
-
-            goto finalize;
+            else
+            {
+    			_startupControlState = _startupControlState with
+    			{
+    				ActiveStartupControlKey = startupControl.Key
+    			};
+			}
         }
 
-        finalize:
         StartupControlStateChanged?.Invoke();
     }
 	
