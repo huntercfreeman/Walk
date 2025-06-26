@@ -14,7 +14,7 @@ public class IdeMainLayoutService : IIdeMainLayoutService
 	{
 		lock (_stateModificationLock)
 		{
-			var inState = GetIdeMainLayoutState();
+			var inState = _ideMainLayoutState;
 
 			var existingComponent = inState.FooterJustifyEndComponentList.FirstOrDefault(x =>
 				x.Key == footerJustifyEndComponent.Key);

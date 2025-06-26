@@ -17,7 +17,7 @@ public class StartupControlService : IStartupControlService
 	{
 		lock (_stateModificationLock)
 		{
-			var inState = GetStartupControlState();
+			var inState = _startupControlState;
 
 			var indexOfStartupControl = inState.StartupControlList.FindIndex(
 				x => x.Key == startupControl.Key);
@@ -44,7 +44,7 @@ public class StartupControlService : IStartupControlService
 	{
 		lock (_stateModificationLock)
 		{
-			var inState = GetStartupControlState();
+			var inState = _startupControlState;
 
 			var indexOfStartupControl = inState.StartupControlList.FindIndex(
 				x => x.Key == startupControlKey);
@@ -76,7 +76,7 @@ public class StartupControlService : IStartupControlService
 	{
 		lock (_stateModificationLock)
 		{
-			var inState = GetStartupControlState();
+			var inState = _startupControlState;
 
 			var startupControl = inState.StartupControlList.FirstOrDefault(
 				x => x.Key == startupControlKey);

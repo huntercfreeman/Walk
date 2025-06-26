@@ -25,17 +25,12 @@ public class ContextService : IContextService
     {
     	lock (_stateModificationLock)
     	{
-    		var inState = GetContextState();
-    	
-	        _contextState = inState with
+	        _contextState = _contextState with
 	        {
 	            FocusedContextKey = contextKey
 	        };
-
-			goto finalize;
     	}
 
-		finalize:
         ContextStateChanged?.Invoke();
     }
     
