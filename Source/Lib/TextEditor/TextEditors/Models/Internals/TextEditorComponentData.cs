@@ -252,12 +252,12 @@ public sealed class TextEditorComponentData
         TextEditorModel? model;
         
         if (TextEditorViewModelSlimDisplay.TextEditorService.TextEditorState._viewModelMap.TryGetValue(
-            TextEditorViewModelSlimDisplay.TextEditorViewModelKey,
-            out viewModel))
+                TextEditorViewModelSlimDisplay.TextEditorViewModelKey,
+                out viewModel))
         {
             _ = TextEditorViewModelSlimDisplay.TextEditorService.TextEditorState._modelMap.TryGetValue(
-                viewModel.PersistentState.ResourceUri,
-                out model);
+                    viewModel.PersistentState.ResourceUri,
+                    out model);
         }
         else
         {

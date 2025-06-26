@@ -43,20 +43,25 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase, IDisp
 	
 	protected override bool ShouldRender()
 	{
-		/*if (_previousTextEditorViewModelSlimDisplay != TextEditorViewModelSlimDisplay)
-		{
-			_previousTextEditorViewModelSlimDisplay = TextEditorViewModelSlimDisplay;
-			_componentInnerParameters[DictionaryKey] = TextEditorViewModelSlimDisplay;
-		}*/
-	
-		var localTextEditorState = TextEditorService.TextEditorState;
-		
-		var model_viewmodel_tuple = localTextEditorState.GetModelAndViewModelOrDefault(
-			TextEditorViewModelKey);
+		TextEditorViewModel? viewModel;
+        TextEditorModel? model;
+        
+        if (TextEditorService.TextEditorState._viewModelMap.TryGetValue(
+                TextEditorViewModelKey,
+                out viewModel))
+        {
+            _ = TextEditorService.TextEditorState._modelMap.TryGetValue(
+                    viewModel.PersistentState.ResourceUri,
+                    out model);
+        }
+        else
+        {
+            model = null;
+        }
     	
-    	var fileExtensionLocal = model_viewmodel_tuple.Model is null
+    	var fileExtensionLocal = model is null
     		? string.Empty
-    		: model_viewmodel_tuple.Model.PersistentState.FileExtension;
+    		: model.PersistentState.FileExtension;
     		
     	if (_fileExtensionCurrent != fileExtensionLocal)
     		_fileExtensionCurrent = fileExtensionLocal;
