@@ -17,8 +17,6 @@ public partial class TextEditorDiffHeaderDisplay : ComponentBase, ITextEditorDep
     {
         // TextEditorViewModelSlimDisplay.RenderBatchChanged += OnRenderBatchChanged;
         OnRenderBatchChanged();
-        
-        base.OnInitialized();
     }
 
 	private void OnRenderBatchChanged()

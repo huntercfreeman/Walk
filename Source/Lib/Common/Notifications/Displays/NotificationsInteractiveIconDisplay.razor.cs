@@ -32,7 +32,6 @@ public partial class NotificationsInteractiveIconDisplay : ComponentBase, IDispo
 	protected override void OnInitialized()
     {
     	NotificationService.NotificationStateChanged += OnNotificationStateChanged;
-    	base.OnInitialized();
     }
 
     private void ShowNotificationsViewDisplayOnClick()

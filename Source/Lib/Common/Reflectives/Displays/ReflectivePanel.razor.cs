@@ -16,7 +16,6 @@ public partial class ReflectivePanel : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
     	ReflectiveService.ReflectiveStateChanged += OnReflectiveStateChanged;
-    	base.OnInitialized();
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender)

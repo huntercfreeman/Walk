@@ -56,8 +56,6 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 		SubscribeTo_DotNetSolutionCompilerService();
 		SubscribeTo_CSharpProjectCompilerService();
 		SubscribeTo_CSharpCompilerService();
-
-		base.OnInitialized();
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)

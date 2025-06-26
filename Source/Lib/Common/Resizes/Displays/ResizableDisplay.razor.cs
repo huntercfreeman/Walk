@@ -42,8 +42,6 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         DragService.DragStateChanged += DragStateWrapOnStateChanged;
-
-        base.OnInitialized();
     }
 
     private async void DragStateWrapOnStateChanged()

@@ -82,8 +82,6 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 			ServiceProvider,
 			TreeViewService,
 			BackgroundTaskService);
-
-		base.OnInitialized();
 	}
 	
 	protected override void OnAfterRender(bool firstRender)

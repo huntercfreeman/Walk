@@ -34,7 +34,6 @@ public partial class DirtyResourceUriInteractiveIconDisplay : ComponentBase, IDi
 	protected override void OnInitialized()
 	{
 		DirtyResourceUriService.DirtyResourceUriStateChanged += OnDirtyResourceUriStateChanged;
-		base.OnInitialized();
 	}
 
     private void ShowDialogOnClick()

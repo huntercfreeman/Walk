@@ -15,7 +15,6 @@ public partial class NotificationsViewDisplay : ComponentBase, IDisposable
 	protected override void OnInitialized()
     {
     	NotificationService.NotificationStateChanged += OnNotificationStateChanged;
-    	base.OnInitialized();
     }
 
     private string GetIsActiveCssClass(

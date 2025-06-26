@@ -38,8 +38,6 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 		_menuRecord = await GetMenuRecord(MouseEventArgs).ConfigureAwait(false);
 		_htmlElementDimensionsChanged = true;
 		await InvokeAsync(StateHasChanged);
-
-		await base.OnInitializedAsync();
 	}
 	
 	protected override void OnAfterRender(bool firstRender)

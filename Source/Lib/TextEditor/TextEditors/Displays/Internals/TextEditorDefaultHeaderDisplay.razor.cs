@@ -56,8 +56,6 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
         TextEditorService.OptionsApi.TextEditorWrapperCssStateChanged += OnTextEditorWrapperCssStateChanged;
         OnCursorShouldBlinkChanged();
-        
-        base.OnInitialized();
     }
     
     private TextEditorRenderBatch GetRenderBatch()

@@ -106,8 +106,6 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 				.HandleUserInterfaceWasInitializedEffect()
 				.ConfigureAwait(false);
 		});
-
-		base.OnInitialized();
 	}
 
 	private void DispatchShouldDiscoverTestsEffect()

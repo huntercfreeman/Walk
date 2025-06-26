@@ -65,8 +65,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 			BackgroundTaskService,
             EnvironmentProvider,
             NotificationService);
-
-        base.OnInitialized();
     }
 
     private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)

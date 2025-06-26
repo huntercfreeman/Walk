@@ -20,7 +20,6 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
 	protected override void OnInitialized()
 	{
 		CommandBarService.CommandBarStateChanged += OnCommandBarStateChanged;
-		base.OnInitialized();
 	}
 	
 	protected override async Task OnAfterRenderAsync(bool firstRender)

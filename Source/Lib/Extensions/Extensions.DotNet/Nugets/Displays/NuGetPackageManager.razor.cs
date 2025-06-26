@@ -36,7 +36,6 @@ public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPac
 	{
 		DotNetBackgroundTaskApi.NuGetPackageManagerService.NuGetPackageManagerStateChanged += OnNuGetPackageManagerStateChanged;
 		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
-		base.OnInitialized();
 	}
 
 	private void SelectedProjectToModifyChanged(ChangeEventArgs changeEventArgs, DotNetSolutionState dotNetSolutionState)

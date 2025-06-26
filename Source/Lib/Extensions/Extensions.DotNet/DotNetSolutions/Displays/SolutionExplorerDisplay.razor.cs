@@ -71,8 +71,6 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 			TextEditorService,
 			TreeViewService,
 			BackgroundTaskService);
-
-		base.OnInitialized();
 	}
 
 	private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)

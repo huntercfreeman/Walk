@@ -26,8 +26,6 @@ public partial class InputAppResizeHandleWidth : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
-
-        base.OnInitialized();
     }
 
     private async void AppOptionsStateWrapOnStateChanged()

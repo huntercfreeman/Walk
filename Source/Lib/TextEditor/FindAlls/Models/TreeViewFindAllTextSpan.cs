@@ -49,7 +49,6 @@ public class TreeViewFindAllTextSpan : TreeViewWithType<(string SourceText, Text
         	protected override void OnInitialized()
         	{
         		CalculatePreviewNearbyText();
-        		base.OnInitialized();
         	}
         	
         	private void CalculatePreviewNearbyText()

@@ -62,8 +62,6 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
         TextEditorService.DiffApi.TextEditorDiffStateChanged += TextEditorDiffWrapOnStateChanged;
         TextEditorService.TextEditorStateChanged += TextEditorModelsCollectionWrapOnStateChanged;
         // TextEditorService.OptionsApi.TextEditorOptionsStateChanged += TextEditorOptionsStateWrapOnStateChanged;
-
-        base.OnInitialized();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

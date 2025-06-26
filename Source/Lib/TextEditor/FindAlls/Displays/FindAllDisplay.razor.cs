@@ -71,8 +71,6 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
 			ServiceProvider,
 			TreeViewService,
 			BackgroundTaskService);
-
-		base.OnInitialized();
 	}
 	
 	private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)

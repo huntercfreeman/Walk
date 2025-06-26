@@ -43,8 +43,6 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     {
         TextEditorService.GroupApi.TextEditorGroupStateChanged += TextEditorGroupWrapOnStateChanged;
         TextEditorService.TextEditorStateChanged += TextEditorViewModelStateWrapOnStateChanged;
-
-        base.OnInitialized();
     }
 
     private async void TextEditorGroupWrapOnStateChanged() =>

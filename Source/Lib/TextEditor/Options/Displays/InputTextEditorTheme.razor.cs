@@ -18,7 +18,6 @@ public partial class InputTextEditorTheme : ComponentBase, IDisposable
 	protected override void OnInitialized()
     {
     	TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
-    	base.OnInitialized();
     }
     
     private void SelectedThemeChanged(ChangeEventArgs changeEventArgs)

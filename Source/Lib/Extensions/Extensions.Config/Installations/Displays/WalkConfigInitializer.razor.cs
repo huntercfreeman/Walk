@@ -43,7 +43,6 @@ public partial class WalkConfigInitializer : ComponentBase
         BackgroundTaskService.Continuous_EnqueueGroup(new BackgroundTask(
         	Key<IBackgroundTaskGroup>.Empty,
         	Do_InitializeFooterJustifyEndComponents));
-		base.OnInitialized();
 	}
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

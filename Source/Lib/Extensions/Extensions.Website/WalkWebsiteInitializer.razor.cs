@@ -44,8 +44,6 @@ public partial class WalkWebsiteInitializer : ComponentBase
     {
         TextEditorRegistryWrap.DecorationMapperRegistry = DecorationMapperRegistry;
         TextEditorRegistryWrap.CompilerServiceRegistry = CompilerServiceRegistry;
-
-        base.OnInitialized();
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender)

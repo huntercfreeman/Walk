@@ -73,8 +73,6 @@ public partial class FindAllReferencesDisplay : ComponentBase, IDisposable
 			ServiceProvider,
 			TreeViewService,
 			BackgroundTaskService);
-    	
-    	base.OnInitialized();
     }
     
     private async void OnFindAllReferencesStateChanged()

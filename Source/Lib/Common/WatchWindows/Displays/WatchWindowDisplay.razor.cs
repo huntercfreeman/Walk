@@ -38,7 +38,6 @@ public partial class WatchWindowDisplay : ComponentBase
     {
         _treeViewMouseEventHandler = new(TreeViewService, BackgroundTaskService);
         _treeViewKeyboardEventHandler = new(TreeViewService, BackgroundTaskService);
-        base.OnInitialized();
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender)

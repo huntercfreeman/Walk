@@ -52,8 +52,6 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 		var terminalState = TerminalService.GetTerminalState();
 		_executionTerminal = terminalState.TerminalMap[TerminalFacts.EXECUTION_KEY];
 		_executionTerminal.TerminalOutput.OnWriteOutput += OnWriteOutput;
-		
-		base.OnInitialized();
 	}
 
 	protected override void OnParametersSet()

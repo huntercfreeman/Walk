@@ -59,8 +59,6 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 			IdeBackgroundTaskApi,
 			TreeViewService,
 			BackgroundTaskService);
-
-		base.OnInitialized();
 	}
 
 	protected override Task OnAfterRenderAsync(bool firstRender)

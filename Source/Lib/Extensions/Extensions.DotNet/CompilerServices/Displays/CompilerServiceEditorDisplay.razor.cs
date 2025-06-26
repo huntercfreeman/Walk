@@ -16,7 +16,6 @@ public partial class CompilerServiceEditorDisplay : ComponentBase
         // TODO: This must be removed as it puts a requirement to have the CSharpCompilerService...
         //       ...instead generalize this component to iterate over the CompilerServiceRegistry.CompilerServiceList
         _cSharpCompilerService = (CSharpCompilerService)CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
-		base.OnInitialized();
 	}
 	
 	private void RecalculateViewModel()

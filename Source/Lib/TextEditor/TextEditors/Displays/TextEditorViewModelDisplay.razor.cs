@@ -37,7 +37,5 @@ public partial class TextEditorViewModelDisplay : ComponentBase
 			
 		_componentDataKey = new Key<TextEditorComponentData>(ViewModelDisplayOptions.TextEditorHtmlElementId);
 		DependentComponentParameters[DictionaryKey] = _componentDataKey;
-		
-		base.OnInitialized();
 	}
 }

@@ -20,8 +20,6 @@ public partial class InputFileEditAddress : ComponentBase
     protected override void OnInitialized()
     {
         _editForAddressValue = InitialInputValue;
-
-        base.OnInitialized();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

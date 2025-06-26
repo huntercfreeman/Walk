@@ -51,8 +51,6 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
     	TextEditorService.OptionsApi.NeedsMeasured += OnNeedsMeasured;
 
         TextEditorService.Enqueue_TextEditorInitializationBackgroundTaskGroupWorkKind();
-            
-        base.OnInitialized();
     }
     
     protected override async Task OnAfterRenderAsync(bool firstRender)

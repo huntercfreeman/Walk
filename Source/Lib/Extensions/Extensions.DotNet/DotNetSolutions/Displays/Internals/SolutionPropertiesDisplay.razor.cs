@@ -11,7 +11,6 @@ public partial class SolutionPropertiesDisplay : ComponentBase, IDisposable
 	protected override void OnInitialized()
 	{
 		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
-		base.OnInitialized();
 	}
 	
 	private async void OnDotNetSolutionStateChanged()

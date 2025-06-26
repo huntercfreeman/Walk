@@ -167,8 +167,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         TextEditorService.OptionsApi.MeasuredStateChanged += OnOptionMeasuredStateChanged;
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
         DragService.DragStateChanged += DragStateWrapOnStateChanged;
-
-        base.OnInitialized();
     }
     
     protected override void OnParametersSet()

@@ -19,8 +19,6 @@ public partial class BackgroundTaskDialogDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         BackgroundTaskService.ContinuousTaskWorker.ExecutingBackgroundTaskChanged += ContinuousBackgroundTaskWorker_ExecutingBackgroundTaskChanged;
-
-        base.OnInitialized();
     }
 
     private void ContinuousBackgroundTaskWorker_ExecutingBackgroundTaskChanged()

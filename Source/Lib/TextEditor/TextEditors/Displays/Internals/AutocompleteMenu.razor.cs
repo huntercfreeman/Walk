@@ -46,8 +46,6 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     {
         TextEditorService.TextEditorStateChanged += OnTextEditorStateChanged;
         OnTextEditorStateChanged();
-        
-        base.OnInitialized();
     }
     
     protected override async Task OnAfterRenderAsync(bool firstRender)

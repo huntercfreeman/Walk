@@ -127,8 +127,6 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
             BackgroundTaskService);
 
         InitializeElementDimensions();
-
-        base.OnInitialized();
     }
 
     private void InitializeElementDimensions()

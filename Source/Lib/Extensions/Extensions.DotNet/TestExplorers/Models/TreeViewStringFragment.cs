@@ -53,7 +53,6 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
         	protected override void OnInitialized()
         	{
         		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
-        		base.OnInitialized();
         	}
         
         	private string? GetTerminalCommandRequestOutput(ITerminal terminal)

@@ -67,8 +67,6 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
         _htmlIdTabs = _panelPositionCss + "_tabs";
     
     	PanelService.PanelStateChanged += OnPanelStateChanged;
-    
-    	base.OnInitialized();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

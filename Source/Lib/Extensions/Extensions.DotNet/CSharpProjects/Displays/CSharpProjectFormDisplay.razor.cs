@@ -67,8 +67,6 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 		
 		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
 		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
-		
-		base.OnInitialized();
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
