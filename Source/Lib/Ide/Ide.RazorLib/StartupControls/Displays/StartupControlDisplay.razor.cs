@@ -52,9 +52,8 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     	
     protected override void OnInitialized()
     {
-    	TerminalService.TerminalStateChanged += OnTerminalStateChanged;
-    	StartupControlService.StartupControlStateChanged += OnStartupControlStateChanged;
-    	base.OnInitialized();
+    	TerminalService.TerminalStateChanged += Shared_OnStateChanged;
+    	StartupControlService.StartupControlStateChanged += Shared_OnStateChanged;
     }
 
     private async Task StartProgramWithoutDebuggingOnClick(bool isExecuting)
@@ -140,19 +139,11 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
             .ConfigureAwait(false);
     }
     
-    private async void OnTerminalStateChanged()
-    {
-    	await InvokeAsync(StateHasChanged);
-    }
-    
-    private async void OnStartupControlStateChanged()
-    {
-    	await InvokeAsync(StateHasChanged);
-    }
+    private async void Shared_OnStateChanged() => await InvokeAsync(StateHasChanged);
     
     public void Dispose()
     {
-    	TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
-    	StartupControlService.StartupControlStateChanged -= OnStartupControlStateChanged;
+    	TerminalService.TerminalStateChanged -= Shared_OnStateChanged;
+    	StartupControlService.StartupControlStateChanged -= Shared_OnStateChanged;
     }
 }
