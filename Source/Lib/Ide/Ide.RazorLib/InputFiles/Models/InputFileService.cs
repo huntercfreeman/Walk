@@ -32,9 +32,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
     {
         lock (_stateModificationLock)
         {
-            var inState = GetInputFileState();
-
-            _inputFileState = inState with
+            _inputFileState = _inputFileState with
             {
                 SelectionIsValidFunc = selectionIsValidFunc,
                 OnAfterSubmitFunc = onAfterSubmitFunc,
@@ -42,11 +40,8 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
                 SelectedInputFilePattern = inputFilePatterns.First(),
                 Message = message
             };
-
-            goto finalize;
         }
 
-        finalize:
         InputFileStateChanged?.Invoke();
     }
 
@@ -54,17 +49,12 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
     {
         lock (_stateModificationLock)
         {
-            var inState = GetInputFileState();
-
-            _inputFileState = inState with
+            _inputFileState = _inputFileState with
             {
                 SelectedTreeViewModel = selectedTreeViewModel
             };
-
-            goto finalize;
         }
 
-        finalize:
         InputFileStateChanged?.Invoke();
     }
 
@@ -77,27 +67,22 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
     {
         lock (_stateModificationLock)
         {
-            var inState = GetInputFileState();
-
             if (treeViewModel.Item.IsDirectory)
             {
                 _inputFileState = InputFileState.NewOpenedTreeViewModelHistory(
-                    inState,
+                    _inputFileState,
                     treeViewModel,
                     ideComponentRenderers,
                     commonComponentRenderers,
                     fileSystemProvider,
                     environmentProvider);
-
-                goto finalize;
             }
-
-            _inputFileState = inState;
-
-            goto finalize;
+            else
+            {
+                _inputFileState = _inputFileState;
+            }
         }
 
-        finalize:
         InputFileStateChanged?.Invoke();
     }
 
@@ -105,17 +90,12 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
     {
         lock (_stateModificationLock)
         {
-            var inState = GetInputFileState();
-
-            _inputFileState = inState with
+            _inputFileState = _inputFileState with
             {
                 SelectedInputFilePattern = inputFilePattern
             };
-
-            goto finalize;
         }
 
-        finalize:
         InputFileStateChanged?.Invoke();
     }
 
@@ -123,21 +103,16 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
     {
         lock (_stateModificationLock)
         {
-            var inState = GetInputFileState();
-
-            if (inState.CanMoveBackwardsInHistory)
+            if (_inputFileState.CanMoveBackwardsInHistory)
             {
-                _inputFileState = inState with { IndexInHistory = inState.IndexInHistory - 1 };
-
-                goto finalize;
+                _inputFileState = _inputFileState with { IndexInHistory = _inputFileState.IndexInHistory - 1 };
             }
-
-            _inputFileState = inState;
-
-            goto finalize;
+            else
+            {
+                _inputFileState = _inputFileState;
+            }
         }
 
-        finalize:
         InputFileStateChanged?.Invoke();
     }
 
@@ -145,21 +120,16 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
     {
         lock (_stateModificationLock)
         {
-            var inState = GetInputFileState();
-
-            if (inState.CanMoveForwardsInHistory)
+            if (_inputFileState.CanMoveForwardsInHistory)
             {
-                _inputFileState = inState with { IndexInHistory = inState.IndexInHistory + 1 };
-
-                goto finalize;
+                _inputFileState = _inputFileState with { IndexInHistory = _inputFileState.IndexInHistory + 1 };
             }
-
-            _inputFileState = inState;
-
-            goto finalize;
+            else
+            {
+                _inputFileState = _inputFileState;
+            }
         }
 
-        finalize:
         InputFileStateChanged?.Invoke();
     }
 
