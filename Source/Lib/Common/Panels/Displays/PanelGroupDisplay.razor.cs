@@ -46,7 +46,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     
     private TabCascadingValueBatch _tabCascadingValueBatch = new();
 
-    public string DimensionAttributeModificationPurpose => $"take_size_of_adjacent_hidden_panel_{PanelGroupKey}";
+    public string DimensionAttributeModificationPurpose { get; private set; }
 
     private string _panelPositionCss;
     private string _htmlIdTabs;
@@ -65,6 +65,8 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
         _panelPositionCss = $"di_ide_panel_{position}";
         
         _htmlIdTabs = _panelPositionCss + "_tabs";
+        
+        DimensionAttributeModificationPurpose = $"take_size_of_adjacent_hidden_panel_{PanelGroupKey}";
     
     	PanelService.PanelStateChanged += OnPanelStateChanged;
     }

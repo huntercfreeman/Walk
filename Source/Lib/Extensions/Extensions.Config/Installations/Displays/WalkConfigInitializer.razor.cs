@@ -43,12 +43,22 @@ public partial class WalkConfigInitializer : ComponentBase
         BackgroundTaskService.Continuous_EnqueueGroup(new BackgroundTask(
         	Key<IBackgroundTaskGroup>.Empty,
         	Do_InitializeFooterJustifyEndComponents));
+	
+	    DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
+		{
+			WorkKind = DotNetBackgroundTaskApiWorkKind.WalkExtensionsDotNetInitializerOnInit,
+		});
 	}
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
+            {
+            	WorkKind = DotNetBackgroundTaskApiWorkKind.WalkExtensionsDotNetInitializerOnAfterRender
+            });
+        
         	var dotNetAppData = await AppDataService
         		.ReadAppDataAsync<DotNetAppData>(
         			DotNetAppData.AssemblyName, DotNetAppData.TypeName, uniqueIdentifier: null, forceRefreshCache: false)

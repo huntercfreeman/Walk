@@ -248,22 +248,22 @@ public sealed class TextEditorComponentData
     
     public void CreateUi()
     {
-    	TextEditorViewModel? viewModel;
-    	TextEditorModel? model;
-    	
-    	try
-    	{
-    		viewModel = TextEditorViewModelSlimDisplay.TextEditorService.TextEditorState._viewModelMap[TextEditorViewModelSlimDisplay.TextEditorViewModelKey];
-			model = TextEditorViewModelSlimDisplay.TextEditorService.TextEditorState._modelMap[viewModel.PersistentState.ResourceUri];
-    	}
-    	catch (Exception e)
-    	{
-    		viewModel = null;
-    		model = null;
-    	
-    		Console.WriteLine(e);
-    	}
-    
+        TextEditorViewModel? viewModel;
+        TextEditorModel? model;
+        
+        if (TextEditorViewModelSlimDisplay.TextEditorService.TextEditorState._viewModelMap.TryGetValue(
+            TextEditorViewModelSlimDisplay.TextEditorViewModelKey,
+            out viewModel))
+        {
+            _ = TextEditorViewModelSlimDisplay.TextEditorService.TextEditorState._modelMap.TryGetValue(
+                viewModel.PersistentState.ResourceUri,
+                out model);
+        }
+        else
+        {
+            model = null;
+        }
+        
         RenderBatch = new TextEditorRenderBatch(
             model,
             viewModel,

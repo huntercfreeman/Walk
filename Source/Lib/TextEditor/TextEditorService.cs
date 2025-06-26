@@ -793,12 +793,7 @@ public sealed class TextEditorService
     public async ValueTask Do_WalkTextEditorInitializerOnInit()
     {
         if (TextEditorConfig.CustomThemeRecordList is not null)
-        {
-            foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
-            {
-                ThemeService.ReduceRegisterAction(themeRecord);
-            }
-        }
+            ThemeService.RegisterRangeAction(TextEditorConfig.CustomThemeRecordList);
 
         var initialThemeRecord = ThemeService.GetThemeState().ThemeList.FirstOrDefault(
             x => x.Key == TextEditorConfig.InitialThemeKey);

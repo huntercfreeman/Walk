@@ -6,14 +6,13 @@ namespace Walk.Common.RazorLib.Themes.Models;
 /// </summary>
 public record struct ThemeState(IReadOnlyList<ThemeRecord> ThemeList)
 {
-    public ThemeState() : this(DefaultThemeRecordsList)
+    public ThemeState()
+        : this(new List<ThemeRecord>()
+            {
+                ThemeFacts.VisualStudioDarkThemeClone,
+                ThemeFacts.VisualStudioLightThemeClone,
+            })
     {
         
     }
-
-    public static readonly List<ThemeRecord> DefaultThemeRecordsList = new()
-    {
-        ThemeFacts.VisualStudioDarkThemeClone,
-        ThemeFacts.VisualStudioLightThemeClone,
-    };
 }

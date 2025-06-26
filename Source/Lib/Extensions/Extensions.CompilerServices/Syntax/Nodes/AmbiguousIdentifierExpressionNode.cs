@@ -42,7 +42,7 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
 	
 	public bool IsParsingGenericParameters { get; set; }
 
-	#if DEBUG	
+	#if DEBUG
 	~AmbiguousIdentifierExpressionNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AmbiguousIdentifierExpressionNode--;

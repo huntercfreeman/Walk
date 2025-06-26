@@ -8,6 +8,7 @@ public interface IThemeService
 	
 	public ThemeState GetThemeState();
 
-    public void ReduceRegisterAction(ThemeRecord theme);
-    public void ReduceDisposeAction(Key<ThemeRecord> themeKey);
+    public void RegisterAction(ThemeRecord theme);
+    public void RegisterRangeAction(IReadOnlyList<ThemeRecord> theme);
+    public void DisposeAction(Key<ThemeRecord> themeKey);
 }
