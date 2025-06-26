@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.TextEditor.RazorLib;
@@ -8,7 +7,6 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
-using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;

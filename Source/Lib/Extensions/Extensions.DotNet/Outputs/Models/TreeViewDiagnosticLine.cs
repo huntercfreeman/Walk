@@ -1,6 +1,5 @@
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
-using Walk.Extensions.DotNet.Outputs.Displays.Internals;
 
 namespace Walk.Extensions.DotNet.Outputs.Models;
 

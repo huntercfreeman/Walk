@@ -1,5 +1,4 @@
 using Walk.Common.RazorLib.ComponentRenderers.Models;
-using Walk.Common.RazorLib.TreeViews.Models;
 
 namespace Walk.Common.RazorLib.WatchWindows.Models;
 

@@ -4,7 +4,6 @@ using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.CompilerServices.CSharpProject.CompilerServiceCase;
-using Walk.CompilerServices.JavaScript;
 using Walk.CompilerServices.Css;
 using Walk.CompilerServices.DotNetSolution.CompilerServiceCase;
 using Walk.CompilerServices.Json;

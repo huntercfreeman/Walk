@@ -5,7 +5,6 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.TextEditor.RazorLib.Characters.Models;
 using Walk.TextEditor.RazorLib.Cursors.Models;

@@ -8,52 +8,32 @@ using Walk.TextEditor.RazorLib;
 using Walk.Ide.RazorLib.Shareds.Models;
 
 /* Start Body */
-using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.Dimensions.Models;
-using Walk.Common.RazorLib.Panels.Models;
-using Walk.Common.RazorLib.StateHasChangedBoundaries.Displays;
-using Walk.Common.RazorLib.Options.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
 /* End Body */
 
 /* Start Header */
-using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Clipboards.Models;
 using Walk.Common.RazorLib.Contexts.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.Options.Models;
-using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.Ide.RazorLib.Shareds.Displays.Internals;
 using Walk.Ide.RazorLib.Commands;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
-using Walk.Ide.RazorLib.Shareds.Models;
 /* End Header */
 
 /* Start IdeMainLayout */
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using Walk.Common.RazorLib.Installations.Models;
 using Walk.Ide.RazorLib.JsRuntimes.Models;
-using Walk.Ide.RazorLib.BackgroundTasks.Models;
 /* End IdeMainLayout */
 
 /* Start SettingsDialogEntryPoint */
-using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.Dialogs.Models;
-using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.Options.Models;
-/*namespace*/ using Walk.Ide.RazorLib.Settings.Displays;
+/*namespace*/
+using Walk.Ide.RazorLib.Settings.Displays;
 /* End SettingsDialogEntryPoint */
 
 namespace Walk.Ide.RazorLib.Shareds.Displays;

@@ -19,7 +19,6 @@ using Walk.TextEditor.RazorLib.FindAlls.Models;
 using Walk.TextEditor.RazorLib.Groups.Models;
 using Walk.TextEditor.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
-using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.Installations.Models;

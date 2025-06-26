@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components.Web;
-using Walk.Common.RazorLib.JavaScriptObjects.Models;
 
 namespace Walk.Common.RazorLib.Tooltips.Models;
 

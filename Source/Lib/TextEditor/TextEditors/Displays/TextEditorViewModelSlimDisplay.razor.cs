@@ -13,7 +13,6 @@ using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Icons.Displays;
-using Walk.Common.RazorLib.CustomEvents.Models;
 using Walk.Common.RazorLib.Tooltips.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.Edits.Models;

@@ -9,7 +9,6 @@ using Walk.Extensions.CompilerServices.Syntax;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.CompilerServices.CSharp.LexerCase;
 using Walk.CompilerServices.CSharp.ParserCase;
-using Walk.CompilerServices.CSharp.BinderCase;
 using Walk.CompilerServices.Razor.CompilerServiceCase;
 using Walk.CompilerServices.Razor.Facts;
 using Walk.CompilerServices.Xml.Html;

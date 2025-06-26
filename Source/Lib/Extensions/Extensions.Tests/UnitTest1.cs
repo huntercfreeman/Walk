@@ -1,7 +1,6 @@
 using System.Text;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
