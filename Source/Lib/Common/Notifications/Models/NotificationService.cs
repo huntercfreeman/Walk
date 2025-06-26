@@ -18,17 +18,11 @@ public class NotificationService : INotificationService
     {
     	lock (_stateModificationLock)
     	{
-	    	var inState = GetNotificationState();
-	    
-	        var outDefaultList = new List<INotification>(inState.DefaultList);
+	        var outDefaultList = new List<INotification>(_notificationState.DefaultList);
 	        outDefaultList.Add(notification);
-	
-	        _notificationState = inState with { DefaultList = outDefaultList };
-	        
-	        goto finalize;
+	        _notificationState = _notificationState with { DefaultList = outDefaultList };
 	    }
 	    
-	    finalize:
 	    NotificationStateChanged?.Invoke();
     }
 
@@ -36,25 +30,18 @@ public class NotificationService : INotificationService
     {
     	lock (_stateModificationLock)
     	{
-	    	var inState = GetNotificationState();
-	    
-	        var indexNotification = inState.DefaultList.FindIndex(
+	        var indexNotification = _notificationState.DefaultList.FindIndex(
 	            x => x.DynamicViewModelKey == key);
 	
-	        if (indexNotification == -1)
-	        	goto finalize;
-	            
-	        var inNotification = inState.DefaultList[indexNotification];
-	
-	        var outDefaultList = new List<INotification>(inState.DefaultList);
-	        outDefaultList.RemoveAt(indexNotification);
-	
-	        _notificationState = inState with { DefaultList = outDefaultList };
-	        
-	        goto finalize;
+	        if (indexNotification != -1)
+	        {
+    	        var inNotification = _notificationState.DefaultList[indexNotification];
+    	        var outDefaultList = new List<INotification>(_notificationState.DefaultList);
+    	        outDefaultList.RemoveAt(indexNotification);
+    	        _notificationState = _notificationState with { DefaultList = outDefaultList };
+	        }
 	    }
 	    
-	    finalize:
 	    NotificationStateChanged?.Invoke();
     }
 
@@ -62,32 +49,27 @@ public class NotificationService : INotificationService
     {
     	lock (_stateModificationLock)
     	{
-	    	var inState = GetNotificationState();
-	    
-	        var inNotificationIndex = inState.DefaultList.FindIndex(
+	        var inNotificationIndex = _notificationState.DefaultList.FindIndex(
 	            x => x.DynamicViewModelKey == key);
 	
-	        if (inNotificationIndex == -1)
-	        	goto finalize;
-	
-	        var inNotification = inState.DefaultList[inNotificationIndex];
-	
-	        var outDefaultList = new List<INotification>(inState.DefaultList);
-	        outDefaultList.RemoveAt(inNotificationIndex);
-	        
-	        var outReadList = new List<INotification>(inState.ReadList);
-	        outReadList.Add(inNotification);
-	
-	        _notificationState = inState with
+	        if (inNotificationIndex != -1)
 	        {
-	            DefaultList = outDefaultList,
-	            ReadList = outReadList
-	        };
-	        
-	        goto finalize;
+    	        var inNotification = _notificationState.DefaultList[inNotificationIndex];
+    	
+    	        var outDefaultList = new List<INotification>(_notificationState.DefaultList);
+    	        outDefaultList.RemoveAt(inNotificationIndex);
+    	        
+    	        var outReadList = new List<INotification>(_notificationState.ReadList);
+    	        outReadList.Add(inNotification);
+    	
+    	        _notificationState = _notificationState with
+    	        {
+    	            DefaultList = outDefaultList,
+    	            ReadList = outReadList
+    	        };
+	        }
 	    }
 	    
-	    finalize:
 	    NotificationStateChanged?.Invoke();
     }
     
@@ -95,32 +77,27 @@ public class NotificationService : INotificationService
     {
     	lock (_stateModificationLock)
     	{
-	    	var inState = GetNotificationState();
-	    
-	        var inNotificationIndex = inState.ReadList.FindIndex(
+	        var inNotificationIndex = _notificationState.ReadList.FindIndex(
 	            x => x.DynamicViewModelKey == key);
 	
-	        if (inNotificationIndex == -1)
-	        	goto finalize;
-	
-	        var inNotification = inState.ReadList[inNotificationIndex];
-	
-	        var outReadList = new List<INotification>(inState.ReadList);
-	        outReadList.RemoveAt(inNotificationIndex);
-	        
-	        var outDefaultList = new List<INotification>(inState.DefaultList);
-	        outDefaultList.Add(inNotification);
-	
-	        _notificationState = inState with
+	        if (inNotificationIndex != -1)
 	        {
-	            DefaultList = outDefaultList,
-	            ReadList = outReadList
-	        };
-	        
-	        goto finalize;
+    	        var inNotification = _notificationState.ReadList[inNotificationIndex];
+    	
+    	        var outReadList = new List<INotification>(_notificationState.ReadList);
+    	        outReadList.RemoveAt(inNotificationIndex);
+    	        
+    	        var outDefaultList = new List<INotification>(_notificationState.DefaultList);
+    	        outDefaultList.Add(inNotification);
+    	
+    	        _notificationState = _notificationState with
+    	        {
+    	            DefaultList = outDefaultList,
+    	            ReadList = outReadList
+    	        };
+    	    }
 	    }
 	    
-	    finalize:
 	    NotificationStateChanged?.Invoke();
     }
 
@@ -128,32 +105,27 @@ public class NotificationService : INotificationService
     {
     	lock (_stateModificationLock)
     	{
-	    	var inState = GetNotificationState();
-	    
-	        var inNotificationIndex = inState.DefaultList.FindIndex(
+	        var inNotificationIndex = _notificationState.DefaultList.FindIndex(
 	            x => x.DynamicViewModelKey == key);
 	
-	        if (inNotificationIndex == -1)
-	        	goto finalize;
-	
-	        var inNotification = inState.DefaultList[inNotificationIndex];
-	
-	        var outDefaultList = new List<INotification>(inState.DefaultList);
-	        outDefaultList.RemoveAt(inNotificationIndex);
-	        
-	        var outDeletedList = new List<INotification>(inState.DeletedList);
-	        outDeletedList.Add(inNotification);
-	
-	        _notificationState = inState with
+	        if (inNotificationIndex != -1)
 	        {
-	            DefaultList = outDefaultList,
-	            DeletedList = outDeletedList
-	        };
-	        
-	        goto finalize;
+    	        var inNotification = _notificationState.DefaultList[inNotificationIndex];
+    	
+    	        var outDefaultList = new List<INotification>(_notificationState.DefaultList);
+    	        outDefaultList.RemoveAt(inNotificationIndex);
+    	        
+    	        var outDeletedList = new List<INotification>(_notificationState.DeletedList);
+    	        outDeletedList.Add(inNotification);
+    	
+    	        _notificationState = _notificationState with
+    	        {
+    	            DefaultList = outDefaultList,
+    	            DeletedList = outDeletedList
+    	        };
+	        }
 	    }
 	    
-	    finalize:
 	    NotificationStateChanged?.Invoke();
     }
 
@@ -161,32 +133,27 @@ public class NotificationService : INotificationService
     {
     	lock (_stateModificationLock)
     	{
-	    	var inState = GetNotificationState();
-	    
-	        var inNotificationIndex = inState.DeletedList.FindIndex(
+	        var inNotificationIndex = _notificationState.DeletedList.FindIndex(
 	            x => x.DynamicViewModelKey == key);
 	
-	        if (inNotificationIndex == -1)
-	        	goto finalize;
-	
-	        var inNotification = inState.DeletedList[inNotificationIndex];
-	
-	        var outDeletedList = new List<INotification>(inState.DeletedList);
-	        outDeletedList.RemoveAt(inNotificationIndex);
-	
-	        var outDefaultList = new List<INotification>(inState.DefaultList);
-	        outDefaultList.Add(inNotification);
-	
-	        _notificationState = inState with
+	        if (inNotificationIndex != -1)
 	        {
-	            DefaultList = outDefaultList,
-	            DeletedList = outDeletedList
-	        };
-	        
-	        goto finalize;
+    	        var inNotification = _notificationState.DeletedList[inNotificationIndex];
+    	
+    	        var outDeletedList = new List<INotification>(_notificationState.DeletedList);
+    	        outDeletedList.RemoveAt(inNotificationIndex);
+    	
+    	        var outDefaultList = new List<INotification>(_notificationState.DefaultList);
+    	        outDefaultList.Add(inNotification);
+    	
+    	        _notificationState = _notificationState with
+    	        {
+    	            DefaultList = outDefaultList,
+    	            DeletedList = outDeletedList
+    	        };
+	        }
 	    }
 	    
-	    finalize:
 	    NotificationStateChanged?.Invoke();
     }
 
@@ -194,32 +161,27 @@ public class NotificationService : INotificationService
     {
     	lock (_stateModificationLock)
     	{
-	    	var inState = GetNotificationState();
-	    
-	        var inNotificationIndex = inState.DefaultList.FindIndex(
+	        var inNotificationIndex = _notificationState.DefaultList.FindIndex(
 	            x => x.DynamicViewModelKey == key);
 	
-	        if (inNotificationIndex == -1)
-	        	goto finalize;
-	
-	        var inNotification = inState.DefaultList[inNotificationIndex];
-	
-	        var outDefaultList = new List<INotification>(inState.DefaultList);
-	        outDefaultList.RemoveAt(inNotificationIndex);
-	
-	        var outArchivedList = new List<INotification>(inState.ArchivedList);
-	        outArchivedList.Add(inNotification);
-	
-	        _notificationState = inState with
+	        if (inNotificationIndex != -1)
 	        {
-	            DefaultList = outDefaultList,
-	            ArchivedList = outArchivedList
-	        };
-	        
-	        goto finalize;
+    	        var inNotification = _notificationState.DefaultList[inNotificationIndex];
+    	
+    	        var outDefaultList = new List<INotification>(_notificationState.DefaultList);
+    	        outDefaultList.RemoveAt(inNotificationIndex);
+    	
+    	        var outArchivedList = new List<INotification>(_notificationState.ArchivedList);
+    	        outArchivedList.Add(inNotification);
+    	
+    	        _notificationState = _notificationState with
+    	        {
+    	            DefaultList = outDefaultList,
+    	            ArchivedList = outArchivedList
+    	        };
+	        }
 	    }
 	    
-	    finalize:
 	    NotificationStateChanged?.Invoke();
     }
     
@@ -227,32 +189,27 @@ public class NotificationService : INotificationService
     {
     	lock (_stateModificationLock)
     	{
-	    	var inState = GetNotificationState();
-	    
-	        var inNotificationIndex = inState.ArchivedList.FindIndex(
+	        var inNotificationIndex = _notificationState.ArchivedList.FindIndex(
 	            x => x.DynamicViewModelKey == key);
 	
-	        if (inNotificationIndex == -1)
-	        	goto finalize;
-	
-	        var inNotification = inState.ArchivedList[inNotificationIndex];
-	
-	        var outArchivedList = new List<INotification>(inState.ArchivedList);
-	        outArchivedList.RemoveAt(inNotificationIndex);
-	        
-	        var outDefaultList = new List<INotification>(inState.DefaultList);
-	        outDefaultList.Add(inNotification);
-	
-	        _notificationState = inState with
+	        if (inNotificationIndex != -1)
 	        {
-	            DefaultList = outDefaultList,
-	            ArchivedList = outArchivedList
-	        };
-	        
-	        goto finalize;
+    	        var inNotification = _notificationState.ArchivedList[inNotificationIndex];
+    	
+    	        var outArchivedList = new List<INotification>(_notificationState.ArchivedList);
+    	        outArchivedList.RemoveAt(inNotificationIndex);
+    	        
+    	        var outDefaultList = new List<INotification>(_notificationState.DefaultList);
+    	        outDefaultList.Add(inNotification);
+    	
+    	        _notificationState = _notificationState with
+    	        {
+    	            DefaultList = outDefaultList,
+    	            ArchivedList = outArchivedList
+    	        };
+	        }
 	    }
 	    
-	    finalize:
 	    NotificationStateChanged?.Invoke();
     }
 
@@ -260,17 +217,12 @@ public class NotificationService : INotificationService
     {
     	lock (_stateModificationLock)
     	{
-	    	var inState = GetNotificationState();
-	    
-	        _notificationState = inState with
+	        _notificationState = _notificationState with
 	        {
 	            DefaultList = new List<INotification>()
 	        };
-	        
-	        goto finalize;
 	    }
 	    
-	    finalize:
 	    NotificationStateChanged?.Invoke();
     }
     
@@ -278,17 +230,12 @@ public class NotificationService : INotificationService
     {
     	lock (_stateModificationLock)
     	{
-	    	var inState = GetNotificationState();
-	    
-	        _notificationState = inState with
+	        _notificationState = _notificationState with
 	        {
 	            ReadList = new List<INotification>()
 	        };
-	        
-	        goto finalize;
 	    }
 	    
-	    finalize:
 	    NotificationStateChanged?.Invoke();
     }
     
@@ -296,17 +243,12 @@ public class NotificationService : INotificationService
     {
     	lock (_stateModificationLock)
     	{
-	    	var inState = GetNotificationState();
-	    
-	        _notificationState = inState with
+	        _notificationState = _notificationState with
 	        {
 	            DeletedList = new List<INotification>()
 	        };
-	        
-	        goto finalize;
 	    }
 	    
-	    finalize:
 	    NotificationStateChanged?.Invoke();
     }
 
@@ -314,17 +256,12 @@ public class NotificationService : INotificationService
     {
     	lock (_stateModificationLock)
     	{
-	    	var inState = GetNotificationState();
-	    
-	        _notificationState = inState with
+	        _notificationState = _notificationState with
 	        {
 	            ArchivedList = new List<INotification>()
 	        };
-	        
-	        goto finalize;
 	    }
 	    
-	    finalize:
 	    NotificationStateChanged?.Invoke();
     }
 }

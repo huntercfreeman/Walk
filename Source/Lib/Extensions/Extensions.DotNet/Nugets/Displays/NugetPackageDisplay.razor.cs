@@ -35,7 +35,6 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
 	{
 		DotNetBackgroundTaskApi.NuGetPackageManagerService.NuGetPackageManagerStateChanged += OnNuGetPackageManagerStateChanged;
 		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
-		base.OnInitialized();
 	}
 	
 	protected override void OnParametersSet()

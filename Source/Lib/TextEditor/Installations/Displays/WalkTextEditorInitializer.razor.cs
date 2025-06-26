@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
+using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.Options.Models;
@@ -26,6 +27,8 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
     public IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     
@@ -48,43 +51,62 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
     	TextEditorService.OptionsApi.NeedsMeasured += OnNeedsMeasured;
 
         TextEditorService.Enqueue_TextEditorInitializationBackgroundTaskGroupWorkKind();
-            
-        base.OnInitialized();
     }
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
     	if (firstRender)
     	{
-    		await Ready();
+    		await InvokeAsync(Ready);
     		QueueRemeasureBackgroundTask();
     	}
     }
     
+    /// <summary>
+    /// Only invoke this method from the UI thread due to the usage of the shared UiStringBuilder.
+    /// </summary>
     private async Task Ready()
     {
-    	_wrapperCssClass = $"di_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} ";
+        CommonBackgroundTaskApi.UiStringBuilder.Clear();
+        CommonBackgroundTaskApi.UiStringBuilder.Append("di_te_text-editor-css-wrapper ");
+        CommonBackgroundTaskApi.UiStringBuilder.Append(TextEditorService.ThemeCssClassString);
+    	_wrapperCssClass = CommonBackgroundTaskApi.UiStringBuilder.ToString();
     	
     	var options = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
     	
     	var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
     	if (options.CommonOptions?.FontSizeInPixels is not null)
             fontSizeInPixels = options!.CommonOptions.FontSizeInPixels;
-    	var fontSizeCssStyle = $"font-size: {fontSizeInPixels.ToCssValue()}px;";
+        CommonBackgroundTaskApi.UiStringBuilder.Clear();
+        CommonBackgroundTaskApi.UiStringBuilder.Append("font-size: ");
+        CommonBackgroundTaskApi.UiStringBuilder.Append(fontSizeInPixels.ToCssValue());
+        CommonBackgroundTaskApi.UiStringBuilder.Append("px;");
+    	var fontSizeCssStyle = CommonBackgroundTaskApi.UiStringBuilder.ToString();
     	
     	var fontFamily = TextEditorRenderBatch.DEFAULT_FONT_FAMILY;
     	if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
         	fontFamily = options!.CommonOptions!.FontFamily;
-    	var fontFamilyCssStyle = $"font-family: {fontFamily};";
+    	CommonBackgroundTaskApi.UiStringBuilder.Clear();
+    	CommonBackgroundTaskApi.UiStringBuilder.Append("font-family: ");
+    	CommonBackgroundTaskApi.UiStringBuilder.Append(fontFamily);
+    	CommonBackgroundTaskApi.UiStringBuilder.Append(";");
+    	var fontFamilyCssStyle = CommonBackgroundTaskApi.UiStringBuilder.ToString();
     	
-    	_wrapperCssStyle = $"{fontSizeCssStyle} {fontFamilyCssStyle}";
+    	CommonBackgroundTaskApi.UiStringBuilder.Clear();
+    	CommonBackgroundTaskApi.UiStringBuilder.Append(fontSizeCssStyle);
+    	CommonBackgroundTaskApi.UiStringBuilder.Append(" ");
+    	CommonBackgroundTaskApi.UiStringBuilder.Append(fontFamilyCssStyle);
+    	CommonBackgroundTaskApi.UiStringBuilder.Append(" position:absolute;");
+    	_wrapperCssStyle = CommonBackgroundTaskApi.UiStringBuilder.ToString();
     	
+    	// I said "Only invoke this method from the UI thread due to the usage of the shared UiStringBuilder."
+    	// But I'm still going to keep this InvokeAsync for the StateHasChanged due to superstituous anxiety.
     	await InvokeAsync(StateHasChanged);
     }
     
 	private async void OnNeedsMeasured()
 	{
-		await Ready();
+		await InvokeAsync(Ready);
 		QueueRemeasureBackgroundTask();
 	}
 	

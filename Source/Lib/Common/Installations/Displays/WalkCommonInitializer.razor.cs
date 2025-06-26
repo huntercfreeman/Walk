@@ -1,51 +1,16 @@
+using System.Text;
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
-
-
-/* Start DialogInitializer */
 using Walk.Common.RazorLib.Dialogs.Models;
-using Walk.Common.RazorLib.Contexts.Displays;
-using Walk.Common.RazorLib.Dynamics.Models;
-/*namespace*/ using Walk.Common.RazorLib.Dialogs.Displays;
-/* End DialogInitializer */
-
-
-/* Start WidgetInitializer */
 using Walk.Common.RazorLib.Widgets.Models;
-using Walk.Common.RazorLib.Contexts.Displays;
-/*namespace*/ using Walk.Common.RazorLib.Widgets.Displays;
-/* End WidgetInitializer */
-
-
-/* Start NotificationInitializer */
 using Walk.Common.RazorLib.Notifications.Models;
-using Walk.Common.RazorLib.Contexts.Displays;
-using Walk.Common.RazorLib.Dynamics.Models;
-/*namespace*/ using Walk.Common.RazorLib.Notifications.Displays;
-/* End NotificationInitializer */
-
-
-/* Start DropdownInitializer */
 using Walk.Common.RazorLib.Dropdowns.Models;
-using Walk.Common.RazorLib.Contexts.Displays;
-/*namespace*/ using Walk.Common.RazorLib.Dropdowns.Displays;
-/* End DropdownInitializer */
-
-
-/* Start OutlineInitializer */
-using System.Text;
 using Walk.Common.RazorLib.Outlines.Models;
-/* End OutlineInitializer */
-
-
-/* Start TooltipInitializer */
 using Walk.Common.RazorLib.Tooltips.Models;
-/* End TooltipInitializer */
-
 
 namespace Walk.Common.RazorLib.Installations.Displays;
 
@@ -69,43 +34,18 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     private BrowserResizeInterop BrowserResizeInterop { get; set; } = null!;
     [Inject]
     private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
-    
-    
-    /* Start DialogInitializer */
     [Inject]
     private IDialogService DialogService { get; set; } = null!;
-    /* End DialogInitializer */
-    
-    
-    /* Start WidgetInitializer */
     [Inject]
     private IWidgetService WidgetService { get; set; } = null!;
-    /* End WidgetInitializer */
-    
-    
-    /* Start NotificationInitializer */
     [Inject]
     private INotificationService NotificationService { get; set; } = null!;
-    /* End NotificationInitializer */
-    
-    
-    /* Start DropdownInitializer */
     [Inject]
     private IDropdownService DropdownService { get; set; } = null!;
-    /* End DropdownInitializer */
-    
-    
-    /* Start OutlineInitializer */
     [Inject]
 	public IOutlineService OutlineService { get; set; } = null!;
-    /* End OutlineInitializer */
-    
-    
-    /* Start TooltipInitializer */
     [Inject]
 	private ITooltipService TooltipService { get; set; } = null!;
-    /* End TooltipInitializer */
-    
     
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     
@@ -116,14 +56,9 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     /// </summary>
     private readonly StringBuilder _styleBuilder = new();
     
-    
-    /* Start OutlineInitializer */
     /// <summary>The unit of measurement is Pixels (px)</summary>
 	public const double OUTLINE_THICKNESS = 4;
-    /* End OutlineInitializer */
     
-    
-    /* Start TooltipInitializer */
     public double ValueTooltipRelativeX { get; set; }
     public double ValueTooltipRelativeY { get; set; }
 	
@@ -131,24 +66,21 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 	public string TooltipRelativeY { get; set; } = string.Empty;
 	
 	private ITooltipModel? _tooltipModelPrevious = null;
-    /* End TooltipInitializer */
-    
     
 	protected override void OnInitialized()
 	{
-    	DialogService.DialogStateChanged += OnDialogStateChanged;
-    	WidgetService.WidgetStateChanged += OnWidgetStateChanged;
-    	NotificationService.NotificationStateChanged += OnNotificationStateChanged;
-    	DropdownService.DropdownStateChanged += OnDropdownStateChanged;
-		OutlineService.OutlineStateChanged += OnOutlineStateChanged;
-		TooltipService.TooltipStateChanged += OnTooltipStateChanged;
+    	DialogService.DialogStateChanged += Shared_OnStateChanged;
+    	WidgetService.WidgetStateChanged += Shared_OnStateChanged;
+    	NotificationService.NotificationStateChanged += Shared_OnStateChanged;
+    	DropdownService.DropdownStateChanged += Shared_OnStateChanged;
+		OutlineService.OutlineStateChanged += Shared_OnStateChanged;
+		TooltipService.TooltipStateChanged += Shared_OnStateChanged;
 	
         CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
         {
         	WorkKind = CommonWorkKind.WalkCommonInitializerWork
     	});
 	}
-	
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -200,9 +132,6 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     	        yLarge = true;
     	    }
     	    
-    	    Console.WriteLine("tooltip was repositioned");
-    	    // Console.WriteLine($"xLarge:{xLarge} yLarge:{yLarge}");
-    	    
     	    tooltipModel.WasRepositioned = true;
     	    
     	    if (xLarge)
@@ -223,56 +152,8 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 	    }
 	}
     
+    private async void Shared_OnStateChanged() => await InvokeAsync(StateHasChanged);
     
-    /* Start DialogInitializer */
-    private async void OnDialogStateChanged()
-    {
-    	await InvokeAsync(StateHasChanged);
-    }
-    /* End DialogInitializer */
-    
-    
-    /* Start WidgetInitializer */
-    private async void OnWidgetStateChanged()
-    {
-    	await InvokeAsync(StateHasChanged);
-    }
-    /* End WidgetInitializer */
-    
-    
-    /* Start NotificationInitializer */
-    public async void OnNotificationStateChanged()
-    {
-    	await InvokeAsync(StateHasChanged);
-    }
-    /* End NotificationInitializer */
-    
-    
-    /* Start DropdownInitializer */
-    public async void OnDropdownStateChanged()
-    {
-    	await InvokeAsync(StateHasChanged);
-    }
-    /* End DropdownInitializer */
-    
-    
-    /* Start OutlineInitializer */
-    private async void OnOutlineStateChanged()
-	{
-		await InvokeAsync(StateHasChanged);
-	}
-    /* End OutlineInitializer */
-    
-    
-    /* Start TooltipInitializer */
-    private async void OnTooltipStateChanged()
-	{
-	    await InvokeAsync(StateHasChanged);
-	}
-    /* End TooltipInitializer */
-    
-    
-    /* Start of misc */
     private Task WIDGET_RemoveWidget()
     {
     	WidgetService.SetWidget(null);
@@ -421,8 +302,6 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 		
 		return _styleBuilder.ToString();
 	}
-    /* End of misc */
-    
     
     /// <summary>
     /// Presumptions:
@@ -440,12 +319,12 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     	BackgroundTaskService.ContinuousWorker.StartAsyncTask = null;
     	BackgroundTaskService.IndefiniteWorker.StartAsyncTask = null;
     	
-		DialogService.DialogStateChanged -= OnDialogStateChanged;
-    	WidgetService.WidgetStateChanged -= OnWidgetStateChanged;
-    	NotificationService.NotificationStateChanged -= OnNotificationStateChanged;
-        DropdownService.DropdownStateChanged -= OnDropdownStateChanged;
-    	OutlineService.OutlineStateChanged -= OnOutlineStateChanged;
-		TooltipService.TooltipStateChanged -= OnTooltipStateChanged;
+		DialogService.DialogStateChanged -= Shared_OnStateChanged;
+    	WidgetService.WidgetStateChanged -= Shared_OnStateChanged;
+    	NotificationService.NotificationStateChanged -= Shared_OnStateChanged;
+        DropdownService.DropdownStateChanged -= Shared_OnStateChanged;
+    	OutlineService.OutlineStateChanged -= Shared_OnStateChanged;
+		TooltipService.TooltipStateChanged -= Shared_OnStateChanged;
 		
 		var notificationState = NotificationService.GetNotificationState();
 

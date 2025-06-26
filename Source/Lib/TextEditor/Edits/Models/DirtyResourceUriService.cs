@@ -16,31 +16,23 @@ public class DirtyResourceUriService : IDirtyResourceUriService
     {
         lock (_stateModificationLock)
         {
-            var inState = GetDirtyResourceUriState();
-
-            if (resourceUri.Value.StartsWith(ResourceUriFacts.Terminal_ReservedResourceUri_Prefix) ||
-                resourceUri.Value.StartsWith(ResourceUriFacts.Git_ReservedResourceUri_Prefix))
+            if (!resourceUri.Value.StartsWith(ResourceUriFacts.Terminal_ReservedResourceUri_Prefix) &&
+                !resourceUri.Value.StartsWith(ResourceUriFacts.Git_ReservedResourceUri_Prefix))
             {
-                goto finalize;
+                if (resourceUri != ResourceUriFacts.SettingsPreviewTextEditorResourceUri &&
+                    resourceUri != ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri)
+                {
+                    var outDirtyResourceUriList = new List<ResourceUri>(_dirtyResourceUriState.DirtyResourceUriList);
+                    outDirtyResourceUriList.Add(resourceUri);
+        
+        			_dirtyResourceUriState = _dirtyResourceUriState with
+                    {
+                        DirtyResourceUriList = outDirtyResourceUriList
+                    };
+                }
             }
-            else if (resourceUri == ResourceUriFacts.SettingsPreviewTextEditorResourceUri ||
-                     resourceUri == ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri)
-            {
-                goto finalize;
-            }
-
-            var outDirtyResourceUriList = new List<ResourceUri>(inState.DirtyResourceUriList);
-            outDirtyResourceUriList.Add(resourceUri);
-
-			_dirtyResourceUriState = inState with
-            {
-                DirtyResourceUriList = outDirtyResourceUriList
-            };
-
-            goto finalize;
         }
 
-        finalize:
         DirtyResourceUriStateChanged?.Invoke();
     }
 
@@ -48,20 +40,15 @@ public class DirtyResourceUriService : IDirtyResourceUriService
     {
         lock (_stateModificationLock)
         {
-            var inState = GetDirtyResourceUriState();
-
-            var outDirtyResourceUriList = new List<ResourceUri>(inState.DirtyResourceUriList);
+            var outDirtyResourceUriList = new List<ResourceUri>(_dirtyResourceUriState.DirtyResourceUriList);
             outDirtyResourceUriList.Remove(resourceUri);
 
-			_dirtyResourceUriState = inState with
+			_dirtyResourceUriState = _dirtyResourceUriState with
             {
                 DirtyResourceUriList = outDirtyResourceUriList
 			};
-
-            goto finalize;
         }
 
-        finalize:
         DirtyResourceUriStateChanged?.Invoke();
     }
 }

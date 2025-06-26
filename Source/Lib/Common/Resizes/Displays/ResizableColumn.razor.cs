@@ -30,8 +30,6 @@ public partial class ResizableColumn : ComponentBase, IDisposable
     {
         DragService.DragStateChanged += DragStateWrapOnStateChanged;
         AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
-
-        base.OnInitialized();
     }
     
     private async void OnAppOptionsStateChanged()

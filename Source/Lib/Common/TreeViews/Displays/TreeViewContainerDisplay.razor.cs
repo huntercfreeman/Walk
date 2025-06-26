@@ -53,7 +53,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         TreeViewService.TreeViewStateChanged += OnTreeViewStateChanged;
-        base.OnInitialized();
     }
 
     private int GetRootDepth(TreeViewNoType rootNode)

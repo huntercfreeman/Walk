@@ -59,8 +59,6 @@ public partial class EditorDisplay : ComponentBase, IDisposable
         
         TextEditorService.GroupApi.TextEditorGroupStateChanged += TextEditorGroupWrapOnStateChanged;
         DirtyResourceUriService.DirtyResourceUriStateChanged += DirtyResourceUriServiceOnStateChanged;
-
-        base.OnInitialized();
     }
 
     private async void TextEditorGroupWrapOnStateChanged()

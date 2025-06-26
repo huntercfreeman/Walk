@@ -18,21 +18,18 @@ public class KeymapService : IKeymapService
         {
             var inState = GetKeymapState();
 
-            if (inState.KeymapLayerList.Any(x => x.Key == keymapLayer.Key))
-                goto finalize;
-
-            var outKeymapLayerList = new List<KeymapLayer>(inState.KeymapLayerList);
-            outKeymapLayerList.Add(keymapLayer);
-
-            _keymapState = inState with
+            if (!inState.KeymapLayerList.Any(x => x.Key == keymapLayer.Key))
             {
-                KeymapLayerList = outKeymapLayerList
-            };
-
-            goto finalize;
+                var outKeymapLayerList = new List<KeymapLayer>(inState.KeymapLayerList);
+                outKeymapLayerList.Add(keymapLayer);
+    
+                _keymapState = inState with
+                {
+                    KeymapLayerList = outKeymapLayerList
+                };
+            }
         }
 
-        finalize:
         KeymapStateChanged?.Invoke();
     }
     
@@ -44,21 +41,18 @@ public class KeymapService : IKeymapService
 
             var indexExisting = inState.KeymapLayerList.FindIndex(x => x.Key == keymapLayerKey);
 
-            if (indexExisting == -1)
-                goto finalize;
-
-            var outKeymapLayerList = new List<KeymapLayer>(inState.KeymapLayerList);
-            outKeymapLayerList.RemoveAt(indexExisting);
-
-            _keymapState = inState with
+            if (indexExisting != -1)
             {
-                KeymapLayerList = outKeymapLayerList
-            };
-
-            goto finalize;
+                var outKeymapLayerList = new List<KeymapLayer>(inState.KeymapLayerList);
+                outKeymapLayerList.RemoveAt(indexExisting);
+    
+                _keymapState = inState with
+                {
+                    KeymapLayerList = outKeymapLayerList
+                };
+            }
         }
 
-        finalize:
         KeymapStateChanged?.Invoke();
     }
 }

@@ -1,6 +1,5 @@
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.TextEditor.RazorLib.FindAlls.Displays;
 
 namespace Walk.TextEditor.RazorLib.FindAlls.Models;
 

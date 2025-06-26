@@ -8,10 +8,8 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Widgets.Models;
 using Walk.Common.RazorLib.Notifications.Displays;
-using Walk.Common.RazorLib.WatchWindows.Displays;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Outlines.Models;
-using Walk.Common.RazorLib.Reflectives.Models;
 using Walk.Common.RazorLib.Drags.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
@@ -80,7 +78,6 @@ public static class ServiceCollectionExtensions
             .AddScoped<IAppDimensionService, AppDimensionService>()
             .AddScoped<IKeymapService, KeymapService>()
             .AddScoped<IWidgetService, WidgetService>()
-            .AddScoped<IReflectiveService, ReflectiveService>()
             .AddScoped<IClipboardService, JavaScriptInteropClipboardService>()
             .AddScoped<IDialogService, DialogService>()
             .AddScoped<INotificationService, NotificationService>()

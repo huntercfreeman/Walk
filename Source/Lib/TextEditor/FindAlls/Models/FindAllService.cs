@@ -44,17 +44,12 @@ public class FindAllService : IFindAllService
     {
 		lock (_stateModificationLock)
 		{
-			var inState = GetFindAllState();
-
-			_findAllState = inState with
+			_findAllState = _findAllState with
 			{
 				SearchQuery = searchQuery
 			};
-
-            goto finalize;
         }
 
-		finalize:
         FindAllStateChanged?.Invoke();
     }
 
@@ -62,17 +57,12 @@ public class FindAllService : IFindAllService
     {
 		lock (_stateModificationLock)
 		{
-			var inState = GetFindAllState();
-
-			_findAllState = inState with
+			_findAllState = _findAllState with
 			{
 				StartingDirectoryPath = startingDirectoryPath
 			};
-
-            goto finalize;
         }
 
-        finalize:
         FindAllStateChanged?.Invoke();
     }
 
@@ -80,17 +70,12 @@ public class FindAllService : IFindAllService
     {
 		lock (_stateModificationLock)
 		{
-			var inState = GetFindAllState();
-
 			_searchCancellationTokenSource.Cancel();
 			_searchCancellationTokenSource = new();
 
-			_findAllState = inState with { };
-
-            goto finalize;
+			_findAllState = _findAllState with { };
         }
 
-        finalize:
         FindAllStateChanged?.Invoke();
     }
 
@@ -98,17 +83,12 @@ public class FindAllService : IFindAllService
     {
 		lock (_stateModificationLock)
 		{
-			var inState = GetFindAllState();
-
-			_findAllState = inState with
+			_findAllState = _findAllState with
 			{
 				ProgressBarModel = progressBarModel,
 			};
-
-            goto finalize;
         }
 
-        finalize:
         FindAllStateChanged?.Invoke();
     }
 
@@ -130,11 +110,8 @@ public class FindAllService : IFindAllService
 			{
 				SearchResultList = localSearchResultList
 			};
-
-            goto finalize;
         }
 
-        finalize:
         FindAllStateChanged?.Invoke();
     }
 
@@ -148,11 +125,8 @@ public class FindAllService : IFindAllService
 			{
 				SearchResultList = new()
 			};
-
-			goto finalize;
         }
 
-        finalize:
         FindAllStateChanged?.Invoke();
     }
 	

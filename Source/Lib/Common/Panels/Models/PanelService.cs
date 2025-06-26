@@ -28,17 +28,15 @@ public class PanelService : IPanelService
         {
     	    var inState = GetPanelState();
     
-            if (inState.PanelList.Any(x => x.Key == panel.Key))
-                goto finalize;
-
-            var outPanelList = new List<Panel>(inState.PanelList);
-            outPanelList.Add(panel);
-
-            _panelState = inState with { PanelList = outPanelList };
-            goto finalize;
+            if (!inState.PanelList.Any(x => x.Key == panel.Key))
+            {
+                var outPanelList = new List<Panel>(inState.PanelList);
+                outPanelList.Add(panel);
+    
+                _panelState = inState with { PanelList = outPanelList };
+            }
         }
 
-        finalize:
         PanelStateChanged?.Invoke();
     }
 
@@ -48,20 +46,16 @@ public class PanelService : IPanelService
         {
             var inState = GetPanelState();
 
-            var indexPanel = inState.PanelList.FindIndex(
-                x => x.Key == panelKey);
-
-            if (indexPanel == -1)
-                goto finalize;
-
-            var outPanelList = new List<Panel>(inState.PanelList);
-            outPanelList.RemoveAt(indexPanel);
-
-            _panelState = inState with { PanelList = outPanelList };
-            goto finalize;
+            var indexPanel = inState.PanelList.FindIndex(x => x.Key == panelKey);
+            if (indexPanel != -1)
+            {
+                var outPanelList = new List<Panel>(inState.PanelList);
+                outPanelList.RemoveAt(indexPanel);
+    
+                _panelState = inState with { PanelList = outPanelList };
+            }
         }
 
-        finalize:
         PanelStateChanged?.Invoke();
     }
 	
@@ -71,17 +65,15 @@ public class PanelService : IPanelService
         {
             var inState = GetPanelState();
 
-            if (inState.PanelGroupList.Any(x => x.Key == panelGroup.Key))
-                goto finalize;
-
-            var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
-            outPanelGroupList.Add(panelGroup);
-
-            _panelState = inState with { PanelGroupList = outPanelGroupList };
-            goto finalize;
+            if (!inState.PanelGroupList.Any(x => x.Key == panelGroup.Key))
+            {
+                var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
+                outPanelGroupList.Add(panelGroup);
+    
+                _panelState = inState with { PanelGroupList = outPanelGroupList };
+            }
         }
 
-        finalize:
         PanelStateChanged?.Invoke();
     }
 
@@ -91,20 +83,16 @@ public class PanelService : IPanelService
         {
             var inState = GetPanelState();
 
-            var indexPanelGroup = inState.PanelGroupList.FindIndex(
-                x => x.Key == panelGroupKey);
-
-            if (indexPanelGroup == -1)
-                goto finalize;
-
-            var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
-            outPanelGroupList.RemoveAt(indexPanelGroup);
-
-            _panelState = inState with { PanelGroupList = outPanelGroupList };
-            goto finalize;
+            var indexPanelGroup = inState.PanelGroupList.FindIndex(x => x.Key == panelGroupKey);
+            if (indexPanelGroup != -1)
+            {
+                var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
+                outPanelGroupList.RemoveAt(indexPanelGroup);
+    
+                _panelState = inState with { PanelGroupList = outPanelGroupList };
+            }
         }
 
-        finalize:
         PanelStateChanged?.Invoke();
     }
 
@@ -117,41 +105,35 @@ public class PanelService : IPanelService
         {
             var inState = GetPanelState();
 
-            var indexPanelGroup = inState.PanelGroupList.FindIndex(
-                x => x.Key == panelGroupKey);
-
-            if (indexPanelGroup == -1)
-                goto finalize;
-
-            var inPanelGroup = inState.PanelGroupList[indexPanelGroup];
-            
-            if (inPanelGroup.TabList.Any(x => x.Key == panelTab.Key))
-            	goto finalize;
-
-            var outTabList = new List<IPanelTab>(inPanelGroup.TabList);
-
-            var insertionPoint = insertAtIndexZero
-                ? 0
-                : outTabList.Count;
-
-            outTabList.Insert(insertionPoint, panelTab);
-
-            var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
-
-            outPanelGroupList[indexPanelGroup] = inPanelGroup with
+            var indexPanelGroup = inState.PanelGroupList.FindIndex(x => x.Key == panelGroupKey);
+            if (indexPanelGroup != -1)
             {
-                TabList = outTabList
-            };
-
-            _panelState = inState with
-            {
-                PanelGroupList = outPanelGroupList
-            };
-
-            goto finalize;
+                var inPanelGroup = inState.PanelGroupList[indexPanelGroup];
+                if (!inPanelGroup.TabList.Any(x => x.Key == panelTab.Key))
+                {
+                    var outTabList = new List<IPanelTab>(inPanelGroup.TabList);
+        
+                    var insertionPoint = insertAtIndexZero
+                        ? 0
+                        : outTabList.Count;
+        
+                    outTabList.Insert(insertionPoint, panelTab);
+        
+                    var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
+        
+                    outPanelGroupList[indexPanelGroup] = inPanelGroup with
+                    {
+                        TabList = outTabList
+                    };
+        
+                    _panelState = inState with
+                    {
+                        PanelGroupList = outPanelGroupList
+                    };
+                }
+            }
         }
 
-        finalize:
         PanelStateChanged?.Invoke();
     }
 
@@ -161,34 +143,27 @@ public class PanelService : IPanelService
         {
             var inState = GetPanelState();
 
-            var indexPanelGroup = inState.PanelGroupList.FindIndex(
-                x => x.Key == panelGroupKey);
-
-            if (indexPanelGroup == -1)
-                goto finalize;
-
-            var inPanelGroup = inState.PanelGroupList[indexPanelGroup];
-
-            var indexPanelTab = inPanelGroup.TabList.FindIndex(
-                x => x.Key == panelTabKey);
-
-            if (indexPanelTab == -1)
-                goto finalize;
-
-            var outTabList = new List<IPanelTab>(inPanelGroup.TabList);
-            outTabList.RemoveAt(indexPanelTab);
-
-            var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
-            outPanelGroupList[indexPanelGroup] = inPanelGroup with
+            var indexPanelGroup = inState.PanelGroupList.FindIndex(x => x.Key == panelGroupKey);
+            if (indexPanelGroup != -1)
             {
-                TabList = outTabList
-            };
-
-            _panelState = inState with { PanelGroupList = outPanelGroupList };
-            goto finalize;
+                var inPanelGroup = inState.PanelGroupList[indexPanelGroup];
+                var indexPanelTab = inPanelGroup.TabList.FindIndex(x => x.Key == panelTabKey);
+                if (indexPanelTab != -1)
+                {
+                    var outTabList = new List<IPanelTab>(inPanelGroup.TabList);
+                    outTabList.RemoveAt(indexPanelTab);
+        
+                    var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
+                    outPanelGroupList[indexPanelGroup] = inPanelGroup with
+                    {
+                        TabList = outTabList
+                    };
+        
+                    _panelState = inState with { PanelGroupList = outPanelGroupList };
+                }
+            }
         }
 
-        finalize:
         PanelStateChanged?.Invoke();
     }
 
@@ -200,27 +175,22 @@ public class PanelService : IPanelService
         {
             var inState = GetPanelState();
 
-            var indexPanelGroup = inState.PanelGroupList.FindIndex(
-                x => x.Key == panelGroupKey);
-
-            if (indexPanelGroup == -1)
-                goto finalize;
-
-            var inPanelGroup = inState.PanelGroupList[indexPanelGroup];
-
-            var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
-
-            outPanelGroupList[indexPanelGroup] = inPanelGroup with
+            var indexPanelGroup = inState.PanelGroupList.FindIndex(x => x.Key == panelGroupKey);
+            if (indexPanelGroup != -1)
             {
-                ActiveTabKey = panelTabKey
-            };
-
-            _panelState = inState with { PanelGroupList = outPanelGroupList };
-            sideEffect = true;
-            goto finalize;
+                var inPanelGroup = inState.PanelGroupList[indexPanelGroup];
+                var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
+    
+                outPanelGroupList[indexPanelGroup] = inPanelGroup with
+                {
+                    ActiveTabKey = panelTabKey
+                };
+    
+                _panelState = inState with { PanelGroupList = outPanelGroupList };
+                sideEffect = true;
+            }
         }
 
-        finalize:
         PanelStateChanged?.Invoke();
 
         if (sideEffect)
@@ -235,23 +205,22 @@ public class PanelService : IPanelService
 
             var inPanelGroup = inState.PanelGroupList.FirstOrDefault(x => x.TabList
                 .Any(y => y.ContextRecordKey == contextRecordKey));
-
-            if (inPanelGroup is null)
-                goto finalize;
-
-            var inPanelTab = inPanelGroup.TabList.FirstOrDefault(
-                x => x.ContextRecordKey == contextRecordKey);
-
-            if (inPanelTab is null)
-                goto finalize;
-
-            // TODO: This should be thread safe yes?...
-            // ...Only ever would the same thread access the inner lock from invoking this which is the current lock so no deadlock?
-            SetActivePanelTab(inPanelGroup.Key, inPanelTab.Key);
-            return; // Inner reduce will trigger finalize.
+                
+            if (inPanelGroup is not null)
+            {
+                var inPanelTab = inPanelGroup.TabList.FirstOrDefault(
+                    x => x.ContextRecordKey == contextRecordKey);
+                    
+                if (inPanelTab is not null)
+                {
+                    // TODO: This should be thread safe yes?...
+                    // ...Only ever would the same thread access the inner lock from invoking this which is the current lock so no deadlock?
+                    SetActivePanelTab(inPanelGroup.Key, inPanelTab.Key);
+                    return; // Inner reduce will trigger finalize.
+                }
+            }
         }
 
-        finalize:
         PanelStateChanged?.Invoke();
     }
 
@@ -265,11 +234,8 @@ public class PanelService : IPanelService
             {
                 DragEventArgs = dragEventArgs
             };
-
-            goto finalize;
         }
 
-        finalize:
         PanelStateChanged?.Invoke();
     }
     
@@ -282,46 +248,37 @@ public class PanelService : IPanelService
             var inPanelGroup = inState.PanelGroupList.FirstOrDefault(
                 x => x.Key == panelGroupKey);
 
-            if (inPanelGroup is null)
-                goto finalize;
-
-            if (dimensionUnit.Purpose != DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW ||
-                dimensionUnit.Purpose != DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)
+            if (inPanelGroup is not null)
             {
-                goto finalize;
+                if (dimensionUnit.Purpose == DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW ||
+                    dimensionUnit.Purpose == DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)
+                {
+                    if (dimensionUnit.Purpose == DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW)
+                    {
+                        if (inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList is not null)
+                        {
+                            var existingDimensionUnit = inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList
+                                .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
+            
+                            if (existingDimensionUnit.Purpose is null)
+                                inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+                        }
+                    }
+                    else if (dimensionUnit.Purpose != DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)
+                    {
+                        if (inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList is not null)
+                        {
+                            var existingDimensionUnit = inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList
+                                .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
+            
+                            if (existingDimensionUnit.Purpose is null)
+                                inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+                        }
+                    }
+                }
             }
-
-            if (dimensionUnit.Purpose == DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW)
-            {
-                if (inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList is null)
-                    goto finalize;
-
-                var existingDimensionUnit = inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList
-                    .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-
-                if (existingDimensionUnit.Purpose is not null)
-                    goto finalize;
-
-                inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-            }
-            else if (dimensionUnit.Purpose != DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)
-            {
-                if (inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
-                    goto finalize;
-
-                var existingDimensionUnit = inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList
-                    .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-
-                if (existingDimensionUnit.Purpose is not null)
-                    goto finalize;
-
-                inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-            }
-
-            goto finalize;
         }
 
-        finalize:
         PanelStateChanged?.Invoke();
     }
 }

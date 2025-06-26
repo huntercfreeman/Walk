@@ -1,9 +1,7 @@
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
-using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.CompilerServices.CSharp.BinderCase;
 
 namespace Walk.CompilerServices.CSharp.ParserCase;

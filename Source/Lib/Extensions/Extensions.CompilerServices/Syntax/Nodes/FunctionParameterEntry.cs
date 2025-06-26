@@ -1,5 +1,4 @@
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
-using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 

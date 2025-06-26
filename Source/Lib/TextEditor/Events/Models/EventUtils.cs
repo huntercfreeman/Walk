@@ -3,7 +3,6 @@ using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Displays;
 using Walk.TextEditor.RazorLib.TextEditors.Models;

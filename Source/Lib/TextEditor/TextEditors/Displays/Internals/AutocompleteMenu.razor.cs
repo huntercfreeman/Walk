@@ -19,8 +19,6 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private IAutocompleteService AutocompleteService { get; set; } = null!;
-    [Inject]
     private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
@@ -46,8 +44,6 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     {
         TextEditorService.TextEditorStateChanged += OnTextEditorStateChanged;
         OnTextEditorStateChanged();
-        
-        base.OnInitialized();
     }
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -145,8 +141,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         {
             return renderBatch.Model.PersistentState.CompilerService.GetAutocompleteMenu(renderBatch, this);
         }
-		// Catching 'InvalidOperationException' is for the currently occurring case: "Collection was modified; enumeration operation may not execute."
-        catch (Exception e) when (e is WalkTextEditorException || e is InvalidOperationException)
+        catch (Exception e)
         {
             return NoResultsMenuRecord;
         }
@@ -170,7 +165,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
                 if (word is not null)
                 {
-                    var autocompleteWordsList = AutocompleteService.GetAutocompleteOptions(word);
+                    List<string> autocompleteWordsList = new();
 
                     var autocompleteEntryList = autocompleteWordsList
                         .Select(aw => new AutocompleteEntry(aw, AutocompleteEntryKind.Word, null))

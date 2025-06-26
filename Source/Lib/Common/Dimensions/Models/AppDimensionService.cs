@@ -36,12 +36,9 @@ public class AppDimensionService : IAppDimensionService
 	{
 		lock (_stateModificationLock)
 		{
-			var inState = GetAppDimensionState();
-			_appDimensionState = withFunc.Invoke(inState);
-			goto finalize;
+			_appDimensionState = withFunc.Invoke(_appDimensionState);
         }
 
-		finalize:
         AppDimensionStateChanged?.Invoke();
     }
 

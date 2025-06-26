@@ -19,8 +19,6 @@ public partial class InputAppTheme : IDisposable
     {
         AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
         ThemeService.ThemeStateChanged += OnStateChanged;
-
-        base.OnInitialized();
     }
 
     private async void OnStateChanged()

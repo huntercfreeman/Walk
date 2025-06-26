@@ -36,7 +36,6 @@ public partial class InputTextEditorHeight : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
     	TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
-    	base.OnInitialized();
     }
 
     public string GetIsDisabledCssClassString(bool globalHeightInPixelsValueIsNull)

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components.Web;
-using Walk.Common.RazorLib.Dimensions.Models;
 
 namespace Walk.Common.RazorLib.Dynamics.Models;
 

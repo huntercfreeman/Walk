@@ -64,8 +64,6 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 			ServiceProvider,
 			TreeViewService,
 			BackgroundTaskService);
-
-		base.OnInitialized();
 	}
 
 	private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)

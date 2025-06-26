@@ -26,8 +26,7 @@ public partial class InputAppIconSize : ComponentBase, IDisposable
     protected override Task OnInitializedAsync()
     {
         AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
-
-        return base.OnInitializedAsync();
+        return Task.CompletedTask;
     }
 
     private async void AppOptionsStateWrapOnStateChanged()

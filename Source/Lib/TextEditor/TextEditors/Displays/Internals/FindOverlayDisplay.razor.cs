@@ -130,8 +130,6 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
     {
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
         OnCursorShouldBlinkChanged();
-        
-        base.OnInitialized();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -64,8 +64,6 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     	
     	if (DotNetBackgroundTaskApi.OutputService.GetOutputState().DotNetRunParseResultId != DotNetCliOutputParser.GetDotNetRunParseResult().Id)
     		DotNetCliOutputParser_StateChanged();
-    	
-        base.OnInitialized();
     }
     
     public void DotNetCliOutputParser_StateChanged()

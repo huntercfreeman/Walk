@@ -1,4 +1,4 @@
-﻿using Walk.Ide.RazorLib.FileSystems.Models;
+using Walk.Ide.RazorLib.FileSystems.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Walk.Ide.RazorLib.FileSystems.Displays;
@@ -26,8 +26,6 @@ public partial class FileTemplatesDisplay : ComponentBase
         _fileTemplatesFormWrappersList = FileTemplateProvider.FileTemplatesList
             .Select(x => new FileTemplatesFormWrapper(x, true))
             .ToList();
-
-        base.OnInitialized();
     }
 
     private class FileTemplatesFormWrapper

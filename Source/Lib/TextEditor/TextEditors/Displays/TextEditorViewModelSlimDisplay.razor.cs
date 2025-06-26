@@ -13,7 +13,6 @@ using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Icons.Displays;
-using Walk.Common.RazorLib.CustomEvents.Models;
 using Walk.Common.RazorLib.Tooltips.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.Edits.Models;
@@ -40,8 +39,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     public TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     public IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
-    [Inject]
-    public IAutocompleteIndexer AutocompleteIndexer { get; set; } = null!;
     [Inject]
     public IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
@@ -168,8 +165,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         TextEditorService.OptionsApi.MeasuredStateChanged += OnOptionMeasuredStateChanged;
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
         DragService.DragStateChanged += DragStateWrapOnStateChanged;
-
-        base.OnInitialized();
     }
     
     protected override void OnParametersSet()

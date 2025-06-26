@@ -27,8 +27,6 @@ public static class ServiceCollectionExtensions
         services
             .AddSingleton(textEditorConfig)
             .AddSingleton<IWalkTextEditorComponentRenderers>(_textEditorComponentRenderers)
-            .AddScoped<IAutocompleteService, WordAutocompleteService>()
-            .AddScoped<IAutocompleteIndexer, WordAutocompleteIndexer>()
             .AddScoped<TextEditorService>()
             .AddScoped<ITextEditorRegistryWrap, TextEditorRegistryWrap>()
             .AddScoped<ITextEditorHeaderRegistry, TextEditorHeaderRegistry>()

@@ -16,20 +16,15 @@ public class TerminalService : ITerminalService
     {
         lock (_stateModificationLock)
         {
-            var inState = GetTerminalState();
-
-            if (inState.TerminalMap.ContainsKey(terminal.Key))
-                goto finalize;
-
-            var nextMap = new Dictionary<Key<ITerminal>, ITerminal>(inState.TerminalMap);
-            nextMap.Add(terminal.Key, terminal);
-
-            _terminalState = inState with { TerminalMap = nextMap };
-
-            goto finalize;
+            if (!_terminalState.TerminalMap.ContainsKey(terminal.Key))
+            {
+                var nextMap = new Dictionary<Key<ITerminal>, ITerminal>(_terminalState.TerminalMap);
+                nextMap.Add(terminal.Key, terminal);
+    
+                _terminalState = _terminalState with { TerminalMap = nextMap };
+            }
         }
 
-        finalize:
         TerminalStateChanged?.Invoke();
     }
 
@@ -42,17 +37,12 @@ public class TerminalService : ITerminalService
     {
         lock (_stateModificationLock)
         {
-            var inState = GetTerminalState();
-            
-            var nextMap = new Dictionary<Key<ITerminal>, ITerminal>(inState.TerminalMap);
+            var nextMap = new Dictionary<Key<ITerminal>, ITerminal>(_terminalState.TerminalMap);
             nextMap.Remove(terminalKey);
 
-            _terminalState = inState with { TerminalMap = nextMap };
-
-            goto finalize;
+            _terminalState = _terminalState with { TerminalMap = nextMap };
         }
 
-        finalize:
         TerminalStateChanged?.Invoke();
     }
 }

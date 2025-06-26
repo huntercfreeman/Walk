@@ -1,62 +1,33 @@
-@* Start DialogInitializer *@
 @using Walk.Common.RazorLib.Contexts.Models
 @using Walk.Common.RazorLib.Contexts.Displays
 @using Walk.Common.RazorLib.Dialogs.Displays
+@using Walk.Common.RazorLib.Widgets.Displays
+@using Walk.Common.RazorLib.Notifications.Displays
+@using Walk.Common.RazorLib.OutOfBoundsClicks.Displays
+@using Walk.Common.RazorLib.Dropdowns.Displays
 
 @{ var dialogList = DialogService.GetDialogState().DialogList; }
-
 @foreach (var dialog in dialogList)
 {
     <DialogDisplay @key="dialog.DynamicViewModelKey" 
                    Dialog="dialog"/>
 }
 
-@*
-	TODO: Would wrapping the foreach in a div i.e.:
-		  
-		  <div class="di_dialog-initializer"></div>
-		  
-		  Cause the gaps between dialogs to create invisible walls
-		  or some other weird behaviors?
-		  
-		  It is (2024-05-26), I can't recall if I left out an encompassing
-		  div for a reason or not, but I don't have time to look into this
-		  at the moment.
-*@
-@* End DialogInitializer *@
-
-
-
-@* Start WidgetInitializer *@
-@using Walk.Common.RazorLib.Contexts.Models
-@using Walk.Common.RazorLib.Contexts.Displays
-@using Walk.Common.RazorLib.OutOfBoundsClicks.Displays
-@using Walk.Common.RazorLib.Widgets.Displays
 
 @{ var widgetState = WidgetService.GetWidgetState(); }
-
 @if (widgetState.Widget is not null)
 {
 	<OutOfBoundsClickDisplay ZIndex="12"
 	                         OnMouseDownCallback="WIDGET_RemoveWidget" />
 }
-
 @if (widgetState.Widget is not null)
 {
 	<WidgetDisplay @key="widgetState.Widget.Key"
 				   Widget="widgetState.Widget"/>
 }
-@* End WidgetInitializer *@
 
-
-
-@* Start NotificationInitializer *@
-@using Walk.Common.RazorLib.Contexts.Models
-@using Walk.Common.RazorLib.Contexts.Displays
-@using Walk.Common.RazorLib.Notifications.Displays
 
 @{ var notificationState = NotificationService.GetNotificationState(); }
-
 @for (int i = 0; i < notificationState.DefaultList.Count; i++)
 {
     var index = i;
@@ -67,48 +38,21 @@
                          Index="index"/>
 }
 
-@*
-	TODO: Would wrapping the for-loop in a div i.e.:
-		  
-		  <div class="di_notification-initializer"></div>
-		  
-		  Cause the gaps between notifications to create invisible walls
-		  or some other weird behaviors?
-		  
-		  It is (2024-05-26), I can't recall if I left out an encompassing
-		  div for a reason or not, but I don't have time to look into this
-		  at the moment.
-*@
-@* End NotificationInitializer *@
-
-
-
-@* Start DropdownInitializer *@
-@using Walk.Common.RazorLib.Contexts.Models
-@using Walk.Common.RazorLib.Contexts.Displays
-@using Walk.Common.RazorLib.OutOfBoundsClicks.Displays
-@using Walk.Common.RazorLib.Dropdowns.Displays
 
 @{ var dropdownState = DropdownService.GetDropdownState(); }
-
 @if (dropdownState.DropdownList.Count > 0 && dropdownState.DropdownList.Any(x => x.ShouldShowOutOfBoundsClickDisplay))
 {
 	<OutOfBoundsClickDisplay ZIndex="15"
 	                         OnMouseDownCallback="DROPDOWN_ClearActiveKeyList" />
 }
-
 @foreach (var dropdown in dropdownState.DropdownList)
 {
 	<DropdownDisplay @key="dropdown.Key"
 					 Dropdown="dropdown"/>
 }
-@* End DropdownInitializer *@
 
 
-
-@* Start OutlineInitializer *@
 @{ var localOutlineState = OutlineService.GetOutlineState(); }
-
 @if (localOutlineState.MeasuredHtmlElementDimensions is not null)
 {
 	<div class="di_outline di_outline-left"
@@ -127,13 +71,9 @@
 		 style="@OUTLINE_GetStyleCssBottom(localOutlineState)">
 	</div>
 }
-@* End OutlineInitializer *@
 
 
-
-@* Start TooltipInitializer *@
 <div class="di_tooltip-initializer"></div>
-
 @{
     var tooltipModel = TooltipService.GetTooltipState().TooltipModel;
     
@@ -155,7 +95,6 @@
 		}
 	}
 }
-	    
 @if (tooltipModel is not null)
 {
     <div class="di_te_tooltip di_set-selectable @(tooltipModel.CssClassString ?? string.Empty)"
@@ -180,6 +119,3 @@
         }
     </div>
 }
-@* End TooltipInitializer *@
-
-

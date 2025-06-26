@@ -28,7 +28,6 @@ public partial class InputTextEditorCursorWidth : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
     	TextEditorService.OptionsApi.StaticStateChanged += OnOptionStaticStateChanged;
-    	base.OnInitialized();
     }
     
     private async void OnOptionStaticStateChanged()

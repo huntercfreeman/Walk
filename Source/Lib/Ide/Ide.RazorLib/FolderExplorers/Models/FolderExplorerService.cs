@@ -14,12 +14,9 @@ public class FolderExplorerService : IFolderExplorerService
     {
         lock (_stateModificationLock)
         {
-    	    var inState = GetFolderExplorerState();
-            _folderExplorerState = withFunc.Invoke(inState);
-            goto finalize;
+            _folderExplorerState = withFunc.Invoke(_folderExplorerState);
         }
 
-        finalize:
         FolderExplorerStateChanged?.Invoke();
     }
 }

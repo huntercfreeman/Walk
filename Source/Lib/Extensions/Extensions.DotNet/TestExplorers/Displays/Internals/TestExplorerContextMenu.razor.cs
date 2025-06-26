@@ -55,8 +55,6 @@ public partial class TestExplorerContextMenu : ComponentBase
 		_menuRecord = await GetMenuRecord(TreeViewCommandArgs).ConfigureAwait(false);
 		_htmlElementDimensionsChanged = true;
 		await InvokeAsync(StateHasChanged);
-
-		await base.OnInitializedAsync();
 	}
 	
 	protected override void OnAfterRender(bool firstRender)

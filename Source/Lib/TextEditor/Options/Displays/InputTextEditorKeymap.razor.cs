@@ -14,7 +14,6 @@ public partial class InputTextEditorKeymap : ComponentBase, IDisposable
 	protected override void OnInitialized()
     {
     	TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
-    	base.OnInitialized();
     }
 
     private void SelectedKeymapChanged(ChangeEventArgs changeEventArgs)

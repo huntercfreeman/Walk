@@ -24,8 +24,6 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
 	{
 		TerminalGroupService.TerminalGroupStateChanged += OnTerminalGroupStateChanged;
     	TerminalService.TerminalStateChanged += OnTerminalStateChanged;
-    	
-		base.OnInitialized();
 	}
 
     private void DispatchSetActiveTerminalAction(Key<ITerminal> terminalKey)

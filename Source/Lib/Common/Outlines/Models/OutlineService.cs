@@ -27,9 +27,7 @@ public class OutlineService : IOutlineService
 	{
 		lock (_stateModificationLock)
 		{
-			var inState = GetOutlineState();
-
-			_outlineState = inState with
+			_outlineState = _outlineState with
 			{
 				ElementId = elementId,
 				MeasuredHtmlElementDimensions = measuredHtmlElementDimensions,
@@ -67,23 +65,16 @@ public class OutlineService : IOutlineService
 	{
 		lock (_stateModificationLock)
 		{
-			var inState = GetOutlineState();
-	
-			if (inState.ElementId != elementId)
+			if (_outlineState.ElementId == elementId)
 			{
-				goto finalize;
-			}
-			
-			_outlineState = inState with
-			{
-				MeasuredHtmlElementDimensions = measuredHtmlElementDimensions,
-				NeedsMeasured = false,
-			};
-		
-			goto finalize;
+    			_outlineState = _outlineState with
+    			{
+    				MeasuredHtmlElementDimensions = measuredHtmlElementDimensions,
+    				NeedsMeasured = false,
+    			};
+    		}
         }
 
-        finalize:
         OutlineStateChanged?.Invoke();
     }
 }

@@ -41,8 +41,6 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
     {
         TextEditorService.OptionsApi.StaticStateChanged += OptionsWrapOnStateChanged;
         ReadActualFontSizeInPixels();
-
-        base.OnInitialized();
     }
     
     private void ReadActualFontSizeInPixels()

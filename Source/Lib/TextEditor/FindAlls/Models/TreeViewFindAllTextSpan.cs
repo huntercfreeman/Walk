@@ -1,6 +1,5 @@
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.TextEditor.RazorLib.FindAlls.Displays;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 
 namespace Walk.TextEditor.RazorLib.FindAlls.Models;
@@ -50,7 +49,6 @@ public class TreeViewFindAllTextSpan : TreeViewWithType<(string SourceText, Text
         	protected override void OnInitialized()
         	{
         		CalculatePreviewNearbyText();
-        		base.OnInitialized();
         	}
         	
         	private void CalculatePreviewNearbyText()

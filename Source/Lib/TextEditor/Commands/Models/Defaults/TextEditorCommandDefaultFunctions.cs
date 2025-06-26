@@ -1108,37 +1108,6 @@ public class TextEditorCommandDefaultFunctions
         KeymapArgs keymapArgs,
 		TextEditorComponentData componentData)
     {
-        // Indexing can be invoked and this method still check for syntax highlighting and such
-        if (EventUtils.IsAutocompleteIndexerInvoker(keymapArgs))
-        {
-            try
-            {
-				if (viewModel.ColumnIndex > 0)
-				{
-					// All keyboardEventArgs that return true from "IsAutocompleteIndexerInvoker"
-					// are to be 1 character long, as well either specific whitespace or punctuation.
-					// Therefore 1 character behind might be a word that can be indexed.
-					var word = modelModifier.ReadPreviousWordOrDefault(
-						viewModel.LineIndex,
-						viewModel.ColumnIndex);
-
-					if (word is not null)
-					{
-						_ = Task.Run(async () =>
-						{
-							await editContext.TextEditorService.AutocompleteIndexer
-								.IndexWordAsync(word)
-								.ConfigureAwait(false);
-						});
-					}
-				}
-			}
-            catch (WalkTextEditorException e)
-            {
-                // Eat this exception
-            }
-        }
-
         if (EventUtils.IsAutocompleteMenuInvoker(keymapArgs))
         {
         	ShowAutocompleteMenu(
@@ -1209,29 +1178,6 @@ public class TextEditorCommandDefaultFunctions
                 seenIsAutocompleteMenuInvoker = true;
             else if (!seenIsSyntaxHighlightingInvoker && EventUtils.IsSyntaxHighlightingInvoker(keymapArgs))
                 seenIsSyntaxHighlightingInvoker = true;
-        }
-
-        if (seenIsAutocompleteIndexerInvoker)
-        {
-            if (viewModel.ColumnIndex > 0)
-            {
-                // All keyboardEventArgs that return true from "IsAutocompleteIndexerInvoker"
-                // are to be 1 character long, as well either specific whitespace or punctuation.
-                // Therefore 1 character behind might be a word that can be indexed.
-                var word = modelModifier.ReadPreviousWordOrDefault(
-                    viewModel.LineIndex,
-                    viewModel.ColumnIndex);
-
-                if (word is not null)
-                {
-		            _ = Task.Run(async () =>
-		            {
-                        await editContext.TextEditorService.AutocompleteIndexer
-                            .IndexWordAsync(word)
-                            .ConfigureAwait(false);
-		            });
-                }
-            }
         }
 
         if (seenIsAutocompleteMenuInvoker)

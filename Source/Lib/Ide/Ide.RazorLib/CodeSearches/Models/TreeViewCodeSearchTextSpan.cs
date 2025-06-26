@@ -1,7 +1,6 @@
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.Ide.RazorLib.CodeSearches.Displays;
 
 namespace Walk.Ide.RazorLib.CodeSearches.Models;
 

@@ -52,8 +52,6 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
-
-        base.OnInitialized();
     }
 
     private async void AppOptionsStateWrapOnStateChanged()

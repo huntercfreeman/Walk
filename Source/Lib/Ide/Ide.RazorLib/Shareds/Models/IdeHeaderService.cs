@@ -16,17 +16,12 @@ public class IdeHeaderService : IIdeHeaderService
 	{
 		lock (_stateModificationLock)
 		{
-			var inState = GetIdeHeaderState();
-
-			_ideHeaderState = inState with
+			_ideHeaderState = _ideHeaderState with
 			{
 				MenuFile = menu
 			};
-
-			goto finalize;
 		}
 
-		finalize:
         IdeHeaderStateChanged?.Invoke();
     }
 	
@@ -34,17 +29,12 @@ public class IdeHeaderService : IIdeHeaderService
 	{
 		lock (_stateModificationLock)
 		{
-			var inState = GetIdeHeaderState();
-
-			_ideHeaderState = inState with
+			_ideHeaderState = _ideHeaderState with
 			{
 				MenuTools = menu
 			};
-
-            goto finalize;
         }
 
-        finalize:
         IdeHeaderStateChanged?.Invoke();
     }
 	
@@ -52,17 +42,12 @@ public class IdeHeaderService : IIdeHeaderService
 	{
 		lock (_stateModificationLock)
 		{
-			var inState = GetIdeHeaderState();
-
-			_ideHeaderState = inState with
+			_ideHeaderState = _ideHeaderState with
 			{
 				MenuView = menu
 			};
-
-            goto finalize;
         }
 
-        finalize:
         IdeHeaderStateChanged?.Invoke();
     }
 	
@@ -70,17 +55,12 @@ public class IdeHeaderService : IIdeHeaderService
 	{
 		lock (_stateModificationLock)
 		{
-			var inState = GetIdeHeaderState();
-
-			_ideHeaderState = inState with
+			_ideHeaderState = _ideHeaderState with
 			{
 				MenuRun = menu
 			};
-
-            goto finalize;
         }
 
-        finalize:
         IdeHeaderStateChanged?.Invoke();
     }
 	
@@ -88,17 +68,12 @@ public class IdeHeaderService : IIdeHeaderService
 	{
 		lock (_stateModificationLock)
 		{
-			var inState = GetIdeHeaderState();
-
-			_ideHeaderState = inState with
+			_ideHeaderState = _ideHeaderState with
 			{
-				MenuFile = menuFunc.Invoke(inState.MenuFile)
+				MenuFile = menuFunc.Invoke(_ideHeaderState.MenuFile)
 			};
-
-            goto finalize;
         }
 
-        finalize:
         IdeHeaderStateChanged?.Invoke();
     }
 	
@@ -106,17 +81,12 @@ public class IdeHeaderService : IIdeHeaderService
 	{
 		lock (_stateModificationLock)
 		{
-			var inState = GetIdeHeaderState();
-
-			_ideHeaderState = inState with
+			_ideHeaderState = _ideHeaderState with
 			{
-				MenuTools = menuFunc.Invoke(inState.MenuTools)
+				MenuTools = menuFunc.Invoke(_ideHeaderState.MenuTools)
 			};
-
-            goto finalize;
         }
 
-        finalize:
         IdeHeaderStateChanged?.Invoke();
     }
 
@@ -124,17 +94,12 @@ public class IdeHeaderService : IIdeHeaderService
 	{
 		lock (_stateModificationLock)
 		{
-			var inState = GetIdeHeaderState();
-
-			_ideHeaderState = inState with
+			_ideHeaderState = _ideHeaderState with
 			{
-				MenuView = menuFunc.Invoke(inState.MenuView)
+				MenuView = menuFunc.Invoke(_ideHeaderState.MenuView)
 			};
-
-            goto finalize;
         }
 
-        finalize:
         IdeHeaderStateChanged?.Invoke();
     }
 	
@@ -142,17 +107,12 @@ public class IdeHeaderService : IIdeHeaderService
 	{
 		lock (_stateModificationLock)
 		{
-			var inState = GetIdeHeaderState();
-
-			_ideHeaderState = inState with
+			_ideHeaderState = _ideHeaderState with
 			{
-				MenuRun = menuFunc.Invoke(inState.MenuRun)
+				MenuRun = menuFunc.Invoke(_ideHeaderState.MenuRun)
 			};
-
-            goto finalize;
         }
 
-        finalize:
         IdeHeaderStateChanged?.Invoke();
     }
 }

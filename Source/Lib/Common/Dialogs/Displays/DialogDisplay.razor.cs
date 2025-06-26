@@ -44,8 +44,6 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     {
         AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
         DialogService.ActiveDialogKeyChanged += OnActiveDialogKeyChanged;
-
-        base.OnInitialized();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

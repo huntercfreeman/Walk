@@ -18,7 +18,6 @@ public partial class DirtyResourceUriViewDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
 	{
 		DirtyResourceUriService.DirtyResourceUriStateChanged += OnDirtyResourceUriStateChanged;
-		base.OnInitialized();
 	}
 
     private Task OpenInEditorOnClick(string filePath)

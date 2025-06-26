@@ -14,26 +14,21 @@ public class IdeMainLayoutService : IIdeMainLayoutService
 	{
 		lock (_stateModificationLock)
 		{
-			var inState = GetIdeMainLayoutState();
-
-			var existingComponent = inState.FooterJustifyEndComponentList.FirstOrDefault(x =>
+			var existingComponent = _ideMainLayoutState.FooterJustifyEndComponentList.FirstOrDefault(x =>
 				x.Key == footerJustifyEndComponent.Key);
 
-			if (existingComponent is not null)
-                goto finalize;
-
-			var outFooterJustifyEndComponentList = new List<FooterJustifyEndComponent>(inState.FooterJustifyEndComponentList);
-			outFooterJustifyEndComponentList.Add(footerJustifyEndComponent);
-
-			_ideMainLayoutState = inState with
-			{
-				FooterJustifyEndComponentList = outFooterJustifyEndComponentList
-			};
-
-			goto finalize;
+			if (existingComponent is null)
+            {
+    			var outFooterJustifyEndComponentList = new List<FooterJustifyEndComponent>(_ideMainLayoutState.FooterJustifyEndComponentList);
+    			outFooterJustifyEndComponentList.Add(footerJustifyEndComponent);
+    
+    			_ideMainLayoutState = _ideMainLayoutState with
+    			{
+    				FooterJustifyEndComponentList = outFooterJustifyEndComponentList
+    			};
+    	    }
 		}
 
-		finalize:
         IdeMainLayoutStateChanged?.Invoke();
     }
 }

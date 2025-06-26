@@ -14,7 +14,6 @@ public partial class WalkExtensionsDotNetInitializer : ComponentBase
 		{
 			WorkKind = DotNetBackgroundTaskApiWorkKind.WalkExtensionsDotNetInitializerOnInit,
 		});
-		base.OnInitialized();
 	}
 	
 	protected override void OnAfterRender(bool firstRender)

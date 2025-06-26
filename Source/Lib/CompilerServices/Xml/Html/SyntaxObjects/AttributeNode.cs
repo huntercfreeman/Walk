@@ -1,5 +1,4 @@
 using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.CompilerServices.Xml.Html.SyntaxEnums;
 
 namespace Walk.CompilerServices.Xml.Html.SyntaxObjects;

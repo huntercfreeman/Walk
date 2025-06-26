@@ -16,7 +16,6 @@ public partial class DragInitializer : ComponentBase, IDisposable
     [Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
     
-    /* Start DragInitializer */
     private string StyleCss => DragService.GetDragState().ShouldDisplay
         ? string.Empty
         : "display: none;";
@@ -36,7 +35,6 @@ public partial class DragInitializer : ComponentBase, IDisposable
     }
 
     private IDropzone? _onMouseOverDropzone = null;
-    /* End DragInitializer */
     
     protected override void OnInitialized()
     {
@@ -86,12 +84,10 @@ public partial class DragInitializer : ComponentBase, IDisposable
         DragService.DragStateChanged += OnDragStateChanged;
     }
     
-    /* Start DragInitializer */
     private async void OnDragStateChanged()
     {
     	await InvokeAsync(StateHasChanged);
     }
-    /* End DragInitializer */
     
     private void DRAG_DispatchClearDragStateAction()
     {

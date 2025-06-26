@@ -62,7 +62,6 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	protected override void OnInitialized()
 	{
 		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
-		base.OnInitialized();
 	}
 
 	private void RequestInputFileForParentDirectory()

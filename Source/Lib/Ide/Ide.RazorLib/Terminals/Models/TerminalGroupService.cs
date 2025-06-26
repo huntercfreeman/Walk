@@ -17,17 +17,12 @@ public class TerminalGroupService : ITerminalGroupService
     {
         lock (_stateModificationLock)
         {
-            var inState = GetTerminalGroupState();
-
-            _terminalGroupState = inState with
+            _terminalGroupState = _terminalGroupState with
             {
                 ActiveTerminalKey = terminalKey
             };
-
-            goto finalize;
         }
 
-        finalize:
         TerminalGroupStateChanged?.Invoke();
     }
     
@@ -35,43 +30,28 @@ public class TerminalGroupService : ITerminalGroupService
     {
         lock (_stateModificationLock)
         {
-            var inState = GetTerminalGroupState();
-
-            if (dimensionUnit.Purpose != DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)
-                goto finalize;
-
-            // BodyElementDimensions
+            if (dimensionUnit.Purpose == DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)
             {
-                if (inState.BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
-                    goto finalize;
+                if (_terminalGroupState.BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList is not null)
+                {
+                    var existingDimensionUnit = _terminalGroupState.BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList
+                        .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
+    
+                    if (existingDimensionUnit.Purpose is null)
+                        _terminalGroupState.BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+                }
 
-                var existingDimensionUnit = inState.BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList
-                    .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-
-                if (existingDimensionUnit.Purpose is not null)
-                    goto finalize;
-
-                inState.BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+                if (_terminalGroupState.TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList is not null)
+                {
+                    var existingDimensionUnit = _terminalGroupState.TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList
+                        .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
+    
+                    if (existingDimensionUnit.Purpose is null)
+                        _terminalGroupState.TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+                }
             }
-
-            // TabsElementDimensions
-            {
-                if (inState.TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
-                    goto finalize;
-
-                var existingDimensionUnit = inState.TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList
-                    .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-
-                if (existingDimensionUnit.Purpose is not null)
-                    goto finalize;
-
-                inState.TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-            }
-
-            goto finalize;
         }
 
-        finalize:
         TerminalGroupStateChanged?.Invoke();
     }
 }
