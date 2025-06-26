@@ -1,17 +1,10 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Drags.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.TextEditor.RazorLib;
-using Walk.Ide.RazorLib.Shareds.Models;
-
-/* Start Body */
-/* End Body */
-
-/* Start Header */
-using Microsoft.JSInterop;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Installations.Models;
@@ -20,21 +13,15 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Clipboards.Models;
 using Walk.Common.RazorLib.Contexts.Models;
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Installations.Models;
+using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Ide.RazorLib.Shareds.Displays.Internals;
 using Walk.Ide.RazorLib.Commands;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
-/* End Header */
-
-/* Start IdeMainLayout */
 using Walk.Ide.RazorLib.JsRuntimes.Models;
-/* End IdeMainLayout */
-
-/* Start SettingsDialogEntryPoint */
-/*namespace*/
 using Walk.Ide.RazorLib.Settings.Displays;
-/* End SettingsDialogEntryPoint */
 
 namespace Walk.Ide.RazorLib.Shareds.Displays;
 
@@ -52,7 +39,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-    /* Start Header */
     [Inject]
     private ITerminalService TerminalService { get; set; } = null!;
     [Inject]
@@ -77,7 +63,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
     private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
-    /* End Header */
     
     private bool _previousDragStateWrapShouldDisplay;
     private ElementDimensions _bodyElementDimensions = new();
@@ -94,16 +79,13 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private string _styleCssString;
     private string _headerCssStyle;
     
-    /* Start Header */
     private static readonly Key<IDynamicViewModel> _infoDialogKey = Key<IDynamicViewModel>.NewKey();
     
     public ElementReference? _buttonFileElementReference;
     public ElementReference? _buttonToolsElementReference;
     public ElementReference? _buttonViewElementReference;
     public ElementReference? _buttonRunElementReference;
-    /* End Header */
     
-    /* Start SettingsDialogEntryPoint */
     private IDialog _dialogRecord = new DialogViewModel(
         Key<IDynamicViewModel>.NewKey(),
         "Settings",
@@ -112,7 +94,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         null,
 		true,
 		null);
-    /* End SettingsDialogEntryPoint */
 
     protected override void OnInitialized()
     {
@@ -250,7 +231,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         }
     }
     
-    /* Start Header */
     public Task RenderFileDropdownOnClick()
     {
         return DropdownHelper.RenderDropdownAsync(
@@ -396,12 +376,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         DialogService.ReduceRegisterAction(dialogRecord);
         return Task.CompletedTask;
     }
-    /* End Header */
 
-    /* Start SettingsDialogEntryPoint */
     public void DispatchRegisterDialogRecordAction() =>
         DialogService.ReduceRegisterAction(_dialogRecord);
-    /* End SettingsDialogEntryPoint */
 
     public void Dispose()
     {
