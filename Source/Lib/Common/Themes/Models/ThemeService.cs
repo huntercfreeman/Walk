@@ -10,45 +10,52 @@ public class ThemeService : IThemeService
 	
 	public ThemeState GetThemeState() => _themeState;
 
-    public void ReduceRegisterAction(ThemeRecord theme)
+    public void RegisterAction(ThemeRecord theme)
     {
-    	var inState = GetThemeState();
-    
-        var inTheme = inState.ThemeList.FirstOrDefault(
+        var inTheme = _themeState.ThemeList.FirstOrDefault(
             x => x.Key == theme.Key);
 
         if (inTheme is not null)
-        {
-            ThemeStateChanged?.Invoke();
             return;
-        }
 
-        var outThemeList = new List<ThemeRecord>(inState.ThemeList);
+        var outThemeList = new List<ThemeRecord>(_themeState.ThemeList);
         outThemeList.Add(theme);
 
         _themeState = new ThemeState { ThemeList = outThemeList };
         ThemeStateChanged?.Invoke();
-        return;
+    }
+    
+    public void RegisterRangeAction(IReadOnlyList<ThemeRecord> themeList)
+    {
+        var outThemeList = new List<ThemeRecord>(_themeState.ThemeList);
+        
+        foreach (var theme in themeList)
+        {
+            var inTheme = _themeState.ThemeList.FirstOrDefault(
+                x => x.Key == theme.Key);
+    
+            if (inTheme is not null)
+                return;
+    
+            outThemeList.Add(theme);
+    
+            _themeState = new ThemeState { ThemeList = outThemeList };
+            ThemeStateChanged?.Invoke();
+        }
     }
 
-    public void ReduceDisposeAction(Key<ThemeRecord> themeKey)
+    public void DisposeAction(Key<ThemeRecord> themeKey)
     {
-    	var inState = GetThemeState();
-    
-        var inTheme = inState.ThemeList.FirstOrDefault(
+        var inTheme = _themeState.ThemeList.FirstOrDefault(
             x => x.Key == themeKey);
 
         if (inTheme is null)
-        {
-            ThemeStateChanged?.Invoke();
             return;
-        }
 
-        var outThemeList = new List<ThemeRecord>(inState.ThemeList);
+        var outThemeList = new List<ThemeRecord>(_themeState.ThemeList);
         outThemeList.Remove(inTheme);
 
         _themeState = new ThemeState { ThemeList = outThemeList };
         ThemeStateChanged?.Invoke();
-        return;
     }
 }
