@@ -51,11 +51,8 @@ public class WidgetService : IWidgetService
 			{
 				Widget = widget,
 			};
-
-			goto finalize;
         }
 
-		finalize:
         WidgetStateChanged?.Invoke();
 
 		if (sideEffect)
