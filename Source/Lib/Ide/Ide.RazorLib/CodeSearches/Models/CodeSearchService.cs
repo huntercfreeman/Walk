@@ -53,9 +53,7 @@ public class CodeSearchService : ICodeSearchService
     {
         lock (_stateModificationLock)
         {
-            var inState = GetCodeSearchState();
-
-            var outState = withFunc.Invoke(inState);
+            var outState = withFunc.Invoke(_codeSearchState);
 
             if (outState.Query.StartsWith("f:"))
             {
@@ -87,10 +85,8 @@ public class CodeSearchService : ICodeSearchService
             }
 
             _codeSearchState = outState;
-            goto finalize;
         }
 
-        finalize:
         CodeSearchStateChanged?.Invoke();
     }
 
@@ -98,19 +94,15 @@ public class CodeSearchService : ICodeSearchService
     {
         lock (_stateModificationLock)
         {
-            var inState = GetCodeSearchState();
-
-            var outResultList = new List<string>(inState.ResultList);
+            var outResultList = new List<string>(_codeSearchState.ResultList);
             outResultList.Add(result);
 
-			_codeSearchState = inState with
+			_codeSearchState = _codeSearchState with
             {
                 ResultList = outResultList
 			};
-            goto finalize;
         }
 
-        finalize:
         CodeSearchStateChanged?.Invoke();
     }
 
@@ -118,16 +110,12 @@ public class CodeSearchService : ICodeSearchService
     {
         lock (_stateModificationLock)
         {
-            var inState = GetCodeSearchState();
-
-            _codeSearchState = inState with
+            _codeSearchState = _codeSearchState with
             {
                 ResultList = new List<string>()
             };
-            goto finalize;
         }
 
-        finalize:
         CodeSearchStateChanged?.Invoke();
     }
     
@@ -135,41 +123,28 @@ public class CodeSearchService : ICodeSearchService
     {
         lock (_stateModificationLock)
         {
-            var inState = GetCodeSearchState();
-
-            if (dimensionUnit.Purpose != DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW)
-                goto finalize;
-
-            // TopContentElementDimensions
+            if (dimensionUnit.Purpose == DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW)
             {
-                if (inState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList is null)
-                    goto finalize;
-
-                var existingDimensionUnit = inState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList
-                    .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-
-                if (existingDimensionUnit.Purpose is not null)
-                    goto finalize;
-
-                inState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+                if (_codeSearchState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList is not null)
+                {
+                    var existingDimensionUnit = _codeSearchState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList
+                        .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
+    
+                    if (existingDimensionUnit.Purpose is null)
+                        _codeSearchState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+                }
+    
+                if (_codeSearchState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList is not null)
+                {
+                    var existingDimensionUnit = _codeSearchState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList
+                        .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
+                    
+                    if (existingDimensionUnit.Purpose is null)
+                        _codeSearchState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+                }
             }
-
-            // BottomContentElementDimensions
-            {
-                if (inState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList is null)
-                    goto finalize;
-
-                var existingDimensionUnit = inState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-                if (existingDimensionUnit.Purpose is not null)
-                    goto finalize;
-
-                inState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-            }
-
-            goto finalize;
         }
 
-        finalize:
         CodeSearchStateChanged?.Invoke();
     }
 
