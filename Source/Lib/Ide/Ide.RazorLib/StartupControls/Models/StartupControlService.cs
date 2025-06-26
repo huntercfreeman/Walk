@@ -20,7 +20,7 @@ public class StartupControlService : IStartupControlService
 			var indexOfStartupControl = _startupControlState.StartupControlList.FindIndex(
 				x => x.Key == startupControl.Key);
 
-			if (indexOfStartupControl != -1)
+			if (indexOfStartupControl == -1)
 			{
     			var outStartupControlList = new List<IStartupControlModel>(_startupControlState.StartupControlList);
     			outStartupControlList.Add(startupControl);
