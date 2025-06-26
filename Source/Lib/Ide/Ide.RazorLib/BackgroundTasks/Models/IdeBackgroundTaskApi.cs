@@ -151,8 +151,8 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
     public ValueTask Do_WalkIdeInitializerOnInit()
     {
-        AddGeneralTerminal();
         AddExecutionTerminal();
+        AddGeneralTerminal();
 
         _codeSearchService.InitializeResizeHandleDimensionUnit(
             new DimensionUnit(
