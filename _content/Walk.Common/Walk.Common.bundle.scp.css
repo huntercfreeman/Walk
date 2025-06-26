@@ -56,7 +56,6 @@
     padding: var(--di_dialog-display-body-padding);
 }
 /* _content/Walk.Common/Drags/Displays/DragInitializer.razor.rz.scp.css */
-/* Start DragInitializer */
 .di_drag-initializer[b-xzhefc0ojs] {
     z-index: var(--di_drag-initializer-z-index);
     width: 100vw;
@@ -83,7 +82,6 @@
     opacity: 0;
 	cursor: pointer;
 }
-/* End DragInitializer */
 /* _content/Walk.Common/Dropdowns/Displays/DropdownDisplay.razor.rz.scp.css */
 .di_dropdown[b-713cro0tdc] {
 	position: fixed;
@@ -311,18 +309,6 @@ td[b-7ykvgl7no9] {
 .di_ide_panel[b-jdovd4anwz] {
 	overflow: hidden;
     display: flex;
-}
-/* _content/Walk.Common/Reflectives/Displays/ReflectiveConstructor.razor.rz.scp.css */
-.di_reflective-constructor[b-dov9n8k4s4] {
-    display: flex;
-}
-
-.di_reflective-argument-list[b-dov9n8k4s4] {
-    display: inline-flex;
-}
-/* _content/Walk.Common/Reflectives/Displays/ReflectiveDisplay.razor.rz.scp.css */
-.di_reflective[b-vj4f0271d4] {
-    padding: 8px;
 }
 /* _content/Walk.Common/Resizes/Displays/ResizableColumn.razor.rz.scp.css */
 .di_resize-column[b-gukc071pu4] {
