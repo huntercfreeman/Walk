@@ -151,21 +151,8 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
     public ValueTask Do_WalkIdeInitializerOnInit()
     {
-        if (_textEditorConfig.CustomThemeRecordList is not null)
-        {
-            foreach (var themeRecord in _textEditorConfig.CustomThemeRecordList)
-            {
-                _themeService.ReduceRegisterAction(themeRecord);
-            }
-        }
-
-        foreach (var terminalKey in TerminalFacts.WELL_KNOWN_KEYS)
-        {
-            if (terminalKey == TerminalFacts.GENERAL_KEY)
-                AddGeneralTerminal();
-            else if (terminalKey == TerminalFacts.EXECUTION_KEY)
-                AddExecutionTerminal();
-        }
+        AddGeneralTerminal();
+        AddExecutionTerminal();
 
         _codeSearchService.InitializeResizeHandleDimensionUnit(
             new DimensionUnit(
