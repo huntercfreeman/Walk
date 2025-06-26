@@ -51,6 +51,7 @@ public sealed class TextEditorModelApi
     #endregion
 
     #region READ_METHODS
+    [Obsolete("TextEditorModel.PersistentState.ViewModelKeyList")]
     public List<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri)
     {
     	return _textEditorService.TextEditorState.ModelGetViewModelsOrEmpty(resourceUri);
