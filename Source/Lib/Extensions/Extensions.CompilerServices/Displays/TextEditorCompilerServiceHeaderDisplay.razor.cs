@@ -45,9 +45,9 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
         OnCursorShouldBlinkChanged();
     }
     
-    private TextEditorRenderBatch GetRenderBatch()
+    private TextEditorVirtualizationResult GetVirtualizationResult()
     {
-    	return GetComponentData()?.RenderBatch ?? default;
+    	return GetComponentData()?.VirtualizationResult ?? default;
     }
     
     private TextEditorComponentData? GetComponentData()
@@ -82,15 +82,15 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     
     private void UpdateUi()
     {
-    	if (!GetRenderBatch().IsValid)
+    	if (!GetVirtualizationResult().IsValid)
     		return;
     	
     	TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
     	{
-    		var renderBatch = GetRenderBatch();
+    		var virtualizationResult = GetVirtualizationResult();
     	
-    		var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
-            var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
+    		var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
             if (modelModifier is null || viewModelModifier is null)
                 return;
@@ -182,10 +182,10 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				TextEditorDevToolsPresentationFacts.EmptyPresentationModel,
 				diagnosticTextSpans);
 			
-			if (viewModelModifier.VirtualizationResultCount > 0)
+			if (viewModelModifier.VirtualizationResult.Count > 0)
 			{
 				var lowerLineIndexInclusive = viewModelModifier.VirtualizationResult.EntryList[0].LineIndex;
-	            var upperLineIndexInclusive = viewModelModifier.VirtualizationResult.EntryList[viewModelModifier.VirtualizationResultCount - 1].LineIndex;
+	            var upperLineIndexInclusive = viewModelModifier.VirtualizationResult.EntryList[viewModelModifier.VirtualizationResult.Count - 1].LineIndex;
 	            
 	            var lowerLine = modelModifier.GetLineInformation(lowerLineIndexInclusive);
 	            var upperLine = modelModifier.GetLineInformation(upperLineIndexInclusive);

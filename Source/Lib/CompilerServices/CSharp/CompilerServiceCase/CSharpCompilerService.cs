@@ -140,12 +140,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         }
     }
     
-    public MenuRecord GetContextMenu(TextEditorRenderBatch renderBatch, ContextMenu contextMenu)
+    public MenuRecord GetContextMenu(TextEditorVirtualizationResult virtualizationResult, ContextMenu contextMenu)
 	{
 		return contextMenu.GetDefaultMenuRecord();
 	}
 	
-	private MenuRecord? GetAutocompleteMenuPart(TextEditorRenderBatch renderBatch, AutocompleteMenu autocompleteMenu, int positionIndex)
+	private MenuRecord? GetAutocompleteMenuPart(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu, int positionIndex)
 	{
 		var character = '\0';
 		
@@ -175,7 +175,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		
 		for (; i >= 0; i--)
 		{
-		    character = renderBatch.Model.GetCharacter(i);
+		    character = virtualizationResult.Model.GetCharacter(i);
 		    
 		    switch (character)
 		    {
@@ -315,7 +315,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		                
 		                if (i > 0)
 		                {
-		                	var innerCharacter = renderBatch.Model.GetCharacter(i - 1);
+		                	var innerCharacter = virtualizationResult.Model.GetCharacter(i - 1);
 		                	
 		                	if (innerCharacter == '?' || innerCharacter == '!')
 		                		i--;
@@ -361,8 +361,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				filteringWordStartInclusiveIndex,
 				filteringWordEndExclusiveIndex,
 				DecorationByte: 0,
-				renderBatch.Model.PersistentState.ResourceUri,
-				renderBatch.Model.GetAllText());
+				virtualizationResult.Model.PersistentState.ResourceUri,
+				virtualizationResult.Model.GetAllText());
 				
 			filteringWord = textSpan.Text;
 		}
@@ -378,7 +378,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
        
 	        var foundMatch = false;
 	        
-	        var resource = GetResource(renderBatch.Model.PersistentState.ResourceUri);
+	        var resource = GetResource(virtualizationResult.Model.PersistentState.ResourceUri);
 	        var compilationUnitLocal = (CSharpCompilationUnit)resource.CompilationUnit;
 	        
 	        var symbols = compilationUnitLocal.SymbolList;
@@ -433,7 +433,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         						autocompleteEntryList.Add(new AutocompleteEntry(
     								kvp.Key,
     				                AutocompleteEntryKind.Namespace,
-    				                () => MemberAutocomplete(kvp.Key, renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+    				                () => MemberAutocomplete(kvp.Key, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
                 		    }
                 		    
                 		    if (__CSharpBinder.NamespaceGroupMap.TryGetValue(foundSymbol.TextSpan.Text, out var namespaceGroup))
@@ -443,7 +443,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	        						autocompleteEntryList.Add(new AutocompleteEntry(
 										typeDefinitionNode.TypeIdentifierToken.TextSpan.Text,
 						                AutocompleteEntryKind.Type,
-						                () => MemberAutocomplete(typeDefinitionNode.TypeIdentifierToken.TextSpan.Text, renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+						                () => MemberAutocomplete(typeDefinitionNode.TypeIdentifierToken.TextSpan.Text, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
                 		        }
                 		    }
                 		    
@@ -534,21 +534,21 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			        						autocompleteEntryList.Add(new AutocompleteEntry(
 												variableDeclarationNode.IdentifierToken.TextSpan.Text,
 								                AutocompleteEntryKind.Variable,
-								                () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.Text, renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+								                () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.Text, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
 			        						break;
 			    						case SyntaxKind.FunctionDefinitionNode:
 			        						var functionDefinitionNode = (FunctionDefinitionNode)member;
 			        						autocompleteEntryList.Add(new AutocompleteEntry(
 												functionDefinitionNode.FunctionIdentifierToken.TextSpan.Text,
 								                AutocompleteEntryKind.Function,
-								                () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.Text, renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+								                () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.Text, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
 			        						break;
 		        						case SyntaxKind.TypeDefinitionNode:
 			        						var innerTypeDefinitionNode = (TypeDefinitionNode)member;
 			        						autocompleteEntryList.Add(new AutocompleteEntry(
 												innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.Text,
 								                AutocompleteEntryKind.Type,
-								                () => MemberAutocomplete(innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.Text, renderBatch.Model.PersistentState.ResourceUri, renderBatch.ViewModel.PersistentState.ViewModelKey)));
+								                () => MemberAutocomplete(innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.Text, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
 			        						break;
 			        				}
 			        			}
@@ -576,30 +576,30 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		return null;
 	}
 
-	public MenuRecord GetAutocompleteMenu(TextEditorRenderBatch renderBatch, AutocompleteMenu autocompleteMenu)
+	public MenuRecord GetAutocompleteMenu(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu)
 	{
-		var positionIndex = renderBatch.Model.GetPositionIndex(renderBatch.ViewModel);
+		var positionIndex = virtualizationResult.Model.GetPositionIndex(virtualizationResult.ViewModel);
 		
-		var autocompleteMenuPart = GetAutocompleteMenuPart(renderBatch, autocompleteMenu, positionIndex);
+		var autocompleteMenuPart = GetAutocompleteMenuPart(virtualizationResult, autocompleteMenu, positionIndex);
 		if (autocompleteMenuPart is not null)
 			return autocompleteMenuPart;
         
-        var word = renderBatch.Model.ReadPreviousWordOrDefault(
-	        renderBatch.ViewModel.LineIndex,
-	        renderBatch.ViewModel.ColumnIndex);
+        var word = virtualizationResult.Model.ReadPreviousWordOrDefault(
+	        virtualizationResult.ViewModel.LineIndex,
+	        virtualizationResult.ViewModel.ColumnIndex);
 	
 		// The cursor is 1 character ahead.
         var textSpan = new TextEditorTextSpan(
             positionIndex - 1,
             positionIndex,
             0,
-            renderBatch.Model.PersistentState.ResourceUri,
-            renderBatch.Model.GetAllText());
+            virtualizationResult.Model.PersistentState.ResourceUri,
+            virtualizationResult.Model.GetAllText());
 	
 		var compilerServiceAutocompleteEntryList = OBSOLETE_GetAutocompleteEntries(
 			word,
             textSpan,
-            renderBatch);
+            virtualizationResult);
 	
 		return autocompleteMenu.GetDefaultMenuRecord(compilerServiceAutocompleteEntryList);
 	}
@@ -1189,7 +1189,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     	return __CSharpBinder.GetScopeByPositionIndex(null, resourceUri, positionIndex);
     }
     
-    public List<AutocompleteEntry>? OBSOLETE_GetAutocompleteEntries(string word, TextEditorTextSpan textSpan, TextEditorRenderBatch renderBatch)
+    public List<AutocompleteEntry>? OBSOLETE_GetAutocompleteEntries(string word, TextEditorTextSpan textSpan, TextEditorVirtualizationResult virtualizationResult)
     {
     	if (word is null)
 			return null;

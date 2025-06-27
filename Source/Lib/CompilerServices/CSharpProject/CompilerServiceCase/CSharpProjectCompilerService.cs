@@ -123,12 +123,12 @@ public sealed class CSharpProjectCompilerService : ICompilerService
         }
     }
     
-    public MenuRecord GetContextMenu(TextEditorRenderBatch renderBatch, ContextMenu contextMenu)
+    public MenuRecord GetContextMenu(TextEditorVirtualizationResult virtualizationResult, ContextMenu contextMenu)
 	{
 		return contextMenu.GetDefaultMenuRecord();
 	}
 
-	public MenuRecord GetAutocompleteMenu(TextEditorRenderBatch renderBatch, AutocompleteMenu autocompleteMenu)
+	public MenuRecord GetAutocompleteMenu(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu)
 	{
 		return autocompleteMenu.GetDefaultMenuRecord();
 	}

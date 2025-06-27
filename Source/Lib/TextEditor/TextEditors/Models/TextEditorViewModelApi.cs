@@ -1123,10 +1123,10 @@ public sealed class TextEditorViewModelApi
 				{
         			var previous = _createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[lineIndex];
         			
-        			var virtualizationEntry = _createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[lineIndex];
-        			virtualizationEntry.VirtualizationSpan_StartInclusiveIndex = _createCacheEachSharedParameters.ViewModel.VirtualizationResult.VirtualizationSpanList.Count;
+        			var cacheEntry = _createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[lineIndex];
+        			cacheEntry.VirtualizationSpan_StartInclusiveIndex = _createCacheEachSharedParameters.ViewModel.VirtualizationResult.VirtualizationSpanList.Count;
 		
-		            _createCacheEachSharedParameters.ComponentData.LineIndexCache.UsedKeyHashSet.Add(virtualizationEntry.LineIndex);
+		            _createCacheEachSharedParameters.ComponentData.LineIndexCache.UsedKeyHashSet.Add(cacheEntry.LineIndex);
         			
         			var smallSpan = entireSpan.Slice(
         			    previous.VirtualizationSpan_StartInclusiveIndex,
@@ -1138,10 +1138,19 @@ public sealed class TextEditorViewModelApi
         			}
         			
         			// WARNING CODE DUPLICATION
-        			virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = _createCacheEachSharedParameters.ViewModel.VirtualizationResult.VirtualizationSpanList.Count;
-        			virtualizedLineList[linesTaken++] = virtualizationEntry;
+        			cacheEntry.VirtualizationSpan_EndExclusiveIndex = _createCacheEachSharedParameters.ViewModel.VirtualizationResult.VirtualizationSpanList.Count;
+        			virtualizedLineList[linesTaken++] = new TextEditorVirtualizationLine(
+        			    cacheEntry.LineIndex,
+                	    cacheEntry.Position_StartInclusiveIndex,
+                	    cacheEntry.Position_EndExclusiveIndex,
+                	    cacheEntry.VirtualizationSpan_StartInclusiveIndex,
+                	    cacheEntry.VirtualizationSpan_EndExclusiveIndex,
+                	    cacheEntry.WidthInPixels,
+                	    cacheEntry.HeightInPixels,
+                	    cacheEntry.LeftInPixels,
+                	    cacheEntry.TopInPixels);
         			
-        			_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[virtualizationEntry.LineIndex] = virtualizationEntry;
+        			_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[cacheEntry.LineIndex] = cacheEntry;
 				    continue;
 				}
 				
@@ -1451,7 +1460,16 @@ public sealed class TextEditorViewModelApi
 	    			topCssValue: ((lineIndex - hiddenLineCount) * virtualizationResult.ViewModel.CharAndLineMeasurements.LineHeight).ToString(),
 	    			leftCssValue: virtualizationResult.ViewModel.VirtualizationResult.EntryList[i].LeftInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture),
 					lineNumberString: (lineIndex + 1).ToString(),
-					hiddenLineCount: hiddenLineCount));
+					hiddenLineCount: hiddenLineCount,
+					lineIndex: 0,
+            	    position_StartInclusiveIndex: 0,
+            	    position_EndExclusiveIndex: 0,
+            	    virtualizationSpan_StartInclusiveIndex: 0,
+            	    virtualizationSpan_EndExclusiveIndex: 0,
+            	    widthInPixels: 0,
+            	    heightInPixels: 0,
+            	    leftInPixels: 0,
+            	    topInPixels: 0));
 	    	}
 	    	
 	    	if (isHandlingCursor)
@@ -1493,7 +1511,16 @@ public sealed class TextEditorViewModelApi
 					// TODO: This will cause a bug, this declares a lines left but in reality its trying to just describe the cursor and this value is placeholder.
 					// But, since this placeholder is cached, if this line comes up in a future render it may or may not be positioned correctly.
 					leftCssValue: virtualizationResult.ViewModel.GutterWidthInPixels.ToString(),
-					hiddenLineCount: 0));
+					hiddenLineCount: 0,
+					lineIndex: 0,
+            	    position_StartInclusiveIndex: 0,
+            	    position_EndExclusiveIndex: 0,
+            	    virtualizationSpan_StartInclusiveIndex: 0,
+            	    virtualizationSpan_EndExclusiveIndex: 0,
+            	    widthInPixels: 0,
+            	    heightInPixels: 0,
+            	    leftInPixels: 0,
+            	    topInPixels: 0));
 	    	}
 	    		
     		if (virtualizationResult.ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(virtualizationResult.ViewModel.LineIndex))
@@ -2525,12 +2552,38 @@ public sealed class TextEditorViewModelApi
 		
 		if (_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map.ContainsKey(virtualizationEntry.LineIndex))
 		{
-			_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[virtualizationEntry.LineIndex] = virtualizationEntry;
+			_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[virtualizationEntry.LineIndex] = new TextEditorLineIndexCacheEntry(
+			    topCssValue: string.Empty,
+        		leftCssValue: string.Empty,
+        		lineNumberString: string.Empty,
+        		hiddenLineCount: 0,
+			    virtualizationEntry.LineIndex,
+        	    virtualizationEntry.Position_StartInclusiveIndex,
+        	    virtualizationEntry.Position_EndExclusiveIndex,
+        	    virtualizationEntry.VirtualizationSpan_StartInclusiveIndex,
+        	    virtualizationEntry.VirtualizationSpan_EndExclusiveIndex,
+        	    virtualizationEntry.WidthInPixels,
+        	    virtualizationEntry.HeightInPixels,
+        	    virtualizationEntry.LeftInPixels,
+        	    virtualizationEntry.TopInPixels);
 		}
 		else
 		{
 			_createCacheEachSharedParameters.ComponentData.LineIndexCache.ExistsKeyList.Add(virtualizationEntry.LineIndex);
-			_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map.Add(virtualizationEntry.LineIndex, virtualizationEntry);
+			_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map.Add(virtualizationEntry.LineIndex, new TextEditorLineIndexCacheEntry(
+			    topCssValue: string.Empty,
+        		leftCssValue: string.Empty,
+        		lineNumberString: string.Empty,
+        		hiddenLineCount: 0,
+			    virtualizationEntry.LineIndex,
+        	    virtualizationEntry.Position_StartInclusiveIndex,
+        	    virtualizationEntry.Position_EndExclusiveIndex,
+        	    virtualizationEntry.VirtualizationSpan_StartInclusiveIndex,
+        	    virtualizationEntry.VirtualizationSpan_EndExclusiveIndex,
+        	    virtualizationEntry.WidthInPixels,
+        	    virtualizationEntry.HeightInPixels,
+        	    virtualizationEntry.LeftInPixels,
+        	    virtualizationEntry.TopInPixels));
 		}
     }
     

@@ -141,9 +141,9 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 				
 				var showingFinalLine = false;
 				
-				if (viewModelModifier.VirtualizationResultCount > 0)
+				if (viewModelModifier.VirtualizationResult.Count > 0)
 				{
-					var last = viewModelModifier.VirtualizationResult.EntryList[viewModelModifier.VirtualizationResultCount - 1];
+					var last = viewModelModifier.VirtualizationResult.EntryList[viewModelModifier.VirtualizationResult.Count - 1];
 					if (last.LineIndex == modelModifier.LineCount - 1)
 						showingFinalLine = true;
 				}
