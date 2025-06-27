@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace Walk.TextEditor.RazorLib.Virtualizations.Models;
+namespace Walk.TextEditor.RazorLib.TextEditors.Models;
 
 /// <summary>
 /// Currently, the UI is looping over all the 'RichCharacter'(s)
@@ -17,9 +17,9 @@ namespace Walk.TextEditor.RazorLib.Virtualizations.Models;
 /// So, the goal here is to do the combining and then cache the result,
 /// as well to do this combining logic off the UI thread.
 /// </summary>
-public struct VirtualizationSpan
+public struct TextEditorVirtualizationSpan
 {
-	public VirtualizationSpan(string cssClass, string text)
+	public TextEditorVirtualizationSpan(string cssClass, string text)
 	{
 		CssClass = cssClass;
 		MarkupStringText = new MarkupString(text);

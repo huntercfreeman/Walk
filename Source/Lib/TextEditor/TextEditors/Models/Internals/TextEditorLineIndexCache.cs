@@ -1,12 +1,11 @@
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.TextEditor.RazorLib.Virtualizations.Models;
 
 namespace Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 public class TextEditorLineIndexCache
 {
     /// <summary>TODO: Don't do this.</summary>
-    public static List<VirtualizationSpan> VirtualizationSpanList_Empty { get; } = new();
+    public static List<TextEditorVirtualizationSpan> VirtualizationSpanList_Empty { get; } = new();
 
 	/// <summary>
     /// Every virtualized line has its "spans" stored in this flat list.
@@ -17,7 +16,7 @@ public class TextEditorLineIndexCache
     /// This points to a TextEditorViewModel('s) VirtualizationGrid('s) list directly.
 	/// If you clear it that'll cause a UI race condition exception.
     /// </summary>
-    public List<VirtualizationSpan> VirtualizationSpanList { get; set; } = new();
+    public List<TextEditorVirtualizationSpan> VirtualizationSpanList { get; set; } = new();
     
     public bool IsInvalid { get; set; }
     public HashSet<int> UsedKeyHashSet { get; set; } = new();
@@ -27,4 +26,24 @@ public class TextEditorLineIndexCache
     public int ScrollLeftMarker { get; set; } = -1;
     public Key<TextEditorViewModel> ViewModelKeyMarker { get; set; } = Key<TextEditorViewModel>.Empty;
     public Dictionary<int, TextEditorLineIndexCacheEntry> Map { get; set; } = new();
+    
+    public void Clear()
+    {
+	    ScrollLeftMarker = -1;
+	    
+	    Map.Clear();
+	    
+	    // This points to a TextEditorViewModel('s) VirtualizationGrid('s) list directly.
+	    // If you clear it that'll cause a UI race condition exception.
+	    VirtualizationSpanList = VirtualizationSpanList_Empty;
+	    
+	    UsedKeyHashSet.Clear();
+	    
+	    ExistsKeyList.Clear();
+	    
+	    ViewModelKeyMarker = Key<TextEditorViewModel>.Empty;
+	    
+	    IsInvalid = false;
+	    ModifiedLineIndexList.Clear();
+    }
 }

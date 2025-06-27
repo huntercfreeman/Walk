@@ -8,11 +8,10 @@ using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Displays;
-using Walk.TextEditor.RazorLib.Virtualizations.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 
-namespace Walk.TextEditor.RazorLib.Virtualizations.Models;
+namespace Walk.TextEditor.RazorLib.TextEditors.Models;
 
 /// <summary>
 /// This type is used to render the text editor's text on the UI.
@@ -54,30 +53,38 @@ namespace Walk.TextEditor.RazorLib.Virtualizations.Models;
 ///       i.e.: contiguous decoration bytes being grouped in the same '<span>'.
 /// 
 /// </summary>
-public class VirtualizationGrid
+public class TextEditorVirtualizationResult
 {
-	public static VirtualizationGrid Empty { get; } = new(
-        Array.Empty<VirtualizationLine>(),
-        new List<VirtualizationSpan>(),
+    public const string DEFAULT_FONT_FAMILY = "monospace";
+
+	public static TextEditorVirtualizationResult Empty { get; } = new(
+        Array.Empty<TextEditorVirtualizationLine>(),
+        new List<TextEditorVirtualizationSpan>(),
         totalWidth: 0,
         totalHeight: 0,
         resultWidth: 0,
         resultHeight: 0,
         left: 0,
         top: 0,
-        componentData: null);
+        componentData: null,
+        model: null,
+	    viewModel: null,
+	    renderBatchPersistentState: null);
 
 	/// <summary>Measurements are in pixels</summary>
-    public VirtualizationGrid(
-        VirtualizationLine[] entries,
-        List<VirtualizationSpan> virtualizationSpanList,
+    public TextEditorVirtualizationResult(
+        TextEditorVirtualizationLine[] entries,
+        List<TextEditorVirtualizationSpan> virtualizationSpanList,
         int totalWidth,
         int totalHeight,
         int resultWidth,
         int resultHeight,
         double left,
         int top,
-        TextEditorComponentData? componentData)
+        TextEditorComponentData? componentData,
+        TextEditorModel? model,
+	    TextEditorViewModel? viewModel,
+	    TextEditorRenderBatchPersistentState? renderBatchPersistentState)
     {
         EntryList = entries;
         VirtualizationSpanList = virtualizationSpanList;
@@ -88,6 +95,13 @@ public class VirtualizationGrid
         VirtualLeft = left;
         VirtualTop = top;
         ComponentData = componentData;
+        Model = model;
+	    ViewModel = viewModel;
+	    TextEditorRenderBatchPersistentState = renderBatchPersistentState;
+	    
+	    IsValid = Model is not null &&
+			      ViewModel is not null &&
+			      TextEditorRenderBatchPersistentState.TextEditorOptions is not null;
     }
 
     /// <summary>
@@ -96,8 +110,8 @@ public class VirtualizationGrid
     /// because this array is allocated at a predicted size
     /// but it is possible that the count does not reach capacity.
     /// </summary>
-    public VirtualizationLine[] EntryList { get; init; }
-    public List<VirtualizationSpan> VirtualizationSpanList { get; init; }
+    public TextEditorVirtualizationLine[] EntryList { get; init; }
+    public List<TextEditorVirtualizationSpan> VirtualizationSpanList { get; init; }
     
     /// <summary>
     /// Measurements are in pixels.
@@ -135,11 +149,14 @@ public class VirtualizationGrid
     /// Lowest 'top' point where a rendered element is displayed.
     /// </summary>
     public int VirtualTop { get; init; }
+	
+    public TextEditorModel? Model { get; set; }
+    public TextEditorViewModel? ViewModel { get; set; }
+    public TextEditorRenderBatchPersistentState? TextEditorRenderBatchPersistentState { get; set; }
     
+    public bool IsValid { get; private set; }
+        
     public TextEditorComponentData? ComponentData { get; set; }
-    
-    // Active is the one given to the UI after the current was validated and found to be valid.
-    public TextEditorRenderBatch RenderBatch { get; set; }
     
     public string? InlineUiWidthStyleCssString { get; set; }
 	public bool InlineUiWidthStyleCssStringIsOutdated { get; set; }
@@ -185,9 +202,6 @@ public class VirtualizationGrid
 	/// <summary>Pixels (px)</summary>
 	public int Scroll_Top { get; set; }
 	
-	public bool Scroll_LeftChanged { get; set; }
-    public bool Scroll_TopChanged { get; set; }
-	
 	/// <summary>
     /// Each individual line number is a separate "gutter".
     /// Therefore, the UI in a loop will use a StringBuilder to .Append(...)
@@ -205,7 +219,7 @@ public class VirtualizationGrid
     /// </summary>
     public string Gutter_HeightWidthPaddingCssStyle { get; set; }
     
-	public string Gutter_PaddingCssStyle { get; set; }
+	
     public string Gutter_WidthCssStyle { get; set; }
     
     /// <summary>
@@ -214,9 +228,9 @@ public class VirtualizationGrid
     /// The initial value cannot be 0 else any text editor without a gutter cannot detect change on the initial render.
     /// Particularly, whatever the double subtraction -- absolute value precision -- check is, it has to be greater a difference than that.
     /// </summary>
-    public int ViewModelGutterWidth { get; set; } = -2;
+    public int GutterWidth { get; set; } = -2;
     /// <summary>Pixels (px)</summary>
-    private int ViewModelScrollLeft { get; set; }
+    public int ScrollLeft { get; set; }
     
     public string ScrollbarSection_LeftCssStyle { get; set; }
     
@@ -224,8 +238,7 @@ public class VirtualizationGrid
     
     public string BodyStyle { get; set; } = $"width: 100%; left: 0;";
     
-    /// <summary>Pixels (px)</summary>
-    public string ScrollbarSizeCssValue { get; set; }
+    
     
     public bool PreviousIncludeHeader { get; set; }
     public bool PreviousIncludeFooter { get; set; }
@@ -238,13 +251,9 @@ public class VirtualizationGrid
     public string PersonalWrapperCssClass { get; set; }
     public string PersonalWrapperCssStyle { get; set; }
     
-    public string CursorCssClassBlinkAnimationOn { get; set; }
-    public string CursorCssClassBlinkAnimationOff { get; set; }
+    
 	
-	// _ = "di_te_text-editor-cursor " + BlinkAnimationCssClass + " " + _activeRenderBatch.Options.Keymap.GetCursorCssClassString();
-	public string BlinkAnimationCssClass => ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.ViewModelApi.CursorShouldBlink
-        ? CursorCssClassBlinkAnimationOn
-        : CursorCssClassBlinkAnimationOff;
+	
 
 	public string WrapperCssClass { get; private set; }
     public string WrapperCssStyle { get; private set; }
@@ -274,14 +283,6 @@ public class VirtualizationGrid
     // string GetTextSelectionStyleCss(int position_LowerInclusiveIndex, int position_UpperExclusiveIndex, int lineIndex)
 
     // public void GetSelection() SelectionStyleList
-
-    // public void SetWrapperCssAndStyle()
-    // WrapperCssClass
-    // PersonalWrapperCssClass
-    // WrapperCssStyle
-    // PersonalWrapperCssStyle
-    // SetRenderBatchConstants();
-    // InvokeTextEditorWrapperCssStateChanged();
     
     // ConstructVirtualizationStyleCssStrings()
     // HorizontalVirtualizationBoundaryStyleCssString

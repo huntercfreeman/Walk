@@ -45,8 +45,8 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
         get => _inputValue;
         set
         {
-	    	var renderBatchLocal = GetRenderBatch();
-	    	if (!renderBatchLocal.IsValid)
+	    	var virtualizationResult = GetVirtualizationResult();
+	    	if (!virtualizationResult.IsValid)
 	    		return;
         
             _inputValue = value;
@@ -55,7 +55,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
             {
             	TextEditorService.WorkerArbitrary.PostUnique(editContext =>
                 {
-                    var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+                    var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
                     if (viewModelModifier is null)
                         return ValueTask.CompletedTask;
@@ -64,7 +64,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
 
                     viewModelModifier.PersistentState.FindOverlayValue = localInputValue;
 
-                    var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
+                    var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
 
                     if (modelModifier is null)
                         return ValueTask.CompletedTask;
@@ -107,15 +107,15 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
         get => _inputReplace;
         set
         {
-	    	var renderBatchLocal = GetRenderBatch();
-	    	if (!renderBatchLocal.IsValid)
+	    	var virtualizationResult = GetVirtualizationResult();
+	    	if (!virtualizationResult.IsValid)
 	    		return;
         
             _inputReplace = value;
             
         	TextEditorService.WorkerArbitrary.PostUnique(editContext =>
             {
-                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
                 if (viewModelModifier is null)
                     return ValueTask.CompletedTask;
@@ -134,22 +134,22 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return;
     		
     	var becameShown = false;
     		
-        if (_lastSeenShowFindOverlayValue != renderBatchLocal.ViewModel.PersistentState.ShowFindOverlay)
+        if (_lastSeenShowFindOverlayValue != virtualizationResult.ViewModel.PersistentState.ShowFindOverlay)
         {
-            _lastSeenShowFindOverlayValue = renderBatchLocal.ViewModel.PersistentState.ShowFindOverlay;
+            _lastSeenShowFindOverlayValue = virtualizationResult.ViewModel.PersistentState.ShowFindOverlay;
 
             // If it changes from 'false' to 'true', focus the input element
             if (_lastSeenShowFindOverlayValue)
             {
             	becameShown = true;
             	
-            	var componentData = renderBatchLocal.ViewModel.PersistentState.ComponentData;
+            	var componentData = virtualizationResult.ViewModel.PersistentState.ComponentData;
             	if (componentData is not null)
             	{
 	                await CommonBackgroundTaskApi.JsRuntimeCommonApi
@@ -160,17 +160,17 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
         }
         
         if (becameShown ||
-        	_lastFindOverlayValueExternallyChangedMarker != renderBatchLocal.ViewModel.PersistentState.FindOverlayValueExternallyChangedMarker)
+        	_lastFindOverlayValueExternallyChangedMarker != virtualizationResult.ViewModel.PersistentState.FindOverlayValueExternallyChangedMarker)
         {
-        	_lastFindOverlayValueExternallyChangedMarker = renderBatchLocal.ViewModel.PersistentState.FindOverlayValueExternallyChangedMarker;
-        	InputValue = renderBatchLocal.ViewModel.PersistentState.FindOverlayValue;
-        	InputReplace = renderBatchLocal.ViewModel.PersistentState.ReplaceValueInFindOverlay;
+        	_lastFindOverlayValueExternallyChangedMarker = virtualizationResult.ViewModel.PersistentState.FindOverlayValueExternallyChangedMarker;
+        	InputValue = virtualizationResult.ViewModel.PersistentState.FindOverlayValue;
+        	InputReplace = virtualizationResult.ViewModel.PersistentState.ReplaceValueInFindOverlay;
         }
     }
     
-    private TextEditorRenderBatch GetRenderBatch()
+    private TextEditorVirtualizationResult GetVirtualizationResult()
     {
-    	return GetComponentData()?.RenderBatch ?? default;
+    	return GetComponentData()?.VirtualizationResult ?? default;
     }
     
     private TextEditorComponentData? GetComponentData()
@@ -194,13 +194,13 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
 
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return;
     	
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
-        	var componentData = renderBatchLocal.ViewModel.PersistentState.ComponentData;
+        	var componentData = virtualizationResult.ViewModel.PersistentState.ComponentData;
         	if (componentData is not null)
         	{
 	            await CommonBackgroundTaskApi.JsRuntimeCommonApi
@@ -210,14 +210,14 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
 
             TextEditorService.WorkerArbitrary.PostUnique(editContext =>
             {
-                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
                 if (viewModelModifier is null)
                     return ValueTask.CompletedTask;
 
                 viewModelModifier.PersistentState.ShowFindOverlay = false;
 
-                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
+                var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
 
                 if (modelModifier is null)
                     return ValueTask.CompletedTask;
@@ -245,11 +245,11 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
 
     private async Task MoveActiveIndexMatchedTextSpanUp()
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return;
     	
-        var findOverlayPresentationModel = renderBatchLocal.Model.PresentationModelList.FirstOrDefault(
+        var findOverlayPresentationModel = virtualizationResult.Model.PresentationModelList.FirstOrDefault(
             x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
         if (findOverlayPresentationModel is null)
@@ -283,11 +283,11 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
 
     private async Task MoveActiveIndexMatchedTextSpanDown()
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return;
     	
-        var findOverlayPresentationModel = renderBatchLocal.Model.PresentationModelList.FirstOrDefault(
+        var findOverlayPresentationModel = virtualizationResult.Model.PresentationModelList.FirstOrDefault(
             x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
         if (findOverlayPresentationModel is null)
@@ -321,8 +321,8 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
 
     private Task HandleActiveIndexMatchedTextSpanChanged()
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
@@ -332,12 +332,12 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
             if (localActiveIndexMatchedTextSpan is null)
                 return ValueTask.CompletedTask;
 
-            var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+            var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
             if (viewModelModifier is null)
                 return ValueTask.CompletedTask;
             
-            var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
+            var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
 
             if (modelModifier is null)
                 return ValueTask.CompletedTask;
@@ -409,13 +409,13 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
     
     private void ToggleShowReplace()
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return;
     	
     	TextEditorService.WorkerArbitrary.PostUnique((TextEditorEditContext editContext) =>
         {
-            var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+            var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
             if (viewModelModifier is null)
                 return ValueTask.CompletedTask;
@@ -428,14 +428,14 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
     
     private void ReplaceCurrent()
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return;
     
     	TextEditorService.WorkerArbitrary.PostUnique((TextEditorEditContext editContext) =>
         {
-        	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-            var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+        	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
             var localActiveIndexMatchedTextSpan = _activeIndexMatchedTextSpan;
 
             if (modelModifier is null || viewModelModifier is null || localActiveIndexMatchedTextSpan is null)
@@ -472,14 +472,14 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
     
     private void ReplaceAll()
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return;
     
     	TextEditorService.WorkerArbitrary.PostUnique((TextEditorEditContext editContext) =>
         {
-        	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-            var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+        	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
             var localActiveIndexMatchedTextSpan = _activeIndexMatchedTextSpan;
 
             if (modelModifier is null || viewModelModifier is null || localActiveIndexMatchedTextSpan is null)

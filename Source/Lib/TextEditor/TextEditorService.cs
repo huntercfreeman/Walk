@@ -134,7 +134,7 @@ public sealed class TextEditorService
     public BackgroundTaskService BackgroundTaskService => _backgroundTaskService;
     
     /// <summary>
-	/// Do not touch this property, it is used for the VirtualizationGrid.
+	/// Do not touch this property, it is used for the VirtualizationResult.
 	/// </summary>
 	public StringBuilder __StringBuilder { get; } = new StringBuilder();
 	

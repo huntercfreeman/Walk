@@ -8,7 +8,6 @@ using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Displays;
-using Walk.TextEditor.RazorLib.Virtualizations.Models;
 
 namespace Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 
@@ -73,6 +72,23 @@ public sealed class TextEditorComponentData
 	/// </summary>
 	public TextEditorOptions Options { get; init; }
 	
+	public string Gutter_PaddingCssStyle { get; set; }
+	
+	/// <summary>Pixels (px)</summary>
+    public string ScrollbarSizeCssValue { get; set; }
+    
+    public string CursorCssClassBlinkAnimationOn { get; set; }
+    public string CursorCssClassBlinkAnimationOff { get; set; }
+    
+    // _ = "di_te_text-editor-cursor " + BlinkAnimationCssClass + " " + _activeRenderBatch.Options.Keymap.GetCursorCssClassString();
+	public string BlinkAnimationCssClass => TextEditorViewModelSlimDisplay.TextEditorService.ViewModelApi.CursorShouldBlink
+        ? CursorCssClassBlinkAnimationOn
+        : CursorCssClassBlinkAnimationOff;
+	
+	public TextEditorVirtualizationResult VirtualizationResult { get; set; }
+	
+	public TextEditorRenderBatchPersistentState RenderBatchPersistentState { get; set; }
+	
 	/// <summary>
 	/// The TextEditorComponentData should never interact with its `LineIndexCache`.
 	///
@@ -101,27 +117,86 @@ public sealed class TextEditorComponentData
     
     public bool MenuShouldTakeFocus { get; set; }
     
-    private void Css_LineIndexCache_Clear()
+    /// <summary>
+	/// WARNING: Do not use 'UiStringBuilder' in this method. This method can be invoked from outside the UI thread via events.
+	/// </summary>
+    public void SetWrapperCssAndStyle()
     {
-	   Css_LineIndexCache_EntryMap.Clear();
-	   Css_LineIndexCache_UsageHashSet.Clear();
-	   Css_LineIndexCache_KeyList.Clear();
-    }
-    
-    public void Virtualized_LineIndexCache_Clear()
-    {
-	    Virtualized_LineIndexCache_CreatedWithScrollLeft = -1;
-	    Virtualized_LineIndexCache_LineMap.Clear();
-	    
-	    // This points to a TextEditorViewModel('s) VirtualizationGrid('s) list directly.
-	    // If you clear it that'll cause a UI race condition exception.
-	    Virtualized_LineIndexCache_SpanList = Virtualized_LineIndexCache_SpanList_Empty;
-	    
-	    Virtualized_LineIndexCache_LineIndexUsageHashSet.Clear();
-	    Virtualized_LineIndexCache_LineIndexKeyList.Clear();
-	    Virtualized_LineIndexCache_ViewModelKey = Key<TextEditorViewModel>.Empty;
-	    CacheIsInvalid = false;
-	    LineIndexWithModificationList.Clear();
+    	var stringBuilder = new StringBuilder();
+    	
+    	WrapperCssClass = TextEditorViewModelSlimDisplay.TextEditorService.ThemeCssClassString;
+    	
+    	stringBuilder.Append("di_te_text-editor di_unselectable di_te_text-editor-css-wrapper ");
+    	stringBuilder.Append(WrapperCssClass);
+    	stringBuilder.Append(" ");
+    	stringBuilder.Append(ViewModelDisplayOptions.TextEditorClassCssString);
+    	PersonalWrapperCssClass = stringBuilder.ToString();
+    	
+    	stringBuilder.Clear();
+    	
+    	var options = TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
+    	
+    	var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
+    	if (options.CommonOptions?.FontSizeInPixels is not null)
+            fontSizeInPixels = options!.CommonOptions.FontSizeInPixels;
+            
+        stringBuilder.Append("font-size: ");
+        stringBuilder.Append(fontSizeInPixels.ToString());
+        stringBuilder.Append("px;");
+    	
+    	var fontFamily = TextEditorRenderBatch.DEFAULT_FONT_FAMILY;
+    	if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
+        	fontFamily = options!.CommonOptions!.FontFamily;
+    	
+    	stringBuilder.Append("font-family: ");
+    	stringBuilder.Append(fontFamily);
+    	stringBuilder.Append(";");
+    	
+    	WrapperCssStyle = stringBuilder.ToString();
+    	
+    	stringBuilder.Append(WrapperCssStyle);
+    	stringBuilder.Append(" ");
+    	// string GetGlobalHeightInPixelsStyling()
+	    {
+	        var heightInPixels = TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.TextEditorHeightInPixels;
+	
+	        if (heightInPixels is not null)
+	        {
+	        	var heightInPixelsInvariantCulture = heightInPixels.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+	        
+		        stringBuilder.Append("height: ");
+		        stringBuilder.Append(heightInPixelsInvariantCulture);
+		        stringBuilder.Append("px;");
+	        }
+	    }
+    	stringBuilder.Append(" ");
+    	stringBuilder.Append(ViewModelDisplayOptions.TextEditorStyleCssString);
+    	stringBuilder.Append(" ");
+    	// string GetHeightCssStyle()
+	    {
+	    	if (PreviousIncludeHeader != ViewModelDisplayOptions.HeaderComponentType is not null ||
+	    	    PreviousIncludeFooter != ViewModelDisplayOptions.FooterComponentType is not null)
+	    	{
+	    		// Start with a calc statement and a value of 100%
+		        stringBuilder.Append("height: calc(100%");
+		
+		        if (ViewModelDisplayOptions.HeaderComponentType is not null)
+		            stringBuilder.Append(" - var(--di_te_text-editor-header-height)");
+		
+		        if (ViewModelDisplayOptions.FooterComponentType is not null)
+		            stringBuilder.Append(" - var(--di_te_text-editor-footer-height)");
+		
+		        // Close the calc statement, and the height style attribute
+		        stringBuilder.Append(");");
+		        
+		        PreviousGetHeightCssStyleResult = stringBuilder.ToString();
+	    	}
+	    }
+    	PersonalWrapperCssStyle = stringBuilder.ToString();
+    	
+    	TextEditorViewModelSlimDisplay.SetRenderBatchConstants();
+    	
+    	TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.InvokeTextEditorWrapperCssStateChanged();
     }
     
     public void ThrottleApplySyntaxHighlighting(TextEditorModel modelModifier)

@@ -1,12 +1,12 @@
-namespace Walk.TextEditor.RazorLib.Virtualizations.Models;
+namespace Walk.TextEditor.RazorLib.TextEditors.Models;
 
 /// <summary>
 /// This type is intended to represent a line within a flat list.
 /// The 'LineIndex' is just a marker for the offset within the flat list, not actually multi-dimensional list.
 /// </summary>
-public record struct VirtualizationLine
+public record struct TextEditorVirtualizationLine
 {
-	public VirtualizationLine(
+	public TextEditorVirtualizationLine(
 	    int lineIndex,
 	    int position_StartInclusiveIndex,
 	    int position_EndExclusiveIndex,

@@ -58,9 +58,9 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
         OnCursorShouldBlinkChanged();
     }
     
-    private TextEditorRenderBatch GetRenderBatch()
+    private TextEditorVirtualizationResult GetVirtualizationResult()
     {
-    	return GetComponentData()?.RenderBatch ?? default;
+    	return GetComponentData()?.VirtualizationResult ?? default;
     }
     
     private TextEditorComponentData? GetComponentData()
@@ -94,14 +94,14 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     
     public Task DoSaveOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
 
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-        	var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-        	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+        	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
         	TextEditorCommandDefaultFunctions.TriggerSave(
         		editContext,
@@ -116,19 +116,19 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public void ShowWatchWindowDisplayDialogOnClick()
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return;
     	
-        var model = renderBatchLocal.Model;
+        var model = virtualizationResult.Model;
 
         if (model is null)
             return;
 
         var watchWindowObject = new WatchWindowObject(
-            renderBatchLocal,
-            typeof(TextEditorRenderBatch),
-            nameof(TextEditorRenderBatch),
+            virtualizationResult,
+            typeof(TextEditorVirtualizationResult),
+            nameof(TextEditorVirtualizationResult),
             true);
 
         var dialogRecord = new DialogViewModel(
@@ -151,14 +151,14 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
 	public Task DoCopyOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-            var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-        	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+            var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
         	return TextEditorCommandDefaultFunctions.CopyAsync(
             	editContext,
@@ -171,14 +171,14 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoCutOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-            var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-        	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+            var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
         	return TextEditorCommandDefaultFunctions.CutAsync(
         		editContext,
@@ -191,14 +191,14 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoPasteOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-            var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-        	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+            var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
         	return TextEditorCommandDefaultFunctions.PasteAsync(
             	editContext,
@@ -211,14 +211,14 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoRedoOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
 
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-            var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-        	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+            var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
         	TextEditorCommandDefaultFunctions.Redo(
         		editContext,
@@ -232,14 +232,14 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoUndoOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-            var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-        	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+            var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
         	TextEditorCommandDefaultFunctions.Undo(
         		editContext,
@@ -252,14 +252,14 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoSelectAllOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-            var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-        	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+            var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
         	TextEditorCommandDefaultFunctions.SelectAll(
         		editContext,
@@ -273,14 +273,14 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoRemeasureOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-            var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-        	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+            var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
         	TextEditorCommandDefaultFunctions.TriggerRemeasure(
         		editContext,
@@ -293,8 +293,8 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public async Task DoReloadOnClick(MouseEventArgs arg)
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return;
         
         var dropdownKey = Key<DropdownRecord>.NewKey();
@@ -305,7 +305,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 			
 		var menuOptionList = new List<MenuOptionRecord>();
 		
-		var absolutePath = EnvironmentProvider.AbsolutePathFactory(renderBatchLocal.Model.PersistentState.ResourceUri.Value, false);
+		var absolutePath = EnvironmentProvider.AbsolutePathFactory(virtualizationResult.Model.PersistentState.ResourceUri.Value, false);
 
 		menuOptionList.Add(new MenuOptionRecord(
 		    "Cancel",
@@ -323,9 +323,9 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 		    {
 			    TextEditorService.WorkerArbitrary.PostUnique(editContext =>
 	            {
-	            	editContext.TextEditorService.ViewModelApi.Dispose(editContext, renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
-	            	DirtyResourceUriService.RemoveDirtyResourceUri(renderBatchLocal.Model.PersistentState.ResourceUri);
-	            	editContext.TextEditorService.ModelApi.Dispose(editContext, renderBatchLocal.Model.PersistentState.ResourceUri);
+	            	editContext.TextEditorService.ViewModelApi.Dispose(editContext, virtualizationResult.ViewModel.PersistentState.ViewModelKey);
+	            	DirtyResourceUriService.RemoveDirtyResourceUri(virtualizationResult.Model.PersistentState.ResourceUri);
+	            	editContext.TextEditorService.ModelApi.Dispose(editContext, virtualizationResult.Model.PersistentState.ResourceUri);
 	            	return ValueTask.CompletedTask;
 	            });
 		    	return Task.CompletedTask;
@@ -352,14 +352,14 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
     public Task DoRefreshOnClick()
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-            var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.PersistentState.ResourceUri);
-        	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.PersistentState.ViewModelKey);
+            var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
         	TextEditorCommandDefaultFunctions.TriggerRemeasure(
         		editContext,
@@ -378,12 +378,12 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     /// </summary>
     public bool GetUndoDisabledAttribute()
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return true;
     	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
+        var model = virtualizationResult.Model;
+        var viewModel = virtualizationResult.ViewModel;
 
         if (model is null || viewModel is null)
             return true;
@@ -400,12 +400,12 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     /// </summary>
     public bool GetRedoDisabledAttribute()
     {
-    	var renderBatchLocal = GetRenderBatch();
-    	if (!renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return true;
     	
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
+        var model = virtualizationResult.Model;
+        var viewModel = virtualizationResult.ViewModel;
 
         if (model is null || viewModel is null)
             return true;

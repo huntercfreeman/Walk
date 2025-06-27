@@ -2,7 +2,6 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.TextEditor.RazorLib.Virtualizations.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Lexers.Models;
@@ -38,7 +37,7 @@ public sealed class TextEditorViewModel : IDisposable
         IPanelService panelService,
         IDialogService dialogService,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
-        VirtualizationGrid virtualizationResult,
+        TextEditorVirtualizationResult virtualizationResult,
 		TextEditorDimensions textEditorDimensions,
 		int scrollLeft,
 	    int scrollTop,
@@ -131,7 +130,7 @@ public sealed class TextEditorViewModel : IDisposable
     /// Given the dimensions of the rendered text editor, this provides a subset of the file's content, such that "only what is
     /// visible when rendered" is in this. There is some padding of offscreen content so that scrolling is smoother.
     /// </summary>
-    public VirtualizationGrid VirtualizationResult { get; set; }
+    public TextEditorVirtualizationResult VirtualizationResult { get; set; }
 	public TextEditorDimensions TextEditorDimensions { get; set; }
 	
 	public int ScrollLeft { get; set; }

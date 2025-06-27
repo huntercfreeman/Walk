@@ -6,6 +6,7 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.Options.Models;
+using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Walk.TextEditor.RazorLib.Installations.Displays;
@@ -83,7 +84,7 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
         CommonBackgroundTaskApi.UiStringBuilder.Append("px;");
     	var fontSizeCssStyle = CommonBackgroundTaskApi.UiStringBuilder.ToString();
     	
-    	var fontFamily = TextEditorRenderBatch.DEFAULT_FONT_FAMILY;
+    	var fontFamily = TextEditorVirtualizationResult.DEFAULT_FONT_FAMILY;
     	if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
         	fontFamily = options!.CommonOptions!.FontFamily;
     	CommonBackgroundTaskApi.UiStringBuilder.Clear();

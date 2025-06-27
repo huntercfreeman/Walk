@@ -325,7 +325,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 			// TODO: Where does the method: 'ValidateMaximumScrollLeftAndScrollTop(...)' belong?
 			TextEditorService.ValidateMaximumScrollLeftAndScrollTop(editContext, modelModifier, viewModelModifier, textEditorDimensionsChanged: true);
 			
-			componentData.Virtualized_LineIndexCache_IsInvalid = true;
+			componentData.LineIndexCache.IsInvalid = true;
 			
 			if (useExtraEvent)
 			{

@@ -58,9 +58,9 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     	}
     }
     
-    private TextEditorRenderBatch GetRenderBatch()
+    private TextEditorVirtualizationResult GetVirtualizationResult()
     {
-    	return GetComponentData()?.RenderBatch ?? default;
+    	return GetComponentData()?.VirtualizationResult ?? default;
     }
     
     private TextEditorComponentData? GetComponentData()
@@ -89,8 +89,8 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
     private Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
@@ -101,15 +101,15 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
     private async Task ReturnFocusToThisAsync()
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return;
     		
         try
         {
             TextEditorService.WorkerArbitrary.PostUnique(editContext =>
 			{
-				var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
+				var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
 				if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
 				{
@@ -122,7 +122,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 				return ValueTask.CompletedTask;
 			});
 				
-			await renderBatch.ViewModel.FocusAsync();
+			await virtualizationResult.ViewModel.FocusAsync();
         }
         catch (Exception e)
         {
@@ -133,13 +133,13 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
     private MenuRecord GetMenuRecord()
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return NoResultsMenuRecord;
     
         try
         {
-            return renderBatch.Model.PersistentState.CompilerService.GetAutocompleteMenu(renderBatch, this);
+            return virtualizationResult.Model.PersistentState.CompilerService.GetAutocompleteMenu(virtualizationResult, this);
         }
         catch (Exception e)
         {
@@ -149,17 +149,17 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
     public MenuRecord GetDefaultMenuRecord(List<AutocompleteEntry>? otherAutocompleteEntryList = null)
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return NoResultsMenuRecord;
     
         try
         {
-            if (renderBatch.ViewModel.ColumnIndex > 0)
+            if (virtualizationResult.ViewModel.ColumnIndex > 0)
             {
-                var word = renderBatch.Model.ReadPreviousWordOrDefault(
-                    renderBatch.ViewModel.LineIndex,
-                    renderBatch.ViewModel.ColumnIndex);
+                var word = virtualizationResult.Model.ReadPreviousWordOrDefault(
+                    virtualizationResult.ViewModel.LineIndex,
+                    virtualizationResult.ViewModel.ColumnIndex);
 
                 List<MenuOptionRecord> menuOptionRecordsList = new();
 
@@ -183,7 +183,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
                         () => SelectMenuOption(() =>
                         {
                         	if (entry.AutocompleteEntryKind != AutocompleteEntryKind.Snippet)
-                            	InsertAutocompleteMenuOption(word, entry, renderBatch.ViewModel);
+                            	InsertAutocompleteMenuOption(word, entry, virtualizationResult.ViewModel);
                             	
                             return entry.SideEffectFunc?.Invoke();
                         }),
@@ -214,8 +214,8 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
     public async Task SelectMenuOption(Func<Task> menuOptionAction)
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return;
     
         _ = Task.Run(async () =>
@@ -224,7 +224,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
             {
 				TextEditorService.WorkerArbitrary.PostUnique(editContext =>
 				{
-					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
+					var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
 					if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
 					{
@@ -234,7 +234,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 					        DropdownService);
 					}
 
-					return renderBatch.ViewModel.FocusAsync();
+					return virtualizationResult.ViewModel.FocusAsync();
 				});
 				
 				// (2025-01-21)
@@ -263,7 +263,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
             }
         }, CancellationToken.None);
 
-        await renderBatch.ViewModel.FocusAsync();
+        await virtualizationResult.ViewModel.FocusAsync();
     }
 
     public async Task InsertAutocompleteMenuOption(
@@ -271,8 +271,8 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return;
     
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
@@ -289,10 +289,10 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 		        viewModelModifier,
 		        autocompleteEntry.DisplayName.Substring(word.Length));
 		        
-            return renderBatch.ViewModel.FocusAsync();
+            return virtualizationResult.ViewModel.FocusAsync();
         });
 		
-		await renderBatch.ViewModel.FocusAsync();
+		await virtualizationResult.ViewModel.FocusAsync();
     }
     
     public void Dispose()

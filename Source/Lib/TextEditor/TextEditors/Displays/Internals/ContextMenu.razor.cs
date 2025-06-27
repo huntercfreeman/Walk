@@ -66,9 +66,9 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         }
     }
     
-    private TextEditorRenderBatch GetRenderBatch()
+    private TextEditorVirtualizationResult GetVirtualizationResult()
     {
-    	return GetComponentData()?.RenderBatch ?? default;
+    	return GetComponentData()?.VirtualizationResult ?? default;
     }
     
     private TextEditorComponentData? GetComponentData()
@@ -92,15 +92,15 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return;
     	
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
         {
             TextEditorService.WorkerArbitrary.PostUnique(editContext =>
 			{
-				var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
+				var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
 				if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
 				{
@@ -117,15 +117,15 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     private Task ReturnFocusToThisAsync()
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     		
         try
         {
             TextEditorService.WorkerArbitrary.PostUnique(editContext =>
 			{
-				var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
+				var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
 				if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
 				{
@@ -148,11 +148,11 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     private MenuRecord GetMenuRecord()
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return new MenuRecord(MenuRecord.NoMenuOptionsExistList);
     		
-    	return renderBatch.Model.PersistentState.CompilerService.GetContextMenu(renderBatch, this);
+    	return virtualizationResult.Model.PersistentState.CompilerService.GetContextMenu(virtualizationResult, this);
     }
     
     public MenuRecord GetDefaultMenuRecord()
@@ -200,8 +200,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     public Task SelectMenuOption(Func<Task> menuOptionAction)
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     		
         _ = Task.Run(async () =>
@@ -210,7 +210,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             {
 				TextEditorService.WorkerArbitrary.PostUnique(editContext =>
 				{
-					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
+					var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
 					if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
 					{
@@ -238,14 +238,14 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     
     public Task CutMenuOption()
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     		
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-            var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
-		    var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
+            var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+		    var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 			
             return TextEditorCommandDefaultFunctions.CutAsync(
             	editContext,
@@ -258,14 +258,14 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     public Task CopyMenuOption()
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-	        var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
-		    var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
+	        var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+		    var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         	
             return TextEditorCommandDefaultFunctions.CopyAsync(
         		editContext,
@@ -278,14 +278,14 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     public Task PasteMenuOption()
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
 
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-        	var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
-            var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
+        	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
             return TextEditorCommandDefaultFunctions.PasteAsync(
             	editContext,
@@ -298,14 +298,14 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
 	public Task ToggleCollapseOption()
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
 
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-        	var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
-            var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
+        	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
     		
     		CollapsePoint encompassingCollapsePoint = new CollapsePoint(-1, false, string.Empty, -1);;
 
@@ -333,14 +333,14 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     public Task GoToDefinitionOption()
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     		
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-            var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
-            var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
+            var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
     		if (viewModelModifier is null)
     			return ValueTask.CompletedTask;
@@ -359,14 +359,14 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     
     public Task PeekDefinitionOption()
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     		
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-            var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
-            var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
+            var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
     		if (viewModelModifier is null)
     			return ValueTask.CompletedTask;
@@ -385,14 +385,14 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     
     public Task QuickActionsSlashRefactors()
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-        	var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
-        	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
+        	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
             return TextEditorCommandDefaultFunctions.QuickActionsSlashRefactor(
             	editContext,
@@ -407,14 +407,14 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     
     public Task FindInTextEditor()
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-        	var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
-        	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
+        	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
             return TextEditorCommandDefaultFunctions.ShowFindOverlay(
 		        editContext,
@@ -427,14 +427,14 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     
     public Task FindAllReferences()
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-        	var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
-        	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
+        	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
             return ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).ShiftF12Func.Invoke(
             	editContext,
@@ -446,14 +446,14 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     
     public Task RelatedFilesQuickPick()
     {
-    	var renderBatch = GetRenderBatch();
-    	if (!renderBatch.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+    	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     	
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-        	var modelModifier = editContext.GetModelModifier(renderBatch.Model.PersistentState.ResourceUri);
-        	var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.PersistentState.ViewModelKey);
+        	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+        	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
             return TextEditorCommandDefaultFunctions.RelatedFilesQuickPick(
 		        editContext,
