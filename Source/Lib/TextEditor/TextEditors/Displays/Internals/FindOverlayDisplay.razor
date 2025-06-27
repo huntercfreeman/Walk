@@ -1,6 +1,6 @@
 @using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 
-@{ var renderBatchLocal = GetRenderBatch(); }
+@{ var renderBatchLocal = GetVirtualizationResult(); }
 
 @if (renderBatchLocal.IsValid &&
 	 renderBatchLocal.ViewModel.PersistentState.ShowFindOverlay)

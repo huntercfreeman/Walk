@@ -555,7 +555,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     [JSInvokable]
     public async Task HORIZONTAL_HandleOnMouseDownAsync(TextEditorEventArgs eventArgs)
     {
-    	var virtualizationResult = ComponentData.RenderBatch;
+    	var virtualizationResult = ComponentData.VirtualizationResult;
     	if (!virtualizationResult.IsValid)
     		return;
     		
@@ -586,7 +586,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     [JSInvokable]
     public async Task VERTICAL_HandleOnMouseDownAsync(TextEditorEventArgs eventArgs)
     {
-    	var virtualizationResult = _componentData.RenderBatch;
+    	var virtualizationResult = _componentData.VirtualizationResult;
     	if (!virtualizationResult.IsValid)
     		return;
     
@@ -748,7 +748,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     	    var componentData = viewModelModifier.PersistentState.ComponentData;
     	    if (componentData is not null)
     	    {
-    	        componentData.Virtualized_LineIndexCache_IsInvalid = true;
+    	        componentData.LineIndexCache.IsInvalid = true;
     	        
     	        if (!componentData.ViewModelDisplayOptions.IncludeGutterComponent)
     	        {
@@ -758,7 +758,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     	            //
     	            // The initial value cannot be 0 else any text editor without a gutter cannot detect change on the initial render.
                     // Particularly, whatever the double subtraction -- absolute value precision -- check is, it has to be greater a difference than that.
-    	            componentData.ViewModelGutterWidth = -2;
+    	            componentData.VirtualizationResult.GutterWidth = -2;
     	        }
     	    }
         	
@@ -792,7 +792,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
     private Task HORIZONTAL_DragEventHandlerScrollAsync(TextEditorEventArgs localMouseDownEventArgsStruct, MouseEventArgs onDragMouseEventArgs)
     {
-    	var virtualizationResult = _componentData.RenderBatch;
+    	var virtualizationResult = _componentData.VirtualizationResult;
     	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     
@@ -850,7 +850,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     private Task VERTICAL_DragEventHandlerScrollAsync(TextEditorEventArgs localMouseDownEventArgsStruct, MouseEventArgs onDragMouseEventArgs)
     {
-    	var virtualizationResult = _componentData.RenderBatch;
+    	var virtualizationResult = _componentData.VirtualizationResult;
     	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     

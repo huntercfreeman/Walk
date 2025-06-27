@@ -89,6 +89,8 @@ public sealed class TextEditorComponentData
 	
 	public TextEditorRenderBatchPersistentState RenderBatchPersistentState { get; set; }
 	
+	public bool InlineUiWidthStyleCssStringIsOutdated { get; set; }
+	
 	/// <summary>
 	/// The TextEditorComponentData should never interact with its `LineIndexCache`.
 	///
@@ -117,6 +119,24 @@ public sealed class TextEditorComponentData
     
     public bool MenuShouldTakeFocus { get; set; }
     
+    public string PersonalWrapperCssClass { get; set; }
+    public string PersonalWrapperCssStyle { get; set; }
+
+	public string WrapperCssClass { get; private set; }
+    public string WrapperCssStyle { get; private set; }
+    
+    public bool PreviousIncludeHeader { get; set; }
+    public bool PreviousIncludeFooter { get; set; }
+    public string PreviousGetHeightCssStyleResult { get; set; } = "height: calc(100%);";
+    
+    public string BothVirtualizationBoundaryStyleCssString { get; set; } = "width: 0px; height: 0px;";
+    
+    /// <summary>
+    /// Share this StringBuilder when used for rendering and no other function is currently using it.
+    /// (i.e.: only use this for methods that were invoked from the .razor file)
+    /// </summary>
+    public StringBuilder UiStringBuilder { get; set; } = new();
+    
     /// <summary>
 	/// WARNING: Do not use 'UiStringBuilder' in this method. This method can be invoked from outside the UI thread via events.
 	/// </summary>
@@ -144,7 +164,7 @@ public sealed class TextEditorComponentData
         stringBuilder.Append(fontSizeInPixels.ToString());
         stringBuilder.Append("px;");
     	
-    	var fontFamily = TextEditorRenderBatch.DEFAULT_FONT_FAMILY;
+    	var fontFamily = TextEditorVirtualizationResult.DEFAULT_FONT_FAMILY;
     	if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
         	fontFamily = options!.CommonOptions!.FontFamily;
     	

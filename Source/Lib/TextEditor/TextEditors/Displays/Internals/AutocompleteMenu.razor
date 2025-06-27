@@ -1,7 +1,7 @@
 @using Walk.Common.RazorLib.Menus.Displays
 @using Walk.TextEditor.RazorLib.Autocompletes.Models
 
-@{ var renderBatch = GetRenderBatch(); }
+@{ var renderBatch = GetVirtualizationResult(); }
 
 @if (renderBatch.IsValid)
 {

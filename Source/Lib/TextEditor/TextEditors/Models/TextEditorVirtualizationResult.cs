@@ -69,7 +69,8 @@ public class TextEditorVirtualizationResult
         componentData: null,
         model: null,
 	    viewModel: null,
-	    renderBatchPersistentState: null);
+	    renderBatchPersistentState: null,
+	    count: 0);
 
 	/// <summary>Measurements are in pixels</summary>
     public TextEditorVirtualizationResult(
@@ -84,7 +85,8 @@ public class TextEditorVirtualizationResult
         TextEditorComponentData? componentData,
         TextEditorModel? model,
 	    TextEditorViewModel? viewModel,
-	    TextEditorRenderBatchPersistentState? renderBatchPersistentState)
+	    TextEditorRenderBatchPersistentState? renderBatchPersistentState,
+	    int count)
     {
         EntryList = entries;
         VirtualizationSpanList = virtualizationSpanList;
@@ -98,6 +100,7 @@ public class TextEditorVirtualizationResult
         Model = model;
 	    ViewModel = viewModel;
 	    TextEditorRenderBatchPersistentState = renderBatchPersistentState;
+	    Count = count;
 	    
 	    IsValid = Model is not null &&
 			      ViewModel is not null &&
@@ -106,11 +109,20 @@ public class TextEditorVirtualizationResult
 
     /// <summary>
     /// Do NOT use EntryList.Length.
-    /// Use TextEditorViewModel.VirtualizationResultCount,
+    /// Use Count,
     /// because this array is allocated at a predicted size
     /// but it is possible that the count does not reach capacity.
     /// </summary>
     public TextEditorVirtualizationLine[] EntryList { get; init; }
+    
+    /// <summary>
+    /// Do NOT use EntryList.Length.
+    /// Use this property instead,
+    /// because the array is allocated at a predicted size
+    /// but it is possible that the count does not reach capacity.
+    /// </summary>
+    public int Count { get; set; }
+    
     public List<TextEditorVirtualizationSpan> VirtualizationSpanList { get; init; }
     
     /// <summary>
@@ -150,6 +162,8 @@ public class TextEditorVirtualizationResult
     /// </summary>
     public int VirtualTop { get; init; }
 	
+	
+	
     public TextEditorModel? Model { get; set; }
     public TextEditorViewModel? ViewModel { get; set; }
     public TextEditorRenderBatchPersistentState? TextEditorRenderBatchPersistentState { get; set; }
@@ -159,7 +173,7 @@ public class TextEditorVirtualizationResult
     public TextEditorComponentData? ComponentData { get; set; }
     
     public string? InlineUiWidthStyleCssString { get; set; }
-	public bool InlineUiWidthStyleCssStringIsOutdated { get; set; }
+	
 	
 	public bool CursorIsOnHiddenLine { get; set; } = false;
     
@@ -182,8 +196,8 @@ public class TextEditorVirtualizationResult
     public List<CollapsePoint> VirtualizedCollapsePointList { get; set; } = new();
     public int VirtualizedCollapsePointListVersion { get; set; }
     
-    private List<TextEditorTextSpan> VirtualizedTextSpanList { get; set; } = new();
-    private List<TextEditorTextSpan> OutTextSpansList { get; set; } = new();
+    public List<TextEditorTextSpan> VirtualizedTextSpanList { get; set; } = new();
+    public List<TextEditorTextSpan> OutTextSpansList { get; set; } = new();
     
     /// <summary>Pixels (px)</summary>
 	public int LineHeight { get; set; }
@@ -238,35 +252,7 @@ public class TextEditorVirtualizationResult
     
     public string BodyStyle { get; set; } = $"width: 100%; left: 0;";
     
-    
-    
-    public bool PreviousIncludeHeader { get; set; }
-    public bool PreviousIncludeFooter { get; set; }
-    public string PreviousGetHeightCssStyleResult { get; set; } = "height: calc(100%);";
-    
-    public string VerticalVirtualizationBoundaryStyleCssString { get; set; } = "height: 0px;";
-	public string HorizontalVirtualizationBoundaryStyleCssString { get; set; } = "width: 0px;";
-	public string BothVirtualizationBoundaryStyleCssString { get; set; } = "width: 0px; height: 0px;";
-	
-    public string PersonalWrapperCssClass { get; set; }
-    public string PersonalWrapperCssStyle { get; set; }
-    
-    
-	
-	
-
-	public string WrapperCssClass { get; private set; }
-    public string WrapperCssStyle { get; private set; }
-    
-    /// <summary>
-    /// Share this StringBuilder when used for rendering and no other function is currently using it.
-    /// (i.e.: only use this for methods that were invoked from the .razor file)
-    /// </summary>
-    public StringBuilder UiStringBuilder { get; set; } = new();
-    
-    private Key<TextEditorViewModel> _seenViewModelKey = Key<TextEditorViewModel>.Empty;
-    
-    
+    public Key<TextEditorViewModel> _seenViewModelKey = Key<TextEditorViewModel>.Empty;
     
     public string GutterCssStyle { get; set; }
     public string GutterSectionCssStyle { get; set; }
@@ -284,11 +270,6 @@ public class TextEditorVirtualizationResult
 
     // public void GetSelection() SelectionStyleList
     
-    // ConstructVirtualizationStyleCssStrings()
-    // HorizontalVirtualizationBoundaryStyleCssString
-    // VerticalVirtualizationBoundaryStyleCssString
-    // BothVirtualizationBoundaryStyleCssString
-    
     /* private void GetPresentationLayer(
     	List<Key<TextEditorPresentationModel>> presentationLayerKeysList,
     	List<(string CssClassString, int StartInclusiveIndex, int EndExclusiveIndex)> presentationLayerGroupList,
@@ -298,4 +279,34 @@ public class TextEditorVirtualizationResult
     // InlineUiWidthStyleCssString
     // InlineUiWidthStyleCssStringIsOutdated
     // InlineUiStyleList
+    
+    public string GetGutterStyleCss(string topCssValue)
+    {
+    	ComponentData.UiStringBuilder.Clear();
+    
+    	ComponentData.UiStringBuilder.Append("top: ");
+        ComponentData.UiStringBuilder.Append(topCssValue);
+        ComponentData.UiStringBuilder.Append("px;");
+    
+        ComponentData.UiStringBuilder.Append(Gutter_HeightWidthPaddingCssStyle);
+
+        return ComponentData.UiStringBuilder.ToString();
+    }
+    
+    public string RowSection_GetRowStyleCss(int lineIndex)
+    {
+    	ComponentData.UiStringBuilder.Clear();
+    
+        ComponentData.UiStringBuilder.Append("top: ");
+        ComponentData.UiStringBuilder.Append(ComponentData.LineIndexCache.Map[lineIndex].TopCssValue);
+        ComponentData.UiStringBuilder.Append("px;");
+
+        ComponentData.UiStringBuilder.Append(LineHeightStyleCssString);
+
+        ComponentData.UiStringBuilder.Append("left: ");
+        ComponentData.UiStringBuilder.Append(ComponentData.LineIndexCache.Map[lineIndex].LeftCssValue);
+        ComponentData.UiStringBuilder.Append("px;");
+
+        return ComponentData.UiStringBuilder.ToString();
+    }
 }

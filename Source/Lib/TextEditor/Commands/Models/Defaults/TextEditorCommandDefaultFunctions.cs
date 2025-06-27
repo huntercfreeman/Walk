@@ -184,9 +184,9 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
-        if (viewModel.VirtualizationResultCount > 0)
+        if (viewModel.VirtualizationResult.Count > 0)
         {
-            var lastEntry = viewModel.VirtualizationResult.EntryList[viewModel.VirtualizationResultCount - 1];
+            var lastEntry = viewModel.VirtualizationResult.EntryList[viewModel.VirtualizationResult.Count - 1];
             var lastEntriesLineLength = modelModifier.GetLineLength(lastEntry.LineIndex);
 
             viewModel.LineIndex = lastEntry.LineIndex;
@@ -199,7 +199,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
-        if (viewModel.VirtualizationResultCount > 0)
+        if (viewModel.VirtualizationResult.Count > 0)
         {
         	var firstEntry = viewModel.VirtualizationResult.EntryList[0];
             viewModel.LineIndex = firstEntry.LineIndex;

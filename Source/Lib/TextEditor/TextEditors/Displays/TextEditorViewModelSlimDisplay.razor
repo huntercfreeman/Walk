@@ -27,48 +27,50 @@
 		 style="@_componentData.BothVirtualizationBoundaryStyleCssString">
 	</div>
     
-    @if (_componentData.RenderBatch.IsValid && _componentData.Css_LineIndexCache_EntryMap.Count != 0)
+    @{ var virtualizationResult = _componentData.VirtualizationResult; }
+    
+    @if (virtualizationResult.IsValid && _componentData.LineIndexCache.Map.Count != 0)
     {
     	<div class="di_te_three-dots-section">
-        	@for (int inlineUiIndex = 0; inlineUiIndex < _componentData.InlineUiStyleList.Count; inlineUiIndex++)
+        	@for (int inlineUiIndex = 0; inlineUiIndex < virtualizationResult.InlineUiStyleList.Count; inlineUiIndex++)
         	{
-        		<div style="@(_componentData.InlineUiStyleList[inlineUiIndex])"><!--
+        		<div style="@(virtualizationResult.InlineUiStyleList[inlineUiIndex])"><!--
 	    			-->...<!--
 	    		--></div>
         	}
         </div>
 					                           
-		for (int groupIndex = 0; groupIndex < _componentData.FirstPresentationLayerGroupList.Count; groupIndex++)
+		for (int groupIndex = 0; groupIndex < virtualizationResult.FirstPresentationLayerGroupList.Count; groupIndex++)
 		{
-			<div class="@_componentData.FirstPresentationLayerGroupList[groupIndex].CssClassString">
-				@for (int textSpanIndex = _componentData.FirstPresentationLayerGroupList[groupIndex].StartInclusiveIndex;
-					  textSpanIndex < _componentData.FirstPresentationLayerGroupList[groupIndex].EndExclusiveIndex;
+			<div class="@virtualizationResult.FirstPresentationLayerGroupList[groupIndex].CssClassString">
+				@for (int textSpanIndex = virtualizationResult.FirstPresentationLayerGroupList[groupIndex].StartInclusiveIndex;
+					  textSpanIndex < virtualizationResult.FirstPresentationLayerGroupList[groupIndex].EndExclusiveIndex;
 					  textSpanIndex++)
 				{
-					<div class="@_componentData.FirstPresentationLayerTextSpanList[textSpanIndex].PresentationCssClass"
-                         style="@_componentData.FirstPresentationLayerTextSpanList[textSpanIndex].PresentationCssStyle">
+					<div class="@virtualizationResult.FirstPresentationLayerTextSpanList[textSpanIndex].PresentationCssClass"
+                         style="@virtualizationResult.FirstPresentationLayerTextSpanList[textSpanIndex].PresentationCssStyle">
                     </div>
 				}
 			</div>
 		}
 		
 		<div class="di_te_text-selection-group">
-		    @for (var i = 0; i < _componentData.SelectionStyleList.Count; i++)
+		    @for (var i = 0; i < virtualizationResult.SelectionStyleList.Count; i++)
 	        {
-				<div style="@_componentData.SelectionStyleList[i]">
+				<div style="@virtualizationResult.SelectionStyleList[i]">
 				</div>
 	        }
 		</div>
 		
-		@for (int groupIndex = 0; groupIndex < _componentData.LastPresentationLayerGroupList.Count; groupIndex++)
+		@for (int groupIndex = 0; groupIndex < virtualizationResult.LastPresentationLayerGroupList.Count; groupIndex++)
 		{
-			<div class="@_componentData.LastPresentationLayerGroupList[groupIndex].CssClassString">
-				@for (int textSpanIndex = _componentData.LastPresentationLayerGroupList[groupIndex].StartInclusiveIndex;
-					  textSpanIndex < _componentData.LastPresentationLayerGroupList[groupIndex].EndExclusiveIndex;
+			<div class="@virtualizationResult.LastPresentationLayerGroupList[groupIndex].CssClassString">
+				@for (int textSpanIndex = virtualizationResult.LastPresentationLayerGroupList[groupIndex].StartInclusiveIndex;
+					  textSpanIndex < virtualizationResult.LastPresentationLayerGroupList[groupIndex].EndExclusiveIndex;
 					  textSpanIndex++)
 				{
-					<div class="@_componentData.LastPresentationLayerTextSpanList[textSpanIndex].PresentationCssClass"
-                         style="@_componentData.LastPresentationLayerTextSpanList[textSpanIndex].PresentationCssStyle">
+					<div class="@virtualizationResult.LastPresentationLayerTextSpanList[textSpanIndex].PresentationCssClass"
+                         style="@virtualizationResult.LastPresentationLayerTextSpanList[textSpanIndex].PresentationCssStyle">
                     </div>
 				}
 			</div>
@@ -80,8 +82,8 @@
     	{
     	    string gutterColumnTopCssValue;
     	
-    	    if (_componentData.RenderBatch.ViewModel.VirtualizationResultCount > 0)
-	        	gutterColumnTopCssValue = _componentData.Css_LineIndexCache_EntryMap[_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[0].LineIndex].TopCssValue;
+    	    if (virtualizationResult.ViewModel.VirtualizationResult.Count > 0)
+	        	gutterColumnTopCssValue = _componentData.LineIndexCache.Map[virtualizationResult.ViewModel.VirtualizationResult.EntryList[0].LineIndex].TopCssValue;
 	        else
 	            gutterColumnTopCssValue = "0";
 	        
@@ -91,30 +93,30 @@
 	        _componentData.UiStringBuilder.Append("px;");
     	
     		<div class="di_te_gutter-section"
-    			 style="@_componentData.Gutter_WidthCssStyle">
+    			 style="@virtualizationResult.Gutter_WidthCssStyle">
     			 
     			<div class="di_te_gutter-column"
     			     style="@(_componentData.UiStringBuilder.ToString())">
     			</div>
     			 
 	    		@for (int virtualizationResultIndex = 0;
-	    			  virtualizationResultIndex < _componentData.RenderBatch.ViewModel.VirtualizationResultCount;
+	    			  virtualizationResultIndex < virtualizationResult.ViewModel.VirtualizationResult.Count;
 	    			  virtualizationResultIndex++)
 			    {
-			        <div style="@(_componentData.GetGutterStyleCss(_componentData.Css_LineIndexCache_EntryMap[_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex].TopCssValue))">
+			        <div style="@(virtualizationResult.GetGutterStyleCss(_componentData.LineIndexCache.Map[virtualizationResult.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex].TopCssValue))">
 			             
-			            @(_componentData.Css_LineIndexCache_EntryMap[_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex].LineNumberString)
+			            @(_componentData.LineIndexCache.Map[virtualizationResult.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex].LineNumberString)
 			            
-			            @for (int i = 0; i < _componentData.VirtualizedCollapsePointList.Count; i++)
+			            @for (int i = 0; i < virtualizationResult.VirtualizedCollapsePointList.Count; i++)
 		            	{
-		            		if (_componentData.VirtualizedCollapsePointList[i].AppendToLineIndex == _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex)
+		            		if (virtualizationResult.VirtualizedCollapsePointList[i].AppendToLineIndex == virtualizationResult.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex)
 		            		{
-		            			collapsePoint = _componentData.VirtualizedCollapsePointList[i];
+		            			collapsePoint = virtualizationResult.VirtualizedCollapsePointList[i];
 		            			break;
 		            		}
 		            	}
 		
-						@if (collapsePoint.AppendToLineIndex == _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex)
+						@if (collapsePoint.AppendToLineIndex == virtualizationResult.EntryList[virtualizationResultIndex].LineIndex)
 						{
 						    <span class="di_te_gutter-chevron">
 						    	@if (collapsePoint.IsCollapsed)
@@ -135,25 +137,25 @@
     	<div class="di_te_text-section">
     	
     	    @{
-    	        var entireSpan = System.Runtime.InteropServices.CollectionsMarshal.AsSpan(_componentData.RenderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList);
+    	        var entireSpan = System.Runtime.InteropServices.CollectionsMarshal.AsSpan(virtualizationResult.VirtualizationSpanList);
     	    }
     	
 	    	@for (int virtualizationResultIndex = 0;
-	    		  virtualizationResultIndex < _componentData.RenderBatch.ViewModel.VirtualizationResultCount;
+	    		  virtualizationResultIndex < virtualizationResult.Count;
 	    		  virtualizationResultIndex++)
 		    {
-		    	<div style="@_componentData.RowSection_GetRowStyleCss(_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex)">
+		    	<div style="@virtualizationResult.RowSection_GetRowStyleCss(virtualizationResult.EntryList[virtualizationResultIndex].LineIndex)">
 				
 					@*
 						'!= 0' because the struct's int property will default to '0',
 						and if there is no text then the property is unchanged from its default value.
 					*@
-					@if (_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].VirtualizationSpan_EndExclusiveIndex != 0)
+					@if (virtualizationResult.EntryList[virtualizationResultIndex].VirtualizationSpan_EndExclusiveIndex != 0)
 					{
 					    var smallSpan = entireSpan.Slice(
-					        _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].VirtualizationSpan_StartInclusiveIndex,
-					        _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].VirtualizationSpan_EndExclusiveIndex -
-					            _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].VirtualizationSpan_StartInclusiveIndex);
+					        virtualizationResult.EntryList[virtualizationResultIndex].VirtualizationSpan_StartInclusiveIndex,
+					        virtualizationResult.EntryList[virtualizationResultIndex].VirtualizationSpan_EndExclusiveIndex -
+					            virtualizationResult.EntryList[virtualizationResultIndex].VirtualizationSpan_StartInclusiveIndex);
 					
 						foreach (var virtualizationSpan in smallSpan)
 						{
@@ -163,14 +165,14 @@
 					    }
 					}
 					
-					@if (GlobalShowNewlines && _componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex < _componentData.RenderBatch.Model.LineCount)
+					@if (GlobalShowNewlines && virtualizationResult.EntryList[virtualizationResultIndex].LineIndex < virtualizationResult.Model.LineCount)
 					{
 						// amountOfLeftInCharacterWidthUnits <= lengthOfLine
-						if (_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LeftInPixels / _componentData.RenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth <=
-							_componentData.RenderBatch.Model.GetLineLength(_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex, true))
+						if (virtualizationResult.EntryList[virtualizationResultIndex].LeftInPixels / virtualizationResult.ViewModel.CharAndLineMeasurements.CharacterWidth <=
+							virtualizationResult.Model.GetLineLength(virtualizationResult.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex, true))
 						{
 						    <span class="di_te_newline">
-						        @_componentData.RenderBatch.Model.LineEndList[_componentData.RenderBatch.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex].LineEndKind.AsCharactersHtmlEscaped()
+						        @virtualizationResult.Model.LineEndList[virtualizationResult.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex].LineEndKind.AsCharactersHtmlEscaped()
 						    </span>
 						}
 					}
@@ -179,40 +181,40 @@
 	    </div>
 	    
 	    <textarea id="@_componentData.PrimaryCursorContentId"
-				  tabindex="@_componentData.RenderBatch.TextEditorRenderBatchPersistentState.ViewModelDisplayOptions.TabIndex"
+				  tabindex="@virtualizationResult.TextEditorRenderBatchPersistentState.ViewModelDisplayOptions.TabIndex"
 				  class="@_componentData.BlinkAnimationCssClass"
-				  style="@_componentData.CursorCssStyle">
+				  style="@virtualizationResult.CursorCssStyle">
 		</textarea>
 						
 		<div class="@CaretRowCssClass"
-			 style="@_componentData.CaretRowCssStyle">
+			 style="@virtualizationResult.CaretRowCssStyle">
 		</div>
 	}
 	else
     {
-    	if (_componentData.RenderBatch.Model is null)
+    	if (virtualizationResult.Model is null)
 	    {
 	        <div>The @nameof(TextEditorModel) was null</div>
 	    }
-	    else if (_componentData.RenderBatch.ViewModel is null)
+	    else if (virtualizationResult.ViewModel is null)
 	    {
 	        <div>The @nameof(TextEditorViewModel) was null</div>
 	    }
-	    else if (_componentData.RenderBatch.TextEditorRenderBatchPersistentState.TextEditorOptions is null)
+	    else if (virtualizationResult.TextEditorRenderBatchPersistentState.TextEditorOptions is null)
 	    {
 	        <div>The @nameof(TextEditorOptions) was null</div>
 	    }
     }
     
-    <div class="di_te_scrollbar-section" style="@_componentData.ScrollbarSection_LeftCssStyle">
+    <div class="di_te_scrollbar-section" style="@virtualizationResult.ScrollbarSection_LeftCssStyle">
 		
 		<div class="di_te_scrollbar di_te_scrollbar-horizontal"
 		     id="@HORIZONTAL_ScrollbarElementId"
-		     style="@_componentData.HORIZONTAL_ScrollbarCssStyle">
+		     style="@virtualizationResult.HORIZONTAL_ScrollbarCssStyle">
 		    
 		    <div class="di_te_scrollbar-slider"
 		         id="@HORIZONTAL_ScrollbarSliderElementId"
-		         style="@_componentData.HORIZONTAL_SliderCssStyle">
+		         style="@virtualizationResult.HORIZONTAL_SliderCssStyle">
 		    </div>
 		</div><!--
 		
@@ -221,7 +223,7 @@
 		         
 		    <div class="di_te_scrollbar-slider"
 		         id="@VERTICAL_ScrollbarSliderElementId"
-		         style="@_componentData.VERTICAL_SliderCssStyle">
+		         style="@virtualizationResult.VERTICAL_SliderCssStyle">
 		    </div>
 		</div><!--
 	    

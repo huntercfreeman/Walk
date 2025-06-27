@@ -321,7 +321,7 @@ public sealed class TextEditorService
             	//
             	// This code only needs to run if the scrollbar was modified.
             	
-            	if (viewModelModifier.VirtualizationResultCount > 0)
+            	if (viewModelModifier.VirtualizationResult.Count > 0)
             	{
             		if (viewModelModifier.ScrollTop < viewModelModifier.VirtualizationResult.VirtualTop)
             		{
