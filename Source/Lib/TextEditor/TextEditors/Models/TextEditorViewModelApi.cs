@@ -1340,6 +1340,8 @@ public sealed class TextEditorViewModelApi
 		
 		componentData.VirtualizationResult = viewModel.VirtualizationResult;
 		
+		LineIndexCache_Create(viewModel.VirtualizationResult);
+		
 		#if DEBUG
 		WalkDebugSomething.SetTextEditorViewModelApi(Stopwatch.GetElapsedTime(startTime));
 		#endif
