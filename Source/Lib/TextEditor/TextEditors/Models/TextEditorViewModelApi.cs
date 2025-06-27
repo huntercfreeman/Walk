@@ -939,6 +939,8 @@ public sealed class TextEditorViewModelApi
     	var startTime = Stopwatch.GetTimestamp();
     	#endif
     	
+    	Console.WriteLine("CalculateVirtualizationResult");
+    	
 		var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
 		viewModel.ShouldCalculateVirtualizationResult = false;
 	
@@ -1335,6 +1337,8 @@ public sealed class TextEditorViewModelApi
 				componentData.LineIndexCache.ExistsKeyList.RemoveAt(i);
 			}
 		}
+		
+		componentData.VirtualizationResult = viewModel.VirtualizationResult;
 		
 		#if DEBUG
 		WalkDebugSomething.SetTextEditorViewModelApi(Stopwatch.GetElapsedTime(startTime));

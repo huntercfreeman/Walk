@@ -60,7 +60,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
     private TextEditorVirtualizationResult GetVirtualizationResult()
     {
-    	return GetComponentData()?.VirtualizationResult ?? default;
+    	return GetComponentData()?.VirtualizationResult ?? TextEditorVirtualizationResult.Empty;
     }
     
     private TextEditorComponentData? GetComponentData()

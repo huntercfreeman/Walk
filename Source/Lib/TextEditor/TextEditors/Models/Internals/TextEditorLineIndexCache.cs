@@ -21,7 +21,7 @@ public class TextEditorLineIndexCache
     public bool IsInvalid { get; set; }
     public HashSet<int> UsedKeyHashSet { get; set; } = new();
     public List<int> ExistsKeyList { get; set; } = new();
-	public List<int> ModifiedLineIndexList { get; set; }
+	public List<int> ModifiedLineIndexList { get; set; } = new();
 	/// <summary>If the scroll left changes you have to discard the virtualized line cache.</summary>
     public int ScrollLeftMarker { get; set; } = -1;
     public Key<TextEditorViewModel> ViewModelKeyMarker { get; set; } = Key<TextEditorViewModel>.Empty;

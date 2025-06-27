@@ -85,7 +85,7 @@ public sealed class TextEditorComponentData
         ? CursorCssClassBlinkAnimationOn
         : CursorCssClassBlinkAnimationOff;
 	
-	public TextEditorVirtualizationResult VirtualizationResult { get; set; }
+	public TextEditorVirtualizationResult VirtualizationResult { get; set; } = TextEditorVirtualizationResult.Empty;
 	
 	public TextEditorRenderBatchPersistentState RenderBatchPersistentState { get; set; }
 	
@@ -102,7 +102,7 @@ public sealed class TextEditorComponentData
 	/// By having the `LineIndexCache` here, you only incur the overhead
 	/// when there is a viewmodel actively being rendered.
 	/// </summary>
-    public TextEditorLineIndexCache LineIndexCache { get; set; }
+    public TextEditorLineIndexCache LineIndexCache { get; set; } = new();
     
     public Task MouseStoppedMovingTask { get; set; } = Task.CompletedTask;
     public Task MouseNoLongerOverTooltipTask { get; set; } = Task.CompletedTask;

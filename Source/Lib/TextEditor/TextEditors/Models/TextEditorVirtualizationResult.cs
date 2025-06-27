@@ -104,7 +104,7 @@ public class TextEditorVirtualizationResult
 	    
 	    IsValid = Model is not null &&
 			      ViewModel is not null &&
-			      TextEditorRenderBatchPersistentState.TextEditorOptions is not null;
+			      TextEditorRenderBatchPersistentState?.TextEditorOptions is not null;
     }
 
     /// <summary>

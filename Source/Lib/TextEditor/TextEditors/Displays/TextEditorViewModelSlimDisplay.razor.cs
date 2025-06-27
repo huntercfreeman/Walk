@@ -305,7 +305,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         else
         	fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
 		
-		_textEditorRenderBatchPersistentState = new TextEditorRenderBatchPersistentState(
+		_componentData.RenderBatchPersistentState = new TextEditorRenderBatchPersistentState(
 			textEditorOptions,
 			fontFamily,
 			fontSizeInPixels,
