@@ -407,26 +407,6 @@ public class TextEditorVirtualizationResult
     
     public string? ScrollbarSection_LeftCssStyle { get; set; }
 	
-	/// <summary>
-    /// Non loop related UI:
-    /// --------------------
-    /// - GutterColumnTopCss (specifically the column that provides background-color not the individual line numbers).
-    /// - CursorIsOnHiddenLine
-    /// - LineHeight
-    /// - LineHeightStyleCssString
-    /// - Gutter_HeightWidthPaddingCssStyle
-    /// - TextEditor_Height
-    /// - Scroll_Height
-    /// - Scroll_Top
-    /// - TextEditor_Width
-    /// - Scroll_Width
-    /// - Scroll_Left
-    /// - VERTICAL_GetSliderVerticalStyleCss
-    /// - HORIZONTAL_GetSliderHorizontalStyleCss
-    /// - HORIZONTAL_GetScrollbarHorizontalStyleCss
-    /// - ConstructVirtualizationStyleCssStrings
-    ///
-    /// </summary>
     public void CreateUi()
     {
         if (!IsValid)
@@ -435,7 +415,7 @@ public class TextEditorVirtualizationResult
         	return;
         }
         
-        LineHeightStyleCssString = _previousState.LineHeightStyleCssString;
+        // LineHeightStyleCssString = _previousState.LineHeightStyleCssString;
         
     	if (_previousState.Changed_GutterWidth)
     	{
