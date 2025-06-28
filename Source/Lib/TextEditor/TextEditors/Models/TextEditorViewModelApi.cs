@@ -1085,6 +1085,8 @@ public sealed class TextEditorViewModelApi
     	_createCacheEachSharedParameters.TabKeyOutput = tabKeyOutput;
     	_createCacheEachSharedParameters.SpaceKeyOutput = spaceKeyOutput;
 		
+		viewModel.VirtualizationResult.CreateUi_Start();
+		
 		_textEditorService.__StringBuilder.Clear();
 		
 		int linesTaken = 0;
@@ -1336,7 +1338,7 @@ public sealed class TextEditorViewModelApi
 		
 		componentData.VirtualizationResult = viewModel.VirtualizationResult;
 		
-		viewModel.VirtualizationResult.CreateUi();
+		viewModel.VirtualizationResult.CreateUi_End();
 		
 		#if DEBUG
 		WalkDebugSomething.SetTextEditorViewModelApi(Stopwatch.GetElapsedTime(startTime));
@@ -1376,14 +1378,9 @@ public sealed class TextEditorViewModelApi
     	int hiddenLineCount,
 		ref Span<TextEditorVirtualizationSpan> entireSpan)
     {
-        Console.WriteLine($"CreateCacheEach: entryIndex:{entryIndex}");
-    
     	var virtualizationEntry = _createCacheEachSharedParameters.ViewModel.VirtualizationResult.EntryList[entryIndex];
 		if (virtualizationEntry.Position_EndExclusiveIndex - virtualizationEntry.Position_StartInclusiveIndex <= 0)
-		{
-		    Console.WriteLine($"\tCreateCacheEach: entryIndex:{entryIndex} was empty.");
 			return;
-		}
 		
 		virtualizationEntry.VirtualizationSpan_StartInclusiveIndex = _createCacheEachSharedParameters.ViewModel.VirtualizationResult.VirtualizationSpanList.Count;
 		

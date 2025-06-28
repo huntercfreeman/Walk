@@ -261,6 +261,8 @@ public class TextEditorVirtualizationResult
     
     public string GutterCssStyle { get; set; }
     public string GutterSectionCssStyle { get; set; }
+    public string GutterColumnTopCss { get; set; }
+    
     // string RowSection_GetRowStyleCss(int lineIndex)
     public string CursorCssStyle { get; set; } = string.Empty;
     public string CaretRowCssStyle { get; set; } = string.Empty;
@@ -329,13 +331,23 @@ public class TextEditorVirtualizationResult
     	*/
     }
     
-    public void CreateUi()
+    public void CreateUi_Start()
     {
-        Console.WriteLine($"ComponentData.LineIndexCache.Map.Count: {ComponentData.LineIndexCache.Map.Count}");
+        string gutterColumnTopCssValue;
+    	
+	    if (ViewModel.VirtualizationResult.Count > 0)
+        	gutterColumnTopCssValue = ComponentData.LineIndexCache.Map[ViewModel.VirtualizationResult.EntryList[0].LineIndex].TopCssValue;
+        else
+            gutterColumnTopCssValue = "0";
         
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("top: ");
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(gutterColumnTopCssValue);
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
         
+        GutterColumnTopCss = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
 		
-        /*
+        
         if (!IsValid)
         {
         	DiagnoseIssues();
@@ -424,7 +436,10 @@ public class TextEditorVirtualizationResult
 			HORIZONTAL_GetScrollbarHorizontalStyleCss();
     
     	ConstructVirtualizationStyleCssStrings();
+    }
     
+    public void CreateUi_End()
+    {
     	// Somewhat hacky second try-catch so the presentations
     	// don't clobber the text editor's default behavior when they throw an exception.
     	try
@@ -462,90 +477,6 @@ public class TextEditorVirtualizationResult
         {
         	Console.WriteLine("inner " + e);
         }
-		
-		for (int i = ComponentData.LineIndexCache.ExistsKeyList.Count - 1; i >= 0; i--)
-		{
-			if (!ComponentData.LineIndexCache.UsedKeyHashSet.Contains(ComponentData.LineIndexCache.ExistsKeyList[i]))
-			{
-				ComponentData.LineIndexCache.Map.Remove(ComponentData.LineIndexCache.ExistsKeyList[i]);
-				ComponentData.LineIndexCache.ExistsKeyList.RemoveAt(i);
-			}
-		}
-		
-		if (++_stopDebugConsoleWriteCount == 2)
-		{
-		    Console.WriteLine("\n\n=============");
-		
-    		// Console.WriteLine($"Model: {Model}");
-            // Console.WriteLine($"ViewModel: {ViewModel}");
-            // Console.WriteLine($"TextEditorRenderBatchPersistentState: {TextEditorRenderBatchPersistentState}");
-            
-            Console.WriteLine($"IsValid: {IsValid}");
-                
-            // Console.WriteLine($"ComponentData: {ComponentData}");
-            
-            // Console.WriteLine($"InlineUiWidthStyleCssString: {InlineUiWidthStyleCssString}");
-        	
-        	
-        	// Console.WriteLine($"CursorIsOnHiddenLine: {CursorIsOnHiddenLine}");
-            
-            // Console.WriteLine($"ShouldScroll: {ShouldScroll}");
-            
-            // Console.WriteLine($"UseLowerBoundInclusiveLineIndex: {UseLowerBoundInclusiveLineIndex}");
-            // Console.WriteLine($"UseUpperBoundExclusiveLineIndex: {UseUpperBoundExclusiveLineIndex}");
-            // Console.WriteLine($"SelectionBoundsInPositionIndexUnits: {SelectionBoundsInPositionIndexUnits}");
-            
-            // Console.WriteLine($"FirstPresentationLayerGroupList: {FirstPresentationLayerGroupList}");
-        	// Console.WriteLine($"FirstPresentationLayerTextSpanList: {FirstPresentationLayerTextSpanList}");
-        	
-            // Console.WriteLine($"LastPresentationLayerGroupList: {LastPresentationLayerGroupList}");
-        	// Console.WriteLine($"LastPresentationLayerTextSpanList: {LastPresentationLayerTextSpanList}");
-        	
-        	// Console.WriteLine($"InlineUiStyleList: {InlineUiStyleList}");
-            
-            // Console.WriteLine($"SelectionStyleList: {SelectionStyleList}");
-            
-            // Console.WriteLine($"VirtualizedCollapsePointList: {VirtualizedCollapsePointList}");
-            // Console.WriteLine($"VirtualizedCollapsePointListVersion: {VirtualizedCollapsePointListVersion}");
-            
-            // Console.WriteLine($"VirtualizedTextSpanList: {VirtualizedTextSpanList}");
-            // Console.WriteLine($"OutTextSpansList: {OutTextSpansList}");
-            
-        	Console.WriteLine($"LineHeight: {LineHeight}");
-        	
-        	Console.WriteLine($"TextEditor_Width: {TextEditor_Width}");
-        	Console.WriteLine($"TextEditor_Height: {TextEditor_Height}");
-        	
-        	Console.WriteLine($"LineHeightStyleCssString: {LineHeightStyleCssString}");
-        	
-            Console.WriteLine($"Gutter_HeightWidthPaddingCssStyle: {Gutter_HeightWidthPaddingCssStyle}");
-        	
-            Console.WriteLine($"Gutter_WidthCssStyle: {Gutter_WidthCssStyle}");
-            Console.WriteLine($"GutterWidth: {GutterWidth}");
-            Console.WriteLine($"GutterCssStyle: {GutterCssStyle}");
-            Console.WriteLine($"GutterSectionCssStyle: {GutterSectionCssStyle}");
-            
-            Console.WriteLine($"BodyStyle: {BodyStyle}");
-            
-            Console.WriteLine($"CursorCssStyle: {CursorCssStyle}");
-            Console.WriteLine($"CaretRowCssStyle: {CaretRowCssStyle}");
-        	
-        	Console.WriteLine($"Scroll_Width: {Scroll_Width}");
-        	Console.WriteLine($"Scroll_Height: {Scroll_Height}");
-        	Console.WriteLine($"Scroll_Left: {Scroll_Left}");
-        	Console.WriteLine($"Scroll_Top: {Scroll_Top}");
-        	Console.WriteLine($"ScrollLeft: {ScrollLeft}");
-        	Console.WriteLine($"VERTICAL_SliderCssStyle: {VERTICAL_SliderCssStyle}");
-            Console.WriteLine($"HORIZONTAL_SliderCssStyle: {HORIZONTAL_SliderCssStyle}");
-            Console.WriteLine($"HORIZONTAL_ScrollbarCssStyle: {HORIZONTAL_ScrollbarCssStyle}");
-        	
-            Console.WriteLine($"ScrollbarSection_LeftCssStyle: {ScrollbarSection_LeftCssStyle}");
-            
-            Console.WriteLine($"_seenViewModelKey: {_seenViewModelKey}");
-            
-            Console.WriteLine("=============\n");
-        }
-        */
     }
     
     public string GetGutterStyleCss(string topCssValue)
