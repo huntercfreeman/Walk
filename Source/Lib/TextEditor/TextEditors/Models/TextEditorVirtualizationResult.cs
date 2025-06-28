@@ -610,17 +610,17 @@ public class TextEditorVirtualizationResult
     
         GetSelection();
         
-        /* GetPresentationLayer(
+        GetPresentationLayer(
         	ViewModel.PersistentState.FirstPresentationLayerKeysList,
         	FirstPresentationLayerGroupList,
-        	FirstPresentationLayerTextSpanList); */
+        	FirstPresentationLayerTextSpanList);
         	
-        /* GetPresentationLayer(
+        GetPresentationLayer(
         	ViewModel.PersistentState.LastPresentationLayerKeysList,
         	LastPresentationLayerGroupList,
-        	LastPresentationLayerTextSpanList); */
+        	LastPresentationLayerTextSpanList);
         
-        /* if (VirtualizedCollapsePointListVersion != ViewModel.PersistentState.VirtualizedCollapsePointListVersion ||
+        if (VirtualizedCollapsePointListVersion != ViewModel.PersistentState.VirtualizedCollapsePointListVersion ||
         	_seenViewModelKey != ViewModel.PersistentState.ViewModelKey)
         {
         	VirtualizedCollapsePointList.Clear();
@@ -634,7 +634,7 @@ public class TextEditorVirtualizationResult
         	
         	_seenViewModelKey = ViewModel.PersistentState.ViewModelKey;
         	VirtualizedCollapsePointListVersion = ViewModel.PersistentState.VirtualizedCollapsePointListVersion;
-        } */
+        }
     }
     
     public string GetGutterStyleCss(string topCssValue)
@@ -738,26 +738,22 @@ public class TextEditorVirtualizationResult
     		
     		var lineAndColumnIndices = Model.GetLineAndColumnIndicesFromPositionIndex(entry.InlineUi.PositionIndex);
     		
-    		if (!ComponentData.LineIndexCache.Map.ContainsKey(lineAndColumnIndices.lineIndex))
+    		if (!ComponentData.LineIndexCache.Map.TryGetValue(lineAndColumnIndices.lineIndex, out var cacheEntry))
     			continue;
     		
     		var leftInPixels = GutterWidth + lineAndColumnIndices.columnIndex * CharAndLineMeasurements.CharacterWidth;
     		
     		// Tab key column offset
-    		{
-	    		var tabsOnSameLineBeforeCursor = Model.GetTabCountOnSameLineBeforeCursor(
-				    lineAndColumnIndices.lineIndex,
-				    lineAndColumnIndices.columnIndex);
-				
-				// 1 of the character width is already accounted for
-				var extraWidthPerTabKey = tabWidth - 1;
-				
-				leftInPixels += extraWidthPerTabKey *
-				    tabsOnSameLineBeforeCursor *
-				    CharAndLineMeasurements.CharacterWidth;
-			}
+    		var tabsOnSameLineBeforeCursor = Model.GetTabCountOnSameLineBeforeCursor(
+			    lineAndColumnIndices.lineIndex,
+			    lineAndColumnIndices.columnIndex);
+			// 1 of the character width is already accounted for
+			var extraWidthPerTabKey = tabWidth - 1;
+			leftInPixels += extraWidthPerTabKey *
+			    tabsOnSameLineBeforeCursor *
+			    CharAndLineMeasurements.CharacterWidth;
     		
-    		var topCssValue = ComponentData.LineIndexCache.Map[lineAndColumnIndices.lineIndex].TopCssValue;
+    		var topCssValue = cacheEntry.TopCssValue;
 
     		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
     		
@@ -787,7 +783,7 @@ public class TextEditorVirtualizationResult
     	double leftInPixels = GutterWidth;
     	var topInPixelsInvariantCulture = string.Empty;
 	
-		/* if (CursorIsOnHiddenLine)
+		if (CursorIsOnHiddenLine)
 		{
 			for (int collapsePointIndex = 0; collapsePointIndex < ViewModel.PersistentState.AllCollapsePointList.Count; collapsePointIndex++)
 			{
@@ -820,29 +816,24 @@ public class TextEditorVirtualizationResult
 			        }
 			        
 			        // +3 for the 3 dots: '[...]'
-			        /*leftInPixels += CharAndLineMeasurements.CharacterWidth * (appendToLineInformation.LastValidColumnIndex + 3);
+			        leftInPixels += CharAndLineMeasurements.CharacterWidth * (appendToLineInformation.LastValidColumnIndex + 3);
 			        
-			        if (ComponentData.LineIndexCache.Map.ContainsKey(collapsePoint.AppendToLineIndex))
+			        if (ComponentData.LineIndexCache.Map.TryGetValue(collapsePoint.AppendToLineIndex, out var cacheEntry1))
 			        {
-			        	topInPixelsInvariantCulture = ComponentData.LineIndexCache.Map[collapsePoint.AppendToLineIndex].TopCssValue;
+			        	topInPixelsInvariantCulture = cacheEntry1.TopCssValue;
 			        }
 			        else
 			        {
-			        	if (Count > 0)
-			        	{
-			        		var firstEntry = EntryList[0];
-			        		topInPixelsInvariantCulture = ComponentData.LineIndexCache.Map[firstEntry.LineIndex].TopCssValue;
-			        	}
+			        	if (Count > 0 && ComponentData.LineIndexCache.Map.TryGetValue(EntryList[0].LineIndex, out var cacheEntry2))
+			        		topInPixelsInvariantCulture = cacheEntry2.TopCssValue;
 			        	else
-			        	{
 			        		topInPixelsInvariantCulture = 0.ToString();
-			        	}
 			        }
 			        
 			        break;
 				}
 			}
-		} */
+		}
 
 		if (!shouldAppearAfterCollapsePoint)
 		{
@@ -858,7 +849,7 @@ public class TextEditorVirtualizationResult
 	        
 	        leftInPixels += CharAndLineMeasurements.CharacterWidth * ViewModel.ColumnIndex;
 	        
-	        /*for (int inlineUiTupleIndex = 0; inlineUiTupleIndex < ViewModel.PersistentState.InlineUiList.Count; inlineUiTupleIndex++)
+	        for (int inlineUiTupleIndex = 0; inlineUiTupleIndex < ViewModel.PersistentState.InlineUiList.Count; inlineUiTupleIndex++)
 			{
 				var inlineUiTuple = ViewModel.PersistentState.InlineUiList[inlineUiTupleIndex];
 				
@@ -878,7 +869,7 @@ public class TextEditorVirtualizationResult
 						leftInPixels += CharAndLineMeasurements.CharacterWidth * 3;
 					}
 				}
-			}*/
+			}
 	    }
         
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
@@ -1008,7 +999,7 @@ public class TextEditorVirtualizationResult
         int position_UpperExclusiveIndex,
         int lineIndex)
     {
-        if (lineIndex >= Model.LineEndList.Count)
+        if (lineIndex >= Model.LineEndList.Count || !ComponentData.LineIndexCache.Map.TryGetValue(lineIndex, out var cacheEntry))
             return string.Empty;
 
         var line = Model.GetLineInformation(lineIndex);
@@ -1035,7 +1026,7 @@ public class TextEditorVirtualizationResult
 
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
         
-        var topInPixelsInvariantCulture = ComponentData.LineIndexCache.Map[lineIndex].TopCssValue;
+        var topInPixelsInvariantCulture = cacheEntry.TopCssValue;
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("top: ");
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(topInPixelsInvariantCulture);
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
@@ -1304,7 +1295,7 @@ public class TextEditorVirtualizationResult
         int position_UpperExclusiveIndex,
         int lineIndex)
     {
-        if (lineIndex >= Model.LineEndList.Count)
+        if (lineIndex >= Model.LineEndList.Count || !ComponentData.LineIndexCache.Map.TryGetValue(lineIndex, out var cacheEntry))
             return string.Empty;
 
         var line = Model.GetLineInformation(lineIndex);
@@ -1327,7 +1318,7 @@ public class TextEditorVirtualizationResult
             fullWidthOfLineIsSelected = false;
         }
 
-        var topInPixelsInvariantCulture = ComponentData.LineIndexCache.Map[lineIndex].TopCssValue;
+        var topInPixelsInvariantCulture = cacheEntry.TopCssValue;
         
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("position: absolute; ");
