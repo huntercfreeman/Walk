@@ -758,8 +758,6 @@ public class TextEditorVirtualizationResult
     
     public void GetCursorAndCaretRowStyleCss()
     {
-        Console.WriteLine(GetHashCode());
-    
     	var shouldAppearAfterCollapsePoint = false; // CursorIsOnHiddenLine;
     	var tabWidth = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetOptions().TabWidth;
     	
@@ -825,8 +823,6 @@ public class TextEditorVirtualizationResult
 
 		if (!shouldAppearAfterCollapsePoint)
 		{
-		    Console.WriteLine($"ViewModel.ColumnIndex: {ViewModel.ColumnIndex}");
-		
 	        // Tab key column offset
             var tabsOnSameLineBeforeCursor = Model.GetTabCountOnSameLineBeforeCursor(
                 ViewModel.LineIndex,
@@ -897,7 +893,6 @@ public class TextEditorVirtualizationResult
         // So store the result of this method incase an exception occurs in future invocations,
         // to keep the cursor on screen while the state works itself out.
         CursorCssStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
-        Console.WriteLine(CursorCssStyle);
     
     	/////////////////////
     	/////////////////////
