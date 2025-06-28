@@ -385,7 +385,7 @@ public sealed class TextEditorService
 			    if (componentData is not null)
 			    {
 			        viewModelModifier.Virtualization.ViewModel = viewModelModifier;
-			        viewModelModifier.Virtualization.GetCursorAndCaretRowStyleCss();
+			        viewModelModifier.Virtualization.External_GetCursorCss();
 		        }
 			}
 			

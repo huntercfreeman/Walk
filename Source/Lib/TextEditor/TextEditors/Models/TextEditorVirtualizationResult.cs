@@ -577,12 +577,18 @@ public class TextEditorVirtualizationResult
     	ConstructVirtualizationStyleCssStrings();
     }
     
+    public void External_GetCursorCss()
+    {
+        GetCursorAndCaretRowStyleCss();
+        GetSelection();
+    }
+    
     public void CreateUi_IsCacheDependent()
     {
         if (ViewModel.Changed_Cursor_AnyState || (CursorCssStyle == string.Empty))
             GetCursorAndCaretRowStyleCss();
     
-        // GetSelection();
+        GetSelection();
         
         /* GetPresentationLayer(
         	ViewModel.PersistentState.FirstPresentationLayerKeysList,
