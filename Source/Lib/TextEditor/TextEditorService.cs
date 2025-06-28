@@ -372,6 +372,9 @@ public sealed class TextEditorService
 				}
 			}
 			
+			if (viewModelModifier.Changed_Cursor_AnyState)
+			    viewModelModifier.Virtualization.CalculateCursorUi();
+			
 			TextEditorState._viewModelMap[viewModelModifier.PersistentState.ViewModelKey] = viewModelModifier;
         }
 	    

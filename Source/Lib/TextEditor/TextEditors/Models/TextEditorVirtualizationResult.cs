@@ -403,6 +403,11 @@ public class TextEditorVirtualizationResult
     
     public string ScrollbarSection_LeftCssStyle { get; set; }
 	
+	public void CalculateCursorUi()
+	{
+	    
+	}
+	
     public void LineIndexCache_Create()
     {
         /*

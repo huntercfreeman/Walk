@@ -90,11 +90,11 @@ public sealed class TextEditorViewModel : IDisposable
 	{
 		PersistentState = other.PersistentState;
 		
-	    LineIndex = other.LineIndex;
-	    ColumnIndex = other.ColumnIndex;
-	    PreferredColumnIndex = other.PreferredColumnIndex;
-	    SelectionAnchorPositionIndex = other.SelectionAnchorPositionIndex;
-	    SelectionEndingPositionIndex = other.SelectionEndingPositionIndex;
+	    _lineIndex = other._lineIndex;
+	    _columnIndex = other._columnIndex;
+	    _preferredColumnIndex = other._preferredColumnIndex;
+	    _selectionAnchorPositionIndex = other._selectionAnchorPositionIndex;
+	    _selectionEndingPositionIndex = other._selectionEndingPositionIndex;
 	    
 	    Virtualization = other.Virtualization;
 		
@@ -182,10 +182,21 @@ public sealed class TextEditorViewModel : IDisposable
     }
     
     /// <summary>
+    /// Given the dimensions of the rendered text editor, this provides a subset of the file's content, such that "only what is
+    /// visible when rendered" is in this. There is some padding of offscreen content so that scrolling is smoother.
+    /// </summary>
+    public TextEditorVirtualizationResult Virtualization { get; set; }
+	
+    public bool ScrollWasModified { get; set; }
+    
+    /// <summary>
     /// When settings `Changed_...` also set this property.
     /// Then to determine if the many `Changed_...` properties that are not this one
     /// have changed, you can first check this singular property so you short circuit
     /// if nothing changed.
+    ///
+    /// Don't copy any of the `Changed_...` properties when making a copy of a viewmodel.
+    /// They're just used as markers during the lifespan of each viewmodel whether the UI needs to be updated.
     /// </summary>
     public bool Changed_Cursor_AnyState { get; set; }
     
@@ -194,14 +205,6 @@ public sealed class TextEditorViewModel : IDisposable
     public bool Changed_PreferredColumnIndex { get; set; }
     public bool Changed_SelectionAnchorPositionIndex { get; set; }
     public bool Changed_SelectionEndingPositionIndex { get; set; }
-    
-    /// <summary>
-    /// Given the dimensions of the rendered text editor, this provides a subset of the file's content, such that "only what is
-    /// visible when rendered" is in this. There is some padding of offscreen content so that scrolling is smoother.
-    /// </summary>
-    public TextEditorVirtualizationResult Virtualization { get; set; }
-	
-    public bool ScrollWasModified { get; set; }
     
     public ValueTask FocusAsync()
     {
