@@ -111,7 +111,9 @@ public sealed class TextEditorViewModelApi
 			_panelService,
 			_dialogService,
 			_commonBackgroundTaskApi,
-			new(
+			// Do not use `TextEditorVirtualizationResult.Empty` here.
+			// The viewmodels themselves will modify their virtualization result instances.
+			new TextEditorVirtualizationResult(
                 Array.Empty<TextEditorVirtualizationLine>(),
                 new List<TextEditorVirtualizationSpan>(),
                 totalWidth: 0,

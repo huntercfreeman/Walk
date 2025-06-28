@@ -71,8 +71,45 @@ public class TextEditorVirtualizationResult
         model: null,
 	    viewModel: null,
 	    renderBatchPersistentState: null,
-	    count: 0,
-	    previousState: null);
+	    count: 0);
+
+    /// <summary>
+    /// This constructor permits the Empty instance to be made without
+    /// an if statement relating to the previousState.
+    /// </summary>
+    public TextEditorVirtualizationResult(
+        TextEditorVirtualizationLine[] entries,
+        List<TextEditorVirtualizationSpan> virtualizationSpanList,
+        int totalWidth,
+        int totalHeight,
+        int resultWidth,
+        int resultHeight,
+        double left,
+        int top,
+        TextEditorComponentData? componentData,
+        TextEditorModel? model,
+	    TextEditorViewModel? viewModel,
+	    TextEditorRenderBatchPersistentState? renderBatchPersistentState,
+	    int count)
+    {
+        EntryList = entries;
+        VirtualizationSpanList = virtualizationSpanList;
+        TotalWidth = totalWidth;
+        TotalHeight = totalHeight;
+        VirtualWidth = resultWidth;
+        VirtualHeight = resultHeight;
+        VirtualLeft = left;
+        VirtualTop = top;
+        ComponentData = componentData;
+        Model = model;
+	    ViewModel = viewModel;
+	    TextEditorRenderBatchPersistentState = renderBatchPersistentState;
+	    Count = count;
+	    
+	    IsValid = Model is not null &&
+			      ViewModel is not null &&
+			      TextEditorRenderBatchPersistentState?.TextEditorOptions is not null;
+    }
 
 	/// <summary>Measurements are in pixels</summary>
     public TextEditorVirtualizationResult(
@@ -107,7 +144,17 @@ public class TextEditorVirtualizationResult
 	    _previousState = previousState;
 	    
 	    if (previousState is not null)
-	        TextEditorDimensions = previousState.TextEditorDimensions;
+	    {
+	        _textEditorDimensions = previousState._textEditorDimensions;
+            _gutterWidth = previousState._gutterWidth;
+        	_textEditorDimensions = previousState._textEditorDimensions;
+            _scrollTop = previousState._scrollTop;
+            _scrollWidth = previousState._scrollWidth;
+            _scrollHeight = previousState._scrollHeight;
+            _marginScrollHeight = previousState._marginScrollHeight;
+            _scrollLeft = previousState._scrollLeft;
+            _charAndLineMeasurements = previousState._charAndLineMeasurements;
+        }
 	    
 	    IsValid = Model is not null &&
 			      ViewModel is not null &&
@@ -171,8 +218,6 @@ public class TextEditorVirtualizationResult
     /// </summary>
     public int VirtualTop { get; init; }
 	
-	public TextEditorDimensions TextEditorDimensions { get; set; }
-	
     public TextEditorModel? Model { get; set; }
     public TextEditorViewModel? ViewModel { get; set; }
     public TextEditorRenderBatchPersistentState? TextEditorRenderBatchPersistentState { get; set; }
@@ -182,7 +227,6 @@ public class TextEditorVirtualizationResult
     public TextEditorComponentData? ComponentData { get; set; }
     
     public string? InlineUiWidthStyleCssString { get; set; }
-	
 	
 	public bool CursorIsOnHiddenLine { get; set; } = false;
     
@@ -208,22 +252,118 @@ public class TextEditorVirtualizationResult
     public List<TextEditorTextSpan> VirtualizedTextSpanList { get; set; } = new();
     public List<TextEditorTextSpan> OutTextSpansList { get; set; } = new();
     
-    /// <summary>Pixels (px)</summary>
-	public int LineHeight { get; set; }
+    private int _gutterWidth;
+    public int GutterWidth
+    {
+        get => _gutterWidth;
+        set
+        {
+            if (_gutterWidth != value)
+                Changed_GutterWidth = true;
+            _gutterWidth = value;
+        }
+    }
+    
+	private TextEditorDimensions _textEditorDimensions;
+	public TextEditorDimensions TextEditorDimensions
+	{
+	    get => _textEditorDimensions;
+	    set
+	    {
+	        if (_textEditorDimensions.Width != value.Width)
+	            Changed_TextEditorWidth = true;
+            if (_textEditorDimensions.Height != value.Height)
+	            Changed_TextEditorHeight = true;
+            _textEditorDimensions = value;
+	    }
+    }
+    
+    private int _scrollTop;
+    public int ScrollTop
+    {
+        get => _scrollTop;
+        set
+        {
+            if (_scrollTop != value)
+                Changed_ScrollTop = true;
+            _scrollTop = value;
+        }
+    }
+    
+    private int _scrollWidth;
+    public int ScrollWidth
+    {
+        get => _scrollWidth;
+        set
+        {
+            if (_scrollWidth != value)
+                Changed_ScrollWidth = true;
+            _scrollWidth = value;
+        }
+    }
+    
+    private int _scrollHeight;
+    public int ScrollHeight
+    {
+        get => _scrollHeight;
+        set
+        {
+            if (_scrollHeight != value)
+                Changed_ScrollHeight = true;
+            _scrollHeight = value;
+        }
+    }
+    
+    private int _marginScrollHeight;
+    public int MarginScrollHeight
+    {
+        get => _marginScrollHeight;
+        set
+        {
+            if (_marginScrollHeight != value)
+                Changed_MarginScrollHeight = true;
+            _marginScrollHeight = value;
+        }
+    }
+    
+    private int _scrollLeft;
+    public int ScrollLeft
+    {
+        get => _scrollLeft;
+        set
+        {
+            if (_scrollLeft != value)
+                Changed_ScrollLeft = true;
+            _scrollLeft = value;
+        }
+    }
+    
+    private CharAndLineMeasurements _charAndLineMeasurements;
+    public CharAndLineMeasurements CharAndLineMeasurements
+    {
+        get => _charAndLineMeasurements;
+        set
+        {
+            if (_charAndLineMeasurements.CharacterWidth != value.CharacterWidth)
+                Changed_CharacterWidth = true;
+            if (_charAndLineMeasurements.LineHeight != value.LineHeight)
+                Changed_LineHeight = true;
+            _charAndLineMeasurements = value;
+        }
+    }
+    
+    public bool Changed_GutterWidth { get; set; }
+    public bool Changed_LineHeight { get; set; }
+    public bool Changed_CharacterWidth { get; set; }
+    public bool Changed_TextEditorWidth { get; set; }
+    public bool Changed_TextEditorHeight { get; set; }
+    public bool Changed_ScrollHeight { get; set; }
+    public bool Changed_ScrollTop { get; set; }
+    public bool Changed_ScrollWidth { get; set; }
+    public bool Changed_ScrollLeft { get; set; }
+    public bool Changed_MarginScrollHeight { get; set; }
 	
-	/// <summary>Pixels (px)</summary>
-	public int TextEditor_Width { get; set; }
-	/// <summary>Pixels (px)</summary>
-	public int TextEditor_Height { get; set; }
-	
-	/// <summary>Pixels (px)</summary>
-	public int Scroll_Width { get; set; }
-	/// <summary>Pixels (px)</summary>
-	public int Scroll_Height { get; set; }
-	/// <summary>Pixels (px)</summary>
-	public int Scroll_Left { get; set; }
-	/// <summary>Pixels (px)</summary>
-	public int Scroll_Top { get; set; }
+	public bool ShouldCalculateVirtualizationResult { get; set; }
 	
 	/// <summary>
     /// Each individual line number is a separate "gutter".
@@ -242,16 +382,7 @@ public class TextEditorVirtualizationResult
     /// </summary>
     public string Gutter_HeightWidthPaddingCssStyle { get; set; }
     
-	
     public string Gutter_WidthCssStyle { get; set; }
-    
-    /// <summary>
-    /// Pixels (px)
-    ///
-    /// The initial value cannot be 0 else any text editor without a gutter cannot detect change on the initial render.
-    /// Particularly, whatever the double subtraction -- absolute value precision -- check is, it has to be greater a difference than that.
-    /// </summary>
-    public int GutterWidth { get; set; } = -2;
     
     public string LineHeightStyleCssString { get; set; }
     
@@ -270,38 +401,8 @@ public class TextEditorVirtualizationResult
     public string HORIZONTAL_SliderCssStyle { get; set; }
     public string HORIZONTAL_ScrollbarCssStyle { get; set; }
     
-    public int ScrollTop { get; set; }
-    public int ScrollWidth { get; set; }
-    public int ScrollHeight { get; set; }
-    public int MarginScrollHeight { get; set; }
-    
-    /// <summary>Pixels (px)</summary>
-    public int ScrollLeft { get; set; }
-    
     public string ScrollbarSection_LeftCssStyle { get; set; }
 	
-	/// <summary>
-	/// TODO: Rename 'CharAndLineMeasurements' to 'CharAndLineDimensions'...
-	///       ...as to bring it inline with 'TextEditorDimensions' and 'ScrollbarDimensions'.
-	/// </summary>
-    public CharAndLineMeasurements CharAndLineMeasurements { get; set; }
-    
-    /// <summary>
-	/// This property decides whether or not to re-calculate the virtualization result that gets displayed on the UI.
-	/// </summary>
-    public bool ShouldCalculateVirtualizationResult { get; set; }
-    
-    public bool Changed_LineHeight { get; set; }
-    public bool Changed_CharacterWidth { get; set; }
-    public bool Changed_TextEditorWidth { get; set; }
-    public bool Changed_TextEditorHeight { get; set; }
-    public bool Changed_ScrollHeight { get; set; }
-    public bool Changed_ScrollTop { get; set; }
-    public bool Changed_ScrollWidth { get; set; }
-    public bool Changed_ScrollLeft { get; set; }
-    
-    private static int _stopDebugConsoleWriteCount = 0;
-    
     public void LineIndexCache_Create()
     {
         /*
@@ -410,8 +511,6 @@ public class TextEditorVirtualizationResult
     	
     	if (Changed_LineHeight)
     	{
-    		LineHeight = ViewModel.Virtualization.CharAndLineMeasurements.LineHeight;
-			
 			ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
     		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("height: ");
 	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ViewModel.Virtualization.CharAndLineMeasurements.LineHeight.ToString());
@@ -426,7 +525,6 @@ public class TextEditorVirtualizationResult
 		}
 		else
 		{
-		    LineHeight = _previousState.LineHeight;
 		    LineHeightStyleCssString = _previousState.LineHeightStyleCssString;
 		    Gutter_HeightWidthPaddingCssStyle = _previousState.Gutter_HeightWidthPaddingCssStyle;
 		}
