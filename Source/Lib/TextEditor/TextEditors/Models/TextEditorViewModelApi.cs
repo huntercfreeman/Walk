@@ -1061,10 +1061,10 @@ public sealed class TextEditorViewModelApi
 		previousVirtualizationResult.GutterWidth = GetGutterWidthInPixels(modelModifier, viewModel, componentData);
 		viewModel.Virtualization.GutterWidth = GetGutterWidthInPixels(modelModifier, viewModel, componentData);
 		
-		/*if (componentData.LineIndexCache.IsInvalid)
+		if (componentData.LineIndexCache.IsInvalid)
 			componentData.LineIndexCache.Clear();
 		else
-			componentData.LineIndexCache.UsedKeyHashSet.Clear();*/
+			componentData.LineIndexCache.UsedKeyHashSet.Clear();
 		
 		var absDiffScrollLeft = Math.Abs(componentData.LineIndexCache.ScrollLeftMarker - viewModel.Virtualization.ScrollLeft);
 		var useAll = absDiffScrollLeft < 0.01 && componentData.LineIndexCache.ViewModelKeyMarker == viewModel.PersistentState.ViewModelKey;
@@ -1134,7 +1134,7 @@ public sealed class TextEditorViewModelApi
 			var useCache = _createCacheEachSharedParameters.ComponentData.LineIndexCache.Map.ContainsKey(lineIndex) &&
 				          !_createCacheEachSharedParameters.ComponentData.LineIndexCache.ModifiedLineIndexList.Contains(lineIndex);
 			
-			/*if (useCache)
+			if (useCache)
 			{
     			var previous = _createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[lineIndex];
     			
@@ -1143,13 +1143,21 @@ public sealed class TextEditorViewModelApi
 	
 	            _createCacheEachSharedParameters.ComponentData.LineIndexCache.UsedKeyHashSet.Add(cacheEntry.LineIndex);
     			
-    			var smallSpan = entireSpan.Slice(
-    			    previous.VirtualizationSpan_StartInclusiveIndex,
-    			    previous.VirtualizationSpan_EndExclusiveIndex - previous.VirtualizationSpan_StartInclusiveIndex);
-    			
-    			foreach (var virtualizedSpan in smallSpan)
+    			if (previous.VirtualizationSpan_EndExclusiveIndex - previous.VirtualizationSpan_StartInclusiveIndex > 0)
     			{
-    				_createCacheEachSharedParameters.ViewModel.Virtualization.VirtualizationSpanList.Add(virtualizedSpan);
+    			    Console.WriteLine($"previous.VirtualizationSpan_StartInclusiveIndex: {previous.VirtualizationSpan_StartInclusiveIndex}");
+    			    Console.WriteLine($"previous.VirtualizationSpan_EndExclusiveIndex: {previous.VirtualizationSpan_EndExclusiveIndex}");
+    			    Console.WriteLine($"entireSpan.Length: {entireSpan.Length}");
+    			    
+    			
+    			    var smallSpan = entireSpan.Slice(
+        			    previous.VirtualizationSpan_StartInclusiveIndex,
+        			    previous.VirtualizationSpan_EndExclusiveIndex - previous.VirtualizationSpan_StartInclusiveIndex);
+        			
+        			foreach (var virtualizedSpan in smallSpan)
+        			{
+        				_createCacheEachSharedParameters.ViewModel.Virtualization.VirtualizationSpanList.Add(virtualizedSpan);
+        			}
     			}
     			
     			// WARNING CODE DUPLICATION
@@ -1170,7 +1178,7 @@ public sealed class TextEditorViewModelApi
     			
     			_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[cacheEntry.LineIndex] = cacheEntry;
 			    continue;
-			}*/
+			}
 			
 			var lineInformation = modelModifier.GetLineInformation(lineIndex);
 						    
@@ -1345,12 +1353,11 @@ public sealed class TextEditorViewModelApi
 		viewModel.Virtualization.CreateUi_NotCacheDependent();
 		viewModel.Virtualization.CreateUi_IsCacheDependent();
 		
-		
-		/*componentData.LineIndexCache.ModifiedLineIndexList.Clear();
+		componentData.LineIndexCache.ModifiedLineIndexList.Clear();
 	
 		componentData.LineIndexCache.ViewModelKeyMarker = viewModel.PersistentState.ViewModelKey;
 		componentData.LineIndexCache.VirtualizationSpanList = viewModel.Virtualization.VirtualizationSpanList;
-		componentData.LineIndexCache.ScrollLeftMarker = viewModel.ScrollLeft;
+		componentData.LineIndexCache.ScrollLeftMarker = viewModel.Virtualization.ScrollLeft;
 		
 		for (var i = componentData.LineIndexCache.ExistsKeyList.Count - 1; i >= 0; i--)
 		{
@@ -1359,7 +1366,7 @@ public sealed class TextEditorViewModelApi
 				componentData.LineIndexCache.Map.Remove(componentData.LineIndexCache.ExistsKeyList[i]);
 				componentData.LineIndexCache.ExistsKeyList.RemoveAt(i);
 			}
-		}*/
+		}
 		
 		#if DEBUG
 		WalkDebugSomething.SetTextEditorViewModelApi(Stopwatch.GetElapsedTime(startTime));
