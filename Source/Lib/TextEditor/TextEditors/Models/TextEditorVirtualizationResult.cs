@@ -495,10 +495,15 @@ public class TextEditorVirtualizationResult
     
         string gutterColumnTopCssValue;
     	
-	    if (ViewModel.Virtualization.Count > 0)
-        	gutterColumnTopCssValue = ComponentData.LineIndexCache.Map[ViewModel.Virtualization.EntryList[0].LineIndex].TopCssValue;
+	    if (Count > 0)
+	    {
+        	gutterColumnTopCssValue = ComponentData.LineIndexCache.Map[EntryList[0].LineIndex].TopCssValue;
+        	Console.WriteLine();
+        }
         else
+        {
             gutterColumnTopCssValue = "0";
+        }
         
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("top: ");
@@ -516,7 +521,7 @@ public class TextEditorVirtualizationResult
     	{
 			ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
     		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("height: ");
-	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ViewModel.Virtualization.CharAndLineMeasurements.LineHeight.ToString());
+	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(CharAndLineMeasurements.LineHeight.ToString());
 	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
 	        LineHeightStyleCssString = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
 	        
@@ -673,11 +678,11 @@ public class TextEditorVirtualizationResult
 		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
 		
     	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("width: ");
-    	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ViewModel.Virtualization.TotalWidth.ToString());
+    	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(TotalWidth.ToString());
     	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px; ");
     	
     	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("height: ");
-    	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ViewModel.Virtualization.TotalHeight.ToString());
+    	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(TotalHeight.ToString());
     	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
     	
     	ComponentData.BothVirtualizationBoundaryStyleCssString = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
@@ -686,15 +691,15 @@ public class TextEditorVirtualizationResult
     public void VERTICAL_GetSliderVerticalStyleCss()
     {
     	// Divide by zero exception
-    	if (ViewModel.Virtualization.ScrollHeight == 0)
+    	if (ScrollHeight == 0)
     		return;
     
-        var scrollbarHeightInPixels = ViewModel.Virtualization.TextEditorDimensions.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+        var scrollbarHeightInPixels = TextEditorDimensions.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 
         // Proportional Top
-        var sliderProportionalTopInPixels = ViewModel.Virtualization.ScrollTop *
+        var sliderProportionalTopInPixels = ScrollTop *
             scrollbarHeightInPixels /
-            ViewModel.Virtualization.ScrollHeight;
+            ScrollHeight;
 
 		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
 		
@@ -706,12 +711,9 @@ public class TextEditorVirtualizationResult
 		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(sliderProportionalTopInPixels.ToString());
 		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
 
-        // Proportional Height
-        var pageHeight = ViewModel.Virtualization.TextEditorDimensions.Height;
-
-        var sliderProportionalHeightInPixels = pageHeight *
+        var sliderProportionalHeightInPixels = TextEditorDimensions.Height *
             scrollbarHeightInPixels /
-            ViewModel.Virtualization.ScrollHeight;
+            ScrollHeight;
 
         var sliderProportionalHeightInPixelsInvariantCulture = sliderProportionalHeightInPixels.ToString();
 
@@ -726,7 +728,7 @@ public class TextEditorVirtualizationResult
     {
     	if (InlineUiWidthStyleCssString is null || ComponentData.InlineUiWidthStyleCssStringIsOutdated)
     	{
-	    	var widthPixels = ViewModel.Virtualization.CharAndLineMeasurements.CharacterWidth * 3;
+	    	var widthPixels = CharAndLineMeasurements.CharacterWidth * 3;
 			var widthCssValue = widthPixels.ToString(System.Globalization.CultureInfo.InvariantCulture);
 			InlineUiWidthStyleCssString = $"width: {widthCssValue}px;";
 			// width: @(widthCssValue)px;
@@ -744,7 +746,7 @@ public class TextEditorVirtualizationResult
     		if (!ComponentData.LineIndexCache.Map.ContainsKey(lineAndColumnIndices.lineIndex))
     			continue;
     		
-    		var leftInPixels = ViewModel.Virtualization.GutterWidth + lineAndColumnIndices.columnIndex * ViewModel.Virtualization.CharAndLineMeasurements.CharacterWidth;
+    		var leftInPixels = GutterWidth + lineAndColumnIndices.columnIndex * CharAndLineMeasurements.CharacterWidth;
     		
     		// Tab key column offset
     		{
@@ -757,7 +759,7 @@ public class TextEditorVirtualizationResult
 				
 				leftInPixels += extraWidthPerTabKey *
 				    tabsOnSameLineBeforeCursor *
-				    ViewModel.Virtualization.CharAndLineMeasurements.CharacterWidth;
+				    CharAndLineMeasurements.CharacterWidth;
 			}
     		
     		var topCssValue = ComponentData.LineIndexCache.Map[lineAndColumnIndices.lineIndex].TopCssValue;
@@ -787,7 +789,7 @@ public class TextEditorVirtualizationResult
     	var shouldAppearAfterCollapsePoint = false; // CursorIsOnHiddenLine;
     	var tabWidth = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetOptions().TabWidth;
     	
-    	double leftInPixels = ViewModel.Virtualization.GutterWidth;
+    	double leftInPixels = GutterWidth;
     	var topInPixelsInvariantCulture = string.Empty;
 	
 		/* if (CursorIsOnHiddenLine)
@@ -819,11 +821,11 @@ public class TextEditorVirtualizationResult
 			
 			            leftInPixels += extraWidthPerTabKey *
 			                tabsOnSameLineBeforeCursor *
-			                ViewModel.Virtualization.CharAndLineMeasurements.CharacterWidth;
+			                CharAndLineMeasurements.CharacterWidth;
 			        }
 			        
 			        // +3 for the 3 dots: '[...]'
-			        /*leftInPixels += ViewModel.Virtualization.CharAndLineMeasurements.CharacterWidth * (appendToLineInformation.LastValidColumnIndex + 3);
+			        /*leftInPixels += CharAndLineMeasurements.CharacterWidth * (appendToLineInformation.LastValidColumnIndex + 3);
 			        
 			        if (ComponentData.LineIndexCache.Map.ContainsKey(collapsePoint.AppendToLineIndex))
 			        {
@@ -831,9 +833,9 @@ public class TextEditorVirtualizationResult
 			        }
 			        else
 			        {
-			        	if (ViewModel.Virtualization.Count > 0)
+			        	if (Count > 0)
 			        	{
-			        		var firstEntry = ViewModel.Virtualization.EntryList[0];
+			        		var firstEntry = EntryList[0];
 			        		topInPixelsInvariantCulture = ComponentData.LineIndexCache.Map[firstEntry.LineIndex].TopCssValue;
 			        	}
 			        	else
@@ -857,9 +859,9 @@ public class TextEditorVirtualizationResult
             var extraWidthPerTabKey = tabWidth - 1;
             leftInPixels += extraWidthPerTabKey *
                 tabsOnSameLineBeforeCursor *
-                ViewModel.Virtualization.CharAndLineMeasurements.CharacterWidth;
+                CharAndLineMeasurements.CharacterWidth;
 	        
-	        leftInPixels += ViewModel.Virtualization.CharAndLineMeasurements.CharacterWidth * ViewModel.ColumnIndex;
+	        leftInPixels += CharAndLineMeasurements.CharacterWidth * ViewModel.ColumnIndex;
 	        
 	        /*for (int inlineUiTupleIndex = 0; inlineUiTupleIndex < ViewModel.PersistentState.InlineUiList.Count; inlineUiTupleIndex++)
 			{
@@ -873,12 +875,12 @@ public class TextEditorVirtualizationResult
 					{
 						if (ViewModel.PersistentState.VirtualAssociativityKind == VirtualAssociativityKind.Right)
 						{
-							leftInPixels += ViewModel.Virtualization.CharAndLineMeasurements.CharacterWidth * 3;
+							leftInPixels += CharAndLineMeasurements.CharacterWidth * 3;
 						}
 					}
 					else if (lineAndColumnIndices.columnIndex <= ViewModel.ColumnIndex)
 					{
-						leftInPixels += ViewModel.Virtualization.CharAndLineMeasurements.CharacterWidth * 3;
+						leftInPixels += CharAndLineMeasurements.CharacterWidth * 3;
 					}
 				}
 			}*/
@@ -937,7 +939,7 @@ public class TextEditorVirtualizationResult
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(LineHeightStyleCssString);
 
         var widthOfBodyInPixelsInvariantCulture =
-            (Model.MostCharactersOnASingleLineTuple.lineLength * ViewModel.Virtualization.CharAndLineMeasurements.CharacterWidth)
+            (Model.MostCharactersOnASingleLineTuple.lineLength * CharAndLineMeasurements.CharacterWidth)
             .ToString(System.Globalization.CultureInfo.InvariantCulture);
 
 		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("width: ");
@@ -959,8 +961,7 @@ public class TextEditorVirtualizationResult
     {
     	SelectionStyleList.Clear();
     
-    	if (TextEditorSelectionHelper.HasSelectedText(ViewModel) &&
-	         ViewModel.Virtualization.Count > 0)
+    	if (TextEditorSelectionHelper.HasSelectedText(ViewModel) && Count > 0)
 	    {
 	        SelectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
 	            ViewModel);
@@ -969,8 +970,8 @@ public class TextEditorVirtualizationResult
                 Model,
                 SelectionBoundsInPositionIndexUnits);
 	
-	        var virtualLowerBoundInclusiveLineIndex = ViewModel.Virtualization.EntryList[0].LineIndex;
-	        var virtualUpperBoundExclusiveLineIndex = 1 + ViewModel.Virtualization.EntryList[ViewModel.Virtualization.Count - 1].LineIndex;
+	        var virtualLowerBoundInclusiveLineIndex = EntryList[0].LineIndex;
+	        var virtualUpperBoundExclusiveLineIndex = 1 + EntryList[Count - 1].LineIndex;
 	
 	        UseLowerBoundInclusiveLineIndex = virtualLowerBoundInclusiveLineIndex >= selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex
 	            ? virtualLowerBoundInclusiveLineIndex
@@ -1035,7 +1036,7 @@ public class TextEditorVirtualizationResult
             fullWidthOfLineIsSelected = false;
         }
 
-        var charMeasurements = ViewModel.Virtualization.CharAndLineMeasurements;
+        var charMeasurements = CharAndLineMeasurements;
 
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
         
@@ -1046,7 +1047,7 @@ public class TextEditorVirtualizationResult
 
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(LineHeightStyleCssString);
 
-        var selectionStartInPixels = ViewModel.Virtualization.GutterWidth + selectionStartingColumnIndex * charMeasurements.CharacterWidth;
+        var selectionStartInPixels = GutterWidth + selectionStartingColumnIndex * charMeasurements.CharacterWidth;
 
         // selectionStartInPixels offset from Tab keys a width of many characters
         {
@@ -1067,7 +1068,7 @@ public class TextEditorVirtualizationResult
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
 
         var selectionWidthInPixels = 
-            selectionEndingColumnIndex * charMeasurements.CharacterWidth - selectionStartInPixels + ViewModel.Virtualization.GutterWidth;
+            selectionEndingColumnIndex * charMeasurements.CharacterWidth - selectionStartInPixels + GutterWidth;
 
         // Tab keys a width of many characters
         {
@@ -1088,13 +1089,12 @@ public class TextEditorVirtualizationResult
         }
 
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("width: ");
-        var fullWidthValue = ViewModel.Virtualization.ScrollWidth;
+        var fullWidthValue = ScrollWidth;
 
-        if (ViewModel.Virtualization.TextEditorDimensions.Width >
-            ViewModel.Virtualization.ScrollWidth)
+        if (TextEditorDimensions.Width > ScrollWidth)
         {
             // If content does not fill the viewable width of the Text Editor User Interface
-            fullWidthValue = ViewModel.Virtualization.TextEditorDimensions.Width;
+            fullWidthValue = TextEditorDimensions.Width;
         }
 
         var fullWidthValueInPixelsInvariantCulture = fullWidthValue.ToString();
@@ -1211,10 +1211,10 @@ public class TextEditorVirtualizationResult
     	OutTextSpansList.Clear();
     
         // Virtualize the text spans
-        if (ViewModel.Virtualization.Count > 0)
+        if (Count > 0)
         {
-            var lowerLineIndexInclusive = ViewModel.Virtualization.EntryList[0].LineIndex;
-            var upperLineIndexInclusive = ViewModel.Virtualization.EntryList[ViewModel.Virtualization.Count - 1].LineIndex;
+            var lowerLineIndexInclusive = EntryList[0].LineIndex;
+            var upperLineIndexInclusive = EntryList[Count - 1].LineIndex;
 
             var lowerLine = Model.GetLineInformation(lowerLineIndexInclusive);
             var upperLine = Model.GetLineInformation(upperLineIndexInclusive);
@@ -1342,7 +1342,7 @@ public class TextEditorVirtualizationResult
 		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
 
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("height: ");
-        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ViewModel.Virtualization.CharAndLineMeasurements.LineHeight.ToString());
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(CharAndLineMeasurements.LineHeight.ToString());
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
         
         // This only happens when the 'EOF' position index is "inclusive"
@@ -1350,7 +1350,7 @@ public class TextEditorVirtualizationResult
         if (startingColumnIndex > line.LastValidColumnIndex)
         	startingColumnIndex = line.LastValidColumnIndex;
 
-        var startInPixels = ViewModel.Virtualization.GutterWidth + startingColumnIndex * ViewModel.Virtualization.CharAndLineMeasurements.CharacterWidth;
+        var startInPixels = GutterWidth + startingColumnIndex * CharAndLineMeasurements.CharacterWidth;
 
         // startInPixels offset from Tab keys a width of many characters
         {
@@ -1361,7 +1361,7 @@ public class TextEditorVirtualizationResult
             // 1 of the character width is already accounted for
             var extraWidthPerTabKey = tabWidth - 1;
 
-            startInPixels += extraWidthPerTabKey * tabsOnSameLineBeforeCursor * ViewModel.Virtualization.CharAndLineMeasurements.CharacterWidth;
+            startInPixels += extraWidthPerTabKey * tabsOnSameLineBeforeCursor * CharAndLineMeasurements.CharacterWidth;
         }
 
         var startInPixelsInvariantCulture = startInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture);
@@ -1369,7 +1369,7 @@ public class TextEditorVirtualizationResult
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(startInPixelsInvariantCulture);
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
 
-        var widthInPixels = endingColumnIndex * ViewModel.Virtualization.CharAndLineMeasurements.CharacterWidth - startInPixels + ViewModel.Virtualization.GutterWidth;
+        var widthInPixels = endingColumnIndex * CharAndLineMeasurements.CharacterWidth - startInPixels + GutterWidth;
 
         // Tab keys a width of many characters
         {
@@ -1380,15 +1380,15 @@ public class TextEditorVirtualizationResult
             // 1 of the character width is already accounted for
             var extraWidthPerTabKey = tabWidth - 1;
 
-            widthInPixels += extraWidthPerTabKey * tabsOnSameLineBeforeCursor * ViewModel.Virtualization.CharAndLineMeasurements.CharacterWidth;
+            widthInPixels += extraWidthPerTabKey * tabsOnSameLineBeforeCursor * CharAndLineMeasurements.CharacterWidth;
         }
 
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("width: ");
 
-        var fullWidthValue = ViewModel.Virtualization.ScrollWidth;
+        var fullWidthValue = ScrollWidth;
 
-        if (ViewModel.Virtualization.TextEditorDimensions.Width > ViewModel.Virtualization.ScrollWidth)
-            fullWidthValue = ViewModel.Virtualization.TextEditorDimensions.Width; // If content does not fill the viewable width of the Text Editor User Interface
+        if (TextEditorDimensions.Width > ScrollWidth)
+            fullWidthValue = TextEditorDimensions.Width; // If content does not fill the viewable width of the Text Editor User Interface
 
         var fullWidthValueInPixelsInvariantCulture = fullWidthValue.ToString();
 
@@ -1418,9 +1418,9 @@ public class TextEditorVirtualizationResult
     
     public void HORIZONTAL_GetScrollbarHorizontalStyleCss()
     {
-    	var scrollbarWidthInPixels = ViewModel.Virtualization.TextEditorDimensions.Width -
+    	var scrollbarWidthInPixels = TextEditorDimensions.Width -
                                      ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS -
-                                     ViewModel.Virtualization.GutterWidth;
+                                     GutterWidth;
         
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("width: ");
@@ -1433,17 +1433,17 @@ public class TextEditorVirtualizationResult
     public void HORIZONTAL_GetSliderHorizontalStyleCss()
     {
     	// Divide by 0 exception
-    	if (ViewModel.Virtualization.ScrollWidth == 0)
+    	if (ScrollWidth == 0)
     		return;
     
-    	var scrollbarWidthInPixels = ViewModel.Virtualization.TextEditorDimensions.Width -
+    	var scrollbarWidthInPixels = TextEditorDimensions.Width -
 						             ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS -
-						             ViewModel.Virtualization.GutterWidth;
+						             GutterWidth;
         
         // Proportional Left
-    	var sliderProportionalLeftInPixels = ViewModel.Virtualization.ScrollLeft *
+    	var sliderProportionalLeftInPixels = ScrollLeft *
             scrollbarWidthInPixels /
-            ViewModel.Virtualization.ScrollWidth;
+            ScrollWidth;
 
 		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
 		
@@ -1456,11 +1456,11 @@ public class TextEditorVirtualizationResult
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
         
         // Proportional Width
-    	var pageWidth = ViewModel.Virtualization.TextEditorDimensions.Width;
+    	var pageWidth = TextEditorDimensions.Width;
 
         var sliderProportionalWidthInPixels = pageWidth *
             scrollbarWidthInPixels /
-            ViewModel.Virtualization.ScrollWidth;
+            ScrollWidth;
         
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("width: ");
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(sliderProportionalWidthInPixels.ToString());
