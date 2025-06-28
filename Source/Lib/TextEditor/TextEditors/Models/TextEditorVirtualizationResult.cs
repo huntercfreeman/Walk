@@ -495,8 +495,8 @@ public class TextEditorVirtualizationResult
     
         string gutterColumnTopCssValue;
     	
-	    if (Count > 0)
-        	gutterColumnTopCssValue = ComponentData.LineIndexCache.Map[EntryList[0].LineIndex].TopCssValue;
+	    if (Count > 0 && ComponentData.LineIndexCache.Map.TryGetValue(EntryList[0].LineIndex, out var cacheEntry))
+        	gutterColumnTopCssValue = cacheEntry.TopCssValue;
         else
             gutterColumnTopCssValue = "0";
         
@@ -888,8 +888,8 @@ public class TextEditorVirtualizationResult
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(leftInPixelsInvariantCulture);
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
 
-		if (!shouldAppearAfterCollapsePoint)
-			topInPixelsInvariantCulture = ComponentData.LineIndexCache.Map[ViewModel.LineIndex].TopCssValue;
+		if (!shouldAppearAfterCollapsePoint && ComponentData.LineIndexCache.Map.TryGetValue(ViewModel.LineIndex, out var cacheEntry))
+			topInPixelsInvariantCulture = cacheEntry.TopCssValue;
 
 		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("top: ");
 		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(topInPixelsInvariantCulture);

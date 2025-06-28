@@ -1061,13 +1061,16 @@ public sealed class TextEditorViewModelApi
 		previousVirtualizationResult.GutterWidth = GetGutterWidthInPixels(modelModifier, viewModel, componentData);
 		viewModel.Virtualization.GutterWidth = GetGutterWidthInPixels(modelModifier, viewModel, componentData);
 		
+		var absDiffScrollLeft = Math.Abs(componentData.LineIndexCache.ScrollLeftMarker - viewModel.Virtualization.ScrollLeft);
+		var useCache = absDiffScrollLeft < 0.01 && componentData.LineIndexCache.ViewModelKeyMarker == viewModel.PersistentState.ViewModelKey;
+		
+		if (!useCache)
+		    componentData.LineIndexCache.IsInvalid = true;
+		
 		if (componentData.LineIndexCache.IsInvalid)
 			componentData.LineIndexCache.Clear();
 		else
 			componentData.LineIndexCache.UsedKeyHashSet.Clear();
-		
-		var absDiffScrollLeft = Math.Abs(componentData.LineIndexCache.ScrollLeftMarker - viewModel.Virtualization.ScrollLeft);
-		var useAll = absDiffScrollLeft < 0.01 && componentData.LineIndexCache.ViewModelKeyMarker == viewModel.PersistentState.ViewModelKey;
 		
 		if (_textEditorService.SeenTabWidth != _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.TabWidth)
 		{
@@ -1131,8 +1134,8 @@ public sealed class TextEditorViewModelApi
 				continue;
 			}
 			
-			var useCache = _createCacheEachSharedParameters.ComponentData.LineIndexCache.Map.ContainsKey(lineIndex) &&
-				          !_createCacheEachSharedParameters.ComponentData.LineIndexCache.ModifiedLineIndexList.Contains(lineIndex);
+			useCache = _createCacheEachSharedParameters.ComponentData.LineIndexCache.Map.ContainsKey(lineIndex) &&
+				       !_createCacheEachSharedParameters.ComponentData.LineIndexCache.ModifiedLineIndexList.Contains(lineIndex);
 			
 			if (useCache)
 			{
@@ -1143,21 +1146,13 @@ public sealed class TextEditorViewModelApi
 	
 	            _createCacheEachSharedParameters.ComponentData.LineIndexCache.UsedKeyHashSet.Add(cacheEntry.LineIndex);
     			
-    			if (previous.VirtualizationSpan_EndExclusiveIndex - previous.VirtualizationSpan_StartInclusiveIndex > 0)
-    			{
-    			    Console.WriteLine($"previous.VirtualizationSpan_StartInclusiveIndex: {previous.VirtualizationSpan_StartInclusiveIndex}");
-    			    Console.WriteLine($"previous.VirtualizationSpan_EndExclusiveIndex: {previous.VirtualizationSpan_EndExclusiveIndex}");
-    			    Console.WriteLine($"entireSpan.Length: {entireSpan.Length}");
-    			    
+			    var smallSpan = entireSpan.Slice(
+    			    previous.VirtualizationSpan_StartInclusiveIndex,
+    			    previous.VirtualizationSpan_EndExclusiveIndex - previous.VirtualizationSpan_StartInclusiveIndex);
     			
-    			    var smallSpan = entireSpan.Slice(
-        			    previous.VirtualizationSpan_StartInclusiveIndex,
-        			    previous.VirtualizationSpan_EndExclusiveIndex - previous.VirtualizationSpan_StartInclusiveIndex);
-        			
-        			foreach (var virtualizedSpan in smallSpan)
-        			{
-        				_createCacheEachSharedParameters.ViewModel.Virtualization.VirtualizationSpanList.Add(virtualizedSpan);
-        			}
+    			foreach (var virtualizedSpan in smallSpan)
+    			{
+    				_createCacheEachSharedParameters.ViewModel.Virtualization.VirtualizationSpanList.Add(virtualizedSpan);
     			}
     			
     			// WARNING CODE DUPLICATION
@@ -1347,8 +1342,6 @@ public sealed class TextEditorViewModelApi
 		}
 		
 		viewModel.Virtualization.Count = linesTaken;
-
-		componentData.Virtualization = viewModel.Virtualization;
 		
 		viewModel.Virtualization.CreateUi_NotCacheDependent();
 		viewModel.Virtualization.CreateUi_IsCacheDependent();
@@ -1356,8 +1349,8 @@ public sealed class TextEditorViewModelApi
 		componentData.LineIndexCache.ModifiedLineIndexList.Clear();
 	
 		componentData.LineIndexCache.ViewModelKeyMarker = viewModel.PersistentState.ViewModelKey;
-		componentData.LineIndexCache.VirtualizationSpanList = viewModel.Virtualization.VirtualizationSpanList;
 		componentData.LineIndexCache.ScrollLeftMarker = viewModel.Virtualization.ScrollLeft;
+		componentData.LineIndexCache.VirtualizationSpanList = viewModel.Virtualization.VirtualizationSpanList;
 		
 		for (var i = componentData.LineIndexCache.ExistsKeyList.Count - 1; i >= 0; i--)
 		{
@@ -1367,6 +1360,8 @@ public sealed class TextEditorViewModelApi
 				componentData.LineIndexCache.ExistsKeyList.RemoveAt(i);
 			}
 		}
+		
+		componentData.Virtualization = viewModel.Virtualization;
 		
 		#if DEBUG
 		WalkDebugSomething.SetTextEditorViewModelApi(Stopwatch.GetElapsedTime(startTime));
@@ -1419,6 +1414,9 @@ public sealed class TextEditorViewModelApi
     	    virtualizationEntry.GutterCssStyle = _createCacheEachSharedParameters.ViewModel.Virtualization.GetGutterStyleCss(topCssValue1);
     	    virtualizationEntry.LineCssStyle = _createCacheEachSharedParameters.ViewModel.Virtualization.RowSection_GetRowStyleCss(topCssValue1, leftCssValue1);
     	    virtualizationEntry.LineNumberString = lineNumberString1;
+    	    
+    	    virtualizationEntry.VirtualizationSpan_StartInclusiveIndex = _createCacheEachSharedParameters.ViewModel.Virtualization.VirtualizationSpanList.Count;
+    	    virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = _createCacheEachSharedParameters.ViewModel.Virtualization.VirtualizationSpanList.Count;
 		    
 		    if (_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map.ContainsKey(virtualizationEntry.LineIndex))
     		{
