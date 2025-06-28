@@ -197,6 +197,9 @@ public sealed class TextEditorViewModel : IDisposable
     ///
     /// Don't copy any of the `Changed_...` properties when making a copy of a viewmodel.
     /// They're just used as markers during the lifespan of each viewmodel whether the UI needs to be updated.
+    ///
+    /// If only this bool is set, then it means while calculating the VirtualizationResult, that
+    /// some other variable had changed, and the cursor CSS is dependent on that variable.
     /// </summary>
     public bool Changed_Cursor_AnyState { get; set; }
     

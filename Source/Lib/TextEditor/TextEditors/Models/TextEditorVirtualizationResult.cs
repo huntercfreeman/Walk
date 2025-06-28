@@ -405,15 +405,39 @@ public class TextEditorVirtualizationResult
 	
 	public void CalculateCursorUi()
 	{
-	    
+	    GetCursorAndCaretRowStyleCss();
 	}
 	
-    public void LineIndexCache_Create()
+    /// <summary>
+    /// Non loop related UI:
+    /// --------------------
+    /// - GutterColumnTopCss (specifically the column that provides background-color not the individual line numbers).
+    /// - CursorIsOnHiddenLine
+    /// - LineHeight
+    /// - LineHeightStyleCssString
+    /// - Gutter_HeightWidthPaddingCssStyle
+    /// - TextEditor_Height
+    /// - Scroll_Height
+    /// - Scroll_Top
+    /// - TextEditor_Width
+    /// - Scroll_Width
+    /// - Scroll_Left
+    /// - VERTICAL_GetSliderVerticalStyleCss
+    /// - HORIZONTAL_GetSliderHorizontalStyleCss
+    /// - HORIZONTAL_GetScrollbarHorizontalStyleCss
+    /// - ConstructVirtualizationStyleCssStrings
+    ///
+    /// </summary>
+    public void CreateUi_NotCacheDependent()
     {
-        /*
-    	if (_previousState.GutterWidth != ViewModel.GutterWidthInPixels)
+        if (!IsValid)
+        {
+        	DiagnoseIssues();
+        	return;
+        }
+        
+    	if (Changed_GutterWidth)
     	{
-    		GutterWidth = ViewModel.GutterWidthInPixels;
     		ComponentData.LineIndexCache.Clear();
     		
     		var widthInPixelsInvariantCulture = GutterWidth.ToString();
@@ -449,51 +473,10 @@ public class TextEditorVirtualizationResult
     		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
     		ScrollbarSection_LeftCssStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
     	}
-    	else if (ScrollLeft != ViewModel.ScrollLeft)
+    	else if (Changed_ScrollLeft)
     	{
-    		ScrollLeft = ViewModel.ScrollLeft;
     		ComponentData.LineIndexCache.Clear();
     	}
-    	else
-    	{
-    	    GutterWidth = _previousState.GutterWidth;
-    		Gutter_WidthCssStyle = _previousState.Gutter_WidthCssStyle;
-    		Gutter_HeightWidthPaddingCssStyle = _previousState.Gutter_HeightWidthPaddingCssStyle;
-    		BodyStyle = _previousState.BodyStyle;
-            HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;
-            HORIZONTAL_SliderCssStyle = _previousState.HORIZONTAL_SliderCssStyle;
-    		ScrollbarSection_LeftCssStyle = _previousState.ScrollbarSection_LeftCssStyle;
-    	}
-    	*/
-    }
-    
-    /// <summary>
-    /// Non loop related UI:
-    /// --------------------
-    /// - GutterColumnTopCss (specifically the column that provides background-color not the individual line numbers).
-    /// - CursorIsOnHiddenLine
-    /// - LineHeight
-    /// - LineHeightStyleCssString
-    /// - Gutter_HeightWidthPaddingCssStyle
-    /// - TextEditor_Height
-    /// - Scroll_Height
-    /// - Scroll_Top
-    /// - TextEditor_Width
-    /// - Scroll_Width
-    /// - Scroll_Left
-    /// - VERTICAL_GetSliderVerticalStyleCss
-    /// - HORIZONTAL_GetSliderHorizontalStyleCss
-    /// - HORIZONTAL_GetScrollbarHorizontalStyleCss
-    /// - ConstructVirtualizationStyleCssStrings
-    ///
-    /// </summary>
-    public void CreateUi_NotCacheRelated()
-    {
-        if (!IsValid)
-        {
-        	DiagnoseIssues();
-        	return;
-        }
     
         string gutterColumnTopCssValue;
     	
@@ -581,22 +564,21 @@ public class TextEditorVirtualizationResult
     	ConstructVirtualizationStyleCssStrings();
     }
     
-    public void CreateUi_IsCacheRelated()
+    public void CreateUi_IsCacheDependent()
     {
-        GetCursorAndCaretRowStyleCss();
-        GetSelection();
+        // GetSelection();
         
-        GetPresentationLayer(
+        /* GetPresentationLayer(
         	ViewModel.PersistentState.FirstPresentationLayerKeysList,
         	FirstPresentationLayerGroupList,
-        	FirstPresentationLayerTextSpanList);
+        	FirstPresentationLayerTextSpanList); */
         	
-        GetPresentationLayer(
+        /* GetPresentationLayer(
         	ViewModel.PersistentState.LastPresentationLayerKeysList,
         	LastPresentationLayerGroupList,
-        	LastPresentationLayerTextSpanList);
+        	LastPresentationLayerTextSpanList); */
         
-        if (VirtualizedCollapsePointListVersion != ViewModel.PersistentState.VirtualizedCollapsePointListVersion ||
+        /* if (VirtualizedCollapsePointListVersion != ViewModel.PersistentState.VirtualizedCollapsePointListVersion ||
         	_seenViewModelKey != ViewModel.PersistentState.ViewModelKey)
         {
         	VirtualizedCollapsePointList.Clear();
@@ -610,7 +592,7 @@ public class TextEditorVirtualizationResult
         	
         	_seenViewModelKey = ViewModel.PersistentState.ViewModelKey;
         	VirtualizedCollapsePointListVersion = ViewModel.PersistentState.VirtualizedCollapsePointListVersion;
-        }
+        } */
     }
     
     public string GetGutterStyleCss(string topCssValue)
