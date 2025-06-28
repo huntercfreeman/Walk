@@ -113,7 +113,10 @@ public sealed class TextEditorViewModel : IDisposable
         set
         {
             if (_lineIndex != value)
+            {
                 Changed_LineIndex = true;
+                Changed_Cursor_AnyState = true;
+            }
             _lineIndex = value;
         }
     }
@@ -125,7 +128,10 @@ public sealed class TextEditorViewModel : IDisposable
         set
         {
             if (_columnIndex != value)
+            {
                 Changed_ColumnIndex = true;
+                Changed_Cursor_AnyState = true;
+            }
             _columnIndex = value;
         }
     }
@@ -137,7 +143,10 @@ public sealed class TextEditorViewModel : IDisposable
         set
         {
             if (_preferredColumnIndex != value)
+            {
                 Changed_PreferredColumnIndex = true;
+                Changed_Cursor_AnyState = true;
+            }
             _preferredColumnIndex = value;
         }
     }
@@ -149,7 +158,10 @@ public sealed class TextEditorViewModel : IDisposable
         set
         {
             if (_selectionAnchorPositionIndex != value)
+            {
                 Changed_SelectionAnchorPositionIndex = true;
+                Changed_Cursor_AnyState = true;
+            }
             _selectionAnchorPositionIndex = value;
         }
     }
@@ -161,10 +173,21 @@ public sealed class TextEditorViewModel : IDisposable
         set
         {
             if (_selectionEndingPositionIndex != value)
+            {
                 Changed_SelectionEndingPositionIndex = true;
+                Changed_Cursor_AnyState = true;
+            }
             _selectionEndingPositionIndex = value;
         }
     }
+    
+    /// <summary>
+    /// When settings `Changed_...` also set this property.
+    /// Then to determine if the many `Changed_...` properties that are not this one
+    /// have changed, you can first check this singular property so you short circuit
+    /// if nothing changed.
+    /// </summary>
+    public bool Changed_Cursor_AnyState { get; set; }
     
     public bool Changed_LineIndex { get; set; }
     public bool Changed_ColumnIndex { get; set; }
