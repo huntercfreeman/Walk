@@ -106,6 +106,9 @@ public class TextEditorVirtualizationResult
 	    Count = count;
 	    _previousState = previousState;
 	    
+	    if (previousState is not null)
+	        TextEditorDimensions = previousState.TextEditorDimensions;
+	    
 	    IsValid = Model is not null &&
 			      ViewModel is not null &&
 			      TextEditorRenderBatchPersistentState?.TextEditorOptions is not null;
@@ -288,6 +291,15 @@ public class TextEditorVirtualizationResult
 	/// </summary>
     public bool ShouldCalculateVirtualizationResult { get; set; }
     
+    public bool Changed_LineHeight { get; set; }
+    public bool Changed_CharacterWidth { get; set; }
+    public bool Changed_TextEditorWidth { get; set; }
+    public bool Changed_TextEditorHeight { get; set; }
+    public bool Changed_ScrollHeight { get; set; }
+    public bool Changed_ScrollTop { get; set; }
+    public bool Changed_ScrollWidth { get; set; }
+    public bool Changed_ScrollLeft { get; set; }
+    
     private static int _stopDebugConsoleWriteCount = 0;
     
     public void LineIndexCache_Create()
@@ -396,7 +408,7 @@ public class TextEditorVirtualizationResult
     	else
     	    CursorIsOnHiddenLine = false;
     	
-    	if (_previousState.LineHeight != ViewModel.Virtualization.CharAndLineMeasurements.LineHeight)
+    	if (Changed_LineHeight)
     	{
     		LineHeight = ViewModel.Virtualization.CharAndLineMeasurements.LineHeight;
 			
@@ -423,40 +435,34 @@ public class TextEditorVirtualizationResult
 		bool shouldCalculateHorizontalSlider = false;
 		bool shouldCalculateHorizontalScrollbar = false;
 		
-    	if (TextEditor_Height != ViewModel.Virtualization.TextEditorDimensions.Height)
+    	if (Changed_TextEditorHeight)
     	{
-    		TextEditor_Height = ViewModel.Virtualization.TextEditorDimensions.Height;
     		shouldCalculateVerticalSlider = true;
 	    }
 		
-    	if (Scroll_Height != ViewModel.Virtualization.ScrollHeight)
+    	if (Changed_ScrollHeight)
     	{
-    		Scroll_Height = ViewModel.Virtualization.ScrollHeight;
     		shouldCalculateVerticalSlider = true;
 	    }
 		
-    	if (Scroll_Top != ViewModel.Virtualization.ScrollTop)
+    	if (Changed_ScrollTop)
     	{
-    		Scroll_Top = ViewModel.Virtualization.ScrollTop;
     		shouldCalculateVerticalSlider = true;
 	    }
 		
-    	if (TextEditor_Width != ViewModel.Virtualization.TextEditorDimensions.Width)
+    	if (Changed_TextEditorWidth)
     	{
-    		TextEditor_Width = ViewModel.Virtualization.TextEditorDimensions.Width;
     		shouldCalculateHorizontalSlider = true;
     		shouldCalculateHorizontalScrollbar = true;
 	    }
 		
-    	if (Scroll_Width != ViewModel.Virtualization.ScrollWidth)
+    	if (Changed_ScrollWidth)
     	{
-    		Scroll_Width = ViewModel.Virtualization.ScrollWidth;
     		shouldCalculateHorizontalSlider = true;
 	    }
 		
-    	if (Scroll_Left != ViewModel.Virtualization.ScrollLeft)
+    	if (Changed_ScrollLeft)
     	{
-    		Scroll_Left = ViewModel.Virtualization.ScrollLeft;
     		shouldCalculateHorizontalSlider = true;
 	    }
 
