@@ -156,7 +156,7 @@
 					@if (GlobalShowNewlines && virtualizationResult.EntryList[virtualizationResultIndex].LineIndex < virtualizationResult.Model.LineCount)
 					{
 						// amountOfLeftInCharacterWidthUnits <= lengthOfLine
-						if (virtualizationResult.EntryList[virtualizationResultIndex].LeftInPixels / virtualizationResult.ViewModel.CharAndLineMeasurements.CharacterWidth <=
+						if (virtualizationResult.EntryList[virtualizationResultIndex].LeftInPixels / virtualizationResult.ViewModel.VirtualizationResult.CharAndLineMeasurements.CharacterWidth <=
 							virtualizationResult.Model.GetLineLength(virtualizationResult.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex, true))
 						{
 						    <span class="di_te_newline">

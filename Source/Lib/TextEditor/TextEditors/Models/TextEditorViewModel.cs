@@ -71,13 +71,13 @@ public sealed class TextEditorViewModel : IDisposable
         VirtualizationResult = virtualizationResult;
 		TextEditorDimensions = textEditorDimensions;
 		
-		ScrollLeft = scrollLeft;
-	    ScrollTop = scrollTop;
-	    ScrollWidth = scrollWidth;
-	    ScrollHeight = scrollHeight;
-	    MarginScrollHeight = marginScrollHeight;
+		VirtualizationResult.ScrollLeft = scrollLeft;
+	    VirtualizationResult.ScrollTop = scrollTop;
+	    VirtualizationResult.ScrollWidth = scrollWidth;
+	    VirtualizationResult.ScrollHeight = scrollHeight;
+	    VirtualizationResult.MarginScrollHeight = marginScrollHeight;
 		
-        CharAndLineMeasurements = textEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
+        VirtualizationResult.CharAndLineMeasurements = textEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
         
         LineIndex = 0;
 	    ColumnIndex = 0;
@@ -99,17 +99,7 @@ public sealed class TextEditorViewModel : IDisposable
 	    VirtualizationResult = other.VirtualizationResult;
 		TextEditorDimensions = other.TextEditorDimensions;
 		
-		ScrollLeft = other.ScrollLeft;
-	    ScrollTop = other.ScrollTop;
-	    ScrollWidth = other.ScrollWidth;
-	    ScrollHeight = other.ScrollHeight;
-	    MarginScrollHeight = other.MarginScrollHeight;
-	    
-	    GutterWidthInPixels = other.GutterWidthInPixels;
 		
-	    CharAndLineMeasurements = other.CharAndLineMeasurements;
-		
-		ShouldCalculateVirtualizationResult = other.ShouldCalculateVirtualizationResult;
 		
 	    /*
 	    // Don't copy these properties
@@ -130,25 +120,6 @@ public sealed class TextEditorViewModel : IDisposable
     /// </summary>
     public TextEditorVirtualizationResult VirtualizationResult { get; set; }
 	public TextEditorDimensions TextEditorDimensions { get; set; }
-	
-	public int ScrollLeft { get; set; }
-    public int ScrollTop { get; set; }
-    public int ScrollWidth { get; set; }
-    public int ScrollHeight { get; set; }
-    public int MarginScrollHeight { get; set; }
-    
-    public int GutterWidthInPixels { get; set; }
-	
-	/// <summary>
-	/// TODO: Rename 'CharAndLineMeasurements' to 'CharAndLineDimensions'...
-	///       ...as to bring it inline with 'TextEditorDimensions' and 'ScrollbarDimensions'.
-	/// </summary>
-    public CharAndLineMeasurements CharAndLineMeasurements { get; set; }
-    
-    /// <summary>
-	/// This property decides whether or not to re-calculate the virtualization result that gets displayed on the UI.
-	/// </summary>
-    public bool ShouldCalculateVirtualizationResult { get; set; }
 	
     public bool ScrollWasModified { get; set; }
     
@@ -183,31 +154,31 @@ public sealed class TextEditorViewModel : IDisposable
     }
     
     public void MutateScrollLeft(int pixels, TextEditorDimensions textEditorDimensions) =>
-		SetScrollLeft(ScrollLeft + pixels, textEditorDimensions);
+		SetScrollLeft(VirtualizationResult.ScrollLeft + pixels, textEditorDimensions);
 
 	public void SetScrollLeft(int pixels, TextEditorDimensions textEditorDimensions)
 	{
 		var resultScrollLeft = Math.Max(0, pixels);
-		var maxScrollLeft = (int)Math.Max(0, ScrollWidth - textEditorDimensions.Width);
+		var maxScrollLeft = (int)Math.Max(0, VirtualizationResult.ScrollWidth - textEditorDimensions.Width);
 
 		if (resultScrollLeft > maxScrollLeft)
 			resultScrollLeft = maxScrollLeft;
 
-		ScrollLeft = resultScrollLeft;
+		VirtualizationResult.ScrollLeft = resultScrollLeft;
 	}
 
 	public void MutateScrollTop(int pixels, TextEditorDimensions textEditorDimensions) =>
-		SetScrollTop(ScrollTop + pixels, textEditorDimensions);
+		SetScrollTop(VirtualizationResult.ScrollTop + pixels, textEditorDimensions);
 
 	public void SetScrollTop(int pixels, TextEditorDimensions textEditorDimensions)
 	{
 		var resultScrollTop = Math.Max(0, pixels);
-		var maxScrollTop = (int)Math.Max(0, ScrollHeight - textEditorDimensions.Height);
+		var maxScrollTop = (int)Math.Max(0, VirtualizationResult.ScrollHeight - textEditorDimensions.Height);
 
 		if (resultScrollTop > maxScrollTop)
 			resultScrollTop = maxScrollTop;
 
-		ScrollTop = resultScrollTop;
+		VirtualizationResult.ScrollTop = resultScrollTop;
 	}
 
     public void Dispose()

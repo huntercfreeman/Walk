@@ -168,7 +168,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 				{
 					var lineInformation = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
 					
-					var originalScrollLeft = viewModelModifier.ScrollLeft;
+					var originalScrollLeft = viewModelModifier.VirtualizationResult.ScrollLeft;
 					
 					var textSpan = new TextEditorTextSpan(
 					    startInclusiveIndex: lineInformation.Position_StartInclusiveIndex,

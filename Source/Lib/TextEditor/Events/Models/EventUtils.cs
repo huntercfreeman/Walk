@@ -265,12 +265,12 @@ public static class EventUtils
         var positionY = clientY - viewModel.TextEditorDimensions.BoundingClientRectTop;
     
         // Scroll position offset
-        positionX += viewModel.ScrollLeft;
-        positionY += viewModel.ScrollTop;
+        positionX += viewModel.VirtualizationResult.ScrollLeft;
+        positionY += viewModel.VirtualizationResult.ScrollTop;
         
-        positionX -= viewModel.GutterWidthInPixels;
+        positionX -= viewModel.VirtualizationResult.GutterWidth;
         
-        var lineIndex = (int)(positionY / viewModel.CharAndLineMeasurements.LineHeight);
+        var lineIndex = (int)(positionY / viewModel.VirtualizationResult.CharAndLineMeasurements.LineHeight);
         
         var hiddenLineCount = 0;
         
@@ -284,7 +284,7 @@ public static class EventUtils
             ? modelModifier.LineCount - 1
             : lineIndex;
             
-        var columnIndexDouble = positionX / viewModel.CharAndLineMeasurements.CharacterWidth;
+        var columnIndexDouble = positionX / viewModel.VirtualizationResult.CharAndLineMeasurements.CharacterWidth;
         int columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
         
         var inlineUi = default(InlineUi);
