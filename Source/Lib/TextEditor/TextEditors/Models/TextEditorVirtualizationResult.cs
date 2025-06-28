@@ -267,23 +267,221 @@ public class TextEditorVirtualizationResult
     public string VERTICAL_SliderCssStyle { get; set; }
     public string HORIZONTAL_SliderCssStyle { get; set; }
     public string HORIZONTAL_ScrollbarCssStyle { get; set; }
-    // string PresentationGetCssStyleString(int position_LowerInclusiveIndex, int position_UpperExclusiveIndex, int lineIndex)
-
-    // IReadOnlyList<TextEditorTextSpan> PresentationVirtualizeAndShiftTextSpans(IReadOnlyList<TextEditorTextModification> textModifications, IReadOnlyList<TextEditorTextSpan> inTextSpanList)
-
-    // string GetTextSelectionStyleCss(int position_LowerInclusiveIndex, int position_UpperExclusiveIndex, int lineIndex)
-
-    // public void GetSelection() SelectionStyleList
     
-    /* private void GetPresentationLayer(
-    	List<Key<TextEditorPresentationModel>> presentationLayerKeysList,
-    	List<(string CssClassString, int StartInclusiveIndex, int EndExclusiveIndex)> presentationLayerGroupList,
-    	List<(string PresentationCssClass, string PresentationCssStyle)> presentationLayerTextSpanList) */
+    private static int _stopDebugConsoleWriteCount = 0;
     
-    // private void GetInlineUiStyleList()
-    // InlineUiWidthStyleCssString
-    // InlineUiWidthStyleCssStringIsOutdated
-    // InlineUiStyleList
+    public void CreateUi()
+    {
+        if (!IsValid)
+        {
+        	DiagnoseIssues();
+        	return;
+        }
+    		
+    	CursorIsOnHiddenLine = false;
+    		
+    	ComponentData.LineIndexCache.UsedKeyHashSet.Clear();
+    	
+    	if (_previousState.LineHeight != ViewModel.CharAndLineMeasurements.LineHeight)
+    	{
+    		LineHeight = ViewModel.CharAndLineMeasurements.LineHeight;
+			
+			ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
+    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("height: ");
+	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ViewModel.CharAndLineMeasurements.LineHeight.ToString());
+	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
+	        LineHeightStyleCssString = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
+	        
+	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
+    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(LineHeightStyleCssString);
+	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(Gutter_WidthCssStyle);
+	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ComponentData.Gutter_PaddingCssStyle);
+    		Gutter_HeightWidthPaddingCssStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
+		}
+		else
+		{
+		    LineHeight = _previousState.LineHeight;
+		    LineHeightStyleCssString = _previousState.LineHeightStyleCssString;
+		    Gutter_HeightWidthPaddingCssStyle = _previousState.Gutter_HeightWidthPaddingCssStyle;
+		}
+		
+		bool shouldCalculateVerticalSlider = false;
+		bool shouldCalculateHorizontalSlider = false;
+		bool shouldCalculateHorizontalScrollbar = false;
+		
+    	if (TextEditor_Height != ViewModel.TextEditorDimensions.Height)
+    	{
+    		TextEditor_Height = ViewModel.TextEditorDimensions.Height;
+    		shouldCalculateVerticalSlider = true;
+	    }
+		
+    	if (Scroll_Height != ViewModel.ScrollHeight)
+    	{
+    		Scroll_Height = ViewModel.ScrollHeight;
+    		shouldCalculateVerticalSlider = true;
+	    }
+		
+    	if (Scroll_Top != ViewModel.ScrollTop)
+    	{
+    		Scroll_Top = ViewModel.ScrollTop;
+    		shouldCalculateVerticalSlider = true;
+	    }
+		
+    	if (TextEditor_Width != ViewModel.TextEditorDimensions.Width)
+    	{
+    		TextEditor_Width = ViewModel.TextEditorDimensions.Width;
+    		shouldCalculateHorizontalSlider = true;
+    		shouldCalculateHorizontalScrollbar = true;
+	    }
+		
+    	if (Scroll_Width != ViewModel.ScrollWidth)
+    	{
+    		Scroll_Width = ViewModel.ScrollWidth;
+    		shouldCalculateHorizontalSlider = true;
+	    }
+		
+    	if (Scroll_Left != ViewModel.ScrollLeft)
+    	{
+    		Scroll_Left = ViewModel.ScrollLeft;
+    		shouldCalculateHorizontalSlider = true;
+	    }
+
+		if (shouldCalculateVerticalSlider)
+			VERTICAL_GetSliderVerticalStyleCss();
+		
+		if (shouldCalculateHorizontalSlider)
+			HORIZONTAL_GetSliderHorizontalStyleCss();
+		
+		if (shouldCalculateHorizontalScrollbar)
+			HORIZONTAL_GetScrollbarHorizontalStyleCss();
+    
+    	ConstructVirtualizationStyleCssStrings();
+    	
+    	LineIndexCache_Create();
+    
+    	// Somewhat hacky second try-catch so the presentations
+    	// don't clobber the text editor's default behavior when they throw an exception.
+    	try
+    	{
+	        GetCursorAndCaretRowStyleCss();
+	        GetSelection();
+	        
+	        GetPresentationLayer(
+	        	ViewModel.PersistentState.FirstPresentationLayerKeysList,
+	        	FirstPresentationLayerGroupList,
+	        	FirstPresentationLayerTextSpanList);
+	        	
+	        GetPresentationLayer(
+	        	ViewModel.PersistentState.LastPresentationLayerKeysList,
+	        	LastPresentationLayerGroupList,
+	        	LastPresentationLayerTextSpanList);
+	        
+	        if (VirtualizedCollapsePointListVersion != ViewModel.PersistentState.VirtualizedCollapsePointListVersion ||
+	        	_seenViewModelKey != ViewModel.PersistentState.ViewModelKey)
+	        {
+	        	VirtualizedCollapsePointList.Clear();
+	        
+	        	for (int i = 0; i < ViewModel.PersistentState.VirtualizedCollapsePointList.Count; i++)
+	        	{
+	        		VirtualizedCollapsePointList.Add(ViewModel.PersistentState.VirtualizedCollapsePointList[i]);
+	        	}
+	        	
+	        	GetInlineUiStyleList();
+	        	
+	        	_seenViewModelKey = ViewModel.PersistentState.ViewModelKey;
+	        	VirtualizedCollapsePointListVersion = ViewModel.PersistentState.VirtualizedCollapsePointListVersion;
+	        }
+        }
+        catch (Exception e)
+        {
+        	Console.WriteLine("inner " + e);
+        }
+		
+		for (int i = ComponentData.LineIndexCache.ExistsKeyList.Count - 1; i >= 0; i--)
+		{
+			if (!ComponentData.LineIndexCache.UsedKeyHashSet.Contains(ComponentData.LineIndexCache.ExistsKeyList[i]))
+			{
+				ComponentData.LineIndexCache.Map.Remove(ComponentData.LineIndexCache.ExistsKeyList[i]);
+				ComponentData.LineIndexCache.ExistsKeyList.RemoveAt(i);
+			}
+		}
+		
+		if (_stopDebugConsoleWriteCount++ < 3)
+		{
+		    Console.WriteLine("\n\n=============");
+		
+    		Console.WriteLine($"Model: {Model}");
+            Console.WriteLine($"ViewModel: {ViewModel}");
+            Console.WriteLine($"TextEditorRenderBatchPersistentState: {TextEditorRenderBatchPersistentState}");
+            
+            Console.WriteLine($"IsValid: {IsValid}");
+                
+            Console.WriteLine($"ComponentData: {ComponentData}");
+            
+            Console.WriteLine($"InlineUiWidthStyleCssString: {InlineUiWidthStyleCssString}");
+        	
+        	
+        	Console.WriteLine($"CursorIsOnHiddenLine: {CursorIsOnHiddenLine}");
+            
+            Console.WriteLine($"ShouldScroll: {ShouldScroll}");
+            
+            Console.WriteLine($"UseLowerBoundInclusiveLineIndex: {UseLowerBoundInclusiveLineIndex}");
+            Console.WriteLine($"UseUpperBoundExclusiveLineIndex: {UseUpperBoundExclusiveLineIndex}");
+            Console.WriteLine($"SelectionBoundsInPositionIndexUnits: {SelectionBoundsInPositionIndexUnits}");
+            
+            Console.WriteLine($"FirstPresentationLayerGroupList: {FirstPresentationLayerGroupList}");
+        	Console.WriteLine($"FirstPresentationLayerTextSpanList: {FirstPresentationLayerTextSpanList}");
+        	
+            Console.WriteLine($"LastPresentationLayerGroupList: {LastPresentationLayerGroupList}");
+        	Console.WriteLine($"LastPresentationLayerTextSpanList: {LastPresentationLayerTextSpanList}");
+        	
+        	Console.WriteLine($"InlineUiStyleList: {InlineUiStyleList}");
+            
+            Console.WriteLine($"SelectionStyleList: {SelectionStyleList}");
+            
+            Console.WriteLine($"VirtualizedCollapsePointList: {VirtualizedCollapsePointList}");
+            Console.WriteLine($"VirtualizedCollapsePointListVersion: {VirtualizedCollapsePointListVersion}");
+            
+            Console.WriteLine($"VirtualizedTextSpanList: {VirtualizedTextSpanList}");
+            Console.WriteLine($"OutTextSpansList: {OutTextSpansList}");
+            
+        	Console.WriteLine($"LineHeight: {LineHeight}");
+        	
+        	Console.WriteLine($"TextEditor_Width: {TextEditor_Width}");
+        	Console.WriteLine($"TextEditor_Height: {TextEditor_Height}");
+        	
+        	Console.WriteLine($"Scroll_Width: {Scroll_Width}");
+        	Console.WriteLine($"Scroll_Height: {Scroll_Height}");
+        	Console.WriteLine($"Scroll_Left: {Scroll_Left}");
+        	Console.WriteLine($"Scroll_Top: {Scroll_Top}");
+        	
+            Console.WriteLine($"Gutter_HeightWidthPaddingCssStyle: {Gutter_HeightWidthPaddingCssStyle}");
+            
+        	
+            Console.WriteLine($"Gutter_WidthCssStyle: {Gutter_WidthCssStyle}");
+            
+            Console.WriteLine($"GutterWidth: {GutterWidth}");
+            Console.WriteLine($"ScrollLeft: {ScrollLeft}");
+            
+            Console.WriteLine($"ScrollbarSection_LeftCssStyle: {ScrollbarSection_LeftCssStyle}");
+            
+            Console.WriteLine($"LineHeightStyleCssString: {LineHeightStyleCssString}");
+            
+            Console.WriteLine($"BodyStyle: {BodyStyle}");
+            
+            Console.WriteLine($"_seenViewModelKey: {_seenViewModelKey}");
+                        
+            Console.WriteLine($"GutterCssStyle: {GutterCssStyle}");
+            Console.WriteLine($"GutterSectionCssStyle: {GutterSectionCssStyle}");
+            Console.WriteLine($"CursorCssStyle: {CursorCssStyle}");
+            Console.WriteLine($"CaretRowCssStyle: {CaretRowCssStyle}");
+            Console.WriteLine($"VERTICAL_SliderCssStyle: {VERTICAL_SliderCssStyle}");
+            Console.WriteLine($"HORIZONTAL_SliderCssStyle: {HORIZONTAL_SliderCssStyle}");
+            Console.WriteLine($"HORIZONTAL_ScrollbarCssStyle: {HORIZONTAL_ScrollbarCssStyle}");
+            
+            Console.WriteLine("=============\n");
+        }
+    }
     
     public string GetGutterStyleCss(string topCssValue)
     {
@@ -317,7 +515,7 @@ public class TextEditorVirtualizationResult
     
     private void LineIndexCache_Create()
     {
-    	if (GutterWidth != ViewModel.GutterWidthInPixels)
+    	if (_previousState.GutterWidth != ViewModel.GutterWidthInPixels)
     	{
     		GutterWidth = ViewModel.GutterWidthInPixels;
     		ComponentData.LineIndexCache.Clear();
@@ -359,6 +557,16 @@ public class TextEditorVirtualizationResult
     	{
     		ScrollLeft = ViewModel.ScrollLeft;
     		ComponentData.LineIndexCache.Clear();
+    	}
+    	else
+    	{
+    	    GutterWidth = _previousState.GutterWidth;
+    		Gutter_WidthCssStyle = _previousState.Gutter_WidthCssStyle;
+    		Gutter_HeightWidthPaddingCssStyle = _previousState.Gutter_HeightWidthPaddingCssStyle;
+    		BodyStyle = _previousState.BodyStyle;
+            HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;
+            HORIZONTAL_SliderCssStyle = _previousState.HORIZONTAL_SliderCssStyle;
+    		ScrollbarSection_LeftCssStyle = _previousState.ScrollbarSection_LeftCssStyle;
     	}
     
     	var hiddenLineCount = 0;
@@ -472,153 +680,6 @@ public class TextEditorVirtualizationResult
     		if (ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(ViewModel.LineIndex))
 	    		CursorIsOnHiddenLine = true;
     	}
-    }
-    
-    public void CreateUi()
-    {
-        TextEditorViewModel? viewModel;
-        TextEditorModel? model;
-        
-        if (ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.TextEditorState._viewModelMap.TryGetValue(
-                ComponentData.TextEditorViewModelSlimDisplay.TextEditorViewModelKey,
-                out viewModel))
-        {
-            _ = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.TextEditorState._modelMap.TryGetValue(
-                    viewModel.PersistentState.ResourceUri,
-                    out model);
-        }
-        else
-        {
-            model = null;
-        }
-        
-        if (!IsValid)
-        {
-        	DiagnoseIssues();
-        	return;
-        }
-    		
-    	CursorIsOnHiddenLine = false;
-    		
-    	ComponentData.LineIndexCache.UsedKeyHashSet.Clear();
-    	
-    	LineIndexCache_Create();
-    
-    	// Somewhat hacky second try-catch so the presentations
-    	// don't clobber the text editor's default behavior when they throw an exception.
-    	try
-    	{
-	        GetCursorAndCaretRowStyleCss();
-	        GetSelection();
-	        
-	        GetPresentationLayer(
-	        	ViewModel.PersistentState.FirstPresentationLayerKeysList,
-	        	FirstPresentationLayerGroupList,
-	        	FirstPresentationLayerTextSpanList);
-	        	
-	        GetPresentationLayer(
-	        	ViewModel.PersistentState.LastPresentationLayerKeysList,
-	        	LastPresentationLayerGroupList,
-	        	LastPresentationLayerTextSpanList);
-	        
-	        if (VirtualizedCollapsePointListVersion != ViewModel.PersistentState.VirtualizedCollapsePointListVersion ||
-	        	_seenViewModelKey != ViewModel.PersistentState.ViewModelKey)
-	        {
-	        	VirtualizedCollapsePointList.Clear();
-	        
-	        	for (int i = 0; i < ViewModel.PersistentState.VirtualizedCollapsePointList.Count; i++)
-	        	{
-	        		VirtualizedCollapsePointList.Add(ViewModel.PersistentState.VirtualizedCollapsePointList[i]);
-	        	}
-	        	
-	        	GetInlineUiStyleList();
-	        	
-	        	_seenViewModelKey = ViewModel.PersistentState.ViewModelKey;
-	        	VirtualizedCollapsePointListVersion = ViewModel.PersistentState.VirtualizedCollapsePointListVersion;
-	        }
-        }
-        catch (Exception e)
-        {
-        	Console.WriteLine("inner " + e);
-        }
-        
-    	if (LineHeight != ViewModel.CharAndLineMeasurements.LineHeight)
-    	{
-    		LineHeight = ViewModel.CharAndLineMeasurements.LineHeight;
-			
-			ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("height: ");
-	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ViewModel.CharAndLineMeasurements.LineHeight.ToString());
-	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
-	        LineHeightStyleCssString = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
-	        
-	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(LineHeightStyleCssString);
-	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(Gutter_WidthCssStyle);
-	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ComponentData.Gutter_PaddingCssStyle);
-    		Gutter_HeightWidthPaddingCssStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
-		}
-		
-		bool shouldCalculateVerticalSlider = false;
-		bool shouldCalculateHorizontalSlider = false;
-		bool shouldCalculateHorizontalScrollbar = false;
-		
-    	if (TextEditor_Height != ViewModel.TextEditorDimensions.Height)
-    	{
-    		TextEditor_Height = ViewModel.TextEditorDimensions.Height;
-    		shouldCalculateVerticalSlider = true;
-	    }
-		
-    	if (Scroll_Height != ViewModel.ScrollHeight)
-    	{
-    		Scroll_Height = ViewModel.ScrollHeight;
-    		shouldCalculateVerticalSlider = true;
-	    }
-		
-    	if (Scroll_Top != ViewModel.ScrollTop)
-    	{
-    		Scroll_Top = ViewModel.ScrollTop;
-    		shouldCalculateVerticalSlider = true;
-	    }
-		
-    	if (TextEditor_Width != ViewModel.TextEditorDimensions.Width)
-    	{
-    		TextEditor_Width = ViewModel.TextEditorDimensions.Width;
-    		shouldCalculateHorizontalSlider = true;
-    		shouldCalculateHorizontalScrollbar = true;
-	    }
-		
-    	if (Scroll_Width != ViewModel.ScrollWidth)
-    	{
-    		Scroll_Width = ViewModel.ScrollWidth;
-    		shouldCalculateHorizontalSlider = true;
-	    }
-		
-    	if (Scroll_Left != ViewModel.ScrollLeft)
-    	{
-    		Scroll_Left = ViewModel.ScrollLeft;
-    		shouldCalculateHorizontalSlider = true;
-	    }
-
-		if (shouldCalculateVerticalSlider)
-			VERTICAL_GetSliderVerticalStyleCss();
-		
-		if (shouldCalculateHorizontalSlider)
-			HORIZONTAL_GetSliderHorizontalStyleCss();
-		
-		if (shouldCalculateHorizontalScrollbar)
-			HORIZONTAL_GetScrollbarHorizontalStyleCss();
-    
-    	ConstructVirtualizationStyleCssStrings();
-		
-		for (int i = ComponentData.LineIndexCache.ExistsKeyList.Count - 1; i >= 0; i--)
-		{
-			if (!ComponentData.LineIndexCache.UsedKeyHashSet.Contains(ComponentData.LineIndexCache.ExistsKeyList[i]))
-			{
-				ComponentData.LineIndexCache.Map.Remove(ComponentData.LineIndexCache.ExistsKeyList[i]);
-				ComponentData.LineIndexCache.ExistsKeyList.RemoveAt(i);
-			}
-		}
     }
     
     /// <summary>TODO: Determine if total width changed?</summary>
