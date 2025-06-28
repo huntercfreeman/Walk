@@ -1404,6 +1404,8 @@ public sealed class TextEditorViewModelApi
 		if (virtualizationEntry.Position_EndExclusiveIndex - virtualizationEntry.Position_StartInclusiveIndex <= 0)
 		{
 		    // WARNING: CODE DUPLICATION
+		    _createCacheEachSharedParameters.ComponentData.LineIndexCache.UsedKeyHashSet.Add(virtualizationEntry.LineIndex);
+		    
 		    if (_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map.ContainsKey(virtualizationEntry.LineIndex))
     		{
     			_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[virtualizationEntry.LineIndex] = new TextEditorLineIndexCacheEntry(
@@ -1444,6 +1446,7 @@ public sealed class TextEditorViewModelApi
     	    var ddd = _createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[ccc].TopCssValue;
     	    virtualizationEntry.GutterCssStyle = _createCacheEachSharedParameters.ViewModel.Virtualization.GetGutterStyleCss(ddd);
     	    virtualizationEntry.LineCssStyle = _createCacheEachSharedParameters.ViewModel.Virtualization.RowSection_GetRowStyleCss(ccc);
+    	    virtualizationEntry.LineNumberString = _createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[virtualizationEntry.LineIndex].LineNumberString;
     	    _createCacheEachSharedParameters.ViewModel.Virtualization.EntryList[entryIndex] = virtualizationEntry;
     		
     		_textEditorService.__StringBuilder.Clear();
@@ -1593,6 +1596,7 @@ public sealed class TextEditorViewModelApi
 		
 	    var aaa = virtualizationEntry.LineIndex;
 	    var bbb = _createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[aaa].TopCssValue;
+	    virtualizationEntry.LineNumberString = _createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[aaa].LineNumberString;
 	    virtualizationEntry.GutterCssStyle = _createCacheEachSharedParameters.ViewModel.Virtualization.GetGutterStyleCss(bbb);
 	    virtualizationEntry.LineCssStyle = _createCacheEachSharedParameters.ViewModel.Virtualization.RowSection_GetRowStyleCss(aaa);
 	    _textEditorService.__StringBuilder.Clear();
