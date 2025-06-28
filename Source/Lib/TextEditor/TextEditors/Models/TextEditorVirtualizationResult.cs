@@ -508,11 +508,8 @@ public class TextEditorVirtualizationResult
     	else
     	    CursorIsOnHiddenLine = false;
     	
-    	Console.WriteLine("if (Changed_LineHeight || LineHeightStyleCssString == string.Empty)");
     	if (Changed_LineHeight || LineHeightStyleCssString == string.Empty)
     	{
-    	    Console.WriteLine("if (Changed_LineHeight)");
-    	
 			ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
     		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("height: ");
 	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ViewModel.Virtualization.CharAndLineMeasurements.LineHeight.ToString());
@@ -761,7 +758,7 @@ public class TextEditorVirtualizationResult
     
     public void GetCursorAndCaretRowStyleCss()
     {
-        Console.WriteLine("aaa GetCursorAndCaretRowStyleCss");
+        Console.WriteLine(GetHashCode());
     
     	var shouldAppearAfterCollapsePoint = false; // CursorIsOnHiddenLine;
     	var tabWidth = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetOptions().TabWidth;
@@ -828,6 +825,8 @@ public class TextEditorVirtualizationResult
 
 		if (!shouldAppearAfterCollapsePoint)
 		{
+		    Console.WriteLine($"ViewModel.ColumnIndex: {ViewModel.ColumnIndex}");
+		
 	        // Tab key column offset
             var tabsOnSameLineBeforeCursor = Model.GetTabCountOnSameLineBeforeCursor(
                 ViewModel.LineIndex,
@@ -862,8 +861,6 @@ public class TextEditorVirtualizationResult
 				}
 			}*/
 	    }
-        
-        Console.WriteLine("bbb GetCursorAndCaretRowStyleCss");
         
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
 
@@ -900,6 +897,7 @@ public class TextEditorVirtualizationResult
         // So store the result of this method incase an exception occurs in future invocations,
         // to keep the cursor on screen while the state works itself out.
         CursorCssStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
+        Console.WriteLine(CursorCssStyle);
     
     	/////////////////////
     	/////////////////////
@@ -908,8 +906,6 @@ public class TextEditorVirtualizationResult
     	
     	/////////////////////
     	/////////////////////
-		
-		Console.WriteLine($"ccc GetCursorAndCaretRowStyleCss: {LineHeightStyleCssString}");
 		
 		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
 		

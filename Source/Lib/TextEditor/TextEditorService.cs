@@ -383,7 +383,10 @@ public sealed class TextEditorService
 			
 			    var componentData = viewModelModifier.PersistentState.ComponentData;
 			    if (componentData is not null)
+			    {
+			        viewModelModifier.Virtualization.ViewModel = viewModelModifier;
 			        viewModelModifier.Virtualization.GetCursorAndCaretRowStyleCss();
+		        }
 			}
 			
 			TextEditorState._viewModelMap[viewModelModifier.PersistentState.ViewModelKey] = viewModelModifier;
