@@ -68,7 +68,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     
     private TextEditorVirtualizationResult GetVirtualizationResult()
     {
-    	return GetComponentData()?.VirtualizationResult ?? TextEditorVirtualizationResult.Empty;
+    	return GetComponentData()?.Virtualization ?? TextEditorVirtualizationResult.Empty;
     }
     
     private TextEditorComponentData? GetComponentData()

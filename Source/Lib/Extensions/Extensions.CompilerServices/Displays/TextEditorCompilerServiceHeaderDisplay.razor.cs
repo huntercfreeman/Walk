@@ -47,7 +47,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     
     private TextEditorVirtualizationResult GetVirtualizationResult()
     {
-    	return GetComponentData()?.VirtualizationResult ?? TextEditorVirtualizationResult.Empty;
+    	return GetComponentData()?.Virtualization ?? TextEditorVirtualizationResult.Empty;
     }
     
     private TextEditorComponentData? GetComponentData()
@@ -182,10 +182,10 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				TextEditorDevToolsPresentationFacts.EmptyPresentationModel,
 				diagnosticTextSpans);
 			
-			if (viewModelModifier.VirtualizationResult.Count > 0)
+			if (viewModelModifier.Virtualization.Count > 0)
 			{
-				var lowerLineIndexInclusive = viewModelModifier.VirtualizationResult.EntryList[0].LineIndex;
-	            var upperLineIndexInclusive = viewModelModifier.VirtualizationResult.EntryList[viewModelModifier.VirtualizationResult.Count - 1].LineIndex;
+				var lowerLineIndexInclusive = viewModelModifier.Virtualization.EntryList[0].LineIndex;
+	            var upperLineIndexInclusive = viewModelModifier.Virtualization.EntryList[viewModelModifier.Virtualization.Count - 1].LineIndex;
 	            
 	            var lowerLine = modelModifier.GetLineInformation(lowerLineIndexInclusive);
 	            var upperLine = modelModifier.GetLineInformation(upperLineIndexInclusive);

@@ -68,16 +68,16 @@ public sealed class TextEditorViewModel : IDisposable
             dialogService,
             commonBackgroundTaskApi);
     
-        VirtualizationResult = virtualizationResult;
-		TextEditorDimensions = textEditorDimensions;
+        Virtualization = virtualizationResult;
+		Virtualization.TextEditorDimensions = textEditorDimensions;
 		
-		VirtualizationResult.ScrollLeft = scrollLeft;
-	    VirtualizationResult.ScrollTop = scrollTop;
-	    VirtualizationResult.ScrollWidth = scrollWidth;
-	    VirtualizationResult.ScrollHeight = scrollHeight;
-	    VirtualizationResult.MarginScrollHeight = marginScrollHeight;
+		Virtualization.ScrollLeft = scrollLeft;
+	    Virtualization.ScrollTop = scrollTop;
+	    Virtualization.ScrollWidth = scrollWidth;
+	    Virtualization.ScrollHeight = scrollHeight;
+	    Virtualization.MarginScrollHeight = marginScrollHeight;
 		
-        VirtualizationResult.CharAndLineMeasurements = textEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
+        Virtualization.CharAndLineMeasurements = textEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
         
         LineIndex = 0;
 	    ColumnIndex = 0;
@@ -96,10 +96,7 @@ public sealed class TextEditorViewModel : IDisposable
 	    SelectionAnchorPositionIndex = other.SelectionAnchorPositionIndex;
 	    SelectionEndingPositionIndex = other.SelectionEndingPositionIndex;
 	    
-	    VirtualizationResult = other.VirtualizationResult;
-		TextEditorDimensions = other.TextEditorDimensions;
-		
-		
+	    Virtualization = other.Virtualization;
 		
 	    /*
 	    // Don't copy these properties
@@ -118,8 +115,7 @@ public sealed class TextEditorViewModel : IDisposable
     /// Given the dimensions of the rendered text editor, this provides a subset of the file's content, such that "only what is
     /// visible when rendered" is in this. There is some padding of offscreen content so that scrolling is smoother.
     /// </summary>
-    public TextEditorVirtualizationResult VirtualizationResult { get; set; }
-	public TextEditorDimensions TextEditorDimensions { get; set; }
+    public TextEditorVirtualizationResult Virtualization { get; set; }
 	
     public bool ScrollWasModified { get; set; }
     
@@ -154,31 +150,31 @@ public sealed class TextEditorViewModel : IDisposable
     }
     
     public void MutateScrollLeft(int pixels, TextEditorDimensions textEditorDimensions) =>
-		SetScrollLeft(VirtualizationResult.ScrollLeft + pixels, textEditorDimensions);
+		SetScrollLeft(Virtualization.ScrollLeft + pixels, textEditorDimensions);
 
 	public void SetScrollLeft(int pixels, TextEditorDimensions textEditorDimensions)
 	{
 		var resultScrollLeft = Math.Max(0, pixels);
-		var maxScrollLeft = (int)Math.Max(0, VirtualizationResult.ScrollWidth - textEditorDimensions.Width);
+		var maxScrollLeft = (int)Math.Max(0, Virtualization.ScrollWidth - textEditorDimensions.Width);
 
 		if (resultScrollLeft > maxScrollLeft)
 			resultScrollLeft = maxScrollLeft;
 
-		VirtualizationResult.ScrollLeft = resultScrollLeft;
+		Virtualization.ScrollLeft = resultScrollLeft;
 	}
 
 	public void MutateScrollTop(int pixels, TextEditorDimensions textEditorDimensions) =>
-		SetScrollTop(VirtualizationResult.ScrollTop + pixels, textEditorDimensions);
+		SetScrollTop(Virtualization.ScrollTop + pixels, textEditorDimensions);
 
 	public void SetScrollTop(int pixels, TextEditorDimensions textEditorDimensions)
 	{
 		var resultScrollTop = Math.Max(0, pixels);
-		var maxScrollTop = (int)Math.Max(0, VirtualizationResult.ScrollHeight - textEditorDimensions.Height);
+		var maxScrollTop = (int)Math.Max(0, Virtualization.ScrollHeight - textEditorDimensions.Height);
 
 		if (resultScrollTop > maxScrollTop)
 			resultScrollTop = maxScrollTop;
 
-		VirtualizationResult.ScrollTop = resultScrollTop;
+		Virtualization.ScrollTop = resultScrollTop;
 	}
 
     public void Dispose()

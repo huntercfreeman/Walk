@@ -143,7 +143,7 @@ public class TextEditorCommandDefaultFunctions
         editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
     		editContext,
 	        viewModel,
-	        viewModel.VirtualizationResult.CharAndLineMeasurements.LineHeight);
+	        viewModel.Virtualization.CharAndLineMeasurements.LineHeight);
     }
 
     public static void ScrollLineUp(
@@ -154,7 +154,7 @@ public class TextEditorCommandDefaultFunctions
         editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
             editContext,
 	        viewModel,
-	        -1 * viewModel.VirtualizationResult.CharAndLineMeasurements.LineHeight);
+	        -1 * viewModel.Virtualization.CharAndLineMeasurements.LineHeight);
     }
 
     public static void ScrollPageDown(
@@ -165,7 +165,7 @@ public class TextEditorCommandDefaultFunctions
         editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
             editContext,
 	        viewModel,
-	        viewModel.TextEditorDimensions.Height);
+	        viewModel.Virtualization.TextEditorDimensions.Height);
     }
 
     public static void ScrollPageUp(
@@ -176,7 +176,7 @@ public class TextEditorCommandDefaultFunctions
         editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
             editContext,
 	        viewModel,
-	        -1 * viewModel.TextEditorDimensions.Height);
+	        -1 * viewModel.Virtualization.TextEditorDimensions.Height);
     }
 
     public static void CursorMovePageBottom(
@@ -184,9 +184,9 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
-        if (viewModel.VirtualizationResult.Count > 0)
+        if (viewModel.Virtualization.Count > 0)
         {
-            var lastEntry = viewModel.VirtualizationResult.EntryList[viewModel.VirtualizationResult.Count - 1];
+            var lastEntry = viewModel.Virtualization.EntryList[viewModel.Virtualization.Count - 1];
             var lastEntriesLineLength = modelModifier.GetLineLength(lastEntry.LineIndex);
 
             viewModel.LineIndex = lastEntry.LineIndex;
@@ -199,9 +199,9 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
-        if (viewModel.VirtualizationResult.Count > 0)
+        if (viewModel.Virtualization.Count > 0)
         {
-        	var firstEntry = viewModel.VirtualizationResult.EntryList[0];
+        	var firstEntry = viewModel.Virtualization.EntryList[0];
             viewModel.LineIndex = firstEntry.LineIndex;
             viewModel.ColumnIndex = 0;
         }
@@ -955,7 +955,7 @@ public class TextEditorCommandDefaultFunctions
         elementPositionInPixels = elementPositionInPixels with
         {
             Top = elementPositionInPixels.Top +
-                (.9 * viewModel.VirtualizationResult.CharAndLineMeasurements.LineHeight)
+                (.9 * viewModel.Virtualization.CharAndLineMeasurements.LineHeight)
         };
 
         await HandleMouseStoppedMovingEventAsync(
@@ -1091,7 +1091,7 @@ public class TextEditorCommandDefaultFunctions
     				}*/
     			}
 				
-				viewModel.VirtualizationResult.ShouldCalculateVirtualizationResult = true;
+				viewModel.Virtualization.ShouldCalculateVirtualizationResult = true;
 				viewModel.PersistentState.VirtualizedCollapsePointListVersion++;
 				return true;
 			}
@@ -1244,9 +1244,9 @@ public class TextEditorCommandDefaultFunctions
         
         if (leftOffset is null)
         {
-            leftOffset = viewModel.VirtualizationResult.GutterWidth +
+            leftOffset = viewModel.Virtualization.GutterWidth +
                          viewModel.ColumnIndex *
-                         viewModel.VirtualizationResult.CharAndLineMeasurements.CharacterWidth;
+                         viewModel.Virtualization.CharAndLineMeasurements.CharacterWidth;
 	        
 	        // Tab key column offset
             var tabsOnSameLineBeforeCursor = modelModifier.GetTabCountOnSameLineBeforeCursor(
@@ -1258,9 +1258,9 @@ public class TextEditorCommandDefaultFunctions
 
             leftOffset += extraWidthPerTabKey *
                 tabsOnSameLineBeforeCursor *
-                viewModel.VirtualizationResult.CharAndLineMeasurements.CharacterWidth;
+                viewModel.Virtualization.CharAndLineMeasurements.CharacterWidth;
                 
-            leftOffset -= viewModel.VirtualizationResult.ScrollLeft;
+            leftOffset -= viewModel.Virtualization.ScrollLeft;
         }
         
         if (topOffset is null)
@@ -1274,14 +1274,14 @@ public class TextEditorCommandDefaultFunctions
 			}
         
         	topOffset ??= ((viewModel.LineIndex - hiddenLineCount) + 1) *
-	        	viewModel.VirtualizationResult.CharAndLineMeasurements.LineHeight -
-	        	viewModel.VirtualizationResult.ScrollTop;
+	        	viewModel.Virtualization.CharAndLineMeasurements.LineHeight -
+	        	viewModel.Virtualization.ScrollTop;
         }
 		
 		var dropdownRecord = new DropdownRecord(
 			dropdownKey,
-			viewModel.TextEditorDimensions.BoundingClientRectLeft + leftOffset.Value,
-			viewModel.TextEditorDimensions.BoundingClientRectTop + topOffset.Value,
+			viewModel.Virtualization.TextEditorDimensions.BoundingClientRectLeft + leftOffset.Value,
+			viewModel.Virtualization.TextEditorDimensions.BoundingClientRectTop + topOffset.Value,
 			componentType,
 			componentParameters,
 			async () => await viewModel.FocusAsync())

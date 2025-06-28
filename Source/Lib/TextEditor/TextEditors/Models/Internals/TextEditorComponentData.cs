@@ -85,7 +85,7 @@ public sealed class TextEditorComponentData
         ? CursorCssClassBlinkAnimationOn
         : CursorCssClassBlinkAnimationOff;
 	
-	public TextEditorVirtualizationResult VirtualizationResult { get; set; } = TextEditorVirtualizationResult.Empty;
+	public TextEditorVirtualizationResult Virtualization { get; set; } = TextEditorVirtualizationResult.Empty;
 	
 	public TextEditorRenderBatchPersistentState RenderBatchPersistentState { get; set; }
 	

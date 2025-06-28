@@ -60,7 +60,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     
     private TextEditorVirtualizationResult GetVirtualizationResult()
     {
-    	return GetComponentData()?.VirtualizationResult ?? TextEditorVirtualizationResult.Empty;
+    	return GetComponentData()?.Virtualization ?? TextEditorVirtualizationResult.Empty;
     }
     
     private TextEditorComponentData? GetComponentData()

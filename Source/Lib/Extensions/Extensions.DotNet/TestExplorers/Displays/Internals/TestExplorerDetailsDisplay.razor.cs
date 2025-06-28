@@ -141,9 +141,9 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 				
 				var showingFinalLine = false;
 				
-				if (viewModelModifier.VirtualizationResult.Count > 0)
+				if (viewModelModifier.Virtualization.Count > 0)
 				{
-					var last = viewModelModifier.VirtualizationResult.EntryList[viewModelModifier.VirtualizationResult.Count - 1];
+					var last = viewModelModifier.Virtualization.EntryList[viewModelModifier.Virtualization.Count - 1];
 					if (last.LineIndex == modelModifier.LineCount - 1)
 						showingFinalLine = true;
 				}
@@ -168,7 +168,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 				{
 					var lineInformation = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
 					
-					var originalScrollLeft = viewModelModifier.VirtualizationResult.ScrollLeft;
+					var originalScrollLeft = viewModelModifier.Virtualization.ScrollLeft;
 					
 					var textSpan = new TextEditorTextSpan(
 					    startInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
@@ -186,7 +186,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 				        
 			        viewModelModifier.SetScrollLeft(
 			        	(int)originalScrollLeft,
-			        	viewModelModifier.TextEditorDimensions);
+			        	viewModelModifier.Virtualization.TextEditorDimensions);
 				}
 				else if (lineIndexOriginal != viewModelModifier.LineIndex ||
 					     columnIndexOriginal != viewModelModifier.ColumnIndex)

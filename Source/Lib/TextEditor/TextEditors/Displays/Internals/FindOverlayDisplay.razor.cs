@@ -170,7 +170,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
     
     private TextEditorVirtualizationResult GetVirtualizationResult()
     {
-    	return GetComponentData()?.VirtualizationResult ?? TextEditorVirtualizationResult.Empty;
+    	return GetComponentData()?.Virtualization ?? TextEditorVirtualizationResult.Empty;
     }
     
     private TextEditorComponentData? GetComponentData()
