@@ -468,7 +468,17 @@ public class TextEditorVirtualizationResult
     		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
     		ScrollbarSection_LeftCssStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
     	}
-    	else if (Changed_ScrollLeft)
+    	else
+    	{
+    		Gutter_WidthCssStyle = _previousState.Gutter_WidthCssStyle;
+    		Gutter_HeightWidthPaddingCssStyle = _previousState.Gutter_HeightWidthPaddingCssStyle;
+    		BodyStyle = _previousState.BodyStyle;
+    		HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;
+    		HORIZONTAL_SliderCssStyle = _previousState.HORIZONTAL_SliderCssStyle;
+    		ScrollbarSection_LeftCssStyle = _previousState.ScrollbarSection_LeftCssStyle;
+    	}
+    	
+    	if (Changed_ScrollLeft)
     	{
     		ComponentData.LineIndexCache.Clear();
     	}
