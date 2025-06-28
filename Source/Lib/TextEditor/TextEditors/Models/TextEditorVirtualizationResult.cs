@@ -280,7 +280,10 @@ public class TextEditorVirtualizationResult
     		
     	CursorIsOnHiddenLine = false;
     		
-    	ComponentData.LineIndexCache.UsedKeyHashSet.Clear();
+    	ComponentData.LineIndexCache.Clear();
+    	
+    	LineIndexCache_Create();
+    	
     	
     	if (_previousState.LineHeight != ViewModel.CharAndLineMeasurements.LineHeight)
     	{
@@ -327,8 +330,11 @@ public class TextEditorVirtualizationResult
     		shouldCalculateVerticalSlider = true;
 	    }
 		
+		Console.WriteLine("before if (TextEditor_Width != ViewModel.TextEditorDimensions.Width)");
     	if (TextEditor_Width != ViewModel.TextEditorDimensions.Width)
     	{
+    	    Console.WriteLine("inside if (TextEditor_Width != ViewModel.TextEditorDimensions.Width)");
+    	    
     		TextEditor_Width = ViewModel.TextEditorDimensions.Width;
     		shouldCalculateHorizontalSlider = true;
     		shouldCalculateHorizontalScrollbar = true;
@@ -357,7 +363,7 @@ public class TextEditorVirtualizationResult
     
     	ConstructVirtualizationStyleCssStrings();
     	
-    	LineIndexCache_Create();
+    	
     
     	// Somewhat hacky second try-catch so the presentations
     	// don't clobber the text editor's default behavior when they throw an exception.
@@ -406,78 +412,76 @@ public class TextEditorVirtualizationResult
 			}
 		}
 		
-		if (_stopDebugConsoleWriteCount++ < 3)
+		if (++_stopDebugConsoleWriteCount == 2)
 		{
 		    Console.WriteLine("\n\n=============");
 		
-    		Console.WriteLine($"Model: {Model}");
-            Console.WriteLine($"ViewModel: {ViewModel}");
-            Console.WriteLine($"TextEditorRenderBatchPersistentState: {TextEditorRenderBatchPersistentState}");
+    		// Console.WriteLine($"Model: {Model}");
+            // Console.WriteLine($"ViewModel: {ViewModel}");
+            // Console.WriteLine($"TextEditorRenderBatchPersistentState: {TextEditorRenderBatchPersistentState}");
             
             Console.WriteLine($"IsValid: {IsValid}");
                 
-            Console.WriteLine($"ComponentData: {ComponentData}");
+            // Console.WriteLine($"ComponentData: {ComponentData}");
             
-            Console.WriteLine($"InlineUiWidthStyleCssString: {InlineUiWidthStyleCssString}");
+            // Console.WriteLine($"InlineUiWidthStyleCssString: {InlineUiWidthStyleCssString}");
         	
         	
-        	Console.WriteLine($"CursorIsOnHiddenLine: {CursorIsOnHiddenLine}");
+        	// Console.WriteLine($"CursorIsOnHiddenLine: {CursorIsOnHiddenLine}");
             
-            Console.WriteLine($"ShouldScroll: {ShouldScroll}");
+            // Console.WriteLine($"ShouldScroll: {ShouldScroll}");
             
-            Console.WriteLine($"UseLowerBoundInclusiveLineIndex: {UseLowerBoundInclusiveLineIndex}");
-            Console.WriteLine($"UseUpperBoundExclusiveLineIndex: {UseUpperBoundExclusiveLineIndex}");
-            Console.WriteLine($"SelectionBoundsInPositionIndexUnits: {SelectionBoundsInPositionIndexUnits}");
+            // Console.WriteLine($"UseLowerBoundInclusiveLineIndex: {UseLowerBoundInclusiveLineIndex}");
+            // Console.WriteLine($"UseUpperBoundExclusiveLineIndex: {UseUpperBoundExclusiveLineIndex}");
+            // Console.WriteLine($"SelectionBoundsInPositionIndexUnits: {SelectionBoundsInPositionIndexUnits}");
             
-            Console.WriteLine($"FirstPresentationLayerGroupList: {FirstPresentationLayerGroupList}");
-        	Console.WriteLine($"FirstPresentationLayerTextSpanList: {FirstPresentationLayerTextSpanList}");
+            // Console.WriteLine($"FirstPresentationLayerGroupList: {FirstPresentationLayerGroupList}");
+        	// Console.WriteLine($"FirstPresentationLayerTextSpanList: {FirstPresentationLayerTextSpanList}");
         	
-            Console.WriteLine($"LastPresentationLayerGroupList: {LastPresentationLayerGroupList}");
-        	Console.WriteLine($"LastPresentationLayerTextSpanList: {LastPresentationLayerTextSpanList}");
+            // Console.WriteLine($"LastPresentationLayerGroupList: {LastPresentationLayerGroupList}");
+        	// Console.WriteLine($"LastPresentationLayerTextSpanList: {LastPresentationLayerTextSpanList}");
         	
-        	Console.WriteLine($"InlineUiStyleList: {InlineUiStyleList}");
+        	// Console.WriteLine($"InlineUiStyleList: {InlineUiStyleList}");
             
-            Console.WriteLine($"SelectionStyleList: {SelectionStyleList}");
+            // Console.WriteLine($"SelectionStyleList: {SelectionStyleList}");
             
-            Console.WriteLine($"VirtualizedCollapsePointList: {VirtualizedCollapsePointList}");
-            Console.WriteLine($"VirtualizedCollapsePointListVersion: {VirtualizedCollapsePointListVersion}");
+            // Console.WriteLine($"VirtualizedCollapsePointList: {VirtualizedCollapsePointList}");
+            // Console.WriteLine($"VirtualizedCollapsePointListVersion: {VirtualizedCollapsePointListVersion}");
             
-            Console.WriteLine($"VirtualizedTextSpanList: {VirtualizedTextSpanList}");
-            Console.WriteLine($"OutTextSpansList: {OutTextSpansList}");
+            // Console.WriteLine($"VirtualizedTextSpanList: {VirtualizedTextSpanList}");
+            // Console.WriteLine($"OutTextSpansList: {OutTextSpansList}");
             
         	Console.WriteLine($"LineHeight: {LineHeight}");
         	
         	Console.WriteLine($"TextEditor_Width: {TextEditor_Width}");
         	Console.WriteLine($"TextEditor_Height: {TextEditor_Height}");
         	
+        	Console.WriteLine($"LineHeightStyleCssString: {LineHeightStyleCssString}");
+        	
+            Console.WriteLine($"Gutter_HeightWidthPaddingCssStyle: {Gutter_HeightWidthPaddingCssStyle}");
+        	
+            Console.WriteLine($"Gutter_WidthCssStyle: {Gutter_WidthCssStyle}");
+            Console.WriteLine($"GutterWidth: {GutterWidth}");
+            Console.WriteLine($"GutterCssStyle: {GutterCssStyle}");
+            Console.WriteLine($"GutterSectionCssStyle: {GutterSectionCssStyle}");
+            
+            Console.WriteLine($"BodyStyle: {BodyStyle}");
+            
+            Console.WriteLine($"CursorCssStyle: {CursorCssStyle}");
+            Console.WriteLine($"CaretRowCssStyle: {CaretRowCssStyle}");
+        	
         	Console.WriteLine($"Scroll_Width: {Scroll_Width}");
         	Console.WriteLine($"Scroll_Height: {Scroll_Height}");
         	Console.WriteLine($"Scroll_Left: {Scroll_Left}");
         	Console.WriteLine($"Scroll_Top: {Scroll_Top}");
-        	
-            Console.WriteLine($"Gutter_HeightWidthPaddingCssStyle: {Gutter_HeightWidthPaddingCssStyle}");
-            
-        	
-            Console.WriteLine($"Gutter_WidthCssStyle: {Gutter_WidthCssStyle}");
-            
-            Console.WriteLine($"GutterWidth: {GutterWidth}");
-            Console.WriteLine($"ScrollLeft: {ScrollLeft}");
-            
-            Console.WriteLine($"ScrollbarSection_LeftCssStyle: {ScrollbarSection_LeftCssStyle}");
-            
-            Console.WriteLine($"LineHeightStyleCssString: {LineHeightStyleCssString}");
-            
-            Console.WriteLine($"BodyStyle: {BodyStyle}");
-            
-            Console.WriteLine($"_seenViewModelKey: {_seenViewModelKey}");
-                        
-            Console.WriteLine($"GutterCssStyle: {GutterCssStyle}");
-            Console.WriteLine($"GutterSectionCssStyle: {GutterSectionCssStyle}");
-            Console.WriteLine($"CursorCssStyle: {CursorCssStyle}");
-            Console.WriteLine($"CaretRowCssStyle: {CaretRowCssStyle}");
-            Console.WriteLine($"VERTICAL_SliderCssStyle: {VERTICAL_SliderCssStyle}");
+        	Console.WriteLine($"ScrollLeft: {ScrollLeft}");
+        	Console.WriteLine($"VERTICAL_SliderCssStyle: {VERTICAL_SliderCssStyle}");
             Console.WriteLine($"HORIZONTAL_SliderCssStyle: {HORIZONTAL_SliderCssStyle}");
             Console.WriteLine($"HORIZONTAL_ScrollbarCssStyle: {HORIZONTAL_ScrollbarCssStyle}");
+        	
+            Console.WriteLine($"ScrollbarSection_LeftCssStyle: {ScrollbarSection_LeftCssStyle}");
+            
+            Console.WriteLine($"_seenViewModelKey: {_seenViewModelKey}");
             
             Console.WriteLine("=============\n");
         }

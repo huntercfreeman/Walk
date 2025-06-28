@@ -1046,10 +1046,11 @@ public sealed class TextEditorViewModelApi
 		
 		viewModel.GutterWidthInPixels = GetGutterWidthInPixels(modelModifier, viewModel, componentData);
 		
-		if (componentData.LineIndexCache.IsInvalid)
+		componentData.LineIndexCache.Clear();
+		/*if (componentData.LineIndexCache.IsInvalid)
 			componentData.LineIndexCache.Clear();
 		else
-			componentData.LineIndexCache.UsedKeyHashSet.Clear();
+			componentData.LineIndexCache.UsedKeyHashSet.Clear();*/
 		
 		var absDiffScrollLeft = Math.Abs(componentData.LineIndexCache.ScrollLeftMarker - viewModel.ScrollLeft);
 		var useAll = absDiffScrollLeft < 0.01 && componentData.LineIndexCache.ViewModelKeyMarker == viewModel.PersistentState.ViewModelKey;
