@@ -427,7 +427,7 @@ public class TextEditorVirtualizationResult
     /// - ConstructVirtualizationStyleCssStrings
     ///
     /// </summary>
-    public void CreateUi_NotCacheDependent()
+    public void CreateUi()
     {
         if (!IsValid)
         {
@@ -595,16 +595,7 @@ public class TextEditorVirtualizationResult
 	        // 
 	        ConstructVirtualizationStyleCssStrings();
         }
-    }
-    
-    public void External_GetCursorCss()
-    {
-        GetCursorAndCaretRowStyleCss();
-        GetSelection();
-    }
-    
-    public void CreateUi_IsCacheDependent()
-    {
+        
         if (ViewModel.Changed_Cursor_AnyState || (CursorCssStyle == string.Empty))
             GetCursorAndCaretRowStyleCss();
     
@@ -635,6 +626,12 @@ public class TextEditorVirtualizationResult
         	_seenViewModelKey = ViewModel.PersistentState.ViewModelKey;
         	VirtualizedCollapsePointListVersion = ViewModel.PersistentState.VirtualizedCollapsePointListVersion;
         }
+    }
+    
+    public void External_GetCursorCss()
+    {
+        GetCursorAndCaretRowStyleCss();
+        GetSelection();
     }
     
     public string GetGutterStyleCss(string topCssValue)

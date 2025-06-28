@@ -1108,8 +1108,6 @@ public sealed class TextEditorViewModelApi
 		
 		_textEditorService.__StringBuilder.Clear();
 		
-		int linesTaken = 0;
-		
 		var minLineWidthToTriggerVirtualizationExclusive = 2 * viewModel.Virtualization.TextEditorDimensions.Width;
 			
 		int lineOffset = -1;
@@ -1120,7 +1118,7 @@ public sealed class TextEditorViewModelApi
 		{
 			lineOffset++;
 		
-			if (linesTaken >= lineCountToReturn)
+			if (viewModel.Virtualization.Count >= lineCountToReturn)
 				break;
 			// TODO: Is this '>' or '>='?
 			if (verticalStartingIndex + lineOffset >= modelModifier.LineEndList.Count)
@@ -1157,7 +1155,7 @@ public sealed class TextEditorViewModelApi
     			
     			// WARNING CODE DUPLICATION
     			cacheEntry.VirtualizationSpan_EndExclusiveIndex = _createCacheEachSharedParameters.ViewModel.Virtualization.VirtualizationSpanList.Count;
-    			virtualizedLineList[linesTaken++] = new TextEditorVirtualizationLine(
+    			virtualizedLineList[viewModel.Virtualization.Count++] = new TextEditorVirtualizationLine(
     			    cacheEntry.LineIndex,
             	    cacheEntry.Position_StartInclusiveIndex,
             	    cacheEntry.Position_EndExclusiveIndex,
@@ -1279,7 +1277,7 @@ public sealed class TextEditorViewModelApi
 				if (positionEndExclusiveIndex > lineInformation.UpperLineEnd.Position_StartInclusiveIndex)
 					positionEndExclusiveIndex = lineInformation.UpperLineEnd.Position_StartInclusiveIndex;
 				
-				virtualizedLineList[linesTaken++] = new TextEditorVirtualizationLine(
+				virtualizedLineList[viewModel.Virtualization.Count++] = new TextEditorVirtualizationLine(
 					lineIndex,
 					position_StartInclusiveIndex: positionStartInclusiveIndex,
 					position_EndExclusiveIndex: positionEndExclusiveIndex,
@@ -1291,7 +1289,7 @@ public sealed class TextEditorViewModelApi
 					topInPixels - (viewModel.Virtualization.CharAndLineMeasurements.LineHeight * hiddenCount));
 				
 				CreateCacheEach(
-					linesTaken - 1,
+					viewModel.Virtualization.Count - 1,
 					hiddenCount,
 					ref entireSpan);
 			}
@@ -1323,7 +1321,7 @@ public sealed class TextEditorViewModelApi
 				widthInPixels += (int)Math.Ceiling((extraWidthPerTabKey * resultTabCount) *
 					viewModel.Virtualization.CharAndLineMeasurements.CharacterWidth);
 			
-				virtualizedLineList[linesTaken++]= new TextEditorVirtualizationLine(
+				virtualizedLineList[viewModel.Virtualization.Count++]= new TextEditorVirtualizationLine(
 					lineIndex,
 					position_StartInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
 					position_EndExclusiveIndex: lineInformation.UpperLineEnd.Position_StartInclusiveIndex,
@@ -1335,16 +1333,13 @@ public sealed class TextEditorViewModelApi
 					topInPixels: (lineIndex * viewModel.Virtualization.CharAndLineMeasurements.LineHeight) - (viewModel.Virtualization.CharAndLineMeasurements.LineHeight * hiddenCount));
 				
 				CreateCacheEach(
-					linesTaken - 1,
+					viewModel.Virtualization.Count - 1,
 					hiddenCount,
 					ref entireSpan);
 			}
 		}
 		
-		viewModel.Virtualization.Count = linesTaken;
-		
-		viewModel.Virtualization.CreateUi_NotCacheDependent();
-		viewModel.Virtualization.CreateUi_IsCacheDependent();
+		viewModel.Virtualization.CreateUi();
 		
 		componentData.LineIndexCache.ModifiedLineIndexList.Clear();
 	

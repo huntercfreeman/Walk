@@ -94,6 +94,8 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 
             if (modelModifier is null || viewModelModifier is null)
                 return;
+                
+            viewModelModifier.Virtualization.ShouldCalculateVirtualizationResult = true;
             
             _lineIndexPrevious = viewModelModifier.LineIndex;
             _columnIndexPrevious = viewModelModifier.ColumnIndex;
