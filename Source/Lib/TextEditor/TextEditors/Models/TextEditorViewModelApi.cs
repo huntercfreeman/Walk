@@ -1105,8 +1105,6 @@ public sealed class TextEditorViewModelApi
     	_createCacheEachSharedParameters.TabKeyOutput = tabKeyOutput;
     	_createCacheEachSharedParameters.SpaceKeyOutput = spaceKeyOutput;
 		
-		viewModel.Virtualization.CreateUi_NotCacheDependent();
-		
 		_textEditorService.__StringBuilder.Clear();
 		
 		int linesTaken = 0;
@@ -1349,7 +1347,9 @@ public sealed class TextEditorViewModelApi
 
 		componentData.Virtualization = viewModel.Virtualization;
 		
+		viewModel.Virtualization.CreateUi_NotCacheDependent();
 		viewModel.Virtualization.CreateUi_IsCacheDependent();
+		
 		
 		/*componentData.LineIndexCache.ModifiedLineIndexList.Clear();
 	

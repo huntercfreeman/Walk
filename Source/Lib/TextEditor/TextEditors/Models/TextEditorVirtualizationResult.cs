@@ -496,14 +496,9 @@ public class TextEditorVirtualizationResult
         string gutterColumnTopCssValue;
     	
 	    if (Count > 0)
-	    {
         	gutterColumnTopCssValue = ComponentData.LineIndexCache.Map[EntryList[0].LineIndex].TopCssValue;
-        	Console.WriteLine();
-        }
         else
-        {
             gutterColumnTopCssValue = "0";
-        }
         
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("top: ");
