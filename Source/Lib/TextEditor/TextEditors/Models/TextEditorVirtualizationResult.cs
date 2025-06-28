@@ -397,11 +397,11 @@ public class TextEditorVirtualizationResult
     // string RowSection_GetRowStyleCss(int lineIndex)
     public string CursorCssStyle { get; set; } = string.Empty;
     public string CaretRowCssStyle { get; set; } = string.Empty;
-    public string VERTICAL_SliderCssStyle { get; set; }
-    public string HORIZONTAL_SliderCssStyle { get; set; }
-    public string HORIZONTAL_ScrollbarCssStyle { get; set; }
+    public string VERTICAL_SliderCssStyle { get; set; } = string.Empty;
+    public string HORIZONTAL_SliderCssStyle { get; set; } = string.Empty;
+    public string HORIZONTAL_ScrollbarCssStyle { get; set; } = string.Empty;
     
-    public string ScrollbarSection_LeftCssStyle { get; set; }
+    public string ScrollbarSection_LeftCssStyle { get; set; } = string.Empty;
 	
 	/// <summary>
     /// Non loop related UI:
@@ -432,6 +432,8 @@ public class TextEditorVirtualizationResult
         }
         
         LineHeightStyleCssString = _previousState.LineHeightStyleCssString;
+        
+        Console.WriteLine($"Changed_GutterWidth: {Changed_GutterWidth}");
         
     	if (Changed_GutterWidth)
     	{
@@ -565,16 +567,32 @@ public class TextEditorVirtualizationResult
     		shouldCalculateHorizontalSlider = true;
 	    }
 
-		if (shouldCalculateVerticalSlider)
+        if (shouldCalculateVerticalSlider || (VERTICAL_SliderCssStyle == string.Empty))
 			VERTICAL_GetSliderVerticalStyleCss();
+		else
+		    VERTICAL_SliderCssStyle = _previousState.VERTICAL_SliderCssStyle;
 		
-		if (shouldCalculateHorizontalSlider)
+		if (shouldCalculateHorizontalSlider || (HORIZONTAL_SliderCssStyle == string.Empty))
 			HORIZONTAL_GetSliderHorizontalStyleCss();
+		else
+		    HORIZONTAL_SliderCssStyle = _previousState.HORIZONTAL_SliderCssStyle;
 		
-		if (shouldCalculateHorizontalScrollbar)
+		if (shouldCalculateHorizontalScrollbar || (HORIZONTAL_ScrollbarCssStyle == string.Empty))
 			HORIZONTAL_GetScrollbarHorizontalStyleCss();
+		else
+		    HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;
     
-    	ConstructVirtualizationStyleCssStrings();
+        if (TotalWidth != _previousState.TotalWidth || TotalHeight != _previousState.TotalHeight)
+        {
+    	    ConstructVirtualizationStyleCssStrings();
+	    }
+	    else
+	    {
+	        // This is such a silly thing to type I don't think this code will work since you can't re-use the _previousState value
+	        // cause it is stored on the ComponentData?
+	        // 
+	        ConstructVirtualizationStyleCssStrings();
+        }
     }
     
     public void External_GetCursorCss()

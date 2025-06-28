@@ -96,6 +96,8 @@ public sealed class TextEditorViewModel : IDisposable
 	    _selectionAnchorPositionIndex = other._selectionAnchorPositionIndex;
 	    _selectionEndingPositionIndex = other._selectionEndingPositionIndex;
 	    
+	    // The new instance of `Virtualization` is only made when calculating a virtualization result.
+	    // Otherwise, just keep re-using the previous.
 	    Virtualization = other.Virtualization;
 		
 	    /*
