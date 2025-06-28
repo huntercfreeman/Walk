@@ -351,8 +351,14 @@ public class TextEditorVirtualizationResult
     /// - ConstructVirtualizationStyleCssStrings
     ///
     /// </summary>
-    public void CreateUi_NonLoop()
+    public void CreateUi_NotCacheRelated()
     {
+        if (!IsValid)
+        {
+        	DiagnoseIssues();
+        	return;
+        }
+    
         string gutterColumnTopCssValue;
     	
 	    if (ViewModel.VirtualizationResult.Count > 0)
@@ -366,13 +372,6 @@ public class TextEditorVirtualizationResult
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
         
         GutterColumnTopCss = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
-		
-        
-        if (!IsValid)
-        {
-        	DiagnoseIssues();
-        	return;
-        }
 
     	if (ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(ViewModel.LineIndex))
 	    	CursorIsOnHiddenLine = true;
@@ -455,44 +454,35 @@ public class TextEditorVirtualizationResult
     	ConstructVirtualizationStyleCssStrings();
     }
     
-    public void CreateUi_End()
+    public void CreateUi_IsCacheRelated()
     {
-    	// Somewhat hacky second try-catch so the presentations
-    	// don't clobber the text editor's default behavior when they throw an exception.
-    	try
-    	{
-	        GetCursorAndCaretRowStyleCss();
-	        GetSelection();
-	        
-	        GetPresentationLayer(
-	        	ViewModel.PersistentState.FirstPresentationLayerKeysList,
-	        	FirstPresentationLayerGroupList,
-	        	FirstPresentationLayerTextSpanList);
-	        	
-	        GetPresentationLayer(
-	        	ViewModel.PersistentState.LastPresentationLayerKeysList,
-	        	LastPresentationLayerGroupList,
-	        	LastPresentationLayerTextSpanList);
-	        
-	        if (VirtualizedCollapsePointListVersion != ViewModel.PersistentState.VirtualizedCollapsePointListVersion ||
-	        	_seenViewModelKey != ViewModel.PersistentState.ViewModelKey)
-	        {
-	        	VirtualizedCollapsePointList.Clear();
-	        
-	        	for (int i = 0; i < ViewModel.PersistentState.VirtualizedCollapsePointList.Count; i++)
-	        	{
-	        		VirtualizedCollapsePointList.Add(ViewModel.PersistentState.VirtualizedCollapsePointList[i]);
-	        	}
-	        	
-	        	GetInlineUiStyleList();
-	        	
-	        	_seenViewModelKey = ViewModel.PersistentState.ViewModelKey;
-	        	VirtualizedCollapsePointListVersion = ViewModel.PersistentState.VirtualizedCollapsePointListVersion;
-	        }
-        }
-        catch (Exception e)
+        GetCursorAndCaretRowStyleCss();
+        GetSelection();
+        
+        GetPresentationLayer(
+        	ViewModel.PersistentState.FirstPresentationLayerKeysList,
+        	FirstPresentationLayerGroupList,
+        	FirstPresentationLayerTextSpanList);
+        	
+        GetPresentationLayer(
+        	ViewModel.PersistentState.LastPresentationLayerKeysList,
+        	LastPresentationLayerGroupList,
+        	LastPresentationLayerTextSpanList);
+        
+        if (VirtualizedCollapsePointListVersion != ViewModel.PersistentState.VirtualizedCollapsePointListVersion ||
+        	_seenViewModelKey != ViewModel.PersistentState.ViewModelKey)
         {
-        	Console.WriteLine("inner " + e);
+        	VirtualizedCollapsePointList.Clear();
+        
+        	for (int i = 0; i < ViewModel.PersistentState.VirtualizedCollapsePointList.Count; i++)
+        	{
+        		VirtualizedCollapsePointList.Add(ViewModel.PersistentState.VirtualizedCollapsePointList[i]);
+        	}
+        	
+        	GetInlineUiStyleList();
+        	
+        	_seenViewModelKey = ViewModel.PersistentState.ViewModelKey;
+        	VirtualizedCollapsePointListVersion = ViewModel.PersistentState.VirtualizedCollapsePointListVersion;
         }
     }
     
