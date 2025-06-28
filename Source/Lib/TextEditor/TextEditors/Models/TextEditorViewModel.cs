@@ -106,11 +106,72 @@ public sealed class TextEditorViewModel : IDisposable
 	
 	public TextEditorViewModelPersistentState PersistentState { get; set; }
 
-    public int LineIndex { get; set; }
-    public int ColumnIndex { get; set; }
-    public int PreferredColumnIndex { get; set; }
-    public int SelectionAnchorPositionIndex { get; set; }
-    public int SelectionEndingPositionIndex { get; set; }
+    private int _lineIndex;
+    public int LineIndex
+    {
+        get => _lineIndex;
+        set
+        {
+            if (_lineIndex != value)
+                Changed_LineIndex = true;
+            _lineIndex = value;
+        }
+    }
+    
+    private int _columnIndex;
+    public int ColumnIndex
+    {
+        get => _columnIndex;
+        set
+        {
+            if (_columnIndex != value)
+                Changed_ColumnIndex = true;
+            _columnIndex = value;
+        }
+    }
+    
+    private int _preferredColumnIndex;
+    public int PreferredColumnIndex
+    {
+        get => _preferredColumnIndex;
+        set
+        {
+            if (_preferredColumnIndex != value)
+                Changed_PreferredColumnIndex = true;
+            _preferredColumnIndex = value;
+        }
+    }
+    
+    private int _selectionAnchorPositionIndex;
+    public int SelectionAnchorPositionIndex
+    {
+        get => _selectionAnchorPositionIndex;
+        set
+        {
+            if (_selectionAnchorPositionIndex != value)
+                Changed_SelectionAnchorPositionIndex = true;
+            _selectionAnchorPositionIndex = value;
+        }
+    }
+    
+    private int _selectionEndingPositionIndex;
+    public int SelectionEndingPositionIndex
+    {
+        get => _selectionEndingPositionIndex;
+        set
+        {
+            if (_selectionEndingPositionIndex != value)
+                Changed_SelectionEndingPositionIndex = true;
+            _selectionEndingPositionIndex = value;
+        }
+    }
+    
+    public bool Changed_LineIndex { get; set; }
+    public bool Changed_ColumnIndex { get; set; }
+    public bool Changed_PreferredColumnIndex { get; set; }
+    public bool Changed_SelectionAnchorPositionIndex { get; set; }
+    public bool Changed_SelectionEndingPositionIndex { get; set; }
+    
     /// <summary>
     /// Given the dimensions of the rendered text editor, this provides a subset of the file's content, such that "only what is
     /// visible when rendered" is in this. There is some padding of offscreen content so that scrolling is smoother.
