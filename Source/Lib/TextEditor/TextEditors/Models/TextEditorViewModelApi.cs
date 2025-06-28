@@ -1396,7 +1396,46 @@ public sealed class TextEditorViewModelApi
     {
     	var virtualizationEntry = _createCacheEachSharedParameters.ViewModel.Virtualization.EntryList[entryIndex];
 		if (virtualizationEntry.Position_EndExclusiveIndex - virtualizationEntry.Position_StartInclusiveIndex <= 0)
-			return;
+		{
+		    // WARNING: CODE DUPLICATION
+		    if (_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map.ContainsKey(virtualizationEntry.LineIndex))
+    		{
+    			_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[virtualizationEntry.LineIndex] = new TextEditorLineIndexCacheEntry(
+    			    topCssValue: ((virtualizationEntry.LineIndex - hiddenLineCount) * _createCacheEachSharedParameters.ViewModel.Virtualization.CharAndLineMeasurements.LineHeight).ToString(),
+        			leftCssValue: virtualizationEntry.LeftInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture),
+    				lineNumberString: (virtualizationEntry.LineIndex + 1).ToString(),
+    				hiddenLineCount: hiddenLineCount,
+    			    virtualizationEntry.LineIndex,
+            	    virtualizationEntry.Position_StartInclusiveIndex,
+            	    virtualizationEntry.Position_EndExclusiveIndex,
+            	    virtualizationEntry.VirtualizationSpan_StartInclusiveIndex,
+            	    virtualizationEntry.VirtualizationSpan_EndExclusiveIndex,
+            	    virtualizationEntry.WidthInPixels,
+            	    virtualizationEntry.HeightInPixels,
+            	    virtualizationEntry.LeftInPixels,
+            	    virtualizationEntry.TopInPixels);
+    		}
+    		else
+    		{
+    			_createCacheEachSharedParameters.ComponentData.LineIndexCache.ExistsKeyList.Add(virtualizationEntry.LineIndex);
+    			_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map.Add(virtualizationEntry.LineIndex, new TextEditorLineIndexCacheEntry(
+    			    topCssValue: ((virtualizationEntry.LineIndex - hiddenLineCount) * _createCacheEachSharedParameters.ViewModel.Virtualization.CharAndLineMeasurements.LineHeight).ToString(),
+        			leftCssValue: virtualizationEntry.LeftInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture),
+    				lineNumberString: (virtualizationEntry.LineIndex + 1).ToString(),
+    				hiddenLineCount: hiddenLineCount,
+    			    virtualizationEntry.LineIndex,
+            	    virtualizationEntry.Position_StartInclusiveIndex,
+            	    virtualizationEntry.Position_EndExclusiveIndex,
+            	    virtualizationEntry.VirtualizationSpan_StartInclusiveIndex,
+            	    virtualizationEntry.VirtualizationSpan_EndExclusiveIndex,
+            	    virtualizationEntry.WidthInPixels,
+            	    virtualizationEntry.HeightInPixels,
+            	    virtualizationEntry.LeftInPixels,
+            	    virtualizationEntry.TopInPixels));
+    		}
+    		
+    		return;
+		}
 		
 		virtualizationEntry.VirtualizationSpan_StartInclusiveIndex = _createCacheEachSharedParameters.ViewModel.Virtualization.VirtualizationSpanList.Count;
 		
