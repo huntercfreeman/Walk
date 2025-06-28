@@ -510,6 +510,12 @@ public class TextEditorVirtualizationResult
     	else
     	    CursorIsOnHiddenLine = false;
     	
+    	// Does initializing to string.Empty:
+    	// - initialize to null,
+    	// - then to string.Empty?
+    	//
+    	// If so just compare against null so you don't "double initialize".
+    	//
     	if (Changed_LineHeight || LineHeightStyleCssString == string.Empty)
     	{
 			ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
@@ -562,7 +568,8 @@ public class TextEditorVirtualizationResult
     		shouldCalculateHorizontalSlider = true;
 	    }
 		
-    	if (Changed_ScrollLeft)
+		Console.WriteLine($"Changed_ScrollLeft: {Changed_ScrollLeft}");
+    	if (_previousState.Changed_ScrollLeft)
     	{
     		shouldCalculateHorizontalSlider = true;
 	    }
