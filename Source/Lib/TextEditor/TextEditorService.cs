@@ -360,7 +360,6 @@ public sealed class TextEditorService
 			if (viewModelModifier.Virtualization.ShouldCalculateVirtualizationResult)
 			{
 				var componentData = viewModelModifier.PersistentState.ComponentData;
-				
 				if (componentData is not null)
 				{
 					// TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
@@ -371,9 +370,21 @@ public sealed class TextEditorService
 				        componentData);
 				}
 			}
+			else if (viewModelModifier.Changed_Cursor_AnyState)
+			{
+			    // If `CalculateVirtualizationResult` is invoked, then `CalculateCursorUi`
+			    // gets invoked as part of `CalculateVirtualizationResult`.
+			    //
+			    // This is done to permit the `CalculateCursorUi` to use the cache even if
+			    // the cursor isn't on screen.
+			    //
+			    // (otherwise `CalculateVirtualizationResult` would remove that line index from the cache,
+			    //  since it was offscreen).
 			
-			if (viewModelModifier.Changed_Cursor_AnyState)
-			    viewModelModifier.Virtualization.CalculateCursorUi();
+			    var componentData = viewModelModifier.PersistentState.ComponentData;
+			    if (componentData is not null)
+			        viewModelModifier.Virtualization.GetCursorAndCaretRowStyleCss();
+			}
 			
 			TextEditorState._viewModelMap[viewModelModifier.PersistentState.ViewModelKey] = viewModelModifier;
         }

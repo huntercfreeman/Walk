@@ -403,12 +403,7 @@ public class TextEditorVirtualizationResult
     
     public string ScrollbarSection_LeftCssStyle { get; set; }
 	
-	public void CalculateCursorUi()
-	{
-	    GetCursorAndCaretRowStyleCss();
-	}
-	
-    /// <summary>
+	/// <summary>
     /// Non loop related UI:
     /// --------------------
     /// - GutterColumnTopCss (specifically the column that provides background-color not the individual line numbers).
@@ -566,6 +561,9 @@ public class TextEditorVirtualizationResult
     
     public void CreateUi_IsCacheDependent()
     {
+        if (ViewModel.Changed_Cursor_AnyState)
+            GetCursorAndCaretRowStyleCss();
+    
         // GetSelection();
         
         /* GetPresentationLayer(
