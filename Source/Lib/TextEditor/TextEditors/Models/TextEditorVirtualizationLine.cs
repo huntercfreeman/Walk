@@ -6,6 +6,9 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Models;
 /// </summary>
 public record struct TextEditorVirtualizationLine
 {
+    /// <summary>
+    /// TODO: This constructor is massive and likely doesn't need to copy so much data around.
+    /// </summary>
 	public TextEditorVirtualizationLine(
 	    int lineIndex,
 	    int position_StartInclusiveIndex,
@@ -15,7 +18,10 @@ public record struct TextEditorVirtualizationLine
 	    int widthInPixels,
 	    int heightInPixels,
 	    double leftInPixels,
-	    int topInPixels)
+	    int topInPixels,
+	    string gutterCssStyle,
+        string lineCssStyle,
+        string lineNumberString)
 	{
 		LineIndex = lineIndex;
 	    Position_StartInclusiveIndex = position_StartInclusiveIndex;
@@ -26,6 +32,9 @@ public record struct TextEditorVirtualizationLine
 	    HeightInPixels = heightInPixels;
 	    LeftInPixels = leftInPixels;
 	    TopInPixels = topInPixels;
+	    GutterCssStyle = gutterCssStyle;
+        LineCssStyle = lineCssStyle;
+        LineNumberString = lineNumberString;
 	}
 	
 	public int LineIndex { get; }

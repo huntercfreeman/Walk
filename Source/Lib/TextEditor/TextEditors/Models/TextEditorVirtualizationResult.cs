@@ -605,32 +605,32 @@ public class TextEditorVirtualizationResult
     
     public string GetGutterStyleCss(string topCssValue)
     {
-    	ComponentData.UiStringBuilder.Clear();
+    	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
     
-    	ComponentData.UiStringBuilder.Append("top: ");
-        ComponentData.UiStringBuilder.Append(topCssValue);
-        ComponentData.UiStringBuilder.Append("px;");
+    	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("top: ");
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(topCssValue);
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
     
-        ComponentData.UiStringBuilder.Append(Gutter_HeightWidthPaddingCssStyle);
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(Gutter_HeightWidthPaddingCssStyle);
 
-        return ComponentData.UiStringBuilder.ToString();
+        return ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
     }
     
     public string RowSection_GetRowStyleCss(int lineIndex)
     {
-    	ComponentData.UiStringBuilder.Clear();
+    	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
     
-        ComponentData.UiStringBuilder.Append("top: ");
-        ComponentData.UiStringBuilder.Append(ComponentData.LineIndexCache.Map[lineIndex].TopCssValue);
-        ComponentData.UiStringBuilder.Append("px;");
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("top: ");
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ComponentData.LineIndexCache.Map[lineIndex].TopCssValue);
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
 
-        ComponentData.UiStringBuilder.Append(LineHeightStyleCssString);
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(LineHeightStyleCssString);
 
-        ComponentData.UiStringBuilder.Append("left: ");
-        ComponentData.UiStringBuilder.Append(ComponentData.LineIndexCache.Map[lineIndex].LeftCssValue);
-        ComponentData.UiStringBuilder.Append("px;");
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("left: ");
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ComponentData.LineIndexCache.Map[lineIndex].LeftCssValue);
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
 
-        return ComponentData.UiStringBuilder.ToString();
+        return ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
     }
     
     /// <summary>TODO: Determine if total width changed?</summary>

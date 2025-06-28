@@ -1282,7 +1282,10 @@ public sealed class TextEditorViewModelApi
 					widthInPixels,
 					viewModel.Virtualization.CharAndLineMeasurements.LineHeight,
 					viewModel.Virtualization.GutterWidth + leftInPixels,
-					topInPixels - (viewModel.Virtualization.CharAndLineMeasurements.LineHeight * hiddenCount));
+					topInPixels - (viewModel.Virtualization.CharAndLineMeasurements.LineHeight * hiddenCount),
+					gutterCssStyle: string.Empty,
+                    lineCssStyle: string.Empty,
+                    lineNumberString: string.Empty);
 				
 				CreateCacheEach(
 					linesTaken - 1,
@@ -1326,7 +1329,10 @@ public sealed class TextEditorViewModelApi
 					widthInPixels,
 					viewModel.Virtualization.CharAndLineMeasurements.LineHeight,
 					leftInPixels: viewModel.Virtualization.GutterWidth,
-					topInPixels: (lineIndex * viewModel.Virtualization.CharAndLineMeasurements.LineHeight) - (viewModel.Virtualization.CharAndLineMeasurements.LineHeight * hiddenCount));
+					topInPixels: (lineIndex * viewModel.Virtualization.CharAndLineMeasurements.LineHeight) - (viewModel.Virtualization.CharAndLineMeasurements.LineHeight * hiddenCount),
+					gutterCssStyle: string.Empty,
+                    lineCssStyle: string.Empty,
+                    lineNumberString: string.Empty);
 				
 				CreateCacheEach(
 					linesTaken - 1,
@@ -1433,6 +1439,14 @@ public sealed class TextEditorViewModelApi
             	    virtualizationEntry.LeftInPixels,
             	    virtualizationEntry.TopInPixels));
     		}
+    		
+    		var ccc = virtualizationEntry.LineIndex;
+    	    var ddd = _createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[ccc].TopCssValue;
+    	    virtualizationEntry.GutterCssStyle = _createCacheEachSharedParameters.ViewModel.Virtualization.GetGutterStyleCss(ddd);
+    	    virtualizationEntry.LineCssStyle = _createCacheEachSharedParameters.ViewModel.Virtualization.RowSection_GetRowStyleCss(ccc);
+    	    _createCacheEachSharedParameters.ViewModel.Virtualization.EntryList[entryIndex] = virtualizationEntry;
+    		
+    		_textEditorService.__StringBuilder.Clear();
     		
     		return;
 		}
@@ -1581,6 +1595,7 @@ public sealed class TextEditorViewModelApi
 	    var bbb = _createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[aaa].TopCssValue;
 	    virtualizationEntry.GutterCssStyle = _createCacheEachSharedParameters.ViewModel.Virtualization.GetGutterStyleCss(bbb);
 	    virtualizationEntry.LineCssStyle = _createCacheEachSharedParameters.ViewModel.Virtualization.RowSection_GetRowStyleCss(aaa);
+	    _textEditorService.__StringBuilder.Clear();
 	    _createCacheEachSharedParameters.ViewModel.Virtualization.EntryList[entryIndex] = virtualizationEntry;
     }
     
