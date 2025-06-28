@@ -365,6 +365,8 @@ public class TextEditorVirtualizationResult
 	
 	public bool ShouldCalculateVirtualizationResult { get; set; }
 	
+	public Key<TextEditorViewModel> _seenViewModelKey = Key<TextEditorViewModel>.Empty;
+	
 	/// <summary>
     /// Each individual line number is a separate "gutter".
     /// Therefore, the UI in a loop will use a StringBuilder to .Append(...)
@@ -380,28 +382,30 @@ public class TextEditorVirtualizationResult
     /// and it is a D.R.Y. code / omnipotent knowledge
     /// that this needs re-calculated nightmare.
     /// </summary>
-    public string Gutter_HeightWidthPaddingCssStyle { get; set; }
+    public string? Gutter_HeightWidthPaddingCssStyle { get; set; }
     
-    public string Gutter_WidthCssStyle { get; set; }
+    public string? Gutter_WidthCssStyle { get; set; }
     
-    public string LineHeightStyleCssString { get; set; } = string.Empty;
+    public string? LineHeightStyleCssString { get; set; }
     
+    /// <summary>
+    /// BodyStyle is the odd one out for the nullable strings being used for CSS.
+    /// The text editor needs to initially render with full width so that JavaScript can measure it.
+    /// </summary>
     public string BodyStyle { get; set; } = $"width: 100%; left: 0;";
     
-    public Key<TextEditorViewModel> _seenViewModelKey = Key<TextEditorViewModel>.Empty;
-    
-    public string GutterCssStyle { get; set; }
-    public string GutterSectionCssStyle { get; set; }
-    public string GutterColumnTopCss { get; set; }
+    public string? GutterCssStyle { get; set; }
+    public string? GutterSectionCssStyle { get; set; }
+    public string? GutterColumnTopCss { get; set; }
     
     // string RowSection_GetRowStyleCss(int lineIndex)
-    public string CursorCssStyle { get; set; } = string.Empty;
-    public string CaretRowCssStyle { get; set; } = string.Empty;
-    public string VERTICAL_SliderCssStyle { get; set; } = string.Empty;
-    public string HORIZONTAL_SliderCssStyle { get; set; } = string.Empty;
-    public string HORIZONTAL_ScrollbarCssStyle { get; set; } = string.Empty;
+    public string? CursorCssStyle { get; set; }
+    public string? CaretRowCssStyle { get; set; }
+    public string? VERTICAL_SliderCssStyle { get; set; }
+    public string? HORIZONTAL_SliderCssStyle { get; set; }
+    public string? HORIZONTAL_ScrollbarCssStyle { get; set; }
     
-    public string ScrollbarSection_LeftCssStyle { get; set; } = string.Empty;
+    public string? ScrollbarSection_LeftCssStyle { get; set; }
 	
 	/// <summary>
     /// Non loop related UI:
@@ -433,9 +437,7 @@ public class TextEditorVirtualizationResult
         
         LineHeightStyleCssString = _previousState.LineHeightStyleCssString;
         
-        Console.WriteLine($"Changed_GutterWidth: {Changed_GutterWidth}");
-        
-    	if (Changed_GutterWidth)
+    	if (_previousState.Changed_GutterWidth)
     	{
     		ComponentData.LineIndexCache.Clear();
     		
@@ -486,7 +488,7 @@ public class TextEditorVirtualizationResult
     		CaretRowCssStyle = _previousState.CaretRowCssStyle;
     	}
     	
-    	if (Changed_ScrollLeft)
+    	if (_previousState.Changed_ScrollLeft)
     	{
     		ComponentData.LineIndexCache.Clear();
     	}
@@ -510,13 +512,7 @@ public class TextEditorVirtualizationResult
     	else
     	    CursorIsOnHiddenLine = false;
     	
-    	// Does initializing to string.Empty:
-    	// - initialize to null,
-    	// - then to string.Empty?
-    	//
-    	// If so just compare against null so you don't "double initialize".
-    	//
-    	if (Changed_LineHeight || LineHeightStyleCssString == string.Empty)
+    	if (_previousState.Changed_LineHeight)
     	{
 			ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
     		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("height: ");
@@ -542,49 +538,48 @@ public class TextEditorVirtualizationResult
 		bool shouldCalculateHorizontalSlider = false;
 		bool shouldCalculateHorizontalScrollbar = false;
 		
-    	if (Changed_TextEditorHeight)
+    	if (_previousState.Changed_TextEditorHeight)
     	{
     		shouldCalculateVerticalSlider = true;
 	    }
 		
-    	if (Changed_ScrollHeight)
+    	if (_previousState.Changed_ScrollHeight)
     	{
     		shouldCalculateVerticalSlider = true;
 	    }
 		
-    	if (Changed_ScrollTop)
+    	if (_previousState.Changed_ScrollTop)
     	{
     		shouldCalculateVerticalSlider = true;
 	    }
 		
-    	if (Changed_TextEditorWidth)
+    	if (_previousState.Changed_TextEditorWidth)
     	{
     		shouldCalculateHorizontalSlider = true;
     		shouldCalculateHorizontalScrollbar = true;
 	    }
 		
-    	if (Changed_ScrollWidth)
+    	if (_previousState.Changed_ScrollWidth)
     	{
     		shouldCalculateHorizontalSlider = true;
 	    }
 		
-		Console.WriteLine($"Changed_ScrollLeft: {Changed_ScrollLeft}");
     	if (_previousState.Changed_ScrollLeft)
     	{
     		shouldCalculateHorizontalSlider = true;
 	    }
 
-        if (shouldCalculateVerticalSlider || (VERTICAL_SliderCssStyle == string.Empty))
+        if (shouldCalculateVerticalSlider)
 			VERTICAL_GetSliderVerticalStyleCss();
 		else
 		    VERTICAL_SliderCssStyle = _previousState.VERTICAL_SliderCssStyle;
 		
-		if (shouldCalculateHorizontalSlider || (HORIZONTAL_SliderCssStyle == string.Empty))
+		if (shouldCalculateHorizontalSlider)
 			HORIZONTAL_GetSliderHorizontalStyleCss();
 		else
 		    HORIZONTAL_SliderCssStyle = _previousState.HORIZONTAL_SliderCssStyle;
 		
-		if (shouldCalculateHorizontalScrollbar || (HORIZONTAL_ScrollbarCssStyle == string.Empty))
+		if (shouldCalculateHorizontalScrollbar)
 			HORIZONTAL_GetScrollbarHorizontalStyleCss();
 		else
 		    HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;

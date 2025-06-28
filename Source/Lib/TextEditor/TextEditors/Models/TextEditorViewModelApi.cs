@@ -1055,6 +1055,10 @@ public sealed class TextEditorViewModelApi
 		viewModel.Virtualization.ScrollHeight = totalHeight;
 		viewModel.Virtualization.MarginScrollHeight = marginScrollHeight;
 		
+		// GutterWidth is the only property with an "awkward" timing to the `Changed_...` variables.
+		// Every other property is changed prior to invoking `CalculateVirtualizationResult`.
+		//
+		previousVirtualizationResult.GutterWidth = GetGutterWidthInPixels(modelModifier, viewModel, componentData);
 		viewModel.Virtualization.GutterWidth = GetGutterWidthInPixels(modelModifier, viewModel, componentData);
 		
 		/*if (componentData.LineIndexCache.IsInvalid)
