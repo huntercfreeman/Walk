@@ -29,7 +29,7 @@ public class TextEditorLineIndexCache
     
     public void Clear()
     {
-	    ScrollLeftMarker = -1;
+	    /*ScrollLeftMarker = -1;
 	    
 	    Map.Clear();
 	    
@@ -44,6 +44,6 @@ public class TextEditorLineIndexCache
 	    ViewModelKeyMarker = Key<TextEditorViewModel>.Empty;
 	    
 	    IsInvalid = false;
-	    ModifiedLineIndexList.Clear();
+	    ModifiedLineIndexList.Clear();*/
     }
 }

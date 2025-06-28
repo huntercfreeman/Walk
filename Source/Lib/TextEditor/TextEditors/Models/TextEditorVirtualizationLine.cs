@@ -37,4 +37,7 @@ public record struct TextEditorVirtualizationLine
     public int HeightInPixels { get; }
     public double LeftInPixels { get; }
     public int TopInPixels { get; }
+    public string GutterCssStyle { get; set; }
+    public string LineCssStyle { get; set; }
+    public string LineNumberString { get; set; }
 }

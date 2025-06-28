@@ -103,9 +103,9 @@
 	    			  virtualizationResultIndex < virtualizationResult.ViewModel.VirtualizationResult.Count;
 	    			  virtualizationResultIndex++)
 			    {
-			        <div style="@(virtualizationResult.GetGutterStyleCss(_componentData.LineIndexCache.Map[virtualizationResult.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex].TopCssValue))">
-			             
-			            @(_componentData.LineIndexCache.Map[virtualizationResult.ViewModel.VirtualizationResult.EntryList[virtualizationResultIndex].LineIndex].LineNumberString)
+			        <div style="virtualizationResult.EntryList[virtualizationResultIndex].GutterCssStyle">
+			            
+			            @(virtualizationResult.EntryList[virtualizationResultIndex].LineNumberString)
 			            
 			            @for (int i = 0; i < virtualizationResult.VirtualizedCollapsePointList.Count; i++)
 		            	{
@@ -144,7 +144,7 @@
 	    		  virtualizationResultIndex < virtualizationResult.Count;
 	    		  virtualizationResultIndex++)
 		    {
-		    	<div style="@virtualizationResult.RowSection_GetRowStyleCss(virtualizationResult.EntryList[virtualizationResultIndex].LineIndex)">
+		    	<div style="@virtualizationResult.EntryList[virtualizationResultIndex].LineCssStyle">
 				
 					@*
 						'!= 0' because the struct's int property will default to '0',

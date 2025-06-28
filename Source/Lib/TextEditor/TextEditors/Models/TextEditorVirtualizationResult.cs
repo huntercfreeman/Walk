@@ -270,20 +270,82 @@ public class TextEditorVirtualizationResult
     
     private static int _stopDebugConsoleWriteCount = 0;
     
+    public void LineIndexCache_Create()
+    {
+        /*
+    	if (_previousState.GutterWidth != ViewModel.GutterWidthInPixels)
+    	{
+    		GutterWidth = ViewModel.GutterWidthInPixels;
+    		ComponentData.LineIndexCache.Clear();
+    		
+    		var widthInPixelsInvariantCulture = GutterWidth.ToString();
+    		
+    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
+    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("width: ");
+    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(widthInPixelsInvariantCulture);
+    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
+    		Gutter_WidthCssStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
+    		
+    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
+    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(LineHeightStyleCssString);
+	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(Gutter_WidthCssStyle);
+	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ComponentData.Gutter_PaddingCssStyle);
+    		Gutter_HeightWidthPaddingCssStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
+    		
+    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
+    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("width: calc(100% - ");
+	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(widthInPixelsInvariantCulture);
+	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px); left: ");
+	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(widthInPixelsInvariantCulture);
+	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
+    		BodyStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
+
+    		ViewModel.PersistentState.PostScrollAndRemeasure();
+    		
+    		HORIZONTAL_GetScrollbarHorizontalStyleCss();
+    		HORIZONTAL_GetSliderHorizontalStyleCss();
+    		
+    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
+    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("left: ");
+    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(widthInPixelsInvariantCulture);
+    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
+    		ScrollbarSection_LeftCssStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
+    	}
+    	else if (ScrollLeft != ViewModel.ScrollLeft)
+    	{
+    		ScrollLeft = ViewModel.ScrollLeft;
+    		ComponentData.LineIndexCache.Clear();
+    	}
+    	else
+    	{
+    	    GutterWidth = _previousState.GutterWidth;
+    		Gutter_WidthCssStyle = _previousState.Gutter_WidthCssStyle;
+    		Gutter_HeightWidthPaddingCssStyle = _previousState.Gutter_HeightWidthPaddingCssStyle;
+    		BodyStyle = _previousState.BodyStyle;
+            HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;
+            HORIZONTAL_SliderCssStyle = _previousState.HORIZONTAL_SliderCssStyle;
+    		ScrollbarSection_LeftCssStyle = _previousState.ScrollbarSection_LeftCssStyle;
+    	}
+    	*/
+    }
+    
     public void CreateUi()
     {
+        Console.WriteLine($"ComponentData.LineIndexCache.Map.Count: {ComponentData.LineIndexCache.Map.Count}");
+        
+        
+		
+        /*
         if (!IsValid)
         {
         	DiagnoseIssues();
         	return;
         }
-    		
-    	CursorIsOnHiddenLine = false;
-    		
-    	ComponentData.LineIndexCache.Clear();
-    	
-    	LineIndexCache_Create();
-    	
+
+    	if (ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(ViewModel.LineIndex))
+	    	CursorIsOnHiddenLine = true;
+    	else
+    	    CursorIsOnHiddenLine = false;
     	
     	if (_previousState.LineHeight != ViewModel.CharAndLineMeasurements.LineHeight)
     	{
@@ -362,8 +424,6 @@ public class TextEditorVirtualizationResult
 			HORIZONTAL_GetScrollbarHorizontalStyleCss();
     
     	ConstructVirtualizationStyleCssStrings();
-    	
-    	
     
     	// Somewhat hacky second try-catch so the presentations
     	// don't clobber the text editor's default behavior when they throw an exception.
@@ -485,6 +545,7 @@ public class TextEditorVirtualizationResult
             
             Console.WriteLine("=============\n");
         }
+        */
     }
     
     public string GetGutterStyleCss(string topCssValue)
@@ -515,175 +576,6 @@ public class TextEditorVirtualizationResult
         ComponentData.UiStringBuilder.Append("px;");
 
         return ComponentData.UiStringBuilder.ToString();
-    }
-    
-    private void LineIndexCache_Create()
-    {
-    	if (_previousState.GutterWidth != ViewModel.GutterWidthInPixels)
-    	{
-    		GutterWidth = ViewModel.GutterWidthInPixels;
-    		ComponentData.LineIndexCache.Clear();
-    		
-    		var widthInPixelsInvariantCulture = GutterWidth.ToString();
-    		
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("width: ");
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(widthInPixelsInvariantCulture);
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
-    		Gutter_WidthCssStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
-    		
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(LineHeightStyleCssString);
-	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(Gutter_WidthCssStyle);
-	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ComponentData.Gutter_PaddingCssStyle);
-    		Gutter_HeightWidthPaddingCssStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
-    		
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("width: calc(100% - ");
-	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(widthInPixelsInvariantCulture);
-	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px); left: ");
-	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(widthInPixelsInvariantCulture);
-	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
-    		BodyStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
-
-    		ViewModel.PersistentState.PostScrollAndRemeasure();
-    		
-    		HORIZONTAL_GetScrollbarHorizontalStyleCss();
-    		HORIZONTAL_GetSliderHorizontalStyleCss();
-    		
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("left: ");
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(widthInPixelsInvariantCulture);
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
-    		ScrollbarSection_LeftCssStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
-    	}
-    	else if (ScrollLeft != ViewModel.ScrollLeft)
-    	{
-    		ScrollLeft = ViewModel.ScrollLeft;
-    		ComponentData.LineIndexCache.Clear();
-    	}
-    	else
-    	{
-    	    GutterWidth = _previousState.GutterWidth;
-    		Gutter_WidthCssStyle = _previousState.Gutter_WidthCssStyle;
-    		Gutter_HeightWidthPaddingCssStyle = _previousState.Gutter_HeightWidthPaddingCssStyle;
-    		BodyStyle = _previousState.BodyStyle;
-            HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;
-            HORIZONTAL_SliderCssStyle = _previousState.HORIZONTAL_SliderCssStyle;
-    		ScrollbarSection_LeftCssStyle = _previousState.ScrollbarSection_LeftCssStyle;
-    	}
-    
-    	var hiddenLineCount = 0;
-    	var checkHiddenLineIndex = 0;
-    	var handledCursor = false;
-    	var isHandlingCursor = false;
-    	
-    	for (int i = 0; i < ViewModel.VirtualizationResult.Count; i++)
-    	{
-    		int lineIndex = ViewModel.VirtualizationResult.EntryList[i].LineIndex;
-    		
-    		if (lineIndex >= ViewModel.LineIndex && !handledCursor)
-    		{
-    		 	isHandlingCursor = true;
-    		 	lineIndex = ViewModel.LineIndex;
-			}
-    		
-    		for (; checkHiddenLineIndex < lineIndex; checkHiddenLineIndex++)
-            {
-            	if (ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(checkHiddenLineIndex))
-            		hiddenLineCount++;
-            }
-            
-            ComponentData.LineIndexCache.UsedKeyHashSet.Add(lineIndex);
-            
-            if (ComponentData.LineIndexCache.Map.ContainsKey(lineIndex))
-	    	{
-	    		var cacheEntry = ComponentData.LineIndexCache.Map[lineIndex];
-	    		
-	    		if (hiddenLineCount != cacheEntry.HiddenLineCount)
-	            {
-	            	cacheEntry.TopCssValue = ((lineIndex - hiddenLineCount) * ViewModel.CharAndLineMeasurements.LineHeight)
-	            		.ToString();
-	            		
-	            	cacheEntry.HiddenLineCount = hiddenLineCount;
-	            	
-	            	ComponentData.LineIndexCache.Map[lineIndex] = cacheEntry;
-	            }
-	    	}
-	    	else
-	    	{
-	    		ComponentData.LineIndexCache.ExistsKeyList.Add(lineIndex);
-	    		
-	    		ComponentData.LineIndexCache.Map.Add(lineIndex, new TextEditorLineIndexCacheEntry(
-	    			topCssValue: ((lineIndex - hiddenLineCount) * ViewModel.CharAndLineMeasurements.LineHeight).ToString(),
-	    			leftCssValue: ViewModel.VirtualizationResult.EntryList[i].LeftInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture),
-					lineNumberString: (lineIndex + 1).ToString(),
-					hiddenLineCount: hiddenLineCount,
-					lineIndex: 0,
-            	    position_StartInclusiveIndex: 0,
-            	    position_EndExclusiveIndex: 0,
-            	    virtualizationSpan_StartInclusiveIndex: 0,
-            	    virtualizationSpan_EndExclusiveIndex: 0,
-            	    widthInPixels: 0,
-            	    heightInPixels: 0,
-            	    leftInPixels: 0,
-            	    topInPixels: 0));
-	    	}
-	    	
-	    	if (isHandlingCursor)
-	    	{
-	    		isHandlingCursor = false;
-	    		handledCursor = true;
-	    		i--;
-	    		
-	    		if (ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(ViewModel.LineIndex))
-	    			CursorIsOnHiddenLine = true;
-	    	}
-    	}
-    	
-    	if (!handledCursor)
-    	{
-    		ComponentData.LineIndexCache.UsedKeyHashSet.Add(ViewModel.LineIndex);
-    		
-    		if (ComponentData.LineIndexCache.Map.ContainsKey(ViewModel.LineIndex))
-	    	{
-	    		var cacheEntry = ComponentData.LineIndexCache.Map[ViewModel.LineIndex];
-	    		
-	    		if (hiddenLineCount != cacheEntry.HiddenLineCount)
-	            {
-	            	cacheEntry.TopCssValue = (ViewModel.LineIndex * ViewModel.CharAndLineMeasurements.LineHeight)
-	            		.ToString();
-	            		
-	            	cacheEntry.HiddenLineCount = 0;
-	            	
-	            	ComponentData.LineIndexCache.Map[ViewModel.LineIndex] = cacheEntry;
-	            }
-	    	}
-	    	else
-	    	{
-	    		ComponentData.LineIndexCache.ExistsKeyList.Add(ViewModel.LineIndex);
-	    		
-	    		ComponentData.LineIndexCache.Map.Add(ViewModel.LineIndex, new TextEditorLineIndexCacheEntry(
-	    			topCssValue: (ViewModel.LineIndex * ViewModel.CharAndLineMeasurements.LineHeight).ToString(),
-					lineNumberString: (ViewModel.LineIndex + 1).ToString(),
-					// TODO: This will cause a bug, this declares a lines left but in reality its trying to just describe the cursor and this value is placeholder.
-					// But, since this placeholder is cached, if this line comes up in a future render it may or may not be positioned correctly.
-					leftCssValue: ViewModel.GutterWidthInPixels.ToString(),
-					hiddenLineCount: 0,
-					lineIndex: 0,
-            	    position_StartInclusiveIndex: 0,
-            	    position_EndExclusiveIndex: 0,
-            	    virtualizationSpan_StartInclusiveIndex: 0,
-            	    virtualizationSpan_EndExclusiveIndex: 0,
-            	    widthInPixels: 0,
-            	    heightInPixels: 0,
-            	    leftInPixels: 0,
-            	    topInPixels: 0));
-	    	}
-	    		
-    		if (ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(ViewModel.LineIndex))
-	    		CursorIsOnHiddenLine = true;
-    	}
     }
     
     /// <summary>TODO: Determine if total width changed?</summary>
