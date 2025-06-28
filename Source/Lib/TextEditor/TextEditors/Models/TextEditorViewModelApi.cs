@@ -1085,7 +1085,7 @@ public sealed class TextEditorViewModelApi
     	_createCacheEachSharedParameters.TabKeyOutput = tabKeyOutput;
     	_createCacheEachSharedParameters.SpaceKeyOutput = spaceKeyOutput;
 		
-		viewModel.VirtualizationResult.CreateUi_Start();
+		viewModel.VirtualizationResult.CreateUi_NonLoop();
 		
 		_textEditorService.__StringBuilder.Clear();
 		

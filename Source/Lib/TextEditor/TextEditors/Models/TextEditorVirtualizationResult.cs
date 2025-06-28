@@ -331,7 +331,27 @@ public class TextEditorVirtualizationResult
     	*/
     }
     
-    public void CreateUi_Start()
+    /// <summary>
+    /// Non loop related UI:
+    /// --------------------
+    /// - GutterColumnTopCss (specifically the column that provides background-color not the individual line numbers).
+    /// - CursorIsOnHiddenLine
+    /// - LineHeight
+    /// - LineHeightStyleCssString
+    /// - Gutter_HeightWidthPaddingCssStyle
+    /// - TextEditor_Height
+    /// - Scroll_Height
+    /// - Scroll_Top
+    /// - TextEditor_Width
+    /// - Scroll_Width
+    /// - Scroll_Left
+    /// - VERTICAL_GetSliderVerticalStyleCss
+    /// - HORIZONTAL_GetSliderHorizontalStyleCss
+    /// - HORIZONTAL_GetScrollbarHorizontalStyleCss
+    /// - ConstructVirtualizationStyleCssStrings
+    ///
+    /// </summary>
+    public void CreateUi_NonLoop()
     {
         string gutterColumnTopCssValue;
     	
@@ -404,11 +424,8 @@ public class TextEditorVirtualizationResult
     		shouldCalculateVerticalSlider = true;
 	    }
 		
-		Console.WriteLine("before if (TextEditor_Width != ViewModel.TextEditorDimensions.Width)");
     	if (TextEditor_Width != ViewModel.TextEditorDimensions.Width)
     	{
-    	    Console.WriteLine("inside if (TextEditor_Width != ViewModel.TextEditorDimensions.Width)");
-    	    
     		TextEditor_Width = ViewModel.TextEditorDimensions.Width;
     		shouldCalculateHorizontalSlider = true;
     		shouldCalculateHorizontalScrollbar = true;
