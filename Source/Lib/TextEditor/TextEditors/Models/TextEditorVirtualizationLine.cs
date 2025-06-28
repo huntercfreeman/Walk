@@ -37,6 +37,28 @@ public record struct TextEditorVirtualizationLine
         LineNumberString = lineNumberString;
 	}
 	
+	public TextEditorVirtualizationLine(
+	    int lineIndex,
+	    int position_StartInclusiveIndex,
+	    int position_EndExclusiveIndex,
+	    int virtualizationSpan_StartInclusiveIndex,
+	    int virtualizationSpan_EndExclusiveIndex,
+	    int widthInPixels,
+	    int heightInPixels,
+	    double leftInPixels,
+	    int topInPixels)
+	{
+		LineIndex = lineIndex;
+	    Position_StartInclusiveIndex = position_StartInclusiveIndex;
+	    Position_EndExclusiveIndex = position_EndExclusiveIndex;
+	    VirtualizationSpan_StartInclusiveIndex = virtualizationSpan_StartInclusiveIndex;
+	    VirtualizationSpan_EndExclusiveIndex = virtualizationSpan_EndExclusiveIndex;
+	    WidthInPixels = widthInPixels;
+	    HeightInPixels = heightInPixels;
+	    LeftInPixels = leftInPixels;
+	    TopInPixels = topInPixels;
+	}
+	
 	public int LineIndex { get; }
     public int Position_StartInclusiveIndex { get; }
     public int Position_EndExclusiveIndex { get; }

@@ -650,18 +650,18 @@ public class TextEditorVirtualizationResult
         return ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
     }
     
-    public string RowSection_GetRowStyleCss(int lineIndex)
+    public string RowSection_GetRowStyleCss(string topCssValue, string leftCssValue)
     {
     	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
     
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("top: ");
-        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ComponentData.LineIndexCache.Map[lineIndex].TopCssValue);
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(topCssValue);
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
 
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(LineHeightStyleCssString);
 
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("left: ");
-        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ComponentData.LineIndexCache.Map[lineIndex].LeftCssValue);
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(leftCssValue);
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
 
         return ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();

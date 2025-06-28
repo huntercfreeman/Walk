@@ -16,7 +16,9 @@ public struct TextEditorLineIndexCacheEntry
 	    int widthInPixels,
 	    int heightInPixels,
 	    double leftInPixels,
-	    int topInPixels)
+	    int topInPixels,
+	    string gutterCssStyle,
+	    string lineCssStyle)
 	{
 		TopCssValue = topCssValue;
 		LeftCssValue = leftCssValue;
@@ -31,6 +33,8 @@ public struct TextEditorLineIndexCacheEntry
 	    HeightInPixels = heightInPixels;
 	    LeftInPixels = leftInPixels;
 	    TopInPixels = topInPixels;
+	    GutterCssStyle = gutterCssStyle;
+	    LineCssStyle = lineCssStyle;
 	}
 
     public string TopCssValue { get; set; }
@@ -46,4 +50,6 @@ public struct TextEditorLineIndexCacheEntry
     public int HeightInPixels { get; }
     public double LeftInPixels { get; }
     public int TopInPixels { get; }
+    public string GutterCssStyle { get; }
+    public string LineCssStyle { get; }
 }
