@@ -225,7 +225,7 @@ public class TextEditorVirtualizationResult
     public int LastPresentationLayerGroupStartInclusiveIndex { get; set; }
     public int LastPresentationLayerGroupEndExclusiveIndex { get; set; }
 	
-	public List<string> InlineUiStyleList { get; set; } = new();
+	public List<string> InlineUiStyleList { get; set; }
     
     public List<string> SelectionStyleList { get; set; }
     
@@ -500,6 +500,7 @@ public class TextEditorVirtualizationResult
         else
         {
             VirtualizedCollapsePointList = _previousState.VirtualizedCollapsePointList;
+            InlineUiStyleList = _previousState.InlineUiStyleList;
         }
     }
     
@@ -601,7 +602,7 @@ public class TextEditorVirtualizationResult
 			// width: @(widthCssValue)px;
 		}
     
-    	InlineUiStyleList.Clear();
+    	InlineUiStyleList = new();
         var tabWidth = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetOptions().TabWidth;
     	
     	for (int inlineUiIndex = 0; inlineUiIndex < ViewModel.PersistentState.InlineUiList.Count; inlineUiIndex++)
