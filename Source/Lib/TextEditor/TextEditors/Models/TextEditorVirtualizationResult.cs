@@ -145,7 +145,6 @@ public class TextEditorVirtualizationResult
 	    
 	    if (previousState is not null)
 	    {
-	        _textEditorDimensions = previousState._textEditorDimensions;
             _gutterWidth = previousState._gutterWidth;
         	_textEditorDimensions = previousState._textEditorDimensions;
             _scrollTop = previousState._scrollTop;
