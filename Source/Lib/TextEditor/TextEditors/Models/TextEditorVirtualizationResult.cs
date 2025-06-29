@@ -208,8 +208,6 @@ public class TextEditorVirtualizationResult
 	
 	public bool CursorIsOnHiddenLine { get; set; } = false;
     
-    public int ShouldScroll { get; set; }
-    
     public int UseLowerBoundInclusiveLineIndex { get; set; }
     public int UseUpperBoundExclusiveLineIndex { get; set; }
     public (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) SelectionBoundsInPositionIndexUnits { get; set; }
