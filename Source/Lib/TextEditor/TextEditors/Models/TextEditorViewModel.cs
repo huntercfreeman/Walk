@@ -66,18 +66,16 @@ public sealed class TextEditorViewModel : IDisposable
 			virtualAssociativityKind: VirtualAssociativityKind.None,
 			panelService,
             dialogService,
-            commonBackgroundTaskApi);
+            commonBackgroundTaskApi,
+            textEditorDimensions,
+    		scrollLeft,
+    	    scrollTop,
+    	    scrollWidth,
+    	    scrollHeight,
+    	    marginScrollHeight,
+            textEditorService.OptionsApi.GetOptions().CharAndLineMeasurements);
     
         Virtualization = virtualizationResult;
-		Virtualization.TextEditorDimensions = textEditorDimensions;
-		
-		Virtualization.ScrollLeft = scrollLeft;
-	    Virtualization.ScrollTop = scrollTop;
-	    Virtualization.ScrollWidth = scrollWidth;
-	    Virtualization.ScrollHeight = scrollHeight;
-	    Virtualization.MarginScrollHeight = marginScrollHeight;
-		
-        Virtualization.CharAndLineMeasurements = textEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
         
         LineIndex = 0;
 	    ColumnIndex = 0;
@@ -242,31 +240,31 @@ public sealed class TextEditorViewModel : IDisposable
     }
     
     public void MutateScrollLeft(int pixels, TextEditorDimensions textEditorDimensions) =>
-		SetScrollLeft(Virtualization.ScrollLeft + pixels, textEditorDimensions);
+		SetScrollLeft(PersistentState.ScrollLeft + pixels, textEditorDimensions);
 
 	public void SetScrollLeft(int pixels, TextEditorDimensions textEditorDimensions)
 	{
 		var resultScrollLeft = Math.Max(0, pixels);
-		var maxScrollLeft = (int)Math.Max(0, Virtualization.ScrollWidth - textEditorDimensions.Width);
+		var maxScrollLeft = (int)Math.Max(0, PersistentState.ScrollWidth - textEditorDimensions.Width);
 
 		if (resultScrollLeft > maxScrollLeft)
 			resultScrollLeft = maxScrollLeft;
 
-		Virtualization.ScrollLeft = resultScrollLeft;
+		PersistentState.ScrollLeft = resultScrollLeft;
 	}
 
 	public void MutateScrollTop(int pixels, TextEditorDimensions textEditorDimensions) =>
-		SetScrollTop(Virtualization.ScrollTop + pixels, textEditorDimensions);
+		SetScrollTop(PersistentState.ScrollTop + pixels, textEditorDimensions);
 
 	public void SetScrollTop(int pixels, TextEditorDimensions textEditorDimensions)
 	{
 		var resultScrollTop = Math.Max(0, pixels);
-		var maxScrollTop = (int)Math.Max(0, Virtualization.ScrollHeight - textEditorDimensions.Height);
+		var maxScrollTop = (int)Math.Max(0, PersistentState.ScrollHeight - textEditorDimensions.Height);
 
 		if (resultScrollTop > maxScrollTop)
 			resultScrollTop = maxScrollTop;
 
-		Virtualization.ScrollTop = resultScrollTop;
+		PersistentState.ScrollTop = resultScrollTop;
 	}
 
     public void Dispose()

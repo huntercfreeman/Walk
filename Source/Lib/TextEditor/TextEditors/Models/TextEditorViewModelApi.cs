@@ -190,9 +190,9 @@ public sealed class TextEditorViewModelApi
     {
     	viewModel.ScrollWasModified = true;
 
-		viewModel.SetScrollLeft((int)Math.Floor(scrollLeftInPixels), viewModel.Virtualization.TextEditorDimensions);
+		viewModel.SetScrollLeft((int)Math.Floor(scrollLeftInPixels), viewModel.PersistentState.TextEditorDimensions);
 
-		viewModel.SetScrollTop((int)Math.Floor(scrollTopInPixels), viewModel.Virtualization.TextEditorDimensions);
+		viewModel.SetScrollTop((int)Math.Floor(scrollTopInPixels), viewModel.PersistentState.TextEditorDimensions);
     }
         
     public void SetScrollPositionLeft(
@@ -202,7 +202,7 @@ public sealed class TextEditorViewModelApi
     {
     	viewModel.ScrollWasModified = true;
 
-		viewModel.SetScrollLeft((int)Math.Floor(scrollLeftInPixels), viewModel.Virtualization.TextEditorDimensions);
+		viewModel.SetScrollLeft((int)Math.Floor(scrollLeftInPixels), viewModel.PersistentState.TextEditorDimensions);
     }
     
     public void SetScrollPositionTop(
@@ -212,7 +212,7 @@ public sealed class TextEditorViewModelApi
     {
     	viewModel.ScrollWasModified = true;
 
-		viewModel.SetScrollTop((int)Math.Floor(scrollTopInPixels), viewModel.Virtualization.TextEditorDimensions);
+		viewModel.SetScrollTop((int)Math.Floor(scrollTopInPixels), viewModel.PersistentState.TextEditorDimensions);
     }
 
     public void MutateScrollVerticalPosition(
@@ -222,7 +222,7 @@ public sealed class TextEditorViewModelApi
     {
         viewModel.ScrollWasModified = true;
 
-        viewModel.MutateScrollTop((int)Math.Ceiling(pixels), viewModel.Virtualization.TextEditorDimensions);
+        viewModel.MutateScrollTop((int)Math.Ceiling(pixels), viewModel.PersistentState.TextEditorDimensions);
     }
 
     public void MutateScrollHorizontalPosition(
@@ -232,7 +232,7 @@ public sealed class TextEditorViewModelApi
     {
         viewModel.ScrollWasModified = true;
 
-		viewModel.MutateScrollLeft((int)Math.Ceiling(pixels), viewModel.Virtualization.TextEditorDimensions);
+		viewModel.MutateScrollLeft((int)Math.Ceiling(pixels), viewModel.PersistentState.TextEditorDimensions);
     }
 
 	/// <summary>
@@ -255,53 +255,53 @@ public sealed class TextEditorViewModelApi
         		hiddenLineCount++;
         }
         // Scroll start
-        var targetScrollTop = (lineIndex - hiddenLineCount) * viewModel.Virtualization.CharAndLineMeasurements.LineHeight;
-        bool lowerBoundInRange = viewModel.Virtualization.ScrollTop <= targetScrollTop;
-        bool upperBoundInRange = targetScrollTop < (viewModel.Virtualization.TextEditorDimensions.Height + viewModel.Virtualization.ScrollTop);
+        var targetScrollTop = (lineIndex - hiddenLineCount) * viewModel.PersistentState.CharAndLineMeasurements.LineHeight;
+        bool lowerBoundInRange = viewModel.PersistentState.ScrollTop <= targetScrollTop;
+        bool upperBoundInRange = targetScrollTop < (viewModel.PersistentState.TextEditorDimensions.Height + viewModel.PersistentState.ScrollTop);
         if (lowerBoundInRange && upperBoundInRange)
         {
-            targetScrollTop = viewModel.Virtualization.ScrollTop;
+            targetScrollTop = viewModel.PersistentState.ScrollTop;
         }
         else
         {
-        	var startDistanceToTarget = Math.Abs(targetScrollTop - viewModel.Virtualization.ScrollTop);
-        	var endDistanceToTarget = Math.Abs(targetScrollTop - (viewModel.Virtualization.TextEditorDimensions.Height + viewModel.Virtualization.ScrollTop));
+        	var startDistanceToTarget = Math.Abs(targetScrollTop - viewModel.PersistentState.ScrollTop);
+        	var endDistanceToTarget = Math.Abs(targetScrollTop - (viewModel.PersistentState.TextEditorDimensions.Height + viewModel.PersistentState.ScrollTop));
         	
     		// Scroll end
         	if (endDistanceToTarget < startDistanceToTarget)
         	{
-        		var margin = 3 * viewModel.Virtualization.CharAndLineMeasurements.LineHeight;
-        		var maxMargin = viewModel.Virtualization.TextEditorDimensions.Height * .3;
+        		var margin = 3 * viewModel.PersistentState.CharAndLineMeasurements.LineHeight;
+        		var maxMargin = viewModel.PersistentState.TextEditorDimensions.Height * .3;
         		if (margin > maxMargin)
         			margin = (int)maxMargin;
         	
-        		targetScrollTop -= (viewModel.Virtualization.TextEditorDimensions.Height - margin);
+        		targetScrollTop -= (viewModel.PersistentState.TextEditorDimensions.Height - margin);
         	}
         }
         
 		var columnIndex = textSpan.StartInclusiveIndex - lineInformation.Position_StartInclusiveIndex;
 		// Scroll start
-        var targetScrollLeft = columnIndex * viewModel.Virtualization.CharAndLineMeasurements.CharacterWidth;
-        lowerBoundInRange = viewModel.Virtualization.ScrollLeft <= targetScrollLeft;
-        upperBoundInRange = targetScrollLeft < (viewModel.Virtualization.TextEditorDimensions.Width + viewModel.Virtualization.ScrollLeft);
+        var targetScrollLeft = columnIndex * viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth;
+        lowerBoundInRange = viewModel.PersistentState.ScrollLeft <= targetScrollLeft;
+        upperBoundInRange = targetScrollLeft < (viewModel.PersistentState.TextEditorDimensions.Width + viewModel.PersistentState.ScrollLeft);
         if (lowerBoundInRange && upperBoundInRange)
         {
-        	targetScrollLeft = viewModel.Virtualization.ScrollLeft;
+        	targetScrollLeft = viewModel.PersistentState.ScrollLeft;
         }
         else
         {
-        	var startDistanceToTarget = targetScrollLeft - viewModel.Virtualization.ScrollLeft;
-        	var endDistanceToTarget = targetScrollLeft - (viewModel.Virtualization.TextEditorDimensions.Width + viewModel.Virtualization.ScrollLeft);
+        	var startDistanceToTarget = targetScrollLeft - viewModel.PersistentState.ScrollLeft;
+        	var endDistanceToTarget = targetScrollLeft - (viewModel.PersistentState.TextEditorDimensions.Width + viewModel.PersistentState.ScrollLeft);
         	
         	// Scroll end
         	if (endDistanceToTarget < startDistanceToTarget)
         	{
-        		var margin = 9 * viewModel.Virtualization.CharAndLineMeasurements.CharacterWidth;
-        		var maxMargin = viewModel.Virtualization.TextEditorDimensions.Width * .3;
+        		var margin = 9 * viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth;
+        		var maxMargin = viewModel.PersistentState.TextEditorDimensions.Width * .3;
         		if (margin > maxMargin)
         			margin = maxMargin;
         	
-        		targetScrollLeft -= (viewModel.Virtualization.TextEditorDimensions.Width - margin);
+        		targetScrollLeft -= (viewModel.PersistentState.TextEditorDimensions.Width - margin);
         	}
         }
             
@@ -954,22 +954,22 @@ public sealed class TextEditorViewModelApi
 		var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
 		viewModel.Virtualization.ShouldCalculateVirtualizationResult = false;
 	
-		var verticalStartingIndex = viewModel.Virtualization.ScrollTop /
-			viewModel.Virtualization.CharAndLineMeasurements.LineHeight;
+		var verticalStartingIndex = viewModel.PersistentState.ScrollTop /
+			viewModel.PersistentState.CharAndLineMeasurements.LineHeight;
 
-		var verticalTake = viewModel.Virtualization.TextEditorDimensions.Height /
-			viewModel.Virtualization.CharAndLineMeasurements.LineHeight;
+		var verticalTake = viewModel.PersistentState.TextEditorDimensions.Height /
+			viewModel.PersistentState.CharAndLineMeasurements.LineHeight;
 
 		// Vertical Padding (render some offscreen data)
 		verticalTake += 1;
 
 		var horizontalStartingIndex = (int)Math.Floor(
-			viewModel.Virtualization.ScrollLeft /
-			viewModel.Virtualization.CharAndLineMeasurements.CharacterWidth);
+			viewModel.PersistentState.ScrollLeft /
+			viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth);
 
 		var horizontalTake = (int)Math.Ceiling(
-			viewModel.Virtualization.TextEditorDimensions.Width /
-			viewModel.Virtualization.CharAndLineMeasurements.CharacterWidth);
+			viewModel.PersistentState.TextEditorDimensions.Width /
+			viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth);
 		
 		var hiddenCount = 0;
 		
@@ -998,7 +998,7 @@ public sealed class TextEditorViewModelApi
 		var endingLineIndexExclusive = verticalStartingIndex + lineCountToReturn;
 		
 		var totalWidth = (int)Math.Ceiling(modelModifier.MostCharactersOnASingleLineTuple.lineLength *
-			viewModel.Virtualization.CharAndLineMeasurements.CharacterWidth);
+			viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth);
 
 		// Account for any tab characters on the 'MostCharactersOnASingleLineTuple'
 		//
@@ -1016,14 +1016,14 @@ public sealed class TextEditorViewModelApi
 		var extraWidthPerTabKey = tabWidth - 1;
 		totalWidth += (int)Math.Ceiling(extraWidthPerTabKey *
 			tabCountOnLongestLine *
-			viewModel.Virtualization.CharAndLineMeasurements.CharacterWidth);
+			viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth);
 
 		var totalHeight = (modelModifier.LineEndList.Count - viewModel.PersistentState.HiddenLineIndexHashSet.Count) *
-			viewModel.Virtualization.CharAndLineMeasurements.LineHeight;
+			viewModel.PersistentState.CharAndLineMeasurements.LineHeight;
 
 		// Add vertical margin so the user can scroll beyond the final line of content
 		var percentOfMarginScrollHeightByPageUnit = 0.4;
-		int marginScrollHeight = (int)Math.Ceiling(viewModel.Virtualization.TextEditorDimensions.Height * percentOfMarginScrollHeightByPageUnit);
+		int marginScrollHeight = (int)Math.Ceiling(viewModel.PersistentState.TextEditorDimensions.Height * percentOfMarginScrollHeightByPageUnit);
 		totalHeight += marginScrollHeight;
 		
 		var virtualizedLineList = new TextEditorVirtualizationLine[lineCountToReturn];
@@ -1036,27 +1036,23 @@ public sealed class TextEditorViewModelApi
     		new List<TextEditorVirtualizationSpan>(),
 			totalWidth: totalWidth,
 	        totalHeight: totalHeight,
-	        resultWidth: (int)Math.Ceiling(horizontalTake * viewModel.Virtualization.CharAndLineMeasurements.CharacterWidth),
-	        resultHeight: verticalTake * viewModel.Virtualization.CharAndLineMeasurements.LineHeight,
-	        left: (int)(horizontalStartingIndex * viewModel.Virtualization.CharAndLineMeasurements.CharacterWidth),
-	        top: verticalStartingIndex * viewModel.Virtualization.CharAndLineMeasurements.LineHeight,
+	        resultWidth: (int)Math.Ceiling(horizontalTake * viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth),
+	        resultHeight: verticalTake * viewModel.PersistentState.CharAndLineMeasurements.LineHeight,
+	        left: (int)(horizontalStartingIndex * viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth),
+	        top: verticalStartingIndex * viewModel.PersistentState.CharAndLineMeasurements.LineHeight,
 	        componentData,
 	        modelModifier,
 	        viewModel,
 	        componentData.RenderBatchPersistentState,
 	        previousVirtualizationResult);
 		
-		viewModel.Virtualization.ScrollWidth = totalWidth;
-		viewModel.Virtualization.ScrollHeight = totalHeight;
-		viewModel.Virtualization.MarginScrollHeight = marginScrollHeight;
+		viewModel.PersistentState.ScrollWidth = totalWidth;
+		viewModel.PersistentState.ScrollHeight = totalHeight;
+		viewModel.PersistentState.MarginScrollHeight = marginScrollHeight;
 		
-		// GutterWidth is the only property with an "awkward" timing to the `Changed_...` variables.
-		// Every other property is changed prior to invoking `CalculateVirtualizationResult`.
-		//
-		previousVirtualizationResult.GutterWidth = GetGutterWidthInPixels(modelModifier, viewModel, componentData);
-		viewModel.Virtualization.GutterWidth = GetGutterWidthInPixels(modelModifier, viewModel, componentData);
+		viewModel.PersistentState.GutterWidth = GetGutterWidthInPixels(modelModifier, viewModel, componentData);
 		
-		var absDiffScrollLeft = Math.Abs(componentData.LineIndexCache.ScrollLeftMarker - viewModel.Virtualization.ScrollLeft);
+		var absDiffScrollLeft = Math.Abs(componentData.LineIndexCache.ScrollLeftMarker - viewModel.PersistentState.ScrollLeft);
 		var useCache = absDiffScrollLeft < 0.01 && componentData.LineIndexCache.ViewModelKeyMarker == viewModel.PersistentState.ViewModelKey;
 		
 		if (!useCache)
@@ -1097,7 +1093,7 @@ public sealed class TextEditorViewModelApi
 		
 		_textEditorService.__StringBuilder.Clear();
 		
-		var minLineWidthToTriggerVirtualizationExclusive = 2 * viewModel.Virtualization.TextEditorDimensions.Width;
+		var minLineWidthToTriggerVirtualizationExclusive = 2 * viewModel.PersistentState.TextEditorDimensions.Width;
 			
 		int lineOffset = -1;
 		
@@ -1174,7 +1170,7 @@ public sealed class TextEditorViewModelApi
 			// It is thought to be too costly on average to get the tab count for the line in order to take less text overall
 			// than to just take the estimated amount of characters.
 			
-			var widthInPixels = (int)Math.Ceiling(lineLength * viewModel.Virtualization.CharAndLineMeasurements.CharacterWidth);
+			var widthInPixels = (int)Math.Ceiling(lineLength * viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth);
 
 			if (widthInPixels > minLineWidthToTriggerVirtualizationExclusive)
 			{
@@ -1247,19 +1243,19 @@ public sealed class TextEditorViewModelApi
 				}
 				
 				widthInPixels = (int)Math.Ceiling(((localHorizontalTake - localHorizontalStartingIndex) + (extraWidthPerTabKey * resultTabCount)) *
-					viewModel.Virtualization.CharAndLineMeasurements.CharacterWidth);
+					viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth);
 
 				double leftInPixels = localHorizontalStartingIndex *
-					viewModel.Virtualization.CharAndLineMeasurements.CharacterWidth;
+					viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth;
 
 				// Adjust the unrendered for tab key width
 				leftInPixels += (extraWidthPerTabKey *
 					unrenderedTabCount *
-					viewModel.Virtualization.CharAndLineMeasurements.CharacterWidth);
+					viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth);
 
 				leftInPixels = Math.Max(0, leftInPixels);
 
-				var topInPixels = lineIndex * viewModel.Virtualization.CharAndLineMeasurements.LineHeight;
+				var topInPixels = lineIndex * viewModel.PersistentState.CharAndLineMeasurements.LineHeight;
 				var positionStartInclusiveIndex = line_PositionStartInclusiveIndex + localHorizontalStartingIndex;
 				
 				var positionEndExclusiveIndex = positionStartInclusiveIndex + localHorizontalTake;
@@ -1273,9 +1269,9 @@ public sealed class TextEditorViewModelApi
 					virtualizationSpan_StartInclusiveIndex: 0,
 					virtualizationSpan_EndExclusiveIndex: 0,
 					widthInPixels,
-					viewModel.Virtualization.CharAndLineMeasurements.LineHeight,
-					viewModel.Virtualization.GutterWidth + leftInPixels,
-					topInPixels - (viewModel.Virtualization.CharAndLineMeasurements.LineHeight * hiddenCount));
+					viewModel.PersistentState.CharAndLineMeasurements.LineHeight,
+					viewModel.PersistentState.GutterWidth + leftInPixels,
+					topInPixels - (viewModel.PersistentState.CharAndLineMeasurements.LineHeight * hiddenCount));
 			}
 			else
 			{
@@ -1303,7 +1299,7 @@ public sealed class TextEditorViewModelApi
 				}
 				
 				widthInPixels += (int)Math.Ceiling((extraWidthPerTabKey * resultTabCount) *
-					viewModel.Virtualization.CharAndLineMeasurements.CharacterWidth);
+					viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth);
 			
 				virtualizedLineList[viewModel.Virtualization.Count++]= new TextEditorVirtualizationLine(
 					lineIndex,
@@ -1312,9 +1308,9 @@ public sealed class TextEditorViewModelApi
 					virtualizationSpan_StartInclusiveIndex: 0,
 					virtualizationSpan_EndExclusiveIndex: 0,
 					widthInPixels,
-					viewModel.Virtualization.CharAndLineMeasurements.LineHeight,
-					leftInPixels: viewModel.Virtualization.GutterWidth,
-					topInPixels: (lineIndex * viewModel.Virtualization.CharAndLineMeasurements.LineHeight) - (viewModel.Virtualization.CharAndLineMeasurements.LineHeight * hiddenCount));
+					viewModel.PersistentState.CharAndLineMeasurements.LineHeight,
+					leftInPixels: viewModel.PersistentState.GutterWidth,
+					topInPixels: (lineIndex * viewModel.PersistentState.CharAndLineMeasurements.LineHeight) - (viewModel.PersistentState.CharAndLineMeasurements.LineHeight * hiddenCount));
 			}
 			
 			var entryIndex = viewModel.Virtualization.Count - 1;
@@ -1326,7 +1322,7 @@ public sealed class TextEditorViewModelApi
     		    // WARNING: CODE DUPLICATION
     		    componentData.LineIndexCache.UsedKeyHashSet.Add(virtualizationEntry.LineIndex);
     		    
-    		    var topCssValue1 = ((virtualizationEntry.LineIndex - hiddenLineCount) * viewModel.Virtualization.CharAndLineMeasurements.LineHeight).ToString();
+    		    var topCssValue1 = ((virtualizationEntry.LineIndex - hiddenLineCount) * viewModel.PersistentState.CharAndLineMeasurements.LineHeight).ToString();
     		    var leftCssValue1 = virtualizationEntry.LeftInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture);
     		    var lineNumberString1 = (virtualizationEntry.LineIndex + 1).ToString();
     		    
@@ -1488,7 +1484,7 @@ public sealed class TextEditorViewModelApi
     		virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
     		viewModel.Virtualization.EntryList[entryIndex] = virtualizationEntry;
     		
-    		var topCssValue2 = ((virtualizationEntry.LineIndex - hiddenLineCount) * viewModel.Virtualization.CharAndLineMeasurements.LineHeight).ToString();
+    		var topCssValue2 = ((virtualizationEntry.LineIndex - hiddenLineCount) * viewModel.PersistentState.CharAndLineMeasurements.LineHeight).ToString();
     	    var leftCssValue2 = virtualizationEntry.LeftInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture);
     	    var lineNumberString2 = (virtualizationEntry.LineIndex + 1).ToString();
     	    
@@ -1545,7 +1541,7 @@ public sealed class TextEditorViewModelApi
 		componentData.LineIndexCache.ModifiedLineIndexList.Clear();
 	
 		componentData.LineIndexCache.ViewModelKeyMarker = viewModel.PersistentState.ViewModelKey;
-		componentData.LineIndexCache.ScrollLeftMarker = viewModel.Virtualization.ScrollLeft;
+		componentData.LineIndexCache.ScrollLeftMarker = viewModel.PersistentState.ScrollLeft;
 		componentData.LineIndexCache.VirtualizationSpanList = viewModel.Virtualization.VirtualizationSpanList;
 		
 		for (var i = componentData.LineIndexCache.ExistsKeyList.Count - 1; i >= 0; i--)
@@ -1585,7 +1581,7 @@ public sealed class TextEditorViewModelApi
         var mostDigitsInARowLineNumber = CountDigits(model!.LineCount);
 
         var gutterWidthInPixels = mostDigitsInARowLineNumber *
-            viewModel!.Virtualization.CharAndLineMeasurements.CharacterWidth;
+            viewModel!.PersistentState.CharAndLineMeasurements.CharacterWidth;
 
         gutterWidthInPixels += TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS + TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS;
 
@@ -1648,8 +1644,8 @@ public sealed class TextEditorViewModelApi
 			.GetTextEditorMeasurementsAsync(componentData.RowSectionElementId)
 			.ConfigureAwait(false);
 
-		viewModel.Virtualization.CharAndLineMeasurements = options.CharAndLineMeasurements;
-		viewModel.Virtualization.TextEditorDimensions = textEditorMeasurements;
+		viewModel.PersistentState.CharAndLineMeasurements = options.CharAndLineMeasurements;
+		viewModel.PersistentState.TextEditorDimensions = textEditorMeasurements;
     }
 
     public void ForceRender(

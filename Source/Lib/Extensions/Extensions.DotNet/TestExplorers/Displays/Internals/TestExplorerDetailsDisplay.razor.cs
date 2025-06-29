@@ -168,7 +168,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 				{
 					var lineInformation = modelModifier.GetLineInformation(modelModifier.LineCount - 1);
 					
-					var originalScrollLeft = viewModelModifier.Virtualization.ScrollLeft;
+					var originalScrollLeft = viewModelModifier.PersistentState.ScrollLeft;
 					
 					var textSpan = new TextEditorTextSpan(
 					    startInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
@@ -186,7 +186,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 				        
 			        viewModelModifier.SetScrollLeft(
 			        	(int)originalScrollLeft,
-			        	viewModelModifier.Virtualization.TextEditorDimensions);
+			        	viewModelModifier.PersistentState.TextEditorDimensions);
 				}
 				else if (lineIndexOriginal != viewModelModifier.LineIndex ||
 					     columnIndexOriginal != viewModelModifier.ColumnIndex)

@@ -9,6 +9,7 @@ using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Tabs.Displays;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Tooltips.Models;
+using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.Groups.Models;
@@ -42,7 +43,14 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 		VirtualAssociativityKind virtualAssociativityKind,
 		IPanelService panelService,
         IDialogService dialogService,
-        CommonBackgroundTaskApi commonBackgroundTaskApi)
+        CommonBackgroundTaskApi commonBackgroundTaskApi,
+        TextEditorDimensions textEditorDimensions,
+		int scrollLeft,
+	    int scrollTop,
+	    int scrollWidth,
+	    int scrollHeight,
+	    int marginScrollHeight,
+        CharAndLineMeasurements charAndLineMeasurements)
 	{
 	    ViewModelKey = viewModelKey;
 	    ResourceUri = resourceUri;
@@ -179,6 +187,117 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 	public HashSet<int> HiddenLineIndexHashSet { get; set; }
 	public List<(InlineUi InlineUi, string Tag)> InlineUiList { get; set; }
 	public int VirtualizedCollapsePointListVersion { get; set; }
+	
+	private int _gutterWidth;
+    public int GutterWidth
+    {
+        get => _gutterWidth;
+        set
+        {
+            if (_gutterWidth != value)
+                Changed_GutterWidth = true;
+            _gutterWidth = value;
+        }
+    }
+    
+	private TextEditorDimensions _textEditorDimensions;
+	public TextEditorDimensions TextEditorDimensions
+	{
+	    get => _textEditorDimensions;
+	    set
+	    {
+	        if (_textEditorDimensions.Width != value.Width)
+	            Changed_TextEditorWidth = true;
+            if (_textEditorDimensions.Height != value.Height)
+	            Changed_TextEditorHeight = true;
+            _textEditorDimensions = value;
+	    }
+    }
+    
+    private int _scrollTop;
+    public int ScrollTop
+    {
+        get => _scrollTop;
+        set
+        {
+            if (_scrollTop != value)
+                Changed_ScrollTop = true;
+            _scrollTop = value;
+        }
+    }
+    
+    private int _scrollWidth;
+    public int ScrollWidth
+    {
+        get => _scrollWidth;
+        set
+        {
+            if (_scrollWidth != value)
+                Changed_ScrollWidth = true;
+            _scrollWidth = value;
+        }
+    }
+    
+    private int _scrollHeight;
+    public int ScrollHeight
+    {
+        get => _scrollHeight;
+        set
+        {
+            if (_scrollHeight != value)
+                Changed_ScrollHeight = true;
+            _scrollHeight = value;
+        }
+    }
+    
+    private int _marginScrollHeight;
+    public int MarginScrollHeight
+    {
+        get => _marginScrollHeight;
+        set
+        {
+            if (_marginScrollHeight != value)
+                Changed_MarginScrollHeight = true;
+            _marginScrollHeight = value;
+        }
+    }
+    
+    private int _scrollLeft;
+    public int ScrollLeft
+    {
+        get => _scrollLeft;
+        set
+        {
+            if (_scrollLeft != value)
+                Changed_ScrollLeft = true;
+            _scrollLeft = value;
+        }
+    }
+    
+    private CharAndLineMeasurements _charAndLineMeasurements;
+    public CharAndLineMeasurements CharAndLineMeasurements
+    {
+        get => _charAndLineMeasurements;
+        set
+        {
+            if (_charAndLineMeasurements.CharacterWidth != value.CharacterWidth)
+                Changed_CharacterWidth = true;
+            if (_charAndLineMeasurements.LineHeight != value.LineHeight)
+                Changed_LineHeight = true;
+            _charAndLineMeasurements = value;
+        }
+    }
+    
+    public bool Changed_GutterWidth { get; set; }
+    public bool Changed_LineHeight { get; set; }
+    public bool Changed_CharacterWidth { get; set; }
+    public bool Changed_TextEditorWidth { get; set; }
+    public bool Changed_TextEditorHeight { get; set; }
+    public bool Changed_ScrollHeight { get; set; }
+    public bool Changed_ScrollTop { get; set; }
+    public bool Changed_ScrollWidth { get; set; }
+    public bool Changed_ScrollLeft { get; set; }
+    public bool Changed_MarginScrollHeight { get; set; }
     
     #region DisplayTracker
 	/// <summary>
@@ -323,8 +442,8 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 				.GetTextEditorMeasurementsAsync(componentData.RowSectionElementId)
 				.ConfigureAwait(false);
 	
-			viewModelModifier.Virtualization.TextEditorDimensions = textEditorDimensions;
-			viewModelModifier.Virtualization.CharAndLineMeasurements = TextEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
+			viewModelModifier.PersistentState.TextEditorDimensions = textEditorDimensions;
+			viewModelModifier.PersistentState.CharAndLineMeasurements = TextEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
 			viewModelModifier.Virtualization.ShouldCalculateVirtualizationResult = true;
 			
 			// TODO: Where does the method: 'ValidateMaximumScrollLeftAndScrollTop(...)' belong?

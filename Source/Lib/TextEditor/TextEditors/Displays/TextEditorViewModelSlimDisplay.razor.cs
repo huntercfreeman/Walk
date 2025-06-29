@@ -216,39 +216,39 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         	//
         	// ScrollLeft is most likely to shortcircuit, thus it is being put first.
         	
-    	    var scroll_LeftChanged = _seenScrollLeft != _componentData.Virtualization.ViewModel.Virtualization.ScrollLeft;
-    	    var scroll_TopChanged = _seenScrollTop != _componentData.Virtualization.ViewModel.Virtualization.ScrollTop;
+    	    var scroll_LeftChanged = _seenScrollLeft != _componentData.Virtualization.ViewModel.PersistentState.ScrollLeft;
+    	    var scroll_TopChanged = _seenScrollTop != _componentData.Virtualization.ViewModel.PersistentState.ScrollTop;
         	
         	if (scroll_LeftChanged && scroll_TopChanged)
         	{
-        		_seenScrollLeft = _componentData.Virtualization.ViewModel.Virtualization.ScrollLeft;
-        		_seenScrollTop = _componentData.Virtualization.ViewModel.Virtualization.ScrollTop;
+        		_seenScrollLeft = _componentData.Virtualization.ViewModel.PersistentState.ScrollLeft;
+        		_seenScrollTop = _componentData.Virtualization.ViewModel.PersistentState.ScrollTop;
         		
         		await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionBoth(
 		                _componentData.RowSectionElementId,
-		                _componentData.Virtualization.ViewModel.Virtualization.ScrollLeft,
-		                _componentData.Virtualization.ViewModel.Virtualization.ScrollTop)
+		                _componentData.Virtualization.ViewModel.PersistentState.ScrollLeft,
+		                _componentData.Virtualization.ViewModel.PersistentState.ScrollTop)
 	                .ConfigureAwait(false);
         	}
         	else if (scroll_TopChanged) // ScrollTop is most likely to come next
         	{
-        		_seenScrollTop = _componentData.Virtualization.ViewModel.Virtualization.ScrollTop;
+        		_seenScrollTop = _componentData.Virtualization.ViewModel.PersistentState.ScrollTop;
         		
         		await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionTop(
 		                _componentData.RowSectionElementId,
-		                _componentData.Virtualization.ViewModel.Virtualization.ScrollTop)
+		                _componentData.Virtualization.ViewModel.PersistentState.ScrollTop)
 	                .ConfigureAwait(false);
         	}
         	else if (scroll_LeftChanged)
         	{
-        		_seenScrollLeft = _componentData.Virtualization.ViewModel.Virtualization.ScrollLeft;
+        		_seenScrollLeft = _componentData.Virtualization.ViewModel.PersistentState.ScrollLeft;
         		
         		await TextEditorService.JsRuntimeTextEditorApi
 		            .SetScrollPositionLeft(
 		                _componentData.RowSectionElementId,
-		                _componentData.Virtualization.ViewModel.Virtualization.ScrollLeft)
+		                _componentData.Virtualization.ViewModel.PersistentState.ScrollLeft)
 	                .ConfigureAwait(false);
         	}
         }
@@ -560,14 +560,14 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     		return;
     		
     	HORIZONTAL_thinksLeftMouseButtonIsDown = true;
-		HORIZONTAL_scrollLeftOnMouseDown = virtualizationResult.ViewModel.Virtualization.ScrollLeft;
+		HORIZONTAL_scrollLeftOnMouseDown = virtualizationResult.ViewModel.PersistentState.ScrollLeft;
 
 		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
 			.MeasureElementById(HORIZONTAL_ScrollbarElementId)
 			.ConfigureAwait(false);
 
 		// Drag far up to reset scroll to original
-		var textEditorDimensions = virtualizationResult.ViewModel.Virtualization.TextEditorDimensions;
+		var textEditorDimensions = virtualizationResult.ViewModel.PersistentState.TextEditorDimensions;
 		var distanceBetweenTopEditorAndTopScrollbar = scrollbarBoundingClientRect.TopInPixels - textEditorDimensions.BoundingClientRectTop;
 		HORIZONTAL_clientYThresholdToResetScrollLeftPosition = scrollbarBoundingClientRect.TopInPixels - DISTANCE_TO_RESET_SCROLL_POSITION;
 
@@ -591,14 +591,14 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     		return;
     
     	VERTICAL_thinksLeftMouseButtonIsDown = true;
-		VERTICAL_scrollTopOnMouseDown = virtualizationResult.ViewModel.Virtualization.ScrollTop;
+		VERTICAL_scrollTopOnMouseDown = virtualizationResult.ViewModel.PersistentState.ScrollTop;
 
 		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
 			.MeasureElementById(VERTICAL_ScrollbarElementId)
 			.ConfigureAwait(false);
 
 		// Drag far left to reset scroll to original
-		var textEditorDimensions = virtualizationResult.ViewModel.Virtualization.TextEditorDimensions;
+		var textEditorDimensions = virtualizationResult.ViewModel.PersistentState.TextEditorDimensions;
 		var distanceBetweenLeftEditorAndLeftScrollbar = scrollbarBoundingClientRect.LeftInPixels - textEditorDimensions.BoundingClientRectLeft;
 		VERTICAL_clientXThresholdToResetScrollTopPosition = scrollbarBoundingClientRect.LeftInPixels - DISTANCE_TO_RESET_SCROLL_POSITION;
 
@@ -741,7 +741,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			if (modelModifier is null || viewModelModifier is null)
 				return ValueTask.CompletedTask;
         	
-        	viewModelModifier.Virtualization.CharAndLineMeasurements = TextEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
+        	viewModelModifier.PersistentState.CharAndLineMeasurements = TextEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
     	    viewModelModifier.Virtualization.ShouldCalculateVirtualizationResult = true;
     	    _componentData.InlineUiWidthStyleCssStringIsOutdated = true;
     	    
@@ -758,7 +758,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     	            //
     	            // The initial value cannot be 0 else any text editor without a gutter cannot detect change on the initial render.
                     // Particularly, whatever the double subtraction -- absolute value precision -- check is, it has to be greater a difference than that.
-    	            componentData.Virtualization.GutterWidth = -2;
+    	            componentData.Virtualization.ViewModel.PersistentState.GutterWidth = -2;
     	        }
     	    }
         	
@@ -804,7 +804,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (onDragMouseEventArgs.Buttons & 1) == 1)
         {
-			var textEditorDimensions = virtualizationResult.ViewModel.Virtualization.TextEditorDimensions;
+			var textEditorDimensions = virtualizationResult.ViewModel.PersistentState.TextEditorDimensions;
 		
 			double scrollLeft;
 
@@ -821,11 +821,11 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	
 	            scrollLeft = HORIZONTAL_scrollLeftOnMouseDown +
 					diffX *
-	                virtualizationResult.ViewModel.Virtualization.ScrollWidth /
+	                virtualizationResult.ViewModel.PersistentState.ScrollWidth /
 	                scrollbarWidthInPixels;
 	
-	            if (scrollLeft + textEditorDimensions.Width > virtualizationResult.ViewModel.Virtualization.ScrollWidth)
-	                scrollLeft = virtualizationResult.ViewModel.Virtualization.ScrollWidth - textEditorDimensions.Width;
+	            if (scrollLeft + textEditorDimensions.Width > virtualizationResult.ViewModel.PersistentState.ScrollWidth)
+	                scrollLeft = virtualizationResult.ViewModel.PersistentState.ScrollWidth - textEditorDimensions.Width;
 
 				if (scrollLeft < 0)
 					scrollLeft = 0;
@@ -862,7 +862,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (onDragMouseEventArgs.Buttons & 1) == 1)
         {
-			var textEditorDimensions = virtualizationResult.ViewModel.Virtualization.TextEditorDimensions;
+			var textEditorDimensions = virtualizationResult.ViewModel.PersistentState.TextEditorDimensions;
 
 			double scrollTop;
 
@@ -879,11 +879,11 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	
 	            scrollTop = VERTICAL_scrollTopOnMouseDown +
 					diffY *
-	                virtualizationResult.ViewModel.Virtualization.ScrollHeight /
+	                virtualizationResult.ViewModel.PersistentState.ScrollHeight /
 	                scrollbarHeightInPixels;
 	
-	            if (scrollTop + textEditorDimensions.Height > virtualizationResult.ViewModel.Virtualization.ScrollHeight)
-	                scrollTop = virtualizationResult.ViewModel.Virtualization.ScrollHeight - textEditorDimensions.Height;
+	            if (scrollTop + textEditorDimensions.Height > virtualizationResult.ViewModel.PersistentState.ScrollHeight)
+	                scrollTop = virtualizationResult.ViewModel.PersistentState.ScrollHeight - textEditorDimensions.Height;
 
 				if (scrollTop < 0)
 					scrollTop = 0;
