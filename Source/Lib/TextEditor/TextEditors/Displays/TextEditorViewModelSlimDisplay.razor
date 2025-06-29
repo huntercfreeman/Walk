@@ -41,20 +41,29 @@
 	    		--></div>
         	}
         </div>
-					                           
-		for (int groupIndex = 0; groupIndex < virtualizationResult.FirstPresentationLayerGroupList.Count; groupIndex++)
-		{
-			<div class="@virtualizationResult.FirstPresentationLayerGroupList[groupIndex].CssClassString">
-				@for (int textSpanIndex = virtualizationResult.FirstPresentationLayerGroupList[groupIndex].StartInclusiveIndex;
-					  textSpanIndex < virtualizationResult.FirstPresentationLayerGroupList[groupIndex].EndExclusiveIndex;
-					  textSpanIndex++)
-				{
-					<div class="@virtualizationResult.FirstPresentationLayerTextSpanList[textSpanIndex].PresentationCssClass"
-                         style="@virtualizationResult.FirstPresentationLayerTextSpanList[textSpanIndex].PresentationCssStyle">
+
+        var presentationLayerGroupSpan = System.Runtime.InteropServices.CollectionsMarshal.AsSpan(virtualizationResult.PresentationLayerGroupList);
+        var presentationLayerTextSpanSpan = System.Runtime.InteropServices.CollectionsMarshal.AsSpan(virtualizationResult.PresentationLayerTextSpanList);
+
+        var firstPresentationLayerGroupSpan = presentationLayerGroupSpan.Slice(
+            virtualizationResult.FirstPresentationLayerGroupStartInclusiveIndex,
+            virtualizationResult.FirstPresentationLayerGroupEndExclusiveIndex - virtualizationResult.FirstPresentationLayerGroupStartInclusiveIndex);
+
+        foreach (var group in firstPresentationLayerGroupSpan)
+        {
+            var firstPresentationLayerTextSpanSpan = presentationLayerTextSpanSpan.Slice(
+                group.StartInclusiveIndex,
+                group.EndExclusiveIndex - group.StartInclusiveIndex);
+        
+            <div class="@group.CssClassString">
+                @foreach (var textSpan in firstPresentationLayerTextSpanSpan)
+                {
+                    <div class="@textSpan.PresentationCssClass"
+                         style="@textSpan.PresentationCssStyle">
                     </div>
-				}
+                }
 			</div>
-		}
+        }
 		
 		<div class="di_te_text-selection-group">
 		    @for (var i = 0; i < virtualizationResult.SelectionStyleList.Count; i++)
@@ -64,19 +73,25 @@
 	        }
 		</div>
 		
-		@for (int groupIndex = 0; groupIndex < virtualizationResult.LastPresentationLayerGroupList.Count; groupIndex++)
-		{
-			<div class="@virtualizationResult.LastPresentationLayerGroupList[groupIndex].CssClassString">
-				@for (int textSpanIndex = virtualizationResult.LastPresentationLayerGroupList[groupIndex].StartInclusiveIndex;
-					  textSpanIndex < virtualizationResult.LastPresentationLayerGroupList[groupIndex].EndExclusiveIndex;
-					  textSpanIndex++)
-				{
-					<div class="@virtualizationResult.LastPresentationLayerTextSpanList[textSpanIndex].PresentationCssClass"
-                         style="@virtualizationResult.LastPresentationLayerTextSpanList[textSpanIndex].PresentationCssStyle">
+		var lastPresentationLayerGroupSpan = presentationLayerGroupSpan.Slice(
+            virtualizationResult.LastPresentationLayerGroupStartInclusiveIndex,
+            virtualizationResult.LastPresentationLayerGroupEndExclusiveIndex - virtualizationResult.LastPresentationLayerGroupStartInclusiveIndex);
+
+        foreach (var group in lastPresentationLayerGroupSpan)
+        {
+            var lastPresentationLayerTextSpanSpan = presentationLayerTextSpanSpan.Slice(
+                group.StartInclusiveIndex,
+                group.EndExclusiveIndex - group.StartInclusiveIndex);
+        
+            <div class="@group.CssClassString">
+                @foreach (var textSpan in lastPresentationLayerTextSpanSpan)
+                {
+                    <div class="@textSpan.PresentationCssClass"
+                         style="@textSpan.PresentationCssStyle">
                     </div>
-				}
+                }
 			</div>
-		}
+        }
     
     	var collapsePoint = new CollapsePoint(-1, false, string.Empty, -1);
     	

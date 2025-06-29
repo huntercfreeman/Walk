@@ -235,11 +235,14 @@ public class TextEditorVirtualizationResult
     public int UseUpperBoundExclusiveLineIndex { get; set; }
     public (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) SelectionBoundsInPositionIndexUnits { get; set; }
     
-    public List<(string CssClassString, int StartInclusiveIndex, int EndExclusiveIndex)> FirstPresentationLayerGroupList { get; set; } = new();
-	public List<(string PresentationCssClass, string PresentationCssStyle)> FirstPresentationLayerTextSpanList { get; set; } = new();
+    public List<(string CssClassString, int StartInclusiveIndex, int EndExclusiveIndex)> PresentationLayerGroupList { get; set; } = new();
+	public List<(string PresentationCssClass, string PresentationCssStyle)> PresentationLayerTextSpanList { get; set; } = new();
 	
-    public List<(string CssClassString, int StartInclusiveIndex, int EndExclusiveIndex)> LastPresentationLayerGroupList { get; set; } = new();
-	public List<(string PresentationCssClass, string PresentationCssStyle)> LastPresentationLayerTextSpanList { get; set; } = new();
+    public int FirstPresentationLayerGroupStartInclusiveIndex { get; set; }
+    public int FirstPresentationLayerGroupEndExclusiveIndex { get; set; }
+    
+    public int LastPresentationLayerGroupStartInclusiveIndex { get; set; }
+    public int LastPresentationLayerGroupEndExclusiveIndex { get; set; }
 	
 	public List<string> InlineUiStyleList { get; set; } = new();
     
@@ -577,15 +580,19 @@ public class TextEditorVirtualizationResult
     
         GetSelection();
         
+        FirstPresentationLayerGroupStartInclusiveIndex = PresentationLayerGroupList.Count;
         GetPresentationLayer(
         	ViewModel.PersistentState.FirstPresentationLayerKeysList,
-        	FirstPresentationLayerGroupList,
-        	FirstPresentationLayerTextSpanList);
-        	
+        	PresentationLayerGroupList,
+        	PresentationLayerTextSpanList);
+        FirstPresentationLayerGroupEndExclusiveIndex = PresentationLayerGroupList.Count;
+        
+        LastPresentationLayerGroupStartInclusiveIndex = PresentationLayerGroupList.Count;
         GetPresentationLayer(
         	ViewModel.PersistentState.LastPresentationLayerKeysList,
-        	LastPresentationLayerGroupList,
-        	LastPresentationLayerTextSpanList);
+        	PresentationLayerGroupList,
+        	PresentationLayerTextSpanList);
+        LastPresentationLayerGroupEndExclusiveIndex = PresentationLayerGroupList.Count;
         
         if (VirtualizedCollapsePointListVersion != ViewModel.PersistentState.VirtualizedCollapsePointListVersion ||
         	_seenViewModelKey != ViewModel.PersistentState.ViewModelKey)
@@ -1074,9 +1081,6 @@ public class TextEditorVirtualizationResult
     	List<(string CssClassString, int StartInclusiveIndex, int EndExclusiveIndex)> presentationLayerGroupList,
     	List<(string PresentationCssClass, string PresentationCssStyle)> presentationLayerTextSpanList)
     {
-    	presentationLayerGroupList.Clear();
-    	presentationLayerTextSpanList.Clear();
-    
     	for (int presentationKeyIndex = 0; presentationKeyIndex < presentationLayerKeysList.Count; presentationKeyIndex++)
 	    {
 	    	var presentationKey = presentationLayerKeysList[presentationKeyIndex];
