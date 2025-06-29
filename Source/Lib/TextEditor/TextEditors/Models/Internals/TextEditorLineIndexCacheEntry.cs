@@ -14,7 +14,6 @@ public struct TextEditorLineIndexCacheEntry
 	    int virtualizationSpan_StartInclusiveIndex,
 	    int virtualizationSpan_EndExclusiveIndex,
 	    double leftInPixels,
-	    int topInPixels,
 	    string gutterCssStyle,
 	    string lineCssStyle)
 	{
@@ -28,7 +27,6 @@ public struct TextEditorLineIndexCacheEntry
 	    VirtualizationSpan_StartInclusiveIndex = virtualizationSpan_StartInclusiveIndex;
 	    VirtualizationSpan_EndExclusiveIndex = virtualizationSpan_EndExclusiveIndex;
 	    LeftInPixels = leftInPixels;
-        TopInPixels = topInPixels;
 	    GutterCssStyle = gutterCssStyle;
 	    LineCssStyle = lineCssStyle;
 	}
@@ -43,7 +41,6 @@ public struct TextEditorLineIndexCacheEntry
     public int VirtualizationSpan_StartInclusiveIndex { get; set; }
     public int VirtualizationSpan_EndExclusiveIndex { get; set; }
     public double LeftInPixels { get; }
-    public int TopInPixels { get; }
     public string GutterCssStyle { get; }
     public string LineCssStyle { get; }
 }
