@@ -208,10 +208,6 @@ public class TextEditorVirtualizationResult
 	
 	public bool CursorIsOnHiddenLine { get; set; } = false;
     
-    public int UseLowerBoundInclusiveLineIndex { get; set; }
-    public int UseUpperBoundExclusiveLineIndex { get; set; }
-    public (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) SelectionBoundsInPositionIndexUnits { get; set; }
-    
     public List<(string CssClassString, int StartInclusiveIndex, int EndExclusiveIndex)> PresentationLayerGroupList { get; set; } = new();
 	public List<string> PresentationLayerStyleList { get; set; } = new();
 	
@@ -811,34 +807,34 @@ public class TextEditorVirtualizationResult
     
     	if (TextEditorSelectionHelper.HasSelectedText(ViewModel) && Count > 0)
 	    {
-	        SelectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
+	        var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
 	            ViewModel);
 	
 	        var selectionBoundsInLineIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToLineIndexUnits(
                 Model,
-                SelectionBoundsInPositionIndexUnits);
+                selectionBoundsInPositionIndexUnits);
 	
 	        var virtualLowerBoundInclusiveLineIndex = EntryList[0].LineIndex;
 	        var virtualUpperBoundExclusiveLineIndex = 1 + EntryList[Count - 1].LineIndex;
 	
-	        UseLowerBoundInclusiveLineIndex = virtualLowerBoundInclusiveLineIndex >= selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex
+	        var useLowerBoundInclusiveLineIndex = virtualLowerBoundInclusiveLineIndex >= selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex
 	            ? virtualLowerBoundInclusiveLineIndex
 	            : selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex;
 	
-	        UseUpperBoundExclusiveLineIndex = virtualUpperBoundExclusiveLineIndex <= selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex
+	        var useUpperBoundExclusiveLineIndex = virtualUpperBoundExclusiveLineIndex <= selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex
 	            ? virtualUpperBoundExclusiveLineIndex
             	: selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex;
             
             var hiddenLineCount = 0;
 			var checkHiddenLineIndex = 0;
             
-            for (; checkHiddenLineIndex < UseLowerBoundInclusiveLineIndex; checkHiddenLineIndex++)
+            for (; checkHiddenLineIndex < useLowerBoundInclusiveLineIndex; checkHiddenLineIndex++)
             {
             	if (ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(checkHiddenLineIndex))
             		hiddenLineCount++;
             }
             
-            for (var i = UseLowerBoundInclusiveLineIndex; i < UseUpperBoundExclusiveLineIndex; i++)
+            for (var i = useLowerBoundInclusiveLineIndex; i < useUpperBoundExclusiveLineIndex; i++)
 	        {
 	        	checkHiddenLineIndex++;
 	        
@@ -849,8 +845,8 @@ public class TextEditorVirtualizationResult
 	        	}
 	        	
 	        	SelectionStyleList.Add(GetTextSelectionStyleCss(
-		     	   SelectionBoundsInPositionIndexUnits.Position_LowerInclusiveIndex,
-		     	   SelectionBoundsInPositionIndexUnits.Position_UpperExclusiveIndex,
+		     	   selectionBoundsInPositionIndexUnits.Position_LowerInclusiveIndex,
+		     	   selectionBoundsInPositionIndexUnits.Position_UpperExclusiveIndex,
 		     	   lineIndex: i));
 	        }
 	    }
