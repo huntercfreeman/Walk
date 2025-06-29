@@ -236,7 +236,7 @@ public class TextEditorVirtualizationResult
     public (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) SelectionBoundsInPositionIndexUnits { get; set; }
     
     public List<(string CssClassString, int StartInclusiveIndex, int EndExclusiveIndex)> PresentationLayerGroupList { get; set; } = new();
-	public List<(string PresentationCssClass, string PresentationCssStyle)> PresentationLayerTextSpanList { get; set; } = new();
+	public List<string> PresentationLayerStyleList { get; set; } = new();
 	
     public int FirstPresentationLayerGroupStartInclusiveIndex { get; set; }
     public int FirstPresentationLayerGroupEndExclusiveIndex { get; set; }
@@ -584,14 +584,14 @@ public class TextEditorVirtualizationResult
         GetPresentationLayer(
         	ViewModel.PersistentState.FirstPresentationLayerKeysList,
         	PresentationLayerGroupList,
-        	PresentationLayerTextSpanList);
+        	PresentationLayerStyleList);
         FirstPresentationLayerGroupEndExclusiveIndex = PresentationLayerGroupList.Count;
         
         LastPresentationLayerGroupStartInclusiveIndex = PresentationLayerGroupList.Count;
         GetPresentationLayer(
         	ViewModel.PersistentState.LastPresentationLayerKeysList,
         	PresentationLayerGroupList,
-        	PresentationLayerTextSpanList);
+        	PresentationLayerStyleList);
         LastPresentationLayerGroupEndExclusiveIndex = PresentationLayerGroupList.Count;
         
         if (VirtualizedCollapsePointListVersion != ViewModel.PersistentState.VirtualizedCollapsePointListVersion ||
@@ -1079,7 +1079,7 @@ public class TextEditorVirtualizationResult
     private void GetPresentationLayer(
     	List<Key<TextEditorPresentationModel>> presentationLayerKeysList,
     	List<(string CssClassString, int StartInclusiveIndex, int EndExclusiveIndex)> presentationLayerGroupList,
-    	List<(string PresentationCssClass, string PresentationCssStyle)> presentationLayerTextSpanList)
+    	List<string> presentationLayerStyleList)
     {
     	for (int presentationKeyIndex = 0; presentationKeyIndex < presentationLayerKeysList.Count; presentationKeyIndex++)
 	    {
@@ -1103,7 +1103,7 @@ public class TextEditorVirtualizationResult
         	// Should be using 'textSpansList' not 'completedCalculation.TextSpanList'?
             textSpansList = PresentationVirtualizeAndShiftTextSpans(textModificationList, completedCalculation.TextSpanList);
 
-			var indexInclusiveStart = presentationLayerTextSpanList.Count;
+			var indexInclusiveStart = presentationLayerStyleList.Count;
 			
 			var hiddenLineCount = 0;
 			var checkHiddenLineIndex = 0;
@@ -1134,12 +1134,12 @@ public class TextEditorVirtualizationResult
                 		continue;
                 	}
                 		
-                	presentationLayerTextSpanList.Add((
-                		PresentationGetCssClass(presentationLayer, textSpan.DecorationByte),
-                		PresentationGetCssStyleString(
-                            boundsInPositionIndexUnits.StartInclusiveIndex,
-                            boundsInPositionIndexUnits.EndExclusiveIndex,
-                            lineIndex: i)));
+                	presentationLayerStyleList.Add(PresentationGetCssStyleString(
+                        boundsInPositionIndexUnits.StartInclusiveIndex,
+                        boundsInPositionIndexUnits.EndExclusiveIndex,
+                        lineIndex: i,
+                        presentationLayer,
+                        textSpan.DecorationByte));
                 }
             }
             
@@ -1147,7 +1147,7 @@ public class TextEditorVirtualizationResult
             	(
             		presentationLayer.CssClassString,
             	    indexInclusiveStart,
-            	    indexExclusiveEnd: presentationLayerTextSpanList.Count)
+            	    indexExclusiveEnd: presentationLayerStyleList.Count)
             	);
 	    }
     }
@@ -1250,15 +1250,12 @@ public class TextEditorVirtualizationResult
         return (firstLineToSelectDataInclusive, lastLineToSelectDataExclusive);
     }
     
-    public string PresentationGetCssClass(TextEditorPresentationModel presentationModel, byte decorationByte)
-    {
-        return presentationModel.DecorationMapper.Map(decorationByte);
-    }
-    
     public string PresentationGetCssStyleString(
         int position_LowerInclusiveIndex,
         int position_UpperExclusiveIndex,
-        int lineIndex)
+        int lineIndex,
+        TextEditorPresentationModel presentationModel,
+        byte decorationByte)
     {
         if (lineIndex >= Model.LineEndList.Count || !ComponentData.LineIndexCache.Map.TryGetValue(lineIndex, out var cacheEntry))
             return string.Empty;
@@ -1349,6 +1346,8 @@ public class TextEditorVirtualizationResult
         	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(widthInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture));
         	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
         }
+        
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(presentationModel.DecorationMapper.Map(decorationByte));
 
         return ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
     }

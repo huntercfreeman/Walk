@@ -12,14 +12,14 @@ public sealed class FindOverlayDecorationMapper : IDecorationMapper
     public string Map(byte decorationByte)
     {
         var decoration = (FindOverlayDecorationKind)decorationByte;
-
+        
         return decoration switch
         {
             FindOverlayDecorationKind.None => string.Empty,
-            FindOverlayDecorationKind.LongestCommonSubsequence => "di_te_diff-longest-common-subsequence",
-            FindOverlayDecorationKind.Insertion => "di_te_diff-insertion",
-            FindOverlayDecorationKind.Deletion => "di_te_diff-deletion",
-            FindOverlayDecorationKind.Modification => "di_te_diff-modification",
+            FindOverlayDecorationKind.LongestCommonSubsequence => "background-color: var(--di_te_diff-longest-common-subsequence-background-color);",
+            FindOverlayDecorationKind.Insertion => "background-color: var(--di_te_diff-insertion-background-color);",
+            FindOverlayDecorationKind.Deletion => "background-color: var(--di_te_diff-deletion-background-color);",
+            FindOverlayDecorationKind.Modification => "background-color: var(--di_te_diff-modification-background-color);",
             _ => string.Empty,
         };
     }

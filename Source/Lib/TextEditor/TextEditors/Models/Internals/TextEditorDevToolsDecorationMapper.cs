@@ -11,7 +11,7 @@ public sealed class TextEditorDevToolsDecorationMapper : IDecorationMapper
         return decoration switch
         {
             TextEditorDevToolsDecorationKind.None => string.Empty,
-            TextEditorDevToolsDecorationKind.Scope => "di_te_brace_matching",
+            TextEditorDevToolsDecorationKind.Scope => "background-color: var(--di_te_brace_matching-background-color);",
             _ => string.Empty,
         };
     }

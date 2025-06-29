@@ -43,7 +43,7 @@
         </div>
 
         var presentationLayerGroupSpan = System.Runtime.InteropServices.CollectionsMarshal.AsSpan(virtualizationResult.PresentationLayerGroupList);
-        var presentationLayerTextSpanSpan = System.Runtime.InteropServices.CollectionsMarshal.AsSpan(virtualizationResult.PresentationLayerTextSpanList);
+        var presentationLayerStyleSpan = System.Runtime.InteropServices.CollectionsMarshal.AsSpan(virtualizationResult.PresentationLayerStyleList);
 
         var firstPresentationLayerGroupSpan = presentationLayerGroupSpan.Slice(
             virtualizationResult.FirstPresentationLayerGroupStartInclusiveIndex,
@@ -51,15 +51,14 @@
 
         foreach (var group in firstPresentationLayerGroupSpan)
         {
-            var firstPresentationLayerTextSpanSpan = presentationLayerTextSpanSpan.Slice(
+            var firstPresentationLayerStyleSpan = presentationLayerStyleSpan.Slice(
                 group.StartInclusiveIndex,
                 group.EndExclusiveIndex - group.StartInclusiveIndex);
         
             <div class="@group.CssClassString">
-                @foreach (var textSpan in firstPresentationLayerTextSpanSpan)
+                @foreach (var styleString in firstPresentationLayerStyleSpan)
                 {
-                    <div class="@textSpan.PresentationCssClass"
-                         style="@textSpan.PresentationCssStyle">
+                    <div style="@styleString">
                     </div>
                 }
 			</div>
@@ -79,15 +78,14 @@
 
         foreach (var group in lastPresentationLayerGroupSpan)
         {
-            var lastPresentationLayerTextSpanSpan = presentationLayerTextSpanSpan.Slice(
+            var lastPresentationLayerStyleSpan = presentationLayerStyleSpan.Slice(
                 group.StartInclusiveIndex,
                 group.EndExclusiveIndex - group.StartInclusiveIndex);
         
             <div class="@group.CssClassString">
-                @foreach (var textSpan in lastPresentationLayerTextSpanSpan)
+                @foreach (var styleString in lastPresentationLayerStyleSpan)
                 {
-                    <div class="@textSpan.PresentationCssClass"
-                         style="@textSpan.PresentationCssStyle">
+                    <div style="@styleString">
                     </div>
                 }
 			</div>
