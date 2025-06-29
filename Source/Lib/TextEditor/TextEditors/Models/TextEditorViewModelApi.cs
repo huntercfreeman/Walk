@@ -122,8 +122,7 @@ public sealed class TextEditorViewModelApi
                 top: 0,
                 componentData: null,
                 model: null,
-        	    viewModel: null,
-        	    renderBatchPersistentState: null),
+        	    viewModel: null),
 			new TextEditorDimensions(0, 0, 0, 0),
 			scrollLeft: 0,
 	    	scrollTop: 0,
@@ -1040,7 +1039,6 @@ public sealed class TextEditorViewModelApi
 	        componentData,
 	        modelModifier,
 	        viewModel,
-	        componentData.RenderBatchPersistentState,
 	        viewModel.Virtualization);
 		
 		viewModel.PersistentState.ScrollWidth = totalWidth;

@@ -69,8 +69,7 @@ public class TextEditorVirtualizationResult
         top: 0,
         componentData: null,
         model: null,
-	    viewModel: null,
-	    renderBatchPersistentState: null);
+	    viewModel: null);
 
     /// <summary>
     /// This constructor permits the Empty instance to be made without
@@ -87,8 +86,7 @@ public class TextEditorVirtualizationResult
         int top,
         TextEditorComponentData? componentData,
         TextEditorModel? model,
-	    TextEditorViewModel? viewModel,
-	    TextEditorRenderBatchPersistentState? renderBatchPersistentState)
+	    TextEditorViewModel? viewModel)
     {
         EntryList = entries;
         VirtualizationSpanList = virtualizationSpanList;
@@ -101,7 +99,6 @@ public class TextEditorVirtualizationResult
         ComponentData = componentData;
         Model = model;
 	    ViewModel = viewModel;
-	    TextEditorRenderBatchPersistentState = renderBatchPersistentState;
 	    
 	    BodyStyle = "width: 100%; left: 0;";
 	    BothVirtualizationBoundaryStyleCssString = "width: 0px; height: 0px;";
@@ -122,7 +119,6 @@ public class TextEditorVirtualizationResult
         TextEditorComponentData? componentData,
         TextEditorModel? model,
 	    TextEditorViewModel? viewModel,
-	    TextEditorRenderBatchPersistentState? renderBatchPersistentState,
 	    TextEditorVirtualizationResult previousState)
     {
         EntryList = entries;
@@ -136,7 +132,6 @@ public class TextEditorVirtualizationResult
         ComponentData = componentData;
         Model = model;
 	    ViewModel = viewModel;
-	    TextEditorRenderBatchPersistentState = renderBatchPersistentState;
 	    _previousState = previousState;
 	    
 	    LineHeightStyleCssString = _previousState.LineHeightStyleCssString;
@@ -204,7 +199,6 @@ public class TextEditorVirtualizationResult
 	
     public TextEditorModel? Model { get; set; }
     public TextEditorViewModel? ViewModel { get; set; }
-    public TextEditorRenderBatchPersistentState? TextEditorRenderBatchPersistentState { get; set; }
     
     public bool IsValid { get; private set; }
         
@@ -758,15 +752,15 @@ public class TextEditorVirtualizationResult
 
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(LineHeightStyleCssString);
 
-        var widthInPixelsInvariantCulture = TextEditorRenderBatchPersistentState.TextEditorOptions.CursorWidthInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        var widthInPixelsInvariantCulture = ComponentData.RenderBatchPersistentState.TextEditorOptions.CursorWidthInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture);
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("width: ");
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(widthInPixelsInvariantCulture);
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
 
-        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(((ITextEditorKeymap)TextEditorRenderBatchPersistentState.TextEditorOptions.Keymap).GetCursorCssStyleString(
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(((ITextEditorKeymap)ComponentData.RenderBatchPersistentState.TextEditorOptions.Keymap).GetCursorCssStyleString(
             Model,
             ViewModel,
-            TextEditorRenderBatchPersistentState.TextEditorOptions));
+            ComponentData.RenderBatchPersistentState.TextEditorOptions));
         
         // This feels a bit hacky, exceptions are happening because the UI isn't accessing
         // the text editor in a thread safe way.
