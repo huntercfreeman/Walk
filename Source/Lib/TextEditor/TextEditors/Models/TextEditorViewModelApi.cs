@@ -1141,7 +1141,6 @@ public sealed class TextEditorViewModelApi
             	    cacheEntry.Position_EndExclusiveIndex,
             	    cacheEntry.VirtualizationSpan_StartInclusiveIndex,
             	    cacheEntry.VirtualizationSpan_EndExclusiveIndex,
-            	    cacheEntry.HeightInPixels,
             	    cacheEntry.LeftInPixels,
             	    cacheEntry.TopInPixels,
             	    cacheEntry.GutterCssStyle,
@@ -1262,7 +1261,6 @@ public sealed class TextEditorViewModelApi
 					position_EndExclusiveIndex: positionEndExclusiveIndex,
 					virtualizationSpan_StartInclusiveIndex: 0,
 					virtualizationSpan_EndExclusiveIndex: 0,
-					viewModel.PersistentState.CharAndLineMeasurements.LineHeight,
 					viewModel.PersistentState.GutterWidth + leftInPixels,
 					topInPixels - (viewModel.PersistentState.CharAndLineMeasurements.LineHeight * hiddenCount));
 			}
@@ -1300,7 +1298,6 @@ public sealed class TextEditorViewModelApi
 					position_EndExclusiveIndex: lineInformation.UpperLineEnd.Position_StartInclusiveIndex,
 					virtualizationSpan_StartInclusiveIndex: 0,
 					virtualizationSpan_EndExclusiveIndex: 0,
-					viewModel.PersistentState.CharAndLineMeasurements.LineHeight,
 					leftInPixels: viewModel.PersistentState.GutterWidth,
 					topInPixels: (lineIndex * viewModel.PersistentState.CharAndLineMeasurements.LineHeight) - (viewModel.PersistentState.CharAndLineMeasurements.LineHeight * hiddenCount));
 			}
@@ -1337,7 +1334,6 @@ public sealed class TextEditorViewModelApi
                 	    virtualizationEntry.Position_EndExclusiveIndex,
                 	    virtualizationEntry.VirtualizationSpan_StartInclusiveIndex,
                 	    virtualizationEntry.VirtualizationSpan_EndExclusiveIndex,
-                	    virtualizationEntry.HeightInPixels,
                 	    virtualizationEntry.LeftInPixels,
                 	    virtualizationEntry.TopInPixels,
                 	    virtualizationEntry.GutterCssStyle,
@@ -1356,7 +1352,6 @@ public sealed class TextEditorViewModelApi
                 	    virtualizationEntry.Position_EndExclusiveIndex,
                 	    virtualizationEntry.VirtualizationSpan_StartInclusiveIndex,
                 	    virtualizationEntry.VirtualizationSpan_EndExclusiveIndex,
-                	    virtualizationEntry.HeightInPixels,
                 	    virtualizationEntry.LeftInPixels,
                 	    virtualizationEntry.TopInPixels,
                 	    virtualizationEntry.GutterCssStyle,
@@ -1494,7 +1489,6 @@ public sealed class TextEditorViewModelApi
             	    virtualizationEntry.Position_EndExclusiveIndex,
             	    virtualizationEntry.VirtualizationSpan_StartInclusiveIndex,
             	    virtualizationEntry.VirtualizationSpan_EndExclusiveIndex,
-            	    virtualizationEntry.HeightInPixels,
             	    virtualizationEntry.LeftInPixels,
             	    virtualizationEntry.TopInPixels,
             	    virtualizationEntry.GutterCssStyle,
@@ -1513,7 +1507,6 @@ public sealed class TextEditorViewModelApi
             	    virtualizationEntry.Position_EndExclusiveIndex,
             	    virtualizationEntry.VirtualizationSpan_StartInclusiveIndex,
             	    virtualizationEntry.VirtualizationSpan_EndExclusiveIndex,
-            	    virtualizationEntry.HeightInPixels,
             	    virtualizationEntry.LeftInPixels,
             	    virtualizationEntry.TopInPixels,
             	    virtualizationEntry.GutterCssStyle,
