@@ -73,9 +73,9 @@ public interface ICompilerService
 
 	public ICompilerServiceResource? GetResource(ResourceUri resourceUri);
 
-	public MenuRecord GetContextMenu(TextEditorRenderBatch renderBatch, ContextMenu contextMenu);
+	public MenuRecord GetContextMenu(TextEditorVirtualizationResult virtualizationResult, ContextMenu contextMenu);
 
-	public MenuRecord GetAutocompleteMenu(TextEditorRenderBatch renderBatch, AutocompleteMenu autocompleteMenu);
+	public MenuRecord GetAutocompleteMenu(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu);
 
 	public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
 		TextEditorEditContext editContext,

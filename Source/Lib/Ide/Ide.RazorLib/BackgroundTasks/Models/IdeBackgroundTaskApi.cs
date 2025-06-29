@@ -20,7 +20,6 @@ using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.FileSystems.Displays;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib;
-using Walk.TextEditor.RazorLib.Virtualizations.Models;
 using Walk.TextEditor.RazorLib.Groups.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
@@ -746,7 +745,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             _panelService,
             _dialogService,
             _commonBackgroundTaskApi,
-            VirtualizationGrid.Empty,
+            TextEditorVirtualizationResult.Empty,
 			new TextEditorDimensions(0, 0, 0, 0),
 			scrollLeft: 0,
 	    	scrollTop: 0,

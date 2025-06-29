@@ -60,9 +60,9 @@ public class TextEditorViewModelLiason
 			if (componentData is not null)
 			{
 				if (lineEndPositionWasAdded)
-					componentData.Virtualized_LineIndexCache_IsInvalid = true;
+					componentData.LineIndexCache.IsInvalid = true;
 				else
-					componentData.Virtualized_LineIndexCache_LineIndexWithModificationList.Add(initialCursorLineIndex);
+					componentData.LineIndexCache.ModifiedLineIndexList.Add(initialCursorLineIndex);
 			}
 		}
 	}
@@ -100,9 +100,9 @@ public class TextEditorViewModelLiason
 			if (componentData is not null)
 			{
 				if (lineEndPositionWasAdded)
-					componentData.Virtualized_LineIndexCache_IsInvalid = true;
+					componentData.LineIndexCache.IsInvalid = true;
 				else
-					componentData.Virtualized_LineIndexCache_LineIndexWithModificationList.Add(initialCursorLineIndex);
+					componentData.LineIndexCache.ModifiedLineIndexList.Add(initialCursorLineIndex);
 			}
 		}
 	}
@@ -117,7 +117,7 @@ public class TextEditorViewModelLiason
 			
 			var componentData = viewModel.PersistentState.ComponentData;
 			if (componentData is not null)
-				componentData.Virtualized_LineIndexCache_IsInvalid = true;
+				componentData.LineIndexCache.IsInvalid = true;
 		}
 	}
 }

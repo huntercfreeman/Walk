@@ -2,7 +2,6 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.TextEditor.RazorLib.Virtualizations.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Lexers.Models;
@@ -38,7 +37,7 @@ public sealed class TextEditorViewModel : IDisposable
         IPanelService panelService,
         IDialogService dialogService,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
-        VirtualizationGrid virtualizationResult,
+        TextEditorVirtualizationResult virtualizationResult,
 		TextEditorDimensions textEditorDimensions,
 		int scrollLeft,
 	    int scrollTop,
@@ -67,18 +66,16 @@ public sealed class TextEditorViewModel : IDisposable
 			virtualAssociativityKind: VirtualAssociativityKind.None,
 			panelService,
             dialogService,
-            commonBackgroundTaskApi);
+            commonBackgroundTaskApi,
+            textEditorDimensions,
+    		scrollLeft,
+    	    scrollTop,
+    	    scrollWidth,
+    	    scrollHeight,
+    	    marginScrollHeight,
+            textEditorService.OptionsApi.GetOptions().CharAndLineMeasurements);
     
-        VirtualizationResult = virtualizationResult;
-		TextEditorDimensions = textEditorDimensions;
-		
-		ScrollLeft = scrollLeft;
-	    ScrollTop = scrollTop;
-	    ScrollWidth = scrollWidth;
-	    ScrollHeight = scrollHeight;
-	    MarginScrollHeight = marginScrollHeight;
-		
-        CharAndLineMeasurements = textEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
+        Virtualization = virtualizationResult;
         
         LineIndex = 0;
 	    ColumnIndex = 0;
@@ -91,29 +88,16 @@ public sealed class TextEditorViewModel : IDisposable
 	{
 		PersistentState = other.PersistentState;
 		
-	    LineIndex = other.LineIndex;
-	    ColumnIndex = other.ColumnIndex;
-	    PreferredColumnIndex = other.PreferredColumnIndex;
-	    SelectionAnchorPositionIndex = other.SelectionAnchorPositionIndex;
-	    SelectionEndingPositionIndex = other.SelectionEndingPositionIndex;
+	    _lineIndex = other._lineIndex;
+	    _columnIndex = other._columnIndex;
+	    _preferredColumnIndex = other._preferredColumnIndex;
+	    _selectionAnchorPositionIndex = other._selectionAnchorPositionIndex;
+	    _selectionEndingPositionIndex = other._selectionEndingPositionIndex;
 	    
-	    VirtualizationResult = other.VirtualizationResult;
-		TextEditorDimensions = other.TextEditorDimensions;
+	    // The new instance of `Virtualization` is only made when calculating a virtualization result.
+	    // Otherwise, just keep re-using the previous.
+	    Virtualization = other.Virtualization;
 		
-		ScrollLeft = other.ScrollLeft;
-	    ScrollTop = other.ScrollTop;
-	    ScrollWidth = other.ScrollWidth;
-	    ScrollHeight = other.ScrollHeight;
-	    MarginScrollHeight = other.MarginScrollHeight;
-	    
-	    GutterWidthInPixels = other.GutterWidthInPixels;
-		
-	    CharAndLineMeasurements = other.CharAndLineMeasurements;
-		
-		ShouldCalculateVirtualizationResult = other.ShouldCalculateVirtualizationResult;
-		
-		VirtualizationResultCount = other.VirtualizationResultCount;
-	    
 	    /*
 	    // Don't copy these properties
 	    ScrollWasModified { get; set; }
@@ -122,40 +106,108 @@ public sealed class TextEditorViewModel : IDisposable
 	
 	public TextEditorViewModelPersistentState PersistentState { get; set; }
 
-    public int LineIndex { get; set; }
-    public int ColumnIndex { get; set; }
-    public int PreferredColumnIndex { get; set; }
-    public int SelectionAnchorPositionIndex { get; set; }
-    public int SelectionEndingPositionIndex { get; set; }
+    private int _lineIndex;
+    public int LineIndex
+    {
+        get => _lineIndex;
+        set
+        {
+            if (_lineIndex != value)
+            {
+                Changed_LineIndex = true;
+                Changed_Cursor_AnyState = true;
+            }
+            _lineIndex = value;
+        }
+    }
+    
+    private int _columnIndex;
+    public int ColumnIndex
+    {
+        get => _columnIndex;
+        set
+        {
+            if (_columnIndex != value)
+            {
+                Changed_ColumnIndex = true;
+                Changed_Cursor_AnyState = true;
+            }
+            _columnIndex = value;
+        }
+    }
+    
+    private int _preferredColumnIndex;
+    public int PreferredColumnIndex
+    {
+        get => _preferredColumnIndex;
+        set
+        {
+            if (_preferredColumnIndex != value)
+            {
+                Changed_PreferredColumnIndex = true;
+                Changed_Cursor_AnyState = true;
+            }
+            _preferredColumnIndex = value;
+        }
+    }
+    
+    private int _selectionAnchorPositionIndex;
+    public int SelectionAnchorPositionIndex
+    {
+        get => _selectionAnchorPositionIndex;
+        set
+        {
+            if (_selectionAnchorPositionIndex != value)
+            {
+                Changed_SelectionAnchorPositionIndex = true;
+                Changed_Cursor_AnyState = true;
+            }
+            _selectionAnchorPositionIndex = value;
+        }
+    }
+    
+    private int _selectionEndingPositionIndex;
+    public int SelectionEndingPositionIndex
+    {
+        get => _selectionEndingPositionIndex;
+        set
+        {
+            if (_selectionEndingPositionIndex != value)
+            {
+                Changed_SelectionEndingPositionIndex = true;
+                Changed_Cursor_AnyState = true;
+            }
+            _selectionEndingPositionIndex = value;
+        }
+    }
+    
     /// <summary>
     /// Given the dimensions of the rendered text editor, this provides a subset of the file's content, such that "only what is
     /// visible when rendered" is in this. There is some padding of offscreen content so that scrolling is smoother.
     /// </summary>
-    public VirtualizationGrid VirtualizationResult { get; set; }
-	public TextEditorDimensions TextEditorDimensions { get; set; }
-	
-	public int ScrollLeft { get; set; }
-    public int ScrollTop { get; set; }
-    public int ScrollWidth { get; set; }
-    public int ScrollHeight { get; set; }
-    public int MarginScrollHeight { get; set; }
-    
-    public int GutterWidthInPixels { get; set; }
-    
-    public int VirtualizationResultCount { get; set; }
-	
-	/// <summary>
-	/// TODO: Rename 'CharAndLineMeasurements' to 'CharAndLineDimensions'...
-	///       ...as to bring it inline with 'TextEditorDimensions' and 'ScrollbarDimensions'.
-	/// </summary>
-    public CharAndLineMeasurements CharAndLineMeasurements { get; set; }
-    
-    /// <summary>
-	/// This property decides whether or not to re-calculate the virtualization result that gets displayed on the UI.
-	/// </summary>
-    public bool ShouldCalculateVirtualizationResult { get; set; }
+    public TextEditorVirtualizationResult Virtualization { get; set; }
 	
     public bool ScrollWasModified { get; set; }
+    
+    /// <summary>
+    /// When settings `Changed_...` also set this property.
+    /// Then to determine if the many `Changed_...` properties that are not this one
+    /// have changed, you can first check this singular property so you short circuit
+    /// if nothing changed.
+    ///
+    /// Don't copy any of the `Changed_...` properties when making a copy of a viewmodel.
+    /// They're just used as markers during the lifespan of each viewmodel whether the UI needs to be updated.
+    ///
+    /// If only this bool is set, then it means while calculating the VirtualizationResult, that
+    /// some other variable had changed, and the cursor CSS is dependent on that variable.
+    /// </summary>
+    public bool Changed_Cursor_AnyState { get; set; }
+    
+    public bool Changed_LineIndex { get; set; }
+    public bool Changed_ColumnIndex { get; set; }
+    public bool Changed_PreferredColumnIndex { get; set; }
+    public bool Changed_SelectionAnchorPositionIndex { get; set; }
+    public bool Changed_SelectionEndingPositionIndex { get; set; }
     
     public ValueTask FocusAsync()
     {
@@ -188,31 +240,31 @@ public sealed class TextEditorViewModel : IDisposable
     }
     
     public void MutateScrollLeft(int pixels, TextEditorDimensions textEditorDimensions) =>
-		SetScrollLeft(ScrollLeft + pixels, textEditorDimensions);
+		SetScrollLeft(PersistentState.ScrollLeft + pixels, textEditorDimensions);
 
 	public void SetScrollLeft(int pixels, TextEditorDimensions textEditorDimensions)
 	{
 		var resultScrollLeft = Math.Max(0, pixels);
-		var maxScrollLeft = (int)Math.Max(0, ScrollWidth - textEditorDimensions.Width);
+		var maxScrollLeft = (int)Math.Max(0, PersistentState.ScrollWidth - textEditorDimensions.Width);
 
 		if (resultScrollLeft > maxScrollLeft)
 			resultScrollLeft = maxScrollLeft;
 
-		ScrollLeft = resultScrollLeft;
+		PersistentState.ScrollLeft = resultScrollLeft;
 	}
 
 	public void MutateScrollTop(int pixels, TextEditorDimensions textEditorDimensions) =>
-		SetScrollTop(ScrollTop + pixels, textEditorDimensions);
+		SetScrollTop(PersistentState.ScrollTop + pixels, textEditorDimensions);
 
 	public void SetScrollTop(int pixels, TextEditorDimensions textEditorDimensions)
 	{
 		var resultScrollTop = Math.Max(0, pixels);
-		var maxScrollTop = (int)Math.Max(0, ScrollHeight - textEditorDimensions.Height);
+		var maxScrollTop = (int)Math.Max(0, PersistentState.ScrollHeight - textEditorDimensions.Height);
 
 		if (resultScrollTop > maxScrollTop)
 			resultScrollTop = maxScrollTop;
 
-		ScrollTop = resultScrollTop;
+		PersistentState.ScrollTop = resultScrollTop;
 	}
 
     public void Dispose()

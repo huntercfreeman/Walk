@@ -261,16 +261,16 @@ public static class EventUtils
             
         var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
     
-        var positionX = clientX - viewModel.TextEditorDimensions.BoundingClientRectLeft;
-        var positionY = clientY - viewModel.TextEditorDimensions.BoundingClientRectTop;
+        var positionX = clientX - viewModel.PersistentState.TextEditorDimensions.BoundingClientRectLeft;
+        var positionY = clientY - viewModel.PersistentState.TextEditorDimensions.BoundingClientRectTop;
     
         // Scroll position offset
-        positionX += viewModel.ScrollLeft;
-        positionY += viewModel.ScrollTop;
+        positionX += viewModel.PersistentState.ScrollLeft;
+        positionY += viewModel.PersistentState.ScrollTop;
         
-        positionX -= viewModel.GutterWidthInPixels;
+        positionX -= viewModel.PersistentState.GutterWidth;
         
-        var lineIndex = (int)(positionY / viewModel.CharAndLineMeasurements.LineHeight);
+        var lineIndex = (int)(positionY / viewModel.PersistentState.CharAndLineMeasurements.LineHeight);
         
         var hiddenLineCount = 0;
         
@@ -284,7 +284,7 @@ public static class EventUtils
             ? modelModifier.LineCount - 1
             : lineIndex;
             
-        var columnIndexDouble = positionX / viewModel.CharAndLineMeasurements.CharacterWidth;
+        var columnIndexDouble = positionX / viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth;
         int columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
         
         var inlineUi = default(InlineUi);

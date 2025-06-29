@@ -8,7 +8,6 @@ using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.Lines.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Walk.TextEditor.RazorLib.Virtualizations.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
@@ -141,7 +140,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	            _panelService,
 	            _dialogService,
 	            _commonBackgroundTaskApi,
-	            VirtualizationGrid.Empty,
+	            TextEditorVirtualizationResult.Empty,
 				new TextEditorDimensions(0, 0, 0, 0),
 				scrollLeft: 0,
 		    	scrollTop: 0,

@@ -21,19 +21,8 @@ public record TextEditorState
 	public (TextEditorModel? TextEditorModel, TextEditorViewModel? TextEditorViewModel)
 		GetModelAndViewModelOrDefault(ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)
 	{
-		var inModel = (TextEditorModel?)null;
-		var inViewModel = (TextEditorViewModel?)null;
-		
-		try
-		{
-			_ = _modelMap.TryGetValue(resourceUri, out inModel);
-			_ = _viewModelMap.TryGetValue(viewModelKey, out inViewModel);
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e);
-		}
-		
+		_ = _modelMap.TryGetValue(resourceUri, out TextEditorModel? inModel);
+		_ = _viewModelMap.TryGetValue(viewModelKey, out TextEditorViewModel? inViewModel);
 		return (inModel, inViewModel);
 	}
 	
@@ -43,37 +32,20 @@ public record TextEditorState
 	public (TextEditorModel? Model, TextEditorViewModel? ViewModel) GetModelAndViewModelOrDefault(
 		Key<TextEditorViewModel> viewModelKey)
 	{
-		var inModel = (TextEditorModel?)null;
-		var inViewModel = (TextEditorViewModel?)null;
+		TextEditorModel? inModel;
+		TextEditorViewModel? inViewModel;
 		
-		try
-		{
-			_ = _viewModelMap.TryGetValue(viewModelKey, out inViewModel);
-			
-			if (inViewModel is not null)
-				_ = _modelMap.TryGetValue(inViewModel.PersistentState.ResourceUri, out inModel);
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e);
-		}
+		if (_viewModelMap.TryGetValue(viewModelKey, out inViewModel))
+			_ = _modelMap.TryGetValue(inViewModel.PersistentState.ResourceUri, out inModel);
+		else
+		    inModel = null;
 		
 		return (inModel, inViewModel);
 	}
 	
 	public TextEditorModel? ModelGetOrDefault(ResourceUri resourceUri)
     {
-    	var inModel = (TextEditorModel?)null;
-    	
-    	try
-    	{
-    		var exists = _modelMap.TryGetValue(resourceUri, out inModel);
-    	}
-    	catch (Exception e)
-		{
-			Console.WriteLine(e);
-		}
-		
+		var exists = _modelMap.TryGetValue(resourceUri, out TextEditorModel? inModel);
 		return inModel;
     }
     
@@ -108,6 +80,7 @@ public record TextEditorState
 		return 0;
     }
     
+    [Obsolete("TextEditorModel.PersistentState.ViewModelKeyList")]
     public List<TextEditorViewModel> ModelGetViewModelsOrEmpty(ResourceUri resourceUri)
     {
     	try
@@ -126,20 +99,8 @@ public record TextEditorState
     
     public TextEditorViewModel? ViewModelGetOrDefault(Key<TextEditorViewModel> viewModelKey)
     {
-    	try
-    	{
-    		return _viewModelMap[viewModelKey];
-    	}
-    	catch (Exception e)
-		{
-			// Eat this exception for now.
-			// This is being done due to "race condition" like scenarios
-			// and a performant solution to this needs to be decided on.
-			//
-			// Console.WriteLine(e);
-			
-			return null;
-		}
+    	_viewModelMap.TryGetValue(viewModelKey, out TextEditorViewModel? inViewModel);
+    	return inViewModel;
     }
 
 	/// <summary>

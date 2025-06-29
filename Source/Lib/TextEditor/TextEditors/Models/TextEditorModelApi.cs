@@ -51,6 +51,7 @@ public sealed class TextEditorModelApi
     #endregion
 
     #region READ_METHODS
+    [Obsolete("TextEditorModel.PersistentState.ViewModelKeyList")]
     public List<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri)
     {
     	return _textEditorService.TextEditorState.ModelGetViewModelsOrEmpty(resourceUri);
@@ -266,8 +267,9 @@ public sealed class TextEditorModelApi
         {
         	var viewModel = editContext.GetViewModelModifier(viewModelKey);
         	
-        	if (viewModel.PersistentState.ComponentData is not null)
-        		viewModel.PersistentState.ComponentData.Virtualized_LineIndexCache_IsInvalid = true;
+        	var componentData = viewModel.PersistentState.ComponentData;
+        	if (componentData is not null)
+        		componentData.LineIndexCache.IsInvalid = true;
         }
 
         ApplyDecorationRange(

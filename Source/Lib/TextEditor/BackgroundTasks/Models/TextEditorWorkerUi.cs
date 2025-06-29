@@ -190,7 +190,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 					.ConfigureAwait(false);
 					
 				if (lineAndColumnIndex.PositionX < -4 &&
-					lineAndColumnIndex.PositionX > -2 * viewModel.CharAndLineMeasurements.CharacterWidth)
+					lineAndColumnIndex.PositionX > -2 * viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth)
 				{
 					var shouldGotoFinalize = TextEditorCommandDefaultFunctions.ToggleCollapsePoint(lineAndColumnIndex.LineIndex, modelModifier, viewModel);
 					if (shouldGotoFinalize)
@@ -200,7 +200,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 				{
 					var lineInformation = modelModifier.GetLineInformation(lineAndColumnIndex.LineIndex);
 					
-					var lastValidColumnLeft = lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth;
+					var lastValidColumnLeft = lineInformation.LastValidColumnIndex * viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth;
 					
 					// Tab key column offset
 			        {
@@ -214,10 +214,10 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 			
 			            lastValidColumnLeft += extraWidthPerTabKey *
 			                tabsOnSameLineBeforeCursor *
-			                viewModel.CharAndLineMeasurements.CharacterWidth;
+			                viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth;
 			        }
 					
-					if (lineAndColumnIndex.PositionX > lastValidColumnLeft + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
+					if (lineAndColumnIndex.PositionX > lastValidColumnLeft + viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth * 0.2)
 					{
 						// Check for collision with non-tab inline UI
 						foreach (var collapsePoint in viewModel.PersistentState.AllCollapsePointList)
@@ -228,9 +228,9 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 								continue;
 						    }
 						
-							if (lineAndColumnIndex.PositionX > lastValidColumnLeft + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
+							if (lineAndColumnIndex.PositionX > lastValidColumnLeft + viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth * 0.2)
 							{
-								if (lineAndColumnIndex.PositionX < lastValidColumnLeft + 3 * viewModel.CharAndLineMeasurements.CharacterWidth)
+								if (lineAndColumnIndex.PositionX < lastValidColumnLeft + 3 * viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth)
 								{
 									var shouldGotoFinalize = TextEditorCommandDefaultFunctions.ToggleCollapsePoint(lineAndColumnIndex.LineIndex, modelModifier, viewModel);
 									if (shouldGotoFinalize)
@@ -306,7 +306,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 					.ConfigureAwait(false);
 					
 				if (rowAndColumnIndex.PositionX < -4 &&
-					rowAndColumnIndex.PositionX > -2 * viewModel.CharAndLineMeasurements.CharacterWidth)
+					rowAndColumnIndex.PositionX > -2 * viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth)
 				{
 					var virtualizedIndexCollapsePoint = viewModel.PersistentState.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == rowAndColumnIndex.LineIndex);
 					
@@ -317,7 +317,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 				{
 					var lineInformation = modelModifier.GetLineInformation(rowAndColumnIndex.LineIndex);
 					
-					if (rowAndColumnIndex.PositionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
+					if (rowAndColumnIndex.PositionX > lineInformation.LastValidColumnIndex * viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth + viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth * 0.2)
 					{
 						// Check for collision with non-tab inline UI
 						foreach (var collapsePoint in viewModel.PersistentState.AllCollapsePointList)
@@ -328,7 +328,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 								continue;
 						    }
 						
-							if (rowAndColumnIndex.PositionX > lineInformation.LastValidColumnIndex * viewModel.CharAndLineMeasurements.CharacterWidth + viewModel.CharAndLineMeasurements.CharacterWidth * 0.2)
+							if (rowAndColumnIndex.PositionX > lineInformation.LastValidColumnIndex * viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth + viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth * 0.2)
 							{
 								var lastHiddenLineInformation = modelModifier.GetLineInformation(collapsePoint.EndExclusiveLineIndex - 1);
 								viewModel.LineIndex = lastHiddenLineInformation.Index;

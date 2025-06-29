@@ -1,6 +1,6 @@
 @using Walk.Common.RazorLib.Menus.Displays
 
-@{ var renderBatch = GetRenderBatch(); }
+@{ var renderBatch = GetVirtualizationResult(); }
 
 @if (renderBatch.IsValid)
 {

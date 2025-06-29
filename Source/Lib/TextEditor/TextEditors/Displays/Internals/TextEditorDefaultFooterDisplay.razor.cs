@@ -30,13 +30,13 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
 		get => _selectedLineEndKindString;
 		set
 		{
-			var renderBatchLocal = GetRenderBatch();
+			var virtualizationResult = GetVirtualizationResult();
 		
-			if (!renderBatchLocal.IsValid)
+			if (!virtualizationResult.IsValid)
 	    		return;
 		    		
-	        var model = renderBatchLocal.Model;
-	        var viewModel = renderBatchLocal.ViewModel;
+	        var model = virtualizationResult.Model;
+	        var viewModel = virtualizationResult.ViewModel;
 	
 	        if (model is null || viewModel is null)
 	            return;
@@ -71,9 +71,9 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
         OnCursorShouldBlinkChanged();
     }
     
-    private TextEditorRenderBatch GetRenderBatch()
+    private TextEditorVirtualizationResult GetVirtualizationResult()
     {
-    	return GetComponentData()?.RenderBatch ?? default;
+    	return GetComponentData()?.Virtualization ?? TextEditorVirtualizationResult.Empty;
     }
     
     private TextEditorComponentData? GetComponentData()
@@ -97,24 +97,24 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
 
     private async void OnCursorShouldBlinkChanged()
     {
-    	var renderBatchLocal = GetRenderBatch();
-		if (renderBatchLocal.IsValid)
+    	var virtualizationResult = GetVirtualizationResult();
+		if (virtualizationResult.IsValid)
 		{
 			var shouldSetSelectedLineEndKindString = false;
 			
-			if (_viewModelKeyPrevious != renderBatchLocal.ViewModel.PersistentState.ViewModelKey)
+			if (_viewModelKeyPrevious != virtualizationResult.ViewModel.PersistentState.ViewModelKey)
 			{
-				_viewModelKeyPrevious = renderBatchLocal.ViewModel.PersistentState.ViewModelKey;
+				_viewModelKeyPrevious = virtualizationResult.ViewModel.PersistentState.ViewModelKey;
 				shouldSetSelectedLineEndKindString = true;
 			}
-			else if (_lineEndKindPreferencePrevious != renderBatchLocal.Model.LineEndKindPreference)
+			else if (_lineEndKindPreferencePrevious != virtualizationResult.Model.LineEndKindPreference)
 			{
-				_lineEndKindPreferencePrevious = renderBatchLocal.Model.LineEndKindPreference;
+				_lineEndKindPreferencePrevious = virtualizationResult.Model.LineEndKindPreference;
 				shouldSetSelectedLineEndKindString = true;
 			}
 			
 			if (shouldSetSelectedLineEndKindString)
-				_selectedLineEndKindString = renderBatchLocal.Model.LineEndKindPreference.AsEnumName();
+				_selectedLineEndKindString = virtualizationResult.Model.LineEndKindPreference.AsEnumName();
     	}
     
     	await InvokeAsync(StateHasChanged);
