@@ -69,8 +69,7 @@ public class TextEditorVirtualizationResult
         top: 0,
         componentData: null,
         model: null,
-	    viewModel: null,
-	    renderBatchPersistentState: null);
+	    viewModel: null);
 
     /// <summary>
     /// This constructor permits the Empty instance to be made without
@@ -87,8 +86,7 @@ public class TextEditorVirtualizationResult
         int top,
         TextEditorComponentData? componentData,
         TextEditorModel? model,
-	    TextEditorViewModel? viewModel,
-	    TextEditorRenderBatchPersistentState? renderBatchPersistentState)
+	    TextEditorViewModel? viewModel)
     {
         EntryList = entries;
         VirtualizationSpanList = virtualizationSpanList;
@@ -101,9 +99,9 @@ public class TextEditorVirtualizationResult
         ComponentData = componentData;
         Model = model;
 	    ViewModel = viewModel;
-	    TextEditorRenderBatchPersistentState = renderBatchPersistentState;
 	    
 	    BodyStyle = "width: 100%; left: 0;";
+	    BothVirtualizationBoundaryStyleCssString = "width: 0px; height: 0px;";
 	    
 	    IsValid = false;
     }
@@ -121,7 +119,6 @@ public class TextEditorVirtualizationResult
         TextEditorComponentData? componentData,
         TextEditorModel? model,
 	    TextEditorViewModel? viewModel,
-	    TextEditorRenderBatchPersistentState? renderBatchPersistentState,
 	    TextEditorVirtualizationResult previousState)
     {
         EntryList = entries;
@@ -135,7 +132,6 @@ public class TextEditorVirtualizationResult
         ComponentData = componentData;
         Model = model;
 	    ViewModel = viewModel;
-	    TextEditorRenderBatchPersistentState = renderBatchPersistentState;
 	    _previousState = previousState;
 	    
 	    LineHeightStyleCssString = _previousState.LineHeightStyleCssString;
@@ -203,7 +199,6 @@ public class TextEditorVirtualizationResult
 	
     public TextEditorModel? Model { get; set; }
     public TextEditorViewModel? ViewModel { get; set; }
-    public TextEditorRenderBatchPersistentState? TextEditorRenderBatchPersistentState { get; set; }
     
     public bool IsValid { get; private set; }
         
@@ -212,12 +207,6 @@ public class TextEditorVirtualizationResult
     public string? InlineUiWidthStyleCssString { get; set; }
 	
 	public bool CursorIsOnHiddenLine { get; set; } = false;
-    
-    public int ShouldScroll { get; set; }
-    
-    public int UseLowerBoundInclusiveLineIndex { get; set; }
-    public int UseUpperBoundExclusiveLineIndex { get; set; }
-    public (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) SelectionBoundsInPositionIndexUnits { get; set; }
     
     public List<(string CssClassString, int StartInclusiveIndex, int EndExclusiveIndex)> PresentationLayerGroupList { get; set; } = new();
 	public List<string> PresentationLayerStyleList { get; set; } = new();
@@ -284,6 +273,8 @@ public class TextEditorVirtualizationResult
     public string? HORIZONTAL_ScrollbarCssStyle { get; set; }
     
     public string? ScrollbarSection_LeftCssStyle { get; set; }
+    
+    public string BothVirtualizationBoundaryStyleCssString { get; set; }
 	
     public void CreateUi()
     {
@@ -293,7 +284,7 @@ public class TextEditorVirtualizationResult
     	    
     		ComponentData.LineIndexCache.Clear();
     		
-    		var widthInPixelsInvariantCulture = ViewModel.PersistentState.GutterWidth.ToString();
+    		var widthInPixelsInvariantCulture = ViewModel.PersistentState.GetGutterWidthCssValue();
     		
     		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
     		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("width: ");
@@ -440,16 +431,9 @@ public class TextEditorVirtualizationResult
 		    HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;
     
         if (TotalWidth != _previousState.TotalWidth || TotalHeight != _previousState.TotalHeight)
-        {
     	    ConstructVirtualizationStyleCssStrings();
-	    }
 	    else
-	    {
-	        // This is such a silly thing to type I don't think this code will work since you can't re-use the _previousState value
-	        // cause it is stored on the ComponentData?
-	        // 
-	        ConstructVirtualizationStyleCssStrings();
-        }
+	        BothVirtualizationBoundaryStyleCssString = _previousState.BothVirtualizationBoundaryStyleCssString;
         
         if (ViewModel.Changed_Cursor_AnyState)
         {
@@ -554,7 +538,7 @@ public class TextEditorVirtualizationResult
     	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(TotalHeight.ToString());
     	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
     	
-    	ComponentData.BothVirtualizationBoundaryStyleCssString = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
+    	BothVirtualizationBoundaryStyleCssString = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
     }
     
     public void VERTICAL_GetSliderVerticalStyleCss()
@@ -762,15 +746,15 @@ public class TextEditorVirtualizationResult
 
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(LineHeightStyleCssString);
 
-        var widthInPixelsInvariantCulture = TextEditorRenderBatchPersistentState.TextEditorOptions.CursorWidthInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        var widthInPixelsInvariantCulture = ComponentData.RenderBatchPersistentState.TextEditorOptions.CursorWidthInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture);
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("width: ");
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(widthInPixelsInvariantCulture);
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
 
-        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(((ITextEditorKeymap)TextEditorRenderBatchPersistentState.TextEditorOptions.Keymap).GetCursorCssStyleString(
+        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(((ITextEditorKeymap)ComponentData.RenderBatchPersistentState.TextEditorOptions.Keymap).GetCursorCssStyleString(
             Model,
             ViewModel,
-            TextEditorRenderBatchPersistentState.TextEditorOptions));
+            ComponentData.RenderBatchPersistentState.TextEditorOptions));
         
         // This feels a bit hacky, exceptions are happening because the UI isn't accessing
         // the text editor in a thread safe way.
@@ -823,34 +807,34 @@ public class TextEditorVirtualizationResult
     
     	if (TextEditorSelectionHelper.HasSelectedText(ViewModel) && Count > 0)
 	    {
-	        SelectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
+	        var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
 	            ViewModel);
 	
 	        var selectionBoundsInLineIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToLineIndexUnits(
                 Model,
-                SelectionBoundsInPositionIndexUnits);
+                selectionBoundsInPositionIndexUnits);
 	
 	        var virtualLowerBoundInclusiveLineIndex = EntryList[0].LineIndex;
 	        var virtualUpperBoundExclusiveLineIndex = 1 + EntryList[Count - 1].LineIndex;
 	
-	        UseLowerBoundInclusiveLineIndex = virtualLowerBoundInclusiveLineIndex >= selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex
+	        var useLowerBoundInclusiveLineIndex = virtualLowerBoundInclusiveLineIndex >= selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex
 	            ? virtualLowerBoundInclusiveLineIndex
 	            : selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex;
 	
-	        UseUpperBoundExclusiveLineIndex = virtualUpperBoundExclusiveLineIndex <= selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex
+	        var useUpperBoundExclusiveLineIndex = virtualUpperBoundExclusiveLineIndex <= selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex
 	            ? virtualUpperBoundExclusiveLineIndex
             	: selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex;
             
             var hiddenLineCount = 0;
 			var checkHiddenLineIndex = 0;
             
-            for (; checkHiddenLineIndex < UseLowerBoundInclusiveLineIndex; checkHiddenLineIndex++)
+            for (; checkHiddenLineIndex < useLowerBoundInclusiveLineIndex; checkHiddenLineIndex++)
             {
             	if (ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(checkHiddenLineIndex))
             		hiddenLineCount++;
             }
             
-            for (var i = UseLowerBoundInclusiveLineIndex; i < UseUpperBoundExclusiveLineIndex; i++)
+            for (var i = useLowerBoundInclusiveLineIndex; i < useUpperBoundExclusiveLineIndex; i++)
 	        {
 	        	checkHiddenLineIndex++;
 	        
@@ -861,8 +845,8 @@ public class TextEditorVirtualizationResult
 	        	}
 	        	
 	        	SelectionStyleList.Add(GetTextSelectionStyleCss(
-		     	   SelectionBoundsInPositionIndexUnits.Position_LowerInclusiveIndex,
-		     	   SelectionBoundsInPositionIndexUnits.Position_UpperExclusiveIndex,
+		     	   selectionBoundsInPositionIndexUnits.Position_LowerInclusiveIndex,
+		     	   selectionBoundsInPositionIndexUnits.Position_UpperExclusiveIndex,
 		     	   lineIndex: i));
 	        }
 	    }

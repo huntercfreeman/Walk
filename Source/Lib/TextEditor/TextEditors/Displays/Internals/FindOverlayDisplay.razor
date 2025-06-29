@@ -1,8 +1,12 @@
 @using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 
-@{ var renderBatchLocal = GetVirtualizationResult(); }
+@{
+    var renderBatchLocal = GetVirtualizationResult();
+    var componentDataLocal = GetComponentData();
+}
 
-@if (renderBatchLocal.IsValid &&
+@if (componentDataLocal is not null &&
+     renderBatchLocal.IsValid &&
 	 renderBatchLocal.ViewModel.PersistentState.ShowFindOverlay)
 {
 	var appOptionsState = AppOptionsService.GetAppOptionsState();
@@ -48,7 +52,7 @@
         
             <input @bind="InputValue"
                    @bind:event="oninput"
-                   id="@renderBatchLocal.TextEditorRenderBatchPersistentState.ComponentData.FindOverlayId"
+                   id="@componentDataLocal.RenderBatchPersistentState.ComponentData.FindOverlayId"
                    class="di_ide_input di_ide_input-text"
                    placeholder="Find..." />
          </div>

@@ -129,8 +129,6 @@ public sealed class TextEditorComponentData
     public bool PreviousIncludeFooter { get; set; }
     public string PreviousGetHeightCssStyleResult { get; set; } = "height: calc(100%);";
     
-    public string BothVirtualizationBoundaryStyleCssString { get; set; } = "width: 0px; height: 0px;";
-    
     /// <summary>
     /// Share this StringBuilder when used for rendering and no other function is currently using it.
     /// (i.e.: only use this for methods that were invoked from the .razor file)
