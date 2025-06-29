@@ -457,7 +457,20 @@ public class TextEditorVirtualizationResult
         }
         else
         {
-            SelectionStyleList = _previousState.SelectionStyleList;
+            // I wanted to avoid getting the selection if the cursor state didn't change.
+            // But `GetSelection()` virtualizes the selection such that only the selection in view will be made into HTML elements.
+            //
+            // As a result if you select all the text in a large file, then scroll up and down, only the selection that was originally
+            // viewable will show no matter how far away you scroll because it won't update.
+            //
+            if (TextEditorSelectionHelper.HasSelectedText(ViewModel))
+            {
+                GetSelection();
+            }
+            else
+            {
+                SelectionStyleList = _previousState.SelectionStyleList;
+            }
         }
         
         FirstPresentationLayerGroupStartInclusiveIndex = PresentationLayerGroupList.Count;
