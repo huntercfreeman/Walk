@@ -1028,9 +1028,6 @@ public sealed class TextEditorViewModelApi
 		
 		var virtualizedLineList = new TextEditorVirtualizationLine[lineCountToReturn];
 		
-		// You can probably inline this but I'm not messing with this at the moment.
-		var previousVirtualizationResult = viewModel.Virtualization;
-					
 		viewModel.Virtualization = new TextEditorVirtualizationResult(
 			virtualizedLineList,
     		new List<TextEditorVirtualizationSpan>(),
@@ -1044,7 +1041,7 @@ public sealed class TextEditorViewModelApi
 	        modelModifier,
 	        viewModel,
 	        componentData.RenderBatchPersistentState,
-	        previousVirtualizationResult);
+	        viewModel.Virtualization);
 		
 		viewModel.PersistentState.ScrollWidth = totalWidth;
 		viewModel.PersistentState.ScrollHeight = totalHeight;
