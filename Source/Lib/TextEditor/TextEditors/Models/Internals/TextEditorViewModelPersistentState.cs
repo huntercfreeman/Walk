@@ -91,6 +91,14 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 		VirtualizedCollapsePointList = new();
 		HiddenLineIndexHashSet = new();
 		InlineUiList = new();
+		
+		TextEditorDimensions = textEditorDimensions;
+		ScrollLeft = scrollLeft;
+	    ScrollTop = scrollTop;
+	    ScrollWidth = scrollWidth;
+	    ScrollHeight = scrollHeight;
+	    MarginScrollHeight = marginScrollHeight;
+        CharAndLineMeasurements = charAndLineMeasurements;
 	}
 
 	/// <summary>
