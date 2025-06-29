@@ -563,7 +563,7 @@ public class TextEditorVirtualizationResult
 	        ConstructVirtualizationStyleCssStrings();
         }
         
-        if (ViewModel.Changed_Cursor_AnyState || (CursorCssStyle == string.Empty))
+        if (ViewModel.Changed_Cursor_AnyState)
             GetCursorAndCaretRowStyleCss();
     
         GetSelection();
