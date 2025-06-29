@@ -374,9 +374,10 @@ public class TextEditorVirtualizationResult
 		    Gutter_HeightWidthPaddingCssStyle = _previousState.Gutter_HeightWidthPaddingCssStyle;
 		}
 		
-		bool shouldCalculateVerticalSlider = false;
-		bool shouldCalculateHorizontalSlider = false;
-		bool shouldCalculateHorizontalScrollbar = false;
+		var shouldCalculateVerticalSlider = false;
+		var shouldCalculateHorizontalSlider = false;
+		
+		var shouldCalculateVirtualization = false;
 		
     	if (ViewModel.PersistentState.Changed_TextEditorHeight)
     	{
@@ -388,6 +389,7 @@ public class TextEditorVirtualizationResult
     	{
     	    ViewModel.PersistentState.Changed_ScrollHeight = false;
     		shouldCalculateVerticalSlider = true;
+    		shouldCalculateVirtualization = true;
 	    }
 		
     	if (ViewModel.PersistentState.Changed_ScrollTop)
@@ -400,13 +402,18 @@ public class TextEditorVirtualizationResult
     	{
     	    ViewModel.PersistentState.Changed_TextEditorWidth = false;
     		shouldCalculateHorizontalSlider = true;
-    		shouldCalculateHorizontalScrollbar = true;
+    		HORIZONTAL_GetScrollbarHorizontalStyleCss();
 	    }
+	    else
+	    {
+		    HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;
+		}
 		
     	if (ViewModel.PersistentState.Changed_ScrollWidth)
     	{
     	    ViewModel.PersistentState.Changed_ScrollWidth = false;
     		shouldCalculateHorizontalSlider = true;
+    		shouldCalculateVirtualization = true;
 	    }
 		
     	if (ViewModel.PersistentState.Changed_ScrollLeft)
@@ -424,13 +431,8 @@ public class TextEditorVirtualizationResult
 			HORIZONTAL_GetSliderHorizontalStyleCss();
 		else
 		    HORIZONTAL_SliderCssStyle = _previousState.HORIZONTAL_SliderCssStyle;
-		
-		if (shouldCalculateHorizontalScrollbar)
-			HORIZONTAL_GetScrollbarHorizontalStyleCss();
-		else
-		    HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;
     
-        if (TotalWidth != _previousState.TotalWidth || TotalHeight != _previousState.TotalHeight)
+        if (shouldCalculateVirtualization)
     	    ConstructVirtualizationStyleCssStrings();
 	    else
 	        BothVirtualizationBoundaryStyleCssString = _previousState.BothVirtualizationBoundaryStyleCssString;
@@ -449,13 +451,9 @@ public class TextEditorVirtualizationResult
             // viewable will show no matter how far away you scroll because it won't update.
             //
             if (TextEditorSelectionHelper.HasSelectedText(ViewModel))
-            {
                 GetSelection();
-            }
             else
-            {
                 SelectionStyleList = _previousState.SelectionStyleList;
-            }
         }
         
         FirstPresentationLayerGroupStartInclusiveIndex = PresentationLayerGroupList.Count;
