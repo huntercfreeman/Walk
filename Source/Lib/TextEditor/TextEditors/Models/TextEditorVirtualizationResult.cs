@@ -237,8 +237,6 @@ public class TextEditorVirtualizationResult
     /// </summary>
     public List<CollapsePoint>? VirtualizedCollapsePointList { get; set; }
     public int VirtualizedCollapsePointListVersion { get; set; }
-    
-    public List<TextEditorTextSpan> OutTextSpansList { get; set; } = new();
 	
 	public bool ShouldCalculateVirtualizationResult { get; set; }
 	
@@ -1046,7 +1044,7 @@ public class TextEditorVirtualizationResult
     	// TODO: Why virtualize then shift? Isn't it shift then virtualize? (2025-05-01)
     	
     	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__VirtualizedTextSpanList.Clear();
-    	OutTextSpansList.Clear();
+    	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__OutTextSpansList.Clear();
     
         // Virtualize the text spans
         if (Count > 0)
@@ -1111,7 +1109,7 @@ public class TextEditorVirtualizationResult
                     }
                 }
 
-                OutTextSpansList.Add(textSpan with
+                ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__OutTextSpansList.Add(textSpan with
                 {
                     StartInclusiveIndex = startingIndexInclusive,
                     EndExclusiveIndex = endingIndexExclusive
@@ -1119,7 +1117,7 @@ public class TextEditorVirtualizationResult
             }
         }
 
-        return OutTextSpansList;
+        return ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__OutTextSpansList;
     }
     
     public (int FirstLineToSelectDataInclusive, int LastLineToSelectDataExclusive) PresentationGetBoundsInLineIndexUnits(
