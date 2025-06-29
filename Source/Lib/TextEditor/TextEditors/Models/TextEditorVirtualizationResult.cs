@@ -284,7 +284,7 @@ public class TextEditorVirtualizationResult
     	    
     		ComponentData.LineIndexCache.Clear();
     		
-    		var widthInPixelsInvariantCulture = ViewModel.PersistentState.GutterWidth.ToString();
+    		var widthInPixelsInvariantCulture = ViewModel.PersistentState.GetGutterWidthCssValue();
     		
     		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
     		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("width: ");

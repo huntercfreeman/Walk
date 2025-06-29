@@ -196,6 +196,31 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 	public List<(InlineUi InlineUi, string Tag)> InlineUiList { get; set; }
 	public int VirtualizedCollapsePointListVersion { get; set; }
 	
+	private int _seenGutterWidth = -2;
+	private string _gutterWidthCssValue;
+	
+	/// <summary>
+	/// This method is not intuitive, because it doesn't make use of 'Changed_GutterWidth'.
+	///
+	/// It tracks the int value for the '_gutterWidth' when it does the '.ToString()',
+	/// then it checks if the int value had changed.
+	///
+	/// This is because if the method were to use 'Changed_GutterWidth',
+	/// then it'd presumably want to say 'Changed_GutterWidth = false'
+	/// when doing the '.ToString()' so that it re-uses the value.
+	///
+	/// But, this would then clobber the functionality of 'TextEditorVirtualizationResult'.
+	/// </summary>
+	public string GetGutterWidthCssValue()
+	{
+	    if (_seenGutterWidth != _gutterWidth)
+	    {
+	        _seenGutterWidth = _gutterWidth;
+	        _gutterWidthCssValue = GutterWidth.ToString();
+	    }
+        return _gutterWidthCssValue;
+	}
+	
 	private int _gutterWidth;
     public int GutterWidth
     {

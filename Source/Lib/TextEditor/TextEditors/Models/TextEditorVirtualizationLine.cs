@@ -15,7 +15,7 @@ public record struct TextEditorVirtualizationLine
 	    int position_EndExclusiveIndex,
 	    int virtualizationSpan_StartInclusiveIndex,
 	    int virtualizationSpan_EndExclusiveIndex,
-	    double leftInPixels,
+	    string leftCssValue,
 	    string topCssValue,
 	    string gutterCssStyle,
         string lineCssStyle,
@@ -26,7 +26,7 @@ public record struct TextEditorVirtualizationLine
 	    Position_EndExclusiveIndex = position_EndExclusiveIndex;
 	    VirtualizationSpan_StartInclusiveIndex = virtualizationSpan_StartInclusiveIndex;
 	    VirtualizationSpan_EndExclusiveIndex = virtualizationSpan_EndExclusiveIndex;
-	    LeftInPixels = leftInPixels;
+	    LeftCssValue = leftCssValue;
 	    TopCssValue = topCssValue;
 	    GutterCssStyle = gutterCssStyle;
         LineCssStyle = lineCssStyle;
@@ -39,7 +39,7 @@ public record struct TextEditorVirtualizationLine
 	    int position_EndExclusiveIndex,
 	    int virtualizationSpan_StartInclusiveIndex,
 	    int virtualizationSpan_EndExclusiveIndex,
-	    double leftInPixels,
+	    string leftCssValue,
 	    string topCssValue)
 	{
 		LineIndex = lineIndex;
@@ -47,7 +47,7 @@ public record struct TextEditorVirtualizationLine
 	    Position_EndExclusiveIndex = position_EndExclusiveIndex;
 	    VirtualizationSpan_StartInclusiveIndex = virtualizationSpan_StartInclusiveIndex;
 	    VirtualizationSpan_EndExclusiveIndex = virtualizationSpan_EndExclusiveIndex;
-	    LeftInPixels = leftInPixels;
+	    LeftCssValue = leftCssValue;
 	    TopCssValue = topCssValue;
 	}
 	
@@ -56,7 +56,7 @@ public record struct TextEditorVirtualizationLine
     public int Position_EndExclusiveIndex { get; }
     public int VirtualizationSpan_StartInclusiveIndex { get; set; }
     public int VirtualizationSpan_EndExclusiveIndex { get; set; }
-    public double LeftInPixels { get; }
+    public string LeftCssValue { get; }
     public string TopCssValue { get; }
     public string GutterCssStyle { get; set; }
     public string LineCssStyle { get; set; }
