@@ -106,6 +106,8 @@ public class TextEditorVirtualizationResult
 	    TextEditorRenderBatchPersistentState = renderBatchPersistentState;
 	    Count = count;
 	    
+	    BodyStyle = "width: 100%; left: 0;";
+	    
 	    IsValid = false;
     }
 
@@ -388,7 +390,7 @@ public class TextEditorVirtualizationResult
     /// BodyStyle is the odd one out for the nullable strings being used for CSS.
     /// The text editor needs to initially render with full width so that JavaScript can measure it.
     /// </summary>
-    public string BodyStyle { get; set; } = $"width: 100%; left: 0;";
+    public string BodyStyle { get; set; }
     
     public string? GutterCssStyle { get; set; }
     public string? GutterSectionCssStyle { get; set; }
