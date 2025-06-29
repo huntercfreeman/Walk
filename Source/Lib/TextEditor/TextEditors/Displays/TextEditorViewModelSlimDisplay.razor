@@ -23,13 +23,13 @@
      class="@_componentData.PersonalWrapperCssClass"
      tabindex="-1">
     
-	<div class="di_te_virtualization-boundary-display"
-		 style="@_componentData.BothVirtualizationBoundaryStyleCssString">
-	</div>
-    
     @{
         var virtualizationResult = _componentData.Virtualization;
     }
+    
+	<div class="di_te_virtualization-boundary-display"
+		 style="@virtualizationResult.BothVirtualizationBoundaryStyleCssString">
+	</div>
     
     @if (virtualizationResult.IsValid && _componentData.LineIndexCache.Map.Count != 0)
     {

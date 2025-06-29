@@ -104,6 +104,7 @@ public class TextEditorVirtualizationResult
 	    TextEditorRenderBatchPersistentState = renderBatchPersistentState;
 	    
 	    BodyStyle = "width: 100%; left: 0;";
+	    BothVirtualizationBoundaryStyleCssString = "width: 0px; height: 0px;";
 	    
 	    IsValid = false;
     }
@@ -284,6 +285,8 @@ public class TextEditorVirtualizationResult
     public string? HORIZONTAL_ScrollbarCssStyle { get; set; }
     
     public string? ScrollbarSection_LeftCssStyle { get; set; }
+    
+    public string BothVirtualizationBoundaryStyleCssString { get; set; }
 	
     public void CreateUi()
     {
@@ -440,16 +443,9 @@ public class TextEditorVirtualizationResult
 		    HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;
     
         if (TotalWidth != _previousState.TotalWidth || TotalHeight != _previousState.TotalHeight)
-        {
     	    ConstructVirtualizationStyleCssStrings();
-	    }
 	    else
-	    {
-	        // This is such a silly thing to type I don't think this code will work since you can't re-use the _previousState value
-	        // cause it is stored on the ComponentData?
-	        // 
-	        ConstructVirtualizationStyleCssStrings();
-        }
+	        BothVirtualizationBoundaryStyleCssString = _previousState.BothVirtualizationBoundaryStyleCssString;
         
         if (ViewModel.Changed_Cursor_AnyState)
         {
@@ -554,7 +550,7 @@ public class TextEditorVirtualizationResult
     	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(TotalHeight.ToString());
     	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
     	
-    	ComponentData.BothVirtualizationBoundaryStyleCssString = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
+    	BothVirtualizationBoundaryStyleCssString = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
     }
     
     public void VERTICAL_GetSliderVerticalStyleCss()
