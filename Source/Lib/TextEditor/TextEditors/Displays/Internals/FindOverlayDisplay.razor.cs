@@ -339,6 +339,8 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
 
             if (viewModelModifier is null)
                 return ValueTask.CompletedTask;
+                
+            viewModelModifier.Virtualization.ShouldCalculateVirtualizationResult = true;
             
             var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
 
