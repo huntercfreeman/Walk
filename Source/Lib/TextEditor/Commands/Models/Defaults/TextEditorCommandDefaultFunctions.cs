@@ -981,6 +981,8 @@ public class TextEditorCommandDefaultFunctions
     	TextEditorModel modelModifier,
     	TextEditorViewModel viewModel)
     {
+        viewModel.PersistentState.ComponentData.LineIndexCache.Clear();
+    
     	var virtualizedIndexCollapsePoint = viewModel.PersistentState.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == lineIndex);
 		if (virtualizedIndexCollapsePoint != -1)
 		{
