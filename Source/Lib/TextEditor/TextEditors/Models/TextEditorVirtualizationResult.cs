@@ -466,11 +466,6 @@ public class TextEditorVirtualizationResult
     		CursorCssStyle = _previousState.CursorCssStyle;
     		CaretRowCssStyle = _previousState.CaretRowCssStyle;
     	}
-    	
-    	if (_previousState.Changed_ScrollLeft)
-    	{
-    		ComponentData.LineIndexCache.Clear();
-    	}
     
         string gutterColumnTopCssValue;
     	
