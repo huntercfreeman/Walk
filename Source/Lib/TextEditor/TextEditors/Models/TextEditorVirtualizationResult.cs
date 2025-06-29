@@ -243,7 +243,7 @@ public class TextEditorVirtualizationResult
     
     public List<string> SelectionStyleList { get; set; } = new List<string>();
     
-    public List<CollapsePoint> VirtualizedCollapsePointList { get; set; } = new();
+    public List<CollapsePoint>? VirtualizedCollapsePointList { get; set; }
     public int VirtualizedCollapsePointListVersion { get; set; }
     
     public List<TextEditorTextSpan> OutTextSpansList { get; set; } = new();
@@ -588,7 +588,7 @@ public class TextEditorVirtualizationResult
         if (VirtualizedCollapsePointListVersion != ViewModel.PersistentState.VirtualizedCollapsePointListVersion ||
         	_seenViewModelKey != ViewModel.PersistentState.ViewModelKey)
         {
-        	VirtualizedCollapsePointList.Clear();
+        	VirtualizedCollapsePointList = new();
         
         	for (int i = 0; i < ViewModel.PersistentState.VirtualizedCollapsePointList.Count; i++)
         	{
@@ -599,6 +599,10 @@ public class TextEditorVirtualizationResult
         	
         	_seenViewModelKey = ViewModel.PersistentState.ViewModelKey;
         	VirtualizedCollapsePointListVersion = ViewModel.PersistentState.VirtualizedCollapsePointListVersion;
+        }
+        else
+        {
+            VirtualizedCollapsePointList = _previousState.VirtualizedCollapsePointList;
         }
     }
     
