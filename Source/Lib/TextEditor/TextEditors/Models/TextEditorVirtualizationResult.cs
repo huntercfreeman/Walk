@@ -227,7 +227,7 @@ public class TextEditorVirtualizationResult
 	
 	public List<string> InlineUiStyleList { get; set; } = new();
     
-    public List<string> SelectionStyleList { get; set; } = new List<string>();
+    public List<string> SelectionStyleList { get; set; }
     
     /// <summary>
     /// This is a reference to a "finished" viewModel's list.
@@ -451,9 +451,14 @@ public class TextEditorVirtualizationResult
         }
         
         if (ViewModel.Changed_Cursor_AnyState)
+        {
             GetCursorAndCaretRowStyleCss();
-    
-        GetSelection();
+            GetSelection();
+        }
+        else
+        {
+            SelectionStyleList = _previousState.SelectionStyleList;
+        }
         
         FirstPresentationLayerGroupStartInclusiveIndex = PresentationLayerGroupList.Count;
         GetPresentationLayer(
@@ -799,7 +804,7 @@ public class TextEditorVirtualizationResult
     
     public void GetSelection()
     {
-    	SelectionStyleList.Clear();
+    	SelectionStyleList = new();
     
     	if (TextEditorSelectionHelper.HasSelectedText(ViewModel) && Count > 0)
 	    {
