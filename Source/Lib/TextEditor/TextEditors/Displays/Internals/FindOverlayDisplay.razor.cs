@@ -60,6 +60,8 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
                     if (viewModelModifier is null)
                         return ValueTask.CompletedTask;
 
+                    viewModelModifier.Virtualization.ShouldCalculateVirtualizationResult = true;
+                    
                     var localInputValue = _inputValue;
 
                     viewModelModifier.PersistentState.FindOverlayValue = localInputValue;
@@ -95,6 +97,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
 
                     _activeIndexMatchedTextSpan = null;
                     _decorationByteChangedTargetTextSpan = null;
+                    
                     return ValueTask.CompletedTask;
                 });
 				return Task.CompletedTask;
