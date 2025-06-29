@@ -138,6 +138,9 @@ public class TextEditorVirtualizationResult
 	    TextEditorRenderBatchPersistentState = renderBatchPersistentState;
 	    _previousState = previousState;
 	    
+	    LineHeightStyleCssString = _previousState.LineHeightStyleCssString;
+	    Gutter_HeightWidthPaddingCssStyle = _previousState.Gutter_HeightWidthPaddingCssStyle;
+	    
 	    IsValid = true;
     }
     
