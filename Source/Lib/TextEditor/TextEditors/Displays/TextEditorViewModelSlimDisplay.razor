@@ -27,7 +27,9 @@
 		 style="@_componentData.BothVirtualizationBoundaryStyleCssString">
 	</div>
     
-    @{ var virtualizationResult = _componentData.Virtualization; }
+    @{
+        var virtualizationResult = _componentData.Virtualization;
+    }
     
     @if (virtualizationResult.IsValid && _componentData.LineIndexCache.Map.Count != 0)
     {

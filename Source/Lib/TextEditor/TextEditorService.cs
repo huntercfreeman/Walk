@@ -170,6 +170,11 @@ public sealed class TextEditorService
 	/// </summary>
     public TextEditorViewModelLiason __TextEditorViewModelLiason { get; }
     
+    /// <summary>
+	/// Do not touch this property, it is used for the 'TextEditorVirtualizationResult.PresentationVirtualizeAndShiftTextSpans(...)' method.
+	/// </summary>
+    public List<TextEditorTextSpan> __VirtualizedTextSpanList { get; set; } = new();
+    
     public int SeenTabWidth { get; set; }
     public string TabKeyOutput_ShowWhitespaceTrue { get; set; }
     public string TabKeyOutput_ShowWhitespaceFalse { get; set; }

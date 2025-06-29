@@ -106,9 +106,7 @@ public class TextEditorVirtualizationResult
 	    TextEditorRenderBatchPersistentState = renderBatchPersistentState;
 	    Count = count;
 	    
-	    IsValid = Model is not null &&
-			      ViewModel is not null &&
-			      TextEditorRenderBatchPersistentState?.TextEditorOptions is not null;
+	    IsValid = false;
     }
 
 	/// <summary>Measurements are in pixels</summary>
@@ -156,9 +154,8 @@ public class TextEditorVirtualizationResult
             _charAndLineMeasurements = previousState._charAndLineMeasurements;
         }
 	    
-	    IsValid = Model is not null &&
-			      ViewModel is not null &&
-			      TextEditorRenderBatchPersistentState?.TextEditorOptions is not null;
+	    // `model` and `viewModel` will never be null in this scenario, so only check options.
+	    IsValid = TextEditorRenderBatchPersistentState?.TextEditorOptions is not null;
     }
     
     private TextEditorVirtualizationResult _previousState;
@@ -249,7 +246,6 @@ public class TextEditorVirtualizationResult
     public List<CollapsePoint> VirtualizedCollapsePointList { get; set; } = new();
     public int VirtualizedCollapsePointListVersion { get; set; }
     
-    public List<TextEditorTextSpan> VirtualizedTextSpanList { get; set; } = new();
     public List<TextEditorTextSpan> OutTextSpansList { get; set; } = new();
     
     private int _gutterWidth;
@@ -1152,7 +1148,7 @@ public class TextEditorVirtualizationResult
     {
     	// TODO: Why virtualize then shift? Isn't it shift then virtualize? (2025-05-01)
     	
-    	VirtualizedTextSpanList.Clear();
+    	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__VirtualizedTextSpanList.Clear();
     	OutTextSpansList.Clear();
     
         // Virtualize the text spans
@@ -1174,7 +1170,7 @@ public class TextEditorVirtualizationResult
                 if (lowerLine.Position_StartInclusiveIndex <= textSpan.StartInclusiveIndex &&
                     upperLine.Position_EndExclusiveIndex >= textSpan.StartInclusiveIndex)
                 {
-                	VirtualizedTextSpanList.Add(textSpan);
+                	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__VirtualizedTextSpanList.Add(textSpan);
                 }
             }
         }
@@ -1186,9 +1182,9 @@ public class TextEditorVirtualizationResult
 
         // Shift the text spans
         {
-            for (int textSpanIndex = 0; textSpanIndex < VirtualizedTextSpanList.Count; textSpanIndex++)
+            for (int textSpanIndex = 0; textSpanIndex < ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__VirtualizedTextSpanList.Count; textSpanIndex++)
             {
-            	var textSpan = VirtualizedTextSpanList[textSpanIndex];
+            	var textSpan = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__VirtualizedTextSpanList[textSpanIndex];
             	
                 var startingIndexInclusive = textSpan.StartInclusiveIndex;
                 var endingIndexExclusive = textSpan.EndExclusiveIndex;
