@@ -25,8 +25,6 @@ public sealed class TextEditorViewModelApi
 
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
     
-    private readonly CreateCacheEachSharedParameters _createCacheEachSharedParameters = new();
-
     public TextEditorViewModelApi(
         TextEditorService textEditorService,
         BackgroundTaskService backgroundTaskService,
@@ -1100,12 +1098,6 @@ public sealed class TextEditorViewModelApi
 			spaceKeyOutput = "&nbsp;";
 		}
 		
-		_createCacheEachSharedParameters.Model = modelModifier;
-    	_createCacheEachSharedParameters.ViewModel = viewModel;
-    	_createCacheEachSharedParameters.ComponentData = componentData;
-    	_createCacheEachSharedParameters.TabKeyOutput = tabKeyOutput;
-    	_createCacheEachSharedParameters.SpaceKeyOutput = spaceKeyOutput;
-		
 		_textEditorService.__StringBuilder.Clear();
 		
 		var minLineWidthToTriggerVirtualizationExclusive = 2 * viewModel.Virtualization.TextEditorDimensions.Width;
@@ -1132,17 +1124,17 @@ public sealed class TextEditorViewModelApi
 				continue;
 			}
 			
-			useCache = _createCacheEachSharedParameters.ComponentData.LineIndexCache.Map.ContainsKey(lineIndex) &&
-				       !_createCacheEachSharedParameters.ComponentData.LineIndexCache.ModifiedLineIndexList.Contains(lineIndex);
+			useCache = componentData.LineIndexCache.Map.ContainsKey(lineIndex) &&
+				       !componentData.LineIndexCache.ModifiedLineIndexList.Contains(lineIndex);
 			
 			if (useCache)
 			{
-    			var previous = _createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[lineIndex];
+    			var previous = componentData.LineIndexCache.Map[lineIndex];
     			
-    			var cacheEntry = _createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[lineIndex];
-    			cacheEntry.VirtualizationSpan_StartInclusiveIndex = _createCacheEachSharedParameters.ViewModel.Virtualization.VirtualizationSpanList.Count;
+    			var cacheEntry = componentData.LineIndexCache.Map[lineIndex];
+    			cacheEntry.VirtualizationSpan_StartInclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
 	
-	            _createCacheEachSharedParameters.ComponentData.LineIndexCache.UsedKeyHashSet.Add(cacheEntry.LineIndex);
+	            componentData.LineIndexCache.UsedKeyHashSet.Add(cacheEntry.LineIndex);
     			
 			    var smallSpan = entireSpan.Slice(
     			    previous.VirtualizationSpan_StartInclusiveIndex,
@@ -1150,11 +1142,11 @@ public sealed class TextEditorViewModelApi
     			
     			foreach (var virtualizedSpan in smallSpan)
     			{
-    				_createCacheEachSharedParameters.ViewModel.Virtualization.VirtualizationSpanList.Add(virtualizedSpan);
+    				viewModel.Virtualization.VirtualizationSpanList.Add(virtualizedSpan);
     			}
     			
     			// WARNING CODE DUPLICATION
-    			cacheEntry.VirtualizationSpan_EndExclusiveIndex = _createCacheEachSharedParameters.ViewModel.Virtualization.VirtualizationSpanList.Count;
+    			cacheEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
     			virtualizedLineList[viewModel.Virtualization.Count++] = new TextEditorVirtualizationLine(
     			    cacheEntry.LineIndex,
             	    cacheEntry.Position_StartInclusiveIndex,
@@ -1169,7 +1161,7 @@ public sealed class TextEditorViewModelApi
                     cacheEntry.LineCssStyle,
                     cacheEntry.LineNumberString);
     			
-    			_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[cacheEntry.LineIndex] = cacheEntry;
+    			componentData.LineIndexCache.Map[cacheEntry.LineIndex] = cacheEntry;
 			    continue;
 			}
 			
@@ -1331,26 +1323,26 @@ public sealed class TextEditorViewModelApi
 			var entryIndex = viewModel.Virtualization.Count - 1;
 			var hiddenLineCount = hiddenCount;
 				
-			var virtualizationEntry = _createCacheEachSharedParameters.ViewModel.Virtualization.EntryList[entryIndex];
+			var virtualizationEntry = viewModel.Virtualization.EntryList[entryIndex];
     		if (virtualizationEntry.Position_EndExclusiveIndex - virtualizationEntry.Position_StartInclusiveIndex <= 0)
     		{
     		    // WARNING: CODE DUPLICATION
-    		    _createCacheEachSharedParameters.ComponentData.LineIndexCache.UsedKeyHashSet.Add(virtualizationEntry.LineIndex);
+    		    componentData.LineIndexCache.UsedKeyHashSet.Add(virtualizationEntry.LineIndex);
     		    
-    		    var topCssValue1 = ((virtualizationEntry.LineIndex - hiddenLineCount) * _createCacheEachSharedParameters.ViewModel.Virtualization.CharAndLineMeasurements.LineHeight).ToString();
+    		    var topCssValue1 = ((virtualizationEntry.LineIndex - hiddenLineCount) * viewModel.Virtualization.CharAndLineMeasurements.LineHeight).ToString();
     		    var leftCssValue1 = virtualizationEntry.LeftInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture);
     		    var lineNumberString1 = (virtualizationEntry.LineIndex + 1).ToString();
     		    
-        	    virtualizationEntry.GutterCssStyle = _createCacheEachSharedParameters.ViewModel.Virtualization.GetGutterStyleCss(topCssValue1);
-        	    virtualizationEntry.LineCssStyle = _createCacheEachSharedParameters.ViewModel.Virtualization.RowSection_GetRowStyleCss(topCssValue1, leftCssValue1);
+        	    virtualizationEntry.GutterCssStyle = viewModel.Virtualization.GetGutterStyleCss(topCssValue1);
+        	    virtualizationEntry.LineCssStyle = viewModel.Virtualization.RowSection_GetRowStyleCss(topCssValue1, leftCssValue1);
         	    virtualizationEntry.LineNumberString = lineNumberString1;
         	    
-        	    virtualizationEntry.VirtualizationSpan_StartInclusiveIndex = _createCacheEachSharedParameters.ViewModel.Virtualization.VirtualizationSpanList.Count;
-        	    virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = _createCacheEachSharedParameters.ViewModel.Virtualization.VirtualizationSpanList.Count;
+        	    virtualizationEntry.VirtualizationSpan_StartInclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
+        	    virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
     		    
-    		    if (_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map.ContainsKey(virtualizationEntry.LineIndex))
+    		    if (componentData.LineIndexCache.Map.ContainsKey(virtualizationEntry.LineIndex))
         		{
-        			_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[virtualizationEntry.LineIndex] = new TextEditorLineIndexCacheEntry(
+        			componentData.LineIndexCache.Map[virtualizationEntry.LineIndex] = new TextEditorLineIndexCacheEntry(
         			    topCssValue: topCssValue1,
             			leftCssValue: leftCssValue1,
         				lineNumberString: lineNumberString1,
@@ -1369,8 +1361,8 @@ public sealed class TextEditorViewModelApi
         		}
         		else
         		{
-        			_createCacheEachSharedParameters.ComponentData.LineIndexCache.ExistsKeyList.Add(virtualizationEntry.LineIndex);
-        			_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map.Add(virtualizationEntry.LineIndex, new TextEditorLineIndexCacheEntry(
+        			componentData.LineIndexCache.ExistsKeyList.Add(virtualizationEntry.LineIndex);
+        			componentData.LineIndexCache.Map.Add(virtualizationEntry.LineIndex, new TextEditorLineIndexCacheEntry(
         			    topCssValue: topCssValue1,
             			leftCssValue: leftCssValue1,
         				lineNumberString: lineNumberString1,
@@ -1388,19 +1380,19 @@ public sealed class TextEditorViewModelApi
                 	    virtualizationEntry.LineCssStyle));
         		}
         		
-        	    _createCacheEachSharedParameters.ViewModel.Virtualization.EntryList[entryIndex] = virtualizationEntry;
+        	    viewModel.Virtualization.EntryList[entryIndex] = virtualizationEntry;
         		
         		_textEditorService.__StringBuilder.Clear();
         		
         		continue;
     		}
     		
-    		virtualizationEntry.VirtualizationSpan_StartInclusiveIndex = _createCacheEachSharedParameters.ViewModel.Virtualization.VirtualizationSpanList.Count;
+    		virtualizationEntry.VirtualizationSpan_StartInclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
     		
-    		_createCacheEachSharedParameters.ComponentData.LineIndexCache.UsedKeyHashSet.Add(virtualizationEntry.LineIndex);
+    		componentData.LineIndexCache.UsedKeyHashSet.Add(virtualizationEntry.LineIndex);
     		
     	    var richCharacterSpan = new Span<RichCharacter>(
-    	        _createCacheEachSharedParameters.Model.RichCharacterList,
+    	        modelModifier.RichCharacterList,
     	        virtualizationEntry.Position_StartInclusiveIndex,
     	        virtualizationEntry.Position_EndExclusiveIndex - virtualizationEntry.Position_StartInclusiveIndex);
     	
@@ -1414,10 +1406,10 @@ public sealed class TextEditorViewModelApi
     		        switch (richCharacter.Value)
     		        {
     		            case '\t':
-    		                _textEditorService.__StringBuilder.Append(_createCacheEachSharedParameters.TabKeyOutput);
+    		                _textEditorService.__StringBuilder.Append(tabKeyOutput);
     		                break;
     		            case ' ':
-    		                _textEditorService.__StringBuilder.Append(_createCacheEachSharedParameters.SpaceKeyOutput);
+    		                _textEditorService.__StringBuilder.Append(spaceKeyOutput);
     		                break;
     		            case '\r':
     		                break;
@@ -1446,8 +1438,8 @@ public sealed class TextEditorViewModelApi
     		    }
     		    else
     		    {
-    		    	_createCacheEachSharedParameters.ViewModel.Virtualization.VirtualizationSpanList.Add(new TextEditorVirtualizationSpan(
-    		    		cssClass: _createCacheEachSharedParameters.Model.PersistentState.DecorationMapper.Map(currentDecorationByte),
+    		    	viewModel.Virtualization.VirtualizationSpanList.Add(new TextEditorVirtualizationSpan(
+    		    		cssClass: modelModifier.PersistentState.DecorationMapper.Map(currentDecorationByte),
     		    		text: _textEditorService.__StringBuilder.ToString()));
     		        _textEditorService.__StringBuilder.Clear();
     		        
@@ -1455,10 +1447,10 @@ public sealed class TextEditorViewModelApi
     		        switch (richCharacter.Value)
     		        {
     		            case '\t':
-    		                _textEditorService.__StringBuilder.Append(_createCacheEachSharedParameters.TabKeyOutput);
+    		                _textEditorService.__StringBuilder.Append(tabKeyOutput);
     		                break;
     		            case ' ':
-    		                _textEditorService.__StringBuilder.Append(_createCacheEachSharedParameters.SpaceKeyOutput);
+    		                _textEditorService.__StringBuilder.Append(spaceKeyOutput);
     		                break;
     		            case '\r':
     		                break;
@@ -1490,26 +1482,26 @@ public sealed class TextEditorViewModelApi
     	    }
     	    
     	    /* Final grouping of contiguous characters */
-    		_createCacheEachSharedParameters.ViewModel.Virtualization.VirtualizationSpanList.Add(new TextEditorVirtualizationSpan(
-        		cssClass: _createCacheEachSharedParameters.Model.PersistentState.DecorationMapper.Map(currentDecorationByte),
+    		viewModel.Virtualization.VirtualizationSpanList.Add(new TextEditorVirtualizationSpan(
+        		cssClass: modelModifier.PersistentState.DecorationMapper.Map(currentDecorationByte),
         		text: _textEditorService.__StringBuilder.ToString()));
     		_textEditorService.__StringBuilder.Clear();
     		
     		// WARNING CODE DUPLICATION (this also exists when copying a virtualizationEntry from cache).
-    		virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = _createCacheEachSharedParameters.ViewModel.Virtualization.VirtualizationSpanList.Count;
-    		_createCacheEachSharedParameters.ViewModel.Virtualization.EntryList[entryIndex] = virtualizationEntry;
+    		virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
+    		viewModel.Virtualization.EntryList[entryIndex] = virtualizationEntry;
     		
-    		var topCssValue2 = ((virtualizationEntry.LineIndex - hiddenLineCount) * _createCacheEachSharedParameters.ViewModel.Virtualization.CharAndLineMeasurements.LineHeight).ToString();
+    		var topCssValue2 = ((virtualizationEntry.LineIndex - hiddenLineCount) * viewModel.Virtualization.CharAndLineMeasurements.LineHeight).ToString();
     	    var leftCssValue2 = virtualizationEntry.LeftInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture);
     	    var lineNumberString2 = (virtualizationEntry.LineIndex + 1).ToString();
     	    
     	    virtualizationEntry.LineNumberString = lineNumberString2;
-    	    virtualizationEntry.GutterCssStyle = _createCacheEachSharedParameters.ViewModel.Virtualization.GetGutterStyleCss(topCssValue2);
-    	    virtualizationEntry.LineCssStyle = _createCacheEachSharedParameters.ViewModel.Virtualization.RowSection_GetRowStyleCss(topCssValue2, leftCssValue2);
+    	    virtualizationEntry.GutterCssStyle = viewModel.Virtualization.GetGutterStyleCss(topCssValue2);
+    	    virtualizationEntry.LineCssStyle = viewModel.Virtualization.RowSection_GetRowStyleCss(topCssValue2, leftCssValue2);
     		
-    		if (_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map.ContainsKey(virtualizationEntry.LineIndex))
+    		if (componentData.LineIndexCache.Map.ContainsKey(virtualizationEntry.LineIndex))
     		{
-    			_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map[virtualizationEntry.LineIndex] = new TextEditorLineIndexCacheEntry(
+    			componentData.LineIndexCache.Map[virtualizationEntry.LineIndex] = new TextEditorLineIndexCacheEntry(
     			    topCssValue: topCssValue2,
         			leftCssValue: leftCssValue2,
     				lineNumberString: lineNumberString2,
@@ -1528,8 +1520,8 @@ public sealed class TextEditorViewModelApi
     		}
     		else
     		{
-    			_createCacheEachSharedParameters.ComponentData.LineIndexCache.ExistsKeyList.Add(virtualizationEntry.LineIndex);
-    			_createCacheEachSharedParameters.ComponentData.LineIndexCache.Map.Add(virtualizationEntry.LineIndex, new TextEditorLineIndexCacheEntry(
+    			componentData.LineIndexCache.ExistsKeyList.Add(virtualizationEntry.LineIndex);
+    			componentData.LineIndexCache.Map.Add(virtualizationEntry.LineIndex, new TextEditorLineIndexCacheEntry(
     			    topCssValue: topCssValue2,
         			leftCssValue: leftCssValue2,
     				lineNumberString: lineNumberString2,
@@ -1548,7 +1540,7 @@ public sealed class TextEditorViewModelApi
     		}
     		
     	    _textEditorService.__StringBuilder.Clear();
-    	    _createCacheEachSharedParameters.ViewModel.Virtualization.EntryList[entryIndex] = virtualizationEntry;
+    	    viewModel.Virtualization.EntryList[entryIndex] = virtualizationEntry;
 		}
 		
 		viewModel.Virtualization.CreateUi();
