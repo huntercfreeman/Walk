@@ -70,8 +70,7 @@ public class TextEditorVirtualizationResult
         componentData: null,
         model: null,
 	    viewModel: null,
-	    renderBatchPersistentState: null,
-	    count: 0);
+	    renderBatchPersistentState: null);
 
     /// <summary>
     /// This constructor permits the Empty instance to be made without
@@ -89,8 +88,7 @@ public class TextEditorVirtualizationResult
         TextEditorComponentData? componentData,
         TextEditorModel? model,
 	    TextEditorViewModel? viewModel,
-	    TextEditorRenderBatchPersistentState? renderBatchPersistentState,
-	    int count)
+	    TextEditorRenderBatchPersistentState? renderBatchPersistentState)
     {
         EntryList = entries;
         VirtualizationSpanList = virtualizationSpanList;
@@ -104,7 +102,6 @@ public class TextEditorVirtualizationResult
         Model = model;
 	    ViewModel = viewModel;
 	    TextEditorRenderBatchPersistentState = renderBatchPersistentState;
-	    Count = count;
 	    
 	    BodyStyle = "width: 100%; left: 0;";
 	    
@@ -125,7 +122,6 @@ public class TextEditorVirtualizationResult
         TextEditorModel? model,
 	    TextEditorViewModel? viewModel,
 	    TextEditorRenderBatchPersistentState? renderBatchPersistentState,
-	    int count,
 	    TextEditorVirtualizationResult previousState)
     {
         EntryList = entries;
@@ -140,7 +136,6 @@ public class TextEditorVirtualizationResult
         Model = model;
 	    ViewModel = viewModel;
 	    TextEditorRenderBatchPersistentState = renderBatchPersistentState;
-	    Count = count;
 	    _previousState = previousState;
 	    
 	    if (previousState is not null)
