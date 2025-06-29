@@ -155,8 +155,7 @@ public class TextEditorVirtualizationResult
             _charAndLineMeasurements = previousState._charAndLineMeasurements;
         }
 	    
-	    // `model` and `viewModel` will never be null in this scenario, so only check options.
-	    IsValid = TextEditorRenderBatchPersistentState?.TextEditorOptions is not null;
+	    IsValid = true;
     }
     
     private TextEditorVirtualizationResult _previousState;
@@ -415,12 +414,6 @@ public class TextEditorVirtualizationResult
 	
     public void CreateUi()
     {
-        if (!IsValid)
-        {
-        	DiagnoseIssues();
-        	return;
-        }
-        
     	if (_previousState.Changed_GutterWidth)
     	{
     		ComponentData.LineIndexCache.Clear();
