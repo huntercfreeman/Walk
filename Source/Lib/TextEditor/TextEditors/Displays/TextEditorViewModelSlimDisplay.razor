@@ -103,7 +103,7 @@
     			</div>
     			 
 	    		@for (int virtualizationResultIndex = 0;
-	    			  virtualizationResultIndex < virtualizationResult.ViewModel.Virtualization.Count;
+	    			  virtualizationResultIndex < virtualizationResult.Count;
 	    			  virtualizationResultIndex++)
 			    {
 			        <div style="@virtualizationResult.EntryList[virtualizationResultIndex].GutterCssStyle">
@@ -112,7 +112,7 @@
 			            
 			            @for (int i = 0; i < virtualizationResult.VirtualizedCollapsePointList.Count; i++)
 		            	{
-		            		if (virtualizationResult.VirtualizedCollapsePointList[i].AppendToLineIndex == virtualizationResult.ViewModel.Virtualization.EntryList[virtualizationResultIndex].LineIndex)
+		            		if (virtualizationResult.VirtualizedCollapsePointList[i].AppendToLineIndex == virtualizationResult.EntryList[virtualizationResultIndex].LineIndex)
 		            		{
 		            			collapsePoint = virtualizationResult.VirtualizedCollapsePointList[i];
 		            			break;
@@ -171,11 +171,11 @@
 					@if (GlobalShowNewlines && virtualizationResult.EntryList[virtualizationResultIndex].LineIndex < virtualizationResult.Model.LineCount)
 					{
 						// amountOfLeftInCharacterWidthUnits <= lengthOfLine
-						if (virtualizationResult.EntryList[virtualizationResultIndex].LeftInPixels / virtualizationResult.ViewModel.Virtualization.CharAndLineMeasurements.CharacterWidth <=
-							virtualizationResult.Model.GetLineLength(virtualizationResult.ViewModel.Virtualization.EntryList[virtualizationResultIndex].LineIndex, true))
+						if (virtualizationResult.EntryList[virtualizationResultIndex].LeftInPixels / virtualizationResult.CharAndLineMeasurements.CharacterWidth <=
+							virtualizationResult.Model.GetLineLength(virtualizationResult.EntryList[virtualizationResultIndex].LineIndex, true))
 						{
 						    <span class="di_te_newline">
-						        @virtualizationResult.Model.LineEndList[virtualizationResult.ViewModel.Virtualization.EntryList[virtualizationResultIndex].LineIndex].LineEndKind.AsCharactersHtmlEscaped()
+						        @virtualizationResult.Model.LineEndList[virtualizationResult.EntryList[virtualizationResultIndex].LineIndex].LineEndKind.AsCharactersHtmlEscaped()
 						    </span>
 						}
 					}

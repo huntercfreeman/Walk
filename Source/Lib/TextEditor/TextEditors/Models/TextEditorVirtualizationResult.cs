@@ -247,6 +247,12 @@ public class TextEditorVirtualizationResult
     
     public List<string> SelectionStyleList { get; set; } = new List<string>();
     
+    /// <summary>
+    /// This is a reference to a "finished" viewModel's list.
+    /// If you reference viewModel.VirtualizedCollapsePointList, it can change out from under you at any point.
+    /// This property of the same name but on the TextEditorVirtualizationResult type, is a snapshot to a reference
+    /// that will not be modified anymore.
+    /// </summary>
     public List<CollapsePoint>? VirtualizedCollapsePointList { get; set; }
     public int VirtualizedCollapsePointListVersion { get; set; }
     
@@ -591,12 +597,7 @@ public class TextEditorVirtualizationResult
         if (VirtualizedCollapsePointListVersion != ViewModel.PersistentState.VirtualizedCollapsePointListVersion ||
         	_seenViewModelKey != ViewModel.PersistentState.ViewModelKey)
         {
-        	VirtualizedCollapsePointList = new();
-        
-        	for (int i = 0; i < ViewModel.PersistentState.VirtualizedCollapsePointList.Count; i++)
-        	{
-        		VirtualizedCollapsePointList.Add(ViewModel.PersistentState.VirtualizedCollapsePointList[i]);
-        	}
+        	VirtualizedCollapsePointList = ViewModel.PersistentState.VirtualizedCollapsePointList;
         	
         	GetInlineUiStyleList();
         	

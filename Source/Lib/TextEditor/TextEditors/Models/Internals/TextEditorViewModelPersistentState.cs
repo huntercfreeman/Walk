@@ -170,6 +170,11 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     public VirtualAssociativityKind VirtualAssociativityKind { get; set; } = VirtualAssociativityKind.None;
     
     public List<CollapsePoint> AllCollapsePointList { get; set; }
+    /// <summary>
+    /// This list can change out from under you at any point.
+    /// Use TextEditorVirtualizationResult.VirtualizedCollapsePointList because it is a snapshot to a reference
+    /// that will not be modified anymore.
+    /// </summary>
 	public List<CollapsePoint> VirtualizedCollapsePointList { get; set; }
 	public HashSet<int> HiddenLineIndexHashSet { get; set; }
 	public List<(InlineUi InlineUi, string Tag)> InlineUiList { get; set; }
