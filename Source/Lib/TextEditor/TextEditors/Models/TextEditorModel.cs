@@ -277,7 +277,7 @@ public sealed class TextEditorModel
     
     public const int GUTTER_PADDING_LEFT_IN_PIXELS = 3;
     public const int GUTTER_PADDING_RIGHT_IN_PIXELS = 17;
-    public const int MAXIMUM_EDIT_BLOCKS = 7;
+    public const int MAXIMUM_EDIT_BLOCKS = 6;
     public const int MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN = 5;
     
     /// <summary>
