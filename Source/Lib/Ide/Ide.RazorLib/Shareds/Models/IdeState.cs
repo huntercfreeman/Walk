@@ -10,14 +10,18 @@ public record struct IdeState(
     MenuRecord MenuFile,
 	MenuRecord MenuTools,
 	MenuRecord MenuView,
-	MenuRecord MenuRun)
+	MenuRecord MenuRun,
+	Key<IStartupControlModel> ActiveStartupControlKey,
+	IReadOnlyList<IStartupControlModel> StartupControlList)
 {
 	public IdeState() : this(
 	    Array.Empty<IBadgeModel>(),
 	    new MenuRecord(Array.Empty<MenuOptionRecord>()),
 		new MenuRecord(Array.Empty<MenuOptionRecord>()),
 		new MenuRecord(Array.Empty<MenuOptionRecord>()),
-		new MenuRecord(Array.Empty<MenuOptionRecord>()))
+		new MenuRecord(Array.Empty<MenuOptionRecord>()),
+		Key<IStartupControlModel>.Empty,
+		Array.Empty<IStartupControlModel>())
 	{
 	}
 	
