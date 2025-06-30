@@ -51,16 +51,18 @@ public class CommonUiService : ICommonUiService
 {
     private readonly object _stateModificationLock = new();
     
-    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
     private readonly IAppDimensionService _appDimensionService;
     
     public CommonUiService(
-        CommonBackgroundTaskApi commonBackgroundTaskApi,
-        IAppDimensionService appDimensionService)
+        IAppDimensionService appDimensionService,
+        IJSRuntime jsRuntime)
 	{
-		_commonBackgroundTaskApi = commonBackgroundTaskApi;
-		_appDimensionService = appDimensionService;
+	    _appDimensionService = appDimensionService;
+		
+		JsRuntimeCommonApi = jsRuntime.GetWalkCommonApi();
 	}
+	
+	public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
 	
     /* Start IOutlineService */
 	private OutlineState _outlineState = new();
@@ -88,7 +90,7 @@ public class CommonUiService : ICommonUiService
         {
             _ = Task.Run(async () =>
             {
-                var elementDimensions = await _commonBackgroundTaskApi.JsRuntimeCommonApi
+                var elementDimensions = await JsRuntimeCommonApi
                     .MeasureElementById(elementId)
                     .ConfigureAwait(false);
 
@@ -442,7 +444,7 @@ public class CommonUiService : ICommonUiService
 		{
             _ = Task.Run(async () =>
             {
-                await _commonBackgroundTaskApi.JsRuntimeCommonApi
+                await JsRuntimeCommonApi
                     .FocusHtmlElementById(IDynamicViewModel.DefaultSetFocusOnCloseElementId)
                     .ConfigureAwait(false);
             });
@@ -470,7 +472,7 @@ public class CommonUiService : ICommonUiService
         if (inState.DialogList.Any(x => x.DynamicViewModelKey == dialog.DynamicViewModelKey))
         {
         	_ = Task.Run(async () =>
-        		await _commonBackgroundTaskApi.JsRuntimeCommonApi
+        		await JsRuntimeCommonApi
 	                .FocusHtmlElementById(dialog.DialogFocusPointHtmlElementId)
 	                .ConfigureAwait(false));
         	
