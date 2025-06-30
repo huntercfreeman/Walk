@@ -61,8 +61,6 @@ public class TextEditorVirtualizationResult
 	public static TextEditorVirtualizationResult Empty { get; } = new(
         Array.Empty<TextEditorVirtualizationLine>(),
         new List<TextEditorVirtualizationSpan>(),
-        totalWidth: 0,
-        totalHeight: 0,
         resultWidth: 0,
         resultHeight: 0,
         left: 0,
@@ -78,8 +76,6 @@ public class TextEditorVirtualizationResult
     public TextEditorVirtualizationResult(
         TextEditorVirtualizationLine[] entries,
         List<TextEditorVirtualizationSpan> virtualizationSpanList,
-        int totalWidth,
-        int totalHeight,
         int resultWidth,
         int resultHeight,
         double left,
@@ -90,8 +86,6 @@ public class TextEditorVirtualizationResult
     {
         EntryList = entries;
         VirtualizationSpanList = virtualizationSpanList;
-        TotalWidth = totalWidth;
-        TotalHeight = totalHeight;
         VirtualWidth = resultWidth;
         VirtualHeight = resultHeight;
         VirtualLeft = left;
@@ -110,8 +104,6 @@ public class TextEditorVirtualizationResult
     public TextEditorVirtualizationResult(
         TextEditorVirtualizationLine[] entries,
         List<TextEditorVirtualizationSpan> virtualizationSpanList,
-        int totalWidth,
-        int totalHeight,
         int resultWidth,
         int resultHeight,
         double left,
@@ -123,8 +115,6 @@ public class TextEditorVirtualizationResult
     {
         EntryList = entries;
         VirtualizationSpanList = virtualizationSpanList;
-        TotalWidth = totalWidth;
-        TotalHeight = totalHeight;
         VirtualWidth = resultWidth;
         VirtualHeight = resultHeight;
         VirtualLeft = left;
@@ -159,19 +149,7 @@ public class TextEditorVirtualizationResult
     public int Count { get; set; }
     
     public List<TextEditorVirtualizationSpan> VirtualizationSpanList { get; init; }
-    
-    /// <summary>
-    /// Measurements are in pixels.
-    ///
-    /// Width (including non-rendered elements).
-    /// </summary>
-    public int TotalWidth { get; init; }
-    /// <summary>
-    /// Measurements are in pixels
-    ///
-    /// Height (including non-rendered elements).
-    /// </summary>
-    public int TotalHeight { get; init; }
+
     /// <summary>
     /// Measurements are in pixels
     ///
@@ -529,11 +507,11 @@ public class TextEditorVirtualizationResult
 		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
 		
     	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("width: ");
-    	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(TotalWidth.ToString());
+    	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ViewModel.PersistentState.ScrollWidth.ToString());
     	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px; ");
     	
     	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("height: ");
-    	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(TotalHeight.ToString());
+    	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ViewModel.PersistentState.ScrollHeight.ToString());
     	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
     	
     	BothVirtualizationBoundaryStyleCssString = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();

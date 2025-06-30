@@ -114,8 +114,6 @@ public sealed class TextEditorViewModelApi
 			new TextEditorVirtualizationResult(
                 Array.Empty<TextEditorVirtualizationLine>(),
                 new List<TextEditorVirtualizationSpan>(),
-                totalWidth: 0,
-                totalHeight: 0,
                 resultWidth: 0,
                 resultHeight: 0,
                 left: 0,
@@ -1030,8 +1028,6 @@ public sealed class TextEditorViewModelApi
 		viewModel.Virtualization = new TextEditorVirtualizationResult(
 			virtualizedLineList,
     		new List<TextEditorVirtualizationSpan>(),
-			totalWidth: totalWidth,
-	        totalHeight: totalHeight,
 	        resultWidth: (int)Math.Ceiling(horizontalTake * viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth),
 	        resultHeight: verticalTake * viewModel.PersistentState.CharAndLineMeasurements.LineHeight,
 	        left: (int)(horizontalStartingIndex * viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth),
