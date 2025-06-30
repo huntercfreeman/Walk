@@ -41,7 +41,7 @@ public partial class WalkConfigInitializer : ComponentBase
 	[Inject]
 	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
-	private IIdeMainLayoutService IdeMainLayoutService { get; set; } = null!;
+	private IIdeService IdeService { get; set; } = null!;
 	[Inject]
 	private IDialogService DialogService { get; set; } = null!;
 	[Inject]
@@ -55,7 +55,7 @@ public partial class WalkConfigInitializer : ComponentBase
 	{
         BackgroundTaskService.Continuous_EnqueueGroup(new BackgroundTask(
         	Key<IBackgroundTaskGroup>.Empty,
-        	Do_InitializeFooterJustifyEndComponents));
+        	Do_InitializeFooterBadges));
 	
 	    DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
 		{
@@ -81,26 +81,14 @@ public partial class WalkConfigInitializer : ComponentBase
         }
     }
     
-    public ValueTask Do_InitializeFooterJustifyEndComponents()
+    public ValueTask Do_InitializeFooterBadges()
     {
-        /*_ideMainLayoutService.RegisterFooterJustifyEndComponent(
-            new FooterJustifyEndComponent(
-                Key<FooterJustifyEndComponent>.NewKey(),
-                typeof(GitInteractiveIconDisplay),
-                new Dictionary<string, object?>
-                {
-                    {
-                        nameof(GitInteractiveIconDisplay.CssStyleString),
-                        "margin-right: 15px;"
-                    }
-                }));*/
-
-        IdeMainLayoutService.RegisterFooterJustifyEndComponent(
+        IdeService.RegisterFooterBadge(
             new DirtyResourceUriBadge(
                 DirtyResourceUriService,
                 DialogService));
 
-        IdeMainLayoutService.RegisterFooterJustifyEndComponent(
+        IdeService.RegisterFooterBadge(
             new NotificationBadge(
                 NotificationService,
                 DialogService));

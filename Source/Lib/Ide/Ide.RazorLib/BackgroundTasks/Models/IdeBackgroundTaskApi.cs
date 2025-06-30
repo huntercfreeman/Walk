@@ -71,7 +71,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly ICommandFactory _commandFactory;
 	private readonly ITerminalGroupService _terminalGroupService;
 	private readonly WalkHostingInformation _walkHostingInformation;
-	private readonly IIdeHeaderService _ideHeaderService;
+	private readonly IIdeService _ideService;
 	private readonly IServiceProvider _serviceProvider;
 
     public IdeBackgroundTaskApi(
@@ -100,7 +100,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         ICommandFactory commandFactory,
         ITerminalGroupService terminalGroupService,
         WalkHostingInformation walkHostingInformation,
-        IIdeHeaderService ideHeaderService,
+        IIdeService ideService,
         IServiceProvider serviceProvider)
     {
         _backgroundTaskService = backgroundTaskService;
@@ -128,7 +128,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         _commandFactory = commandFactory;
         _terminalGroupService = terminalGroupService;
         _walkHostingInformation = walkHostingInformation;
-        _ideHeaderService = ideHeaderService;
+        _ideService = ideService;
         _serviceProvider = serviceProvider;
     }
     
@@ -438,7 +438,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             menuOptionsList.Add(menuOptionPermissions);
         }
 
-        _ideHeaderService.SetMenuFile(new MenuRecord(menuOptionsList));
+        _ideService.SetMenuFile(new MenuRecord(menuOptionsList));
     }
 
     private void InitializeMenuTools()
@@ -532,7 +532,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         //    menuOptionsList.Add(menuOptionSolutionVisualization);
         //}
 
-        _ideHeaderService.SetMenuTools(new MenuRecord(menuOptionsList));
+        _ideService.SetMenuTools(new MenuRecord(menuOptionsList));
     }
 
     private Task ShowPermissionsDialog()

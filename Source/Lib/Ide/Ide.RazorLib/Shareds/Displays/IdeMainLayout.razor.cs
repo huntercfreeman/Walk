@@ -32,7 +32,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private IPanelService PanelService { get; set; } = null!;
     [Inject]
-    private IIdeMainLayoutService IdeMainLayoutService { get; set; } = null!;
+    private IIdeService IdeService { get; set; } = null!;
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -41,8 +41,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private ITerminalService TerminalService { get; set; } = null!;
-    [Inject]
-    private IIdeHeaderService IdeHeaderService { get; set; } = null!;
     [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
@@ -123,7 +121,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
         DragService.DragStateChanged += DragStateWrapOnStateChanged;
         AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
-        IdeMainLayoutService.IdeMainLayoutStateChanged += OnIdeMainLayoutStateChanged;
+        IdeService.IdeStateChanged += OnIdeMainLayoutStateChanged;
         TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrap_StateChanged;
 
     	IdeBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
@@ -236,10 +234,10 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         return DropdownHelper.RenderDropdownAsync(
             DropdownService,
             CommonBackgroundTaskApi.JsRuntimeCommonApi,
-            IdeHeaderState.ButtonFileId,
+            IdeState.ButtonFileId,
             DropdownOrientation.Bottom,
-            IdeHeaderState.DropdownKeyFile,
-            IdeHeaderService.GetIdeHeaderState().MenuFile,
+            IdeState.DropdownKeyFile,
+            IdeService.GetIdeState().MenuFile,
             _buttonFileElementReference);
     }
     
@@ -248,10 +246,10 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         return DropdownHelper.RenderDropdownAsync(
             DropdownService,
             CommonBackgroundTaskApi.JsRuntimeCommonApi,
-            IdeHeaderState.ButtonToolsId,
+            IdeState.ButtonToolsId,
             DropdownOrientation.Bottom,
-            IdeHeaderState.DropdownKeyTools,
-            IdeHeaderService.GetIdeHeaderState().MenuTools,
+            IdeState.DropdownKeyTools,
+            IdeService.GetIdeState().MenuTools,
             _buttonToolsElementReference);
     }
     
@@ -262,10 +260,10 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         return DropdownHelper.RenderDropdownAsync(
             DropdownService,
             CommonBackgroundTaskApi.JsRuntimeCommonApi,
-            IdeHeaderState.ButtonViewId,
+            IdeState.ButtonViewId,
             DropdownOrientation.Bottom,
-            IdeHeaderState.DropdownKeyView,
-            IdeHeaderService.GetIdeHeaderState().MenuView,
+            IdeState.DropdownKeyView,
+            IdeService.GetIdeState().MenuView,
             _buttonViewElementReference);
     }
     
@@ -274,10 +272,10 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         return DropdownHelper.RenderDropdownAsync(
             DropdownService,
             CommonBackgroundTaskApi.JsRuntimeCommonApi,
-            IdeHeaderState.ButtonRunId,
+            IdeState.ButtonRunId,
             DropdownOrientation.Bottom,
-            IdeHeaderState.DropdownKeyRun,
-            IdeHeaderService.GetIdeHeaderState().MenuRun,
+            IdeState.DropdownKeyRun,
+            IdeService.GetIdeState().MenuRun,
             _buttonRunElementReference);
     }
     
@@ -354,11 +352,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
         if (menuOptionsList.Count == 0)
         {
-            IdeHeaderService.SetMenuView(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
+            IdeService.SetMenuView(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
         }
         else
         {
-            IdeHeaderService.SetMenuView(new MenuRecord(menuOptionsList));
+            IdeService.SetMenuView(new MenuRecord(menuOptionsList));
         }
     }
     
@@ -384,7 +382,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         DragService.DragStateChanged -= DragStateWrapOnStateChanged;
         AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
-        IdeMainLayoutService.IdeMainLayoutStateChanged -= OnIdeMainLayoutStateChanged;
+        IdeService.IdeStateChanged -= OnIdeMainLayoutStateChanged;
         TextEditorService.OptionsApi.StaticStateChanged -= TextEditorOptionsStateWrap_StateChanged;
     }
 }

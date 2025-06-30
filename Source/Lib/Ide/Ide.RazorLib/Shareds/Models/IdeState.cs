@@ -1,23 +1,26 @@
+using Walk.Common.RazorLib.Badges.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 
 namespace Walk.Ide.RazorLib.Shareds.Models;
 
-public record struct IdeHeaderState(
-	MenuRecord MenuFile,
+public record struct IdeState(
+    IReadOnlyList<IBadgeModel> FooterBadgeList,
+    MenuRecord MenuFile,
 	MenuRecord MenuTools,
 	MenuRecord MenuView,
 	MenuRecord MenuRun)
 {
-	public IdeHeaderState() : this(
-		new MenuRecord(Array.Empty<MenuOptionRecord>()),
+	public IdeState() : this(
+	    Array.Empty<IBadgeModel>(),
+	    new MenuRecord(Array.Empty<MenuOptionRecord>()),
 		new MenuRecord(Array.Empty<MenuOptionRecord>()),
 		new MenuRecord(Array.Empty<MenuOptionRecord>()),
 		new MenuRecord(Array.Empty<MenuOptionRecord>()))
 	{
 	}
-
+	
 	public static readonly Key<DropdownRecord> DropdownKeyFile = Key<DropdownRecord>.NewKey();
     public const string ButtonFileId = "di_ide_header-button-file";
 

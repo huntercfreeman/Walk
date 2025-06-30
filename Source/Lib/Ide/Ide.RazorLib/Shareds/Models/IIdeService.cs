@@ -1,13 +1,16 @@
+using Walk.Common.RazorLib.Badges.Models;
 using Walk.Common.RazorLib.Menus.Models;
 
 namespace Walk.Ide.RazorLib.Shareds.Models;
 
-public interface IIdeHeaderService
+public interface IIdeService
 {
-	public event Action? IdeHeaderStateChanged;
+    public event Action? IdeStateChanged;
+    
+    public IdeState GetIdeState();
+    
+    public void RegisterFooterBadge(IBadgeModel badgeModel);
 	
-	public IdeHeaderState GetIdeHeaderState();
-
 	public void SetMenuFile(MenuRecord menu);
 	public void SetMenuTools(MenuRecord menu);
 	public void SetMenuView(MenuRecord menu);
@@ -18,3 +21,5 @@ public interface IIdeHeaderService
 	public void ModifyMenuView(Func<MenuRecord, MenuRecord> menuFunc);
 	public void ModifyMenuRun(Func<MenuRecord, MenuRecord> menuFunc);
 }
+
+

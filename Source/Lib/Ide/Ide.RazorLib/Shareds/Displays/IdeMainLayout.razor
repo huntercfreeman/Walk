@@ -53,7 +53,7 @@
     
             <button @ref="_buttonFileElementReference"
                     @onclick="RenderFileDropdownOnClick"
-    			    id="@IdeHeaderState.ButtonFileId"
+    			    id="@IdeState.ButtonFileId"
                     class="di_button"
                     style="margin-left: 15px;">
                 File
@@ -61,7 +61,7 @@
     
     		<button @ref="_buttonToolsElementReference"
                     @onclick="RenderToolsDropdownOnClick"
-    			    id="@IdeHeaderState.ButtonToolsId"
+    			    id="@IdeState.ButtonToolsId"
                     class="di_button"
                     style="margin-left: 15px;">
                 Tools
@@ -69,7 +69,7 @@
     
     		<button @ref="_buttonViewElementReference"
                     @onclick="RenderViewDropdownOnClick"
-    			    id="@IdeHeaderState.ButtonViewId"
+    			    id="@IdeState.ButtonViewId"
                     class="di_button"
                     style="margin-left: 15px;">
     			View
@@ -77,7 +77,7 @@
     
     		<button @ref="_buttonRunElementReference"
                     @onclick="RenderRunDropdownOnClick"
-    			    id="@IdeHeaderState.ButtonRunId"
+    			    id="@IdeState.ButtonRunId"
     				class="di_button"
                     style="margin-left: 15px;">
                 Run
@@ -131,5 +131,5 @@
                        AdjacentElementDimensions="_bodyElementDimensions"
                        DimensionAttributeKind="DimensionAttributeKind.Height"
                        ReRenderSelfAndAdjacentElementDimensionsFunc="() => InvokeAsync(StateHasChanged)"
-                       BadgeList="IdeMainLayoutService.GetIdeMainLayoutState().FooterJustifyEndComponentList"/>
+                       BadgeList="IdeService.GetIdeState().FooterBadgeList"/>
 </div>

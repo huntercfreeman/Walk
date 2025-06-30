@@ -90,7 +90,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly IPanelService _panelService;
 	private readonly IDialogService _dialogService;
 	private readonly IAppOptionsService _appOptionsService;
-	private readonly IIdeHeaderService _ideHeaderService;
+	private readonly IIdeService _ideService;
 	private readonly ITextEditorHeaderRegistry _textEditorHeaderRegistry;
 	private readonly INugetPackageManagerProvider _nugetPackageManagerProvider;
 	
@@ -127,7 +127,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         IPanelService panelService,
         IDialogService dialogService,
         IAppOptionsService appOptionsService,
-        IIdeHeaderService ideHeaderService,
+        IIdeService ideService,
         ITextEditorHeaderRegistry textEditorHeaderRegistry,
         INugetPackageManagerProvider nugetPackageManagerProvider,
         IServiceProvider serviceProvider)
@@ -157,7 +157,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         _dialogService = dialogService;
         _panelService = panelService;
         _appOptionsService = appOptionsService;
-        _ideHeaderService = ideHeaderService;
+        _ideService = ideService;
         _textEditorHeaderRegistry = textEditorHeaderRegistry;
         _nugetPackageManagerProvider = nugetPackageManagerProvider;
 
@@ -390,7 +390,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 return Task.CompletedTask;
             });
 
-        _ideHeaderService.ModifyMenuFile(
+        _ideService.ModifyMenuFile(
             inMenu =>
             {
                 var indexMenuOptionOpen = inMenu.MenuOptionList.FindIndex(x => x.DisplayName == "Open");
@@ -525,7 +525,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 return Task.CompletedTask;
             }));
 
-        _ideHeaderService.ModifyMenuRun(inMenu =>
+        _ideService.ModifyMenuRun(inMenu =>
         {
             // UI foreach enumeration was modified nightmare. (2025-02-07)
             var copyMenuOptionList = new List<MenuOptionRecord>(inMenu.MenuOptionList);
