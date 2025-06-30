@@ -1,21 +1,23 @@
 @{
-	var localStartupControlState = StartupControlService.GetStartupControlState();
+	var localStartupControlState = IdeService.GetIdeState();
+	var activeStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
+    	    x => x.Key == localStartupControlState.ActiveStartupControlKey);
 	bool isExecuting;
 
-	if (localStartupControlState?.ActiveStartupControl is null)
+	if (activeStartupControl is null)
 	{
 		isExecuting = false;
 	}
 	else
 	{
-		isExecuting = localStartupControlState.ActiveStartupControl.IsExecuting;
+		isExecuting = activeStartupControl.IsExecuting;
 	}
 }
 
 <div class="di_ide_startup-controls-display">
    <div class="di_ide_startup-controls-display-entry">
        <select @bind="SelectedStartupControlGuidString"
-               title="Startup: @(localStartupControlState.ActiveStartupControl?.TitleVerbose)">
+               title="Startup: @(activeStartupControl?.TitleVerbose)">
        	<option title="Choose startup project"
    			    value="@Guid.Empty.ToString()">
    	    	Choose startup project
@@ -36,8 +38,8 @@
         	    @onclick="() => StartProgramWithoutDebuggingOnClick(isExecuting)"
                 class="di_button"
                 id="@_startButtonElementId"
-                disabled=@(localStartupControlState.ActiveStartupControl is null)
-                title="Start without debugging:  @(localStartupControlState.ActiveStartupControl?.TitleVerbose)">
+                disabled=@(activeStartupControl is null)
+                title="Start without debugging:  @(activeStartupControl?.TitleVerbose)">
             
             @{
             	var appOptionsState = AppOptionsService.GetAppOptionsState();

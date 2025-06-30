@@ -23,7 +23,6 @@ using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.AppDatas.Models;
 using Walk.Ide.RazorLib.CodeSearches.Models;
-using Walk.Ide.RazorLib.StartupControls.Models;
 using Walk.Ide.RazorLib.Shareds.Models;
 // FindAllReferences
 // using Walk.Ide.RazorLib.FindAllReferences.Models;
@@ -83,7 +82,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly ICodeSearchService _codeSearchService;
 	// FindAllReferences
 	// private readonly IFindAllReferencesService _findAllReferencesService;
-	private readonly IStartupControlService _startupControlService;
 	private readonly INotificationService _notificationService;
 	private readonly ITerminalService _terminalService;
 	private readonly IDotNetCommandFactory _dotNetCommandFactory;
@@ -120,7 +118,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		ICodeSearchService codeSearchService,
 		// FindAllReferences
 		// IFindAllReferencesService findAllReferencesService,
-		IStartupControlService startupControlService,
 		INotificationService notificationService,
 		ITerminalService terminalService,
         IDotNetCommandFactory dotNetCommandFactory,
@@ -149,7 +146,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		_codeSearchService = codeSearchService;
 		// FindAllReferences
 		// _findAllReferencesService = findAllReferencesService;
-		_startupControlService = startupControlService;
 		_notificationService = notificationService;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_terminalService = terminalService;
@@ -467,8 +463,9 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             MenuOptionKind.Create,
             () =>
             {
-                var startupControlState = _startupControlService.GetStartupControlState();
-                var activeStartupControl = startupControlState.ActiveStartupControl;
+                var startupControlState = _ideService.GetIdeState();
+                var activeStartupControl = startupControlState.StartupControlList.FirstOrDefault(
+    	            x => x.Key == startupControlState.ActiveStartupControlKey);
 
                 if (activeStartupControl?.StartupProjectAbsolutePath is not null)
                     BuildProjectOnClick(activeStartupControl.StartupProjectAbsolutePath.Value);
@@ -483,8 +480,9 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             MenuOptionKind.Create,
             () =>
             {
-                var startupControlState = _startupControlService.GetStartupControlState();
-                var activeStartupControl = startupControlState.ActiveStartupControl;
+                var startupControlState = _ideService.GetIdeState();
+                var activeStartupControl = startupControlState.StartupControlList.FirstOrDefault(
+    	            x => x.Key == startupControlState.ActiveStartupControlKey);
 
                 if (activeStartupControl?.StartupProjectAbsolutePath is not null)
                     CleanProjectOnClick(activeStartupControl.StartupProjectAbsolutePath.Value);
@@ -1577,7 +1575,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 	
 	private void RegisterStartupControl(IDotNetProject project)
 	{
-		_startupControlService.RegisterStartupControl(
+		_ideService.RegisterStartupControl(
 			new StartupControlModel(
 				Key<IStartupControlModel>.NewKey(),
 				project.DisplayName,
@@ -1617,7 +1615,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
         	ContinueWithFunc = parsedCommand =>
         	{
         		startupControlModel.ExecutingTerminalCommandRequest = null;
-        		_startupControlService.StateChanged();
+        		_ideService.StateChanged();
         	
         		_dotNetCliOutputParser.ParseOutputEntireDotNetRun(
         			parsedCommand.OutputCache.ToString(),
@@ -1640,7 +1638,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].KillProcess();
 		startupControlModel.ExecutingTerminalCommandRequest = null;
 		
-        _startupControlService.StateChanged();
+        _ideService.StateChanged();
         return Task.CompletedTask;
     }
 

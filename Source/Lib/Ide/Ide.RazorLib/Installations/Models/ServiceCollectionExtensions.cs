@@ -6,7 +6,6 @@ using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.CodeSearches.Models;
-using Walk.Ide.RazorLib.StartupControls.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.Menus.Models;
 using Walk.Ide.RazorLib.InputFiles.Displays;
@@ -120,7 +119,6 @@ public static class ServiceCollectionExtensions
             .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
             .AddScoped<ICodeSearchService, CodeSearchService>()
             .AddScoped<IInputFileService, InputFileService>()
-            .AddScoped<IStartupControlService, StartupControlService>()
             .AddScoped<ITerminalService, TerminalService>()
             .AddScoped<ITerminalGroupService, TerminalGroupService>()
             .AddScoped<IFolderExplorerService, FolderExplorerService>()

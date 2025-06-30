@@ -7,7 +7,7 @@ using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
-using Walk.Ide.RazorLib.StartupControls.Models;
+using Walk.Ide.RazorLib.Shareds.Models;
 
 namespace Walk.Ide.RazorLib.StartupControls.Displays;
 
@@ -22,7 +22,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     [Inject]
     private IDropdownService DropdownService { get; set; } = null!;
     [Inject]
-    private IStartupControlService StartupControlService { get; set; } = null!;
+    private IIdeService IdeService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
@@ -35,7 +35,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     
     public string? SelectedStartupControlGuidString
     {
-    	get => StartupControlService.GetStartupControlState().ActiveStartupControlKey.Guid.ToString();
+    	get => IdeService.GetIdeState().ActiveStartupControlKey.Guid.ToString();
     	set
     	{
     		Key<IStartupControlModel> startupControlKey = Key<IStartupControlModel>.Empty;
@@ -46,21 +46,23 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     			startupControlKey = new Key<IStartupControlModel>(guid);
     		}
     		
-    		StartupControlService.SetActiveStartupControlKey(startupControlKey);
+    		IdeService.SetActiveStartupControlKey(startupControlKey);
     	}
     }
     	
     protected override void OnInitialized()
     {
     	TerminalService.TerminalStateChanged += Shared_OnStateChanged;
-    	StartupControlService.StartupControlStateChanged += Shared_OnStateChanged;
+    	IdeService.StartupControlStateChanged += Shared_OnStateChanged;
     }
 
     private async Task StartProgramWithoutDebuggingOnClick(bool isExecuting)
     {
-    	var localStartupControlState = StartupControlService.GetStartupControlState();
+    	var localStartupControlState = IdeService.GetIdeState();
+    	var activeStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
+    	    x => x.Key == localStartupControlState.ActiveStartupControlKey);
     	
-    	if (localStartupControlState.ActiveStartupControl is null)
+    	if (activeStartupControl is null)
 	    	return;
     
     	if (isExecuting)
@@ -106,13 +108,15 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 			    MenuOptionKind.Other,
 			    onClickFunc: () =>
 			    {
-			    	var localStartupControlState = StartupControlService.GetStartupControlState();
+			    	var localStartupControlState = IdeService.GetIdeState();
+			    	var activeStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
+    	                x => x.Key == localStartupControlState.ActiveStartupControlKey);
 			    	
-			    	if (localStartupControlState.ActiveStartupControl is null)
+			    	if (activeStartupControl is null)
 			    		return Task.CompletedTask;
 			    		
-			    	return localStartupControlState.ActiveStartupControl.StopButtonOnClickTask
-			    		.Invoke(localStartupControlState.ActiveStartupControl);
+			    	return activeStartupControl.StopButtonOnClickTask
+			    		.Invoke(activeStartupControl);
 			    }));
 			    
 			await DropdownHelper.RenderDropdownAsync(
@@ -126,8 +130,8 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 		}
         else
         {
-	        await localStartupControlState.ActiveStartupControl.StartButtonOnClickTask
-	        	.Invoke(localStartupControlState.ActiveStartupControl)
+	        await activeStartupControl.StartButtonOnClickTask
+	        	.Invoke(activeStartupControl)
 	        	.ConfigureAwait(false);
         }
     }
@@ -144,6 +148,6 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
     	TerminalService.TerminalStateChanged -= Shared_OnStateChanged;
-    	StartupControlService.StartupControlStateChanged -= Shared_OnStateChanged;
+    	IdeService.StartupControlStateChanged -= Shared_OnStateChanged;
     }
 }

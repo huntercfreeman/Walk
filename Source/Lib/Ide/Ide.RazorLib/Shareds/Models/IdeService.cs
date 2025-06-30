@@ -1,5 +1,7 @@
 using Walk.Common.RazorLib.Badges.Models;
 using Walk.Common.RazorLib.Menus.Models;
+using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.ListExtensions;
 
 namespace Walk.Ide.RazorLib.Shareds.Models;
 
@@ -10,6 +12,7 @@ public class IdeService : IIdeService
     private IdeState _ideState = new();
     
     public event Action? IdeStateChanged;
+    public event Action? StartupControlStateChanged;
     
     public IdeState GetIdeState() => _ideState;
     
@@ -122,4 +125,85 @@ public class IdeService : IIdeService
 			};
         }
     }
+
+	public void RegisterStartupControl(IStartupControlModel startupControl)
+	{
+		lock (_stateModificationLock)
+		{
+			var indexOfStartupControl = _ideState.StartupControlList.FindIndex(
+				x => x.Key == startupControl.Key);
+
+			if (indexOfStartupControl == -1)
+			{
+    			var outStartupControlList = new List<IStartupControlModel>(_ideState.StartupControlList);
+    			outStartupControlList.Add(startupControl);
+    
+    			_ideState = _ideState with
+    			{
+    				StartupControlList = outStartupControlList
+    			};
+    	    }
+        }
+
+        StartupControlStateChanged?.Invoke();
+    }
+	
+	public void DisposeStartupControl(Key<IStartupControlModel> startupControlKey)
+	{
+		lock (_stateModificationLock)
+		{
+			var indexOfStartupControl = _ideState.StartupControlList.FindIndex(
+				x => x.Key == startupControlKey);
+
+			if (indexOfStartupControl != -1)
+            {
+                var outActiveStartupControlKey = _ideState.ActiveStartupControlKey;
+    			if (_ideState.ActiveStartupControlKey == startupControlKey)
+    				outActiveStartupControlKey = Key<IStartupControlModel>.Empty;
+    
+    			var outStartupControlList = new List<IStartupControlModel>(_ideState.StartupControlList);
+    			outStartupControlList.RemoveAt(indexOfStartupControl);
+    
+    			_ideState = _ideState with
+    			{
+    				StartupControlList = outStartupControlList,
+    				ActiveStartupControlKey = outActiveStartupControlKey
+    			};
+            }
+        }
+
+        StartupControlStateChanged?.Invoke();
+    }
+	
+	public void SetActiveStartupControlKey(Key<IStartupControlModel> startupControlKey)
+	{
+		lock (_stateModificationLock)
+		{
+			var startupControl = _ideState.StartupControlList.FirstOrDefault(
+				x => x.Key == startupControlKey);
+
+			if (startupControlKey == Key<IStartupControlModel>.Empty ||
+				startupControl is null)
+			{
+				_ideState = _ideState with
+				{
+					ActiveStartupControlKey = Key<IStartupControlModel>.Empty
+				};
+            }
+            else
+            {
+    			_ideState = _ideState with
+    			{
+    				ActiveStartupControlKey = startupControl.Key
+    			};
+			}
+        }
+
+        StartupControlStateChanged?.Invoke();
+    }
+	
+	public void StateChanged()
+	{
+		StartupControlStateChanged?.Invoke();
+	}
 }

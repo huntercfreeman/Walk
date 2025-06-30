@@ -19,7 +19,7 @@ using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.FormsGenerics.Displays;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
-using Walk.Ide.RazorLib.StartupControls.Models;
+using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Extensions.DotNet.CSharpProjects.Displays;
 using Walk.Extensions.DotNet.Menus.Models;
 using Walk.Extensions.DotNet.CSharpProjects.Models;
@@ -34,8 +34,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 {
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
-	[Inject]
-	private IStartupControlService StartupControlService { get; set; } = null!;
 	[Inject]
 	private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
 	[Inject]
@@ -60,6 +58,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
+	[Inject]
+	private IIdeService IdeService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public TreeViewCommandArgs TreeViewCommandArgs { get; set; }
@@ -343,13 +343,13 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				MenuOptionKind.Other,
 				() =>
 				{
-					var startupControl = StartupControlService.GetStartupControlState().StartupControlList.FirstOrDefault(
+					var startupControl = IdeService.GetIdeState().StartupControlList.FirstOrDefault(
 						x => x.StartupProjectAbsolutePath.Value == treeViewModel.Item.AbsolutePath.Value);
 						
 					if (startupControl is null)
 						return Task.CompletedTask;
 					
-					StartupControlService.SetActiveStartupControlKey(startupControl.Key);
+					IdeService.SetActiveStartupControlKey(startupControl.Key);
 					return Task.CompletedTask;
 				}),
 			DotNetMenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
