@@ -2,6 +2,9 @@ using Walk.Common.RazorLib.Dimensions.Models;
 
 namespace Walk.Common.RazorLib.Dynamics.Models;
 
+/// <summary>
+/// TODO: Does dragging a dialog around cause the "dialog initializer" to re-render? This would probably be very bad if true.
+/// </summary>
 public interface IDialog : IDynamicViewModel
 {
     public bool DialogIsMinimized { get; set; }

@@ -3,6 +3,7 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Notifications.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Ide.RazorLib.Exceptions;
 using Walk.Ide.RazorLib.Terminals.Models.Internals;
 
@@ -15,7 +16,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 {
 	private readonly BackgroundTaskService _backgroundTaskService;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
-	private readonly INotificationService _notificationService;
+	private readonly ICommonUiService _commonUiService;
 
 	public TerminalWebsite(
 		string displayName,
@@ -24,7 +25,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 		Func<TerminalWebsite, ITerminalOutput> terminalOutputFactory,
 		BackgroundTaskService backgroundTaskService,
 		ICommonComponentRenderers commonComponentRenderers,
-		INotificationService notificationService)
+		ICommonUiService commonUiService)
 	{
 		DisplayName = displayName;
 		TerminalInteractive = terminalInteractiveFactory.Invoke(this);
@@ -33,7 +34,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 		
 		_backgroundTaskService = backgroundTaskService;
 		_commonComponentRenderers = commonComponentRenderers;
-		_notificationService = notificationService;
+		_commonUiService = commonUiService;
 	}
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
@@ -140,7 +141,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 				parsedCommand,
 				new StandardErrorCommandEvent(parsedCommand.SourceTerminalCommandRequest.CommandText + " threw an exception" + "\n"));
 		
-			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(14));
+			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(14));
 		}
 		finally
 		{

@@ -1,6 +1,7 @@
 using Walk.Common.RazorLib.Clipboards.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Drags.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Exceptions;
 using Walk.Common.RazorLib.FileSystems.Models;
@@ -26,12 +27,10 @@ public class CommonUnitTestHelper
         EnvironmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
         FileSystemProvider = serviceProvider.GetRequiredService<IFileSystemProvider>();
         AppOptionsService = serviceProvider.GetRequiredService<IAppOptionsService>();
-        DialogService = serviceProvider.GetRequiredService<IDialogService>();
+        CommonUiService = serviceProvider.GetRequiredService<ICommonUiService>();
         StorageService = serviceProvider.GetRequiredService<IStorageService>();
         DragService = serviceProvider.GetRequiredService<IDragService>();
-        DropdownService = serviceProvider.GetRequiredService<IDropdownService>();
         ClipboardService = serviceProvider.GetRequiredService<IClipboardService>();
-        NotificationService = serviceProvider.GetRequiredService<INotificationService>();
         ThemeService = serviceProvider.GetRequiredService<IThemeService>();
         TreeViewService = serviceProvider.GetRequiredService<ITreeViewService>();
 
@@ -47,15 +46,13 @@ public class CommonUnitTestHelper
     /// </summary>
     public IFileSystemProvider FileSystemProvider { get; }
     public IAppOptionsService AppOptionsService { get; }
-    public IDialogService DialogService { get; }
+    public ICommonUiService CommonUiService { get; }
     public IStorageService StorageService { get; }
     public IDragService DragService { get; }
-    public IDropdownService DropdownService { get; }
     /// <summary>
     /// Implementation is intended to be <see cref="InMemoryClipboardService"/>
     /// </summary>
     public IClipboardService ClipboardService { get; }
-    public INotificationService NotificationService { get; }
     public IThemeService ThemeService { get; }
     public ITreeViewService TreeViewService { get; }
 

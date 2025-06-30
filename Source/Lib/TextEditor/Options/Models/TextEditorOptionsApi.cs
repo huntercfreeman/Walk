@@ -22,7 +22,7 @@ public sealed class TextEditorOptionsApi
     private readonly TextEditorService _textEditorService;
     private readonly WalkTextEditorConfig _textEditorConfig;
     private readonly IStorageService _storageService;
-    private readonly IDialogService _dialogService;
+    private readonly ICommonUiService _commonUiService;
     private readonly IContextService _contextService;
     private readonly IThemeService _themeService;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
@@ -31,7 +31,7 @@ public sealed class TextEditorOptionsApi
         TextEditorService textEditorService,
         WalkTextEditorConfig textEditorConfig,
         IStorageService storageService,
-        IDialogService dialogService,
+        ICommonUiService commonUiService,
         IContextService contextService,
         IThemeService themeService,
         CommonBackgroundTaskApi commonBackgroundTaskApi)
@@ -39,7 +39,7 @@ public sealed class TextEditorOptionsApi
         _textEditorService = textEditorService;
         _textEditorConfig = textEditorConfig;
         _storageService = storageService;
-        _dialogService = dialogService;
+        _commonUiService = commonUiService;
         _contextService = contextService;
         _themeService = themeService;
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
@@ -96,7 +96,7 @@ public sealed class TextEditorOptionsApi
             isResizableOverride ?? _textEditorConfig.SettingsDialogConfig.ComponentIsResizable,
             null);
 
-        _dialogService.ReduceRegisterAction(settingsDialog);
+        _commonUiService.Dialog_ReduceRegisterAction(settingsDialog);
     }
 
     public void ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null)
@@ -112,7 +112,7 @@ public sealed class TextEditorOptionsApi
             isResizableOverride ?? _textEditorConfig.FindAllDialogConfig.ComponentIsResizable,
             null);
 
-        _dialogService.ReduceRegisterAction(_findAllDialog);
+        _commonUiService.Dialog_ReduceRegisterAction(_findAllDialog);
     }
 
     public void SetTheme(ThemeRecord theme, bool updateStorage = true)

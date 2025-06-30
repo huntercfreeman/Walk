@@ -13,6 +13,7 @@ using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Reactives.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib.Lines.Models;
 using Walk.TextEditor.RazorLib.Diffs.Models;
 using Walk.TextEditor.RazorLib.FindAlls.Models;
@@ -32,8 +33,7 @@ namespace Walk.TextEditor.RazorLib;
 public sealed class TextEditorService
 {
     private readonly BackgroundTaskService _backgroundTaskService;
-    private readonly IPanelService _panelService;
-    private readonly IDialogService _dialogService;
+    private readonly ICommonUiService _commonUiService;
     private readonly IContextService _contextService;
     private readonly IKeymapService _keymapService;
     private readonly IEnvironmentProvider _environmentProvider;
@@ -54,8 +54,7 @@ public sealed class TextEditorService
         IStorageService storageService,
         IJSRuntime jsRuntime,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
-        IPanelService panelService,
-        IDialogService dialogService,
+        ICommonUiService commonUiService,
         IContextService contextService,
         IKeymapService keymapService,
         IEnvironmentProvider environmentProvider,
@@ -90,16 +89,16 @@ public sealed class TextEditorService
         _jsRuntime = jsRuntime;
 		JsRuntimeTextEditorApi = _jsRuntime.GetWalkTextEditorApi();
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
-        _dialogService = dialogService;
+        _commonUiService = commonUiService;
         _contextService = contextService;
         _keymapService = keymapService;
         _environmentProvider = environmentProvider;
 
         ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService);
-        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _commonBackgroundTaskApi, _dialogService, _panelService);
-        GroupApi = new TextEditorGroupApi(this, _panelService, _dialogService, _commonBackgroundTaskApi);
+        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _commonBackgroundTaskApi, _commonUiService);
+        GroupApi = new TextEditorGroupApi(this, _commonUiService, _commonBackgroundTaskApi);
         DiffApi = new TextEditorDiffApi(this);
-        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _dialogService, contextService, themeService, _commonBackgroundTaskApi);
+        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _commonUiService, contextService, themeService, _commonBackgroundTaskApi);
         
         TextEditorState = new();
     }

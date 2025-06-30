@@ -41,8 +41,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 	    ITooltipModel tooltipModel,
 	    bool shouldRevealCursor,
 		VirtualAssociativityKind virtualAssociativityKind,
-		IPanelService panelService,
-        IDialogService dialogService,
+		ICommonUiService commonUiService,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         TextEditorDimensions textEditorDimensions,
 		int scrollLeft,
@@ -73,8 +72,8 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 	    ShouldRevealCursor = shouldRevealCursor;
 		VirtualAssociativityKind = virtualAssociativityKind;
 		
-		PanelService = panelService;
-        DialogService = dialogService;
+		CommonUiService = commonUiService;
+		
         CommonBackgroundTaskApi = commonBackgroundTaskApi;
         
         ComponentType = typeof(TextEditorViewModelDisplay);
@@ -509,8 +508,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     private readonly Type? _dragDialogComponentType = null;
     private readonly Dictionary<string, object?>? _dragDialogComponentParameterMap = null;
 
-    public IPanelService PanelService { get; }
-    public IDialogService DialogService { get; }
+    public ICommonUiService CommonUiService { get; }
     public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; }
 
     public Key<Panel> Key { get; }
@@ -695,7 +693,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                     TabGroup = null;
                 }
 
-                DialogService.ReduceRegisterAction(this);
+                CommonUiService.Dialog_ReduceRegisterAction(this);
             }
 
             // Create TextEditor Tab
@@ -724,7 +722,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                     else
                     {
                         // Is a dialog
-                        DialogService.ReduceDisposeAction(DynamicViewModelKey);
+                        CommonUiService.Dialog_ReduceDisposeAction(DynamicViewModelKey);
                     }
 
                     TabGroup = null;
@@ -756,13 +754,13 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                 else
                 {
                     // Is a dialog
-                    DialogService.ReduceDisposeAction(DynamicViewModelKey);
+                    CommonUiService.Dialog_ReduceDisposeAction(DynamicViewModelKey);
                 }
 
                 TabGroup = null;
             }
 
-            PanelService.RegisterPanelTab(
+            CommonUiService.RegisterPanelTab(
                 panelDropzone.PanelGroupKey,
                 new Panel(
                     Title,
@@ -777,8 +775,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                             ViewModelKey
                         },
                     },
-                    PanelService,
-                    DialogService,
+                    CommonUiService,
                     CommonBackgroundTaskApi),
                 true);
 

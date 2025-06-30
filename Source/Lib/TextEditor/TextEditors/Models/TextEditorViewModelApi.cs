@@ -6,6 +6,7 @@ using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Panels.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.Characters.Models;
 using Walk.TextEditor.RazorLib.Cursors.Models;
@@ -20,8 +21,7 @@ public sealed class TextEditorViewModelApi
 {
     private readonly TextEditorService _textEditorService;
     private readonly BackgroundTaskService _backgroundTaskService;
-    private readonly IDialogService _dialogService;
-    private readonly IPanelService _panelService;
+    private readonly ICommonUiService _commonUiService;
 
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
     
@@ -29,14 +29,12 @@ public sealed class TextEditorViewModelApi
         TextEditorService textEditorService,
         BackgroundTaskService backgroundTaskService,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
-        IDialogService dialogService,
-        IPanelService panelService)
+        ICommonUiService commonUiService)
     {
         _textEditorService = textEditorService;
         _backgroundTaskService = backgroundTaskService;
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
-        _dialogService = dialogService;
-        _panelService = panelService;
+        _commonUiService = commonUiService;
     }
     
     private Task _cursorShouldBlinkTask = Task.CompletedTask;
@@ -106,8 +104,7 @@ public sealed class TextEditorViewModelApi
 			viewModelKey,
 			resourceUri,
 			_textEditorService,
-			_panelService,
-			_dialogService,
+			_commonUiService,
 			_commonBackgroundTaskApi,
 			// Do not use `TextEditorVirtualizationResult.Empty` here.
 			// The viewmodels themselves will modify their virtualization result instances.

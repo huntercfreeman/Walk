@@ -1,5 +1,6 @@
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Notifications.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Common.RazorLib.FileSystems.Models;
 
@@ -14,12 +15,12 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
     public InMemoryFileSystemProvider(
         IEnvironmentProvider environmentProvider,
         ICommonComponentRenderers commonComponentRenderers,
-        INotificationService notificationService)
+        ICommonUiService commonUiService)
     {
         _environmentProvider = environmentProvider;
 
-        _file = new InMemoryFileHandler(this, _environmentProvider, commonComponentRenderers, notificationService);
-        _directory = new InMemoryDirectoryHandler(this, _environmentProvider, commonComponentRenderers, notificationService);
+        _file = new InMemoryFileHandler(this, _environmentProvider, commonComponentRenderers, commonUiService);
+        _directory = new InMemoryDirectoryHandler(this, _environmentProvider, commonComponentRenderers, commonUiService);
 
         Directory
             .CreateDirectoryAsync(_environmentProvider.RootDirectoryAbsolutePath.Value)

@@ -1,6 +1,7 @@
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.Notifications.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.CSharpProjects.Models;
@@ -15,33 +16,33 @@ public interface IDotNetMenuOptionsFactory
 		TreeViewSolution solutionNode,
 		TreeViewNamespacePath projectNode,
 		ITerminal terminal,
-		INotificationService notificationService,
+		ICommonUiService commonUiService,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord AddProjectToProjectReference(
 		TreeViewNamespacePath projectReceivingReference,
 		ITerminal terminal,
-		INotificationService notificationService,
+		ICommonUiService commonUiService,
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord RemoveProjectToProjectReference(
 		TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
 		ITerminal terminal,
-		INotificationService notificationService,
+		ICommonUiService commonUiService,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord MoveProjectToSolutionFolder(
 		TreeViewSolution treeViewSolution,
 		TreeViewNamespacePath treeViewProjectToMove,
 		ITerminal terminal,
-		INotificationService notificationService,
+		ICommonUiService commonUiService,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord RemoveNuGetPackageReferenceFromProject(
 		NamespacePath modifyProjectNamespacePath,
 		TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
 		ITerminal terminal,
-		INotificationService notificationService,
+		ICommonUiService commonUiService,
 		Func<Task> onAfterCompletion);
 }

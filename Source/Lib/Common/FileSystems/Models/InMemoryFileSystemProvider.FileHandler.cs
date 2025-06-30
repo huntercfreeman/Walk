@@ -2,6 +2,7 @@ using System.Text;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Exceptions;
 using Walk.Common.RazorLib.Notifications.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Common.RazorLib.FileSystems.Models;
 
@@ -14,18 +15,18 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
         private readonly InMemoryFileSystemProvider _inMemoryFileSystemProvider;
         private readonly IEnvironmentProvider _environmentProvider;
         private readonly ICommonComponentRenderers _commonComponentRenderers;
-        private readonly INotificationService _notificationService;
+        private readonly ICommonUiService _commonUiService;
 
         public InMemoryFileHandler(
             InMemoryFileSystemProvider inMemoryFileSystemProvider,
             IEnvironmentProvider environmentProvider,
             ICommonComponentRenderers commonComponentRenderers,
-            INotificationService notificationService)
+            ICommonUiService commonUiService)
         {
             _inMemoryFileSystemProvider = inMemoryFileSystemProvider;
             _environmentProvider = environmentProvider;
             _commonComponentRenderers = commonComponentRenderers;
-            _notificationService = notificationService;
+            _commonUiService = commonUiService;
         }
 
         public Task<bool> ExistsAsync(
@@ -334,7 +335,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 title,
                 exception.ToString(),
                 _commonComponentRenderers,
-                _notificationService,
+                _commonUiService,
                 TimeSpan.FromSeconds(10));
         }
     }

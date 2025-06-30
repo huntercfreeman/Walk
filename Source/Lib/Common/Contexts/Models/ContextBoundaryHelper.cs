@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
-using Walk.Common.RazorLib.Outlines.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Common.RazorLib.Contexts.Models;
 
@@ -13,17 +13,17 @@ public static class ContextBoundaryHelper
     }
     
     /// <summary>NOTE: 'onfocus' event does not bubble, whereas 'onfocusin' does bubble. Usage of both events in this file is intentional.</summary>
-    public static void HandleOnFocus(IOutlineService outlineService, string contextElementId)
+    public static void HandleOnFocus(ICommonUiService commonUiService, string contextElementId)
     {
-    	outlineService.SetOutline(
+    	commonUiService.SetOutline(
 	    	contextElementId,
 	    	null,
 	    	true);
     }
     
-    public static void HandleOnBlur(IOutlineService outlineService)
+    public static void HandleOnBlur(ICommonUiService commonUiService)
     {
-    	outlineService.SetOutline(
+    	commonUiService.SetOutline(
 	    	null,
 	    	null,
 	    	false);

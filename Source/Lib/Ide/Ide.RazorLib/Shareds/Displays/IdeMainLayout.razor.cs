@@ -30,9 +30,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private IDragService DragService { get; set; } = null!;
     [Inject]
-    private IPanelService PanelService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
-    private IIdeMainLayoutService IdeMainLayoutService { get; set; } = null!;
+    private IIdeService IdeService { get; set; } = null!;
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -42,15 +42,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private ITerminalService TerminalService { get; set; } = null!;
     [Inject]
-    private IIdeHeaderService IdeHeaderService { get; set; } = null!;
-    [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
-    [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
-    [Inject]
-    private IDialogService DialogService { get; set; } = null!;
     [Inject]
     private ICommandFactory CommandFactory { get; set; } = null!;
     [Inject]
@@ -123,7 +117,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
         DragService.DragStateChanged += DragStateWrapOnStateChanged;
         AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
-        IdeMainLayoutService.IdeMainLayoutStateChanged += OnIdeMainLayoutStateChanged;
+        IdeService.IdeStateChanged += OnIdeMainLayoutStateChanged;
         TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrap_StateChanged;
 
     	IdeBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
@@ -234,24 +228,24 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public Task RenderFileDropdownOnClick()
     {
         return DropdownHelper.RenderDropdownAsync(
-            DropdownService,
+            CommonUiService,
             CommonBackgroundTaskApi.JsRuntimeCommonApi,
-            IdeHeaderState.ButtonFileId,
+            IdeState.ButtonFileId,
             DropdownOrientation.Bottom,
-            IdeHeaderState.DropdownKeyFile,
-            IdeHeaderService.GetIdeHeaderState().MenuFile,
+            IdeState.DropdownKeyFile,
+            IdeService.GetIdeState().MenuFile,
             _buttonFileElementReference);
     }
     
     public Task RenderToolsDropdownOnClick()
     {
         return DropdownHelper.RenderDropdownAsync(
-            DropdownService,
+            CommonUiService,
             CommonBackgroundTaskApi.JsRuntimeCommonApi,
-            IdeHeaderState.ButtonToolsId,
+            IdeState.ButtonToolsId,
             DropdownOrientation.Bottom,
-            IdeHeaderState.DropdownKeyTools,
-            IdeHeaderService.GetIdeHeaderState().MenuTools,
+            IdeState.DropdownKeyTools,
+            IdeService.GetIdeState().MenuTools,
             _buttonToolsElementReference);
     }
     
@@ -260,32 +254,32 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         InitializeMenuView();
     
         return DropdownHelper.RenderDropdownAsync(
-            DropdownService,
+            CommonUiService,
             CommonBackgroundTaskApi.JsRuntimeCommonApi,
-            IdeHeaderState.ButtonViewId,
+            IdeState.ButtonViewId,
             DropdownOrientation.Bottom,
-            IdeHeaderState.DropdownKeyView,
-            IdeHeaderService.GetIdeHeaderState().MenuView,
+            IdeState.DropdownKeyView,
+            IdeService.GetIdeState().MenuView,
             _buttonViewElementReference);
     }
     
     public Task RenderRunDropdownOnClick()
     {
         return DropdownHelper.RenderDropdownAsync(
-            DropdownService,
+            CommonUiService,
             CommonBackgroundTaskApi.JsRuntimeCommonApi,
-            IdeHeaderState.ButtonRunId,
+            IdeState.ButtonRunId,
             DropdownOrientation.Bottom,
-            IdeHeaderState.DropdownKeyRun,
-            IdeHeaderService.GetIdeHeaderState().MenuRun,
+            IdeState.DropdownKeyRun,
+            IdeService.GetIdeState().MenuRun,
             _buttonRunElementReference);
     }
     
     public void InitializeMenuView()
     {
         var menuOptionsList = new List<MenuOptionRecord>();
-        var panelState = PanelService.GetPanelState();
-        var dialogState = DialogService.GetDialogState();
+        var panelState = CommonUiService.GetPanelState();
+        var dialogState = CommonUiService.GetDialogState();
     
         foreach (var panel in panelState.PanelList)
         {
@@ -298,7 +292,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
                     if (panelGroup is not null)
                     {
-                        PanelService.SetActivePanelTab(panelGroup.Key, panel.Key);
+                        CommonUiService.SetActivePanelTab(panelGroup.Key, panel.Key);
     
                         var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
     
@@ -309,7 +303,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                                 nameof(ContextHelper.ConstructFocusContextElementCommand),
                                 nameof(ContextHelper.ConstructFocusContextElementCommand),
                                 CommonBackgroundTaskApi.JsRuntimeCommonApi,
-                                PanelService);
+                                CommonUiService);
     
                             await command.CommandFunc.Invoke(null).ConfigureAwait(false);
                         }
@@ -321,7 +315,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
                         if (existingDialog is not null)
                         {
-                            DialogService.ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
+                            CommonUiService.Dialog_ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
     
                             await CommonBackgroundTaskApi.JsRuntimeCommonApi
                                 .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)
@@ -329,8 +323,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                         }
                         else
                         {
-                            PanelService.RegisterPanelTab(PanelFacts.LeftPanelGroupKey, panel, true);
-                            PanelService.SetActivePanelTab(PanelFacts.LeftPanelGroupKey, panel.Key);
+                            CommonUiService.RegisterPanelTab(PanelFacts.LeftPanelGroupKey, panel, true);
+                            CommonUiService.SetActivePanelTab(PanelFacts.LeftPanelGroupKey, panel.Key);
     
                             var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
     
@@ -341,7 +335,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                                     nameof(ContextHelper.ConstructFocusContextElementCommand),
                                     nameof(ContextHelper.ConstructFocusContextElementCommand),
                                     CommonBackgroundTaskApi.JsRuntimeCommonApi,
-                                    PanelService);
+                                    CommonUiService);
     
                                 await command.CommandFunc.Invoke(null).ConfigureAwait(false);
                             }
@@ -354,11 +348,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
         if (menuOptionsList.Count == 0)
         {
-            IdeHeaderService.SetMenuView(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
+            IdeService.SetMenuView(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
         }
         else
         {
-            IdeHeaderService.SetMenuView(new MenuRecord(menuOptionsList));
+            IdeService.SetMenuView(new MenuRecord(menuOptionsList));
         }
     }
     
@@ -373,18 +367,18 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             true,
             null);
     
-        DialogService.ReduceRegisterAction(dialogRecord);
+        CommonUiService.Dialog_ReduceRegisterAction(dialogRecord);
         return Task.CompletedTask;
     }
 
     public void DispatchRegisterDialogRecordAction() =>
-        DialogService.ReduceRegisterAction(_dialogRecord);
+        CommonUiService.Dialog_ReduceRegisterAction(_dialogRecord);
 
     public void Dispose()
     {
         DragService.DragStateChanged -= DragStateWrapOnStateChanged;
         AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
-        IdeMainLayoutService.IdeMainLayoutStateChanged -= OnIdeMainLayoutStateChanged;
+        IdeService.IdeStateChanged -= OnIdeMainLayoutStateChanged;
         TextEditorService.OptionsApi.StaticStateChanged -= TextEditorOptionsStateWrap_StateChanged;
     }
 }

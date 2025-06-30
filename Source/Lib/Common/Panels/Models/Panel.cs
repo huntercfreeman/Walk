@@ -24,8 +24,7 @@ public record Panel : IPanelTab, IDialog, IDrag
         Key<ContextRecord> contextRecordKey,
         Type componentType,
         Dictionary<string, object?>? componentParameterMap,
-        IPanelService panelService,
-        IDialogService dialogService,
+        ICommonUiService commonUiService,
         CommonBackgroundTaskApi commonBackgroundTaskApi)
     {
         Title = title;
@@ -35,8 +34,7 @@ public record Panel : IPanelTab, IDialog, IDrag
         ComponentType = componentType;
         ComponentParameterMap = componentParameterMap;
 
-        PanelService = panelService;
-        DialogService = dialogService;
+        CommonUiService = commonUiService;
         CommonBackgroundTaskApi = commonBackgroundTaskApi;
 
         _dragTabComponentType = typeof(DragDisplay);
@@ -49,8 +47,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 	public Key<Panel> Key { get; }
 	public Key<IDynamicViewModel> DynamicViewModelKey { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
-	public IPanelService PanelService { get;}
-    public IDialogService DialogService { get;}
+	public ICommonUiService CommonUiService { get;}
     public CommonBackgroundTaskApi CommonBackgroundTaskApi { get;}
 	public Type ComponentType { get; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; set; }
@@ -169,7 +166,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 			{
 				if (panelGroup is not null)
 				{
-					PanelService.DisposePanelTab(
+					CommonUiService.DisposePanelTab(
 						panelGroup.Key,
 						Key);
 				}
@@ -184,7 +181,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 				TabGroup = null;
 			}
 
-			DialogService.ReduceRegisterAction(this);
+			CommonUiService.Dialog_ReduceRegisterAction(this);
 		}
 		
 		// Create Panel Tab
@@ -193,13 +190,13 @@ public record Panel : IPanelTab, IDialog, IDrag
 			{
 				if (panelGroup is not null)
 				{
-					PanelService.DisposePanelTab(
+					CommonUiService.DisposePanelTab(
 						panelGroup.Key,
 						Key);
 				}
 				else
 				{
-					DialogService.ReduceDisposeAction(DynamicViewModelKey);
+					CommonUiService.Dialog_ReduceDisposeAction(DynamicViewModelKey);
 				}
 
 				TabGroup = null;
@@ -212,7 +209,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 				? true
 				: false;
 
-			PanelService.RegisterPanelTab(
+			CommonUiService.RegisterPanelTab(
 				panelGroupDropzone.PanelGroupKey,
 				this,
 				insertAtIndexZero);

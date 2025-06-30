@@ -7,6 +7,7 @@ using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.CompilerServices;
@@ -19,7 +20,7 @@ namespace Walk.Extensions.DotNet.CompilerServices.Displays;
 public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private IDropdownService DropdownService { get; set; } = null!;
+	private ICommonUiService CommonUiService { get; set; } = null!;
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
@@ -96,7 +97,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 			},
 			restoreFocusOnClose: null);
 
-		DropdownService.ReduceRegisterAction(dropdownRecord);
+		CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 

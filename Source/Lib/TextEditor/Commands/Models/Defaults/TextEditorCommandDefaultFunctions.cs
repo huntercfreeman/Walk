@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Clipboards.Models;
 using Walk.Common.RazorLib.JsRuntimes.Models;
@@ -85,7 +86,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
         ICommonComponentRenderers commonComponentRenderers,
-        INotificationService notificationService)
+        ICommonUiService commonUiService)
     {
     	if (viewModel.PersistentState.OnSaveRequested is null)
     	{
@@ -93,7 +94,7 @@ public class TextEditorCommandDefaultFunctions
 		        nameof(TriggerSave),
 		        $"{nameof(TriggerSave)} was null",
 		        commonComponentRenderers,
-				notificationService,
+				commonUiService,
 		        TimeSpan.FromSeconds(7));
     	}
     	else
@@ -739,7 +740,7 @@ public class TextEditorCommandDefaultFunctions
         IEnvironmentProvider environmentProvider,
         IFileSystemProvider fileSystemProvider,
         TextEditorService textEditorService,
-        IDropdownService dropdownService)
+        ICommonUiService commonUiService)
     {
     	var componentData = viewModel.PersistentState.ComponentData;
     	if (componentData is null)
@@ -847,7 +848,7 @@ public class TextEditorCommandDefaultFunctions
 				await viewModel.FocusAsync();
 			});
 
-        dropdownService.ReduceRegisterAction(dropdownRecord);
+        commonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
     }
     
     public static async ValueTask QuickActionsSlashRefactor(
@@ -856,7 +857,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorViewModel viewModel,
         WalkCommonJavaScriptInteropApi jsRuntimeCommonApi,
         TextEditorService textEditorService,
-        IDropdownService dropdownService)
+        ICommonUiService commonUiService)
     {
     	var componentData = viewModel.PersistentState.ComponentData;
     	if (componentData is null)
@@ -911,7 +912,7 @@ public class TextEditorCommandDefaultFunctions
 				await viewModel.FocusAsync();
 			});
 
-        dropdownService.ReduceRegisterAction(dropdownRecord);
+        commonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
     }
     
     public static void GoToDefinition(
@@ -1116,7 +1117,7 @@ public class TextEditorCommandDefaultFunctions
         		editContext,
 		        modelModifier,
 		        viewModel,
-		        componentData.TextEditorViewModelSlimDisplay.DropdownService,
+		        componentData.TextEditorViewModelSlimDisplay.CommonUiService,
 		        componentData);
         }
         else if (EventUtils.IsSyntaxHighlightingInvoker(keymapArgs))
@@ -1188,7 +1189,7 @@ public class TextEditorCommandDefaultFunctions
         		editContext,
 		        modelModifier,
 		        viewModel,
-		        componentData.TextEditorViewModelSlimDisplay.DropdownService,
+		        componentData.TextEditorViewModelSlimDisplay.CommonUiService,
 		        componentData);
         }
 
@@ -1235,7 +1236,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
-        IDropdownService dropdownService,
+        ICommonUiService commonUiService,
         double? leftOffset,
         double? topOffset,
         Type componentType,
@@ -1291,25 +1292,25 @@ public class TextEditorCommandDefaultFunctions
 			ShouldShowOutOfBoundsClickDisplay = false
 		};
 
-        dropdownService.ReduceRegisterAction(dropdownRecord);
+        commonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
 	}
 	
 	public static void RemoveDropdown(
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel,
-        IDropdownService dropdownService)
+        ICommonUiService commonUiService)
     {
     	viewModel.PersistentState.MenuKind = MenuKind.None;
     
 		var dropdownKey = new Key<DropdownRecord>(viewModel.PersistentState.ViewModelKey.Guid);
-		dropdownService.ReduceDisposeAction(dropdownKey);
+		commonUiService.Dropdown_ReduceDisposeAction(dropdownKey);
 	}
 	
 	public static void ShowContextMenu(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
-        IDropdownService dropdownService,
+        ICommonUiService commonUiService,
         TextEditorComponentData componentData)
     {
     	viewModel.PersistentState.MenuKind = MenuKind.ContextMenu;
@@ -1318,7 +1319,7 @@ public class TextEditorCommandDefaultFunctions
     		editContext,
 	        modelModifier,
 	        viewModel,
-	        dropdownService,
+	        commonUiService,
 	        leftOffset: null,
 	        topOffset: null,
 	        typeof(Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.ContextMenu),
@@ -1335,7 +1336,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
-        IDropdownService dropdownService,
+        ICommonUiService commonUiService,
         TextEditorComponentData componentData)
     {
     	viewModel.PersistentState.MenuKind = MenuKind.AutoCompleteMenu;
@@ -1344,7 +1345,7 @@ public class TextEditorCommandDefaultFunctions
     		editContext,
 	        modelModifier,
 	        viewModel,
-	        dropdownService,
+	        commonUiService,
 	        leftOffset: null,
 	        topOffset: null,
 	        typeof(Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu),

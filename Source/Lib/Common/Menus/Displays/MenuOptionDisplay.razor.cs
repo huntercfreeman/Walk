@@ -6,13 +6,14 @@ using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Common.RazorLib.Menus.Displays;
 
 public partial class MenuOptionDisplay : ComponentBase
 {
     [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
@@ -41,7 +42,7 @@ public partial class MenuOptionDisplay : ComponentBase
 
     private bool IsActive => Index == ActiveMenuOptionRecordIndex;
 
-    private bool HasSubmenuActive => DropdownService.GetDropdownState().DropdownList.Any(
+    private bool HasSubmenuActive => CommonUiService.GetDropdownState().DropdownList.Any(
         x => x.Key == _subMenuDropdownKey);
 
     private string IsActiveCssClass => IsActive ? "di_active" : string.Empty;
@@ -86,7 +87,7 @@ public partial class MenuOptionDisplay : ComponentBase
     private Task RenderDropdownAsync(MenuRecord localSubMenu)
     {
     	return DropdownHelper.RenderDropdownAsync(
-    		DropdownService,
+    		CommonUiService,
     		CommonBackgroundTaskApi.JsRuntimeCommonApi,
 			_menuOptionHtmlElementId,
 			DropdownOrientation.Right,
@@ -101,10 +102,10 @@ public partial class MenuOptionDisplay : ComponentBase
         {
             var localDropdown = Dropdown;
             
-            DropdownService.ReduceClearAction();
+            CommonUiService.Dropdown_ReduceClearAction();
 			
 			if (localDropdown is not null)
-            	DropdownService.ReduceDisposeAction(localDropdown.Key);
+            	CommonUiService.Dropdown_ReduceDisposeAction(localDropdown.Key);
             	
             await MenuOptionRecord.OnClickFunc.Invoke().ConfigureAwait(false);
         }
@@ -113,7 +114,7 @@ public partial class MenuOptionDisplay : ComponentBase
         if (localSubMenu is not null)
         {
             if (HasSubmenuActive)
-                DropdownService.ReduceDisposeAction(_subMenuDropdownKey);
+                CommonUiService.Dropdown_ReduceDisposeAction(_subMenuDropdownKey);
             else
 				await RenderDropdownAsync(localSubMenu);
         }
@@ -178,11 +179,11 @@ public partial class MenuOptionDisplay : ComponentBase
         else // Hide the widget AND dispose the menu
         {
             onAfterWidgetHidden.Invoke();
-            DropdownService.ReduceClearAction();
+            CommonUiService.Dropdown_ReduceClearAction();
 
 			var localDropdown = Dropdown;
 			if (localDropdown is not null)
-            	DropdownService.ReduceDisposeAction(localDropdown.Key);
+            	CommonUiService.Dropdown_ReduceDisposeAction(localDropdown.Key);
         }
     }
 }

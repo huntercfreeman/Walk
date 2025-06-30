@@ -6,6 +6,7 @@ using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Clipboards.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.Clipboards.Models;
@@ -136,7 +137,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
             });
     }
 
-    public MenuOptionRecord RenameFile(AbsolutePath sourceAbsolutePath, INotificationService notificationService, Func<Task> onAfterCompletion)
+    public MenuOptionRecord RenameFile(AbsolutePath sourceAbsolutePath, ICommonUiService commonUiService, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Rename", MenuOptionKind.Update,
             widgetRendererType: _ideComponentRenderers.FileFormRendererType,
@@ -153,7 +154,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
                     nameof(IFileFormRendererType.OnAfterSubmitFunc),
                     new Func<string, IFileTemplate?, List<IFileTemplate>, Task>((nextName, _, _) =>
                     {
-                        PerformRename(sourceAbsolutePath, nextName, notificationService, onAfterCompletion);
+                        PerformRename(sourceAbsolutePath, nextName, commonUiService, onAfterCompletion);
                         return Task.CompletedTask;
                     })
                 },
@@ -449,7 +450,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         }
     }
 
-    private AbsolutePath PerformRename(AbsolutePath sourceAbsolutePath, string nextName, INotificationService notificationService, Func<Task> onAfterCompletion)
+    private AbsolutePath PerformRename(AbsolutePath sourceAbsolutePath, string nextName, ICommonUiService commonUiService, Func<Task> onAfterCompletion)
     {
         // Check if the current and next name match when compared with case insensitivity
         if (0 == string.Compare(sourceAbsolutePath.NameWithExtension, nextName, StringComparison.OrdinalIgnoreCase))
@@ -459,7 +460,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
             var temporaryRenameResult = PerformRename(
                 sourceAbsolutePath,
                 temporaryNextName,
-                notificationService,
+                commonUiService,
                 () => Task.CompletedTask);
 
             if (temporaryRenameResult.ExactInput is null)
@@ -486,7 +487,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         }
         catch (Exception e)
         {
-            NotificationHelper.DispatchError("Rename Action", e.Message, _commonComponentRenderers, notificationService, TimeSpan.FromSeconds(14));
+            NotificationHelper.DispatchError("Rename Action", e.Message, _commonComponentRenderers, commonUiService, TimeSpan.FromSeconds(14));
             onAfterCompletion.Invoke();
             return default;
         }

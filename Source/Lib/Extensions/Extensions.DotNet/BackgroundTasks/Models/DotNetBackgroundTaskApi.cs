@@ -23,7 +23,6 @@ using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.AppDatas.Models;
 using Walk.Ide.RazorLib.CodeSearches.Models;
-using Walk.Ide.RazorLib.StartupControls.Models;
 using Walk.Ide.RazorLib.Shareds.Models;
 // FindAllReferences
 // using Walk.Ide.RazorLib.FindAllReferences.Models;
@@ -83,14 +82,11 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly ICodeSearchService _codeSearchService;
 	// FindAllReferences
 	// private readonly IFindAllReferencesService _findAllReferencesService;
-	private readonly IStartupControlService _startupControlService;
-	private readonly INotificationService _notificationService;
+	private readonly ICommonUiService _commonUiService;
 	private readonly ITerminalService _terminalService;
 	private readonly IDotNetCommandFactory _dotNetCommandFactory;
-	private readonly IPanelService _panelService;
-	private readonly IDialogService _dialogService;
 	private readonly IAppOptionsService _appOptionsService;
-	private readonly IIdeHeaderService _ideHeaderService;
+	private readonly IIdeService _ideService;
 	private readonly ITextEditorHeaderRegistry _textEditorHeaderRegistry;
 	private readonly INugetPackageManagerProvider _nugetPackageManagerProvider;
 	
@@ -120,14 +116,11 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		ICodeSearchService codeSearchService,
 		// FindAllReferences
 		// IFindAllReferencesService findAllReferencesService,
-		IStartupControlService startupControlService,
-		INotificationService notificationService,
 		ITerminalService terminalService,
         IDotNetCommandFactory dotNetCommandFactory,
-        IPanelService panelService,
-        IDialogService dialogService,
+        ICommonUiService commonUiService,
         IAppOptionsService appOptionsService,
-        IIdeHeaderService ideHeaderService,
+        IIdeService ideService,
         ITextEditorHeaderRegistry textEditorHeaderRegistry,
         INugetPackageManagerProvider nugetPackageManagerProvider,
         IServiceProvider serviceProvider)
@@ -149,15 +142,12 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		_codeSearchService = codeSearchService;
 		// FindAllReferences
 		// _findAllReferencesService = findAllReferencesService;
-		_startupControlService = startupControlService;
-		_notificationService = notificationService;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_terminalService = terminalService;
         _dotNetCommandFactory = dotNetCommandFactory;
-        _dialogService = dialogService;
-        _panelService = panelService;
+        _commonUiService = commonUiService;
         _appOptionsService = appOptionsService;
-        _ideHeaderService = ideHeaderService;
+        _ideService = ideService;
         _textEditorHeaderRegistry = textEditorHeaderRegistry;
         _nugetPackageManagerProvider = nugetPackageManagerProvider;
 
@@ -172,7 +162,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 			_treeViewService,
             _commonComponentRenderers,
             _textEditorService,
-            _notificationService,
+            _commonUiService,
             _backgroundTaskService,
             _fileSystemProvider,
             _dotNetCliOutputParser,
@@ -262,8 +252,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
     private void InitializeLeftPanelTabs()
     {
-        var leftPanel = PanelFacts.GetTopLeftPanelGroup(_panelService.GetPanelState());
-        leftPanel.PanelService = _panelService;
+        var leftPanel = PanelFacts.GetTopLeftPanelGroup(_commonUiService.GetPanelState());
+        leftPanel.CommonUiService = _commonUiService;
 
         // solutionExplorerPanel
         var solutionExplorerPanel = new Panel(
@@ -273,11 +263,10 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.SolutionExplorerContext.ContextKey,
             typeof(SolutionExplorerDisplay),
             null,
-            _panelService,
-            _dialogService,
+            _commonUiService,
             _commonBackgroundTaskApi);
-        _panelService.RegisterPanel(solutionExplorerPanel);
-        _panelService.RegisterPanelTab(leftPanel.Key, solutionExplorerPanel, false);
+        _commonUiService.RegisterPanel(solutionExplorerPanel);
+        _commonUiService.RegisterPanelTab(leftPanel.Key, solutionExplorerPanel, false);
 
         // SetActivePanelTabAction
         //
@@ -289,8 +278,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
     private void InitializeRightPanelTabs()
     {
-        var rightPanel = PanelFacts.GetTopRightPanelGroup(_panelService.GetPanelState());
-        rightPanel.PanelService = _panelService;
+        var rightPanel = PanelFacts.GetTopRightPanelGroup(_commonUiService.GetPanelState());
+        rightPanel.CommonUiService = _commonUiService;
 
         // compilerServiceExplorerPanel
         var compilerServiceExplorerPanel = new Panel(
@@ -300,11 +289,10 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.CompilerServiceExplorerContext.ContextKey,
             typeof(CompilerServiceExplorerDisplay),
             null,
-            _panelService,
-            _dialogService,
+            _commonUiService,
             _commonBackgroundTaskApi);
-        _panelService.RegisterPanel(compilerServiceExplorerPanel);
-        _panelService.RegisterPanelTab(rightPanel.Key, compilerServiceExplorerPanel, false);
+        _commonUiService.RegisterPanel(compilerServiceExplorerPanel);
+        _commonUiService.RegisterPanelTab(rightPanel.Key, compilerServiceExplorerPanel, false);
 
         /*// compilerServiceEditorPanel
         var compilerServiceEditorPanel = new Panel(
@@ -323,8 +311,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
     private void InitializeBottomPanelTabs()
     {
-        var bottomPanel = PanelFacts.GetBottomPanelGroup(_panelService.GetPanelState());
-        bottomPanel.PanelService = _panelService;
+        var bottomPanel = PanelFacts.GetBottomPanelGroup(_commonUiService.GetPanelState());
+        bottomPanel.CommonUiService = _commonUiService;
 
         // outputPanel
         var outputPanel = new Panel(
@@ -334,11 +322,10 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.OutputContext.ContextKey,
             typeof(OutputPanelDisplay),
             null,
-            _panelService,
-            _dialogService,
+            _commonUiService,
             _commonBackgroundTaskApi);
-        _panelService.RegisterPanel(outputPanel);
-        _panelService.RegisterPanelTab(bottomPanel.Key, outputPanel, false);
+        _commonUiService.RegisterPanel(outputPanel);
+        _commonUiService.RegisterPanelTab(bottomPanel.Key, outputPanel, false);
 
         // testExplorerPanel
         var testExplorerPanel = new Panel(
@@ -348,11 +335,10 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.TestExplorerContext.ContextKey,
             typeof(TestExplorerDisplay),
             null,
-            _panelService,
-            _dialogService,
+            _commonUiService,
             _commonBackgroundTaskApi);
-        _panelService.RegisterPanel(testExplorerPanel);
-        _panelService.RegisterPanelTab(bottomPanel.Key, testExplorerPanel, false);
+        _commonUiService.RegisterPanel(testExplorerPanel);
+        _commonUiService.RegisterPanelTab(bottomPanel.Key, testExplorerPanel, false);
         // This UI has resizable parts that need to be initialized.
         TestExplorerService.ReduceInitializeResizeHandleDimensionUnitAction(
             new DimensionUnit(
@@ -369,14 +355,13 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.NuGetPackageManagerContext.ContextKey,
             typeof(NuGetPackageManager),
             null,
-            _panelService,
-            _dialogService,
+            _commonUiService,
             _commonBackgroundTaskApi);
-        _panelService.RegisterPanel(nuGetPanel);
-        _panelService.RegisterPanelTab(bottomPanel.Key, nuGetPanel, false);
+        _commonUiService.RegisterPanel(nuGetPanel);
+        _commonUiService.RegisterPanelTab(bottomPanel.Key, nuGetPanel, false);
         
         // SetActivePanelTabAction
-        _panelService.SetActivePanelTab(bottomPanel.Key, outputPanel.Key);
+        _commonUiService.SetActivePanelTab(bottomPanel.Key, outputPanel.Key);
     }
 
     public ValueTask Do_WalkExtensionsDotNetInitializerOnAfterRender()
@@ -390,7 +375,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 return Task.CompletedTask;
             });
 
-        _ideHeaderService.ModifyMenuFile(
+        _ideService.ModifyMenuFile(
             inMenu =>
             {
                 var indexMenuOptionOpen = inMenu.MenuOptionList.FindIndex(x => x.DisplayName == "Open");
@@ -443,7 +428,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
         InitializeMenuRun();
 
-        _panelService.SetActivePanelTab(_leftPanelGroupKey, _solutionExplorerPanelKey);
+        _commonUiService.SetActivePanelTab(_leftPanelGroupKey, _solutionExplorerPanelKey);
 
         var compilerService = _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
 
@@ -467,13 +452,14 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             MenuOptionKind.Create,
             () =>
             {
-                var startupControlState = _startupControlService.GetStartupControlState();
-                var activeStartupControl = startupControlState.ActiveStartupControl;
+                var startupControlState = _ideService.GetIdeStartupControlState();
+                var activeStartupControl = startupControlState.StartupControlList.FirstOrDefault(
+    	            x => x.Key == startupControlState.ActiveStartupControlKey);
 
                 if (activeStartupControl?.StartupProjectAbsolutePath is not null)
                     BuildProjectOnClick(activeStartupControl.StartupProjectAbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(BuildProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(6));
+                    NotificationHelper.DispatchError(nameof(BuildProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 
@@ -483,13 +469,14 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             MenuOptionKind.Create,
             () =>
             {
-                var startupControlState = _startupControlService.GetStartupControlState();
-                var activeStartupControl = startupControlState.ActiveStartupControl;
+                var startupControlState = _ideService.GetIdeStartupControlState();
+                var activeStartupControl = startupControlState.StartupControlList.FirstOrDefault(
+    	            x => x.Key == startupControlState.ActiveStartupControlKey);
 
                 if (activeStartupControl?.StartupProjectAbsolutePath is not null)
                     CleanProjectOnClick(activeStartupControl.StartupProjectAbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(CleanProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(6));
+                    NotificationHelper.DispatchError(nameof(CleanProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 
@@ -505,7 +492,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 if (dotNetSolutionModel?.AbsolutePath is not null)
                     BuildSolutionOnClick(dotNetSolutionModel.AbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(BuildSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(6));
+                    NotificationHelper.DispatchError(nameof(BuildSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 
@@ -521,11 +508,11 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 if (dotNetSolutionModel?.AbsolutePath is not null)
                     CleanSolutionOnClick(dotNetSolutionModel.AbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(CleanSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(6));
+                    NotificationHelper.DispatchError(nameof(CleanSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 
-        _ideHeaderService.ModifyMenuRun(inMenu =>
+        _ideService.ModifyMenuRun(inMenu =>
         {
             // UI foreach enumeration was modified nightmare. (2025-02-07)
             var copyMenuOptionList = new List<MenuOptionRecord>(inMenu.MenuOptionList);
@@ -676,7 +663,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             true,
             null);
 
-        _dialogService.ReduceRegisterAction(dialogRecord);
+        _commonUiService.Dialog_ReduceRegisterAction(dialogRecord);
         return Task.CompletedTask;
     }
 
@@ -968,7 +955,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		        $"ERROR: nameof(_appDataService.WriteAppDataAsync)",
 		        e.ToString(),
 		        _commonComponentRenderers,
-		        _notificationService,
+		        _commonUiService,
 		        TimeSpan.FromSeconds(5));
 		}
 		
@@ -1373,7 +1360,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			$"Parse: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
 			progressBarModel,
 			_commonComponentRenderers,
-			_notificationService,
+			_commonUiService,
 			TimeSpan.FromMilliseconds(-1));
 			
 		try
@@ -1577,7 +1564,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 	
 	private void RegisterStartupControl(IDotNetProject project)
 	{
-		_startupControlService.RegisterStartupControl(
+		_ideService.RegisterStartupControl(
 			new StartupControlModel(
 				Key<IStartupControlModel>.NewKey(),
 				project.DisplayName,
@@ -1617,7 +1604,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
         	ContinueWithFunc = parsedCommand =>
         	{
         		startupControlModel.ExecutingTerminalCommandRequest = null;
-        		_startupControlService.StateChanged();
+        		_ideService.TriggerStartupControlStateChanged();
         	
         		_dotNetCliOutputParser.ParseOutputEntireDotNetRun(
         			parsedCommand.OutputCache.ToString(),
@@ -1640,7 +1627,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].KillProcess();
 		startupControlModel.ExecutingTerminalCommandRequest = null;
 		
-        _startupControlService.StateChanged();
+        _ideService.TriggerStartupControlStateChanged();
         return Task.CompletedTask;
     }
 

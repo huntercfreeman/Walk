@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
@@ -9,7 +10,6 @@ using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Widgets.Models;
 using Walk.Common.RazorLib.Notifications.Displays;
 using Walk.Common.RazorLib.Dimensions.Models;
-using Walk.Common.RazorLib.Outlines.Models;
 using Walk.Common.RazorLib.Drags.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
@@ -71,23 +71,17 @@ public static class ServiceCollectionExtensions
 				return hostingInformation.BackgroundTaskService;
 			})
             .AddScoped<CommonBackgroundTaskApi>()
-            .AddScoped<BrowserResizeInterop>()
+            .AddScoped<ICommonUiService, CommonUiService>()
             .AddScoped<IContextService, ContextService>()
-            .AddScoped<IOutlineService, OutlineService>()
-            .AddScoped<IPanelService, PanelService>()
+            .AddScoped<ITreeViewService, TreeViewService>()
+            .AddScoped<BrowserResizeInterop>()
             .AddScoped<IAppDimensionService, AppDimensionService>()
             .AddScoped<IKeymapService, KeymapService>()
-            .AddScoped<IWidgetService, WidgetService>()
             .AddScoped<IClipboardService, JavaScriptInteropClipboardService>()
-            .AddScoped<IDialogService, DialogService>()
-            .AddScoped<INotificationService, NotificationService>()
             .AddScoped<IDragService, DragService>()
-            .AddScoped<IDropdownService, DropdownService>()
             .AddScoped<IAppOptionsService, AppOptionsService>()
             .AddScoped<IStorageService, LocalStorageService>()
-            .AddScoped<IThemeService, ThemeService>()
-            .AddScoped<ITreeViewService, TreeViewService>()
-            .AddScoped<ITooltipService, TooltipService>();
+            .AddScoped<IThemeService, ThemeService>();
 
         switch (hostingInformation.WalkHostingKind)
         {

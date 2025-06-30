@@ -14,7 +14,6 @@
 @using Walk.Ide.RazorLib.Editors.Displays
 @using Walk.Ide.RazorLib.Shareds.Displays.Internals
 @using Walk.Ide.RazorLib.Settings.Displays
-@using Walk.Ide.RazorLib.StartupControls.Displays
 @using Walk.Ide.RazorLib.Shareds.Models
 
 @inherits LayoutComponentBase
@@ -53,7 +52,7 @@
     
             <button @ref="_buttonFileElementReference"
                     @onclick="RenderFileDropdownOnClick"
-    			    id="@IdeHeaderState.ButtonFileId"
+    			    id="@IdeState.ButtonFileId"
                     class="di_button"
                     style="margin-left: 15px;">
                 File
@@ -61,7 +60,7 @@
     
     		<button @ref="_buttonToolsElementReference"
                     @onclick="RenderToolsDropdownOnClick"
-    			    id="@IdeHeaderState.ButtonToolsId"
+    			    id="@IdeState.ButtonToolsId"
                     class="di_button"
                     style="margin-left: 15px;">
                 Tools
@@ -69,7 +68,7 @@
     
     		<button @ref="_buttonViewElementReference"
                     @onclick="RenderViewDropdownOnClick"
-    			    id="@IdeHeaderState.ButtonViewId"
+    			    id="@IdeState.ButtonViewId"
                     class="di_button"
                     style="margin-left: 15px;">
     			View
@@ -77,7 +76,7 @@
     
     		<button @ref="_buttonRunElementReference"
                     @onclick="RenderRunDropdownOnClick"
-    			    id="@IdeHeaderState.ButtonRunId"
+    			    id="@IdeState.ButtonRunId"
     				class="di_button"
                     style="margin-left: 15px;">
                 Run
@@ -95,7 +94,7 @@
     @* End Header *@
     
     @* Start Body *@
-    @{ var panelState = PanelService.GetPanelState(); }
+    @{ var panelState = CommonUiService.GetPanelState(); }
     
     <div class="di_ide_body"
          style="@_bodyElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder)">
@@ -123,23 +122,13 @@
     @* End Body *@
 
     <ResizableRow TopElementDimensions="_bodyElementDimensions"
-                  BottomElementDimensions="PanelFacts.GetBottomPanelGroup(PanelService.GetPanelState()).ElementDimensions"
+                  BottomElementDimensions="PanelFacts.GetBottomPanelGroup(CommonUiService.GetPanelState()).ElementDimensions"
                   ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)" />
 
     <PanelGroupDisplay PanelGroupKey="PanelFacts.BottomPanelGroupKey"
-                  CssClassString="di_ide_footer"
-                  AdjacentElementDimensions="_bodyElementDimensions"
-                  DimensionAttributeKind="DimensionAttributeKind.Height"
-                  ReRenderSelfAndAdjacentElementDimensionsFunc="() => InvokeAsync(StateHasChanged)">
-
-        <JustifyEndRenderFragment>
-        	@{ var ideMainLayoutState = IdeMainLayoutService.GetIdeMainLayoutState(); }
-        	
-        	@foreach (var footerJustifyEndComponent in ideMainLayoutState.FooterJustifyEndComponentList)
-        	{
-        		<DynamicComponent Type="footerJustifyEndComponent.ComponentType"
-        						  Parameters="footerJustifyEndComponent.ComponentParameterMap"/>
-        	}
-        </JustifyEndRenderFragment>
-    </PanelGroupDisplay>
+                       CssClassString="di_ide_footer"
+                       AdjacentElementDimensions="_bodyElementDimensions"
+                       DimensionAttributeKind="DimensionAttributeKind.Height"
+                       ReRenderSelfAndAdjacentElementDimensionsFunc="() => InvokeAsync(StateHasChanged)"
+                       BadgeList="IdeService.GetIdeState().FooterBadgeList"/>
 </div>

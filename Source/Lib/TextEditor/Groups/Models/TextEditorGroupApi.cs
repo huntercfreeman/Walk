@@ -2,6 +2,7 @@ using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Walk.TextEditor.RazorLib.Groups.Models;
@@ -11,19 +12,16 @@ public sealed class TextEditorGroupApi
 	private readonly object _stateModificationLock = new();
 
 	private readonly TextEditorService _textEditorService;
-    private readonly IPanelService _panelService;
-    private readonly IDialogService _dialogService;
+    private readonly ICommonUiService _commonUiService;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
     public TextEditorGroupApi(
         TextEditorService textEditorService,
-        IPanelService panelService,
-        IDialogService dialogService,
+        ICommonUiService commonUiService,
         CommonBackgroundTaskApi commonBackgroundTaskApi)
     {
         _textEditorService = textEditorService;
-        _panelService = panelService;
-        _dialogService = dialogService;
+        _commonUiService = commonUiService;
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
     }
 
@@ -51,8 +49,7 @@ public sealed class TextEditorGroupApi
             new List<Key<TextEditorViewModel>>(),
             category.Value,
             _textEditorService,
-            _panelService,
-            _dialogService,
+            _commonUiService,
             _commonBackgroundTaskApi);
 
         Register(textEditorGroup);

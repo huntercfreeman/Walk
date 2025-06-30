@@ -6,6 +6,7 @@ using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
@@ -17,20 +18,20 @@ namespace Walk.Extensions.DotNet.Commands;
 public class DotNetCommandFactory : IDotNetCommandFactory
 {
 	private readonly TextEditorService _textEditorService;
-	private readonly IPanelService _panelService;
+	private readonly ICommonUiService _commonUiService;
 	private readonly ITreeViewService _treeViewService;
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
 	public DotNetCommandFactory(
         TextEditorService textEditorService,
-        IPanelService panelService,
+        ICommonUiService commonUiService,
         ITreeViewService treeViewService,
 		IEnvironmentProvider environmentProvider,
 		CommonBackgroundTaskApi commonBackgroundTaskApi)
 	{
 		_textEditorService = textEditorService;
-		_panelService = panelService;
+		_commonUiService = commonUiService;
         _treeViewService = treeViewService;
 		_environmentProvider = environmentProvider;
 		_commonBackgroundTaskApi = commonBackgroundTaskApi;
@@ -55,7 +56,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
 				ContextHelper.ConstructFocusContextElementCommand(
-					ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager", _commonBackgroundTaskApi.JsRuntimeCommonApi, _panelService));
+					ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUiService));
 		}
 		// CSharpReplContext
 		{
@@ -71,12 +72,12 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
 				ContextHelper.ConstructFocusContextElementCommand(
-					ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl", _commonBackgroundTaskApi.JsRuntimeCommonApi, _panelService));
+					ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUiService));
 		}
 		// SolutionExplorerContext
 		{
 			var focusSolutionExplorerCommand = ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer", _commonBackgroundTaskApi.JsRuntimeCommonApi, _panelService);
+				ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUiService);
 
 			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
 					new KeymapArgs

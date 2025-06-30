@@ -3,13 +3,14 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Menus.Displays;
 using Walk.Common.RazorLib.JsRuntimes.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Common.RazorLib.Dropdowns.Models;
 
 public static class DropdownHelper
 {
 	public static Task RenderDropdownAsync(
-		IDropdownService dropdownService,
+		ICommonUiService commonUiService,
 		WalkCommonJavaScriptInteropApi walkCommonJavaScriptInteropApi,
 		string anchorHtmlElementId,
 		DropdownOrientation dropdownOrientation,
@@ -19,7 +20,7 @@ public static class DropdownHelper
 		bool preventScroll)
 	{
 		return RenderDropdownAsync(
-			dropdownService,
+			commonUiService,
 			walkCommonJavaScriptInteropApi,
 			anchorHtmlElementId,
 			dropdownOrientation,
@@ -43,7 +44,7 @@ public static class DropdownHelper
 	}
 
 	public static Task RenderDropdownAsync(
-		IDropdownService dropdownService,
+		ICommonUiService commonUiService,
 		WalkCommonJavaScriptInteropApi walkCommonJavaScriptInteropApi,
 		string anchorHtmlElementId,
 		DropdownOrientation dropdownOrientation,
@@ -52,7 +53,7 @@ public static class DropdownHelper
 		ElementReference? elementReferenceForReturnFocus)
 	{
 		return RenderDropdownAsync(
-			dropdownService,
+			commonUiService,
 			walkCommonJavaScriptInteropApi,
 			anchorHtmlElementId,
 			dropdownOrientation,
@@ -79,7 +80,7 @@ public static class DropdownHelper
 	}
 	
 	public static async Task RenderDropdownAsync(
-		IDropdownService dropdownService,
+		ICommonUiService commonUiService,
 		WalkCommonJavaScriptInteropApi walkCommonJavaScriptInteropApi,
 		string anchorHtmlElementId,
 		DropdownOrientation dropdownOrientation,
@@ -113,6 +114,6 @@ public static class DropdownHelper
 			},
 			restoreFocusOnClose);
 
-        dropdownService.ReduceRegisterAction(dropdownRecord);
+        commonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
 	}
 }

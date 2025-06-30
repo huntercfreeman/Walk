@@ -6,6 +6,7 @@ using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Ide.RazorLib.Menus.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.FolderExplorers.Models;
@@ -19,7 +20,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
 
@@ -116,13 +117,13 @@ public partial class FolderExplorerContextMenu : ComponentBase
             MenuOptionsFactory.CopyFile(
                 treeViewModel.Item,
                 () => {
-                    NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(7));
+                    NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", CommonComponentRenderers, CommonUiService, TimeSpan.FromSeconds(7));
                     return Task.CompletedTask;
                 }),
             MenuOptionsFactory.CutFile(
                 treeViewModel.Item,
                 () => {
-                    NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(7));
+                    NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", CommonComponentRenderers, CommonUiService, TimeSpan.FromSeconds(7));
                     ParentOfCutFile = parentTreeViewModel;
                     return Task.CompletedTask;
                 }),
@@ -131,7 +132,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
                 async () => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
             MenuOptionsFactory.RenameFile(
                 treeViewModel.Item,
-                NotificationService,
+                CommonUiService,
                 async ()  => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false))
         };
     }

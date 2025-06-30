@@ -15,6 +15,7 @@ using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Tabs.Models;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Common.RazorLib.BackgroundTasks.Models;
 
@@ -29,8 +30,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
     private readonly IStorageService _storageService;
     private readonly IAppOptionsService _appOptionsService;
     private readonly IContextService _contextService;
-    private readonly IPanelService _panelService;
-    private readonly IDialogService _dialogService;
+    private readonly ICommonUiService _commonUiService;
     private readonly ITreeViewService _treeViewService;
     private readonly WalkCommonConfig _commonConfig;
     
@@ -41,11 +41,9 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 		IStorageService storageService,
 		IAppOptionsService appOptionsService,
 		IContextService contextService,
-		IPanelService panelService,
-        IDialogService dialogService,
+		ICommonUiService commonUiService,
         ITreeViewService treeViewService,
-        WalkCommonConfig commonConfig,
-        IJSRuntime jsRuntime)
+        WalkCommonConfig commonConfig)
     {
         _backgroundTaskService = backgroundTaskService;
         _storageService = storageService;
@@ -54,17 +52,14 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 		_appOptionsService.CommonBackgroundTaskApi = this;
 
         _contextService = contextService;
-        _panelService = panelService;
-        _dialogService = dialogService;
+        _commonUiService = commonUiService;
         _treeViewService = treeViewService;
         _commonConfig = commonConfig;
             
-        JsRuntimeCommonApi = jsRuntime.GetWalkCommonApi();
-
         _treeViewService.CommonBackgroundTaskApi = this;
     }
 
-    public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
+    public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi => _commonUiService.JsRuntimeCommonApi;
     
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
     
@@ -97,8 +92,8 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
                 () =>
                 {
                     var contextState = _contextService.GetContextState();
-                    var panelState = _panelService.GetPanelState();
-                    var dialogState = _dialogService.GetDialogState();
+                    var panelState = _commonUiService.GetPanelState();
+                    var dialogState = _commonUiService.GetDialogState();
                     var menuOptionList = new List<MenuOptionRecord>();
 
                     foreach (var panel in panelState.PanelList)
@@ -112,7 +107,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 
                                 if (panelGroup is not null)
                                 {
-                                    _panelService.SetActivePanelTab(panelGroup.Key, panel.Key);
+                                    _commonUiService.SetActivePanelTab(panelGroup.Key, panel.Key);
 
                                     var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 
@@ -123,7 +118,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
                                             nameof(ContextHelper.ConstructFocusContextElementCommand),
                                             nameof(ContextHelper.ConstructFocusContextElementCommand),
                                             JsRuntimeCommonApi,
-                                            _panelService);
+                                            _commonUiService);
 
                                         await command.CommandFunc.Invoke(null).ConfigureAwait(false);
                                     }
@@ -135,7 +130,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 
                                     if (existingDialog is not null)
                                     {
-                                        _dialogService.ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
+                                        _commonUiService.Dialog_ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
 
                                         await JsRuntimeCommonApi
                                             .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)
@@ -143,8 +138,8 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
                                     }
                                     else
                                     {
-                                        _panelService.RegisterPanelTab(PanelFacts.LeftPanelGroupKey, panel, true);
-                                        _panelService.SetActivePanelTab(PanelFacts.LeftPanelGroupKey, panel.Key);
+                                        _commonUiService.RegisterPanelTab(PanelFacts.LeftPanelGroupKey, panel, true);
+                                        _commonUiService.SetActivePanelTab(PanelFacts.LeftPanelGroupKey, panel.Key);
 
                                         var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 
@@ -155,7 +150,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
                                                 nameof(ContextHelper.ConstructFocusContextElementCommand),
                                                 nameof(ContextHelper.ConstructFocusContextElementCommand),
                                                 JsRuntimeCommonApi,
-                                                _panelService);
+                                                _commonUiService);
 
                                             await command.CommandFunc.Invoke(null).ConfigureAwait(false);
                                         }

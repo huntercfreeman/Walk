@@ -1,5 +1,6 @@
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Notifications.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Common.RazorLib.FileSystems.Models;
 
@@ -9,16 +10,16 @@ public class LocalFileHandler : IFileHandler
 
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly INotificationService _notificationService;
+    private readonly ICommonUiService _commonUiService;
 
     public LocalFileHandler(
         IEnvironmentProvider environmentProvider,
         ICommonComponentRenderers commonComponentRenderers,
-        INotificationService notificationService)
+        ICommonUiService commonUiService)
     {
         _environmentProvider = environmentProvider;
         _commonComponentRenderers = commonComponentRenderers;
-        _notificationService = notificationService;
+        _commonUiService = commonUiService;
     }
 
     public Task<bool> ExistsAsync(
@@ -144,7 +145,7 @@ public class LocalFileHandler : IFileHandler
             title,
             exception.ToString(),
             _commonComponentRenderers,
-            _notificationService,
+            _commonUiService,
             TimeSpan.FromSeconds(10));
     }
 }

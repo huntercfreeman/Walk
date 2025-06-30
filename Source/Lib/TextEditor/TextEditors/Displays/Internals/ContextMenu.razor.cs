@@ -7,6 +7,7 @@ using Walk.Common.RazorLib.Clipboards.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -21,7 +22,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     [Inject]
     private IClipboardService ClipboardService { get; set; } = null!;
     [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -107,7 +108,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 					TextEditorCommandDefaultFunctions.RemoveDropdown(
 				        editContext,
 				        viewModelModifier,
-				        DropdownService);
+				        CommonUiService);
 				}
 
 				return ValueTask.CompletedTask;
@@ -132,7 +133,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 					TextEditorCommandDefaultFunctions.RemoveDropdown(
 				        editContext,
 				        viewModelModifier,
-				        DropdownService);
+				        CommonUiService);
 				}
 
 				return ValueTask.CompletedTask;
@@ -217,7 +218,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 						TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
 					        viewModelModifier,
-					        DropdownService);
+					        CommonUiService);
 					}
 
 					return ValueTask.CompletedTask;
@@ -400,7 +401,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             	viewModelModifier,
             	CommonBackgroundTaskApi.JsRuntimeCommonApi,
             	TextEditorService,
-            	DropdownService);
+            	CommonUiService);
         });
         return Task.CompletedTask;
     }
@@ -463,7 +464,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 		        EnvironmentProvider,
 		        FileSystemProvider,
 		        TextEditorService,
-		        DropdownService);
+		        CommonUiService);
         });
         return Task.CompletedTask;
     }

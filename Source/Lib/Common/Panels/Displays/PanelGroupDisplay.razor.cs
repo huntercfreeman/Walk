@@ -10,21 +10,19 @@ using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Tabs.Models;
+using Walk.Common.RazorLib.Badges.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Common.RazorLib.Panels.Displays;
 
 public partial class PanelGroupDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IPanelService PanelService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
     private IDragService DragService { get; set; } = null!;
     [Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-	private IDropdownService DropdownService { get; set; } = null!;
-    [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
@@ -42,7 +40,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     [Parameter]
     public string CssClassString { get; set; } = null!;
     [Parameter]
-    public RenderFragment? JustifyEndRenderFragment { get; set; } = null;
+    public IReadOnlyList<IBadgeModel>? BadgeList { get; set; } = null;
     
     private TabCascadingValueBatch _tabCascadingValueBatch = new();
 
@@ -68,7 +66,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
         
         DimensionAttributeModificationPurpose = $"take_size_of_adjacent_hidden_panel_{PanelGroupKey}";
     
-    	PanelService.PanelStateChanged += OnPanelStateChanged;
+    	CommonUiService.CommonUiStateChanged += OnCommonUiStateChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -96,7 +94,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
 
     private async Task PassAlongSizeIfNoActiveTab()
     {
-        var panelState = PanelService.GetPanelState();
+        var panelState = CommonUiService.GetPanelState();
         var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
         if (panelGroup is not null)
@@ -181,7 +179,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
 
     private Task TopDropzoneOnMouseUp(MouseEventArgs mouseEventArgs)
     {
-        var panelState = PanelService.GetPanelState();
+        var panelState = CommonUiService.GetPanelState();
 
         var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
@@ -192,16 +190,16 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
 
         if (panelDragEventArgs is not null)
         {
-            PanelService.DisposePanelTab(
+            CommonUiService.DisposePanelTab(
                 panelDragEventArgs.Value.PanelGroup.Key,
                 panelDragEventArgs.Value.PanelTab.Key);
 
-            PanelService.RegisterPanelTab(
+            CommonUiService.RegisterPanelTab(
                 panelGroup.Key,
                 panelDragEventArgs.Value.PanelTab,
                 true);
 
-            PanelService.SetDragEventArgs(null);
+            CommonUiService.Panel_SetDragEventArgs(null);
 
 			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(false, null);
         }
@@ -211,7 +209,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
 
     private Task BottomDropzoneOnMouseUp(MouseEventArgs mouseEventArgs)
     {
-        var panelState = PanelService.GetPanelState();
+        var panelState = CommonUiService.GetPanelState();
 
         var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
@@ -222,16 +220,16 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
 
         if (panelDragEventArgs is not null)
         {
-            PanelService.DisposePanelTab(
+            CommonUiService.DisposePanelTab(
                 panelDragEventArgs.Value.PanelGroup.Key,
                 panelDragEventArgs.Value.PanelTab.Key);
 
-            PanelService.RegisterPanelTab(
+            CommonUiService.RegisterPanelTab(
                 panelGroup.Key,
                 panelDragEventArgs.Value.PanelTab,
                 false);
 
-            PanelService.SetDragEventArgs(null);
+            CommonUiService.Panel_SetDragEventArgs(null);
 
 			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(false, null);
         }
@@ -239,9 +237,10 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
         return Task.CompletedTask;
     }
     
-    private async void OnPanelStateChanged()
+    private async void OnCommonUiStateChanged(CommonUiEventKind commonUiEventKind)
     {
-    	await InvokeAsync(StateHasChanged);
+        if (commonUiEventKind == CommonUiEventKind.PanelStateChanged)
+    	    await InvokeAsync(StateHasChanged);
     }
     
     /// <summary>
@@ -260,6 +259,6 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	PanelService.PanelStateChanged -= OnPanelStateChanged;
+    	CommonUiService.CommonUiStateChanged -= OnCommonUiStateChanged;
     }
 }

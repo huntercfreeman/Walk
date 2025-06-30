@@ -10,7 +10,6 @@ public interface IPanelTab : ITab
 {
     public Key<Panel> Key { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
-    public IPanelService PanelService { get; }
-    public IDialogService DialogService { get; }
+    public ICommonUiService CommonUiService { get; }
     public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; }
 }

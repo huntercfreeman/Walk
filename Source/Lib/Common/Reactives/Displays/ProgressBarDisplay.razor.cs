@@ -2,13 +2,14 @@ using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Notifications.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Common.RazorLib.Reactives.Displays;
 
 public partial class ProgressBarDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
 
 	[CascadingParameter]
 	public INotification? Notification { get; set; } = null!;
@@ -35,9 +36,9 @@ public partial class ProgressBarDisplay : ComponentBase, IDisposable
 				await Task.Delay(4_000);
 		        
 				if (Notification.DeleteNotificationAfterOverlayIsDismissed)
-		            NotificationService.ReduceMakeDeletedAction(Notification.DynamicViewModelKey);
+		            CommonUiService.Notification_ReduceMakeDeletedAction(Notification.DynamicViewModelKey);
 		        else
-		            NotificationService.ReduceMakeReadAction(Notification.DynamicViewModelKey);
+		            CommonUiService.Notification_ReduceMakeReadAction(Notification.DynamicViewModelKey);
 			});
 		}
         

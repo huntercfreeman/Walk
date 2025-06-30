@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Common.RazorLib.Menus.Displays;
 
 public partial class MenuDisplay : ComponentBase
 {
     [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
 
     [CascadingParameter(Name="ReturnFocusToParentFuncAsync")]
     public Func<Task>? ReturnFocusToParentFuncAsync { get; set; }
@@ -111,7 +112,7 @@ public partial class MenuDisplay : ComponentBase
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
             	if (Dropdown is not null)
-	                DropdownService.ReduceDisposeAction(Dropdown.Key);
+	                CommonUiService.Dropdown_ReduceDisposeAction(Dropdown.Key);
 
                 if (ReturnFocusToParentFuncAsync is not null)
                     await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);
@@ -138,7 +139,7 @@ public partial class MenuDisplay : ComponentBase
                 break;
             case KeyboardKeyFacts.MetaKeys.ESCAPE:
             	if (Dropdown is not null)
-	                DropdownService.ReduceDisposeAction(Dropdown.Key);
+	                CommonUiService.Dropdown_ReduceDisposeAction(Dropdown.Key);
 
                 if (ReturnFocusToParentFuncAsync is not null)
                     await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);
