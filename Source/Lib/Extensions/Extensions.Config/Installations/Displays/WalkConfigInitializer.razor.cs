@@ -4,6 +4,11 @@ using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Badges.Models;
+using Walk.Common.RazorLib.Dialogs.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Notifications.Models;
+using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.InputFiles.Displays;
@@ -37,6 +42,14 @@ public partial class WalkConfigInitializer : ComponentBase
 	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private IIdeMainLayoutService IdeMainLayoutService { get; set; } = null!;
+	[Inject]
+	private IDialogService DialogService { get; set; } = null!;
+	[Inject]
+	private INotificationService NotificationService { get; set; } = null!;
+	[Inject]
+	private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
+	
+    private static Key<IDynamicViewModel> _notificationRecordKey = Key<IDynamicViewModel>.NewKey();
 
 	protected override void OnInitialized()
 	{
@@ -83,22 +96,14 @@ public partial class WalkConfigInitializer : ComponentBase
                 }));*/
 
         IdeMainLayoutService.RegisterFooterJustifyEndComponent(
-            new FooterJustifyEndComponent(
-                Key<FooterJustifyEndComponent>.NewKey(),
-                typeof(Walk.TextEditor.RazorLib.Edits.Displays.DirtyResourceUriInteractiveIconDisplay),
-                new Dictionary<string, object?>
-                {
-                    {
-                        nameof(Walk.TextEditor.RazorLib.Edits.Displays.DirtyResourceUriInteractiveIconDisplay.CssStyleString),
-                        "margin-right: 15px;"
-                    }
-                }));
+            new DirtyResourceUriBadge(
+                DirtyResourceUriService,
+                DialogService));
 
         IdeMainLayoutService.RegisterFooterJustifyEndComponent(
-            new FooterJustifyEndComponent(
-                Key<FooterJustifyEndComponent>.NewKey(),
-                typeof(Walk.Common.RazorLib.Notifications.Displays.NotificationsInteractiveIconDisplay),
-                ComponentParameterMap: null));
+            new NotificationBadge(
+                NotificationService,
+                DialogService));
 
         return ValueTask.CompletedTask;
     }

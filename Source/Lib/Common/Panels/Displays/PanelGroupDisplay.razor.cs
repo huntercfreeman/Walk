@@ -10,6 +10,7 @@ using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Tabs.Models;
+using Walk.Common.RazorLib.Badges.Models;
 
 namespace Walk.Common.RazorLib.Panels.Displays;
 
@@ -42,7 +43,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     [Parameter]
     public string CssClassString { get; set; } = null!;
     [Parameter]
-    public RenderFragment? JustifyEndRenderFragment { get; set; } = null;
+    public IReadOnlyList<IBadgeModel>? BadgeList { get; set; } = null;
     
     private TabCascadingValueBatch _tabCascadingValueBatch = new();
 

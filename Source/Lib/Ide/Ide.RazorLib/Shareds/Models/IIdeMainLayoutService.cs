@@ -1,3 +1,5 @@
+using Walk.Common.RazorLib.Badges.Models;
+
 namespace Walk.Ide.RazorLib.Shareds.Models;
 
 public interface IIdeMainLayoutService
@@ -6,5 +8,5 @@ public interface IIdeMainLayoutService
 	
 	public IdeMainLayoutState GetIdeMainLayoutState();
 
-	public void RegisterFooterJustifyEndComponent(FooterJustifyEndComponent footerJustifyEndComponent);
+	public void RegisterFooterJustifyEndComponent(IBadgeModel badgeModel);
 }

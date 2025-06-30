@@ -127,19 +127,9 @@
                   ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)" />
 
     <PanelGroupDisplay PanelGroupKey="PanelFacts.BottomPanelGroupKey"
-                  CssClassString="di_ide_footer"
-                  AdjacentElementDimensions="_bodyElementDimensions"
-                  DimensionAttributeKind="DimensionAttributeKind.Height"
-                  ReRenderSelfAndAdjacentElementDimensionsFunc="() => InvokeAsync(StateHasChanged)">
-
-        <JustifyEndRenderFragment>
-        	@{ var ideMainLayoutState = IdeMainLayoutService.GetIdeMainLayoutState(); }
-        	
-        	@foreach (var footerJustifyEndComponent in ideMainLayoutState.FooterJustifyEndComponentList)
-        	{
-        		<DynamicComponent Type="footerJustifyEndComponent.ComponentType"
-        						  Parameters="footerJustifyEndComponent.ComponentParameterMap"/>
-        	}
-        </JustifyEndRenderFragment>
-    </PanelGroupDisplay>
+                       CssClassString="di_ide_footer"
+                       AdjacentElementDimensions="_bodyElementDimensions"
+                       DimensionAttributeKind="DimensionAttributeKind.Height"
+                       ReRenderSelfAndAdjacentElementDimensionsFunc="() => InvokeAsync(StateHasChanged)"
+                       BadgeList="IdeMainLayoutService.GetIdeMainLayoutState().FooterJustifyEndComponentList"/>
 </div>

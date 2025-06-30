@@ -1,5 +1,6 @@
 @using Walk.Common.RazorLib.Panels.Models;
 @using Walk.Common.RazorLib.Tabs.Displays;
+@using Walk.Common.RazorLib.Badges.Displays;
 
 @{
     var panelState = PanelService.GetPanelState();
@@ -44,9 +45,13 @@
 
         <div class="di_ide_panel-tabs-justify-end"
              style="display: flex;">
-            @if (JustifyEndRenderFragment is not null)
+            @if (BadgeList is not null)
             {
-                @JustifyEndRenderFragment
+                foreach (var badgeModel in BadgeList)
+            	{
+            	    <BadgeDisplay @key="badgeModel.Key"
+            	                  BadgeModel="badgeModel"/>
+            	}
             }
         </div>
 
