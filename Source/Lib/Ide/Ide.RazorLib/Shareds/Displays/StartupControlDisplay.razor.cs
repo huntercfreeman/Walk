@@ -9,7 +9,7 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.Shareds.Models;
 
-namespace Walk.Ide.RazorLib.StartupControls.Displays;
+namespace Walk.Ide.RazorLib.Shareds.Displays;
 
 public partial class StartupControlDisplay : ComponentBase, IDisposable
 {
