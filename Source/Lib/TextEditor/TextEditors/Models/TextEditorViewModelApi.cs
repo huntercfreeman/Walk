@@ -1300,9 +1300,6 @@ public sealed class TextEditorViewModelApi
 				leftCssValue = viewModel.PersistentState.GetGutterWidthCssValue();
 				topCssValue = ((lineIndex * viewModel.PersistentState.CharAndLineMeasurements.LineHeight) - (viewModel.PersistentState.CharAndLineMeasurements.LineHeight * hiddenCount)).ToString();
 			}
-			
-			var entryIndex = viewModel.Virtualization.Count - 1;
-			var hiddenLineCount = hiddenCount;
 
 			componentData.LineIndexCache.UsedKeyHashSet.Add(lineIndex);
 			
