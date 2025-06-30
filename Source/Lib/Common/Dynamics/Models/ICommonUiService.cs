@@ -1,5 +1,10 @@
 namespace Walk.Common.RazorLib.Dynamics.Models;
 
+/// <summary>
+/// This type contains any features that would otherwise have their own `I...Service`,
+/// but are too light of an implementation, and too infrequently invoked,
+/// to warrant an entire object being allocated.
+/// </summary>
 public interface ICommonUiService
 {
     /* Start IOutlineService */
