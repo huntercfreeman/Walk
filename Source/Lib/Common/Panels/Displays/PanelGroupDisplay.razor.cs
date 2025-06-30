@@ -66,7 +66,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
         
         DimensionAttributeModificationPurpose = $"take_size_of_adjacent_hidden_panel_{PanelGroupKey}";
     
-    	PanelService.PanelStateChanged += OnPanelStateChanged;
+    	CommonUiService.PanelStateChanged += OnPanelStateChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -94,7 +94,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
 
     private async Task PassAlongSizeIfNoActiveTab()
     {
-        var panelState = PanelService.GetPanelState();
+        var panelState = CommonUiService.GetPanelState();
         var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
         if (panelGroup is not null)
@@ -179,7 +179,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
 
     private Task TopDropzoneOnMouseUp(MouseEventArgs mouseEventArgs)
     {
-        var panelState = PanelService.GetPanelState();
+        var panelState = CommonUiService.GetPanelState();
 
         var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
@@ -190,16 +190,16 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
 
         if (panelDragEventArgs is not null)
         {
-            PanelService.DisposePanelTab(
+            CommonUiService.DisposePanelTab(
                 panelDragEventArgs.Value.PanelGroup.Key,
                 panelDragEventArgs.Value.PanelTab.Key);
 
-            PanelService.RegisterPanelTab(
+            CommonUiService.RegisterPanelTab(
                 panelGroup.Key,
                 panelDragEventArgs.Value.PanelTab,
                 true);
 
-            PanelService.SetDragEventArgs(null);
+            CommonUiService.Panel_SetDragEventArgs(null);
 
 			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(false, null);
         }
@@ -209,7 +209,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
 
     private Task BottomDropzoneOnMouseUp(MouseEventArgs mouseEventArgs)
     {
-        var panelState = PanelService.GetPanelState();
+        var panelState = CommonUiService.GetPanelState();
 
         var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
@@ -220,16 +220,16 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
 
         if (panelDragEventArgs is not null)
         {
-            PanelService.DisposePanelTab(
+            CommonUiService.DisposePanelTab(
                 panelDragEventArgs.Value.PanelGroup.Key,
                 panelDragEventArgs.Value.PanelTab.Key);
 
-            PanelService.RegisterPanelTab(
+            CommonUiService.RegisterPanelTab(
                 panelGroup.Key,
                 panelDragEventArgs.Value.PanelTab,
                 false);
 
-            PanelService.SetDragEventArgs(null);
+            CommonUiService.Panel_SetDragEventArgs(null);
 
 			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(false, null);
         }
@@ -258,6 +258,6 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	PanelService.PanelStateChanged -= OnPanelStateChanged;
+    	CommonUiService.PanelStateChanged -= OnPanelStateChanged;
     }
 }

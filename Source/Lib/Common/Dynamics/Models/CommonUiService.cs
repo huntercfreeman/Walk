@@ -69,7 +69,7 @@ public class CommonUiService : ICommonUiService
 	
 	public OutlineState GetOutlineState() => _outlineState;
 
-	public void Outline_SetOutline(
+	public void SetOutline(
 		string? elementId,
 		MeasuredHtmlElementDimensions? measuredHtmlElementDimensions,
 		bool needsMeasured)
@@ -92,7 +92,7 @@ public class CommonUiService : ICommonUiService
                     .MeasureElementById(elementId)
                     .ConfigureAwait(false);
 
-                SetMeasurements(
+                Outline_SetMeasurements(
                     elementId,
                     elementDimensions);
             });
@@ -135,7 +135,7 @@ public class CommonUiService : ICommonUiService
 	
 	public PanelState GetPanelState() => _panelState;
 
-    public void Panel_RegisterPanel(Panel panel)
+    public void RegisterPanel(Panel panel)
     {
         lock (_stateModificationLock)
         {
@@ -153,7 +153,7 @@ public class CommonUiService : ICommonUiService
         PanelStateChanged?.Invoke();
     }
 
-    public void Panel_DisposePanel(Key<Panel> panelKey)
+    public void DisposePanel(Key<Panel> panelKey)
     {
         lock (_stateModificationLock)
         {
@@ -172,7 +172,7 @@ public class CommonUiService : ICommonUiService
         PanelStateChanged?.Invoke();
     }
 	
-    public void Panel_RegisterPanelGroup(PanelGroup panelGroup)
+    public void RegisterPanelGroup(PanelGroup panelGroup)
     {
         lock (_stateModificationLock)
         {
@@ -190,7 +190,7 @@ public class CommonUiService : ICommonUiService
         PanelStateChanged?.Invoke();
     }
 
-    public void Panel_DisposePanelGroup(Key<PanelGroup> panelGroupKey)
+    public void DisposePanelGroup(Key<PanelGroup> panelGroupKey)
     {
         lock (_stateModificationLock)
         {
@@ -209,7 +209,7 @@ public class CommonUiService : ICommonUiService
         PanelStateChanged?.Invoke();
     }
 
-    public void Panel_RegisterPanelTab(
+    public void RegisterPanelTab(
     	Key<PanelGroup> panelGroupKey,
     	IPanelTab panelTab,
     	bool insertAtIndexZero)
@@ -250,7 +250,7 @@ public class CommonUiService : ICommonUiService
         PanelStateChanged?.Invoke();
     }
 
-    public void Panel_DisposePanelTab(Key<PanelGroup> panelGroupKey, Key<Panel> panelTabKey)
+    public void DisposePanelTab(Key<PanelGroup> panelGroupKey, Key<Panel> panelTabKey)
     {
         lock (_stateModificationLock)
         {
@@ -280,7 +280,7 @@ public class CommonUiService : ICommonUiService
         PanelStateChanged?.Invoke();
     }
 
-    public void Panel_SetActivePanelTab(Key<PanelGroup> panelGroupKey, Key<Panel> panelTabKey)
+    public void SetActivePanelTab(Key<PanelGroup> panelGroupKey, Key<Panel> panelTabKey)
     {
         var sideEffect = false;
 
@@ -310,7 +310,7 @@ public class CommonUiService : ICommonUiService
             _appDimensionService.NotifyIntraAppResize();
     }
 
-    public void Panel_SetPanelTabAsActiveByContextRecordKey(Key<ContextRecord> contextRecordKey)
+    public void SetPanelTabAsActiveByContextRecordKey(Key<ContextRecord> contextRecordKey)
     {
         lock (_stateModificationLock)
         {
@@ -419,7 +419,7 @@ public class CommonUiService : ICommonUiService
 	///           we should track where the user's focus is, then restore that focus once the
 	///           widget is closed.
 	/// </summary>
-    public void Widget_SetWidget(WidgetModel? widget)
+    public void SetWidget(WidgetModel? widget)
     {
 		var sideEffect = false;
 
@@ -470,7 +470,7 @@ public class CommonUiService : ICommonUiService
         if (inState.DialogList.Any(x => x.DynamicViewModelKey == dialog.DynamicViewModelKey))
         {
         	_ = Task.Run(async () =>
-        		await JsRuntimeCommonApi
+        		await _commonBackgroundTaskApi.JsRuntimeCommonApi
 	                .FocusHtmlElementById(dialog.DialogFocusPointHtmlElementId)
 	                .ConfigureAwait(false));
         	
@@ -925,7 +925,7 @@ public class CommonUiService : ICommonUiService
 
 	public static readonly Guid Tooltip_htmlElementIdSalt = Guid.NewGuid();
     
-	public string Tooltip_HtmlElementId { get; } = $"di_dropdown_{_htmlElementIdSalt}";
+	public string Tooltip_HtmlElementId { get; } = $"di_dropdown_{Tooltip_htmlElementIdSalt}";
 	public MeasuredHtmlElementDimensions Tooltip_HtmlElementDimensions { get; set; }
 	public MeasuredHtmlElementDimensions Tooltip_GlobalHtmlElementDimensions { get; set; }
 	public bool Tooltip_IsOffScreenHorizontally { get; }
@@ -938,7 +938,7 @@ public class CommonUiService : ICommonUiService
 	
 	public TooltipState GetTooltipState() => _tooltipState;
 	
-	public void Tooltip_SetTooltipModel(ITooltipModel tooltipModel)
+	public void SetTooltipModel(ITooltipModel tooltipModel)
 	{
 	    _tooltipState = new TooltipState(tooltipModel);
 	    TooltipStateChanged?.Invoke();

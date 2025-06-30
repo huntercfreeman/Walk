@@ -6,6 +6,7 @@ using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Reactives.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Ide.RazorLib.Terminals.Models;
 
@@ -16,7 +17,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 {
 	private readonly BackgroundTaskService _backgroundTaskService;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
-	private readonly INotificationService _notificationService;
+	private readonly ICommonUiService _commonUiService;
 	private readonly ITerminalService _terminalService;
 	
 	/// <summary>The TArgs of byte is unused</summary>
@@ -29,7 +30,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 		Func<Terminal, ITerminalOutput> terminalOutputFactory,
 		BackgroundTaskService backgroundTaskService,
 		ICommonComponentRenderers commonComponentRenderers,
-		INotificationService notificationService,
+		ICommonUiService commonUiService,
 		ITerminalService terminalService)
 	{
 		DisplayName = displayName;
@@ -39,7 +40,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 		
 		_backgroundTaskService = backgroundTaskService;
 		_commonComponentRenderers = commonComponentRenderers;
-		_notificationService = notificationService;
+		_commonUiService = commonUiService;
 		_terminalService = terminalService;
 		
 		_throttleUiUpdateFromSetHasExecutingProcess = new(
@@ -179,7 +180,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 					" threw an exception" +
 					"\n"));
 		
-			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _notificationService, TimeSpan.FromSeconds(14));
+			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(14));
 		}
 		finally
 		{

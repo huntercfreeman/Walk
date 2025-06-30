@@ -3,6 +3,7 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.Lines.Models;
@@ -25,23 +26,20 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	private readonly ITerminal _terminal;
 	private readonly TextEditorService _textEditorService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
-	private readonly IDialogService _dialogService;
-	private readonly IPanelService _panelService;
+	private readonly ICommonUiService _commonUiService;
 	private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
 	public TerminalOutputFormatterExpand(
 		ITerminal terminal,
 		TextEditorService textEditorService,
 		ICompilerServiceRegistry compilerServiceRegistry,
-		IDialogService dialogService,
-		IPanelService panelService,
+		ICommonUiService commonUiService,
         CommonBackgroundTaskApi commonBackgroundTaskApi)
 	{
 		_terminal = terminal;
 		_textEditorService = textEditorService;
 		_compilerServiceRegistry = compilerServiceRegistry;
-		_dialogService = dialogService;
-		_panelService = panelService;
+		_commonUiService = commonUiService;
 		_commonBackgroundTaskApi = commonBackgroundTaskApi;
 		
 		TextEditorModelResourceUri = new(
@@ -137,8 +135,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	            TextEditorViewModelKey,
 	            TextEditorModelResourceUri,
 	            _textEditorService,
-	            _panelService,
-	            _dialogService,
+	            _commonUiService,
 	            _commonBackgroundTaskApi,
 	            TextEditorVirtualizationResult.Empty,
 				new TextEditorDimensions(0, 0, 0, 0),

@@ -110,7 +110,7 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 					Top = outTop
 				};
 
-				DropdownService.ReduceFitOnScreenAction(outDropdown);
+				CommonUiService.Dropdown_ReduceFitOnScreenAction(outDropdown);
 			}
 		}
 	}

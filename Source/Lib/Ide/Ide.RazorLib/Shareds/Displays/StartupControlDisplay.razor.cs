@@ -6,6 +6,7 @@ using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.Shareds.Models;
 
@@ -18,9 +19,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     [Inject]
     private ITerminalService TerminalService { get; set; } = null!;
     [Inject]
-    private IPanelService PanelService { get; set; } = null!;
-    [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
     private IIdeService IdeService { get; set; } = null!;
     [Inject]
@@ -78,7 +77,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	
 	                if (!success)
 	                {
-	                    PanelService.SetPanelTabAsActiveByContextRecordKey(
+	                    CommonUiService.SetPanelTabAsActiveByContextRecordKey(
 	                        ContextFacts.OutputContext.ContextKey);
 	
 	                    _ = await TrySetFocus(ContextFacts.OutputContext).ConfigureAwait(false);
@@ -96,7 +95,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	
 	                if (!success)
 	                {
-	                    PanelService.SetPanelTabAsActiveByContextRecordKey(
+	                    CommonUiService.SetPanelTabAsActiveByContextRecordKey(
 	                        ContextFacts.TerminalContext.ContextKey);
 	
 	                    _ = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
@@ -120,7 +119,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 			    }));
 			    
 			await DropdownHelper.RenderDropdownAsync(
-    			DropdownService,
+    			CommonUiService,
     			CommonBackgroundTaskApi.JsRuntimeCommonApi,
 				_startButtonElementId,
 				DropdownOrientation.Bottom,

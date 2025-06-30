@@ -19,8 +19,7 @@ public record TextEditorGroup(
 		List<Key<TextEditorViewModel>> ViewModelKeyList,
         Category Category,
         TextEditorService TextEditorService,
-        IPanelService PanelService,
-        IDialogService DialogService,
+        ICommonUiService CommonUiService,
         CommonBackgroundTaskApi CommonBackgroundTaskApi)
      : ITabGroup
 {

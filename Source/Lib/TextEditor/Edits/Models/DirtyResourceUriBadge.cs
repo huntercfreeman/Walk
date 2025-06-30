@@ -11,14 +11,14 @@ public class DirtyResourceUriBadge : IBadgeModel
     public static readonly Key<IDynamicViewModel> DialogRecordKey = Key<IDynamicViewModel>.NewKey();
 
     private readonly IDirtyResourceUriService _dirtyResourceUriService;
-    private readonly IDialogService _dialogService;
+    private readonly ICommonUiService _commonUiService;
 
     public DirtyResourceUriBadge(
         IDirtyResourceUriService dirtyResourceUriService,
-        IDialogService dialogService)
+        ICommonUiService commonUiService)
     {
         _dirtyResourceUriService = dirtyResourceUriService;
-        _dialogService = dialogService;
+        _commonUiService = commonUiService;
     }
     
     private Func<Task>? _updateUiFunc;
@@ -29,7 +29,7 @@ public class DirtyResourceUriBadge : IBadgeModel
 	
 	public void OnClick()
 	{
-	    _dialogService.ReduceRegisterAction(new DialogViewModel(
+	    _commonUiService.Dialog_ReduceRegisterAction(new DialogViewModel(
             DialogRecordKey,
             "Unsaved Files",
             typeof(Walk.TextEditor.RazorLib.Edits.Displays.DirtyResourceUriViewDisplay),

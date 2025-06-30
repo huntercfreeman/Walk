@@ -7,6 +7,7 @@ using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.TreeViews.Models.Utils;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
@@ -27,7 +28,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
     private readonly ITreeViewService _treeViewService;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly TextEditorService _textEditorService;
-    private readonly INotificationService _notificationService;
+    private readonly ICommonUiService _commonUiService;
     private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITerminalService _terminalService;
@@ -40,7 +41,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 		ITreeViewService treeViewService,
         ICommonComponentRenderers commonComponentRenderers,
         TextEditorService textEditorService,
-        INotificationService notificationService,
+        ICommonUiService commonUiService,
         BackgroundTaskService backgroundTaskService,
         IFileSystemProvider fileSystemProvider,
         DotNetCliOutputParser dotNetCliOutputParser,
@@ -52,7 +53,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
         _treeViewService = treeViewService;
         _commonComponentRenderers = commonComponentRenderers;
 		_textEditorService = textEditorService;
-		_notificationService = notificationService;
+		_commonUiService = commonUiService;
 		_backgroundTaskService = backgroundTaskService;
 		_fileSystemProvider = fileSystemProvider;
 		_terminalService = terminalService;
@@ -518,7 +519,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 				$"Test Discovery: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
 				progressBarModel,
 				_commonComponentRenderers,
-				_notificationService,
+				_commonUiService,
 				TimeSpan.FromMilliseconds(-1));
 				
 			var progressThrottle = new Throttle(TimeSpan.FromMilliseconds(100));

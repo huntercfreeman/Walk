@@ -8,7 +8,7 @@ namespace Walk.Ide.RazorLib.InputFiles.Displays;
 public partial class InputFileBottomControls : ComponentBase
 {
     [Inject]
-    private IDialogService DialogService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
     private IInputFileService InputFileService { get; set; } = null!;
 
@@ -49,7 +49,7 @@ public partial class InputFileBottomControls : ComponentBase
         if (valid)
         {
             if (DialogRecord is not null)
-                DialogService.ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+                CommonUiService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
             await InputFileState.OnAfterSubmitFunc
                 .Invoke(InputFileState.SelectedTreeViewModel?.Item ?? default)
@@ -66,7 +66,7 @@ public partial class InputFileBottomControls : ComponentBase
     private Task CancelOnClick()
     {
         if (DialogRecord is not null)
-            DialogService.ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+            CommonUiService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
         return Task.CompletedTask;
     }

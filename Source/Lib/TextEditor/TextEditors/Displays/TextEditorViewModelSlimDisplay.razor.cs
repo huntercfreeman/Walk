@@ -14,6 +14,7 @@ using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Icons.Displays;
 using Walk.Common.RazorLib.Tooltips.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.TextEditor.RazorLib.Autocompletes.Models;
@@ -50,17 +51,11 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     [Inject]
     public ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
-    public INotificationService NotificationService { get; set; } = null!;
+    public ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
     public IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
     public IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    public IDialogService DialogService { get; set; } = null!;
-    [Inject]
-    public ITooltipService TooltipService { get; set; } = null!;
-    [Inject]
-    public IDropdownService DropdownService { get; set; } = null!;
     [Inject]
     public WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
@@ -425,7 +420,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 		        editContext,
 		        modelModifier,
 		        viewModelModifier,
-		        DropdownService,
+		        CommonUiService,
 		        ComponentData);
 			
 			return ValueTask.CompletedTask;
@@ -492,7 +487,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                                 return ValueTask.CompletedTask;
 
                             viewModelModifier.PersistentState.TooltipModel = null;
-                            TooltipService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
+                            CommonUiService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
 
 							return ValueTask.CompletedTask;
 						});

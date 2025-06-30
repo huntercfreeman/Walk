@@ -15,7 +15,7 @@ public partial class NotificationsViewDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
     {
-    	NotificationService.NotificationStateChanged += OnNotificationStateChanged;
+    	CommonUiService.NotificationStateChanged += OnNotificationStateChanged;
     }
 
     private string GetIsActiveCssClass(
@@ -29,22 +29,22 @@ public partial class NotificationsViewDisplay : ComponentBase, IDisposable
 
     private void Clear()
     {
-        NotificationService.ReduceClearDefaultAction();
+        CommonUiService.Notification_ReduceClearDefaultAction();
     }
 
     private void ClearRead()
     {
-        NotificationService.ReduceClearReadAction();
+        CommonUiService.Notification_ReduceClearReadAction();
     }
 
     private void ClearDeleted()
     {
-        NotificationService.ReduceClearDeletedAction();
+        CommonUiService.Notification_ReduceClearDeletedAction();
     }
 
     private void ClearArchived()
     {
-        NotificationService.ReduceClearArchivedAction();
+        CommonUiService.Notification_ReduceClearArchivedAction();
     }
     
     public async void OnNotificationStateChanged()
@@ -54,6 +54,6 @@ public partial class NotificationsViewDisplay : ComponentBase, IDisposable
 	
 	public void Dispose()
 	{
-		NotificationService.NotificationStateChanged -= OnNotificationStateChanged;
+		CommonUiService.NotificationStateChanged -= OnNotificationStateChanged;
 	}
 }

@@ -11,8 +11,8 @@ public class LocalFileSystemProvider : IFileSystemProvider
         ICommonComponentRenderers commonComponentRenderers,
         ICommonUiService commonUiService)
     {
-        File = new LocalFileHandler(environmentProvider, commonComponentRenderers, notificationService);
-        Directory = new LocalDirectoryHandler(environmentProvider, commonComponentRenderers, notificationService);
+        File = new LocalFileHandler(environmentProvider, commonComponentRenderers, commonUiService);
+        Directory = new LocalDirectoryHandler(environmentProvider, commonComponentRenderers, commonUiService);
     }
 
     public IFileHandler File { get; }

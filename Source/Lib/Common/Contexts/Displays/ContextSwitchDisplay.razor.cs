@@ -218,7 +218,7 @@ public partial class ContextSwitchDisplay : ComponentBase
                 _activeIndex = _flatMenuOptionList.Count - 1;
                 break;
             case "Enter":
-				WidgetService.SetWidget(null);
+				CommonUiService.SetWidget(null);
                 break;
         }
     }

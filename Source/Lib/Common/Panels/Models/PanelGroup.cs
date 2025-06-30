@@ -39,9 +39,9 @@ public record PanelGroup(
 			return Task.CompletedTask;
 
 		if (GetIsActive(tab))
-			PanelService.SetActivePanelTab(Key, Key<Panel>.Empty);
+			CommonUiService.SetActivePanelTab(Key, Key<Panel>.Empty);
 		else
-			PanelService.SetActivePanelTab(Key, panelTab.Key);
+			CommonUiService.SetActivePanelTab(Key, panelTab.Key);
 		
 		return Task.CompletedTask;
 	}
@@ -56,7 +56,7 @@ public record PanelGroup(
 		if (tab is not IPanelTab panelTab)
 			return Task.CompletedTask;
 
-		PanelService.DisposePanelTab(Key, panelTab.Key);
+		CommonUiService.DisposePanelTab(Key, panelTab.Key);
 		return Task.CompletedTask;
 	}
 

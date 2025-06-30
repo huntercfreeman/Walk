@@ -36,9 +36,9 @@ public partial class ProgressBarDisplay : ComponentBase, IDisposable
 				await Task.Delay(4_000);
 		        
 				if (Notification.DeleteNotificationAfterOverlayIsDismissed)
-		            NotificationService.ReduceMakeDeletedAction(Notification.DynamicViewModelKey);
+		            CommonUiService.Notification_ReduceMakeDeletedAction(Notification.DynamicViewModelKey);
 		        else
-		            NotificationService.ReduceMakeReadAction(Notification.DynamicViewModelKey);
+		            CommonUiService.Notification_ReduceMakeReadAction(Notification.DynamicViewModelKey);
 			});
 		}
         

@@ -43,7 +43,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
-        DialogService.ActiveDialogKeyChanged += OnActiveDialogKeyChanged;
+        CommonUiService.ActiveDialogKeyChanged += OnActiveDialogKeyChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -79,14 +79,14 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     private void ToggleIsMaximized()
     {
-        DialogService.ReduceSetIsMaximizedAction(
+        CommonUiService.Dialog_ReduceSetIsMaximizedAction(
             Dialog.DynamicViewModelKey,
             !Dialog.DialogIsMaximized);
     }
 
     private async Task DispatchDisposeDialogRecordAction()
     {
-        DialogService.ReduceDisposeAction(Dialog.DynamicViewModelKey);
+        CommonUiService.Dialog_ReduceDisposeAction(Dialog.DynamicViewModelKey);
         
         await CommonBackgroundTaskApi.JsRuntimeCommonApi
 	        .FocusHtmlElementById(Dialog.SetFocusOnCloseElementId
@@ -103,7 +103,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     private Task HandleOnFocusIn()
     {
-        DialogService.ReduceSetActiveDialogKeyAction(Dialog.DynamicViewModelKey);
+        CommonUiService.Dialog_ReduceSetActiveDialogKeyAction(Dialog.DynamicViewModelKey);
         return Task.CompletedTask;
     }
     
@@ -114,12 +114,12 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     private void HandleOnMouseDown()
     {
-        DialogService.ReduceSetActiveDialogKeyAction(Dialog.DynamicViewModelKey);
+        CommonUiService.Dialog_ReduceSetActiveDialogKeyAction(Dialog.DynamicViewModelKey);
     }
 
     public void Dispose()
     {
         AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
-        DialogService.ActiveDialogKeyChanged -= OnActiveDialogKeyChanged;
+        CommonUiService.ActiveDialogKeyChanged -= OnActiveDialogKeyChanged;
     }
 }

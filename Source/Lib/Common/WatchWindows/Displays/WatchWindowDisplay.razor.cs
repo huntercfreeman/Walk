@@ -79,7 +79,7 @@ public partial class WatchWindowDisplay : ComponentBase
 			},
 			treeViewCommandArgs.RestoreFocusToTreeView);
 
-        DropdownService.ReduceRegisterAction(dropdownRecord);
+        CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
         return Task.CompletedTask;
     }
     

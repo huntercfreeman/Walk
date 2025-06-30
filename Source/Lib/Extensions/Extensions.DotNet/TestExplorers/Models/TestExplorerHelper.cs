@@ -1,5 +1,6 @@
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Notifications.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.CompilerServices;
 
@@ -15,7 +16,7 @@ public static class TestExplorerHelper
 		string className,
 		string methodName,
 		ICommonComponentRenderers commonComponentRenderers,
-		INotificationService notificationService,
+		ICommonUiService commonUiService,
 		ICompilerServiceRegistry compilerServiceRegistry,
 		TextEditorService textEditorService,
 		IServiceProvider serviceProvider)

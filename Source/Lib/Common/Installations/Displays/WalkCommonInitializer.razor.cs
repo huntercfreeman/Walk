@@ -59,12 +59,12 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     
 	protected override void OnInitialized()
 	{
-    	DialogService.DialogStateChanged += Shared_OnStateChanged;
-    	WidgetService.WidgetStateChanged += Shared_OnStateChanged;
-    	NotificationService.NotificationStateChanged += Shared_OnStateChanged;
-    	DropdownService.DropdownStateChanged += Shared_OnStateChanged;
-		OutlineService.OutlineStateChanged += Shared_OnStateChanged;
-		TooltipService.TooltipStateChanged += Shared_OnStateChanged;
+    	CommonUiService.DialogStateChanged += Shared_OnStateChanged;
+    	CommonUiService.WidgetStateChanged += Shared_OnStateChanged;
+    	CommonUiService.NotificationStateChanged += Shared_OnStateChanged;
+    	CommonUiService.DropdownStateChanged += Shared_OnStateChanged;
+		CommonUiService.OutlineStateChanged += Shared_OnStateChanged;
+		CommonUiService.TooltipStateChanged += Shared_OnStateChanged;
 	
         CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
         {
@@ -98,26 +98,26 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 			BrowserResizeInterop.SubscribeWindowSizeChanged(CommonBackgroundTaskApi.JsRuntimeCommonApi);
 		}
 	    
-	    var tooltipModel = TooltipService.GetTooltipState().TooltipModel;
+	    var tooltipModel = CommonUiService.GetTooltipState().TooltipModel;
 	    
 	    if (tooltipModel is not null && !tooltipModel.WasRepositioned && _tooltipModelPrevious != tooltipModel)
 	    {
 	        _tooltipModelPrevious = tooltipModel;
 	        
-	        TooltipService.HtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi.MeasureElementById(
-    	        TooltipService.HtmlElementId);
-            TooltipService.GlobalHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi.MeasureElementById(
+	        CommonUiService.Tooltip_HtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi.MeasureElementById(
+    	        CommonUiService.Tooltip_HtmlElementId);
+            CommonUiService.Tooltip_GlobalHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi.MeasureElementById(
     	        ContextFacts.RootHtmlElementId);
 	    
     	    var xLarge = false;
     	    var yLarge = false;
     	    
-    	    if (tooltipModel.X + TooltipService.HtmlElementDimensions.WidthInPixels > TooltipService.GlobalHtmlElementDimensions.WidthInPixels)
+    	    if (tooltipModel.X + CommonUiService.Tooltip_HtmlElementDimensions.WidthInPixels > CommonUiService.Tooltip_GlobalHtmlElementDimensions.WidthInPixels)
     	    {
     	        xLarge = true;
     	    }
     	    
-    	    if (tooltipModel.Y + TooltipService.HtmlElementDimensions.HeightInPixels > TooltipService.GlobalHtmlElementDimensions.HeightInPixels)
+    	    if (tooltipModel.Y + CommonUiService.Tooltip_HtmlElementDimensions.HeightInPixels > CommonUiService.Tooltip_GlobalHtmlElementDimensions.HeightInPixels)
     	    {
     	        yLarge = true;
     	    }
@@ -126,14 +126,14 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     	    
     	    if (xLarge)
     	    {
-        	    tooltipModel.X = TooltipService.GlobalHtmlElementDimensions.WidthInPixels - TooltipService.HtmlElementDimensions.WidthInPixels - 5;
+        	    tooltipModel.X = CommonUiService.Tooltip_GlobalHtmlElementDimensions.WidthInPixels - CommonUiService.Tooltip_HtmlElementDimensions.WidthInPixels - 5;
         	    if (tooltipModel.X < 0)
         	        tooltipModel.X = 0;
 	        }
     	     
     	    if (yLarge)
     	    {   
-    	        tooltipModel.Y = TooltipService.GlobalHtmlElementDimensions.HeightInPixels - TooltipService.HtmlElementDimensions.HeightInPixels - 5;
+    	        tooltipModel.Y = CommonUiService.Tooltip_GlobalHtmlElementDimensions.HeightInPixels - CommonUiService.Tooltip_HtmlElementDimensions.HeightInPixels - 5;
         	    if (tooltipModel.Y < 0)
         	        tooltipModel.Y = 0;
     	    }
@@ -146,13 +146,13 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     
     private Task WIDGET_RemoveWidget()
     {
-    	WidgetService.SetWidget(null);
+    	CommonUiService.SetWidget(null);
     	return Task.CompletedTask;
     }
     
     private async Task DROPDOWN_ClearActiveKeyList()
     {
-    	var firstDropdown = DropdownService.GetDropdownState().DropdownList.FirstOrDefault();
+    	var firstDropdown = CommonUiService.GetDropdownState().DropdownList.FirstOrDefault();
     	
     	if (firstDropdown is not null)
     	{
@@ -162,7 +162,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     			await restoreFocusOnCloseFunc.Invoke();
     	}
     	
-        DropdownService.ReduceClearAction();
+        CommonUiService.Dropdown_ReduceClearAction();
     }
     
     public string OUTLINE_GetStyleCssLeft(OutlineState localOutlineState)
@@ -309,18 +309,18 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     	BackgroundTaskService.ContinuousWorker.StartAsyncTask = null;
     	BackgroundTaskService.IndefiniteWorker.StartAsyncTask = null;
     	
-		DialogService.DialogStateChanged -= Shared_OnStateChanged;
-    	WidgetService.WidgetStateChanged -= Shared_OnStateChanged;
-    	NotificationService.NotificationStateChanged -= Shared_OnStateChanged;
-        DropdownService.DropdownStateChanged -= Shared_OnStateChanged;
-    	OutlineService.OutlineStateChanged -= Shared_OnStateChanged;
-		TooltipService.TooltipStateChanged -= Shared_OnStateChanged;
+		CommonUiService.DialogStateChanged -= Shared_OnStateChanged;
+    	CommonUiService.WidgetStateChanged -= Shared_OnStateChanged;
+    	CommonUiService.NotificationStateChanged -= Shared_OnStateChanged;
+        CommonUiService.DropdownStateChanged -= Shared_OnStateChanged;
+    	CommonUiService.OutlineStateChanged -= Shared_OnStateChanged;
+		CommonUiService.TooltipStateChanged -= Shared_OnStateChanged;
 		
-		var notificationState = NotificationService.GetNotificationState();
+		var notificationState = CommonUiService.GetNotificationState();
 
         foreach (var notification in notificationState.DefaultList)
         {
-            NotificationService.ReduceDisposeAction(notification.DynamicViewModelKey);
+            CommonUiService.Notification_ReduceDisposeAction(notification.DynamicViewModelKey);
         }
     }
 }

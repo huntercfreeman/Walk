@@ -50,7 +50,7 @@ public interface ICommonUiService
 	
 	public OutlineState GetOutlineState();
 
-	public void Outline_SetOutline(
+	public void SetOutline(
 		string? elementId,
 		MeasuredHtmlElementDimensions? measuredHtmlElementDimensions,
 		bool needsMeasured);
@@ -72,19 +72,19 @@ public interface ICommonUiService
 	
 	public PanelState GetPanelState();
 	
-	public void Panel_RegisterPanel(Panel panel);
-    public void Panel_DisposePanel(Key<Panel> panelKey);
-    public void Panel_RegisterPanelGroup(PanelGroup panelGroup);
-    public void Panel_DisposePanelGroup(Key<PanelGroup> panelGroupKey);
+	public void RegisterPanel(Panel panel);
+    public void DisposePanel(Key<Panel> panelKey);
+    public void RegisterPanelGroup(PanelGroup panelGroup);
+    public void DisposePanelGroup(Key<PanelGroup> panelGroupKey);
 
-    public void Panel_RegisterPanelTab(
+    public void RegisterPanelTab(
     	Key<PanelGroup> panelGroupKey,
     	IPanelTab panelTab,
     	bool insertAtIndexZero);
 
-    public void Panel_DisposePanelTab(Key<PanelGroup> panelGroupKey, Key<Panel> panelTabKey);
-    public void Panel_SetActivePanelTab(Key<PanelGroup> panelGroupKey, Key<Panel> panelTabKey);
-    public void Panel_SetPanelTabAsActiveByContextRecordKey(Key<ContextRecord> contextRecordKey);
+    public void DisposePanelTab(Key<PanelGroup> panelGroupKey, Key<Panel> panelTabKey);
+    public void SetActivePanelTab(Key<PanelGroup> panelGroupKey, Key<Panel> panelTabKey);
+    public void SetPanelTabAsActiveByContextRecordKey(Key<ContextRecord> contextRecordKey);
     public void Panel_SetDragEventArgs((IPanelTab PanelTab, PanelGroup PanelGroup)? dragEventArgs);
     public void Panel_InitializeResizeHandleDimensionUnit(Key<PanelGroup> panelGroupKey, DimensionUnit dimensionUnit);
     /* End IPanelService */
@@ -110,7 +110,7 @@ public interface ICommonUiService
 	///           we should track where the user's focus is, then restore that focus once the
 	///           widget is closed.
 	/// </summary>
-    public void Widget_SetWidget(WidgetModel? widget);
+    public void SetWidget(WidgetModel? widget);
     /* End IWidgetService */
     
     /* Start IDialogService */
@@ -177,6 +177,6 @@ public interface ICommonUiService
 	
 	public TooltipState GetTooltipState();
 	
-	public void Tooltip_SetTooltipModel(ITooltipModel tooltipModel);
+	public void SetTooltipModel(ITooltipModel tooltipModel);
     /* End ITooltipService */
 }

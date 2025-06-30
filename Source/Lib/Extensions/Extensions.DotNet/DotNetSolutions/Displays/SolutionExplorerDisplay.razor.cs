@@ -24,11 +24,7 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
-	private IDialogService DialogService { get; set; } = null!;
-	[Inject]
-	private INotificationService NotificationService { get; set; } = null!;
-	[Inject]
-	private IDropdownService DropdownService { get; set; } = null!;
+	private ICommonUiService CommonUiService { get; set; } = null!;
 	[Inject]
 	private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
@@ -62,7 +58,7 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 			CommonComponentRenderers,
 			TextEditorService,
 			TreeViewService,
-			NotificationService,
+			CommonUiService,
 			BackgroundTaskService,
 			EnvironmentProvider);
 
@@ -89,7 +85,7 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 			},
 			null);
 
-		DropdownService.ReduceRegisterAction(dropdownRecord);
+		CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 
@@ -104,7 +100,7 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 			true,
 			null);
 
-		DialogService.ReduceRegisterAction(dialogRecord);
+		CommonUiService.Dialog_ReduceRegisterAction(dialogRecord);
 	}
 	
 	public async void OnDotNetSolutionStateChanged()

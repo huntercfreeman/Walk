@@ -29,7 +29,7 @@ public static class NotificationHelper
             true,
             null);
 
-        commonUiService.ReduceRegisterAction(notificationInformative);
+        commonUiService.Notification_ReduceRegisterAction(notificationInformative);
     }
 
     public static void DispatchError(
@@ -50,7 +50,7 @@ public static class NotificationHelper
             true,
             IErrorNotificationRendererType.CSS_CLASS_STRING);
 
-        commonUiService.ReduceRegisterAction(notificationError);
+        commonUiService.Notification_ReduceRegisterAction(notificationError);
     }
 
     public static void DispatchProgress(
@@ -74,7 +74,7 @@ public static class NotificationHelper
             true,
             null);
 
-        commonUiService.ReduceRegisterAction(notificationProgress);
+        commonUiService.Notification_ReduceRegisterAction(notificationProgress);
     }
 
     /// <summary>
@@ -105,6 +105,6 @@ public static class NotificationHelper
             true,
             IErrorNotificationRendererType.CSS_CLASS_STRING);
 
-        commonUiService.ReduceRegisterAction(notificationError);
+        commonUiService.Notification_ReduceRegisterAction(notificationError);
     }
 }

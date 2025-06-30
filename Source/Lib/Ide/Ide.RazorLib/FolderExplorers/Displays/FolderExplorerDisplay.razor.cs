@@ -7,6 +7,7 @@ using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.Ide.RazorLib.FolderExplorers.Models;
 using Walk.Ide.RazorLib.Menus.Models;
@@ -21,9 +22,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
-    [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
@@ -64,7 +63,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
             TreeViewService,
 			BackgroundTaskService,
             EnvironmentProvider,
-            NotificationService);
+            CommonUiService);
     }
 
     private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
@@ -83,7 +82,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 			},
 			restoreFocusOnClose: null);
 
-        DropdownService.ReduceRegisterAction(dropdownRecord);
+        CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 	

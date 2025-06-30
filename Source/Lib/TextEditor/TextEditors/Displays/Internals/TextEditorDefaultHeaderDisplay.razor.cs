@@ -31,15 +31,11 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 	[Inject]
 	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	[Inject]
-	private INotificationService NotificationService { get; set; } = null!;
+	private ICommonUiService CommonUiService { get; set; } = null!;
 	[Inject]
 	private IClipboardService ClipboardService { get; set; } = null!;
 	[Inject]
 	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-	[Inject]
-	private IDropdownService DropdownService { get; set; } = null!;
-	[Inject]
-	private IDialogService DialogService { get; set; } = null!;
 	[Inject]
 	private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
 
@@ -108,7 +104,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
         		modelModifier,
         		viewModelModifier,
         		CommonComponentRenderers,
-        		NotificationService);
+        		CommonUiService);
         	return ValueTask.CompletedTask;
         });
         return Task.CompletedTask;
@@ -146,7 +142,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 			true,
 			null);
 
-        DialogService.ReduceRegisterAction(dialogRecord);
+        CommonUiService.Dialog_ReduceRegisterAction(dialogRecord);
     }
 
 	public Task DoCopyOnClick(MouseEventArgs arg)
@@ -312,7 +308,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 		    MenuOptionKind.Read,
 		    onClickFunc: () =>
 		    {
-			    DropdownService.ReduceDisposeAction(dropdownKey);
+			    CommonUiService.Dropdown_ReduceDisposeAction(dropdownKey);
 		    	return Task.CompletedTask;
 		    }));
 		    
@@ -347,7 +343,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 			},
 			async () => await TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(_reloadButtonHtmlElementId));
 
-        DropdownService.ReduceRegisterAction(dropdownRecord);
+        CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
     }
 
     public Task DoRefreshOnClick()

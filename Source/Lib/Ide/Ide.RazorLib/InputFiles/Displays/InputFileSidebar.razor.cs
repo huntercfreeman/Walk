@@ -23,7 +23,7 @@ public partial class InputFileSidebar : ComponentBase
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -103,7 +103,7 @@ public partial class InputFileSidebar : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-        DropdownService.ReduceRegisterAction(dropdownRecord);
+        CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 }

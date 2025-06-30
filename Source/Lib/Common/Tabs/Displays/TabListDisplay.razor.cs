@@ -53,7 +53,7 @@ public partial class TabListDisplay : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-        DropdownService.ReduceRegisterAction(dropdownRecord);
+        CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
         return Task.CompletedTask;
     }
 }

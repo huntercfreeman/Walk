@@ -43,9 +43,7 @@ public partial class WalkConfigInitializer : ComponentBase
 	[Inject]
 	private IIdeService IdeService { get; set; } = null!;
 	[Inject]
-	private IDialogService DialogService { get; set; } = null!;
-	[Inject]
-	private INotificationService NotificationService { get; set; } = null!;
+	private ICommonUiService CommonUiService { get; set; } = null!;
 	[Inject]
 	private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
 	
@@ -86,12 +84,11 @@ public partial class WalkConfigInitializer : ComponentBase
         IdeService.RegisterFooterBadge(
             new DirtyResourceUriBadge(
                 DirtyResourceUriService,
-                DialogService));
+                CommonUiService));
 
         IdeService.RegisterFooterBadge(
             new NotificationBadge(
-                NotificationService,
-                DialogService));
+                CommonUiService));
 
         return ValueTask.CompletedTask;
     }

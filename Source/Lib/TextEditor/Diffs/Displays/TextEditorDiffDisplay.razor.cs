@@ -14,7 +14,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private IDialogService DialogService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
 
     /// <summary>
     /// If the provided <see cref="TextEditorDiffKey"/> is registered using the
@@ -97,7 +97,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 
     private void ShowCalculationOnClick()
     {
-        DialogService.ReduceDisposeAction(_detailsDialogRecord.DynamicViewModelKey);
+        CommonUiService.Dialog_ReduceDisposeAction(_detailsDialogRecord.DynamicViewModelKey);
 
         _detailsDialogRecord = _detailsDialogRecord with
         {
@@ -114,7 +114,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 			}
 		};
 
-        DialogService.ReduceRegisterAction(_detailsDialogRecord);
+        CommonUiService.Dialog_ReduceRegisterAction(_detailsDialogRecord);
     }
 
     public void Dispose()

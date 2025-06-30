@@ -145,7 +145,7 @@ public class LocalFileHandler : IFileHandler
             title,
             exception.ToString(),
             _commonComponentRenderers,
-            _notificationService,
+            _commonUiService,
             TimeSpan.FromSeconds(10));
     }
 }

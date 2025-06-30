@@ -21,11 +21,11 @@ public class NotificationBadge : IBadgeModel
 
     public Key<IBadgeModel> Key => NotificationBadgeKey;
 	public BadgeKind BadgeKind => BadgeKind.Notification;
-	public int Count => _notificationService.GetNotificationState().DefaultList.Count;
+	public int Count => _commonUiService.GetNotificationState().DefaultList.Count;
 	
 	public void OnClick()
 	{
-	    _dialogService.ReduceRegisterAction(new DialogViewModel(
+	    _commonUiService.Dialog_ReduceRegisterAction(new DialogViewModel(
             DialogRecordKey,
             "Notifications",
             typeof(Walk.Common.RazorLib.Notifications.Displays.NotificationsViewDisplay),
@@ -38,7 +38,7 @@ public class NotificationBadge : IBadgeModel
 	public void AddSubscription(Func<Task> updateUiFunc)
 	{
 	    _updateUiFunc = updateUiFunc;
-	    _notificationService.NotificationStateChanged += DoSubscription;
+	    _commonUiService.NotificationStateChanged += DoSubscription;
 	}
 	
 	public async void DoSubscription()
@@ -50,7 +50,7 @@ public class NotificationBadge : IBadgeModel
 	
 	public void DisposeSubscription()
 	{
-	    _notificationService.NotificationStateChanged -= DoSubscription;
+	    _commonUiService.NotificationStateChanged -= DoSubscription;
 	    _updateUiFunc = null;
 	}
 }

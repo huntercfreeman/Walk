@@ -38,6 +38,6 @@ public partial class WidgetDisplay : ComponentBase
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
 	{
 		if (keyboardEventArgs.Key == "Escape")
-			WidgetService.SetWidget(null);
+			CommonUiService.SetWidget(null);
 	}
 }

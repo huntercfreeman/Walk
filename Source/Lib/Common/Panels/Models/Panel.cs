@@ -24,6 +24,7 @@ public record Panel : IPanelTab, IDialog, IDrag
         Key<ContextRecord> contextRecordKey,
         Type componentType,
         Dictionary<string, object?>? componentParameterMap,
+        ICommonUiService commonUiService,
         CommonBackgroundTaskApi commonBackgroundTaskApi)
     {
         Title = title;
@@ -165,7 +166,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 			{
 				if (panelGroup is not null)
 				{
-					PanelService.DisposePanelTab(
+					CommonUiService.DisposePanelTab(
 						panelGroup.Key,
 						Key);
 				}
@@ -180,7 +181,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 				TabGroup = null;
 			}
 
-			DialogService.ReduceRegisterAction(this);
+			CommonUiService.Dialog_ReduceRegisterAction(this);
 		}
 		
 		// Create Panel Tab
@@ -189,13 +190,13 @@ public record Panel : IPanelTab, IDialog, IDrag
 			{
 				if (panelGroup is not null)
 				{
-					PanelService.DisposePanelTab(
+					CommonUiService.DisposePanelTab(
 						panelGroup.Key,
 						Key);
 				}
 				else
 				{
-					DialogService.ReduceDisposeAction(DynamicViewModelKey);
+					CommonUiService.Dialog_ReduceDisposeAction(DynamicViewModelKey);
 				}
 
 				TabGroup = null;
@@ -208,7 +209,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 				? true
 				: false;
 
-			PanelService.RegisterPanelTab(
+			CommonUiService.RegisterPanelTab(
 				panelGroupDropzone.PanelGroupKey,
 				this,
 				insertAtIndexZero);

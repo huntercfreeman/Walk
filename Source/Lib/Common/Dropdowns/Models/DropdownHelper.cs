@@ -114,6 +114,6 @@ public static class DropdownHelper
 			},
 			restoreFocusOnClose);
 
-        dropdownService.ReduceRegisterAction(dropdownRecord);
+        commonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
 	}
 }

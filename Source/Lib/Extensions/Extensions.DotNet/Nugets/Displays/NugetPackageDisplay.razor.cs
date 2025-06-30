@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.BackgroundTasks.Models;
@@ -19,7 +20,7 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public NugetPackageRecord NugetPackageRecord { get; set; } = null!;
@@ -102,7 +103,7 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
         {
         	ContinueWithFunc = parsedCommand =>
         	{
-        		NotificationHelper.DispatchInformative("Add Nuget Package Reference", $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}", CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(7));
+        		NotificationHelper.DispatchInformative("Add Nuget Package Reference", $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}", CommonComponentRenderers, CommonUiService, TimeSpan.FromSeconds(7));
 				return Task.CompletedTask;
         	}
         };

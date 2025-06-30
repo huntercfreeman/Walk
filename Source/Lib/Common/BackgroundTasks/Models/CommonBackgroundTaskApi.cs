@@ -95,8 +95,8 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
                 () =>
                 {
                     var contextState = _contextService.GetContextState();
-                    var panelState = _panelService.GetPanelState();
-                    var dialogState = _dialogService.GetDialogState();
+                    var panelState = _commonUiService.GetPanelState();
+                    var dialogState = _commonUiService.GetDialogState();
                     var menuOptionList = new List<MenuOptionRecord>();
 
                     foreach (var panel in panelState.PanelList)
@@ -110,7 +110,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 
                                 if (panelGroup is not null)
                                 {
-                                    _panelService.SetActivePanelTab(panelGroup.Key, panel.Key);
+                                    _commonUiService.SetActivePanelTab(panelGroup.Key, panel.Key);
 
                                     var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 
@@ -121,7 +121,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
                                             nameof(ContextHelper.ConstructFocusContextElementCommand),
                                             nameof(ContextHelper.ConstructFocusContextElementCommand),
                                             JsRuntimeCommonApi,
-                                            _panelService);
+                                            _commonUiService);
 
                                         await command.CommandFunc.Invoke(null).ConfigureAwait(false);
                                     }
@@ -133,7 +133,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 
                                     if (existingDialog is not null)
                                     {
-                                        _dialogService.ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
+                                        _commonUiService.Dialog_ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
 
                                         await JsRuntimeCommonApi
                                             .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)
@@ -141,8 +141,8 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
                                     }
                                     else
                                     {
-                                        _panelService.RegisterPanelTab(PanelFacts.LeftPanelGroupKey, panel, true);
-                                        _panelService.SetActivePanelTab(PanelFacts.LeftPanelGroupKey, panel.Key);
+                                        _commonUiService.RegisterPanelTab(PanelFacts.LeftPanelGroupKey, panel, true);
+                                        _commonUiService.SetActivePanelTab(PanelFacts.LeftPanelGroupKey, panel.Key);
 
                                         var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 
@@ -153,7 +153,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
                                                 nameof(ContextHelper.ConstructFocusContextElementCommand),
                                                 nameof(ContextHelper.ConstructFocusContextElementCommand),
                                                 JsRuntimeCommonApi,
-                                                _panelService);
+                                                _commonUiService);
 
                                             await command.CommandFunc.Invoke(null).ConfigureAwait(false);
                                         }

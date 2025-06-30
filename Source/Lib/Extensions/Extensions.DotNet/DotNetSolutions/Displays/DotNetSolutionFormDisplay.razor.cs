@@ -34,9 +34,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private IDialogService DialogService { get; set; } = null!;
-	[Inject]
-	private INotificationService NotificationService { get; set; } = null!;
+	private ICommonUiService CommonUiService { get; set; } = null!;
 	[Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 
@@ -121,7 +119,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	        	ContinueWithFunc = parsedCommand =>
 	        	{
 	        		// Close Dialog
-					DialogService.ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+					CommonUiService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
 					// Open the created .NET Solution
 					var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
@@ -180,9 +178,9 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 			.ConfigureAwait(false);
 
 		// Close Dialog
-		DialogService.ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+		CommonUiService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
-		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", CommonComponentRenderers, NotificationService, TimeSpan.FromSeconds(7));
+		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", CommonComponentRenderers, CommonUiService, TimeSpan.FromSeconds(7));
 
 		var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
 			solutionAbsolutePathString,

@@ -4,6 +4,7 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib.FindAlls.Models;
 using Walk.TextEditor.RazorLib.Installations.Models;
 
@@ -20,7 +21,7 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
 	[Inject]
 	private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
@@ -89,7 +90,7 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
 			},
 			null);
 
-		DropdownService.ReduceRegisterAction(dropdownRecord);
+		CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 

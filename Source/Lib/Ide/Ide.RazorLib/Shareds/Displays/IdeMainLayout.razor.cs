@@ -30,7 +30,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private IDragService DragService { get; set; } = null!;
     [Inject]
-    private IPanelService PanelService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
     private IIdeService IdeService { get; set; } = null!;
     [Inject]
@@ -45,10 +45,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
-    [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
-    [Inject]
-    private IDialogService DialogService { get; set; } = null!;
     [Inject]
     private ICommandFactory CommandFactory { get; set; } = null!;
     [Inject]
@@ -232,7 +228,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public Task RenderFileDropdownOnClick()
     {
         return DropdownHelper.RenderDropdownAsync(
-            DropdownService,
+            CommonUiService,
             CommonBackgroundTaskApi.JsRuntimeCommonApi,
             IdeState.ButtonFileId,
             DropdownOrientation.Bottom,
@@ -244,7 +240,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public Task RenderToolsDropdownOnClick()
     {
         return DropdownHelper.RenderDropdownAsync(
-            DropdownService,
+            CommonUiService,
             CommonBackgroundTaskApi.JsRuntimeCommonApi,
             IdeState.ButtonToolsId,
             DropdownOrientation.Bottom,
@@ -258,7 +254,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         InitializeMenuView();
     
         return DropdownHelper.RenderDropdownAsync(
-            DropdownService,
+            CommonUiService,
             CommonBackgroundTaskApi.JsRuntimeCommonApi,
             IdeState.ButtonViewId,
             DropdownOrientation.Bottom,
@@ -270,7 +266,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public Task RenderRunDropdownOnClick()
     {
         return DropdownHelper.RenderDropdownAsync(
-            DropdownService,
+            CommonUiService,
             CommonBackgroundTaskApi.JsRuntimeCommonApi,
             IdeState.ButtonRunId,
             DropdownOrientation.Bottom,
@@ -282,8 +278,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public void InitializeMenuView()
     {
         var menuOptionsList = new List<MenuOptionRecord>();
-        var panelState = PanelService.GetPanelState();
-        var dialogState = DialogService.GetDialogState();
+        var panelState = CommonUiService.GetPanelState();
+        var dialogState = CommonUiService.GetDialogState();
     
         foreach (var panel in panelState.PanelList)
         {
@@ -296,7 +292,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
                     if (panelGroup is not null)
                     {
-                        PanelService.SetActivePanelTab(panelGroup.Key, panel.Key);
+                        CommonUiService.SetActivePanelTab(panelGroup.Key, panel.Key);
     
                         var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
     
@@ -307,7 +303,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                                 nameof(ContextHelper.ConstructFocusContextElementCommand),
                                 nameof(ContextHelper.ConstructFocusContextElementCommand),
                                 CommonBackgroundTaskApi.JsRuntimeCommonApi,
-                                PanelService);
+                                CommonUiService);
     
                             await command.CommandFunc.Invoke(null).ConfigureAwait(false);
                         }
@@ -319,7 +315,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
                         if (existingDialog is not null)
                         {
-                            DialogService.ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
+                            CommonUiService.Dialog_ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
     
                             await CommonBackgroundTaskApi.JsRuntimeCommonApi
                                 .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)
@@ -327,8 +323,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                         }
                         else
                         {
-                            PanelService.RegisterPanelTab(PanelFacts.LeftPanelGroupKey, panel, true);
-                            PanelService.SetActivePanelTab(PanelFacts.LeftPanelGroupKey, panel.Key);
+                            CommonUiService.RegisterPanelTab(PanelFacts.LeftPanelGroupKey, panel, true);
+                            CommonUiService.SetActivePanelTab(PanelFacts.LeftPanelGroupKey, panel.Key);
     
                             var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
     
@@ -339,7 +335,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                                     nameof(ContextHelper.ConstructFocusContextElementCommand),
                                     nameof(ContextHelper.ConstructFocusContextElementCommand),
                                     CommonBackgroundTaskApi.JsRuntimeCommonApi,
-                                    PanelService);
+                                    CommonUiService);
     
                                 await command.CommandFunc.Invoke(null).ConfigureAwait(false);
                             }
@@ -371,12 +367,12 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             true,
             null);
     
-        DialogService.ReduceRegisterAction(dialogRecord);
+        CommonUiService.Dialog_ReduceRegisterAction(dialogRecord);
         return Task.CompletedTask;
     }
 
     public void DispatchRegisterDialogRecordAction() =>
-        DialogService.ReduceRegisterAction(_dialogRecord);
+        CommonUiService.Dialog_ReduceRegisterAction(_dialogRecord);
 
     public void Dispose()
     {

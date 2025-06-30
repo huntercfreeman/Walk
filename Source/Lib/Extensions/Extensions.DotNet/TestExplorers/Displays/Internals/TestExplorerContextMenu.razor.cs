@@ -9,6 +9,7 @@ using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.TreeViews.Models.Utils;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Extensions.DotNet.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.TestExplorers.Models;
@@ -31,7 +32,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
-	private IPanelService PanelService { get; set; } = null!;
+	private ICommonUiService CommonUiService { get; set; } = null!;
 
 	[CascadingParameter]
 	public TestExplorerRenderBatchValidated RenderBatch { get; set; } = null!;
@@ -354,7 +355,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		
 		DotNetCliOutputParser.ParseOutputEntireDotNetRun(output, "Unit-Test_results");
 		
-		PanelService.SetPanelTabAsActiveByContextRecordKey(contextRecord.ContextKey);
+		CommonUiService.SetPanelTabAsActiveByContextRecordKey(contextRecord.ContextKey);
 	
 		if (contextRecord != default)
 		{
@@ -363,7 +364,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		        nameof(ContextHelper.ConstructFocusContextElementCommand),
 		        nameof(ContextHelper.ConstructFocusContextElementCommand),
 		        CommonBackgroundTaskApi.JsRuntimeCommonApi,
-		        PanelService);
+		        CommonUiService);
 		        
 		    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
 		}
