@@ -1,35 +1,12 @@
-/* Start IOutlineService */
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
-/* End IOutlineService */
-
-/* Start IPanelService */
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Keys.Models;
-/*namespace*/ using Walk.Common.RazorLib.Panels.Models;
-/* End IPanelService */
-
-/* Start IWidgetService */
-/*namespace*/ using Walk.Common.RazorLib.Widgets.Models;
-/* End IWidgetService */
-
-/* Start IDialogService */
-using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.Keys.Models;
-/*namespace*/ using Walk.Common.RazorLib.Dialogs.Models;
-/* End IDialogService */
-
-/* Start INotificationService */
-using Walk.Common.RazorLib.Dynamics.Models;
-/*namespace*/ using Walk.Common.RazorLib.Notifications.Models;
-/* End INotificationService */
-
-/* Start IDropdownService */
-/*namespace*/ using Walk.Common.RazorLib.Dropdowns.Models;
-/* End IDropdownService */
-
-/* Start ITooltipService */
-/*namespace*/ using Walk.Common.RazorLib.Tooltips.Models;
-/* End ITooltipService */
+using Walk.Common.RazorLib.Panels.Models;
+using Walk.Common.RazorLib.Widgets.Models;
+using Walk.Common.RazorLib.Dialogs.Models;
+using Walk.Common.RazorLib.Notifications.Models;
+using Walk.Common.RazorLib.Dropdowns.Models;
+using Walk.Common.RazorLib.Tooltips.Models;
 
 namespace Walk.Common.RazorLib.Dynamics.Models;
 
