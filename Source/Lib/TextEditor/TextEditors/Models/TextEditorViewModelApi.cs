@@ -1090,6 +1090,13 @@ public sealed class TextEditorViewModelApi
 		
 		var entireSpan = System.Runtime.InteropServices.CollectionsMarshal.AsSpan(componentData.LineIndexCache.VirtualizationSpanList);
 		
+		int position_StartInclusiveIndex;
+		int position_EndExclusiveIndex;
+		string leftCssValue;
+		string topCssValue;
+        int virtualizationSpan_StartInclusiveIndex;
+		int virtualizationSpan_EndExclusiveIndex;
+		
 		while (true)
 		{
 			lineOffset++;
@@ -1239,13 +1246,12 @@ public sealed class TextEditorViewModelApi
 				leftInPixels = Math.Max(0, leftInPixels);
 
 				var topInPixels = lineIndex * viewModel.PersistentState.CharAndLineMeasurements.LineHeight;
-				var positionStartInclusiveIndex = line_PositionStartInclusiveIndex + localHorizontalStartingIndex;
+				position_StartInclusiveIndex = line_PositionStartInclusiveIndex + localHorizontalStartingIndex;
 				
-				var positionEndExclusiveIndex = positionStartInclusiveIndex + localHorizontalTake;
-				if (positionEndExclusiveIndex > lineInformation.UpperLineEnd.Position_StartInclusiveIndex)
-					positionEndExclusiveIndex = lineInformation.UpperLineEnd.Position_StartInclusiveIndex;
+				position_EndExclusiveIndex = position_StartInclusiveIndex + localHorizontalTake;
+				if (position_EndExclusiveIndex > lineInformation.UpperLineEnd.Position_StartInclusiveIndex)
+					position_EndExclusiveIndex = lineInformation.UpperLineEnd.Position_StartInclusiveIndex;
 				
-				string leftCssValue;
 				if (leftInPixels == 0)
 				{
 				    leftCssValue = viewModel.PersistentState.GetGutterWidthCssValue();
@@ -1258,14 +1264,7 @@ public sealed class TextEditorViewModelApi
 				    leftCssValue = (viewModel.PersistentState.GutterWidth + leftInPixels).ToString(System.Globalization.CultureInfo.InvariantCulture);
 				}
 				
-				virtualizedLineList[viewModel.Virtualization.Count++] = new TextEditorVirtualizationLine(
-					lineIndex,
-					position_StartInclusiveIndex: positionStartInclusiveIndex,
-					position_EndExclusiveIndex: positionEndExclusiveIndex,
-					virtualizationSpan_StartInclusiveIndex: 0,
-					virtualizationSpan_EndExclusiveIndex: 0,
-					leftCssValue,
-					(topInPixels - (viewModel.PersistentState.CharAndLineMeasurements.LineHeight * hiddenCount)).ToString());
+				topCssValue = (topInPixels - (viewModel.PersistentState.CharAndLineMeasurements.LineHeight * hiddenCount)).ToString();
 			}
 			else
 			{
@@ -1295,37 +1294,31 @@ public sealed class TextEditorViewModelApi
 				widthInPixels += (int)Math.Ceiling((extraWidthPerTabKey * resultTabCount) *
 					viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth);
 			
-				virtualizedLineList[viewModel.Virtualization.Count++]= new TextEditorVirtualizationLine(
-					lineIndex,
-					position_StartInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
-					position_EndExclusiveIndex: lineInformation.UpperLineEnd.Position_StartInclusiveIndex,
-					virtualizationSpan_StartInclusiveIndex: 0,
-					virtualizationSpan_EndExclusiveIndex: 0,
-					leftCssValue: viewModel.PersistentState.GetGutterWidthCssValue(),
-					topCssValue: ((lineIndex * viewModel.PersistentState.CharAndLineMeasurements.LineHeight) - (viewModel.PersistentState.CharAndLineMeasurements.LineHeight * hiddenCount)).ToString());
+				position_StartInclusiveIndex = lineInformation.Position_StartInclusiveIndex;
+				position_EndExclusiveIndex = lineInformation.UpperLineEnd.Position_StartInclusiveIndex;
+				
+				leftCssValue = viewModel.PersistentState.GetGutterWidthCssValue();
+				topCssValue = ((lineIndex * viewModel.PersistentState.CharAndLineMeasurements.LineHeight) - (viewModel.PersistentState.CharAndLineMeasurements.LineHeight * hiddenCount)).ToString();
 			}
 			
 			var entryIndex = viewModel.Virtualization.Count - 1;
 			var hiddenLineCount = hiddenCount;
+
+			componentData.LineIndexCache.UsedKeyHashSet.Add(lineIndex);
 			
-			var virtualizationEntry = viewModel.Virtualization.EntryList[entryIndex];
-			componentData.LineIndexCache.UsedKeyHashSet.Add(virtualizationEntry.LineIndex);
-			
-			var lineNumberString = (virtualizationEntry.LineIndex + 1).ToString();
-			
-    		if (virtualizationEntry.Position_EndExclusiveIndex - virtualizationEntry.Position_StartInclusiveIndex <= 0)
+			if (position_EndExclusiveIndex - position_StartInclusiveIndex <= 0)
     		{
-        	    virtualizationEntry.VirtualizationSpan_StartInclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
-        	    virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
+        	    virtualizationSpan_StartInclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
+        	    virtualizationSpan_EndExclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
     		}
     		else
     		{
-        		virtualizationEntry.VirtualizationSpan_StartInclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
+        		virtualizationSpan_StartInclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
         		
         	    var richCharacterSpan = new Span<RichCharacter>(
         	        modelModifier.RichCharacterList,
-        	        virtualizationEntry.Position_StartInclusiveIndex,
-        	        virtualizationEntry.Position_EndExclusiveIndex - virtualizationEntry.Position_StartInclusiveIndex);
+        	        position_StartInclusiveIndex,
+        	        position_EndExclusiveIndex - position_StartInclusiveIndex);
         	
         		var currentDecorationByte = richCharacterSpan[0].DecorationByte;
         	    
@@ -1418,43 +1411,49 @@ public sealed class TextEditorViewModelApi
             		text: _textEditorService.__StringBuilder.ToString()));
         		_textEditorService.__StringBuilder.Clear();
 
-        		virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
+        		virtualizationSpan_EndExclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
     		}
     		
-    		virtualizationEntry.LineNumberString = lineNumberString;
-    	    virtualizationEntry.GutterCssStyle = viewModel.Virtualization.GetGutterStyleCss(virtualizationEntry.TopCssValue);
-    	    virtualizationEntry.LineCssStyle = viewModel.Virtualization.RowSection_GetRowStyleCss(virtualizationEntry.TopCssValue, virtualizationEntry.LeftCssValue);
+    		virtualizedLineList[viewModel.Virtualization.Count++] = new TextEditorVirtualizationLine(
+    		    lineIndex,
+        	    position_StartInclusiveIndex,
+        	    position_EndExclusiveIndex,
+        	    virtualizationSpan_StartInclusiveIndex,
+        	    virtualizationSpan_EndExclusiveIndex,
+        	    leftCssValue,
+        	    topCssValue,
+        	    viewModel.Virtualization.GetGutterStyleCss(topCssValue),
+                viewModel.Virtualization.RowSection_GetRowStyleCss(topCssValue, leftCssValue),
+                (lineIndex + 1).ToString());
     		
-    		viewModel.Virtualization.EntryList[entryIndex] = virtualizationEntry;
-    		
-    		if (componentData.LineIndexCache.Map.ContainsKey(virtualizationEntry.LineIndex))
+    		if (componentData.LineIndexCache.Map.ContainsKey(lineIndex))
     		{
-    			componentData.LineIndexCache.Map[virtualizationEntry.LineIndex] = new TextEditorLineIndexCacheEntry(
-    			    topCssValue: virtualizationEntry.TopCssValue,
-        			leftCssValue: virtualizationEntry.LeftCssValue,
-    				lineNumberString: lineNumberString,
-    			    virtualizationEntry.LineIndex,
-            	    virtualizationEntry.Position_StartInclusiveIndex,
-            	    virtualizationEntry.Position_EndExclusiveIndex,
-            	    virtualizationEntry.VirtualizationSpan_StartInclusiveIndex,
-            	    virtualizationEntry.VirtualizationSpan_EndExclusiveIndex,
-            	    virtualizationEntry.GutterCssStyle,
-            	    virtualizationEntry.LineCssStyle);
+    			componentData.LineIndexCache.Map[lineIndex] = new TextEditorLineIndexCacheEntry(
+    			    topCssValue,
+        			leftCssValue,
+    				lineNumberString: virtualizedLineList[viewModel.Virtualization.Count - 1].LineNumberString,
+    			    lineIndex,
+            	    position_StartInclusiveIndex,
+            	    position_EndExclusiveIndex,
+            	    virtualizationSpan_StartInclusiveIndex,
+            	    virtualizationSpan_EndExclusiveIndex,
+            	    virtualizedLineList[viewModel.Virtualization.Count - 1].GutterCssStyle,
+            	    virtualizedLineList[viewModel.Virtualization.Count - 1].LineCssStyle);
     		}
     		else
     		{
-    			componentData.LineIndexCache.ExistsKeyList.Add(virtualizationEntry.LineIndex);
-    			componentData.LineIndexCache.Map.Add(virtualizationEntry.LineIndex, new TextEditorLineIndexCacheEntry(
-    			    topCssValue: virtualizationEntry.TopCssValue,
-        			leftCssValue: virtualizationEntry.LeftCssValue,
-    				lineNumberString: lineNumberString,
-    			    virtualizationEntry.LineIndex,
-            	    virtualizationEntry.Position_StartInclusiveIndex,
-            	    virtualizationEntry.Position_EndExclusiveIndex,
-            	    virtualizationEntry.VirtualizationSpan_StartInclusiveIndex,
-            	    virtualizationEntry.VirtualizationSpan_EndExclusiveIndex,
-            	    virtualizationEntry.GutterCssStyle,
-            	    virtualizationEntry.LineCssStyle));
+    			componentData.LineIndexCache.ExistsKeyList.Add(lineIndex);
+    			componentData.LineIndexCache.Map.Add(lineIndex, new TextEditorLineIndexCacheEntry(
+    			    topCssValue,
+        			leftCssValue,
+    				lineNumberString: virtualizedLineList[viewModel.Virtualization.Count - 1].LineNumberString,
+    			    lineIndex,
+            	    position_StartInclusiveIndex,
+            	    position_EndExclusiveIndex,
+            	    virtualizationSpan_StartInclusiveIndex,
+            	    virtualizationSpan_EndExclusiveIndex,
+            	    virtualizedLineList[viewModel.Virtualization.Count - 1].GutterCssStyle,
+            	    virtualizedLineList[viewModel.Virtualization.Count - 1].LineCssStyle));
     		}
     		
     	    _textEditorService.__StringBuilder.Clear();
