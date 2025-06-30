@@ -1468,7 +1468,6 @@ public sealed class TextEditorViewModelApi
     		
     		// WARNING CODE DUPLICATION (this also exists when copying a virtualizationEntry from cache).
     		virtualizationEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
-    		viewModel.Virtualization.EntryList[entryIndex] = virtualizationEntry;
     		
     	    var lineNumberString2 = (virtualizationEntry.LineIndex + 1).ToString();
     	    
@@ -1506,8 +1505,8 @@ public sealed class TextEditorViewModelApi
             	    virtualizationEntry.LineCssStyle));
     		}
     		
+    		viewModel.Virtualization.EntryList[entryIndex] = virtualizationEntry;
     	    _textEditorService.__StringBuilder.Clear();
-    	    viewModel.Virtualization.EntryList[entryIndex] = virtualizationEntry;
 		}
 		
 		viewModel.Virtualization.CreateUi();
