@@ -221,7 +221,12 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         return _gutterWidthCssValue;
 	}
 	
-	private int _gutterWidth;
+	/// <summary>
+    /// Pixels (px)
+    ///
+    /// The initial value cannot be 0 else any text editor without a gutter cannot detect change on the initial render.
+    /// </summary>
+	private int _gutterWidth = -2;
     public int GutterWidth
     {
         get => _gutterWidth;
