@@ -463,7 +463,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             MenuOptionKind.Create,
             () =>
             {
-                var startupControlState = _ideService.GetIdeState();
+                var startupControlState = _ideService.GetIdeStartupControlState();
                 var activeStartupControl = startupControlState.StartupControlList.FirstOrDefault(
     	            x => x.Key == startupControlState.ActiveStartupControlKey);
 
@@ -480,7 +480,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             MenuOptionKind.Create,
             () =>
             {
-                var startupControlState = _ideService.GetIdeState();
+                var startupControlState = _ideService.GetIdeStartupControlState();
                 var activeStartupControl = startupControlState.StartupControlList.FirstOrDefault(
     	            x => x.Key == startupControlState.ActiveStartupControlKey);
 
@@ -1615,7 +1615,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
         	ContinueWithFunc = parsedCommand =>
         	{
         		startupControlModel.ExecutingTerminalCommandRequest = null;
-        		_ideService.StateChanged();
+        		_ideService.TriggerStartupControlStateChanged();
         	
         		_dotNetCliOutputParser.ParseOutputEntireDotNetRun(
         			parsedCommand.OutputCache.ToString(),
@@ -1638,7 +1638,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].KillProcess();
 		startupControlModel.ExecutingTerminalCommandRequest = null;
 		
-        _ideService.StateChanged();
+        _ideService.TriggerStartupControlStateChanged();
         return Task.CompletedTask;
     }
 

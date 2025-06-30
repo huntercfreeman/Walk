@@ -35,7 +35,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     
     public string? SelectedStartupControlGuidString
     {
-    	get => IdeService.GetIdeState().ActiveStartupControlKey.Guid.ToString();
+    	get => IdeService.GetIdeStartupControlState().ActiveStartupControlKey.Guid.ToString();
     	set
     	{
     		Key<IStartupControlModel> startupControlKey = Key<IStartupControlModel>.Empty;
@@ -58,7 +58,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 
     private async Task StartProgramWithoutDebuggingOnClick(bool isExecuting)
     {
-    	var localStartupControlState = IdeService.GetIdeState();
+    	var localStartupControlState = IdeService.GetIdeStartupControlState();
     	var activeStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
     	    x => x.Key == localStartupControlState.ActiveStartupControlKey);
     	
@@ -108,7 +108,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 			    MenuOptionKind.Other,
 			    onClickFunc: () =>
 			    {
-			    	var localStartupControlState = IdeService.GetIdeState();
+			    	var localStartupControlState = IdeService.GetIdeStartupControlState();
 			    	var activeStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
     	                x => x.Key == localStartupControlState.ActiveStartupControlKey);
 			    	

@@ -343,7 +343,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				MenuOptionKind.Other,
 				() =>
 				{
-					var startupControl = IdeService.GetIdeState().StartupControlList.FirstOrDefault(
+					var startupControl = IdeService.GetIdeStartupControlState().StartupControlList.FirstOrDefault(
 						x => x.StartupProjectAbsolutePath.Value == treeViewModel.Item.AbsolutePath.Value);
 						
 					if (startupControl is null)

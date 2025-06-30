@@ -10,6 +10,7 @@ public interface IIdeService
     public event Action? StartupControlStateChanged;
     
     public IdeState GetIdeState();
+    public StartupControlState GetIdeStartupControlState();
     
     public void RegisterFooterBadge(IBadgeModel badgeModel);
 	
@@ -26,7 +27,7 @@ public interface IIdeService
 	public void RegisterStartupControl(IStartupControlModel startupControl);
 	public void DisposeStartupControl(Key<IStartupControlModel> startupControlKey);
 	public void SetActiveStartupControlKey(Key<IStartupControlModel> startupControlKey);
-	public void StateChanged();
+	public void TriggerStartupControlStateChanged();
 }
 
 

@@ -10,11 +10,13 @@ public class IdeService : IIdeService
     private readonly object _stateModificationLock = new();
     
     private IdeState _ideState = new();
+    private StartupControlState _startupControlState = new();
     
     public event Action? IdeStateChanged;
     public event Action? StartupControlStateChanged;
     
     public IdeState GetIdeState() => _ideState;
+    public StartupControlState GetIdeStartupControlState() => _startupControlState;
     
     public void RegisterFooterBadge(IBadgeModel badgeModel)
 	{
@@ -130,15 +132,15 @@ public class IdeService : IIdeService
 	{
 		lock (_stateModificationLock)
 		{
-			var indexOfStartupControl = _ideState.StartupControlList.FindIndex(
+			var indexOfStartupControl = _startupControlState.StartupControlList.FindIndex(
 				x => x.Key == startupControl.Key);
 
 			if (indexOfStartupControl == -1)
 			{
-    			var outStartupControlList = new List<IStartupControlModel>(_ideState.StartupControlList);
+    			var outStartupControlList = new List<IStartupControlModel>(_startupControlState.StartupControlList);
     			outStartupControlList.Add(startupControl);
     
-    			_ideState = _ideState with
+    			_startupControlState = _startupControlState with
     			{
     				StartupControlList = outStartupControlList
     			};
@@ -152,19 +154,19 @@ public class IdeService : IIdeService
 	{
 		lock (_stateModificationLock)
 		{
-			var indexOfStartupControl = _ideState.StartupControlList.FindIndex(
+			var indexOfStartupControl = _startupControlState.StartupControlList.FindIndex(
 				x => x.Key == startupControlKey);
 
 			if (indexOfStartupControl != -1)
             {
-                var outActiveStartupControlKey = _ideState.ActiveStartupControlKey;
-    			if (_ideState.ActiveStartupControlKey == startupControlKey)
+                var outActiveStartupControlKey = _startupControlState.ActiveStartupControlKey;
+    			if (_startupControlState.ActiveStartupControlKey == startupControlKey)
     				outActiveStartupControlKey = Key<IStartupControlModel>.Empty;
     
-    			var outStartupControlList = new List<IStartupControlModel>(_ideState.StartupControlList);
+    			var outStartupControlList = new List<IStartupControlModel>(_startupControlState.StartupControlList);
     			outStartupControlList.RemoveAt(indexOfStartupControl);
     
-    			_ideState = _ideState with
+    			_startupControlState = _startupControlState with
     			{
     				StartupControlList = outStartupControlList,
     				ActiveStartupControlKey = outActiveStartupControlKey
@@ -179,20 +181,20 @@ public class IdeService : IIdeService
 	{
 		lock (_stateModificationLock)
 		{
-			var startupControl = _ideState.StartupControlList.FirstOrDefault(
+			var startupControl = _startupControlState.StartupControlList.FirstOrDefault(
 				x => x.Key == startupControlKey);
 
 			if (startupControlKey == Key<IStartupControlModel>.Empty ||
 				startupControl is null)
 			{
-				_ideState = _ideState with
+				_startupControlState = _startupControlState with
 				{
 					ActiveStartupControlKey = Key<IStartupControlModel>.Empty
 				};
             }
             else
             {
-    			_ideState = _ideState with
+    			_startupControlState = _startupControlState with
     			{
     				ActiveStartupControlKey = startupControl.Key
     			};
@@ -202,7 +204,7 @@ public class IdeService : IIdeService
         StartupControlStateChanged?.Invoke();
     }
 	
-	public void StateChanged()
+	public void TriggerStartupControlStateChanged()
 	{
 		StartupControlStateChanged?.Invoke();
 	}

@@ -1,5 +1,5 @@
 @{
-	var localStartupControlState = IdeService.GetIdeState();
+	var localStartupControlState = IdeService.GetIdeStartupControlState();
 	var activeStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
     	    x => x.Key == localStartupControlState.ActiveStartupControlKey);
 	bool isExecuting;
