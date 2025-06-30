@@ -1113,37 +1113,31 @@ public sealed class TextEditorViewModelApi
 			
 			if (useCache)
 			{
-    			var previous = componentData.LineIndexCache.Map[lineIndex];
+			    componentData.LineIndexCache.UsedKeyHashSet.Add(lineIndex);
+    			var cacheEntryCopy = componentData.LineIndexCache.Map[lineIndex];
     			
-    			var cacheEntry = componentData.LineIndexCache.Map[lineIndex];
-    			cacheEntry.VirtualizationSpan_StartInclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
-	
-	            componentData.LineIndexCache.UsedKeyHashSet.Add(cacheEntry.LineIndex);
-    			
+    			cacheEntryCopy.VirtualizationSpan_StartInclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
 			    var smallSpan = entireSpan.Slice(
-    			    previous.VirtualizationSpan_StartInclusiveIndex,
-    			    previous.VirtualizationSpan_EndExclusiveIndex - previous.VirtualizationSpan_StartInclusiveIndex);
-    			
+    			    componentData.LineIndexCache.Map[lineIndex].VirtualizationSpan_StartInclusiveIndex,
+    			    componentData.LineIndexCache.Map[lineIndex].VirtualizationSpan_EndExclusiveIndex - componentData.LineIndexCache.Map[lineIndex].VirtualizationSpan_StartInclusiveIndex);
     			foreach (var virtualizedSpan in smallSpan)
     			{
     				viewModel.Virtualization.VirtualizationSpanList.Add(virtualizedSpan);
     			}
+    			cacheEntryCopy.VirtualizationSpan_EndExclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
     			
-    			// WARNING CODE DUPLICATION
-    			cacheEntry.VirtualizationSpan_EndExclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
+    			componentData.LineIndexCache.Map[cacheEntryCopy.LineIndex] = cacheEntryCopy;
     			virtualizedLineList[viewModel.Virtualization.Count++] = new TextEditorVirtualizationLine(
-    			    cacheEntry.LineIndex,
-            	    cacheEntry.Position_StartInclusiveIndex,
-            	    cacheEntry.Position_EndExclusiveIndex,
-            	    cacheEntry.VirtualizationSpan_StartInclusiveIndex,
-            	    cacheEntry.VirtualizationSpan_EndExclusiveIndex,
-            	    cacheEntry.LeftCssValue,
-            	    cacheEntry.TopCssValue,
-            	    cacheEntry.GutterCssStyle,
-                    cacheEntry.LineCssStyle,
-                    cacheEntry.LineNumberString);
-    			
-    			componentData.LineIndexCache.Map[cacheEntry.LineIndex] = cacheEntry;
+    			    cacheEntryCopy.LineIndex,
+            	    cacheEntryCopy.Position_StartInclusiveIndex,
+            	    cacheEntryCopy.Position_EndExclusiveIndex,
+            	    cacheEntryCopy.VirtualizationSpan_StartInclusiveIndex,
+            	    cacheEntryCopy.VirtualizationSpan_EndExclusiveIndex,
+            	    cacheEntryCopy.LeftCssValue,
+            	    cacheEntryCopy.TopCssValue,
+            	    cacheEntryCopy.GutterCssStyle,
+                    cacheEntryCopy.LineCssStyle,
+                    cacheEntryCopy.LineNumberString);
 			    continue;
 			}
 			
