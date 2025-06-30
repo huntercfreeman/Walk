@@ -5,6 +5,7 @@ using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Widgets.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Common.RazorLib.Contexts.Displays;
 
@@ -13,7 +14,7 @@ public partial class ContextSwitchDisplay : ComponentBase
 	[Inject]
 	private IContextService ContextService { get; set; } = null!;
 	[Inject]
-	private IWidgetService WidgetService { get; set; } = null!;
+	private ICommonUiService CommonUiService { get; set; } = null!;
 	
 	[CascadingParameter]
     public WidgetModel Widget { get; set; } = null!;

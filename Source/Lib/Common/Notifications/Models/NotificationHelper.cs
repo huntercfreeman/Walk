@@ -11,7 +11,7 @@ public static class NotificationHelper
         string title,
         string message,
         ICommonComponentRenderers commonComponentRenderers,
-        INotificationService notificationService,
+        ICommonUiService commonUiService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationInformative = new NotificationViewModel(
@@ -29,14 +29,14 @@ public static class NotificationHelper
             true,
             null);
 
-        notificationService.ReduceRegisterAction(notificationInformative);
+        commonUiService.ReduceRegisterAction(notificationInformative);
     }
 
     public static void DispatchError(
         string title,
         string message,
         ICommonComponentRenderers commonComponentRenderers,
-        INotificationService notificationService,
+        ICommonUiService commonUiService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
@@ -50,14 +50,14 @@ public static class NotificationHelper
             true,
             IErrorNotificationRendererType.CSS_CLASS_STRING);
 
-        notificationService.ReduceRegisterAction(notificationError);
+        commonUiService.ReduceRegisterAction(notificationError);
     }
 
     public static void DispatchProgress(
         string title,
         ProgressBarModel progressBarModel,
         ICommonComponentRenderers commonComponentRenderers,
-        INotificationService notificationService,
+        ICommonUiService commonUiService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationProgress = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
@@ -74,7 +74,7 @@ public static class NotificationHelper
             true,
             null);
 
-        notificationService.ReduceRegisterAction(notificationProgress);
+        commonUiService.ReduceRegisterAction(notificationProgress);
     }
 
     /// <summary>
@@ -91,7 +91,7 @@ public static class NotificationHelper
         string title,
         Func<string> messageFunc,
         ICommonComponentRenderers commonComponentRenderers,
-        INotificationService notificationService,
+        ICommonUiService commonUiService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
@@ -105,6 +105,6 @@ public static class NotificationHelper
             true,
             IErrorNotificationRendererType.CSS_CLASS_STRING);
 
-        notificationService.ReduceRegisterAction(notificationError);
+        commonUiService.ReduceRegisterAction(notificationError);
     }
 }

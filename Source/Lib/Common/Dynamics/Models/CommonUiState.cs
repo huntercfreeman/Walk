@@ -1,6 +1,5 @@
 /* Start IOutlineService */
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
-/*namespace*/ using Walk.Common.RazorLib.Outlines.Models;
 /* End IOutlineService */
 
 /* Start IPanelService */

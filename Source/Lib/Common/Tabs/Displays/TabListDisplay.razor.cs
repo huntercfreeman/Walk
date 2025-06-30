@@ -13,11 +13,9 @@ namespace Walk.Common.RazorLib.Tabs.Displays;
 public partial class TabListDisplay : ComponentBase
 {
 	[Inject]
-	private IDropdownService DropdownService { get; set; } = null!;
+	private ICommonUiService CommonUiService { get; set; } = null!;
 	[Inject]
     private IDragService DragService { get; set; } = null!;
-    [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]

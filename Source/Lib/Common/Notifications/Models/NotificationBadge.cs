@@ -10,15 +10,11 @@ public class NotificationBadge : IBadgeModel
     public static readonly Key<IBadgeModel> NotificationBadgeKey = Key<IBadgeModel>.NewKey();
     public static readonly Key<IDynamicViewModel> DialogRecordKey = Key<IDynamicViewModel>.NewKey();
 
-    private readonly INotificationService _notificationService;
-    private readonly IDialogService _dialogService;
+    private readonly ICommonUiService _commonUiService;
 
-    public NotificationBadge(
-        INotificationService notificationService,
-        IDialogService dialogService)
+    public NotificationBadge(ICommonUiService commonUiService)
     {
-        _notificationService = notificationService;
-        _dialogService = dialogService;
+        _commonUiService = commonUiService;
     }
     
     private Func<Task>? _updateUiFunc;

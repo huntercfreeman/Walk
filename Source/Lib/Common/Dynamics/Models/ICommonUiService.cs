@@ -1,6 +1,5 @@
 /* Start IOutlineService */
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
-/*namespace*/ using Walk.Common.RazorLib.Outlines.Models;
 /* End IOutlineService */
 
 /* Start IPanelService */
@@ -47,9 +46,9 @@ namespace Walk.Common.RazorLib.Dynamics.Models;
 public interface ICommonUiService
 {
     /* Start IOutlineService */
-	public event Action? Outline_OutlineStateChanged;
+	public event Action? OutlineStateChanged;
 	
-	public OutlineState Outline_GetOutlineState();
+	public OutlineState GetOutlineState();
 
 	public void Outline_SetOutline(
 		string? elementId,
@@ -69,9 +68,9 @@ public interface ICommonUiService
     /* End IOutlineService */
     
     /* Start IPanelService */
-	public event Action? Panel_PanelStateChanged;
+	public event Action? PanelStateChanged;
 	
-	public PanelState Panel_GetPanelState();
+	public PanelState GetPanelState();
 	
 	public void Panel_RegisterPanel(Panel panel);
     public void Panel_DisposePanel(Key<Panel> panelKey);
@@ -91,9 +90,9 @@ public interface ICommonUiService
     /* End IPanelService */
 
     /* Start IWidgetService */
-	public event Action? Widget_WidgetStateChanged;
+	public event Action? WidgetStateChanged;
 	
-	public WidgetState Widget_GetWidgetState();
+	public WidgetState GetWidgetState();
 
 	/// <summary>
 	/// When this action causes the transition from a widget being rendered,
@@ -115,14 +114,14 @@ public interface ICommonUiService
     /* End IWidgetService */
     
     /* Start IDialogService */
-	public event Action? Dialog_DialogStateChanged;
-	public event Action? Dialog_ActiveDialogKeyChanged;
+	public event Action? DialogStateChanged;
+	public event Action? ActiveDialogKeyChanged;
 	
 	/// <summary>
 	/// Capture the reference and re-use it,
 	/// because the state will change out from under you, if you continually invoke this.
 	/// </summary>
-	public DialogState Dialog_GetDialogState();
+	public DialogState GetDialogState();
 
     public void Dialog_ReduceRegisterAction(IDialog dialog);
 
@@ -135,9 +134,9 @@ public interface ICommonUiService
     /* End IDialogService */
     
     /* Start INotificationService */
-	public event Action? Notification_NotificationStateChanged;
+	public event Action? NotificationStateChanged;
 	
-	public NotificationState Notification_GetNotificationState();
+	public NotificationState GetNotificationState();
 
     public void Notification_ReduceRegisterAction(INotification notification);
     public void Notification_ReduceDisposeAction(Key<IDynamicViewModel> key);
@@ -154,9 +153,9 @@ public interface ICommonUiService
     /* End INotificationService */
     
     /* Start IDropdownService */
-	public event Action? Dropdown_DropdownStateChanged;
+	public event Action? DropdownStateChanged;
 	
-	public DropdownState Dropdown_GetDropdownState();
+	public DropdownState GetDropdownState();
 	
     public void Dropdown_ReduceRegisterAction(DropdownRecord dropdown);
     public void Dropdown_ReduceDisposeAction(Key<DropdownRecord> key);
@@ -174,9 +173,9 @@ public interface ICommonUiService
 	
 	public StringBuilder Tooltip_StyleBuilder { get; }
 
-	public event Action? Tooltip_TooltipStateChanged;
+	public event Action? TooltipStateChanged;
 	
-	public TooltipState Tooltip_GetTooltipState();
+	public TooltipState GetTooltipState();
 	
 	public void Tooltip_SetTooltipModel(ITooltipModel tooltipModel);
     /* End ITooltipService */

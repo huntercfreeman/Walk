@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Widgets.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Common.RazorLib.Widgets.Displays;
 
@@ -10,7 +11,7 @@ public partial class WidgetDisplay : ComponentBase
     [Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
     [Inject]
-    private IWidgetService WidgetService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
     
 	[Parameter, EditorRequired]
 	public WidgetModel Widget { get; set; } = null!;

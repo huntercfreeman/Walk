@@ -15,6 +15,7 @@ using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Tabs.Models;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Common.RazorLib.BackgroundTasks.Models;
 
@@ -29,8 +30,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
     private readonly IStorageService _storageService;
     private readonly IAppOptionsService _appOptionsService;
     private readonly IContextService _contextService;
-    private readonly IPanelService _panelService;
-    private readonly IDialogService _dialogService;
+    private readonly ICommonUiService _commonUiService;
     private readonly ITreeViewService _treeViewService;
     private readonly WalkCommonConfig _commonConfig;
     
@@ -41,8 +41,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 		IStorageService storageService,
 		IAppOptionsService appOptionsService,
 		IContextService contextService,
-		IPanelService panelService,
-        IDialogService dialogService,
+		ICommonUiService commonUiService,
         ITreeViewService treeViewService,
         WalkCommonConfig commonConfig,
         IJSRuntime jsRuntime)
@@ -54,8 +53,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 		_appOptionsService.CommonBackgroundTaskApi = this;
 
         _contextService = contextService;
-        _panelService = panelService;
-        _dialogService = dialogService;
+        _commonUiService = commonUiService;
         _treeViewService = treeViewService;
         _commonConfig = commonConfig;
             

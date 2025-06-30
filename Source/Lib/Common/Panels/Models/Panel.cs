@@ -24,8 +24,6 @@ public record Panel : IPanelTab, IDialog, IDrag
         Key<ContextRecord> contextRecordKey,
         Type componentType,
         Dictionary<string, object?>? componentParameterMap,
-        IPanelService panelService,
-        IDialogService dialogService,
         CommonBackgroundTaskApi commonBackgroundTaskApi)
     {
         Title = title;
@@ -35,8 +33,7 @@ public record Panel : IPanelTab, IDialog, IDrag
         ComponentType = componentType;
         ComponentParameterMap = componentParameterMap;
 
-        PanelService = panelService;
-        DialogService = dialogService;
+        CommonUiService = commonUiService;
         CommonBackgroundTaskApi = commonBackgroundTaskApi;
 
         _dragTabComponentType = typeof(DragDisplay);
@@ -49,8 +46,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 	public Key<Panel> Key { get; }
 	public Key<IDynamicViewModel> DynamicViewModelKey { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
-	public IPanelService PanelService { get;}
-    public IDialogService DialogService { get;}
+	public ICommonUiService CommonUiService { get;}
     public CommonBackgroundTaskApi CommonBackgroundTaskApi { get;}
 	public Type ComponentType { get; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; set; }

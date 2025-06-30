@@ -9,8 +9,8 @@ using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Widgets.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
-using Walk.Common.RazorLib.Outlines.Models;
 using Walk.Common.RazorLib.Tooltips.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Common.RazorLib.Installations.Displays;
 
@@ -35,17 +35,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     [Inject]
     private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
     [Inject]
-    private IDialogService DialogService { get; set; } = null!;
-    [Inject]
-    private IWidgetService WidgetService { get; set; } = null!;
-    [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
-    [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
-    [Inject]
-	public IOutlineService OutlineService { get; set; } = null!;
-    [Inject]
-	private ITooltipService TooltipService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
     
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     

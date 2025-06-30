@@ -13,7 +13,7 @@ namespace Walk.Common.RazorLib.Dialogs.Displays;
 public partial class DialogDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IDialogService DialogService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
     [Inject]

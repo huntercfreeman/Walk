@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Notifications.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Common.RazorLib.Notifications.Displays;
 
 public partial class NotificationsViewDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
     
     private readonly Action _defaultClearAction = new Action(() => { });
 

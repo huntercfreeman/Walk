@@ -11,21 +11,18 @@ using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Tabs.Models;
 using Walk.Common.RazorLib.Badges.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Common.RazorLib.Panels.Displays;
 
 public partial class PanelGroupDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IPanelService PanelService { get; set; } = null!;
+    private ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
     private IDragService DragService { get; set; } = null!;
     [Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-	private IDropdownService DropdownService { get; set; } = null!;
-    [Inject]
-    private INotificationService NotificationService { get; set; } = null!;
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]

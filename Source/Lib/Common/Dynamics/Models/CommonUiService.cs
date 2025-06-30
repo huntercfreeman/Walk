@@ -1,7 +1,6 @@
 /* Start IOutlineService */
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;    
-/*namespace*/ using Walk.Common.RazorLib.Outlines.Models;
+using Walk.Common.RazorLib.BackgroundTasks.Models;
 /* End IOutlineService */
 
 /* Start IPanelService */
@@ -50,21 +49,25 @@ namespace Walk.Common.RazorLib.Dynamics.Models;
 
 public class CommonUiService : ICommonUiService
 {
-    /* Start IOutlineService */
-    private readonly object Outline_stateModificationLock = new();
-
-    private readonly CommonBackgroundTaskApi Outline_commonBackgroundTaskApi;
-
-	public OutlineService(CommonBackgroundTaskApi commonBackgroundTaskApi)
+    private readonly object _stateModificationLock = new();
+    
+    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
+    private readonly IAppDimensionService _appDimensionService;
+    
+    public CommonUiService(
+        CommonBackgroundTaskApi commonBackgroundTaskApi,
+        IAppDimensionService appDimensionService)
 	{
-		Outline_commonBackgroundTaskApi = commonBackgroundTaskApi;
+		_commonBackgroundTaskApi = commonBackgroundTaskApi;
+		_appDimensionService = appDimensionService;
 	}
 	
-	private OutlineState Outline_outlineState = new();
+    /* Start IOutlineService */
+	private OutlineState _outlineState = new();
 		
-	public event Action? Outline_OutlineStateChanged;
+	public event Action? OutlineStateChanged;
 	
-	public OutlineState Outline_GetOutlineState() => _outlineState;
+	public OutlineState GetOutlineState() => _outlineState;
 
 	public void Outline_SetOutline(
 		string? elementId,
@@ -126,20 +129,11 @@ public class CommonUiService : ICommonUiService
     /* End IOutlineService */
     
     /* Start IPanelService */
-    private readonly object Panel_stateModificationLock = new();
-
-    private readonly IAppDimensionService Panel_appDimensionService;
-
-	public PanelService(IAppDimensionService appDimensionService)
-	{
-		Panel_appDimensionService = appDimensionService;
-	}
-
-	private PanelState Panel_panelState = new();
+	private PanelState _panelState = new();
 	
-	public event Action? Panel_PanelStateChanged;
+	public event Action? PanelStateChanged;
 	
-	public PanelState Panel_GetPanelState() => _panelState;
+	public PanelState GetPanelState() => _panelState;
 
     public void Panel_RegisterPanel(Panel panel)
     {
@@ -403,20 +397,11 @@ public class CommonUiService : ICommonUiService
     /* End IPanelService */
     
     /* Start IWidgetService */
-    private readonly object Widget_stateModificationLock = new();
-
-    private readonly CommonBackgroundTaskApi Widget_commonBackgroundTaskApi;
-
-	public WidgetService(CommonBackgroundTaskApi commonBackgroundTaskApi)
-	{
-		Widget_commonBackgroundTaskApi = commonBackgroundTaskApi;
-	}
+	private WidgetState _widgetState = new();
 	
-	private WidgetState Widget_widgetState = new();
+	public event Action? WidgetStateChanged;
 	
-	public event Action? Widget_WidgetStateChanged;
-	
-	public WidgetState GetWidgetState() => Widget_widgetState;
+	public WidgetState GetWidgetState() => _widgetState;
 
 	/// <summary>
 	/// When this action causes the transition from a widget being rendered,
@@ -470,24 +455,13 @@ public class CommonUiService : ICommonUiService
     /// TODO: Some methods just invoke a single method, so remove the redundant middle man.
     /// TODO: Thread safety.
     /// </summary>
-	private readonly IJSRuntime Dialog_jsRuntime;
-
-    public DialogService(IJSRuntime jsRuntime)
-    {
-        Dialog_jsRuntime = jsRuntime;
-    }
+    private DialogState _dialogState = new();
     
-    private WalkCommonJavaScriptInteropApi Dialog_jsRuntimeCommonApi;
-    private DialogState Dialog_dialogState = new();
-    
-    private WalkCommonJavaScriptInteropApi Dialog_JsRuntimeCommonApi => _jsRuntimeCommonApi
-		??= _jsRuntime.GetWalkCommonApi();
-		
-	public event Action? Dialog_DialogStateChanged;
+	public event Action? DialogStateChanged;
 	
-	public event Action? Dialog_ActiveDialogKeyChanged;
+	public event Action? ActiveDialogKeyChanged;
 	
-	public DialogState Dialog_GetDialogState() => _dialogState;
+	public DialogState GetDialogState() => _dialogState;
     
     public void Dialog_ReduceRegisterAction(IDialog dialog)
     {
@@ -580,13 +554,11 @@ public class CommonUiService : ICommonUiService
     /* End IDialogService */
     
     /* Start INotificationService */
-	private readonly object Notification_stateModificationLock = new();
-
-	private NotificationState Notification_notificationState = new();
+	private NotificationState _notificationState = new();
 	
-	public event Action? Notification_NotificationStateChanged;
+	public event Action? NotificationStateChanged;
 	
-	public NotificationState Notification_GetNotificationState() => _notificationState;
+	public NotificationState GetNotificationState() => _notificationState;
 
     public void Notification_ReduceRegisterAction(INotification notification)
     {
@@ -841,11 +813,11 @@ public class CommonUiService : ICommonUiService
     /* End INotificationService */
     
     /* Start IDropdownService */
-	private DropdownState Dropdown_dropdownState = new();
+	private DropdownState _dropdownState = new();
 	
-	public event Action? Dropdown_DropdownStateChanged;
+	public event Action? DropdownStateChanged;
 	
-	public DropdownState Dropdown_GetDropdownState() => _dropdownState;
+	public DropdownState GetDropdownState() => _dropdownState;
 	
     public void Dropdown_ReduceRegisterAction(DropdownRecord dropdown)
     {
@@ -949,7 +921,7 @@ public class CommonUiService : ICommonUiService
     /* End IDropdownService */
     
     /* Start ITooltipService */
-    public TooltipState Tooltip_tooltipState = new(tooltipModel: null);
+    public TooltipState _tooltipState = new(tooltipModel: null);
 
 	public static readonly Guid Tooltip_htmlElementIdSalt = Guid.NewGuid();
     
@@ -962,9 +934,9 @@ public class CommonUiService : ICommonUiService
 	
 	public StringBuilder Tooltip_StyleBuilder { get; } = new();
 	
-	public event Action? Tooltip_TooltipStateChanged;
+	public event Action? TooltipStateChanged;
 	
-	public TooltipState Tooltip_GetTooltipState() => _tooltipState;
+	public TooltipState GetTooltipState() => _tooltipState;
 	
 	public void Tooltip_SetTooltipModel(ITooltipModel tooltipModel)
 	{

@@ -1,6 +1,7 @@
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.JsRuntimes.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Common.RazorLib.Contexts.Models;
 
@@ -14,7 +15,7 @@ public static class ContextHelper
         string displayName,
         string internalIdentifier,
         WalkCommonJavaScriptInteropApi jsRuntimeCommonApi,
-        IPanelService panelService)
+        ICommonUiService commonUiService)
     {
         return new CommonCommand(
             displayName, internalIdentifier, false,
