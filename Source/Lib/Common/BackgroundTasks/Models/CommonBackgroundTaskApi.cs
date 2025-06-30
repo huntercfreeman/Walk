@@ -43,8 +43,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 		IContextService contextService,
 		ICommonUiService commonUiService,
         ITreeViewService treeViewService,
-        WalkCommonConfig commonConfig,
-        IJSRuntime jsRuntime)
+        WalkCommonConfig commonConfig)
     {
         _backgroundTaskService = backgroundTaskService;
         _storageService = storageService;
@@ -57,12 +56,10 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
         _treeViewService = treeViewService;
         _commonConfig = commonConfig;
             
-        JsRuntimeCommonApi = jsRuntime.GetWalkCommonApi();
-
         _treeViewService.CommonBackgroundTaskApi = this;
     }
 
-    public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
+    public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi => _commonUiService.JsRuntimeCommonApi;
     
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
     

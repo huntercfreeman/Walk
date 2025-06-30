@@ -1,3 +1,5 @@
+using Walk.Common.RazorLib.JsRuntimes.Models;
+
 /* Start IOutlineService */
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
 /* End IOutlineService */
@@ -45,6 +47,8 @@ namespace Walk.Common.RazorLib.Dynamics.Models;
 /// </summary>
 public interface ICommonUiService
 {
+    public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
+
     /* Start IOutlineService */
 	public event Action? OutlineStateChanged;
 	
