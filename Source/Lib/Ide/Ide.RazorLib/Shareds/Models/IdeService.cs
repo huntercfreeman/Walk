@@ -44,8 +44,6 @@ public class IdeService : IIdeService
 				MenuFile = menu
 			};
 		}
-
-        IdeStateChanged?.Invoke();
     }
 	
 	public void SetMenuTools(MenuRecord menu)
@@ -57,8 +55,6 @@ public class IdeService : IIdeService
 				MenuTools = menu
 			};
         }
-
-        IdeStateChanged?.Invoke();
     }
 	
 	public void SetMenuView(MenuRecord menu)
@@ -70,8 +66,6 @@ public class IdeService : IIdeService
 				MenuView = menu
 			};
         }
-
-        IdeStateChanged?.Invoke();
     }
 	
 	public void SetMenuRun(MenuRecord menu)
@@ -83,8 +77,6 @@ public class IdeService : IIdeService
 				MenuRun = menu
 			};
         }
-
-        IdeStateChanged?.Invoke();
     }
 	
 	public void ModifyMenuFile(Func<MenuRecord, MenuRecord> menuFunc)
@@ -96,8 +88,6 @@ public class IdeService : IIdeService
 				MenuFile = menuFunc.Invoke(_ideState.MenuFile)
 			};
         }
-
-        IdeStateChanged?.Invoke();
     }
 	
 	public void ModifyMenuTools(Func<MenuRecord, MenuRecord> menuFunc)
@@ -109,8 +99,6 @@ public class IdeService : IIdeService
 				MenuTools = menuFunc.Invoke(_ideState.MenuTools)
 			};
         }
-
-        IdeStateChanged?.Invoke();
     }
 
 	public void ModifyMenuView(Func<MenuRecord, MenuRecord> menuFunc)
@@ -122,8 +110,6 @@ public class IdeService : IIdeService
 				MenuView = menuFunc.Invoke(_ideState.MenuView)
 			};
         }
-
-        IdeStateChanged?.Invoke();
     }
 	
 	public void ModifyMenuRun(Func<MenuRecord, MenuRecord> menuFunc)
@@ -135,7 +121,5 @@ public class IdeService : IIdeService
 				MenuRun = menuFunc.Invoke(_ideState.MenuRun)
 			};
         }
-
-        IdeStateChanged?.Invoke();
     }
 }
