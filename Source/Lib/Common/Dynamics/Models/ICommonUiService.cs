@@ -1,3 +1,42 @@
+/* Start IOutlineService */
+using Walk.Common.RazorLib.JavaScriptObjects.Models;
+/*namespace*/ using Walk.Common.RazorLib.Outlines.Models;
+/* End IOutlineService */
+
+/* Start IPanelService */
+using Walk.Common.RazorLib.Contexts.Models;
+using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Dimensions.Models;
+/*namespace*/ using Walk.Common.RazorLib.Panels.Models;
+/* End IPanelService */
+
+/* Start IWidgetService */
+/*namespace*/ using Walk.Common.RazorLib.Widgets.Models;
+/* End IWidgetService */
+
+/* Start IDialogService */
+using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Keys.Models;
+/*namespace*/ using Walk.Common.RazorLib.Dialogs.Models;
+/* End IDialogService */
+
+/* Start INotificationService */
+using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Keys.Models;
+/*namespace*/ using Walk.Common.RazorLib.Notifications.Models;
+/* End INotificationService */
+
+/* Start IDropdownService */
+using Walk.Common.RazorLib.Keys.Models;
+/*namespace*/ using Walk.Common.RazorLib.Dropdowns.Models;
+/* End IDropdownService */
+
+/* Start ITooltipService */
+using System.Text;
+using Walk.Common.RazorLib.JavaScriptObjects.Models;
+/*namespace*/ using Walk.Common.RazorLib.Tooltips.Models;
+/* End ITooltipService */
+
 namespace Walk.Common.RazorLib.Dynamics.Models;
 
 /// <summary>
@@ -8,10 +47,6 @@ namespace Walk.Common.RazorLib.Dynamics.Models;
 public interface ICommonUiService
 {
     /* Start IOutlineService */
-    using Walk.Common.RazorLib.JavaScriptObjects.Models;
-
-    namespace Walk.Common.RazorLib.Outlines.Models;
-    
     public interface IOutlineService
     {
     	public event Action? OutlineStateChanged;
@@ -37,12 +72,6 @@ public interface ICommonUiService
     /* End IOutlineService */
     
     /* Start IPanelService */
-    using Walk.Common.RazorLib.Contexts.Models;
-    using Walk.Common.RazorLib.Keys.Models;
-    using Walk.Common.RazorLib.Dimensions.Models;
-    
-    namespace Walk.Common.RazorLib.Panels.Models;
-    
     public interface IPanelService
     {
     	public event Action? PanelStateChanged;
@@ -66,10 +95,8 @@ public interface ICommonUiService
         public void InitializeResizeHandleDimensionUnit(Key<PanelGroup> panelGroupKey, DimensionUnit dimensionUnit);
     }
     /* End IPanelService */
-    
-    /* Start IWidgetService */
-    namespace Walk.Common.RazorLib.Widgets.Models;
 
+    /* Start IWidgetService */
     public interface IWidgetService
     {
     	public event Action? WidgetStateChanged;
@@ -97,11 +124,6 @@ public interface ICommonUiService
     /* End IWidgetService */
     
     /* Start IDialogService */
-    using Walk.Common.RazorLib.Dynamics.Models;
-    using Walk.Common.RazorLib.Keys.Models;
-    
-    namespace Walk.Common.RazorLib.Dialogs.Models;
-    
     public interface IDialogService
     {
     	public event Action? DialogStateChanged;
@@ -125,11 +147,6 @@ public interface ICommonUiService
     /* End IDialogService */
     
     /* Start INotificationService */
-    using Walk.Common.RazorLib.Dynamics.Models;
-    using Walk.Common.RazorLib.Keys.Models;
-    
-    namespace Walk.Common.RazorLib.Notifications.Models;
-    
     public interface INotificationService
     {
     	public event Action? NotificationStateChanged;
@@ -152,10 +169,6 @@ public interface ICommonUiService
     /* End INotificationService */
     
     /* Start IDropdownService */
-    using Walk.Common.RazorLib.Keys.Models;
-
-    namespace Walk.Common.RazorLib.Dropdowns.Models;
-    
     public interface IDropdownService
     {
     	public event Action? DropdownStateChanged;
@@ -170,11 +183,6 @@ public interface ICommonUiService
     /* End IDropdownService */
     
     /* Start ITooltipService */
-    using System.Text;
-    using Walk.Common.RazorLib.JavaScriptObjects.Models;
-    
-    namespace Walk.Common.RazorLib.Tooltips.Models;
-    
     public interface ITooltipService
     {
     	public string HtmlElementId { get; }
