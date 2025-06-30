@@ -7,7 +7,6 @@ public struct TextEditorLineIndexCacheEntry
 		string topCssValue,
 		string leftCssValue,
 		string lineNumberString,
-		int hiddenLineCount,
 		int lineIndex,
 	    int position_StartInclusiveIndex,
 	    int position_EndExclusiveIndex,
@@ -19,7 +18,6 @@ public struct TextEditorLineIndexCacheEntry
 		TopCssValue = topCssValue;
 		LeftCssValue = leftCssValue;
 		LineNumberString = lineNumberString;
-		HiddenLineCount = hiddenLineCount;
 		LineIndex = lineIndex;
 	    Position_StartInclusiveIndex = position_StartInclusiveIndex;
 	    Position_EndExclusiveIndex = position_EndExclusiveIndex;
@@ -32,7 +30,6 @@ public struct TextEditorLineIndexCacheEntry
     public string TopCssValue { get; set; }
     public string LeftCssValue { get; set; }
     public string LineNumberString { get; set; }
-    public int HiddenLineCount { get; set; }
     public int LineIndex { get; }
     public int Position_StartInclusiveIndex { get; }
     public int Position_EndExclusiveIndex { get; }

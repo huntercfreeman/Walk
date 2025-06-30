@@ -61,8 +61,6 @@ public class TextEditorVirtualizationResult
 	public static TextEditorVirtualizationResult Empty { get; } = new(
         Array.Empty<TextEditorVirtualizationLine>(),
         new List<TextEditorVirtualizationSpan>(),
-        totalWidth: 0,
-        totalHeight: 0,
         resultWidth: 0,
         resultHeight: 0,
         left: 0,
@@ -78,8 +76,6 @@ public class TextEditorVirtualizationResult
     public TextEditorVirtualizationResult(
         TextEditorVirtualizationLine[] entries,
         List<TextEditorVirtualizationSpan> virtualizationSpanList,
-        int totalWidth,
-        int totalHeight,
         int resultWidth,
         int resultHeight,
         double left,
@@ -90,8 +86,6 @@ public class TextEditorVirtualizationResult
     {
         EntryList = entries;
         VirtualizationSpanList = virtualizationSpanList;
-        TotalWidth = totalWidth;
-        TotalHeight = totalHeight;
         VirtualWidth = resultWidth;
         VirtualHeight = resultHeight;
         VirtualLeft = left;
@@ -110,8 +104,6 @@ public class TextEditorVirtualizationResult
     public TextEditorVirtualizationResult(
         TextEditorVirtualizationLine[] entries,
         List<TextEditorVirtualizationSpan> virtualizationSpanList,
-        int totalWidth,
-        int totalHeight,
         int resultWidth,
         int resultHeight,
         double left,
@@ -123,8 +115,6 @@ public class TextEditorVirtualizationResult
     {
         EntryList = entries;
         VirtualizationSpanList = virtualizationSpanList;
-        TotalWidth = totalWidth;
-        TotalHeight = totalHeight;
         VirtualWidth = resultWidth;
         VirtualHeight = resultHeight;
         VirtualLeft = left;
@@ -159,19 +149,7 @@ public class TextEditorVirtualizationResult
     public int Count { get; set; }
     
     public List<TextEditorVirtualizationSpan> VirtualizationSpanList { get; init; }
-    
-    /// <summary>
-    /// Measurements are in pixels.
-    ///
-    /// Width (including non-rendered elements).
-    /// </summary>
-    public int TotalWidth { get; init; }
-    /// <summary>
-    /// Measurements are in pixels
-    ///
-    /// Height (including non-rendered elements).
-    /// </summary>
-    public int TotalHeight { get; init; }
+
     /// <summary>
     /// Measurements are in pixels
     ///
@@ -374,9 +352,10 @@ public class TextEditorVirtualizationResult
 		    Gutter_HeightWidthPaddingCssStyle = _previousState.Gutter_HeightWidthPaddingCssStyle;
 		}
 		
-		bool shouldCalculateVerticalSlider = false;
-		bool shouldCalculateHorizontalSlider = false;
-		bool shouldCalculateHorizontalScrollbar = false;
+		var shouldCalculateVerticalSlider = false;
+		var shouldCalculateHorizontalSlider = false;
+		
+		var shouldCalculateVirtualization = false;
 		
     	if (ViewModel.PersistentState.Changed_TextEditorHeight)
     	{
@@ -388,6 +367,7 @@ public class TextEditorVirtualizationResult
     	{
     	    ViewModel.PersistentState.Changed_ScrollHeight = false;
     		shouldCalculateVerticalSlider = true;
+    		shouldCalculateVirtualization = true;
 	    }
 		
     	if (ViewModel.PersistentState.Changed_ScrollTop)
@@ -400,13 +380,18 @@ public class TextEditorVirtualizationResult
     	{
     	    ViewModel.PersistentState.Changed_TextEditorWidth = false;
     		shouldCalculateHorizontalSlider = true;
-    		shouldCalculateHorizontalScrollbar = true;
+    		HORIZONTAL_GetScrollbarHorizontalStyleCss();
 	    }
+	    else
+	    {
+		    HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;
+		}
 		
     	if (ViewModel.PersistentState.Changed_ScrollWidth)
     	{
     	    ViewModel.PersistentState.Changed_ScrollWidth = false;
     		shouldCalculateHorizontalSlider = true;
+    		shouldCalculateVirtualization = true;
 	    }
 		
     	if (ViewModel.PersistentState.Changed_ScrollLeft)
@@ -424,13 +409,8 @@ public class TextEditorVirtualizationResult
 			HORIZONTAL_GetSliderHorizontalStyleCss();
 		else
 		    HORIZONTAL_SliderCssStyle = _previousState.HORIZONTAL_SliderCssStyle;
-		
-		if (shouldCalculateHorizontalScrollbar)
-			HORIZONTAL_GetScrollbarHorizontalStyleCss();
-		else
-		    HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;
     
-        if (TotalWidth != _previousState.TotalWidth || TotalHeight != _previousState.TotalHeight)
+        if (shouldCalculateVirtualization)
     	    ConstructVirtualizationStyleCssStrings();
 	    else
 	        BothVirtualizationBoundaryStyleCssString = _previousState.BothVirtualizationBoundaryStyleCssString;
@@ -449,13 +429,9 @@ public class TextEditorVirtualizationResult
             // viewable will show no matter how far away you scroll because it won't update.
             //
             if (TextEditorSelectionHelper.HasSelectedText(ViewModel))
-            {
                 GetSelection();
-            }
             else
-            {
                 SelectionStyleList = _previousState.SelectionStyleList;
-            }
         }
         
         FirstPresentationLayerGroupStartInclusiveIndex = PresentationLayerGroupList.Count;
@@ -531,11 +507,11 @@ public class TextEditorVirtualizationResult
 		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
 		
     	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("width: ");
-    	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(TotalWidth.ToString());
+    	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ViewModel.PersistentState.ScrollWidth.ToString());
     	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px; ");
     	
     	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("height: ");
-    	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(TotalHeight.ToString());
+    	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ViewModel.PersistentState.ScrollHeight.ToString());
     	ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
     	
     	BothVirtualizationBoundaryStyleCssString = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
