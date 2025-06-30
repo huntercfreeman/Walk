@@ -43,7 +43,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
-        CommonUiService.ActiveDialogKeyChanged += OnActiveDialogKeyChanged;
+        CommonUiService.CommonUiStateChanged += OnCommonUiStateChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -56,9 +56,10 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         }
     }
 
-    private async void OnActiveDialogKeyChanged()
+    private async void OnCommonUiStateChanged(CommonUiEventKind commonUiEventKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (commonUiEventKind == CommonUiEventKind.ActiveDialogKeyChanged)
+            await InvokeAsync(StateHasChanged);
     }
 
     private async void AppOptionsStateWrapOnStateChanged()
@@ -120,6 +121,6 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
-        CommonUiService.ActiveDialogKeyChanged -= OnActiveDialogKeyChanged;
+        CommonUiService.CommonUiStateChanged -= OnCommonUiStateChanged;
     }
 }

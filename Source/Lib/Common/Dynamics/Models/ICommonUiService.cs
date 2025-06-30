@@ -21,10 +21,10 @@ namespace Walk.Common.RazorLib.Dynamics.Models;
 public interface ICommonUiService
 {
     public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
+    
+    public event Action<CommonUiEventKind>? CommonUiStateChanged;
 
     /* Start IOutlineService */
-	public event Action? OutlineStateChanged;
-	
 	public OutlineState GetOutlineState();
 
 	public void SetOutline(
@@ -45,8 +45,6 @@ public interface ICommonUiService
     /* End IOutlineService */
     
     /* Start IPanelService */
-	public event Action? PanelStateChanged;
-	
 	public PanelState GetPanelState();
 	
 	public void RegisterPanel(Panel panel);
@@ -67,8 +65,6 @@ public interface ICommonUiService
     /* End IPanelService */
 
     /* Start IWidgetService */
-	public event Action? WidgetStateChanged;
-	
 	public WidgetState GetWidgetState();
 
 	/// <summary>
@@ -91,9 +87,6 @@ public interface ICommonUiService
     /* End IWidgetService */
     
     /* Start IDialogService */
-	public event Action? DialogStateChanged;
-	public event Action? ActiveDialogKeyChanged;
-	
 	/// <summary>
 	/// Capture the reference and re-use it,
 	/// because the state will change out from under you, if you continually invoke this.
@@ -111,8 +104,6 @@ public interface ICommonUiService
     /* End IDialogService */
     
     /* Start INotificationService */
-	public event Action? NotificationStateChanged;
-	
 	public NotificationState GetNotificationState();
 
     public void Notification_ReduceRegisterAction(INotification notification);
@@ -130,8 +121,6 @@ public interface ICommonUiService
     /* End INotificationService */
     
     /* Start IDropdownService */
-	public event Action? DropdownStateChanged;
-	
 	public DropdownState GetDropdownState();
 	
     public void Dropdown_ReduceRegisterAction(DropdownRecord dropdown);
@@ -150,8 +139,6 @@ public interface ICommonUiService
 	
 	public StringBuilder Tooltip_StyleBuilder { get; }
 
-	public event Action? TooltipStateChanged;
-	
 	public TooltipState GetTooltipState();
 	
 	public void SetTooltipModel(ITooltipModel tooltipModel);

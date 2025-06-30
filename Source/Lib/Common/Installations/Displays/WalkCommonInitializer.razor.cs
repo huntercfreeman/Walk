@@ -59,12 +59,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     
 	protected override void OnInitialized()
 	{
-    	CommonUiService.DialogStateChanged += Shared_OnStateChanged;
-    	CommonUiService.WidgetStateChanged += Shared_OnStateChanged;
-    	CommonUiService.NotificationStateChanged += Shared_OnStateChanged;
-    	CommonUiService.DropdownStateChanged += Shared_OnStateChanged;
-		CommonUiService.OutlineStateChanged += Shared_OnStateChanged;
-		CommonUiService.TooltipStateChanged += Shared_OnStateChanged;
+    	CommonUiService.CommonUiStateChanged += OnCommonUiStateChanged;
 	
         CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
         {
@@ -142,7 +137,20 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 	    }
 	}
     
-    private async void Shared_OnStateChanged() => await InvokeAsync(StateHasChanged);
+    private async void OnCommonUiStateChanged(CommonUiEventKind commonUiEventKind)
+    {
+        switch (commonUiEventKind)
+        {
+            case CommonUiEventKind.DialogStateChanged:
+        	case CommonUiEventKind.WidgetStateChanged:
+        	case CommonUiEventKind.NotificationStateChanged:
+        	case CommonUiEventKind.DropdownStateChanged:
+        	case CommonUiEventKind.OutlineStateChanged:
+        	case CommonUiEventKind.TooltipStateChanged:
+        	    await InvokeAsync(StateHasChanged);
+        	    break;
+        }
+    }
     
     private Task WIDGET_RemoveWidget()
     {
@@ -309,12 +317,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     	BackgroundTaskService.ContinuousWorker.StartAsyncTask = null;
     	BackgroundTaskService.IndefiniteWorker.StartAsyncTask = null;
     	
-		CommonUiService.DialogStateChanged -= Shared_OnStateChanged;
-    	CommonUiService.WidgetStateChanged -= Shared_OnStateChanged;
-    	CommonUiService.NotificationStateChanged -= Shared_OnStateChanged;
-        CommonUiService.DropdownStateChanged -= Shared_OnStateChanged;
-    	CommonUiService.OutlineStateChanged -= Shared_OnStateChanged;
-		CommonUiService.TooltipStateChanged -= Shared_OnStateChanged;
+		CommonUiService.CommonUiStateChanged -= OnCommonUiStateChanged;
 		
 		var notificationState = CommonUiService.GetNotificationState();
 

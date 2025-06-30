@@ -38,19 +38,22 @@ public class NotificationBadge : IBadgeModel
 	public void AddSubscription(Func<Task> updateUiFunc)
 	{
 	    _updateUiFunc = updateUiFunc;
-	    _commonUiService.NotificationStateChanged += DoSubscription;
+	    _commonUiService.CommonUiStateChanged += DoSubscription;
 	}
 	
-	public async void DoSubscription()
+	public async void DoSubscription(CommonUiEventKind commonUiEventKind)
 	{
-	    var localUpdateUiFunc = _updateUiFunc;
-	    if (_updateUiFunc is not null)
-	        await _updateUiFunc.Invoke();
+	    if (commonUiEventKind == CommonUiEventKind.NotificationStateChanged)
+	    {
+    	    var localUpdateUiFunc = _updateUiFunc;
+    	    if (_updateUiFunc is not null)
+    	        await _updateUiFunc.Invoke();
+	    }
 	}
 	
 	public void DisposeSubscription()
 	{
-	    _commonUiService.NotificationStateChanged -= DoSubscription;
+	    _commonUiService.CommonUiStateChanged -= DoSubscription;
 	    _updateUiFunc = null;
 	}
 }

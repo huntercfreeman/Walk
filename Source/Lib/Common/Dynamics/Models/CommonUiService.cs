@@ -33,10 +33,10 @@ public class CommonUiService : ICommonUiService
 	
 	public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
 	
+	public event Action<CommonUiEventKind>? CommonUiStateChanged;
+	
     /* Start IOutlineService */
 	private OutlineState _outlineState = new();
-		
-	public event Action? OutlineStateChanged;
 	
 	public OutlineState GetOutlineState() => _outlineState;
 
@@ -76,7 +76,7 @@ public class CommonUiService : ICommonUiService
         }
 
         finalize:
-        OutlineStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.OutlineStateChanged);
     }
 	
 	public void Outline_SetMeasurements(
@@ -95,14 +95,12 @@ public class CommonUiService : ICommonUiService
     		}
         }
 
-        OutlineStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.OutlineStateChanged);
     }
     /* End IOutlineService */
     
     /* Start IPanelService */
 	private PanelState _panelState = new();
-	
-	public event Action? PanelStateChanged;
 	
 	public PanelState GetPanelState() => _panelState;
 
@@ -121,7 +119,7 @@ public class CommonUiService : ICommonUiService
             }
         }
 
-        PanelStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
     }
 
     public void DisposePanel(Key<Panel> panelKey)
@@ -140,7 +138,7 @@ public class CommonUiService : ICommonUiService
             }
         }
 
-        PanelStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
     }
 	
     public void RegisterPanelGroup(PanelGroup panelGroup)
@@ -158,7 +156,7 @@ public class CommonUiService : ICommonUiService
             }
         }
 
-        PanelStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
     }
 
     public void DisposePanelGroup(Key<PanelGroup> panelGroupKey)
@@ -177,7 +175,7 @@ public class CommonUiService : ICommonUiService
             }
         }
 
-        PanelStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
     }
 
     public void RegisterPanelTab(
@@ -218,7 +216,7 @@ public class CommonUiService : ICommonUiService
             }
         }
 
-        PanelStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
     }
 
     public void DisposePanelTab(Key<PanelGroup> panelGroupKey, Key<Panel> panelTabKey)
@@ -248,7 +246,7 @@ public class CommonUiService : ICommonUiService
             }
         }
 
-        PanelStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
     }
 
     public void SetActivePanelTab(Key<PanelGroup> panelGroupKey, Key<Panel> panelTabKey)
@@ -275,7 +273,7 @@ public class CommonUiService : ICommonUiService
             }
         }
 
-        PanelStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
 
         if (sideEffect)
             _appDimensionService.NotifyIntraAppResize();
@@ -305,7 +303,7 @@ public class CommonUiService : ICommonUiService
             }
         }
 
-        PanelStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
     }
 
     public void Panel_SetDragEventArgs((IPanelTab PanelTab, PanelGroup PanelGroup)? dragEventArgs)
@@ -320,7 +318,7 @@ public class CommonUiService : ICommonUiService
             };
         }
 
-        PanelStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
     }
     
     public void Panel_InitializeResizeHandleDimensionUnit(Key<PanelGroup> panelGroupKey, DimensionUnit dimensionUnit)
@@ -363,14 +361,12 @@ public class CommonUiService : ICommonUiService
             }
         }
 
-        PanelStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
     }
     /* End IPanelService */
     
     /* Start IWidgetService */
 	private WidgetState _widgetState = new();
-	
-	public event Action? WidgetStateChanged;
 	
 	public WidgetState GetWidgetState() => _widgetState;
 
@@ -407,7 +403,7 @@ public class CommonUiService : ICommonUiService
 			};
         }
 
-        WidgetStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.WidgetStateChanged);
 
 		if (sideEffect)
 		{
@@ -427,10 +423,6 @@ public class CommonUiService : ICommonUiService
     /// TODO: Thread safety.
     /// </summary>
     private DialogState _dialogState = new();
-    
-	public event Action? DialogStateChanged;
-	
-	public event Action? ActiveDialogKeyChanged;
 	
 	public DialogState GetDialogState() => _dialogState;
     
@@ -445,7 +437,7 @@ public class CommonUiService : ICommonUiService
 	                .FocusHtmlElementById(dialog.DialogFocusPointHtmlElementId)
 	                .ConfigureAwait(false));
         	
-        	DialogStateChanged?.Invoke();
+        	CommonUiStateChanged?.Invoke(CommonUiEventKind.DialogStateChanged);
         	return;
         }
 
@@ -458,7 +450,7 @@ public class CommonUiService : ICommonUiService
             ActiveDialogKey = dialog.DynamicViewModelKey,
         };
         
-        DialogStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.DialogStateChanged);
         return;
     }
 
@@ -473,7 +465,7 @@ public class CommonUiService : ICommonUiService
 
         if (indexDialog == -1)
         {
-            DialogStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.DialogStateChanged);
         	return;
         }
             
@@ -485,7 +477,7 @@ public class CommonUiService : ICommonUiService
 
         _dialogState = inState with { DialogList = outDialogList };
         
-        DialogStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.DialogStateChanged);
         return;
     }
     
@@ -495,7 +487,7 @@ public class CommonUiService : ICommonUiService
     	
         _dialogState = inState with { ActiveDialogKey = dynamicViewModelKey };
         
-        ActiveDialogKeyChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.ActiveDialogKeyChanged);
         return;
     }
 
@@ -508,7 +500,7 @@ public class CommonUiService : ICommonUiService
 
         if (indexDialog == -1)
         {
-        	DialogStateChanged?.Invoke();
+        	CommonUiStateChanged?.Invoke(CommonUiEventKind.DialogStateChanged);
         	return;
         }
 
@@ -519,15 +511,13 @@ public class CommonUiService : ICommonUiService
 
         _dialogState = inState with { DialogList = outDialogList };
         
-        DialogStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.DialogStateChanged);
         return;
     }
     /* End IDialogService */
     
     /* Start INotificationService */
 	private NotificationState _notificationState = new();
-	
-	public event Action? NotificationStateChanged;
 	
 	public NotificationState GetNotificationState() => _notificationState;
 
@@ -540,7 +530,7 @@ public class CommonUiService : ICommonUiService
 	        _notificationState = _notificationState with { DefaultList = outDefaultList };
 	    }
 	    
-	    NotificationStateChanged?.Invoke();
+	    CommonUiStateChanged?.Invoke(CommonUiEventKind.NotificationStateChanged);
     }
 
     public void Notification_ReduceDisposeAction(Key<IDynamicViewModel> key)
@@ -559,7 +549,7 @@ public class CommonUiService : ICommonUiService
 	        }
 	    }
 	    
-	    NotificationStateChanged?.Invoke();
+	    CommonUiStateChanged?.Invoke(CommonUiEventKind.NotificationStateChanged);
     }
 
     public void Notification_ReduceMakeReadAction(Key<IDynamicViewModel> key)
@@ -587,7 +577,7 @@ public class CommonUiService : ICommonUiService
 	        }
 	    }
 	    
-	    NotificationStateChanged?.Invoke();
+	    CommonUiStateChanged?.Invoke(CommonUiEventKind.NotificationStateChanged);
     }
     
     public void Notification_ReduceUndoMakeReadAction(Key<IDynamicViewModel> key)
@@ -615,7 +605,7 @@ public class CommonUiService : ICommonUiService
     	    }
 	    }
 	    
-	    NotificationStateChanged?.Invoke();
+	    CommonUiStateChanged?.Invoke(CommonUiEventKind.NotificationStateChanged);
     }
 
     public void Notification_ReduceMakeDeletedAction(Key<IDynamicViewModel> key)
@@ -643,7 +633,7 @@ public class CommonUiService : ICommonUiService
 	        }
 	    }
 	    
-	    NotificationStateChanged?.Invoke();
+	    CommonUiStateChanged?.Invoke(CommonUiEventKind.NotificationStateChanged);
     }
 
     public void Notification_ReduceUndoMakeDeletedAction(Key<IDynamicViewModel> key)
@@ -671,7 +661,7 @@ public class CommonUiService : ICommonUiService
 	        }
 	    }
 	    
-	    NotificationStateChanged?.Invoke();
+	    CommonUiStateChanged?.Invoke(CommonUiEventKind.NotificationStateChanged);
     }
 
     public void Notification_ReduceMakeArchivedAction(Key<IDynamicViewModel> key)
@@ -699,7 +689,7 @@ public class CommonUiService : ICommonUiService
 	        }
 	    }
 	    
-	    NotificationStateChanged?.Invoke();
+	    CommonUiStateChanged?.Invoke(CommonUiEventKind.NotificationStateChanged);
     }
     
     public void Notification_ReduceUndoMakeArchivedAction(Key<IDynamicViewModel> key)
@@ -727,7 +717,7 @@ public class CommonUiService : ICommonUiService
 	        }
 	    }
 	    
-	    NotificationStateChanged?.Invoke();
+	    CommonUiStateChanged?.Invoke(CommonUiEventKind.NotificationStateChanged);
     }
 
     public void Notification_ReduceClearDefaultAction()
@@ -740,7 +730,7 @@ public class CommonUiService : ICommonUiService
 	        };
 	    }
 	    
-	    NotificationStateChanged?.Invoke();
+	    CommonUiStateChanged?.Invoke(CommonUiEventKind.NotificationStateChanged);
     }
     
     public void Notification_ReduceClearReadAction()
@@ -753,7 +743,7 @@ public class CommonUiService : ICommonUiService
 	        };
 	    }
 	    
-	    NotificationStateChanged?.Invoke();
+	    CommonUiStateChanged?.Invoke(CommonUiEventKind.NotificationStateChanged);
     }
     
     public void Notification_ReduceClearDeletedAction()
@@ -766,7 +756,7 @@ public class CommonUiService : ICommonUiService
 	        };
 	    }
 	    
-	    NotificationStateChanged?.Invoke();
+	    CommonUiStateChanged?.Invoke(CommonUiEventKind.NotificationStateChanged);
     }
 
     public void Notification_ReduceClearArchivedAction()
@@ -779,14 +769,12 @@ public class CommonUiService : ICommonUiService
 	        };
 	    }
 	    
-	    NotificationStateChanged?.Invoke();
+	    CommonUiStateChanged?.Invoke(CommonUiEventKind.NotificationStateChanged);
     }
     /* End INotificationService */
     
     /* Start IDropdownService */
 	private DropdownState _dropdownState = new();
-	
-	public event Action? DropdownStateChanged;
 	
 	public DropdownState GetDropdownState() => _dropdownState;
 	
@@ -799,7 +787,7 @@ public class CommonUiService : ICommonUiService
 
 		if (indexExistingDropdown != -1)
 		{
-			DropdownStateChanged?.Invoke();
+			CommonUiStateChanged?.Invoke(CommonUiEventKind.DropdownStateChanged);
 			return;
 		}
 
@@ -811,7 +799,7 @@ public class CommonUiService : ICommonUiService
             DropdownList = outDropdownList
         };
         
-        DropdownStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.DropdownStateChanged);
 		return;
     }
 
@@ -824,7 +812,7 @@ public class CommonUiService : ICommonUiService
 
 		if (indexExistingDropdown == -1)
 		{
-			DropdownStateChanged?.Invoke();
+			CommonUiStateChanged?.Invoke(CommonUiEventKind.DropdownStateChanged);
 			return;
 		}
 			
@@ -836,7 +824,7 @@ public class CommonUiService : ICommonUiService
             DropdownList = outDropdownList
         };
         
-        DropdownStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.DropdownStateChanged);
 		return;
     }
 
@@ -851,7 +839,7 @@ public class CommonUiService : ICommonUiService
             DropdownList = outDropdownList
         };
         
-        DropdownStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.DropdownStateChanged);
 		return;
     }
 
@@ -864,7 +852,7 @@ public class CommonUiService : ICommonUiService
 
 		if (indexExistingDropdown == -1)
 		{
-			DropdownStateChanged?.Invoke();
+			CommonUiStateChanged?.Invoke(CommonUiEventKind.DropdownStateChanged);
 			return;
 		}
 		
@@ -886,7 +874,7 @@ public class CommonUiService : ICommonUiService
             DropdownList = outDropdownList
         };
         
-        DropdownStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.DropdownStateChanged);
 		return;
     }
     /* End IDropdownService */
@@ -905,14 +893,12 @@ public class CommonUiService : ICommonUiService
 	
 	public StringBuilder Tooltip_StyleBuilder { get; } = new();
 	
-	public event Action? TooltipStateChanged;
-	
 	public TooltipState GetTooltipState() => _tooltipState;
 	
 	public void SetTooltipModel(ITooltipModel tooltipModel)
 	{
 	    _tooltipState = new TooltipState(tooltipModel);
-	    TooltipStateChanged?.Invoke();
+	    CommonUiStateChanged?.Invoke(CommonUiEventKind.TooltipStateChanged);
 	}
     /* End ITooltipService */
 }

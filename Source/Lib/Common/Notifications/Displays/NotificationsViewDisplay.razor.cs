@@ -15,7 +15,7 @@ public partial class NotificationsViewDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
     {
-    	CommonUiService.NotificationStateChanged += OnNotificationStateChanged;
+    	CommonUiService.CommonUiStateChanged += OnCommonUiStateChanged;
     }
 
     private string GetIsActiveCssClass(
@@ -47,13 +47,14 @@ public partial class NotificationsViewDisplay : ComponentBase, IDisposable
         CommonUiService.Notification_ReduceClearArchivedAction();
     }
     
-    public async void OnNotificationStateChanged()
+    public async void OnCommonUiStateChanged(CommonUiEventKind commonUiEventKind)
     {
-    	await InvokeAsync(StateHasChanged);
+        if (commonUiEventKind == CommonUiEventKind.NotificationStateChanged)
+    	    await InvokeAsync(StateHasChanged);
     }
 	
 	public void Dispose()
 	{
-		CommonUiService.NotificationStateChanged -= OnNotificationStateChanged;
+		CommonUiService.CommonUiStateChanged -= OnCommonUiStateChanged;
 	}
 }

@@ -66,7 +66,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
         
         DimensionAttributeModificationPurpose = $"take_size_of_adjacent_hidden_panel_{PanelGroupKey}";
     
-    	CommonUiService.PanelStateChanged += OnPanelStateChanged;
+    	CommonUiService.CommonUiStateChanged += OnCommonUiStateChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -237,9 +237,10 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
         return Task.CompletedTask;
     }
     
-    private async void OnPanelStateChanged()
+    private async void OnCommonUiStateChanged(CommonUiEventKind commonUiEventKind)
     {
-    	await InvokeAsync(StateHasChanged);
+        if (commonUiEventKind == CommonUiEventKind.PanelStateChanged)
+    	    await InvokeAsync(StateHasChanged);
     }
     
     /// <summary>
@@ -258,6 +259,6 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	CommonUiService.PanelStateChanged -= OnPanelStateChanged;
+    	CommonUiService.CommonUiStateChanged -= OnCommonUiStateChanged;
     }
 }
