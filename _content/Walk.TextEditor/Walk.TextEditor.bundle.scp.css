@@ -43,10 +43,6 @@
     height: 2em;
     width: calc(100% - 2em);
 }
-/* _content/Walk.TextEditor/Edits/Displays/DirtyResourceUriInteractiveIconDisplay.razor.rz.scp.css */
-.di_web_dirty-text-editor-models-interactive-icon[b-cdo248k2wm] {
-    position: relative;
-}
 /* _content/Walk.TextEditor/TextEditors/Displays/Internals/AutocompleteMenu.razor.rz.scp.css */
 .di_ide_text-editor-autocomplete-menu:focus[b-2jzu4xes85] {
 

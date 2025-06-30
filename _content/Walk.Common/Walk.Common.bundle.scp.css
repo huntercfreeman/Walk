@@ -1,3 +1,23 @@
+/* _content/Walk.Common/Badges/Displays/BadgeDisplay.razor.rz.scp.css */
+.di_web_notifications-interactive-icon[b-kozajw3nmh] {
+    position: relative;
+}
+
+.di_icon-badge[b-kozajw3nmh] {
+    position: absolute;
+	right: 0;
+	bottom: 0;
+	border-radius: 25px;
+	width: 1.2em;
+	height: 1.2em;
+	line-height: 1.4;
+}
+
+.di_icon-badge.di_active[b-kozajw3nmh] {
+    background-color: var(--di_active-button-background-color);
+	color: var(--di_active-button-primary-font-color);
+}
+
 /* _content/Walk.Common/Dialogs/Displays/DialogDisplay.razor.rz.scp.css */
 .di_dialog-display[b-5vjm5l4fmf] {
     z-index: var(--di_dialog-display-z-index);
@@ -96,22 +116,6 @@
     padding: 10px;
     border-left: 1px solid var(--di_primary-border-color);
 }
-/* _content/Walk.Common/Icons/Displays/IconBadgeDisplay.razor.rz.scp.css */
-.di_icon-badge[b-rsg53d3k7l] {
-    position: absolute;
-	right: 0;
-	bottom: 0;
-	border-radius: 25px;
-	width: 1.2em;
-	height: 1.2em;
-	line-height: 1.4;
-}
-
-.di_icon-badge.di_active[b-rsg53d3k7l] {
-    background-color: var(--di_active-button-background-color);
-	color: var(--di_active-button-primary-font-color);
-}
-
 /* _content/Walk.Common/Icons/Displays/IconLoadingFragment.razor.rz.scp.css */
 .lds-dual-ring[b-4h13sg3zem] {
     display: flex;
@@ -276,10 +280,6 @@ td[b-7ykvgl7no9] {
     height: calc(100% - var(--di_notification-display-toolbar-height));
     overflow: auto;
     padding: var(--di_notification-body-padding);
-}
-/* _content/Walk.Common/Notifications/Displays/NotificationsInteractiveIconDisplay.razor.rz.scp.css */
-.di_web_notifications-interactive-icon[b-357i7np0bh] {
-    position: relative;
 }
 /* _content/Walk.Common/Notifications/Displays/NotificationsViewDisplay.razor.rz.scp.css */
 .di_web_notifications-view-tabs[b-6pb15jkl2o] {
