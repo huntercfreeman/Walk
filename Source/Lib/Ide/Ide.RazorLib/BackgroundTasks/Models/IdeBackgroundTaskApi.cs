@@ -729,7 +729,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             _textEditorService,
             _commonUiService,
             _commonBackgroundTaskApi,
-            TextEditorVirtualizationResult.Empty,
+            TextEditorVirtualizationResult.ConstructEmpty(),
 			new TextEditorDimensions(0, 0, 0, 0),
 			scrollLeft: 0,
 	    	scrollTop: 0,

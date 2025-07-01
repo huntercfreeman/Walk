@@ -15,50 +15,17 @@ using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 namespace Walk.TextEditor.RazorLib.TextEditors.Models;
 
 /// <summary>
-/// This type is used to render the text editor's text on the UI.
-///
-/// A single List of 'VirtualizationEntry' is allocated each time
-/// the UI is calculated.
-///
-/// Each 'VirtualizationEntry' is a representation of each line of text to display.
-///
-/// The text to display for each line is not stored in the 'VirtualizationEntry'.
-///
-/// The 'VirtualizationEntry' is only describing the position index span
-/// of characters that should be rendered by mapping from the 'TextEditorModel'.
-///
-/// The 'VirtualizationBoundary's will ensure that the horizontal
-/// and vertical scrollbars stay consistent, regardless of how much
-/// text is "virtually" not being rendered.
-///
-/// ===============================================================================
-/// 
-/// Idea: look in the previous VirtualizationGrid to see if a line of text has already been calculated.
-///       If it was already calculated then re-use the previous calculation.
-///       Otherwise calculate it.
-/// 
-/// Remarks: this idea is in reference to a 'partially' changed virtualization grid.
-///          Not to be confused with how the code currently will 're-use' the previous virtualization grid
-///          if a new virtualization grid was not deemed necessary.
-///          |
-///          This is re-using the virtualization lines that are common between
-///          two separate virtualization grids, that have some overlapping lines.
-///
-/// i.e.:
-/// - Use for scrolling vertically, only calculate the lines that were not previously visible.
-/// - Use for editing text, in the case that only 1 line of text is being edited,
-///   	this would permit re-use of the other 29 lines (relative to the height of the text editor and font-size;
-///       30 lines is what I see currently in mine.).
-/// - Given how the UI is written, all 30 lines have to re-drawn yes.
-///   	But, we still get to avoid the overhead of 'calculating what is to be drawn'.
-///       i.e.: contiguous decoration bytes being grouped in the same '<span>'.
-/// 
+/// All measurements are in pixels (px) unless stated otherwise.
 /// </summary>
 public class TextEditorVirtualizationResult
 {
     public const string DEFAULT_FONT_FAMILY = "monospace";
 
-	public static TextEditorVirtualizationResult Empty { get; } = new(
+	/// <summary>
+    /// No shared 'Empty' instance can exist because the virtualization results
+    /// have various properties that are mutated.
+    /// </summary>
+    public static TextEditorVirtualizationResult ConstructEmpty() => new TextEditorVirtualizationResult(
         Array.Empty<TextEditorVirtualizationLine>(),
         new List<TextEditorVirtualizationSpan>(),
         resultWidth: 0,
@@ -67,14 +34,22 @@ public class TextEditorVirtualizationResult
         top: 0,
         componentData: null,
         model: null,
-	    viewModel: null);
+        viewModel: null);
 
     /// <summary>
-    /// This constructor permits the Empty instance to be made without
-    /// an if statement relating to the previousState.
+    /// This instance is "unsafe". It is used as a standin for nullable scenarios,
+    /// but this type is technically mutable.
+    ///
+    /// i.e.: 'if (!virtualizationResult.IsValid) return;'
+    /// is the only way to safely interact with this instance,
+    /// since the Empty has its IsValid state set to false,
+    /// whereas other instances have IsValid as true.
     /// </summary>
+    public static TextEditorVirtualizationResult Empty { get; } = ConstructEmpty();
+    
+    /// <summary>A constructor for 'ConstructEmpty()'</summary>
     public TextEditorVirtualizationResult(
-        TextEditorVirtualizationLine[] entries,
+        TextEditorVirtualizationLine[] entryList,
         List<TextEditorVirtualizationSpan> virtualizationSpanList,
         int resultWidth,
         int resultHeight,
@@ -84,7 +59,7 @@ public class TextEditorVirtualizationResult
         TextEditorModel? model,
 	    TextEditorViewModel? viewModel)
     {
-        EntryList = entries;
+        EntryList = entryList;
         VirtualizationSpanList = virtualizationSpanList;
         VirtualWidth = resultWidth;
         VirtualHeight = resultHeight;
@@ -94,15 +69,25 @@ public class TextEditorVirtualizationResult
         Model = model;
 	    ViewModel = viewModel;
 	    
+	    InlineUiStyleList = new();
+	    VirtualizedCollapsePointList = new();
+	    SelectionStyleList = new();
+	    
+	    SeenViewModelKey = Key<TextEditorViewModel>.Empty;
+	    
 	    BodyStyle = "width: 100%; left: 0;";
 	    BothVirtualizationBoundaryStyleCssString = "width: 0px; height: 0px;";
 	    
 	    IsValid = false;
     }
 
-	/// <summary>Measurements are in pixels</summary>
+    /// <summary>
+    /// Every new instance checks whether an attribute of the text editor has changed.
+    /// - If it has NOT changed, then re-use the result from the '_previousState'.
+    /// - Else calculate a new result, and set the 'changed' marker to false for the respective attribute.
+    /// </summary>
     public TextEditorVirtualizationResult(
-        TextEditorVirtualizationLine[] entries,
+        TextEditorVirtualizationLine[] entryList,
         List<TextEditorVirtualizationSpan> virtualizationSpanList,
         int resultWidth,
         int resultHeight,
@@ -113,7 +98,7 @@ public class TextEditorVirtualizationResult
 	    TextEditorViewModel? viewModel,
 	    TextEditorVirtualizationResult previousState)
     {
-        EntryList = entries;
+        EntryList = entryList;
         VirtualizationSpanList = virtualizationSpanList;
         VirtualWidth = resultWidth;
         VirtualHeight = resultHeight;
@@ -133,119 +118,73 @@ public class TextEditorVirtualizationResult
     private TextEditorVirtualizationResult _previousState;
 
     /// <summary>
-    /// Do NOT use EntryList.Length.
-    /// Use Count,
-    /// because this array is allocated at a predicted size
+    /// Do NOT use EntryList.Length. Use this.Count, because this array is allocated at a predicted size
     /// but it is possible that the count does not reach capacity.
     /// </summary>
     public TextEditorVirtualizationLine[] EntryList { get; init; }
     
     /// <summary>
-    /// Do NOT use EntryList.Length.
-    /// Use this property instead,
-    /// because the array is allocated at a predicted size
+    /// Do NOT use EntryList.Length. Use this.Count, because this array is allocated at a predicted size
     /// but it is possible that the count does not reach capacity.
     /// </summary>
     public int Count { get; set; }
     
     public List<TextEditorVirtualizationSpan> VirtualizationSpanList { get; init; }
 
-    /// <summary>
-    /// Measurements are in pixels
-    ///
-    /// Width (only rendered elements).
-    /// </summary>
+    /// <summary>Width (only rendered elements)</summary>
     public int VirtualWidth { get; init; }
-    /// <summary>
-    /// Measurements are in pixels
-    ///
-    /// Height (only rendered elements).
-    /// </summary>
+    /// <summary>Height (only rendered elements)</summary>
     public int VirtualHeight { get; init; }
-    /// <summary>
-    /// Measurements are in pixels
-    ///
-    /// Lowest 'left' point where a rendered element is displayed.
-    /// </summary>
+    /// <summary>Lowest 'left' point where a rendered element is displayed</summary>
     public double VirtualLeft { get; init; }
-    /// <summary>
-    /// Measurements are in pixels
-    ///
-    /// Lowest 'top' point where a rendered element is displayed.
-    /// </summary>
+    /// <summary>Lowest 'top' point where a rendered element is displayed</summary>
     public int VirtualTop { get; init; }
 	
     public TextEditorModel? Model { get; set; }
     public TextEditorViewModel? ViewModel { get; set; }
-    
-    public bool IsValid { get; private set; }
-        
     public TextEditorComponentData? ComponentData { get; set; }
     
-    public string? InlineUiWidthStyleCssString { get; set; }
-	
-	public bool CursorIsOnHiddenLine { get; set; } = false;
+    public bool IsValid { get; }
+    public bool ShouldCalculateVirtualizationResult { get; set; }
+    
+	public bool CursorIsOnHiddenLine { get; set; }
     
     public List<(string CssClassString, int StartInclusiveIndex, int EndExclusiveIndex)> PresentationLayerGroupList { get; set; } = new();
 	public List<string> PresentationLayerStyleList { get; set; } = new();
-	
     public int FirstPresentationLayerGroupStartInclusiveIndex { get; set; }
     public int FirstPresentationLayerGroupEndExclusiveIndex { get; set; }
-    
     public int LastPresentationLayerGroupStartInclusiveIndex { get; set; }
     public int LastPresentationLayerGroupEndExclusiveIndex { get; set; }
 	
 	public List<string> InlineUiStyleList { get; set; }
+	public string? InlineUiWidthStyleCssString { get; set; }
+	public List<CollapsePoint> VirtualizedCollapsePointList { get; set; }
+    public Key<TextEditorViewModel> SeenViewModelKey { get; set; }
+    public int VirtualizedCollapsePointListVersion { get; set; }
     
+	public string? CursorCssStyle { get; set; }
+    public string? CaretRowCssStyle { get; set; }
     public List<string> SelectionStyleList { get; set; }
     
-    /// <summary>
-    /// This is a reference to a "finished" viewModel's list.
-    /// If you reference viewModel.VirtualizedCollapsePointList, it can change out from under you at any point.
-    /// This property of the same name but on the TextEditorVirtualizationResult type, is a snapshot to a reference
-    /// that will not be modified anymore.
-    /// </summary>
-    public List<CollapsePoint>? VirtualizedCollapsePointList { get; set; }
-    public int VirtualizedCollapsePointListVersion { get; set; }
-	
-	public bool ShouldCalculateVirtualizationResult { get; set; }
-	
-	public Key<TextEditorViewModel> _seenViewModelKey = Key<TextEditorViewModel>.Empty;
-	
 	/// <summary>
-    /// Each individual line number is a separate "gutter".
-    /// Therefore, the UI in a loop will use a StringBuilder to .Append(...)
-    /// - _lineHeightStyleCssString
-    /// - _gutterWidthStyleCssString
-    /// - _gutterPaddingStyleCssString
-    ///
-    /// Due to this occuring within a loop, it is presumed that
-    /// pre-calculating all 3 strings together would be best.
-    ///
-    /// Issue with this: anytime any of the variables change that are used
-    /// in this calculation, you need to re-calculate this string field,
-    /// and it is a D.R.Y. code / omnipotent knowledge
-    /// that this needs re-calculated nightmare.
-    /// </summary>
+	/// WARNING (when any of these 3 variables are changed you need to re-create 'Gutter_HeightWidthPaddingCssStyle'):
+	/// Gutter_WidthCssStyle + ComponentData.Gutter_PaddingCssStyle + LineHeightStyleCssString => Gutter_HeightWidthPaddingCssStyle
+	/// </summary>
     public string? Gutter_HeightWidthPaddingCssStyle { get; set; }
-    
     public string? Gutter_WidthCssStyle { get; set; }
-    
-    public string? LineHeightStyleCssString { get; set; }
-    
-    /// <summary>
-    /// BodyStyle is the odd one out for the nullable strings being used for CSS.
-    /// The text editor needs to initially render with full width so that JavaScript can measure it.
-    /// </summary>
-    public string BodyStyle { get; set; }
     
     public string? GutterCssStyle { get; set; }
     public string? GutterSectionCssStyle { get; set; }
     public string? GutterColumnTopCss { get; set; }
+ 
+    /// <summary>
+	/// WARNING (when any of these 3 variables are changed you need to re-create 'Gutter_HeightWidthPaddingCssStyle'):
+	/// Gutter_WidthCssStyle + ComponentData.Gutter_PaddingCssStyle + LineHeightStyleCssString => Gutter_HeightWidthPaddingCssStyle
+	/// </summary>
+    public string? LineHeightStyleCssString { get; set; }
     
-    // string RowSection_GetRowStyleCss(int lineIndex)
-    public string? CursorCssStyle { get; set; }
-    public string? CaretRowCssStyle { get; set; }
+    public string BodyStyle { get; set; }
+    
     public string? VERTICAL_SliderCssStyle { get; set; }
     public string? HORIZONTAL_SliderCssStyle { get; set; }
     public string? HORIZONTAL_ScrollbarCssStyle { get; set; }
@@ -448,20 +387,20 @@ public class TextEditorVirtualizationResult
         	PresentationLayerStyleList);
         LastPresentationLayerGroupEndExclusiveIndex = PresentationLayerGroupList.Count;
         
-        if (VirtualizedCollapsePointListVersion != ViewModel.PersistentState.VirtualizedCollapsePointListVersion ||
-        	_seenViewModelKey != ViewModel.PersistentState.ViewModelKey)
+        if (_previousState.VirtualizedCollapsePointListVersion != ViewModel.PersistentState.VirtualizedCollapsePointListVersion ||
+        	_previousState.SeenViewModelKey != ViewModel.PersistentState.ViewModelKey)
         {
         	VirtualizedCollapsePointList = ViewModel.PersistentState.VirtualizedCollapsePointList;
-        	
         	GetInlineUiStyleList();
-        	
-        	_seenViewModelKey = ViewModel.PersistentState.ViewModelKey;
+        	SeenViewModelKey = ViewModel.PersistentState.ViewModelKey;
         	VirtualizedCollapsePointListVersion = ViewModel.PersistentState.VirtualizedCollapsePointListVersion;
         }
         else
         {
             VirtualizedCollapsePointList = _previousState.VirtualizedCollapsePointList;
             InlineUiStyleList = _previousState.InlineUiStyleList;
+            SeenViewModelKey = _previousState.SeenViewModelKey;
+        	VirtualizedCollapsePointListVersion = _previousState.VirtualizedCollapsePointListVersion;
         }
     }
     

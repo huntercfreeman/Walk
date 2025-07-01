@@ -106,18 +106,7 @@ public sealed class TextEditorViewModelApi
 			_textEditorService,
 			_commonUiService,
 			_commonBackgroundTaskApi,
-			// Do not use `TextEditorVirtualizationResult.Empty` here.
-			// The viewmodels themselves will modify their virtualization result instances.
-			new TextEditorVirtualizationResult(
-                Array.Empty<TextEditorVirtualizationLine>(),
-                new List<TextEditorVirtualizationSpan>(),
-                resultWidth: 0,
-                resultHeight: 0,
-                left: 0,
-                top: 0,
-                componentData: null,
-                model: null,
-        	    viewModel: null),
+			TextEditorVirtualizationResult.ConstructEmpty(),
 			new TextEditorDimensions(0, 0, 0, 0),
 			scrollLeft: 0,
 	    	scrollTop: 0,
