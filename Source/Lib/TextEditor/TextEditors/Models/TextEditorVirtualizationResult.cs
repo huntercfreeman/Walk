@@ -270,15 +270,15 @@ public class TextEditorVirtualizationResult
     {
         HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;
 		HORIZONTAL_SliderCssStyle = _previousState.HORIZONTAL_SliderCssStyle;
-		ScrollbarSection_LeftCssStyle = _previousState.ScrollbarSection_LeftCssStyle;
+		// ScrollbarSection_LeftCssStyle = _previousState.ScrollbarSection_LeftCssStyle;
 		CursorCssStyle = _previousState.CursorCssStyle;
 		CaretRowCssStyle = _previousState.CaretRowCssStyle;
 		GutterColumnTopCss = _previousState.GutterColumnTopCss;
 		LineHeightStyleCssString = _previousState.LineHeightStyleCssString;
 		// Gutter_HeightWidthPaddingCssStyle = _previousState.Gutter_HeightWidthPaddingCssStyle;
-		HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;
+		// HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;
+		// HORIZONTAL_SliderCssStyle = _previousState.HORIZONTAL_SliderCssStyle;
 		VERTICAL_SliderCssStyle = _previousState.VERTICAL_SliderCssStyle;
-		HORIZONTAL_SliderCssStyle = _previousState.HORIZONTAL_SliderCssStyle;
 		BothVirtualizationBoundaryStyleCssString = _previousState.BothVirtualizationBoundaryStyleCssString;
 		CursorCssStyle = _previousState.CursorCssStyle;
     	CaretRowCssStyle = _previousState.CaretRowCssStyle;
@@ -304,9 +304,6 @@ public class TextEditorVirtualizationResult
     	if (ViewModel.PersistentState.Changed_GutterWidth)
     	{
     	    ViewModel.PersistentState.Changed_GutterWidth = false;
-    	    
-    	    // Console.WriteLine("ComponentData.LineIndexCache.Clear();");
-    		ComponentData.LineIndexCache.Clear();
     		
     		var widthInPixelsInvariantCulture = ViewModel.PersistentState.GetGutterWidthCssValue();
     		
@@ -329,7 +326,19 @@ public class TextEditorVirtualizationResult
 	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(widthInPixelsInvariantCulture);
 	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
     		BodyStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
+    		
+    		HORIZONTAL_GetScrollbarHorizontalStyleCss();
+    		HORIZONTAL_GetSliderHorizontalStyleCss();
+    		
+    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
+    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("left: ");
+    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(widthInPixelsInvariantCulture);
+    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
+    		ScrollbarSection_LeftCssStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
+    		
+    		ViewModel.Changed_Cursor_AnyState = true;
 
+            ComponentData.LineIndexCache.Clear();
             CopySomeDuetoPostScrollAndRemeasure();
     		ViewModel.PersistentState.PostScrollAndRemeasure();
     		return;
