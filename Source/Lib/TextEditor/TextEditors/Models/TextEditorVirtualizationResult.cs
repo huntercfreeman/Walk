@@ -265,6 +265,39 @@ public class TextEditorVirtualizationResult
     public string? ScrollbarSection_LeftCssStyle { get; set; }
     
     public string BothVirtualizationBoundaryStyleCssString { get; set; }
+    
+    public void CopySomeDuetoPostScrollAndRemeasure()
+    {
+        HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;
+		HORIZONTAL_SliderCssStyle = _previousState.HORIZONTAL_SliderCssStyle;
+		ScrollbarSection_LeftCssStyle = _previousState.ScrollbarSection_LeftCssStyle;
+		CursorCssStyle = _previousState.CursorCssStyle;
+		CaretRowCssStyle = _previousState.CaretRowCssStyle;
+		GutterColumnTopCss = _previousState.GutterColumnTopCss;
+		LineHeightStyleCssString = _previousState.LineHeightStyleCssString;
+		// Gutter_HeightWidthPaddingCssStyle = _previousState.Gutter_HeightWidthPaddingCssStyle;
+		HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;
+		VERTICAL_SliderCssStyle = _previousState.VERTICAL_SliderCssStyle;
+		HORIZONTAL_SliderCssStyle = _previousState.HORIZONTAL_SliderCssStyle;
+		BothVirtualizationBoundaryStyleCssString = _previousState.BothVirtualizationBoundaryStyleCssString;
+		CursorCssStyle = _previousState.CursorCssStyle;
+    	CaretRowCssStyle = _previousState.CaretRowCssStyle;
+		SelectionStyleList = _previousState.SelectionStyleList;
+		
+		PresentationLayerGroupList = _previousState.PresentationLayerGroupList;
+		PresentationLayerStyleList = _previousState.PresentationLayerStyleList;
+		
+		FirstPresentationLayerGroupStartInclusiveIndex = _previousState.FirstPresentationLayerGroupStartInclusiveIndex;
+        FirstPresentationLayerGroupEndExclusiveIndex = _previousState.FirstPresentationLayerGroupEndExclusiveIndex;
+        
+        LastPresentationLayerGroupStartInclusiveIndex = _previousState.LastPresentationLayerGroupStartInclusiveIndex;
+        LastPresentationLayerGroupEndExclusiveIndex = _previousState.LastPresentationLayerGroupEndExclusiveIndex;
+        
+        VirtualizedCollapsePointList = _previousState.VirtualizedCollapsePointList;
+        InlineUiStyleList = _previousState.InlineUiStyleList;
+        SeenViewModelKey = _previousState.SeenViewModelKey;
+        VirtualizedCollapsePointListVersion = _previousState.VirtualizedCollapsePointListVersion;
+    }
 	
     public void CreateUi()
     {
@@ -272,6 +305,7 @@ public class TextEditorVirtualizationResult
     	{
     	    ViewModel.PersistentState.Changed_GutterWidth = false;
     	    
+    	    // Console.WriteLine("ComponentData.LineIndexCache.Clear();");
     		ComponentData.LineIndexCache.Clear();
     		
     		var widthInPixelsInvariantCulture = ViewModel.PersistentState.GetGutterWidthCssValue();
@@ -296,18 +330,9 @@ public class TextEditorVirtualizationResult
 	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
     		BodyStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
 
+            CopySomeDuetoPostScrollAndRemeasure();
     		ViewModel.PersistentState.PostScrollAndRemeasure();
-    		
-    		HORIZONTAL_GetScrollbarHorizontalStyleCss();
-    		HORIZONTAL_GetSliderHorizontalStyleCss();
-    		
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("left: ");
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(widthInPixelsInvariantCulture);
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
-    		ScrollbarSection_LeftCssStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
-    		
-    		ViewModel.Changed_Cursor_AnyState = true;
+    		return;
     	}
     	else
     	{
@@ -317,8 +342,6 @@ public class TextEditorVirtualizationResult
     		HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;
     		HORIZONTAL_SliderCssStyle = _previousState.HORIZONTAL_SliderCssStyle;
     		ScrollbarSection_LeftCssStyle = _previousState.ScrollbarSection_LeftCssStyle;
-    		CursorCssStyle = _previousState.CursorCssStyle;
-    		CaretRowCssStyle = _previousState.CaretRowCssStyle;
     	}
     
         string gutterColumnTopCssValue;
@@ -434,6 +457,9 @@ public class TextEditorVirtualizationResult
         }
         else
         {
+            CursorCssStyle = _previousState.CursorCssStyle;
+    		CaretRowCssStyle = _previousState.CaretRowCssStyle;
+        
             // I wanted to avoid getting the selection if the cursor state didn't change.
             // But `GetSelection()` virtualizes the selection such that only the selection in view will be made into HTML elements.
             //
