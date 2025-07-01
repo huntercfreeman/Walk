@@ -220,6 +220,22 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         return _gutterWidthCssValue;
 	}
 	
+	private int _seenTextEditorHeight;
+	private int _seenLineHeight;
+	private string _gutterColumnHeightCssValue;
+	
+	public string GetGutterColumnHeightCssValue()
+	{
+	    if (_seenTextEditorHeight != TextEditorDimensions.Height ||
+	        _seenLineHeight != CharAndLineMeasurements.LineHeight)
+	    {
+	        _seenTextEditorHeight = TextEditorDimensions.Height;
+	        _seenLineHeight = CharAndLineMeasurements.LineHeight;
+	        _gutterColumnHeightCssValue = (_seenTextEditorHeight + _seenLineHeight).ToString();
+	    }
+        return _gutterColumnHeightCssValue;
+	}
+	
 	/// <summary>
     /// Pixels (px)
     ///
