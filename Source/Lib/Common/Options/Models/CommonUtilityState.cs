@@ -118,4 +118,3 @@ public record struct ThemeState(IReadOnlyList<ThemeRecord> ThemeList)
 
 /* Start IStorageService, LocalStorageService */
 /* End IStorageService, LocalStorageService */
-    

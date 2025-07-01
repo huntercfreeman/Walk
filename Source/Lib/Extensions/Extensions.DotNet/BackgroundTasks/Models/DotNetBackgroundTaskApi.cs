@@ -72,7 +72,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 	private readonly ITreeViewService _treeViewService;
-	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 	private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly TextEditorService _textEditorService;
@@ -105,7 +104,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		ICommonComponentRenderers commonComponentRenderers,
 		CommonBackgroundTaskApi commonBackgroundTaskApi,
 		ITreeViewService treeViewService,
-		IEnvironmentProvider environmentProvider,
 		DotNetCliOutputParser dotNetCliOutputParser,
 		IFileSystemProvider fileSystemProvider,
 		TextEditorService textEditorService,
@@ -130,7 +128,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		_commonComponentRenderers = commonComponentRenderers;
 		_commonBackgroundTaskApi = commonBackgroundTaskApi;
 		_treeViewService = treeViewService;
-		_environmentProvider = environmentProvider;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
 		_fileSystemProvider = fileSystemProvider;
 		_textEditorService = textEditorService;
@@ -167,7 +164,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         OutputService = new OutputService(
         	this,
         	_dotNetCliOutputParser,
-        	_environmentProvider,
+        	_commonUtilityService,
         	_treeViewService);
 			
 			NuGetPackageManagerService = new NuGetPackageManagerService();
@@ -523,7 +520,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
     private void BuildProjectOnClick(string projectAbsolutePathString)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuildProject(projectAbsolutePathString);
-        var solutionAbsolutePath = _environmentProvider.AbsolutePathFactory(projectAbsolutePathString, false);
+        var solutionAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false);
 
         var localParentDirectory = solutionAbsolutePath.ParentDirectory;
         if (localParentDirectory is null)
@@ -555,7 +552,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
     private void CleanProjectOnClick(string projectAbsolutePathString)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanProject(projectAbsolutePathString);
-        var solutionAbsolutePath = _environmentProvider.AbsolutePathFactory(projectAbsolutePathString, false);
+        var solutionAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false);
 
         var localParentDirectory = solutionAbsolutePath.ParentDirectory;
         if (localParentDirectory is null)
@@ -587,7 +584,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
     private void BuildSolutionOnClick(string solutionAbsolutePathString)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuildSolution(solutionAbsolutePathString);
-        var solutionAbsolutePath = _environmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false);
+        var solutionAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false);
 
         var localParentDirectory = solutionAbsolutePath.ParentDirectory;
         if (localParentDirectory is null)
@@ -619,7 +616,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
     private void CleanSolutionOnClick(string solutionAbsolutePathString)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanSolution(solutionAbsolutePathString);
-        var solutionAbsolutePath = _environmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false);
+        var solutionAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false);
 
         var localParentDirectory = solutionAbsolutePath.ParentDirectory;
         if (localParentDirectory is null)
@@ -810,7 +807,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 				CancellationToken.None)
 			.ConfigureAwait(false);
 
-		var solutionAbsolutePath = _environmentProvider.AbsolutePathFactory(
+		var solutionAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 			dotNetSolutionAbsolutePathString,
 			false);
 
@@ -892,7 +889,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
 		if (parentDirectory is not null)
 		{
-			_environmentProvider.DeletionPermittedRegister(new(parentDirectory, true));
+			_commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(new(parentDirectory, true));
 
 			_findAllService.SetStartingDirectoryPath(parentDirectory);
 
@@ -1021,7 +1018,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			var absolutePath = new AbsolutePath(
 				attribute.Item2,
 				isDirectory: true,
-				_environmentProvider,
+				_commonUtilityService.EnvironmentProvider,
 				ancestorDirectoryList);
 
 			solutionFolderPathHashSet.Add(absolutePath.Value);
@@ -1074,7 +1071,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			var absolutePath = new AbsolutePath(
 				solutionFolderPath,
 				isDirectory: true,
-				_environmentProvider);
+				_commonUtilityService.EnvironmentProvider);
 			
 			solutionFolderList.Add(new SolutionFolder(
 		        absolutePath.NameNoExtension,
@@ -1100,7 +1097,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			if (attribute.Item2 is null)
 				continue;
 
-			var relativePath = new RelativePath(attribute.Item2, isDirectory: false, _environmentProvider);
+			var relativePath = new RelativePath(attribute.Item2, isDirectory: false, _commonUtilityService.EnvironmentProvider);
 
 			dotNetProjectList.Add(new CSharpProjectModel(
 		        relativePath.NameNoExtension,
@@ -1204,8 +1201,8 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
 				dotNetSolutionModel.AbsolutePath,
 				relativePathFromSolutionFileString,
-				_environmentProvider);
-			projectTuple.AbsolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, false);
+				_commonUtilityService.EnvironmentProvider);
+			projectTuple.AbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(absolutePathString, false);
 		
 			if (!await _fileSystemProvider.File.ExistsAsync(projectTuple.AbsolutePath.Value))
 			{
@@ -1217,7 +1214,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			
 			var innerParentDirectory = projectTuple.AbsolutePath.ParentDirectory;
 			if (innerParentDirectory is not null)
-				_environmentProvider.DeletionPermittedRegister(new(innerParentDirectory, true));
+				_commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(new(innerParentDirectory, true));
 			
 			var content = await _fileSystemProvider.File.ReadAllTextAsync(
 					projectTuple.AbsolutePath.Value)
@@ -1259,9 +1256,9 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
 					projectTuple.AbsolutePath,
 					includeAttribute.Item2,
-					_environmentProvider);
+					_commonUtilityService.EnvironmentProvider);
 	
-				var referenceProjectAbsolutePath = _environmentProvider.AbsolutePathFactory(
+				var referenceProjectAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 					referenceProjectAbsolutePathString,
 					false);
 	
@@ -1494,7 +1491,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		
 		foreach (var file in discoveredFileList)
 		{
-			var fileAbsolutePath = _environmentProvider.AbsolutePathFactory(file, false);
+			var fileAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(file, false);
 			var progress = currentProgress + maximumProgressAvailableToProject * (fileParsedCount / (double)discoveredFileList.Count);
 			var resourceUri = new ResourceUri(file);
 	        var compilerService = _compilerServiceRegistry.GetCompilerService(fileAbsolutePath.ExtensionNoPeriod);
@@ -1526,7 +1523,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			_ideComponentRenderers,
 			_commonComponentRenderers,
 			_fileSystemProvider,
-			_environmentProvider,
+			_commonUtilityService.EnvironmentProvider,
 			true,
 			true);
 

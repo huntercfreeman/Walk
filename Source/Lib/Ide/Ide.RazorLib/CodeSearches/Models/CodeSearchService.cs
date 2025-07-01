@@ -3,6 +3,7 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
@@ -16,8 +17,7 @@ public class CodeSearchService : ICodeSearchService
     private readonly object _stateModificationLock = new();
 
 	private readonly Throttle _throttle = new(TimeSpan.FromMilliseconds(300));
-    private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly IEnvironmentProvider _environmentProvider;
+    private readonly ICommonUtilityService _commonUtilityService;
     private readonly ITreeViewService _treeViewService;
     private readonly TextEditorService _textEditorService;
     private readonly WalkTextEditorConfig _textEditorConfig;
@@ -28,15 +28,13 @@ public class CodeSearchService : ICodeSearchService
 	public Throttle _updateContentThrottle { get; } = new Throttle(TimeSpan.FromMilliseconds(333));
 
     public CodeSearchService(
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
+        ICommonUtilityService commonUtilityService,
         ITreeViewService treeViewService,
         TextEditorService textEditorService,
         WalkTextEditorConfig textEditorConfig,
         IServiceProvider serviceProvider)
     {
-        _fileSystemProvider = fileSystemProvider;
-        _environmentProvider = environmentProvider;
+        _commonUtilityService = commonUtilityService;
         _treeViewService = treeViewService;
         _textEditorService = textEditorService;
         _textEditorConfig = textEditorConfig;
@@ -181,19 +179,19 @@ public class CodeSearchService : ICodeSearchService
 
             async Task RecursiveHandleSearchEffect(string directoryPathParent)
             {
-                var directoryPathChildList = await _fileSystemProvider.Directory.GetDirectoriesAsync(
+                var directoryPathChildList = await _commonUtilityService.FileSystemProvider.Directory.GetDirectoriesAsync(
                         directoryPathParent,
                         cancellationToken)
                     .ConfigureAwait(false);
 
-                var filePathChildList = await _fileSystemProvider.Directory.GetFilesAsync(
+                var filePathChildList = await _commonUtilityService.FileSystemProvider.Directory.GetFilesAsync(
                         directoryPathParent,
                         cancellationToken)
                     .ConfigureAwait(false);
 
                 foreach (var filePathChild in filePathChildList)
                 {
-                	var absolutePath = _environmentProvider.AbsolutePathFactory(filePathChild, false);
+                	var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(filePathChild, false);
                 
                     if (absolutePath.NameWithExtension.Contains(codeSearchState.Query))
                         AddResult(filePathChild);
@@ -225,8 +223,8 @@ public class CodeSearchService : ICodeSearchService
 			        (byte)GenericDecorationKind.None,
 			        new ResourceUri(x),
 			        string.Empty),
-				_environmentProvider,
-				_fileSystemProvider,
+				_commonUtilityService.EnvironmentProvider,
+				_commonUtilityService.FileSystemProvider,
 				false,
 				false))
 			.ToArray();

@@ -31,8 +31,6 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
     [Inject]
     private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;

@@ -14,6 +14,7 @@ using Walk.Common.RazorLib.Contexts.Displays;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Installations.Displays;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Installations.Displays;
 using Walk.TextEditor.RazorLib.Cursors.Models;
@@ -36,7 +37,7 @@ public class CommandFactory : ICommandFactory
     // FindAllReferences
     // private readonly IFindAllReferencesService _findAllReferencesService;
     private readonly ICodeSearchService _codeSearchService;
-    private readonly IEnvironmentProvider _environmentProvider;
+    private readonly ICommonUtilityService _commonUtilityService;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
     public CommandFactory(
@@ -47,7 +48,7 @@ public class CommandFactory : ICommandFactory
 		// FindAllReferences
 		// IFindAllReferencesService findAllReferencesService,
 		ICodeSearchService codeSearchService,
-		IEnvironmentProvider environmentProvider,
+		ICommonUtilityService commonUtilityService,
 		CommonBackgroundTaskApi commonBackgroundTaskApi)
     {
     	_contextService = contextService;
@@ -57,7 +58,7 @@ public class CommandFactory : ICommandFactory
 		// FindAllReferences
 		// _findAllReferencesService = findAllReferencesService;
 		_codeSearchService = codeSearchService;
-		_environmentProvider = environmentProvider;
+		_commonUtilityService = commonUtilityService;
 		_commonBackgroundTaskApi = commonBackgroundTaskApi;
     }
 
@@ -557,7 +558,7 @@ public class CommandFactory : ICommandFactory
     
     public async ValueTask PeekCodeSearchDialog(TextEditorEditContext editContext, string? resourceUriValue, int? indexInclusiveStart)
     {
-    	var absolutePath = _environmentProvider.AbsolutePathFactory(resourceUriValue, isDirectory: false);
+    	var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(resourceUriValue, isDirectory: false);
     
     	// Duplicated Code: 'OpenCodeSearchDialog(...)'
     	CodeSearchDialog ??= new DialogViewModel(

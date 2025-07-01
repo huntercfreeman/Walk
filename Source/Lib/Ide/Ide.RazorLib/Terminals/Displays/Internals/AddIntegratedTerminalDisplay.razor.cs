@@ -7,9 +7,10 @@ using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
-using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
+using Walk.Ide.RazorLib.Terminals.Models;
 
 namespace Walk.Ide.RazorLib.Terminals.Displays.Internals;
 
@@ -22,13 +23,13 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 	[Inject]
 	private ICommonUiService CommonUiService { get; set; } = null!;
 	[Inject]
+	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+	[Inject]
 	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-	[Inject]
-	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	
@@ -44,7 +45,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 	{
 		var terminalCommandRequest = new TerminalCommandRequest(
         	"bash -c \"type bash\"",
-        	EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+        	CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
         	TypeBashTerminalCommandRequestKey)
         {
         	ContinueWithFunc = parsedCommand =>
@@ -92,7 +93,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 			BackgroundTaskService,
 			CommonComponentRenderers,
 			CommonUiService,
-			EnvironmentProvider,
+			CommonUtilityService.EnvironmentProvider,
 			_pathToShellExecutable)
 		{
 			Key = Key<ITerminal>.NewKey()

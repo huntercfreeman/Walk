@@ -30,10 +30,6 @@ public partial class WalkWebsiteInitializer : ComponentBase
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
     private ITextEditorHeaderRegistry TextEditorHeaderRegistry { get; set; } = null!;
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;

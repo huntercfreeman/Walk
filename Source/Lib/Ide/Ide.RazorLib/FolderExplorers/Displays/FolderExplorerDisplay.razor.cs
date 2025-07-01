@@ -35,8 +35,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
     private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
     private FolderExplorerTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     private FolderExplorerTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
@@ -62,7 +60,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
             CommonComponentRenderers,
             TreeViewService,
 			BackgroundTaskService,
-            EnvironmentProvider,
+            CommonUtilityService.EnvironmentProvider,
             CommonUiService);
     }
 

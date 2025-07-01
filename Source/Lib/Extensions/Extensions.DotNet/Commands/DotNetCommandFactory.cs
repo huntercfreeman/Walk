@@ -7,6 +7,7 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
@@ -20,20 +21,20 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 	private readonly TextEditorService _textEditorService;
 	private readonly ICommonUiService _commonUiService;
 	private readonly ITreeViewService _treeViewService;
-	private readonly IEnvironmentProvider _environmentProvider;
+	private readonly ICommonUtilityService _commonUtilityService;
 	private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
 	public DotNetCommandFactory(
         TextEditorService textEditorService,
         ICommonUiService commonUiService,
         ITreeViewService treeViewService,
-		IEnvironmentProvider environmentProvider,
+		ICommonUtilityService commonUtilityService,
 		CommonBackgroundTaskApi commonBackgroundTaskApi)
 	{
 		_textEditorService = textEditorService;
 		_commonUiService = commonUiService;
         _treeViewService = treeViewService;
-		_environmentProvider = environmentProvider;
+		_commonUtilityService = commonUtilityService;
 		_commonBackgroundTaskApi = commonBackgroundTaskApi;
     }
 
@@ -169,7 +170,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
         {
             if (textEditorViewModel is not null)
             {
-                var viewModelAbsolutePath = _environmentProvider.AbsolutePathFactory(
+                var viewModelAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
                     textEditorViewModel.PersistentState.ResourceUri.Value,
                     false);
 

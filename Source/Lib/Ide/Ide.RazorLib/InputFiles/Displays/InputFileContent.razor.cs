@@ -4,6 +4,7 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 
 namespace Walk.Ide.RazorLib.InputFiles.Displays;
@@ -13,9 +14,9 @@ public partial class InputFileContent : ComponentBase
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
+    [Inject]
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [CascadingParameter(Name = "SetInputFileContentTreeViewRootFunc")]
     public Func<AbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
@@ -38,7 +39,7 @@ public partial class InputFileContent : ComponentBase
         if (!TreeViewService.TryGetTreeViewContainer(TreeViewContainerKey, out _))
         {
             await SetInputFileContentTreeViewRootFunc
-                .Invoke(EnvironmentProvider.HomeDirectoryAbsolutePath)
+                .Invoke(CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath)
                 .ConfigureAwait(false);
         }
     }

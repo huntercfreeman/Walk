@@ -32,8 +32,6 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 	[Inject]
 	private ICommonUiService CommonUiService { get; set; } = null!;
 	[Inject]
-	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-	[Inject]
 	private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
@@ -295,7 +293,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 			
 		var menuOptionList = new List<MenuOptionRecord>();
 		
-		var absolutePath = EnvironmentProvider.AbsolutePathFactory(virtualizationResult.Model.PersistentState.ResourceUri.Value, false);
+		var absolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(virtualizationResult.Model.PersistentState.ResourceUri.Value, false);
 
 		menuOptionList.Add(new MenuOptionRecord(
 		    "Cancel",

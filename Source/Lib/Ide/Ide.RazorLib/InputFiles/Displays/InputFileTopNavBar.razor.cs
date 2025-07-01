@@ -22,10 +22,6 @@ public partial class InputFileTopNavBar : ComponentBase
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
     private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
     private ICommonUiService CommonUiService { get; set; } = null!;
@@ -62,8 +58,8 @@ public partial class InputFileTopNavBar : ComponentBase
         InputFileService.OpenParentDirectory(
             IdeComponentRenderers,
             CommonComponentRenderers,
-            FileSystemProvider,
-            EnvironmentProvider,
+            CommonUtilityService.FileSystemProvider,
+            CommonUtilityService.EnvironmentProvider,
             BackgroundTaskService,
             parentDirectoryTreeViewModel: null);
 
@@ -117,15 +113,15 @@ public partial class InputFileTopNavBar : ComponentBase
     {
         try
         {
-            if (!await FileSystemProvider.Directory.ExistsAsync(address).ConfigureAwait(false))
+            if (!await CommonUtilityService.FileSystemProvider.Directory.ExistsAsync(address).ConfigureAwait(false))
             {
-                if (await FileSystemProvider.File.ExistsAsync(address).ConfigureAwait(false))
+                if (await CommonUtilityService.FileSystemProvider.File.ExistsAsync(address).ConfigureAwait(false))
                     throw new WalkIdeException($"Address provided was a file. Provide a directory instead. {address}");
 
                 throw new WalkIdeException($"Address provided does not exist. {address}");
             }
 
-            var absolutePath = EnvironmentProvider.AbsolutePathFactory(address, true);
+            var absolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(address, true);
             _showInputTextEditForAddress = false;
 
             await SetInputFileContentTreeViewRootFunc.Invoke(absolutePath).ConfigureAwait(false);

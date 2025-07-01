@@ -50,10 +50,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     [Inject]
     public ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
-    public IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
-    public IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
     public WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
     public IFindAllService FindAllService { get; set; } = null!;

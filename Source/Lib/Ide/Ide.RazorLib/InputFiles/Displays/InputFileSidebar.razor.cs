@@ -8,6 +8,7 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
@@ -25,9 +26,7 @@ public partial class InputFileSidebar : ComponentBase
     [Inject]
     private ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 
@@ -54,20 +53,20 @@ public partial class InputFileSidebar : ComponentBase
         if (firstRender)
         {
             var directoryHomeNode = new TreeViewAbsolutePath(
-                EnvironmentProvider.HomeDirectoryAbsolutePath,
+                CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath,
                 IdeComponentRenderers,
                 CommonComponentRenderers,
-                FileSystemProvider,
-                EnvironmentProvider,
+                CommonUtilityService.FileSystemProvider,
+                CommonUtilityService.EnvironmentProvider,
                 true,
                 false);
 
             var directoryRootNode = new TreeViewAbsolutePath(
-                EnvironmentProvider.RootDirectoryAbsolutePath,
+                CommonUtilityService.EnvironmentProvider.RootDirectoryAbsolutePath,
                 IdeComponentRenderers,
                 CommonComponentRenderers,
-                FileSystemProvider,
-                EnvironmentProvider,
+                CommonUtilityService.FileSystemProvider,
+                CommonUtilityService.EnvironmentProvider,
                 true,
                 false);
 

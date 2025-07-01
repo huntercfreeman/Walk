@@ -11,6 +11,10 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Themes.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
+using Walk.Common.RazorLib.Installations.Models;
+using Walk.Common.RazorLib.ComponentRenderers.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Common.RazorLib.Options.Models;
 
@@ -18,8 +22,30 @@ public class CommonUtilityService : ICommonUtilityService
 {
     private readonly object _stateModificationLock = new();
 
-    public CommonUtilityService(BackgroundTaskService backgroundTaskService)
+    public CommonUtilityService(
+        WalkHostingInformation hostingInformation,
+        ICommonComponentRenderers commonComponentRenderers,
+        BackgroundTaskService backgroundTaskService,
+        ICommonUiService commonUiService)
     {
+        switch (hostingInformation.WalkHostingKind)
+        {
+            case WalkHostingKind.Photino:
+                EnvironmentProvider = new LocalEnvironmentProvider();
+                FileSystemProvider = new LocalFileSystemProvider(
+                    EnvironmentProvider,
+                    commonComponentRenderers,
+                    commonUiService);
+                break;
+            default:
+                EnvironmentProvider = new InMemoryEnvironmentProvider();
+                FileSystemProvider = new InMemoryFileSystemProvider(
+                    EnvironmentProvider,
+                    commonComponentRenderers,
+                    commonUiService);
+                break;
+        }
+    
         _backgroundTaskService = backgroundTaskService;
     
         _debounceExtraEvent = new(
@@ -485,4 +511,7 @@ public class CommonUtilityService : ICommonUtilityService
             .ConfigureAwait(false);
     }
     /* End IStorageService, LocalStorageService */
+    
+    public IEnvironmentProvider EnvironmentProvider { get; }
+    public IFileSystemProvider FileSystemProvider { get; }
 }

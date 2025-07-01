@@ -50,8 +50,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
     private readonly ITreeViewService _treeViewService;
-    private readonly IEnvironmentProvider _environmentProvider;
-	private readonly IFileSystemProvider _fileSystemProvider;
     private readonly TextEditorService _textEditorService;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
     private readonly ITerminalService _terminalService;
@@ -75,8 +73,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         ICommonComponentRenderers commonComponentRenderers,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         ITreeViewService treeViewService,
-        IEnvironmentProvider environmentProvider,
-        IFileSystemProvider fileSystemProvider,
         TextEditorService textEditorService,
         ITerminalService terminalService,
         IDecorationMapperRegistry decorationMapperRegistry,
@@ -97,8 +93,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         _commonComponentRenderers = commonComponentRenderers;
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _treeViewService = treeViewService;
-        _environmentProvider = environmentProvider;
-		_fileSystemProvider = fileSystemProvider;
         _textEditorService = textEditorService;
         _compilerServiceRegistry = compilerServiceRegistry;
         _terminalService = terminalService;
@@ -595,7 +589,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             OnAfterSubmitFunc = absolutePath =>
             {
             	// TODO: Why does 'isDirectory: false' not work?
-				_environmentProvider.DeletionPermittedRegister(new(absolutePath.Value, isDirectory: true));
+				_commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(new(absolutePath.Value, isDirectory: true));
             
             	_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
 				{
@@ -654,15 +648,15 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 			
     	var resourceUri = registerModelArgs.ResourceUri;
 
-        var fileLastWriteTime = await _fileSystemProvider.File
+        var fileLastWriteTime = await _commonUtilityService.FileSystemProvider.File
             .GetLastWriteTimeAsync(resourceUri.Value)
             .ConfigureAwait(false);
 
-        var content = await _fileSystemProvider.File
+        var content = await _commonUtilityService.FileSystemProvider.File
             .ReadAllTextAsync(resourceUri.Value)
             .ConfigureAwait(false);
 
-        var absolutePath = _environmentProvider.AbsolutePathFactory(resourceUri.Value, false);
+        var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(resourceUri.Value, false);
         var decorationMapper = _decorationMapperRegistry.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
         var compilerService = _compilerServiceRegistry.GetCompilerService(absolutePath.ExtensionNoPeriod);
 
@@ -737,7 +731,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             FindOverlayPresentationFacts.PresentationKey,
         };
 
-        var absolutePath = _environmentProvider.AbsolutePathFactory(
+        var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
             registerViewModelArgs.ResourceUri.Value,
             false);
 
@@ -753,7 +747,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     {
         var innerContent = innerTextEditor.GetAllText_WithOriginalLineEndings();
         
-        var absolutePath = _environmentProvider.AbsolutePathFactory(
+        var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
             innerTextEditor.PersistentState.ResourceUri.Value,
             false);
 
@@ -835,7 +829,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         string inputFileAbsolutePathString,
         TextEditorModel textEditorModel)
     {
-        var fileLastWriteTime = await _fileSystemProvider.File
+        var fileLastWriteTime = await _commonUtilityService.FileSystemProvider.File
             .GetLastWriteTimeAsync(inputFileAbsolutePathString)
             .ConfigureAwait(false);
 
@@ -895,7 +889,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     {
         _commonUiService.Notification_ReduceDisposeAction(notificationInformativeKey);
 
-        var content = await _fileSystemProvider.File
+        var content = await _commonUtilityService.FileSystemProvider.File
             .ReadAllTextAsync(inputFileAbsolutePathString)
             .ConfigureAwait(false);
 
@@ -930,9 +924,9 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         var absolutePathString = absolutePath.Value;
 
         if (absolutePathString is not null &&
-            await _fileSystemProvider.File.ExistsAsync(absolutePathString).ConfigureAwait(false))
+            await _commonUtilityService.FileSystemProvider.File.ExistsAsync(absolutePathString).ConfigureAwait(false))
         {
-            await _fileSystemProvider.File.WriteAllTextAsync(absolutePathString, content).ConfigureAwait(false);
+            await _commonUtilityService.FileSystemProvider.File.WriteAllTextAsync(absolutePathString, content).ConfigureAwait(false);
         }
         else
         {
@@ -944,7 +938,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
         if (absolutePathString is not null)
         {
-            fileLastWriteTime = await _fileSystemProvider.File.GetLastWriteTimeAsync(
+            fileLastWriteTime = await _commonUtilityService.FileSystemProvider.File.GetLastWriteTimeAsync(
                     absolutePathString,
                     CancellationToken.None)
                 .ConfigureAwait(false);
@@ -972,14 +966,14 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             IsLoadingFolderExplorer = true
         });
         
-		_environmentProvider.DeletionPermittedRegister(new(folderAbsolutePath.Value, true));
+		_commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(new(folderAbsolutePath.Value, true));
 
         var rootNode = new TreeViewAbsolutePath(
             folderAbsolutePath,
             _ideComponentRenderers,
             _commonComponentRenderers,
-            _fileSystemProvider,
-            _environmentProvider,
+            _commonUtilityService.FileSystemProvider,
+            _commonUtilityService.EnvironmentProvider,
             true,
             true);
 

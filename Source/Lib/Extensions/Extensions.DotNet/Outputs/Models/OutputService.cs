@@ -3,6 +3,7 @@ using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.TreeViews.Models.Utils;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
 using Walk.Extensions.DotNet.BackgroundTasks.Models;
 
@@ -12,7 +13,7 @@ public class OutputService : IOutputService
 {
 	private readonly DotNetBackgroundTaskApi _dotNetBackgroundTaskApi;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
-	private readonly IEnvironmentProvider _environmentProvider;
+	private readonly ICommonUtilityService _commonUtilityService;
 	private readonly ITreeViewService _treeViewService;
 		
 	private readonly Throttle _throttleCreateTreeView = new Throttle(TimeSpan.FromMilliseconds(333));
@@ -20,12 +21,12 @@ public class OutputService : IOutputService
 	public OutputService(
 		DotNetBackgroundTaskApi dotNetBackgroundTaskApi,
 		DotNetCliOutputParser dotNetCliOutputParser,
-		IEnvironmentProvider environmentProvider,
+		ICommonUtilityService commonUtilityService,
 		ITreeViewService treeViewService)
 	{
 		_dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
-		_environmentProvider = environmentProvider;
+		_commonUtilityService = commonUtilityService;
 		_treeViewService = treeViewService;
     }
     
@@ -73,7 +74,7 @@ public class OutputService : IOutputService
 
 		foreach (var group in filePathGrouping)
 		{
-			var absolutePath = _environmentProvider.AbsolutePathFactory(group.Key, false);
+			var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(group.Key, false);
 			var groupEnumerated = group.ToList();
 			var groupNameBuilder = new StringBuilder();
 			
@@ -108,7 +109,7 @@ public class OutputService : IOutputService
 			if (firstEntry is not null)
 			{
 				var projectText = ((TreeViewDiagnosticLine)firstEntry).Item.ProjectTextSpan.Text;
-				var projectAbsolutePath = _environmentProvider.AbsolutePathFactory(projectText, false);
+				var projectAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(projectText, false);
 			
 				if (!projectManualGrouping.ContainsKey(projectText))
 				{

@@ -22,7 +22,6 @@ public struct RelativePath
     {
         ExactInput = relativePathString;
         IsDirectory = isDirectory;
-        EnvironmentProvider = environmentProvider;
 
         // UpDirDirectiveCount
         {
@@ -68,7 +67,7 @@ public struct RelativePath
         {
             // Strip the last character if this is a directory, where the exact input ended in a directory separator char.
             // Reasoning: This standardizes what a directory looks like within the scope of this method.
-            if (EnvironmentProvider.IsDirectorySeparator(relativePathString.LastOrDefault()))
+            if (environmentProvider.IsDirectorySeparator(relativePathString.LastOrDefault()))
                 relativePathString = relativePathString[..^1];
         }
 
@@ -76,8 +75,8 @@ public struct RelativePath
         {
             char currentCharacter = relativePathString[_position++];
 
-            if (EnvironmentProvider.IsDirectorySeparator(currentCharacter))
-                ConsumeTokenAsDirectory();
+            if (environmentProvider.IsDirectorySeparator(currentCharacter))
+                ConsumeTokenAsDirectory(environmentProvider);
             else
                 _tokenBuilder.Append(currentCharacter);
         }
@@ -116,70 +115,73 @@ public struct RelativePath
         else
         {
             NameNoExtension = fileNameAmbiguous;
-            ExtensionNoPeriod = EnvironmentProvider.DirectorySeparatorChar.ToString();
+            ExtensionNoPeriod = environmentProvider.DirectorySeparatorChar.ToString();
         }
     }
 
     public PathType PathType { get; } = PathType.RelativePath;
     public bool IsDirectory { get; private set; }
-    public IEnvironmentProvider EnvironmentProvider { get; }
-    public List<(string NameWithExtension, string Path)> AncestorDirectoryList { get; } = new();
     public string NameNoExtension { get; private set; }
     public string ExtensionNoPeriod { get; private set; }
     public int UpDirDirectiveCount { get; }
-    public string? ParentDirectory => AncestorDirectoryList.LastOrDefault().Path;
     public string? ExactInput { get; }
-    public string Value => _value ??= CalculateValue();
+    public List<(string NameWithExtension, string Path)> AncestorDirectoryList { get; } = new();
+    public string? ParentDirectory => AncestorDirectoryList.LastOrDefault().Path;
     public string NameWithExtension => _nameWithExtension ??= PathHelper.CalculateNameWithExtension(NameNoExtension, ExtensionNoPeriod, IsDirectory);
 
 	public List<(string NameWithExtension, string Path)> GetAncestorDirectoryList() => AncestorDirectoryList;
 
-    private void ConsumeTokenAsDirectory()
+    private void ConsumeTokenAsDirectory(IEnvironmentProvider environmentProvider)
     {
         var nameNoExtension = _tokenBuilder.ToString();
-        var nameWithExtension = nameNoExtension + EnvironmentProvider.DirectorySeparatorChar;
+        var nameWithExtension = nameNoExtension + environmentProvider.DirectorySeparatorChar;
 
         _parentDirectoriesBuilder.Append(nameWithExtension);
 
-        AncestorDirectoryList.Add((nameNoExtension + EnvironmentProvider.DirectorySeparatorChar, _parentDirectoriesBuilder.ToString()));
+        AncestorDirectoryList.Add((nameNoExtension + environmentProvider.DirectorySeparatorChar, _parentDirectoriesBuilder.ToString()));
 
         _tokenBuilder.Clear();
     }
 
-    private string CalculateValue()
+    private string CalculateValue(IEnvironmentProvider environmentProvider)
     {
-        StringBuilder relativePathStringBuilder = new();
-
-        if (UpDirDirectiveCount > 0)
+        if (_value is null)
         {
-            var moveUpDirectoryToken = $"..{EnvironmentProvider.DirectorySeparatorChar}";
-
-            for (var i = 0; i < UpDirDirectiveCount; i++)
+            StringBuilder relativePathStringBuilder = new();
+    
+            if (UpDirDirectiveCount > 0)
             {
-                relativePathStringBuilder.Append(moveUpDirectoryToken);
+                var moveUpDirectoryToken = $"..{environmentProvider.DirectorySeparatorChar}";
+    
+                for (var i = 0; i < UpDirDirectiveCount; i++)
+                {
+                    relativePathStringBuilder.Append(moveUpDirectoryToken);
+                }
             }
+            else
+            {
+                var currentDirectoryToken = $".{environmentProvider.DirectorySeparatorChar}";
+                relativePathStringBuilder.Append(currentDirectoryToken);
+            }
+    
+            foreach (var ancestorDirectory in AncestorDirectoryList)
+            {
+                relativePathStringBuilder.Append(ancestorDirectory.NameWithExtension);
+            }
+    
+            relativePathStringBuilder.Append(NameWithExtension);
+    
+            var relativePathString = relativePathStringBuilder.ToString();
+    
+            if (relativePathString.EndsWith(new string(environmentProvider.DirectorySeparatorChar, 2)) ||
+                relativePathString.EndsWith(new string(environmentProvider.AltDirectorySeparatorChar, 2)))
+            {
+                relativePathString = relativePathString[..^1];
+            }
+    
+            _value = relativePathString;
         }
-        else
-        {
-            var currentDirectoryToken = $".{EnvironmentProvider.DirectorySeparatorChar}";
-            relativePathStringBuilder.Append(currentDirectoryToken);
-        }
-
-        foreach (var ancestorDirectory in AncestorDirectoryList)
-        {
-            relativePathStringBuilder.Append(ancestorDirectory.NameWithExtension);
-        }
-
-        relativePathStringBuilder.Append(NameWithExtension);
-
-        var relativePathString = relativePathStringBuilder.ToString();
-
-        if (relativePathString.EndsWith(new string(EnvironmentProvider.DirectorySeparatorChar, 2)) ||
-            relativePathString.EndsWith(new string(EnvironmentProvider.AltDirectorySeparatorChar, 2)))
-        {
-            relativePathString = relativePathString[..^1];
-        }
-
-        return relativePathString;
+        
+        return _value;
     }
 }

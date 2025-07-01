@@ -38,8 +38,6 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 	[Inject]
 	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
-	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 
 	private SolutionExplorerTreeViewKeyboardEventHandler _solutionExplorerTreeViewKeymap = null!;
@@ -60,7 +58,7 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 			TreeViewService,
 			CommonUiService,
 			BackgroundTaskService,
-			EnvironmentProvider);
+			CommonUtilityService.EnvironmentProvider);
 
 		_solutionExplorerTreeViewMouseEventHandler = new SolutionExplorerTreeViewMouseEventHandler(
 			IdeBackgroundTaskApi,

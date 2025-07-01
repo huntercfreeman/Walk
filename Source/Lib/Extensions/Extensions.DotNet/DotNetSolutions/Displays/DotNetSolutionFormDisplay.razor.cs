@@ -22,10 +22,6 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
-	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-	[Inject]
-	private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-	[Inject]
 	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	[Inject]
 	private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
@@ -122,19 +118,19 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 					CommonUiService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
 					// Open the created .NET Solution
-					var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
+					var parentDirectoryAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 						localParentDirectoryName,
 						true);
 
 					var solutionAbsolutePathString =
 						parentDirectoryAbsolutePath.Value +
 						localSolutionName +
-						EnvironmentProvider.DirectorySeparatorChar +
+						CommonUtilityService.EnvironmentProvider.DirectorySeparatorChar +
 						localSolutionName +
 						'.' +
 						ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-					var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
+					var solutionAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 						solutionAbsolutePathString,
 						false);
 
@@ -156,10 +152,10 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 		string localParentDirectoryName)
 	{
 		var directoryContainingSolution =
-			EnvironmentProvider.JoinPaths(localParentDirectoryName, localSolutionName) +
-			EnvironmentProvider.DirectorySeparatorChar;
+			CommonUtilityService.EnvironmentProvider.JoinPaths(localParentDirectoryName, localSolutionName) +
+			CommonUtilityService.EnvironmentProvider.DirectorySeparatorChar;
 
-		await FileSystemProvider.Directory
+		await CommonUtilityService.FileSystemProvider.Directory
 			.CreateDirectoryAsync(directoryContainingSolution)
 			.ConfigureAwait(false);
 
@@ -168,11 +164,11 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 			'.' +
 			ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-		var solutionAbsolutePathString = EnvironmentProvider.JoinPaths(
+		var solutionAbsolutePathString = CommonUtilityService.EnvironmentProvider.JoinPaths(
 			directoryContainingSolution,
 			localSolutionFilenameWithExtension);
 
-		await FileSystemProvider.File.WriteAllTextAsync(
+		await CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
 				solutionAbsolutePathString,
 				HackForWebsite_NEW_SOLUTION_TEMPLATE)
 			.ConfigureAwait(false);
@@ -182,7 +178,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 
 		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", CommonComponentRenderers, CommonUiService, TimeSpan.FromSeconds(7));
 
-		var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
+		var solutionAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 			solutionAbsolutePathString,
 			false);
 

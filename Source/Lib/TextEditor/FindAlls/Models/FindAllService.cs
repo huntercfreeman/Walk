@@ -1,8 +1,9 @@
 using Walk.Common.RazorLib.Reactives.Models;
-using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Walk.TextEditor.RazorLib.Lexers.Models;
 
 namespace Walk.TextEditor.RazorLib.FindAlls.Models;
 
@@ -10,22 +11,19 @@ public class FindAllService : IFindAllService
 {
     private readonly object _stateModificationLock = new();
 
-    private readonly IFileSystemProvider _fileSystemProvider;
-	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly ITreeViewService _treeViewService;
+	private readonly ICommonUtilityService _commonUtilityService;
 	private readonly Throttle _throttleSetSearchQuery = new Throttle(TimeSpan.FromMilliseconds(500));
 	private readonly Throttle _throttleUiUpdate = new Throttle(ThrottleFacts.TwentyFour_Frames_Per_Second);
 	
 	private readonly object _flushSearchResultsLock = new();
 	
 	public FindAllService(
-		IFileSystemProvider fileSystemProvider,
-		IEnvironmentProvider environmentProvider,
-		ITreeViewService treeViewService)
+		ITreeViewService treeViewService,
+		ICommonUtilityService commonUtilityService)
 	{
-		_fileSystemProvider = fileSystemProvider;
-		_environmentProvider = environmentProvider;
 		_treeViewService = treeViewService;
+		_commonUtilityService = commonUtilityService;
 	}
 	
     /// <summary>
@@ -156,7 +154,7 @@ public class FindAllService : IFindAllService
 			{
 				await StartSearchTask(
 					progressBarModel,
-					_fileSystemProvider,
+					_commonUtilityService.FileSystemProvider,
 					textEditorFindAllState,
 					cancellationToken);
 			}
@@ -328,7 +326,7 @@ public class FindAllService : IFindAllService
 	
 	    var treeViewList = groupedResults.Select(group =>
 	    {
-	    	var absolutePath = _environmentProvider.AbsolutePathFactory(
+	    	var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 	    		group.Key.Value,
 	    		false);
 	    		

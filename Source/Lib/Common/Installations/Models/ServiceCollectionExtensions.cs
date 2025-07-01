@@ -75,18 +75,6 @@ public static class ServiceCollectionExtensions
             .AddScoped<CommonBackgroundTaskApi>()
             .AddScoped<IContextService, ContextService>()
             .AddScoped<ICommonUtilityService, CommonUtilityService>();
-            
-        switch (hostingInformation.WalkHostingKind)
-        {
-            case WalkHostingKind.Photino:
-                services.AddScoped<IEnvironmentProvider, LocalEnvironmentProvider>();
-                services.AddScoped<IFileSystemProvider, LocalFileSystemProvider>();
-                break;
-            default:
-                services.AddScoped<IEnvironmentProvider, InMemoryEnvironmentProvider>();
-                services.AddScoped<IFileSystemProvider, InMemoryFileSystemProvider>();
-                break;
-        }
         
         return services;
     }

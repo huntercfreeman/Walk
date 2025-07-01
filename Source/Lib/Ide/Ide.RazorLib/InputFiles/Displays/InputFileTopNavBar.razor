@@ -51,9 +51,9 @@
                     }
                     else
                     {
-                        foreach (var directory in openedTreeView.Item.GetAncestorDirectoryList())
+                        foreach (var directory in openedTreeView.Item.GetAncestorDirectoryList(CommonUtilityService.EnvironmentProvider))
                         {
-                            var directoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(directory, true);
+                            var directoryAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(directory, true);
                             <InputFileAddressHierarchyEntry AbsolutePath="directoryAbsolutePath" />
                         }
 

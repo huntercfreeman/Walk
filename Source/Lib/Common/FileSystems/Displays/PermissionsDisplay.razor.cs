@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.FileSystems.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.FileSystems.Displays;
 
 public partial class PermissionsDisplay : ComponentBase
 {
     [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
     private string _deleteAllowPathTextInput = string.Empty;
     private bool _deleteAllowPathIsDirectoryInput;
@@ -18,7 +19,7 @@ public partial class PermissionsDisplay : ComponentBase
         string localProtectPathTextInput,
         bool localProtectPathIsDirectoryInput)
     {
-        EnvironmentProvider.DeletionPermittedRegister(new SimplePath(
+        CommonUtilityService.EnvironmentProvider.DeletionPermittedRegister(new SimplePath(
             localProtectPathTextInput,
             localProtectPathIsDirectoryInput));
     }
@@ -27,7 +28,7 @@ public partial class PermissionsDisplay : ComponentBase
         string localProtectPathTextInput,
         bool localProtectPathIsDirectoryInput)
     {
-        EnvironmentProvider.ProtectedPathsRegister(new SimplePath(
+        CommonUtilityService.EnvironmentProvider.ProtectedPathsRegister(new SimplePath(
             localProtectPathTextInput,
             localProtectPathIsDirectoryInput));
     }

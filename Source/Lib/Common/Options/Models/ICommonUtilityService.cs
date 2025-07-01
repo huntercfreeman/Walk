@@ -7,6 +7,7 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Themes.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 
 namespace Walk.Common.RazorLib.Options.Models;
 
@@ -97,4 +98,7 @@ public interface ICommonUtilityService
     public ValueTask Storage_SetValue(string key, object? value);
     public ValueTask<object?> Storage_GetValue(string key);
     /* End IStorageService, LocalStorageService */
+    
+    public IEnvironmentProvider EnvironmentProvider { get; }
+    public IFileSystemProvider FileSystemProvider { get; }
 }

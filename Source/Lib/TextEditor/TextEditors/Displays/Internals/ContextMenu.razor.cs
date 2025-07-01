@@ -31,10 +31,6 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     private IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
 
     [Parameter, EditorRequired]
 	public Key<TextEditorComponentData> ComponentDataKey { get; set; }
@@ -458,8 +454,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             	modelModifier,
             	viewModelModifier,
 		        CommonBackgroundTaskApi.JsRuntimeCommonApi,
-		        EnvironmentProvider,
-		        FileSystemProvider,
+		        CommonUtilityService.EnvironmentProvider,
+		        CommonUtilityService.FileSystemProvider,
 		        TextEditorService,
 		        CommonUiService);
         });

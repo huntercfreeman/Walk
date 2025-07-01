@@ -28,10 +28,6 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 	[Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
-	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-	[Inject]
-	private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-	[Inject]
 	private ICommonComponentRenderers WalkCommonComponentRenderers { get; set; } = null!;
 	[Inject]
 	private WalkIdeConfig IdeConfig { get; set; } = null!;
@@ -61,7 +57,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		_viewModel = new(DotNetSolutionModel, EnvironmentProvider);
+		_viewModel = new(DotNetSolutionModel, CommonUtilityService.EnvironmentProvider);
 		
 		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
 		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
@@ -132,7 +128,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 				
 			var terminalCommandRequest = new TerminalCommandRequest(
 				formattedCommand.Value,
-				EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+				CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
 				new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandRequestKey.Guid))
 			{
 				ContinueWithFunc = parsedTerminalCommand =>
@@ -167,7 +163,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 			var terminalCommandRequest = new TerminalCommandRequest(
 	        	formattedCommand.Value,
-	        	EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+	        	CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
 	        	new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandRequestKey.Guid))
 	        {
 	        	ContinueWithFunc = parsedCommand =>
@@ -253,8 +249,8 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 		{
 			await WebsiteDotNetCliHelper.StartNewCSharpProjectCommand(
 					immutableView,
-					EnvironmentProvider,
-					FileSystemProvider,
+					CommonUtilityService.EnvironmentProvider,
+					CommonUtilityService.FileSystemProvider,
 					DotNetBackgroundTaskApi,
 					CommonUiService,
 					DialogRecord,

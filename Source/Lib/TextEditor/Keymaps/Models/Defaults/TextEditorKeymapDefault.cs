@@ -513,8 +513,8 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				        modelModifier,
 				        viewModel,
 				        componentData.TextEditorViewModelSlimDisplay.TextEditorService.JsRuntimeCommonApi,
-				        componentData.TextEditorViewModelSlimDisplay.EnvironmentProvider,
-				        componentData.TextEditorViewModelSlimDisplay.FileSystemProvider,
+				        componentData.TextEditorViewModelSlimDisplay.CommonUtilityService.EnvironmentProvider,
+				        componentData.TextEditorViewModelSlimDisplay.CommonUtilityService.FileSystemProvider,
 				        componentData.TextEditorViewModelSlimDisplay.TextEditorService,
 				        componentData.TextEditorViewModelSlimDisplay.CommonUiService);
 				    break;

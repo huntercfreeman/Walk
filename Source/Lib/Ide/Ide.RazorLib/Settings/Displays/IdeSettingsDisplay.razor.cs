@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Installations.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.AppDatas.Models;
 
 namespace Walk.Ide.RazorLib.Settings.Displays;
@@ -8,9 +9,9 @@ namespace Walk.Ide.RazorLib.Settings.Displays;
 public partial class IdeSettingsDisplay : ComponentBase
 {
 	[Inject]
-	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-	[Inject]
 	private IAppDataService AppDataService { get; set; } = null!;
+	[Inject]
+	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	
 	private void WriteWalkDebugSomethingToConsole()
 	{
