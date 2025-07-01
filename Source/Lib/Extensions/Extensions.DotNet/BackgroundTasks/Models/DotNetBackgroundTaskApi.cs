@@ -73,7 +73,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 	private readonly ITreeViewService _treeViewService;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
-	private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly TextEditorService _textEditorService;
 	private readonly IFindAllService _findAllService;
 	private readonly ICodeSearchService _codeSearchService;
@@ -105,7 +104,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		CommonBackgroundTaskApi commonBackgroundTaskApi,
 		ITreeViewService treeViewService,
 		DotNetCliOutputParser dotNetCliOutputParser,
-		IFileSystemProvider fileSystemProvider,
 		TextEditorService textEditorService,
 		IFindAllService findAllService,
 		ICodeSearchService codeSearchService,
@@ -129,7 +127,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		_commonBackgroundTaskApi = commonBackgroundTaskApi;
 		_treeViewService = treeViewService;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
-		_fileSystemProvider = fileSystemProvider;
 		_textEditorService = textEditorService;
 		_findAllService = findAllService;
 		_codeSearchService = codeSearchService;
@@ -157,7 +154,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             _textEditorService,
             _commonUiService,
             _backgroundTaskService,
-            _fileSystemProvider,
+            _commonUtilityService.FileSystemProvider,
             _dotNetCliOutputParser,
             _terminalService);
 
@@ -204,13 +201,13 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
             if (treeViewNamespacePath.Item.AbsolutePath.IsDirectory)
             {
-                await _fileSystemProvider.Directory
+                await _commonUtilityService.FileSystemProvider.Directory
                     .DeleteAsync(treeViewNamespacePath.Item.AbsolutePath.Value, true, CancellationToken.None)
                     .ConfigureAwait(false);
             }
             else
             {
-                await _fileSystemProvider.File
+                await _commonUtilityService.FileSystemProvider.File
                     .DeleteAsync(treeViewNamespacePath.Item.AbsolutePath.Value)
                     .ConfigureAwait(false);
             }
@@ -802,7 +799,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	{
 		var dotNetSolutionAbsolutePathString = inSolutionAbsolutePath.Value;
 
-		var content = await _fileSystemProvider.File.ReadAllTextAsync(
+		var content = await _commonUtilityService.FileSystemProvider.File.ReadAllTextAsync(
 				dotNetSolutionAbsolutePathString,
 				CancellationToken.None)
 			.ConfigureAwait(false);
@@ -1204,7 +1201,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				_commonUtilityService.EnvironmentProvider);
 			projectTuple.AbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(absolutePathString, false);
 		
-			if (!await _fileSystemProvider.File.ExistsAsync(projectTuple.AbsolutePath.Value))
+			if (!await _commonUtilityService.FileSystemProvider.File.ExistsAsync(projectTuple.AbsolutePath.Value))
 			{
 				dotNetSolutionModel.DotNetProjectList.RemoveAt(i);
 				continue;
@@ -1216,7 +1213,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			if (innerParentDirectory is not null)
 				_commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(new(innerParentDirectory, true));
 			
-			var content = await _fileSystemProvider.File.ReadAllTextAsync(
+			var content = await _commonUtilityService.FileSystemProvider.File.ReadAllTextAsync(
 					projectTuple.AbsolutePath.Value)
 				.ConfigureAwait(false);
 	
@@ -1364,7 +1361,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			
 				var resourceUri = new ResourceUri(project.AbsolutePath.Value);
 
-				if (!await _fileSystemProvider.File.ExistsAsync(resourceUri.Value))
+				if (!await _commonUtilityService.FileSystemProvider.File.ExistsAsync(resourceUri.Value))
 					continue; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
 			}
 
@@ -1429,7 +1426,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		double maximumProgressAvailableToProject,
 		CompilationUnitKind compilationUnitKind)
 	{
-		if (!await _fileSystemProvider.File.ExistsAsync(dotNetProject.AbsolutePath.Value))
+		if (!await _commonUtilityService.FileSystemProvider.File.ExistsAsync(dotNetProject.AbsolutePath.Value))
 			return; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
 
 		var parentDirectory = dotNetProject.AbsolutePath.ParentDirectory;
@@ -1452,12 +1449,12 @@ Execution Terminal".ReplaceLineEndings("\n")));
 
 		async Task DiscoverFilesRecursively(string directoryPathParent, List<string> discoveredFileList, bool isFirstInvocation)
 		{
-			var directoryPathChildList = await _fileSystemProvider.Directory.GetDirectoriesAsync(
+			var directoryPathChildList = await _commonUtilityService.FileSystemProvider.Directory.GetDirectoriesAsync(
 					directoryPathParent,
 					CancellationToken.None)
 				.ConfigureAwait(false);
 
-			var filePathChildList = await _fileSystemProvider.Directory.GetFilesAsync(
+			var filePathChildList = await _commonUtilityService.FileSystemProvider.Directory.GetFilesAsync(
 					directoryPathParent,
 					CancellationToken.None)
 				.ConfigureAwait(false);
@@ -1500,7 +1497,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				resourceUri,
 				shouldTriggerResourceWasModified: false);
 				
-			await compilerService.FastParseAsync(editContext, resourceUri, _fileSystemProvider, compilationUnitKind)
+			await compilerService.FastParseAsync(editContext, resourceUri, _commonUtilityService.FileSystemProvider, compilationUnitKind)
 				.ConfigureAwait(false);
 				
 			fileParsedCount++;
@@ -1522,7 +1519,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			_dotNetComponentRenderers,
 			_ideComponentRenderers,
 			_commonComponentRenderers,
-			_fileSystemProvider,
+			_commonUtilityService.FileSystemProvider,
 			_commonUtilityService.EnvironmentProvider,
 			true,
 			true);

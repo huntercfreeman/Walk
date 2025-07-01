@@ -10,6 +10,7 @@ using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Tooltips.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Dynamics.Models;
 
@@ -23,6 +24,8 @@ public interface ICommonUiService
     public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
     
     public event Action<CommonUiEventKind>? CommonUiStateChanged;
+    
+    public void HACK_SetCommonUtilityServiceCircularReferenceTemporaryFix(ICommonUtilityService commonUtilityService);
 
     /* Start IOutlineService */
 	public OutlineState GetOutlineState();

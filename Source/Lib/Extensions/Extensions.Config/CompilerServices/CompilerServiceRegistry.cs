@@ -23,7 +23,6 @@ public class ConfigCompilerServiceRegistry : ICompilerServiceRegistry
 
     public ConfigCompilerServiceRegistry(
         TextEditorService textEditorService,
-        IEnvironmentProvider environmentProvider,
         ITerminalService terminalService,
         ICommonUtilityService commonUtilityService)
     {
@@ -33,7 +32,7 @@ public class ConfigCompilerServiceRegistry : ICompilerServiceRegistry
         CssCompilerService = new CssCompilerService(textEditorService);
         DotNetSolutionCompilerService = new DotNetSolutionCompilerService(textEditorService);
         JsonCompilerService = new JsonCompilerService(textEditorService);
-        RazorCompilerService = new RazorCompilerService(textEditorService, CSharpCompilerService, environmentProvider);
+        RazorCompilerService = new RazorCompilerService(textEditorService, CSharpCompilerService, commonUtilityService.EnvironmentProvider);
         XmlCompilerService = new XmlCompilerService(textEditorService);
         TerminalCompilerService = new TerminalCompilerService(textEditorService, terminalService);
         DefaultCompilerService = new CompilerServiceDoNothing();

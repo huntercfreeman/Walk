@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Themes.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
@@ -46,7 +47,7 @@ public static class ServiceCollectionExtensions
                 FastParseFunc = async (fastParseArgs) =>
                 {
                 	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
-                		fastParseArgs.ResourceUri.Value, fastParseArgs.ServiceProvider);
+                		fastParseArgs.ResourceUri.Value, fastParseArgs.ServiceProvider.GetRequiredService<ICommonUtilityService>());
                 		
                 	var standardizedResourceUri = new ResourceUri(standardizedAbsolutePathString);
                 
@@ -64,7 +65,7 @@ public static class ServiceCollectionExtensions
                 RegisterModelFunc = async (registerModelArgs) =>
                 {
                 	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
-                		registerModelArgs.ResourceUri.Value, registerModelArgs.ServiceProvider);
+                		registerModelArgs.ResourceUri.Value, registerModelArgs.ServiceProvider.GetRequiredService<ICommonUtilityService>());
                 		
                 	var standardizedResourceUri = new ResourceUri(standardizedAbsolutePathString);
                 
@@ -82,7 +83,7 @@ public static class ServiceCollectionExtensions
                 TryRegisterViewModelFunc = async (tryRegisterViewModelArgs) =>
                 {
                 	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
-                		tryRegisterViewModelArgs.ResourceUri.Value, tryRegisterViewModelArgs.ServiceProvider);
+                		tryRegisterViewModelArgs.ResourceUri.Value, tryRegisterViewModelArgs.ServiceProvider.GetRequiredService<ICommonUtilityService>());
                 		
                 	var standardizedResourceUri = new ResourceUri(standardizedAbsolutePathString);
                 	
@@ -130,14 +131,12 @@ public static class ServiceCollectionExtensions
         return services;
     }
     
-    public static Task<string> AbsolutePathStandardizeFunc(string absolutePathString, IServiceProvider serviceProvider)
+    public static Task<string> AbsolutePathStandardizeFunc(string absolutePathString, ICommonUtilityService commonUtilityService)
     {
-        var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
-
-        if (absolutePathString.StartsWith(environmentProvider.DriveExecutingFromNoDirectorySeparator))
+        if (absolutePathString.StartsWith(commonUtilityService.EnvironmentProvider.DriveExecutingFromNoDirectorySeparator))
         {
             var removeDriveFromResourceUriValue = absolutePathString[
-                environmentProvider.DriveExecutingFromNoDirectorySeparator.Length..];
+                commonUtilityService.EnvironmentProvider.DriveExecutingFromNoDirectorySeparator.Length..];
 
             return Task.FromResult(removeDriveFromResourceUriValue);
         }

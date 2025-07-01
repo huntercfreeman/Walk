@@ -49,7 +49,10 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 		_commonUtilityService.Options_CommonBackgroundTaskApi = this;
 
         _contextService = contextService;
+        
         _commonUiService = commonUiService;
+        _commonUiService.HACK_SetCommonUtilityServiceCircularReferenceTemporaryFix(_commonUtilityService);
+        
         _treeViewService = treeViewService;
         _commonConfig = commonConfig;
             

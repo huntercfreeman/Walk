@@ -35,7 +35,6 @@ public sealed class TextEditorService
     private readonly BackgroundTaskService _backgroundTaskService;
     private readonly ICommonUiService _commonUiService;
     private readonly IContextService _contextService;
-    private readonly IEnvironmentProvider _environmentProvider;
     private readonly IDirtyResourceUriService _dirtyResourceUriService;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
     private readonly IJSRuntime _jsRuntime;
@@ -53,7 +52,6 @@ public sealed class TextEditorService
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         ICommonUiService commonUiService,
         IContextService contextService,
-        IEnvironmentProvider environmentProvider,
 		IServiceProvider serviceProvider)
     {
     	__TextEditorViewModelLiason = new(this);
@@ -84,7 +82,6 @@ public sealed class TextEditorService
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _commonUiService = commonUiService;
         _contextService = contextService;
-        _environmentProvider = environmentProvider;
 
         ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService);
         ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _commonBackgroundTaskApi, _commonUiService);
@@ -577,7 +574,7 @@ public sealed class TextEditorService
 			return;
 			
 		var standardizedFilePathString = await TextEditorConfig.AbsolutePathStandardizeFunc
-			.Invoke(absolutePath, _serviceProvider)
+			.Invoke(absolutePath, CommonUtilityService)
 			.ConfigureAwait(false);
 			
 		var resourceUri = new ResourceUri(standardizedFilePathString);
@@ -850,7 +847,7 @@ public sealed class TextEditorService
                             {
                                 viewModelList.Add(viewModel);
 
-                                var absolutePath = _environmentProvider.AbsolutePathFactory(
+                                var absolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
                                     viewModel.PersistentState.ResourceUri.Value,
                                     false);
 

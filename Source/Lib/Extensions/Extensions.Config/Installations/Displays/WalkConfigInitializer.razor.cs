@@ -8,6 +8,7 @@ using Walk.Common.RazorLib.Badges.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Notifications.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
@@ -23,11 +24,7 @@ namespace Walk.Extensions.Config.Installations.Displays;
 public partial class WalkConfigInitializer : ComponentBase
 {
     [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
@@ -44,6 +41,8 @@ public partial class WalkConfigInitializer : ComponentBase
 	private IIdeService IdeService { get; set; } = null!;
 	[Inject]
 	private ICommonUiService CommonUiService { get; set; } = null!;
+	[Inject]
+	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
 	
@@ -100,7 +99,7 @@ public partial class WalkConfigInitializer : ComponentBase
     	if (solutionMostRecent is null)
     		return;
     
-    	var slnAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
+    	var slnAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
             solutionMostRecent,
             false);
 
@@ -113,7 +112,7 @@ public partial class WalkConfigInitializer : ComponentBase
         var parentDirectory = slnAbsolutePath.ParentDirectory;
         if (parentDirectory is not null)
         {
-            var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
+            var parentDirectoryAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
                 parentDirectory,
                 true);
 
@@ -121,8 +120,8 @@ public partial class WalkConfigInitializer : ComponentBase
                 parentDirectoryAbsolutePath,
                 IdeComponentRenderers,
                 CommonComponentRenderers,
-                FileSystemProvider,
-                EnvironmentProvider,
+                CommonUtilityService.FileSystemProvider,
+                CommonUtilityService.EnvironmentProvider,
                 true,
                 false);
 
@@ -162,8 +161,8 @@ public partial class WalkConfigInitializer : ComponentBase
                 pseudoRootNode,
                 IdeComponentRenderers,
                 CommonComponentRenderers,
-                FileSystemProvider,
-                EnvironmentProvider);
+                CommonUtilityService.FileSystemProvider,
+                CommonUtilityService.EnvironmentProvider);
         }
 
 		/*

@@ -21,20 +21,21 @@ public class CommonUiService : ICommonUiService
 {
     private readonly object _stateModificationLock = new();
     
-    private readonly ICommonUtilityService _commonUtilityService;
+    private ICommonUtilityService _commonUtilityService;
     
-    public CommonUiService(
-        ICommonUtilityService commonUtilityService,
-        IJSRuntime jsRuntime)
+    public CommonUiService(IJSRuntime jsRuntime)
 	{
-	    _commonUtilityService = commonUtilityService;
-		
-		JsRuntimeCommonApi = jsRuntime.GetWalkCommonApi();
+        JsRuntimeCommonApi = jsRuntime.GetWalkCommonApi();
 	}
 	
 	public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
 	
 	public event Action<CommonUiEventKind>? CommonUiStateChanged;
+	
+	public void HACK_SetCommonUtilityServiceCircularReferenceTemporaryFix(ICommonUtilityService commonUtilityService)
+	{
+	    _commonUtilityService = commonUtilityService;
+	}
 	
     /* Start IOutlineService */
 	private OutlineState _outlineState = new();
