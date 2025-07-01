@@ -2,7 +2,6 @@ using System.Collections.Concurrent;
 using System.Text;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
-using Walk.Common.RazorLib.Storages.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.JsRuntimes.Models;
 using Walk.Common.RazorLib.Contexts.Models;
@@ -28,7 +27,6 @@ namespace Walk.Common.RazorLib.BackgroundTasks.Models;
 public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 {
 	private readonly BackgroundTaskService _backgroundTaskService;
-    private readonly IStorageService _storageService;
     private readonly ICommonUtilityService _commonUtilityService;
     private readonly IContextService _contextService;
     private readonly ICommonUiService _commonUiService;
@@ -39,7 +37,6 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 
     public CommonBackgroundTaskApi(
 		BackgroundTaskService backgroundTaskService,
-		IStorageService storageService,
 		ICommonUtilityService commonUtilityService,
 		IContextService contextService,
 		ICommonUiService commonUiService,
@@ -47,7 +44,6 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
         WalkCommonConfig commonConfig)
     {
         _backgroundTaskService = backgroundTaskService;
-        _storageService = storageService;
 
         _commonUtilityService = commonUtilityService;
 		_commonUtilityService.Options_CommonBackgroundTaskApi = this;
@@ -173,7 +169,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
     public async ValueTask Do_WriteToLocalStorage(string key, object value)
     {
         var valueJson = System.Text.Json.JsonSerializer.Serialize(value);
-        await _storageService.SetValue(key, valueJson).ConfigureAwait(false);
+        await _commonUtilityService.Storage_SetValue(key, valueJson).ConfigureAwait(false);
     }
 
     public async ValueTask Do_Tab_ManuallyPropagateOnContextMenu(

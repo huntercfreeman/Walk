@@ -1,5 +1,5 @@
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Common.RazorLib.Clipboards.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
@@ -25,9 +25,9 @@ public class ConfigCompilerServiceRegistry : ICompilerServiceRegistry
         TextEditorService textEditorService,
         IEnvironmentProvider environmentProvider,
         ITerminalService terminalService,
-        IClipboardService clipboardService)
+        ICommonUtilityService commonUtilityService)
     {
-        CSharpCompilerService = new CSharpCompilerService(textEditorService, clipboardService);
+        CSharpCompilerService = new CSharpCompilerService(textEditorService, commonUtilityService);
         CSharpProjectCompilerService = new CSharpProjectCompilerService(textEditorService);
         // JavaScriptCompilerService = new JavaScriptCompilerService(textEditorService);
         CssCompilerService = new CssCompilerService(textEditorService);

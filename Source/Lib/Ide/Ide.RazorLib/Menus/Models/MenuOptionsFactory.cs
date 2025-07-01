@@ -4,9 +4,9 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Notifications.Models;
-using Walk.Common.RazorLib.Clipboards.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.Clipboards.Models;
@@ -19,7 +19,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
-    private readonly IClipboardService _clipboardService;
+    private readonly ICommonUtilityService _commonUtilityService;
     private readonly BackgroundTaskService _backgroundTaskService;
 
     public MenuOptionsFactory(
@@ -27,14 +27,14 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
-        IClipboardService clipboardService,
+        ICommonUtilityService commonUtilityService,
         BackgroundTaskService backgroundTaskService)
     {
         _ideComponentRenderers = ideComponentRenderers;
         _commonComponentRenderers = commonComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _environmentProvider = environmentProvider;
-        _clipboardService = clipboardService;
+        _commonUtilityService = commonUtilityService;
         _backgroundTaskService = backgroundTaskService;
     }
 
@@ -331,7 +331,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
 
     private async ValueTask Do_PerformCopyFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
-        await _clipboardService.SetClipboard(ClipboardFacts.FormatPhrase(
+        await _commonUtilityService.SetClipboard(ClipboardFacts.FormatPhrase(
                 ClipboardFacts.CopyCommand,
                 ClipboardFacts.AbsolutePathDataType,
                 absolutePath.Value))
@@ -356,7 +356,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         AbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
-        await _clipboardService.SetClipboard(ClipboardFacts.FormatPhrase(
+        await _commonUtilityService.SetClipboard(ClipboardFacts.FormatPhrase(
                 ClipboardFacts.CutCommand,
                 ClipboardFacts.AbsolutePathDataType,
                 absolutePath.Value))
@@ -377,7 +377,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
     
     private async ValueTask Do_PerformPasteFile(AbsolutePath receivingDirectory, Func<Task> onAfterCompletion)
     {
-        var clipboardContents = await _clipboardService.ReadClipboard().ConfigureAwait(false);
+        var clipboardContents = await _commonUtilityService.ReadClipboard().ConfigureAwait(false);
 
         if (ClipboardFacts.TryParseString(clipboardContents, out var clipboardPhrase))
         {

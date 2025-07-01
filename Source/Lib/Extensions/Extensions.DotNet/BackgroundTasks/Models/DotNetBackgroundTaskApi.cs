@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.Storages.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
@@ -66,7 +65,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 {
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 	private readonly BackgroundTaskService _backgroundTaskService;
-	private readonly IStorageService _storageService;
 	private readonly IAppDataService _appDataService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
@@ -100,7 +98,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
     public DotNetBackgroundTaskApi(
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		BackgroundTaskService backgroundTaskService,
-        IStorageService storageService,
         IAppDataService appDataService,
 		ICompilerServiceRegistry compilerServiceRegistry,
 		IDotNetComponentRenderers dotNetComponentRenderers,
@@ -127,7 +124,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
 		_backgroundTaskService = backgroundTaskService;
-		_storageService = storageService;
 		_appDataService = appDataService;
         _dotNetComponentRenderers = dotNetComponentRenderers;
 		_ideComponentRenderers = ideComponentRenderers;

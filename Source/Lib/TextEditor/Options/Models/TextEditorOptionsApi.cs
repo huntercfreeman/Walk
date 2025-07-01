@@ -4,7 +4,6 @@ using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.RenderStates.Models;
-using Walk.Common.RazorLib.Storages.Models;
 using Walk.Common.RazorLib.Themes.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Installations.Models;
@@ -22,7 +21,6 @@ public sealed class TextEditorOptionsApi
 
     private readonly TextEditorService _textEditorService;
     private readonly WalkTextEditorConfig _textEditorConfig;
-    private readonly IStorageService _storageService;
     private readonly ICommonUiService _commonUiService;
     private readonly IContextService _contextService;
     private readonly ICommonUtilityService _commonUtilityService;
@@ -31,7 +29,6 @@ public sealed class TextEditorOptionsApi
     public TextEditorOptionsApi(
         TextEditorService textEditorService,
         WalkTextEditorConfig textEditorConfig,
-        IStorageService storageService,
         ICommonUiService commonUiService,
         IContextService contextService,
         ICommonUtilityService commonUtilityService,
@@ -39,7 +36,6 @@ public sealed class TextEditorOptionsApi
     {
         _textEditorService = textEditorService;
         _textEditorConfig = textEditorConfig;
-        _storageService = storageService;
         _commonUiService = commonUiService;
         _contextService = contextService;
         _commonUtilityService = commonUtilityService;
@@ -390,7 +386,7 @@ public sealed class TextEditorOptionsApi
 
     public async Task SetFromLocalStorageAsync()
     {
-        var optionsJsonString = await _storageService.GetValue(_textEditorService.StorageKey).ConfigureAwait(false) as string;
+        var optionsJsonString = await _commonUtilityService.Storage_GetValue(_textEditorService.StorageKey).ConfigureAwait(false) as string;
 
         if (string.IsNullOrWhiteSpace(optionsJsonString))
             return;

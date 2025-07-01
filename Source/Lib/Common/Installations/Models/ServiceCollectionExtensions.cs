@@ -15,8 +15,6 @@ using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Notifications.Models;
-using Walk.Common.RazorLib.Clipboards.Models;
-using Walk.Common.RazorLib.Storages.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Themes.Models;
 using Walk.Common.RazorLib.Tooltips.Models;
@@ -76,8 +74,6 @@ public static class ServiceCollectionExtensions
             .AddScoped<BrowserResizeInterop>()
             .AddScoped<CommonBackgroundTaskApi>()
             .AddScoped<IContextService, ContextService>()
-            .AddScoped<IClipboardService, JavaScriptInteropClipboardService>()
-            .AddScoped<IStorageService, LocalStorageService>()
             .AddScoped<ICommonUtilityService, CommonUtilityService>();
             
         switch (hostingInformation.WalkHostingKind)

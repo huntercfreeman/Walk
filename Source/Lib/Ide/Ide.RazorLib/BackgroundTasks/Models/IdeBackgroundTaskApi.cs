@@ -4,7 +4,6 @@ using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Common.RazorLib.Storages.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keys.Models;
@@ -47,7 +46,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 	public static readonly Key<TextEditorGroup> EditorTextEditorGroupKey = Key<TextEditorGroup>.NewKey();
 
     private readonly BackgroundTaskService _backgroundTaskService;
-    private readonly IStorageService _storageService;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
@@ -72,7 +70,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
     public IdeBackgroundTaskApi(
         BackgroundTaskService backgroundTaskService,
-        IStorageService storageService,
         ICompilerServiceRegistry compilerServiceRegistry,
         IIdeComponentRenderers ideComponentRenderers,
         ICommonComponentRenderers commonComponentRenderers,
@@ -96,7 +93,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         IServiceProvider serviceProvider)
     {
         _backgroundTaskService = backgroundTaskService;
-        _storageService = storageService;
         _ideComponentRenderers = ideComponentRenderers;
         _commonComponentRenderers = commonComponentRenderers;
         _commonBackgroundTaskApi = commonBackgroundTaskApi;

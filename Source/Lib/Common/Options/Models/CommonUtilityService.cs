@@ -7,7 +7,6 @@ using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Themes.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
-using Walk.Common.RazorLib.Storages.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Keys.Models;
@@ -19,11 +18,8 @@ public class CommonUtilityService : ICommonUtilityService
 {
     private readonly object _stateModificationLock = new();
 
-    public CommonUtilityService(
-        IStorageService storageService,
-        BackgroundTaskService backgroundTaskService)
+    public CommonUtilityService(BackgroundTaskService backgroundTaskService)
     {
-        _storageService = storageService;
         _backgroundTaskService = backgroundTaskService;
     
         _debounceExtraEvent = new(
@@ -131,7 +127,6 @@ public class CommonUtilityService : ICommonUtilityService
     /* End IKeymapService */
     
     /* Start IAppOptionsService */
-    private readonly IStorageService _storageService;
     private readonly BackgroundTaskService _backgroundTaskService;
     
     private AppOptionsState _appOptionsState = new();
@@ -324,7 +319,7 @@ public class CommonUtilityService : ICommonUtilityService
 
     public async Task Options_SetFromLocalStorageAsync()
     {
-        var optionsJsonString = await _storageService.GetValue(Options_StorageKey).ConfigureAwait(false) as string;
+        var optionsJsonString = await Storage_GetValue(Options_StorageKey).ConfigureAwait(false) as string;
 
         if (string.IsNullOrWhiteSpace(optionsJsonString))
             return;
@@ -444,4 +439,50 @@ public class CommonUtilityService : ICommonUtilityService
         ThemeStateChanged?.Invoke();
     }
     /* End IThemeService */
+    
+    /* Start IClipboardService, JavaScriptInteropClipboardService */
+    public async Task<string> ReadClipboard()
+    {
+        try
+        {
+            return await Options_CommonBackgroundTaskApi.JsRuntimeCommonApi
+                .ReadClipboard()
+                .ConfigureAwait(false);
+        }
+        catch (TaskCanceledException)
+        {
+            return string.Empty;
+        }
+    }
+
+    public async Task SetClipboard(string value)
+    {
+        try
+        {
+            await Options_CommonBackgroundTaskApi.JsRuntimeCommonApi
+                .SetClipboard(value)
+                .ConfigureAwait(false);
+        }
+        catch (TaskCanceledException)
+        {
+        }
+    }
+    /* End IClipboardService, JavaScriptInteropClipboardService */
+    
+    /* Start IStorageService, LocalStorageService */
+    public async ValueTask Storage_SetValue(string key, object? value)
+    {
+        await Options_CommonBackgroundTaskApi.JsRuntimeCommonApi.LocalStorageSetItem(
+                key,
+                value)
+            .ConfigureAwait(false);
+    }
+
+    public async ValueTask<object?> Storage_GetValue(string key)
+    {
+        return await Options_CommonBackgroundTaskApi.JsRuntimeCommonApi.LocalStorageGetItem(
+                key)
+            .ConfigureAwait(false);
+    }
+    /* End IStorageService, LocalStorageService */
 }

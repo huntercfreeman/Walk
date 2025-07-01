@@ -111,16 +111,14 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            await TextEditorCommandDefaultFunctions.CopyAsync(
 		                editContext,
 		                modelModifier,
-		                viewModel,
-		                componentData.TextEditorViewModelSlimDisplay.ClipboardService);
+		                viewModel);
 		            break;
 		        case "KeyV":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
 		            await TextEditorCommandDefaultFunctions.PasteAsync(
 		                editContext,
 		                modelModifier,
-		                viewModel,
-		                componentData.TextEditorViewModelSlimDisplay.ClipboardService);
+		                viewModel);
 		            shouldRevealCursor = true;
 		            shouldApplySyntaxHighlighting = true;
 		            break;
@@ -129,8 +127,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		            await TextEditorCommandDefaultFunctions.CutAsync(
 		                editContext,
 		                modelModifier,
-		                viewModel,
-		                componentData.TextEditorViewModelSlimDisplay.ClipboardService);
+		                viewModel);
 		            shouldRevealCursor = true;
 		            shouldApplySyntaxHighlighting = true;
 		            break;

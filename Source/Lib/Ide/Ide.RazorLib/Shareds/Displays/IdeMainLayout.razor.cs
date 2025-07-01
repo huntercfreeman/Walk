@@ -11,7 +11,6 @@ using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.Clipboards.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Installations.Models;
@@ -47,8 +46,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
     [Inject]
     private ICommandFactory CommandFactory { get; set; } = null!;
-    [Inject]
-    private IClipboardService ClipboardService { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]

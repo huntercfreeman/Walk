@@ -1,8 +1,8 @@
 using System.Text;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Clipboards.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Autocompletes.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
@@ -36,12 +36,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     // Service dependencies
     private readonly TextEditorService _textEditorService;
-    private readonly IClipboardService _clipboardService;
+    private readonly ICommonUtilityService _commonUtilityService;
     
-    public CSharpCompilerService(TextEditorService textEditorService, IClipboardService clipboardService)
+    public CSharpCompilerService(TextEditorService textEditorService, ICommonUtilityService commonUtilityService)
     {
     	_textEditorService = textEditorService;
-    	_clipboardService = clipboardService;
+    	_commonUtilityService = commonUtilityService;
     	
     	__CSharpBinder = new(_textEditorService);
     }
@@ -669,7 +669,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 						MenuOptionKind.Other,
 						onClickFunc: async () =>
 						{
-							await _clipboardService.SetClipboard(usingStatementText).ConfigureAwait(false);
+							await _commonUtilityService.SetClipboard(usingStatementText).ConfigureAwait(false);
 						}));
 				}
 				else

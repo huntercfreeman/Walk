@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Notifications.Models;
-using Walk.Common.RazorLib.Clipboards.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
@@ -32,8 +31,6 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	[Inject]
 	private ICommonUiService CommonUiService { get; set; } = null!;
-	[Inject]
-	private IClipboardService ClipboardService { get; set; } = null!;
 	[Inject]
 	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 	[Inject]
@@ -159,8 +156,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
         	return TextEditorCommandDefaultFunctions.CopyAsync(
             	editContext,
             	modelModifier,
-            	viewModelModifier,
-            	ClipboardService);
+            	viewModelModifier);
         });
         return Task.CompletedTask;
     }
@@ -179,8 +175,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
         	return TextEditorCommandDefaultFunctions.CutAsync(
         		editContext,
             	modelModifier,
-            	viewModelModifier,
-            	ClipboardService);
+            	viewModelModifier);
         });
         return Task.CompletedTask;
     }
@@ -199,8 +194,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
         	return TextEditorCommandDefaultFunctions.PasteAsync(
             	editContext,
             	modelModifier,
-            	viewModelModifier,
-            	ClipboardService);
+            	viewModelModifier);
         });
         return Task.CompletedTask;
     }

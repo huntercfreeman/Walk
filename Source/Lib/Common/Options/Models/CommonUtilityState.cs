@@ -112,3 +112,10 @@ public record struct ThemeState(IReadOnlyList<ThemeRecord> ThemeList)
     }
 }
 /* End IThemeService */
+
+/* Start IClipboardService, JavaScriptInteropClipboardService */
+/* End IClipboardService, JavaScriptInteropClipboardService */
+
+/* Start IStorageService, LocalStorageService */
+/* End IStorageService, LocalStorageService */
+    

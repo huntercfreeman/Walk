@@ -3,7 +3,6 @@ using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Drags.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.Clipboards.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
@@ -42,8 +41,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     public IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
     [Inject]
     public IJSRuntime JsRuntime { get; set; } = null!;
-    [Inject]
-    public IClipboardService ClipboardService { get; set; } = null!;
     [Inject]
     public BackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]

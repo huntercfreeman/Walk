@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
-using Walk.Common.RazorLib.Clipboards.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -20,7 +20,7 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
 public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 {
     [Inject]
-    private IClipboardService ClipboardService { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     private ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
@@ -251,8 +251,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             return TextEditorCommandDefaultFunctions.CutAsync(
             	editContext,
 		        modelModifier,
-		        viewModelModifier,
-		        ClipboardService);
+		        viewModelModifier);
         });
         return Task.CompletedTask;
     }
@@ -271,8 +270,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             return TextEditorCommandDefaultFunctions.CopyAsync(
         		editContext,
 		        modelModifier,
-		        viewModelModifier,
-		        ClipboardService);
+		        viewModelModifier);
         });
         return Task.CompletedTask;
     }
@@ -291,8 +289,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             return TextEditorCommandDefaultFunctions.PasteAsync(
             	editContext,
 		        modelModifier,
-		        viewModelModifier,
-		        ClipboardService);
+		        viewModelModifier);
         });
         return Task.CompletedTask;
     }

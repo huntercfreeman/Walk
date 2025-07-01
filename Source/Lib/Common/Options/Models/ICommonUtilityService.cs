@@ -3,7 +3,6 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Themes.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Storages.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Keys.Models;
@@ -88,4 +87,14 @@ public interface ICommonUtilityService
     public void Theme_RegisterRangeAction(IReadOnlyList<ThemeRecord> theme);
     public void Theme_DisposeAction(Key<ThemeRecord> themeKey);
     /* End IThemeService */
+    
+    /* Start IClipboardService, JavaScriptInteropClipboardService */
+    public Task<string> ReadClipboard();
+    public Task SetClipboard(string value);
+    /* End IClipboardService, JavaScriptInteropClipboardService */
+    
+    /* Start IStorageService, LocalStorageService */
+    public ValueTask Storage_SetValue(string key, object? value);
+    public ValueTask<object?> Storage_GetValue(string key);
+    /* End IStorageService, LocalStorageService */
 }

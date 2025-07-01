@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
-using Walk.Common.RazorLib.Clipboards.Models;
 using Walk.Common.RazorLib.JsRuntimes.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Menus.Models;
@@ -36,21 +35,19 @@ public class TextEditorCommandDefaultFunctions
     public static async ValueTask CopyAsync(
 	    TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        TextEditorViewModel viewModel,
-        IClipboardService clipboardService)
+        TextEditorViewModel viewModel)
     {
         var selectedText = TextEditorSelectionHelper.GetSelectedText(viewModel, modelModifier);
         selectedText ??= modelModifier.GetLineTextRange(viewModel.LineIndex, 1);
 
-        await clipboardService.SetClipboard(selectedText).ConfigureAwait(false);
+        await editContext.TextEditorService.CommonUtilityService.SetClipboard(selectedText).ConfigureAwait(false);
         await viewModel.FocusAsync().ConfigureAwait(false);
     }
 
     public static async ValueTask CutAsync(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        TextEditorViewModel viewModel,
-        IClipboardService clipboardService)
+        TextEditorViewModel viewModel)
     {
     	if (!TextEditorSelectionHelper.HasSelectedText(viewModel))
         {
@@ -62,7 +59,7 @@ public class TextEditorCommandDefaultFunctions
         }
 
         var selectedText = TextEditorSelectionHelper.GetSelectedText(viewModel, modelModifier) ?? string.Empty;
-        await clipboardService.SetClipboard(selectedText).ConfigureAwait(false);
+        await editContext.TextEditorService.CommonUtilityService.SetClipboard(selectedText).ConfigureAwait(false);
 
         await viewModel.FocusAsync().ConfigureAwait(false);
 
@@ -74,10 +71,9 @@ public class TextEditorCommandDefaultFunctions
     public static async ValueTask PasteAsync(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        TextEditorViewModel viewModel,
-        IClipboardService clipboardService)
+        TextEditorViewModel viewModel)
     {
-    	var clipboard = await clipboardService.ReadClipboard().ConfigureAwait(false);
+    	var clipboard = await editContext.TextEditorService.CommonUtilityService.ReadClipboard().ConfigureAwait(false);
         modelModifier.Insert(clipboard, viewModel);
     }
 
