@@ -392,6 +392,8 @@ public sealed class TextEditorService
 			    var componentData = viewModelModifier.PersistentState.ComponentData;
 			    if (componentData is not null)
 			    {
+			        viewModelModifier.Changed_Cursor_AnyState = false;
+			    
 			        viewModelModifier.Virtualization = new TextEditorVirtualizationResult(
 			            modelModifier,
 			            viewModelModifier,

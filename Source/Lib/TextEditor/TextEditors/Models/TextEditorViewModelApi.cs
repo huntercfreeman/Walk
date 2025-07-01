@@ -290,7 +290,10 @@ public sealed class TextEditorViewModelApi
             
         if (targetScrollTop == -1 && targetScrollLeft == -1)
         	return;
-        else if (targetScrollTop != -1 && targetScrollLeft != -1)
+        
+        viewModel.Changed_Cursor_AnyState = true;
+        
+        if (targetScrollTop != -1 && targetScrollLeft != -1)
         	SetScrollPositionBoth(editContext, viewModel, targetScrollLeft, targetScrollTop);
         else if (targetScrollTop != -1)
         	SetScrollPositionTop(editContext, viewModel, targetScrollTop);
