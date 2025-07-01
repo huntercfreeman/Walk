@@ -23,7 +23,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     [Inject]
     private IIdeService IdeService { get; set; } = null!;
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 

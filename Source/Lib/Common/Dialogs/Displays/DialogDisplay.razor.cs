@@ -15,7 +15,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     [Inject]
     private ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     private WalkCommonConfig CommonConfig { get; set; } = null!;
     [Inject]
@@ -33,7 +33,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         : string.Empty;
 
     private string IconSizeInPixelsCssValue =>
-        $"{AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels.ToCssValue()}";
+        $"{CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels.ToCssValue()}";
 
     private string DialogTitleCssStyleString =>
         "width: calc(100% -" +
@@ -42,7 +42,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
+        CommonUtilityService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
         CommonUiService.CommonUiStateChanged += OnCommonUiStateChanged;
     }
 
@@ -120,7 +120,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
+        CommonUtilityService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
         CommonUiService.CommonUiStateChanged -= OnCommonUiStateChanged;
     }
 }

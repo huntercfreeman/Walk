@@ -26,12 +26,11 @@ public class CommonUnitTestHelper
     {
         EnvironmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
         FileSystemProvider = serviceProvider.GetRequiredService<IFileSystemProvider>();
-        AppOptionsService = serviceProvider.GetRequiredService<IAppOptionsService>();
+        CommonUtilityService = serviceProvider.GetRequiredService<ICommonUtilityService>();
         CommonUiService = serviceProvider.GetRequiredService<ICommonUiService>();
         StorageService = serviceProvider.GetRequiredService<IStorageService>();
         DragService = serviceProvider.GetRequiredService<IDragService>();
         ClipboardService = serviceProvider.GetRequiredService<IClipboardService>();
-        ThemeService = serviceProvider.GetRequiredService<IThemeService>();
         TreeViewService = serviceProvider.GetRequiredService<ITreeViewService>();
 
         ValidateDependencies();
@@ -45,7 +44,7 @@ public class CommonUnitTestHelper
     /// Implementation is intended to be <see cref="InMemoryFileSystemProvider"/>
     /// </summary>
     public IFileSystemProvider FileSystemProvider { get; }
-    public IAppOptionsService AppOptionsService { get; }
+    public ICommonUtilityService CommonUtilityService { get; }
     public ICommonUiService CommonUiService { get; }
     public IStorageService StorageService { get; }
     public IDragService DragService { get; }
@@ -53,7 +52,6 @@ public class CommonUnitTestHelper
     /// Implementation is intended to be <see cref="InMemoryClipboardService"/>
     /// </summary>
     public IClipboardService ClipboardService { get; }
-    public IThemeService ThemeService { get; }
     public ITreeViewService TreeViewService { get; }
 
     /// <summary>This method is not an extension method due to its niche nature.</summary>

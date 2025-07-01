@@ -12,7 +12,7 @@
 	@{
 		var showDefaultToolbarLocal = _showDefaultToolbar;
 		
-		var appOptionsState = AppOptionsService.GetAppOptionsState();
+		var appOptionsState = CommonUtilityService.GetAppOptionsState();
 		
 		var iconDriver = new IconDriver(
 			appOptionsState.Options.IconSizeInPixels,

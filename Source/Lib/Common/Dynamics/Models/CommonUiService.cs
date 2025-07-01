@@ -13,6 +13,7 @@ using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Tooltips.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Dynamics.Models;
 
@@ -20,13 +21,13 @@ public class CommonUiService : ICommonUiService
 {
     private readonly object _stateModificationLock = new();
     
-    private readonly IAppDimensionService _appDimensionService;
+    private readonly ICommonUtilityService _commonUtilityService;
     
     public CommonUiService(
-        IAppDimensionService appDimensionService,
+        ICommonUtilityService commonUtilityService,
         IJSRuntime jsRuntime)
 	{
-	    _appDimensionService = appDimensionService;
+	    _commonUtilityService = commonUtilityService;
 		
 		JsRuntimeCommonApi = jsRuntime.GetWalkCommonApi();
 	}
@@ -276,7 +277,7 @@ public class CommonUiService : ICommonUiService
         CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
 
         if (sideEffect)
-            _appDimensionService.NotifyIntraAppResize();
+            _commonUtilityService.AppDimension_NotifyIntraAppResize();
     }
 
     public void SetPanelTabAsActiveByContextRecordKey(Key<ContextRecord> contextRecordKey)

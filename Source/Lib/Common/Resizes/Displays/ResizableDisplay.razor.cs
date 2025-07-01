@@ -5,6 +5,7 @@ using Walk.Common.RazorLib.Resizes.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Resizes.Displays;
 
@@ -13,7 +14,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
     [Inject]
     private IDragService DragService { get; set; } = null!;
     [Inject]
-    private IAppDimensionService AppDimensionService { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 
@@ -54,7 +55,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _previousDragMouseEventArgs = null;
 
 			if (wasTargetOfDragging)
-				AppDimensionService.NotifyIntraAppResize();
+				CommonUtilityService.AppDimension_NotifyIntraAppResize();
         }
         else
         {

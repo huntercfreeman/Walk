@@ -9,7 +9,7 @@
      renderBatchLocal.IsValid &&
 	 renderBatchLocal.ViewModel.PersistentState.ShowFindOverlay)
 {
-	var appOptionsState = AppOptionsService.GetAppOptionsState();
+	var appOptionsState = CommonUtilityService.GetAppOptionsState();
 
 	var iconDriver = new IconDriver(
 		appOptionsState.Options.IconSizeInPixels,

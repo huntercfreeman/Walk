@@ -41,7 +41,7 @@
     	            @onclick="CloseTabOnClickAsync">
     	        
     	        @{
-    	        	var appOptionsState = RenderBatch.AppOptionsService.GetAppOptionsState();
+    	        	var appOptionsState = RenderBatch.CommonUtilityService.GetAppOptionsState();
     	        
     	        	var iconDriver = new IconDriver(
     					appOptionsState.Options.IconSizeInPixels,

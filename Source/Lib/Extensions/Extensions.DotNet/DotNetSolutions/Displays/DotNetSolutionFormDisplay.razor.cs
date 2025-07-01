@@ -36,7 +36,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ICommonUiService CommonUiService { get; set; } = null!;
 	[Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
 	[CascadingParameter]
 	public IDialog DialogRecord { get; set; } = null!;

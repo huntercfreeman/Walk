@@ -15,7 +15,7 @@ public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPac
 	[Inject]
 	private INugetPackageManagerProvider NugetPackageManagerProvider { get; set; } = null!;
 	[Inject]
-	private IAppOptionsService AppOptionsService { get; set; } = null!;
+	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
 	private bool _performingNugetQuery;
 	private Exception? _exceptionFromNugetQuery;

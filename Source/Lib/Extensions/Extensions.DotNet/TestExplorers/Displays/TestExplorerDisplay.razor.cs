@@ -17,7 +17,7 @@ namespace Walk.Extensions.DotNet.TestExplorers.Displays;
 public partial class TestExplorerDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]

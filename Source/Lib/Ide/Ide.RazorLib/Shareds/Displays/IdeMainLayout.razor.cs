@@ -36,7 +36,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
     [Inject]
@@ -95,7 +95,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         {
             new DimensionUnit(78, DimensionUnitKind.Percentage),
             new DimensionUnit(
-            	AppOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
+            	CommonUtilityService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
             	DimensionUnitKind.Pixels,
             	DimensionOperatorKind.Subtract),
             new DimensionUnit(
@@ -110,13 +110,13 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             	33.3333,
             	DimensionUnitKind.Percentage),
             new DimensionUnit(
-            	AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+            	CommonUtilityService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
             	DimensionUnitKind.Pixels,
             	DimensionOperatorKind.Subtract)
         });
     
         DragService.DragStateChanged += DragStateWrapOnStateChanged;
-        AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
+        CommonUtilityService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
         IdeService.IdeStateChanged += OnIdeMainLayoutStateChanged;
         TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrap_StateChanged;
 
@@ -140,8 +140,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 .SetFromLocalStorageAsync()
                 .ConfigureAwait(false);
 
-            await AppOptionsService
-                .SetFromLocalStorageAsync()
+            await CommonUtilityService.
+                Options_SetFromLocalStorageAsync()
                 .ConfigureAwait(false);
                 
             if (WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
@@ -204,22 +204,22 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             uiStringBuilder.Append("di_ide_main-layout ");
             uiStringBuilder.Append(UnselectableClassCss);
             uiStringBuilder.Append(" ");
-            uiStringBuilder.Append(AppOptionsService.ThemeCssClassString);
+            uiStringBuilder.Append(CommonUtilityService.Options_ThemeCssClassString);
             uiStringBuilder.Append(" ");
             uiStringBuilder.Append(TextEditorService.ThemeCssClassString);
             _classCssString = uiStringBuilder.ToString();
             
             uiStringBuilder.Clear();
-            uiStringBuilder.Append(AppOptionsService.FontSizeCssStyleString);
+            uiStringBuilder.Append(CommonUtilityService.Options_FontSizeCssStyleString);
             uiStringBuilder.Append(" ");
-            uiStringBuilder.Append(AppOptionsService.FontFamilyCssStyleString);
+            uiStringBuilder.Append(CommonUtilityService.Options_FontFamilyCssStyleString);
             uiStringBuilder.Append(" ");
-            uiStringBuilder.Append(AppOptionsService.ColorSchemeCssStyleString);
+            uiStringBuilder.Append(CommonUtilityService.Options_ColorSchemeCssStyleString);
             _styleCssString = uiStringBuilder.ToString();
             
         	uiStringBuilder.Clear();
             uiStringBuilder.Append("display: flex; justify-content: space-between; border-bottom: ");
-            uiStringBuilder.Append(AppOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels);
+            uiStringBuilder.Append(CommonUtilityService.GetAppOptionsState().Options.ResizeHandleHeightInPixels);
             uiStringBuilder.Append("px solid var(--di_primary-border-color);");
             _headerCssStyle = uiStringBuilder.ToString();
         }
@@ -377,7 +377,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public void Dispose()
     {
         DragService.DragStateChanged -= DragStateWrapOnStateChanged;
-        AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
+        CommonUtilityService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
         IdeService.IdeStateChanged -= OnIdeMainLayoutStateChanged;
         TextEditorService.OptionsApi.StaticStateChanged -= TextEditorOptionsStateWrap_StateChanged;
     }

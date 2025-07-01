@@ -24,7 +24,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
-	private IAppOptionsService AppOptionsService { get; set; } = null!;
+	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
@@ -42,7 +42,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 	private CompilerServiceExplorerTreeViewMouseEventHandler _compilerServiceExplorerTreeViewMouseEventHandler = null!;
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private static bool _hasInitialized;
 

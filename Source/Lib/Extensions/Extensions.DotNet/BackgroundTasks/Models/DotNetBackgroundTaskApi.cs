@@ -85,7 +85,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly ICommonUiService _commonUiService;
 	private readonly ITerminalService _terminalService;
 	private readonly IDotNetCommandFactory _dotNetCommandFactory;
-	private readonly IAppOptionsService _appOptionsService;
+	private readonly ICommonUtilityService _commonUtilityService;
 	private readonly IIdeService _ideService;
 	private readonly ITextEditorHeaderRegistry _textEditorHeaderRegistry;
 	private readonly INugetPackageManagerProvider _nugetPackageManagerProvider;
@@ -119,7 +119,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		ITerminalService terminalService,
         IDotNetCommandFactory dotNetCommandFactory,
         ICommonUiService commonUiService,
-        IAppOptionsService appOptionsService,
+        ICommonUtilityService commonUtilityService,
         IIdeService ideService,
         ITextEditorHeaderRegistry textEditorHeaderRegistry,
         INugetPackageManagerProvider nugetPackageManagerProvider,
@@ -146,7 +146,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		_terminalService = terminalService;
         _dotNetCommandFactory = dotNetCommandFactory;
         _commonUiService = commonUiService;
-        _appOptionsService = appOptionsService;
+        _commonUtilityService = commonUtilityService;
         _ideService = ideService;
         _textEditorHeaderRegistry = textEditorHeaderRegistry;
         _nugetPackageManagerProvider = nugetPackageManagerProvider;
@@ -342,7 +342,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         // This UI has resizable parts that need to be initialized.
         TestExplorerService.ReduceInitializeResizeHandleDimensionUnitAction(
             new DimensionUnit(
-                () => _appOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+                () => _commonUtilityService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
                 DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));

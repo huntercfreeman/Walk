@@ -15,7 +15,7 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
 	[Inject]
     private IFindAllService FindAllService { get; set; } = null!;
     [Inject]
-	private IAppOptionsService AppOptionsService { get; set; } = null!;
+	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;	
 	[Inject]
@@ -33,7 +33,7 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
 	private FindAllTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private string SearchQuery
     {

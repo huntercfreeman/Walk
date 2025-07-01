@@ -9,14 +9,14 @@
 @* ContextRecord="_viewModelDisplayOptions.ContextRecord" *@
 
 <div id="@_viewModelDisplayOptions.ContextRecord.ContextElementId" class="di_ide_editor-display" style="@EditorElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder)">
-	@if (AppOptionsService.ShowPanelTitles)
+	@if (CommonUtilityService.Options_ShowPanelTitles)
 	{
 	    <div class="di_ide_section-title">
 	        Editor
 	    </div>
     }
 
-    <div class="di_ide_section-body di_te_text-editor-group @AppOptionsService.ShowPanelTitlesCssClass"
+    <div class="di_ide_section-body di_te_text-editor-group @CommonUtilityService.Options_ShowPanelTitlesCssClass"
          id="@HtmlId">
     
     	@{

@@ -6,6 +6,7 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.RenderStates.Models;
 using Walk.Common.RazorLib.Storages.Models;
 using Walk.Common.RazorLib.Themes.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
@@ -24,7 +25,7 @@ public sealed class TextEditorOptionsApi
     private readonly IStorageService _storageService;
     private readonly ICommonUiService _commonUiService;
     private readonly IContextService _contextService;
-    private readonly IThemeService _themeService;
+    private readonly ICommonUtilityService _commonUtilityService;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
     public TextEditorOptionsApi(
@@ -33,7 +34,7 @@ public sealed class TextEditorOptionsApi
         IStorageService storageService,
         ICommonUiService commonUiService,
         IContextService contextService,
-        IThemeService themeService,
+        ICommonUtilityService commonUtilityService,
         CommonBackgroundTaskApi commonBackgroundTaskApi)
     {
         _textEditorService = textEditorService;
@@ -41,7 +42,7 @@ public sealed class TextEditorOptionsApi
         _storageService = storageService;
         _commonUiService = commonUiService;
         _contextService = contextService;
-        _themeService = themeService;
+        _commonUtilityService = commonUtilityService;
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
     }
     
@@ -136,7 +137,7 @@ public sealed class TextEditorOptionsApi
 		//
 		// Can probably use 'theme' variable here but
 		// I don't want to touch that right now -- incase there are unexpected consequences.
-        var usingThemeCssClassString = _themeService.GetThemeState().ThemeList
+        var usingThemeCssClassString = _commonUtilityService.GetThemeState().ThemeList
         	.FirstOrDefault(x => x.Key == GetTextEditorOptionsState().Options.CommonOptions.ThemeKey)
         	?.CssClassString
             ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
@@ -401,7 +402,7 @@ public sealed class TextEditorOptionsApi
 
         if (optionsJson.CommonOptionsJsonDto?.ThemeKey is not null)
         {
-            var matchedTheme = _textEditorService.ThemeService.GetThemeState().ThemeList.FirstOrDefault(
+            var matchedTheme = _textEditorService.CommonUtilityService.GetThemeState().ThemeList.FirstOrDefault(
                 x => x.Key == optionsJson.CommonOptionsJsonDto.ThemeKey);
 
             SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false);

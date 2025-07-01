@@ -14,7 +14,7 @@ namespace Walk.Common.RazorLib.Notifications.Displays;
 public partial class NotificationDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     private ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
@@ -40,7 +40,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     private string CssStyleString => GetCssStyleString();
 
     private string IconSizeInPixelsCssValue =>
-        $"{AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels.ToCssValue()}";
+        $"{CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels.ToCssValue()}";
 
     private string NotificationTitleCssStyleString =>
         "width: calc(100% -" +
@@ -49,7 +49,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
+        CommonUtilityService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
     }
 
     private async void AppOptionsStateWrapOnStateChanged()
@@ -179,6 +179,6 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     {
         _notificationOverlayCancellationTokenSource.Cancel();
 
-        AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
+        CommonUtilityService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }

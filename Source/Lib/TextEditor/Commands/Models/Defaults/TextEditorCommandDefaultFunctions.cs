@@ -133,7 +133,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel)
     {
-    	editContext.TextEditorService.AppDimensionService.NotifyIntraAppResize();
+    	editContext.TextEditorService.CommonUtilityService.AppDimension_NotifyIntraAppResize();
     }
 
     public static void ScrollLineDown(

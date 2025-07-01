@@ -14,7 +14,7 @@ namespace Walk.Ide.RazorLib.InputFiles.Displays;
 public partial class InputFileTopNavBar : ComponentBase
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     private IInputFileService InputFileService { get; set; } = null!;
     [Inject]

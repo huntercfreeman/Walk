@@ -14,6 +14,7 @@ using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Lines.Models;
 using Walk.TextEditor.RazorLib.Diffs.Models;
 using Walk.TextEditor.RazorLib.FindAlls.Models;
@@ -35,7 +36,6 @@ public sealed class TextEditorService
     private readonly BackgroundTaskService _backgroundTaskService;
     private readonly ICommonUiService _commonUiService;
     private readonly IContextService _contextService;
-    private readonly IKeymapService _keymapService;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly IDirtyResourceUriService _dirtyResourceUriService;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
@@ -47,7 +47,7 @@ public sealed class TextEditorService
     public TextEditorService(
         IFindAllService findAllService,
         IDirtyResourceUriService dirtyResourceUriService,
-        IThemeService themeService,
+        ICommonUtilityService commonUtilityService,
         BackgroundTaskService backgroundTaskService,
         WalkTextEditorConfig textEditorConfig,
         ITextEditorRegistryWrap textEditorRegistryWrap,
@@ -56,9 +56,7 @@ public sealed class TextEditorService
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         ICommonUiService commonUiService,
         IContextService contextService,
-        IKeymapService keymapService,
         IEnvironmentProvider environmentProvider,
-		IAppDimensionService appDimensionService,
 		IServiceProvider serviceProvider)
     {
     	__TextEditorViewModelLiason = new(this);
@@ -66,14 +64,14 @@ public sealed class TextEditorService
     	WorkerUi = new(this);
     	WorkerArbitrary = new(this);
     
-		AppDimensionService = appDimensionService;
+		CommonUtilityService = commonUtilityService;
 		
 		PostScrollAndRemeasure_DebounceExtraEvent = new(
         	TimeSpan.FromMilliseconds(250),
         	CancellationToken.None,
         	(_, _) =>
         	{
-        	    AppDimensionService.NotifyIntraAppResize(useExtraEvent: false);
+        	    CommonUtilityService.AppDimension_NotifyIntraAppResize(useExtraEvent: false);
         	    return Task.CompletedTask;
     	    });
 		
@@ -81,7 +79,6 @@ public sealed class TextEditorService
 
         FindAllService = findAllService;
         _dirtyResourceUriService = dirtyResourceUriService;
-        ThemeService = themeService;
         _backgroundTaskService = backgroundTaskService;
         TextEditorConfig = textEditorConfig;
         _textEditorRegistryWrap = textEditorRegistryWrap;
@@ -91,20 +88,18 @@ public sealed class TextEditorService
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _commonUiService = commonUiService;
         _contextService = contextService;
-        _keymapService = keymapService;
         _environmentProvider = environmentProvider;
 
         ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService);
         ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _commonBackgroundTaskApi, _commonUiService);
         GroupApi = new TextEditorGroupApi(this, _commonUiService, _commonBackgroundTaskApi);
         DiffApi = new TextEditorDiffApi(this);
-        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _commonUiService, contextService, themeService, _commonBackgroundTaskApi);
+        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _commonUiService, contextService, CommonUtilityService, _commonBackgroundTaskApi);
         
         TextEditorState = new();
     }
 
-    public IThemeService ThemeService { get; }
-    public IAppDimensionService AppDimensionService { get; }
+    public ICommonUtilityService CommonUtilityService { get; }
     public IFindAllService FindAllService { get; }
 
 	public WalkTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
@@ -826,9 +821,9 @@ public sealed class TextEditorService
     public async ValueTask Do_WalkTextEditorInitializerOnInit()
     {
         if (TextEditorConfig.CustomThemeRecordList is not null)
-            ThemeService.RegisterRangeAction(TextEditorConfig.CustomThemeRecordList);
+            CommonUtilityService.Theme_RegisterRangeAction(TextEditorConfig.CustomThemeRecordList);
 
-        var initialThemeRecord = ThemeService.GetThemeState().ThemeList.FirstOrDefault(
+        var initialThemeRecord = CommonUtilityService.GetThemeState().ThemeList.FirstOrDefault(
             x => x.Key == TextEditorConfig.InitialThemeKey);
 
         if (initialThemeRecord is not null)
@@ -891,6 +886,6 @@ public sealed class TextEditorService
                     return Task.FromResult(menu);
                 }));
 
-        _keymapService.RegisterKeymapLayer(Walk.TextEditor.RazorLib.Keymaps.Models.Defaults.TextEditorKeymapDefaultFacts.HasSelectionLayer);
+        CommonUtilityService.RegisterKeymapLayer(Walk.TextEditor.RazorLib.Keymaps.Models.Defaults.TextEditorKeymapDefaultFacts.HasSelectionLayer);
     }
 }

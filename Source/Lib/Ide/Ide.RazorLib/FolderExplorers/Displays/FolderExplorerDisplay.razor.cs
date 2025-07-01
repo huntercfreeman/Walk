@@ -20,7 +20,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private IFolderExplorerService FolderExplorerService { get; set; } = null!;
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     private ICommonUiService CommonUiService { get; set; } = null!;
     [Inject]
@@ -42,12 +42,12 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private FolderExplorerTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+        CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
     protected override void OnInitialized()
     {
         FolderExplorerService.FolderExplorerStateChanged += OnFolderExplorerStateChanged;
-        AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
+        CommonUtilityService.AppOptionsStateChanged += OnAppOptionsStateChanged;
 
         _treeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(
             IdeBackgroundTaskApi,
@@ -99,6 +99,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         FolderExplorerService.FolderExplorerStateChanged -= OnFolderExplorerStateChanged;
-        AppOptionsService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
+        CommonUtilityService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
     }
 }

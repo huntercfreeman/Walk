@@ -8,17 +8,15 @@ namespace Walk.Common.RazorLib.Options.Displays;
 public partial class InputAppTheme : IDisposable
 {
     [Inject]
-    private IThemeService ThemeService { get; set; } = null!;
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter]
     public InputViewModel InputViewModel { get; set; } = InputViewModel.Empty;
 
     protected override void OnInitialized()
     {
-        AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
-        ThemeService.ThemeStateChanged += OnStateChanged;
+        CommonUtilityService.AppOptionsStateChanged += OnAppOptionsStateChanged;
+        CommonUtilityService.ThemeStateChanged += OnStateChanged;
     }
 
     private async void OnStateChanged()
@@ -31,7 +29,7 @@ public partial class InputAppTheme : IDisposable
         if (changeEventArgs.Value is null)
             return;
 
-        var themeState = ThemeService.GetThemeState();
+        var themeState = CommonUtilityService.GetThemeState();
 
         var guidAsString = (string)changeEventArgs.Value;
 
@@ -43,7 +41,7 @@ public partial class InputAppTheme : IDisposable
             var existingThemeRecord = themesInScopeList.FirstOrDefault(btr => btr.Key.Guid == guidValue);
 
             if (existingThemeRecord is not null)
-                AppOptionsService.SetActiveThemeRecordKey(existingThemeRecord.Key);
+                CommonUtilityService.Options_SetActiveThemeRecordKey(existingThemeRecord.Key);
         }
     }
 
@@ -64,7 +62,7 @@ public partial class InputAppTheme : IDisposable
 
     public void Dispose()
     {
-        AppOptionsService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
-        ThemeService.ThemeStateChanged -= OnStateChanged;
+        CommonUtilityService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
+        CommonUtilityService.ThemeStateChanged -= OnStateChanged;
     }
 }

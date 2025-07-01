@@ -16,6 +16,7 @@ using Walk.Common.RazorLib.Tabs.Models;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.BackgroundTasks.Models;
 
@@ -28,7 +29,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 {
 	private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IStorageService _storageService;
-    private readonly IAppOptionsService _appOptionsService;
+    private readonly ICommonUtilityService _commonUtilityService;
     private readonly IContextService _contextService;
     private readonly ICommonUiService _commonUiService;
     private readonly ITreeViewService _treeViewService;
@@ -39,7 +40,7 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
     public CommonBackgroundTaskApi(
 		BackgroundTaskService backgroundTaskService,
 		IStorageService storageService,
-		IAppOptionsService appOptionsService,
+		ICommonUtilityService commonUtilityService,
 		IContextService contextService,
 		ICommonUiService commonUiService,
         ITreeViewService treeViewService,
@@ -48,8 +49,8 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
         _backgroundTaskService = backgroundTaskService;
         _storageService = storageService;
 
-        _appOptionsService = appOptionsService;
-		_appOptionsService.CommonBackgroundTaskApi = this;
+        _commonUtilityService = commonUtilityService;
+		_commonUtilityService.Options_CommonBackgroundTaskApi = this;
 
         _contextService = contextService;
         _commonUiService = commonUiService;
@@ -78,10 +79,10 @@ public class CommonBackgroundTaskApi : IBackgroundTaskGroup
 
     private async ValueTask Do_WalkCommonInitializer(Key<ContextSwitchGroup> contextSwitchGroupKey)
     {
-        _appOptionsService.SetActiveThemeRecordKey(_commonConfig.InitialThemeKey, false);
+        _commonUtilityService.Options_SetActiveThemeRecordKey(_commonConfig.InitialThemeKey, false);
 
-        await _appOptionsService
-            .SetFromLocalStorageAsync()
+        await _commonUtilityService
+            .Options_SetFromLocalStorageAsync()
             .ConfigureAwait(false);
 
         _contextService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = contextSwitchGroupKey;

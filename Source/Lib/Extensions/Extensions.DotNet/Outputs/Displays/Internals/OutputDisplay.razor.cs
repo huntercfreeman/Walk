@@ -34,7 +34,7 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 	[Inject]
-	private IAppOptionsService AppOptionsService { get; set; } = null!;
+	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     
     private readonly Throttle _eventThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
     
@@ -42,7 +42,7 @@ public partial class OutputDisplay : ComponentBase, IDisposable
 	private OutputTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
     
     protected override void OnInitialized()
     {

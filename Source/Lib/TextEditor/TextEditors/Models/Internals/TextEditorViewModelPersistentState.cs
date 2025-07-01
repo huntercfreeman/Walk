@@ -405,7 +405,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     	}
     
         ComponentData = componentData;
-		TextEditorService.AppDimensionService.AppDimensionStateChanged += AppDimensionStateWrap_StateChanged;
+		TextEditorService.CommonUtilityService.AppDimensionStateChanged += AppDimensionStateWrap_StateChanged;
 
 		// Tell the view model what the (already known) font-size measurements and text-editor measurements are.
 		PostScrollAndRemeasure(useExtraEvent: false);
@@ -454,7 +454,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     	}
     
         ComponentData = null;
-		TextEditorService.AppDimensionService.AppDimensionStateChanged -= AppDimensionStateWrap_StateChanged;
+		TextEditorService.CommonUtilityService.AppDimensionStateChanged -= AppDimensionStateWrap_StateChanged;
     }
 
     private void AppDimensionStateWrap_StateChanged()

@@ -19,7 +19,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ICodeSearchService CodeSearchService { get; set; } = null!;
     [Inject]
-	private IAppOptionsService AppOptionsService { get; set; } = null!;
+	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]
@@ -41,7 +41,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	private CodeSearchTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private readonly ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
 	{

@@ -22,7 +22,7 @@ public partial class EditorDisplay : ComponentBase, IDisposable
     [Inject]
     private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
     [Inject]
-	private IAppOptionsService AppOptionsService { get; set; } = null!;
+	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 

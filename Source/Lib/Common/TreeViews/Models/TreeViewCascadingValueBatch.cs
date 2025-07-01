@@ -13,7 +13,7 @@ public class TreeViewCascadingValueBatch
     public TreeViewKeyboardEventHandler TreeViewKeyboardEventHandler { get; set; } = null!;
     public ITreeViewService TreeViewService { get; set; } = null!;
     public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-    public IAppOptionsService AppOptionsService { get; set; } = null!;
+    public ICommonUtilityService CommonUtilityService { get; set; } = null!;
     public int OffsetPerDepthInPixels { get; set; }
     public int WalkTreeViewIconWidth { get; set; }
 }

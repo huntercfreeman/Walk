@@ -33,7 +33,7 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Displays;
 public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    public IAppOptionsService AppOptionsService { get; set; } = null!;
+    public ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     public IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]

@@ -63,8 +63,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly IFolderExplorerService _folderExplorerService;
 	private readonly ICodeSearchService _codeSearchService;
 	private readonly WalkTextEditorConfig _textEditorConfig;
-	private readonly IThemeService _themeService;
-	private readonly IAppOptionsService _appOptionsService;
+	private readonly ICommonUtilityService _commonUtilityService;
 	private readonly ICommandFactory _commandFactory;
 	private readonly ITerminalGroupService _terminalGroupService;
 	private readonly WalkHostingInformation _walkHostingInformation;
@@ -89,8 +88,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         IFolderExplorerService folderExplorerService,
         ICodeSearchService codeSearchService,
         WalkTextEditorConfig textEditorConfig,
-        IThemeService themeService,
-        IAppOptionsService appOptionsService,
+        ICommonUtilityService commonUtilityService,
         ICommandFactory commandFactory,
         ITerminalGroupService terminalGroupService,
         WalkHostingInformation walkHostingInformation,
@@ -114,8 +112,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 		_folderExplorerService = folderExplorerService;
         _codeSearchService = codeSearchService;
         _textEditorConfig = textEditorConfig;
-        _themeService = themeService;
-        _appOptionsService = appOptionsService;
+        _commonUtilityService = commonUtilityService;
         _commandFactory = commandFactory;
         _terminalGroupService = terminalGroupService;
         _walkHostingInformation = walkHostingInformation;
@@ -146,7 +143,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
         _codeSearchService.InitializeResizeHandleDimensionUnit(
             new DimensionUnit(
-                () => _appOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
+                () => _commonUtilityService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
                 DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW));
@@ -168,7 +165,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             _commonUiService.Panel_InitializeResizeHandleDimensionUnit(
                 leftPanel.Key,
                 new DimensionUnit(
-                    () => _appOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+                    () => _commonUtilityService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
                     DimensionUnitKind.Pixels,
                     DimensionOperatorKind.Subtract,
                     DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
@@ -182,7 +179,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             _commonUiService.Panel_InitializeResizeHandleDimensionUnit(
                 rightPanel.Key,
                 new DimensionUnit(
-                    () => _appOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+                    () => _commonUtilityService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
                     DimensionUnitKind.Pixels,
                     DimensionOperatorKind.Subtract,
                     DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
@@ -196,7 +193,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             _commonUiService.Panel_InitializeResizeHandleDimensionUnit(
                 bottomPanel.Key,
                 new DimensionUnit(
-                    () => _appOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
+                    () => _commonUtilityService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
                     DimensionUnitKind.Pixels,
                     DimensionOperatorKind.Subtract,
                     DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW));
@@ -258,7 +255,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         // This UI has resizable parts that need to be initialized.
         _terminalGroupService.InitializeResizeHandleDimensionUnit(
             new DimensionUnit(
-                () => _appOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+                () => _commonUtilityService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
                 DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));

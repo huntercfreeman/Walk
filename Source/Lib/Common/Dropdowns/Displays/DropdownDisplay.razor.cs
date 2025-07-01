@@ -7,6 +7,7 @@ using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Dropdowns.Displays;
 
@@ -15,7 +16,7 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 	[Inject]
 	public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	public IAppDimensionService AppDimensionService { get; set; } = null!;
+	public ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	public ICommonUiService CommonUiService { get; set; } = null!;
 	[Inject]

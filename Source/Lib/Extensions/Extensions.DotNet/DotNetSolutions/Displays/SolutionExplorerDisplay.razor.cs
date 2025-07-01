@@ -26,7 +26,7 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ICommonUiService CommonUiService { get; set; } = null!;
 	[Inject]
-	private IAppOptionsService AppOptionsService { get; set; } = null!;
+	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	[Inject]
@@ -46,7 +46,7 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 	private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	protected override void OnInitialized()
 	{

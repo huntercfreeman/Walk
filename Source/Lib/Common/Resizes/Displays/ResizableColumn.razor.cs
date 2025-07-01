@@ -12,9 +12,7 @@ public partial class ResizableColumn : ComponentBase, IDisposable
     [Inject]
     private IDragService DragService { get; set; } = null!;
     [Inject]
-    private IAppDimensionService AppDimensionService { get; set; } = null!;
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions LeftElementDimensions { get; set; }
@@ -29,7 +27,7 @@ public partial class ResizableColumn : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         DragService.DragStateChanged += DragStateWrapOnStateChanged;
-        AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
+        CommonUtilityService.AppOptionsStateChanged += OnAppOptionsStateChanged;
     }
     
     private async void OnAppOptionsStateChanged()
@@ -47,7 +45,7 @@ public partial class ResizableColumn : ComponentBase, IDisposable
             _previousDragMouseEventArgs = null;
 
 			if (wasTargetOfDragging)
-				AppDimensionService.NotifyIntraAppResize();
+				CommonUtilityService.AppDimension_NotifyIntraAppResize();
         }
         else
         {
@@ -94,6 +92,6 @@ public partial class ResizableColumn : ComponentBase, IDisposable
     public void Dispose()
     {
         DragService.DragStateChanged -= DragStateWrapOnStateChanged;
-        AppOptionsService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
+        CommonUtilityService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
     }
 }

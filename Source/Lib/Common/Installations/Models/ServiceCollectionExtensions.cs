@@ -70,19 +70,16 @@ public static class ServiceCollectionExtensions
 
 				return hostingInformation.BackgroundTaskService;
 			})
-            .AddScoped<CommonBackgroundTaskApi>()
             .AddScoped<ICommonUiService, CommonUiService>()
-            .AddScoped<IContextService, ContextService>()
             .AddScoped<ITreeViewService, TreeViewService>()
-            .AddScoped<BrowserResizeInterop>()
-            .AddScoped<IAppDimensionService, AppDimensionService>()
-            .AddScoped<IKeymapService, KeymapService>()
-            .AddScoped<IClipboardService, JavaScriptInteropClipboardService>()
             .AddScoped<IDragService, DragService>()
-            .AddScoped<IAppOptionsService, AppOptionsService>()
+            .AddScoped<BrowserResizeInterop>()
+            .AddScoped<CommonBackgroundTaskApi>()
+            .AddScoped<IContextService, ContextService>()
+            .AddScoped<IClipboardService, JavaScriptInteropClipboardService>()
             .AddScoped<IStorageService, LocalStorageService>()
-            .AddScoped<IThemeService, ThemeService>();
-
+            .AddScoped<ICommonUtilityService, CommonUtilityService>();
+            
         switch (hostingInformation.WalkHostingKind)
         {
             case WalkHostingKind.Photino:

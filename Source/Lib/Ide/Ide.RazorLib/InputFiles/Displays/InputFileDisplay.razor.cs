@@ -23,7 +23,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
     [Inject]
     private IInputFileService InputFileService { get; set; } = null!;
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -131,7 +131,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
 
     private void InitializeElementDimensions()
     {
-    	var appOptionsState = AppOptionsService.GetAppOptionsState();
+    	var appOptionsState = CommonUtilityService.GetAppOptionsState();
     
         _sidebarElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {

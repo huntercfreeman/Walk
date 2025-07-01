@@ -26,7 +26,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 	[Inject]

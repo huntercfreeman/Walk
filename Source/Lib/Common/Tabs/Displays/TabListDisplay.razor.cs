@@ -17,7 +17,7 @@ public partial class TabListDisplay : ComponentBase
 	[Inject]
     private IDragService DragService { get; set; } = null!;
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 	[Inject]

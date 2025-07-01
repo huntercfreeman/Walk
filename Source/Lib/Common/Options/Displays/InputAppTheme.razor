@@ -1,8 +1,8 @@
 @using Walk.Common.RazorLib.Themes.Models;
 
 @{
-    var themeState = ThemeService.GetThemeState();
-    var appOptionsState = AppOptionsService.GetAppOptionsState();
+    var themeState = CommonUtilityService.GetThemeState();
+    var appOptionsState = CommonUtilityService.GetAppOptionsState();
 
     var themesInScopeList = themeState.ThemeList
         .Where(x => x.ThemeScopeList.Contains(ThemeScope.App))

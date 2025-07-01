@@ -6,26 +6,26 @@ namespace Walk.Common.RazorLib.Options.Displays;
 public partial class InputAppIconSize : ComponentBase, IDisposable
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter]
     public InputViewModel InputViewModel { get; set; } = InputViewModel.Empty;
 
     private int IconSizeInPixels
     {
-        get => AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels;
+        get => CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels;
         set
         {
             if (value < AppOptionsState.MINIMUM_ICON_SIZE_IN_PIXELS)
                 value = AppOptionsState.MINIMUM_ICON_SIZE_IN_PIXELS;
 
-            AppOptionsService.SetIconSize(value);
+            CommonUtilityService.Options_SetIconSize(value);
         }
     }
 
     protected override Task OnInitializedAsync()
     {
-        AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
+        CommonUtilityService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
         return Task.CompletedTask;
     }
 
@@ -36,6 +36,6 @@ public partial class InputAppIconSize : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
+        CommonUtilityService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }
