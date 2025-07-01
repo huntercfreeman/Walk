@@ -297,7 +297,7 @@ public sealed class TextEditorService
         	var viewModelModifier = __ViewModelList[viewModelIndex];
         
         	TextEditorModel? modelModifier = null;
-        	if (viewModelModifier.PersistentState.ShouldRevealCursor || viewModelModifier.Virtualization.ShouldCalculateVirtualizationResult || viewModelModifier.ScrollWasModified)
+        	if (viewModelModifier.PersistentState.ShouldRevealCursor || viewModelModifier.Virtualization.ShouldCalculateVirtualizationResult || viewModelModifier.ScrollWasModified || viewModelModifier.Changed_Cursor_AnyState)
         		modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri, isReadOnly: true);
         
         	if (viewModelModifier.PersistentState.ShouldRevealCursor)
@@ -392,8 +392,14 @@ public sealed class TextEditorService
 			    var componentData = viewModelModifier.PersistentState.ComponentData;
 			    if (componentData is not null)
 			    {
-			        viewModelModifier.Virtualization.ViewModel = viewModelModifier;
+			        viewModelModifier.Virtualization = new TextEditorVirtualizationResult(
+			            modelModifier,
+			            viewModelModifier,
+			            componentData,
+			            viewModelModifier.Virtualization);
+
 			        viewModelModifier.Virtualization.External_GetCursorCss();
+			        componentData.Virtualization = viewModelModifier.Virtualization;
 		        }
 			}
 			

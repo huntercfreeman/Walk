@@ -115,6 +115,80 @@ public class TextEditorVirtualizationResult
 	    IsValid = true;
     }
     
+    /// <summary>
+    /// If only cursor state has changed, you do not need to calculate an entirely new virtualization result.
+    /// Thus, this constructor is for when only cursor state has changed.
+    /// This constructor shallow copies all properties except for the:
+    /// - bool CursorIsOnHiddenLine
+    /// - string? CursorCssStyle
+    /// - string? CaretRowCssStyle
+    /// - List<string> SelectionStyleList
+    /// - TextEditorModel? Model
+    /// - TextEditorViewModel? ViewModel
+    /// - TextEditorComponentData? ComponentData
+    ///
+    /// Then the invoker of this constructor invokes External_GetCursorCss()
+    /// to calculate only those 3 states.
+    /// </summary>
+    public TextEditorVirtualizationResult(
+        TextEditorModel model,
+        TextEditorViewModel viewModel,
+        TextEditorComponentData componentData,
+        TextEditorVirtualizationResult previousState)
+    {
+        _previousState = previousState;
+        
+        EntryList = _previousState.EntryList;
+        
+        Count = _previousState.Count;
+        
+        VirtualizationSpanList = _previousState.VirtualizationSpanList;
+    
+        VirtualWidth = _previousState.VirtualWidth;
+        VirtualHeight = _previousState.VirtualHeight;
+        VirtualLeft = _previousState.VirtualLeft;
+        VirtualTop = _previousState.VirtualTop;
+    	
+    	Model = model;
+    	ViewModel = viewModel;
+    	ComponentData = componentData;
+    	
+        IsValid = _previousState.IsValid;
+        ShouldCalculateVirtualizationResult = _previousState.ShouldCalculateVirtualizationResult;
+        
+        PresentationLayerGroupList = _previousState.PresentationLayerGroupList;
+    	PresentationLayerStyleList = _previousState.PresentationLayerStyleList;
+        FirstPresentationLayerGroupStartInclusiveIndex = _previousState.FirstPresentationLayerGroupStartInclusiveIndex;
+        FirstPresentationLayerGroupEndExclusiveIndex = _previousState.FirstPresentationLayerGroupEndExclusiveIndex;
+        LastPresentationLayerGroupStartInclusiveIndex = _previousState.LastPresentationLayerGroupStartInclusiveIndex;
+        LastPresentationLayerGroupEndExclusiveIndex = _previousState.LastPresentationLayerGroupEndExclusiveIndex;
+    	
+    	InlineUiStyleList = _previousState.InlineUiStyleList;
+    	InlineUiWidthStyleCssString = _previousState.InlineUiWidthStyleCssString;
+    	VirtualizedCollapsePointList = _previousState.VirtualizedCollapsePointList;
+        SeenViewModelKey = _previousState.SeenViewModelKey;
+        VirtualizedCollapsePointListVersion = _previousState.VirtualizedCollapsePointListVersion;
+        
+        Gutter_HeightWidthPaddingCssStyle = _previousState.Gutter_HeightWidthPaddingCssStyle;
+        Gutter_WidthCssStyle = _previousState.Gutter_WidthCssStyle;
+        
+        GutterCssStyle = _previousState.GutterCssStyle;
+        GutterSectionCssStyle = _previousState.GutterSectionCssStyle;
+        GutterColumnTopCss = _previousState.GutterColumnTopCss;
+     
+        LineHeightStyleCssString = _previousState.LineHeightStyleCssString;
+        
+        BodyStyle = _previousState.BodyStyle;
+        
+        VERTICAL_SliderCssStyle = _previousState.VERTICAL_SliderCssStyle;
+        HORIZONTAL_SliderCssStyle = _previousState.HORIZONTAL_SliderCssStyle;
+        HORIZONTAL_ScrollbarCssStyle = _previousState.HORIZONTAL_ScrollbarCssStyle;
+        
+        ScrollbarSection_LeftCssStyle = _previousState.ScrollbarSection_LeftCssStyle;
+        
+        BothVirtualizationBoundaryStyleCssString = _previousState.BothVirtualizationBoundaryStyleCssString;
+    }
+    
     private TextEditorVirtualizationResult _previousState;
 
     /// <summary>
@@ -147,8 +221,6 @@ public class TextEditorVirtualizationResult
     public bool IsValid { get; }
     public bool ShouldCalculateVirtualizationResult { get; set; }
     
-	public bool CursorIsOnHiddenLine { get; set; }
-    
     public List<(string CssClassString, int StartInclusiveIndex, int EndExclusiveIndex)> PresentationLayerGroupList { get; set; } = new();
 	public List<string> PresentationLayerStyleList { get; set; } = new();
     public int FirstPresentationLayerGroupStartInclusiveIndex { get; set; }
@@ -162,6 +234,7 @@ public class TextEditorVirtualizationResult
     public Key<TextEditorViewModel> SeenViewModelKey { get; set; }
     public int VirtualizedCollapsePointListVersion { get; set; }
     
+    public bool CursorIsOnHiddenLine { get; set; }
 	public string? CursorCssStyle { get; set; }
     public string? CaretRowCssStyle { get; set; }
     public List<string> SelectionStyleList { get; set; }
@@ -404,6 +477,21 @@ public class TextEditorVirtualizationResult
         }
     }
     
+    /// <summary>
+    /// This method relates to one of the constructors,
+    /// the summary for that constructor has been copy and pasted here:
+    /// ---------------------------------------------------------------
+    ///
+    /// If only cursor state has changed, you do not need to calculate an entirely new virtualization result.
+    /// Thus, this constructor is for when only cursor state has changed.
+    /// This constructor shallow copies all properties except for the:
+    /// - string? CursorCssStyle
+    /// - string? CaretRowCssStyle
+    /// - List<string> SelectionStyleList
+    ///
+    /// Then the invoker of this constructor invokes External_GetCursorCss()
+    /// to calculate only those 3 states.
+    /// </summary>
     public void External_GetCursorCss()
     {
         GetCursorAndCaretRowStyleCss();
