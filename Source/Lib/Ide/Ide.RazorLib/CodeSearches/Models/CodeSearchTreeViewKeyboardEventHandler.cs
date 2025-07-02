@@ -1,8 +1,8 @@
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
@@ -19,9 +19,8 @@ public class CodeSearchTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandl
 			TextEditorService textEditorService,
 			WalkTextEditorConfig textEditorConfig,
 			IServiceProvider serviceProvider,
-			ITreeViewService treeViewService,
-			BackgroundTaskService backgroundTaskService)
-		: base(treeViewService, backgroundTaskService)
+			CommonUtilityService commonUtilityService)
+		: base(commonUtilityService)
 	{
 		_textEditorService = textEditorService;
 		_textEditorConfig = textEditorConfig;

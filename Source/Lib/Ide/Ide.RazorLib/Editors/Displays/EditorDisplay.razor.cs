@@ -4,7 +4,6 @@ using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Tabs.Displays;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.TextEditor.RazorLib.Groups.Models;
@@ -22,9 +21,7 @@ public partial class EditorDisplay : ComponentBase, IDisposable
     [Inject]
     private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
     [Inject]
-	private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions EditorElementDimensions { get; set; } = null!;

@@ -1,12 +1,8 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Commands.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
-using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.Extensions.DotNet.TestExplorers.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
@@ -16,15 +12,7 @@ namespace Walk.Extensions.DotNet.TestExplorers.Displays.Internals;
 public partial class TestExplorerTreeViewDisplay : ComponentBase
 {
 	[Inject]
-	private ITreeViewService TreeViewService { get; set; } = null!;
-	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
-	[Inject]
-	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]
@@ -47,22 +35,16 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 	protected override void OnInitialized()
 	{
 		_treeViewKeyboardEventHandler = new TestExplorerTreeViewKeyboardEventHandler(
-			CommonComponentRenderers,
 			CompilerServiceRegistry,
 			TextEditorService,
-			CommonUiService,
-			ServiceProvider,
-			TreeViewService,
-			BackgroundTaskService);
+			CommonUtilityService,
+			ServiceProvider);
 
 		_treeViewMouseEventHandler = new TestExplorerTreeViewMouseEventHandler(
-			CommonComponentRenderers,
 			CompilerServiceRegistry,
 			TextEditorService,
-			CommonUiService,
-			ServiceProvider,
-			TreeViewService,
-			BackgroundTaskService);
+			CommonUtilityService,
+			ServiceProvider);
 	}
 
 	private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
@@ -81,7 +63,7 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-		CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 }

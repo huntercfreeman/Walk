@@ -14,17 +14,17 @@
                 out var activeTerminal);
     }
 
-	@if (AppOptionsService.ShowPanelTitles)
+	@if (CommonUtilityService.Options_ShowPanelTitles)
 	{
 	    <div class="di_ide_section-title">
 	        Terminal
 	    </div>
     }
 
-    <div class="di_ide_section-body @AppOptionsService.ShowPanelTitlesCssClass">
+    <div class="di_ide_section-body @CommonUtilityService.Options_ShowPanelTitlesCssClass">
 
         <div class="di_ide_terminal-body"
-             style="@terminalGroupDisplayState.BodyElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder)">
+             style="@terminalGroupDisplayState.BodyElementDimensions.GetStyleString(CommonUtilityService.UiStringBuilder)">
 
             @if (activeTerminal is null)
             {
@@ -42,7 +42,7 @@
                                                                    ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged)" />
 
         <div class="di_ide_terminal-tabs"
-             style="@terminalGroupDisplayState.TabsElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder)">
+             style="@terminalGroupDisplayState.TabsElementDimensions.GetStyleString(CommonUtilityService.UiStringBuilder)">
              
             @*
             Pause working on the integrated terminal for now.
@@ -93,7 +93,7 @@
                     <div style="margin-left: 15px;">
                     
                     	@{
-                    		var appOptionsState = AppOptionsService.GetAppOptionsState();
+                    		var appOptionsState = CommonUtilityService.GetAppOptionsState();
                     	
                     		var iconDriver = new IconDriver(
 								appOptionsState.Options.IconSizeInPixels,

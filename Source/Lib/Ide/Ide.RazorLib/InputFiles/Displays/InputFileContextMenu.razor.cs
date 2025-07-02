@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Commands.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.Menus.Models;
 
@@ -17,11 +16,7 @@ public partial class InputFileContextMenu : ComponentBase
     [Inject]
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
-    private ICommonUiService CommonUiService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TreeViewCommandArgs TreeViewCommandArgs { get; set; }
@@ -113,25 +108,25 @@ public partial class InputFileContextMenu : ComponentBase
     {
         return new[]
         {
-            MenuOptionsFactory.CopyFile(
+			MenuOptionsFactory.CopyFile(
                 treeViewModel.Item,
-                () => {
-                    NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", CommonComponentRenderers, CommonUiService, TimeSpan.FromSeconds(7));
+                (Func<Task>)(() => {
+					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService, TimeSpan.FromSeconds(7));
                     return Task.CompletedTask;
-                }),
-            MenuOptionsFactory.CutFile(
+                })),
+			MenuOptionsFactory.CutFile(
                 treeViewModel.Item,
-                () => {
-                    NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", CommonComponentRenderers, CommonUiService, TimeSpan.FromSeconds(7));
-                    ParentOfCutFile = parentTreeViewModel;
+                (Func<Task>)(() => {
+					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService, TimeSpan.FromSeconds(7));
+					ParentOfCutFile = parentTreeViewModel;
                     return Task.CompletedTask;
-                }),
-            MenuOptionsFactory.DeleteFile(
+                })),
+			MenuOptionsFactory.DeleteFile(
                 treeViewModel.Item,
                 async () => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
-            MenuOptionsFactory.RenameFile(
+			MenuOptionsFactory.RenameFile(
                 treeViewModel.Item,
-                CommonUiService,
+                (Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService,
                 async ()  => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
         };
     }
@@ -163,9 +158,9 @@ public partial class InputFileContextMenu : ComponentBase
 
         await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-        TreeViewService.ReduceReRenderNodeAction(InputFileSidebar.TreeViewContainerKey, treeViewModel);
+        CommonUtilityService.TreeView_ReRenderNodeAction(InputFileSidebar.TreeViewContainerKey, treeViewModel);
         
-		TreeViewService.ReduceMoveUpAction(
+		CommonUtilityService.TreeView_MoveUpAction(
 			InputFileSidebar.TreeViewContainerKey,
 			false,
 			false);

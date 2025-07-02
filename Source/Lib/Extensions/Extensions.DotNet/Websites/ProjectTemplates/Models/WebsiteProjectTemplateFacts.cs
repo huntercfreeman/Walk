@@ -1,4 +1,5 @@
 using Walk.Common.RazorLib.FileSystems.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Extensions.DotNet.Websites.ProjectTemplates.Models;
 
@@ -33,14 +34,13 @@ public static class WebsiteProjectTemplateFacts
 	public static async Task HandleNewCSharpProjectAsync(
 		string projectTemplateShortName,
 		string cSharpProjectAbsolutePathString,
-		IFileSystemProvider fileSystemProvider,
-		IEnvironmentProvider environmentProvider)
+		CommonUtilityService commonUtilityService)
 	{
 		if (projectTemplateShortName == BlazorWasmEmptyProjectTemplate.ShortName)
-			await HandleBlazorWasmEmptyProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider)
+			await HandleBlazorWasmEmptyProjectTemplateAsync(cSharpProjectAbsolutePathString, commonUtilityService)
 				.ConfigureAwait(false);
 		else if (projectTemplateShortName == ConsoleAppProjectTemplate.ShortName)
-			await HandleConsoleAppProjectTemplateAsync(cSharpProjectAbsolutePathString, fileSystemProvider, environmentProvider)
+			await HandleConsoleAppProjectTemplateAsync(cSharpProjectAbsolutePathString, commonUtilityService)
 				.ConfigureAwait(false);
 		else
 			throw new NotImplementedException($"The {nameof(ProjectTemplate.ShortName)}: '{projectTemplateShortName}' was not recognized.");
@@ -48,10 +48,9 @@ public static class WebsiteProjectTemplateFacts
 
 	private static async Task HandleBlazorWasmEmptyProjectTemplateAsync(
 		string cSharpProjectAbsolutePathString,
-		IFileSystemProvider fileSystemProvider,
-		IEnvironmentProvider environmentProvider)
+		CommonUtilityService commonUtilityService)
 	{
-		var cSharpProjectAbsolutePath = environmentProvider.AbsolutePathFactory(cSharpProjectAbsolutePathString, false);
+		var cSharpProjectAbsolutePath = commonUtilityService.EnvironmentProvider.AbsolutePathFactory(cSharpProjectAbsolutePathString, false);
 		var parentDirectoryOfProject = cSharpProjectAbsolutePath.ParentDirectory;
 
 		if (parentDirectoryOfProject is null)
@@ -61,11 +60,11 @@ public static class WebsiteProjectTemplateFacts
 
 		// AppCss
 		{
-			var absolutePath = environmentProvider.JoinPaths(
+			var absolutePath = commonUtilityService.EnvironmentProvider.JoinPaths(
 				parentDirectoryOfProjectAbsolutePath,
 				BlazorWasmEmptyFacts.APP_CSS_RELATIVE_FILE_PATH);
 
-			await fileSystemProvider.File.WriteAllTextAsync(
+			await commonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
 					absolutePath,
 					BlazorWasmEmptyFacts.GetAppCssContents(cSharpProjectAbsolutePath.NameNoExtension))
 				.ConfigureAwait(false);
@@ -73,7 +72,7 @@ public static class WebsiteProjectTemplateFacts
 
 		// Csproj
 		{
-			await fileSystemProvider.File.WriteAllTextAsync(
+			await commonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
 					cSharpProjectAbsolutePathString,
 					BlazorWasmEmptyFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension))
 				.ConfigureAwait(false);
@@ -81,11 +80,11 @@ public static class WebsiteProjectTemplateFacts
 
 		// ImportsRazor
 		{
-			var absolutePath = environmentProvider.JoinPaths(
+			var absolutePath = commonUtilityService.EnvironmentProvider.JoinPaths(
 				parentDirectoryOfProjectAbsolutePath,
 				BlazorWasmEmptyFacts.IMPORTS_RAZOR_RELATIVE_FILE_PATH);
 
-			await fileSystemProvider.File.WriteAllTextAsync(
+			await commonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
 					absolutePath,
 					BlazorWasmEmptyFacts.GetImportsRazorContents(cSharpProjectAbsolutePath.NameNoExtension))
 				.ConfigureAwait(false);
@@ -93,11 +92,11 @@ public static class WebsiteProjectTemplateFacts
 
 		// IndexHtml
 		{
-			var absolutePath = environmentProvider.JoinPaths(
+			var absolutePath = commonUtilityService.EnvironmentProvider.JoinPaths(
 				parentDirectoryOfProjectAbsolutePath,
 				BlazorWasmEmptyFacts.INDEX_HTML_RELATIVE_FILE_PATH);
 
-			await fileSystemProvider.File.WriteAllTextAsync(
+			await commonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
 					absolutePath,
 					BlazorWasmEmptyFacts.GetIndexHtmlContents(cSharpProjectAbsolutePath.NameNoExtension))
 				.ConfigureAwait(false);
@@ -105,11 +104,11 @@ public static class WebsiteProjectTemplateFacts
 
 		// IndexRazor
 		{
-			var absolutePath = environmentProvider.JoinPaths(
+			var absolutePath = commonUtilityService.EnvironmentProvider.JoinPaths(
 				parentDirectoryOfProjectAbsolutePath,
 				BlazorWasmEmptyFacts.INDEX_RAZOR_RELATIVE_FILE_PATH);
 
-			await fileSystemProvider.File.WriteAllTextAsync(
+			await commonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
 					absolutePath,
 					BlazorWasmEmptyFacts.GetIndexRazorContents(cSharpProjectAbsolutePath.NameNoExtension))
 				.ConfigureAwait(false);
@@ -117,11 +116,11 @@ public static class WebsiteProjectTemplateFacts
 
 		// LaunchSettingsJson
 		{
-			var absolutePath = environmentProvider.JoinPaths(
+			var absolutePath = commonUtilityService.EnvironmentProvider.JoinPaths(
 				parentDirectoryOfProjectAbsolutePath,
 				BlazorWasmEmptyFacts.LAUNCH_SETTINGS_JSON_RELATIVE_FILE_PATH);
 
-			await fileSystemProvider.File.WriteAllTextAsync(
+			await commonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
 					absolutePath,
 					BlazorWasmEmptyFacts.GetLaunchSettingsJsonContents(cSharpProjectAbsolutePath.NameNoExtension))
 				.ConfigureAwait(false);
@@ -129,11 +128,11 @@ public static class WebsiteProjectTemplateFacts
 
 		// MainLayoutRazor
 		{
-			var absolutePath = environmentProvider.JoinPaths(
+			var absolutePath = commonUtilityService.EnvironmentProvider.JoinPaths(
 				parentDirectoryOfProjectAbsolutePath,
 				BlazorWasmEmptyFacts.MAIN_LAYOUT_RAZOR_RELATIVE_FILE_PATH);
 
-			await fileSystemProvider.File.WriteAllTextAsync(
+			await commonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
 					absolutePath,
 					BlazorWasmEmptyFacts.GetMainLayoutRazorContents(cSharpProjectAbsolutePath.NameNoExtension))
 				.ConfigureAwait(false);
@@ -141,11 +140,11 @@ public static class WebsiteProjectTemplateFacts
 
 		// ProgramCs
 		{
-			var absolutePath = environmentProvider.JoinPaths(
+			var absolutePath = commonUtilityService.EnvironmentProvider.JoinPaths(
 				parentDirectoryOfProjectAbsolutePath,
 				BlazorWasmEmptyFacts.PROGRAM_CS_RELATIVE_FILE_PATH);
 
-			await fileSystemProvider.File.WriteAllTextAsync(
+			await commonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
 					absolutePath,
 					BlazorWasmEmptyFacts.GetProgramCsContents(cSharpProjectAbsolutePath.NameNoExtension))
 				.ConfigureAwait(false);
@@ -154,10 +153,9 @@ public static class WebsiteProjectTemplateFacts
 	
 	private static async Task HandleConsoleAppProjectTemplateAsync(
 		string cSharpProjectAbsolutePathString,
-		IFileSystemProvider fileSystemProvider,
-		IEnvironmentProvider environmentProvider)
+		CommonUtilityService commonUtilityService)
 	{
-		var cSharpProjectAbsolutePath = environmentProvider.AbsolutePathFactory(cSharpProjectAbsolutePathString, false);
+		var cSharpProjectAbsolutePath = commonUtilityService.EnvironmentProvider.AbsolutePathFactory(cSharpProjectAbsolutePathString, false);
 		var parentDirectoryOfProject = cSharpProjectAbsolutePath.ParentDirectory;
 
 		if (parentDirectoryOfProject is null)
@@ -167,11 +165,11 @@ public static class WebsiteProjectTemplateFacts
 
 		// ProgramCs
 		{
-			var absolutePath = environmentProvider.JoinPaths(
+			var absolutePath = commonUtilityService.EnvironmentProvider.JoinPaths(
 				ancestorDirectory,
 				ConsoleAppFacts.PROGRAM_CS_RELATIVE_FILE_PATH);
 
-			await fileSystemProvider.File.WriteAllTextAsync(
+			await commonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
 					absolutePath,
 					ConsoleAppFacts.GetProgramCsContents(cSharpProjectAbsolutePath.NameNoExtension))
 				.ConfigureAwait(false);
@@ -179,7 +177,7 @@ public static class WebsiteProjectTemplateFacts
 
 		// Csproj
 		{
-			await fileSystemProvider.File.WriteAllTextAsync(
+			await commonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
 					cSharpProjectAbsolutePathString,
 					ConsoleAppFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension))
 				.ConfigureAwait(false);
@@ -198,6 +196,4 @@ public static class WebsiteProjectTemplateFacts
 		else
 			throw new NotImplementedException($"The {nameof(ProjectTemplate.ShortName)}: '{projectTemplateShortName}' was not recognized.");
 	}
-
-
 }

@@ -2,6 +2,7 @@ using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Reactives.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Notifications.Models;
 
@@ -10,14 +11,13 @@ public static class NotificationHelper
     public static void DispatchInformative(
         string title,
         string message,
-        ICommonComponentRenderers commonComponentRenderers,
-        ICommonUiService commonUiService,
+        CommonUtilityService commonUtilityService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationInformative = new NotificationViewModel(
             Key<IDynamicViewModel>.NewKey(),
             title,
-            commonComponentRenderers.InformativeNotificationRendererType,
+            commonUtilityService.CommonComponentRenderers.InformativeNotificationRendererType,
             new Dictionary<string, object?>
             {
                 {
@@ -29,19 +29,18 @@ public static class NotificationHelper
             true,
             null);
 
-        commonUiService.Notification_ReduceRegisterAction(notificationInformative);
+        commonUtilityService.Notification_ReduceRegisterAction(notificationInformative);
     }
 
     public static void DispatchError(
         string title,
         string message,
-        ICommonComponentRenderers commonComponentRenderers,
-        ICommonUiService commonUiService,
+        CommonUtilityService commonUtilityService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
-            commonComponentRenderers.ErrorNotificationRendererType,
+            commonUtilityService.CommonComponentRenderers.ErrorNotificationRendererType,
             new Dictionary<string, object?>
             {
                 { nameof(IErrorNotificationRendererType.Message), $"ERROR: {message}" },
@@ -50,19 +49,18 @@ public static class NotificationHelper
             true,
             IErrorNotificationRendererType.CSS_CLASS_STRING);
 
-        commonUiService.Notification_ReduceRegisterAction(notificationError);
+        commonUtilityService.Notification_ReduceRegisterAction(notificationError);
     }
 
     public static void DispatchProgress(
         string title,
         ProgressBarModel progressBarModel,
-        ICommonComponentRenderers commonComponentRenderers,
-        ICommonUiService commonUiService,
+        CommonUtilityService commonUtilityService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationProgress = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
-            commonComponentRenderers.ProgressNotificationRendererType,
+            commonUtilityService.CommonComponentRenderers.ProgressNotificationRendererType,
             new Dictionary<string, object?>
             {
                 {
@@ -74,7 +72,7 @@ public static class NotificationHelper
             true,
             null);
 
-        commonUiService.Notification_ReduceRegisterAction(notificationProgress);
+        commonUtilityService.Notification_ReduceRegisterAction(notificationProgress);
     }
 
     /// <summary>
@@ -90,13 +88,12 @@ public static class NotificationHelper
 	public static void DispatchDebugMessage(
         string title,
         Func<string> messageFunc,
-        ICommonComponentRenderers commonComponentRenderers,
-        ICommonUiService commonUiService,
+        CommonUtilityService commonUtilityService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
-            commonComponentRenderers.ErrorNotificationRendererType,
+            commonUtilityService.CommonComponentRenderers.ErrorNotificationRendererType,
             new Dictionary<string, object?>
             {
                 { nameof(IErrorNotificationRendererType.Message), $"DEBUG: {messageFunc.Invoke()}" },
@@ -105,6 +102,6 @@ public static class NotificationHelper
             true,
             IErrorNotificationRendererType.CSS_CLASS_STRING);
 
-        commonUiService.Notification_ReduceRegisterAction(notificationError);
+        commonUtilityService.Notification_ReduceRegisterAction(notificationError);
     }
 }

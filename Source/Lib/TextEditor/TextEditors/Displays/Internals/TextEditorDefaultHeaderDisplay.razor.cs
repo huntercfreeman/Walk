@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
-using Walk.Common.RazorLib.Notifications.Models;
-using Walk.Common.RazorLib.Clipboards.Models;
-using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 
@@ -27,15 +24,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
-	private IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
-	[Inject]
-	private IClipboardService ClipboardService { get; set; } = null!;
-	[Inject]
-	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
 
@@ -94,19 +83,19 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
 
-        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+		TextEditorService.WorkerArbitrary.PostUnique((Func<TextEditorEditContext, ValueTask>)(editContext =>
         {
         	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
         	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
-        
-        	TextEditorCommandDefaultFunctions.TriggerSave(
+
+			TextEditorCommandDefaultFunctions.TriggerSave(
         		editContext,
         		modelModifier,
         		viewModelModifier,
-        		CommonComponentRenderers,
-        		CommonUiService);
+        		(ICommonComponentRenderers)CommonUtilityService.CommonComponentRenderers,
+        		(Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService);
         	return ValueTask.CompletedTask;
-        });
+        }));
         return Task.CompletedTask;
     }
 
@@ -142,7 +131,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 			true,
 			null);
 
-        CommonUiService.Dialog_ReduceRegisterAction(dialogRecord);
+        CommonUtilityService.Dialog_ReduceRegisterAction(dialogRecord);
     }
 
 	public Task DoCopyOnClick(MouseEventArgs arg)
@@ -159,8 +148,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
         	return TextEditorCommandDefaultFunctions.CopyAsync(
             	editContext,
             	modelModifier,
-            	viewModelModifier,
-            	ClipboardService);
+            	viewModelModifier);
         });
         return Task.CompletedTask;
     }
@@ -179,8 +167,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
         	return TextEditorCommandDefaultFunctions.CutAsync(
         		editContext,
             	modelModifier,
-            	viewModelModifier,
-            	ClipboardService);
+            	viewModelModifier);
         });
         return Task.CompletedTask;
     }
@@ -199,8 +186,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
         	return TextEditorCommandDefaultFunctions.PasteAsync(
             	editContext,
             	modelModifier,
-            	viewModelModifier,
-            	ClipboardService);
+            	viewModelModifier);
         });
         return Task.CompletedTask;
     }
@@ -301,14 +287,14 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 			
 		var menuOptionList = new List<MenuOptionRecord>();
 		
-		var absolutePath = EnvironmentProvider.AbsolutePathFactory(virtualizationResult.Model.PersistentState.ResourceUri.Value, false);
+		var absolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(virtualizationResult.Model.PersistentState.ResourceUri.Value, false);
 
 		menuOptionList.Add(new MenuOptionRecord(
 		    "Cancel",
 		    MenuOptionKind.Read,
 		    onClickFunc: () =>
 		    {
-			    CommonUiService.Dropdown_ReduceDisposeAction(dropdownKey);
+			    CommonUtilityService.Dropdown_ReduceDisposeAction(dropdownKey);
 		    	return Task.CompletedTask;
 		    }));
 		    
@@ -343,7 +329,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 			},
 			async () => await TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(_reloadButtonHtmlElementId));
 
-        CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
     }
 
     public Task DoRefreshOnClick()

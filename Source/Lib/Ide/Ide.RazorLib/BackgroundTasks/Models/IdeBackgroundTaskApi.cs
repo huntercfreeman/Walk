@@ -2,21 +2,17 @@ using System.Collections.Concurrent;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Common.RazorLib.Storages.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
-using Walk.Common.RazorLib.Themes.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Commands.Models;
-using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.FileSystems.Displays;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib;
@@ -46,79 +42,49 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 {
 	public static readonly Key<TextEditorGroup> EditorTextEditorGroupKey = Key<TextEditorGroup>.NewKey();
 
-    private readonly BackgroundTaskService _backgroundTaskService;
-    private readonly IStorageService _storageService;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
-    private readonly ITreeViewService _treeViewService;
-    private readonly IEnvironmentProvider _environmentProvider;
-	private readonly IFileSystemProvider _fileSystemProvider;
     private readonly TextEditorService _textEditorService;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
     private readonly ITerminalService _terminalService;
 	private readonly IDecorationMapperRegistry _decorationMapperRegistry;
-	private readonly ICommonUiService _commonUiService;
 	private readonly IInputFileService _inputFileService;
 	private readonly IFolderExplorerService _folderExplorerService;
 	private readonly ICodeSearchService _codeSearchService;
 	private readonly WalkTextEditorConfig _textEditorConfig;
-	private readonly IThemeService _themeService;
-	private readonly IAppOptionsService _appOptionsService;
+	private readonly CommonUtilityService _commonUtilityService;
 	private readonly ICommandFactory _commandFactory;
 	private readonly ITerminalGroupService _terminalGroupService;
-	private readonly WalkHostingInformation _walkHostingInformation;
 	private readonly IIdeService _ideService;
 	private readonly IServiceProvider _serviceProvider;
 
     public IdeBackgroundTaskApi(
-        BackgroundTaskService backgroundTaskService,
-        IStorageService storageService,
         ICompilerServiceRegistry compilerServiceRegistry,
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
-        CommonBackgroundTaskApi commonBackgroundTaskApi,
-        ITreeViewService treeViewService,
-        IEnvironmentProvider environmentProvider,
-        IFileSystemProvider fileSystemProvider,
         TextEditorService textEditorService,
         ITerminalService terminalService,
         IDecorationMapperRegistry decorationMapperRegistry,
-        ICommonUiService commonUiService,
         IInputFileService inputFileService,
         IFolderExplorerService folderExplorerService,
         ICodeSearchService codeSearchService,
         WalkTextEditorConfig textEditorConfig,
-        IThemeService themeService,
-        IAppOptionsService appOptionsService,
+        CommonUtilityService commonUtilityService,
         ICommandFactory commandFactory,
         ITerminalGroupService terminalGroupService,
-        WalkHostingInformation walkHostingInformation,
         IIdeService ideService,
         IServiceProvider serviceProvider)
     {
-        _backgroundTaskService = backgroundTaskService;
-        _storageService = storageService;
         _ideComponentRenderers = ideComponentRenderers;
-        _commonComponentRenderers = commonComponentRenderers;
-        _commonBackgroundTaskApi = commonBackgroundTaskApi;
-        _treeViewService = treeViewService;
-        _environmentProvider = environmentProvider;
-		_fileSystemProvider = fileSystemProvider;
         _textEditorService = textEditorService;
         _compilerServiceRegistry = compilerServiceRegistry;
         _terminalService = terminalService;
 		_decorationMapperRegistry = decorationMapperRegistry;
-		_commonUiService = commonUiService;
 		_inputFileService = inputFileService;
 		_folderExplorerService = folderExplorerService;
         _codeSearchService = codeSearchService;
         _textEditorConfig = textEditorConfig;
-        _themeService = themeService;
-        _appOptionsService = appOptionsService;
+        _commonUtilityService = commonUtilityService;
         _commandFactory = commandFactory;
         _terminalGroupService = terminalGroupService;
-        _walkHostingInformation = walkHostingInformation;
         _ideService = ideService;
         _serviceProvider = serviceProvider;
     }
@@ -136,7 +102,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     public void Enqueue(IdeBackgroundTaskApiWorkArgs workArgs)
     {
         _workQueue.Enqueue(workArgs);
-        _backgroundTaskService.Continuous_EnqueueGroup(this);
+        _commonUtilityService.Continuous_EnqueueGroup(this);
     }
 
     public ValueTask Do_WalkIdeInitializerOnInit()
@@ -146,7 +112,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
         _codeSearchService.InitializeResizeHandleDimensionUnit(
             new DimensionUnit(
-                () => _appOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
+                () => _commonUtilityService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
                 DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW));
@@ -162,13 +128,13 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     {
         // Left
         {
-            var leftPanel = PanelFacts.GetTopLeftPanelGroup(_commonUiService.GetPanelState());
-            leftPanel.CommonUiService = _commonUiService;
+            var leftPanel = PanelFacts.GetTopLeftPanelGroup(_commonUtilityService.GetPanelState());
+            leftPanel.CommonUtilityService = _commonUtilityService;
 
-            _commonUiService.Panel_InitializeResizeHandleDimensionUnit(
+            _commonUtilityService.Panel_InitializeResizeHandleDimensionUnit(
                 leftPanel.Key,
                 new DimensionUnit(
-                    () => _appOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+                    () => _commonUtilityService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
                     DimensionUnitKind.Pixels,
                     DimensionOperatorKind.Subtract,
                     DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
@@ -176,13 +142,13 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
         // Right
         {
-            var rightPanel = PanelFacts.GetTopRightPanelGroup(_commonUiService.GetPanelState());
-            rightPanel.CommonUiService = _commonUiService;
+            var rightPanel = PanelFacts.GetTopRightPanelGroup(_commonUtilityService.GetPanelState());
+            rightPanel.CommonUtilityService = _commonUtilityService;
 
-            _commonUiService.Panel_InitializeResizeHandleDimensionUnit(
+            _commonUtilityService.Panel_InitializeResizeHandleDimensionUnit(
                 rightPanel.Key,
                 new DimensionUnit(
-                    () => _appOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+                    () => _commonUtilityService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
                     DimensionUnitKind.Pixels,
                     DimensionOperatorKind.Subtract,
                     DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
@@ -190,13 +156,13 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
         // Bottom
         {
-            var bottomPanel = PanelFacts.GetBottomPanelGroup(_commonUiService.GetPanelState());
-            bottomPanel.CommonUiService = _commonUiService;
+            var bottomPanel = PanelFacts.GetBottomPanelGroup(_commonUtilityService.GetPanelState());
+            bottomPanel.CommonUtilityService = _commonUtilityService;
 
-            _commonUiService.Panel_InitializeResizeHandleDimensionUnit(
+            _commonUtilityService.Panel_InitializeResizeHandleDimensionUnit(
                 bottomPanel.Key,
                 new DimensionUnit(
-                    () => _appOptionsService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
+                    () => _commonUtilityService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
                     DimensionUnitKind.Pixels,
                     DimensionOperatorKind.Subtract,
                     DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW));
@@ -212,8 +178,8 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
     private void InitializeLeftPanelTabs()
     {
-        var leftPanel = PanelFacts.GetTopLeftPanelGroup(_commonUiService.GetPanelState());
-        leftPanel.CommonUiService = _commonUiService;
+        var leftPanel = PanelFacts.GetTopLeftPanelGroup(_commonUtilityService.GetPanelState());
+        leftPanel.CommonUtilityService = _commonUtilityService;
 
         // folderExplorerPanel
         var folderExplorerPanel = new Panel(
@@ -223,25 +189,24 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.FolderExplorerContext.ContextKey,
             typeof(FolderExplorerDisplay),
             null,
-            _commonUiService,
-            _commonBackgroundTaskApi);
-        _commonUiService.RegisterPanel(folderExplorerPanel);
-        _commonUiService.RegisterPanelTab(leftPanel.Key, folderExplorerPanel, false);
+            _commonUtilityService);
+        _commonUtilityService.RegisterPanel(folderExplorerPanel);
+        _commonUtilityService.RegisterPanelTab(leftPanel.Key, folderExplorerPanel, false);
 
         // SetActivePanelTabAction
-        _commonUiService.SetActivePanelTab(leftPanel.Key, folderExplorerPanel.Key);
+        _commonUtilityService.SetActivePanelTab(leftPanel.Key, folderExplorerPanel.Key);
     }
 
     private void InitializeRightPanelTabs()
     {
-        var rightPanel = PanelFacts.GetTopRightPanelGroup(_commonUiService.GetPanelState());
-        rightPanel.CommonUiService = _commonUiService;
+        var rightPanel = PanelFacts.GetTopRightPanelGroup(_commonUtilityService.GetPanelState());
+        rightPanel.CommonUtilityService = _commonUtilityService;
     }
 
     private void InitializeBottomPanelTabs()
     {
-        var bottomPanel = PanelFacts.GetBottomPanelGroup(_commonUiService.GetPanelState());
-        bottomPanel.CommonUiService = _commonUiService;
+        var bottomPanel = PanelFacts.GetBottomPanelGroup(_commonUtilityService.GetPanelState());
+        bottomPanel.CommonUtilityService = _commonUtilityService;
 
         // terminalGroupPanel
         var terminalGroupPanel = new Panel(
@@ -251,14 +216,13 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.TerminalContext.ContextKey,
             typeof(TerminalGroupDisplay),
             null,
-            _commonUiService,
-            _commonBackgroundTaskApi);
-        _commonUiService.RegisterPanel(terminalGroupPanel);
-        _commonUiService.RegisterPanelTab(bottomPanel.Key, terminalGroupPanel, false);
+            _commonUtilityService);
+        _commonUtilityService.RegisterPanel(terminalGroupPanel);
+        _commonUtilityService.RegisterPanelTab(bottomPanel.Key, terminalGroupPanel, false);
         // This UI has resizable parts that need to be initialized.
         _terminalGroupService.InitializeResizeHandleDimensionUnit(
             new DimensionUnit(
-                () => _appOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+                () => _commonUtilityService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
                 DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
@@ -269,8 +233,8 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
     private void AddGeneralTerminal()
     {
-        if (_walkHostingInformation.WalkHostingKind == WalkHostingKind.Wasm ||
-            _walkHostingInformation.WalkHostingKind == WalkHostingKind.ServerSide)
+        if (_commonUtilityService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Wasm ||
+            _commonUtilityService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.ServerSide)
         {
             _terminalService.Register(
                 new TerminalWebsite(
@@ -283,11 +247,8 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             terminal,
                             _textEditorService,
                             _compilerServiceRegistry,
-                            _commonUiService,
-                            _commonBackgroundTaskApi)),
-                    _backgroundTaskService,
-                    _commonComponentRenderers,
-                    _commonUiService)
+                            _commonUtilityService)),
+                    _commonUtilityService)
                 {
                     Key = TerminalFacts.GENERAL_KEY
                 });
@@ -305,11 +266,8 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             terminal,
                             _textEditorService,
                             _compilerServiceRegistry,
-                            _commonUiService,
-                            _commonBackgroundTaskApi)),
-                    _backgroundTaskService,
-                    _commonComponentRenderers,
-                    _commonUiService,
+                            _commonUtilityService)),
+                    _commonUtilityService,
                     _terminalService)
                 {
                     Key = TerminalFacts.GENERAL_KEY
@@ -319,8 +277,8 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
     private void AddExecutionTerminal()
     {
-        if (_walkHostingInformation.WalkHostingKind == WalkHostingKind.Wasm ||
-            _walkHostingInformation.WalkHostingKind == WalkHostingKind.ServerSide)
+        if (_commonUtilityService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Wasm ||
+            _commonUtilityService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.ServerSide)
         {
             _terminalService.Register(
                 new TerminalWebsite(
@@ -333,11 +291,8 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             terminal,
                             _textEditorService,
                             _compilerServiceRegistry,
-                            _commonUiService,
-                            _commonBackgroundTaskApi)),
-                    _backgroundTaskService,
-                    _commonComponentRenderers,
-                    _commonUiService)
+                            _commonUtilityService)),
+                    _commonUtilityService)
                 {
                     Key = TerminalFacts.EXECUTION_KEY
                 });
@@ -355,11 +310,8 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             terminal,
                             _textEditorService,
                             _compilerServiceRegistry,
-                            _commonUiService,
-                            _commonBackgroundTaskApi)),
-                    _backgroundTaskService,
-                    _commonComponentRenderers,
-                    _commonUiService,
+                            _commonUtilityService)),
+                    _commonUtilityService,
                     _terminalService)
                 {
                     Key = TerminalFacts.EXECUTION_KEY
@@ -460,7 +412,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                         true,
                         null);
 
-                    _commonUiService.Dialog_ReduceRegisterAction(_commandFactory.CodeSearchDialog);
+                    _commonUtilityService.Dialog_ReduceRegisterAction(_commandFactory.CodeSearchDialog);
                     return Task.CompletedTask;
                 });
 
@@ -531,7 +483,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             true,
             null);
 
-        _commonUiService.Dialog_ReduceRegisterAction(dialogRecord);
+        _commonUtilityService.Dialog_ReduceRegisterAction(dialogRecord);
         return Task.CompletedTask;
     }
 
@@ -602,7 +554,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             OnAfterSubmitFunc = absolutePath =>
             {
             	// TODO: Why does 'isDirectory: false' not work?
-				_environmentProvider.DeletionPermittedRegister(new(absolutePath.Value, isDirectory: true));
+				_commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(new(absolutePath.Value, isDirectory: true));
             
             	_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
 				{
@@ -661,15 +613,15 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 			
     	var resourceUri = registerModelArgs.ResourceUri;
 
-        var fileLastWriteTime = await _fileSystemProvider.File
+        var fileLastWriteTime = await _commonUtilityService.FileSystemProvider.File
             .GetLastWriteTimeAsync(resourceUri.Value)
             .ConfigureAwait(false);
 
-        var content = await _fileSystemProvider.File
+        var content = await _commonUtilityService.FileSystemProvider.File
             .ReadAllTextAsync(resourceUri.Value)
             .ConfigureAwait(false);
 
-        var absolutePath = _environmentProvider.AbsolutePathFactory(resourceUri.Value, false);
+        var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(resourceUri.Value, false);
         var decorationMapper = _decorationMapperRegistry.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
         var compilerService = _compilerServiceRegistry.GetCompilerService(absolutePath.ExtensionNoPeriod);
 
@@ -712,7 +664,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
         if (model is null)
         {
-        	NotificationHelper.DispatchDebugMessage(nameof(Editor_TryRegisterViewModelFunc), () => "model is null: " + registerViewModelArgs.ResourceUri.Value, _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(4));
+        	NotificationHelper.DispatchDebugMessage(nameof(Editor_TryRegisterViewModelFunc), () => "model is null: " + registerViewModelArgs.ResourceUri.Value, _commonUtilityService, TimeSpan.FromSeconds(4));
             return Key<TextEditorViewModel>.Empty;
         }
 
@@ -727,8 +679,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             viewModelKey,
             registerViewModelArgs.ResourceUri,
             _textEditorService,
-            _commonUiService,
-            _commonBackgroundTaskApi,
+            _commonUtilityService,
             TextEditorVirtualizationResult.ConstructEmpty(),
 			new TextEditorDimensions(0, 0, 0, 0),
 			scrollLeft: 0,
@@ -744,7 +695,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             FindOverlayPresentationFacts.PresentationKey,
         };
 
-        var absolutePath = _environmentProvider.AbsolutePathFactory(
+        var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
             registerViewModelArgs.ResourceUri.Value,
             false);
 
@@ -760,7 +711,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     {
         var innerContent = innerTextEditor.GetAllText_WithOriginalLineEndings();
         
-        var absolutePath = _environmentProvider.AbsolutePathFactory(
+        var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
             innerTextEditor.PersistentState.ResourceUri.Value,
             false);
 
@@ -809,7 +760,8 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                 showViewModelArgs.ViewModelKey,
                 EditorTextEditorGroupKey,
                 showViewModelArgs.ShouldSetFocusToEditor,
-                showViewModelArgs.ServiceProvider);
+                showViewModelArgs.CommonUtilityService,
+                showViewModelArgs.IdeBackgroundTaskApi);
         }
 
         if (showViewModelArgs.ViewModelKey == Key<TextEditorViewModel>.Empty ||
@@ -842,7 +794,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         string inputFileAbsolutePathString,
         TextEditorModel textEditorModel)
     {
-        var fileLastWriteTime = await _fileSystemProvider.File
+        var fileLastWriteTime = await _commonUtilityService.FileSystemProvider.File
             .GetLastWriteTimeAsync(inputFileAbsolutePathString)
             .ConfigureAwait(false);
 
@@ -885,7 +837,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineFunc),
                             new Func<Task>(() =>
                             {
-                                _commonUiService.Notification_ReduceDisposeAction(notificationInformativeKey);
+                                _commonUtilityService.Notification_ReduceDisposeAction(notificationInformativeKey);
                                 return Task.CompletedTask;
                             })
                         },
@@ -894,15 +846,15 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                 true,
                 null);
 
-            _commonUiService.Notification_ReduceRegisterAction(notificationInformative);
+            _commonUtilityService.Notification_ReduceRegisterAction(notificationInformative);
         }
     }
 
     private async ValueTask Editor_Do_FileContentsWereModifiedOnDisk(string inputFileAbsolutePathString, TextEditorModel textEditorModel, DateTime fileLastWriteTime, Key<IDynamicViewModel> notificationInformativeKey)
     {
-        _commonUiService.Notification_ReduceDisposeAction(notificationInformativeKey);
+        _commonUtilityService.Notification_ReduceDisposeAction(notificationInformativeKey);
 
-        var content = await _fileSystemProvider.File
+        var content = await _commonUtilityService.FileSystemProvider.File
             .ReadAllTextAsync(inputFileAbsolutePathString)
             .ConfigureAwait(false);
 
@@ -937,21 +889,21 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         var absolutePathString = absolutePath.Value;
 
         if (absolutePathString is not null &&
-            await _fileSystemProvider.File.ExistsAsync(absolutePathString).ConfigureAwait(false))
+            await _commonUtilityService.FileSystemProvider.File.ExistsAsync(absolutePathString).ConfigureAwait(false))
         {
-            await _fileSystemProvider.File.WriteAllTextAsync(absolutePathString, content).ConfigureAwait(false);
+            await _commonUtilityService.FileSystemProvider.File.WriteAllTextAsync(absolutePathString, content).ConfigureAwait(false);
         }
         else
         {
             // TODO: Save As to make new file
-            NotificationHelper.DispatchInformative("Save Action", "File not found. TODO: Save As", _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(7));
+            NotificationHelper.DispatchInformative("Save Action", "File not found. TODO: Save As", _commonUtilityService, TimeSpan.FromSeconds(7));
         }
 
         DateTime? fileLastWriteTime = null;
 
         if (absolutePathString is not null)
         {
-            fileLastWriteTime = await _fileSystemProvider.File.GetLastWriteTimeAsync(
+            fileLastWriteTime = await _commonUtilityService.FileSystemProvider.File.GetLastWriteTimeAsync(
                     absolutePathString,
                     CancellationToken.None)
                 .ConfigureAwait(false);
@@ -979,33 +931,31 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             IsLoadingFolderExplorer = true
         });
         
-		_environmentProvider.DeletionPermittedRegister(new(folderAbsolutePath.Value, true));
+		_commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(new(folderAbsolutePath.Value, true));
 
         var rootNode = new TreeViewAbsolutePath(
             folderAbsolutePath,
             _ideComponentRenderers,
-            _commonComponentRenderers,
-            _fileSystemProvider,
-            _environmentProvider,
+            _commonUtilityService,
             true,
             true);
 
         await rootNode.LoadChildListAsync().ConfigureAwait(false);
 
-        if (!_treeViewService.TryGetTreeViewContainer(
+        if (!_commonUtilityService.TryGetTreeViewContainer(
                 FolderExplorerState.TreeViewContentStateKey,
                 out var treeViewState))
         {
-            _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+            _commonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
                 FolderExplorerState.TreeViewContentStateKey,
                 rootNode,
                 new List<TreeViewNoType>() { rootNode }));
         }
         else
         {
-            _treeViewService.ReduceWithRootNodeAction(FolderExplorerState.TreeViewContentStateKey, rootNode);
+            _commonUtilityService.TreeView_WithRootNodeAction(FolderExplorerState.TreeViewContentStateKey, rootNode);
 
-            _treeViewService.ReduceSetActiveNodeAction(
+            _commonUtilityService.TreeView_SetActiveNodeAction(
                 FolderExplorerState.TreeViewContentStateKey,
                 rootNode,
                 true,
@@ -1063,7 +1013,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             true,
             null);
 
-        _commonUiService.Dialog_ReduceRegisterAction(inputFileDialog);
+        _commonUtilityService.Dialog_ReduceRegisterAction(inputFileDialog);
 
         return ValueTask.CompletedTask;
     }

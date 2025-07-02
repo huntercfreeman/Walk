@@ -2,9 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Reactives.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Options.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -18,12 +16,8 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<TextEditorComponentData> ComponentDataKey { get; set; }
@@ -155,7 +149,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
             	var componentData = virtualizationResult.ViewModel.PersistentState.ComponentData;
             	if (componentData is not null)
             	{
-	                await CommonBackgroundTaskApi.JsRuntimeCommonApi
+	                await CommonUtilityService.JsRuntimeCommonApi
 	                    .FocusHtmlElementById(componentData.FindOverlayId)
 	                    .ConfigureAwait(false);
                 }
@@ -206,7 +200,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
         	var componentData = virtualizationResult.ViewModel.PersistentState.ComponentData;
         	if (componentData is not null)
         	{
-	            await CommonBackgroundTaskApi.JsRuntimeCommonApi
+	            await CommonUtilityService.JsRuntimeCommonApi
 	                .FocusHtmlElementById(componentData.PrimaryCursorContentId)
 	                .ConfigureAwait(false);
             }

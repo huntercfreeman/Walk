@@ -1,12 +1,7 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Commands.Models;
-using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
-using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Options.Models;
@@ -22,13 +17,7 @@ namespace Walk.Extensions.DotNet.DotNetSolutions.Displays;
 public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private ITreeViewService TreeViewService { get; set; } = null!;
-	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
-	[Inject]
-	private IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
 	[Inject]
@@ -36,17 +25,13 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
-	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 
 	private SolutionExplorerTreeViewKeyboardEventHandler _solutionExplorerTreeViewKeymap = null!;
 	private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	protected override void OnInitialized()
 	{
@@ -55,18 +40,13 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 		_solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeyboardEventHandler(
 			IdeBackgroundTaskApi,
 			MenuOptionsFactory,
-			CommonComponentRenderers,
 			TextEditorService,
-			TreeViewService,
-			CommonUiService,
-			BackgroundTaskService,
-			EnvironmentProvider);
+			CommonUtilityService);
 
 		_solutionExplorerTreeViewMouseEventHandler = new SolutionExplorerTreeViewMouseEventHandler(
 			IdeBackgroundTaskApi,
 			TextEditorService,
-			TreeViewService,
-			BackgroundTaskService);
+			CommonUtilityService);
 	}
 
 	private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
@@ -85,7 +65,7 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 			},
 			null);
 
-		CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 
@@ -100,7 +80,7 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 			true,
 			null);
 
-		CommonUiService.Dialog_ReduceRegisterAction(dialogRecord);
+		CommonUtilityService.Dialog_ReduceRegisterAction(dialogRecord);
 	}
 	
 	public async void OnDotNetSolutionStateChanged()

@@ -1,7 +1,7 @@
-﻿<div class="di_permissions">
+<div class="di_permissions">
     @{
-        var localDeletionPermittedPathList = EnvironmentProvider.DeletionPermittedPathList;
-        var localProtectedPathList = EnvironmentProvider.ProtectedPathList;
+        var localDeletionPermittedPathList = CommonUtilityService.EnvironmentProvider.DeletionPermittedPathList;
+        var localProtectedPathList = CommonUtilityService.EnvironmentProvider.ProtectedPathList;
     }
 
     <div class="di_permission-entry">

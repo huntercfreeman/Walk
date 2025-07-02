@@ -1,9 +1,8 @@
 using CliWrap.EventStream;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Notifications.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.Exceptions;
 using Walk.Ide.RazorLib.Terminals.Models.Internals;
 
@@ -14,27 +13,21 @@ namespace Walk.Ide.RazorLib.Terminals.Models;
 /// </summary>
 public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 {
-	private readonly BackgroundTaskService _backgroundTaskService;
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
-	private readonly ICommonUiService _commonUiService;
+	private readonly CommonUtilityService _commonUtilityService;
 
 	public TerminalWebsite(
 		string displayName,
 		Func<TerminalWebsite, ITerminalInteractive> terminalInteractiveFactory,
 		Func<TerminalWebsite, ITerminalInput> terminalInputFactory,
 		Func<TerminalWebsite, ITerminalOutput> terminalOutputFactory,
-		BackgroundTaskService backgroundTaskService,
-		ICommonComponentRenderers commonComponentRenderers,
-		ICommonUiService commonUiService)
+		CommonUtilityService commonUtilityService)
 	{
 		DisplayName = displayName;
 		TerminalInteractive = terminalInteractiveFactory.Invoke(this);
 		TerminalInput = terminalInputFactory.Invoke(this);
 		TerminalOutput = terminalOutputFactory.Invoke(this);
 		
-		_backgroundTaskService = backgroundTaskService;
-		_commonComponentRenderers = commonComponentRenderers;
-		_commonUiService = commonUiService;
+		_commonUtilityService = commonUtilityService;
 	}
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
@@ -65,7 +58,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(TerminalWorkKind.Command);
             _queue_general_TerminalCommandRequest.Enqueue(terminalCommandRequest);
-            _backgroundTaskService.Indefinite_EnqueueGroup(this);
+            _commonUtilityService.Indefinite_EnqueueGroup(this);
         }
     }
 
@@ -76,7 +69,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 
     public Task EnqueueCommandAsync(TerminalCommandRequest terminalCommandRequest)
     {
-		return _backgroundTaskService.Indefinite_EnqueueAsync(
+		return _commonUtilityService.Indefinite_EnqueueAsync(
 			Key<IBackgroundTaskGroup>.NewKey(),
 			BackgroundTaskFacts.IndefiniteQueueKey,
 			"Enqueue Command",
@@ -141,7 +134,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 				parsedCommand,
 				new StandardErrorCommandEvent(parsedCommand.SourceTerminalCommandRequest.CommandText + " threw an exception" + "\n"));
 		
-			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(14));
+			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonUtilityService, TimeSpan.FromSeconds(14));
 		}
 		finally
 		{

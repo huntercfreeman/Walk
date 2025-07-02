@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Options.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.Exceptions;
 using Walk.Ide.RazorLib.InputFiles.Models;
@@ -14,21 +11,11 @@ namespace Walk.Ide.RazorLib.InputFiles.Displays;
 public partial class InputFileTopNavBar : ComponentBase
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     private IInputFileService InputFileService { get; set; } = null!;
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
-    [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
-    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-    [Inject]
-    private ICommonUiService CommonUiService { get; set; } = null!;
 
     [CascadingParameter(Name="SetInputFileContentTreeViewRootFunc")]
     public Func<AbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
@@ -61,10 +48,7 @@ public partial class InputFileTopNavBar : ComponentBase
     {
         InputFileService.OpenParentDirectory(
             IdeComponentRenderers,
-            CommonComponentRenderers,
-            FileSystemProvider,
-            EnvironmentProvider,
-            BackgroundTaskService,
+            CommonUtilityService,
             parentDirectoryTreeViewModel: null);
 
         await ChangeContentRootToOpenedTreeView().ConfigureAwait(false);
@@ -72,7 +56,7 @@ public partial class InputFileTopNavBar : ComponentBase
 
     private async Task HandleRefreshButtonOnClick()
     {
-        InputFileService.RefreshCurrentSelection(BackgroundTaskService, currentSelection: null);
+        InputFileService.RefreshCurrentSelection(currentSelection: null);
         await ChangeContentRootToOpenedTreeView().ConfigureAwait(false);
     }
 
@@ -117,22 +101,22 @@ public partial class InputFileTopNavBar : ComponentBase
     {
         try
         {
-            if (!await FileSystemProvider.Directory.ExistsAsync(address).ConfigureAwait(false))
+            if (!await CommonUtilityService.FileSystemProvider.Directory.ExistsAsync(address).ConfigureAwait(false))
             {
-                if (await FileSystemProvider.File.ExistsAsync(address).ConfigureAwait(false))
+                if (await CommonUtilityService.FileSystemProvider.File.ExistsAsync(address).ConfigureAwait(false))
                     throw new WalkIdeException($"Address provided was a file. Provide a directory instead. {address}");
 
                 throw new WalkIdeException($"Address provided does not exist. {address}");
             }
 
-            var absolutePath = EnvironmentProvider.AbsolutePathFactory(address, true);
+            var absolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(address, true);
             _showInputTextEditForAddress = false;
 
             await SetInputFileContentTreeViewRootFunc.Invoke(absolutePath).ConfigureAwait(false);
         }
         catch (Exception exception)
         {
-            NotificationHelper.DispatchError($"ERROR: {nameof(InputFileTopNavBar)}", exception.ToString(), CommonComponentRenderers, CommonUiService, TimeSpan.FromSeconds(14));
+            NotificationHelper.DispatchError($"ERROR: {nameof(InputFileTopNavBar)}", exception.ToString(), CommonUtilityService, TimeSpan.FromSeconds(14));
         }
     }
 

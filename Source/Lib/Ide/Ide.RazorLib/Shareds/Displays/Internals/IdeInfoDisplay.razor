@@ -144,24 +144,13 @@
         WalkHostingInformation:
 		<div>
             <div>
-                @nameof(WalkHostingInformation.WalkHostingKind): @WalkHostingInformation.WalkHostingKind
+                @nameof(CommonUtilityService.WalkHostingInformation.WalkHostingKind): @CommonUtilityService.WalkHostingInformation.WalkHostingKind
             </div>
             <div>
-                @nameof(WalkHostingInformation.WalkPurposeKind): @WalkHostingInformation.WalkPurposeKind
+                @nameof(CommonUtilityService.WalkHostingInformation.WalkPurposeKind): @CommonUtilityService.WalkHostingInformation.WalkPurposeKind
             </div>
             <div>
-                @nameof(WalkHostingInformation.BackgroundTaskService):
-                @if (WalkHostingInformation.BackgroundTaskService is null)
-                {
-                    <text>null</text>
-                }
-                else
-                {
-                    <text>NOT-null</text>
-                }
-            </div>
-            <div>
-                @nameof(WalkHostingInformation.GetMainWindowScreenDpiFunc): @WalkHostingInformation.GetMainWindowScreenDpiFunc.Invoke()
+                @nameof(CommonUtilityService.WalkHostingInformation.GetMainWindowScreenDpiFunc): @CommonUtilityService.WalkHostingInformation.GetMainWindowScreenDpiFunc.Invoke()
             </div>
 		</div>
 	</div>
@@ -172,6 +161,17 @@
         Recent Changes:
 		<div>
 		    <div>
+                <div>v <em class="di_em">26.0.0 </em> (2025-07-02)</div>
+                <ul>
+                    <li>
+                        Fix gutter width change progress.
+                    </li>
+                    <li>
+                        Optimizations to services.
+                    </li>
+                </ul>
+            </div>
+            <div>
                 <div>v <em class="di_em">26.0.0 </em> (2025-07-01)</div>
                 <ul>
                     <li>

@@ -1,5 +1,5 @@
 using Walk.Common.RazorLib.Commands.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.TreeViews.Models;
 
@@ -9,15 +9,11 @@ namespace Walk.Common.RazorLib.TreeViews.Models;
 /// </summary>
 public class TreeViewMouseEventHandler
 {
-    protected readonly ITreeViewService TreeViewService;
-    protected readonly BackgroundTaskService BackgroundTaskService;
+    protected readonly CommonUtilityService CommonUtilityService;
 
-    public TreeViewMouseEventHandler(
-		ITreeViewService treeViewService,
-		BackgroundTaskService backgroundTaskService)
+    public TreeViewMouseEventHandler(CommonUtilityService commonUtilityService)
     {
-        TreeViewService = treeViewService;
-		BackgroundTaskService = backgroundTaskService;
+        CommonUtilityService = commonUtilityService;
     }
 
     /// <summary>
@@ -113,7 +109,7 @@ public class TreeViewMouseEventHandler
             // This boolean asks: Should I ALSO SELECT the nodes between the currentNode and the targetNode.
             var selectNodesBetweenCurrentAndNextActiveNode = commandArgs.MouseEventArgs.ShiftKey;
 
-            TreeViewService.ReduceSetActiveNodeAction(
+            CommonUtilityService.TreeView_SetActiveNodeAction(
                 commandArgs.TreeViewContainer.Key,
                 commandArgs.NodeThatReceivedMouseEvent,
                 addSelectedNodes,
@@ -136,7 +132,7 @@ public class TreeViewMouseEventHandler
                 else
                 {
                     // Move the active node, and open context menu
-                    TreeViewService.ReduceSetActiveNodeAction(
+                    CommonUtilityService.TreeView_SetActiveNodeAction(
                         commandArgs.TreeViewContainer.Key,
                         commandArgs.NodeThatReceivedMouseEvent,
                         false,

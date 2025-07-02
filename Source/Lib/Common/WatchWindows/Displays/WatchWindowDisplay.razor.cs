@@ -1,12 +1,10 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.WatchWindows.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.WatchWindows.Displays;
 
@@ -18,13 +16,7 @@ namespace Walk.Common.RazorLib.WatchWindows.Displays;
 public partial class WatchWindowDisplay : ComponentBase
 {
     [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
-    private ICommonUiService CommonUiService { get; set; } = null!;
-    [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-	[Inject]
-    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public WatchWindowObject WatchWindowObject { get; set; } = null!;
@@ -37,23 +29,23 @@ public partial class WatchWindowDisplay : ComponentBase
 
     protected override void OnInitialized()
     {
-        _treeViewMouseEventHandler = new(TreeViewService, BackgroundTaskService);
-        _treeViewKeyboardEventHandler = new(TreeViewService, BackgroundTaskService);
+        _treeViewMouseEventHandler = new(CommonUtilityService);
+        _treeViewKeyboardEventHandler = new(CommonUtilityService);
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            if (!TreeViewService.TryGetTreeViewContainer(TreeViewContainerKey, out var treeViewContainer))
+            if (!CommonUtilityService.TryGetTreeViewContainer(TreeViewContainerKey, out var treeViewContainer))
             {
                 var rootNode = new TreeViewReflection(
                     WatchWindowObject,
                     true,
                     false,
-                    CommonComponentRenderers);
+                    CommonUtilityService.CommonComponentRenderers);
 
-                TreeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+                CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
                     TreeViewContainerKey,
                     rootNode,
                     new List<TreeViewNoType>() { rootNode }));
@@ -79,12 +71,12 @@ public partial class WatchWindowDisplay : ComponentBase
 			},
 			treeViewCommandArgs.RestoreFocusToTreeView);
 
-        CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
         return Task.CompletedTask;
     }
     
     public void Dispose()
 	{
-		TreeViewService.ReduceDisposeContainerAction(TreeViewContainerKey);
+		CommonUtilityService.TreeView_DisposeContainerAction(TreeViewContainerKey);
 	}
 }

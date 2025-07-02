@@ -3,6 +3,7 @@ using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.TreeViews.Models.Utils;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
 using Walk.Extensions.DotNet.BackgroundTasks.Models;
 
@@ -12,21 +13,18 @@ public class OutputService : IOutputService
 {
 	private readonly DotNetBackgroundTaskApi _dotNetBackgroundTaskApi;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
-	private readonly IEnvironmentProvider _environmentProvider;
-	private readonly ITreeViewService _treeViewService;
+	private readonly CommonUtilityService _commonUtilityService;
 		
 	private readonly Throttle _throttleCreateTreeView = new Throttle(TimeSpan.FromMilliseconds(333));
 	
 	public OutputService(
 		DotNetBackgroundTaskApi dotNetBackgroundTaskApi,
 		DotNetCliOutputParser dotNetCliOutputParser,
-		IEnvironmentProvider environmentProvider,
-		ITreeViewService treeViewService)
+		CommonUtilityService commonUtilityService)
 	{
 		_dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
-		_environmentProvider = environmentProvider;
-		_treeViewService = treeViewService;
+		_commonUtilityService = commonUtilityService;
     }
     
     private OutputState _outputState = new();
@@ -73,7 +71,7 @@ public class OutputService : IOutputService
 
 		foreach (var group in filePathGrouping)
 		{
-			var absolutePath = _environmentProvider.AbsolutePathFactory(group.Key, false);
+			var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(group.Key, false);
 			var groupEnumerated = group.ToList();
 			var groupNameBuilder = new StringBuilder();
 			
@@ -108,7 +106,7 @@ public class OutputService : IOutputService
 			if (firstEntry is not null)
 			{
 				var projectText = ((TreeViewDiagnosticLine)firstEntry).Item.ProjectTextSpan.Text;
-				var projectAbsolutePath = _environmentProvider.AbsolutePathFactory(projectText, false);
+				var projectAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(projectText, false);
 			
 				if (!projectManualGrouping.ContainsKey(projectText))
 				{
@@ -165,18 +163,18 @@ public class OutputService : IOutputService
             ? new List<TreeViewNoType>()
             : new() { firstNode };
 
-        if (!_treeViewService.TryGetTreeViewContainer(OutputState.TreeViewContainerKey, out _))
+        if (!_commonUtilityService.TryGetTreeViewContainer(OutputState.TreeViewContainerKey, out _))
         {
-            _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+            _commonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
                 OutputState.TreeViewContainerKey,
                 adhocRoot,
                 activeNodes));
         }
         else
         {
-            _treeViewService.ReduceWithRootNodeAction(OutputState.TreeViewContainerKey, adhocRoot);
+            _commonUtilityService.TreeView_WithRootNodeAction(OutputState.TreeViewContainerKey, adhocRoot);
 
-            _treeViewService.ReduceSetActiveNodeAction(
+            _commonUtilityService.TreeView_SetActiveNodeAction(
                 OutputState.TreeViewContainerKey,
                 firstNode,
                 true,

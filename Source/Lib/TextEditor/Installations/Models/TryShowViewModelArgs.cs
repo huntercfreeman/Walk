@@ -1,4 +1,5 @@
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Groups.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 
@@ -10,12 +11,14 @@ public struct TryShowViewModelArgs
         Key<TextEditorViewModel> viewModelKey,
         Key<TextEditorGroup> groupKey,
         bool shouldSetFocusToEditor,
-        IServiceProvider serviceProvider)
+        CommonUtilityService commonUtilityService,
+        object ideBackgroundTaskApi)
     {
         ViewModelKey = viewModelKey;
         GroupKey = groupKey;
         ShouldSetFocusToEditor = shouldSetFocusToEditor;
-        ServiceProvider = serviceProvider;
+        CommonUtilityService = commonUtilityService;
+        IdeBackgroundTaskApi = ideBackgroundTaskApi;
     }
 
     /// <summary>
@@ -28,5 +31,6 @@ public struct TryShowViewModelArgs
     /// </summary>
     public Key<TextEditorGroup> GroupKey { get; }
     public bool ShouldSetFocusToEditor { get; }
-    public IServiceProvider ServiceProvider { get; }
+    public CommonUtilityService CommonUtilityService { get; }
+    public object IdeBackgroundTaskApi { get; }
 }

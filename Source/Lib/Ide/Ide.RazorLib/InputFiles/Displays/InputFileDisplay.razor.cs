@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
@@ -17,19 +15,9 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
     private IInputFileService InputFileService { get; set; } = null!;
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
-    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     /// <summary>
     /// Receives the <see cref="_selectedAbsolutePath"/> as
@@ -91,18 +79,14 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
     	InputFileService.InputFileStateChanged += OnInputFileStateChanged;
     	
         _inputFileTreeViewMouseEventHandler = new InputFileTreeViewMouseEventHandler(
-            TreeViewService,
+            CommonUtilityService,
             InputFileService,
-            SetInputFileContentTreeViewRootFunc,
-			BackgroundTaskService);
+            SetInputFileContentTreeViewRootFunc);
 
         _inputFileTreeViewKeyboardEventHandler = new InputFileTreeViewKeyboardEventHandler(
-            TreeViewService,
             InputFileService,
             IdeComponentRenderers,
-            CommonComponentRenderers,
-            FileSystemProvider,
-            EnvironmentProvider,
+            CommonUtilityService,
             SetInputFileContentTreeViewRootFunc,
             async () =>
             {
@@ -123,15 +107,14 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
                     //             on an ElementReference.
                 }
             },
-            () => _searchMatchTuples,
-            BackgroundTaskService);
+            () => _searchMatchTuples);
 
         InitializeElementDimensions();
     }
 
     private void InitializeElementDimensions()
     {
-    	var appOptionsState = AppOptionsService.GetAppOptionsState();
+    	var appOptionsState = CommonUtilityService.GetAppOptionsState();
     
         _sidebarElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
@@ -164,9 +147,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
         var pseudoRootNode = new TreeViewAbsolutePath(
             absolutePath,
             IdeComponentRenderers,
-            CommonComponentRenderers,
-            FileSystemProvider,
-            EnvironmentProvider,
+            CommonUtilityService,
             true,
             false);
 
@@ -181,9 +162,9 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
 
         var activeNode = adhocRootNode.ChildList.FirstOrDefault();
 
-        if (!TreeViewService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
+        if (!CommonUtilityService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
         {
-            TreeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+            CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
                 InputFileContent.TreeViewContainerKey,
                 adhocRootNode,
                 activeNode is null
@@ -192,9 +173,9 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
         }
         else
         {
-            TreeViewService.ReduceWithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
+            CommonUtilityService.TreeView_WithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
             
-			TreeViewService.ReduceSetActiveNodeAction(
+			CommonUtilityService.TreeView_SetActiveNodeAction(
 				InputFileContent.TreeViewContainerKey,
 				activeNode,
 				true,
@@ -206,9 +187,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
         InputFileService.SetOpenedTreeViewModel(
             pseudoRootNode,
             IdeComponentRenderers,
-            CommonComponentRenderers,
-            FileSystemProvider,
-            EnvironmentProvider);
+            CommonUtilityService);
     }
     
     public async void OnInputFileStateChanged()

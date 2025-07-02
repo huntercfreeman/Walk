@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Themes.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Walk.TextEditor.RazorLib.Installations.Models;
@@ -49,7 +50,7 @@ public record WalkTextEditorConfig
     ///          or add 'C:' to the "\a.txt" or etc...
     ///          to make these resource uris match one another.
     /// </summary>
-    public Func<string, IServiceProvider, Task<string>>? AbsolutePathStandardizeFunc { get; set; }
+    public Func<string, CommonUtilityService, Task<string>>? AbsolutePathStandardizeFunc { get; set; }
     /// <summary>
     /// The go-to definition implementation makes use of <see cref="RegisterModelFunc"/>.<br/>
     /// 

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Walk.Common.RazorLib.Drags.Models;
 using Walk.Common.RazorLib.Resizes.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Options.Models;
@@ -10,11 +9,7 @@ namespace Walk.Common.RazorLib.Resizes.Displays;
 public partial class ResizableColumn : ComponentBase, IDisposable
 {
     [Inject]
-    private IDragService DragService { get; set; } = null!;
-    [Inject]
-    private IAppDimensionService AppDimensionService { get; set; } = null!;
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions LeftElementDimensions { get; set; }
@@ -28,8 +23,8 @@ public partial class ResizableColumn : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        DragService.DragStateChanged += DragStateWrapOnStateChanged;
-        AppOptionsService.AppOptionsStateChanged += OnAppOptionsStateChanged;
+        CommonUtilityService.DragStateChanged += DragStateWrapOnStateChanged;
+        CommonUtilityService.AppOptionsStateChanged += OnAppOptionsStateChanged;
     }
     
     private async void OnAppOptionsStateChanged()
@@ -39,7 +34,7 @@ public partial class ResizableColumn : ComponentBase, IDisposable
 
     private async void DragStateWrapOnStateChanged()
     {
-        if (!DragService.GetDragState().ShouldDisplay)
+        if (!CommonUtilityService.GetDragState().ShouldDisplay)
         {
 			bool wasTargetOfDragging = _dragEventHandler is not null;
 
@@ -47,11 +42,11 @@ public partial class ResizableColumn : ComponentBase, IDisposable
             _previousDragMouseEventArgs = null;
 
 			if (wasTargetOfDragging)
-				AppDimensionService.NotifyIntraAppResize();
+				CommonUtilityService.AppDimension_NotifyIntraAppResize();
         }
         else
         {
-            var mouseEventArgs = DragService.GetDragState().MouseEventArgs;
+            var mouseEventArgs = CommonUtilityService.GetDragState().MouseEventArgs;
 
             if (_dragEventHandler is not null)
             {
@@ -72,7 +67,7 @@ public partial class ResizableColumn : ComponentBase, IDisposable
         Func<(MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task> dragEventHandler)
     {
         _dragEventHandler = dragEventHandler;
-		DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, null);
+		CommonUtilityService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
     }
 
     private async Task DragEventHandlerResizeHandleAsync(
@@ -93,7 +88,7 @@ public partial class ResizableColumn : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        DragService.DragStateChanged -= DragStateWrapOnStateChanged;
-        AppOptionsService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
+        CommonUtilityService.DragStateChanged -= DragStateWrapOnStateChanged;
+        CommonUtilityService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
     }
 }

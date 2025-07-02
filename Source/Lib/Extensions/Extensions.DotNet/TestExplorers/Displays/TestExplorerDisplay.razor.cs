@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
@@ -17,9 +16,7 @@ namespace Walk.Extensions.DotNet.TestExplorers.Displays;
 public partial class TestExplorerDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-	private ITreeViewService TreeViewService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
@@ -97,7 +94,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 		}
 	
 		DotNetBackgroundTaskApi.TestExplorerService.TestExplorerStateChanged += OnTestExplorerStateChanged;
-		TreeViewService.TreeViewStateChanged += OnTreeViewStateChanged;
+		CommonUtilityService.TreeViewStateChanged += OnTreeViewStateChanged;
 		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
 
 		_ = Task.Run(async () =>
@@ -150,7 +147,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 	public void Dispose()
 	{
 		DotNetBackgroundTaskApi.TestExplorerService.TestExplorerStateChanged -= OnTestExplorerStateChanged;
-		TreeViewService.TreeViewStateChanged -= OnTreeViewStateChanged;
+		CommonUtilityService.TreeViewStateChanged -= OnTreeViewStateChanged;
 		TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
 	}
 }

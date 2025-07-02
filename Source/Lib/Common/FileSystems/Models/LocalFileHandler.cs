@@ -1,6 +1,5 @@
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Notifications.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.FileSystems.Models;
 
@@ -8,18 +7,11 @@ public class LocalFileHandler : IFileHandler
 {
     private const bool IS_DIRECTORY_RESPONSE = true;
 
-    private readonly IEnvironmentProvider _environmentProvider;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly ICommonUiService _commonUiService;
+    private readonly CommonUtilityService _commonUtilityService;
 
-    public LocalFileHandler(
-        IEnvironmentProvider environmentProvider,
-        ICommonComponentRenderers commonComponentRenderers,
-        ICommonUiService commonUiService)
+    public LocalFileHandler(CommonUtilityService commonUtilityService)
     {
-        _environmentProvider = environmentProvider;
-        _commonComponentRenderers = commonComponentRenderers;
-        _commonUiService = commonUiService;
+        _commonUtilityService = commonUtilityService;
     }
 
     public Task<bool> ExistsAsync(
@@ -36,7 +28,7 @@ public class LocalFileHandler : IFileHandler
     {
         try
         {
-            _environmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
+            _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
             File.Delete(absolutePathString);
         }
         catch (Exception exception)
@@ -57,7 +49,7 @@ public class LocalFileHandler : IFileHandler
             sourceAbsolutePathString,
             destinationAbsolutePathString);
 
-        _environmentProvider.DeletionPermittedRegister(
+        _commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(
             new SimplePath(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE));
 
         return Task.CompletedTask;
@@ -70,16 +62,16 @@ public class LocalFileHandler : IFileHandler
     {
         try
         {
-            _environmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
+            _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
             if (await ExistsAsync(destinationAbsolutePathString).ConfigureAwait(false))
-                _environmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
+                _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
             File.Move(
                 sourceAbsolutePathString,
                 destinationAbsolutePathString);
 
-            _environmentProvider.DeletionPermittedRegister(
+            _commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(
                 new SimplePath(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE));
         }
         catch (Exception exception)
@@ -116,7 +108,7 @@ public class LocalFileHandler : IFileHandler
         try
         {
             if (await ExistsAsync(absolutePathString, cancellationToken).ConfigureAwait(false))
-                _environmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
+                _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
 
             await File.WriteAllTextAsync(
                     absolutePathString,
@@ -124,7 +116,7 @@ public class LocalFileHandler : IFileHandler
                     cancellationToken)
 				.ConfigureAwait(false);
 
-            _environmentProvider.DeletionPermittedRegister(
+            _commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(
                 new SimplePath(absolutePathString, IS_DIRECTORY_RESPONSE));
         }
         catch (Exception exception)
@@ -144,8 +136,7 @@ public class LocalFileHandler : IFileHandler
         NotificationHelper.DispatchError(
             title,
             exception.ToString(),
-            _commonComponentRenderers,
-            _commonUiService,
+            _commonUtilityService,
             TimeSpan.FromSeconds(10));
     }
 }

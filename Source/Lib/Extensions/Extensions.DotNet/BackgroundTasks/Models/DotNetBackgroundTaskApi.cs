@@ -1,7 +1,5 @@
 using System.Collections.Concurrent;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.Storages.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Notifications.Models;
@@ -65,27 +63,19 @@ namespace Walk.Extensions.DotNet.BackgroundTasks.Models;
 public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 {
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-	private readonly BackgroundTaskService _backgroundTaskService;
-	private readonly IStorageService _storageService;
 	private readonly IAppDataService _appDataService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
-	private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
-	private readonly ITreeViewService _treeViewService;
-	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
-	private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly TextEditorService _textEditorService;
 	private readonly IFindAllService _findAllService;
 	private readonly ICodeSearchService _codeSearchService;
 	// FindAllReferences
 	// private readonly IFindAllReferencesService _findAllReferencesService;
-	private readonly ICommonUiService _commonUiService;
 	private readonly ITerminalService _terminalService;
 	private readonly IDotNetCommandFactory _dotNetCommandFactory;
-	private readonly IAppOptionsService _appOptionsService;
+	private readonly CommonUtilityService _commonUtilityService;
 	private readonly IIdeService _ideService;
 	private readonly ITextEditorHeaderRegistry _textEditorHeaderRegistry;
 	private readonly INugetPackageManagerProvider _nugetPackageManagerProvider;
@@ -99,18 +89,11 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
     public DotNetBackgroundTaskApi(
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
-		BackgroundTaskService backgroundTaskService,
-        IStorageService storageService,
         IAppDataService appDataService,
 		ICompilerServiceRegistry compilerServiceRegistry,
 		IDotNetComponentRenderers dotNetComponentRenderers,
 		IIdeComponentRenderers ideComponentRenderers,
-		ICommonComponentRenderers commonComponentRenderers,
-		CommonBackgroundTaskApi commonBackgroundTaskApi,
-		ITreeViewService treeViewService,
-		IEnvironmentProvider environmentProvider,
 		DotNetCliOutputParser dotNetCliOutputParser,
-		IFileSystemProvider fileSystemProvider,
 		TextEditorService textEditorService,
 		IFindAllService findAllService,
 		ICodeSearchService codeSearchService,
@@ -118,25 +101,17 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		// IFindAllReferencesService findAllReferencesService,
 		ITerminalService terminalService,
         IDotNetCommandFactory dotNetCommandFactory,
-        ICommonUiService commonUiService,
-        IAppOptionsService appOptionsService,
+        CommonUtilityService commonUtilityService,
         IIdeService ideService,
         ITextEditorHeaderRegistry textEditorHeaderRegistry,
         INugetPackageManagerProvider nugetPackageManagerProvider,
         IServiceProvider serviceProvider)
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
-		_backgroundTaskService = backgroundTaskService;
-		_storageService = storageService;
 		_appDataService = appDataService;
         _dotNetComponentRenderers = dotNetComponentRenderers;
 		_ideComponentRenderers = ideComponentRenderers;
-		_commonComponentRenderers = commonComponentRenderers;
-		_commonBackgroundTaskApi = commonBackgroundTaskApi;
-		_treeViewService = treeViewService;
-		_environmentProvider = environmentProvider;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
-		_fileSystemProvider = fileSystemProvider;
 		_textEditorService = textEditorService;
 		_findAllService = findAllService;
 		_codeSearchService = codeSearchService;
@@ -145,8 +120,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_terminalService = terminalService;
         _dotNetCommandFactory = dotNetCommandFactory;
-        _commonUiService = commonUiService;
-        _appOptionsService = appOptionsService;
+        _commonUtilityService = commonUtilityService;
         _ideService = ideService;
         _textEditorHeaderRegistry = textEditorHeaderRegistry;
         _nugetPackageManagerProvider = nugetPackageManagerProvider;
@@ -159,20 +133,15 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 			this,
 			_ideBackgroundTaskApi,
 			DotNetSolutionService,
-			_treeViewService,
-            _commonComponentRenderers,
             _textEditorService,
-            _commonUiService,
-            _backgroundTaskService,
-            _fileSystemProvider,
+            _commonUtilityService,
             _dotNetCliOutputParser,
             _terminalService);
 
         OutputService = new OutputService(
         	this,
         	_dotNetCliOutputParser,
-        	_environmentProvider,
-        	_treeViewService);
+        	_commonUtilityService);
 			
 			NuGetPackageManagerService = new NuGetPackageManagerService();
 			
@@ -200,7 +169,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
     public void Enqueue(DotNetBackgroundTaskApiWorkArgs workArgs)
     {
 		_workQueue.Enqueue(workArgs);
-        _backgroundTaskService.Continuous_EnqueueGroup(this);
+        _commonUtilityService.Continuous_EnqueueGroup(this);
     }
 
     public async ValueTask Do_SolutionExplorer_TreeView_MultiSelect_DeleteFiles(TreeViewCommandArgs commandArgs)
@@ -211,18 +180,18 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
             if (treeViewNamespacePath.Item.AbsolutePath.IsDirectory)
             {
-                await _fileSystemProvider.Directory
+                await _commonUtilityService.FileSystemProvider.Directory
                     .DeleteAsync(treeViewNamespacePath.Item.AbsolutePath.Value, true, CancellationToken.None)
                     .ConfigureAwait(false);
             }
             else
             {
-                await _fileSystemProvider.File
+                await _commonUtilityService.FileSystemProvider.File
                     .DeleteAsync(treeViewNamespacePath.Item.AbsolutePath.Value)
                     .ConfigureAwait(false);
             }
 
-            if (_treeViewService.TryGetTreeViewContainer(commandArgs.TreeViewContainer.Key, out var mostRecentContainer) &&
+            if (_commonUtilityService.TryGetTreeViewContainer(commandArgs.TreeViewContainer.Key, out var mostRecentContainer) &&
                 mostRecentContainer is not null)
             {
                 var localParent = node.Parent;
@@ -230,7 +199,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 if (localParent is not null)
                 {
                     await localParent.LoadChildListAsync().ConfigureAwait(false);
-                    _treeViewService.ReduceReRenderNodeAction(mostRecentContainer.Key, localParent);
+                    _commonUtilityService.TreeView_ReRenderNodeAction(mostRecentContainer.Key, localParent);
                 }
             }
         }
@@ -252,8 +221,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
     private void InitializeLeftPanelTabs()
     {
-        var leftPanel = PanelFacts.GetTopLeftPanelGroup(_commonUiService.GetPanelState());
-        leftPanel.CommonUiService = _commonUiService;
+        var leftPanel = PanelFacts.GetTopLeftPanelGroup(_commonUtilityService.GetPanelState());
+        leftPanel.CommonUtilityService = _commonUtilityService;
 
         // solutionExplorerPanel
         var solutionExplorerPanel = new Panel(
@@ -263,10 +232,9 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.SolutionExplorerContext.ContextKey,
             typeof(SolutionExplorerDisplay),
             null,
-            _commonUiService,
-            _commonBackgroundTaskApi);
-        _commonUiService.RegisterPanel(solutionExplorerPanel);
-        _commonUiService.RegisterPanelTab(leftPanel.Key, solutionExplorerPanel, false);
+            _commonUtilityService);
+        _commonUtilityService.RegisterPanel(solutionExplorerPanel);
+        _commonUtilityService.RegisterPanelTab(leftPanel.Key, solutionExplorerPanel, false);
 
         // SetActivePanelTabAction
         //
@@ -278,8 +246,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
     private void InitializeRightPanelTabs()
     {
-        var rightPanel = PanelFacts.GetTopRightPanelGroup(_commonUiService.GetPanelState());
-        rightPanel.CommonUiService = _commonUiService;
+        var rightPanel = PanelFacts.GetTopRightPanelGroup(_commonUtilityService.GetPanelState());
+        rightPanel.CommonUtilityService = _commonUtilityService;
 
         // compilerServiceExplorerPanel
         var compilerServiceExplorerPanel = new Panel(
@@ -289,10 +257,9 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.CompilerServiceExplorerContext.ContextKey,
             typeof(CompilerServiceExplorerDisplay),
             null,
-            _commonUiService,
-            _commonBackgroundTaskApi);
-        _commonUiService.RegisterPanel(compilerServiceExplorerPanel);
-        _commonUiService.RegisterPanelTab(rightPanel.Key, compilerServiceExplorerPanel, false);
+            _commonUtilityService);
+        _commonUtilityService.RegisterPanel(compilerServiceExplorerPanel);
+        _commonUtilityService.RegisterPanelTab(rightPanel.Key, compilerServiceExplorerPanel, false);
 
         /*// compilerServiceEditorPanel
         var compilerServiceEditorPanel = new Panel(
@@ -311,8 +278,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
     private void InitializeBottomPanelTabs()
     {
-        var bottomPanel = PanelFacts.GetBottomPanelGroup(_commonUiService.GetPanelState());
-        bottomPanel.CommonUiService = _commonUiService;
+        var bottomPanel = PanelFacts.GetBottomPanelGroup(_commonUtilityService.GetPanelState());
+        bottomPanel.CommonUtilityService = _commonUtilityService;
 
         // outputPanel
         var outputPanel = new Panel(
@@ -322,10 +289,9 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.OutputContext.ContextKey,
             typeof(OutputPanelDisplay),
             null,
-            _commonUiService,
-            _commonBackgroundTaskApi);
-        _commonUiService.RegisterPanel(outputPanel);
-        _commonUiService.RegisterPanelTab(bottomPanel.Key, outputPanel, false);
+            _commonUtilityService);
+        _commonUtilityService.RegisterPanel(outputPanel);
+        _commonUtilityService.RegisterPanelTab(bottomPanel.Key, outputPanel, false);
 
         // testExplorerPanel
         var testExplorerPanel = new Panel(
@@ -335,14 +301,13 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.TestExplorerContext.ContextKey,
             typeof(TestExplorerDisplay),
             null,
-            _commonUiService,
-            _commonBackgroundTaskApi);
-        _commonUiService.RegisterPanel(testExplorerPanel);
-        _commonUiService.RegisterPanelTab(bottomPanel.Key, testExplorerPanel, false);
+            _commonUtilityService);
+        _commonUtilityService.RegisterPanel(testExplorerPanel);
+        _commonUtilityService.RegisterPanelTab(bottomPanel.Key, testExplorerPanel, false);
         // This UI has resizable parts that need to be initialized.
         TestExplorerService.ReduceInitializeResizeHandleDimensionUnitAction(
             new DimensionUnit(
-                () => _appOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+                () => _commonUtilityService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
                 DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
@@ -355,13 +320,12 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.NuGetPackageManagerContext.ContextKey,
             typeof(NuGetPackageManager),
             null,
-            _commonUiService,
-            _commonBackgroundTaskApi);
-        _commonUiService.RegisterPanel(nuGetPanel);
-        _commonUiService.RegisterPanelTab(bottomPanel.Key, nuGetPanel, false);
+            _commonUtilityService);
+        _commonUtilityService.RegisterPanel(nuGetPanel);
+        _commonUtilityService.RegisterPanelTab(bottomPanel.Key, nuGetPanel, false);
         
         // SetActivePanelTabAction
-        _commonUiService.SetActivePanelTab(bottomPanel.Key, outputPanel.Key);
+        _commonUtilityService.SetActivePanelTab(bottomPanel.Key, outputPanel.Key);
     }
 
     public ValueTask Do_WalkExtensionsDotNetInitializerOnAfterRender()
@@ -428,7 +392,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
         InitializeMenuRun();
 
-        _commonUiService.SetActivePanelTab(_leftPanelGroupKey, _solutionExplorerPanelKey);
+        _commonUtilityService.SetActivePanelTab(_leftPanelGroupKey, _solutionExplorerPanelKey);
 
         var compilerService = _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
 
@@ -459,7 +423,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 if (activeStartupControl?.StartupProjectAbsolutePath is not null)
                     BuildProjectOnClick(activeStartupControl.StartupProjectAbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(BuildProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(6));
+                    NotificationHelper.DispatchError(nameof(BuildProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", _commonUtilityService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 
@@ -476,7 +440,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 if (activeStartupControl?.StartupProjectAbsolutePath is not null)
                     CleanProjectOnClick(activeStartupControl.StartupProjectAbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(CleanProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(6));
+                    NotificationHelper.DispatchError(nameof(CleanProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", _commonUtilityService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 
@@ -492,7 +456,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 if (dotNetSolutionModel?.AbsolutePath is not null)
                     BuildSolutionOnClick(dotNetSolutionModel.AbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(BuildSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(6));
+                    NotificationHelper.DispatchError(nameof(BuildSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", _commonUtilityService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 
@@ -508,7 +472,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 if (dotNetSolutionModel?.AbsolutePath is not null)
                     CleanSolutionOnClick(dotNetSolutionModel.AbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(CleanSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(6));
+                    NotificationHelper.DispatchError(nameof(CleanSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", _commonUtilityService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 
@@ -527,7 +491,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
     private void BuildProjectOnClick(string projectAbsolutePathString)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuildProject(projectAbsolutePathString);
-        var solutionAbsolutePath = _environmentProvider.AbsolutePathFactory(projectAbsolutePathString, false);
+        var solutionAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false);
 
         var localParentDirectory = solutionAbsolutePath.ParentDirectory;
         if (localParentDirectory is null)
@@ -559,7 +523,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
     private void CleanProjectOnClick(string projectAbsolutePathString)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanProject(projectAbsolutePathString);
-        var solutionAbsolutePath = _environmentProvider.AbsolutePathFactory(projectAbsolutePathString, false);
+        var solutionAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false);
 
         var localParentDirectory = solutionAbsolutePath.ParentDirectory;
         if (localParentDirectory is null)
@@ -591,7 +555,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
     private void BuildSolutionOnClick(string solutionAbsolutePathString)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuildSolution(solutionAbsolutePathString);
-        var solutionAbsolutePath = _environmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false);
+        var solutionAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false);
 
         var localParentDirectory = solutionAbsolutePath.ParentDirectory;
         if (localParentDirectory is null)
@@ -623,7 +587,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
     private void CleanSolutionOnClick(string solutionAbsolutePathString)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanSolution(solutionAbsolutePathString);
-        var solutionAbsolutePath = _environmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false);
+        var solutionAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false);
 
         var localParentDirectory = solutionAbsolutePath.ParentDirectory;
         if (localParentDirectory is null)
@@ -663,7 +627,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             true,
             null);
 
-        _commonUiService.Dialog_ReduceRegisterAction(dialogRecord);
+        _commonUtilityService.Dialog_ReduceRegisterAction(dialogRecord);
         return Task.CompletedTask;
     }
 
@@ -708,7 +672,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             BeginWithFunc = parsedCommand =>
             {
                 treeViewStringFragment.Item.TerminalCommandParsed = parsedCommand;
-                _treeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
+                _commonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
                 return Task.CompletedTask;
             },
             ContinueWithFunc = parsedCommand =>
@@ -762,7 +726,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                     }
                 }
 
-                _treeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
+                _commonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
                 return Task.CompletedTask;
             }
         };
@@ -809,12 +773,12 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	{
 		var dotNetSolutionAbsolutePathString = inSolutionAbsolutePath.Value;
 
-		var content = await _fileSystemProvider.File.ReadAllTextAsync(
+		var content = await _commonUtilityService.FileSystemProvider.File.ReadAllTextAsync(
 				dotNetSolutionAbsolutePathString,
 				CancellationToken.None)
 			.ConfigureAwait(false);
 
-		var solutionAbsolutePath = _environmentProvider.AbsolutePathFactory(
+		var solutionAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 			dotNetSolutionAbsolutePathString,
 			false);
 
@@ -896,7 +860,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
 		if (parentDirectory is not null)
 		{
-			_environmentProvider.DeletionPermittedRegister(new(parentDirectory, true));
+			_commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(new(parentDirectory, true));
 
 			_findAllService.SetStartingDirectoryPath(parentDirectory);
 
@@ -954,8 +918,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			NotificationHelper.DispatchError(
 		        $"ERROR: nameof(_appDataService.WriteAppDataAsync)",
 		        e.ToString(),
-		        _commonComponentRenderers,
-		        _commonUiService,
+		        _commonUtilityService,
 		        TimeSpan.FromSeconds(5));
 		}
 		
@@ -1025,7 +988,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			var absolutePath = new AbsolutePath(
 				attribute.Item2,
 				isDirectory: true,
-				_environmentProvider,
+				_commonUtilityService.EnvironmentProvider,
 				ancestorDirectoryList);
 
 			solutionFolderPathHashSet.Add(absolutePath.Value);
@@ -1078,7 +1041,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			var absolutePath = new AbsolutePath(
 				solutionFolderPath,
 				isDirectory: true,
-				_environmentProvider);
+				_commonUtilityService.EnvironmentProvider);
 			
 			solutionFolderList.Add(new SolutionFolder(
 		        absolutePath.NameNoExtension,
@@ -1104,7 +1067,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			if (attribute.Item2 is null)
 				continue;
 
-			var relativePath = new RelativePath(attribute.Item2, isDirectory: false, _environmentProvider);
+			var relativePath = new RelativePath(attribute.Item2, isDirectory: false, _commonUtilityService.EnvironmentProvider);
 
 			dotNetProjectList.Add(new CSharpProjectModel(
 		        relativePath.NameNoExtension,
@@ -1208,10 +1171,10 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
 				dotNetSolutionModel.AbsolutePath,
 				relativePathFromSolutionFileString,
-				_environmentProvider);
-			projectTuple.AbsolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, false);
+				_commonUtilityService.EnvironmentProvider);
+			projectTuple.AbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(absolutePathString, false);
 		
-			if (!await _fileSystemProvider.File.ExistsAsync(projectTuple.AbsolutePath.Value))
+			if (!await _commonUtilityService.FileSystemProvider.File.ExistsAsync(projectTuple.AbsolutePath.Value))
 			{
 				dotNetSolutionModel.DotNetProjectList.RemoveAt(i);
 				continue;
@@ -1221,9 +1184,9 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			
 			var innerParentDirectory = projectTuple.AbsolutePath.ParentDirectory;
 			if (innerParentDirectory is not null)
-				_environmentProvider.DeletionPermittedRegister(new(innerParentDirectory, true));
+				_commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(new(innerParentDirectory, true));
 			
-			var content = await _fileSystemProvider.File.ReadAllTextAsync(
+			var content = await _commonUtilityService.FileSystemProvider.File.ReadAllTextAsync(
 					projectTuple.AbsolutePath.Value)
 				.ConfigureAwait(false);
 	
@@ -1263,9 +1226,9 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
 					projectTuple.AbsolutePath,
 					includeAttribute.Item2,
-					_environmentProvider);
+					_commonUtilityService.EnvironmentProvider);
 	
-				var referenceProjectAbsolutePath = _environmentProvider.AbsolutePathFactory(
+				var referenceProjectAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 					referenceProjectAbsolutePathString,
 					false);
 	
@@ -1359,8 +1322,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		NotificationHelper.DispatchProgress(
 			$"Parse: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
 			progressBarModel,
-			_commonComponentRenderers,
-			_commonUiService,
+			_commonUtilityService,
 			TimeSpan.FromMilliseconds(-1));
 			
 		try
@@ -1371,7 +1333,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			
 				var resourceUri = new ResourceUri(project.AbsolutePath.Value);
 
-				if (!await _fileSystemProvider.File.ExistsAsync(resourceUri.Value))
+				if (!await _commonUtilityService.FileSystemProvider.File.ExistsAsync(resourceUri.Value))
 					continue; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
 			}
 
@@ -1436,7 +1398,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		double maximumProgressAvailableToProject,
 		CompilationUnitKind compilationUnitKind)
 	{
-		if (!await _fileSystemProvider.File.ExistsAsync(dotNetProject.AbsolutePath.Value))
+		if (!await _commonUtilityService.FileSystemProvider.File.ExistsAsync(dotNetProject.AbsolutePath.Value))
 			return; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
 
 		var parentDirectory = dotNetProject.AbsolutePath.ParentDirectory;
@@ -1459,12 +1421,12 @@ Execution Terminal".ReplaceLineEndings("\n")));
 
 		async Task DiscoverFilesRecursively(string directoryPathParent, List<string> discoveredFileList, bool isFirstInvocation)
 		{
-			var directoryPathChildList = await _fileSystemProvider.Directory.GetDirectoriesAsync(
+			var directoryPathChildList = await _commonUtilityService.FileSystemProvider.Directory.GetDirectoriesAsync(
 					directoryPathParent,
 					CancellationToken.None)
 				.ConfigureAwait(false);
 
-			var filePathChildList = await _fileSystemProvider.Directory.GetFilesAsync(
+			var filePathChildList = await _commonUtilityService.FileSystemProvider.Directory.GetFilesAsync(
 					directoryPathParent,
 					CancellationToken.None)
 				.ConfigureAwait(false);
@@ -1498,7 +1460,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		
 		foreach (var file in discoveredFileList)
 		{
-			var fileAbsolutePath = _environmentProvider.AbsolutePathFactory(file, false);
+			var fileAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(file, false);
 			var progress = currentProgress + maximumProgressAvailableToProject * (fileParsedCount / (double)discoveredFileList.Count);
 			var resourceUri = new ResourceUri(file);
 	        var compilerService = _compilerServiceRegistry.GetCompilerService(fileAbsolutePath.ExtensionNoPeriod);
@@ -1507,7 +1469,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				resourceUri,
 				shouldTriggerResourceWasModified: false);
 				
-			await compilerService.FastParseAsync(editContext, resourceUri, _fileSystemProvider, compilationUnitKind)
+			await compilerService.FastParseAsync(editContext, resourceUri, _commonUtilityService.FileSystemProvider, compilationUnitKind)
 				.ConfigureAwait(false);
 				
 			fileParsedCount++;
@@ -1528,26 +1490,24 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			dotNetSolutionModel,
 			_dotNetComponentRenderers,
 			_ideComponentRenderers,
-			_commonComponentRenderers,
-			_fileSystemProvider,
-			_environmentProvider,
+			_commonUtilityService,
 			true,
 			true);
 
 		await rootNode.LoadChildListAsync().ConfigureAwait(false);
 
-		if (!_treeViewService.TryGetTreeViewContainer(DotNetSolutionState.TreeViewSolutionExplorerStateKey, out _))
+		if (!_commonUtilityService.TryGetTreeViewContainer(DotNetSolutionState.TreeViewSolutionExplorerStateKey, out _))
 		{
-			_treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+			_commonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
 				DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 				rootNode,
 				new List<TreeViewNoType> { rootNode }));
 		}
 		else
 		{
-			_treeViewService.ReduceWithRootNodeAction(DotNetSolutionState.TreeViewSolutionExplorerStateKey, rootNode);
+			_commonUtilityService.TreeView_WithRootNodeAction(DotNetSolutionState.TreeViewSolutionExplorerStateKey, rootNode);
 
-			_treeViewService.ReduceSetActiveNodeAction(
+			_commonUtilityService.TreeView_SetActiveNodeAction(
 				DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 				rootNode,
 				true,

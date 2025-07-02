@@ -7,8 +7,8 @@ using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Tabs.Displays;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Tooltips.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
@@ -41,8 +41,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 	    ITooltipModel tooltipModel,
 	    bool shouldRevealCursor,
 		VirtualAssociativityKind virtualAssociativityKind,
-		ICommonUiService commonUiService,
-        CommonBackgroundTaskApi commonBackgroundTaskApi,
+		CommonUtilityService commonUtilityService,
         TextEditorDimensions textEditorDimensions,
 		int scrollLeft,
 	    int scrollTop,
@@ -72,9 +71,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 	    ShouldRevealCursor = shouldRevealCursor;
 		VirtualAssociativityKind = virtualAssociativityKind;
 		
-		CommonUiService = commonUiService;
-		
-        CommonBackgroundTaskApi = commonBackgroundTaskApi;
+		CommonUtilityService = commonUtilityService;
         
         ComponentType = typeof(TextEditorViewModelDisplay);
         ComponentParameterMap = new()
@@ -341,6 +338,31 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         }
     }
     
+    /// <summary>
+    /// The cursor related `Changed_...` properties need to be on the PersistentState
+    /// otherwise you can "lose" the `Changed_...` bool having been true without
+    /// ever generating the CSS (construct two viewmodels in a row then do CalculateVirtualizationResult(...)
+    /// you lose the `Changed_...` of the first one).
+    ///
+    /// When settings `Changed_...` also set this property.
+    /// Then to determine if the many `Changed_...` properties that are not this one
+    /// have changed, you can first check this singular property so you short circuit
+    /// if nothing changed.
+    ///
+    /// Don't copy any of the `Changed_...` properties when making a copy of a viewmodel.
+    /// They're just used as markers during the lifespan of each viewmodel whether the UI needs to be updated.
+    ///
+    /// If only this bool is set, then it means while calculating the VirtualizationResult, that
+    /// some other variable had changed, and the cursor CSS is dependent on that variable.
+    /// </summary>
+    public bool Changed_Cursor_AnyState { get; set; }
+    
+    public bool Changed_LineIndex { get; set; }
+    public bool Changed_ColumnIndex { get; set; }
+    public bool Changed_PreferredColumnIndex { get; set; }
+    public bool Changed_SelectionAnchorPositionIndex { get; set; }
+    public bool Changed_SelectionEndingPositionIndex { get; set; }
+    
     public bool Changed_GutterWidth { get; set; }
     public bool Changed_LineHeight { get; set; }
     public bool Changed_CharacterWidth { get; set; }
@@ -405,7 +427,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     	}
     
         ComponentData = componentData;
-		TextEditorService.AppDimensionService.AppDimensionStateChanged += AppDimensionStateWrap_StateChanged;
+		TextEditorService.CommonUtilityService.AppDimensionStateChanged += AppDimensionStateWrap_StateChanged;
 
 		// Tell the view model what the (already known) font-size measurements and text-editor measurements are.
 		PostScrollAndRemeasure(useExtraEvent: false);
@@ -454,7 +476,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     	}
     
         ComponentData = null;
-		TextEditorService.AppDimensionService.AppDimensionStateChanged -= AppDimensionStateWrap_StateChanged;
+		TextEditorService.CommonUtilityService.AppDimensionStateChanged -= AppDimensionStateWrap_StateChanged;
     }
 
     private void AppDimensionStateWrap_StateChanged()
@@ -524,8 +546,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     private readonly Type? _dragDialogComponentType = null;
     private readonly Dictionary<string, object?>? _dragDialogComponentParameterMap = null;
 
-    public ICommonUiService CommonUiService { get; }
-    public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; }
+    public CommonUtilityService CommonUtilityService { get; }
 
     public Key<Panel> Key { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
@@ -622,7 +643,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         AddFallbackDropzone(dropzoneList);
         await AddPanelDropzonesAsync(dropzoneList).ConfigureAwait(false);
 
-        var measuredHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi
+        var measuredHtmlElementDimensions = await CommonUtilityService.JsRuntimeCommonApi
             .MeasureElementById(
                 $"di_te_group_{TextEditorService.GroupApi.GetTextEditorGroupState().GroupList.Single().GroupKey.Guid}")
             .ConfigureAwait(false);
@@ -709,7 +730,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                     TabGroup = null;
                 }
 
-                CommonUiService.Dialog_ReduceRegisterAction(this);
+                CommonUtilityService.Dialog_ReduceRegisterAction(this);
             }
 
             // Create TextEditor Tab
@@ -738,7 +759,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                     else
                     {
                         // Is a dialog
-                        CommonUiService.Dialog_ReduceDisposeAction(DynamicViewModelKey);
+                        CommonUtilityService.Dialog_ReduceDisposeAction(DynamicViewModelKey);
                     }
 
                     TabGroup = null;
@@ -770,13 +791,13 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                 else
                 {
                     // Is a dialog
-                    CommonUiService.Dialog_ReduceDisposeAction(DynamicViewModelKey);
+                    CommonUtilityService.Dialog_ReduceDisposeAction(DynamicViewModelKey);
                 }
 
                 TabGroup = null;
             }
 
-            CommonUiService.RegisterPanelTab(
+            CommonUtilityService.RegisterPanelTab(
                 panelDropzone.PanelGroupKey,
                 new Panel(
                     Title,
@@ -791,8 +812,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                             ViewModelKey
                         },
                     },
-                    CommonUiService,
-                    CommonBackgroundTaskApi),
+                    CommonUtilityService),
                 true);
 
             return Task.CompletedTask;
@@ -861,7 +881,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 
         foreach (var panelGroupHtmlIdTuple in panelGroupHtmlIdTupleList)
         {
-            var measuredHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi
+            var measuredHtmlElementDimensions = await CommonUtilityService.JsRuntimeCommonApi
                 .MeasureElementById(panelGroupHtmlIdTuple.HtmlElementId)
                 .ConfigureAwait(false);
 

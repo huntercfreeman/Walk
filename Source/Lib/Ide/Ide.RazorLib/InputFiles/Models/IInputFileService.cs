@@ -1,6 +1,5 @@
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 
@@ -23,9 +22,7 @@ public interface IInputFileService
     public void SetOpenedTreeViewModel(
     	TreeViewAbsolutePath treeViewModel,
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider);
+        CommonUtilityService commonUtilityService);
 
     public void SetSelectedInputFilePattern(InputFilePattern inputFilePattern);
 
@@ -35,27 +32,17 @@ public interface IInputFileService
 
     public void OpenParentDirectory(
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        BackgroundTaskService backgroundTaskService,
+        CommonUtilityService commonUtilityService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel);
 
-    public void RefreshCurrentSelection(
-    	BackgroundTaskService backgroundTaskService,
-    	TreeViewAbsolutePath? currentSelection);
+    public void RefreshCurrentSelection(TreeViewAbsolutePath? currentSelection);
 
     public void SetSearchQuery(string searchQuery);
     
     public void Enqueue_OpenParentDirectoryAction(
     	IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        BackgroundTaskService backgroundTaskService,
+        CommonUtilityService commonUtilityService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel);
     
-    public void Enqueue_RefreshCurrentSelectionAction(
-        BackgroundTaskService backgroundTaskService,
-    	TreeViewAbsolutePath? currentSelection);
+    public void Enqueue_RefreshCurrentSelectionAction(CommonUtilityService commonUtilityService, TreeViewAbsolutePath? currentSelection);
 }

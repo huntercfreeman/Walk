@@ -1,13 +1,10 @@
 using Walk.Common.RazorLib.Commands.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
@@ -21,30 +18,20 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 {
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 	private readonly IMenuOptionsFactory _menuOptionsFactory;
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly TextEditorService _textEditorService;
-	private readonly ITreeViewService _treeViewService;
-	private readonly ICommonUiService _commonUiService;
-	private readonly IEnvironmentProvider _environmentProvider;
+	private readonly CommonUtilityService _commonUtilityService;
 
 	public SolutionExplorerTreeViewKeyboardEventHandler(
 			IdeBackgroundTaskApi ideBackgroundTaskApi,
 			IMenuOptionsFactory menuOptionsFactory,
-			ICommonComponentRenderers commonComponentRenderers,
 			TextEditorService textEditorService,
-			ITreeViewService treeViewService,
-			ICommonUiService commonUiService,
-			BackgroundTaskService backgroundTaskService,
-			IEnvironmentProvider environmentProvider)
-		: base(treeViewService, backgroundTaskService)
+			CommonUtilityService commonUtilityService)
+		: base(commonUtilityService)
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
 		_menuOptionsFactory = menuOptionsFactory;
-		_commonComponentRenderers = commonComponentRenderers;
 		_textEditorService = textEditorService;
-		_treeViewService = treeViewService;
-		_commonUiService = commonUiService;
-		_environmentProvider = environmentProvider;
+		_commonUtilityService = commonUtilityService;
 	}
 
 	public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
@@ -122,7 +109,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 			treeViewNamespacePath.Item.AbsolutePath,
 			() =>
 			{
-				NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(7));
+				NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _commonUtilityService, TimeSpan.FromSeconds(7));
 				return Task.CompletedTask;
 			});
 
@@ -159,7 +146,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 		else
 		{
 			var parentDirectory = treeViewNamespacePath.Item.AbsolutePath.ParentDirectory;
-			var parentDirectoryAbsolutePath = _environmentProvider.AbsolutePathFactory(parentDirectory, true);
+			var parentDirectoryAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(parentDirectory, true);
 
 			pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
 				parentDirectoryAbsolutePath,
@@ -194,7 +181,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 			treeViewNamespacePath.Item.AbsolutePath,
 			() =>
 			{
-				NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(7));
+				NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _commonUtilityService, TimeSpan.FromSeconds(7));
 				SolutionExplorerContextMenu.ParentOfCutFile = parent;
 				return Task.CompletedTask;
 			});
@@ -230,11 +217,11 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 
 		await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-		_treeViewService.ReduceReRenderNodeAction(
+		_commonUtilityService.TreeView_ReRenderNodeAction(
 			DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 			treeViewModel);
 
-		_treeViewService.ReduceMoveUpAction(
+		_commonUtilityService.TreeView_MoveUpAction(
 			DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 			false,
 			false);

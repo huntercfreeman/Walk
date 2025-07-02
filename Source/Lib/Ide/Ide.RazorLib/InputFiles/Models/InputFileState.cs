@@ -1,5 +1,5 @@
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 
@@ -44,16 +44,12 @@ public record struct InputFileState(
         InputFileState inInputFileState,
         TreeViewAbsolutePath selectedTreeViewModel,
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider)
+        CommonUtilityService commonUtilityService)
     {
         var selectionClone = new TreeViewAbsolutePath(
             selectedTreeViewModel.Item,
             ideComponentRenderers,
-            commonComponentRenderers,
-            fileSystemProvider,
-            environmentProvider,
+            commonUtilityService,
             false,
             true);
 

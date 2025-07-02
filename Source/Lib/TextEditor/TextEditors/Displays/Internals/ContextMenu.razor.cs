@@ -1,13 +1,10 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Menus.Models;
-using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
-using Walk.Common.RazorLib.Clipboards.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -20,21 +17,13 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
 public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 {
     [Inject]
-    private IClipboardService ClipboardService { get; set; } = null!;
-    [Inject]
-    private ICommonUiService CommonUiService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
     private IServiceProvider ServiceProvider { get; set; } = null!;
-    [Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
 
     [Parameter, EditorRequired]
 	public Key<TextEditorComponentData> ComponentDataKey { get; set; }
@@ -108,7 +97,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 					TextEditorCommandDefaultFunctions.RemoveDropdown(
 				        editContext,
 				        viewModelModifier,
-				        CommonUiService);
+				        CommonUtilityService);
 				}
 
 				return ValueTask.CompletedTask;
@@ -133,7 +122,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 					TextEditorCommandDefaultFunctions.RemoveDropdown(
 				        editContext,
 				        viewModelModifier,
-				        CommonUiService);
+				        CommonUtilityService);
 				}
 
 				return ValueTask.CompletedTask;
@@ -218,7 +207,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 						TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
 					        viewModelModifier,
-					        CommonUiService);
+					        CommonUtilityService);
 					}
 
 					return ValueTask.CompletedTask;
@@ -251,8 +240,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             return TextEditorCommandDefaultFunctions.CutAsync(
             	editContext,
 		        modelModifier,
-		        viewModelModifier,
-		        ClipboardService);
+		        viewModelModifier);
         });
         return Task.CompletedTask;
     }
@@ -271,8 +259,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             return TextEditorCommandDefaultFunctions.CopyAsync(
         		editContext,
 		        modelModifier,
-		        viewModelModifier,
-		        ClipboardService);
+		        viewModelModifier);
         });
         return Task.CompletedTask;
     }
@@ -291,8 +278,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             return TextEditorCommandDefaultFunctions.PasteAsync(
             	editContext,
 		        modelModifier,
-		        viewModelModifier,
-		        ClipboardService);
+		        viewModelModifier);
         });
         return Task.CompletedTask;
     }
@@ -389,8 +375,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	var virtualizationResult = GetVirtualizationResult();
     	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
-    	
-        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+
+		TextEditorService.WorkerArbitrary.PostUnique((Func<TextEditorEditContext, ValueTask>)(editContext =>
         {
         	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
         	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
@@ -399,10 +385,10 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             	editContext,
             	modelModifier,
             	viewModelModifier,
-            	CommonBackgroundTaskApi.JsRuntimeCommonApi,
-            	TextEditorService,
-            	CommonUiService);
-        });
+            	(Common.RazorLib.JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonUtilityService.JsRuntimeCommonApi,
+				TextEditorService,
+            	(Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService);
+        }));
         return Task.CompletedTask;
     }
     
@@ -411,8 +397,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	var virtualizationResult = GetVirtualizationResult();
     	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
-    	
-        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+
+		TextEditorService.WorkerArbitrary.PostUnique((Func<TextEditorEditContext, ValueTask>)(editContext =>
         {
         	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
         	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
@@ -421,8 +407,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 		        editContext,
             	modelModifier,
             	viewModelModifier,
-		        CommonBackgroundTaskApi.JsRuntimeCommonApi);
-        });
+		        (Common.RazorLib.JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonUtilityService.JsRuntimeCommonApi);
+        }));
         return Task.CompletedTask;
     }
     
@@ -450,8 +436,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	var virtualizationResult = GetVirtualizationResult();
     	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
-    	
-        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+
+		TextEditorService.WorkerArbitrary.PostUnique((Func<TextEditorEditContext, ValueTask>)(editContext =>
         {
         	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
         	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
@@ -460,12 +446,12 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 		        editContext,
             	modelModifier,
             	viewModelModifier,
-		        CommonBackgroundTaskApi.JsRuntimeCommonApi,
-		        EnvironmentProvider,
-		        FileSystemProvider,
-		        TextEditorService,
-		        CommonUiService);
-        });
+		        (Common.RazorLib.JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonUtilityService.JsRuntimeCommonApi,
+		        (IEnvironmentProvider)CommonUtilityService.EnvironmentProvider,
+		        (IFileSystemProvider)CommonUtilityService.FileSystemProvider,
+				TextEditorService,
+		        (Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService);
+        }));
         return Task.CompletedTask;
     }
 

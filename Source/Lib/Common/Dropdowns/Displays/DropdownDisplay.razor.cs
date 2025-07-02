@@ -5,21 +5,14 @@ using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Installations.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Dropdowns.Displays;
 
 public partial class DropdownDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	public IAppDimensionService AppDimensionService { get; set; } = null!;
-	[Inject]
-	public ICommonUiService CommonUiService { get; set; } = null!;
-	[Inject]
-	private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
+	public CommonUtilityService CommonUtilityService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public DropdownRecord Dropdown { get; set; } = null!;
@@ -64,7 +57,7 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 			// Force the initial invocation (as opposed to waiting for the event)
 			await RemeasureAndRerender();
 		}
-		else if (WalkHostingInformation.WalkPurposeKind == WalkPurposeKind.Ide && _hasPendingEvent)
+		else if (CommonUtilityService.WalkHostingInformation.WalkPurposeKind == WalkPurposeKind.Ide && _hasPendingEvent)
 		{		
 			if (_isOffScreenHorizontally || _isOffScreenVertically)
 			{
@@ -110,7 +103,7 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 					Top = outTop
 				};
 
-				CommonUiService.Dropdown_ReduceFitOnScreenAction(outDropdown);
+				CommonUtilityService.Dropdown_ReduceFitOnScreenAction(outDropdown);
 			}
 		}
 	}
@@ -127,8 +120,8 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 			_hasPendingEvent = true;
 		}
 
-		_htmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi.MeasureElementById(_htmlElementId);
-		_globalHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi.MeasureElementById(ContextFacts.RootHtmlElementId);
+		_htmlElementDimensions = await CommonUtilityService.JsRuntimeCommonApi.MeasureElementById(_htmlElementId);
+		_globalHtmlElementDimensions = await CommonUtilityService.JsRuntimeCommonApi.MeasureElementById(ContextFacts.RootHtmlElementId);
 		await InvokeAsync(StateHasChanged);
 	}
 

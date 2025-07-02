@@ -2,6 +2,7 @@ using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Badges.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Notifications.Models;
 
@@ -10,22 +11,22 @@ public class NotificationBadge : IBadgeModel
     public static readonly Key<IBadgeModel> NotificationBadgeKey = Key<IBadgeModel>.NewKey();
     public static readonly Key<IDynamicViewModel> DialogRecordKey = Key<IDynamicViewModel>.NewKey();
 
-    private readonly ICommonUiService _commonUiService;
+    private readonly CommonUtilityService _commonUtilityService;
 
-    public NotificationBadge(ICommonUiService commonUiService)
+    public NotificationBadge(CommonUtilityService commonUtilityService)
     {
-        _commonUiService = commonUiService;
+        _commonUtilityService = commonUtilityService;
     }
     
     private Func<Task>? _updateUiFunc;
 
     public Key<IBadgeModel> Key => NotificationBadgeKey;
 	public BadgeKind BadgeKind => BadgeKind.Notification;
-	public int Count => _commonUiService.GetNotificationState().DefaultList.Count;
+	public int Count => _commonUtilityService.GetNotificationState().DefaultList.Count;
 	
 	public void OnClick()
 	{
-	    _commonUiService.Dialog_ReduceRegisterAction(new DialogViewModel(
+	    _commonUtilityService.Dialog_ReduceRegisterAction(new DialogViewModel(
             DialogRecordKey,
             "Notifications",
             typeof(Walk.Common.RazorLib.Notifications.Displays.NotificationsViewDisplay),
@@ -38,7 +39,7 @@ public class NotificationBadge : IBadgeModel
 	public void AddSubscription(Func<Task> updateUiFunc)
 	{
 	    _updateUiFunc = updateUiFunc;
-	    _commonUiService.CommonUiStateChanged += DoSubscription;
+	    _commonUtilityService.CommonUiStateChanged += DoSubscription;
 	}
 	
 	public async void DoSubscription(CommonUiEventKind commonUiEventKind)
@@ -53,7 +54,7 @@ public class NotificationBadge : IBadgeModel
 	
 	public void DisposeSubscription()
 	{
-	    _commonUiService.CommonUiStateChanged -= DoSubscription;
+	    _commonUtilityService.CommonUiStateChanged -= DoSubscription;
 	    _updateUiFunc = null;
 	}
 }

@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Themes.Models;
-using Walk.Common.RazorLib.FileSystems.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
@@ -38,53 +38,56 @@ public static class ServiceCollectionExtensions
 
         if (ideConfig.AddWalkTextEditor)
         {
-            services.AddWalkTextEditor(hostingInformation, inTextEditorOptions => inTextEditorOptions with
+            services.AddWalkTextEditor(hostingInformation, (Func<WalkTextEditorConfig, WalkTextEditorConfig>?)(inTextEditorOptions => (inTextEditorOptions with
             {
                 CustomThemeRecordList = WalkTextEditorCustomThemeFacts.AllCustomThemesList,
                 InitialThemeKey = ThemeFacts.VisualStudioDarkThemeClone.Key,
-                AbsolutePathStandardizeFunc = AbsolutePathStandardizeFunc,
+                AbsolutePathStandardizeFunc = ServiceCollectionExtensions.AbsolutePathStandardizeFunc,
                 FastParseFunc = async (fastParseArgs) =>
-                {
+                {    
                 	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
-                		fastParseArgs.ResourceUri.Value, fastParseArgs.ServiceProvider);
+                		fastParseArgs.ResourceUri.Value,
+                		fastParseArgs.CommonUtilityService);
                 		
-                	var standardizedResourceUri = new ResourceUri(standardizedAbsolutePathString);
+                	var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
                 
                     fastParseArgs = new FastParseArgs(
                         standardizedResourceUri,
                         fastParseArgs.ExtensionNoPeriod,
-                        fastParseArgs.ServiceProvider)
+                        fastParseArgs.CommonUtilityService,
+                        fastParseArgs.IdeBackgroundTaskApi)
                     {
                     	ShouldBlockUntilBackgroundTaskIsCompleted = fastParseArgs.ShouldBlockUntilBackgroundTaskIsCompleted
                     };
 
-                    var ideBackgroundTaskApi = fastParseArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
-                    await ideBackgroundTaskApi.Editor_FastParseFunc(fastParseArgs);
+                    await ((IdeBackgroundTaskApi)fastParseArgs.IdeBackgroundTaskApi).Editor_FastParseFunc(fastParseArgs);
                 },
                 RegisterModelFunc = async (registerModelArgs) =>
                 {
                 	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
-                		registerModelArgs.ResourceUri.Value, registerModelArgs.ServiceProvider);
+                		registerModelArgs.ResourceUri.Value,
+                		registerModelArgs.CommonUtilityService);
                 		
-                	var standardizedResourceUri = new ResourceUri(standardizedAbsolutePathString);
+                	var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
                 
                     registerModelArgs = new RegisterModelArgs(
                     	registerModelArgs.EditContext,
                         standardizedResourceUri,
-                        registerModelArgs.ServiceProvider)
+                        registerModelArgs.CommonUtilityService,
+                        registerModelArgs.IdeBackgroundTaskApi)
                     {
                     	ShouldBlockUntilBackgroundTaskIsCompleted = registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted
                     };
 
-                    var ideBackgroundTaskApi = registerModelArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
-                    await ideBackgroundTaskApi.Editor_RegisterModelFunc(registerModelArgs);
+                    await ((IdeBackgroundTaskApi)registerModelArgs.IdeBackgroundTaskApi).Editor_RegisterModelFunc(registerModelArgs);
                 },
                 TryRegisterViewModelFunc = async (tryRegisterViewModelArgs) =>
                 {
                 	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
-                		tryRegisterViewModelArgs.ResourceUri.Value, tryRegisterViewModelArgs.ServiceProvider);
+                		tryRegisterViewModelArgs.ResourceUri.Value,
+                		tryRegisterViewModelArgs.CommonUtilityService);
                 		
-                	var standardizedResourceUri = new ResourceUri(standardizedAbsolutePathString);
+                	var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
                 	
                     tryRegisterViewModelArgs = new TryRegisterViewModelArgs(
                     	tryRegisterViewModelArgs.EditContext,
@@ -92,17 +95,16 @@ public static class ServiceCollectionExtensions
                         standardizedResourceUri,
                         tryRegisterViewModelArgs.Category,
                         tryRegisterViewModelArgs.ShouldSetFocusToEditor,
-                        tryRegisterViewModelArgs.ServiceProvider);
+                        tryRegisterViewModelArgs.CommonUtilityService,
+                        tryRegisterViewModelArgs.IdeBackgroundTaskApi);
 
-                    var ideBackgroundTaskApi = tryRegisterViewModelArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
-                    return await ideBackgroundTaskApi.Editor_TryRegisterViewModelFunc(tryRegisterViewModelArgs);
+                    return await ((IdeBackgroundTaskApi)tryRegisterViewModelArgs.IdeBackgroundTaskApi).Editor_TryRegisterViewModelFunc(tryRegisterViewModelArgs);
                 },
                 TryShowViewModelFunc = (tryShowViewModelArgs) =>
                 {
-                    var ideBackgroundTaskApi = tryShowViewModelArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
-                    return ideBackgroundTaskApi.Editor_TryShowViewModelFunc(tryShowViewModelArgs);
+                    return ((IdeBackgroundTaskApi)tryShowViewModelArgs.IdeBackgroundTaskApi).Editor_TryShowViewModelFunc(tryShowViewModelArgs);
                 },
-            });
+            })));
         }
         
         if (hostingInformation.WalkHostingKind == WalkHostingKind.Photino)
@@ -130,14 +132,12 @@ public static class ServiceCollectionExtensions
         return services;
     }
     
-    public static Task<string> AbsolutePathStandardizeFunc(string absolutePathString, IServiceProvider serviceProvider)
+    public static Task<string> AbsolutePathStandardizeFunc(string absolutePathString, CommonUtilityService commonUtilityService)
     {
-        var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
-
-        if (absolutePathString.StartsWith(environmentProvider.DriveExecutingFromNoDirectorySeparator))
+        if (absolutePathString.StartsWith(commonUtilityService.EnvironmentProvider.DriveExecutingFromNoDirectorySeparator))
         {
             var removeDriveFromResourceUriValue = absolutePathString[
-                environmentProvider.DriveExecutingFromNoDirectorySeparator.Length..];
+                commonUtilityService.EnvironmentProvider.DriveExecutingFromNoDirectorySeparator.Length..];
 
             return Task.FromResult(removeDriveFromResourceUriValue);
         }

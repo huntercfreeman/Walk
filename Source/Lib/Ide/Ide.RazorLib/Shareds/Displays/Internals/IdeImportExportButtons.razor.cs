@@ -2,13 +2,14 @@ using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Ide.RazorLib.Shareds.Displays.Internals;
 
 public partial class IdeImportExportButtons : ComponentBase
 {
     [Inject]
-    private ICommonUiService CommonUiService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     private IDialog _importDialogRecord = new DialogViewModel(
         Key<IDynamicViewModel>.NewKey(),
@@ -30,6 +31,6 @@ public partial class IdeImportExportButtons : ComponentBase
 
     private void ImportOnClick()
     {
-        CommonUiService.Dialog_ReduceRegisterAction(_importDialogRecord);
+        CommonUtilityService.Dialog_ReduceRegisterAction(_importDialogRecord);
     }
 }

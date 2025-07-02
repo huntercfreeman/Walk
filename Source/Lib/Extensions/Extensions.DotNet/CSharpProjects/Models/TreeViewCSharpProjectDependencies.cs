@@ -1,8 +1,8 @@
-using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Icons.Displays;
 using Walk.Common.RazorLib.Icons.Displays.Codicon;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.ComponentRenderers.Models;
@@ -15,22 +15,19 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 			CSharpProjectDependencies cSharpProjectDependencies,
 			IDotNetComponentRenderers dotNetComponentRenderers,
 			IIdeComponentRenderers ideComponentRenderers,
-			IFileSystemProvider fileSystemProvider,
-			IEnvironmentProvider environmentProvider,
+			CommonUtilityService commonUtilityService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(cSharpProjectDependencies, isExpandable, isExpanded)
 	{
 		DotNetComponentRenderers = dotNetComponentRenderers;
 		IdeComponentRenderers = ideComponentRenderers;
-		FileSystemProvider = fileSystemProvider;
-		EnvironmentProvider = environmentProvider;
+		CommonUtilityService = commonUtilityService;
 	}
 
 	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public IIdeComponentRenderers IdeComponentRenderers { get; }
-	public IFileSystemProvider FileSystemProvider { get; }
-	public IEnvironmentProvider EnvironmentProvider { get; }
+	public CommonUtilityService CommonUtilityService { get; }
 
 	public override bool Equals(object? obj)
 	{
@@ -91,8 +88,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 			new CSharpProjectNugetPackageReferences(Item.CSharpProjectNamespacePath),
 			DotNetComponentRenderers,
 			IdeComponentRenderers,
-			FileSystemProvider,
-			EnvironmentProvider,
+			CommonUtilityService,
 			true,
 			false)
 		{
@@ -103,8 +99,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 			new CSharpProjectToProjectReferences(Item.CSharpProjectNamespacePath),
 			DotNetComponentRenderers,
 			IdeComponentRenderers,
-			FileSystemProvider,
-			EnvironmentProvider,
+			CommonUtilityService,
 			true,
 			false)
 		{

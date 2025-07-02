@@ -6,8 +6,6 @@ using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.CompilerServices;
@@ -20,29 +18,21 @@ namespace Walk.Extensions.DotNet.CompilerServices.Displays;
 public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
-	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
-	private IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-	private ITreeViewService TreeViewService { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 
 	private CompilerServiceExplorerTreeViewKeyboardEventHandler _compilerServiceExplorerTreeViewKeymap = null!;
 	private CompilerServiceExplorerTreeViewMouseEventHandler _compilerServiceExplorerTreeViewMouseEventHandler = null!;
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private static bool _hasInitialized;
 
@@ -53,13 +43,11 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
 		_compilerServiceExplorerTreeViewKeymap = new CompilerServiceExplorerTreeViewKeyboardEventHandler(
 			IdeBackgroundTaskApi,
-			TreeViewService,
-			BackgroundTaskService);
+			CommonUtilityService);
 
 		_compilerServiceExplorerTreeViewMouseEventHandler = new CompilerServiceExplorerTreeViewMouseEventHandler(
 			IdeBackgroundTaskApi,
-			TreeViewService,
-			BackgroundTaskService);
+			CommonUtilityService);
 	}
 
 	protected override Task OnAfterRenderAsync(bool firstRender)
@@ -97,13 +85,13 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 			},
 			restoreFocusOnClose: null);
 
-		CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 
 	private void ReloadOnClick()
 	{
-		BackgroundTaskService.Continuous_EnqueueGroup(new BackgroundTask(
+		CommonUtilityService.Continuous_EnqueueGroup(new BackgroundTask(
 			Key<IBackgroundTaskGroup>.Empty,
 			Do_SetCompilerServiceExplorerTreeView));
 	}
@@ -183,36 +171,36 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 			true);
 
 		var rootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
-			new TreeViewReflection(xmlCompilerServiceWatchWindowObject, true, false, CommonComponentRenderers),
-			new TreeViewReflection(dotNetSolutionCompilerServiceWatchWindowObject, true, false, CommonComponentRenderers),
-			new TreeViewReflection(cSharpProjectCompilerServiceWatchWindowObject, true, false, CommonComponentRenderers),
-			new TreeViewReflection(cSharpCompilerServiceWatchWindowObject, true, false, CommonComponentRenderers),
-			new TreeViewReflection(razorCompilerServiceWatchWindowObject, true, false, CommonComponentRenderers),
-			new TreeViewReflection(cssCompilerServiceWatchWindowObject, true, false, CommonComponentRenderers),
-			new TreeViewReflection(fSharpCompilerServiceWatchWindowObject, true, false, CommonComponentRenderers),
-			new TreeViewReflection(javaScriptCompilerServiceWatchWindowObject, true, false, CommonComponentRenderers),
-			new TreeViewReflection(typeScriptCompilerServiceWatchWindowObject, true, false, CommonComponentRenderers),
-			new TreeViewReflection(jsonCompilerServiceWatchWindowObject, true, false, CommonComponentRenderers),
-			new TreeViewReflection(terminalCompilerServiceWatchWindowObject, true, false, CommonComponentRenderers));
+			new TreeViewReflection(xmlCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(dotNetSolutionCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(cSharpProjectCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(cSharpCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(razorCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(cssCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(fSharpCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(javaScriptCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(typeScriptCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(jsonCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(terminalCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers));
 
 		await rootNode.LoadChildListAsync().ConfigureAwait(false);
 
-		if (!TreeViewService.TryGetTreeViewContainer(
+		if (!CommonUtilityService.TryGetTreeViewContainer(
 				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 				out var treeViewState))
 		{
-			TreeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+			CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
 				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 				rootNode,
 				new List<TreeViewNoType> { rootNode }));
 		}
 		else
 		{
-			TreeViewService.ReduceWithRootNodeAction(
+			CommonUtilityService.TreeView_WithRootNodeAction(
 				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 				rootNode);
 
-			TreeViewService.ReduceSetActiveNodeAction(
+			CommonUtilityService.TreeView_SetActiveNodeAction(
 				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 				rootNode,
 				true,

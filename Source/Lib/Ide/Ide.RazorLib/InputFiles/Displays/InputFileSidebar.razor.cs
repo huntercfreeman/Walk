@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
@@ -7,7 +6,7 @@ using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
@@ -19,17 +18,7 @@ public partial class InputFileSidebar : ComponentBase
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
-    private ICommonUiService CommonUiService { get; set; } = null!;
-    [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [CascadingParameter(Name="SetInputFileContentTreeViewRootFunc")]
     public Func<AbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
@@ -54,28 +43,24 @@ public partial class InputFileSidebar : ComponentBase
         if (firstRender)
         {
             var directoryHomeNode = new TreeViewAbsolutePath(
-                EnvironmentProvider.HomeDirectoryAbsolutePath,
+                CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath,
                 IdeComponentRenderers,
-                CommonComponentRenderers,
-                FileSystemProvider,
-                EnvironmentProvider,
+                CommonUtilityService,
                 true,
                 false);
 
             var directoryRootNode = new TreeViewAbsolutePath(
-                EnvironmentProvider.RootDirectoryAbsolutePath,
+                CommonUtilityService.EnvironmentProvider.RootDirectoryAbsolutePath,
                 IdeComponentRenderers,
-                CommonComponentRenderers,
-                FileSystemProvider,
-                EnvironmentProvider,
+                CommonUtilityService,
                 true,
                 false);
 
             var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(directoryHomeNode, directoryRootNode);
 
-            if (!TreeViewService.TryGetTreeViewContainer(TreeViewContainerKey, out var treeViewContainer))
+            if (!CommonUtilityService.TryGetTreeViewContainer(TreeViewContainerKey, out var treeViewContainer))
             {
-                TreeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+                CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
                     TreeViewContainerKey,
                     adhocRootNode,
                     directoryHomeNode is null
@@ -103,7 +88,7 @@ public partial class InputFileSidebar : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-        CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 }

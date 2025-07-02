@@ -5,13 +5,13 @@
 
 @{
 	var codeSearchState = CodeSearchService.GetCodeSearchState();
-	var appOptionsState = AppOptionsService.GetAppOptionsState();
+	var appOptionsState = CommonUtilityService.GetAppOptionsState();
 }
 
 <div class="di_ide_find-all">
 
     <div class="di_ide_find-all-top-content"
-         style="@codeSearchState.TopContentElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder)">
+         style="@codeSearchState.TopContentElementDimensions.GetStyleString(CommonUtilityService.UiStringBuilder)">
 		
 		@* <!-- Comment out currently unimplemented code -->
 	        <div class="di_ide_find-all-filter-list">
@@ -58,7 +58,7 @@
                   ReRenderFuncAsync="HandleResizableRowReRenderAsync"/>
     
     <div class="di_ide_find-all-bottom-content"
-         style="@codeSearchState.BottomContentElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder)">
+         style="@codeSearchState.BottomContentElementDimensions.GetStyleString(CommonUtilityService.UiStringBuilder)">
          
          <TextEditorViewModelDisplay TextEditorViewModelKey="codeSearchState.PreviewViewModelKey"
                                      ViewModelDisplayOptions="_textEditorViewModelDisplayOptions" />

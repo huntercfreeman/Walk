@@ -3,14 +3,14 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Menus.Displays;
 using Walk.Common.RazorLib.JsRuntimes.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Dropdowns.Models;
 
 public static class DropdownHelper
 {
 	public static Task RenderDropdownAsync(
-		ICommonUiService commonUiService,
+		CommonUtilityService commonUtilityService,
 		WalkCommonJavaScriptInteropApi walkCommonJavaScriptInteropApi,
 		string anchorHtmlElementId,
 		DropdownOrientation dropdownOrientation,
@@ -20,7 +20,7 @@ public static class DropdownHelper
 		bool preventScroll)
 	{
 		return RenderDropdownAsync(
-			commonUiService,
+			commonUtilityService,
 			walkCommonJavaScriptInteropApi,
 			anchorHtmlElementId,
 			dropdownOrientation,
@@ -44,7 +44,7 @@ public static class DropdownHelper
 	}
 
 	public static Task RenderDropdownAsync(
-		ICommonUiService commonUiService,
+		CommonUtilityService commonUtilityService,
 		WalkCommonJavaScriptInteropApi walkCommonJavaScriptInteropApi,
 		string anchorHtmlElementId,
 		DropdownOrientation dropdownOrientation,
@@ -53,7 +53,7 @@ public static class DropdownHelper
 		ElementReference? elementReferenceForReturnFocus)
 	{
 		return RenderDropdownAsync(
-			commonUiService,
+			commonUtilityService,
 			walkCommonJavaScriptInteropApi,
 			anchorHtmlElementId,
 			dropdownOrientation,
@@ -80,7 +80,7 @@ public static class DropdownHelper
 	}
 	
 	public static async Task RenderDropdownAsync(
-		ICommonUiService commonUiService,
+		CommonUtilityService commonUtilityService,
 		WalkCommonJavaScriptInteropApi walkCommonJavaScriptInteropApi,
 		string anchorHtmlElementId,
 		DropdownOrientation dropdownOrientation,
@@ -114,6 +114,6 @@ public static class DropdownHelper
 			},
 			restoreFocusOnClose);
 
-        commonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        commonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
 	}
 }

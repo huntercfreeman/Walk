@@ -1,14 +1,14 @@
+using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Menus.Models;
-using Walk.Common.RazorLib.TreeViews.Models;
-using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.WatchWindows.Displays;
 
 public partial class WatchWindowContextMenuDisplay : ComponentBase
 {
     [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TreeViewCommandArgs TreeViewCommandArgs { get; set; }
@@ -30,7 +30,7 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
                 {
                     // ICommonBackgroundTaskQueue does not work well here because
                     // this Task does not need to be tracked.
-                    _ = Task.Run(async () =>
+                    _ = Task.Run((Func<Task?>)(async () =>
                     {
                         try
                         {
@@ -41,18 +41,18 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
                                 .LoadChildListAsync()
                                 .ConfigureAwait(false);
 
-                            TreeViewService.ReduceReRenderNodeAction(
-                                WatchWindowDisplay.TreeViewContainerKey,
+							CommonUtilityService.TreeView_ReRenderNodeAction(
+								WatchWindowDisplay.TreeViewContainerKey,
                                 treeViewCommandArgs.NodeThatReceivedMouseEvent);
 
                             await InvokeAsync(StateHasChanged);
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine(e);
+							Console.WriteLine(e);
                             throw;
                         }
-                   }, CancellationToken.None);
+                   }), CancellationToken.None);
 
                     return Task.CompletedTask;
                 }));

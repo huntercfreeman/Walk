@@ -2,12 +2,11 @@ using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
-using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Walk.TextEditor.RazorLib.Installations.Displays;
 
@@ -29,7 +28,7 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     
@@ -68,37 +67,37 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
     /// </summary>
     private async Task Ready()
     {
-        CommonBackgroundTaskApi.UiStringBuilder.Clear();
-        CommonBackgroundTaskApi.UiStringBuilder.Append("di_te_text-editor-css-wrapper ");
-        CommonBackgroundTaskApi.UiStringBuilder.Append(TextEditorService.ThemeCssClassString);
-    	_wrapperCssClass = CommonBackgroundTaskApi.UiStringBuilder.ToString();
+        CommonUtilityService.UiStringBuilder.Clear();
+        CommonUtilityService.UiStringBuilder.Append("di_te_text-editor-css-wrapper ");
+        CommonUtilityService.UiStringBuilder.Append(TextEditorService.ThemeCssClassString);
+    	_wrapperCssClass = CommonUtilityService.UiStringBuilder.ToString();
     	
     	var options = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
     	
     	var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
     	if (options.CommonOptions?.FontSizeInPixels is not null)
             fontSizeInPixels = options!.CommonOptions.FontSizeInPixels;
-        CommonBackgroundTaskApi.UiStringBuilder.Clear();
-        CommonBackgroundTaskApi.UiStringBuilder.Append("font-size: ");
-        CommonBackgroundTaskApi.UiStringBuilder.Append(fontSizeInPixels.ToCssValue());
-        CommonBackgroundTaskApi.UiStringBuilder.Append("px;");
-    	var fontSizeCssStyle = CommonBackgroundTaskApi.UiStringBuilder.ToString();
+        CommonUtilityService.UiStringBuilder.Clear();
+        CommonUtilityService.UiStringBuilder.Append("font-size: ");
+        CommonUtilityService.UiStringBuilder.Append(fontSizeInPixels.ToCssValue());
+        CommonUtilityService.UiStringBuilder.Append("px;");
+    	var fontSizeCssStyle = CommonUtilityService.UiStringBuilder.ToString();
     	
     	var fontFamily = TextEditorVirtualizationResult.DEFAULT_FONT_FAMILY;
     	if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
         	fontFamily = options!.CommonOptions!.FontFamily;
-    	CommonBackgroundTaskApi.UiStringBuilder.Clear();
-    	CommonBackgroundTaskApi.UiStringBuilder.Append("font-family: ");
-    	CommonBackgroundTaskApi.UiStringBuilder.Append(fontFamily);
-    	CommonBackgroundTaskApi.UiStringBuilder.Append(";");
-    	var fontFamilyCssStyle = CommonBackgroundTaskApi.UiStringBuilder.ToString();
+    	CommonUtilityService.UiStringBuilder.Clear();
+    	CommonUtilityService.UiStringBuilder.Append("font-family: ");
+    	CommonUtilityService.UiStringBuilder.Append(fontFamily);
+    	CommonUtilityService.UiStringBuilder.Append(";");
+    	var fontFamilyCssStyle = CommonUtilityService.UiStringBuilder.ToString();
     	
-    	CommonBackgroundTaskApi.UiStringBuilder.Clear();
-    	CommonBackgroundTaskApi.UiStringBuilder.Append(fontSizeCssStyle);
-    	CommonBackgroundTaskApi.UiStringBuilder.Append(" ");
-    	CommonBackgroundTaskApi.UiStringBuilder.Append(fontFamilyCssStyle);
-    	CommonBackgroundTaskApi.UiStringBuilder.Append(" position:absolute;");
-    	_wrapperCssStyle = CommonBackgroundTaskApi.UiStringBuilder.ToString();
+    	CommonUtilityService.UiStringBuilder.Clear();
+    	CommonUtilityService.UiStringBuilder.Append(fontSizeCssStyle);
+    	CommonUtilityService.UiStringBuilder.Append(" ");
+    	CommonUtilityService.UiStringBuilder.Append(fontFamilyCssStyle);
+    	CommonUtilityService.UiStringBuilder.Append(" position:absolute;");
+    	_wrapperCssStyle = CommonUtilityService.UiStringBuilder.ToString();
     	
     	// I said "Only invoke this method from the UI thread due to the usage of the shared UiStringBuilder."
     	// But I'm still going to keep this InvokeAsync for the StateHasChanged due to superstituous anxiety.

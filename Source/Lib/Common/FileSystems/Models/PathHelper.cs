@@ -71,7 +71,7 @@ public static class PathHelper
 
         if (moveUpDirectoryCount > 0)
         {
-            var sharedAncestorDirectories = absolutePath.GetAncestorDirectoryList()
+            var sharedAncestorDirectories = absolutePath.GetAncestorDirectoryList(environmentProvider)
                 .SkipLast(moveUpDirectoryCount)
                 .ToArray();
         
@@ -125,8 +125,8 @@ public static class PathHelper
     {
         var pathBuilder = new StringBuilder();
         
-        var startingPathAncestorDirectoryList = startingPath.GetAncestorDirectoryList();
-        var endingPathAncestorDirectoryList = endingPath.GetAncestorDirectoryList();
+        var startingPathAncestorDirectoryList = startingPath.GetAncestorDirectoryList(environmentProvider);
+        var endingPathAncestorDirectoryList = endingPath.GetAncestorDirectoryList(environmentProvider);
         
         var commonPath = startingPathAncestorDirectoryList.First();
 

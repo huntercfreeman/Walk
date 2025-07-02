@@ -6,26 +6,26 @@ namespace Walk.Common.RazorLib.Options.Displays;
 public partial class InputAppResizeHandleWidth : ComponentBase, IDisposable
 {
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter]
     public InputViewModel InputViewModel { get; set; } = InputViewModel.Empty;
 
     public int ResizeHandleWidthInPixels
     {
-        get => AppOptionsService.GetAppOptionsState().Options.ResizeHandleWidthInPixels;
+        get => CommonUtilityService.GetAppOptionsState().Options.ResizeHandleWidthInPixels;
         set
         {
             if (value < AppOptionsState.MINIMUM_RESIZE_HANDLE_WIDTH_IN_PIXELS)
                 value = AppOptionsState.MINIMUM_RESIZE_HANDLE_WIDTH_IN_PIXELS;
 
-            AppOptionsService.SetResizeHandleWidth(value);
+            CommonUtilityService.Options_SetResizeHandleWidth(value);
         }
     }
 
     protected override void OnInitialized()
     {
-        AppOptionsService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
+        CommonUtilityService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
     }
 
     private async void AppOptionsStateWrapOnStateChanged()
@@ -35,6 +35,6 @@ public partial class InputAppResizeHandleWidth : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        AppOptionsService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
+        CommonUtilityService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }

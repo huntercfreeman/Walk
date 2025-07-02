@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 
@@ -11,9 +11,9 @@ public partial class DirtyResourceUriViewDisplay : ComponentBase, IDisposable
     [Inject]
     private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
     [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
     
     protected override void OnInitialized()
 	{

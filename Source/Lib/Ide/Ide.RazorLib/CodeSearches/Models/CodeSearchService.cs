@@ -3,6 +3,7 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
@@ -16,9 +17,7 @@ public class CodeSearchService : ICodeSearchService
     private readonly object _stateModificationLock = new();
 
 	private readonly Throttle _throttle = new(TimeSpan.FromMilliseconds(300));
-    private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly IEnvironmentProvider _environmentProvider;
-    private readonly ITreeViewService _treeViewService;
+    private readonly CommonUtilityService _commonUtilityService;
     private readonly TextEditorService _textEditorService;
     private readonly WalkTextEditorConfig _textEditorConfig;
     private readonly IServiceProvider _serviceProvider;
@@ -28,16 +27,12 @@ public class CodeSearchService : ICodeSearchService
 	public Throttle _updateContentThrottle { get; } = new Throttle(TimeSpan.FromMilliseconds(333));
 
     public CodeSearchService(
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        ITreeViewService treeViewService,
+        CommonUtilityService commonUtilityService,
         TextEditorService textEditorService,
         WalkTextEditorConfig textEditorConfig,
         IServiceProvider serviceProvider)
     {
-        _fileSystemProvider = fileSystemProvider;
-        _environmentProvider = environmentProvider;
-        _treeViewService = treeViewService;
+        _commonUtilityService = commonUtilityService;
         _textEditorService = textEditorService;
         _textEditorConfig = textEditorConfig;
         _serviceProvider = serviceProvider;
@@ -181,19 +176,19 @@ public class CodeSearchService : ICodeSearchService
 
             async Task RecursiveHandleSearchEffect(string directoryPathParent)
             {
-                var directoryPathChildList = await _fileSystemProvider.Directory.GetDirectoriesAsync(
+                var directoryPathChildList = await _commonUtilityService.FileSystemProvider.Directory.GetDirectoriesAsync(
                         directoryPathParent,
                         cancellationToken)
                     .ConfigureAwait(false);
 
-                var filePathChildList = await _fileSystemProvider.Directory.GetFilesAsync(
+                var filePathChildList = await _commonUtilityService.FileSystemProvider.Directory.GetFilesAsync(
                         directoryPathParent,
                         cancellationToken)
                     .ConfigureAwait(false);
 
                 foreach (var filePathChild in filePathChildList)
                 {
-                	var absolutePath = _environmentProvider.AbsolutePathFactory(filePathChild, false);
+                	var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(filePathChild, false);
                 
                     if (absolutePath.NameWithExtension.Contains(codeSearchState.Query))
                         AddResult(filePathChild);
@@ -225,8 +220,8 @@ public class CodeSearchService : ICodeSearchService
 			        (byte)GenericDecorationKind.None,
 			        new ResourceUri(x),
 			        string.Empty),
-				_environmentProvider,
-				_fileSystemProvider,
+				_commonUtilityService.EnvironmentProvider,
+				_commonUtilityService.FileSystemProvider,
 				false,
 				false))
 			.ToArray();
@@ -238,18 +233,18 @@ public class CodeSearchService : ICodeSearchService
 	        ? Array.Empty<TreeViewNoType>()
 	        : new List<TreeViewNoType> { firstNode };
 	
-	    if (!_treeViewService.TryGetTreeViewContainer(CodeSearchState.TreeViewCodeSearchContainerKey, out _))
+	    if (!_commonUtilityService.TryGetTreeViewContainer(CodeSearchState.TreeViewCodeSearchContainerKey, out _))
 	    {
-	        _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+	        _commonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
 	            CodeSearchState.TreeViewCodeSearchContainerKey,
 	            adhocRoot,
 	            activeNodes));
 	    }
 	    else
 	    {
-	        _treeViewService.ReduceWithRootNodeAction(CodeSearchState.TreeViewCodeSearchContainerKey, adhocRoot);
+	        _commonUtilityService.TreeView_WithRootNodeAction(CodeSearchState.TreeViewCodeSearchContainerKey, adhocRoot);
 	
-	        _treeViewService.ReduceSetActiveNodeAction(
+	        _commonUtilityService.TreeView_SetActiveNodeAction(
 	            CodeSearchState.TreeViewCodeSearchContainerKey,
 	            firstNode,
 	            true,
@@ -263,7 +258,7 @@ public class CodeSearchService : ICodeSearchService
 		{
 			Console.WriteLine(nameof(UpdateContent));
 		
-			if (!_treeViewService.TryGetTreeViewContainer(
+			if (!_commonUtilityService.TryGetTreeViewContainer(
 					CodeSearchState.TreeViewCodeSearchContainerKey,
 					out var treeViewContainer))
 			{
@@ -298,7 +293,7 @@ public class CodeSearchService : ICodeSearchService
 	            return;
 	
 	        await _textEditorConfig.RegisterModelFunc.Invoke(
-	                new RegisterModelArgs(editContext, resourceUri, _serviceProvider))
+	                new RegisterModelArgs(editContext, resourceUri, _commonUtilityService, _textEditorService.IdeBackgroundTaskApi))
 	            .ConfigureAwait(false);
 	
 	        if (_textEditorConfig.TryRegisterViewModelFunc is not null)
@@ -309,7 +304,8 @@ public class CodeSearchService : ICodeSearchService
 	                    resourceUri,
 	                    new Category(nameof(CodeSearchService)),
 	                    false,
-	                    _serviceProvider))
+	                    _commonUtilityService,
+	                    _textEditorService.IdeBackgroundTaskApi))
 	                .ConfigureAwait(false);
 	
 	            if (viewModelKey != Key<TextEditorViewModel>.Empty &&

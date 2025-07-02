@@ -1,13 +1,10 @@
 using Walk.Common.RazorLib.Commands.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib.FolderExplorers.Displays;
@@ -22,29 +19,19 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly TextEditorService _textEditorService;
     private readonly IMenuOptionsFactory _menuOptionsFactory;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly ITreeViewService _treeViewService;
-    private readonly IEnvironmentProvider _environmentProvider;
-    private readonly ICommonUiService _commonUiService;
+    private readonly CommonUtilityService _commonUtilityService;
 
     public FolderExplorerTreeViewKeyboardEventHandler(
             IdeBackgroundTaskApi ideBackgroundTaskApi,
             TextEditorService textEditorService,
             IMenuOptionsFactory menuOptionsFactory,
-            ICommonComponentRenderers commonComponentRenderers,
-            ITreeViewService treeViewService,
-		    BackgroundTaskService backgroundTaskService,
-            IEnvironmentProvider environmentProvider,
-            ICommonUiService commonUiService)
-        : base(treeViewService, backgroundTaskService)
+            CommonUtilityService commonUtilityService)
+        : base(commonUtilityService)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _textEditorService = textEditorService;
         _menuOptionsFactory = menuOptionsFactory;
-        _commonComponentRenderers = commonComponentRenderers;
-        _treeViewService = treeViewService;
-        _environmentProvider = environmentProvider;
-        _commonUiService = commonUiService;
+        _commonUtilityService = commonUtilityService;
     }
 
     public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
@@ -124,7 +111,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             treeViewAbsolutePath.Item,
             () =>
             {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewAbsolutePath.Item.NameWithExtension}", _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewAbsolutePath.Item.NameWithExtension}", _commonUtilityService, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
@@ -162,7 +149,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         {
             var parentDirectory = treeViewAbsolutePath.Item.ParentDirectory;
 
-            var parentDirectoryAbsolutePath = _environmentProvider.AbsolutePathFactory(
+            var parentDirectoryAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
                 parentDirectory,
                 true);
 
@@ -200,7 +187,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             () =>
             {
                 FolderExplorerContextMenu.ParentOfCutFile = parent;
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.NameWithExtension}", _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.NameWithExtension}", _commonUtilityService, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
@@ -237,11 +224,11 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
         await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-        _treeViewService.ReduceReRenderNodeAction(
+        _commonUtilityService.TreeView_ReRenderNodeAction(
             FolderExplorerState.TreeViewContentStateKey,
             treeViewModel);
 
-        _treeViewService.ReduceMoveUpAction(
+        _commonUtilityService.TreeView_MoveUpAction(
             FolderExplorerState.TreeViewContentStateKey,
             false,
 			false);

@@ -2,15 +2,13 @@
 @using Walk.Common.RazorLib.TreeViews.Models;
 
 @{
-    var treeViewContainer = TreeViewService.GetTreeViewContainer(TreeViewContainerKey);
+    var treeViewContainer = CommonUtilityService.GetTreeViewContainer(TreeViewContainerKey);
     
     _treeViewCascadingValueBatch.TreeViewContainer = treeViewContainer;
     _treeViewCascadingValueBatch.HandleTreeViewOnContextMenu = HandleTreeViewOnContextMenu;
     _treeViewCascadingValueBatch.TreeViewMouseEventHandler = TreeViewMouseEventHandler;
     _treeViewCascadingValueBatch.TreeViewKeyboardEventHandler = TreeViewKeyboardEventHandler;
-    _treeViewCascadingValueBatch.TreeViewService = TreeViewService;
-    _treeViewCascadingValueBatch.CommonBackgroundTaskApi = CommonBackgroundTaskApi;
-    _treeViewCascadingValueBatch.AppOptionsService = AppOptionsService;
+    _treeViewCascadingValueBatch.CommonUtilityService = CommonUtilityService;
     _treeViewCascadingValueBatch.OffsetPerDepthInPixels = OffsetPerDepthInPixels;
     _treeViewCascadingValueBatch.WalkTreeViewIconWidth = WalkTreeViewIconWidth;
 
@@ -39,7 +37,7 @@
 }
 
 @if (OnContextMenuRenderFragment is not null &&
-     _treeViewContextMenuCommandArgs.TreeViewService is not null)
+     _treeViewContextMenuCommandArgs.CommonUtilityService is not null)
 {
     <div class="di_context-menu di_set-selectable"
          style="@GetContextMenuCssStyleString()"

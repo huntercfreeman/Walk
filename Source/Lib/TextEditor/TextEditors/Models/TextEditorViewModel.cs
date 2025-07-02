@@ -1,9 +1,5 @@
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Dialogs.Models;
-using Walk.Common.RazorLib.Panels.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 
@@ -35,8 +31,7 @@ public sealed class TextEditorViewModel : IDisposable
         Key<TextEditorViewModel> viewModelKey,
         ResourceUri resourceUri,
         TextEditorService textEditorService,
-        ICommonUiService commonUiService,
-        CommonBackgroundTaskApi commonBackgroundTaskApi,
+        CommonUtilityService commonUtilityService,
         TextEditorVirtualizationResult virtualizationResult,
 		TextEditorDimensions textEditorDimensions,
 		int scrollLeft,
@@ -64,8 +59,7 @@ public sealed class TextEditorViewModel : IDisposable
 	    	tooltipModel: null,
 		    shouldRevealCursor: false,
 			virtualAssociativityKind: VirtualAssociativityKind.None,
-			commonUiService,
-			commonBackgroundTaskApi,
+			commonUtilityService,
             textEditorDimensions,
     		scrollLeft,
     	    scrollTop,
@@ -113,8 +107,8 @@ public sealed class TextEditorViewModel : IDisposable
         {
             if (_lineIndex != value)
             {
-                Changed_LineIndex = true;
-                Changed_Cursor_AnyState = true;
+                PersistentState.Changed_LineIndex = true;
+                PersistentState.Changed_Cursor_AnyState = true;
             }
             _lineIndex = value;
         }
@@ -128,8 +122,8 @@ public sealed class TextEditorViewModel : IDisposable
         {
             if (_columnIndex != value)
             {
-                Changed_ColumnIndex = true;
-                Changed_Cursor_AnyState = true;
+                PersistentState.Changed_ColumnIndex = true;
+                PersistentState.Changed_Cursor_AnyState = true;
             }
             _columnIndex = value;
         }
@@ -143,8 +137,8 @@ public sealed class TextEditorViewModel : IDisposable
         {
             if (_preferredColumnIndex != value)
             {
-                Changed_PreferredColumnIndex = true;
-                Changed_Cursor_AnyState = true;
+                PersistentState.Changed_PreferredColumnIndex = true;
+                PersistentState.Changed_Cursor_AnyState = true;
             }
             _preferredColumnIndex = value;
         }
@@ -158,8 +152,8 @@ public sealed class TextEditorViewModel : IDisposable
         {
             if (_selectionAnchorPositionIndex != value)
             {
-                Changed_SelectionAnchorPositionIndex = true;
-                Changed_Cursor_AnyState = true;
+                PersistentState.Changed_SelectionAnchorPositionIndex = true;
+                PersistentState.Changed_Cursor_AnyState = true;
             }
             _selectionAnchorPositionIndex = value;
         }
@@ -173,8 +167,8 @@ public sealed class TextEditorViewModel : IDisposable
         {
             if (_selectionEndingPositionIndex != value)
             {
-                Changed_SelectionEndingPositionIndex = true;
-                Changed_Cursor_AnyState = true;
+                PersistentState.Changed_SelectionEndingPositionIndex = true;
+                PersistentState.Changed_Cursor_AnyState = true;
             }
             _selectionEndingPositionIndex = value;
         }
@@ -187,26 +181,6 @@ public sealed class TextEditorViewModel : IDisposable
     public TextEditorVirtualizationResult Virtualization { get; set; }
 	
     public bool ScrollWasModified { get; set; }
-    
-    /// <summary>
-    /// When settings `Changed_...` also set this property.
-    /// Then to determine if the many `Changed_...` properties that are not this one
-    /// have changed, you can first check this singular property so you short circuit
-    /// if nothing changed.
-    ///
-    /// Don't copy any of the `Changed_...` properties when making a copy of a viewmodel.
-    /// They're just used as markers during the lifespan of each viewmodel whether the UI needs to be updated.
-    ///
-    /// If only this bool is set, then it means while calculating the VirtualizationResult, that
-    /// some other variable had changed, and the cursor CSS is dependent on that variable.
-    /// </summary>
-    public bool Changed_Cursor_AnyState { get; set; }
-    
-    public bool Changed_LineIndex { get; set; }
-    public bool Changed_ColumnIndex { get; set; }
-    public bool Changed_PreferredColumnIndex { get; set; }
-    public bool Changed_SelectionAnchorPositionIndex { get; set; }
-    public bool Changed_SelectionEndingPositionIndex { get; set; }
     
     public ValueTask FocusAsync()
     {

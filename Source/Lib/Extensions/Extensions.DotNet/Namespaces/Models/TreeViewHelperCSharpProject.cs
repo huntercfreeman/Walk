@@ -16,7 +16,7 @@ public class TreeViewHelperCSharpProject
 		var ancestorDirectory = parentDirectoryOfCSharpProject;
 		var hiddenFiles = HiddenFileFacts.GetHiddenFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
 
-		var directoryPathStringsList = await cSharpProjectTreeView.FileSystemProvider.Directory
+		var directoryPathStringsList = await cSharpProjectTreeView.CommonUtilityService.FileSystemProvider.Directory
 			.GetDirectoriesAsync(ancestorDirectory)
 			.ConfigureAwait(false);
 
@@ -25,7 +25,7 @@ public class TreeViewHelperCSharpProject
 			.Where(x => hiddenFiles.All(hidden => !x.EndsWith(hidden)))
 			.Select(x =>
 			{
-				var absolutePath = cSharpProjectTreeView.EnvironmentProvider.AbsolutePathFactory(x, true);
+				var absolutePath = cSharpProjectTreeView.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(x, true);
 
 				var namespaceString = cSharpProjectTreeView.Item.Namespace +
 					TreeViewNamespaceHelper.NAMESPACE_DELIMITER +
@@ -34,9 +34,7 @@ public class TreeViewHelperCSharpProject
 				return new TreeViewNamespacePath(new NamespacePath(namespaceString, absolutePath),
 					cSharpProjectTreeView.DotNetComponentRenderers,
 					cSharpProjectTreeView.IdeComponentRenderers,
-					cSharpProjectTreeView.CommonComponentRenderers,
-					cSharpProjectTreeView.FileSystemProvider,
-					cSharpProjectTreeView.EnvironmentProvider,
+					cSharpProjectTreeView.CommonUtilityService,
 					true,
 					false);
 			});
@@ -56,7 +54,7 @@ public class TreeViewHelperCSharpProject
 		foundUniqueDirectories = foundUniqueDirectories.OrderBy(x => x.Item.AbsolutePath.NameNoExtension).ToList();
 		foundDefaultDirectories = foundDefaultDirectories.OrderBy(x => x.Item.AbsolutePath.NameNoExtension).ToList();
 
-		var filePathStringsList = await cSharpProjectTreeView.FileSystemProvider.Directory
+		var filePathStringsList = await cSharpProjectTreeView.CommonUtilityService.FileSystemProvider.Directory
 			.GetFilesAsync(ancestorDirectory)
 			.ConfigureAwait(false);
 
@@ -65,15 +63,13 @@ public class TreeViewHelperCSharpProject
 			.Where(x => !x.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
 			.Select(x =>
 			{
-				var absolutePath = cSharpProjectTreeView.EnvironmentProvider.AbsolutePathFactory(x, false);
+				var absolutePath = cSharpProjectTreeView.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(x, false);
 				var namespaceString = cSharpProjectTreeView.Item.Namespace;
 
 				return (TreeViewNoType)new TreeViewNamespacePath(new NamespacePath(namespaceString, absolutePath),
 					cSharpProjectTreeView.DotNetComponentRenderers,
 					cSharpProjectTreeView.IdeComponentRenderers,
-					cSharpProjectTreeView.CommonComponentRenderers,
-					cSharpProjectTreeView.FileSystemProvider,
-					cSharpProjectTreeView.EnvironmentProvider,
+					cSharpProjectTreeView.CommonUtilityService,
 					false,
 					false);
 			});
@@ -82,8 +78,7 @@ public class TreeViewHelperCSharpProject
 			new CSharpProjectDependencies(cSharpProjectTreeView.Item),
             cSharpProjectTreeView.DotNetComponentRenderers,
 			cSharpProjectTreeView.IdeComponentRenderers,
-			cSharpProjectTreeView.FileSystemProvider,
-			cSharpProjectTreeView.EnvironmentProvider,
+			cSharpProjectTreeView.CommonUtilityService,
 			true,
 			false);
 	    

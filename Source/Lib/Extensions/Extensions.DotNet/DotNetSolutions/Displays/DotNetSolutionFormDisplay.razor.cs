@@ -1,11 +1,8 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
-using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib.CommandLines.Models;
@@ -22,21 +19,11 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
-	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-	[Inject]
-	private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-	[Inject]
-	private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
-	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
-	[Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
 	[CascadingParameter]
 	public IDialog DialogRecord { get; set; } = null!;
@@ -102,7 +89,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 			return;
 		}
 
-		if (WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
+		if (CommonUtilityService.WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
 		{
 			await HackForWebsite_StartNewDotNetSolutionCommandOnClick(
 					localSolutionName,
@@ -119,22 +106,22 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	        	ContinueWithFunc = parsedCommand =>
 	        	{
 	        		// Close Dialog
-					CommonUiService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+					CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
 					// Open the created .NET Solution
-					var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
+					var parentDirectoryAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 						localParentDirectoryName,
 						true);
 
 					var solutionAbsolutePathString =
 						parentDirectoryAbsolutePath.Value +
 						localSolutionName +
-						EnvironmentProvider.DirectorySeparatorChar +
+						CommonUtilityService.EnvironmentProvider.DirectorySeparatorChar +
 						localSolutionName +
 						'.' +
 						ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-					var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
+					var solutionAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 						solutionAbsolutePathString,
 						false);
 
@@ -156,10 +143,10 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 		string localParentDirectoryName)
 	{
 		var directoryContainingSolution =
-			EnvironmentProvider.JoinPaths(localParentDirectoryName, localSolutionName) +
-			EnvironmentProvider.DirectorySeparatorChar;
+			CommonUtilityService.EnvironmentProvider.JoinPaths(localParentDirectoryName, localSolutionName) +
+			CommonUtilityService.EnvironmentProvider.DirectorySeparatorChar;
 
-		await FileSystemProvider.Directory
+		await CommonUtilityService.FileSystemProvider.Directory
 			.CreateDirectoryAsync(directoryContainingSolution)
 			.ConfigureAwait(false);
 
@@ -168,21 +155,21 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 			'.' +
 			ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-		var solutionAbsolutePathString = EnvironmentProvider.JoinPaths(
+		var solutionAbsolutePathString = CommonUtilityService.EnvironmentProvider.JoinPaths(
 			directoryContainingSolution,
 			localSolutionFilenameWithExtension);
 
-		await FileSystemProvider.File.WriteAllTextAsync(
+		await CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
 				solutionAbsolutePathString,
 				HackForWebsite_NEW_SOLUTION_TEMPLATE)
 			.ConfigureAwait(false);
 
 		// Close Dialog
-		CommonUiService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+		CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
-		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", CommonComponentRenderers, CommonUiService, TimeSpan.FromSeconds(7));
+		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", CommonUtilityService, TimeSpan.FromSeconds(7));
 
-		var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
+		var solutionAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 			solutionAbsolutePathString,
 			false);
 

@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Walk.Common.RazorLib.Installations.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.BackgroundTasks.Models;
 
@@ -9,18 +10,18 @@ public sealed class ContinuousBackgroundTaskWorker
 
     public ContinuousBackgroundTaskWorker(
         BackgroundTaskQueue queue,
-        BackgroundTaskService backgroundTaskService,
+        CommonUtilityService commonUtilityService,
         ILoggerFactory loggerFactory,
         WalkHostingKind walkHostingKind)
     {
         Queue = queue;
-        BackgroundTaskService = backgroundTaskService;
+        CommonUtilityService = commonUtilityService;
         _logger = loggerFactory.CreateLogger<ContinuousBackgroundTaskWorker>();
         WalkHostingKind = walkHostingKind;
     }
 
     public BackgroundTaskQueue Queue { get; }
-    public BackgroundTaskService BackgroundTaskService { get; }
+    public CommonUtilityService CommonUtilityService { get; }
     public Task? StartAsyncTask { get; internal set; }
     public WalkHostingKind WalkHostingKind { get; }
     

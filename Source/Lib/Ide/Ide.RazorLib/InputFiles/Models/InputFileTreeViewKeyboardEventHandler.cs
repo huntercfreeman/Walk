@@ -1,10 +1,9 @@
-using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Commands.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 
@@ -14,36 +13,26 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 {
     private readonly IInputFileService _inputFileService;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly IEnvironmentProvider _environmentProvider;
+    private readonly CommonUtilityService _commonUtilityService;
     private readonly Func<AbsolutePath, Task> _setInputFileContentTreeViewRootFunc;
     private readonly Func<Task> _focusSearchInputElementFunc;
     private readonly Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> _getSearchMatchTuplesFunc;
-    private readonly BackgroundTaskService _backgroundTaskService;
 
     public InputFileTreeViewKeyboardEventHandler(
-	        ITreeViewService treeViewService,
 	        IInputFileService inputFileService,
 	        IIdeComponentRenderers ideComponentRenderers,
-	        ICommonComponentRenderers commonComponentRenderers,
-	        IFileSystemProvider fileSystemProvider,
-	        IEnvironmentProvider environmentProvider,
+	        CommonUtilityService commonUtilityService,
 	        Func<AbsolutePath, Task> setInputFileContentTreeViewRootFunc,
 	        Func<Task> focusSearchInputElementFunc,
-	        Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc,
-	        BackgroundTaskService backgroundTaskService)
-        : base(treeViewService, backgroundTaskService)
+	        Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc)
+        : base(commonUtilityService)
     {
         _inputFileService = inputFileService;
         _ideComponentRenderers = ideComponentRenderers;
-        _commonComponentRenderers = commonComponentRenderers;
-        _fileSystemProvider = fileSystemProvider;
-        _environmentProvider = environmentProvider;
+        _commonUtilityService = commonUtilityService;
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
         _focusSearchInputElementFunc = focusSearchInputElementFunc;
         _getSearchMatchTuplesFunc = getSearchMatchTuplesFunc;
-        _backgroundTaskService = backgroundTaskService;
     }
 
     public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
@@ -140,10 +129,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     {
         _inputFileService.OpenParentDirectory(
             _ideComponentRenderers,
-            _commonComponentRenderers,
-            _fileSystemProvider,
-            _environmentProvider,
-            _backgroundTaskService,
+            _commonUtilityService,
             parentDirectoryTreeViewModel: null);
 
         ChangeContentRootToOpenedTreeView(_inputFileService.GetInputFileState());
@@ -151,7 +137,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 
     private void HandleRefreshButtonOnClick(TreeViewCommandArgs commandArgs)
     {
-        _inputFileService.RefreshCurrentSelection(_backgroundTaskService, currentSelection: null);
+        _inputFileService.RefreshCurrentSelection(currentSelection: null);
         ChangeContentRootToOpenedTreeView(_inputFileService.GetInputFileState());
     }
 

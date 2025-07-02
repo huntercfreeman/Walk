@@ -11,7 +11,7 @@ public class TreeViewHelperNamespacePathDirectory
     {
         var directoryAbsolutePathString = directoryTreeView.Item.AbsolutePath.Value;
 
-        var directoryPathStringsList = await directoryTreeView.FileSystemProvider.Directory
+        var directoryPathStringsList = await directoryTreeView.CommonUtilityService.FileSystemProvider.Directory
             .GetDirectoriesAsync(directoryAbsolutePathString)
             .ConfigureAwait(false);
 
@@ -19,7 +19,7 @@ public class TreeViewHelperNamespacePathDirectory
             .OrderBy(pathString => pathString)
             .Select(x =>
             {
-                var absolutePath = directoryTreeView.EnvironmentProvider.AbsolutePathFactory(x, true);
+                var absolutePath = directoryTreeView.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(x, true);
 
                 var namespaceString = directoryTreeView.Item.Namespace +
                     TreeViewNamespaceHelper.NAMESPACE_DELIMITER +
@@ -29,14 +29,12 @@ public class TreeViewHelperNamespacePathDirectory
                     new NamespacePath(namespaceString, absolutePath),
                     directoryTreeView.DotNetComponentRenderers,
                     directoryTreeView.IdeComponentRenderers,
-                    directoryTreeView.CommonComponentRenderers,
-                    directoryTreeView.FileSystemProvider,
-                    directoryTreeView.EnvironmentProvider,
+                    directoryTreeView.CommonUtilityService,
                     true,
                     false);
             });
 
-        var filePathStringsList = await directoryTreeView.FileSystemProvider.Directory
+        var filePathStringsList = await directoryTreeView.CommonUtilityService.FileSystemProvider.Directory
             .GetFilesAsync(directoryAbsolutePathString)
             .ConfigureAwait(false);
 
@@ -44,16 +42,14 @@ public class TreeViewHelperNamespacePathDirectory
             .OrderBy(pathString => pathString)
             .Select(x =>
             {
-                var absolutePath = directoryTreeView.EnvironmentProvider.AbsolutePathFactory(x, false);
+                var absolutePath = directoryTreeView.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(x, false);
                 var namespaceString = directoryTreeView.Item.Namespace;
 
                 return (TreeViewNoType)new TreeViewNamespacePath(
                     new NamespacePath(namespaceString, absolutePath),
                     directoryTreeView.DotNetComponentRenderers,
                     directoryTreeView.IdeComponentRenderers,
-                    directoryTreeView.CommonComponentRenderers,
-                    directoryTreeView.FileSystemProvider,
-                    directoryTreeView.EnvironmentProvider,
+                    directoryTreeView.CommonUtilityService,
                     false,
                     false);
             }).ToList();

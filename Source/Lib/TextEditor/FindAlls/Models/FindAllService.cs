@@ -1,8 +1,9 @@
 using Walk.Common.RazorLib.Reactives.Models;
-using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Walk.TextEditor.RazorLib.Lexers.Models;
 
 namespace Walk.TextEditor.RazorLib.FindAlls.Models;
 
@@ -10,22 +11,15 @@ public class FindAllService : IFindAllService
 {
     private readonly object _stateModificationLock = new();
 
-    private readonly IFileSystemProvider _fileSystemProvider;
-	private readonly IEnvironmentProvider _environmentProvider;
-	private readonly ITreeViewService _treeViewService;
+	private readonly CommonUtilityService _commonUtilityService;
 	private readonly Throttle _throttleSetSearchQuery = new Throttle(TimeSpan.FromMilliseconds(500));
 	private readonly Throttle _throttleUiUpdate = new Throttle(ThrottleFacts.TwentyFour_Frames_Per_Second);
 	
 	private readonly object _flushSearchResultsLock = new();
 	
-	public FindAllService(
-		IFileSystemProvider fileSystemProvider,
-		IEnvironmentProvider environmentProvider,
-		ITreeViewService treeViewService)
+	public FindAllService(CommonUtilityService commonUtilityService)
 	{
-		_fileSystemProvider = fileSystemProvider;
-		_environmentProvider = environmentProvider;
-		_treeViewService = treeViewService;
+		_commonUtilityService = commonUtilityService;
 	}
 	
     /// <summary>
@@ -156,7 +150,7 @@ public class FindAllService : IFindAllService
 			{
 				await StartSearchTask(
 					progressBarModel,
-					_fileSystemProvider,
+					_commonUtilityService.FileSystemProvider,
 					textEditorFindAllState,
 					cancellationToken);
 			}
@@ -328,7 +322,7 @@ public class FindAllService : IFindAllService
 	
 	    var treeViewList = groupedResults.Select(group =>
 	    {
-	    	var absolutePath = _environmentProvider.AbsolutePathFactory(
+	    	var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 	    		group.Key.Value,
 	    		false);
 	    		
@@ -350,18 +344,18 @@ public class FindAllService : IFindAllService
 	        ? Array.Empty<TreeViewNoType>()
 	        : new List<TreeViewNoType> { firstNode };
 	
-	    if (!_treeViewService.TryGetTreeViewContainer(TextEditorFindAllState.TreeViewFindAllContainerKey, out _))
+	    if (!_commonUtilityService.TryGetTreeViewContainer(TextEditorFindAllState.TreeViewFindAllContainerKey, out _))
 	    {
-	        _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+	        _commonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
 	            TextEditorFindAllState.TreeViewFindAllContainerKey,
 	            adhocRoot,
 	            activeNodes));
 	    }
 	    else
 	    {
-	        _treeViewService.ReduceWithRootNodeAction(TextEditorFindAllState.TreeViewFindAllContainerKey, adhocRoot);
+	        _commonUtilityService.TreeView_WithRootNodeAction(TextEditorFindAllState.TreeViewFindAllContainerKey, adhocRoot);
 	
-	        _treeViewService.ReduceSetActiveNodeAction(
+	        _commonUtilityService.TreeView_SetActiveNodeAction(
 	            TextEditorFindAllState.TreeViewFindAllContainerKey,
 	            firstNode,
 	            true,

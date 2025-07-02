@@ -15,9 +15,7 @@ public class TreeViewHelperDotNetSolution
 				x,
 				treeViewSolution.DotNetComponentRenderers,
 				treeViewSolution.IdeComponentRenderers,
-				treeViewSolution.CommonComponentRenderers,
-				treeViewSolution.FileSystemProvider,
-				treeViewSolution.EnvironmentProvider,
+				treeViewSolution.CommonUtilityService,
 				true,
 				false)
 			{
@@ -34,9 +32,7 @@ public class TreeViewHelperDotNetSolution
 					new NamespacePath(x.AbsolutePath.NameNoExtension, x.AbsolutePath),
 					treeViewSolution.DotNetComponentRenderers,
 					treeViewSolution.IdeComponentRenderers,
-					treeViewSolution.CommonComponentRenderers,
-					treeViewSolution.FileSystemProvider,
-					treeViewSolution.EnvironmentProvider,
+					treeViewSolution.CommonUtilityService,
 					true,
 					false)
 				{

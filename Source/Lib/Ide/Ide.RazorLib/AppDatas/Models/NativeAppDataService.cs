@@ -1,6 +1,6 @@
 using System.Text.Json;
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Ide.RazorLib.AppDatas.Models;
 
@@ -13,18 +13,11 @@ public class NativeAppDataService : IAppDataService
 	/// </summary>
 	private readonly Dictionary<string, IAppData> _appDataMap = new();
 	
-	private readonly IEnvironmentProvider _environmentProvider;
-	private readonly IFileSystemProvider _fileSystemProvider;
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
+	private readonly CommonUtilityService _commonUtilityService;
 
-	public NativeAppDataService(
-		IEnvironmentProvider environmentProvider,
-		IFileSystemProvider fileSystemProvider,
-		ICommonComponentRenderers commonComponentRenderers)
+	public NativeAppDataService(CommonUtilityService commonUtilityService)
 	{
-		_environmentProvider = environmentProvider;
-		_fileSystemProvider = fileSystemProvider;
-		_commonComponentRenderers = commonComponentRenderers;
+		_commonUtilityService = commonUtilityService;
 	}
 	
 	private bool _isInitialized;
@@ -36,26 +29,26 @@ public class NativeAppDataService : IAppDataService
 		{
 			_isInitialized = true;
 			
-			var directoryPath = _environmentProvider.SafeRoamingApplicationDataDirectoryAbsolutePath.Value;
+			var directoryPath = _commonUtilityService.EnvironmentProvider.SafeRoamingApplicationDataDirectoryAbsolutePath.Value;
 			
-			var directoryExists = await _fileSystemProvider.Directory
+			var directoryExists = await _commonUtilityService.FileSystemProvider.Directory
 				.ExistsAsync(directoryPath)
 				.ConfigureAwait(false);
 			
 			if (!directoryExists)
 			{
-				await _fileSystemProvider.Directory
+				await _commonUtilityService.FileSystemProvider.Directory
 					.CreateDirectoryAsync(directoryPath)
 					.ConfigureAwait(false);
 			}
 			
-			_environmentProvider.DeletionPermittedRegister(
+			_commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(
 				new SimplePath(directoryPath, true));
 		}
 		
 		var options = new JsonSerializerOptions { WriteIndented = true };
 	
-		await _fileSystemProvider.File.WriteAllTextAsync(
+		await _commonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
 		        GetFilePath(appData.AssemblyName, appData.TypeName, appData.UniqueIdentifier),
 		        JsonSerializer.Serialize(appData, options))
 	        .ConfigureAwait(false);
@@ -86,7 +79,7 @@ public class NativeAppDataService : IAppDataService
 			
 			if (!success || forceRefreshCache)
 			{
-				var appDataJson = await _fileSystemProvider.File
+				var appDataJson = await _commonUtilityService.FileSystemProvider.File
 					.ReadAllTextAsync(path)
 					.ConfigureAwait(false);
 				
@@ -123,8 +116,8 @@ public class NativeAppDataService : IAppDataService
 			typeName,
 			uniqueIdentifier);
 		
-		return _environmentProvider.JoinPaths(
-	    	_environmentProvider.SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
+		return _commonUtilityService.EnvironmentProvider.JoinPaths(
+	    	_commonUtilityService.EnvironmentProvider.SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
 	    	relativePath);
 	}
 }

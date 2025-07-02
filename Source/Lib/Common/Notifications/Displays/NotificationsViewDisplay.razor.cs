@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Notifications.Displays;
 
 public partial class NotificationsViewDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private ICommonUiService CommonUiService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
     
     private readonly Action _defaultClearAction = new Action(() => { });
 
@@ -15,7 +16,7 @@ public partial class NotificationsViewDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
     {
-    	CommonUiService.CommonUiStateChanged += OnCommonUiStateChanged;
+    	CommonUtilityService.CommonUiStateChanged += OnCommonUiStateChanged;
     }
 
     private string GetIsActiveCssClass(
@@ -29,22 +30,22 @@ public partial class NotificationsViewDisplay : ComponentBase, IDisposable
 
     private void Clear()
     {
-        CommonUiService.Notification_ReduceClearDefaultAction();
+        CommonUtilityService.Notification_ReduceClearDefaultAction();
     }
 
     private void ClearRead()
     {
-        CommonUiService.Notification_ReduceClearReadAction();
+        CommonUtilityService.Notification_ReduceClearReadAction();
     }
 
     private void ClearDeleted()
     {
-        CommonUiService.Notification_ReduceClearDeletedAction();
+        CommonUtilityService.Notification_ReduceClearDeletedAction();
     }
 
     private void ClearArchived()
     {
-        CommonUiService.Notification_ReduceClearArchivedAction();
+        CommonUtilityService.Notification_ReduceClearArchivedAction();
     }
     
     public async void OnCommonUiStateChanged(CommonUiEventKind commonUiEventKind)
@@ -55,6 +56,6 @@ public partial class NotificationsViewDisplay : ComponentBase, IDisposable
 	
 	public void Dispose()
 	{
-		CommonUiService.CommonUiStateChanged -= OnCommonUiStateChanged;
+		CommonUtilityService.CommonUiStateChanged -= OnCommonUiStateChanged;
 	}
 }

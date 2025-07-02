@@ -1,9 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
-using Walk.Common.RazorLib.Clipboards.Models;
 using Walk.Common.RazorLib.JsRuntimes.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Menus.Models;
@@ -12,6 +10,7 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.Cursors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
@@ -21,7 +20,6 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Events.Models;
 using Walk.TextEditor.RazorLib.ComponentRenderers.Models;
-using Walk.TextEditor.RazorLib.Exceptions;
 using Walk.TextEditor.RazorLib.FindAlls.Models;
 
 namespace Walk.TextEditor.RazorLib.Commands.Models.Defaults;
@@ -36,21 +34,19 @@ public class TextEditorCommandDefaultFunctions
     public static async ValueTask CopyAsync(
 	    TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        TextEditorViewModel viewModel,
-        IClipboardService clipboardService)
+        TextEditorViewModel viewModel)
     {
         var selectedText = TextEditorSelectionHelper.GetSelectedText(viewModel, modelModifier);
         selectedText ??= modelModifier.GetLineTextRange(viewModel.LineIndex, 1);
 
-        await clipboardService.SetClipboard(selectedText).ConfigureAwait(false);
+        await editContext.TextEditorService.CommonUtilityService.SetClipboard(selectedText).ConfigureAwait(false);
         await viewModel.FocusAsync().ConfigureAwait(false);
     }
 
     public static async ValueTask CutAsync(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        TextEditorViewModel viewModel,
-        IClipboardService clipboardService)
+        TextEditorViewModel viewModel)
     {
     	if (!TextEditorSelectionHelper.HasSelectedText(viewModel))
         {
@@ -62,7 +58,7 @@ public class TextEditorCommandDefaultFunctions
         }
 
         var selectedText = TextEditorSelectionHelper.GetSelectedText(viewModel, modelModifier) ?? string.Empty;
-        await clipboardService.SetClipboard(selectedText).ConfigureAwait(false);
+        await editContext.TextEditorService.CommonUtilityService.SetClipboard(selectedText).ConfigureAwait(false);
 
         await viewModel.FocusAsync().ConfigureAwait(false);
 
@@ -74,10 +70,9 @@ public class TextEditorCommandDefaultFunctions
     public static async ValueTask PasteAsync(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        TextEditorViewModel viewModel,
-        IClipboardService clipboardService)
+        TextEditorViewModel viewModel)
     {
-    	var clipboard = await clipboardService.ReadClipboard().ConfigureAwait(false);
+    	var clipboard = await editContext.TextEditorService.CommonUtilityService.ReadClipboard().ConfigureAwait(false);
         modelModifier.Insert(clipboard, viewModel);
     }
 
@@ -86,15 +81,14 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
         ICommonComponentRenderers commonComponentRenderers,
-        ICommonUiService commonUiService)
+        CommonUtilityService commonUtilityService)
     {
     	if (viewModel.PersistentState.OnSaveRequested is null)
     	{
     		NotificationHelper.DispatchError(
 		        nameof(TriggerSave),
 		        $"{nameof(TriggerSave)} was null",
-		        commonComponentRenderers,
-				commonUiService,
+				commonUtilityService,
 		        TimeSpan.FromSeconds(7));
     	}
     	else
@@ -133,7 +127,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel)
     {
-    	editContext.TextEditorService.AppDimensionService.NotifyIntraAppResize();
+    	editContext.TextEditorService.CommonUtilityService.AppDimension_NotifyIntraAppResize();
     }
 
     public static void ScrollLineDown(
@@ -740,7 +734,7 @@ public class TextEditorCommandDefaultFunctions
         IEnvironmentProvider environmentProvider,
         IFileSystemProvider fileSystemProvider,
         TextEditorService textEditorService,
-        ICommonUiService commonUiService)
+        CommonUtilityService commonUtilityService)
     {
     	var componentData = viewModel.PersistentState.ComponentData;
     	if (componentData is null)
@@ -848,7 +842,7 @@ public class TextEditorCommandDefaultFunctions
 				await viewModel.FocusAsync();
 			});
 
-        commonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        commonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
     }
     
     public static async ValueTask QuickActionsSlashRefactor(
@@ -857,7 +851,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorViewModel viewModel,
         WalkCommonJavaScriptInteropApi jsRuntimeCommonApi,
         TextEditorService textEditorService,
-        ICommonUiService commonUiService)
+        CommonUtilityService commonUtilityService)
     {
     	var componentData = viewModel.PersistentState.ComponentData;
     	if (componentData is null)
@@ -912,7 +906,7 @@ public class TextEditorCommandDefaultFunctions
 				await viewModel.FocusAsync();
 			});
 
-        commonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        commonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
     }
     
     public static void GoToDefinition(
@@ -1117,7 +1111,7 @@ public class TextEditorCommandDefaultFunctions
         		editContext,
 		        modelModifier,
 		        viewModel,
-		        componentData.TextEditorViewModelSlimDisplay.CommonUiService,
+		        componentData.TextEditorViewModelSlimDisplay.CommonUtilityService,
 		        componentData);
         }
         else if (EventUtils.IsSyntaxHighlightingInvoker(keymapArgs))
@@ -1189,7 +1183,7 @@ public class TextEditorCommandDefaultFunctions
         		editContext,
 		        modelModifier,
 		        viewModel,
-		        componentData.TextEditorViewModelSlimDisplay.CommonUiService,
+		        componentData.TextEditorViewModelSlimDisplay.CommonUtilityService,
 		        componentData);
         }
 
@@ -1236,7 +1230,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
-        ICommonUiService commonUiService,
+        CommonUtilityService commonUtilityService,
         double? leftOffset,
         double? topOffset,
         Type componentType,
@@ -1292,25 +1286,25 @@ public class TextEditorCommandDefaultFunctions
 			ShouldShowOutOfBoundsClickDisplay = false
 		};
 
-        commonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        commonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
 	}
 	
 	public static void RemoveDropdown(
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel,
-        ICommonUiService commonUiService)
+        CommonUtilityService commonUtilityService)
     {
     	viewModel.PersistentState.MenuKind = MenuKind.None;
     
 		var dropdownKey = new Key<DropdownRecord>(viewModel.PersistentState.ViewModelKey.Guid);
-		commonUiService.Dropdown_ReduceDisposeAction(dropdownKey);
+		commonUtilityService.Dropdown_ReduceDisposeAction(dropdownKey);
 	}
 	
 	public static void ShowContextMenu(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
-        ICommonUiService commonUiService,
+        CommonUtilityService commonUtilityService,
         TextEditorComponentData componentData)
     {
     	viewModel.PersistentState.MenuKind = MenuKind.ContextMenu;
@@ -1319,7 +1313,7 @@ public class TextEditorCommandDefaultFunctions
     		editContext,
 	        modelModifier,
 	        viewModel,
-	        commonUiService,
+	        commonUtilityService,
 	        leftOffset: null,
 	        topOffset: null,
 	        typeof(Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.ContextMenu),
@@ -1336,7 +1330,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
-        ICommonUiService commonUiService,
+        CommonUtilityService commonUtilityService,
         TextEditorComponentData componentData)
     {
     	viewModel.PersistentState.MenuKind = MenuKind.AutoCompleteMenu;
@@ -1345,7 +1339,7 @@ public class TextEditorCommandDefaultFunctions
     		editContext,
 	        modelModifier,
 	        viewModel,
-	        commonUiService,
+	        commonUtilityService,
 	        leftOffset: null,
 	        topOffset: null,
 	        typeof(Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu),

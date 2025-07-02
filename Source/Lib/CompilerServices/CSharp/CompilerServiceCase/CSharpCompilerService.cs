@@ -1,8 +1,8 @@
 using System.Text;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Clipboards.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Autocompletes.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
@@ -36,12 +36,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     // Service dependencies
     private readonly TextEditorService _textEditorService;
-    private readonly IClipboardService _clipboardService;
+    private readonly CommonUtilityService _commonUtilityService;
     
-    public CSharpCompilerService(TextEditorService textEditorService, IClipboardService clipboardService)
+    public CSharpCompilerService(TextEditorService textEditorService, CommonUtilityService commonUtilityService)
     {
     	_textEditorService = textEditorService;
-    	_clipboardService = clipboardService;
+    	_commonUtilityService = commonUtilityService;
     	
     	__CSharpBinder = new(_textEditorService);
     }
@@ -669,7 +669,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 						MenuOptionKind.Other,
 						onClickFunc: async () =>
 						{
-							await _clipboardService.SetClipboard(usingStatementText).ConfigureAwait(false);
+							await _commonUtilityService.SetClipboard(usingStatementText).ConfigureAwait(false);
 						}));
 				}
 				else
@@ -761,7 +761,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         componentData.ContinueRenderingTooltipAsync,
                         Walk.TextEditor.RazorLib.Commands.Models.Defaults.TextEditorCommandDefaultFunctions.OnWheel,
                         (_textEditorService, viewModelModifier.PersistentState.ViewModelKey));
-                    componentData.TextEditorViewModelSlimDisplay.CommonUiService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
+                    componentData.TextEditorViewModelSlimDisplay.CommonUtilityService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
                 }
             }
         }
@@ -792,7 +792,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         componentData.ContinueRenderingTooltipAsync,
                         Walk.TextEditor.RazorLib.Commands.Models.Defaults.TextEditorCommandDefaultFunctions.OnWheel,
                         (_textEditorService, viewModelModifier.PersistentState.ViewModelKey));
-                    componentData.TextEditorViewModelSlimDisplay.CommonUiService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
+                    componentData.TextEditorViewModelSlimDisplay.CommonUtilityService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
                 }
             }
         }
@@ -800,7 +800,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         if (!foundMatch)
         {
 			viewModelModifier.PersistentState.TooltipModel = null;
-			componentData.TextEditorViewModelSlimDisplay.CommonUiService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
+			componentData.TextEditorViewModelSlimDisplay.CommonUtilityService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
         }
 
         // TODO: Measure the tooltip, and reposition if it would go offscreen.

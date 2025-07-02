@@ -1,11 +1,10 @@
 using System.Text.Json;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.RenderStates.Models;
-using Walk.Common.RazorLib.Storages.Models;
 using Walk.Common.RazorLib.Themes.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
@@ -21,28 +20,16 @@ public sealed class TextEditorOptionsApi
 
     private readonly TextEditorService _textEditorService;
     private readonly WalkTextEditorConfig _textEditorConfig;
-    private readonly IStorageService _storageService;
-    private readonly ICommonUiService _commonUiService;
-    private readonly IContextService _contextService;
-    private readonly IThemeService _themeService;
-    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
+    private readonly CommonUtilityService _commonUtilityService;
 
     public TextEditorOptionsApi(
         TextEditorService textEditorService,
         WalkTextEditorConfig textEditorConfig,
-        IStorageService storageService,
-        ICommonUiService commonUiService,
-        IContextService contextService,
-        IThemeService themeService,
-        CommonBackgroundTaskApi commonBackgroundTaskApi)
+        CommonUtilityService commonUtilityService)
     {
         _textEditorService = textEditorService;
         _textEditorConfig = textEditorConfig;
-        _storageService = storageService;
-        _commonUiService = commonUiService;
-        _contextService = contextService;
-        _themeService = themeService;
-        _commonBackgroundTaskApi = commonBackgroundTaskApi;
+        _commonUtilityService = commonUtilityService;
     }
     
     private TextEditorOptionsState _textEditorOptionsState = new();
@@ -96,7 +83,7 @@ public sealed class TextEditorOptionsApi
             isResizableOverride ?? _textEditorConfig.SettingsDialogConfig.ComponentIsResizable,
             null);
 
-        _commonUiService.Dialog_ReduceRegisterAction(settingsDialog);
+        _commonUtilityService.Dialog_ReduceRegisterAction(settingsDialog);
     }
 
     public void ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null)
@@ -112,7 +99,7 @@ public sealed class TextEditorOptionsApi
             isResizableOverride ?? _textEditorConfig.FindAllDialogConfig.ComponentIsResizable,
             null);
 
-        _commonUiService.Dialog_ReduceRegisterAction(_findAllDialog);
+        _commonUtilityService.Dialog_ReduceRegisterAction(_findAllDialog);
     }
 
     public void SetTheme(ThemeRecord theme, bool updateStorage = true)
@@ -136,7 +123,7 @@ public sealed class TextEditorOptionsApi
 		//
 		// Can probably use 'theme' variable here but
 		// I don't want to touch that right now -- incase there are unexpected consequences.
-        var usingThemeCssClassString = _themeService.GetThemeState().ThemeList
+        var usingThemeCssClassString = _commonUtilityService.GetThemeState().ThemeList
         	.FirstOrDefault(x => x.Key == GetTextEditorOptionsState().Options.CommonOptions.ThemeKey)
         	?.CssClassString
             ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
@@ -379,7 +366,7 @@ public sealed class TextEditorOptionsApi
 
     public void WriteToStorage()
     {
-        _commonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+        _commonUtilityService.Enqueue(new CommonWorkArgs
         {
     		WorkKind = CommonWorkKind.WriteToLocalStorage,
         	WriteToLocalStorage_Key = _textEditorService.StorageKey,
@@ -389,7 +376,7 @@ public sealed class TextEditorOptionsApi
 
     public async Task SetFromLocalStorageAsync()
     {
-        var optionsJsonString = await _storageService.GetValue(_textEditorService.StorageKey).ConfigureAwait(false) as string;
+        var optionsJsonString = await _commonUtilityService.Storage_GetValue(_textEditorService.StorageKey).ConfigureAwait(false) as string;
 
         if (string.IsNullOrWhiteSpace(optionsJsonString))
             return;
@@ -401,7 +388,7 @@ public sealed class TextEditorOptionsApi
 
         if (optionsJson.CommonOptionsJsonDto?.ThemeKey is not null)
         {
-            var matchedTheme = _textEditorService.ThemeService.GetThemeState().ThemeList.FirstOrDefault(
+            var matchedTheme = _textEditorService.CommonUtilityService.GetThemeState().ThemeList.FirstOrDefault(
                 x => x.Key == optionsJson.CommonOptionsJsonDto.ThemeKey);
 
             SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false);

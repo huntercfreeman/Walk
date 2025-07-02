@@ -4,9 +4,7 @@ using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Menus.Displays;
 using Walk.Common.RazorLib.Options.Models;
-using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib.Autocompletes.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -20,9 +18,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private ICommonUiService CommonUiService { get; set; } = null!;
-    [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public Key<TextEditorComponentData> ComponentDataKey { get; set; }
@@ -117,7 +113,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 					TextEditorCommandDefaultFunctions.RemoveDropdown(
 				        editContext,
 				        viewModelModifier,
-				        CommonUiService);
+				        CommonUtilityService);
 				}
 
 				return ValueTask.CompletedTask;
@@ -232,7 +228,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 						TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
 					        viewModelModifier,
-					        CommonUiService);
+					        CommonUtilityService);
 					}
 
 					return virtualizationResult.ViewModel.FocusAsync();

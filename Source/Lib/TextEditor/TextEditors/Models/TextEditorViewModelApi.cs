@@ -1,40 +1,28 @@
 using System.Diagnostics;
 using System.Text;
 using Walk.Common.RazorLib.Installations.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Panels.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.TextEditor.RazorLib.Keymaps.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Characters.Models;
 using Walk.TextEditor.RazorLib.Cursors.Models;
 using Walk.TextEditor.RazorLib.Exceptions;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Walk.TextEditor.RazorLib.Decorations.Models;
 
 namespace Walk.TextEditor.RazorLib.TextEditors.Models;
 
 public sealed class TextEditorViewModelApi
 {
     private readonly TextEditorService _textEditorService;
-    private readonly BackgroundTaskService _backgroundTaskService;
-    private readonly ICommonUiService _commonUiService;
-
-    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
+    private readonly CommonUtilityService _commonUtilityService;
     
     public TextEditorViewModelApi(
         TextEditorService textEditorService,
-        BackgroundTaskService backgroundTaskService,
-        CommonBackgroundTaskApi commonBackgroundTaskApi,
-        ICommonUiService commonUiService)
+        CommonUtilityService commonUtilityService)
     {
         _textEditorService = textEditorService;
-        _backgroundTaskService = backgroundTaskService;
-        _commonBackgroundTaskApi = commonBackgroundTaskApi;
-        _commonUiService = commonUiService;
+        _commonUtilityService = commonUtilityService;
     }
     
     private Task _cursorShouldBlinkTask = Task.CompletedTask;
@@ -104,8 +92,7 @@ public sealed class TextEditorViewModelApi
 			viewModelKey,
 			resourceUri,
 			_textEditorService,
-			_commonUiService,
-			_commonBackgroundTaskApi,
+			_commonUtilityService,
 			TextEditorVirtualizationResult.ConstructEmpty(),
 			new TextEditorDimensions(0, 0, 0, 0),
 			scrollLeft: 0,
@@ -291,7 +278,7 @@ public sealed class TextEditorViewModelApi
         if (targetScrollTop == -1 && targetScrollLeft == -1)
         	return;
         
-        viewModel.Changed_Cursor_AnyState = true;
+        viewModel.PersistentState.Changed_Cursor_AnyState = true;
         
         if (targetScrollTop != -1 && targetScrollLeft != -1)
         	SetScrollPositionBoth(editContext, viewModel, targetScrollLeft, targetScrollTop);
@@ -303,7 +290,7 @@ public sealed class TextEditorViewModelApi
 
     public ValueTask FocusPrimaryCursorAsync(string primaryCursorContentId)
     {
-        return _commonBackgroundTaskApi.JsRuntimeCommonApi
+        return _commonUtilityService.JsRuntimeCommonApi
             .FocusHtmlElementById(primaryCursorContentId, preventScroll: true);
     }
 

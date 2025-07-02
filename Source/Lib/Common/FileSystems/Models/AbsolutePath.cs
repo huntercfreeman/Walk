@@ -18,7 +18,6 @@ public struct AbsolutePath
     {
     	ExactInput = absolutePathString;
         IsDirectory = isDirectory;
-        EnvironmentProvider = environmentProvider;
         _ancestorDirectoryList = ancestorDirectoryList;
 
         var lengthAbsolutePathString = absolutePathString.Length;
@@ -28,7 +27,7 @@ public struct AbsolutePath
             // Strip the last character if this is a directory, where the exact input ended in a directory separator char.
             // Reasoning: This standardizes what a directory looks like within the scope of this method.
             //
-            if (EnvironmentProvider.IsDirectorySeparator(absolutePathString[^1]))
+            if (environmentProvider.IsDirectorySeparator(absolutePathString[^1]))
                 lengthAbsolutePathString--;
         }
         
@@ -42,12 +41,12 @@ public struct AbsolutePath
         {
             char currentCharacter = absolutePathString[position++];
 
-            if (EnvironmentProvider.IsDirectorySeparator(currentCharacter))
+            if (environmentProvider.IsDirectorySeparator(currentCharacter))
             {
                 // ConsumeTokenAsDirectory
 	            formattedBuilder
 	            	.Append(tokenBuilder.ToString())
-	            	.Append(EnvironmentProvider.DirectorySeparatorChar);
+	            	.Append(environmentProvider.DirectorySeparatorChar);
 	            
 	            tokenBuilder.Clear();
 	            
@@ -102,7 +101,7 @@ public struct AbsolutePath
         else
         {
             NameNoExtension = fileNameAmbiguous;
-            ExtensionNoPeriod = EnvironmentProvider.DirectorySeparatorChar.ToString();
+            ExtensionNoPeriod = environmentProvider.DirectorySeparatorChar.ToString();
         }
         
         if (IsDirectory)
@@ -131,10 +130,10 @@ public struct AbsolutePath
         if (formattedString.Length == 2)
         {
         	// If two directory separators chars are one after another and that is the only text in the string.
-        	if ((formattedString[0] == EnvironmentProvider.DirectorySeparatorChar && formattedString[1] == EnvironmentProvider.DirectorySeparatorChar) ||
-        	    (formattedString[0] == EnvironmentProvider.AltDirectorySeparatorChar && formattedString[1] == EnvironmentProvider.AltDirectorySeparatorChar))
+        	if ((formattedString[0] == environmentProvider.DirectorySeparatorChar && formattedString[1] == environmentProvider.DirectorySeparatorChar) ||
+        	    (formattedString[0] == environmentProvider.AltDirectorySeparatorChar && formattedString[1] == environmentProvider.AltDirectorySeparatorChar))
         	{
-        		Value = EnvironmentProvider.DirectorySeparatorChar.ToString();
+        		Value = environmentProvider.DirectorySeparatorChar.ToString();
         		return;
         	}
         }
@@ -149,7 +148,6 @@ public struct AbsolutePath
     public string? ExactInput { get; }
     public PathType PathType { get; } = PathType.AbsolutePath;
     public bool IsDirectory { get; private set; }
-    public IEnvironmentProvider EnvironmentProvider { get; }
     /// <summary>
     /// The <see cref="NameNoExtension"/> for a directory does NOT end with a directory separator char.
     /// </summary>
@@ -164,12 +162,12 @@ public struct AbsolutePath
     public string NameWithExtension => _nameWithExtension ??= PathHelper.CalculateNameWithExtension(NameNoExtension, ExtensionNoPeriod, IsDirectory);
     public bool IsRootDirectory => ParentDirectory is null;
     
-    public List<string> GetAncestorDirectoryList()
+    public List<string> GetAncestorDirectoryList(IEnvironmentProvider environmentProvider)
     {
     	return _ancestorDirectoryList ??= new AbsolutePath(
         		Value,
 	            IsDirectory,
-	            EnvironmentProvider,
+	            environmentProvider,
 	            ancestorDirectoryList: new())
             ._ancestorDirectoryList;
     }

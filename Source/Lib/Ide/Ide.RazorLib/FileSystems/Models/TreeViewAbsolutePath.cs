@@ -1,8 +1,8 @@
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.WatchWindows.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 
 namespace Walk.Ide.RazorLib.FileSystems.Models;
@@ -12,23 +12,17 @@ public class TreeViewAbsolutePath : TreeViewWithType<AbsolutePath>
     public TreeViewAbsolutePath(
             AbsolutePath absolutePath,
             IIdeComponentRenderers ideComponentRenderers,
-            ICommonComponentRenderers commonComponentRenderers,
-            IFileSystemProvider fileSystemProvider,
-            IEnvironmentProvider environmentProvider,
+            CommonUtilityService commonUtilityService,
             bool isExpandable,
             bool isExpanded)
         : base(absolutePath, isExpandable, isExpanded)
     {
         IdeComponentRenderers = ideComponentRenderers;
-        CommonComponentRenderers = commonComponentRenderers;
-        FileSystemProvider = fileSystemProvider;
-        EnvironmentProvider = environmentProvider;
+        CommonUtilityService = commonUtilityService;
     }
 
     public IIdeComponentRenderers IdeComponentRenderers { get; }
-    public ICommonComponentRenderers CommonComponentRenderers { get; }
-    public IFileSystemProvider FileSystemProvider { get; }
-    public IEnvironmentProvider EnvironmentProvider { get; }
+    public CommonUtilityService CommonUtilityService { get; }
 
     public override bool Equals(object? obj)
     {
@@ -150,7 +144,7 @@ public class TreeViewAbsolutePath : TreeViewWithType<AbsolutePath>
         {
             ChildList = new List<TreeViewNoType>
             {
-                new TreeViewException(exception, false, false, CommonComponentRenderers)
+                new TreeViewException(exception, false, false, CommonUtilityService.CommonComponentRenderers)
                 {
                     Parent = this,
                     IndexAmongSiblings = 0,

@@ -1,4 +1,3 @@
-using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Ide.Wasm;
 using Walk.Website.RazorLib;
@@ -13,8 +12,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 var hostingInformation = new WalkHostingInformation(
     WalkHostingKind.Wasm,
-    WalkPurposeKind.Ide,
-    new BackgroundTaskService());
+    WalkPurposeKind.Ide);
 
 builder.Services.AddWalkWebsiteServices(hostingInformation);
 

@@ -1,6 +1,5 @@
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Notifications.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.FileSystems.Models;
 
@@ -8,18 +7,11 @@ public class LocalDirectoryHandler : IDirectoryHandler
 {
     private const bool IS_DIRECTORY_RESPONSE = true;
 
-    private readonly IEnvironmentProvider _environmentProvider;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly ICommonUiService _commonUiService;
+    private readonly CommonUtilityService _commonUtilityService;
 
-    public LocalDirectoryHandler(
-        IEnvironmentProvider environmentProvider,
-        ICommonComponentRenderers commonComponentRenderers,
-        ICommonUiService commonUiService)
+    public LocalDirectoryHandler(CommonUtilityService commonUtilityService)
     {
-        _environmentProvider = environmentProvider;
-        _commonComponentRenderers = commonComponentRenderers;
-        _commonUiService = commonUiService;
+        _commonUtilityService = commonUtilityService;
     }
 
     public async Task CreateDirectoryAsync(
@@ -39,7 +31,7 @@ public class LocalDirectoryHandler : IDirectoryHandler
 
         Directory.CreateDirectory(absolutePathString);
 
-        _environmentProvider.DeletionPermittedRegister(
+        _commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(
             new SimplePath(absolutePathString, IS_DIRECTORY_RESPONSE));
     }
 
@@ -50,7 +42,7 @@ public class LocalDirectoryHandler : IDirectoryHandler
     {
         try
         {
-            _environmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
+            _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
             Directory.Delete(absolutePathString, recursive);
         }
         catch (Exception exception)
@@ -93,16 +85,16 @@ public class LocalDirectoryHandler : IDirectoryHandler
     {
         try
         {
-			_environmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
+			_commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
             if (await ExistsAsync(destinationAbsolutePathString).ConfigureAwait(false))
-                _environmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
+                _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
             Directory.Move(
                 sourceAbsolutePathString,
                 destinationAbsolutePathString);
 
-            _environmentProvider.DeletionPermittedRegister(
+            _commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(
                 new SimplePath(destinationAbsolutePathString, true));
         }
         catch (Exception exception)
@@ -149,8 +141,7 @@ public class LocalDirectoryHandler : IDirectoryHandler
 		NotificationHelper.DispatchError(
             title,
             exception.ToString(),
-            _commonComponentRenderers,
-            _commonUiService,
+            _commonUtilityService,
             TimeSpan.FromSeconds(10));
     }
 }

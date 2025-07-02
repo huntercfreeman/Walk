@@ -1,6 +1,6 @@
-using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Lines.Models;
@@ -11,16 +11,16 @@ public sealed class TextEditorModelApi
 {
     private readonly TextEditorService _textEditorService;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
-    private readonly BackgroundTaskService _backgroundTaskService;
+    private readonly CommonUtilityService _commonUtilityService;
 
     public TextEditorModelApi(
         TextEditorService textEditorService,
         ITextEditorRegistryWrap textEditorRegistryWrap,
-        BackgroundTaskService backgroundTaskService)
+        CommonUtilityService commonUtilityService)
     {
         _textEditorService = textEditorService;
         _textEditorRegistryWrap = textEditorRegistryWrap;
-        _backgroundTaskService = backgroundTaskService;
+        _commonUtilityService = commonUtilityService;
     }
 
     #region CREATE_METHODS

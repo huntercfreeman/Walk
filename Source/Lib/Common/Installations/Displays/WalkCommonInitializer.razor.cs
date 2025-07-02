@@ -5,12 +5,9 @@ using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
-using Walk.Common.RazorLib.Dialogs.Models;
-using Walk.Common.RazorLib.Widgets.Models;
-using Walk.Common.RazorLib.Notifications.Models;
-using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Tooltips.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Installations.Displays;
 
@@ -27,15 +24,9 @@ namespace Walk.Common.RazorLib.Installations.Displays;
 public partial class WalkCommonInitializer : ComponentBase, IDisposable
 {
     [Inject]
-    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-    [Inject]
     private BrowserResizeInterop BrowserResizeInterop { get; set; } = null!;
     [Inject]
-    private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
-    [Inject]
-    private ICommonUiService CommonUiService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
     
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     
@@ -59,9 +50,9 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     
 	protected override void OnInitialized()
 	{
-    	CommonUiService.CommonUiStateChanged += OnCommonUiStateChanged;
+    	CommonUtilityService.CommonUiStateChanged += OnCommonUiStateChanged;
 	
-        CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+        CommonUtilityService.Enqueue(new CommonWorkArgs
         {
         	WorkKind = CommonWorkKind.WalkCommonInitializerWork
     	});
@@ -73,46 +64,46 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 		{
 			var token = _workerCancellationTokenSource.Token;
 
-			if (BackgroundTaskService.ContinuousWorker.StartAsyncTask is null)
+			if (CommonUtilityService.ContinuousWorker.StartAsyncTask is null)
 			{
-				BackgroundTaskService.ContinuousWorker.StartAsyncTask = Task.Run(
-					() => BackgroundTaskService.ContinuousWorker.ExecuteAsync(token),
+				CommonUtilityService.ContinuousWorker.StartAsyncTask = Task.Run(
+					() => CommonUtilityService.ContinuousWorker.ExecuteAsync(token),
 					token);
 			}
 
-			if (WalkHostingInformation.WalkPurposeKind == WalkPurposeKind.Ide)
+			if (CommonUtilityService.WalkHostingInformation.WalkPurposeKind == WalkPurposeKind.Ide)
 			{
-				if (BackgroundTaskService.IndefiniteWorker.StartAsyncTask is null)
+				if (CommonUtilityService.IndefiniteWorker.StartAsyncTask is null)
 				{
-					BackgroundTaskService.IndefiniteWorker.StartAsyncTask = Task.Run(
-						() => BackgroundTaskService.IndefiniteWorker.ExecuteAsync(token),
+					CommonUtilityService.IndefiniteWorker.StartAsyncTask = Task.Run(
+						() => CommonUtilityService.IndefiniteWorker.ExecuteAsync(token),
 						token);
 				}
 			}
 
-			BrowserResizeInterop.SubscribeWindowSizeChanged(CommonBackgroundTaskApi.JsRuntimeCommonApi);
+			BrowserResizeInterop.SubscribeWindowSizeChanged((JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonUtilityService.JsRuntimeCommonApi);
 		}
 	    
-	    var tooltipModel = CommonUiService.GetTooltipState().TooltipModel;
+	    var tooltipModel = CommonUtilityService.GetTooltipState().TooltipModel;
 	    
 	    if (tooltipModel is not null && !tooltipModel.WasRepositioned && _tooltipModelPrevious != tooltipModel)
 	    {
 	        _tooltipModelPrevious = tooltipModel;
 	        
-	        CommonUiService.Tooltip_HtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi.MeasureElementById(
-    	        CommonUiService.Tooltip_HtmlElementId);
-            CommonUiService.Tooltip_GlobalHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi.MeasureElementById(
+	        CommonUtilityService.Tooltip_HtmlElementDimensions = await CommonUtilityService.JsRuntimeCommonApi.MeasureElementById(
+    	        CommonUtilityService.Tooltip_HtmlElementId);
+            CommonUtilityService.Tooltip_GlobalHtmlElementDimensions = await CommonUtilityService.JsRuntimeCommonApi.MeasureElementById(
     	        ContextFacts.RootHtmlElementId);
 	    
     	    var xLarge = false;
     	    var yLarge = false;
     	    
-    	    if (tooltipModel.X + CommonUiService.Tooltip_HtmlElementDimensions.WidthInPixels > CommonUiService.Tooltip_GlobalHtmlElementDimensions.WidthInPixels)
+    	    if (tooltipModel.X + CommonUtilityService.Tooltip_HtmlElementDimensions.WidthInPixels > CommonUtilityService.Tooltip_GlobalHtmlElementDimensions.WidthInPixels)
     	    {
     	        xLarge = true;
     	    }
     	    
-    	    if (tooltipModel.Y + CommonUiService.Tooltip_HtmlElementDimensions.HeightInPixels > CommonUiService.Tooltip_GlobalHtmlElementDimensions.HeightInPixels)
+    	    if (tooltipModel.Y + CommonUtilityService.Tooltip_HtmlElementDimensions.HeightInPixels > CommonUtilityService.Tooltip_GlobalHtmlElementDimensions.HeightInPixels)
     	    {
     	        yLarge = true;
     	    }
@@ -121,14 +112,14 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     	    
     	    if (xLarge)
     	    {
-        	    tooltipModel.X = CommonUiService.Tooltip_GlobalHtmlElementDimensions.WidthInPixels - CommonUiService.Tooltip_HtmlElementDimensions.WidthInPixels - 5;
+        	    tooltipModel.X = CommonUtilityService.Tooltip_GlobalHtmlElementDimensions.WidthInPixels - CommonUtilityService.Tooltip_HtmlElementDimensions.WidthInPixels - 5;
         	    if (tooltipModel.X < 0)
         	        tooltipModel.X = 0;
 	        }
     	     
     	    if (yLarge)
     	    {   
-    	        tooltipModel.Y = CommonUiService.Tooltip_GlobalHtmlElementDimensions.HeightInPixels - CommonUiService.Tooltip_HtmlElementDimensions.HeightInPixels - 5;
+    	        tooltipModel.Y = CommonUtilityService.Tooltip_GlobalHtmlElementDimensions.HeightInPixels - CommonUtilityService.Tooltip_HtmlElementDimensions.HeightInPixels - 5;
         	    if (tooltipModel.Y < 0)
         	        tooltipModel.Y = 0;
     	    }
@@ -154,13 +145,13 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     
     private Task WIDGET_RemoveWidget()
     {
-    	CommonUiService.SetWidget(null);
+    	CommonUtilityService.SetWidget(null);
     	return Task.CompletedTask;
     }
     
     private async Task DROPDOWN_ClearActiveKeyList()
     {
-    	var firstDropdown = CommonUiService.GetDropdownState().DropdownList.FirstOrDefault();
+    	var firstDropdown = CommonUtilityService.GetDropdownState().DropdownList.FirstOrDefault();
     	
     	if (firstDropdown is not null)
     	{
@@ -170,7 +161,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     			await restoreFocusOnCloseFunc.Invoke();
     	}
     	
-        CommonUiService.Dropdown_ReduceClearAction();
+        CommonUtilityService.Dropdown_ReduceClearAction();
     }
     
     public string OUTLINE_GetStyleCssLeft(OutlineState localOutlineState)
@@ -309,21 +300,21 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     /// </summary>
     public void Dispose()
     {
-    	BrowserResizeInterop.DisposeWindowSizeChanged(CommonBackgroundTaskApi.JsRuntimeCommonApi);
+		BrowserResizeInterop.DisposeWindowSizeChanged((JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonUtilityService.JsRuntimeCommonApi);
     	
     	_workerCancellationTokenSource.Cancel();
     	_workerCancellationTokenSource.Dispose();
     	
-    	BackgroundTaskService.ContinuousWorker.StartAsyncTask = null;
-    	BackgroundTaskService.IndefiniteWorker.StartAsyncTask = null;
+    	CommonUtilityService.ContinuousWorker.StartAsyncTask = null;
+    	CommonUtilityService.IndefiniteWorker.StartAsyncTask = null;
     	
-		CommonUiService.CommonUiStateChanged -= OnCommonUiStateChanged;
+		CommonUtilityService.CommonUiStateChanged -= OnCommonUiStateChanged;
 		
-		var notificationState = CommonUiService.GetNotificationState();
+		var notificationState = CommonUtilityService.GetNotificationState();
 
         foreach (var notification in notificationState.DefaultList)
         {
-            CommonUiService.Notification_ReduceDisposeAction(notification.DynamicViewModelKey);
+            CommonUtilityService.Notification_ReduceDisposeAction(notification.DynamicViewModelKey);
         }
     }
 }

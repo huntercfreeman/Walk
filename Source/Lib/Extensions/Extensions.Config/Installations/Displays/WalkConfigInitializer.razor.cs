@@ -1,13 +1,10 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
-using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.Badges.Models;
-using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Notifications.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
@@ -23,15 +20,7 @@ namespace Walk.Extensions.Config.Installations.Displays;
 public partial class WalkConfigInitializer : ComponentBase
 {
     [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-    [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-    [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
-    [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
@@ -39,11 +28,9 @@ public partial class WalkConfigInitializer : ComponentBase
 	[Inject]
 	private IInputFileService InputFileService { get; set; } = null!;
 	[Inject]
-	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
 	private IIdeService IdeService { get; set; } = null!;
 	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
 	
@@ -51,7 +38,7 @@ public partial class WalkConfigInitializer : ComponentBase
 
 	protected override void OnInitialized()
 	{
-        BackgroundTaskService.Continuous_EnqueueGroup(new BackgroundTask(
+        CommonUtilityService.Continuous_EnqueueGroup(new BackgroundTask(
         	Key<IBackgroundTaskGroup>.Empty,
         	Do_InitializeFooterBadges));
 	
@@ -84,11 +71,11 @@ public partial class WalkConfigInitializer : ComponentBase
         IdeService.RegisterFooterBadge(
             new DirtyResourceUriBadge(
                 DirtyResourceUriService,
-                CommonUiService));
+                CommonUtilityService));
 
         IdeService.RegisterFooterBadge(
             new NotificationBadge(
-                CommonUiService));
+                CommonUtilityService));
 
         return ValueTask.CompletedTask;
     }
@@ -100,7 +87,7 @@ public partial class WalkConfigInitializer : ComponentBase
     	if (solutionMostRecent is null)
     		return;
     
-    	var slnAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
+    	var slnAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
             solutionMostRecent,
             false);
 
@@ -113,16 +100,14 @@ public partial class WalkConfigInitializer : ComponentBase
         var parentDirectory = slnAbsolutePath.ParentDirectory;
         if (parentDirectory is not null)
         {
-            var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
+            var parentDirectoryAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
                 parentDirectory,
                 true);
 
             var pseudoRootNode = new TreeViewAbsolutePath(
                 parentDirectoryAbsolutePath,
                 IdeComponentRenderers,
-                CommonComponentRenderers,
-                FileSystemProvider,
-                EnvironmentProvider,
+                CommonUtilityService,
                 true,
                 false);
 
@@ -137,9 +122,9 @@ public partial class WalkConfigInitializer : ComponentBase
 
             var activeNode = adhocRootNode.ChildList.FirstOrDefault();
 
-            if (!TreeViewService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
+            if (!CommonUtilityService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
             {
-                TreeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+                CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
                     InputFileContent.TreeViewContainerKey,
                     adhocRootNode,
                     activeNode is null
@@ -148,9 +133,9 @@ public partial class WalkConfigInitializer : ComponentBase
             }
             else
             {
-                TreeViewService.ReduceWithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
+                CommonUtilityService.TreeView_WithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
 
-                TreeViewService.ReduceSetActiveNodeAction(
+                CommonUtilityService.TreeView_SetActiveNodeAction(
                     InputFileContent.TreeViewContainerKey,
                     activeNode,
                     true,
@@ -161,9 +146,7 @@ public partial class WalkConfigInitializer : ComponentBase
             InputFileService.SetOpenedTreeViewModel(
                 pseudoRootNode,
                 IdeComponentRenderers,
-                CommonComponentRenderers,
-                FileSystemProvider,
-                EnvironmentProvider);
+                CommonUtilityService);
         }
 
 		/*

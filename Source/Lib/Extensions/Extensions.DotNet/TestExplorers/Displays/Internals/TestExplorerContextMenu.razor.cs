@@ -3,13 +3,11 @@ using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
-using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Contexts.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.TreeViews.Models.Utils;
-using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Extensions.DotNet.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.TestExplorers.Models;
@@ -22,17 +20,11 @@ public partial class TestExplorerContextMenu : ComponentBase
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
-	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
-	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
 	[Inject]
-	private ITreeViewService TreeViewService { get; set; } = null!;
-	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
 	[CascadingParameter]
 	public TestExplorerRenderBatchValidated RenderBatch { get; set; } = null!;
@@ -156,10 +148,10 @@ public partial class TestExplorerContextMenu : ComponentBase
 				    });
 			        
 					treeViewProjectTestModel.Item.TestNameFullyQualifiedList = null;
-					TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
+					CommonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
 					await treeViewProjectTestModel.LoadChildListAsync();
-					TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
+					CommonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
 					DotNetBackgroundTaskApi.TestExplorerService.MoveNodeToCorrectBranch(treeViewProjectTestModel);
 					
@@ -263,7 +255,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		};
 
 		var fabricateCommandArgs = new TreeViewCommandArgs(
-			commandArgs.TreeViewService,
+			commandArgs.CommonUtilityService,
 			fabricateTreeViewContainer,
 			commandArgs.NodeThatReceivedMouseEvent,
 			commandArgs.RestoreFocusToTreeView,
@@ -294,7 +286,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 			if (node is TreeViewStringFragment treeViewStringFragment)
 			{
 				var innerTreeViewCommandArgs = new TreeViewCommandArgs(
-					commandArgs.TreeViewService,
+					commandArgs.CommonUtilityService,
 					commandArgs.TreeViewContainer,
 					node,
 					commandArgs.RestoreFocusToTreeView,
@@ -355,7 +347,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		
 		DotNetCliOutputParser.ParseOutputEntireDotNetRun(output, "Unit-Test_results");
 		
-		CommonUiService.SetPanelTabAsActiveByContextRecordKey(contextRecord.ContextKey);
+		CommonUtilityService.SetPanelTabAsActiveByContextRecordKey(contextRecord.ContextKey);
 	
 		if (contextRecord != default)
 		{
@@ -363,8 +355,8 @@ public partial class TestExplorerContextMenu : ComponentBase
 		        contextRecord,
 		        nameof(ContextHelper.ConstructFocusContextElementCommand),
 		        nameof(ContextHelper.ConstructFocusContextElementCommand),
-		        CommonBackgroundTaskApi.JsRuntimeCommonApi,
-		        CommonUiService);
+		        CommonUtilityService.JsRuntimeCommonApi,
+		        CommonUtilityService);
 		        
 		    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
 		}

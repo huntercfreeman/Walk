@@ -1,13 +1,10 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.FileSystems.Models;
 namespace Walk.Common.RazorLib.TreeViews.Models.Utils;
 
 public class TreeViewMarkupString : TreeViewWithType<MarkupString>
 {
     public TreeViewMarkupString(
             MarkupString markupString,
-            IFileSystemProvider fileSystemProvider,
-            IEnvironmentProvider environmentProvider,
             bool isExpandable,
             bool isExpanded)
         : base(
@@ -15,12 +12,7 @@ public class TreeViewMarkupString : TreeViewWithType<MarkupString>
             isExpandable,
             isExpanded)
     {
-        FileSystemProvider = fileSystemProvider;
-        EnvironmentProvider = environmentProvider;
     }
-
-    public IFileSystemProvider FileSystemProvider { get; }
-    public IEnvironmentProvider EnvironmentProvider { get; }
 
     public override bool Equals(object? obj)
     {

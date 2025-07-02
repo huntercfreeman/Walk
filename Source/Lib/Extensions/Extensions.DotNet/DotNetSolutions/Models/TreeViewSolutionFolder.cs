@@ -1,11 +1,10 @@
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.WatchWindows.Models;
 using Walk.Common.RazorLib.Namespaces.Models;
-using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Icons.Displays;
 using Walk.Common.RazorLib.Icons.Displays.Codicon;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.ComponentRenderers.Models;
@@ -19,25 +18,19 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 			SolutionFolder dotNetSolutionFolder,
 			IDotNetComponentRenderers dotNetComponentRenderers,
 			IIdeComponentRenderers ideComponentRenderers,
-			ICommonComponentRenderers commonComponentRenderers,
-			IFileSystemProvider fileSystemProvider,
-			IEnvironmentProvider environmentProvider,
+			CommonUtilityService commonUtilityService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(dotNetSolutionFolder, isExpandable, isExpanded)
 	{
 		DotNetComponentRenderers = dotNetComponentRenderers;
 		IdeComponentRenderers = ideComponentRenderers;
-		CommonComponentRenderers = commonComponentRenderers;
-		FileSystemProvider = fileSystemProvider;
-		EnvironmentProvider = environmentProvider;
+		CommonUtilityService = commonUtilityService;
 	}
 
 	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public IIdeComponentRenderers IdeComponentRenderers { get; }
-	public ICommonComponentRenderers CommonComponentRenderers { get; }
-	public IFileSystemProvider FileSystemProvider { get; }
-	public IEnvironmentProvider EnvironmentProvider { get; }
+	public CommonUtilityService CommonUtilityService { get; }
 
 	public override bool Equals(object? obj)
 	{
@@ -123,7 +116,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 		{
 			ChildList = new List<TreeViewNoType>
 			{
-				new TreeViewException(exception, false, false, CommonComponentRenderers)
+				new TreeViewException(exception, false, false, CommonUtilityService.CommonComponentRenderers)
 				{
 					Parent = this,
 					IndexAmongSiblings = 0,
@@ -273,9 +266,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 			dotNetSolutionFolder,
 			DotNetComponentRenderers,
 			IdeComponentRenderers,
-			CommonComponentRenderers,
-			FileSystemProvider,
-			EnvironmentProvider,
+			CommonUtilityService,
 			true,
 			false)
 		{
@@ -293,9 +284,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 			namespacePath,
 			DotNetComponentRenderers,
 			IdeComponentRenderers,
-			CommonComponentRenderers,
-			FileSystemProvider,
-			EnvironmentProvider,
+			CommonUtilityService,
 			true,
 			false)
 		{

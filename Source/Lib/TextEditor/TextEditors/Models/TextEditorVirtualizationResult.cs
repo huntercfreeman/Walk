@@ -1,15 +1,8 @@
-using System.Diagnostics;
-using System.Text;
-using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.Cursors.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
-using Walk.TextEditor.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.TextEditor.RazorLib.TextEditors.Displays;
-using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Walk.TextEditor.RazorLib.TextEditors.Models;
@@ -77,6 +70,7 @@ public class TextEditorVirtualizationResult
 	    
 	    BodyStyle = "width: 100%; left: 0;";
 	    BothVirtualizationBoundaryStyleCssString = "width: 0px; height: 0px;";
+	    CursorCssStyle = "left: 0;top: 0;height: 20px;width: 2.5px;";
 	    
 	    IsValid = false;
     }
@@ -301,7 +295,7 @@ public class TextEditorVirtualizationResult
 	
     public void CreateUi()
     {
-    	if (ViewModel.PersistentState.Changed_GutterWidth)
+        if (ViewModel.PersistentState.Changed_GutterWidth)
     	{
     	    ViewModel.PersistentState.Changed_GutterWidth = false;
     		
@@ -336,7 +330,7 @@ public class TextEditorVirtualizationResult
     		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
     		ScrollbarSection_LeftCssStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
     		
-    		ViewModel.Changed_Cursor_AnyState = true;
+    		ViewModel.PersistentState.Changed_Cursor_AnyState = true;
 
             ComponentData.LineIndexCache.Clear();
             CopySomeDuetoPostScrollAndRemeasure();
@@ -391,7 +385,7 @@ public class TextEditorVirtualizationResult
 	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ComponentData.Gutter_PaddingCssStyle);
     		Gutter_HeightWidthPaddingCssStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
 		
-		    ViewModel.Changed_Cursor_AnyState = true;
+		    ViewModel.PersistentState.Changed_Cursor_AnyState = true;
 		}
 		else
 		{
@@ -462,7 +456,7 @@ public class TextEditorVirtualizationResult
 	    else
 	        BothVirtualizationBoundaryStyleCssString = _previousState.BothVirtualizationBoundaryStyleCssString;
         
-        if (ViewModel.Changed_Cursor_AnyState)
+        if (ViewModel.PersistentState.Changed_Cursor_AnyState)
         {
             GetCursorAndCaretRowStyleCss();
             GetSelection();

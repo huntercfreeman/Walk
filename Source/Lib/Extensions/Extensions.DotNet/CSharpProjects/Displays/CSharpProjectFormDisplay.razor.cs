@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
-using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
@@ -26,21 +24,11 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
-	[Inject]
-	private IFileSystemProvider FileSystemProvider { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers WalkCommonComponentRenderers { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private WalkIdeConfig IdeConfig { get; set; } = null!;
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
-	[Inject]
-	private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
 	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
@@ -61,7 +49,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		_viewModel = new(DotNetSolutionModel, EnvironmentProvider);
+		_viewModel = new(DotNetSolutionModel, CommonUtilityService.EnvironmentProvider);
 		
 		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
 		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
@@ -108,7 +96,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	private async Task ReadProjectTemplates()
 	{
-		if (WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
+		if (CommonUtilityService.WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
 		{
 			_viewModel.ProjectTemplateList = WebsiteProjectTemplateFacts.WebsiteProjectTemplatesContainer.ToList();
 			await InvokeAsync(StateHasChanged);
@@ -132,7 +120,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 				
 			var terminalCommandRequest = new TerminalCommandRequest(
 				formattedCommand.Value,
-				EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+				CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
 				new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandRequestKey.Guid))
 			{
 				ContinueWithFunc = parsedTerminalCommand =>
@@ -167,7 +155,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 			var terminalCommandRequest = new TerminalCommandRequest(
 	        	formattedCommand.Value,
-	        	EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+	        	CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
 	        	new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandRequestKey.Guid))
 	        {
 	        	ContinueWithFunc = parsedCommand =>
@@ -213,7 +201,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			return;
 		}
 
-		if (WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
+		if (CommonUtilityService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
 		{
 			var generalTerminal = TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY];
 
@@ -231,7 +219,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			        {
 			        	ContinueWithFunc = parsedCommand =>
 			        	{
-				        	CommonUiService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+				        	CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 	
 							DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
 							{
@@ -253,12 +241,12 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 		{
 			await WebsiteDotNetCliHelper.StartNewCSharpProjectCommand(
 					immutableView,
-					EnvironmentProvider,
-					FileSystemProvider,
+					(IEnvironmentProvider)CommonUtilityService.EnvironmentProvider,
+					(IFileSystemProvider)CommonUtilityService.FileSystemProvider,
 					DotNetBackgroundTaskApi,
-					CommonUiService,
+					(Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService,
 					DialogRecord,
-					WalkCommonComponentRenderers)
+					(ICommonComponentRenderers)CommonUtilityService.CommonComponentRenderers)
 				.ConfigureAwait(false);
 		}
 	}

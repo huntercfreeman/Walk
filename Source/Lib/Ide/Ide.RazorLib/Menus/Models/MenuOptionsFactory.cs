@@ -1,12 +1,10 @@
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Notifications.Models;
-using Walk.Common.RazorLib.Clipboards.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.Clipboards.Models;
@@ -16,26 +14,14 @@ namespace Walk.Ide.RazorLib.Menus.Models;
 public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
 {
     private readonly IIdeComponentRenderers _ideComponentRenderers;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly IEnvironmentProvider _environmentProvider;
-    private readonly IClipboardService _clipboardService;
-    private readonly BackgroundTaskService _backgroundTaskService;
+    private readonly CommonUtilityService _commonUtilityService;
 
     public MenuOptionsFactory(
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        IClipboardService clipboardService,
-        BackgroundTaskService backgroundTaskService)
+        CommonUtilityService commonUtilityService)
     {
         _ideComponentRenderers = ideComponentRenderers;
-        _commonComponentRenderers = commonComponentRenderers;
-        _fileSystemProvider = fileSystemProvider;
-        _environmentProvider = environmentProvider;
-        _clipboardService = clipboardService;
-        _backgroundTaskService = backgroundTaskService;
+        _commonUtilityService = commonUtilityService;
     }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
@@ -137,7 +123,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
             });
     }
 
-    public MenuOptionRecord RenameFile(AbsolutePath sourceAbsolutePath, ICommonUiService commonUiService, Func<Task> onAfterCompletion)
+    public MenuOptionRecord RenameFile(AbsolutePath sourceAbsolutePath, CommonUtilityService commonUtilityService, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Rename", MenuOptionKind.Update,
             widgetRendererType: _ideComponentRenderers.FileFormRendererType,
@@ -154,7 +140,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
                     nameof(IFileFormRendererType.OnAfterSubmitFunc),
                     new Func<string, IFileTemplate?, List<IFileTemplate>, Task>((nextName, _, _) =>
                     {
-                        PerformRename(sourceAbsolutePath, nextName, commonUiService, onAfterCompletion);
+                        PerformRename(sourceAbsolutePath, nextName, commonUtilityService, onAfterCompletion);
                         return Task.CompletedTask;
                     })
                 },
@@ -213,7 +199,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
                 namespacePath,
                 onAfterCompletion));
 
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
+            _commonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -228,11 +214,11 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         {
             var emptyFileAbsolutePathString = namespacePath.AbsolutePath.Value + fileName;
 
-            var emptyFileAbsolutePath = _environmentProvider.AbsolutePathFactory(
+            var emptyFileAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
                 emptyFileAbsolutePathString,
                 false);
 
-            await _fileSystemProvider.File.WriteAllTextAsync(
+            await _commonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
                     emptyFileAbsolutePath.Value,
                     string.Empty,
                     CancellationToken.None)
@@ -247,9 +233,9 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
             foreach (var fileTemplate in allTemplates)
             {
                 var templateResult = fileTemplate.ConstructFileContents.Invoke(
-                    new FileTemplateParameter(fileName, namespacePath, _environmentProvider));
+                    new FileTemplateParameter(fileName, namespacePath, _commonUtilityService.EnvironmentProvider));
 
-                await _fileSystemProvider.File.WriteAllTextAsync(
+                await _commonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
                         templateResult.FileNamespacePath.AbsolutePath.Value,
                         templateResult.Contents,
                         CancellationToken.None)
@@ -270,16 +256,16 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformNewDirectory);
             _queue_PerformNewDirectory.Enqueue((directoryName, parentDirectory, onAfterCompletion));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
+            _commonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
     
     private async ValueTask Do_PerformNewDirectory(string directoryName, AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         var directoryAbsolutePathString = parentDirectory.Value + directoryName;
-        var directoryAbsolutePath = _environmentProvider.AbsolutePathFactory(directoryAbsolutePathString, true);
+        var directoryAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(directoryAbsolutePathString, true);
 
-        await _fileSystemProvider.Directory.CreateDirectoryAsync(
+        await _commonUtilityService.FileSystemProvider.Directory.CreateDirectoryAsync(
                 directoryAbsolutePath.Value,
                 CancellationToken.None)
             .ConfigureAwait(false);
@@ -297,7 +283,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformDeleteFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((absolutePath, onAfterCompletion));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
+            _commonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -305,13 +291,13 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
     {
         if (absolutePath.IsDirectory)
         {
-            await _fileSystemProvider.Directory
+            await _commonUtilityService.FileSystemProvider.Directory
                 .DeleteAsync(absolutePath.Value, true, CancellationToken.None)
                 .ConfigureAwait(false);
         }
         else
         {
-            await _fileSystemProvider.File
+            await _commonUtilityService.FileSystemProvider.File
                 .DeleteAsync(absolutePath.Value)
                 .ConfigureAwait(false);
         }
@@ -325,13 +311,13 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformCopyFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((absolutePath, onAfterCompletion));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
+            _commonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
 
     private async ValueTask Do_PerformCopyFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
-        await _clipboardService.SetClipboard(ClipboardFacts.FormatPhrase(
+        await _commonUtilityService.SetClipboard(ClipboardFacts.FormatPhrase(
                 ClipboardFacts.CopyCommand,
                 ClipboardFacts.AbsolutePathDataType,
                 absolutePath.Value))
@@ -348,7 +334,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformCutFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((absolutePath, onAfterCompletion));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
+            _commonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -356,7 +342,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         AbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
-        await _clipboardService.SetClipboard(ClipboardFacts.FormatPhrase(
+        await _commonUtilityService.SetClipboard(ClipboardFacts.FormatPhrase(
                 ClipboardFacts.CutCommand,
                 ClipboardFacts.AbsolutePathDataType,
                 absolutePath.Value))
@@ -371,13 +357,13 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformPasteFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((receivingDirectory, onAfterCompletion));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
+            _commonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
     
     private async ValueTask Do_PerformPasteFile(AbsolutePath receivingDirectory, Func<Task> onAfterCompletion)
     {
-        var clipboardContents = await _clipboardService.ReadClipboard().ConfigureAwait(false);
+        var clipboardContents = await _commonUtilityService.ReadClipboard().ConfigureAwait(false);
 
         if (ClipboardFacts.TryParseString(clipboardContents, out var clipboardPhrase))
         {
@@ -391,15 +377,15 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
 
                     // Should the if and else if be kept as inline awaits?
                     // If kept as inline awaits then the else if won't execute if the first one succeeds.
-                    if (await _fileSystemProvider.Directory.ExistsAsync(clipboardPhrase.Value).ConfigureAwait(false))
+                    if (await _commonUtilityService.FileSystemProvider.Directory.ExistsAsync(clipboardPhrase.Value).ConfigureAwait(false))
                     {
-                        clipboardAbsolutePath = _environmentProvider.AbsolutePathFactory(
+                        clipboardAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
                             clipboardPhrase.Value,
                             true);
                     }
-                    else if (await _fileSystemProvider.File.ExistsAsync(clipboardPhrase.Value).ConfigureAwait(false))
+                    else if (await _commonUtilityService.FileSystemProvider.File.ExistsAsync(clipboardPhrase.Value).ConfigureAwait(false))
                     {
-                        clipboardAbsolutePath = _environmentProvider.AbsolutePathFactory(
+                        clipboardAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
                             clipboardPhrase.Value,
                             false);
                     }
@@ -424,7 +410,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
 
                                 var sourceAbsolutePathString = clipboardAbsolutePath.Value;
 
-                                await _fileSystemProvider.File.CopyAsync(
+                                await _commonUtilityService.FileSystemProvider.File.CopyAsync(
                                         sourceAbsolutePathString,
                                         destinationAbsolutePathString)
                                     .ConfigureAwait(false);
@@ -450,17 +436,17 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         }
     }
 
-    private AbsolutePath PerformRename(AbsolutePath sourceAbsolutePath, string nextName, ICommonUiService commonUiService, Func<Task> onAfterCompletion)
+    private AbsolutePath PerformRename(AbsolutePath sourceAbsolutePath, string nextName, CommonUtilityService commonUtilityService, Func<Task> onAfterCompletion)
     {
         // Check if the current and next name match when compared with case insensitivity
         if (0 == string.Compare(sourceAbsolutePath.NameWithExtension, nextName, StringComparison.OrdinalIgnoreCase))
         {
-            var temporaryNextName = _environmentProvider.GetRandomFileName();
+            var temporaryNextName = _commonUtilityService.EnvironmentProvider.GetRandomFileName();
 
             var temporaryRenameResult = PerformRename(
                 sourceAbsolutePath,
                 temporaryNextName,
-                commonUiService,
+                commonUtilityService,
                 () => Task.CompletedTask);
 
             if (temporaryRenameResult.ExactInput is null)
@@ -481,20 +467,20 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         try
         {
             if (sourceAbsolutePath.IsDirectory)
-                _fileSystemProvider.Directory.MoveAsync(sourceAbsolutePathString, destinationAbsolutePathString);
+                _commonUtilityService.FileSystemProvider.Directory.MoveAsync(sourceAbsolutePathString, destinationAbsolutePathString);
             else
-                _fileSystemProvider.File.MoveAsync(sourceAbsolutePathString, destinationAbsolutePathString);
+                _commonUtilityService.FileSystemProvider.File.MoveAsync(sourceAbsolutePathString, destinationAbsolutePathString);
         }
         catch (Exception e)
         {
-            NotificationHelper.DispatchError("Rename Action", e.Message, _commonComponentRenderers, commonUiService, TimeSpan.FromSeconds(14));
+            NotificationHelper.DispatchError("Rename Action", e.Message, commonUtilityService, TimeSpan.FromSeconds(14));
             onAfterCompletion.Invoke();
             return default;
         }
 
         onAfterCompletion.Invoke();
 
-        return _environmentProvider.AbsolutePathFactory(destinationAbsolutePathString, sourceAbsolutePath.IsDirectory);
+        return _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(destinationAbsolutePathString, sourceAbsolutePath.IsDirectory);
     }
 
     /// <summary>

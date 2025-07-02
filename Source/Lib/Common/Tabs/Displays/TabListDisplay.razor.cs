@@ -2,26 +2,14 @@ using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Tabs.Models;
-using Walk.Common.RazorLib.Drags.Models;
-using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Options.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 
 namespace Walk.Common.RazorLib.Tabs.Displays;
 
 public partial class TabListDisplay : ComponentBase
 {
-	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
-	[Inject]
-    private IDragService DragService { get; set; } = null!;
     [Inject]
-    private IAppOptionsService AppOptionsService { get; set; } = null!;
-	[Inject]
-	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
 	/// <summary>
 	/// The list provided should not be modified after passing it as a parameter..
@@ -53,7 +41,7 @@ public partial class TabListDisplay : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-        CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
         return Task.CompletedTask;
     }
 }

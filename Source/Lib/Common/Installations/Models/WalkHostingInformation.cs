@@ -1,5 +1,3 @@
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-
 namespace Walk.Common.RazorLib.Installations.Models;
 
 /// <summary>
@@ -21,17 +19,14 @@ public record WalkHostingInformation
 {
     public WalkHostingInformation(
         WalkHostingKind walkHostingKind,
-        WalkPurposeKind walkPurposeKind,
-        BackgroundTaskService backgroundTaskService)
+        WalkPurposeKind walkPurposeKind)
     {
         WalkHostingKind = walkHostingKind;
         WalkPurposeKind = walkPurposeKind;
-        BackgroundTaskService = backgroundTaskService;
     }
 
     public WalkHostingKind WalkHostingKind { get; init; }
     public WalkPurposeKind WalkPurposeKind { get; init; }
-    public BackgroundTaskService BackgroundTaskService { get; init; }
     /// <summary>
     /// If the main window hasn't been initialized yet, 0 is returned.
     /// Whether 0 returns at other points is uncertain.

@@ -1,21 +1,16 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Walk.Common.RazorLib.Drags.Models;
 using Walk.Common.RazorLib.Resizes.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Resizes.Displays;
 
 public partial class ResizableDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IDragService DragService { get; set; } = null!;
-    [Inject]
-    private IAppDimensionService AppDimensionService { get; set; } = null!;
-    [Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; }
@@ -41,12 +36,12 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        DragService.DragStateChanged += DragStateWrapOnStateChanged;
+        CommonUtilityService.DragStateChanged += DragStateWrapOnStateChanged;
     }
 
     private async void DragStateWrapOnStateChanged()
     {
-        if (!DragService.GetDragState().ShouldDisplay)
+        if (!CommonUtilityService.GetDragState().ShouldDisplay)
         {
 			var wasTargetOfDragging = _dragEventHandler is not null;
 
@@ -54,11 +49,11 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _previousDragMouseEventArgs = null;
 
 			if (wasTargetOfDragging)
-				AppDimensionService.NotifyIntraAppResize();
+				CommonUtilityService.AppDimension_NotifyIntraAppResize();
         }
         else
         {
-            var mouseEventArgs = DragService.GetDragState().MouseEventArgs;
+            var mouseEventArgs = CommonUtilityService.GetDragState().MouseEventArgs;
 
             if (_dragEventHandler is not null)
             {
@@ -83,7 +78,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
         if (Drag is not null)
             await Drag.OnDragStartAsync().ConfigureAwait(false);
 
-		DragService.ReduceShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, Drag);
+		CommonUtilityService.Drag_ShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, Drag);
     }
 
     public Task SubscribeToDragEventWithMoveHandle()
@@ -139,7 +134,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             	DimensionUnitKind.Pixels));
         }
 
-        return _northResizeHandleDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder);
+        return _northResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonUtilityService.UiStringBuilder);
     }
 
     private string GetEastResizeHandleStyleCss()
@@ -192,7 +187,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             	DimensionUnitKind.Pixels));
         }
 
-        return _eastResizeHandleDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder);
+        return _eastResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonUtilityService.UiStringBuilder);
     }
 
     private string GetSouthResizeHandleStyleCss()
@@ -244,7 +239,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             	DimensionOperatorKind.Subtract));
         }
 
-        return _southResizeHandleDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder);
+        return _southResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonUtilityService.UiStringBuilder);
     }
 
     private string GetWestResizeHandleStyleCss()
@@ -292,7 +287,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             	DimensionUnitKind.Pixels));
         }
 
-        return _westResizeHandleDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder);
+        return _westResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonUtilityService.UiStringBuilder);
     }
 
     private string GetNorthEastResizeHandleStyleCss()
@@ -340,7 +335,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             	DimensionUnitKind.Pixels));
         }
 
-        return _northEastResizeHandleDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder);
+        return _northEastResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonUtilityService.UiStringBuilder);
     }
 
     private string GetSouthEastResizeHandleStyleCss()
@@ -392,7 +387,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             	DimensionOperatorKind.Subtract));
         }
 
-        return _southEastResizeHandleDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder);
+        return _southEastResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonUtilityService.UiStringBuilder);
     }
 
     private string GetSouthWestResizeHandleStyleCss()
@@ -440,7 +435,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             	DimensionOperatorKind.Subtract));
         }
 
-        return _southWestResizeHandleDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder);
+        return _southWestResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonUtilityService.UiStringBuilder);
     }
 
     private string GetNorthWestResizeHandleStyleCss()
@@ -483,7 +478,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             	DimensionUnitKind.Pixels));
         }
 
-        return _northWestResizeHandleDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder);
+        return _northWestResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonUtilityService.UiStringBuilder);
     }
 
     #endregion
@@ -593,6 +588,6 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        DragService.DragStateChanged -= DragStateWrapOnStateChanged;
+        CommonUtilityService.DragStateChanged -= DragStateWrapOnStateChanged;
     }
 }

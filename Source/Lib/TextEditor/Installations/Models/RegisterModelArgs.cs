@@ -1,3 +1,4 @@
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 
 namespace Walk.TextEditor.RazorLib.Installations.Models;
@@ -21,11 +22,13 @@ public struct RegisterModelArgs
     public RegisterModelArgs(
     	TextEditorEditContext editContext,
         ResourceUri resourceUri,
-        IServiceProvider serviceProvider)
+        CommonUtilityService commonUtilityService,
+        object ideBackgroundTaskApi)
     {
         EditContext = editContext;
         ResourceUri = resourceUri;
-        ServiceProvider = serviceProvider;
+        CommonUtilityService = commonUtilityService;
+        IdeBackgroundTaskApi = ideBackgroundTaskApi;
     }
 
 	public TextEditorEditContext EditContext { get; }
@@ -35,6 +38,7 @@ public struct RegisterModelArgs
     /// providing the underlying data to be rendered by this view model.
     /// </summary>
     public ResourceUri ResourceUri { get; }
-    public IServiceProvider ServiceProvider { get; }
+    public CommonUtilityService CommonUtilityService { get; }
+    public object IdeBackgroundTaskApi { get; }
     public bool ShouldBlockUntilBackgroundTaskIsCompleted { get; init; }
 }

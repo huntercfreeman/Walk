@@ -1,15 +1,10 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
-using Walk.Common.RazorLib.Dialogs.Models;
-using Walk.Common.RazorLib.Panels.Models;
-using Walk.Common.RazorLib.Notifications.Models;
-using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
-using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
+using Walk.Ide.RazorLib.Terminals.Models;
 
 namespace Walk.Ide.RazorLib.Terminals.Displays.Internals;
 
@@ -20,15 +15,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 	[Inject]
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
-	[Inject]
-	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-	[Inject]
-	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	
@@ -44,7 +31,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 	{
 		var terminalCommandRequest = new TerminalCommandRequest(
         	"bash -c \"type bash\"",
-        	EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+        	CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
         	TypeBashTerminalCommandRequestKey)
         {
         	ContinueWithFunc = parsedCommand =>
@@ -87,12 +74,8 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 					terminal,
 					TextEditorService,
 					CompilerServiceRegistry,
-					CommonUiService,
-					CommonBackgroundTaskApi)),
-			BackgroundTaskService,
-			CommonComponentRenderers,
-			CommonUiService,
-			EnvironmentProvider,
+					CommonUtilityService)),
+			CommonUtilityService,
 			_pathToShellExecutable)
 		{
 			Key = Key<ITerminal>.NewKey()
@@ -102,6 +85,6 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 		
 		TerminalService.Register(terminalIntegrated);
 			
-		CommonUiService.Dialog_ReduceDisposeAction(Dialog.DynamicViewModelKey);
+		CommonUtilityService.Dialog_ReduceDisposeAction(Dialog.DynamicViewModelKey);
 	}
 }

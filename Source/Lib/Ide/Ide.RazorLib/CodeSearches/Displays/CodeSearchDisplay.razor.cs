@@ -1,11 +1,7 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Options.Models;
-using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -19,29 +15,19 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ICodeSearchService CodeSearchService { get; set; } = null!;
     [Inject]
-	private IAppOptionsService AppOptionsService { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
-	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-	private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
-    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-    [Inject]
-    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
-    [Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 	
 	private CodeSearchTreeViewKeyboardEventHandler _treeViewKeymap = null!;
 	private CodeSearchTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private readonly ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
 	{
@@ -68,21 +54,19 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	protected override void OnInitialized()
 	{
 		CodeSearchService.CodeSearchStateChanged += OnCodeSearchStateChanged;
-		TreeViewService.TreeViewStateChanged += OnTreeViewStateChanged;
+		CommonUtilityService.TreeViewStateChanged += OnTreeViewStateChanged;
 	
 		_treeViewKeymap = new CodeSearchTreeViewKeyboardEventHandler(
 			TextEditorService,
 			TextEditorConfig,
 			ServiceProvider,
-			TreeViewService,
-			BackgroundTaskService);
+			CommonUtilityService);
 
 		_treeViewMouseEventHandler = new CodeSearchTreeViewMouseEventHandler(
 			TextEditorService,
 			TextEditorConfig,
 			ServiceProvider,
-			TreeViewService,
-			BackgroundTaskService);
+			CommonUtilityService);
 	}
 	
 	protected override void OnAfterRender(bool firstRender)
@@ -106,7 +90,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 			},
 			null);
 
-		CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 
@@ -135,6 +119,6 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
     	CodeSearchService.CodeSearchStateChanged -= OnCodeSearchStateChanged;
-    	TreeViewService.TreeViewStateChanged -= OnTreeViewStateChanged;
+    	CommonUtilityService.TreeViewStateChanged -= OnTreeViewStateChanged;
     }
 }

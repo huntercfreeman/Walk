@@ -2,11 +2,8 @@ using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Commands.Models;
-using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
-using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
@@ -18,23 +15,14 @@ namespace Walk.Extensions.DotNet.Commands;
 public class DotNetCommandFactory : IDotNetCommandFactory
 {
 	private readonly TextEditorService _textEditorService;
-	private readonly ICommonUiService _commonUiService;
-	private readonly ITreeViewService _treeViewService;
-	private readonly IEnvironmentProvider _environmentProvider;
-	private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
+	private readonly CommonUtilityService _commonUtilityService;
 
 	public DotNetCommandFactory(
         TextEditorService textEditorService,
-        ICommonUiService commonUiService,
-        ITreeViewService treeViewService,
-		IEnvironmentProvider environmentProvider,
-		CommonBackgroundTaskApi commonBackgroundTaskApi)
+		CommonUtilityService commonUtilityService)
 	{
 		_textEditorService = textEditorService;
-		_commonUiService = commonUiService;
-        _treeViewService = treeViewService;
-		_environmentProvider = environmentProvider;
-		_commonBackgroundTaskApi = commonBackgroundTaskApi;
+		_commonUtilityService = commonUtilityService;
     }
 
 	private List<TreeViewNoType> _nodeList = new();
@@ -56,7 +44,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
 				ContextHelper.ConstructFocusContextElementCommand(
-					ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUiService));
+					ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
 		}
 		// CSharpReplContext
 		{
@@ -72,12 +60,12 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
 				ContextHelper.ConstructFocusContextElementCommand(
-					ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUiService));
+					ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
 		}
 		// SolutionExplorerContext
 		{
 			var focusSolutionExplorerCommand = ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUiService);
+				ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService);
 
 			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
 					new KeymapArgs
@@ -107,13 +95,13 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 						if (localNodeOfViewModel is null)
 							return;
 
-						_treeViewService.ReduceSetActiveNodeAction(
+						_commonUtilityService.TreeView_SetActiveNodeAction(
 							DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 							localNodeOfViewModel,
 							false,
 							false);
 
-						var elementId = _treeViewService.GetActiveNodeElementId(DotNetSolutionState.TreeViewSolutionExplorerStateKey);
+						var elementId = _commonUtilityService.TreeView_GetActiveNodeElementId(DotNetSolutionState.TreeViewSolutionExplorerStateKey);
 
 						await focusSolutionExplorerCommand.CommandFunc
 							.Invoke(commandArgs)
@@ -148,7 +136,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 
 			if (textEditorViewModel is not null)
 			{
-				if (_treeViewService.TryGetTreeViewContainer(
+				if (_commonUtilityService.TryGetTreeViewContainer(
 						DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 						out var treeViewContainer) &&
                     treeViewContainer is not null)
@@ -169,7 +157,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
         {
             if (textEditorViewModel is not null)
             {
-                var viewModelAbsolutePath = _environmentProvider.AbsolutePathFactory(
+                var viewModelAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
                     textEditorViewModel.PersistentState.ResourceUri.Value,
                     false);
 
