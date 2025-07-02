@@ -11,13 +11,13 @@ public class FindAllService : IFindAllService
 {
     private readonly object _stateModificationLock = new();
 
-	private readonly ICommonUtilityService _commonUtilityService;
+	private readonly CommonUtilityService _commonUtilityService;
 	private readonly Throttle _throttleSetSearchQuery = new Throttle(TimeSpan.FromMilliseconds(500));
 	private readonly Throttle _throttleUiUpdate = new Throttle(ThrottleFacts.TwentyFour_Frames_Per_Second);
 	
 	private readonly object _flushSearchResultsLock = new();
 	
-	public FindAllService(ICommonUtilityService commonUtilityService)
+	public FindAllService(CommonUtilityService commonUtilityService)
 	{
 		_commonUtilityService = commonUtilityService;
 	}

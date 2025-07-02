@@ -16,7 +16,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 			CSharpProjectDependencies cSharpProjectDependencies,
 			IDotNetComponentRenderers dotNetComponentRenderers,
 			IIdeComponentRenderers ideComponentRenderers,
-			ICommonUtilityService commonUtilityService,
+			CommonUtilityService commonUtilityService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(cSharpProjectDependencies, isExpandable, isExpanded)
@@ -28,7 +28,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 
 	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public IIdeComponentRenderers IdeComponentRenderers { get; }
-	public ICommonUtilityService CommonUtilityService { get; }
+	public CommonUtilityService CommonUtilityService { get; }
 
 	public override bool Equals(object? obj)
 	{

@@ -14,13 +14,13 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly TextEditorService _textEditorService;
-	private readonly ICommonUtilityService _commonUtilityService;
+	private readonly CommonUtilityService _commonUtilityService;
 	private readonly IServiceProvider _serviceProvider;
 
 	public TestExplorerTreeViewMouseEventHandler(
 			ICompilerServiceRegistry compilerServiceRegistry,
 			TextEditorService textEditorService,
-			ICommonUtilityService commonUtilityService,
+			CommonUtilityService commonUtilityService,
 			IServiceProvider serviceProvider)
 		: base(commonUtilityService)
 	{

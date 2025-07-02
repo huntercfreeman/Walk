@@ -11,7 +11,7 @@ namespace Walk.Common.RazorLib.Menus.Displays;
 public partial class MenuDisplay : ComponentBase
 {
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [CascadingParameter(Name="ReturnFocusToParentFuncAsync")]
     public Func<Task>? ReturnFocusToParentFuncAsync { get; set; }

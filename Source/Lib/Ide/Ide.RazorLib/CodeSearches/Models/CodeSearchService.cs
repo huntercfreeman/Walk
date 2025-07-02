@@ -17,7 +17,7 @@ public class CodeSearchService : ICodeSearchService
     private readonly object _stateModificationLock = new();
 
 	private readonly Throttle _throttle = new(TimeSpan.FromMilliseconds(300));
-    private readonly ICommonUtilityService _commonUtilityService;
+    private readonly CommonUtilityService _commonUtilityService;
     private readonly TextEditorService _textEditorService;
     private readonly WalkTextEditorConfig _textEditorConfig;
     private readonly IServiceProvider _serviceProvider;
@@ -27,7 +27,7 @@ public class CodeSearchService : ICodeSearchService
 	public Throttle _updateContentThrottle { get; } = new Throttle(TimeSpan.FromMilliseconds(333));
 
     public CodeSearchService(
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
         TextEditorService textEditorService,
         WalkTextEditorConfig textEditorConfig,
         IServiceProvider serviceProvider)

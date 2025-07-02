@@ -6,5 +6,5 @@ namespace Walk.Extensions.DotNet.CompilerServices.Displays;
 public partial class CompilerServiceExplorerDisplay : ComponentBase
 {
 	[Inject]
-	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 }

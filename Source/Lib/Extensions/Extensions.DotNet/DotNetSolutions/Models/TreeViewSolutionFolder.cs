@@ -20,7 +20,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 			SolutionFolder dotNetSolutionFolder,
 			IDotNetComponentRenderers dotNetComponentRenderers,
 			IIdeComponentRenderers ideComponentRenderers,
-			ICommonUtilityService commonUtilityService,
+			CommonUtilityService commonUtilityService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(dotNetSolutionFolder, isExpandable, isExpanded)
@@ -32,7 +32,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 
 	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public IIdeComponentRenderers IdeComponentRenderers { get; }
-	public ICommonUtilityService CommonUtilityService { get; }
+	public CommonUtilityService CommonUtilityService { get; }
 
 	public override bool Equals(object? obj)
 	{

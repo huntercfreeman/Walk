@@ -30,7 +30,7 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     

@@ -20,7 +20,7 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
 public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 {
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -378,8 +378,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	var virtualizationResult = GetVirtualizationResult();
     	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
-    	
-        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+
+		TextEditorService.WorkerArbitrary.PostUnique((Func<TextEditorEditContext, ValueTask>)(editContext =>
         {
         	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
         	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
@@ -388,10 +388,10 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             	editContext,
             	modelModifier,
             	viewModelModifier,
-            	CommonUtilityService.JsRuntimeCommonApi,
-            	TextEditorService,
-            	CommonUtilityService);
-        });
+            	(Common.RazorLib.JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonUtilityService.JsRuntimeCommonApi,
+				TextEditorService,
+            	(Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService);
+        }));
         return Task.CompletedTask;
     }
     
@@ -400,8 +400,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	var virtualizationResult = GetVirtualizationResult();
     	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
-    	
-        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+
+		TextEditorService.WorkerArbitrary.PostUnique((Func<TextEditorEditContext, ValueTask>)(editContext =>
         {
         	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
         	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
@@ -410,8 +410,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 		        editContext,
             	modelModifier,
             	viewModelModifier,
-		        CommonUtilityService.JsRuntimeCommonApi);
-        });
+		        (Common.RazorLib.JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonUtilityService.JsRuntimeCommonApi);
+        }));
         return Task.CompletedTask;
     }
     
@@ -439,8 +439,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	var virtualizationResult = GetVirtualizationResult();
     	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
-    	
-        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+
+		TextEditorService.WorkerArbitrary.PostUnique((Func<TextEditorEditContext, ValueTask>)(editContext =>
         {
         	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
         	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
@@ -449,12 +449,12 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 		        editContext,
             	modelModifier,
             	viewModelModifier,
-		        CommonUtilityService.JsRuntimeCommonApi,
-		        CommonUtilityService.EnvironmentProvider,
-		        CommonUtilityService.FileSystemProvider,
-		        TextEditorService,
-		        CommonUtilityService);
-        });
+		        (Common.RazorLib.JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonUtilityService.JsRuntimeCommonApi,
+		        (IEnvironmentProvider)CommonUtilityService.EnvironmentProvider,
+		        (IFileSystemProvider)CommonUtilityService.FileSystemProvider,
+				TextEditorService,
+		        (Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService);
+        }));
         return Task.CompletedTask;
     }
 

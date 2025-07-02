@@ -23,13 +23,13 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly TextEditorService _textEditorService;
     private readonly IMenuOptionsFactory _menuOptionsFactory;
-    private readonly ICommonUtilityService _commonUtilityService;
+    private readonly CommonUtilityService _commonUtilityService;
 
     public FolderExplorerTreeViewKeyboardEventHandler(
             IdeBackgroundTaskApi ideBackgroundTaskApi,
             TextEditorService textEditorService,
             IMenuOptionsFactory menuOptionsFactory,
-            ICommonUtilityService commonUtilityService)
+            CommonUtilityService commonUtilityService)
         : base(commonUtilityService)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;

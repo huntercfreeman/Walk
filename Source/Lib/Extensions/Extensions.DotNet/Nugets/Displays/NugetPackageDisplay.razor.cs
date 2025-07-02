@@ -19,7 +19,7 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public NugetPackageRecord NugetPackageRecord { get; set; } = null!;

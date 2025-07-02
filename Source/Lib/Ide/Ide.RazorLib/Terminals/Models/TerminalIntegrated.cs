@@ -14,7 +14,7 @@ namespace Walk.Ide.RazorLib.Terminals.Models;
 
 public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 {
-	private readonly ICommonUtilityService _commonUtilityService;
+	private readonly CommonUtilityService _commonUtilityService;
 	private readonly string _pathToShellExecutable;
 
 	public TerminalIntegrated(
@@ -22,7 +22,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 		Func<TerminalIntegrated, ITerminalInteractive> terminalInteractiveFactory,
 		Func<TerminalIntegrated, ITerminalInput> terminalInputFactory,
 		Func<TerminalIntegrated, ITerminalOutput> terminalOutputFactory,
-		ICommonUtilityService commonUtilityService,
+		CommonUtilityService commonUtilityService,
 		string pathToShellExecutable)
 	{
 		DisplayName = displayName;

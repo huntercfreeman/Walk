@@ -62,7 +62,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
     public void SetOpenedTreeViewModel(
     	TreeViewAbsolutePath treeViewModel,
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonUtilityService commonUtilityService)
+        CommonUtilityService commonUtilityService)
     {
         lock (_stateModificationLock)
         {
@@ -132,7 +132,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
 
     public void OpenParentDirectory(
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel)
     {
         lock (_stateModificationLock)
@@ -222,12 +222,12 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
     }
 
     private readonly
-        Queue<(IIdeComponentRenderers ideComponentRenderers, ICommonUtilityService commonUtilityService, TreeViewAbsolutePath? parentDirectoryTreeViewModel)>
+        Queue<(IIdeComponentRenderers ideComponentRenderers, CommonUtilityService commonUtilityService, TreeViewAbsolutePath? parentDirectoryTreeViewModel)>
         _queue_OpenParentDirectoryAction = new();
 
     public void Enqueue_OpenParentDirectoryAction(
     	IIdeComponentRenderers ideComponentRenderers,
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel)
     {
         if (parentDirectoryTreeViewModel is not null)
@@ -246,16 +246,16 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
     
     public async ValueTask Do_OpenParentDirectoryAction(
     	IIdeComponentRenderers ideComponentRenderers,
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel)
     {
         if (parentDirectoryTreeViewModel is not null)
             await parentDirectoryTreeViewModel.LoadChildListAsync().ConfigureAwait(false);
     }
 
-    private readonly Queue<(ICommonUtilityService, TreeViewAbsolutePath)> _queue_RefreshCurrentSelectionAction = new();
+    private readonly Queue<(CommonUtilityService, TreeViewAbsolutePath)> _queue_RefreshCurrentSelectionAction = new();
 
-    public void Enqueue_RefreshCurrentSelectionAction(ICommonUtilityService commonUtilityService, TreeViewAbsolutePath? currentSelection)
+    public void Enqueue_RefreshCurrentSelectionAction(CommonUtilityService commonUtilityService, TreeViewAbsolutePath? currentSelection)
     {
         if (currentSelection is not null)
         {

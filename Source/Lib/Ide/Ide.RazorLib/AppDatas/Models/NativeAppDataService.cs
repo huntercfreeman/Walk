@@ -14,9 +14,9 @@ public class NativeAppDataService : IAppDataService
 	/// </summary>
 	private readonly Dictionary<string, IAppData> _appDataMap = new();
 	
-	private readonly ICommonUtilityService _commonUtilityService;
+	private readonly CommonUtilityService _commonUtilityService;
 
-	public NativeAppDataService(ICommonUtilityService commonUtilityService)
+	public NativeAppDataService(CommonUtilityService commonUtilityService)
 	{
 		_commonUtilityService = commonUtilityService;
 	}

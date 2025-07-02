@@ -16,11 +16,11 @@ namespace Walk.Ide.RazorLib.Menus.Models;
 public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
 {
     private readonly IIdeComponentRenderers _ideComponentRenderers;
-    private readonly ICommonUtilityService _commonUtilityService;
+    private readonly CommonUtilityService _commonUtilityService;
 
     public MenuOptionsFactory(
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonUtilityService commonUtilityService)
+        CommonUtilityService commonUtilityService)
     {
         _ideComponentRenderers = ideComponentRenderers;
         _commonUtilityService = commonUtilityService;
@@ -125,7 +125,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
             });
     }
 
-    public MenuOptionRecord RenameFile(AbsolutePath sourceAbsolutePath, ICommonUtilityService commonUtilityService, Func<Task> onAfterCompletion)
+    public MenuOptionRecord RenameFile(AbsolutePath sourceAbsolutePath, CommonUtilityService commonUtilityService, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Rename", MenuOptionKind.Update,
             widgetRendererType: _ideComponentRenderers.FileFormRendererType,
@@ -438,7 +438,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         }
     }
 
-    private AbsolutePath PerformRename(AbsolutePath sourceAbsolutePath, string nextName, ICommonUtilityService commonUtilityService, Func<Task> onAfterCompletion)
+    private AbsolutePath PerformRename(AbsolutePath sourceAbsolutePath, string nextName, CommonUtilityService commonUtilityService, Func<Task> onAfterCompletion)
     {
         // Check if the current and next name match when compared with case insensitivity
         if (0 == string.Compare(sourceAbsolutePath.NameWithExtension, nextName, StringComparison.OrdinalIgnoreCase))

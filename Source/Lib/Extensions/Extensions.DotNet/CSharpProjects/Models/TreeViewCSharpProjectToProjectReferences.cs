@@ -18,7 +18,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 			CSharpProjectToProjectReferences cSharpProjectToProjectReferences,
 			IDotNetComponentRenderers dotNetComponentRenderers,
 			IIdeComponentRenderers ideComponentRenderers,
-			ICommonUtilityService commonUtilityService,
+			CommonUtilityService commonUtilityService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(cSharpProjectToProjectReferences, isExpandable, isExpanded)
@@ -30,7 +30,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 
 	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public IIdeComponentRenderers IdeComponentRenderers { get; }
-	public ICommonUtilityService CommonUtilityService { get; }
+	public CommonUtilityService CommonUtilityService { get; }
 
 	public override bool Equals(object? obj)
 	{
@@ -128,7 +128,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 			var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
 				Item.CSharpProjectNamespacePath.AbsolutePath,
 				includeAttribute.Item2,
-				CommonUtilityService.EnvironmentProvider);
+				(IEnvironmentProvider)CommonUtilityService.EnvironmentProvider);
 
 			var referenceProjectAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 				referenceProjectAbsolutePathString,

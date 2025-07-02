@@ -19,7 +19,7 @@ namespace Walk.Common.RazorLib.WatchWindows.Displays;
 public partial class WatchWindowDisplay : ComponentBase
 {
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public WatchWindowObject WatchWindowObject { get; set; } = null!;

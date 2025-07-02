@@ -67,7 +67,7 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Common.RazorLib.Options.Models;
 
-public class CommonUtilityService : ICommonUtilityService
+public class CommonUtilityService : IBackgroundTaskGroup
 {
     private readonly object _stateModificationLock = new();
 	

@@ -15,7 +15,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     /// <summary>
     /// If the provided <see cref="TextEditorDiffKey"/> is registered using the

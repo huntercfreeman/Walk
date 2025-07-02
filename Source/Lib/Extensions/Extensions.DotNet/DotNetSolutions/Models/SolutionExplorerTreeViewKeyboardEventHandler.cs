@@ -23,13 +23,13 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 	private readonly IMenuOptionsFactory _menuOptionsFactory;
 	private readonly TextEditorService _textEditorService;
-	private readonly ICommonUtilityService _commonUtilityService;
+	private readonly CommonUtilityService _commonUtilityService;
 
 	public SolutionExplorerTreeViewKeyboardEventHandler(
 			IdeBackgroundTaskApi ideBackgroundTaskApi,
 			IMenuOptionsFactory menuOptionsFactory,
 			TextEditorService textEditorService,
-			ICommonUtilityService commonUtilityService)
+			CommonUtilityService commonUtilityService)
 		: base(commonUtilityService)
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;

@@ -15,7 +15,7 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
 	[Inject]
     private IFindAllService FindAllService { get; set; } = null!;
     [Inject]
-	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;	
 	[Inject]

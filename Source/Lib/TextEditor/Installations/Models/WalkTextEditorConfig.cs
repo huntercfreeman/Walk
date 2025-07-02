@@ -51,7 +51,7 @@ public record WalkTextEditorConfig
     ///          or add 'C:' to the "\a.txt" or etc...
     ///          to make these resource uris match one another.
     /// </summary>
-    public Func<string, ICommonUtilityService, Task<string>>? AbsolutePathStandardizeFunc { get; set; }
+    public Func<string, CommonUtilityService, Task<string>>? AbsolutePathStandardizeFunc { get; set; }
     /// <summary>
     /// The go-to definition implementation makes use of <see cref="RegisterModelFunc"/>.<br/>
     /// 

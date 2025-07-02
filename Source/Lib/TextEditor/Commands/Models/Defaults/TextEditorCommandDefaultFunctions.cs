@@ -83,7 +83,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
         ICommonComponentRenderers commonComponentRenderers,
-        ICommonUtilityService commonUtilityService)
+        CommonUtilityService commonUtilityService)
     {
     	if (viewModel.PersistentState.OnSaveRequested is null)
     	{
@@ -736,7 +736,7 @@ public class TextEditorCommandDefaultFunctions
         IEnvironmentProvider environmentProvider,
         IFileSystemProvider fileSystemProvider,
         TextEditorService textEditorService,
-        ICommonUtilityService commonUtilityService)
+        CommonUtilityService commonUtilityService)
     {
     	var componentData = viewModel.PersistentState.ComponentData;
     	if (componentData is null)
@@ -853,7 +853,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorViewModel viewModel,
         WalkCommonJavaScriptInteropApi jsRuntimeCommonApi,
         TextEditorService textEditorService,
-        ICommonUtilityService commonUtilityService)
+        CommonUtilityService commonUtilityService)
     {
     	var componentData = viewModel.PersistentState.ComponentData;
     	if (componentData is null)
@@ -1232,7 +1232,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
         double? leftOffset,
         double? topOffset,
         Type componentType,
@@ -1294,7 +1294,7 @@ public class TextEditorCommandDefaultFunctions
 	public static void RemoveDropdown(
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel,
-        ICommonUtilityService commonUtilityService)
+        CommonUtilityService commonUtilityService)
     {
     	viewModel.PersistentState.MenuKind = MenuKind.None;
     
@@ -1306,7 +1306,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
         TextEditorComponentData componentData)
     {
     	viewModel.PersistentState.MenuKind = MenuKind.ContextMenu;
@@ -1332,7 +1332,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
         TextEditorComponentData componentData)
     {
     	viewModel.PersistentState.MenuKind = MenuKind.AutoCompleteMenu;

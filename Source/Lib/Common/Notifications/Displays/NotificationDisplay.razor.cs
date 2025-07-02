@@ -14,7 +14,7 @@ namespace Walk.Common.RazorLib.Notifications.Displays;
 public partial class NotificationDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public INotification Notification  { get; set; } = null!;

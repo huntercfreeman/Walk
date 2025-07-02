@@ -34,14 +34,14 @@ public class CommandFactory : ICommandFactory
     // FindAllReferences
     // private readonly IFindAllReferencesService _findAllReferencesService;
     private readonly ICodeSearchService _codeSearchService;
-    private readonly ICommonUtilityService _commonUtilityService;
+    private readonly CommonUtilityService _commonUtilityService;
 
     public CommandFactory(
 		TextEditorService textEditorService,
 		// FindAllReferences
 		// IFindAllReferencesService findAllReferencesService,
 		ICodeSearchService codeSearchService,
-		ICommonUtilityService commonUtilityService)
+		CommonUtilityService commonUtilityService)
     {
 		_textEditorService = textEditorService;
 		// FindAllReferences

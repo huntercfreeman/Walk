@@ -36,7 +36,7 @@ public sealed class TextEditorViewModel : IDisposable
         Key<TextEditorViewModel> viewModelKey,
         ResourceUri resourceUri,
         TextEditorService textEditorService,
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
         TextEditorVirtualizationResult virtualizationResult,
 		TextEditorDimensions textEditorDimensions,
 		int scrollLeft,

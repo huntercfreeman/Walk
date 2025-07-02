@@ -6,5 +6,5 @@ namespace Walk.Extensions.DotNet.Outputs.Displays;
 public partial class OutputPanelDisplay : ComponentBase
 {
 	[Inject]
-	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 }

@@ -11,7 +11,7 @@ namespace Walk.Common.RazorLib.Commands.Models;
 public record struct TreeViewCommandArgs : ICommandArgs
 {
     public TreeViewCommandArgs(
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
         TreeViewContainer treeViewContainer,
         TreeViewNoType? nodeThatReceivedMouseEvent,
         Func<Task> restoreFocusToTreeView,
@@ -28,7 +28,7 @@ public record struct TreeViewCommandArgs : ICommandArgs
         KeyboardEventArgs = keyboardEventArgs;
     }
 
-    public ICommonUtilityService CommonUtilityService { get; }
+    public CommonUtilityService CommonUtilityService { get; }
     public TreeViewContainer TreeViewContainer { get; }
     public TreeViewNoType? NodeThatReceivedMouseEvent { get; }
     public Func<Task> RestoreFocusToTreeView { get; }

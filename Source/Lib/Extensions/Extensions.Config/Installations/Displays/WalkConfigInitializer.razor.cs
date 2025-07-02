@@ -34,7 +34,7 @@ public partial class WalkConfigInitializer : ComponentBase
 	[Inject]
 	private IIdeService IdeService { get; set; } = null!;
 	[Inject]
-	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
 	

@@ -7,7 +7,7 @@ namespace Walk.Common.RazorLib.FileSystems.Displays;
 public partial class PermissionsDisplay : ComponentBase
 {
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     private string _deleteAllowPathTextInput = string.Empty;
     private bool _deleteAllowPathIsDirectoryInput;

@@ -13,7 +13,7 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ICommandBarService CommandBarService { get; set; } = null!;
 	[Inject]
-	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	
 	public const string INPUT_HTML_ELEMENT_ID = "di_ide_command-bar-input-id";
 		

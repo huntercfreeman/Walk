@@ -10,7 +10,7 @@ namespace Walk.Ide.RazorLib.Shareds.Displays.Internals;
 public partial class IdeInfoDisplay : ComponentBase
 {
 	[Inject]
-	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
 #region
 	[Conditional("DEBUG")]

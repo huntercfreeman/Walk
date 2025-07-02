@@ -46,7 +46,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
@@ -431,23 +431,23 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		{
 			MenuOptionsFactory.CopyFile(
 				treeViewModel.Item.AbsolutePath,
-				() => {
-					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonUtilityService, TimeSpan.FromSeconds(7));
+				(Func<Task>)(() => {
+					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService, TimeSpan.FromSeconds(7));
 					return Task.CompletedTask;
-				}),
+				})),
 			MenuOptionsFactory.CutFile(
 				treeViewModel.Item.AbsolutePath,
-				() => {
+				(Func<Task>)(() => {
 					ParentOfCutFile = parentTreeViewModel;
-					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonUtilityService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService, TimeSpan.FromSeconds(7));
 					return Task.CompletedTask;
-				}),
+				})),
 			MenuOptionsFactory.DeleteFile(
 				treeViewModel.Item.AbsolutePath,
 				async () => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
 			MenuOptionsFactory.RenameFile(
 				treeViewModel.Item.AbsolutePath,
-				CommonUtilityService,
+				(Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService,
 				async ()  => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
 		};
 	}

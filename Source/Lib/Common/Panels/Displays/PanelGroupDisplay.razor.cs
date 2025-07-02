@@ -18,7 +18,7 @@ namespace Walk.Common.RazorLib.Panels.Displays;
 public partial class PanelGroupDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<PanelGroup> PanelGroupKey { get; set; } = Key<PanelGroup>.Empty;
@@ -166,7 +166,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
                    " + var(--di_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo))";
         }
 
-        return panelGroup?.ElementDimensions.GetStyleString(CommonUtilityService.UiStringBuilder) ?? string.Empty;
+        return panelGroup?.ElementDimensions.GetStyleString((System.Text.StringBuilder)CommonUtilityService.UiStringBuilder) ?? string.Empty;
     }
 
     private Task TopDropzoneOnMouseUp(MouseEventArgs mouseEventArgs)

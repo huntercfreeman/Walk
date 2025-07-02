@@ -9,9 +9,9 @@ public class LocalDirectoryHandler : IDirectoryHandler
 {
     private const bool IS_DIRECTORY_RESPONSE = true;
 
-    private readonly ICommonUtilityService _commonUtilityService;
+    private readonly CommonUtilityService _commonUtilityService;
 
-    public LocalDirectoryHandler(ICommonUtilityService commonUtilityService)
+    public LocalDirectoryHandler(CommonUtilityService commonUtilityService)
     {
         _commonUtilityService = commonUtilityService;
     }

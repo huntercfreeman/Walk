@@ -15,7 +15,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 {
     private readonly IInputFileService _inputFileService;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
-    private readonly ICommonUtilityService _commonUtilityService;
+    private readonly CommonUtilityService _commonUtilityService;
     private readonly Func<AbsolutePath, Task> _setInputFileContentTreeViewRootFunc;
     private readonly Func<Task> _focusSearchInputElementFunc;
     private readonly Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> _getSearchMatchTuplesFunc;
@@ -23,7 +23,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     public InputFileTreeViewKeyboardEventHandler(
 	        IInputFileService inputFileService,
 	        IIdeComponentRenderers ideComponentRenderers,
-	        ICommonUtilityService commonUtilityService,
+	        CommonUtilityService commonUtilityService,
 	        Func<AbsolutePath, Task> setInputFileContentTreeViewRootFunc,
 	        Func<Task> focusSearchInputElementFunc,
 	        Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc)

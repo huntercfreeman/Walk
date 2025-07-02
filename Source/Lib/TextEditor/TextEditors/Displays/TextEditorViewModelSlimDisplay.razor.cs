@@ -42,7 +42,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     [Inject]
     public IWalkTextEditorComponentRenderers TextEditorComponentRenderers { get; set; } = null!;
     [Inject]
-    public ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    public CommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     public WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
@@ -456,7 +456,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         {
             var cancellationToken = _onMouseMoveCancellationTokenSource.Token;
 
-            _onMouseMoveTask = Task.Run(async () =>
+			_onMouseMoveTask = Task.Run((Func<Task?>)(async () =>
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
@@ -464,7 +464,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                 	
                 	if (!_userMouseIsInside || _componentData.ThinksLeftMouseButtonIsDown || mouseMoveMouseEventArgs.Buttons == -1)
                 	{
-                		TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+						TextEditorService.WorkerArbitrary.PostUnique((Func<TextEditorEditContext, ValueTask>)(editContext =>
 						{
 							var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
 
@@ -472,10 +472,10 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                                 return ValueTask.CompletedTask;
 
                             viewModelModifier.PersistentState.TooltipModel = null;
-                            CommonUtilityService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
+							CommonUtilityService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
 
 							return ValueTask.CompletedTask;
-						});
+						}));
 						break;
                 	}
                 	
@@ -485,7 +485,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                     {
                         await _componentData.ContinueRenderingTooltipAsync().ConfigureAwait(false);
 
-				        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+						TextEditorService.WorkerArbitrary.PostUnique(editContext =>
 			            {
 			            	var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
 			                var modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri);
@@ -502,15 +502,15 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                         		mouseMoveMouseEventArgs.ShiftKey,
                                 mouseMoveMouseEventArgs.CtrlKey,
                                 mouseMoveMouseEventArgs.AltKey,
-			                    _componentData,
-			                    TextEditorComponentRenderers,
+								_componentData,
+								TextEditorComponentRenderers,
 			                    viewModelModifier.PersistentState.ResourceUri);
 			            });
 
                         break;
                     }
                 }
-            });
+            }));
         }
 	
 	    if (!_componentData.ThinksLeftMouseButtonIsDown)

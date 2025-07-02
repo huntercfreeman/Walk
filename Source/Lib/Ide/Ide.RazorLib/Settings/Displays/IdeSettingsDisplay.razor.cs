@@ -11,7 +11,7 @@ public partial class IdeSettingsDisplay : ComponentBase
 	[Inject]
 	private IAppDataService AppDataService { get; set; } = null!;
 	[Inject]
-	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	
 	private void WriteWalkDebugSomethingToConsole()
 	{

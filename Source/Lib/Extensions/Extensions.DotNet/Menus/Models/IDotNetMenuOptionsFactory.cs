@@ -17,33 +17,33 @@ public interface IDotNetMenuOptionsFactory
 		TreeViewSolution solutionNode,
 		TreeViewNamespacePath projectNode,
 		ITerminal terminal,
-		ICommonUtilityService commonUtilityService,
+		CommonUtilityService commonUtilityService,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord AddProjectToProjectReference(
 		TreeViewNamespacePath projectReceivingReference,
 		ITerminal terminal,
-		ICommonUtilityService commonUtilityService,
+		CommonUtilityService commonUtilityService,
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord RemoveProjectToProjectReference(
 		TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
 		ITerminal terminal,
-		ICommonUtilityService commonUtilityService,
+		CommonUtilityService commonUtilityService,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord MoveProjectToSolutionFolder(
 		TreeViewSolution treeViewSolution,
 		TreeViewNamespacePath treeViewProjectToMove,
 		ITerminal terminal,
-		ICommonUtilityService commonUtilityService,
+		CommonUtilityService commonUtilityService,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord RemoveNuGetPackageReferenceFromProject(
 		NamespacePath modifyProjectNamespacePath,
 		TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
 		ITerminal terminal,
-		ICommonUtilityService commonUtilityService,
+		CommonUtilityService commonUtilityService,
 		Func<Task> onAfterCompletion);
 }

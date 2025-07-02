@@ -12,7 +12,7 @@ namespace Walk.Common.RazorLib.Resizes.Displays;
 public partial class ResizableDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; }
@@ -136,7 +136,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             	DimensionUnitKind.Pixels));
         }
 
-        return _northResizeHandleDimensions.GetStyleString(CommonUtilityService.UiStringBuilder);
+        return _northResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonUtilityService.UiStringBuilder);
     }
 
     private string GetEastResizeHandleStyleCss()
@@ -189,7 +189,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             	DimensionUnitKind.Pixels));
         }
 
-        return _eastResizeHandleDimensions.GetStyleString(CommonUtilityService.UiStringBuilder);
+        return _eastResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonUtilityService.UiStringBuilder);
     }
 
     private string GetSouthResizeHandleStyleCss()
@@ -241,7 +241,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             	DimensionOperatorKind.Subtract));
         }
 
-        return _southResizeHandleDimensions.GetStyleString(CommonUtilityService.UiStringBuilder);
+        return _southResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonUtilityService.UiStringBuilder);
     }
 
     private string GetWestResizeHandleStyleCss()
@@ -289,7 +289,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             	DimensionUnitKind.Pixels));
         }
 
-        return _westResizeHandleDimensions.GetStyleString(CommonUtilityService.UiStringBuilder);
+        return _westResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonUtilityService.UiStringBuilder);
     }
 
     private string GetNorthEastResizeHandleStyleCss()
@@ -337,7 +337,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             	DimensionUnitKind.Pixels));
         }
 
-        return _northEastResizeHandleDimensions.GetStyleString(CommonUtilityService.UiStringBuilder);
+        return _northEastResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonUtilityService.UiStringBuilder);
     }
 
     private string GetSouthEastResizeHandleStyleCss()
@@ -389,7 +389,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             	DimensionOperatorKind.Subtract));
         }
 
-        return _southEastResizeHandleDimensions.GetStyleString(CommonUtilityService.UiStringBuilder);
+        return _southEastResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonUtilityService.UiStringBuilder);
     }
 
     private string GetSouthWestResizeHandleStyleCss()
@@ -437,7 +437,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             	DimensionOperatorKind.Subtract));
         }
 
-        return _southWestResizeHandleDimensions.GetStyleString(CommonUtilityService.UiStringBuilder);
+        return _southWestResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonUtilityService.UiStringBuilder);
     }
 
     private string GetNorthWestResizeHandleStyleCss()
@@ -480,7 +480,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             	DimensionUnitKind.Pixels));
         }
 
-        return _northWestResizeHandleDimensions.GetStyleString(CommonUtilityService.UiStringBuilder);
+        return _northWestResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonUtilityService.UiStringBuilder);
     }
 
     #endregion

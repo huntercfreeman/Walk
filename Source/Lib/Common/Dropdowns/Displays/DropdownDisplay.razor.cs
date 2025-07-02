@@ -14,7 +14,7 @@ namespace Walk.Common.RazorLib.Dropdowns.Displays;
 public partial class DropdownDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	public ICommonUtilityService CommonUtilityService { get; set; } = null!;
+	public CommonUtilityService CommonUtilityService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public DropdownRecord Dropdown { get; set; } = null!;

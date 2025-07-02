@@ -16,7 +16,7 @@ namespace Walk.Ide.RazorLib.Terminals.Models;
 /// </summary>
 public class Terminal : ITerminal, IBackgroundTaskGroup
 {
-	private readonly ICommonUtilityService _commonUtilityService;
+	private readonly CommonUtilityService _commonUtilityService;
 	private readonly ITerminalService _terminalService;
 	
 	/// <summary>The TArgs of byte is unused</summary>
@@ -27,7 +27,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 		Func<Terminal, ITerminalInteractive> terminalInteractiveFactory,
 		Func<Terminal, ITerminalInput> terminalInputFactory,
 		Func<Terminal, ITerminalOutput> terminalOutputFactory,
-		ICommonUtilityService commonUtilityService,
+		CommonUtilityService commonUtilityService,
 		ITerminalService terminalService)
 	{
 		DisplayName = displayName;

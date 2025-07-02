@@ -11,7 +11,7 @@ public static class NotificationHelper
     public static void DispatchInformative(
         string title,
         string message,
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationInformative = new NotificationViewModel(
@@ -35,7 +35,7 @@ public static class NotificationHelper
     public static void DispatchError(
         string title,
         string message,
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
@@ -55,7 +55,7 @@ public static class NotificationHelper
     public static void DispatchProgress(
         string title,
         ProgressBarModel progressBarModel,
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationProgress = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
@@ -88,7 +88,7 @@ public static class NotificationHelper
 	public static void DispatchDebugMessage(
         string title,
         Func<string> messageFunc,
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),

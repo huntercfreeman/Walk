@@ -11,7 +11,7 @@ namespace Walk.Common.RazorLib.Dropdowns.Models;
 public static class DropdownHelper
 {
 	public static Task RenderDropdownAsync(
-		ICommonUtilityService commonUtilityService,
+		CommonUtilityService commonUtilityService,
 		WalkCommonJavaScriptInteropApi walkCommonJavaScriptInteropApi,
 		string anchorHtmlElementId,
 		DropdownOrientation dropdownOrientation,
@@ -45,7 +45,7 @@ public static class DropdownHelper
 	}
 
 	public static Task RenderDropdownAsync(
-		ICommonUtilityService commonUtilityService,
+		CommonUtilityService commonUtilityService,
 		WalkCommonJavaScriptInteropApi walkCommonJavaScriptInteropApi,
 		string anchorHtmlElementId,
 		DropdownOrientation dropdownOrientation,
@@ -81,7 +81,7 @@ public static class DropdownHelper
 	}
 	
 	public static async Task RenderDropdownAsync(
-		ICommonUtilityService commonUtilityService,
+		CommonUtilityService commonUtilityService,
 		WalkCommonJavaScriptInteropApi walkCommonJavaScriptInteropApi,
 		string anchorHtmlElementId,
 		DropdownOrientation dropdownOrientation,

@@ -13,7 +13,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
     private readonly InMemoryFileHandler _file;
     private readonly InMemoryDirectoryHandler _directory;
 
-    public InMemoryFileSystemProvider(ICommonUtilityService commonUtilityService)
+    public InMemoryFileSystemProvider(CommonUtilityService commonUtilityService)
     {
         _environmentProvider = commonUtilityService.EnvironmentProvider;
 

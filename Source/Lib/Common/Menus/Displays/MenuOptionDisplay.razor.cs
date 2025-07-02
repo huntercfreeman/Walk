@@ -13,7 +13,7 @@ namespace Walk.Common.RazorLib.Menus.Displays;
 public partial class MenuOptionDisplay : ComponentBase
 {
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
 	[CascadingParameter]
 	public DropdownRecord? Dropdown { get; set; }
@@ -83,8 +83,8 @@ public partial class MenuOptionDisplay : ComponentBase
     private Task RenderDropdownAsync(MenuRecord localSubMenu)
     {
     	return DropdownHelper.RenderDropdownAsync(
-    		CommonUtilityService,
-    		CommonUtilityService.JsRuntimeCommonApi,
+    		(Options.Models.CommonUtilityService)CommonUtilityService,
+    		(JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonUtilityService.JsRuntimeCommonApi,
 			_menuOptionHtmlElementId,
 			DropdownOrientation.Right,
 			_subMenuDropdownKey,

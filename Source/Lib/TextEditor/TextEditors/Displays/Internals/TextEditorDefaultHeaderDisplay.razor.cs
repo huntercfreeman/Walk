@@ -26,7 +26,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
-	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
 
@@ -85,19 +85,19 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
     	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
 
-        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+		TextEditorService.WorkerArbitrary.PostUnique((Func<TextEditorEditContext, ValueTask>)(editContext =>
         {
         	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
         	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
-        
-        	TextEditorCommandDefaultFunctions.TriggerSave(
+
+			TextEditorCommandDefaultFunctions.TriggerSave(
         		editContext,
         		modelModifier,
         		viewModelModifier,
-        		CommonUtilityService.CommonComponentRenderers,
-        		CommonUtilityService);
+        		(ICommonComponentRenderers)CommonUtilityService.CommonComponentRenderers,
+        		(Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService);
         	return ValueTask.CompletedTask;
-        });
+        }));
         return Task.CompletedTask;
     }
 

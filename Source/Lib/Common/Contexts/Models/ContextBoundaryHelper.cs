@@ -8,13 +8,13 @@ namespace Walk.Common.RazorLib.Contexts.Models;
 
 public static class ContextBoundaryHelper
 {
-    public static void SetActiveContextState(ICommonUtilityService commonUtilityService, Key<ContextRecord> contextKey)
+    public static void SetActiveContextState(CommonUtilityService commonUtilityService, Key<ContextRecord> contextKey)
     {
         commonUtilityService.SetFocusedContextKey(contextKey);
     }
     
     /// <summary>NOTE: 'onfocus' event does not bubble, whereas 'onfocusin' does bubble. Usage of both events in this file is intentional.</summary>
-    public static void HandleOnFocus(ICommonUtilityService commonUtilityService, string contextElementId)
+    public static void HandleOnFocus(CommonUtilityService commonUtilityService, string contextElementId)
     {
     	commonUtilityService.SetOutline(
 	    	contextElementId,
@@ -22,7 +22,7 @@ public static class ContextBoundaryHelper
 	    	true);
     }
     
-    public static void HandleOnBlur(ICommonUtilityService commonUtilityService)
+    public static void HandleOnBlur(CommonUtilityService commonUtilityService)
     {
     	commonUtilityService.SetOutline(
 	    	null,
@@ -31,7 +31,7 @@ public static class ContextBoundaryHelper
     }
 
     /// <summary>NOTE: 'onfocus' event does not bubble, whereas 'onfocusin' does bubble. Usage of both events in this file is intentional.</summary>
-    public static void HandleOnFocusIn(ICommonUtilityService commonUtilityService, Key<ContextRecord> contextKey)
+    public static void HandleOnFocusIn(CommonUtilityService commonUtilityService, Key<ContextRecord> contextKey)
     {
     	if (commonUtilityService.GetContextState().FocusedContextKey != contextKey)
     		SetActiveContextState(commonUtilityService, contextKey);

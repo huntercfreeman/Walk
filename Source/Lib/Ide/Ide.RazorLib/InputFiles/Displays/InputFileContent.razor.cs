@@ -12,7 +12,7 @@ namespace Walk.Ide.RazorLib.InputFiles.Displays;
 public partial class InputFileContent : ComponentBase
 {
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [CascadingParameter(Name = "SetInputFileContentTreeViewRootFunc")]
     public Func<AbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;

@@ -13,7 +13,7 @@ namespace Walk.Common.RazorLib.Tabs.Displays;
 public partial class TabListDisplay : ComponentBase
 {
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
 	/// <summary>
 	/// The list provided should not be modified after passing it as a parameter..

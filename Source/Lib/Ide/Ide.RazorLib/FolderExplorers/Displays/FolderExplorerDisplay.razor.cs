@@ -20,7 +20,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private IFolderExplorerService FolderExplorerService { get; set; } = null!;
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]

@@ -17,7 +17,7 @@ public class OutputTreeViewMouseEventHandler : TreeViewMouseEventHandler
 			TextEditorService textEditorService,
 			WalkTextEditorConfig textEditorConfig,
 			IServiceProvider serviceProvider,
-			ICommonUtilityService commonUtilityService)
+			CommonUtilityService commonUtilityService)
 		: base(commonUtilityService)
 	{
 		_textEditorService = textEditorService;

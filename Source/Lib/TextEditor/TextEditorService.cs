@@ -43,7 +43,7 @@ public sealed class TextEditorService
         WalkTextEditorConfig textEditorConfig,
         ITextEditorRegistryWrap textEditorRegistryWrap,
         IJSRuntime jsRuntime,
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
 		IServiceProvider serviceProvider)
     {
     	__TextEditorViewModelLiason = new(this);
@@ -80,7 +80,7 @@ public sealed class TextEditorService
         TextEditorState = new();
     }
 
-    public ICommonUtilityService CommonUtilityService { get; }
+    public CommonUtilityService CommonUtilityService { get; }
     public IFindAllService FindAllService { get; }
 
 	public WalkTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }

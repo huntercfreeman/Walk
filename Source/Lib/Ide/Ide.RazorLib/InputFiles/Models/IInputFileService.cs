@@ -24,7 +24,7 @@ public interface IInputFileService
     public void SetOpenedTreeViewModel(
     	TreeViewAbsolutePath treeViewModel,
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonUtilityService commonUtilityService);
+        CommonUtilityService commonUtilityService);
 
     public void SetSelectedInputFilePattern(InputFilePattern inputFilePattern);
 
@@ -34,7 +34,7 @@ public interface IInputFileService
 
     public void OpenParentDirectory(
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel);
 
     public void RefreshCurrentSelection(TreeViewAbsolutePath? currentSelection);
@@ -43,8 +43,8 @@ public interface IInputFileService
     
     public void Enqueue_OpenParentDirectoryAction(
     	IIdeComponentRenderers ideComponentRenderers,
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel);
     
-    public void Enqueue_RefreshCurrentSelectionAction(ICommonUtilityService commonUtilityService, TreeViewAbsolutePath? currentSelection);
+    public void Enqueue_RefreshCurrentSelectionAction(CommonUtilityService commonUtilityService, TreeViewAbsolutePath? currentSelection);
 }

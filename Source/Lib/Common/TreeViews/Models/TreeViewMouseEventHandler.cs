@@ -10,9 +10,9 @@ namespace Walk.Common.RazorLib.TreeViews.Models;
 /// </summary>
 public class TreeViewMouseEventHandler
 {
-    protected readonly ICommonUtilityService CommonUtilityService;
+    protected readonly CommonUtilityService CommonUtilityService;
 
-    public TreeViewMouseEventHandler(ICommonUtilityService commonUtilityService)
+    public TreeViewMouseEventHandler(CommonUtilityService commonUtilityService)
     {
         CommonUtilityService = commonUtilityService;
     }

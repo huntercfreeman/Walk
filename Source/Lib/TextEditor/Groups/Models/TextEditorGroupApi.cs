@@ -13,11 +13,11 @@ public sealed class TextEditorGroupApi
 	private readonly object _stateModificationLock = new();
 
 	private readonly TextEditorService _textEditorService;
-    private readonly ICommonUtilityService _commonUtilityService;
+    private readonly CommonUtilityService _commonUtilityService;
 
     public TextEditorGroupApi(
         TextEditorService textEditorService,
-        ICommonUtilityService commonUtilityService)
+        CommonUtilityService commonUtilityService)
     {
         _textEditorService = textEditorService;
         _commonUtilityService = commonUtilityService;

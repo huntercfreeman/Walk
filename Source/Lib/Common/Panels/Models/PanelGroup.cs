@@ -24,7 +24,7 @@ public record PanelGroup(
 	/// TODO: Make this property immutable. Until then in a hack needs to be done where this gets set...
 	///       ...for Walk.Ide this is done in WalkIdeInitializer.razor.cs (2024-04-08)
 	/// </summary>
-	public ICommonUtilityService CommonUtilityService { get; set; } = null!;
+	public CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     public bool GetIsActive(ITab tab)
 	{

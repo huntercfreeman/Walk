@@ -18,7 +18,7 @@ public interface IMenuOptionsFactory
 
     public MenuOptionRecord RenameFile(
         AbsolutePath sourceAbsolutePath,
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord PasteClipboard(

@@ -19,7 +19,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
     [Inject]
     private IInputFileService InputFileService { get; set; } = null!;
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     /// <summary>
     /// Receives the <see cref="_selectedAbsolutePath"/> as

@@ -20,7 +20,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
             NamespacePath namespacePath,
             IDotNetComponentRenderers dotNetComponentRenderers,
             IIdeComponentRenderers ideComponentRenderers,
-            ICommonUtilityService commonUtilityService,
+            CommonUtilityService commonUtilityService,
             bool isExpandable,
             bool isExpanded)
         : base(namespacePath, isExpandable, isExpanded)
@@ -32,7 +32,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
 
     public IDotNetComponentRenderers DotNetComponentRenderers { get; }
     public IIdeComponentRenderers IdeComponentRenderers { get; }
-    public ICommonUtilityService CommonUtilityService { get; }
+    public CommonUtilityService CommonUtilityService { get; }
 
     public override bool Equals(object? obj)
     {

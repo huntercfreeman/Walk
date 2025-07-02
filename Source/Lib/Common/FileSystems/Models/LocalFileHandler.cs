@@ -9,9 +9,9 @@ public class LocalFileHandler : IFileHandler
 {
     private const bool IS_DIRECTORY_RESPONSE = true;
 
-    private readonly ICommonUtilityService _commonUtilityService;
+    private readonly CommonUtilityService _commonUtilityService;
 
-    public LocalFileHandler(ICommonUtilityService commonUtilityService)
+    public LocalFileHandler(CommonUtilityService commonUtilityService)
     {
         _commonUtilityService = commonUtilityService;
     }

@@ -45,7 +45,7 @@ public record struct InputFileState(
         InputFileState inInputFileState,
         TreeViewAbsolutePath selectedTreeViewModel,
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonUtilityService commonUtilityService)
+        CommonUtilityService commonUtilityService)
     {
         var selectionClone = new TreeViewAbsolutePath(
             selectedTreeViewModel.Item,

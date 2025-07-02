@@ -27,13 +27,13 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	private readonly ITerminal _terminal;
 	private readonly TextEditorService _textEditorService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
-	private readonly ICommonUtilityService _commonUtilityService;
+	private readonly CommonUtilityService _commonUtilityService;
 
 	public TerminalOutputFormatterExpand(
 		ITerminal terminal,
 		TextEditorService textEditorService,
 		ICompilerServiceRegistry compilerServiceRegistry,
-		ICommonUtilityService commonUtilityService)
+		CommonUtilityService commonUtilityService)
 	{
 		_terminal = terminal;
 		_textEditorService = textEditorService;

@@ -13,7 +13,7 @@ namespace Walk.Common.RazorLib.Drags.Displays;
 public partial class DragInitializer : ComponentBase, IDisposable
 {
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
     
     private string StyleCss => CommonUtilityService.GetDragState().ShouldDisplay
         ? string.Empty

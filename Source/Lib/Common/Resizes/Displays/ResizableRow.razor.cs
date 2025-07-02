@@ -10,7 +10,7 @@ namespace Walk.Common.RazorLib.Resizes.Displays;
 public partial class ResizableRow : ComponentBase, IDisposable
 {
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions TopElementDimensions { get; set; }

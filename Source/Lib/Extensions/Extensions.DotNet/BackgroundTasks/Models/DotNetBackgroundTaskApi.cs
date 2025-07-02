@@ -76,7 +76,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	// private readonly IFindAllReferencesService _findAllReferencesService;
 	private readonly ITerminalService _terminalService;
 	private readonly IDotNetCommandFactory _dotNetCommandFactory;
-	private readonly ICommonUtilityService _commonUtilityService;
+	private readonly CommonUtilityService _commonUtilityService;
 	private readonly IIdeService _ideService;
 	private readonly ITextEditorHeaderRegistry _textEditorHeaderRegistry;
 	private readonly INugetPackageManagerProvider _nugetPackageManagerProvider;
@@ -102,7 +102,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		// IFindAllReferencesService findAllReferencesService,
 		ITerminalService terminalService,
         IDotNetCommandFactory dotNetCommandFactory,
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
         IIdeService ideService,
         ITextEditorHeaderRegistry textEditorHeaderRegistry,
         INugetPackageManagerProvider nugetPackageManagerProvider,

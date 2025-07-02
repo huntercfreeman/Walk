@@ -17,7 +17,7 @@ namespace Walk.Extensions.DotNet.TestExplorers.Displays.Internals;
 public partial class TestExplorerTreeViewDisplay : ComponentBase
 {
 	[Inject]
-	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]

@@ -24,7 +24,7 @@ public class ConfigCompilerServiceRegistry : ICompilerServiceRegistry
     public ConfigCompilerServiceRegistry(
         TextEditorService textEditorService,
         ITerminalService terminalService,
-        ICommonUtilityService commonUtilityService)
+        CommonUtilityService commonUtilityService)
     {
         CSharpCompilerService = new CSharpCompilerService(textEditorService, commonUtilityService);
         CSharpProjectCompilerService = new CSharpProjectCompilerService(textEditorService);

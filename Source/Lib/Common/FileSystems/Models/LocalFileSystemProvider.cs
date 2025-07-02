@@ -7,7 +7,7 @@ namespace Walk.Common.RazorLib.FileSystems.Models;
 
 public class LocalFileSystemProvider : IFileSystemProvider
 {
-    public LocalFileSystemProvider(ICommonUtilityService commonUtilityService)
+    public LocalFileSystemProvider(CommonUtilityService commonUtilityService)
     {
         File = new LocalFileHandler(commonUtilityService);
         Directory = new LocalDirectoryHandler(commonUtilityService);

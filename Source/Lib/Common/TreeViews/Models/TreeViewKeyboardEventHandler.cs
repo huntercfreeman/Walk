@@ -11,9 +11,9 @@ namespace Walk.Common.RazorLib.TreeViews.Models;
 /// </summary>
 public class TreeViewKeyboardEventHandler
 {
-    protected readonly ICommonUtilityService CommonUtilityService;
+    protected readonly CommonUtilityService CommonUtilityService;
 
-    public TreeViewKeyboardEventHandler(ICommonUtilityService commonUtilityService)
+    public TreeViewKeyboardEventHandler(CommonUtilityService commonUtilityService)
     {
         CommonUtilityService = commonUtilityService;
     }

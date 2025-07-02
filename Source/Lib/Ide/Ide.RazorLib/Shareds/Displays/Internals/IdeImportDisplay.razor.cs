@@ -14,7 +14,7 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     private readonly object RequestRepoContentLock = new();
 

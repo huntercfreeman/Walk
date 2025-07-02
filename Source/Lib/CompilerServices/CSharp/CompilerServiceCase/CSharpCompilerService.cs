@@ -36,9 +36,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     // Service dependencies
     private readonly TextEditorService _textEditorService;
-    private readonly ICommonUtilityService _commonUtilityService;
+    private readonly CommonUtilityService _commonUtilityService;
     
-    public CSharpCompilerService(TextEditorService textEditorService, ICommonUtilityService commonUtilityService)
+    public CSharpCompilerService(TextEditorService textEditorService, CommonUtilityService commonUtilityService)
     {
     	_textEditorService = textEditorService;
     	_commonUtilityService = commonUtilityService;

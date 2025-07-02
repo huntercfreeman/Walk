@@ -22,7 +22,7 @@ public partial class EditorDisplay : ComponentBase, IDisposable
     [Inject]
     private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
     [Inject]
-	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions EditorElementDimensions { get; set; } = null!;

@@ -19,11 +19,11 @@ namespace Walk.Extensions.DotNet.Commands;
 public class DotNetCommandFactory : IDotNetCommandFactory
 {
 	private readonly TextEditorService _textEditorService;
-	private readonly ICommonUtilityService _commonUtilityService;
+	private readonly CommonUtilityService _commonUtilityService;
 
 	public DotNetCommandFactory(
         TextEditorService textEditorService,
-		ICommonUtilityService commonUtilityService)
+		CommonUtilityService commonUtilityService)
 	{
 		_textEditorService = textEditorService;
 		_commonUtilityService = commonUtilityService;

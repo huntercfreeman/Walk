@@ -26,7 +26,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private WalkIdeConfig IdeConfig { get; set; } = null!;
 	[Inject]
@@ -243,12 +243,12 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 		{
 			await WebsiteDotNetCliHelper.StartNewCSharpProjectCommand(
 					immutableView,
-					CommonUtilityService.EnvironmentProvider,
-					CommonUtilityService.FileSystemProvider,
+					(IEnvironmentProvider)CommonUtilityService.EnvironmentProvider,
+					(IFileSystemProvider)CommonUtilityService.FileSystemProvider,
 					DotNetBackgroundTaskApi,
-					CommonUtilityService,
+					(Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService,
 					DialogRecord,
-					CommonUtilityService.CommonComponentRenderers)
+					(ICommonComponentRenderers)CommonUtilityService.CommonComponentRenderers)
 				.ConfigureAwait(false);
 		}
 	}

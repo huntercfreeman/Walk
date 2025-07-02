@@ -14,9 +14,9 @@ namespace Walk.Common.RazorLib.Dimensions.Models;
 public class BrowserResizeInterop
 {
 	private readonly object _dotNetObjectReferenceLock = new();
-	private readonly ICommonUtilityService _commonUtilityService;
+	private readonly CommonUtilityService _commonUtilityService;
 
-	public BrowserResizeInterop(ICommonUtilityService commonUtilityService)
+	public BrowserResizeInterop(CommonUtilityService commonUtilityService)
 	{
 		_commonUtilityService = commonUtilityService;
 	}

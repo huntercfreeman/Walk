@@ -13,7 +13,7 @@ public class TreeViewAbsolutePath : TreeViewWithType<AbsolutePath>
     public TreeViewAbsolutePath(
             AbsolutePath absolutePath,
             IIdeComponentRenderers ideComponentRenderers,
-            ICommonUtilityService commonUtilityService,
+            CommonUtilityService commonUtilityService,
             bool isExpandable,
             bool isExpanded)
         : base(absolutePath, isExpandable, isExpanded)
@@ -23,7 +23,7 @@ public class TreeViewAbsolutePath : TreeViewWithType<AbsolutePath>
     }
 
     public IIdeComponentRenderers IdeComponentRenderers { get; }
-    public ICommonUtilityService CommonUtilityService { get; }
+    public CommonUtilityService CommonUtilityService { get; }
 
     public override bool Equals(object? obj)
     {

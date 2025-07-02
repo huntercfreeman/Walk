@@ -27,7 +27,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IDotNetSolutionService _dotNetSolutionService;
     private readonly TextEditorService _textEditorService;
-    private readonly ICommonUtilityService _commonUtilityService;
+    private readonly CommonUtilityService _commonUtilityService;
 	private readonly ITerminalService _terminalService;
     private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 
@@ -36,7 +36,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		IDotNetSolutionService dotNetSolutionService,
         TextEditorService textEditorService,
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
         DotNetCliOutputParser dotNetCliOutputParser,
         ITerminalService terminalService)
 	{

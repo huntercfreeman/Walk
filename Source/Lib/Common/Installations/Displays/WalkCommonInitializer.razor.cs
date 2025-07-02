@@ -30,7 +30,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     [Inject]
     private BrowserResizeInterop BrowserResizeInterop { get; set; } = null!;
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
     
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     
@@ -85,7 +85,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 				}
 			}
 
-			BrowserResizeInterop.SubscribeWindowSizeChanged(CommonUtilityService.JsRuntimeCommonApi);
+			BrowserResizeInterop.SubscribeWindowSizeChanged((JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonUtilityService.JsRuntimeCommonApi);
 		}
 	    
 	    var tooltipModel = CommonUtilityService.GetTooltipState().TooltipModel;
@@ -304,7 +304,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     /// </summary>
     public void Dispose()
     {
-    	BrowserResizeInterop.DisposeWindowSizeChanged(CommonUtilityService.JsRuntimeCommonApi);
+		BrowserResizeInterop.DisposeWindowSizeChanged((JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonUtilityService.JsRuntimeCommonApi);
     	
     	_workerCancellationTokenSource.Cancel();
     	_workerCancellationTokenSource.Dispose();

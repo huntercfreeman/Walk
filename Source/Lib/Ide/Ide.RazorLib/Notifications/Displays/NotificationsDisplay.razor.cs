@@ -6,5 +6,5 @@ namespace Walk.Ide.RazorLib.Notifications.Displays;
 public partial class NotificationsDisplay : ComponentBase
 {
 	[Inject]
-	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 }

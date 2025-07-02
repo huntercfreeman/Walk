@@ -9,7 +9,7 @@ namespace Walk.Ide.RazorLib.Shareds.Displays.Internals;
 public partial class IdeImportExportButtons : ComponentBase
 {
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     private IDialog _importDialogRecord = new DialogViewModel(
         Key<IDynamicViewModel>.NewKey(),

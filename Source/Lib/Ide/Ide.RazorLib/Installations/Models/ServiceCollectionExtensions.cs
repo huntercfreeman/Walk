@@ -39,17 +39,17 @@ public static class ServiceCollectionExtensions
 
         if (ideConfig.AddWalkTextEditor)
         {
-            services.AddWalkTextEditor(hostingInformation, inTextEditorOptions => inTextEditorOptions with
+            services.AddWalkTextEditor(hostingInformation, (Func<WalkTextEditorConfig, WalkTextEditorConfig>?)(inTextEditorOptions => (inTextEditorOptions with
             {
                 CustomThemeRecordList = WalkTextEditorCustomThemeFacts.AllCustomThemesList,
                 InitialThemeKey = ThemeFacts.VisualStudioDarkThemeClone.Key,
-                AbsolutePathStandardizeFunc = AbsolutePathStandardizeFunc,
+                AbsolutePathStandardizeFunc = ServiceCollectionExtensions.AbsolutePathStandardizeFunc,
                 FastParseFunc = async (fastParseArgs) =>
                 {
                 	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
-                		fastParseArgs.ResourceUri.Value, fastParseArgs.ServiceProvider.GetRequiredService<ICommonUtilityService>());
+                		fastParseArgs.ResourceUri.Value, (Common.RazorLib.Options.Models.CommonUtilityService)fastParseArgs.ServiceProvider.GetRequiredService<Common.RazorLib.Options.Models.CommonUtilityService>());
                 		
-                	var standardizedResourceUri = new ResourceUri(standardizedAbsolutePathString);
+                	var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
                 
                     fastParseArgs = new FastParseArgs(
                         standardizedResourceUri,
@@ -65,9 +65,9 @@ public static class ServiceCollectionExtensions
                 RegisterModelFunc = async (registerModelArgs) =>
                 {
                 	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
-                		registerModelArgs.ResourceUri.Value, registerModelArgs.ServiceProvider.GetRequiredService<ICommonUtilityService>());
+                		registerModelArgs.ResourceUri.Value, (Common.RazorLib.Options.Models.CommonUtilityService)registerModelArgs.ServiceProvider.GetRequiredService<Common.RazorLib.Options.Models.CommonUtilityService>());
                 		
-                	var standardizedResourceUri = new ResourceUri(standardizedAbsolutePathString);
+                	var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
                 
                     registerModelArgs = new RegisterModelArgs(
                     	registerModelArgs.EditContext,
@@ -83,9 +83,9 @@ public static class ServiceCollectionExtensions
                 TryRegisterViewModelFunc = async (tryRegisterViewModelArgs) =>
                 {
                 	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
-                		tryRegisterViewModelArgs.ResourceUri.Value, tryRegisterViewModelArgs.ServiceProvider.GetRequiredService<ICommonUtilityService>());
+                		tryRegisterViewModelArgs.ResourceUri.Value, (Common.RazorLib.Options.Models.CommonUtilityService)tryRegisterViewModelArgs.ServiceProvider.GetRequiredService<Common.RazorLib.Options.Models.CommonUtilityService>());
                 		
-                	var standardizedResourceUri = new ResourceUri(standardizedAbsolutePathString);
+                	var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
                 	
                     tryRegisterViewModelArgs = new TryRegisterViewModelArgs(
                     	tryRegisterViewModelArgs.EditContext,
@@ -103,7 +103,7 @@ public static class ServiceCollectionExtensions
                     var ideBackgroundTaskApi = tryShowViewModelArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
                     return ideBackgroundTaskApi.Editor_TryShowViewModelFunc(tryShowViewModelArgs);
                 },
-            });
+            })));
         }
         
         if (hostingInformation.WalkHostingKind == WalkHostingKind.Photino)
@@ -131,7 +131,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
     
-    public static Task<string> AbsolutePathStandardizeFunc(string absolutePathString, ICommonUtilityService commonUtilityService)
+    public static Task<string> AbsolutePathStandardizeFunc(string absolutePathString, CommonUtilityService commonUtilityService)
     {
         if (absolutePathString.StartsWith(commonUtilityService.EnvironmentProvider.DriveExecutingFromNoDirectorySeparator))
         {

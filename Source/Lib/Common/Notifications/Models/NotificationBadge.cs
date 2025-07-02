@@ -11,9 +11,9 @@ public class NotificationBadge : IBadgeModel
     public static readonly Key<IBadgeModel> NotificationBadgeKey = Key<IBadgeModel>.NewKey();
     public static readonly Key<IDynamicViewModel> DialogRecordKey = Key<IDynamicViewModel>.NewKey();
 
-    private readonly ICommonUtilityService _commonUtilityService;
+    private readonly CommonUtilityService _commonUtilityService;
 
-    public NotificationBadge(ICommonUtilityService commonUtilityService)
+    public NotificationBadge(CommonUtilityService commonUtilityService)
     {
         _commonUtilityService = commonUtilityService;
     }

@@ -26,7 +26,7 @@ public record Panel : IPanelTab, IDialog, IDrag
         Key<ContextRecord> contextRecordKey,
         Type componentType,
         Dictionary<string, object?>? componentParameterMap,
-        ICommonUtilityService commonUtilityService)
+        CommonUtilityService commonUtilityService)
     {
         Title = title;
         Key = key;
@@ -47,7 +47,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 	public Key<Panel> Key { get; }
 	public Key<IDynamicViewModel> DynamicViewModelKey { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
-	public ICommonUtilityService CommonUtilityService { get;}
+	public CommonUtilityService CommonUtilityService { get;}
 	public Type ComponentType { get; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; set; }
 	public string? DialogCssClass { get; set; }

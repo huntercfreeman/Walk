@@ -28,7 +28,7 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 	[Inject]
-	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
     
     private readonly Throttle _eventThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
     
@@ -61,16 +61,16 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     
     public void DotNetCliOutputParser_StateChanged()
     {
-    	_eventThrottle.Run(_ =>
+		_eventThrottle.Run((Func<CancellationToken, Task>)(_ =>
     	{
     		if (DotNetBackgroundTaskApi.OutputService.GetOutputState().DotNetRunParseResultId == DotNetCliOutputParser.GetDotNetRunParseResult().Id)
     			return Task.CompletedTask;
-    		
-    		CommonUtilityService.Continuous_EnqueueGroup(new BackgroundTask(
-    			Key<IBackgroundTaskGroup>.Empty,
-    			DotNetBackgroundTaskApi.OutputService.Do_ConstructTreeView));
+
+			CommonUtilityService.Continuous_EnqueueGroup((IBackgroundTaskGroup)new BackgroundTask(
+				Key<IBackgroundTaskGroup>.Empty,
+				DotNetBackgroundTaskApi.OutputService.Do_ConstructTreeView));
     		return Task.CompletedTask;
-    	});
+    	}));
     }
     
     public async void OnOutputStateChanged()

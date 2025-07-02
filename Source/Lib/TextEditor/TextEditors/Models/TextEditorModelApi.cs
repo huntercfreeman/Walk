@@ -12,12 +12,12 @@ public sealed class TextEditorModelApi
 {
     private readonly TextEditorService _textEditorService;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
-    private readonly ICommonUtilityService _commonUtilityService;
+    private readonly CommonUtilityService _commonUtilityService;
 
     public TextEditorModelApi(
         TextEditorService textEditorService,
         ITextEditorRegistryWrap textEditorRegistryWrap,
-        ICommonUtilityService commonUtilityService)
+        CommonUtilityService commonUtilityService)
     {
         _textEditorService = textEditorService;
         _textEditorRegistryWrap = textEditorRegistryWrap;

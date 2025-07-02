@@ -40,7 +40,7 @@ public static class ServiceCollectionExtensions
 
         services
             .AddScoped<BrowserResizeInterop>()
-            .AddScoped<ICommonUtilityService, CommonUtilityService>(sp =>
+            .AddScoped<CommonUtilityService, CommonUtilityService>(sp =>
             {
                 var commonUtilityService = new CommonUtilityService(
                     hostingInformation,

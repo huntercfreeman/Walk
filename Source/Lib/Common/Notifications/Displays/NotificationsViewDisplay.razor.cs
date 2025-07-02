@@ -8,7 +8,7 @@ namespace Walk.Common.RazorLib.Notifications.Displays;
 public partial class NotificationsViewDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
     
     private readonly Action _defaultClearAction = new Action(() => { });
 

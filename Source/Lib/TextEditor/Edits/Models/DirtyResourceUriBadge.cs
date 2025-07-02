@@ -12,11 +12,11 @@ public class DirtyResourceUriBadge : IBadgeModel
     public static readonly Key<IDynamicViewModel> DialogRecordKey = Key<IDynamicViewModel>.NewKey();
 
     private readonly IDirtyResourceUriService _dirtyResourceUriService;
-    private readonly ICommonUtilityService _commonUtilityService;
+    private readonly CommonUtilityService _commonUtilityService;
 
     public DirtyResourceUriBadge(
         IDirtyResourceUriService dirtyResourceUriService,
-        ICommonUtilityService commonUtilityService)
+        CommonUtilityService commonUtilityService)
     {
         _dirtyResourceUriService = dirtyResourceUriService;
         _commonUtilityService = commonUtilityService;

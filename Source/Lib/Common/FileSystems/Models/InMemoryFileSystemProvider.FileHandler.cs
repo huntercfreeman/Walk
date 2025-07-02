@@ -14,11 +14,11 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
         private const bool IS_DIRECTORY_RESPONSE = false;
 
         private readonly InMemoryFileSystemProvider _inMemoryFileSystemProvider;
-        private readonly ICommonUtilityService _commonUtilityService;
+        private readonly CommonUtilityService _commonUtilityService;
 
         public InMemoryFileHandler(
             InMemoryFileSystemProvider inMemoryFileSystemProvider,
-            ICommonUtilityService commonUtilityService)
+            CommonUtilityService commonUtilityService)
         {
             _inMemoryFileSystemProvider = inMemoryFileSystemProvider;
             _commonUtilityService = commonUtilityService;

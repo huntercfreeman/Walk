@@ -16,7 +16,7 @@ public static class ContextHelper
         string displayName,
         string internalIdentifier,
         WalkCommonJavaScriptInteropApi jsRuntimeCommonApi,
-        ICommonUtilityService commonUtilityService)
+        CommonUtilityService commonUtilityService)
     {
         return new CommonCommand(
             displayName, internalIdentifier, false,

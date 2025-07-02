@@ -10,7 +10,7 @@ namespace Walk.Common.RazorLib.Reactives.Displays;
 public partial class ProgressBarDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
 	[CascadingParameter]
 	public INotification? Notification { get; set; } = null!;
@@ -32,15 +32,15 @@ public partial class ProgressBarDisplay : ComponentBase, IDisposable
 		{
 			_hasSeenProgressModelIsDisposed = true;
 
-			_ = Task.Run(async () =>
+			_ = Task.Run((Func<Task?>)(async () =>
 			{
 				await Task.Delay(4_000);
 		        
 				if (Notification.DeleteNotificationAfterOverlayIsDismissed)
-		            CommonUtilityService.Notification_ReduceMakeDeletedAction(Notification.DynamicViewModelKey);
+					CommonUtilityService.Notification_ReduceMakeDeletedAction(Notification.DynamicViewModelKey);
 		        else
-		            CommonUtilityService.Notification_ReduceMakeReadAction(Notification.DynamicViewModelKey);
-			});
+					CommonUtilityService.Notification_ReduceMakeReadAction(Notification.DynamicViewModelKey);
+			}));
 		}
         
         return Task.CompletedTask;

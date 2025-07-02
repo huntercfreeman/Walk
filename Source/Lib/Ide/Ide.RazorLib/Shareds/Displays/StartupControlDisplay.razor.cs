@@ -21,7 +21,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     [Inject]
     private IIdeService IdeService { get; set; } = null!;
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     private const string _startButtonElementId = "di_ide_startup-controls-display_id";
 

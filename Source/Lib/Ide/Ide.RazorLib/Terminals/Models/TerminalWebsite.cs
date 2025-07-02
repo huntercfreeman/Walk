@@ -15,14 +15,14 @@ namespace Walk.Ide.RazorLib.Terminals.Models;
 /// </summary>
 public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 {
-	private readonly ICommonUtilityService _commonUtilityService;
+	private readonly CommonUtilityService _commonUtilityService;
 
 	public TerminalWebsite(
 		string displayName,
 		Func<TerminalWebsite, ITerminalInteractive> terminalInteractiveFactory,
 		Func<TerminalWebsite, ITerminalInput> terminalInputFactory,
 		Func<TerminalWebsite, ITerminalOutput> terminalOutputFactory,
-		ICommonUtilityService commonUtilityService)
+		CommonUtilityService commonUtilityService)
 	{
 		DisplayName = displayName;
 		TerminalInteractive = terminalInteractiveFactory.Invoke(this);

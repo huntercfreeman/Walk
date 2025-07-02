@@ -16,7 +16,7 @@ public class WebsiteDotNetCliHelper
 		IEnvironmentProvider environmentProvider,
 		IFileSystemProvider fileSystemProvider,
 		DotNetBackgroundTaskApi compilerServicesBackgroundTaskApi,
-		ICommonUtilityService commonUtilityService,
+		CommonUtilityService commonUtilityService,
 		IDialog dialogRecord,
 		ICommonComponentRenderers commonComponentRenderers)
 	{

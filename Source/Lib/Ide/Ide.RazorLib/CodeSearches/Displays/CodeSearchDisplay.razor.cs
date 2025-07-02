@@ -19,7 +19,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ICodeSearchService CodeSearchService { get; set; } = null!;
     [Inject]
-	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]

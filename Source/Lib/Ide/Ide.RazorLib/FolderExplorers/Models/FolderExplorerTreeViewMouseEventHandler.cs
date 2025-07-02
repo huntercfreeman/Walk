@@ -18,7 +18,7 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
     public FolderExplorerTreeViewMouseEventHandler(
             IdeBackgroundTaskApi ideBackgroundTaskApi,
             TextEditorService textEditorService,
-            ICommonUtilityService commonUtilityService)
+            CommonUtilityService commonUtilityService)
         : base(commonUtilityService)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;

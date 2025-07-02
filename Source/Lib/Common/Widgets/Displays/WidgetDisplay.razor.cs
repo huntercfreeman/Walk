@@ -10,7 +10,7 @@ namespace Walk.Common.RazorLib.Widgets.Displays;
 public partial class WidgetDisplay : ComponentBase
 {
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
     
 	[Parameter, EditorRequired]
 	public WidgetModel Widget { get; set; } = null!;

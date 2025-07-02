@@ -21,11 +21,11 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Models;
 public sealed class TextEditorViewModelApi
 {
     private readonly TextEditorService _textEditorService;
-    private readonly ICommonUtilityService _commonUtilityService;
+    private readonly CommonUtilityService _commonUtilityService;
     
     public TextEditorViewModelApi(
         TextEditorService textEditorService,
-        ICommonUtilityService commonUtilityService)
+        CommonUtilityService commonUtilityService)
     {
         _textEditorService = textEditorService;
         _commonUtilityService = commonUtilityService;

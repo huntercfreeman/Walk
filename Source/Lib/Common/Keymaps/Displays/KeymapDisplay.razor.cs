@@ -7,7 +7,7 @@ namespace Walk.Common.RazorLib.Keymaps.Displays;
 public partial class KeymapDisplay : ComponentBase
 {
     [Inject]
-    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public IKeymap Keymap { get; set; } = null!;

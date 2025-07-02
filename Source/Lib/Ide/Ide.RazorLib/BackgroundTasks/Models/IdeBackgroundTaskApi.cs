@@ -54,7 +54,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly IFolderExplorerService _folderExplorerService;
 	private readonly ICodeSearchService _codeSearchService;
 	private readonly WalkTextEditorConfig _textEditorConfig;
-	private readonly ICommonUtilityService _commonUtilityService;
+	private readonly CommonUtilityService _commonUtilityService;
 	private readonly ICommandFactory _commandFactory;
 	private readonly ITerminalGroupService _terminalGroupService;
 	private readonly IIdeService _ideService;
@@ -70,7 +70,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         IFolderExplorerService folderExplorerService,
         ICodeSearchService codeSearchService,
         WalkTextEditorConfig textEditorConfig,
-        ICommonUtilityService commonUtilityService,
+        CommonUtilityService commonUtilityService,
         ICommandFactory commandFactory,
         ITerminalGroupService terminalGroupService,
         IIdeService ideService,
