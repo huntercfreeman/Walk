@@ -26,8 +26,6 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-	[Inject]
 	private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
 	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;

@@ -59,7 +59,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly ICommonUtilityService _commonUtilityService;
 	private readonly ICommandFactory _commandFactory;
 	private readonly ITerminalGroupService _terminalGroupService;
-	private readonly WalkHostingInformation _walkHostingInformation;
 	private readonly IIdeService _ideService;
 	private readonly IServiceProvider _serviceProvider;
 
@@ -78,7 +77,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         ICommonUtilityService commonUtilityService,
         ICommandFactory commandFactory,
         ITerminalGroupService terminalGroupService,
-        WalkHostingInformation walkHostingInformation,
         IIdeService ideService,
         IServiceProvider serviceProvider)
     {
@@ -96,7 +94,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         _commonUtilityService = commonUtilityService;
         _commandFactory = commandFactory;
         _terminalGroupService = terminalGroupService;
-        _walkHostingInformation = walkHostingInformation;
         _ideService = ideService;
         _serviceProvider = serviceProvider;
     }
@@ -245,8 +242,8 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
     private void AddGeneralTerminal()
     {
-        if (_walkHostingInformation.WalkHostingKind == WalkHostingKind.Wasm ||
-            _walkHostingInformation.WalkHostingKind == WalkHostingKind.ServerSide)
+        if (_commonUtilityService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Wasm ||
+            _commonUtilityService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.ServerSide)
         {
             _terminalService.Register(
                 new TerminalWebsite(
@@ -291,8 +288,8 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
     private void AddExecutionTerminal()
     {
-        if (_walkHostingInformation.WalkHostingKind == WalkHostingKind.Wasm ||
-            _walkHostingInformation.WalkHostingKind == WalkHostingKind.ServerSide)
+        if (_commonUtilityService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Wasm ||
+            _commonUtilityService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.ServerSide)
         {
             _terminalService.Register(
                 new TerminalWebsite(

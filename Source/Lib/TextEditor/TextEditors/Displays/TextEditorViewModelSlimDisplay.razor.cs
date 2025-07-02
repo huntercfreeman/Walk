@@ -44,8 +44,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     [Inject]
     public IWalkTextEditorComponentRenderers TextEditorComponentRenderers { get; set; } = null!;
     [Inject]
-    public ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
     public ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     public WalkTextEditorConfig TextEditorConfig { get; set; } = null!;

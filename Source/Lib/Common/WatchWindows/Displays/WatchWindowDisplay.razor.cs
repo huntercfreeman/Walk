@@ -22,8 +22,6 @@ public partial class WatchWindowDisplay : ComponentBase
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
-    [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	[Inject]
     private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
@@ -52,7 +50,7 @@ public partial class WatchWindowDisplay : ComponentBase
                     WatchWindowObject,
                     true,
                     false,
-                    CommonComponentRenderers);
+                    CommonUtilityService.CommonComponentRenderers);
 
                 TreeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
                     TreeViewContainerKey,

@@ -25,8 +25,6 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 	[Inject]
 	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	
 	[CascadingParameter]

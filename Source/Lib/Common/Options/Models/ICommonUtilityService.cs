@@ -33,6 +33,7 @@ namespace Walk.Common.RazorLib.Options.Models;
 public interface ICommonUtilityService : IBackgroundTaskGroup
 {
     public ICommonComponentRenderers CommonComponentRenderers { get; }
+    public WalkHostingInformation WalkHostingInformation { get; }
 
 	/* Start IAppDimensionService */
 	public event Action? AppDimensionStateChanged;

@@ -32,8 +32,6 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     [Inject]
     private BrowserResizeInterop BrowserResizeInterop { get; set; } = null!;
     [Inject]
-    private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
-    [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
@@ -79,7 +77,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 					token);
 			}
 
-			if (WalkHostingInformation.WalkPurposeKind == WalkPurposeKind.Ide)
+			if (CommonUtilityService.WalkHostingInformation.WalkPurposeKind == WalkPurposeKind.Ide)
 			{
 				if (BackgroundTaskService.IndefiniteWorker.StartAsyncTask is null)
 				{

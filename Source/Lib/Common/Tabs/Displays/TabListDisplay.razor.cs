@@ -16,8 +16,6 @@ public partial class TabListDisplay : ComponentBase
     private IDragService DragService { get; set; } = null!;
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 
 	/// <summary>
 	/// The list provided should not be modified after passing it as a parameter..

@@ -26,8 +26,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;

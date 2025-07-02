@@ -62,6 +62,8 @@ public class CommonUtilityService : ICommonUtilityService
 	
 	public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
 	public ICommonComponentRenderers CommonComponentRenderers { get; }
+	
+	public WalkHostingInformation WalkHostingInformation { get; }
 
     public CommonUtilityService(
         WalkHostingInformation hostingInformation,
@@ -71,6 +73,8 @@ public class CommonUtilityService : ICommonUtilityService
         WalkCommonConfig commonConfig,
         IJSRuntime jsRuntime)
     {
+        WalkHostingInformation = hostingInformation;
+    
         CommonComponentRenderers = commonComponentRenderers;
     
         _backgroundTaskService = backgroundTaskService;
@@ -84,17 +88,11 @@ public class CommonUtilityService : ICommonUtilityService
         {
             case WalkHostingKind.Photino:
                 EnvironmentProvider = new LocalEnvironmentProvider();
-                FileSystemProvider = new LocalFileSystemProvider(
-                    EnvironmentProvider,
-                    commonComponentRenderers,
-                    this);
+                FileSystemProvider = new LocalFileSystemProvider(this);
                 break;
             default:
                 EnvironmentProvider = new InMemoryEnvironmentProvider();
-                FileSystemProvider = new InMemoryFileSystemProvider(
-                    EnvironmentProvider,
-                    commonComponentRenderers,
-                    this);
+                FileSystemProvider = new InMemoryFileSystemProvider(this);
                 break;
         }
         

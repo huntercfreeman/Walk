@@ -13,15 +13,12 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
     private readonly InMemoryFileHandler _file;
     private readonly InMemoryDirectoryHandler _directory;
 
-    public InMemoryFileSystemProvider(
-        IEnvironmentProvider environmentProvider,
-        ICommonComponentRenderers commonComponentRenderers,
-        ICommonUtilityService commonUtilityService)
+    public InMemoryFileSystemProvider(ICommonUtilityService commonUtilityService)
     {
-        _environmentProvider = environmentProvider;
+        _environmentProvider = commonUtilityService.EnvironmentProvider;
 
-        _file = new InMemoryFileHandler(this, _environmentProvider, commonComponentRenderers, commonUtilityService);
-        _directory = new InMemoryDirectoryHandler(this, _environmentProvider, commonComponentRenderers, commonUtilityService);
+        _file = new InMemoryFileHandler(this, commonUtilityService);
+        _directory = new InMemoryDirectoryHandler(this, commonUtilityService);
 
         Directory
             .CreateDirectoryAsync(_environmentProvider.RootDirectoryAbsolutePath.Value)

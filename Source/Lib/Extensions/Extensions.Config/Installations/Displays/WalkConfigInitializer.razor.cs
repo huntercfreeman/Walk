@@ -28,8 +28,6 @@ public partial class WalkConfigInitializer : ComponentBase
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private IAppDataService AppDataService { get; set; } = null!;

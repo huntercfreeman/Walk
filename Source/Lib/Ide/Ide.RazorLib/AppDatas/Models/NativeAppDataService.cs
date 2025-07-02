@@ -15,14 +15,10 @@ public class NativeAppDataService : IAppDataService
 	private readonly Dictionary<string, IAppData> _appDataMap = new();
 	
 	private readonly ICommonUtilityService _commonUtilityService;
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
 
-	public NativeAppDataService(
-		ICommonUtilityService commonUtilityService,
-		ICommonComponentRenderers commonComponentRenderers)
+	public NativeAppDataService(ICommonUtilityService commonUtilityService)
 	{
 		_commonUtilityService = commonUtilityService;
-		_commonComponentRenderers = commonComponentRenderers;
 	}
 	
 	private bool _isInitialized;

@@ -28,13 +28,9 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 	[Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
-	private ICommonComponentRenderers WalkCommonComponentRenderers { get; set; } = null!;
-	[Inject]
 	private WalkIdeConfig IdeConfig { get; set; } = null!;
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-	private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
 	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
@@ -102,7 +98,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	private async Task ReadProjectTemplates()
 	{
-		if (WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
+		if (CommonUtilityService.WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
 		{
 			_viewModel.ProjectTemplateList = WebsiteProjectTemplateFacts.WebsiteProjectTemplatesContainer.ToList();
 			await InvokeAsync(StateHasChanged);
@@ -207,7 +203,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			return;
 		}
 
-		if (WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
+		if (CommonUtilityService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
 		{
 			var generalTerminal = TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY];
 
@@ -252,7 +248,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 					DotNetBackgroundTaskApi,
 					CommonUtilityService,
 					DialogRecord,
-					WalkCommonComponentRenderers)
+					CommonUtilityService.CommonComponentRenderers)
 				.ConfigureAwait(false);
 		}
 	}

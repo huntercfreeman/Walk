@@ -21,8 +21,6 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     private IDragService DragService { get; set; } = null!;
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
-	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<PanelGroup> PanelGroupKey { get; set; } = Key<PanelGroup>.Empty;

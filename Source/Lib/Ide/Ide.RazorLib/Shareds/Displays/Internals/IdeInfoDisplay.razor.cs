@@ -3,6 +3,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Installations.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Ide.RazorLib.Shareds.Displays.Internals;
 
@@ -11,7 +12,7 @@ public partial class IdeInfoDisplay : ComponentBase
 	[Inject]
 	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
-	private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
+	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
 #region
 	[Conditional("DEBUG")]

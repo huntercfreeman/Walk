@@ -22,8 +22,6 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
-	private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
-	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
@@ -94,7 +92,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 			return;
 		}
 
-		if (WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
+		if (CommonUtilityService.WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
 		{
 			await HackForWebsite_StartNewDotNetSolutionCommandOnClick(
 					localSolutionName,

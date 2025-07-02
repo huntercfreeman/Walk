@@ -15,8 +15,6 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 {
 	[Inject]
 	public ICommonUtilityService CommonUtilityService { get; set; } = null!;
-	[Inject]
-	private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public DropdownRecord Dropdown { get; set; } = null!;
@@ -61,7 +59,7 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 			// Force the initial invocation (as opposed to waiting for the event)
 			await RemeasureAndRerender();
 		}
-		else if (WalkHostingInformation.WalkPurposeKind == WalkPurposeKind.Ide && _hasPendingEvent)
+		else if (CommonUtilityService.WalkHostingInformation.WalkPurposeKind == WalkPurposeKind.Ide && _hasPendingEvent)
 		{		
 			if (_isOffScreenHorizontally || _isOffScreenVertically)
 			{

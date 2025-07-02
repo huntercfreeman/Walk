@@ -28,8 +28,6 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 	[Inject]
 	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-	[Inject]
 	private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
@@ -96,7 +94,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
         		editContext,
         		modelModifier,
         		viewModelModifier,
-        		CommonComponentRenderers,
+        		CommonUtilityService.CommonComponentRenderers,
         		CommonUtilityService);
         	return ValueTask.CompletedTask;
         });

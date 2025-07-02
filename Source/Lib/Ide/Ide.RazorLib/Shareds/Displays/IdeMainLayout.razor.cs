@@ -39,8 +39,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
-    private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
-    [Inject]
     private ICommandFactory CommandFactory { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
@@ -137,7 +135,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 Options_SetFromLocalStorageAsync()
                 .ConfigureAwait(false);
                 
-            if (WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
+            if (CommonUtilityService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
 			{
 				await JsRuntime.GetWalkIdeApi()
 					.PreventDefaultBrowserKeybindings()

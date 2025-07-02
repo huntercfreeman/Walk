@@ -144,14 +144,14 @@
         WalkHostingInformation:
 		<div>
             <div>
-                @nameof(WalkHostingInformation.WalkHostingKind): @WalkHostingInformation.WalkHostingKind
+                @nameof(CommonUtilityService.WalkHostingInformation.WalkHostingKind): @CommonUtilityService.WalkHostingInformation.WalkHostingKind
             </div>
             <div>
-                @nameof(WalkHostingInformation.WalkPurposeKind): @WalkHostingInformation.WalkPurposeKind
+                @nameof(CommonUtilityService.WalkHostingInformation.WalkPurposeKind): @CommonUtilityService.WalkHostingInformation.WalkPurposeKind
             </div>
             <div>
-                @nameof(WalkHostingInformation.BackgroundTaskService):
-                @if (WalkHostingInformation.BackgroundTaskService is null)
+                @nameof(CommonUtilityService.WalkHostingInformation.BackgroundTaskService):
+                @if (CommonUtilityService.WalkHostingInformation.BackgroundTaskService is null)
                 {
                     <text>null</text>
                 }
@@ -161,7 +161,7 @@
                 }
             </div>
             <div>
-                @nameof(WalkHostingInformation.GetMainWindowScreenDpiFunc): @WalkHostingInformation.GetMainWindowScreenDpiFunc.Invoke()
+                @nameof(CommonUtilityService.WalkHostingInformation.GetMainWindowScreenDpiFunc): @CommonUtilityService.WalkHostingInformation.GetMainWindowScreenDpiFunc.Invoke()
             </div>
 		</div>
 	</div>
