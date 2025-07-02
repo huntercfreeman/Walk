@@ -40,8 +40,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     [Inject]
     public IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
-    public BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-    [Inject]
     public IWalkTextEditorComponentRenderers TextEditorComponentRenderers { get; set; } = null!;
     [Inject]
     public ICommonUtilityService CommonUtilityService { get; set; } = null!;

@@ -19,8 +19,6 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 	[Inject]
 	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
-	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
@@ -45,15 +43,13 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 			CompilerServiceRegistry,
 			TextEditorService,
 			CommonUtilityService,
-			ServiceProvider,
-			BackgroundTaskService);
+			ServiceProvider);
 
 		_treeViewMouseEventHandler = new TestExplorerTreeViewMouseEventHandler(
 			CompilerServiceRegistry,
 			TextEditorService,
 			CommonUtilityService,
-			ServiceProvider,
-			BackgroundTaskService);
+			ServiceProvider);
 	}
 
 	private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)

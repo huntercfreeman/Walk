@@ -64,7 +64,6 @@ namespace Walk.Extensions.DotNet.BackgroundTasks.Models;
 public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 {
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-	private readonly BackgroundTaskService _backgroundTaskService;
 	private readonly IAppDataService _appDataService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
@@ -91,7 +90,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
     public DotNetBackgroundTaskApi(
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
-		BackgroundTaskService backgroundTaskService,
         IAppDataService appDataService,
 		ICompilerServiceRegistry compilerServiceRegistry,
 		IDotNetComponentRenderers dotNetComponentRenderers,
@@ -111,7 +109,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         IServiceProvider serviceProvider)
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
-		_backgroundTaskService = backgroundTaskService;
 		_appDataService = appDataService;
         _dotNetComponentRenderers = dotNetComponentRenderers;
 		_ideComponentRenderers = ideComponentRenderers;
@@ -139,7 +136,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 			DotNetSolutionService,
             _textEditorService,
             _commonUtilityService,
-            _backgroundTaskService,
             _dotNetCliOutputParser,
             _terminalService);
 
@@ -174,7 +170,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
     public void Enqueue(DotNetBackgroundTaskApiWorkArgs workArgs)
     {
 		_workQueue.Enqueue(workArgs);
-        _backgroundTaskService.Continuous_EnqueueGroup(this);
+        _commonUtilityService.Continuous_EnqueueGroup(this);
     }
 
     public async ValueTask Do_SolutionExplorer_TreeView_MultiSelect_DeleteFiles(TreeViewCommandArgs commandArgs)

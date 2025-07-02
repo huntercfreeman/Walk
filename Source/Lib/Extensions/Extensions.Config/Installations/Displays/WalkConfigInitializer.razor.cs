@@ -32,8 +32,6 @@ public partial class WalkConfigInitializer : ComponentBase
 	[Inject]
 	private IInputFileService InputFileService { get; set; } = null!;
 	[Inject]
-	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
 	private IIdeService IdeService { get; set; } = null!;
 	[Inject]
 	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
@@ -44,7 +42,7 @@ public partial class WalkConfigInitializer : ComponentBase
 
 	protected override void OnInitialized()
 	{
-        BackgroundTaskService.Continuous_EnqueueGroup(new BackgroundTask(
+        CommonUtilityService.Continuous_EnqueueGroup(new BackgroundTask(
         	Key<IBackgroundTaskGroup>.Empty,
         	Do_InitializeFooterBadges));
 	

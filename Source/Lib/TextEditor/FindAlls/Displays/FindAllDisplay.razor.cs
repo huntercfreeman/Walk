@@ -22,8 +22,6 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
 	private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
     
     private FindAllTreeViewKeyboardEventHandler _treeViewKeymap = null!;
 	private FindAllTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
@@ -59,15 +57,13 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
 			TextEditorService,
 			TextEditorConfig,
 			ServiceProvider,
-			CommonUtilityService,
-			BackgroundTaskService);
+			CommonUtilityService);
 
 		_treeViewMouseEventHandler = new FindAllTreeViewMouseEventHandler(
 			TextEditorService,
 			TextEditorConfig,
 			ServiceProvider,
-			CommonUtilityService,
-			BackgroundTaskService);
+			CommonUtilityService);
 	}
 	
 	private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)

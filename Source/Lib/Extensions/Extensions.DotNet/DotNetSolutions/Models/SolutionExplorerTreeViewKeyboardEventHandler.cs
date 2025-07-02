@@ -29,9 +29,8 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 			IdeBackgroundTaskApi ideBackgroundTaskApi,
 			IMenuOptionsFactory menuOptionsFactory,
 			TextEditorService textEditorService,
-			ICommonUtilityService commonUtilityService,
-			BackgroundTaskService backgroundTaskService)
-		: base(commonUtilityService, backgroundTaskService)
+			ICommonUtilityService commonUtilityService)
+		: base(commonUtilityService)
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
 		_menuOptionsFactory = menuOptionsFactory;

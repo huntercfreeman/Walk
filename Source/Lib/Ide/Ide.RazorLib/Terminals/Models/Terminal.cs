@@ -16,7 +16,6 @@ namespace Walk.Ide.RazorLib.Terminals.Models;
 /// </summary>
 public class Terminal : ITerminal, IBackgroundTaskGroup
 {
-	private readonly BackgroundTaskService _backgroundTaskService;
 	private readonly ICommonUtilityService _commonUtilityService;
 	private readonly ITerminalService _terminalService;
 	
@@ -28,7 +27,6 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 		Func<Terminal, ITerminalInteractive> terminalInteractiveFactory,
 		Func<Terminal, ITerminalInput> terminalInputFactory,
 		Func<Terminal, ITerminalOutput> terminalOutputFactory,
-		BackgroundTaskService backgroundTaskService,
 		ICommonUtilityService commonUtilityService,
 		ITerminalService terminalService)
 	{
@@ -37,7 +35,6 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 		TerminalInput = terminalInputFactory.Invoke(this);
 		TerminalOutput = terminalOutputFactory.Invoke(this);
 		
-		_backgroundTaskService = backgroundTaskService;
 		_commonUtilityService = commonUtilityService;
 		_terminalService = terminalService;
 		
@@ -80,7 +77,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(TerminalWorkKind.Command);
 			_queue_general_TerminalCommandRequest.Enqueue(terminalCommandRequest);
-            _backgroundTaskService.Indefinite_EnqueueGroup(this);
+            _commonUtilityService.Indefinite_EnqueueGroup(this);
         }
     }
 
@@ -91,7 +88,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
     
     public Task EnqueueCommandAsync(TerminalCommandRequest terminalCommandRequest)
     {
-		return _backgroundTaskService.Indefinite_EnqueueAsync(
+		return _commonUtilityService.Indefinite_EnqueueAsync(
 			Key<IBackgroundTaskGroup>.NewKey(),
 			BackgroundTaskFacts.IndefiniteQueueKey,
 			"Enqueue Command",

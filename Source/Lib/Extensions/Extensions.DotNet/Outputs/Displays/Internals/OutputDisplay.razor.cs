@@ -21,8 +21,6 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]
@@ -46,15 +44,13 @@ public partial class OutputDisplay : ComponentBase, IDisposable
 			TextEditorService,
 			TextEditorConfig,
 			ServiceProvider,
-			CommonUtilityService,
-			BackgroundTaskService);
+			CommonUtilityService);
 
 		_treeViewMouseEventHandler = new OutputTreeViewMouseEventHandler(
 			TextEditorService,
 			TextEditorConfig,
 			ServiceProvider,
-			CommonUtilityService,
-			BackgroundTaskService);
+			CommonUtilityService);
     
     	DotNetCliOutputParser.StateChanged += DotNetCliOutputParser_StateChanged;
     	DotNetBackgroundTaskApi.OutputService.OutputStateChanged += OnOutputStateChanged;
@@ -70,7 +66,7 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     		if (DotNetBackgroundTaskApi.OutputService.GetOutputState().DotNetRunParseResultId == DotNetCliOutputParser.GetDotNetRunParseResult().Id)
     			return Task.CompletedTask;
     		
-    		BackgroundTaskService.Continuous_EnqueueGroup(new BackgroundTask(
+    		CommonUtilityService.Continuous_EnqueueGroup(new BackgroundTask(
     			Key<IBackgroundTaskGroup>.Empty,
     			DotNetBackgroundTaskApi.OutputService.Do_ConstructTreeView));
     		return Task.CompletedTask;

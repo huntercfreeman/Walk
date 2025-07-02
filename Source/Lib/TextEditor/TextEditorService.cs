@@ -32,7 +32,6 @@ namespace Walk.TextEditor.RazorLib;
 
 public sealed class TextEditorService
 {
-    private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IDirtyResourceUriService _dirtyResourceUriService;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
     private readonly IJSRuntime _jsRuntime;
@@ -41,7 +40,6 @@ public sealed class TextEditorService
     public TextEditorService(
         IFindAllService findAllService,
         IDirtyResourceUriService dirtyResourceUriService,
-        BackgroundTaskService backgroundTaskService,
         WalkTextEditorConfig textEditorConfig,
         ITextEditorRegistryWrap textEditorRegistryWrap,
         IJSRuntime jsRuntime,
@@ -68,14 +66,13 @@ public sealed class TextEditorService
 
         FindAllService = findAllService;
         _dirtyResourceUriService = dirtyResourceUriService;
-        _backgroundTaskService = backgroundTaskService;
         TextEditorConfig = textEditorConfig;
         _textEditorRegistryWrap = textEditorRegistryWrap;
         _jsRuntime = jsRuntime;
 		JsRuntimeTextEditorApi = _jsRuntime.GetWalkTextEditorApi();
 
-        ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService);
-        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, CommonUtilityService);
+        ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, CommonUtilityService);
+        ViewModelApi = new TextEditorViewModelApi(this, CommonUtilityService);
         GroupApi = new TextEditorGroupApi(this, CommonUtilityService);
         DiffApi = new TextEditorDiffApi(this);
         OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, CommonUtilityService);
@@ -108,8 +105,6 @@ public sealed class TextEditorService
     
     public TextEditorWorkerUi WorkerUi { get; }
 	public TextEditorWorkerArbitrary WorkerArbitrary { get; }
-    
-    public BackgroundTaskService BackgroundTaskService => _backgroundTaskService;
     
     /// <summary>
 	/// Do not touch this property, it is used for the VirtualizationResult.
@@ -797,7 +792,7 @@ public sealed class TextEditorService
     
     public void Enqueue_TextEditorInitializationBackgroundTaskGroupWorkKind()
     {
-    	_backgroundTaskService.Continuous_EnqueueGroup(new BackgroundTask(
+    	CommonUtilityService.Continuous_EnqueueGroup(new BackgroundTask(
     		Key<IBackgroundTaskGroup>.Empty,
     		Do_WalkTextEditorInitializerOnInit));
     }

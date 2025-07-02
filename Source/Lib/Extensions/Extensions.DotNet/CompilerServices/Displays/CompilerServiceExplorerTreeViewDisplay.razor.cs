@@ -28,8 +28,6 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 
 	private CompilerServiceExplorerTreeViewKeyboardEventHandler _compilerServiceExplorerTreeViewKeymap = null!;
@@ -47,13 +45,11 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
 		_compilerServiceExplorerTreeViewKeymap = new CompilerServiceExplorerTreeViewKeyboardEventHandler(
 			IdeBackgroundTaskApi,
-			CommonUtilityService,
-			BackgroundTaskService);
+			CommonUtilityService);
 
 		_compilerServiceExplorerTreeViewMouseEventHandler = new CompilerServiceExplorerTreeViewMouseEventHandler(
 			IdeBackgroundTaskApi,
-			CommonUtilityService,
-			BackgroundTaskService);
+			CommonUtilityService);
 	}
 
 	protected override Task OnAfterRenderAsync(bool firstRender)
@@ -97,7 +93,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
 	private void ReloadOnClick()
 	{
-		BackgroundTaskService.Continuous_EnqueueGroup(new BackgroundTask(
+		CommonUtilityService.Continuous_EnqueueGroup(new BackgroundTask(
 			Key<IBackgroundTaskGroup>.Empty,
 			Do_SetCompilerServiceExplorerTreeView));
 	}

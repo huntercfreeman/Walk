@@ -23,8 +23,6 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 	[Inject]
 	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
-	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	
 	[CascadingParameter]
@@ -83,7 +81,6 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 					TextEditorService,
 					CompilerServiceRegistry,
 					CommonUtilityService)),
-			BackgroundTaskService,
 			CommonUtilityService,
 			_pathToShellExecutable)
 		{

@@ -12,9 +12,8 @@ public class CompilerServiceExplorerTreeViewMouseEventHandler : TreeViewMouseEve
 
 	public CompilerServiceExplorerTreeViewMouseEventHandler(
 			IdeBackgroundTaskApi ideBackgroundTaskApi,
-			ICommonUtilityService commonUtilityService,
-			BackgroundTaskService backgroundTaskService)
-		: base(commonUtilityService, backgroundTaskService)
+			ICommonUtilityService commonUtilityService)
+		: base(commonUtilityService)
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
 	}

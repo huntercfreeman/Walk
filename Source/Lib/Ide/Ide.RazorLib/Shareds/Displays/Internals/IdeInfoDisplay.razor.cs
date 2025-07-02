@@ -10,8 +10,6 @@ namespace Walk.Ide.RazorLib.Shareds.Displays.Internals;
 public partial class IdeInfoDisplay : ComponentBase
 {
 	[Inject]
-	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
 	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
 #region

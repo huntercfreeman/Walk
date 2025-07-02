@@ -19,8 +19,7 @@ class Program
 
         var hostingInformation = new WalkHostingInformation(
             WalkHostingKind.Photino,
-            WalkPurposeKind.Ide,
-            new BackgroundTaskService());
+            WalkPurposeKind.Ide);
 
         appBuilder.Services.AddWalkIdeRazorLibServices(hostingInformation);
         appBuilder.Services.AddWalkConfigServices(hostingInformation);

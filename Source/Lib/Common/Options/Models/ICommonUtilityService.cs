@@ -361,4 +361,42 @@ public interface ICommonUtilityService : IBackgroundTaskGroup
 	public string TreeView_GetNodeTextStyle(int walkTreeViewIconWidth);
 	public string TreeView_GetNodeBorderStyle(int offsetInPixels, int walkTreeViewIconWidth);
     /* End ITreeViewService, TreeViewService */
+    
+    /* Start BackgroundTaskService */
+	/// <summary>
+	/// Generally speaking: Presume that the ContinuousTaskWorker is "always ready" to run the next task that gets enqueued.
+	/// </summary>
+	public ContinuousBackgroundTaskWorker ContinuousWorker { get; }
+	/// <summary>
+	/// Generally speaking: Presume that the ContinuousTaskWorker is "always ready" to run the next task that gets enqueued.
+	/// </summary>
+	public BackgroundTaskQueue ContinuousQueue { get; }
+	
+	/// <summary>
+	/// Generally speaking: Presume that the IndefiniteTaskWorker is NOT ready to run the next task that gets enqueued.
+	/// </summary>
+    public IndefiniteBackgroundTaskWorker IndefiniteWorker { get; }
+    /// <summary>
+	/// Generally speaking: Presume that the IndefiniteTaskWorker is NOT ready to run the next task that gets enqueued.
+	/// </summary>
+    public BackgroundTaskQueue IndefiniteQueue { get; }
+
+	public void Continuous_EnqueueGroup(IBackgroundTaskGroup backgroundTaskGroup);
+	
+	public void Indefinite_EnqueueGroup(IBackgroundTaskGroup backgroundTaskGroup);
+
+    public Task Indefinite_EnqueueAsync(IBackgroundTaskGroup backgroundTask);
+
+    public Task Indefinite_EnqueueAsync(Key<IBackgroundTaskGroup> taskKey, Key<BackgroundTaskQueue> queueKey, string name, Func<ValueTask> runFunc);
+    
+    public void CompleteTaskCompletionSource(Key<IBackgroundTaskGroup> backgroundTaskKey);
+
+    public void SetContinuousWorker(ContinuousBackgroundTaskWorker worker);
+    
+    public void SetContinuousQueue(BackgroundTaskQueue queue);
+    
+    public void SetIndefiniteWorker(IndefiniteBackgroundTaskWorker worker);
+    
+    public void SetIndefiniteQueue(BackgroundTaskQueue queue);
+    /* End BackgroundTaskService */
 }

@@ -12,14 +12,10 @@ namespace Walk.Common.RazorLib.TreeViews.Models;
 public class TreeViewKeyboardEventHandler
 {
     protected readonly ICommonUtilityService CommonUtilityService;
-    protected readonly BackgroundTaskService BackgroundTaskService;
 
-    public TreeViewKeyboardEventHandler(
-		ICommonUtilityService commonUtilityService,
-		BackgroundTaskService backgroundTaskService)
+    public TreeViewKeyboardEventHandler(ICommonUtilityService commonUtilityService)
     {
         CommonUtilityService = commonUtilityService;
-		BackgroundTaskService = backgroundTaskService;
     }
 
     /// <summary>

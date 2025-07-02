@@ -22,9 +22,8 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 			ICompilerServiceRegistry compilerServiceRegistry,
 			TextEditorService textEditorService,
 			ICommonUtilityService commonUtilityService,
-			IServiceProvider serviceProvider,
-			BackgroundTaskService backgroundTaskService)
-		: base(commonUtilityService, backgroundTaskService)
+			IServiceProvider serviceProvider)
+		: base(commonUtilityService)
 	{
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_textEditorService = textEditorService;

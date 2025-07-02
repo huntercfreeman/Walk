@@ -38,41 +38,37 @@ public static class ServiceCollectionExtensions
         if (configure is not null)
             commonConfig = configure.Invoke(commonConfig);
 
-		var continuousQueue = new BackgroundTaskQueue(
-            BackgroundTaskFacts.ContinuousQueueKey,
-            "Continuous");
-            
-        var indefiniteQueue = new BackgroundTaskQueue(
-            BackgroundTaskFacts.IndefiniteQueueKey,
-            "Blocking");
-            
-        hostingInformation.BackgroundTaskService.SetContinuousQueue(continuousQueue);
-        hostingInformation.BackgroundTaskService.SetIndefiniteQueue(indefiniteQueue);
-            
         services
-			.AddScoped<BackgroundTaskService>(sp => 
-            {
-				hostingInformation.BackgroundTaskService.SetContinuousWorker(new ContinuousBackgroundTaskWorker(
-				    continuousQueue,
-					hostingInformation.BackgroundTaskService,
-				    sp.GetRequiredService<ILoggerFactory>(),
-				    hostingInformation.WalkHostingKind));
-
-				hostingInformation.BackgroundTaskService.SetIndefiniteWorker(new IndefiniteBackgroundTaskWorker(
-				    indefiniteQueue,
-					hostingInformation.BackgroundTaskService,
-				    sp.GetRequiredService<ILoggerFactory>(),
-				    hostingInformation.WalkHostingKind));
-
-				return hostingInformation.BackgroundTaskService;
-			})
             .AddScoped<BrowserResizeInterop>()
-            .AddScoped<ICommonUtilityService, CommonUtilityService>(sp => new CommonUtilityService(
-                hostingInformation,
-                _commonRendererTypes,
-                sp.GetRequiredService<BackgroundTaskService>(),
-                commonConfig,
-                sp.GetRequiredService<IJSRuntime>()));
+            .AddScoped<ICommonUtilityService, CommonUtilityService>(sp =>
+            {
+                var commonUtilityService = new CommonUtilityService(
+                    hostingInformation,
+                    _commonRendererTypes,
+                    commonConfig,
+                    sp.GetRequiredService<IJSRuntime>());
+            
+                commonUtilityService.SetContinuousQueue(new BackgroundTaskQueue(
+                    BackgroundTaskFacts.ContinuousQueueKey,
+                    "Continuous"));
+                commonUtilityService.SetIndefiniteQueue(new BackgroundTaskQueue(
+                    BackgroundTaskFacts.IndefiniteQueueKey,
+                    "Blocking"));
+            
+                commonUtilityService.SetContinuousWorker(new ContinuousBackgroundTaskWorker(
+				    commonUtilityService.ContinuousQueue,
+					commonUtilityService,
+				    sp.GetRequiredService<ILoggerFactory>(),
+				    hostingInformation.WalkHostingKind));
+
+				commonUtilityService.SetIndefiniteWorker(new IndefiniteBackgroundTaskWorker(
+				    commonUtilityService.IndefiniteQueue,
+					commonUtilityService,
+				    sp.GetRequiredService<ILoggerFactory>(),
+				    hostingInformation.WalkHostingKind));
+            
+                return commonUtilityService;
+            });
         
         return services;
     }

@@ -17,16 +17,13 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
 {
     private readonly IIdeComponentRenderers _ideComponentRenderers;
     private readonly ICommonUtilityService _commonUtilityService;
-    private readonly BackgroundTaskService _backgroundTaskService;
 
     public MenuOptionsFactory(
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonUtilityService commonUtilityService,
-        BackgroundTaskService backgroundTaskService)
+        ICommonUtilityService commonUtilityService)
     {
         _ideComponentRenderers = ideComponentRenderers;
         _commonUtilityService = commonUtilityService;
-        _backgroundTaskService = backgroundTaskService;
     }
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
@@ -204,7 +201,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
                 namespacePath,
                 onAfterCompletion));
 
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
+            _commonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -261,7 +258,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformNewDirectory);
             _queue_PerformNewDirectory.Enqueue((directoryName, parentDirectory, onAfterCompletion));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
+            _commonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -288,7 +285,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformDeleteFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((absolutePath, onAfterCompletion));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
+            _commonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -316,7 +313,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformCopyFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((absolutePath, onAfterCompletion));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
+            _commonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
 
@@ -339,7 +336,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformCutFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((absolutePath, onAfterCompletion));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
+            _commonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -362,7 +359,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformPasteFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((receivingDirectory, onAfterCompletion));
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
+            _commonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
     

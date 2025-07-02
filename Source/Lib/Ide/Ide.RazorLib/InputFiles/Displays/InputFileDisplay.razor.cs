@@ -20,8 +20,6 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
     private IInputFileService InputFileService { get; set; } = null!;
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
-    [Inject]
-    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     /// <summary>
     /// Receives the <see cref="_selectedAbsolutePath"/> as
@@ -85,8 +83,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
         _inputFileTreeViewMouseEventHandler = new InputFileTreeViewMouseEventHandler(
             CommonUtilityService,
             InputFileService,
-            SetInputFileContentTreeViewRootFunc,
-			BackgroundTaskService);
+            SetInputFileContentTreeViewRootFunc);
 
         _inputFileTreeViewKeyboardEventHandler = new InputFileTreeViewKeyboardEventHandler(
             InputFileService,
@@ -112,8 +109,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
                     //             on an ElementReference.
                 }
             },
-            () => _searchMatchTuples,
-            BackgroundTaskService);
+            () => _searchMatchTuples);
 
         InitializeElementDimensions();
     }

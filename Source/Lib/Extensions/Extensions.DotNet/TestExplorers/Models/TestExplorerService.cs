@@ -28,7 +28,6 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
     private readonly IDotNetSolutionService _dotNetSolutionService;
     private readonly TextEditorService _textEditorService;
     private readonly ICommonUtilityService _commonUtilityService;
-    private readonly BackgroundTaskService _backgroundTaskService;
 	private readonly ITerminalService _terminalService;
     private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 
@@ -38,7 +37,6 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 		IDotNetSolutionService dotNetSolutionService,
         TextEditorService textEditorService,
         ICommonUtilityService commonUtilityService,
-        BackgroundTaskService backgroundTaskService,
         DotNetCliOutputParser dotNetCliOutputParser,
         ITerminalService terminalService)
 	{
@@ -47,7 +45,6 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
         _dotNetSolutionService = dotNetSolutionService;
 		_textEditorService = textEditorService;
 		_commonUtilityService = commonUtilityService;
-		_backgroundTaskService = backgroundTaskService;
 		_terminalService = terminalService;
         _dotNetCliOutputParser = dotNetCliOutputParser;
         
@@ -256,7 +253,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
         lock (_workLock)
         {
             _workKindQueue.Enqueue(TestExplorerSchedulerWorkKind.ConstructTreeView);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
+            _commonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -265,7 +262,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
         lock (_workLock)
         {
             _workKindQueue.Enqueue(TestExplorerSchedulerWorkKind.DiscoverTests);
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
+            _commonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
 

@@ -27,8 +27,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     private FolderExplorerTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     private FolderExplorerTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
@@ -44,14 +42,12 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         _treeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(
             IdeBackgroundTaskApi,
             TextEditorService,
-            CommonUtilityService,
-			BackgroundTaskService);
+            CommonUtilityService);
 
         _treeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(
             IdeBackgroundTaskApi,
             TextEditorService,
             MenuOptionsFactory,
-			BackgroundTaskService,
             CommonUtilityService);
     }
 

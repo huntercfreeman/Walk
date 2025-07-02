@@ -43,8 +43,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]
-    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-    [Inject]
     private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
     
     private bool _previousDragStateWrapShouldDisplay;

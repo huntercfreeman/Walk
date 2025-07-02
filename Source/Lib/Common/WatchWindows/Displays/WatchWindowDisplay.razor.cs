@@ -20,8 +20,6 @@ public partial class WatchWindowDisplay : ComponentBase
 {
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
-	[Inject]
-    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public WatchWindowObject WatchWindowObject { get; set; } = null!;
@@ -34,8 +32,8 @@ public partial class WatchWindowDisplay : ComponentBase
 
     protected override void OnInitialized()
     {
-        _treeViewMouseEventHandler = new(CommonUtilityService, BackgroundTaskService);
-        _treeViewKeyboardEventHandler = new(CommonUtilityService, BackgroundTaskService);
+        _treeViewMouseEventHandler = new(CommonUtilityService);
+        _treeViewKeyboardEventHandler = new(CommonUtilityService);
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender)

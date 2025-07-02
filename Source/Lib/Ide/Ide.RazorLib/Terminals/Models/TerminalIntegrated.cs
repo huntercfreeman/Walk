@@ -14,7 +14,6 @@ namespace Walk.Ide.RazorLib.Terminals.Models;
 
 public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 {
-	private readonly BackgroundTaskService _backgroundTaskService;
 	private readonly ICommonUtilityService _commonUtilityService;
 	private readonly string _pathToShellExecutable;
 
@@ -23,7 +22,6 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 		Func<TerminalIntegrated, ITerminalInteractive> terminalInteractiveFactory,
 		Func<TerminalIntegrated, ITerminalInput> terminalInputFactory,
 		Func<TerminalIntegrated, ITerminalOutput> terminalOutputFactory,
-		BackgroundTaskService backgroundTaskService,
 		ICommonUtilityService commonUtilityService,
 		string pathToShellExecutable)
 	{
@@ -32,7 +30,6 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 		TerminalInput = terminalInputFactory.Invoke(this);
 		TerminalOutput = terminalOutputFactory.Invoke(this);
 		
-		_backgroundTaskService = backgroundTaskService;
 		_commonUtilityService = commonUtilityService;
 		_pathToShellExecutable = pathToShellExecutable;
 	}
@@ -66,7 +63,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(TerminalWorkKind.Command);
             _queue_general_TerminalCommandRequest.Enqueue(terminalCommandRequest);
-            _backgroundTaskService.Indefinite_EnqueueGroup(this);
+            _commonUtilityService.Indefinite_EnqueueGroup(this);
         }
     }
 
@@ -77,7 +74,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 
     public Task EnqueueCommandAsync(TerminalCommandRequest terminalCommandRequest)
     {
-		return _backgroundTaskService.Indefinite_EnqueueAsync(
+		return _commonUtilityService.Indefinite_EnqueueAsync(
 			Key<IBackgroundTaskGroup>.NewKey(),
 			BackgroundTaskFacts.IndefiniteQueueKey,
 			"Enqueue Command",

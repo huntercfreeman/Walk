@@ -19,8 +19,6 @@ public partial class InputFileTopNavBar : ComponentBase
     private IInputFileService InputFileService { get; set; } = null!;
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
-    [Inject]
-    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     [CascadingParameter(Name="SetInputFileContentTreeViewRootFunc")]
     public Func<AbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
@@ -54,7 +52,6 @@ public partial class InputFileTopNavBar : ComponentBase
         InputFileService.OpenParentDirectory(
             IdeComponentRenderers,
             CommonUtilityService,
-            BackgroundTaskService,
             parentDirectoryTreeViewModel: null);
 
         await ChangeContentRootToOpenedTreeView().ConfigureAwait(false);
@@ -62,7 +59,7 @@ public partial class InputFileTopNavBar : ComponentBase
 
     private async Task HandleRefreshButtonOnClick()
     {
-        InputFileService.RefreshCurrentSelection(BackgroundTaskService, currentSelection: null);
+        InputFileService.RefreshCurrentSelection(currentSelection: null);
         await ChangeContentRootToOpenedTreeView().ConfigureAwait(false);
     }
 

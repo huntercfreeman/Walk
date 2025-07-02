@@ -23,16 +23,16 @@ namespace Walk.Extensions.DotNet.Menus.Models;
 
 public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTaskGroup
 {
-	private readonly BackgroundTaskService _backgroundTaskService;
+	private readonly ICommonUtilityService _commonUtilityService;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
 
 	public DotNetMenuOptionsFactory(
-		BackgroundTaskService backgroundTaskService,
+	    ICommonUtilityService commonUtilityService,
 		IDotNetComponentRenderers dotNetComponentRenderers,
 		IIdeComponentRenderers ideComponentRenderers)
 	{
-		_backgroundTaskService = backgroundTaskService;
+	    _commonUtilityService = commonUtilityService;
 		_dotNetComponentRenderers = dotNetComponentRenderers;
 		_ideComponentRenderers = ideComponentRenderers;
 	}
@@ -191,7 +191,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
             _queue_PerformRemoveCSharpProjectReferenceFromSolution.Enqueue(
 				(treeViewSolution, projectNode, terminal, commonUtilityService, onAfterCompletion));
 
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
+            _commonUtilityService.Continuous_EnqueueGroup(this);
         }
 	}
 	
@@ -287,7 +287,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
             _queue_PerformRemoveProjectToProjectReference.Enqueue(
 				(treeViewCSharpProjectToProjectReference, terminal, commonUtilityService, onAfterCompletion));
 
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
+            _commonUtilityService.Continuous_EnqueueGroup(this);
         }
 	}
 	
@@ -335,7 +335,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
             _queue_PerformMoveProjectToSolutionFolder.Enqueue(
 				(treeViewSolution, treeViewProjectToMove, solutionFolderPath, terminal, commonUtilityService, onAfterCompletion));
 
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
+            _commonUtilityService.Continuous_EnqueueGroup(this);
         }
 	}
 	
@@ -395,7 +395,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
             _queue_PerformRemoveNuGetPackageReferenceFromProject.Enqueue(
 				(modifyProjectNamespacePath, treeViewCSharpProjectNugetPackageReference, terminal, commonUtilityService, onAfterCompletion));
 
-            _backgroundTaskService.Continuous_EnqueueGroup(this);
+            _commonUtilityService.Continuous_EnqueueGroup(this);
         }
 	}
 	

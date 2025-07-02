@@ -15,8 +15,6 @@ namespace Walk.Ide.RazorLib.Terminals.Displays;
 public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;

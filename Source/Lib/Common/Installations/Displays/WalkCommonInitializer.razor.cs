@@ -28,8 +28,6 @@ namespace Walk.Common.RazorLib.Installations.Displays;
 public partial class WalkCommonInitializer : ComponentBase, IDisposable
 {
     [Inject]
-    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-    [Inject]
     private BrowserResizeInterop BrowserResizeInterop { get; set; } = null!;
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
@@ -70,19 +68,19 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 		{
 			var token = _workerCancellationTokenSource.Token;
 
-			if (BackgroundTaskService.ContinuousWorker.StartAsyncTask is null)
+			if (CommonUtilityService.ContinuousWorker.StartAsyncTask is null)
 			{
-				BackgroundTaskService.ContinuousWorker.StartAsyncTask = Task.Run(
-					() => BackgroundTaskService.ContinuousWorker.ExecuteAsync(token),
+				CommonUtilityService.ContinuousWorker.StartAsyncTask = Task.Run(
+					() => CommonUtilityService.ContinuousWorker.ExecuteAsync(token),
 					token);
 			}
 
 			if (CommonUtilityService.WalkHostingInformation.WalkPurposeKind == WalkPurposeKind.Ide)
 			{
-				if (BackgroundTaskService.IndefiniteWorker.StartAsyncTask is null)
+				if (CommonUtilityService.IndefiniteWorker.StartAsyncTask is null)
 				{
-					BackgroundTaskService.IndefiniteWorker.StartAsyncTask = Task.Run(
-						() => BackgroundTaskService.IndefiniteWorker.ExecuteAsync(token),
+					CommonUtilityService.IndefiniteWorker.StartAsyncTask = Task.Run(
+						() => CommonUtilityService.IndefiniteWorker.ExecuteAsync(token),
 						token);
 				}
 			}
@@ -311,8 +309,8 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     	_workerCancellationTokenSource.Cancel();
     	_workerCancellationTokenSource.Dispose();
     	
-    	BackgroundTaskService.ContinuousWorker.StartAsyncTask = null;
-    	BackgroundTaskService.IndefiniteWorker.StartAsyncTask = null;
+    	CommonUtilityService.ContinuousWorker.StartAsyncTask = null;
+    	CommonUtilityService.IndefiniteWorker.StartAsyncTask = null;
     	
 		CommonUtilityService.CommonUiStateChanged -= OnCommonUiStateChanged;
 		

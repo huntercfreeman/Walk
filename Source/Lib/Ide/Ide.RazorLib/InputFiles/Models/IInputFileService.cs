@@ -35,22 +35,16 @@ public interface IInputFileService
     public void OpenParentDirectory(
         IIdeComponentRenderers ideComponentRenderers,
         ICommonUtilityService commonUtilityService,
-        BackgroundTaskService backgroundTaskService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel);
 
-    public void RefreshCurrentSelection(
-    	BackgroundTaskService backgroundTaskService,
-    	TreeViewAbsolutePath? currentSelection);
+    public void RefreshCurrentSelection(TreeViewAbsolutePath? currentSelection);
 
     public void SetSearchQuery(string searchQuery);
     
     public void Enqueue_OpenParentDirectoryAction(
     	IIdeComponentRenderers ideComponentRenderers,
         ICommonUtilityService commonUtilityService,
-        BackgroundTaskService backgroundTaskService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel);
     
-    public void Enqueue_RefreshCurrentSelectionAction(
-        BackgroundTaskService backgroundTaskService,
-    	TreeViewAbsolutePath? currentSelection);
+    public void Enqueue_RefreshCurrentSelectionAction(ICommonUtilityService commonUtilityService, TreeViewAbsolutePath? currentSelection);
 }

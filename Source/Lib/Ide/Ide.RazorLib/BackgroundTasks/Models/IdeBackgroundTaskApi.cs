@@ -45,7 +45,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 {
 	public static readonly Key<TextEditorGroup> EditorTextEditorGroupKey = Key<TextEditorGroup>.NewKey();
 
-    private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
     private readonly TextEditorService _textEditorService;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
@@ -62,7 +61,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly IServiceProvider _serviceProvider;
 
     public IdeBackgroundTaskApi(
-        BackgroundTaskService backgroundTaskService,
         ICompilerServiceRegistry compilerServiceRegistry,
         IIdeComponentRenderers ideComponentRenderers,
         TextEditorService textEditorService,
@@ -78,7 +76,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         IIdeService ideService,
         IServiceProvider serviceProvider)
     {
-        _backgroundTaskService = backgroundTaskService;
         _ideComponentRenderers = ideComponentRenderers;
         _textEditorService = textEditorService;
         _compilerServiceRegistry = compilerServiceRegistry;
@@ -108,7 +105,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     public void Enqueue(IdeBackgroundTaskApiWorkArgs workArgs)
     {
         _workQueue.Enqueue(workArgs);
-        _backgroundTaskService.Continuous_EnqueueGroup(this);
+        _commonUtilityService.Continuous_EnqueueGroup(this);
     }
 
     public ValueTask Do_WalkIdeInitializerOnInit()
@@ -254,7 +251,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             _textEditorService,
                             _compilerServiceRegistry,
                             _commonUtilityService)),
-                    _backgroundTaskService,
                     _commonUtilityService)
                 {
                     Key = TerminalFacts.GENERAL_KEY
@@ -274,7 +270,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             _textEditorService,
                             _compilerServiceRegistry,
                             _commonUtilityService)),
-                    _backgroundTaskService,
                     _commonUtilityService,
                     _terminalService)
                 {
@@ -300,7 +295,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             _textEditorService,
                             _compilerServiceRegistry,
                             _commonUtilityService)),
-                    _backgroundTaskService,
                     _commonUtilityService)
                 {
                     Key = TerminalFacts.EXECUTION_KEY
@@ -320,7 +314,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             _textEditorService,
                             _compilerServiceRegistry,
                             _commonUtilityService)),
-                    _backgroundTaskService,
                     _commonUtilityService,
                     _terminalService)
                 {

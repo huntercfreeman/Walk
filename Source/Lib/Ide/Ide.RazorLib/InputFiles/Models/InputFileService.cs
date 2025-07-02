@@ -133,7 +133,6 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
     public void OpenParentDirectory(
         IIdeComponentRenderers ideComponentRenderers,
         ICommonUtilityService commonUtilityService,
-        BackgroundTaskService backgroundTaskService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel)
     {
         lock (_stateModificationLock)
@@ -179,9 +178,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
         InputFileStateChanged?.Invoke();
     }
 
-    public void RefreshCurrentSelection(
-    	BackgroundTaskService backgroundTaskService,
-    	TreeViewAbsolutePath? currentSelection)
+    public void RefreshCurrentSelection(TreeViewAbsolutePath? currentSelection)
     {
         lock (_stateModificationLock)
         {
@@ -225,13 +222,12 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
     }
 
     private readonly
-        Queue<(IIdeComponentRenderers ideComponentRenderers, ICommonUtilityService commonUtilityService, BackgroundTaskService backgroundTaskService, TreeViewAbsolutePath? parentDirectoryTreeViewModel)>
+        Queue<(IIdeComponentRenderers ideComponentRenderers, ICommonUtilityService commonUtilityService, TreeViewAbsolutePath? parentDirectoryTreeViewModel)>
         _queue_OpenParentDirectoryAction = new();
 
     public void Enqueue_OpenParentDirectoryAction(
     	IIdeComponentRenderers ideComponentRenderers,
         ICommonUtilityService commonUtilityService,
-        BackgroundTaskService backgroundTaskService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel)
     {
         if (parentDirectoryTreeViewModel is not null)
@@ -241,9 +237,9 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
                 _workKindQueue.Enqueue(InputFileServiceWorkKind.OpenParentDirectoryAction);
 
                 _queue_OpenParentDirectoryAction.Enqueue((
-                    ideComponentRenderers, commonUtilityService, backgroundTaskService, parentDirectoryTreeViewModel));
+                    ideComponentRenderers, commonUtilityService, parentDirectoryTreeViewModel));
 
-                backgroundTaskService.Continuous_EnqueueGroup(this);
+                commonUtilityService.Continuous_EnqueueGroup(this);
             }
         }
     }
@@ -251,20 +247,15 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
     public async ValueTask Do_OpenParentDirectoryAction(
     	IIdeComponentRenderers ideComponentRenderers,
         ICommonUtilityService commonUtilityService,
-        BackgroundTaskService backgroundTaskService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel)
     {
         if (parentDirectoryTreeViewModel is not null)
             await parentDirectoryTreeViewModel.LoadChildListAsync().ConfigureAwait(false);
     }
 
-    private readonly
-        Queue<(BackgroundTaskService backgroundTaskService, TreeViewAbsolutePath? currentSelection)>
-        _queue_RefreshCurrentSelectionAction = new();
+    private readonly Queue<(ICommonUtilityService, TreeViewAbsolutePath)> _queue_RefreshCurrentSelectionAction = new();
 
-    public void Enqueue_RefreshCurrentSelectionAction(
-        BackgroundTaskService backgroundTaskService,
-    	TreeViewAbsolutePath? currentSelection)
+    public void Enqueue_RefreshCurrentSelectionAction(ICommonUtilityService commonUtilityService, TreeViewAbsolutePath? currentSelection)
     {
         if (currentSelection is not null)
         {
@@ -273,15 +264,13 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
             lock (_workLock)
             {
                 _workKindQueue.Enqueue(InputFileServiceWorkKind.RefreshCurrentSelectionAction);
-                _queue_RefreshCurrentSelectionAction.Enqueue((backgroundTaskService, currentSelection));
-                backgroundTaskService.Continuous_EnqueueGroup(this);
+                _queue_RefreshCurrentSelectionAction.Enqueue((commonUtilityService, currentSelection));
+                commonUtilityService.Continuous_EnqueueGroup(this);
             }
         }
     }
     
-    public async ValueTask Do_RefreshCurrentSelectionAction(
-        BackgroundTaskService backgroundTaskService,
-    	TreeViewAbsolutePath? currentSelection)
+    public async ValueTask Do_RefreshCurrentSelectionAction(TreeViewAbsolutePath? currentSelection)
     {
         if (currentSelection is not null)
             await currentSelection.LoadChildListAsync().ConfigureAwait(false);
@@ -303,13 +292,12 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
             {
                 var args = _queue_OpenParentDirectoryAction.Dequeue();
                 return Do_OpenParentDirectoryAction(
-                    args.ideComponentRenderers, args.commonUtilityService, args.backgroundTaskService, args.parentDirectoryTreeViewModel);
+                    args.ideComponentRenderers, args.commonUtilityService, args.parentDirectoryTreeViewModel);
             }
             case InputFileServiceWorkKind.RefreshCurrentSelectionAction:
             {
                 var args = _queue_RefreshCurrentSelectionAction.Dequeue();
-                return Do_RefreshCurrentSelectionAction(
-                    args.backgroundTaskService, args.currentSelection);
+                return Do_RefreshCurrentSelectionAction(args.Item2);
             }
             default:
             {

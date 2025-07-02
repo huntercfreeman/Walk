@@ -19,9 +19,8 @@ public class FindAllTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 			TextEditorService textEditorService,
 			WalkTextEditorConfig textEditorConfig,
 			IServiceProvider serviceProvider,
-			ICommonUtilityService commonUtilityService,
-			BackgroundTaskService backgroundTaskService)
-		: base(commonUtilityService, backgroundTaskService)
+			ICommonUtilityService commonUtilityService)
+		: base(commonUtilityService)
 	{
 		_textEditorService = textEditorService;
 		_textEditorConfig = textEditorConfig;

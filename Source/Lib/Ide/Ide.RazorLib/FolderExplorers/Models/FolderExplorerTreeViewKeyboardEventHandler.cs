@@ -29,9 +29,8 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             IdeBackgroundTaskApi ideBackgroundTaskApi,
             TextEditorService textEditorService,
             IMenuOptionsFactory menuOptionsFactory,
-		    BackgroundTaskService backgroundTaskService,
             ICommonUtilityService commonUtilityService)
-        : base(commonUtilityService, backgroundTaskService)
+        : base(commonUtilityService)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _textEditorService = textEditorService;
