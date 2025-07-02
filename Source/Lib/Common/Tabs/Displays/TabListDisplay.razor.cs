@@ -13,8 +13,6 @@ namespace Walk.Common.RazorLib.Tabs.Displays;
 public partial class TabListDisplay : ComponentBase
 {
 	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
-	[Inject]
     private IDragService DragService { get; set; } = null!;
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
@@ -53,7 +51,7 @@ public partial class TabListDisplay : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-        CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
         return Task.CompletedTask;
     }
 }

@@ -34,8 +34,6 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
-	[Inject]
 	private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
 	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
@@ -227,7 +225,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			        {
 			        	ContinueWithFunc = parsedCommand =>
 			        	{
-				        	CommonUiService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+				        	CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 	
 							DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
 							{
@@ -252,7 +250,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 					CommonUtilityService.EnvironmentProvider,
 					CommonUtilityService.FileSystemProvider,
 					DotNetBackgroundTaskApi,
-					CommonUiService,
+					CommonUtilityService,
 					DialogRecord,
 					WalkCommonComponentRenderers)
 				.ConfigureAwait(false);

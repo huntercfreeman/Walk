@@ -30,8 +30,6 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 	[Inject]
 	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
-	[Inject]
 	private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
@@ -99,7 +97,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
         		modelModifier,
         		viewModelModifier,
         		CommonComponentRenderers,
-        		CommonUiService);
+        		CommonUtilityService);
         	return ValueTask.CompletedTask;
         });
         return Task.CompletedTask;
@@ -137,7 +135,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 			true,
 			null);
 
-        CommonUiService.Dialog_ReduceRegisterAction(dialogRecord);
+        CommonUtilityService.Dialog_ReduceRegisterAction(dialogRecord);
     }
 
 	public Task DoCopyOnClick(MouseEventArgs arg)
@@ -300,7 +298,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 		    MenuOptionKind.Read,
 		    onClickFunc: () =>
 		    {
-			    CommonUiService.Dropdown_ReduceDisposeAction(dropdownKey);
+			    CommonUtilityService.Dropdown_ReduceDisposeAction(dropdownKey);
 		    	return Task.CompletedTask;
 		    }));
 		    
@@ -335,7 +333,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 			},
 			async () => await TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(_reloadButtonHtmlElementId));
 
-        CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
     }
 
     public Task DoRefreshOnClick()

@@ -24,8 +24,6 @@ public partial class InputFileSidebar : ComponentBase
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private ICommonUiService CommonUiService { get; set; } = null!;
-    [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
@@ -102,7 +100,7 @@ public partial class InputFileSidebar : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-        CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 }

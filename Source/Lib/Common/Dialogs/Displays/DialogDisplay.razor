@@ -2,7 +2,7 @@
 @using Walk.Common.RazorLib.Resizes.Displays
 
 @{
-	var dialogState = CommonUiService.GetDialogState();
+	var dialogState = CommonUtilityService.GetDialogState();
 	var dialogStateIsActiveSelection = dialogState.ActiveDialogKey == Dialog.DynamicViewModelKey;
 }
 

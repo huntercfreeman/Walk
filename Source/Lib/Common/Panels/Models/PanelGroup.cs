@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Panels.Models;
 
@@ -23,7 +24,7 @@ public record PanelGroup(
 	/// TODO: Make this property immutable. Until then in a hack needs to be done where this gets set...
 	///       ...for Walk.Ide this is done in WalkIdeInitializer.razor.cs (2024-04-08)
 	/// </summary>
-	public ICommonUiService CommonUiService { get; set; } = null!;
+	public ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
     public bool GetIsActive(ITab tab)
 	{
@@ -39,9 +40,9 @@ public record PanelGroup(
 			return Task.CompletedTask;
 
 		if (GetIsActive(tab))
-			CommonUiService.SetActivePanelTab(Key, Key<Panel>.Empty);
+			CommonUtilityService.SetActivePanelTab(Key, Key<Panel>.Empty);
 		else
-			CommonUiService.SetActivePanelTab(Key, panelTab.Key);
+			CommonUtilityService.SetActivePanelTab(Key, panelTab.Key);
 		
 		return Task.CompletedTask;
 	}
@@ -56,7 +57,7 @@ public record PanelGroup(
 		if (tab is not IPanelTab panelTab)
 			return Task.CompletedTask;
 
-		CommonUiService.DisposePanelTab(Key, panelTab.Key);
+		CommonUtilityService.DisposePanelTab(Key, panelTab.Key);
 		return Task.CompletedTask;
 	}
 

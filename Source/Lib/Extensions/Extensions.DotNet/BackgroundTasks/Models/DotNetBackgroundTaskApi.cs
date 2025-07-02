@@ -78,7 +78,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly ICodeSearchService _codeSearchService;
 	// FindAllReferences
 	// private readonly IFindAllReferencesService _findAllReferencesService;
-	private readonly ICommonUiService _commonUiService;
 	private readonly ITerminalService _terminalService;
 	private readonly IDotNetCommandFactory _dotNetCommandFactory;
 	private readonly ICommonUtilityService _commonUtilityService;
@@ -111,7 +110,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		// IFindAllReferencesService findAllReferencesService,
 		ITerminalService terminalService,
         IDotNetCommandFactory dotNetCommandFactory,
-        ICommonUiService commonUiService,
         ICommonUtilityService commonUtilityService,
         IIdeService ideService,
         ITextEditorHeaderRegistry textEditorHeaderRegistry,
@@ -135,7 +133,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_terminalService = terminalService;
         _dotNetCommandFactory = dotNetCommandFactory;
-        _commonUiService = commonUiService;
         _commonUtilityService = commonUtilityService;
         _ideService = ideService;
         _textEditorHeaderRegistry = textEditorHeaderRegistry;
@@ -152,7 +149,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 			_treeViewService,
             _commonComponentRenderers,
             _textEditorService,
-            _commonUiService,
+            _commonUtilityService,
             _backgroundTaskService,
             _commonUtilityService.FileSystemProvider,
             _dotNetCliOutputParser,
@@ -242,8 +239,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
     private void InitializeLeftPanelTabs()
     {
-        var leftPanel = PanelFacts.GetTopLeftPanelGroup(_commonUiService.GetPanelState());
-        leftPanel.CommonUiService = _commonUiService;
+        var leftPanel = PanelFacts.GetTopLeftPanelGroup(_commonUtilityService.GetPanelState());
+        leftPanel.CommonUtilityService = _commonUtilityService;
 
         // solutionExplorerPanel
         var solutionExplorerPanel = new Panel(
@@ -253,10 +250,10 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.SolutionExplorerContext.ContextKey,
             typeof(SolutionExplorerDisplay),
             null,
-            _commonUiService,
+            _commonUtilityService,
             _commonBackgroundTaskApi);
-        _commonUiService.RegisterPanel(solutionExplorerPanel);
-        _commonUiService.RegisterPanelTab(leftPanel.Key, solutionExplorerPanel, false);
+        _commonUtilityService.RegisterPanel(solutionExplorerPanel);
+        _commonUtilityService.RegisterPanelTab(leftPanel.Key, solutionExplorerPanel, false);
 
         // SetActivePanelTabAction
         //
@@ -268,8 +265,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
     private void InitializeRightPanelTabs()
     {
-        var rightPanel = PanelFacts.GetTopRightPanelGroup(_commonUiService.GetPanelState());
-        rightPanel.CommonUiService = _commonUiService;
+        var rightPanel = PanelFacts.GetTopRightPanelGroup(_commonUtilityService.GetPanelState());
+        rightPanel.CommonUtilityService = _commonUtilityService;
 
         // compilerServiceExplorerPanel
         var compilerServiceExplorerPanel = new Panel(
@@ -279,10 +276,10 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.CompilerServiceExplorerContext.ContextKey,
             typeof(CompilerServiceExplorerDisplay),
             null,
-            _commonUiService,
+            _commonUtilityService,
             _commonBackgroundTaskApi);
-        _commonUiService.RegisterPanel(compilerServiceExplorerPanel);
-        _commonUiService.RegisterPanelTab(rightPanel.Key, compilerServiceExplorerPanel, false);
+        _commonUtilityService.RegisterPanel(compilerServiceExplorerPanel);
+        _commonUtilityService.RegisterPanelTab(rightPanel.Key, compilerServiceExplorerPanel, false);
 
         /*// compilerServiceEditorPanel
         var compilerServiceEditorPanel = new Panel(
@@ -301,8 +298,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
     private void InitializeBottomPanelTabs()
     {
-        var bottomPanel = PanelFacts.GetBottomPanelGroup(_commonUiService.GetPanelState());
-        bottomPanel.CommonUiService = _commonUiService;
+        var bottomPanel = PanelFacts.GetBottomPanelGroup(_commonUtilityService.GetPanelState());
+        bottomPanel.CommonUtilityService = _commonUtilityService;
 
         // outputPanel
         var outputPanel = new Panel(
@@ -312,10 +309,10 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.OutputContext.ContextKey,
             typeof(OutputPanelDisplay),
             null,
-            _commonUiService,
+            _commonUtilityService,
             _commonBackgroundTaskApi);
-        _commonUiService.RegisterPanel(outputPanel);
-        _commonUiService.RegisterPanelTab(bottomPanel.Key, outputPanel, false);
+        _commonUtilityService.RegisterPanel(outputPanel);
+        _commonUtilityService.RegisterPanelTab(bottomPanel.Key, outputPanel, false);
 
         // testExplorerPanel
         var testExplorerPanel = new Panel(
@@ -325,10 +322,10 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.TestExplorerContext.ContextKey,
             typeof(TestExplorerDisplay),
             null,
-            _commonUiService,
+            _commonUtilityService,
             _commonBackgroundTaskApi);
-        _commonUiService.RegisterPanel(testExplorerPanel);
-        _commonUiService.RegisterPanelTab(bottomPanel.Key, testExplorerPanel, false);
+        _commonUtilityService.RegisterPanel(testExplorerPanel);
+        _commonUtilityService.RegisterPanelTab(bottomPanel.Key, testExplorerPanel, false);
         // This UI has resizable parts that need to be initialized.
         TestExplorerService.ReduceInitializeResizeHandleDimensionUnitAction(
             new DimensionUnit(
@@ -345,13 +342,13 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.NuGetPackageManagerContext.ContextKey,
             typeof(NuGetPackageManager),
             null,
-            _commonUiService,
+            _commonUtilityService,
             _commonBackgroundTaskApi);
-        _commonUiService.RegisterPanel(nuGetPanel);
-        _commonUiService.RegisterPanelTab(bottomPanel.Key, nuGetPanel, false);
+        _commonUtilityService.RegisterPanel(nuGetPanel);
+        _commonUtilityService.RegisterPanelTab(bottomPanel.Key, nuGetPanel, false);
         
         // SetActivePanelTabAction
-        _commonUiService.SetActivePanelTab(bottomPanel.Key, outputPanel.Key);
+        _commonUtilityService.SetActivePanelTab(bottomPanel.Key, outputPanel.Key);
     }
 
     public ValueTask Do_WalkExtensionsDotNetInitializerOnAfterRender()
@@ -418,7 +415,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
         InitializeMenuRun();
 
-        _commonUiService.SetActivePanelTab(_leftPanelGroupKey, _solutionExplorerPanelKey);
+        _commonUtilityService.SetActivePanelTab(_leftPanelGroupKey, _solutionExplorerPanelKey);
 
         var compilerService = _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
 
@@ -449,7 +446,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 if (activeStartupControl?.StartupProjectAbsolutePath is not null)
                     BuildProjectOnClick(activeStartupControl.StartupProjectAbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(BuildProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(6));
+                    NotificationHelper.DispatchError(nameof(BuildProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", _commonComponentRenderers, _commonUtilityService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 
@@ -466,7 +463,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 if (activeStartupControl?.StartupProjectAbsolutePath is not null)
                     CleanProjectOnClick(activeStartupControl.StartupProjectAbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(CleanProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(6));
+                    NotificationHelper.DispatchError(nameof(CleanProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", _commonComponentRenderers, _commonUtilityService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 
@@ -482,7 +479,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 if (dotNetSolutionModel?.AbsolutePath is not null)
                     BuildSolutionOnClick(dotNetSolutionModel.AbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(BuildSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(6));
+                    NotificationHelper.DispatchError(nameof(BuildSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", _commonComponentRenderers, _commonUtilityService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 
@@ -498,7 +495,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 if (dotNetSolutionModel?.AbsolutePath is not null)
                     CleanSolutionOnClick(dotNetSolutionModel.AbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(CleanSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(6));
+                    NotificationHelper.DispatchError(nameof(CleanSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", _commonComponentRenderers, _commonUtilityService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 
@@ -653,7 +650,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             true,
             null);
 
-        _commonUiService.Dialog_ReduceRegisterAction(dialogRecord);
+        _commonUtilityService.Dialog_ReduceRegisterAction(dialogRecord);
         return Task.CompletedTask;
     }
 
@@ -945,7 +942,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		        $"ERROR: nameof(_appDataService.WriteAppDataAsync)",
 		        e.ToString(),
 		        _commonComponentRenderers,
-		        _commonUiService,
+		        _commonUtilityService,
 		        TimeSpan.FromSeconds(5));
 		}
 		
@@ -1350,7 +1347,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			$"Parse: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
 			progressBarModel,
 			_commonComponentRenderers,
-			_commonUiService,
+			_commonUtilityService,
 			TimeSpan.FromMilliseconds(-1));
 			
 		try

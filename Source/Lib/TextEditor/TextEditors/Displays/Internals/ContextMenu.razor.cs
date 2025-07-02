@@ -22,8 +22,6 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
-    private ICommonUiService CommonUiService { get; set; } = null!;
-    [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
@@ -104,7 +102,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 					TextEditorCommandDefaultFunctions.RemoveDropdown(
 				        editContext,
 				        viewModelModifier,
-				        CommonUiService);
+				        CommonUtilityService);
 				}
 
 				return ValueTask.CompletedTask;
@@ -129,7 +127,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 					TextEditorCommandDefaultFunctions.RemoveDropdown(
 				        editContext,
 				        viewModelModifier,
-				        CommonUiService);
+				        CommonUtilityService);
 				}
 
 				return ValueTask.CompletedTask;
@@ -214,7 +212,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 						TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
 					        viewModelModifier,
-					        CommonUiService);
+					        CommonUtilityService);
 					}
 
 					return ValueTask.CompletedTask;
@@ -394,7 +392,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             	viewModelModifier,
             	CommonBackgroundTaskApi.JsRuntimeCommonApi,
             	TextEditorService,
-            	CommonUiService);
+            	CommonUtilityService);
         });
         return Task.CompletedTask;
     }
@@ -457,7 +455,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 		        CommonUtilityService.EnvironmentProvider,
 		        CommonUtilityService.FileSystemProvider,
 		        TextEditorService,
-		        CommonUiService);
+		        CommonUtilityService);
         });
         return Task.CompletedTask;
     }

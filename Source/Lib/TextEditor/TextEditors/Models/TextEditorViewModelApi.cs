@@ -7,6 +7,7 @@ using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.Characters.Models;
 using Walk.TextEditor.RazorLib.Cursors.Models;
@@ -21,7 +22,7 @@ public sealed class TextEditorViewModelApi
 {
     private readonly TextEditorService _textEditorService;
     private readonly BackgroundTaskService _backgroundTaskService;
-    private readonly ICommonUiService _commonUiService;
+    private readonly ICommonUtilityService _commonUtilityService;
 
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
     
@@ -29,12 +30,12 @@ public sealed class TextEditorViewModelApi
         TextEditorService textEditorService,
         BackgroundTaskService backgroundTaskService,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
-        ICommonUiService commonUiService)
+        ICommonUtilityService commonUtilityService)
     {
         _textEditorService = textEditorService;
         _backgroundTaskService = backgroundTaskService;
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
-        _commonUiService = commonUiService;
+        _commonUtilityService = commonUtilityService;
     }
     
     private Task _cursorShouldBlinkTask = Task.CompletedTask;
@@ -104,7 +105,7 @@ public sealed class TextEditorViewModelApi
 			viewModelKey,
 			resourceUri,
 			_textEditorService,
-			_commonUiService,
+			_commonUtilityService,
 			_commonBackgroundTaskApi,
 			TextEditorVirtualizationResult.ConstructEmpty(),
 			new TextEditorDimensions(0, 0, 0, 0),

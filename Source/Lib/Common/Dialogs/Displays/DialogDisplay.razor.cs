@@ -13,8 +13,6 @@ namespace Walk.Common.RazorLib.Dialogs.Displays;
 public partial class DialogDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private ICommonUiService CommonUiService { get; set; } = null!;
-    [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     private WalkCommonConfig CommonConfig { get; set; } = null!;
@@ -43,7 +41,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         CommonUtilityService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
-        CommonUiService.CommonUiStateChanged += OnCommonUiStateChanged;
+        CommonUtilityService.CommonUiStateChanged += OnCommonUiStateChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -80,14 +78,14 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     private void ToggleIsMaximized()
     {
-        CommonUiService.Dialog_ReduceSetIsMaximizedAction(
+        CommonUtilityService.Dialog_ReduceSetIsMaximizedAction(
             Dialog.DynamicViewModelKey,
             !Dialog.DialogIsMaximized);
     }
 
     private async Task DispatchDisposeDialogRecordAction()
     {
-        CommonUiService.Dialog_ReduceDisposeAction(Dialog.DynamicViewModelKey);
+        CommonUtilityService.Dialog_ReduceDisposeAction(Dialog.DynamicViewModelKey);
         
         await CommonBackgroundTaskApi.JsRuntimeCommonApi
 	        .FocusHtmlElementById(Dialog.SetFocusOnCloseElementId
@@ -104,7 +102,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     private Task HandleOnFocusIn()
     {
-        CommonUiService.Dialog_ReduceSetActiveDialogKeyAction(Dialog.DynamicViewModelKey);
+        CommonUtilityService.Dialog_ReduceSetActiveDialogKeyAction(Dialog.DynamicViewModelKey);
         return Task.CompletedTask;
     }
     
@@ -115,12 +113,12 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     private void HandleOnMouseDown()
     {
-        CommonUiService.Dialog_ReduceSetActiveDialogKeyAction(Dialog.DynamicViewModelKey);
+        CommonUtilityService.Dialog_ReduceSetActiveDialogKeyAction(Dialog.DynamicViewModelKey);
     }
 
     public void Dispose()
     {
         CommonUtilityService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
-        CommonUiService.CommonUiStateChanged -= OnCommonUiStateChanged;
+        CommonUtilityService.CommonUiStateChanged -= OnCommonUiStateChanged;
     }
 }

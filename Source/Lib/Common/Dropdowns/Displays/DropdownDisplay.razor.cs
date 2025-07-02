@@ -18,8 +18,6 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 	[Inject]
 	public ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
-	public ICommonUiService CommonUiService { get; set; } = null!;
-	[Inject]
 	private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
 
 	[Parameter, EditorRequired]
@@ -111,7 +109,7 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 					Top = outTop
 				};
 
-				CommonUiService.Dropdown_ReduceFitOnScreenAction(outDropdown);
+				CommonUtilityService.Dropdown_ReduceFitOnScreenAction(outDropdown);
 			}
 		}
 	}

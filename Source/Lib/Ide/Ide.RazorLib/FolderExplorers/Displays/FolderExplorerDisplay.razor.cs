@@ -22,8 +22,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
-    private ICommonUiService CommonUiService { get; set; } = null!;
-    [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
@@ -61,7 +59,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
             TreeViewService,
 			BackgroundTaskService,
             CommonUtilityService.EnvironmentProvider,
-            CommonUiService);
+            CommonUtilityService);
     }
 
     private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
@@ -80,7 +78,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 			},
 			restoreFocusOnClose: null);
 
-        CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 	

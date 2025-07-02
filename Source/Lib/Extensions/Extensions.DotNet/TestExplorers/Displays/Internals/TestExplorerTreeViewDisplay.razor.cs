@@ -7,6 +7,7 @@ using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.Extensions.DotNet.TestExplorers.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
@@ -18,7 +19,7 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
+	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
@@ -50,7 +51,7 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 			CommonComponentRenderers,
 			CompilerServiceRegistry,
 			TextEditorService,
-			CommonUiService,
+			CommonUtilityService,
 			ServiceProvider,
 			TreeViewService,
 			BackgroundTaskService);
@@ -59,7 +60,7 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 			CommonComponentRenderers,
 			CompilerServiceRegistry,
 			TextEditorService,
-			CommonUiService,
+			CommonUtilityService,
 			ServiceProvider,
 			TreeViewService,
 			BackgroundTaskService);
@@ -81,7 +82,7 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-		CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 }

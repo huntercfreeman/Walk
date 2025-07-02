@@ -19,8 +19,6 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     [Inject]
     private ITerminalService TerminalService { get; set; } = null!;
     [Inject]
-    private ICommonUiService CommonUiService { get; set; } = null!;
-    [Inject]
     private IIdeService IdeService { get; set; } = null!;
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
@@ -77,7 +75,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	
 	                if (!success)
 	                {
-	                    CommonUiService.SetPanelTabAsActiveByContextRecordKey(
+	                    CommonUtilityService.SetPanelTabAsActiveByContextRecordKey(
 	                        ContextFacts.OutputContext.ContextKey);
 	
 	                    _ = await TrySetFocus(ContextFacts.OutputContext).ConfigureAwait(false);
@@ -95,7 +93,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	
 	                if (!success)
 	                {
-	                    CommonUiService.SetPanelTabAsActiveByContextRecordKey(
+	                    CommonUtilityService.SetPanelTabAsActiveByContextRecordKey(
 	                        ContextFacts.TerminalContext.ContextKey);
 	
 	                    _ = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
@@ -119,7 +117,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 			    }));
 			    
 			await DropdownHelper.RenderDropdownAsync(
-    			CommonUiService,
+    			CommonUtilityService,
     			CommonBackgroundTaskApi.JsRuntimeCommonApi,
 				_startButtonElementId,
 				DropdownOrientation.Bottom,

@@ -33,7 +33,6 @@ namespace Walk.TextEditor.RazorLib;
 public sealed class TextEditorService
 {
     private readonly BackgroundTaskService _backgroundTaskService;
-    private readonly ICommonUiService _commonUiService;
     private readonly IContextService _contextService;
     private readonly IDirtyResourceUriService _dirtyResourceUriService;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
@@ -44,13 +43,12 @@ public sealed class TextEditorService
     public TextEditorService(
         IFindAllService findAllService,
         IDirtyResourceUriService dirtyResourceUriService,
-        ICommonUtilityService commonUtilityService,
         BackgroundTaskService backgroundTaskService,
         WalkTextEditorConfig textEditorConfig,
         ITextEditorRegistryWrap textEditorRegistryWrap,
         IJSRuntime jsRuntime,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
-        ICommonUiService commonUiService,
+        ICommonUtilityService commonUtilityService,
         IContextService contextService,
 		IServiceProvider serviceProvider)
     {
@@ -80,14 +78,13 @@ public sealed class TextEditorService
         _jsRuntime = jsRuntime;
 		JsRuntimeTextEditorApi = _jsRuntime.GetWalkTextEditorApi();
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
-        _commonUiService = commonUiService;
         _contextService = contextService;
 
         ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService);
-        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _commonBackgroundTaskApi, _commonUiService);
-        GroupApi = new TextEditorGroupApi(this, _commonUiService, _commonBackgroundTaskApi);
+        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _commonBackgroundTaskApi, CommonUtilityService);
+        GroupApi = new TextEditorGroupApi(this, CommonUtilityService, _commonBackgroundTaskApi);
         DiffApi = new TextEditorDiffApi(this);
-        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _commonUiService, contextService, CommonUtilityService, _commonBackgroundTaskApi);
+        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, CommonUtilityService, contextService,  _commonBackgroundTaskApi);
         
         TextEditorState = new();
     }

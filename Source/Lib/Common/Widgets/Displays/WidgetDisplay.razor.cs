@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Widgets.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Widgets.Displays;
 
@@ -11,7 +12,7 @@ public partial class WidgetDisplay : ComponentBase
     [Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
     [Inject]
-    private ICommonUiService CommonUiService { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     
 	[Parameter, EditorRequired]
 	public WidgetModel Widget { get; set; } = null!;
@@ -38,6 +39,6 @@ public partial class WidgetDisplay : ComponentBase
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
 	{
 		if (keyboardEventArgs.Key == "Escape")
-			CommonUiService.SetWidget(null);
+			CommonUtilityService.SetWidget(null);
 	}
 }

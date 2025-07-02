@@ -20,8 +20,6 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private ICommonUiService CommonUiService { get; set; } = null!;
-    [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
@@ -117,7 +115,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 					TextEditorCommandDefaultFunctions.RemoveDropdown(
 				        editContext,
 				        viewModelModifier,
-				        CommonUiService);
+				        CommonUtilityService);
 				}
 
 				return ValueTask.CompletedTask;
@@ -232,7 +230,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 						TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
 					        viewModelModifier,
-					        CommonUiService);
+					        CommonUtilityService);
 					}
 
 					return virtualizationResult.ViewModel.FocusAsync();

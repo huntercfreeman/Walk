@@ -16,8 +16,6 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
-    private ICommonUiService CommonUiService { get; set; } = null!;
-    [Inject]
     private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 
     [Parameter, EditorRequired]
@@ -151,12 +149,12 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 
     private void DeleteNotification()
     {
-        CommonUiService.Notification_ReduceMakeDeletedAction(Notification.DynamicViewModelKey);
+        CommonUtilityService.Notification_ReduceMakeDeletedAction(Notification.DynamicViewModelKey);
     }
 
     private void MarkNotificationAsRead()
     {
-        CommonUiService.Notification_ReduceMakeReadAction(Notification.DynamicViewModelKey);
+        CommonUtilityService.Notification_ReduceMakeReadAction(Notification.DynamicViewModelKey);
     }
 
     private Task ChangeNotificationToDialog()
@@ -170,7 +168,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 			true,
 			null);
 
-        CommonUiService.Dialog_ReduceRegisterAction(dialogRecord);
+        CommonUtilityService.Dialog_ReduceRegisterAction(dialogRecord);
 
         return HandleShouldNoLongerRender(wasCausedByUiEvent: false);
     }

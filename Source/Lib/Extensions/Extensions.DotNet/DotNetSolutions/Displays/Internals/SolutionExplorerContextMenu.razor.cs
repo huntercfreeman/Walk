@@ -50,8 +50,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
-	[Inject]
 	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
@@ -320,14 +318,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.AddProjectToProjectReference(
 				treeViewModel,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				CommonUiService,
+				CommonUtilityService,
 				IdeBackgroundTaskApi,
 				() => Task.CompletedTask),
 			DotNetMenuOptionsFactory.MoveProjectToSolutionFolder(
 				treeViewSolution,
 				treeViewModel,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				CommonUiService,
+				CommonUtilityService,
 				() =>
 				{
 					CompilerServicesBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
@@ -355,7 +353,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				treeViewSolution,
 				treeViewModel,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				CommonUiService,
+				CommonUtilityService,
 				() =>
 				{
 					CompilerServicesBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
@@ -376,7 +374,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.RemoveProjectToProjectReference(
 				treeViewCSharpProjectToProjectReference,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				CommonUiService,
+				CommonUtilityService,
 				() => Task.CompletedTask),
 		};
 	}
@@ -396,7 +394,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,
 				treeViewCSharpProjectNugetPackageReference,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				CommonUiService,
+				CommonUtilityService,
 				() => Task.CompletedTask),
 		};
 	}
@@ -438,14 +436,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			MenuOptionsFactory.CopyFile(
 				treeViewModel.Item.AbsolutePath,
 				() => {
-					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonComponentRenderers, CommonUiService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonComponentRenderers, CommonUtilityService, TimeSpan.FromSeconds(7));
 					return Task.CompletedTask;
 				}),
 			MenuOptionsFactory.CutFile(
 				treeViewModel.Item.AbsolutePath,
 				() => {
 					ParentOfCutFile = parentTreeViewModel;
-					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonComponentRenderers, CommonUiService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonComponentRenderers, CommonUtilityService, TimeSpan.FromSeconds(7));
 					return Task.CompletedTask;
 				}),
 			MenuOptionsFactory.DeleteFile(
@@ -453,7 +451,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				async () => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
 			MenuOptionsFactory.RenameFile(
 				treeViewModel.Item.AbsolutePath,
-				CommonUiService,
+				CommonUtilityService,
 				async ()  => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
 		};
 	}
@@ -485,7 +483,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			true,
 			null);
 
-		CommonUiService.Dialog_ReduceRegisterAction(dialogRecord);
+		CommonUtilityService.Dialog_ReduceRegisterAction(dialogRecord);
 		return Task.CompletedTask;
 	}
 
@@ -555,7 +553,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	
 	private Task OpenSolutionProperties(DotNetSolutionModel dotNetSolutionModel)
 	{
-		CommonUiService.Dialog_ReduceRegisterAction(new DialogViewModel(
+		CommonUtilityService.Dialog_ReduceRegisterAction(new DialogViewModel(
 			dynamicViewModelKey: _solutionPropertiesDialogKey,
 			title: "Solution Properties",
 			componentType: typeof(SolutionPropertiesDisplay),

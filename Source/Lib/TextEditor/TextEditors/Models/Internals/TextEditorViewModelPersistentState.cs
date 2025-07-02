@@ -9,6 +9,7 @@ using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Tabs.Displays;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Tooltips.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
@@ -41,7 +42,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 	    ITooltipModel tooltipModel,
 	    bool shouldRevealCursor,
 		VirtualAssociativityKind virtualAssociativityKind,
-		ICommonUiService commonUiService,
+		ICommonUtilityService commonUtilityService,
         CommonBackgroundTaskApi commonBackgroundTaskApi,
         TextEditorDimensions textEditorDimensions,
 		int scrollLeft,
@@ -72,7 +73,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 	    ShouldRevealCursor = shouldRevealCursor;
 		VirtualAssociativityKind = virtualAssociativityKind;
 		
-		CommonUiService = commonUiService;
+		CommonUtilityService = commonUtilityService;
 		
         CommonBackgroundTaskApi = commonBackgroundTaskApi;
         
@@ -524,7 +525,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     private readonly Type? _dragDialogComponentType = null;
     private readonly Dictionary<string, object?>? _dragDialogComponentParameterMap = null;
 
-    public ICommonUiService CommonUiService { get; }
+    public ICommonUtilityService CommonUtilityService { get; }
     public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; }
 
     public Key<Panel> Key { get; }
@@ -709,7 +710,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                     TabGroup = null;
                 }
 
-                CommonUiService.Dialog_ReduceRegisterAction(this);
+                CommonUtilityService.Dialog_ReduceRegisterAction(this);
             }
 
             // Create TextEditor Tab
@@ -738,7 +739,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                     else
                     {
                         // Is a dialog
-                        CommonUiService.Dialog_ReduceDisposeAction(DynamicViewModelKey);
+                        CommonUtilityService.Dialog_ReduceDisposeAction(DynamicViewModelKey);
                     }
 
                     TabGroup = null;
@@ -770,13 +771,13 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                 else
                 {
                     // Is a dialog
-                    CommonUiService.Dialog_ReduceDisposeAction(DynamicViewModelKey);
+                    CommonUtilityService.Dialog_ReduceDisposeAction(DynamicViewModelKey);
                 }
 
                 TabGroup = null;
             }
 
-            CommonUiService.RegisterPanelTab(
+            CommonUtilityService.RegisterPanelTab(
                 panelDropzone.PanelGroupKey,
                 new Panel(
                     Title,
@@ -791,7 +792,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                             ViewModelKey
                         },
                     },
-                    CommonUiService,
+                    CommonUtilityService,
                     CommonBackgroundTaskApi),
                 true);
 

@@ -5,6 +5,7 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.RenderStates.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 
@@ -19,7 +20,7 @@ public record TextEditorGroup(
 		List<Key<TextEditorViewModel>> ViewModelKeyList,
         Category Category,
         TextEditorService TextEditorService,
-        ICommonUiService CommonUiService,
+        ICommonUtilityService CommonUtilityService,
         CommonBackgroundTaskApi CommonBackgroundTaskApi)
      : ITabGroup
 {

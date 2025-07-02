@@ -21,7 +21,6 @@ public sealed class TextEditorOptionsApi
 
     private readonly TextEditorService _textEditorService;
     private readonly WalkTextEditorConfig _textEditorConfig;
-    private readonly ICommonUiService _commonUiService;
     private readonly IContextService _contextService;
     private readonly ICommonUtilityService _commonUtilityService;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
@@ -29,14 +28,12 @@ public sealed class TextEditorOptionsApi
     public TextEditorOptionsApi(
         TextEditorService textEditorService,
         WalkTextEditorConfig textEditorConfig,
-        ICommonUiService commonUiService,
-        IContextService contextService,
         ICommonUtilityService commonUtilityService,
+        IContextService contextService,
         CommonBackgroundTaskApi commonBackgroundTaskApi)
     {
         _textEditorService = textEditorService;
         _textEditorConfig = textEditorConfig;
-        _commonUiService = commonUiService;
         _contextService = contextService;
         _commonUtilityService = commonUtilityService;
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
@@ -93,7 +90,7 @@ public sealed class TextEditorOptionsApi
             isResizableOverride ?? _textEditorConfig.SettingsDialogConfig.ComponentIsResizable,
             null);
 
-        _commonUiService.Dialog_ReduceRegisterAction(settingsDialog);
+        _commonUtilityService.Dialog_ReduceRegisterAction(settingsDialog);
     }
 
     public void ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null)
@@ -109,7 +106,7 @@ public sealed class TextEditorOptionsApi
             isResizableOverride ?? _textEditorConfig.FindAllDialogConfig.ComponentIsResizable,
             null);
 
-        _commonUiService.Dialog_ReduceRegisterAction(_findAllDialog);
+        _commonUtilityService.Dialog_ReduceRegisterAction(_findAllDialog);
     }
 
     public void SetTheme(ThemeRecord theme, bool updateStorage = true)

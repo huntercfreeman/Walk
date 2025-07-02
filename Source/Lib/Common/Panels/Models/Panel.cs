@@ -7,6 +7,8 @@ using Walk.Common.RazorLib.JavaScriptObjects.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Drags.Displays;
+using Walk.Common.RazorLib.Options.Displays;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Panels.Models;
 
@@ -24,7 +26,7 @@ public record Panel : IPanelTab, IDialog, IDrag
         Key<ContextRecord> contextRecordKey,
         Type componentType,
         Dictionary<string, object?>? componentParameterMap,
-        ICommonUiService commonUiService,
+        ICommonUtilityService commonUtilityService,
         CommonBackgroundTaskApi commonBackgroundTaskApi)
     {
         Title = title;
@@ -34,7 +36,7 @@ public record Panel : IPanelTab, IDialog, IDrag
         ComponentType = componentType;
         ComponentParameterMap = componentParameterMap;
 
-        CommonUiService = commonUiService;
+        CommonUtilityService = commonUtilityService;
         CommonBackgroundTaskApi = commonBackgroundTaskApi;
 
         _dragTabComponentType = typeof(DragDisplay);
@@ -47,7 +49,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 	public Key<Panel> Key { get; }
 	public Key<IDynamicViewModel> DynamicViewModelKey { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
-	public ICommonUiService CommonUiService { get;}
+	public ICommonUtilityService CommonUtilityService { get;}
     public CommonBackgroundTaskApi CommonBackgroundTaskApi { get;}
 	public Type ComponentType { get; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; set; }
@@ -166,7 +168,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 			{
 				if (panelGroup is not null)
 				{
-					CommonUiService.DisposePanelTab(
+					CommonUtilityService.DisposePanelTab(
 						panelGroup.Key,
 						Key);
 				}
@@ -181,7 +183,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 				TabGroup = null;
 			}
 
-			CommonUiService.Dialog_ReduceRegisterAction(this);
+			CommonUtilityService.Dialog_ReduceRegisterAction(this);
 		}
 		
 		// Create Panel Tab
@@ -190,13 +192,13 @@ public record Panel : IPanelTab, IDialog, IDrag
 			{
 				if (panelGroup is not null)
 				{
-					CommonUiService.DisposePanelTab(
+					CommonUtilityService.DisposePanelTab(
 						panelGroup.Key,
 						Key);
 				}
 				else
 				{
-					CommonUiService.Dialog_ReduceDisposeAction(DynamicViewModelKey);
+					CommonUtilityService.Dialog_ReduceDisposeAction(DynamicViewModelKey);
 				}
 
 				TabGroup = null;
@@ -209,7 +211,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 				? true
 				: false;
 
-			CommonUiService.RegisterPanelTab(
+			CommonUtilityService.RegisterPanelTab(
 				panelGroupDropzone.PanelGroupKey,
 				this,
 				insertAtIndexZero);

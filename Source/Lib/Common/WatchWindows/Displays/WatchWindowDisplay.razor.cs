@@ -7,6 +7,7 @@ using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.WatchWindows.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.WatchWindows.Displays;
 
@@ -20,7 +21,7 @@ public partial class WatchWindowDisplay : ComponentBase
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private ICommonUiService CommonUiService { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	[Inject]
@@ -79,7 +80,7 @@ public partial class WatchWindowDisplay : ComponentBase
 			},
 			treeViewCommandArgs.RestoreFocusToTreeView);
 
-        CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
         return Task.CompletedTask;
     }
     

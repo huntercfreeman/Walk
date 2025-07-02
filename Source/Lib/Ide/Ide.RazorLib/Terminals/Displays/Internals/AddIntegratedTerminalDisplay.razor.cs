@@ -21,8 +21,6 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 	[Inject]
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
-	[Inject]
 	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
@@ -88,11 +86,11 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 					terminal,
 					TextEditorService,
 					CompilerServiceRegistry,
-					CommonUiService,
+					CommonUtilityService,
 					CommonBackgroundTaskApi)),
 			BackgroundTaskService,
 			CommonComponentRenderers,
-			CommonUiService,
+			CommonUtilityService,
 			CommonUtilityService.EnvironmentProvider,
 			_pathToShellExecutable)
 		{
@@ -103,6 +101,6 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 		
 		TerminalService.Register(terminalIntegrated);
 			
-		CommonUiService.Dialog_ReduceDisposeAction(Dialog.DynamicViewModelKey);
+		CommonUtilityService.Dialog_ReduceDisposeAction(Dialog.DynamicViewModelKey);
 	}
 }

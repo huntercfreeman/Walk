@@ -1,6 +1,7 @@
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.FileSystems.Models;
 
@@ -10,16 +11,16 @@ public class LocalDirectoryHandler : IDirectoryHandler
 
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly ICommonUiService _commonUiService;
+    private readonly ICommonUtilityService _commonUtilityService;
 
     public LocalDirectoryHandler(
         IEnvironmentProvider environmentProvider,
         ICommonComponentRenderers commonComponentRenderers,
-        ICommonUiService commonUiService)
+        ICommonUtilityService commonUtilityService)
     {
         _environmentProvider = environmentProvider;
         _commonComponentRenderers = commonComponentRenderers;
-        _commonUiService = commonUiService;
+        _commonUtilityService = commonUtilityService;
     }
 
     public async Task CreateDirectoryAsync(
@@ -150,7 +151,7 @@ public class LocalDirectoryHandler : IDirectoryHandler
             title,
             exception.ToString(),
             _commonComponentRenderers,
-            _commonUiService,
+            _commonUtilityService,
             TimeSpan.FromSeconds(10));
     }
 }

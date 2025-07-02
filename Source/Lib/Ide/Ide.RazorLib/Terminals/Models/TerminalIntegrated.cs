@@ -8,6 +8,7 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Ide.RazorLib.Terminals.Models;
 
@@ -15,7 +16,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 {
 	private readonly BackgroundTaskService _backgroundTaskService;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
-	private readonly ICommonUiService _commonUiService;
+	private readonly ICommonUtilityService _commonUtilityService;
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly string _pathToShellExecutable;
 
@@ -26,7 +27,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 		Func<TerminalIntegrated, ITerminalOutput> terminalOutputFactory,
 		BackgroundTaskService backgroundTaskService,
 		ICommonComponentRenderers commonComponentRenderers,
-		ICommonUiService commonUiService,
+		ICommonUtilityService commonUtilityService,
 		IEnvironmentProvider environmentProvider,
 		string pathToShellExecutable)
 	{
@@ -37,7 +38,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 		
 		_backgroundTaskService = backgroundTaskService;
 		_commonComponentRenderers = commonComponentRenderers;
-		_commonUiService = commonUiService;
+		_commonUtilityService = commonUtilityService;
 		_environmentProvider = environmentProvider;
 		_pathToShellExecutable = pathToShellExecutable;
 	}
@@ -169,7 +170,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 					" threw an exception" +
 					"\n"));
 		
-			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(14));
+			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _commonUtilityService, TimeSpan.FromSeconds(14));
 		}
 		finally
 		{
@@ -242,7 +243,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 			catch (Exception e)
 			{
 				Console.WriteLine("exception shell");
-				NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _commonUiService, TimeSpan.FromSeconds(14));
+				NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _commonUtilityService, TimeSpan.FromSeconds(14));
 			}
 			finally
 			{

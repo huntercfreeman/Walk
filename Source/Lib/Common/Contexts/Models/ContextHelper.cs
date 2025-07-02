@@ -2,6 +2,7 @@ using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.JsRuntimes.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Contexts.Models;
 
@@ -15,7 +16,7 @@ public static class ContextHelper
         string displayName,
         string internalIdentifier,
         WalkCommonJavaScriptInteropApi jsRuntimeCommonApi,
-        ICommonUiService commonUiService)
+        ICommonUtilityService commonUtilityService)
     {
         return new CommonCommand(
             displayName, internalIdentifier, false,
@@ -25,7 +26,7 @@ public static class ContextHelper
 
                 if (!success)
                 {
-                    commonUiService.SetPanelTabAsActiveByContextRecordKey(
+                    commonUtilityService.SetPanelTabAsActiveByContextRecordKey(
                         contextRecord.ContextKey);
 
                     _ = await TrySetFocus().ConfigureAwait(false);

@@ -32,8 +32,6 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Displays;
 public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    public ICommonUtilityService CommonUtilityService { get; set; } = null!;
-    [Inject]
     public IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]
     public TextEditorService TextEditorService { get; set; } = null!;
@@ -48,7 +46,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     [Inject]
     public ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
-    public ICommonUiService CommonUiService { get; set; } = null!;
+    public ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
     public WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
@@ -413,7 +411,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 		        editContext,
 		        modelModifier,
 		        viewModelModifier,
-		        CommonUiService,
+		        CommonUtilityService,
 		        ComponentData);
 			
 			return ValueTask.CompletedTask;
@@ -480,7 +478,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                                 return ValueTask.CompletedTask;
 
                             viewModelModifier.PersistentState.TooltipModel = null;
-                            CommonUiService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
+                            CommonUtilityService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
 
 							return ValueTask.CompletedTask;
 						});

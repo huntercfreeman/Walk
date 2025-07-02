@@ -23,8 +23,6 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	[Inject]
 	private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
-	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
@@ -104,7 +102,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 			},
 			null);
 
-		CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 

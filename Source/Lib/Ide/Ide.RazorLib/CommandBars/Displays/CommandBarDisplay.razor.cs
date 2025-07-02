@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Widgets.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.CommandBars.Models;
 
 namespace Walk.Ide.RazorLib.CommandBars.Displays;
@@ -12,7 +13,7 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ICommandBarService CommandBarService { get; set; } = null!;
 	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
+	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 	
@@ -36,7 +37,7 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
 	private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
 	{
 		if (keyboardEventArgs.Key == "Enter")
-			CommonUiService.SetWidget(null);
+			CommonUtilityService.SetWidget(null);
 	}
 	
 	private async void OnCommandBarStateChanged()

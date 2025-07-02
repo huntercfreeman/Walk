@@ -2,6 +2,7 @@ using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Badges.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.TextEditor.RazorLib.Edits.Models;
 
@@ -11,14 +12,14 @@ public class DirtyResourceUriBadge : IBadgeModel
     public static readonly Key<IDynamicViewModel> DialogRecordKey = Key<IDynamicViewModel>.NewKey();
 
     private readonly IDirtyResourceUriService _dirtyResourceUriService;
-    private readonly ICommonUiService _commonUiService;
+    private readonly ICommonUtilityService _commonUtilityService;
 
     public DirtyResourceUriBadge(
         IDirtyResourceUriService dirtyResourceUriService,
-        ICommonUiService commonUiService)
+        ICommonUtilityService commonUtilityService)
     {
         _dirtyResourceUriService = dirtyResourceUriService;
-        _commonUiService = commonUiService;
+        _commonUtilityService = commonUtilityService;
     }
     
     private Func<Task>? _updateUiFunc;
@@ -29,7 +30,7 @@ public class DirtyResourceUriBadge : IBadgeModel
 	
 	public void OnClick()
 	{
-	    _commonUiService.Dialog_ReduceRegisterAction(new DialogViewModel(
+	    _commonUtilityService.Dialog_ReduceRegisterAction(new DialogViewModel(
             DialogRecordKey,
             "Unsaved Files",
             typeof(Walk.TextEditor.RazorLib.Edits.Displays.DirtyResourceUriViewDisplay),

@@ -20,8 +20,6 @@ namespace Walk.Extensions.DotNet.CompilerServices.Displays;
 public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private ICommonUiService CommonUiService { get; set; } = null!;
-	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
@@ -97,7 +95,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 			},
 			restoreFocusOnClose: null);
 
-		CommonUiService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 
