@@ -44,45 +44,48 @@ public static class ServiceCollectionExtensions
                 InitialThemeKey = ThemeFacts.VisualStudioDarkThemeClone.Key,
                 AbsolutePathStandardizeFunc = ServiceCollectionExtensions.AbsolutePathStandardizeFunc,
                 FastParseFunc = async (fastParseArgs) =>
-                {
+                {    
                 	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
-                		fastParseArgs.ResourceUri.Value, (Common.RazorLib.Options.Models.CommonUtilityService)fastParseArgs.ServiceProvider.GetRequiredService<Common.RazorLib.Options.Models.CommonUtilityService>());
+                		fastParseArgs.ResourceUri.Value,
+                		fastParseArgs.CommonUtilityService);
                 		
                 	var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
                 
                     fastParseArgs = new FastParseArgs(
                         standardizedResourceUri,
                         fastParseArgs.ExtensionNoPeriod,
-                        fastParseArgs.ServiceProvider)
+                        fastParseArgs.CommonUtilityService,
+                        fastParseArgs.IdeBackgroundTaskApi)
                     {
                     	ShouldBlockUntilBackgroundTaskIsCompleted = fastParseArgs.ShouldBlockUntilBackgroundTaskIsCompleted
                     };
 
-                    var ideBackgroundTaskApi = fastParseArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
-                    await ideBackgroundTaskApi.Editor_FastParseFunc(fastParseArgs);
+                    await ((IdeBackgroundTaskApi)fastParseArgs.IdeBackgroundTaskApi).Editor_FastParseFunc(fastParseArgs);
                 },
                 RegisterModelFunc = async (registerModelArgs) =>
                 {
                 	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
-                		registerModelArgs.ResourceUri.Value, (Common.RazorLib.Options.Models.CommonUtilityService)registerModelArgs.ServiceProvider.GetRequiredService<Common.RazorLib.Options.Models.CommonUtilityService>());
+                		registerModelArgs.ResourceUri.Value,
+                		registerModelArgs.CommonUtilityService);
                 		
                 	var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
                 
                     registerModelArgs = new RegisterModelArgs(
                     	registerModelArgs.EditContext,
                         standardizedResourceUri,
-                        registerModelArgs.ServiceProvider)
+                        registerModelArgs.CommonUtilityService,
+                        registerModelArgs.IdeBackgroundTaskApi)
                     {
                     	ShouldBlockUntilBackgroundTaskIsCompleted = registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted
                     };
 
-                    var ideBackgroundTaskApi = registerModelArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
-                    await ideBackgroundTaskApi.Editor_RegisterModelFunc(registerModelArgs);
+                    await ((IdeBackgroundTaskApi)registerModelArgs.IdeBackgroundTaskApi).Editor_RegisterModelFunc(registerModelArgs);
                 },
                 TryRegisterViewModelFunc = async (tryRegisterViewModelArgs) =>
                 {
                 	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
-                		tryRegisterViewModelArgs.ResourceUri.Value, (Common.RazorLib.Options.Models.CommonUtilityService)tryRegisterViewModelArgs.ServiceProvider.GetRequiredService<Common.RazorLib.Options.Models.CommonUtilityService>());
+                		tryRegisterViewModelArgs.ResourceUri.Value,
+                		tryRegisterViewModelArgs.CommonUtilityService);
                 		
                 	var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
                 	
@@ -92,15 +95,14 @@ public static class ServiceCollectionExtensions
                         standardizedResourceUri,
                         tryRegisterViewModelArgs.Category,
                         tryRegisterViewModelArgs.ShouldSetFocusToEditor,
-                        tryRegisterViewModelArgs.ServiceProvider);
+                        tryRegisterViewModelArgs.CommonUtilityService,
+                        tryRegisterViewModelArgs.IdeBackgroundTaskApi);
 
-                    var ideBackgroundTaskApi = tryRegisterViewModelArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
-                    return await ideBackgroundTaskApi.Editor_TryRegisterViewModelFunc(tryRegisterViewModelArgs);
+                    return await ((IdeBackgroundTaskApi)tryRegisterViewModelArgs.IdeBackgroundTaskApi).Editor_TryRegisterViewModelFunc(tryRegisterViewModelArgs);
                 },
                 TryShowViewModelFunc = (tryShowViewModelArgs) =>
                 {
-                    var ideBackgroundTaskApi = tryShowViewModelArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
-                    return ideBackgroundTaskApi.Editor_TryShowViewModelFunc(tryShowViewModelArgs);
+                    return ((IdeBackgroundTaskApi)tryShowViewModelArgs.IdeBackgroundTaskApi).Editor_TryShowViewModelFunc(tryShowViewModelArgs);
                 },
             })));
         }

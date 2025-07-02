@@ -760,7 +760,8 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                 showViewModelArgs.ViewModelKey,
                 EditorTextEditorGroupKey,
                 showViewModelArgs.ShouldSetFocusToEditor,
-                showViewModelArgs.ServiceProvider);
+                showViewModelArgs.CommonUtilityService,
+                showViewModelArgs.IdeBackgroundTaskApi);
         }
 
         if (showViewModelArgs.ViewModelKey == Key<TextEditorViewModel>.Empty ||

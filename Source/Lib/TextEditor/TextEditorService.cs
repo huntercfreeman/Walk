@@ -97,6 +97,8 @@ public sealed class TextEditorService
     
     public TextEditorWorkerUi WorkerUi { get; }
 	public TextEditorWorkerArbitrary WorkerArbitrary { get; }
+	
+	public object IdeBackgroundTaskApi { get; set; }
     
     /// <summary>
 	/// Do not touch this property, it is used for the VirtualizationResult.
@@ -615,25 +617,25 @@ public sealed class TextEditorService
 		Category category,
 		Key<TextEditorViewModel> preferredViewModelKey)
 	{
-		// RegisterModelFunc
+	    // RegisterModelFunc
 		if (TextEditorConfig.RegisterModelFunc is null)
 			return Key<TextEditorViewModel>.Empty;
 		await TextEditorConfig.RegisterModelFunc
-			.Invoke(new RegisterModelArgs(editContext, resourceUri, _serviceProvider))
+			.Invoke(new RegisterModelArgs(editContext, resourceUri, CommonUtilityService, IdeBackgroundTaskApi))
 			.ConfigureAwait(false);
 	
 		// TryRegisterViewModelFunc
 		if (TextEditorConfig.TryRegisterViewModelFunc is null)
 			return Key<TextEditorViewModel>.Empty;
 		var actualViewModelKey = await TextEditorConfig.TryRegisterViewModelFunc
-			.Invoke(new TryRegisterViewModelArgs(editContext, preferredViewModelKey, resourceUri, category, shouldSetFocusToEditor, _serviceProvider))
+			.Invoke(new TryRegisterViewModelArgs(editContext, preferredViewModelKey, resourceUri, category, shouldSetFocusToEditor, CommonUtilityService, IdeBackgroundTaskApi))
 			.ConfigureAwait(false);
 	
 		// TryShowViewModelFunc
 		if (actualViewModelKey == Key<TextEditorViewModel>.Empty || TextEditorConfig.TryShowViewModelFunc is null)
 			return Key<TextEditorViewModel>.Empty;
 		await TextEditorConfig.TryShowViewModelFunc
-			.Invoke(new TryShowViewModelArgs(actualViewModelKey, Key<TextEditorGroup>.Empty, shouldSetFocusToEditor, _serviceProvider))
+			.Invoke(new TryShowViewModelArgs(actualViewModelKey, Key<TextEditorGroup>.Empty, shouldSetFocusToEditor, CommonUtilityService, IdeBackgroundTaskApi))
 			.ConfigureAwait(false);
 		
 		return actualViewModelKey;

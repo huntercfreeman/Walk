@@ -1,4 +1,5 @@
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 
@@ -12,14 +13,16 @@ public struct TryRegisterViewModelArgs
         ResourceUri resourceUri,
         Category category,
         bool shouldSetFocusToEditor,
-        IServiceProvider serviceProvider)
+        CommonUtilityService commonUtilityService,
+        object ideBackgroundTaskApi)
     {
         EditContext = editContext;
         ViewModelKey = viewModelKey;
         ResourceUri = resourceUri;
         Category = category;
         ShouldSetFocusToEditor = shouldSetFocusToEditor;
-        ServiceProvider = serviceProvider;
+        CommonUtilityService = commonUtilityService;
+        IdeBackgroundTaskApi = ideBackgroundTaskApi;
     }
 
 	public TextEditorEditContext EditContext { get; }
@@ -44,5 +47,6 @@ public struct TryRegisterViewModelArgs
     /// When this view model next gets rendered should browser focus be set to the text editor.
     /// </summary>
     public bool ShouldSetFocusToEditor { get; }
-    public IServiceProvider ServiceProvider { get; }
+    public CommonUtilityService CommonUtilityService { get; }
+    public object IdeBackgroundTaskApi { get; }
 }

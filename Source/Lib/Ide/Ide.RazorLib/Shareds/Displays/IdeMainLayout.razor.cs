@@ -76,6 +76,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
+        TextEditorService.IdeBackgroundTaskApi = IdeBackgroundTaskApi;
+    
         _bodyElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(78, DimensionUnitKind.Percentage),

@@ -293,7 +293,7 @@ public class CodeSearchService : ICodeSearchService
 	            return;
 	
 	        await _textEditorConfig.RegisterModelFunc.Invoke(
-	                new RegisterModelArgs(editContext, resourceUri, _serviceProvider))
+	                new RegisterModelArgs(editContext, resourceUri, _commonUtilityService, _textEditorService.IdeBackgroundTaskApi))
 	            .ConfigureAwait(false);
 	
 	        if (_textEditorConfig.TryRegisterViewModelFunc is not null)
@@ -304,7 +304,8 @@ public class CodeSearchService : ICodeSearchService
 	                    resourceUri,
 	                    new Category(nameof(CodeSearchService)),
 	                    false,
-	                    _serviceProvider))
+	                    _commonUtilityService,
+	                    _textEditorService.IdeBackgroundTaskApi))
 	                .ConfigureAwait(false);
 	
 	            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
