@@ -30,7 +30,7 @@
 		 style="@virtualizationResult.BothVirtualizationBoundaryStyleCssString">
 	</div>
     
-    @if (virtualizationResult.IsValid && _componentData.LineIndexCache.Map.Count != 0)
+    @if (virtualizationResult.IsValid)
     {
     	<div class="di_te_three-dots-section">
         	@for (int inlineUiIndex = 0; inlineUiIndex < virtualizationResult.InlineUiStyleList.Count; inlineUiIndex++)
