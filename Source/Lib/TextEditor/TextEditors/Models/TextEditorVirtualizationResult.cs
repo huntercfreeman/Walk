@@ -102,9 +102,6 @@ public class TextEditorVirtualizationResult
 	    ViewModel = viewModel;
 	    _previousState = previousState;
 	    
-	    LineHeightStyleCssString = _previousState.LineHeightStyleCssString;
-	    Gutter_HeightWidthPaddingCssStyle = _previousState.Gutter_HeightWidthPaddingCssStyle;
-	    
 	    IsValid = true;
     }
     
@@ -294,7 +291,7 @@ public class TextEditorVirtualizationResult
 	
     public void CreateUi()
     {
-    	if (ViewModel.PersistentState.Changed_GutterWidth)
+        if (ViewModel.PersistentState.Changed_GutterWidth)
     	{
     	    ViewModel.PersistentState.Changed_GutterWidth = false;
     		
@@ -329,7 +326,7 @@ public class TextEditorVirtualizationResult
     		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
     		ScrollbarSection_LeftCssStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
     		
-    		ViewModel.Changed_Cursor_AnyState = true;
+    		ViewModel.PersistentState.Changed_Cursor_AnyState = true;
 
             ComponentData.LineIndexCache.Clear();
             CopySomeDuetoPostScrollAndRemeasure();
@@ -384,7 +381,7 @@ public class TextEditorVirtualizationResult
 	        ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(ComponentData.Gutter_PaddingCssStyle);
     		Gutter_HeightWidthPaddingCssStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
 		
-		    ViewModel.Changed_Cursor_AnyState = true;
+		    ViewModel.PersistentState.Changed_Cursor_AnyState = true;
 		}
 		else
 		{
@@ -455,7 +452,7 @@ public class TextEditorVirtualizationResult
 	    else
 	        BothVirtualizationBoundaryStyleCssString = _previousState.BothVirtualizationBoundaryStyleCssString;
         
-        if (ViewModel.Changed_Cursor_AnyState)
+        if (ViewModel.PersistentState.Changed_Cursor_AnyState)
         {
             GetCursorAndCaretRowStyleCss();
             GetSelection();

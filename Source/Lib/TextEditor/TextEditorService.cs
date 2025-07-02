@@ -265,7 +265,7 @@ public sealed class TextEditorService
         	var viewModelModifier = __ViewModelList[viewModelIndex];
         
         	TextEditorModel? modelModifier = null;
-        	if (viewModelModifier.PersistentState.ShouldRevealCursor || viewModelModifier.Virtualization.ShouldCalculateVirtualizationResult || viewModelModifier.ScrollWasModified || viewModelModifier.Changed_Cursor_AnyState)
+        	if (viewModelModifier.PersistentState.ShouldRevealCursor || viewModelModifier.Virtualization.ShouldCalculateVirtualizationResult || viewModelModifier.ScrollWasModified || viewModelModifier.PersistentState.Changed_Cursor_AnyState)
         		modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri, isReadOnly: true);
         
         	if (viewModelModifier.PersistentState.ShouldRevealCursor)
@@ -346,7 +346,7 @@ public sealed class TextEditorService
 				        componentData);
 				}
 			}
-			else if (viewModelModifier.Changed_Cursor_AnyState)
+			else if (viewModelModifier.PersistentState.Changed_Cursor_AnyState)
 			{
 			    // If `CalculateVirtualizationResult` is invoked, then `CalculateCursorUi`
 			    // gets invoked as part of `CalculateVirtualizationResult`.
@@ -360,7 +360,7 @@ public sealed class TextEditorService
 			    var componentData = viewModelModifier.PersistentState.ComponentData;
 			    if (componentData is not null)
 			    {
-			        viewModelModifier.Changed_Cursor_AnyState = false;
+			        viewModelModifier.PersistentState.Changed_Cursor_AnyState = false;
 			    
 			        viewModelModifier.Virtualization = new TextEditorVirtualizationResult(
 			            modelModifier,

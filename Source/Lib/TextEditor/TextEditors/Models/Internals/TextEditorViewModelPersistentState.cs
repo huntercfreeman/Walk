@@ -338,6 +338,31 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         }
     }
     
+    /// <summary>
+    /// The cursor related `Changed_...` properties need to be on the PersistentState
+    /// otherwise you can "lose" the `Changed_...` bool having been true without
+    /// ever generating the CSS (construct two viewmodels in a row then do CalculateVirtualizationResult(...)
+    /// you lose the `Changed_...` of the first one).
+    ///
+    /// When settings `Changed_...` also set this property.
+    /// Then to determine if the many `Changed_...` properties that are not this one
+    /// have changed, you can first check this singular property so you short circuit
+    /// if nothing changed.
+    ///
+    /// Don't copy any of the `Changed_...` properties when making a copy of a viewmodel.
+    /// They're just used as markers during the lifespan of each viewmodel whether the UI needs to be updated.
+    ///
+    /// If only this bool is set, then it means while calculating the VirtualizationResult, that
+    /// some other variable had changed, and the cursor CSS is dependent on that variable.
+    /// </summary>
+    public bool Changed_Cursor_AnyState { get; set; }
+    
+    public bool Changed_LineIndex { get; set; }
+    public bool Changed_ColumnIndex { get; set; }
+    public bool Changed_PreferredColumnIndex { get; set; }
+    public bool Changed_SelectionAnchorPositionIndex { get; set; }
+    public bool Changed_SelectionEndingPositionIndex { get; set; }
+    
     public bool Changed_GutterWidth { get; set; }
     public bool Changed_LineHeight { get; set; }
     public bool Changed_CharacterWidth { get; set; }
