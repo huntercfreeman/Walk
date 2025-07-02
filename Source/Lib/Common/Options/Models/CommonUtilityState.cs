@@ -13,6 +13,8 @@ using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Tooltips.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Contexts.Models;
 
 namespace Walk.Common.RazorLib.Options.Models;
 
@@ -328,4 +330,24 @@ public record struct TooltipState
 	public ITooltipModel TooltipModel { get; }
 }
 /* End ITooltipService */
+
+/* Start CommonBackgroundTaskApi */
+/// <summary>
+/// The list provided should not be modified after passing it as a parameter.
+/// Make a shallow copy, and pass the shallow copy, if further modification of your list will be necessary.
+/// </summary>
+public record struct ContextState(
+    IReadOnlyList<ContextRecord> AllContextsList,
+    Key<ContextRecord> FocusedContextKey)
+{
+    public ContextState() : this(
+        Array.Empty<ContextRecord>(),
+        Key<ContextRecord>.Empty)
+    {
+        AllContextsList = ContextFacts.AllContextsList;
+        FocusedContextKey = ContextFacts.GlobalContext.ContextKey;
+    }
+}
+/* End CommonBackgroundTaskApi */
+
 

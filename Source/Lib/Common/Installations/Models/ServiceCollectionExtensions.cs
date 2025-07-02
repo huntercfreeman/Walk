@@ -71,7 +71,6 @@ public static class ServiceCollectionExtensions
             .AddScoped<ITreeViewService, TreeViewService>()
             .AddScoped<IDragService, DragService>()
             .AddScoped<BrowserResizeInterop>()
-            .AddScoped<IContextService, ContextService>()
             .AddScoped<ICommonUtilityService, CommonUtilityService>();
         
         return services;

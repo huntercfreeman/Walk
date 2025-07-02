@@ -30,7 +30,6 @@ namespace Walk.Ide.RazorLib.Commands;
 
 public class CommandFactory : ICommandFactory
 {
-    private readonly IContextService _contextService;
     private readonly TextEditorService _textEditorService;
     private readonly ITreeViewService _treeViewService;
     // FindAllReferences
@@ -39,7 +38,6 @@ public class CommandFactory : ICommandFactory
     private readonly ICommonUtilityService _commonUtilityService;
 
     public CommandFactory(
-    	IContextService contextService,
 		TextEditorService textEditorService,
 		ITreeViewService treeViewService,
 		// FindAllReferences
@@ -47,7 +45,6 @@ public class CommandFactory : ICommandFactory
 		ICodeSearchService codeSearchService,
 		ICommonUtilityService commonUtilityService)
     {
-    	_contextService = contextService;
 		_textEditorService = textEditorService;
 		_treeViewService = treeViewService;
 		// FindAllReferences
@@ -387,7 +384,7 @@ public class CommandFactory : ICommandFactory
 						.MeasureElementById("di_ide_header-button-file")
 						.ConfigureAwait(false);
 						
-					var contextState = _contextService.GetContextState();
+					var contextState = _commonUtilityService.GetContextState();
 					
 					var menuOptionList = new List<MenuOptionRecord>();
 					
@@ -421,13 +418,13 @@ public class CommandFactory : ICommandFactory
 			
 			        // _dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
 			        
-			        if (_contextService.GetContextState().FocusedContextKey == ContextFacts.TextEditorContext.ContextKey)
+			        if (_commonUtilityService.GetContextState().FocusedContextKey == ContextFacts.TextEditorContext.ContextKey)
 			        {
-			        	_contextService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = WalkTextEditorInitializer.ContextSwitchGroupKey;
+			        	_commonUtilityService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = WalkTextEditorInitializer.ContextSwitchGroupKey;
 			        }
 			        else
 			        {
-			        	_contextService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = WalkCommonInitializer.ContextSwitchGroupKey;
+			        	_commonUtilityService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = WalkCommonInitializer.ContextSwitchGroupKey;
 			        }
 				
                     _contextSwitchWidget ??= new WidgetModel(

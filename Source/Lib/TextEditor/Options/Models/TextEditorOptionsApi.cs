@@ -21,18 +21,15 @@ public sealed class TextEditorOptionsApi
 
     private readonly TextEditorService _textEditorService;
     private readonly WalkTextEditorConfig _textEditorConfig;
-    private readonly IContextService _contextService;
     private readonly ICommonUtilityService _commonUtilityService;
 
     public TextEditorOptionsApi(
         TextEditorService textEditorService,
         WalkTextEditorConfig textEditorConfig,
-        ICommonUtilityService commonUtilityService,
-        IContextService contextService)
+        ICommonUtilityService commonUtilityService)
     {
         _textEditorService = textEditorService;
         _textEditorConfig = textEditorConfig;
-        _contextService = contextService;
         _commonUtilityService = commonUtilityService;
     }
     

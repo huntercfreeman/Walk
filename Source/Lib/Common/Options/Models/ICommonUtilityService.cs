@@ -23,6 +23,9 @@ using Walk.Common.RazorLib.Tooltips.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Installations.Models;
+using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Keymaps.Models;
+using Walk.Common.RazorLib.Contexts.Models;
 
 namespace Walk.Common.RazorLib.Options.Models;
 
@@ -236,6 +239,7 @@ public interface ICommonUtilityService : IBackgroundTaskGroup
 	public void SetTooltipModel(ITooltipModel tooltipModel);
     /* End ITooltipService */
 
+    /* Start CommonBackgroundTaskApi */
     /// <summary>
     /// A shared StringBuilder, but only use this if you know for certain you are on the "UI thread".
     /// </summary>
@@ -244,4 +248,18 @@ public interface ICommonUtilityService : IBackgroundTaskGroup
     public WalkCommonConfig CommonConfig { get; }
     
     public void Enqueue(CommonWorkArgs commonWorkArgs);
+    /* End CommonBackgroundTaskApi */
+
+	public event Action? ContextStateChanged;
+    
+    public ContextState GetContextState();
+    
+    public ContextRecord GetContextRecord(Key<ContextRecord> contextKey);
+    
+    public ContextSwitchState GetContextSwitchState();
+    
+    public void SetFocusedContextKey(Key<ContextRecord> contextKey);
+    public void SetContextKeymap(Key<ContextRecord> contextKey, IKeymap keymap);
+    
+    public void RegisterContextSwitchGroup(ContextSwitchGroup contextSwitchGroup);
 }

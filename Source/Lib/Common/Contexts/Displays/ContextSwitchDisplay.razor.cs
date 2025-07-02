@@ -13,8 +13,6 @@ namespace Walk.Common.RazorLib.Contexts.Displays;
 public partial class ContextSwitchDisplay : ComponentBase
 {
 	[Inject]
-	private IContextService ContextService { get; set; } = null!;
-	[Inject]
 	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	
 	[CascadingParameter]
@@ -57,7 +55,7 @@ public partial class ContextSwitchDisplay : ComponentBase
 	{
 		if (firstRender)
 		{
-			var contextSwitchState = ContextService.GetContextSwitchState();
+			var contextSwitchState = CommonUtilityService.GetContextSwitchState();
 			
 			foreach (var contextSwitchGroup in contextSwitchState.ContextSwitchGroupList)
 			{

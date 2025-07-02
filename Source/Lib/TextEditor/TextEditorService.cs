@@ -33,7 +33,6 @@ namespace Walk.TextEditor.RazorLib;
 public sealed class TextEditorService
 {
     private readonly BackgroundTaskService _backgroundTaskService;
-    private readonly IContextService _contextService;
     private readonly IDirtyResourceUriService _dirtyResourceUriService;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
     private readonly IJSRuntime _jsRuntime;
@@ -47,7 +46,6 @@ public sealed class TextEditorService
         ITextEditorRegistryWrap textEditorRegistryWrap,
         IJSRuntime jsRuntime,
         ICommonUtilityService commonUtilityService,
-        IContextService contextService,
 		IServiceProvider serviceProvider)
     {
     	__TextEditorViewModelLiason = new(this);
@@ -75,13 +73,12 @@ public sealed class TextEditorService
         _textEditorRegistryWrap = textEditorRegistryWrap;
         _jsRuntime = jsRuntime;
 		JsRuntimeTextEditorApi = _jsRuntime.GetWalkTextEditorApi();
-        _contextService = contextService;
 
         ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService);
         ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, CommonUtilityService);
         GroupApi = new TextEditorGroupApi(this, CommonUtilityService);
         DiffApi = new TextEditorDiffApi(this);
-        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, CommonUtilityService, contextService);
+        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, CommonUtilityService);
         
         TextEditorState = new();
     }
@@ -818,7 +815,7 @@ public sealed class TextEditorService
 
         await OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
 
-        _contextService.RegisterContextSwitchGroup(
+        CommonUtilityService.RegisterContextSwitchGroup(
             new ContextSwitchGroup(
                 Walk.TextEditor.RazorLib.Installations.Displays.WalkTextEditorInitializer.ContextSwitchGroupKey,
                 "Text Editor",

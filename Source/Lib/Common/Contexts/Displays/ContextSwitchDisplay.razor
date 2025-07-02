@@ -10,7 +10,7 @@
      @oncontextmenu:preventDefault="true"
      @oncontextmenu:stopPropagation="true">
     
-    @{ var contextSwitchState = ContextService.GetContextSwitchState(); }
+    @{ var contextSwitchState = CommonUtilityService.GetContextSwitchState(); }
     
     @if (_hasCalculatedGroupMenuTupleList)
     {
