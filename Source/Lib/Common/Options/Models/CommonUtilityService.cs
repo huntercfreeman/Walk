@@ -53,6 +53,8 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.ListExtensions;
 using Walk.Common.RazorLib.Contexts.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Drags.Models;
 
 namespace Walk.Common.RazorLib.Options.Models;
 
@@ -1628,6 +1630,7 @@ public class CommonUtilityService : ICommonUtilityService
 	}
 	/* End CommonBackgroundTaskApi */
 
+    /* Start IContextService */
 	private ContextState _contextState = new();
 	private ContextSwitchState _contextSwitchState = new();
     
@@ -1717,4 +1720,47 @@ public class CommonUtilityService : ICommonUtilityService
         finalize:
         ContextStateChanged?.Invoke();
     }
+    /* End IContextService */
+    
+    /* Start IDragService */
+    private DragState _dragState = new();
+    
+    public event Action? DragStateChanged;
+    
+    public DragState GetDragState() => _dragState;
+    
+    public void Drag_ShouldDisplayAndMouseEventArgsSetAction(
+        bool shouldDisplay,
+        MouseEventArgs? mouseEventArgs)
+    {
+    	var inState = GetDragState();
+    
+        _dragState = inState with
+        {
+        	ShouldDisplay = shouldDisplay,
+            MouseEventArgs = mouseEventArgs,
+        };
+        
+        DragStateChanged?.Invoke();
+        return;
+    }
+    
+    public void Drag_ShouldDisplayAndMouseEventArgsAndDragSetAction(
+        bool shouldDisplay,
+		MouseEventArgs? mouseEventArgs,
+		IDrag? drag)
+    {
+    	var inState = GetDragState();
+    	
+        _dragState = inState with
+        {
+        	ShouldDisplay = shouldDisplay,
+            MouseEventArgs = mouseEventArgs,
+            Drag = drag,
+        };
+        
+        DragStateChanged?.Invoke();
+        return;
+    }
+    /* End IDragService */
 }

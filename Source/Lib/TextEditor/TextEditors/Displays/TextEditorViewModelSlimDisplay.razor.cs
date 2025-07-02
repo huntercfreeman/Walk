@@ -49,8 +49,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     public WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
     public IFindAllService FindAllService { get; set; } = null!;
-    [Inject]
-    public IDragService DragService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<TextEditorViewModel> TextEditorViewModelKey { get; set; } = Key<TextEditorViewModel>.Empty;
@@ -151,7 +149,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         TextEditorService.OptionsApi.StaticStateChanged += OnOptionStaticStateChanged;
         TextEditorService.OptionsApi.MeasuredStateChanged += OnOptionMeasuredStateChanged;
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
-        DragService.DragStateChanged += DragStateWrapOnStateChanged;
+        CommonUtilityService.DragStateChanged += DragStateWrapOnStateChanged;
     }
     
     protected override void OnParametersSet()
@@ -563,7 +561,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			_mouseDownEventArgsStruct = eventArgs;
 			_dragEventHandler = HORIZONTAL_DragEventHandlerScrollAsync;
 	
-			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, null);
+			CommonUtilityService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
 		}
     }
     
@@ -594,7 +592,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			_mouseDownEventArgsStruct = eventArgs;
 			_dragEventHandler = VERTICAL_DragEventHandlerScrollAsync;
 	
-			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, null);
+			CommonUtilityService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
 		}     
     }
     
@@ -754,7 +752,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
     private async void DragStateWrapOnStateChanged()
     {
-        if (!DragService.GetDragState().ShouldDisplay)
+        if (!CommonUtilityService.GetDragState().ShouldDisplay)
         {
             // NOTE: '_mouseDownEventArgs' being non-null is what indicates that the subscription is active.
 			//       So be wary if one intends to move its assignment elsewhere.
@@ -766,7 +764,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         else
         {
             var localMouseDownEventArgs = _mouseDownEventArgsStruct;
-            var dragEventArgs = DragService.GetDragState().MouseEventArgs;
+            var dragEventArgs = CommonUtilityService.GetDragState().MouseEventArgs;
 			var localDragEventHandler = _dragEventHandler;
 
             if (localMouseDownEventArgs.Buttons != -1 && dragEventArgs is not null)
@@ -905,7 +903,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     public void Dispose()
     {
     	// ScrollbarSection.razor.cs
-    	DragService.DragStateChanged -= DragStateWrapOnStateChanged;
+    	CommonUtilityService.DragStateChanged -= DragStateWrapOnStateChanged;
     
     	// TextEditorViewModelDisplay.razor.cs
         TextEditorService.TextEditorStateChanged -= GeneralOnStateChangedEventHandler;

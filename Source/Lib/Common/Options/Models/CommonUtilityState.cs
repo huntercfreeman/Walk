@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Themes.Models;
@@ -15,6 +16,10 @@ using Walk.Common.RazorLib.Tooltips.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Contexts.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Dimensions.Models;
+using Walk.Common.RazorLib.Dialogs.Models;
+using Walk.Common.RazorLib.Drags.Models;
 
 namespace Walk.Common.RazorLib.Options.Models;
 
@@ -331,7 +336,7 @@ public record struct TooltipState
 }
 /* End ITooltipService */
 
-/* Start CommonBackgroundTaskApi */
+/* Start IContextService */
 /// <summary>
 /// The list provided should not be modified after passing it as a parameter.
 /// Make a shallow copy, and pass the shallow copy, if further modification of your list will be necessary.
@@ -348,6 +353,18 @@ public record struct ContextState(
         FocusedContextKey = ContextFacts.GlobalContext.ContextKey;
     }
 }
-/* End CommonBackgroundTaskApi */
+/* End IContextService */
 
-
+/* Start IDragService */
+public record struct DragState(
+    bool ShouldDisplay,
+    MouseEventArgs? MouseEventArgs,
+	IDrag? Drag,
+	ElementDimensions DragElementDimensions)
+{
+    public DragState() : this (false, null, null, DialogHelper.ConstructDefaultElementDimensions())
+    {
+        
+    }
+}
+/* End IDragService */

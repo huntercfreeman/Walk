@@ -18,8 +18,6 @@ namespace Walk.Common.RazorLib.Panels.Displays;
 public partial class PanelGroupDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IDragService DragService { get; set; } = null!;
-    [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
@@ -195,7 +193,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
 
             CommonUtilityService.Panel_SetDragEventArgs(null);
 
-			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(false, null);
+			CommonUtilityService.Drag_ShouldDisplayAndMouseEventArgsSetAction(false, null);
         }
 
         return Task.CompletedTask;
@@ -225,7 +223,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
 
             CommonUtilityService.Panel_SetDragEventArgs(null);
 
-			DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(false, null);
+			CommonUtilityService.Drag_ShouldDisplayAndMouseEventArgsSetAction(false, null);
         }
 
         return Task.CompletedTask;

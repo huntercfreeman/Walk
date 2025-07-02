@@ -121,7 +121,7 @@ public partial class TabDisplay : ComponentBase
             // This needs to run synchronously to guarantee `dragState.DragElementDimensions` is in a threadsafe state
             // (keep any awaits after it).
             // (only the "UI thread" touches `dragState.DragElementDimensions`).
-            var dragState = RenderBatch.DragService.GetDragState();
+            var dragState = RenderBatch.CommonUtilityService.GetDragState();
 
 			dragState.DragElementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
 
@@ -147,7 +147,7 @@ public partial class TabDisplay : ComponentBase
     
     public void SubscribeToDragEventForScrolling(IDrag draggable)
     {
-		RenderBatch.DragService.ReduceShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, draggable);
+		RenderBatch.CommonUtilityService.Drag_ShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, draggable);
     }
 
 	/// <summary>

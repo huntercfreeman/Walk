@@ -10,8 +10,6 @@ namespace Walk.Common.RazorLib.Resizes.Displays;
 public partial class ResizableRow : ComponentBase, IDisposable
 {
     [Inject]
-    private IDragService DragService { get; set; } = null!;
-    [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
@@ -26,7 +24,7 @@ public partial class ResizableRow : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        DragService.DragStateChanged += DragStateWrapOnStateChanged;
+        CommonUtilityService.DragStateChanged += DragStateWrapOnStateChanged;
         CommonUtilityService.AppOptionsStateChanged += OnAppOptionsStateChanged;
     }
     
@@ -37,7 +35,7 @@ public partial class ResizableRow : ComponentBase, IDisposable
 
     private async void DragStateWrapOnStateChanged()
     {
-        if (!DragService.GetDragState().ShouldDisplay)
+        if (!CommonUtilityService.GetDragState().ShouldDisplay)
         {
 			bool wasTargetOfDragging = _dragEventHandler is not null;
 
@@ -49,7 +47,7 @@ public partial class ResizableRow : ComponentBase, IDisposable
         }
         else
         {
-            var mouseEventArgs = DragService.GetDragState().MouseEventArgs;
+            var mouseEventArgs = CommonUtilityService.GetDragState().MouseEventArgs;
 
             if (_dragEventHandler is not null)
             {
@@ -70,7 +68,7 @@ public partial class ResizableRow : ComponentBase, IDisposable
         Func<(MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task> dragEventHandler)
     {
         _dragEventHandler = dragEventHandler;
-        DragService.ReduceShouldDisplayAndMouseEventArgsSetAction(true, null);
+        CommonUtilityService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
     }
 
     private async Task DragEventHandlerResizeHandleAsync(
@@ -91,7 +89,7 @@ public partial class ResizableRow : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        DragService.DragStateChanged -= DragStateWrapOnStateChanged;
+        CommonUtilityService.DragStateChanged -= DragStateWrapOnStateChanged;
         CommonUtilityService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
     }
 }

@@ -27,8 +27,6 @@ namespace Walk.Ide.RazorLib.Shareds.Displays;
 public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 {
     [Inject]
-    private IDragService DragService { get; set; } = null!;
-    [Inject]
     private IIdeService IdeService { get; set; } = null!;
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
@@ -106,7 +104,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             	DimensionOperatorKind.Subtract)
         });
     
-        DragService.DragStateChanged += DragStateWrapOnStateChanged;
+        CommonUtilityService.DragStateChanged += DragStateWrapOnStateChanged;
         CommonUtilityService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
         IdeService.IdeStateChanged += OnIdeMainLayoutStateChanged;
         TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrap_StateChanged;
@@ -155,9 +153,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     private async void DragStateWrapOnStateChanged()
     {
-        if (_previousDragStateWrapShouldDisplay != DragService.GetDragState().ShouldDisplay)
+        if (_previousDragStateWrapShouldDisplay != CommonUtilityService.GetDragState().ShouldDisplay)
         {
-            _previousDragStateWrapShouldDisplay = DragService.GetDragState().ShouldDisplay;
+            _previousDragStateWrapShouldDisplay = CommonUtilityService.GetDragState().ShouldDisplay;
             await InvokeAsync(() =>
             {
                 _shouldRecalculateCssStrings = true;
@@ -367,7 +365,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     public void Dispose()
     {
-        DragService.DragStateChanged -= DragStateWrapOnStateChanged;
+        CommonUtilityService.DragStateChanged -= DragStateWrapOnStateChanged;
         CommonUtilityService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
         IdeService.IdeStateChanged -= OnIdeMainLayoutStateChanged;
         TextEditorService.OptionsApi.StaticStateChanged -= TextEditorOptionsStateWrap_StateChanged;

@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
@@ -27,6 +28,9 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
+
+using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Drags.Models;
 
 namespace Walk.Common.RazorLib.Options.Models;
 
@@ -254,6 +258,7 @@ public interface ICommonUtilityService : IBackgroundTaskGroup
     public void Enqueue(CommonWorkArgs commonWorkArgs);
     /* End CommonBackgroundTaskApi */
 
+    /* Start IContextService */
 	public event Action? ContextStateChanged;
     
     public ContextState GetContextState();
@@ -266,4 +271,20 @@ public interface ICommonUtilityService : IBackgroundTaskGroup
     public void SetContextKeymap(Key<ContextRecord> contextKey, IKeymap keymap);
     
     public void RegisterContextSwitchGroup(ContextSwitchGroup contextSwitchGroup);
+    /* End IContextService */
+
+    /* Start IDragService */
+	public event Action? DragStateChanged;
+	
+    public DragState GetDragState();
+    
+    public void Drag_ShouldDisplayAndMouseEventArgsSetAction(
+        bool shouldDisplay,
+        MouseEventArgs? mouseEventArgs);
+    
+    public void Drag_ShouldDisplayAndMouseEventArgsAndDragSetAction(
+        bool shouldDisplay,
+		MouseEventArgs? mouseEventArgs,
+		IDrag? drag);
+    /* End IDragService */
 }

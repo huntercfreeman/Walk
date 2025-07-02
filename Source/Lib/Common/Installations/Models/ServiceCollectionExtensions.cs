@@ -67,7 +67,6 @@ public static class ServiceCollectionExtensions
 				return hostingInformation.BackgroundTaskService;
 			})
             .AddScoped<ITreeViewService, TreeViewService>()
-            .AddScoped<IDragService, DragService>()
             .AddScoped<BrowserResizeInterop>()
             .AddScoped<ICommonUtilityService, CommonUtilityService>(sp => new CommonUtilityService(
                 hostingInformation,

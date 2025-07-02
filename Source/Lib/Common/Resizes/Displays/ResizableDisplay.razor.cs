@@ -12,8 +12,6 @@ namespace Walk.Common.RazorLib.Resizes.Displays;
 public partial class ResizableDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IDragService DragService { get; set; } = null!;
-    [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
@@ -40,12 +38,12 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        DragService.DragStateChanged += DragStateWrapOnStateChanged;
+        CommonUtilityService.DragStateChanged += DragStateWrapOnStateChanged;
     }
 
     private async void DragStateWrapOnStateChanged()
     {
-        if (!DragService.GetDragState().ShouldDisplay)
+        if (!CommonUtilityService.GetDragState().ShouldDisplay)
         {
 			var wasTargetOfDragging = _dragEventHandler is not null;
 
@@ -57,7 +55,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
         }
         else
         {
-            var mouseEventArgs = DragService.GetDragState().MouseEventArgs;
+            var mouseEventArgs = CommonUtilityService.GetDragState().MouseEventArgs;
 
             if (_dragEventHandler is not null)
             {
@@ -82,7 +80,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
         if (Drag is not null)
             await Drag.OnDragStartAsync().ConfigureAwait(false);
 
-		DragService.ReduceShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, Drag);
+		CommonUtilityService.Drag_ShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, Drag);
     }
 
     public Task SubscribeToDragEventWithMoveHandle()
@@ -592,6 +590,6 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        DragService.DragStateChanged -= DragStateWrapOnStateChanged;
+        CommonUtilityService.DragStateChanged -= DragStateWrapOnStateChanged;
     }
 }

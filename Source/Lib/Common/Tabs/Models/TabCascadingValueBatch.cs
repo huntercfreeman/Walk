@@ -9,7 +9,6 @@ namespace Walk.Common.RazorLib.Tabs.Models;
 
 public class TabCascadingValueBatch
 {
-    public IDragService DragService { get; set; } = null!;
     public ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	public Func<TabContextMenuEventArgs, Task>? HandleTabButtonOnContextMenu { get; set; }
 }
