@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -24,15 +25,13 @@ public partial class WalkWebsiteInitializer : ComponentBase
     [Inject]
     private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
     [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private ITextEditorHeaderRegistry TextEditorHeaderRegistry { get; set; } = null!;
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
     [Inject]
-    private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     protected override void OnInitialized()
     {
@@ -44,7 +43,7 @@ public partial class WalkWebsiteInitializer : ComponentBase
     {
         if (firstRender)
         {
-        	BackgroundTaskService.Continuous_EnqueueGroup(new BackgroundTask(
+        	CommonUtilityService.Continuous_EnqueueGroup(new BackgroundTask(
         		Key<IBackgroundTaskGroup>.Empty,
         		Do_WalkWebsiteInitializerOnAfterRenderAsync));
         }
@@ -60,17 +59,17 @@ public partial class WalkWebsiteInitializer : ComponentBase
 
         // This code block is hacky. I want the Solution Explorer to from the get-go be fully expanded, so the user can see 'Program.cs'
         {
-            TreeViewService.MoveRight(
+            CommonUtilityService.TreeView_MoveRight(
                 DotNetSolutionState.TreeViewSolutionExplorerStateKey,
                 false,
                 false);
 
-            TreeViewService.MoveRight(
+            CommonUtilityService.TreeView_MoveRight(
                 DotNetSolutionState.TreeViewSolutionExplorerStateKey,
                 false,
                 false);
 
-            TreeViewService.MoveRight(
+            CommonUtilityService.TreeView_MoveRight(
                 DotNetSolutionState.TreeViewSolutionExplorerStateKey,
             false,
                 false);
@@ -83,21 +82,20 @@ public partial class WalkWebsiteInitializer : ComponentBase
         await WebsiteProjectTemplateFacts.HandleNewCSharpProjectAsync(
                 WebsiteProjectTemplateFacts.BlazorWasmEmptyProjectTemplate.ShortName!,
                 InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_CSPROJ_ABSOLUTE_FILE_PATH,
-                FileSystemProvider,
-                EnvironmentProvider)
+                CommonUtilityService)
             .ConfigureAwait(false);
 
-        await FileSystemProvider.File.WriteAllTextAsync(
+        await CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
                 InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.PERSON_CS_CONTENTS)
             .ConfigureAwait(false);
 
-        await FileSystemProvider.File.WriteAllTextAsync(
+        await CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CS_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CS_CONTENTS)
             .ConfigureAwait(false);
 
-        await FileSystemProvider.File.WriteAllTextAsync(
+        await CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CONTENTS)
             .ConfigureAwait(false);
@@ -108,12 +106,12 @@ public partial class WalkWebsiteInitializer : ComponentBase
             .ConfigureAwait(false);*/
 
         // ExampleSolution.sln
-        await FileSystemProvider.File.WriteAllTextAsync(
+        await CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
                 InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.SLN_CONTENTS)
             .ConfigureAwait(false);
 
-        var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
+        var solutionAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
             InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
             false);
 
@@ -142,11 +140,11 @@ public partial class WalkWebsiteInitializer : ComponentBase
         {
             foreach (var directory in directories)
             {
-                var childDirectories = await FileSystemProvider.Directory
+                var childDirectories = await CommonUtilityService.FileSystemProvider.Directory
                     .GetDirectoriesAsync(directory)
                     .ConfigureAwait(false);
                 allFiles.AddRange(
-                    await FileSystemProvider.Directory.GetFilesAsync(directory).ConfigureAwait(false));
+                    await CommonUtilityService.FileSystemProvider.Directory.GetFilesAsync(directory).ConfigureAwait(false));
 
                 await RecursiveStep(childDirectories, allFiles).ConfigureAwait(false);
             }
@@ -154,10 +152,10 @@ public partial class WalkWebsiteInitializer : ComponentBase
 
         foreach (var file in allFiles)
         {
-            var absolutePath = EnvironmentProvider.AbsolutePathFactory(file, false);
+            var absolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(file, false);
             var resourceUri = new ResourceUri(file);
-            var fileLastWriteTime = await FileSystemProvider.File.GetLastWriteTimeAsync(file).ConfigureAwait(false);
-            var content = await FileSystemProvider.File.ReadAllTextAsync(file).ConfigureAwait(false);
+            var fileLastWriteTime = await CommonUtilityService.FileSystemProvider.File.GetLastWriteTimeAsync(file).ConfigureAwait(false);
+            var content = await CommonUtilityService.FileSystemProvider.File.ReadAllTextAsync(file).ConfigureAwait(false);
 
             var decorationMapper = DecorationMapperRegistry.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
             var compilerService = CompilerServiceRegistry.GetCompilerService(absolutePath.ExtensionNoPeriod);
@@ -210,7 +208,7 @@ public partial class WalkWebsiteInitializer : ComponentBase
 		TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
 		{
 			// Display a file from the get-go so the user is less confused on what the website is.
-	        var absolutePath = EnvironmentProvider.AbsolutePathFactory(
+	        var absolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 	            InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
 	            false);
 		

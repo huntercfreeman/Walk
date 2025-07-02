@@ -12,8 +12,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 var hostingInformation = new WalkHostingInformation(
     WalkHostingKind.Wasm,
-    WalkPurposeKind.Ide,
-    new BackgroundTaskService());
+    WalkPurposeKind.Ide);
 
 builder.Services.AddWalkWebsiteServices(hostingInformation);
 
