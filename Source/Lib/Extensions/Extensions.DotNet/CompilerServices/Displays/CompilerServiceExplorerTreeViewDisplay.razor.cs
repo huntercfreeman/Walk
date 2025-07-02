@@ -6,8 +6,6 @@ using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.CompilerServices;

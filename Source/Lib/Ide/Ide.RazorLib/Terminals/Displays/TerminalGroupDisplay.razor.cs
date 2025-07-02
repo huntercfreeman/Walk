@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 
 namespace Walk.Ide.RazorLib.Terminals.Displays;

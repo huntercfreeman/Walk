@@ -1,7 +1,6 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Ide.RazorLib.Installations.Models;
 using Walk.Extensions.Config.Installations.Models;

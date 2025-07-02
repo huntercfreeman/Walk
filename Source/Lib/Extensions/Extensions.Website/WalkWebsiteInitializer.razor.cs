@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib;

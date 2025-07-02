@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;

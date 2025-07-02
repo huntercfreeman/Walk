@@ -1,5 +1,3 @@
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-
 namespace Walk.Common.RazorLib.Installations.Models;
 
 /// <summary>

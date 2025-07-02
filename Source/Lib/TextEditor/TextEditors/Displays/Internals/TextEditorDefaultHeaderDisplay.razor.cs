@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
-using Walk.Common.RazorLib.Notifications.Models;
-using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 

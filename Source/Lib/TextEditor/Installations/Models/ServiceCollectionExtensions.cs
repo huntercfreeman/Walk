@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Walk.Common.RazorLib.Installations.Models;
-using Walk.TextEditor.RazorLib.Autocompletes.Models;
 using Walk.TextEditor.RazorLib.ComponentRenderers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;

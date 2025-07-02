@@ -1,6 +1,5 @@
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 

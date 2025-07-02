@@ -1,4 +1,3 @@
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.WatchWindows.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
