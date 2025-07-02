@@ -17,8 +17,6 @@ public partial class TabListDisplay : ComponentBase
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
-	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-	[Inject]
 	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 
 	/// <summary>

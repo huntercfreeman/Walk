@@ -10,8 +10,6 @@ namespace Walk.Common.RazorLib.Widgets.Displays;
 public partial class WidgetDisplay : ComponentBase
 {
     [Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-    [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     
 	[Parameter, EditorRequired]
@@ -23,7 +21,7 @@ public partial class WidgetDisplay : ComponentBase
     {
         if (firstRender)
         {
-            await CommonBackgroundTaskApi.JsRuntimeCommonApi
+            await CommonUtilityService.JsRuntimeCommonApi
                 .FocusHtmlElementById(WIDGET_HTML_ELEMENT_ID)
                 .ConfigureAwait(false);
         }
@@ -31,7 +29,7 @@ public partial class WidgetDisplay : ComponentBase
 
 	private async Task HandleOnMouseDown()
     {
-        await CommonBackgroundTaskApi.JsRuntimeCommonApi
+        await CommonUtilityService.JsRuntimeCommonApi
             .FocusHtmlElementById(WIDGET_HTML_ELEMENT_ID)
             .ConfigureAwait(false);
     }

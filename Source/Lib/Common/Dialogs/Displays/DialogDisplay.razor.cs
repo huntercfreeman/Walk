@@ -14,10 +14,6 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
-    [Inject]
-    private WalkCommonConfig CommonConfig { get; set; } = null!;
-    [Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public IDialog Dialog { get; set; } = null!;
@@ -27,7 +23,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     private ResizableDisplay? _resizableDisplay;
 
     private string IsMaximizedStyleCssString => Dialog.DialogIsMaximized
-        ? CommonConfig.IsMaximizedStyleCssString
+        ? CommonUtilityService.CommonConfig.IsMaximizedStyleCssString
         : string.Empty;
 
     private string IconSizeInPixelsCssValue =>
@@ -48,7 +44,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     {
         if (firstRender)
         {
-            await CommonBackgroundTaskApi.JsRuntimeCommonApi
+            await CommonUtilityService.JsRuntimeCommonApi
                 .FocusHtmlElementById(Dialog.DialogFocusPointHtmlElementId)
                 .ConfigureAwait(false);
         }
@@ -87,7 +83,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     {
         CommonUtilityService.Dialog_ReduceDisposeAction(Dialog.DynamicViewModelKey);
         
-        await CommonBackgroundTaskApi.JsRuntimeCommonApi
+        await CommonUtilityService.JsRuntimeCommonApi
 	        .FocusHtmlElementById(Dialog.SetFocusOnCloseElementId
 	        	 ?? IDynamicViewModel.DefaultSetFocusOnCloseElementId)
 	        .ConfigureAwait(false);

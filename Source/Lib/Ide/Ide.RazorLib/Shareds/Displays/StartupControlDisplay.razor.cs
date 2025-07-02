@@ -22,8 +22,6 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     private IIdeService IdeService { get; set; } = null!;
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
-    [Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 
     private const string _startButtonElementId = "di_ide_startup-controls-display_id";
 
@@ -118,7 +116,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 			    
 			await DropdownHelper.RenderDropdownAsync(
     			CommonUtilityService,
-    			CommonBackgroundTaskApi.JsRuntimeCommonApi,
+    			CommonUtilityService.JsRuntimeCommonApi,
 				_startButtonElementId,
 				DropdownOrientation.Bottom,
 				_startButtonDropdownKey,
@@ -135,7 +133,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	
 	private async Task<bool> TrySetFocus(ContextRecord contextRecord)
     {
-        return await CommonBackgroundTaskApi.JsRuntimeCommonApi
+        return await CommonUtilityService.JsRuntimeCommonApi
             .TryFocusHtmlElementById(contextRecord.ContextElementId)
             .ConfigureAwait(false);
     }

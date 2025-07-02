@@ -74,7 +74,7 @@ public partial class TabDisplay : ComponentBase
 		if (localHandleTabButtonOnContextMenu is null)
 			return;
 
-		RenderBatch.CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+		RenderBatch.CommonUtilityService.Enqueue(new CommonWorkArgs
 		{
     		WorkKind = CommonWorkKind.Tab_ManuallyPropagateOnContextMenu,
 			HandleTabButtonOnContextMenu = localHandleTabButtonOnContextMenu,
@@ -155,7 +155,7 @@ public partial class TabDisplay : ComponentBase
 	/// </summary>
 	private void CalculateCssClass(ITabGroup localTabGroup, ITab localTabViewModel)
 	{
-	    var uiStringBuilder = RenderBatch.CommonBackgroundTaskApi.UiStringBuilder;
+	    var uiStringBuilder = RenderBatch.CommonUtilityService.UiStringBuilder;
 	    
 	    uiStringBuilder.Clear();
 	    uiStringBuilder.Append("di_polymorphic-tab di_button di_unselectable ");

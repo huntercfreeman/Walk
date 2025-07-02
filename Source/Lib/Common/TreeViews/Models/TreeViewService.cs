@@ -2,6 +2,7 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.ListExtensions;
 using Walk.Common.RazorLib.Dimensions.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.TreeViews.Models;
 
@@ -14,7 +15,7 @@ public class TreeViewService : ITreeViewService
         _backgroundTaskService = backgroundTaskService;
     }
 
-    public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; }
+    public ICommonUtilityService CommonUtilityService { get; set; }
 
     private TreeViewState _treeViewState = new();
     
@@ -44,7 +45,7 @@ public class TreeViewService : ITreeViewService
 			selectNodesBetweenCurrentAndNextActiveNode,
             treeViewNoType =>
             {
-                CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+                CommonUtilityService.Enqueue(new CommonWorkArgs
                 {
     				WorkKind = CommonWorkKind.TreeViewService_LoadChildList,
                 	ContainerKey = containerKey,
@@ -902,12 +903,12 @@ public class TreeViewService : ITreeViewService
 	    if (!_intToCssValueCache.ContainsKey(offsetInPixels))
 	        _intToCssValueCache.Add(offsetInPixels, offsetInPixels.ToCssValue());
         
-        CommonBackgroundTaskApi.UiStringBuilder.Clear();
-        CommonBackgroundTaskApi.UiStringBuilder.Append("padding-left: ");
-        CommonBackgroundTaskApi.UiStringBuilder.Append(_intToCssValueCache[offsetInPixels]);
-        CommonBackgroundTaskApi.UiStringBuilder.Append("px;");
+        CommonUtilityService.UiStringBuilder.Clear();
+        CommonUtilityService.UiStringBuilder.Append("padding-left: ");
+        CommonUtilityService.UiStringBuilder.Append(_intToCssValueCache[offsetInPixels]);
+        CommonUtilityService.UiStringBuilder.Append("px;");
         
-        return CommonBackgroundTaskApi.UiStringBuilder.ToString();
+        return CommonUtilityService.UiStringBuilder.ToString();
 	}
 	
 	/// <summary>This method should only be invoked by the "UI thread"</summary>
@@ -916,12 +917,12 @@ public class TreeViewService : ITreeViewService
 	    if (!_intToCssValueCache.ContainsKey(walkTreeViewIconWidth))
 	        _intToCssValueCache.Add(walkTreeViewIconWidth, walkTreeViewIconWidth.ToCssValue());
 	    
-	    CommonBackgroundTaskApi.UiStringBuilder.Clear();
-	    CommonBackgroundTaskApi.UiStringBuilder.Append("width: calc(100% - ");
-	    CommonBackgroundTaskApi.UiStringBuilder.Append(_intToCssValueCache[walkTreeViewIconWidth]);
-	    CommonBackgroundTaskApi.UiStringBuilder.Append("px); height:  100%;");
+	    CommonUtilityService.UiStringBuilder.Clear();
+	    CommonUtilityService.UiStringBuilder.Append("width: calc(100% - ");
+	    CommonUtilityService.UiStringBuilder.Append(_intToCssValueCache[walkTreeViewIconWidth]);
+	    CommonUtilityService.UiStringBuilder.Append("px); height:  100%;");
 	    
-	    return CommonBackgroundTaskApi.UiStringBuilder.ToString();
+	    return CommonUtilityService.UiStringBuilder.ToString();
 	}
 	
 	/// <summary>This method should only be invoked by the "UI thread"</summary>
@@ -932,11 +933,11 @@ public class TreeViewService : ITreeViewService
 	    if (!_intToCssValueCache.ContainsKey(result))
 	        _intToCssValueCache.Add(result, result.ToCssValue());
 	
-	    CommonBackgroundTaskApi.UiStringBuilder.Clear();
-	    CommonBackgroundTaskApi.UiStringBuilder.Append("margin-left: ");
-	    CommonBackgroundTaskApi.UiStringBuilder.Append(result);
-	    CommonBackgroundTaskApi.UiStringBuilder.Append("px;");
+	    CommonUtilityService.UiStringBuilder.Clear();
+	    CommonUtilityService.UiStringBuilder.Append("margin-left: ");
+	    CommonUtilityService.UiStringBuilder.Append(result);
+	    CommonUtilityService.UiStringBuilder.Append("px;");
 	    
-	    return CommonBackgroundTaskApi.UiStringBuilder.ToString();
+	    return CommonUtilityService.UiStringBuilder.ToString();
 	}
 }

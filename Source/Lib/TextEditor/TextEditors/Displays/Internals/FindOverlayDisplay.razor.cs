@@ -21,8 +21,6 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
 	[Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-    [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
@@ -155,7 +153,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
             	var componentData = virtualizationResult.ViewModel.PersistentState.ComponentData;
             	if (componentData is not null)
             	{
-	                await CommonBackgroundTaskApi.JsRuntimeCommonApi
+	                await CommonUtilityService.JsRuntimeCommonApi
 	                    .FocusHtmlElementById(componentData.FindOverlayId)
 	                    .ConfigureAwait(false);
                 }
@@ -206,7 +204,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
         	var componentData = virtualizationResult.ViewModel.PersistentState.ComponentData;
         	if (componentData is not null)
         	{
-	            await CommonBackgroundTaskApi.JsRuntimeCommonApi
+	            await CommonUtilityService.JsRuntimeCommonApi
 	                .FocusHtmlElementById(componentData.PrimaryCursorContentId)
 	                .ConfigureAwait(false);
             }

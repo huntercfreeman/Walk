@@ -22,11 +22,11 @@ using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Tooltips.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-
+using Walk.Common.RazorLib.Installations.Models;
 
 namespace Walk.Common.RazorLib.Options.Models;
 
-public interface ICommonUtilityService
+public interface ICommonUtilityService : IBackgroundTaskGroup
 {
 	/* Start IAppDimensionService */
 	public event Action? AppDimensionStateChanged;
@@ -73,11 +73,6 @@ public interface ICommonUtilityService
     
     public string Options_ResizeHandleCssWidth { get; set; }
     public string Options_ResizeHandleCssHeight { get; set; }
-    
-    /// <summary>
-    /// Very hacky property to avoid circular services while I work out the details of things.
-    /// </summary>
-    public CommonBackgroundTaskApi Options_CommonBackgroundTaskApi { get; set; }
     
     public event Action? AppOptionsStateChanged;
 	
@@ -240,4 +235,13 @@ public interface ICommonUtilityService
 	
 	public void SetTooltipModel(ITooltipModel tooltipModel);
     /* End ITooltipService */
+
+    /// <summary>
+    /// A shared StringBuilder, but only use this if you know for certain you are on the "UI thread".
+    /// </summary>
+    public StringBuilder UiStringBuilder { get; }
+    
+    public WalkCommonConfig CommonConfig { get; }
+    
+    public void Enqueue(CommonWorkArgs commonWorkArgs);
 }

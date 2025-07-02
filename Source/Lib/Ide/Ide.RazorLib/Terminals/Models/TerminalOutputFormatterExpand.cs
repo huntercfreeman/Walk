@@ -28,20 +28,17 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	private readonly TextEditorService _textEditorService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly ICommonUtilityService _commonUtilityService;
-	private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
 	public TerminalOutputFormatterExpand(
 		ITerminal terminal,
 		TextEditorService textEditorService,
 		ICompilerServiceRegistry compilerServiceRegistry,
-		ICommonUtilityService commonUtilityService,
-        CommonBackgroundTaskApi commonBackgroundTaskApi)
+		ICommonUtilityService commonUtilityService)
 	{
 		_terminal = terminal;
 		_textEditorService = textEditorService;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_commonUtilityService = commonUtilityService;
-		_commonBackgroundTaskApi = commonBackgroundTaskApi;
 		
 		TextEditorModelResourceUri = new(
 			ResourceUriFacts.Terminal_ReservedResourceUri_Prefix + Id.ToString());
@@ -137,7 +134,6 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	            TextEditorModelResourceUri,
 	            _textEditorService,
 	            _commonUtilityService,
-	            _commonBackgroundTaskApi,
 	            TextEditorVirtualizationResult.Empty,
 				new TextEditorDimensions(0, 0, 0, 0),
 				scrollLeft: 0,

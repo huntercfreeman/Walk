@@ -14,8 +14,6 @@ namespace Walk.Common.RazorLib.Dropdowns.Displays;
 public partial class DropdownDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-	[Inject]
 	public ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
@@ -126,8 +124,8 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 			_hasPendingEvent = true;
 		}
 
-		_htmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi.MeasureElementById(_htmlElementId);
-		_globalHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi.MeasureElementById(ContextFacts.RootHtmlElementId);
+		_htmlElementDimensions = await CommonUtilityService.JsRuntimeCommonApi.MeasureElementById(_htmlElementId);
+		_globalHtmlElementDimensions = await CommonUtilityService.JsRuntimeCommonApi.MeasureElementById(ContextFacts.RootHtmlElementId);
 		await InvokeAsync(StateHasChanged);
 	}
 

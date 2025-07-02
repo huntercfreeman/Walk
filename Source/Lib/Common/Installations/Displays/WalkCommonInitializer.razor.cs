@@ -29,8 +29,6 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 {
     [Inject]
     private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
-	[Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private BrowserResizeInterop BrowserResizeInterop { get; set; } = null!;
     [Inject]
@@ -62,7 +60,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 	{
     	CommonUtilityService.CommonUiStateChanged += OnCommonUiStateChanged;
 	
-        CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+        CommonUtilityService.Enqueue(new CommonWorkArgs
         {
         	WorkKind = CommonWorkKind.WalkCommonInitializerWork
     	});
@@ -91,7 +89,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 				}
 			}
 
-			BrowserResizeInterop.SubscribeWindowSizeChanged(CommonBackgroundTaskApi.JsRuntimeCommonApi);
+			BrowserResizeInterop.SubscribeWindowSizeChanged(CommonUtilityService.JsRuntimeCommonApi);
 		}
 	    
 	    var tooltipModel = CommonUtilityService.GetTooltipState().TooltipModel;
@@ -100,9 +98,9 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 	    {
 	        _tooltipModelPrevious = tooltipModel;
 	        
-	        CommonUtilityService.Tooltip_HtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi.MeasureElementById(
+	        CommonUtilityService.Tooltip_HtmlElementDimensions = await CommonUtilityService.JsRuntimeCommonApi.MeasureElementById(
     	        CommonUtilityService.Tooltip_HtmlElementId);
-            CommonUtilityService.Tooltip_GlobalHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi.MeasureElementById(
+            CommonUtilityService.Tooltip_GlobalHtmlElementDimensions = await CommonUtilityService.JsRuntimeCommonApi.MeasureElementById(
     	        ContextFacts.RootHtmlElementId);
 	    
     	    var xLarge = false;
@@ -310,7 +308,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     /// </summary>
     public void Dispose()
     {
-    	BrowserResizeInterop.DisposeWindowSizeChanged(CommonBackgroundTaskApi.JsRuntimeCommonApi);
+    	BrowserResizeInterop.DisposeWindowSizeChanged(CommonUtilityService.JsRuntimeCommonApi);
     	
     	_workerCancellationTokenSource.Cancel();
     	_workerCancellationTokenSource.Dispose();

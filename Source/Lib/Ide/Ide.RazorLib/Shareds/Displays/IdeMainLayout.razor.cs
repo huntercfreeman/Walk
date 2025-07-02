@@ -35,8 +35,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     [Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-    [Inject]
     private ITerminalService TerminalService { get; set; } = null!;
     [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
@@ -193,7 +191,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         {
             _shouldRecalculateCssStrings = false;
         
-            var uiStringBuilder = CommonBackgroundTaskApi.UiStringBuilder;
+            var uiStringBuilder = CommonUtilityService.UiStringBuilder;
             
             uiStringBuilder.Clear();
             uiStringBuilder.Append("di_ide_main-layout ");
@@ -224,7 +222,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         return DropdownHelper.RenderDropdownAsync(
             CommonUtilityService,
-            CommonBackgroundTaskApi.JsRuntimeCommonApi,
+            CommonUtilityService.JsRuntimeCommonApi,
             IdeState.ButtonFileId,
             DropdownOrientation.Bottom,
             IdeState.DropdownKeyFile,
@@ -236,7 +234,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         return DropdownHelper.RenderDropdownAsync(
             CommonUtilityService,
-            CommonBackgroundTaskApi.JsRuntimeCommonApi,
+            CommonUtilityService.JsRuntimeCommonApi,
             IdeState.ButtonToolsId,
             DropdownOrientation.Bottom,
             IdeState.DropdownKeyTools,
@@ -250,7 +248,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
         return DropdownHelper.RenderDropdownAsync(
             CommonUtilityService,
-            CommonBackgroundTaskApi.JsRuntimeCommonApi,
+            CommonUtilityService.JsRuntimeCommonApi,
             IdeState.ButtonViewId,
             DropdownOrientation.Bottom,
             IdeState.DropdownKeyView,
@@ -262,7 +260,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         return DropdownHelper.RenderDropdownAsync(
             CommonUtilityService,
-            CommonBackgroundTaskApi.JsRuntimeCommonApi,
+            CommonUtilityService.JsRuntimeCommonApi,
             IdeState.ButtonRunId,
             DropdownOrientation.Bottom,
             IdeState.DropdownKeyRun,
@@ -297,7 +295,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                                 contextRecord,
                                 nameof(ContextHelper.ConstructFocusContextElementCommand),
                                 nameof(ContextHelper.ConstructFocusContextElementCommand),
-                                CommonBackgroundTaskApi.JsRuntimeCommonApi,
+                                CommonUtilityService.JsRuntimeCommonApi,
                                 CommonUtilityService);
     
                             await command.CommandFunc.Invoke(null).ConfigureAwait(false);
@@ -312,7 +310,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                         {
                             CommonUtilityService.Dialog_ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
     
-                            await CommonBackgroundTaskApi.JsRuntimeCommonApi
+                            await CommonUtilityService.JsRuntimeCommonApi
                                 .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)
                                 .ConfigureAwait(false);
                         }
@@ -329,7 +327,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                                     contextRecord,
                                     nameof(ContextHelper.ConstructFocusContextElementCommand),
                                     nameof(ContextHelper.ConstructFocusContextElementCommand),
-                                    CommonBackgroundTaskApi.JsRuntimeCommonApi,
+                                    CommonUtilityService.JsRuntimeCommonApi,
                                     CommonUtilityService);
     
                                 await command.CommandFunc.Invoke(null).ConfigureAwait(false);

@@ -26,8 +26,7 @@ public record Panel : IPanelTab, IDialog, IDrag
         Key<ContextRecord> contextRecordKey,
         Type componentType,
         Dictionary<string, object?>? componentParameterMap,
-        ICommonUtilityService commonUtilityService,
-        CommonBackgroundTaskApi commonBackgroundTaskApi)
+        ICommonUtilityService commonUtilityService)
     {
         Title = title;
         Key = key;
@@ -37,7 +36,6 @@ public record Panel : IPanelTab, IDialog, IDrag
         ComponentParameterMap = componentParameterMap;
 
         CommonUtilityService = commonUtilityService;
-        CommonBackgroundTaskApi = commonBackgroundTaskApi;
 
         _dragTabComponentType = typeof(DragDisplay);
 
@@ -50,7 +48,6 @@ public record Panel : IPanelTab, IDialog, IDrag
 	public Key<IDynamicViewModel> DynamicViewModelKey { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
 	public ICommonUtilityService CommonUtilityService { get;}
-    public CommonBackgroundTaskApi CommonBackgroundTaskApi { get;}
 	public Type ComponentType { get; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; set; }
 	public string? DialogCssClass { get; set; }
@@ -97,7 +94,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 
 		foreach (var panelGroupHtmlIdTuple in panelGroupHtmlIdTupleList)
 		{
-			var measuredHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi
+			var measuredHtmlElementDimensions = await CommonUtilityService.JsRuntimeCommonApi
                 .MeasureElementById(panelGroupHtmlIdTuple.HtmlElementId)
                 .ConfigureAwait(false);
 

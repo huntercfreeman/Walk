@@ -27,8 +27,6 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
     private IServiceProvider ServiceProvider { get; set; } = null!;
-    [Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 
     [Parameter, EditorRequired]
 	public Key<TextEditorComponentData> ComponentDataKey { get; set; }
@@ -390,7 +388,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             	editContext,
             	modelModifier,
             	viewModelModifier,
-            	CommonBackgroundTaskApi.JsRuntimeCommonApi,
+            	CommonUtilityService.JsRuntimeCommonApi,
             	TextEditorService,
             	CommonUtilityService);
         });
@@ -412,7 +410,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 		        editContext,
             	modelModifier,
             	viewModelModifier,
-		        CommonBackgroundTaskApi.JsRuntimeCommonApi);
+		        CommonUtilityService.JsRuntimeCommonApi);
         });
         return Task.CompletedTask;
     }
@@ -451,7 +449,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 		        editContext,
             	modelModifier,
             	viewModelModifier,
-		        CommonBackgroundTaskApi.JsRuntimeCommonApi,
+		        CommonUtilityService.JsRuntimeCommonApi,
 		        CommonUtilityService.EnvironmentProvider,
 		        CommonUtilityService.FileSystemProvider,
 		        TextEditorService,

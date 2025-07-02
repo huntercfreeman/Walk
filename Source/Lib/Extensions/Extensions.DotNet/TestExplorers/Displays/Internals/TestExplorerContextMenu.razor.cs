@@ -25,8 +25,6 @@ public partial class TestExplorerContextMenu : ComponentBase
 	[Inject]
 	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
-	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
@@ -364,7 +362,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		        contextRecord,
 		        nameof(ContextHelper.ConstructFocusContextElementCommand),
 		        nameof(ContextHelper.ConstructFocusContextElementCommand),
-		        CommonBackgroundTaskApi.JsRuntimeCommonApi,
+		        CommonUtilityService.JsRuntimeCommonApi,
 		        CommonUtilityService);
 		        
 		    await command.CommandFunc.Invoke(null).ConfigureAwait(false);

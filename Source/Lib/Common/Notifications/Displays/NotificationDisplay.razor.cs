@@ -15,8 +15,6 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
-    [Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public INotification Notification  { get; set; } = null!;
@@ -140,7 +138,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
             
         if (wasCausedByUiEvent)
         {
-        	await CommonBackgroundTaskApi.JsRuntimeCommonApi
+        	await CommonUtilityService.JsRuntimeCommonApi
 		        .FocusHtmlElementById(Notification.SetFocusOnCloseElementId
 		        	 ?? IDynamicViewModel.DefaultSetFocusOnCloseElementId)
 		        .ConfigureAwait(false);

@@ -20,8 +20,7 @@ public record TextEditorGroup(
 		List<Key<TextEditorViewModel>> ViewModelKeyList,
         Category Category,
         TextEditorService TextEditorService,
-        ICommonUtilityService CommonUtilityService,
-        CommonBackgroundTaskApi CommonBackgroundTaskApi)
+        ICommonUtilityService CommonUtilityService)
      : ITabGroup
 {
     public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();

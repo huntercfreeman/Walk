@@ -37,7 +37,6 @@ public class CommandFactory : ICommandFactory
     // private readonly IFindAllReferencesService _findAllReferencesService;
     private readonly ICodeSearchService _codeSearchService;
     private readonly ICommonUtilityService _commonUtilityService;
-    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
     public CommandFactory(
     	IContextService contextService,
@@ -46,8 +45,7 @@ public class CommandFactory : ICommandFactory
 		// FindAllReferences
 		// IFindAllReferencesService findAllReferencesService,
 		ICodeSearchService codeSearchService,
-		ICommonUtilityService commonUtilityService,
-		CommonBackgroundTaskApi commonBackgroundTaskApi)
+		ICommonUtilityService commonUtilityService)
     {
     	_contextService = contextService;
 		_textEditorService = textEditorService;
@@ -56,7 +54,6 @@ public class CommandFactory : ICommandFactory
 		// _findAllReferencesService = findAllReferencesService;
 		_codeSearchService = codeSearchService;
 		_commonUtilityService = commonUtilityService;
-		_commonBackgroundTaskApi = commonBackgroundTaskApi;
     }
 
     private WidgetModel? _contextSwitchWidget;
@@ -83,7 +80,7 @@ public class CommandFactory : ICommandFactory
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.ActiveContextsContext, "Focus: ActiveContexts", "focus-active-contexts", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.ActiveContextsContext, "Focus: ActiveContexts", "focus-active-contexts", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
         }
         // BackgroundServicesContext
         {
@@ -98,7 +95,7 @@ public class CommandFactory : ICommandFactory
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.BackgroundServicesContext, "Focus: BackgroundServices", "focus-background-services", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.BackgroundServicesContext, "Focus: BackgroundServices", "focus-background-services", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
         }
         // CompilerServiceExplorerContext
         {
@@ -114,7 +111,7 @@ public class CommandFactory : ICommandFactory
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.CompilerServiceExplorerContext, "Focus: CompilerServiceExplorer", "focus-compiler-service-explorer", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.CompilerServiceExplorerContext, "Focus: CompilerServiceExplorer", "focus-compiler-service-explorer", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
         }
         // CompilerServiceEditorContext
         {
@@ -128,7 +125,7 @@ public class CommandFactory : ICommandFactory
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.CompilerServiceEditorContext, "Focus: CompilerServiceEditor", "focus-compiler-service-editor", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.CompilerServiceEditorContext, "Focus: CompilerServiceEditor", "focus-compiler-service-editor", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
         }
         // DialogDisplayContext
         {
@@ -142,7 +139,7 @@ public class CommandFactory : ICommandFactory
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.DialogDisplayContext, "Focus: DialogDisplay", "focus-dialog-display", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.DialogDisplayContext, "Focus: DialogDisplay", "focus-dialog-display", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
         }
         // EditorContext
         {
@@ -157,7 +154,7 @@ public class CommandFactory : ICommandFactory
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.EditorContext, "Focus: Editor", "focus-editor", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.EditorContext, "Focus: Editor", "focus-editor", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
         }
         // FolderExplorerContext
         {
@@ -171,7 +168,7 @@ public class CommandFactory : ICommandFactory
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.FolderExplorerContext, "Focus: FolderExplorer", "focus-folder-explorer", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.FolderExplorerContext, "Focus: FolderExplorer", "focus-folder-explorer", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
         }
         // GitContext
         {
@@ -185,7 +182,7 @@ public class CommandFactory : ICommandFactory
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.GitContext, "Focus: Git", "focus-git", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.GitContext, "Focus: Git", "focus-git", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
         }
         // GlobalContext
         {
@@ -199,7 +196,7 @@ public class CommandFactory : ICommandFactory
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.GlobalContext, "Focus: Global", "focus-global", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.GlobalContext, "Focus: Global", "focus-global", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
         }
         // MainLayoutFooterContext
         {
@@ -213,7 +210,7 @@ public class CommandFactory : ICommandFactory
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.MainLayoutFooterContext, "Focus: Footer", "focus-footer", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.MainLayoutFooterContext, "Focus: Footer", "focus-footer", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
         }
         // MainLayoutHeaderContext
         {
@@ -227,7 +224,7 @@ public class CommandFactory : ICommandFactory
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.MainLayoutHeaderContext, "Focus: Header", "focus-header", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.MainLayoutHeaderContext, "Focus: Header", "focus-header", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
         }
         // ErrorListContext
         {
@@ -241,7 +238,7 @@ public class CommandFactory : ICommandFactory
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.ErrorListContext, "Focus: Error List", "error-list", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.ErrorListContext, "Focus: Error List", "error-list", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
         }
         // OutputContext
         {
@@ -255,7 +252,7 @@ public class CommandFactory : ICommandFactory
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.OutputContext, "Focus: Output", "focus-output", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.OutputContext, "Focus: Output", "focus-output", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
         }
 		// TerminalContext
         {
@@ -269,7 +266,7 @@ public class CommandFactory : ICommandFactory
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.TerminalContext, "Focus: Terminal", "focus-terminal", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.TerminalContext, "Focus: Terminal", "focus-terminal", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
         }
         // TestExplorerContext
         {
@@ -284,7 +281,7 @@ public class CommandFactory : ICommandFactory
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.TestExplorerContext, "Focus: Test Explorer", "focus-test-explorer", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.TestExplorerContext, "Focus: Test Explorer", "focus-test-explorer", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
         }
         // TextEditorContext
         {
@@ -298,7 +295,7 @@ public class CommandFactory : ICommandFactory
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.TextEditorContext, "Focus: TextEditor", "focus-text-editor", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.TextEditorContext, "Focus: TextEditor", "focus-text-editor", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
         }
 
         // Focus the text editor itself (as to allow for typing into the editor)
@@ -318,7 +315,7 @@ public class CommandFactory : ICommandFactory
 					var componentData = activeViewModel.PersistentState.ComponentData;
 					if (componentData is not null)
 					{
-						await _commonBackgroundTaskApi.JsRuntimeCommonApi
+						await _commonUtilityService.JsRuntimeCommonApi
 	                        .FocusHtmlElementById(componentData.PrimaryCursorContentId)
 	                        .ConfigureAwait(false);
 					}
@@ -386,7 +383,7 @@ public class CommandFactory : ICommandFactory
 	            "Open: Context Switch", "open-context-switch", false,
 	            async commandArgs =>
 				{
-					var elementDimensions = await _commonBackgroundTaskApi.JsRuntimeCommonApi
+					var elementDimensions = await _commonUtilityService.JsRuntimeCommonApi
 						.MeasureElementById("di_ide_header-button-file")
 						.ConfigureAwait(false);
 						

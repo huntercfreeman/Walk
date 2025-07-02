@@ -6,6 +6,7 @@ using Walk.Common.RazorLib.Drags.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Drags.Displays;
 
@@ -14,7 +15,7 @@ public partial class DragInitializer : ComponentBase, IDisposable
     [Inject]
     private IDragService DragService { get; set; } = null!;
     [Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
     
     private string StyleCss => DragService.GetDragState().ShouldDisplay
         ? string.Empty

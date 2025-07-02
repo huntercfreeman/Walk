@@ -23,18 +23,14 @@ public sealed class TextEditorViewModelApi
     private readonly TextEditorService _textEditorService;
     private readonly BackgroundTaskService _backgroundTaskService;
     private readonly ICommonUtilityService _commonUtilityService;
-
-    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
     
     public TextEditorViewModelApi(
         TextEditorService textEditorService,
         BackgroundTaskService backgroundTaskService,
-        CommonBackgroundTaskApi commonBackgroundTaskApi,
         ICommonUtilityService commonUtilityService)
     {
         _textEditorService = textEditorService;
         _backgroundTaskService = backgroundTaskService;
-        _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _commonUtilityService = commonUtilityService;
     }
     
@@ -106,7 +102,6 @@ public sealed class TextEditorViewModelApi
 			resourceUri,
 			_textEditorService,
 			_commonUtilityService,
-			_commonBackgroundTaskApi,
 			TextEditorVirtualizationResult.ConstructEmpty(),
 			new TextEditorDimensions(0, 0, 0, 0),
 			scrollLeft: 0,
@@ -304,7 +299,7 @@ public sealed class TextEditorViewModelApi
 
     public ValueTask FocusPrimaryCursorAsync(string primaryCursorContentId)
     {
-        return _commonBackgroundTaskApi.JsRuntimeCommonApi
+        return _commonUtilityService.JsRuntimeCommonApi
             .FocusHtmlElementById(primaryCursorContentId, preventScroll: true);
     }
 

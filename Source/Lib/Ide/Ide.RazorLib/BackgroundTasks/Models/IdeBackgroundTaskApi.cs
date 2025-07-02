@@ -48,7 +48,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
     private readonly ITreeViewService _treeViewService;
     private readonly TextEditorService _textEditorService;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
@@ -70,7 +69,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         ICompilerServiceRegistry compilerServiceRegistry,
         IIdeComponentRenderers ideComponentRenderers,
         ICommonComponentRenderers commonComponentRenderers,
-        CommonBackgroundTaskApi commonBackgroundTaskApi,
         ITreeViewService treeViewService,
         TextEditorService textEditorService,
         ITerminalService terminalService,
@@ -89,7 +87,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         _backgroundTaskService = backgroundTaskService;
         _ideComponentRenderers = ideComponentRenderers;
         _commonComponentRenderers = commonComponentRenderers;
-        _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _treeViewService = treeViewService;
         _textEditorService = textEditorService;
         _compilerServiceRegistry = compilerServiceRegistry;
@@ -207,8 +204,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.FolderExplorerContext.ContextKey,
             typeof(FolderExplorerDisplay),
             null,
-            _commonUtilityService,
-            _commonBackgroundTaskApi);
+            _commonUtilityService);
         _commonUtilityService.RegisterPanel(folderExplorerPanel);
         _commonUtilityService.RegisterPanelTab(leftPanel.Key, folderExplorerPanel, false);
 
@@ -235,8 +231,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.TerminalContext.ContextKey,
             typeof(TerminalGroupDisplay),
             null,
-            _commonUtilityService,
-            _commonBackgroundTaskApi);
+            _commonUtilityService);
         _commonUtilityService.RegisterPanel(terminalGroupPanel);
         _commonUtilityService.RegisterPanelTab(bottomPanel.Key, terminalGroupPanel, false);
         // This UI has resizable parts that need to be initialized.
@@ -267,8 +262,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             terminal,
                             _textEditorService,
                             _compilerServiceRegistry,
-                            _commonUtilityService,
-                            _commonBackgroundTaskApi)),
+                            _commonUtilityService)),
                     _backgroundTaskService,
                     _commonComponentRenderers,
                     _commonUtilityService)
@@ -289,8 +283,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             terminal,
                             _textEditorService,
                             _compilerServiceRegistry,
-                            _commonUtilityService,
-                            _commonBackgroundTaskApi)),
+                            _commonUtilityService)),
                     _backgroundTaskService,
                     _commonComponentRenderers,
                     _commonUtilityService,
@@ -317,8 +310,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             terminal,
                             _textEditorService,
                             _compilerServiceRegistry,
-                            _commonUtilityService,
-                            _commonBackgroundTaskApi)),
+                            _commonUtilityService)),
                     _backgroundTaskService,
                     _commonComponentRenderers,
                     _commonUtilityService)
@@ -339,8 +331,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             terminal,
                             _textEditorService,
                             _compilerServiceRegistry,
-                            _commonUtilityService,
-                            _commonBackgroundTaskApi)),
+                            _commonUtilityService)),
                     _backgroundTaskService,
                     _commonComponentRenderers,
                     _commonUtilityService,
@@ -712,7 +703,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             registerViewModelArgs.ResourceUri,
             _textEditorService,
             _commonUtilityService,
-            _commonBackgroundTaskApi,
             TextEditorVirtualizationResult.ConstructEmpty(),
 			new TextEditorDimensions(0, 0, 0, 0),
 			scrollLeft: 0,

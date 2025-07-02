@@ -70,7 +70,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
-	private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 	private readonly ITreeViewService _treeViewService;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 	private readonly TextEditorService _textEditorService;
@@ -100,7 +99,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		IDotNetComponentRenderers dotNetComponentRenderers,
 		IIdeComponentRenderers ideComponentRenderers,
 		ICommonComponentRenderers commonComponentRenderers,
-		CommonBackgroundTaskApi commonBackgroundTaskApi,
 		ITreeViewService treeViewService,
 		DotNetCliOutputParser dotNetCliOutputParser,
 		TextEditorService textEditorService,
@@ -122,7 +120,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         _dotNetComponentRenderers = dotNetComponentRenderers;
 		_ideComponentRenderers = ideComponentRenderers;
 		_commonComponentRenderers = commonComponentRenderers;
-		_commonBackgroundTaskApi = commonBackgroundTaskApi;
 		_treeViewService = treeViewService;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
 		_textEditorService = textEditorService;
@@ -250,8 +247,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.SolutionExplorerContext.ContextKey,
             typeof(SolutionExplorerDisplay),
             null,
-            _commonUtilityService,
-            _commonBackgroundTaskApi);
+            _commonUtilityService);
         _commonUtilityService.RegisterPanel(solutionExplorerPanel);
         _commonUtilityService.RegisterPanelTab(leftPanel.Key, solutionExplorerPanel, false);
 
@@ -276,8 +272,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.CompilerServiceExplorerContext.ContextKey,
             typeof(CompilerServiceExplorerDisplay),
             null,
-            _commonUtilityService,
-            _commonBackgroundTaskApi);
+            _commonUtilityService);
         _commonUtilityService.RegisterPanel(compilerServiceExplorerPanel);
         _commonUtilityService.RegisterPanelTab(rightPanel.Key, compilerServiceExplorerPanel, false);
 
@@ -309,8 +304,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.OutputContext.ContextKey,
             typeof(OutputPanelDisplay),
             null,
-            _commonUtilityService,
-            _commonBackgroundTaskApi);
+            _commonUtilityService);
         _commonUtilityService.RegisterPanel(outputPanel);
         _commonUtilityService.RegisterPanelTab(bottomPanel.Key, outputPanel, false);
 
@@ -322,8 +316,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.TestExplorerContext.ContextKey,
             typeof(TestExplorerDisplay),
             null,
-            _commonUtilityService,
-            _commonBackgroundTaskApi);
+            _commonUtilityService);
         _commonUtilityService.RegisterPanel(testExplorerPanel);
         _commonUtilityService.RegisterPanelTab(bottomPanel.Key, testExplorerPanel, false);
         // This UI has resizable parts that need to be initialized.
@@ -342,8 +335,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             ContextFacts.NuGetPackageManagerContext.ContextKey,
             typeof(NuGetPackageManager),
             null,
-            _commonUtilityService,
-            _commonBackgroundTaskApi);
+            _commonUtilityService);
         _commonUtilityService.RegisterPanel(nuGetPanel);
         _commonUtilityService.RegisterPanelTab(bottomPanel.Key, nuGetPanel, false);
         

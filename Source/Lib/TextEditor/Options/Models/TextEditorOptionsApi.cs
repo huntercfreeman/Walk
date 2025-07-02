@@ -23,20 +23,17 @@ public sealed class TextEditorOptionsApi
     private readonly WalkTextEditorConfig _textEditorConfig;
     private readonly IContextService _contextService;
     private readonly ICommonUtilityService _commonUtilityService;
-    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
     public TextEditorOptionsApi(
         TextEditorService textEditorService,
         WalkTextEditorConfig textEditorConfig,
         ICommonUtilityService commonUtilityService,
-        IContextService contextService,
-        CommonBackgroundTaskApi commonBackgroundTaskApi)
+        IContextService contextService)
     {
         _textEditorService = textEditorService;
         _textEditorConfig = textEditorConfig;
         _contextService = contextService;
         _commonUtilityService = commonUtilityService;
-        _commonBackgroundTaskApi = commonBackgroundTaskApi;
     }
     
     private TextEditorOptionsState _textEditorOptionsState = new();
@@ -373,7 +370,7 @@ public sealed class TextEditorOptionsApi
 
     public void WriteToStorage()
     {
-        _commonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+        _commonUtilityService.Enqueue(new CommonWorkArgs
         {
     		WorkKind = CommonWorkKind.WriteToLocalStorage,
         	WriteToLocalStorage_Key = _textEditorService.StorageKey,

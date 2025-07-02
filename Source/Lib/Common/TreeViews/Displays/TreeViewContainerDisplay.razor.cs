@@ -18,8 +18,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
-	[Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
@@ -127,7 +125,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 
             // If dedicated context menu button or shift + F10 was pressed as opposed to
             // a mouse RightClick then use JavaScript to determine the ContextMenu position.
-            contextMenuFixedPosition = await CommonBackgroundTaskApi.JsRuntimeCommonApi
+            contextMenuFixedPosition = await CommonUtilityService.JsRuntimeCommonApi
                 .GetTreeViewContextMenuFixedPosition(treeViewContainer.ActiveNodeElementId)
                 .ConfigureAwait(false);
 
@@ -186,7 +184,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 
         if (OnContextMenuFunc is not null)
 		{
-            CommonBackgroundTaskApi.Enqueue(new CommonWorkArgs
+            CommonUtilityService.Enqueue(new CommonWorkArgs
             {
     			WorkKind = CommonWorkKind.TreeView_HandleTreeViewOnContextMenu,
             	OnContextMenuFunc = OnContextMenuFunc,
@@ -232,13 +230,13 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     /// </summary>
     private string GetContainerElementCssClass(TreeViewContainer treeViewContainer)
     {
-        CommonBackgroundTaskApi.UiStringBuilder.Clear();
-        CommonBackgroundTaskApi.UiStringBuilder.Append("di_tree-view-state di_unselectable ");
-        CommonBackgroundTaskApi.UiStringBuilder.Append(GetHasActiveNodeCssClass(treeViewContainer));
-        CommonBackgroundTaskApi.UiStringBuilder.Append(" ");
-        CommonBackgroundTaskApi.UiStringBuilder.Append(CssClassString);
+        CommonUtilityService.UiStringBuilder.Clear();
+        CommonUtilityService.UiStringBuilder.Append("di_tree-view-state di_unselectable ");
+        CommonUtilityService.UiStringBuilder.Append(GetHasActiveNodeCssClass(treeViewContainer));
+        CommonUtilityService.UiStringBuilder.Append(" ");
+        CommonUtilityService.UiStringBuilder.Append(CssClassString);
         
-        return CommonBackgroundTaskApi.UiStringBuilder.ToString();
+        return CommonUtilityService.UiStringBuilder.ToString();
     }
     
     public void Dispose()

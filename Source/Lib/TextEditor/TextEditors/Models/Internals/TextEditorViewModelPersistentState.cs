@@ -43,7 +43,6 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 	    bool shouldRevealCursor,
 		VirtualAssociativityKind virtualAssociativityKind,
 		ICommonUtilityService commonUtilityService,
-        CommonBackgroundTaskApi commonBackgroundTaskApi,
         TextEditorDimensions textEditorDimensions,
 		int scrollLeft,
 	    int scrollTop,
@@ -74,8 +73,6 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 		VirtualAssociativityKind = virtualAssociativityKind;
 		
 		CommonUtilityService = commonUtilityService;
-		
-        CommonBackgroundTaskApi = commonBackgroundTaskApi;
         
         ComponentType = typeof(TextEditorViewModelDisplay);
         ComponentParameterMap = new()
@@ -526,7 +523,6 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     private readonly Dictionary<string, object?>? _dragDialogComponentParameterMap = null;
 
     public ICommonUtilityService CommonUtilityService { get; }
-    public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; }
 
     public Key<Panel> Key { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
@@ -623,7 +619,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         AddFallbackDropzone(dropzoneList);
         await AddPanelDropzonesAsync(dropzoneList).ConfigureAwait(false);
 
-        var measuredHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi
+        var measuredHtmlElementDimensions = await CommonUtilityService.JsRuntimeCommonApi
             .MeasureElementById(
                 $"di_te_group_{TextEditorService.GroupApi.GetTextEditorGroupState().GroupList.Single().GroupKey.Guid}")
             .ConfigureAwait(false);
@@ -792,8 +788,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                             ViewModelKey
                         },
                     },
-                    CommonUtilityService,
-                    CommonBackgroundTaskApi),
+                    CommonUtilityService),
                 true);
 
             return Task.CompletedTask;
@@ -862,7 +857,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 
         foreach (var panelGroupHtmlIdTuple in panelGroupHtmlIdTupleList)
         {
-            var measuredHtmlElementDimensions = await CommonBackgroundTaskApi.JsRuntimeCommonApi
+            var measuredHtmlElementDimensions = await CommonUtilityService.JsRuntimeCommonApi
                 .MeasureElementById(panelGroupHtmlIdTuple.HtmlElementId)
                 .ConfigureAwait(false);
 

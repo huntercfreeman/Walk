@@ -1,5 +1,6 @@
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.TreeViews.Models;
 
@@ -8,7 +9,7 @@ public interface ITreeViewService
     /// <summary>
     /// HACK: To avoid circular services for now, need to rewrite this.
     /// </summary>
-    public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; }
+    public ICommonUtilityService CommonUtilityService { get; set; }
 
     public event Action? TreeViewStateChanged;
     

@@ -5,6 +5,7 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Badges.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Badges.Displays;
 
@@ -16,7 +17,7 @@ namespace Walk.Common.RazorLib.Badges.Displays;
 public partial class BadgeDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public IBadgeModel BadgeModel { get; set; } = null!;

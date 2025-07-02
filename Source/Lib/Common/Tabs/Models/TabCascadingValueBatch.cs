@@ -11,7 +11,6 @@ public class TabCascadingValueBatch
 {
     public IDragService DragService { get; set; } = null!;
     public ICommonUtilityService CommonUtilityService { get; set; } = null!;
-	public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 	public ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	public Func<TabContextMenuEventArgs, Task>? HandleTabButtonOnContextMenu { get; set; }
 }

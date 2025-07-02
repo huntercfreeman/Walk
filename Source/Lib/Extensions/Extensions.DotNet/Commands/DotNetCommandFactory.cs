@@ -21,18 +21,15 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 	private readonly TextEditorService _textEditorService;
 	private readonly ITreeViewService _treeViewService;
 	private readonly ICommonUtilityService _commonUtilityService;
-	private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
 	public DotNetCommandFactory(
         TextEditorService textEditorService,
         ITreeViewService treeViewService,
-		ICommonUtilityService commonUtilityService,
-		CommonBackgroundTaskApi commonBackgroundTaskApi)
+		ICommonUtilityService commonUtilityService)
 	{
 		_textEditorService = textEditorService;
         _treeViewService = treeViewService;
 		_commonUtilityService = commonUtilityService;
-		_commonBackgroundTaskApi = commonBackgroundTaskApi;
     }
 
 	private List<TreeViewNoType> _nodeList = new();
@@ -54,7 +51,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
 				ContextHelper.ConstructFocusContextElementCommand(
-					ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUtilityService));
+					ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
 		}
 		// CSharpReplContext
 		{
@@ -70,12 +67,12 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
 				ContextHelper.ConstructFocusContextElementCommand(
-					ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUtilityService));
+					ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
 		}
 		// SolutionExplorerContext
 		{
 			var focusSolutionExplorerCommand = ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer", _commonBackgroundTaskApi.JsRuntimeCommonApi, _commonUtilityService);
+				ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService);
 
 			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
 					new KeymapArgs

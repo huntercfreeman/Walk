@@ -20,8 +20,6 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     [Inject]
     private IDragService DragService { get; set; } = null!;
     [Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
-    [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
@@ -172,7 +170,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
                    " + var(--di_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo))";
         }
 
-        return panelGroup?.ElementDimensions.GetStyleString(CommonBackgroundTaskApi.UiStringBuilder) ?? string.Empty;
+        return panelGroup?.ElementDimensions.GetStyleString(CommonUtilityService.UiStringBuilder) ?? string.Empty;
     }
 
     private Task TopDropzoneOnMouseUp(MouseEventArgs mouseEventArgs)
@@ -246,13 +244,13 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     /// </summary>
     private string GetPanelElementCssClass()
     {
-        CommonBackgroundTaskApi.UiStringBuilder.Clear();
-        CommonBackgroundTaskApi.UiStringBuilder.Append("di_ide_panel ");
-        CommonBackgroundTaskApi.UiStringBuilder.Append(_panelPositionCss);
-        CommonBackgroundTaskApi.UiStringBuilder.Append(" ");
-        CommonBackgroundTaskApi.UiStringBuilder.Append(CssClassString);
+        CommonUtilityService.UiStringBuilder.Clear();
+        CommonUtilityService.UiStringBuilder.Append("di_ide_panel ");
+        CommonUtilityService.UiStringBuilder.Append(_panelPositionCss);
+        CommonUtilityService.UiStringBuilder.Append(" ");
+        CommonUtilityService.UiStringBuilder.Append(CssClassString);
     
-        return CommonBackgroundTaskApi.UiStringBuilder.ToString();
+        return CommonUtilityService.UiStringBuilder.ToString();
     }
     
     public void Dispose()

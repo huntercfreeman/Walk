@@ -37,7 +37,6 @@ public sealed class TextEditorService
     private readonly IDirtyResourceUriService _dirtyResourceUriService;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
     private readonly IJSRuntime _jsRuntime;
-    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
     private readonly IServiceProvider _serviceProvider;
 
     public TextEditorService(
@@ -47,7 +46,6 @@ public sealed class TextEditorService
         WalkTextEditorConfig textEditorConfig,
         ITextEditorRegistryWrap textEditorRegistryWrap,
         IJSRuntime jsRuntime,
-        CommonBackgroundTaskApi commonBackgroundTaskApi,
         ICommonUtilityService commonUtilityService,
         IContextService contextService,
 		IServiceProvider serviceProvider)
@@ -77,14 +75,13 @@ public sealed class TextEditorService
         _textEditorRegistryWrap = textEditorRegistryWrap;
         _jsRuntime = jsRuntime;
 		JsRuntimeTextEditorApi = _jsRuntime.GetWalkTextEditorApi();
-        _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _contextService = contextService;
 
         ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, _backgroundTaskService);
-        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, _commonBackgroundTaskApi, CommonUtilityService);
-        GroupApi = new TextEditorGroupApi(this, CommonUtilityService, _commonBackgroundTaskApi);
+        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, CommonUtilityService);
+        GroupApi = new TextEditorGroupApi(this, CommonUtilityService);
         DiffApi = new TextEditorDiffApi(this);
-        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, CommonUtilityService, contextService,  _commonBackgroundTaskApi);
+        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, CommonUtilityService, contextService);
         
         TextEditorState = new();
     }
@@ -93,7 +90,7 @@ public sealed class TextEditorService
     public IFindAllService FindAllService { get; }
 
 	public WalkTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
-	public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi => _commonBackgroundTaskApi.JsRuntimeCommonApi;
+	public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi => CommonUtilityService.JsRuntimeCommonApi;
 	public WalkTextEditorConfig TextEditorConfig { get; }
 
 #if DEBUG

@@ -23,8 +23,6 @@ public partial class EditorDisplay : ComponentBase, IDisposable
     private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
     [Inject]
 	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
-    [Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions EditorElementDimensions { get; set; } = null!;

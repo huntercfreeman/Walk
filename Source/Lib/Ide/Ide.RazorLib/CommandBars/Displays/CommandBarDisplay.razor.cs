@@ -14,8 +14,6 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
 	private ICommandBarService CommandBarService { get; set; } = null!;
 	[Inject]
 	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
-	[Inject]
-	private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 	
 	public const string INPUT_HTML_ELEMENT_ID = "di_ide_command-bar-input-id";
 		
@@ -28,7 +26,7 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
 	{
 		if (firstRender)
 		{
-			await CommonBackgroundTaskApi.JsRuntimeCommonApi
+			await CommonUtilityService.JsRuntimeCommonApi
 				.FocusHtmlElementById(CommandBarDisplay.INPUT_HTML_ELEMENT_ID)
 	            .ConfigureAwait(false);
 		}

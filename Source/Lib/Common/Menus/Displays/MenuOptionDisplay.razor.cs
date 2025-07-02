@@ -14,8 +14,6 @@ public partial class MenuOptionDisplay : ComponentBase
 {
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
-	[Inject]
-    private CommonBackgroundTaskApi CommonBackgroundTaskApi { get; set; } = null!;
 
 	[CascadingParameter]
 	public DropdownRecord? Dropdown { get; set; }
@@ -86,7 +84,7 @@ public partial class MenuOptionDisplay : ComponentBase
     {
     	return DropdownHelper.RenderDropdownAsync(
     		CommonUtilityService,
-    		CommonBackgroundTaskApi.JsRuntimeCommonApi,
+    		CommonUtilityService.JsRuntimeCommonApi,
 			_menuOptionHtmlElementId,
 			DropdownOrientation.Right,
 			_subMenuDropdownKey,

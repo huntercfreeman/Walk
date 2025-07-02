@@ -14,16 +14,13 @@ public sealed class TextEditorGroupApi
 
 	private readonly TextEditorService _textEditorService;
     private readonly ICommonUtilityService _commonUtilityService;
-    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
     public TextEditorGroupApi(
         TextEditorService textEditorService,
-        ICommonUtilityService commonUtilityService,
-        CommonBackgroundTaskApi commonBackgroundTaskApi)
+        ICommonUtilityService commonUtilityService)
     {
         _textEditorService = textEditorService;
         _commonUtilityService = commonUtilityService;
-        _commonBackgroundTaskApi = commonBackgroundTaskApi;
     }
 
     public void SetActiveViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
@@ -50,8 +47,7 @@ public sealed class TextEditorGroupApi
             new List<Key<TextEditorViewModel>>(),
             category.Value,
             _textEditorService,
-            _commonUtilityService,
-            _commonBackgroundTaskApi);
+            _commonUtilityService);
 
         Register(textEditorGroup);
     }

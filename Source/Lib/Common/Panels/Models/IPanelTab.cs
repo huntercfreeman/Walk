@@ -12,5 +12,4 @@ public interface IPanelTab : ITab
     public Key<Panel> Key { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
     public ICommonUtilityService CommonUtilityService { get; }
-    public CommonBackgroundTaskApi CommonBackgroundTaskApi { get; }
 }
