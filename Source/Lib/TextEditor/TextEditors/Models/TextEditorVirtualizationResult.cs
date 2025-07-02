@@ -70,6 +70,7 @@ public class TextEditorVirtualizationResult
 	    
 	    BodyStyle = "width: 100%; left: 0;";
 	    BothVirtualizationBoundaryStyleCssString = "width: 0px; height: 0px;";
+	    CursorCssStyle = "left: 0;top: 0;height: 20px;width: 2.5px;";
 	    
 	    IsValid = false;
     }
@@ -101,6 +102,9 @@ public class TextEditorVirtualizationResult
         Model = model;
 	    ViewModel = viewModel;
 	    _previousState = previousState;
+	    
+	    LineHeightStyleCssString = _previousState.LineHeightStyleCssString;
+	    Gutter_HeightWidthPaddingCssStyle = _previousState.Gutter_HeightWidthPaddingCssStyle;
 	    
 	    IsValid = true;
     }
