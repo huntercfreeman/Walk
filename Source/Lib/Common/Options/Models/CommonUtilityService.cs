@@ -44,7 +44,6 @@ public class CommonUtilityService : ICommonUtilityService
         WalkHostingInformation hostingInformation,
         ICommonComponentRenderers commonComponentRenderers,
         BackgroundTaskService backgroundTaskService,
-        ICommonUtilityService commonUtilityService,
         IJSRuntime jsRuntime)
     {
         switch (hostingInformation.WalkHostingKind)
@@ -54,14 +53,14 @@ public class CommonUtilityService : ICommonUtilityService
                 FileSystemProvider = new LocalFileSystemProvider(
                     EnvironmentProvider,
                     commonComponentRenderers,
-                    commonUtilityService);
+                    this);
                 break;
             default:
                 EnvironmentProvider = new InMemoryEnvironmentProvider();
                 FileSystemProvider = new InMemoryFileSystemProvider(
                     EnvironmentProvider,
                     commonComponentRenderers,
-                    commonUtilityService);
+                    this);
                 break;
         }
         
