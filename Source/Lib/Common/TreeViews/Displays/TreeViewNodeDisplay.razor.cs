@@ -97,7 +97,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
         }
         else
         {
-            RenderBatch.TreeViewService.ReduceReRenderNodeAction(RenderBatch.TreeViewContainer.Key, localTreeViewNoType);
+            RenderBatch.CommonUtilityService.TreeView_ReRenderNodeAction(RenderBatch.TreeViewContainer.Key, localTreeViewNoType);
         }
     }
 
@@ -107,7 +107,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
         TreeViewNoType treeViewNoType)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            RenderBatch.TreeViewService,
+            RenderBatch.CommonUtilityService,
             RenderBatch.TreeViewContainer,
             TreeViewNoType,
             FocusAsync,
@@ -132,7 +132,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
     private async Task HandleOnClick(MouseEventArgs? mouseEventArgs)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            RenderBatch.TreeViewService,
+            RenderBatch.CommonUtilityService,
             RenderBatch.TreeViewContainer,
             TreeViewNoType,
             FocusAsync,
@@ -148,7 +148,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
     private async Task HandleOnDoubleClick(MouseEventArgs? mouseEventArgs)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            RenderBatch.TreeViewService,
+            RenderBatch.CommonUtilityService,
             RenderBatch.TreeViewContainer,
             TreeViewNoType,
             FocusAsync,
@@ -164,7 +164,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
     private async Task HandleOnMouseDown(MouseEventArgs? mouseEventArgs)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            RenderBatch.TreeViewService,
+            RenderBatch.CommonUtilityService,
             RenderBatch.TreeViewContainer,
             TreeViewNoType,
             FocusAsync,

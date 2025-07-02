@@ -17,8 +17,6 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
     private IInputFileService InputFileService { get; set; } = null!;
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
@@ -85,13 +83,12 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
     	InputFileService.InputFileStateChanged += OnInputFileStateChanged;
     	
         _inputFileTreeViewMouseEventHandler = new InputFileTreeViewMouseEventHandler(
-            TreeViewService,
+            CommonUtilityService,
             InputFileService,
             SetInputFileContentTreeViewRootFunc,
 			BackgroundTaskService);
 
         _inputFileTreeViewKeyboardEventHandler = new InputFileTreeViewKeyboardEventHandler(
-            TreeViewService,
             InputFileService,
             IdeComponentRenderers,
             CommonUtilityService,
@@ -171,9 +168,9 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
 
         var activeNode = adhocRootNode.ChildList.FirstOrDefault();
 
-        if (!TreeViewService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
+        if (!CommonUtilityService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
         {
-            TreeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+            CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
                 InputFileContent.TreeViewContainerKey,
                 adhocRootNode,
                 activeNode is null
@@ -182,9 +179,9 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
         }
         else
         {
-            TreeViewService.ReduceWithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
+            CommonUtilityService.TreeView_WithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
             
-			TreeViewService.ReduceSetActiveNodeAction(
+			CommonUtilityService.TreeView_SetActiveNodeAction(
 				InputFileContent.TreeViewContainerKey,
 				activeNode,
 				true,

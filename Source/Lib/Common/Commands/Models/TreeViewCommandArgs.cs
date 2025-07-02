@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Commands.Models;
 
@@ -10,7 +11,7 @@ namespace Walk.Common.RazorLib.Commands.Models;
 public record struct TreeViewCommandArgs : ICommandArgs
 {
     public TreeViewCommandArgs(
-        ITreeViewService treeViewService,
+        ICommonUtilityService commonUtilityService,
         TreeViewContainer treeViewContainer,
         TreeViewNoType? nodeThatReceivedMouseEvent,
         Func<Task> restoreFocusToTreeView,
@@ -18,7 +19,7 @@ public record struct TreeViewCommandArgs : ICommandArgs
         MouseEventArgs? mouseEventArgs,
         KeyboardEventArgs? keyboardEventArgs)
     {
-        TreeViewService = treeViewService;
+        CommonUtilityService = CommonUtilityService;
         TreeViewContainer = treeViewContainer;
         NodeThatReceivedMouseEvent = nodeThatReceivedMouseEvent;
         RestoreFocusToTreeView = restoreFocusToTreeView;
@@ -27,7 +28,7 @@ public record struct TreeViewCommandArgs : ICommandArgs
         KeyboardEventArgs = keyboardEventArgs;
     }
 
-    public ITreeViewService TreeViewService { get; }
+    public ICommonUtilityService CommonUtilityService { get; }
     public TreeViewContainer TreeViewContainer { get; }
     public TreeViewNoType? NodeThatReceivedMouseEvent { get; }
     public Func<Task> RestoreFocusToTreeView { get; }

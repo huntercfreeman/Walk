@@ -66,13 +66,11 @@ public static class ServiceCollectionExtensions
 
 				return hostingInformation.BackgroundTaskService;
 			})
-            .AddScoped<ITreeViewService, TreeViewService>()
             .AddScoped<BrowserResizeInterop>()
             .AddScoped<ICommonUtilityService, CommonUtilityService>(sp => new CommonUtilityService(
                 hostingInformation,
                 _commonRendererTypes,
                 sp.GetRequiredService<BackgroundTaskService>(),
-                sp.GetRequiredService<ITreeViewService>(),
                 commonConfig,
                 sp.GetRequiredService<IJSRuntime>()));
         

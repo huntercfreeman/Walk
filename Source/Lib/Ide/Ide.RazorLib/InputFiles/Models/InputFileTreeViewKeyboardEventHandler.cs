@@ -22,7 +22,6 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     private readonly BackgroundTaskService _backgroundTaskService;
 
     public InputFileTreeViewKeyboardEventHandler(
-	        ITreeViewService treeViewService,
 	        IInputFileService inputFileService,
 	        IIdeComponentRenderers ideComponentRenderers,
 	        ICommonUtilityService commonUtilityService,
@@ -30,7 +29,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 	        Func<Task> focusSearchInputElementFunc,
 	        Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc,
 	        BackgroundTaskService backgroundTaskService)
-        : base(treeViewService, backgroundTaskService)
+        : base(commonUtilityService, backgroundTaskService)
     {
         _inputFileService = inputFileService;
         _ideComponentRenderers = ideComponentRenderers;

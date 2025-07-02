@@ -1,6 +1,7 @@
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.TreeViews.Models;
 
@@ -10,14 +11,14 @@ namespace Walk.Common.RazorLib.TreeViews.Models;
 /// </summary>
 public class TreeViewKeyboardEventHandler
 {
-    protected readonly ITreeViewService TreeViewService;
+    protected readonly ICommonUtilityService CommonUtilityService;
     protected readonly BackgroundTaskService BackgroundTaskService;
 
     public TreeViewKeyboardEventHandler(
-		ITreeViewService treeViewService,
+		ICommonUtilityService commonUtilityService,
 		BackgroundTaskService backgroundTaskService)
     {
-        TreeViewService = treeViewService;
+        CommonUtilityService = commonUtilityService;
 		BackgroundTaskService = backgroundTaskService;
     }
 
@@ -51,37 +52,37 @@ public class TreeViewKeyboardEventHandler
         switch (commandArgs.KeyboardEventArgs.Key)
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
-                TreeViewService.ReduceMoveLeftAction(
+                CommonUtilityService.TreeView_MoveLeftAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
-                TreeViewService.ReduceMoveDownAction(
+                CommonUtilityService.TreeView_MoveDownAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_UP:
-                TreeViewService.ReduceMoveUpAction(
+                CommonUtilityService.TreeView_MoveUpAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
-                TreeViewService.MoveRight(
+                CommonUtilityService.TreeView_MoveRight(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
             case KeyboardKeyFacts.MovementKeys.HOME:
-                TreeViewService.ReduceMoveHomeAction(
+                CommonUtilityService.TreeView_MoveHomeAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
             case KeyboardKeyFacts.MovementKeys.END:
-                TreeViewService.ReduceMoveEndAction(
+                CommonUtilityService.TreeView_MoveEndAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);

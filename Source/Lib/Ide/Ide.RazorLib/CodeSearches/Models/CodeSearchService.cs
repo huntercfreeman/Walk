@@ -18,7 +18,6 @@ public class CodeSearchService : ICodeSearchService
 
 	private readonly Throttle _throttle = new(TimeSpan.FromMilliseconds(300));
     private readonly ICommonUtilityService _commonUtilityService;
-    private readonly ITreeViewService _treeViewService;
     private readonly TextEditorService _textEditorService;
     private readonly WalkTextEditorConfig _textEditorConfig;
     private readonly IServiceProvider _serviceProvider;
@@ -29,13 +28,11 @@ public class CodeSearchService : ICodeSearchService
 
     public CodeSearchService(
         ICommonUtilityService commonUtilityService,
-        ITreeViewService treeViewService,
         TextEditorService textEditorService,
         WalkTextEditorConfig textEditorConfig,
         IServiceProvider serviceProvider)
     {
         _commonUtilityService = commonUtilityService;
-        _treeViewService = treeViewService;
         _textEditorService = textEditorService;
         _textEditorConfig = textEditorConfig;
         _serviceProvider = serviceProvider;
@@ -236,18 +233,18 @@ public class CodeSearchService : ICodeSearchService
 	        ? Array.Empty<TreeViewNoType>()
 	        : new List<TreeViewNoType> { firstNode };
 	
-	    if (!_treeViewService.TryGetTreeViewContainer(CodeSearchState.TreeViewCodeSearchContainerKey, out _))
+	    if (!_commonUtilityService.TryGetTreeViewContainer(CodeSearchState.TreeViewCodeSearchContainerKey, out _))
 	    {
-	        _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+	        _commonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
 	            CodeSearchState.TreeViewCodeSearchContainerKey,
 	            adhocRoot,
 	            activeNodes));
 	    }
 	    else
 	    {
-	        _treeViewService.ReduceWithRootNodeAction(CodeSearchState.TreeViewCodeSearchContainerKey, adhocRoot);
+	        _commonUtilityService.TreeView_WithRootNodeAction(CodeSearchState.TreeViewCodeSearchContainerKey, adhocRoot);
 	
-	        _treeViewService.ReduceSetActiveNodeAction(
+	        _commonUtilityService.TreeView_SetActiveNodeAction(
 	            CodeSearchState.TreeViewCodeSearchContainerKey,
 	            firstNode,
 	            true,
@@ -261,7 +258,7 @@ public class CodeSearchService : ICodeSearchService
 		{
 			Console.WriteLine(nameof(UpdateContent));
 		
-			if (!_treeViewService.TryGetTreeViewContainer(
+			if (!_commonUtilityService.TryGetTreeViewContainer(
 					CodeSearchState.TreeViewCodeSearchContainerKey,
 					out var treeViewContainer))
 			{

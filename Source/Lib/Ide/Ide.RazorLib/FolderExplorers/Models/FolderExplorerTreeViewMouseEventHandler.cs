@@ -2,6 +2,7 @@ using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
@@ -17,9 +18,9 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
     public FolderExplorerTreeViewMouseEventHandler(
             IdeBackgroundTaskApi ideBackgroundTaskApi,
             TextEditorService textEditorService,
-            ITreeViewService treeViewService,
+            ICommonUtilityService commonUtilityService,
 		    BackgroundTaskService backgroundTaskService)
-        : base(treeViewService, backgroundTaskService)
+        : base(commonUtilityService, backgroundTaskService)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _textEditorService = textEditorService;

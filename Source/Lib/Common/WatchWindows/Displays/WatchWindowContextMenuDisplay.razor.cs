@@ -1,14 +1,15 @@
+using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
-using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.WatchWindows.Displays;
 
 public partial class WatchWindowContextMenuDisplay : ComponentBase
 {
     [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
+    private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TreeViewCommandArgs TreeViewCommandArgs { get; set; }
@@ -41,7 +42,7 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
                                 .LoadChildListAsync()
                                 .ConfigureAwait(false);
 
-                            TreeViewService.ReduceReRenderNodeAction(
+                            CommonUtilityService.TreeView_ReRenderNodeAction(
                                 WatchWindowDisplay.TreeViewContainerKey,
                                 treeViewCommandArgs.NodeThatReceivedMouseEvent);
 

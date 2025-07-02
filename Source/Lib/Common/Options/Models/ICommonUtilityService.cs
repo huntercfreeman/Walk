@@ -28,9 +28,12 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
-
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Drags.Models;
+using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Options.Models;
+using Walk.Common.RazorLib.TreeViews.Models;
 
 namespace Walk.Common.RazorLib.Options.Models;
 
@@ -287,4 +290,75 @@ public interface ICommonUtilityService : IBackgroundTaskGroup
 		MouseEventArgs? mouseEventArgs,
 		IDrag? drag);
     /* End IDragService */
+    
+    /* Start ITreeViewService, TreeViewService */
+    public event Action? TreeViewStateChanged;
+    
+    public TreeViewState GetTreeViewState();
+    public TreeViewContainer GetTreeViewContainer(Key<TreeViewContainer> containerKey);
+
+    public bool TryGetTreeViewContainer(Key<TreeViewContainer> containerKey, out TreeViewContainer? container);
+
+    public void TreeView_MoveRight(
+		Key<TreeViewContainer> containerKey,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode);
+
+    public string TreeView_GetActiveNodeElementId(Key<TreeViewContainer> containerKey);
+
+    public void TreeView_RegisterContainerAction(TreeViewContainer container);
+
+    public void TreeView_DisposeContainerAction(Key<TreeViewContainer> containerKey);
+
+    public void TreeView_WithRootNodeAction(Key<TreeViewContainer> containerKey, TreeViewNoType node);
+
+    public void TreeView_AddChildNodeAction(Key<TreeViewContainer> containerKey, TreeViewNoType parentNode, TreeViewNoType childNode);
+
+    public void TreeView_ReRenderNodeAction(Key<TreeViewContainer> containerKey, TreeViewNoType node);
+
+    public void TreeView_SetActiveNodeAction(
+    	Key<TreeViewContainer> containerKey,
+		TreeViewNoType? nextActiveNode,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode);
+
+    public void TreeView_RemoveSelectedNodeAction(
+    	Key<TreeViewContainer> containerKey,
+        Key<TreeViewNoType> keyOfNodeToRemove);
+
+    public void TreeView_MoveLeftAction(
+    	Key<TreeViewContainer> containerKey,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode);
+
+    public void TreeView_MoveDownAction(
+    	Key<TreeViewContainer> containerKey,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode);
+
+    public void TreeView_MoveUpAction(
+    	Key<TreeViewContainer> containerKey,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode);
+
+    public void TreeView_MoveRightAction(
+        Key<TreeViewContainer> containerKey,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode,
+		Action<TreeViewNoType> loadChildListAction);
+
+    public void TreeView_MoveHomeAction(
+		Key<TreeViewContainer> containerKey,
+		bool addSelectedNodes,
+		bool selectNodesBetweenCurrentAndNextActiveNode);
+
+    public void TreeView_MoveEndAction(
+		Key<TreeViewContainer> containerKey,
+		bool addSelectedNodes,
+	    bool selectNodesBetweenCurrentAndNextActiveNode);
+		
+	public string TreeView_GetNodeElementStyle(int offsetInPixels);
+	public string TreeView_GetNodeTextStyle(int walkTreeViewIconWidth);
+	public string TreeView_GetNodeBorderStyle(int offsetInPixels, int walkTreeViewIconWidth);
+    /* End ITreeViewService, TreeViewService */
 }

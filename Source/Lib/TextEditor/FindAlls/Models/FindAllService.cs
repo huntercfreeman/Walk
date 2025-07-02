@@ -11,18 +11,14 @@ public class FindAllService : IFindAllService
 {
     private readonly object _stateModificationLock = new();
 
-	private readonly ITreeViewService _treeViewService;
 	private readonly ICommonUtilityService _commonUtilityService;
 	private readonly Throttle _throttleSetSearchQuery = new Throttle(TimeSpan.FromMilliseconds(500));
 	private readonly Throttle _throttleUiUpdate = new Throttle(ThrottleFacts.TwentyFour_Frames_Per_Second);
 	
 	private readonly object _flushSearchResultsLock = new();
 	
-	public FindAllService(
-		ITreeViewService treeViewService,
-		ICommonUtilityService commonUtilityService)
+	public FindAllService(ICommonUtilityService commonUtilityService)
 	{
-		_treeViewService = treeViewService;
 		_commonUtilityService = commonUtilityService;
 	}
 	
@@ -348,18 +344,18 @@ public class FindAllService : IFindAllService
 	        ? Array.Empty<TreeViewNoType>()
 	        : new List<TreeViewNoType> { firstNode };
 	
-	    if (!_treeViewService.TryGetTreeViewContainer(TextEditorFindAllState.TreeViewFindAllContainerKey, out _))
+	    if (!_commonUtilityService.TryGetTreeViewContainer(TextEditorFindAllState.TreeViewFindAllContainerKey, out _))
 	    {
-	        _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+	        _commonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
 	            TextEditorFindAllState.TreeViewFindAllContainerKey,
 	            adhocRoot,
 	            activeNodes));
 	    }
 	    else
 	    {
-	        _treeViewService.ReduceWithRootNodeAction(TextEditorFindAllState.TreeViewFindAllContainerKey, adhocRoot);
+	        _commonUtilityService.TreeView_WithRootNodeAction(TextEditorFindAllState.TreeViewFindAllContainerKey, adhocRoot);
 	
-	        _treeViewService.ReduceSetActiveNodeAction(
+	        _commonUtilityService.TreeView_SetActiveNodeAction(
 	            TextEditorFindAllState.TreeViewFindAllContainerKey,
 	            firstNode,
 	            true,

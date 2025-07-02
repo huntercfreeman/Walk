@@ -2,6 +2,7 @@ using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 
 namespace Walk.Ide.RazorLib.InputFiles.Models;
@@ -12,11 +13,11 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
     private readonly Func<AbsolutePath, Task> _setInputFileContentTreeViewRootFunc;
 
     public InputFileTreeViewMouseEventHandler(
-        ITreeViewService treeViewService,
+        ICommonUtilityService commonUtilityService,
         IInputFileService inputFileService,
         Func<AbsolutePath, Task> setInputFileContentTreeViewRootFunc,
 		BackgroundTaskService backgroundTaskService)
-        : base(treeViewService, backgroundTaskService)
+        : base(commonUtilityService, backgroundTaskService)
     {
         _inputFileService = inputFileService;
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;

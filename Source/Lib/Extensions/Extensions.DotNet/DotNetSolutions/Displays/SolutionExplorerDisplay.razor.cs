@@ -22,8 +22,6 @@ namespace Walk.Extensions.DotNet.DotNetSolutions.Displays;
 public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private ITreeViewService TreeViewService { get; set; } = null!;
-	[Inject]
 	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
@@ -50,14 +48,13 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 			IdeBackgroundTaskApi,
 			MenuOptionsFactory,
 			TextEditorService,
-			TreeViewService,
 			CommonUtilityService,
 			BackgroundTaskService);
 
 		_solutionExplorerTreeViewMouseEventHandler = new SolutionExplorerTreeViewMouseEventHandler(
 			IdeBackgroundTaskApi,
 			TextEditorService,
-			TreeViewService,
+			CommonUtilityService,
 			BackgroundTaskService);
 	}
 

@@ -14,20 +14,17 @@ public class OutputService : IOutputService
 	private readonly DotNetBackgroundTaskApi _dotNetBackgroundTaskApi;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 	private readonly ICommonUtilityService _commonUtilityService;
-	private readonly ITreeViewService _treeViewService;
 		
 	private readonly Throttle _throttleCreateTreeView = new Throttle(TimeSpan.FromMilliseconds(333));
 	
 	public OutputService(
 		DotNetBackgroundTaskApi dotNetBackgroundTaskApi,
 		DotNetCliOutputParser dotNetCliOutputParser,
-		ICommonUtilityService commonUtilityService,
-		ITreeViewService treeViewService)
+		ICommonUtilityService commonUtilityService)
 	{
 		_dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
 		_commonUtilityService = commonUtilityService;
-		_treeViewService = treeViewService;
     }
     
     private OutputState _outputState = new();
@@ -166,18 +163,18 @@ public class OutputService : IOutputService
             ? new List<TreeViewNoType>()
             : new() { firstNode };
 
-        if (!_treeViewService.TryGetTreeViewContainer(OutputState.TreeViewContainerKey, out _))
+        if (!_commonUtilityService.TryGetTreeViewContainer(OutputState.TreeViewContainerKey, out _))
         {
-            _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+            _commonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
                 OutputState.TreeViewContainerKey,
                 adhocRoot,
                 activeNodes));
         }
         else
         {
-            _treeViewService.ReduceWithRootNodeAction(OutputState.TreeViewContainerKey, adhocRoot);
+            _commonUtilityService.TreeView_WithRootNodeAction(OutputState.TreeViewContainerKey, adhocRoot);
 
-            _treeViewService.ReduceSetActiveNodeAction(
+            _commonUtilityService.TreeView_SetActiveNodeAction(
                 OutputState.TreeViewContainerKey,
                 firstNode,
                 true,

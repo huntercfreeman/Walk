@@ -20,8 +20,6 @@ public partial class FolderExplorerContextMenu : ComponentBase
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
-    [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TreeViewCommandArgs TreeViewCommandArgs { get; set; }
@@ -163,11 +161,11 @@ public partial class FolderExplorerContextMenu : ComponentBase
 
         await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-        TreeViewService.ReduceReRenderNodeAction(
+        CommonUtilityService.TreeView_ReRenderNodeAction(
             FolderExplorerState.TreeViewContentStateKey,
             treeViewModel);
 
-        TreeViewService.ReduceMoveUpAction(
+        CommonUtilityService.TreeView_MoveUpAction(
             FolderExplorerState.TreeViewContentStateKey,
             false,
 			false);

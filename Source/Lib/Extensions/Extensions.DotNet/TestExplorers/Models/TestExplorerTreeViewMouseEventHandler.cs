@@ -22,9 +22,8 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 			TextEditorService textEditorService,
 			ICommonUtilityService commonUtilityService,
 			IServiceProvider serviceProvider,
-			ITreeViewService treeViewService,
 			BackgroundTaskService backgroundTaskService)
-		: base(treeViewService, backgroundTaskService)
+		: base(commonUtilityService, backgroundTaskService)
 	{
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_textEditorService = textEditorService;

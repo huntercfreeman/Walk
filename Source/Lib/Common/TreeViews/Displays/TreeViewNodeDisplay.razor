@@ -6,7 +6,7 @@
     {
         <div id="@IsActiveId"
              class="@GetNodeElementCssClass()"
-             style="@RenderBatch.TreeViewService.GetNodeElementStyle(OffsetInPixels)"
+             style="@RenderBatch.CommonUtilityService.TreeView_GetNodeElementStyle(OffsetInPixels)"
              tabindex="-1"
              @onclick:stopPropagation="true"
              @onclick="HandleOnClick"
@@ -51,7 +51,7 @@
             </div>
 
             <div class="@TreeViewNoType.GetDisplayTextCssClass()"
-                 style="@RenderBatch.TreeViewService.GetNodeTextStyle(RenderBatch.WalkTreeViewIconWidth)"
+                 style="@RenderBatch.CommonUtilityService.TreeView_GetNodeTextStyle(RenderBatch.WalkTreeViewIconWidth)"
                  title="@TreeViewNoType.GetHoverText()">
                 
                 @TreeViewNoType.GetIcon(iconDriver)
@@ -75,7 +75,7 @@
         
             @if (!TreeViewNoType.IsHidden)
             {
-                <div style="@RenderBatch.TreeViewService.GetNodeBorderStyle(OffsetInPixels, RenderBatch.WalkTreeViewIconWidth)"
+                <div style="@RenderBatch.CommonUtilityService.TreeView_GetNodeBorderStyle(OffsetInPixels, RenderBatch.WalkTreeViewIconWidth)"
                      class="di_tree-view-children-border">
                 </div>
             }

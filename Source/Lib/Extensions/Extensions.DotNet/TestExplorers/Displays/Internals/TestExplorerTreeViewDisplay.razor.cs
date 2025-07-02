@@ -17,8 +17,6 @@ namespace Walk.Extensions.DotNet.TestExplorers.Displays.Internals;
 public partial class TestExplorerTreeViewDisplay : ComponentBase
 {
 	[Inject]
-	private ITreeViewService TreeViewService { get; set; } = null!;
-	[Inject]
 	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
@@ -48,7 +46,6 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 			TextEditorService,
 			CommonUtilityService,
 			ServiceProvider,
-			TreeViewService,
 			BackgroundTaskService);
 
 		_treeViewMouseEventHandler = new TestExplorerTreeViewMouseEventHandler(
@@ -56,7 +53,6 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 			TextEditorService,
 			CommonUtilityService,
 			ServiceProvider,
-			TreeViewService,
 			BackgroundTaskService);
 	}
 

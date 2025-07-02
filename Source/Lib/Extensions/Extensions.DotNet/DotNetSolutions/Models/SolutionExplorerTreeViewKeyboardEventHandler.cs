@@ -23,22 +23,19 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 	private readonly IMenuOptionsFactory _menuOptionsFactory;
 	private readonly TextEditorService _textEditorService;
-	private readonly ITreeViewService _treeViewService;
 	private readonly ICommonUtilityService _commonUtilityService;
 
 	public SolutionExplorerTreeViewKeyboardEventHandler(
 			IdeBackgroundTaskApi ideBackgroundTaskApi,
 			IMenuOptionsFactory menuOptionsFactory,
 			TextEditorService textEditorService,
-			ITreeViewService treeViewService,
 			ICommonUtilityService commonUtilityService,
 			BackgroundTaskService backgroundTaskService)
-		: base(treeViewService, backgroundTaskService)
+		: base(commonUtilityService, backgroundTaskService)
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
 		_menuOptionsFactory = menuOptionsFactory;
 		_textEditorService = textEditorService;
-		_treeViewService = treeViewService;
 		_commonUtilityService = commonUtilityService;
 	}
 
@@ -225,11 +222,11 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 
 		await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-		_treeViewService.ReduceReRenderNodeAction(
+		_commonUtilityService.TreeView_ReRenderNodeAction(
 			DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 			treeViewModel);
 
-		_treeViewService.ReduceMoveUpAction(
+		_commonUtilityService.TreeView_MoveUpAction(
 			DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 			false,
 			false);

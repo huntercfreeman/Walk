@@ -28,8 +28,6 @@ public partial class OutputDisplay : ComponentBase, IDisposable
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 	[Inject]
 	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
@@ -48,14 +46,14 @@ public partial class OutputDisplay : ComponentBase, IDisposable
 			TextEditorService,
 			TextEditorConfig,
 			ServiceProvider,
-			TreeViewService,
+			CommonUtilityService,
 			BackgroundTaskService);
 
 		_treeViewMouseEventHandler = new OutputTreeViewMouseEventHandler(
 			TextEditorService,
 			TextEditorConfig,
 			ServiceProvider,
-			TreeViewService,
+			CommonUtilityService,
 			BackgroundTaskService);
     
     	DotNetCliOutputParser.StateChanged += DotNetCliOutputParser_StateChanged;

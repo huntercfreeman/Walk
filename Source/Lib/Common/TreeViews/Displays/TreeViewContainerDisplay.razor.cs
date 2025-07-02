@@ -17,8 +17,6 @@ namespace Walk.Common.RazorLib.TreeViews.Displays;
 public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
@@ -50,7 +48,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        TreeViewService.TreeViewStateChanged += OnTreeViewStateChanged;
+        CommonUtilityService.TreeViewStateChanged += OnTreeViewStateChanged;
     }
 
     private int GetRootDepth(TreeViewNoType rootNode)
@@ -66,7 +64,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             return;
 
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            TreeViewService,
+            CommonUtilityService,
             treeViewContainer,
             null,
             async () =>
@@ -110,7 +108,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         if (treeViewContainerKey == Key<TreeViewContainer>.Empty || mouseEventArgs is null)
             return;
 
-        var treeViewContainer = TreeViewService.GetTreeViewContainer(TreeViewContainerKey);
+        var treeViewContainer = CommonUtilityService.GetTreeViewContainer(TreeViewContainerKey);
         // Validate that the treeViewContainer did not change out from under us
         if (treeViewContainer is null || treeViewContainer.Key != treeViewContainerKey)
             return;
@@ -151,7 +149,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         }
 
         _treeViewContextMenuCommandArgs = new TreeViewCommandArgs(
-            TreeViewService,
+            CommonUtilityService,
             treeViewContainer,
             contextMenuTargetTreeViewNoType,
             async () =>
@@ -205,7 +203,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 
     private string GetContextMenuCssStyleString()
     {
-        if (_treeViewContextMenuCommandArgs.TreeViewService is null || _treeViewContextMenuCommandArgs.ContextMenuFixedPosition is null)
+        if (_treeViewContextMenuCommandArgs.CommonUtilityService is null || _treeViewContextMenuCommandArgs.ContextMenuFixedPosition is null)
         {
             // This should never happen.
             return "display: none;";
@@ -241,6 +239,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TreeViewService.TreeViewStateChanged -= OnTreeViewStateChanged;
+    	CommonUtilityService.TreeViewStateChanged -= OnTreeViewStateChanged;
     }
 }

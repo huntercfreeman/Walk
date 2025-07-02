@@ -31,7 +31,6 @@ namespace Walk.Ide.RazorLib.Commands;
 public class CommandFactory : ICommandFactory
 {
     private readonly TextEditorService _textEditorService;
-    private readonly ITreeViewService _treeViewService;
     // FindAllReferences
     // private readonly IFindAllReferencesService _findAllReferencesService;
     private readonly ICodeSearchService _codeSearchService;
@@ -39,14 +38,12 @@ public class CommandFactory : ICommandFactory
 
     public CommandFactory(
 		TextEditorService textEditorService,
-		ITreeViewService treeViewService,
 		// FindAllReferences
 		// IFindAllReferencesService findAllReferencesService,
 		ICodeSearchService codeSearchService,
 		ICommonUtilityService commonUtilityService)
     {
 		_textEditorService = textEditorService;
-		_treeViewService = treeViewService;
 		// FindAllReferences
 		// _findAllReferencesService = findAllReferencesService;
 		_codeSearchService = codeSearchService;
@@ -538,7 +535,7 @@ public class CommandFactory : ICommandFactory
 	 	   await Task.Yield();
 			await Task.Delay(200).ConfigureAwait(false);
 			
-			_treeViewService.ReduceMoveHomeAction(
+			_commonUtilityService.TreeView_MoveHomeAction(
 				CodeSearchState.TreeViewCodeSearchContainerKey,
 				false,
 				false);
@@ -576,7 +573,7 @@ public class CommandFactory : ICommandFactory
  	   await Task.Yield();
 		await Task.Delay(200).ConfigureAwait(false);
 		
-		_treeViewService.ReduceMoveHomeAction(
+		_commonUtilityService.TreeView_MoveHomeAction(
 			CodeSearchState.TreeViewCodeSearchContainerKey,
 			false,
 			false);

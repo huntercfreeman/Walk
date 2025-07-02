@@ -22,8 +22,6 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-	private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 

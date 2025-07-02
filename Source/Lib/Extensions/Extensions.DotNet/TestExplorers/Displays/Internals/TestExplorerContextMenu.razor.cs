@@ -29,8 +29,6 @@ public partial class TestExplorerContextMenu : ComponentBase
 	[Inject]
 	private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
 	[Inject]
-	private ITreeViewService TreeViewService { get; set; } = null!;
-	[Inject]
 	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
 	[CascadingParameter]
@@ -155,10 +153,10 @@ public partial class TestExplorerContextMenu : ComponentBase
 				    });
 			        
 					treeViewProjectTestModel.Item.TestNameFullyQualifiedList = null;
-					TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
+					CommonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
 					await treeViewProjectTestModel.LoadChildListAsync();
-					TreeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
+					CommonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
 					DotNetBackgroundTaskApi.TestExplorerService.MoveNodeToCorrectBranch(treeViewProjectTestModel);
 					
@@ -262,7 +260,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		};
 
 		var fabricateCommandArgs = new TreeViewCommandArgs(
-			commandArgs.TreeViewService,
+			commandArgs.CommonUtilityService,
 			fabricateTreeViewContainer,
 			commandArgs.NodeThatReceivedMouseEvent,
 			commandArgs.RestoreFocusToTreeView,
@@ -293,7 +291,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 			if (node is TreeViewStringFragment treeViewStringFragment)
 			{
 				var innerTreeViewCommandArgs = new TreeViewCommandArgs(
-					commandArgs.TreeViewService,
+					commandArgs.CommonUtilityService,
 					commandArgs.TreeViewContainer,
 					node,
 					commandArgs.RestoreFocusToTreeView,

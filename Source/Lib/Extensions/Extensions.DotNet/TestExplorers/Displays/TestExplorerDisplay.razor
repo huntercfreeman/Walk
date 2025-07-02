@@ -8,7 +8,7 @@
 	var testExplorerState = DotNetBackgroundTaskApi.TestExplorerService.GetTestExplorerState();
 	var appOptionsState = CommonUtilityService.GetAppOptionsState();
 
-	if (!TreeViewService.TryGetTreeViewContainer(
+	if (!CommonUtilityService.TryGetTreeViewContainer(
 			TestExplorerState.TreeViewTestExplorerKey,
 			out var treeViewContainer))
 	{

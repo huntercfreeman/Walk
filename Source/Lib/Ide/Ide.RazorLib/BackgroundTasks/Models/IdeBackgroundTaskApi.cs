@@ -47,7 +47,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
     private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
-    private readonly ITreeViewService _treeViewService;
     private readonly TextEditorService _textEditorService;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
     private readonly ITerminalService _terminalService;
@@ -66,7 +65,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         BackgroundTaskService backgroundTaskService,
         ICompilerServiceRegistry compilerServiceRegistry,
         IIdeComponentRenderers ideComponentRenderers,
-        ITreeViewService treeViewService,
         TextEditorService textEditorService,
         ITerminalService terminalService,
         IDecorationMapperRegistry decorationMapperRegistry,
@@ -82,7 +80,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     {
         _backgroundTaskService = backgroundTaskService;
         _ideComponentRenderers = ideComponentRenderers;
-        _treeViewService = treeViewService;
         _textEditorService = textEditorService;
         _compilerServiceRegistry = compilerServiceRegistry;
         _terminalService = terminalService;
@@ -954,20 +951,20 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
         await rootNode.LoadChildListAsync().ConfigureAwait(false);
 
-        if (!_treeViewService.TryGetTreeViewContainer(
+        if (!_commonUtilityService.TryGetTreeViewContainer(
                 FolderExplorerState.TreeViewContentStateKey,
                 out var treeViewState))
         {
-            _treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+            _commonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
                 FolderExplorerState.TreeViewContentStateKey,
                 rootNode,
                 new List<TreeViewNoType>() { rootNode }));
         }
         else
         {
-            _treeViewService.ReduceWithRootNodeAction(FolderExplorerState.TreeViewContentStateKey, rootNode);
+            _commonUtilityService.TreeView_WithRootNodeAction(FolderExplorerState.TreeViewContentStateKey, rootNode);
 
-            _treeViewService.ReduceSetActiveNodeAction(
+            _commonUtilityService.TreeView_SetActiveNodeAction(
                 FolderExplorerState.TreeViewContentStateKey,
                 rootNode,
                 true,

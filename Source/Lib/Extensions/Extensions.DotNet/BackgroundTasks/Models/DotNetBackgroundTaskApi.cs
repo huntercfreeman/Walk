@@ -69,7 +69,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
-	private readonly ITreeViewService _treeViewService;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 	private readonly TextEditorService _textEditorService;
 	private readonly IFindAllService _findAllService;
@@ -97,7 +96,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		ICompilerServiceRegistry compilerServiceRegistry,
 		IDotNetComponentRenderers dotNetComponentRenderers,
 		IIdeComponentRenderers ideComponentRenderers,
-		ITreeViewService treeViewService,
 		DotNetCliOutputParser dotNetCliOutputParser,
 		TextEditorService textEditorService,
 		IFindAllService findAllService,
@@ -117,7 +115,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		_appDataService = appDataService;
         _dotNetComponentRenderers = dotNetComponentRenderers;
 		_ideComponentRenderers = ideComponentRenderers;
-		_treeViewService = treeViewService;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
 		_textEditorService = textEditorService;
 		_findAllService = findAllService;
@@ -140,7 +137,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 			this,
 			_ideBackgroundTaskApi,
 			DotNetSolutionService,
-			_treeViewService,
             _textEditorService,
             _commonUtilityService,
             _backgroundTaskService,
@@ -150,8 +146,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
         OutputService = new OutputService(
         	this,
         	_dotNetCliOutputParser,
-        	_commonUtilityService,
-        	_treeViewService);
+        	_commonUtilityService);
 			
 			NuGetPackageManagerService = new NuGetPackageManagerService();
 			
@@ -201,7 +196,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                     .ConfigureAwait(false);
             }
 
-            if (_treeViewService.TryGetTreeViewContainer(commandArgs.TreeViewContainer.Key, out var mostRecentContainer) &&
+            if (_commonUtilityService.TryGetTreeViewContainer(commandArgs.TreeViewContainer.Key, out var mostRecentContainer) &&
                 mostRecentContainer is not null)
             {
                 var localParent = node.Parent;
@@ -209,7 +204,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 if (localParent is not null)
                 {
                     await localParent.LoadChildListAsync().ConfigureAwait(false);
-                    _treeViewService.ReduceReRenderNodeAction(mostRecentContainer.Key, localParent);
+                    _commonUtilityService.TreeView_ReRenderNodeAction(mostRecentContainer.Key, localParent);
                 }
             }
         }
@@ -682,7 +677,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             BeginWithFunc = parsedCommand =>
             {
                 treeViewStringFragment.Item.TerminalCommandParsed = parsedCommand;
-                _treeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
+                _commonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
                 return Task.CompletedTask;
             },
             ContinueWithFunc = parsedCommand =>
@@ -736,7 +731,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                     }
                 }
 
-                _treeViewService.ReduceReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
+                _commonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
                 return Task.CompletedTask;
             }
         };
@@ -1506,18 +1501,18 @@ Execution Terminal".ReplaceLineEndings("\n")));
 
 		await rootNode.LoadChildListAsync().ConfigureAwait(false);
 
-		if (!_treeViewService.TryGetTreeViewContainer(DotNetSolutionState.TreeViewSolutionExplorerStateKey, out _))
+		if (!_commonUtilityService.TryGetTreeViewContainer(DotNetSolutionState.TreeViewSolutionExplorerStateKey, out _))
 		{
-			_treeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+			_commonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
 				DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 				rootNode,
 				new List<TreeViewNoType> { rootNode }));
 		}
 		else
 		{
-			_treeViewService.ReduceWithRootNodeAction(DotNetSolutionState.TreeViewSolutionExplorerStateKey, rootNode);
+			_commonUtilityService.TreeView_WithRootNodeAction(DotNetSolutionState.TreeViewSolutionExplorerStateKey, rootNode);
 
-			_treeViewService.ReduceSetActiveNodeAction(
+			_commonUtilityService.TreeView_SetActiveNodeAction(
 				DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 				rootNode,
 				true,

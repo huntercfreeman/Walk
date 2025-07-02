@@ -24,8 +24,6 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 	[Inject]
 	private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
-	private ITreeViewService TreeViewService { get; set; } = null!;
-	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
@@ -49,12 +47,12 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
 		_compilerServiceExplorerTreeViewKeymap = new CompilerServiceExplorerTreeViewKeyboardEventHandler(
 			IdeBackgroundTaskApi,
-			TreeViewService,
+			CommonUtilityService,
 			BackgroundTaskService);
 
 		_compilerServiceExplorerTreeViewMouseEventHandler = new CompilerServiceExplorerTreeViewMouseEventHandler(
 			IdeBackgroundTaskApi,
-			TreeViewService,
+			CommonUtilityService,
 			BackgroundTaskService);
 	}
 
@@ -193,22 +191,22 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
 		await rootNode.LoadChildListAsync().ConfigureAwait(false);
 
-		if (!TreeViewService.TryGetTreeViewContainer(
+		if (!CommonUtilityService.TryGetTreeViewContainer(
 				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 				out var treeViewState))
 		{
-			TreeViewService.ReduceRegisterContainerAction(new TreeViewContainer(
+			CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
 				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 				rootNode,
 				new List<TreeViewNoType> { rootNode }));
 		}
 		else
 		{
-			TreeViewService.ReduceWithRootNodeAction(
+			CommonUtilityService.TreeView_WithRootNodeAction(
 				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 				rootNode);
 
-			TreeViewService.ReduceSetActiveNodeAction(
+			CommonUtilityService.TreeView_SetActiveNodeAction(
 				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 				rootNode,
 				true,

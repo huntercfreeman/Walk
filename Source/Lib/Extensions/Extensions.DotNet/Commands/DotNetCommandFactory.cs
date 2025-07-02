@@ -19,16 +19,13 @@ namespace Walk.Extensions.DotNet.Commands;
 public class DotNetCommandFactory : IDotNetCommandFactory
 {
 	private readonly TextEditorService _textEditorService;
-	private readonly ITreeViewService _treeViewService;
 	private readonly ICommonUtilityService _commonUtilityService;
 
 	public DotNetCommandFactory(
         TextEditorService textEditorService,
-        ITreeViewService treeViewService,
 		ICommonUtilityService commonUtilityService)
 	{
 		_textEditorService = textEditorService;
-        _treeViewService = treeViewService;
 		_commonUtilityService = commonUtilityService;
     }
 
@@ -102,13 +99,13 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 						if (localNodeOfViewModel is null)
 							return;
 
-						_treeViewService.ReduceSetActiveNodeAction(
+						_commonUtilityService.TreeView_SetActiveNodeAction(
 							DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 							localNodeOfViewModel,
 							false,
 							false);
 
-						var elementId = _treeViewService.GetActiveNodeElementId(DotNetSolutionState.TreeViewSolutionExplorerStateKey);
+						var elementId = _commonUtilityService.TreeView_GetActiveNodeElementId(DotNetSolutionState.TreeViewSolutionExplorerStateKey);
 
 						await focusSolutionExplorerCommand.CommandFunc
 							.Invoke(commandArgs)
@@ -143,7 +140,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 
 			if (textEditorViewModel is not null)
 			{
-				if (_treeViewService.TryGetTreeViewContainer(
+				if (_commonUtilityService.TryGetTreeViewContainer(
 						DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 						out var treeViewContainer) &&
                     treeViewContainer is not null)

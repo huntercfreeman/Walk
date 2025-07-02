@@ -23,22 +23,19 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly TextEditorService _textEditorService;
     private readonly IMenuOptionsFactory _menuOptionsFactory;
-    private readonly ITreeViewService _treeViewService;
     private readonly ICommonUtilityService _commonUtilityService;
 
     public FolderExplorerTreeViewKeyboardEventHandler(
             IdeBackgroundTaskApi ideBackgroundTaskApi,
             TextEditorService textEditorService,
             IMenuOptionsFactory menuOptionsFactory,
-            ITreeViewService treeViewService,
 		    BackgroundTaskService backgroundTaskService,
             ICommonUtilityService commonUtilityService)
-        : base(treeViewService, backgroundTaskService)
+        : base(commonUtilityService, backgroundTaskService)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _textEditorService = textEditorService;
         _menuOptionsFactory = menuOptionsFactory;
-        _treeViewService = treeViewService;
         _commonUtilityService = commonUtilityService;
     }
 
@@ -232,11 +229,11 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
         await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-        _treeViewService.ReduceReRenderNodeAction(
+        _commonUtilityService.TreeView_ReRenderNodeAction(
             FolderExplorerState.TreeViewContentStateKey,
             treeViewModel);
 
-        _treeViewService.ReduceMoveUpAction(
+        _commonUtilityService.TreeView_MoveUpAction(
             FolderExplorerState.TreeViewContentStateKey,
             false,
 			false);

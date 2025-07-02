@@ -24,8 +24,6 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-	private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
@@ -62,20 +60,20 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	protected override void OnInitialized()
 	{
 		CodeSearchService.CodeSearchStateChanged += OnCodeSearchStateChanged;
-		TreeViewService.TreeViewStateChanged += OnTreeViewStateChanged;
+		CommonUtilityService.TreeViewStateChanged += OnTreeViewStateChanged;
 	
 		_treeViewKeymap = new CodeSearchTreeViewKeyboardEventHandler(
 			TextEditorService,
 			TextEditorConfig,
 			ServiceProvider,
-			TreeViewService,
+			CommonUtilityService,
 			BackgroundTaskService);
 
 		_treeViewMouseEventHandler = new CodeSearchTreeViewMouseEventHandler(
 			TextEditorService,
 			TextEditorConfig,
 			ServiceProvider,
-			TreeViewService,
+			CommonUtilityService,
 			BackgroundTaskService);
 	}
 	
@@ -129,6 +127,6 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
     	CodeSearchService.CodeSearchStateChanged -= OnCodeSearchStateChanged;
-    	TreeViewService.TreeViewStateChanged -= OnTreeViewStateChanged;
+    	CommonUtilityService.TreeViewStateChanged -= OnTreeViewStateChanged;
     }
 }

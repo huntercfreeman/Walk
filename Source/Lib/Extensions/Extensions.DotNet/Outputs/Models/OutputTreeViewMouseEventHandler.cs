@@ -1,6 +1,7 @@
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Installations.Models;
 
@@ -16,9 +17,9 @@ public class OutputTreeViewMouseEventHandler : TreeViewMouseEventHandler
 			TextEditorService textEditorService,
 			WalkTextEditorConfig textEditorConfig,
 			IServiceProvider serviceProvider,
-			ITreeViewService treeViewService,
+			ICommonUtilityService commonUtilityService,
 			BackgroundTaskService backgroundTaskService)
-		: base(treeViewService, backgroundTaskService)
+		: base(commonUtilityService, backgroundTaskService)
 	{
 		_textEditorService = textEditorService;
 		_textEditorConfig = textEditorConfig;

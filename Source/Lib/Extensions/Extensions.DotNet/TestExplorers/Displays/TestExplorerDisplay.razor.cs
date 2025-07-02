@@ -19,8 +19,6 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
-	private ITreeViewService TreeViewService { get; set; } = null!;
-	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
@@ -97,7 +95,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 		}
 	
 		DotNetBackgroundTaskApi.TestExplorerService.TestExplorerStateChanged += OnTestExplorerStateChanged;
-		TreeViewService.TreeViewStateChanged += OnTreeViewStateChanged;
+		CommonUtilityService.TreeViewStateChanged += OnTreeViewStateChanged;
 		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
 
 		_ = Task.Run(async () =>
@@ -150,7 +148,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 	public void Dispose()
 	{
 		DotNetBackgroundTaskApi.TestExplorerService.TestExplorerStateChanged -= OnTestExplorerStateChanged;
-		TreeViewService.TreeViewStateChanged -= OnTreeViewStateChanged;
+		CommonUtilityService.TreeViewStateChanged -= OnTreeViewStateChanged;
 		TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
 	}
 }

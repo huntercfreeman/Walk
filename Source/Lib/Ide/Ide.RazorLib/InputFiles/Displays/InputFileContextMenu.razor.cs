@@ -18,8 +18,6 @@ public partial class InputFileContextMenu : ComponentBase
     [Inject]
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
-    private ITreeViewService TreeViewService { get; set; } = null!;
-    [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
@@ -162,9 +160,9 @@ public partial class InputFileContextMenu : ComponentBase
 
         await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-        TreeViewService.ReduceReRenderNodeAction(InputFileSidebar.TreeViewContainerKey, treeViewModel);
+        CommonUtilityService.TreeView_ReRenderNodeAction(InputFileSidebar.TreeViewContainerKey, treeViewModel);
         
-		TreeViewService.ReduceMoveUpAction(
+		CommonUtilityService.TreeView_MoveUpAction(
 			InputFileSidebar.TreeViewContainerKey,
 			false,
 			false);

@@ -1,6 +1,7 @@
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Extensions.DotNet.CompilerServices.Models;
@@ -11,9 +12,9 @@ public class CompilerServiceExplorerTreeViewMouseEventHandler : TreeViewMouseEve
 
 	public CompilerServiceExplorerTreeViewMouseEventHandler(
 			IdeBackgroundTaskApi ideBackgroundTaskApi,
-			ITreeViewService treeViewService,
+			ICommonUtilityService commonUtilityService,
 			BackgroundTaskService backgroundTaskService)
-		: base(treeViewService, backgroundTaskService)
+		: base(commonUtilityService, backgroundTaskService)
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
 	}
