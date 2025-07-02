@@ -1,6 +1,7 @@
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Menus.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -10,7 +11,7 @@ namespace Walk.Ide.RazorLib.FileSystems.Displays;
 public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRendererType
 {
     [Inject]
-    private IFileSystemProvider FileSystemProvider { get; set; } = null!;
+    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [CascadingParameter]
     public MenuOptionCallbacks? MenuOptionCallbacks { get; set; }
@@ -39,7 +40,7 @@ public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRende
 
             if (AbsolutePath.IsDirectory)
             {
-                var fileSystemEntryList = await FileSystemProvider.Directory
+                var fileSystemEntryList = await CommonUtilityService.FileSystemProvider.Directory
                     .EnumerateFileSystemEntriesAsync(AbsolutePath.Value)
                     .ConfigureAwait(false);
 
