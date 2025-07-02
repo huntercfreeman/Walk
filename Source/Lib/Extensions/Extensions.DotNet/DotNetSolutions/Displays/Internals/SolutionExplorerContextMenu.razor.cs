@@ -40,8 +40,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	[Inject]
 	private IDotNetMenuOptionsFactory DotNetMenuOptionsFactory { get; set; } = null!;
 	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-	[Inject]
 	private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
@@ -436,14 +434,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			MenuOptionsFactory.CopyFile(
 				treeViewModel.Item.AbsolutePath,
 				() => {
-					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonComponentRenderers, CommonUtilityService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonUtilityService, TimeSpan.FromSeconds(7));
 					return Task.CompletedTask;
 				}),
 			MenuOptionsFactory.CutFile(
 				treeViewModel.Item.AbsolutePath,
 				() => {
 					ParentOfCutFile = parentTreeViewModel;
-					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonComponentRenderers, CommonUtilityService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", CommonUtilityService, TimeSpan.FromSeconds(7));
 					return Task.CompletedTask;
 				}),
 			MenuOptionsFactory.DeleteFile(

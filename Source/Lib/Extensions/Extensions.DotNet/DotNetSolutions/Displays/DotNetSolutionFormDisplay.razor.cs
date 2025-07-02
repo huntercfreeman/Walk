@@ -22,8 +22,6 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
-	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-	[Inject]
 	private WalkHostingInformation WalkHostingInformation { get; set; } = null!;
 	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
@@ -174,7 +172,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 		// Close Dialog
 		CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
-		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", CommonComponentRenderers, CommonUtilityService, TimeSpan.FromSeconds(7));
+		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", CommonUtilityService, TimeSpan.FromSeconds(7));
 
 		var solutionAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 			solutionAbsolutePathString,

@@ -90,7 +90,6 @@ public class TextEditorCommandDefaultFunctions
     		NotificationHelper.DispatchError(
 		        nameof(TriggerSave),
 		        $"{nameof(TriggerSave)} was null",
-		        commonComponentRenderers,
 				commonUtilityService,
 		        TimeSpan.FromSeconds(7));
     	}

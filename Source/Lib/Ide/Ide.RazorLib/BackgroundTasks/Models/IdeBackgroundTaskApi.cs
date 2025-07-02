@@ -47,7 +47,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
     private readonly BackgroundTaskService _backgroundTaskService;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
     private readonly TextEditorService _textEditorService;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
@@ -68,7 +67,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         BackgroundTaskService backgroundTaskService,
         ICompilerServiceRegistry compilerServiceRegistry,
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
         TextEditorService textEditorService,
         ITerminalService terminalService,
@@ -86,7 +84,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     {
         _backgroundTaskService = backgroundTaskService;
         _ideComponentRenderers = ideComponentRenderers;
-        _commonComponentRenderers = commonComponentRenderers;
         _treeViewService = treeViewService;
         _textEditorService = textEditorService;
         _compilerServiceRegistry = compilerServiceRegistry;
@@ -264,7 +261,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             _compilerServiceRegistry,
                             _commonUtilityService)),
                     _backgroundTaskService,
-                    _commonComponentRenderers,
                     _commonUtilityService)
                 {
                     Key = TerminalFacts.GENERAL_KEY
@@ -285,7 +281,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             _compilerServiceRegistry,
                             _commonUtilityService)),
                     _backgroundTaskService,
-                    _commonComponentRenderers,
                     _commonUtilityService,
                     _terminalService)
                 {
@@ -312,7 +307,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             _compilerServiceRegistry,
                             _commonUtilityService)),
                     _backgroundTaskService,
-                    _commonComponentRenderers,
                     _commonUtilityService)
                 {
                     Key = TerminalFacts.EXECUTION_KEY
@@ -333,7 +327,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                             _compilerServiceRegistry,
                             _commonUtilityService)),
                     _backgroundTaskService,
-                    _commonComponentRenderers,
                     _commonUtilityService,
                     _terminalService)
                 {
@@ -687,7 +680,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
         if (model is null)
         {
-        	NotificationHelper.DispatchDebugMessage(nameof(Editor_TryRegisterViewModelFunc), () => "model is null: " + registerViewModelArgs.ResourceUri.Value, _commonComponentRenderers, _commonUtilityService, TimeSpan.FromSeconds(4));
+        	NotificationHelper.DispatchDebugMessage(nameof(Editor_TryRegisterViewModelFunc), () => "model is null: " + registerViewModelArgs.ResourceUri.Value, _commonUtilityService, TimeSpan.FromSeconds(4));
             return Key<TextEditorViewModel>.Empty;
         }
 
@@ -918,7 +911,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         else
         {
             // TODO: Save As to make new file
-            NotificationHelper.DispatchInformative("Save Action", "File not found. TODO: Save As", _commonComponentRenderers, _commonUtilityService, TimeSpan.FromSeconds(7));
+            NotificationHelper.DispatchInformative("Save Action", "File not found. TODO: Save As", _commonUtilityService, TimeSpan.FromSeconds(7));
         }
 
         DateTime? fileLastWriteTime = null;
@@ -958,9 +951,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         var rootNode = new TreeViewAbsolutePath(
             folderAbsolutePath,
             _ideComponentRenderers,
-            _commonComponentRenderers,
-            _commonUtilityService.FileSystemProvider,
-            _commonUtilityService.EnvironmentProvider,
+            _commonUtilityService,
             true,
             true);
 

@@ -16,18 +16,15 @@ namespace Walk.Ide.RazorLib.Menus.Models;
 public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
 {
     private readonly IIdeComponentRenderers _ideComponentRenderers;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly ICommonUtilityService _commonUtilityService;
     private readonly BackgroundTaskService _backgroundTaskService;
 
     public MenuOptionsFactory(
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
         ICommonUtilityService commonUtilityService,
         BackgroundTaskService backgroundTaskService)
     {
         _ideComponentRenderers = ideComponentRenderers;
-        _commonComponentRenderers = commonComponentRenderers;
         _commonUtilityService = commonUtilityService;
         _backgroundTaskService = backgroundTaskService;
     }
@@ -481,7 +478,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory, IBackgroundTaskGroup
         }
         catch (Exception e)
         {
-            NotificationHelper.DispatchError("Rename Action", e.Message, _commonComponentRenderers, commonUtilityService, TimeSpan.FromSeconds(14));
+            NotificationHelper.DispatchError("Rename Action", e.Message, commonUtilityService, TimeSpan.FromSeconds(14));
             onAfterCompletion.Invoke();
             return default;
         }

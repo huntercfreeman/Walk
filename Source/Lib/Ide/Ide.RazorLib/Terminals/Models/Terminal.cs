@@ -17,7 +17,6 @@ namespace Walk.Ide.RazorLib.Terminals.Models;
 public class Terminal : ITerminal, IBackgroundTaskGroup
 {
 	private readonly BackgroundTaskService _backgroundTaskService;
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly ICommonUtilityService _commonUtilityService;
 	private readonly ITerminalService _terminalService;
 	
@@ -30,7 +29,6 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 		Func<Terminal, ITerminalInput> terminalInputFactory,
 		Func<Terminal, ITerminalOutput> terminalOutputFactory,
 		BackgroundTaskService backgroundTaskService,
-		ICommonComponentRenderers commonComponentRenderers,
 		ICommonUtilityService commonUtilityService,
 		ITerminalService terminalService)
 	{
@@ -40,7 +38,6 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 		TerminalOutput = terminalOutputFactory.Invoke(this);
 		
 		_backgroundTaskService = backgroundTaskService;
-		_commonComponentRenderers = commonComponentRenderers;
 		_commonUtilityService = commonUtilityService;
 		_terminalService = terminalService;
 		
@@ -181,7 +178,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 					" threw an exception" +
 					"\n"));
 		
-			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _commonUtilityService, TimeSpan.FromSeconds(14));
+			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonUtilityService, TimeSpan.FromSeconds(14));
 		}
 		finally
 		{

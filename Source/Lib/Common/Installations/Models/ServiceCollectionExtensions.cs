@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
@@ -49,9 +50,6 @@ public static class ServiceCollectionExtensions
         hostingInformation.BackgroundTaskService.SetIndefiniteQueue(indefiniteQueue);
             
         services
-            .AddSingleton(commonConfig)
-            .AddSingleton(hostingInformation)
-            .AddSingleton<ICommonComponentRenderers>(_ => _commonRendererTypes)
 			.AddScoped<BackgroundTaskService>(sp => 
             {
 				hostingInformation.BackgroundTaskService.SetContinuousWorker(new ContinuousBackgroundTaskWorker(
@@ -71,7 +69,13 @@ public static class ServiceCollectionExtensions
             .AddScoped<ITreeViewService, TreeViewService>()
             .AddScoped<IDragService, DragService>()
             .AddScoped<BrowserResizeInterop>()
-            .AddScoped<ICommonUtilityService, CommonUtilityService>();
+            .AddScoped<ICommonUtilityService, CommonUtilityService>(sp => new CommonUtilityService(
+                hostingInformation,
+                _commonRendererTypes,
+                sp.GetRequiredService<BackgroundTaskService>(),
+                sp.GetRequiredService<ITreeViewService>(),
+                commonConfig,
+                sp.GetRequiredService<IJSRuntime>()));
         
         return services;
     }

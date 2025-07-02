@@ -18,8 +18,6 @@ public partial class InputFileContextMenu : ComponentBase
     [Inject]
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
@@ -117,13 +115,13 @@ public partial class InputFileContextMenu : ComponentBase
             MenuOptionsFactory.CopyFile(
                 treeViewModel.Item,
                 () => {
-                    NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", CommonComponentRenderers, CommonUtilityService, TimeSpan.FromSeconds(7));
+                    NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", CommonUtilityService, TimeSpan.FromSeconds(7));
                     return Task.CompletedTask;
                 }),
             MenuOptionsFactory.CutFile(
                 treeViewModel.Item,
                 () => {
-                    NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", CommonComponentRenderers, CommonUtilityService, TimeSpan.FromSeconds(7));
+                    NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", CommonUtilityService, TimeSpan.FromSeconds(7));
                     ParentOfCutFile = parentTreeViewModel;
                     return Task.CompletedTask;
                 }),

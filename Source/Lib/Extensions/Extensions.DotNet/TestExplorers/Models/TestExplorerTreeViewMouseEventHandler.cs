@@ -12,14 +12,12 @@ namespace Walk.Extensions.DotNet.TestExplorers.Models;
 
 public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly TextEditorService _textEditorService;
 	private readonly ICommonUtilityService _commonUtilityService;
 	private readonly IServiceProvider _serviceProvider;
 
 	public TestExplorerTreeViewMouseEventHandler(
-			ICommonComponentRenderers commonComponentRenderers,
 			ICompilerServiceRegistry compilerServiceRegistry,
 			TextEditorService textEditorService,
 			ICommonUtilityService commonUtilityService,
@@ -28,7 +26,6 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 			BackgroundTaskService backgroundTaskService)
 		: base(treeViewService, backgroundTaskService)
 	{
-		_commonComponentRenderers = commonComponentRenderers;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_textEditorService = textEditorService;
 		_commonUtilityService = commonUtilityService;
@@ -44,7 +41,6 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 			NotificationHelper.DispatchInformative(
 				nameof(TestExplorerTreeViewMouseEventHandler),
 				$"Could not open in editor because node is not type: {nameof(TreeViewStringFragment)}",
-				_commonComponentRenderers,
 				_commonUtilityService,
 				TimeSpan.FromSeconds(5));
 
@@ -56,7 +52,6 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 			NotificationHelper.DispatchInformative(
 				nameof(TestExplorerTreeViewMouseEventHandler),
 				$"Could not open in editor because node's parent does not seem to include a class name",
-				_commonComponentRenderers,
 				_commonUtilityService,
 				TimeSpan.FromSeconds(5));
 
@@ -68,7 +63,6 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 		NotificationHelper.DispatchInformative(
 			nameof(TestExplorerTreeViewMouseEventHandler),
 			className + ".cs",
-			_commonComponentRenderers,
 			_commonUtilityService,
 			TimeSpan.FromSeconds(5));
 
@@ -77,7 +71,6 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 		NotificationHelper.DispatchInformative(
 			nameof(TestExplorerTreeViewMouseEventHandler),
 			methodName + "()",
-			_commonComponentRenderers,
 			_commonUtilityService,
 			TimeSpan.FromSeconds(5));
 
@@ -85,7 +78,6 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 			TestExplorerHelper.ShowTestInEditorFactory(
 				className,
 				methodName,
-				_commonComponentRenderers,
 				_commonUtilityService,
 				_compilerServiceRegistry,
 				_textEditorService,

@@ -335,7 +335,6 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             NotificationHelper.DispatchError(
                 title,
                 exception.ToString(),
-                _commonComponentRenderers,
                 _commonUtilityService,
                 TimeSpan.FromSeconds(10));
         }

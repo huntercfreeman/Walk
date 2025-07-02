@@ -20,8 +20,6 @@ public partial class InputFileSidebar : ComponentBase
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private ICommonUtilityService CommonUtilityService { get; set; } = null!;
@@ -51,18 +49,14 @@ public partial class InputFileSidebar : ComponentBase
             var directoryHomeNode = new TreeViewAbsolutePath(
                 CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath,
                 IdeComponentRenderers,
-                CommonComponentRenderers,
-                CommonUtilityService.FileSystemProvider,
-                CommonUtilityService.EnvironmentProvider,
+                CommonUtilityService,
                 true,
                 false);
 
             var directoryRootNode = new TreeViewAbsolutePath(
                 CommonUtilityService.EnvironmentProvider.RootDirectoryAbsolutePath,
                 IdeComponentRenderers,
-                CommonComponentRenderers,
-                CommonUtilityService.FileSystemProvider,
-                CommonUtilityService.EnvironmentProvider,
+                CommonUtilityService,
                 true,
                 false);
 

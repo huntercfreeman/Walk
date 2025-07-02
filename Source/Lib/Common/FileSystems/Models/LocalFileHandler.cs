@@ -145,7 +145,6 @@ public class LocalFileHandler : IFileHandler
         NotificationHelper.DispatchError(
             title,
             exception.ToString(),
-            _commonComponentRenderers,
             _commonUtilityService,
             TimeSpan.FromSeconds(10));
     }

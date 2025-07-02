@@ -20,8 +20,6 @@ public partial class InputFileTopNavBar : ComponentBase
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
     private BackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
     [CascadingParameter(Name="SetInputFileContentTreeViewRootFunc")]
@@ -55,9 +53,7 @@ public partial class InputFileTopNavBar : ComponentBase
     {
         InputFileService.OpenParentDirectory(
             IdeComponentRenderers,
-            CommonComponentRenderers,
-            CommonUtilityService.FileSystemProvider,
-            CommonUtilityService.EnvironmentProvider,
+            CommonUtilityService,
             BackgroundTaskService,
             parentDirectoryTreeViewModel: null);
 
@@ -126,7 +122,7 @@ public partial class InputFileTopNavBar : ComponentBase
         }
         catch (Exception exception)
         {
-            NotificationHelper.DispatchError($"ERROR: {nameof(InputFileTopNavBar)}", exception.ToString(), CommonComponentRenderers, CommonUtilityService, TimeSpan.FromSeconds(14));
+            NotificationHelper.DispatchError($"ERROR: {nameof(InputFileTopNavBar)}", exception.ToString(), CommonUtilityService, TimeSpan.FromSeconds(14));
         }
     }
 

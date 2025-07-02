@@ -16,7 +16,6 @@ namespace Walk.Ide.RazorLib.Terminals.Models;
 public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 {
 	private readonly BackgroundTaskService _backgroundTaskService;
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly ICommonUtilityService _commonUtilityService;
 
 	public TerminalWebsite(
@@ -25,7 +24,6 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 		Func<TerminalWebsite, ITerminalInput> terminalInputFactory,
 		Func<TerminalWebsite, ITerminalOutput> terminalOutputFactory,
 		BackgroundTaskService backgroundTaskService,
-		ICommonComponentRenderers commonComponentRenderers,
 		ICommonUtilityService commonUtilityService)
 	{
 		DisplayName = displayName;
@@ -34,7 +32,6 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 		TerminalOutput = terminalOutputFactory.Invoke(this);
 		
 		_backgroundTaskService = backgroundTaskService;
-		_commonComponentRenderers = commonComponentRenderers;
 		_commonUtilityService = commonUtilityService;
 	}
 
@@ -142,7 +139,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 				parsedCommand,
 				new StandardErrorCommandEvent(parsedCommand.SourceTerminalCommandRequest.CommandText + " threw an exception" + "\n"));
 		
-			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _commonUtilityService, TimeSpan.FromSeconds(14));
+			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonUtilityService, TimeSpan.FromSeconds(14));
 		}
 		finally
 		{

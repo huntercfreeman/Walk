@@ -15,9 +15,7 @@ namespace Walk.Ide.RazorLib.Terminals.Models;
 public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 {
 	private readonly BackgroundTaskService _backgroundTaskService;
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly ICommonUtilityService _commonUtilityService;
-	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly string _pathToShellExecutable;
 
 	public TerminalIntegrated(
@@ -26,9 +24,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 		Func<TerminalIntegrated, ITerminalInput> terminalInputFactory,
 		Func<TerminalIntegrated, ITerminalOutput> terminalOutputFactory,
 		BackgroundTaskService backgroundTaskService,
-		ICommonComponentRenderers commonComponentRenderers,
 		ICommonUtilityService commonUtilityService,
-		IEnvironmentProvider environmentProvider,
 		string pathToShellExecutable)
 	{
 		DisplayName = displayName;
@@ -37,9 +33,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 		TerminalOutput = terminalOutputFactory.Invoke(this);
 		
 		_backgroundTaskService = backgroundTaskService;
-		_commonComponentRenderers = commonComponentRenderers;
 		_commonUtilityService = commonUtilityService;
-		_environmentProvider = environmentProvider;
 		_pathToShellExecutable = pathToShellExecutable;
 	}
 
@@ -170,7 +164,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 					" threw an exception" +
 					"\n"));
 		
-			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _commonUtilityService, TimeSpan.FromSeconds(14));
+			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonUtilityService, TimeSpan.FromSeconds(14));
 		}
 		finally
 		{
@@ -209,7 +203,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 			{
 				var terminalCommandRequest = new TerminalCommandRequest(
 		    		$"{_pathToShellExecutable} -i",
-					_environmentProvider.HomeDirectoryAbsolutePath.Value);
+					_commonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value);
 		    	
 		    	var parsedCommand = await TerminalInteractive.TryHandleCommand(terminalCommandRequest);
 		    	ActiveTerminalCommandParsed = parsedCommand;
@@ -221,8 +215,8 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 					parsedCommand,
 					new StartedCommandEvent(-1));
 					
-				var pipeFilePath = _environmentProvider.JoinPaths(
-					_environmentProvider.SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
+				var pipeFilePath = _commonUtilityService.EnvironmentProvider.JoinPaths(
+					_commonUtilityService.EnvironmentProvider.SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
 					"terminal-test.txt");
 					
 				_shellCliWrapCommand = "abc" | Cli
@@ -243,7 +237,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
 			catch (Exception e)
 			{
 				Console.WriteLine("exception shell");
-				NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _commonUtilityService, TimeSpan.FromSeconds(14));
+				NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonUtilityService, TimeSpan.FromSeconds(14));
 			}
 			finally
 			{

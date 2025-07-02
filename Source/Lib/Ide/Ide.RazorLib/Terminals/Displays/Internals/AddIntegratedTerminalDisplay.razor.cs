@@ -86,9 +86,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 					CompilerServiceRegistry,
 					CommonUtilityService)),
 			BackgroundTaskService,
-			CommonComponentRenderers,
 			CommonUtilityService,
-			CommonUtilityService.EnvironmentProvider,
 			_pathToShellExecutable)
 		{
 			Key = Key<ITerminal>.NewKey()

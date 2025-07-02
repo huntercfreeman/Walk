@@ -61,6 +61,7 @@ public class CommonUtilityService : ICommonUtilityService
     private readonly object _stateModificationLock = new();
 	
 	public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
+	public ICommonComponentRenderers CommonComponentRenderers { get; }
 
     public CommonUtilityService(
         WalkHostingInformation hostingInformation,
@@ -70,6 +71,8 @@ public class CommonUtilityService : ICommonUtilityService
         WalkCommonConfig commonConfig,
         IJSRuntime jsRuntime)
     {
+        CommonComponentRenderers = commonComponentRenderers;
+    
         _backgroundTaskService = backgroundTaskService;
         
         _treeViewService = treeViewService;

@@ -3,6 +3,7 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Icons.Displays;
 using Walk.Common.RazorLib.Icons.Displays.Codicon;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.CompilerServices.Xml.Html.SyntaxActors;
@@ -17,22 +18,19 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 			CSharpProjectToProjectReferences cSharpProjectToProjectReferences,
 			IDotNetComponentRenderers dotNetComponentRenderers,
 			IIdeComponentRenderers ideComponentRenderers,
-			IFileSystemProvider fileSystemProvider,
-			IEnvironmentProvider environmentProvider,
+			ICommonUtilityService commonUtilityService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(cSharpProjectToProjectReferences, isExpandable, isExpanded)
 	{
 		DotNetComponentRenderers = dotNetComponentRenderers;
 		IdeComponentRenderers = ideComponentRenderers;
-		FileSystemProvider = fileSystemProvider;
-		EnvironmentProvider = environmentProvider;
+		CommonUtilityService = commonUtilityService;
 	}
 
 	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public IIdeComponentRenderers IdeComponentRenderers { get; }
-	public IFileSystemProvider FileSystemProvider { get; }
-	public IEnvironmentProvider EnvironmentProvider { get; }
+	public ICommonUtilityService CommonUtilityService { get; }
 
 	public override bool Equals(object? obj)
 	{
@@ -88,7 +86,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 	{
 		var previousChildren = new List<TreeViewNoType>(ChildList);
 
-		var content = await FileSystemProvider.File.ReadAllTextAsync(
+		var content = await CommonUtilityService.FileSystemProvider.File.ReadAllTextAsync(
 				Item.CSharpProjectNamespacePath.AbsolutePath.Value)
 			.ConfigureAwait(false);
 
@@ -130,9 +128,9 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 			var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
 				Item.CSharpProjectNamespacePath.AbsolutePath,
 				includeAttribute.Item2,
-				EnvironmentProvider);
+				CommonUtilityService.EnvironmentProvider);
 
-			var referenceProjectAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
+			var referenceProjectAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 				referenceProjectAbsolutePathString,
 				false);
 
@@ -148,8 +146,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 				x,
 				DotNetComponentRenderers,
 				IdeComponentRenderers,
-				FileSystemProvider,
-				EnvironmentProvider,
+				CommonUtilityService,
 				false,
 				false)
 			{

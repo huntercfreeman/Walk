@@ -55,10 +55,8 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
             IdeBackgroundTaskApi,
             TextEditorService,
             MenuOptionsFactory,
-            CommonComponentRenderers,
             TreeViewService,
 			BackgroundTaskService,
-            CommonUtilityService.EnvironmentProvider,
             CommonUtilityService);
     }
 

@@ -11,14 +11,13 @@ public static class NotificationHelper
     public static void DispatchInformative(
         string title,
         string message,
-        ICommonComponentRenderers commonComponentRenderers,
         ICommonUtilityService commonUtilityService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationInformative = new NotificationViewModel(
             Key<IDynamicViewModel>.NewKey(),
             title,
-            commonComponentRenderers.InformativeNotificationRendererType,
+            commonUtilityService.CommonComponentRenderers.InformativeNotificationRendererType,
             new Dictionary<string, object?>
             {
                 {
@@ -36,13 +35,12 @@ public static class NotificationHelper
     public static void DispatchError(
         string title,
         string message,
-        ICommonComponentRenderers commonComponentRenderers,
         ICommonUtilityService commonUtilityService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
-            commonComponentRenderers.ErrorNotificationRendererType,
+            commonUtilityService.CommonComponentRenderers.ErrorNotificationRendererType,
             new Dictionary<string, object?>
             {
                 { nameof(IErrorNotificationRendererType.Message), $"ERROR: {message}" },
@@ -57,13 +55,12 @@ public static class NotificationHelper
     public static void DispatchProgress(
         string title,
         ProgressBarModel progressBarModel,
-        ICommonComponentRenderers commonComponentRenderers,
         ICommonUtilityService commonUtilityService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationProgress = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
-            commonComponentRenderers.ProgressNotificationRendererType,
+            commonUtilityService.CommonComponentRenderers.ProgressNotificationRendererType,
             new Dictionary<string, object?>
             {
                 {
@@ -91,13 +88,12 @@ public static class NotificationHelper
 	public static void DispatchDebugMessage(
         string title,
         Func<string> messageFunc,
-        ICommonComponentRenderers commonComponentRenderers,
         ICommonUtilityService commonUtilityService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
-            commonComponentRenderers.ErrorNotificationRendererType,
+            commonUtilityService.CommonComponentRenderers.ErrorNotificationRendererType,
             new Dictionary<string, object?>
             {
                 { nameof(IErrorNotificationRendererType.Message), $"DEBUG: {messageFunc.Invoke()}" },

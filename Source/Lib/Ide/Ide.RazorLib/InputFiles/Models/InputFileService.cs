@@ -2,6 +2,7 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 
@@ -61,9 +62,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
     public void SetOpenedTreeViewModel(
     	TreeViewAbsolutePath treeViewModel,
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider)
+        ICommonUtilityService commonUtilityService)
     {
         lock (_stateModificationLock)
         {
@@ -73,9 +72,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
                     _inputFileState,
                     treeViewModel,
                     ideComponentRenderers,
-                    commonComponentRenderers,
-                    fileSystemProvider,
-                    environmentProvider);
+                    commonUtilityService);
             }
             else
             {
@@ -135,9 +132,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
 
     public void OpenParentDirectory(
         IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
+        ICommonUtilityService commonUtilityService,
         BackgroundTaskService backgroundTaskService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel)
     {
@@ -152,16 +147,14 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
             {
                 var parentDirectory = currentSelection.Item.ParentDirectory;
 
-                var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(
+                var parentDirectoryAbsolutePath = commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
                     parentDirectory,
                     true);
 
                 parentDirectoryTreeViewModel = new TreeViewAbsolutePath(
                     parentDirectoryAbsolutePath,
                     ideComponentRenderers,
-                    commonComponentRenderers,
-                    fileSystemProvider,
-                    environmentProvider,
+                    commonUtilityService,
                     false,
                     true);
             }
@@ -172,9 +165,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
                     inState,
                     parentDirectoryTreeViewModel,
                     ideComponentRenderers,
-                    commonComponentRenderers,
-                    fileSystemProvider,
-                    environmentProvider);
+                    commonUtilityService);
 
                 goto finalize;
             }
@@ -234,14 +225,12 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
     }
 
     private readonly
-        Queue<(IIdeComponentRenderers ideComponentRenderers, ICommonComponentRenderers commonComponentRenderers, IFileSystemProvider fileSystemProvider, IEnvironmentProvider environmentProvider, BackgroundTaskService backgroundTaskService, TreeViewAbsolutePath? parentDirectoryTreeViewModel)>
+        Queue<(IIdeComponentRenderers ideComponentRenderers, ICommonUtilityService commonUtilityService, BackgroundTaskService backgroundTaskService, TreeViewAbsolutePath? parentDirectoryTreeViewModel)>
         _queue_OpenParentDirectoryAction = new();
 
     public void Enqueue_OpenParentDirectoryAction(
     	IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
+        ICommonUtilityService commonUtilityService,
         BackgroundTaskService backgroundTaskService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel)
     {
@@ -252,7 +241,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
                 _workKindQueue.Enqueue(InputFileServiceWorkKind.OpenParentDirectoryAction);
 
                 _queue_OpenParentDirectoryAction.Enqueue((
-                    ideComponentRenderers, commonComponentRenderers, fileSystemProvider, environmentProvider, backgroundTaskService, parentDirectoryTreeViewModel));
+                    ideComponentRenderers, commonUtilityService, backgroundTaskService, parentDirectoryTreeViewModel));
 
                 backgroundTaskService.Continuous_EnqueueGroup(this);
             }
@@ -261,9 +250,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
     
     public async ValueTask Do_OpenParentDirectoryAction(
     	IIdeComponentRenderers ideComponentRenderers,
-        ICommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
+        ICommonUtilityService commonUtilityService,
         BackgroundTaskService backgroundTaskService,
         TreeViewAbsolutePath? parentDirectoryTreeViewModel)
     {
@@ -316,7 +303,7 @@ public class InputFileService : IInputFileService, IBackgroundTaskGroup
             {
                 var args = _queue_OpenParentDirectoryAction.Dequeue();
                 return Do_OpenParentDirectoryAction(
-                    args.ideComponentRenderers, args.commonComponentRenderers, args.fileSystemProvider, args.environmentProvider, args.backgroundTaskService, args.parentDirectoryTreeViewModel);
+                    args.ideComponentRenderers, args.commonUtilityService, args.backgroundTaskService, args.parentDirectoryTreeViewModel);
             }
             case InputFileServiceWorkKind.RefreshCurrentSelectionAction:
             {

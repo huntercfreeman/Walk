@@ -1,4 +1,4 @@
-﻿using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 
 namespace Walk.Ide.RazorLib.FileSystems.Models;
@@ -9,7 +9,7 @@ public class TreeViewHelperAbsolutePathDirectory
     {
         var directoryAbsolutePathString = directoryTreeView.Item.Value;
 
-        var directoryPathStringsList = await directoryTreeView.FileSystemProvider.Directory
+        var directoryPathStringsList = await directoryTreeView.CommonUtilityService.FileSystemProvider.Directory
             .GetDirectoriesAsync(directoryAbsolutePathString)
             .ConfigureAwait(false);
 
@@ -18,11 +18,9 @@ public class TreeViewHelperAbsolutePathDirectory
             .Select(x =>
             {
                 return (TreeViewNoType)new TreeViewAbsolutePath(
-                    directoryTreeView.EnvironmentProvider.AbsolutePathFactory(x, true),
+                    directoryTreeView.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(x, true),
                     directoryTreeView.IdeComponentRenderers,
-                    directoryTreeView.CommonComponentRenderers,
-                    directoryTreeView.FileSystemProvider,
-                    directoryTreeView.EnvironmentProvider,
+                    directoryTreeView.CommonUtilityService,
                     true,
                     false)
                 {
@@ -30,7 +28,7 @@ public class TreeViewHelperAbsolutePathDirectory
                 };
             });
 
-        var filePathStringsList = await directoryTreeView.FileSystemProvider.Directory
+        var filePathStringsList = await directoryTreeView.CommonUtilityService.FileSystemProvider.Directory
             .GetFilesAsync(directoryAbsolutePathString)
             .ConfigureAwait(false);
 
@@ -39,11 +37,9 @@ public class TreeViewHelperAbsolutePathDirectory
             .Select(x =>
             {
                 return (TreeViewNoType)new TreeViewAbsolutePath(
-                    directoryTreeView.EnvironmentProvider.AbsolutePathFactory(x, false),
+                    directoryTreeView.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(x, false),
                     directoryTreeView.IdeComponentRenderers,
-                    directoryTreeView.CommonComponentRenderers,
-                    directoryTreeView.FileSystemProvider,
-                    directoryTreeView.EnvironmentProvider,
+                    directoryTreeView.CommonUtilityService,
                     false,
                     false)
                 {

@@ -26,11 +26,14 @@ using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Contexts.Models;
+using Walk.Common.RazorLib.ComponentRenderers.Models;
 
 namespace Walk.Common.RazorLib.Options.Models;
 
 public interface ICommonUtilityService : IBackgroundTaskGroup
 {
+    public ICommonComponentRenderers CommonComponentRenderers { get; }
+
 	/* Start IAppDimensionService */
 	public event Action? AppDimensionStateChanged;
 	

@@ -27,11 +27,9 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IDotNetSolutionService _dotNetSolutionService;
     private readonly ITreeViewService _treeViewService;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly TextEditorService _textEditorService;
     private readonly ICommonUtilityService _commonUtilityService;
     private readonly BackgroundTaskService _backgroundTaskService;
-    private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITerminalService _terminalService;
     private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 
@@ -40,11 +38,9 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		IDotNetSolutionService dotNetSolutionService,
 		ITreeViewService treeViewService,
-        ICommonComponentRenderers commonComponentRenderers,
         TextEditorService textEditorService,
         ICommonUtilityService commonUtilityService,
         BackgroundTaskService backgroundTaskService,
-        IFileSystemProvider fileSystemProvider,
         DotNetCliOutputParser dotNetCliOutputParser,
         ITerminalService terminalService)
 	{
@@ -52,11 +48,9 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _dotNetSolutionService = dotNetSolutionService;
         _treeViewService = treeViewService;
-        _commonComponentRenderers = commonComponentRenderers;
 		_textEditorService = textEditorService;
 		_commonUtilityService = commonUtilityService;
 		_backgroundTaskService = backgroundTaskService;
-		_fileSystemProvider = fileSystemProvider;
 		_terminalService = terminalService;
         _dotNetCliOutputParser = dotNetCliOutputParser;
         
@@ -336,7 +330,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
         var localTreeViewProjectTestModelList = localProjectTestModelList.Select(x =>
                 (TreeViewNoType)new TreeViewProjectTestModel(
                     x,
-                    _commonComponentRenderers,
+                    _commonUtilityService.CommonComponentRenderers,
                     true,
                     false))
             .ToArray();
@@ -348,7 +342,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
             if (string.IsNullOrWhiteSpace(treeViewProjectTestModel.Item.DirectoryNameForTestDiscovery))
                 return;
             
-            var projectFileText = await _fileSystemProvider.File.ReadAllTextAsync(treeViewProjectTestModel.Item.AbsolutePath.Value);
+            var projectFileText = await _commonUtilityService.FileSystemProvider.File.ReadAllTextAsync(treeViewProjectTestModel.Item.AbsolutePath.Value);
             
             if (projectFileText.Contains("xunit"))
             {
@@ -519,7 +513,6 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 			NotificationHelper.DispatchProgress(
 				$"Test Discovery: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
 				progressBarModel,
-				_commonComponentRenderers,
 				_commonUtilityService,
 				TimeSpan.FromMilliseconds(-1));
 				

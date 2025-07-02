@@ -69,7 +69,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly ITreeViewService _treeViewService;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 	private readonly TextEditorService _textEditorService;
@@ -98,7 +97,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		ICompilerServiceRegistry compilerServiceRegistry,
 		IDotNetComponentRenderers dotNetComponentRenderers,
 		IIdeComponentRenderers ideComponentRenderers,
-		ICommonComponentRenderers commonComponentRenderers,
 		ITreeViewService treeViewService,
 		DotNetCliOutputParser dotNetCliOutputParser,
 		TextEditorService textEditorService,
@@ -119,7 +117,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		_appDataService = appDataService;
         _dotNetComponentRenderers = dotNetComponentRenderers;
 		_ideComponentRenderers = ideComponentRenderers;
-		_commonComponentRenderers = commonComponentRenderers;
 		_treeViewService = treeViewService;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
 		_textEditorService = textEditorService;
@@ -144,11 +141,9 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 			_ideBackgroundTaskApi,
 			DotNetSolutionService,
 			_treeViewService,
-            _commonComponentRenderers,
             _textEditorService,
             _commonUtilityService,
             _backgroundTaskService,
-            _commonUtilityService.FileSystemProvider,
             _dotNetCliOutputParser,
             _terminalService);
 
@@ -438,7 +433,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 if (activeStartupControl?.StartupProjectAbsolutePath is not null)
                     BuildProjectOnClick(activeStartupControl.StartupProjectAbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(BuildProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", _commonComponentRenderers, _commonUtilityService, TimeSpan.FromSeconds(6));
+                    NotificationHelper.DispatchError(nameof(BuildProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", _commonUtilityService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 
@@ -455,7 +450,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 if (activeStartupControl?.StartupProjectAbsolutePath is not null)
                     CleanProjectOnClick(activeStartupControl.StartupProjectAbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(CleanProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", _commonComponentRenderers, _commonUtilityService, TimeSpan.FromSeconds(6));
+                    NotificationHelper.DispatchError(nameof(CleanProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", _commonUtilityService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 
@@ -471,7 +466,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 if (dotNetSolutionModel?.AbsolutePath is not null)
                     BuildSolutionOnClick(dotNetSolutionModel.AbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(BuildSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", _commonComponentRenderers, _commonUtilityService, TimeSpan.FromSeconds(6));
+                    NotificationHelper.DispatchError(nameof(BuildSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", _commonUtilityService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 
@@ -487,7 +482,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 if (dotNetSolutionModel?.AbsolutePath is not null)
                     CleanSolutionOnClick(dotNetSolutionModel.AbsolutePath.Value);
                 else
-                    NotificationHelper.DispatchError(nameof(CleanSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", _commonComponentRenderers, _commonUtilityService, TimeSpan.FromSeconds(6));
+                    NotificationHelper.DispatchError(nameof(CleanSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", _commonUtilityService, TimeSpan.FromSeconds(6));
                 return Task.CompletedTask;
             }));
 
@@ -933,7 +928,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			NotificationHelper.DispatchError(
 		        $"ERROR: nameof(_appDataService.WriteAppDataAsync)",
 		        e.ToString(),
-		        _commonComponentRenderers,
 		        _commonUtilityService,
 		        TimeSpan.FromSeconds(5));
 		}
@@ -1338,7 +1332,6 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		NotificationHelper.DispatchProgress(
 			$"Parse: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
 			progressBarModel,
-			_commonComponentRenderers,
 			_commonUtilityService,
 			TimeSpan.FromMilliseconds(-1));
 			
@@ -1507,9 +1500,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			dotNetSolutionModel,
 			_dotNetComponentRenderers,
 			_ideComponentRenderers,
-			_commonComponentRenderers,
-			_commonUtilityService.FileSystemProvider,
-			_commonUtilityService.EnvironmentProvider,
+			_commonUtilityService,
 			true,
 			true);
 

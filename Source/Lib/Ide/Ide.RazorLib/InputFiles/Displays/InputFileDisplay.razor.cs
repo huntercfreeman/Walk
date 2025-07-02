@@ -17,8 +17,6 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
-    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
-    [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private IInputFileService InputFileService { get; set; } = null!;
@@ -96,9 +94,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
             TreeViewService,
             InputFileService,
             IdeComponentRenderers,
-            CommonComponentRenderers,
-            CommonUtilityService.FileSystemProvider,
-            CommonUtilityService.EnvironmentProvider,
+            CommonUtilityService,
             SetInputFileContentTreeViewRootFunc,
             async () =>
             {
@@ -160,9 +156,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
         var pseudoRootNode = new TreeViewAbsolutePath(
             absolutePath,
             IdeComponentRenderers,
-            CommonComponentRenderers,
-            CommonUtilityService.FileSystemProvider,
-            CommonUtilityService.EnvironmentProvider,
+            CommonUtilityService,
             true,
             false);
 
@@ -202,9 +196,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
         InputFileService.SetOpenedTreeViewModel(
             pseudoRootNode,
             IdeComponentRenderers,
-            CommonComponentRenderers,
-            CommonUtilityService.FileSystemProvider,
-            CommonUtilityService.EnvironmentProvider);
+            CommonUtilityService);
     }
     
     public async void OnInputFileStateChanged()

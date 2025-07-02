@@ -46,7 +46,6 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 	protected override void OnInitialized()
 	{
 		_treeViewKeyboardEventHandler = new TestExplorerTreeViewKeyboardEventHandler(
-			CommonComponentRenderers,
 			CompilerServiceRegistry,
 			TextEditorService,
 			CommonUtilityService,
@@ -55,7 +54,6 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 			BackgroundTaskService);
 
 		_treeViewMouseEventHandler = new TestExplorerTreeViewMouseEventHandler(
-			CommonComponentRenderers,
 			CompilerServiceRegistry,
 			TextEditorService,
 			CommonUtilityService,

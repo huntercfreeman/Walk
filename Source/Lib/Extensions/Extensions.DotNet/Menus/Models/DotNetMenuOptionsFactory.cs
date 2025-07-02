@@ -26,18 +26,15 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 	private readonly BackgroundTaskService _backgroundTaskService;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
-	private readonly ICommonComponentRenderers _commonComponentRenderers;
 
 	public DotNetMenuOptionsFactory(
 		BackgroundTaskService backgroundTaskService,
 		IDotNetComponentRenderers dotNetComponentRenderers,
-		IIdeComponentRenderers ideComponentRenderers,
-		ICommonComponentRenderers commonComponentRenderers)
+		IIdeComponentRenderers ideComponentRenderers)
 	{
 		_backgroundTaskService = backgroundTaskService;
 		_dotNetComponentRenderers = dotNetComponentRenderers;
 		_ideComponentRenderers = ideComponentRenderers;
-		_commonComponentRenderers = commonComponentRenderers;
 	}
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
@@ -248,7 +245,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 				{
 					ContinueWithFunc = parsedCommand =>
 					{
-						NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", _commonComponentRenderers, commonUtilityService, TimeSpan.FromSeconds(7));
+						NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", commonUtilityService, TimeSpan.FromSeconds(7));
 						return onAfterCompletion.Invoke();
 					}
 				};
@@ -310,7 +307,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
         {
             ContinueWithFunc = parsedCommand =>
             {
-                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.NameWithExtension}", _commonComponentRenderers, commonUtilityService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.NameWithExtension}", commonUtilityService, TimeSpan.FromSeconds(7));
                 return onAfterCompletion.Invoke();
             }
         };
@@ -361,7 +358,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
         {
             ContinueWithFunc = parsedCommand =>
             {
-                NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.AbsolutePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}", _commonComponentRenderers, commonUtilityService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.AbsolutePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}", commonUtilityService, TimeSpan.FromSeconds(7));
                 return onAfterCompletion.Invoke();
             }
         };
@@ -419,7 +416,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
         {
             ContinueWithFunc = parsedCommand =>
             {
-                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectNamespacePath.AbsolutePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", _commonComponentRenderers, commonUtilityService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectNamespacePath.AbsolutePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", commonUtilityService, TimeSpan.FromSeconds(7));
                 return onAfterCompletion.Invoke();
             }
         };

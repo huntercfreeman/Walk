@@ -51,12 +51,10 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 		_solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeyboardEventHandler(
 			IdeBackgroundTaskApi,
 			MenuOptionsFactory,
-			CommonComponentRenderers,
 			TextEditorService,
 			TreeViewService,
 			CommonUtilityService,
-			BackgroundTaskService,
-			CommonUtilityService.EnvironmentProvider);
+			BackgroundTaskService);
 
 		_solutionExplorerTreeViewMouseEventHandler = new SolutionExplorerTreeViewMouseEventHandler(
 			IdeBackgroundTaskApi,
