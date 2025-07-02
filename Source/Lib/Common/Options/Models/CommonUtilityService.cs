@@ -535,14 +535,7 @@ public class CommonUtilityService : ICommonUtilityService
     public IEnvironmentProvider EnvironmentProvider { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     
-    private ICommonUtilityService _commonUtilityService;
-	
 	public event Action<CommonUiEventKind>? CommonUiStateChanged;
-	
-	public void HACK_SetCommonUtilityServiceCircularReferenceTemporaryFix(ICommonUtilityService commonUtilityService)
-	{
-	    _commonUtilityService = commonUtilityService;
-	}
 	
     /* Start IOutlineService */
 	private OutlineState _outlineState = new();
@@ -785,7 +778,7 @@ public class CommonUtilityService : ICommonUtilityService
         CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
 
         if (sideEffect)
-            _commonUtilityService.AppDimension_NotifyIntraAppResize();
+            AppDimension_NotifyIntraAppResize();
     }
 
     public void SetPanelTabAsActiveByContextRecordKey(Key<ContextRecord> contextRecordKey)

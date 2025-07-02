@@ -120,8 +120,6 @@ public interface ICommonUtilityService
     public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
     
     public event Action<CommonUiEventKind>? CommonUiStateChanged;
-    
-    public void HACK_SetCommonUtilityServiceCircularReferenceTemporaryFix(ICommonUtilityService commonUtilityService);
 
     /* Start IOutlineService */
 	public OutlineState GetOutlineState();
