@@ -1154,7 +1154,6 @@ public sealed class TextEditorViewModelApi
 				var localHorizontalTake = horizontalTake;
 				
 				// Tab key adjustments
-				var line = modelModifier.GetLineInformation(lineIndex);
 				var firstInlineUiOnLineIndex = -1;
 				var foundLine = false;
 				var tabCharPositionIndexListCount = modelModifier.TabCharPositionIndexList.Count;
@@ -1163,11 +1162,11 @@ public sealed class TextEditorViewModelApi
 				for (int i = 0; i < tabCharPositionIndexListCount; i++)
 				{
 					var tabCharPositionIndex = modelModifier.TabCharPositionIndexList[i];
-					var tabKeyColumnIndex = tabCharPositionIndex - line.Position_StartInclusiveIndex;
+					var tabKeyColumnIndex = tabCharPositionIndex - lineInformation.Position_StartInclusiveIndex;
 				
 					if (!foundLine)
 					{
-						if (tabCharPositionIndex >= line.Position_StartInclusiveIndex)
+						if (tabCharPositionIndex >= lineInformation.Position_StartInclusiveIndex)
 						{
 							firstInlineUiOnLineIndex = i;
 							foundLine = true;
@@ -1200,7 +1199,7 @@ public sealed class TextEditorViewModelApi
 					for (int i = firstInlineUiOnLineIndex; i < tabCharPositionIndexListCount; i++)
 					{
 						var tabCharPositionIndex = modelModifier.TabCharPositionIndexList[i];
-						var tabKeyColumnIndex = tabCharPositionIndex - line.Position_StartInclusiveIndex;
+						var tabKeyColumnIndex = tabCharPositionIndex - lineInformation.Position_StartInclusiveIndex;
 						
 						if (tabKeyColumnIndex >= localHorizontalStartingIndex + localHorizontalTake)
 							break;
@@ -1254,8 +1253,6 @@ public sealed class TextEditorViewModelApi
 			}
 			else
 			{
-				var line = modelModifier.GetLineInformation(lineIndex);
-		
 				var foundLine = false;
 				var resultTabCount = 0;
 		
@@ -1264,13 +1261,13 @@ public sealed class TextEditorViewModelApi
 				{
 					if (!foundLine)
 					{
-						if (tabCharPositionIndex >= line.Position_StartInclusiveIndex)
+						if (tabCharPositionIndex >= lineInformation.Position_StartInclusiveIndex)
 							foundLine = true;
 					}
 					
 					if (foundLine)
 					{
-						if (tabCharPositionIndex >= line.LastValidColumnIndex)
+						if (tabCharPositionIndex >= lineInformation.LastValidColumnIndex)
 							break;
 					
 						resultTabCount++;
