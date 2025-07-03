@@ -2,6 +2,8 @@ namespace Walk.Common.RazorLib.FileSystems.Models;
 
 public interface IFileHandler
 {
+    public bool Exists(string absolutePathString);
+    
     public Task<bool> ExistsAsync(
         string absolutePathString,
         CancellationToken cancellationToken = default);

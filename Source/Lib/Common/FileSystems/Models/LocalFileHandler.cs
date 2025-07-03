@@ -14,6 +14,11 @@ public class LocalFileHandler : IFileHandler
         _commonUtilityService = commonUtilityService;
     }
 
+    public bool Exists(string absolutePathString)
+    {
+        return File.Exists(absolutePathString);
+    }
+    
     public Task<bool> ExistsAsync(
         string absolutePathString,
         CancellationToken cancellationToken = default)
