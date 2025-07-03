@@ -99,6 +99,11 @@ public class LocalFileHandler : IFileHandler
                 cancellationToken)
 			.ConfigureAwait(false);
     }
+    
+    public string ReadAllText(string absolutePathString)
+    {
+        return File.ReadAllText(absolutePathString);
+    }
 
     public async Task WriteAllTextAsync(
         string absolutePathString,

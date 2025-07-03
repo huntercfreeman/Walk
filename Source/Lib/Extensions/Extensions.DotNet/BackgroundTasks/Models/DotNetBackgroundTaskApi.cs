@@ -1410,7 +1410,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		
 		await DiscoverFilesRecursively(startingAbsolutePathForSearch, discoveredFileList, true).ConfigureAwait(false);
 
-		await ParseClassesInProject(
+		ParseClassesInProject(
 			editContext,
 			dotNetProject,
 			progressBarModel,
@@ -1447,7 +1447,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 		}
 	}
 
-	private async Task ParseClassesInProject(
+	private void ParseClassesInProject(
 		TextEditorEditContext editContext,
 		IDotNetProject dotNetProject,
 		ProgressBarModel progressBarModel,
@@ -1468,10 +1468,8 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			compilerService.RegisterResource(
 				resourceUri,
 				shouldTriggerResourceWasModified: false);
-				
-			await compilerService.FastParseAsync(editContext, resourceUri, _commonUtilityService.FileSystemProvider, compilationUnitKind)
-				.ConfigureAwait(false);
-				
+			
+			compilerService.FastParse(editContext, resourceUri, _commonUtilityService.FileSystemProvider, compilationUnitKind);
 			fileParsedCount++;
 		}
 	}

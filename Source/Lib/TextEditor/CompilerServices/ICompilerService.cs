@@ -117,4 +117,10 @@ public interface ICompilerService
 		ResourceUri resourceUri,
 		IFileSystemProvider fileSystemProvider,
 		CompilationUnitKind compilationUnitKind);
+
+    public void FastParse(
+		TextEditorEditContext editContext,
+		ResourceUri resourceUri,
+		IFileSystemProvider fileSystemProvider,
+		CompilationUnitKind compilationUnitKind);
 }
