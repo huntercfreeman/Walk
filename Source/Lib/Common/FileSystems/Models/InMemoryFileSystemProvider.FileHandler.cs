@@ -114,6 +114,11 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
         {
             return await UnsafeReadAllTextAsync(absolutePathString, cancellationToken).ConfigureAwait(false);
         }
+        
+        public string ReadAllText(string absolutePathString)
+        {
+            return UnsafeReadAllText(absolutePathString);
+        }
 
         public async Task WriteAllTextAsync(
             string absolutePathString,
@@ -252,6 +257,18 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             	throw new WalkCommonException($"File with path: '{absolutePathString}' was not found.");
 
             return Task.FromResult(existingFile.Data);
+        }
+        
+        public string UnsafeReadAllText(string absolutePathString)
+        {
+            var existingFile = _inMemoryFileSystemProvider._files.FirstOrDefault(f =>
+                f.AbsolutePath.Value == absolutePathString &&
+                !f.IsDirectory);
+
+            if (existingFile.Data is null)
+            	throw new WalkCommonException($"File with path: '{absolutePathString}' was not found.");
+
+            return existingFile.Data;
         }
 
         public Task UnsafeWriteAllTextAsync(

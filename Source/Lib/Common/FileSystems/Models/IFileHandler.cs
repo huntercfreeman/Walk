@@ -24,6 +24,8 @@ public interface IFileHandler
         string absolutePathString,
         CancellationToken cancellationToken = default);
 
+    public string ReadAllText(string absolutePathString);
+    
     public Task<string> ReadAllTextAsync(
         string absolutePathString,
         CancellationToken cancellationToken = default);

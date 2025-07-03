@@ -131,4 +131,9 @@ public class CompilerServiceDoNothing : ICompilerService
 	{
 		return ValueTask.CompletedTask;
 	}
+	
+	public void FastParse(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
+	{
+		return;
+	}
 }

@@ -227,6 +227,11 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
 	{
 		return ValueTask.CompletedTask;
 	}
+	
+	public void FastParse(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
+	{
+		return;
+	}
     
     /// <summary>
     /// Looks up the <see cref="IScope"/> that encompasses the provided positionIndex.
