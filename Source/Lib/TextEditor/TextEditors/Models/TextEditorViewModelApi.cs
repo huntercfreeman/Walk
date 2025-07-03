@@ -1123,10 +1123,20 @@ public sealed class TextEditorViewModelApi
                     cacheEntryCopy.LineNumberString);
 			    continue;
 			}
+            
+            var lineEndLower = lineIndex == 0
+                ? new(0, 0, Walk.TextEditor.RazorLib.Lines.Models.LineEndKind.StartOfFile)
+                : modelModifier.LineEndList[lineIndex - 1];
 			
-			var lineInformation = modelModifier.GetLineInformation(lineIndex);
-						    
-			var line_PositionStartInclusiveIndex = lineInformation.Position_StartInclusiveIndex;
+			var lineEndUpper = modelModifier.LineEndList[lineIndex];
+			
+			var lineInformation = new Walk.TextEditor.RazorLib.Lines.Models.LineInformation(
+                lineIndex,
+                lineEndLower.Position_EndExclusiveIndex,
+                lineEndUpper.Position_EndExclusiveIndex,
+                lineEndLower,
+                lineEndUpper);
+
 			var lineEnd = modelModifier.LineEndList[lineIndex];
 			
 			// TODO: Was this code using length including line ending or excluding? (2024-12-29)
@@ -1222,7 +1232,7 @@ public sealed class TextEditorViewModelApi
 				leftInPixels = Math.Max(0, leftInPixels);
 
 				var topInPixels = lineIndex * viewModel.PersistentState.CharAndLineMeasurements.LineHeight;
-				position_StartInclusiveIndex = line_PositionStartInclusiveIndex + localHorizontalStartingIndex;
+				position_StartInclusiveIndex = lineInformation.Position_StartInclusiveIndex + localHorizontalStartingIndex;
 				
 				position_EndExclusiveIndex = position_StartInclusiveIndex + localHorizontalTake;
 				if (position_EndExclusiveIndex > lineInformation.UpperLineEnd.Position_StartInclusiveIndex)
