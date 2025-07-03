@@ -976,9 +976,7 @@ public class TextEditorCommandDefaultFunctions
     	TextEditorModel modelModifier,
     	TextEditorViewModel viewModel)
     {
-        viewModel.PersistentState.ComponentData.LineIndexCache.Clear();
-    
-    	var virtualizedIndexCollapsePoint = viewModel.PersistentState.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == lineIndex);
+        var virtualizedIndexCollapsePoint = viewModel.PersistentState.VirtualizedCollapsePointList.FindIndex(x => x.AppendToLineIndex == lineIndex);
 		if (virtualizedIndexCollapsePoint != -1)
 		{
 			var allIndexCollapsePoint = viewModel.PersistentState.AllCollapsePointList.FindIndex(x => x.AppendToLineIndex == lineIndex);
@@ -1090,6 +1088,7 @@ public class TextEditorCommandDefaultFunctions
 				
 				viewModel.Virtualization.ShouldCalculateVirtualizationResult = true;
 				viewModel.PersistentState.VirtualizedCollapsePointListVersion++;
+				viewModel.PersistentState.ComponentData.LineIndexCache.Clear();
 				return true;
 			}
 		}
