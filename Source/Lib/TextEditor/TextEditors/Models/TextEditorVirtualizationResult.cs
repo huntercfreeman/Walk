@@ -1074,8 +1074,29 @@ public class TextEditorVirtualizationResult
             var lowerLineIndexInclusive = EntryList[0].LineIndex;
             var upperLineIndexInclusive = EntryList[Count - 1].LineIndex;
 
-            var lowerLine = Model.GetLineInformation(lowerLineIndexInclusive);
-            var upperLine = Model.GetLineInformation(upperLineIndexInclusive);
+            // "inline" of 'TextEditorModel.GetLineInformation(...)'. This isn't a 1 to 1 inline, it avoids some redundant bounds checking.
+            var lowerLine_lineEndLower = lowerLineIndexInclusive == 0
+                ? new(0, 0, Walk.TextEditor.RazorLib.Lines.Models.LineEndKind.StartOfFile)
+                : Model.LineEndList[lowerLineIndexInclusive - 1];
+			var lowerLine_lineEndUpper = Model.LineEndList[lowerLineIndexInclusive];
+			var lowerLine = new Walk.TextEditor.RazorLib.Lines.Models.LineInformation(
+                lowerLineIndexInclusive,
+                lowerLine_lineEndLower.Position_EndExclusiveIndex,
+                lowerLine_lineEndUpper.Position_EndExclusiveIndex,
+                lowerLine_lineEndLower,
+                lowerLine_lineEndUpper);
+
+            // "inline" of 'TextEditorModel.GetLineInformation(...)'. This isn't a 1 to 1 inline, it avoids some redundant bounds checking.
+            var upperLine_lineEndLower = upperLineIndexInclusive == 0
+                ? new(0, 0, Walk.TextEditor.RazorLib.Lines.Models.LineEndKind.StartOfFile)
+                : Model.LineEndList[upperLineIndexInclusive - 1];
+			var upperLine_lineEndUpper = Model.LineEndList[upperLineIndexInclusive];
+			var upperLine = new Walk.TextEditor.RazorLib.Lines.Models.LineInformation(
+                upperLineIndexInclusive,
+                upperLine_lineEndLower.Position_EndExclusiveIndex,
+                upperLine_lineEndUpper.Position_EndExclusiveIndex,
+                upperLine_lineEndLower,
+                upperLine_lineEndUpper);
 
 			// Awkward enumeration was modified 'for loop' (2025-01-22)
 			// Also, this shouldn't be done here, it should be done during the editContext.

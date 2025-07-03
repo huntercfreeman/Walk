@@ -1124,20 +1124,17 @@ public sealed class TextEditorViewModelApi
 			    continue;
 			}
             
+            // "inline" of 'TextEditorModel.GetLineInformation(...)'. This isn't a 1 to 1 inline, it avoids some redundant bounds checking.
             var lineEndLower = lineIndex == 0
                 ? new(0, 0, Walk.TextEditor.RazorLib.Lines.Models.LineEndKind.StartOfFile)
                 : modelModifier.LineEndList[lineIndex - 1];
-			
 			var lineEndUpper = modelModifier.LineEndList[lineIndex];
-			
 			var lineInformation = new Walk.TextEditor.RazorLib.Lines.Models.LineInformation(
                 lineIndex,
                 lineEndLower.Position_EndExclusiveIndex,
                 lineEndUpper.Position_EndExclusiveIndex,
                 lineEndLower,
                 lineEndUpper);
-
-			var lineEnd = modelModifier.LineEndList[lineIndex];
 			
 			// TODO: Was this code using length including line ending or excluding? (2024-12-29)
 			var lineLength = lineInformation.Position_EndExclusiveIndex - lineInformation.Position_StartInclusiveIndex;
