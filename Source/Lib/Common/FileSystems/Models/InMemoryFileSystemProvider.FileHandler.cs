@@ -22,6 +22,11 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             _commonUtilityService = commonUtilityService;
         }
 
+        public bool Exists(string absolutePathString)
+        {
+            return UnsafeExists(absolutePathString);
+        }
+
         public Task<bool> ExistsAsync(
             string absolutePathString,
             CancellationToken cancellationToken = default)
@@ -144,6 +149,15 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             {
                 _inMemoryFileSystemProvider._modificationSemaphore.Release();
             }
+        }
+        
+        public bool UnsafeExists(string absolutePathString)
+        {
+            // System.InvalidOperationException: Collection was modified; enumeration operation may not execute.
+            // Fix: added '.ToArray()' (2024-04-25)
+            return _inMemoryFileSystemProvider._files.ToArray().Any(imf =>
+                imf.AbsolutePath.Value == absolutePathString &&
+                !imf.IsDirectory);
         }
         
         public Task<bool> UnsafeExistsAsync(

@@ -773,10 +773,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	{
 		var dotNetSolutionAbsolutePathString = inSolutionAbsolutePath.Value;
 
-		var content = await _commonUtilityService.FileSystemProvider.File.ReadAllTextAsync(
-				dotNetSolutionAbsolutePathString,
-				CancellationToken.None)
-			.ConfigureAwait(false);
+		var content = _commonUtilityService.FileSystemProvider.File.ReadAllText(dotNetSolutionAbsolutePathString);
 
 		var solutionAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 			dotNetSolutionAbsolutePathString,
@@ -821,7 +818,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		else
 			dotNetSolutionModel = ParseSln(solutionAbsolutePath, resourceUri, content);
 		
-		dotNetSolutionModel.DotNetProjectList = await SortProjectReferences(dotNetSolutionModel);
+		dotNetSolutionModel.DotNetProjectList = SortProjectReferences(dotNetSolutionModel);
 		
 		/*	
 		// FindAllReferences
@@ -871,18 +868,20 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 			
 			TerminalCommandRequest terminalCommandRequest;
 
+            var slnFoundString = $"sln found: {solutionAbsolutePath.Value}";
+            var prefix = TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetBackgroundTaskApi);
+
 			// Set 'generalTerminal' working directory
 			terminalCommandRequest = new TerminalCommandRequest(
-	        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetBackgroundTaskApi),
+	        	prefix + "_General",
 	        	parentDirectory)
 	        {
 	        	BeginWithFunc = parsedCommand =>
 	        	{
 	        		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
 						parsedCommand,
-						new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
-Sln-Directory: '{parentDirectory}'
-General Terminal".ReplaceLineEndings("\n")));
+						// If newlines are added to this make sure to use '.ReplaceLineEndings("\n")' because the syntax highlighting and text editor are expecting this line ending.
+						new StandardOutputCommandEvent(slnFoundString));
 	        		return Task.CompletedTask;
 	        	}
 	        };
@@ -890,16 +889,15 @@ General Terminal".ReplaceLineEndings("\n")));
 
 			// Set 'executionTerminal' working directory
 			terminalCommandRequest = new TerminalCommandRequest(
-	        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetBackgroundTaskApi),
+	        	prefix + "_Execution",
 	        	parentDirectory)
 	        {
 	        	BeginWithFunc = parsedCommand =>
 	        	{
-	        		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
+	        		_terminalService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].TerminalOutput.WriteOutput(
 						parsedCommand,
-						new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
-Sln-Directory: '{parentDirectory}'
-Execution Terminal".ReplaceLineEndings("\n")));
+						// If newlines are added to this make sure to use '.ReplaceLineEndings("\n")' because the syntax highlighting and text editor are expecting this line ending.
+						new StandardOutputCommandEvent(slnFoundString));
 	        		return Task.CompletedTask;
 	        	}
 	        };
@@ -1148,7 +1146,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 	/// <summary>
 	/// This solution is incomplete, the current code for this was just to get a "feel" for things.
 	/// </summary>
-	private async ValueTask<List<IDotNetProject>> SortProjectReferences(DotNetSolutionModel dotNetSolutionModel)
+	private List<IDotNetProject> SortProjectReferences(DotNetSolutionModel dotNetSolutionModel)
 	{
 		for (int i = dotNetSolutionModel.DotNetProjectList.Count - 1; i >= 0; i--)
 		{
@@ -1174,7 +1172,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				_commonUtilityService.EnvironmentProvider);
 			projectTuple.AbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(absolutePathString, false);
 		
-			if (!await _commonUtilityService.FileSystemProvider.File.ExistsAsync(projectTuple.AbsolutePath.Value))
+			if (!_commonUtilityService.FileSystemProvider.File.Exists(projectTuple.AbsolutePath.Value))
 			{
 				dotNetSolutionModel.DotNetProjectList.RemoveAt(i);
 				continue;
@@ -1186,9 +1184,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 			if (innerParentDirectory is not null)
 				_commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(new(innerParentDirectory, true));
 			
-			var content = await _commonUtilityService.FileSystemProvider.File.ReadAllTextAsync(
-					projectTuple.AbsolutePath.Value)
-				.ConfigureAwait(false);
+			var content = _commonUtilityService.FileSystemProvider.File.ReadAllText(projectTuple.AbsolutePath.Value);
 	
 			var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
 				_textEditorService,
@@ -1367,7 +1363,7 @@ Execution Terminal".ReplaceLineEndings("\n")));
 				// Otherwise an update to message 2 could result in this message 1 update never being written.
 				progressBarModel.SetProgress(
 					currentProgress,
-					$"{projectsParsedCount + 1}/{dotNetProjectListLength}: {project.AbsolutePath.NameWithExtension}");
+					project.AbsolutePath.NameWithExtension);
 				
 				cancellationToken.ThrowIfCancellationRequested();
 
