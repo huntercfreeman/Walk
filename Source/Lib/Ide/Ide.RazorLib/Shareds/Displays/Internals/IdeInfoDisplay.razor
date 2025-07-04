@@ -161,6 +161,28 @@
         Recent Changes:
 		<div>
 		    <div>
+                <div>v <em class="di_em">30.0.0 </em> (2025-07-04)</div>
+                <ul>
+                    <li>
+                        Only keep codeblocks for NamespaceStatementNode and TypeDefinitionNode
+                        
+                        (Explanation: even if something like tracking the codeblock is needed
+                        in order to accurately perform code refactoring,
+                        the current code doesn't make use of the codeblocks.
+                        
+                        And keeping the codeblocks around implies the solution is the codeblocks
+                        but I don't actually think you'd accurately perform refactoring by tracking the codeblocks
+                        recursively. It is too much garbage collection overhead.
+                        
+                        I think you'd actually use a flat list and the flat list contains every node
+                        that was parsed.
+                        
+                        When it comes to child scopes then returning back to the parent and making a jump
+                        in the contiguous children of the parent... look at the time I gotta go.)
+                    </li>
+                </ul>
+            </div>
+            <div>
                 <div>v <em class="di_em">29.0.0 </em> (2025-07-03)</div>
                 <ul>
                     <li>

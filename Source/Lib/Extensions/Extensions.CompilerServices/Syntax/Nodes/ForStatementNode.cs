@@ -23,7 +23,7 @@ public sealed class ForStatementNode : ICodeBlockOwner
 		InitializationStatementDelimiterToken = initializationStatementDelimiterToken;
 		ConditionStatementDelimiterToken = conditionStatementDelimiterToken;
 		CloseParenthesisToken = closeParenthesisToken;
-		CodeBlock = codeBlock;
+		// CodeBlock = codeBlock;
 	}
 
 	public SyntaxToken KeywordToken { get; }
@@ -35,7 +35,7 @@ public sealed class ForStatementNode : ICodeBlockOwner
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
-	public CodeBlock CodeBlock { get; set; }
+	// public CodeBlock CodeBlock { get; set; }
 	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
 	public int ScopeIndexKey { get; set; } = -1;
 
