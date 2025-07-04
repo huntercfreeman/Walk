@@ -35,8 +35,7 @@ public partial class SymbolDisplay : ComponentBase
 	    	var outShouldRenderHashCode = HashCode.Combine(
 	    		Symbol.TextSpan.StartInclusiveIndex,
 	    		Symbol.TextSpan.EndExclusiveIndex,
-	    		Symbol.TextSpan.DecorationByte,
-	    		Symbol.TextSpan.ResourceUri.Value);
+	    		Symbol.TextSpan.DecorationByte);
 	    		
 	    	if (outShouldRenderHashCode != _shouldRenderHashCode)
 	    	{
@@ -78,7 +77,7 @@ public partial class SymbolDisplay : ComponentBase
 	/// </summary>
     public static ISyntaxNode? GetTargetNode(TextEditorService textEditorService, Symbol symbolLocal)
     {
-    	try
+    	/*try
     	{
 	    	var textEditorModel = textEditorService.ModelApi.GetOrDefault(symbolLocal.TextSpan.ResourceUri);
 	    	if (textEditorModel is null)
@@ -100,6 +99,9 @@ public partial class SymbolDisplay : ComponentBase
     		Console.WriteLine(e);
     		return null;
     	}
+    	*/
+    	
+    	return null;
     }
     
     /// <summary>
@@ -109,6 +111,7 @@ public partial class SymbolDisplay : ComponentBase
 	/// </summary>
     public static ISyntaxNode? GetDefinitionNode(TextEditorService textEditorService, Symbol symbolLocal, ISyntaxNode targetNode)
     {
+    	/*
     	try
     	{
 	    	if (targetNode is not null)
@@ -135,5 +138,8 @@ public partial class SymbolDisplay : ComponentBase
     		Console.WriteLine(e);
     		return null;
     	}
+    	*/
+    	
+    	return null;
     }
 }

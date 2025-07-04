@@ -22,10 +22,7 @@ public static class CSharpParser
     	var globalOpenCodeBlockTextSpan = new TextEditorTextSpan(
 		    0,
 		    1,
-		    decorationByte: default,
-		    compilationUnit.ResourceUri,
-		    string.Empty,
-		    string.Empty);
+		    DecorationByte: default);
     	
 		var globalCodeBlockBuilder = binder.NewScopeAndBuilderFromOwner_GlobalScope_Hack(
 	    	globalCodeBlockNode,
@@ -285,8 +282,6 @@ public static class CSharpParser
         	compilationUnit.__DiagnosticList,
         	parserModel.TokenWalker);
                 
-		compilationUnit.RootCodeBlockNode = globalCodeBlockNode;
-		
 		/*if (parserModel.AmbiguousIdentifierExpressionNode.FailCount > 0)
 		{
 			++TotalAmbiguousIdentifierExpressionNodeFailCount;

@@ -9,7 +9,7 @@ public partial class CSharpFacts
     {
         public static Scope GetInitialGlobalScope()
         {
-            var typeDefinitionMap = new Dictionary<string, TypeDefinitionNode>
+            /*var typeDefinitionMap = new Dictionary<string, TypeDefinitionNode>
 	        {
 	            {
 	                Types.Void.TypeIdentifierToken.TextSpan.Text,
@@ -31,7 +31,7 @@ public partial class CSharpFacts
 	                Types.String.TypeIdentifierToken.TextSpan.Text,
 	                Types.String
 	            },
-	        };
+	        };*/
 	        
 			return new Scope(
 				codeBlockOwner: null,

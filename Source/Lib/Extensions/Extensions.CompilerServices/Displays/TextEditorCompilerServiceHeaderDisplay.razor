@@ -39,28 +39,32 @@
 							var functionDefinitionNode = (FunctionDefinitionNode)codeBlockOwnerLocal;
 							<text>
 								@IconSymbolMethodFragment.Render(iconDriver)
-								@(functionDefinitionNode.FunctionIdentifierToken.TextSpan.Text)(...)
+								@*@(functionDefinitionNode.FunctionIdentifierToken.TextSpan.Text)(...)*@
+								aaa
 							</text>
 							break;
 						case SyntaxKind.ConstructorDefinitionNode:
 							var constructorDefinitionNode = (ConstructorDefinitionNode)codeBlockOwnerLocal;
 							<text>
 								@IconBlankFragment.Render(iconDriver)
-								@(constructorDefinitionNode.FunctionIdentifier.TextSpan.Text)(...)
+								@*@(constructorDefinitionNode.FunctionIdentifier.TextSpan.Text)(...)*@
+								aaa
 							</text>
 							break;
 						case SyntaxKind.TypeDefinitionNode:
 							var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwnerLocal;
 							<text>
 								@IconSymbolClassFragment.Render(iconDriver)
-								@typeDefinitionNode.TypeIdentifierToken.TextSpan.Text
+								@*@typeDefinitionNode.TypeIdentifierToken.TextSpan.Text*@
+								aaa
 							</text>
 							break;
 						case SyntaxKind.NamespaceStatementNode:
 							var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwnerLocal;
 							<text>
 								@IconBlankFragment.Render(iconDriver)
-								@namespaceStatementNode.IdentifierToken.TextSpan.Text
+								@*@namespaceStatementNode.IdentifierToken.TextSpan.Text*@
+								aaa
 							</text>
 							break;
 						default:

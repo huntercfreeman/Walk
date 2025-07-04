@@ -305,14 +305,14 @@ public class ParseDefaultKeywords
     	parserModel.ParserContextKind = CSharpParserContextKind.None;
     	var enumerable = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
     	
-    	if (enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList is not null &&
+    	/*if (enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList is not null &&
     	    variableDeclarationNode is not null &&
     	    variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.Text ==
 		        Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Var.TypeIdentifierToken.TextSpan.Text)
     	{
     	    if (enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList.Count == 1)
     	        variableDeclarationNode.SetImplicitTypeReference(enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList[0].TypeReference);
-    	}
+    	}*/
     	
 		var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 	        
@@ -831,7 +831,8 @@ public class ParseDefaultKeywords
             genericParameterListing,
             primaryConstructorFunctionArgumentListing: default,
             inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
-            namespaceName: parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.Text
+            namespaceName: string.Empty
+            // namespaceName: parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.Text
 			// FindAllReferences
 			// ,referenceHashSet: new()
 			);

@@ -97,31 +97,36 @@ public struct SyntaxViewModel
 		if (DefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 		{
 			var typeDefinitionNode = (TypeDefinitionNode)DefinitionNode;
-			resourceUriValue = typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri.Value;
+			// resourceUriValue = typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri.Value;
+			resourceUriValue = null;
 			indexInclusiveStart = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 		{
 			var variableDeclarationNode = (VariableDeclarationNode)DefinitionNode;
-			resourceUriValue = variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri.Value;
+			// resourceUriValue = variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri.Value;
+			resourceUriValue = null;
 			indexInclusiveStart = variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 		{
 			var namespaceStatementNode = (NamespaceStatementNode)DefinitionNode;
-			resourceUriValue = namespaceStatementNode.IdentifierToken.TextSpan.ResourceUri.Value;
+			// resourceUriValue = namespaceStatementNode.IdentifierToken.TextSpan.ResourceUri.Value;
+			resourceUriValue = null;
 			indexInclusiveStart = namespaceStatementNode.IdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
 		{
 			var functionDefinitionNode = (FunctionDefinitionNode)DefinitionNode;
-			resourceUriValue = functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri.Value;
+			// resourceUriValue = functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri.Value;
+			resourceUriValue = null;
 			indexInclusiveStart = functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
 		{
 			var constructorDefinitionNode = (ConstructorDefinitionNode)DefinitionNode;
-			resourceUriValue = constructorDefinitionNode.FunctionIdentifier.TextSpan.ResourceUri.Value;
+			// resourceUriValue = constructorDefinitionNode.FunctionIdentifier.TextSpan.ResourceUri.Value;
+			resourceUriValue = null;
 			indexInclusiveStart = constructorDefinitionNode.FunctionIdentifier.TextSpan.StartInclusiveIndex;
 		}
 		

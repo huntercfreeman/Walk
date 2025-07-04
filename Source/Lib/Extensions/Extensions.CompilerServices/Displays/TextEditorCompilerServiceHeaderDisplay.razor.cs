@@ -140,20 +140,14 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     			textSpanStart = new TextEditorTextSpan(
 		            targetScope.StartInclusiveIndex,
 		            targetScope.StartInclusiveIndex + 1,
-				    (byte)TextEditorDevToolsDecorationKind.Scope,
-				    resourceUri,
-				    sourceText: string.Empty,
-				    getTextPrecalculatedResult: string.Empty);
+				    (byte)TextEditorDevToolsDecorationKind.Scope);
     		}
     		else
     		{
     			textSpanStart = new TextEditorTextSpan(
 		            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.StartInclusiveIndex,
 		            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.StartInclusiveIndex + 1,
-				    (byte)TextEditorDevToolsDecorationKind.Scope,
-				    resourceUri,
-				    sourceText: string.Empty,
-				    getTextPrecalculatedResult: string.Empty);
+				    (byte)TextEditorDevToolsDecorationKind.Scope);
     		}
 
 			int useStartInclusiveIndex;
@@ -172,10 +166,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 			var textSpanEnd = new TextEditorTextSpan(
 	            useStartInclusiveIndex,
 			    useEndExclusiveIndex,
-			    (byte)TextEditorDevToolsDecorationKind.Scope,
-			    resourceUri,
-			    sourceText: string.Empty,
-			    getTextPrecalculatedResult: string.Empty);
+			    (byte)TextEditorDevToolsDecorationKind.Scope);
 	
 			var diagnosticTextSpans = new List<TextEditorTextSpan> { textSpanStart, textSpanEnd };
 

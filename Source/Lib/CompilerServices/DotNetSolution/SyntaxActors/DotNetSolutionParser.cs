@@ -41,7 +41,7 @@ public class DotNetSolutionParser
 
     public CompilationUnit Parse()
     {
-        while (true)
+        /*while (true)
         {
             var consumedToken = _tokenWalker.Consume();
 
@@ -69,8 +69,9 @@ public class DotNetSolutionParser
 
         var globalSectionNestedProjects = DotNetSolutionGlobal.DotNetSolutionGlobalSectionList.FirstOrDefault(x =>
         {
-            return (x.GlobalSectionArgument?.TextSpan.Text ?? string.Empty) == 
-                LexSolutionFacts.GlobalSectionNestedProjects.START_TOKEN;
+            return false;
+            /*return (x.GlobalSectionArgument?.TextSpan.Text ?? string.Empty) == 
+                LexSolutionFacts.GlobalSectionNestedProjects.START_TOKEN;*//*
         });
 
         if (globalSectionNestedProjects is not null)
@@ -106,12 +107,16 @@ public class DotNetSolutionParser
         /*return new CompilationUnit
         {
         	TokenList = Lexer.SyntaxTokenList
-        };*/
+        };*//*
+        return null;
+        */
+        
         return null;
     }
 
     public void ParseAssociatedNameToken(SyntaxToken associatedNameToken)
     {
+        /*
         if (!_hasReadHeader)
         {
             foreach (var wellKnownAssociatedName in LexSolutionFacts.Header.WellKnownAssociatedNamesList)
@@ -161,6 +166,7 @@ public class DotNetSolutionParser
 
             _associatedEntryGroupBuilderStack.Peek().AssociatedEntryList.Add(associatedEntryPair);
         }
+        */
     }
 
     public void ParseAssociatedValueToken(SyntaxToken associatedValueToken)
@@ -174,9 +180,7 @@ public class DotNetSolutionParser
             	new TextEditorTextSpan(
 		            0,
 		            string.Empty.Length,
-		            0,
-		            new("aaa.cs"),
-		            string.Empty)),
+		            0)),
             associatedValueToken);
 
         _associatedEntryGroupBuilderStack.Peek().AssociatedEntryList.Add(associatedEntryPair);
@@ -184,6 +188,7 @@ public class DotNetSolutionParser
 
     private void ParseOpenAssociatedGroupToken(SyntaxToken openAssociatedGroupToken)
     {
+        /*
         // Presumption is made here, that the header only contains AssociatedEntryPairs
         _hasReadHeader = true;
 
@@ -273,10 +278,12 @@ public class DotNetSolutionParser
                     parent.AssociatedEntryList.Add(builtGroup);
                 }));
         }
+        */
     }
 
     private void ParseCloseAssociatedGroupToken(SyntaxToken closeAssociatedGroupToken)
     {
+        /*
         if (closeAssociatedGroupToken.TextSpan.Text == LexSolutionFacts.Global.END_TOKEN)
         {
             _dotNetSolutionGlobal = _dotNetSolutionGlobal with
@@ -298,5 +305,6 @@ public class DotNetSolutionParser
 
             associatedEntryGroupBuilder.Build();
         }
+        */
     }
 }

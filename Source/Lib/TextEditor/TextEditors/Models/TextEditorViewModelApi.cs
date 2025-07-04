@@ -897,10 +897,7 @@ public sealed class TextEditorViewModelApi
             var cursorTextSpan = new TextEditorTextSpan(
                 cursorPositionIndex,
                 cursorPositionIndex + 1,
-                0,
-                modelModifier.PersistentState.ResourceUri,
-                sourceText: string.Empty,
-                getTextPrecalculatedResult: string.Empty);
+                0);
 
             ScrollIntoView(
         		editContext,

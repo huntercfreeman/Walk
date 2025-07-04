@@ -42,9 +42,7 @@ public class CssSyntaxTree
             new TextEditorTextSpan(
                 0,
                 stringWalker.PositionIndex,
-                (byte)CssDecorationKind.None,
-                stringWalker.ResourceUri,
-                stringWalker.SourceText),
+                (byte)CssDecorationKind.None),
             cssDocumentChildren);
 
         var cssSyntaxUnit = new CssSyntaxUnit(
@@ -81,9 +79,7 @@ public class CssSyntaxTree
                 var commentTextSpan = new TextEditorTextSpan(
                     commentStartingPositionIndex,
                     stringWalker.PositionIndex + 1,
-                    (byte)CssDecorationKind.Comment,
-                    stringWalker.ResourceUri,
-                    stringWalker.SourceText);
+                    (byte)CssDecorationKind.Comment);
 
                 var commentToken = new CssCommentSyntax(
                     commentTextSpan,
@@ -170,9 +166,7 @@ public class CssSyntaxTree
                 var childTextSpan = new TextEditorTextSpan(
                     pendingChildStartingPositionIndex,
                     stringWalker.PositionIndex,
-                    (byte)childDecorationKind,
-                    stringWalker.ResourceUri,
-                    stringWalker.SourceText);
+                    (byte)childDecorationKind);
 
                 ICssSyntax childSyntax;
 
@@ -225,9 +219,7 @@ public class CssSyntaxTree
                 var unexpectedTokenTextSpan = new TextEditorTextSpan(
                     pendingChildStartingPositionIndex,
                     stringWalker.PositionIndex,
-                    (byte)CssDecorationKind.UnexpectedToken,
-                    stringWalker.ResourceUri,
-                    stringWalker.SourceText);
+                    (byte)CssDecorationKind.UnexpectedToken);
 
                 /*diagnosticBag.ReportUnexpectedToken(
                     unexpectedTokenTextSpan,
@@ -264,9 +256,7 @@ public class CssSyntaxTree
         var identifierTextSpan = new TextEditorTextSpan(
             startingPositionIndex,
             stringWalker.PositionIndex,
-            (byte)CssDecorationKind.Identifier,
-            stringWalker.ResourceUri,
-            stringWalker.SourceText);
+            (byte)CssDecorationKind.Identifier);
 
         var identifierSyntax = new CssIdentifierSyntax(
             identifierTextSpan,

@@ -114,7 +114,7 @@ public static class DiagnosticHelper
 		Report(
 			diagnosticList,
 			TextEditorDiagnosticLevel.Error,
-			$"'{textSpan.Text}' is not defined in the context '{contextString}'",
+			$"'(2025-07-04) changing TextEditorTextSpan' is not defined in the context '{contextString}'",
 			textSpan,
 			Guid.Parse("89b61fa8-541d-4154-9425-82c5667842a8"));
 	}
@@ -349,9 +349,9 @@ public static class DiagnosticHelper
 
 	public static void ClearByResourceUri(List<TextEditorDiagnostic> diagnosticList, ResourceUri resourceUri)
 	{
-		var keep = diagnosticList.Where(x => x.TextSpan.ResourceUri != resourceUri);
+		// (2025-07-04) var keep = diagnosticList.Where(x => x.TextSpan.ResourceUri != resourceUri);
 
-		diagnosticList.Clear();
-		diagnosticList.AddRange(keep);
+		// diagnosticList.Clear();
+		// diagnosticList.AddRange(keep);
 	}
 }

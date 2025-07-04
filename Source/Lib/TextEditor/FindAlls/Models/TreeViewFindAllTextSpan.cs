@@ -28,9 +28,9 @@ public class TreeViewFindAllTextSpan : TreeViewWithType<(string SourceText, Text
 		return otherTreeView.GetHashCode() == GetHashCode();
 	}
 
-	public override int GetHashCode() => Item.TextSpan.ResourceUri.Value.GetHashCode();
+	public override int GetHashCode() => "(2025-07-04) changing TextEditorTextSpan".GetHashCode();
 	
-	public override string GetDisplayText() => Item.TextSpan.Text;
+	public override string GetDisplayText() => "(2025-07-04) changing TextEditorTextSpan";
 
     /*public override TreeViewRenderer GetTreeViewRenderer()
 	{

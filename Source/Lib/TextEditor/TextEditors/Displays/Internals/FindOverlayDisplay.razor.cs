@@ -359,9 +359,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
                 		var x = presentationModel.CompletedCalculation.TextSpanList[i];
                 		
                 		if (x.StartInclusiveIndex == decorationByteChangedTargetTextSpanLocal.Value.StartInclusiveIndex &&
-                            x.EndExclusiveIndex == decorationByteChangedTargetTextSpanLocal.Value.EndExclusiveIndex &&
-                            x.ResourceUri == decorationByteChangedTargetTextSpanLocal.Value.ResourceUri &&
-                            x.Text == decorationByteChangedTargetTextSpanLocal.Value.Text)
+                            x.EndExclusiveIndex == decorationByteChangedTargetTextSpanLocal.Value.EndExclusiveIndex)
                 		{
                 			needsColorResetSinceNoLongerActive = x;
                 			indexNeedsColorResetSinceNoLongerActive = i;

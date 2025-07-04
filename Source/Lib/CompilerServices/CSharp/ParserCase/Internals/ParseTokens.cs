@@ -11,7 +11,7 @@ public static class ParseTokens
 {
     public static void ParseIdentifierToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	if (parserModel.TokenWalker.Current.TextSpan.Length == 1 &&
+    	/*if (parserModel.TokenWalker.Current.TextSpan.Length == 1 &&
     		parserModel.TokenWalker.Current.TextSpan.Text == "_")
     	{
     		if (!parserModel.Binder.TryGetVariableDeclarationHierarchically(
@@ -31,7 +31,7 @@ public static class ParseTokens
 	    		parserModel.StatementBuilder.ChildList.Add(variableReferenceNode);
 	    		return;
 			}
-    	}
+    	}*/
     	
     	if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.ColonToken)
 		{
@@ -170,7 +170,7 @@ public static class ParseTokens
 					parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
 				}
 				
-				if (variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.Text ==
+				/*if (variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.Text ==
 				        CSharpFacts.Types.Var.TypeIdentifierToken.TextSpan.Text)
 				{
 					if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode)
@@ -179,7 +179,7 @@ public static class ParseTokens
 						if (binaryExpressionNode.OperatorToken.SyntaxKind == SyntaxKind.EqualsToken)
 							variableDeclarationNode.SetImplicitTypeReference(binaryExpressionNode.RightExpressionResultTypeReference);
 					}
-				}
+				}*/
 				
 				parserModel.StatementBuilder.ChildList.Add(expression);
 			}
@@ -195,7 +195,7 @@ public static class ParseTokens
 		{
 			parserModel.StatementBuilder.ChildList.Add(typeClauseNode);
 		}
-		else if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
+		/*else if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
 				 UtilityApi.IsConvertibleToIdentifierToken(typeClauseNode.TypeIdentifierToken.SyntaxKind) &&
 				 parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken &&
 			     typeDefinitionNode.TypeIdentifierToken.TextSpan.Text == typeClauseNode.TypeIdentifierToken.TextSpan.Text)
@@ -210,7 +210,7 @@ public static class ParseTokens
 		        identifierToken,
 		        compilationUnit,
 		        ref parserModel);
-		}
+		}*/
 		else
 		{
 			parserModel.StatementBuilder.ChildList.Add(typeClauseNode);
@@ -581,10 +581,10 @@ public static class ParseTokens
             	compilationUnit.__DiagnosticList,
             	parserModel.TokenWalker);
 
-            parserModel.Binder.AddNamespaceToCurrentScope(
+            /*parserModel.Binder.AddNamespaceToCurrentScope(
                 namespaceStatementNode.IdentifierToken.TextSpan.Text,
                 compilationUnit,
-                ref parserModel);
+                ref parserModel);*/
         }
         else 
         {

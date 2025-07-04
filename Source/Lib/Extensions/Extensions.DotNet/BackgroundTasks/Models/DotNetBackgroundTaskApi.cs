@@ -935,6 +935,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		ResourceUri resourceUri,
 		string content)
 	{
+	    /*
     	var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
     		_textEditorService,
     		_textEditorService.__StringWalker,
@@ -1114,6 +1115,9 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 			stringNestedProjectEntryList,
 			dotNetSolutionGlobal,
 			content);
+		*/
+		
+		throw new NotImplementedException();
 	}
 		
 	public DotNetSolutionModel ParseSln(
@@ -1148,6 +1152,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	/// </summary>
 	private List<IDotNetProject> SortProjectReferences(DotNetSolutionModel dotNetSolutionModel)
 	{
+	    /*
 		for (int i = dotNetSolutionModel.DotNetProjectList.Count - 1; i >= 0; i--)
 		{
 			var projectTuple = dotNetSolutionModel.DotNetProjectList[i];
@@ -1262,6 +1267,9 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		}
 		
 		return dotNetSolutionModel.DotNetProjectList;
+		*/
+		
+		throw new NotImplementedException();
 	}
 	
 	private void MoveAndShiftList(

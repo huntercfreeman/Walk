@@ -281,9 +281,7 @@ public class FindAllService : IFindAllService
 		                    	new TextEditorTextSpan(
 			                        outerI,
 			                        outerI + innerI,
-			                        (byte)FindOverlayDecorationKind.LongestCommonSubsequence,
-			                        new ResourceUri(filePath),
-			                        text)
+			                        (byte)FindOverlayDecorationKind.LongestCommonSubsequence)
 	                        ));
 	                }
 	            }
@@ -318,7 +316,7 @@ public class FindAllService : IFindAllService
 	
 	private void ConstructTreeView(TextEditorFindAllState textEditorFindAllState)
 	{
-		var groupedResults = textEditorFindAllState.SearchResultList.GroupBy(x => x.TextSpan.ResourceUri);
+		/*var groupedResults = textEditorFindAllState.SearchResultList.GroupBy(x => x.TextSpan.ResourceUri);
 	
 	    var treeViewList = groupedResults.Select(group =>
 	    {
@@ -361,6 +359,7 @@ public class FindAllService : IFindAllService
 	            true,
 	            false);
 	    }
+	    */
 	}
 	
 	public void Dispose()

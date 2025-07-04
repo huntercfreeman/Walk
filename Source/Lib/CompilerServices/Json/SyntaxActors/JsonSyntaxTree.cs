@@ -48,9 +48,7 @@ public class JsonSyntaxTree
             new TextEditorTextSpan(
                 0,
                 stringWalker.PositionIndex,
-                (byte)JsonDecorationKind.None,
-                stringWalker.ResourceUri,
-                stringWalker.SourceText),
+                (byte)JsonDecorationKind.None),
             jsonDocumentChildren);
 
         var jsonSyntaxUnit = new JsonSyntaxUnit(
@@ -130,9 +128,7 @@ public class JsonSyntaxTree
                     new TextEditorTextSpan(
                         startingPositionIndex,
                         stringWalker.PositionIndex,
-                        (byte)JsonDecorationKind.PropertyKey,
-                        stringWalker.ResourceUri,
-                        stringWalker.SourceText),
+                        (byte)JsonDecorationKind.PropertyKey),
                     pendingJsonPropertyKeySyntax,
                     pendingJsonPropertyValueSyntax);
 
@@ -157,9 +153,7 @@ public class JsonSyntaxTree
                 new TextEditorTextSpan(
                     startingPositionIndex,
                     stringWalker.PositionIndex,
-                    (byte)JsonDecorationKind.PropertyKey,
-                    stringWalker.ResourceUri,
-                    stringWalker.SourceText),
+                    (byte)JsonDecorationKind.PropertyKey),
                 pendingJsonPropertyKeySyntax,
                 JsonPropertyValueSyntax.GetInvalidJsonPropertyValueSyntax());
 
@@ -181,9 +175,7 @@ public class JsonSyntaxTree
             new TextEditorTextSpan(
                 startingPositionIndex,
                 stringWalker.PositionIndex,
-                (byte)JsonDecorationKind.None,
-                stringWalker.ResourceUri,
-                stringWalker.SourceText),
+                (byte)JsonDecorationKind.None),
             jsonPropertySyntaxes);
 
         return jsonObjectSyntax;
@@ -226,9 +218,7 @@ public class JsonSyntaxTree
             new TextEditorTextSpan(
                 startingPositionIndex,
                 stringWalker.PositionIndex,
-                (byte)JsonDecorationKind.PropertyKey,
-                stringWalker.ResourceUri,
-                stringWalker.SourceText),
+                (byte)JsonDecorationKind.PropertyKey),
 			Array.Empty<IJsonSyntax>());
 
         return jsonPropertyKey;
@@ -294,9 +284,7 @@ public class JsonSyntaxTree
             new TextEditorTextSpan(
                 startingPositionIndex,
                 stringWalker.PositionIndex,
-                (byte)JsonDecorationKind.None,
-                stringWalker.ResourceUri,
-                stringWalker.SourceText),
+                (byte)JsonDecorationKind.None),
             underlyingJsonSyntax);
 
         return jsonPropertyValue;
@@ -351,9 +339,7 @@ public class JsonSyntaxTree
             new TextEditorTextSpan(
                 startingPositionIndex,
                 stringWalker.PositionIndex,
-                (byte)JsonDecorationKind.None,
-                stringWalker.ResourceUri,
-                stringWalker.SourceText),
+                (byte)JsonDecorationKind.None),
             jsonObjectSyntaxes);
     }
 
@@ -383,9 +369,7 @@ public class JsonSyntaxTree
             new TextEditorTextSpan(
                 startingPositionIndex,
                 stringWalker.PositionIndex,
-                (byte)JsonDecorationKind.String,
-                stringWalker.ResourceUri,
-                stringWalker.SourceText));
+                (byte)JsonDecorationKind.String));
     }
 
     /// <summary>
@@ -418,18 +402,14 @@ public class JsonSyntaxTree
                 new TextEditorTextSpan(
                     startingPositionIndex,
                     stringWalker.PositionIndex,
-                    (byte)JsonDecorationKind.Keyword,
-                    stringWalker.ResourceUri,
-                    stringWalker.SourceText));
+                    (byte)JsonDecorationKind.Keyword));
         }
         else if (JsonFacts.BOOLEAN_ALL_STRING_VALUES.Contains(firstWordTuple.value))
         {
             return new JsonBooleanSyntax(new TextEditorTextSpan(
                 startingPositionIndex,
                 stringWalker.PositionIndex,
-                (byte)JsonDecorationKind.Keyword,
-                stringWalker.ResourceUri,
-                stringWalker.SourceText));
+                (byte)JsonDecorationKind.Keyword));
         }
         else
         {
@@ -438,17 +418,13 @@ public class JsonSyntaxTree
                 return new JsonNumberSyntax(new TextEditorTextSpan(
                     startingPositionIndex,
                     stringWalker.PositionIndex,
-                    (byte)JsonDecorationKind.Number,
-                    stringWalker.ResourceUri,
-                    stringWalker.SourceText));
+                    (byte)JsonDecorationKind.Number));
             }
 
             return new JsonIntegerSyntax(new TextEditorTextSpan(
                 startingPositionIndex,
                 stringWalker.PositionIndex,
-                (byte)JsonDecorationKind.Integer,
-                stringWalker.ResourceUri,
-                stringWalker.SourceText));
+                (byte)JsonDecorationKind.Integer));
         }
     }
 }

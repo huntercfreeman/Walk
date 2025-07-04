@@ -54,7 +54,5 @@ public class TagNode : IHtmlSyntaxNode
     public TextEditorTextSpan TextEditorTextSpan => new(
         0,
         0,
-        (byte)GenericDecorationKind.None,
-        ResourceUri.Empty,
-        string.Empty);
+        (byte)GenericDecorationKind.None);
 }

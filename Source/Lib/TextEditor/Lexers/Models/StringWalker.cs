@@ -202,7 +202,7 @@ public class StringWalker
 
 		// 6 of 9,997 allocations
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringWalker_StringAllocation++;
-		return new TextEditorTextSpan(startingPosition, this, 0);
+		return new TextEditorTextSpan(startingPosition, PositionIndex, 0);
 	}
 
 	public string ReadUntil(char deliminator)
@@ -291,9 +291,7 @@ public class StringWalker
 		return (new TextEditorTextSpan(
 				wordBuilderStartInclusiveIndex,
 				PositionIndex,
-				0,
-				ResourceUri,
-				SourceText),
+				0),
 			_stringBuilder.ToString());
 	}
 }

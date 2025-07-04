@@ -277,7 +277,8 @@ public static class UtilityApi
     /// </summary>
     public static StorageModifierKind GetStorageModifierKindFromToken(SyntaxToken consumedToken)
     {
-        switch (consumedToken.TextSpan.Text)
+        //switch (consumedToken.TextSpan.Text)
+        switch (string.Empty)
         {
             case "enum":
                 return StorageModifierKind.Enum;
@@ -296,7 +297,8 @@ public static class UtilityApi
     
     public static AccessModifierKind GetAccessModifierKindFromToken(SyntaxToken consumedToken)
     {
-        switch (consumedToken.TextSpan.Text)
+        //switch (consumedToken.TextSpan.Text)
+        switch (string.Empty)
         {
             case "public":
                 return AccessModifierKind.Public;

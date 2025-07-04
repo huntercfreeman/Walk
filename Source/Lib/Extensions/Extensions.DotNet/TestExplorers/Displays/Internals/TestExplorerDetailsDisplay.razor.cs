@@ -95,9 +95,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 						newDecorationTextSpanList.Add(new TextEditorTextSpan(
 							startPositionInclusive,
 							endPositionExclusive,
-							(byte)TerminalDecorationKind.Comment,
-							ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
-							string.Empty));
+							(byte)TerminalDecorationKind.Comment));
 					}
 
 					textOffset += spacingBetweenEntries.Length;
@@ -169,12 +167,9 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 					var originalScrollLeft = viewModelModifier.PersistentState.ScrollLeft;
 					
 					var textSpan = new TextEditorTextSpan(
-					    startInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
-					    endExclusiveIndex: lineInformation.Position_StartInclusiveIndex + 1,
-					    decorationByte: 0,
-					    modelModifier.PersistentState.ResourceUri,
-					    sourceText: string.Empty,
-					    getTextPrecalculatedResult: string.Empty);
+					    StartInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
+					    EndExclusiveIndex: lineInformation.Position_StartInclusiveIndex + 1,
+					    DecorationByte: 0);
 				
 					TextEditorService.ViewModelApi.ScrollIntoView(
 				        editContext,
@@ -250,9 +245,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 				newDecorationTextSpanList.Add(new TextEditorTextSpan(
 					startPositionInclusive,
 					endPositionExclusive,
-					(byte)TerminalDecorationKind.Keyword,
-					ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
-					string.Empty));
+					(byte)TerminalDecorationKind.Keyword));
 			}
 
 			newContent = $"{treeViewStringFragment.Item.Value}:\n";
@@ -294,9 +287,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 				newDecorationTextSpanList.Add(new TextEditorTextSpan(
 					startPositionInclusive,
 					endPositionExclusive,
-					(byte)TerminalDecorationKind.Keyword,
-					ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
-					string.Empty));
+					(byte)TerminalDecorationKind.Keyword));
 			}
 
 			newContent = $"{treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension}:\n";

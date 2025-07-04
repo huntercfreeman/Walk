@@ -681,7 +681,7 @@ public partial class CSharpBinder
 			}
 		}
 	
-		if (parserModel.ParserContextKind != CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode &&
+		/*if (parserModel.ParserContextKind != CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode &&
 			UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 		{
 			if (TryGetVariableDeclarationHierarchically(
@@ -703,8 +703,9 @@ public partial class CSharpBinder
     			goto finalize;
 			}
 		}
+		*/
 		
-		if (!forceVariableReferenceNode && UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
+		/*if (!forceVariableReferenceNode && UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 		{
 			if (TryGetTypeDefinitionHierarchically(
 	        		compilationUnit,
@@ -732,8 +733,9 @@ public partial class CSharpBinder
     			goto finalize;
 	        }
 		}
+		*/
 		
-		if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken &&
+		/*if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken &&
 			ambiguousIdentifierExpressionNode.Token.TextSpan.Length == 1 &&
     		ambiguousIdentifierExpressionNode.Token.TextSpan.Text == "_")
     	{
@@ -749,8 +751,9 @@ public partial class CSharpBinder
     			goto finalize;
 			}
     	}
+    	*/
     	
-    	if (!forceVariableReferenceNode &&
+    	/*if (!forceVariableReferenceNode &&
     	    parserModel.ParserContextKind != CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode &&
     	    UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 		{
@@ -812,9 +815,9 @@ public partial class CSharpBinder
     			result = labelReferenceNode;
     			goto finalize;
             }
-		}
+		}*/
 		
-		if (allowFabricatedUndefinedNode)
+		/*if (allowFabricatedUndefinedNode)
 		{
 			// Bind an undefined-TypeClauseNode
 			if (!forceVariableReferenceNode ||
@@ -850,6 +853,7 @@ public partial class CSharpBinder
     			goto finalize;
 			}
 		}
+		*/
 		
 		result = ambiguousIdentifierExpressionNode;
 		goto finalize;
@@ -1072,7 +1076,8 @@ public partial class CSharpBinder
 				else
 					goto default;
 					
-				var tokenTypeReferenceText = tokenTypeReference.TypeIdentifierToken.TextSpan.Text;
+				//var tokenTypeReferenceText = tokenTypeReference.TypeIdentifierToken.TextSpan.Text;
+				var tokenTypeReferenceText = string.Empty;
 				
 				IExpressionNode rightExpressionNode;
 					
@@ -1329,10 +1334,7 @@ public partial class CSharpBinder
 				new TextEditorTextSpan(
 					0,
 				    0,
-				    0,
-				    token.TextSpan.ResourceUri,
-				    string.Empty,
-				    string.Empty))
+				    0))
 				{
 					IsFabricated = true
 				};
@@ -1385,10 +1387,7 @@ public partial class CSharpBinder
 				new TextEditorTextSpan(
 					0,
 				    0,
-				    0,
-				    token.TextSpan.ResourceUri,
-				    string.Empty,
-				    string.Empty))
+				    0))
 				{
 					IsFabricated = true
 				};
@@ -1731,9 +1730,7 @@ public partial class CSharpBinder
 			var textSpan = new TextEditorTextSpan(
 				token.TextSpan.StartInclusiveIndex,
 			    token.TextSpan.EndExclusiveIndex,
-			    (byte)GenericDecorationKind.None,
-			    token.TextSpan.ResourceUri,
-			    compilationUnit.SourceText);
+			    (byte)GenericDecorationKind.None);
 		
 			compilationUnit.__SymbolList.Add(new Symbol(SyntaxKind.LambdaSymbol, parserModel.GetNextSymbolId(), textSpan));
 		
@@ -2650,7 +2647,7 @@ public partial class CSharpBinder
 			var memberList = typeDefinitionNode.GetMemberList();
 			ISyntaxNode? foundDefinitionNode = null;
 			
-			foreach (var node in memberList)
+			/*foreach (var node in memberList)
 			{
 				if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 				{
@@ -2677,7 +2674,7 @@ public partial class CSharpBinder
 						break;
 					}
 				}
-			}
+			}*/
 			
 			if (foundDefinitionNode is null)
 			{
@@ -2694,9 +2691,9 @@ public partial class CSharpBinder
 		            variableDeclarationNode);
 		        var symbolId = CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
 		        
-		        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
+		        /*compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
 		        	symbolId,
-		        	(variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri, variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex));
+		        	(variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri, variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex));*/
 		        
 		    	expressionPrimary = variableReferenceNode;
 			}
@@ -2724,9 +2721,9 @@ public partial class CSharpBinder
 		        compilationUnit.__SymbolList.Add(functionSymbol);
 		        var symbolId = functionSymbol.SymbolId;
 		        
-		        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
+		        /*compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
 		        	symbolId,
-		        	(functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri, functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex));
+		        	(functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri, functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex));*/
 		        
 		        functionInvocationNode.ExplicitDefinitionTextSpan = functionDefinitionNode.FunctionIdentifierToken.TextSpan;
 		        
@@ -2747,7 +2744,8 @@ public partial class CSharpBinder
 	private IExpressionNode ParseMemberAccessToken_UndefinedNode(
 		IExpressionNode expressionPrimary, SyntaxToken memberIdentifierToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
+	    return expressionPrimary;
+		/*if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
 			parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
 		{
 			var functionInvocationNode = new FunctionInvocationNode(
@@ -2774,18 +2772,18 @@ public partial class CSharpBinder
 		        
 		        if (firstNamespacePrefixNode is null)
 		        {
-		            if(NamespacePrefixTree.__Root.Children.TryGetValue(
+		            /*if(NamespacePrefixTree.__Root.Children.TryGetValue(
             		    firstNamespaceClauseNode.IdentifierToken.TextSpan.Text,
             		    out firstNamespacePrefixNode))
         		    {
         		        firstNamespaceClauseNode.NamespacePrefixNode = firstNamespacePrefixNode;
         		        firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex = firstNamespaceClauseNode.IdentifierToken.TextSpan.StartInclusiveIndex;
-        		    }
+        		    }*//*
                 }
                 
                 if (firstNamespacePrefixNode is not null)
                 {
-                    if (firstNamespacePrefixNode.Children.TryGetValue(
+                    /*if (firstNamespacePrefixNode.Children.TryGetValue(
                 		    memberIdentifierToken.TextSpan.Text,
                 		    out var secondNamespacePrefixNode))
 		            {
@@ -2808,10 +2806,10 @@ public partial class CSharpBinder
 		                    memberIdentifierToken,
 		                    secondNamespacePrefixNode,
 		                    firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex);
-		            }
+		            }*//*
                 }
                 
-                if (NamespaceGroupMap.TryGetValue(firstNamespaceClauseNode.IdentifierToken.TextSpan.Text, out var namespaceGroup))
+                /*if (NamespaceGroupMap.TryGetValue(firstNamespaceClauseNode.IdentifierToken.TextSpan.Text, out var namespaceGroup))
     		    {
     		        foreach (var typeDefinitionNode in namespaceGroup.GetTopLevelTypeDefinitionNodes())
     		        {
@@ -2844,14 +2842,14 @@ public partial class CSharpBinder
     		            }
     		        }
     		    }
-		    }
+		    }*//*
 		
 			var variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(
 	            memberIdentifierToken,
 	            variableDeclarationNode: null);
 	        _ = CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, VariableKind.Property, compilationUnit, ref parserModel);
 			return variableReferenceNode;
-		}
+		}*/
 	}
 	
 	private IExpressionNode AmbiguousParenthesizedExpressionTransformTo_ParenthesizedExpressionNode(
@@ -2948,7 +2946,9 @@ public partial class CSharpBinder
 	private IExpressionNode AmbiguousParenthesizedExpressionTransformTo_TypeClauseNode(
 		AmbiguousParenthesizedExpressionNode ambiguousParenthesizedExpressionNode, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		var identifierToken = new SyntaxToken(
+	    return EmptyExpressionNode.Empty;
+	
+		/*var identifierToken = new SyntaxToken(
 			SyntaxKind.IdentifierToken,
 			new TextEditorTextSpan(
 			    ambiguousParenthesizedExpressionNode.OpenParenthesisToken.TextSpan.StartInclusiveIndex,
@@ -2961,7 +2961,7 @@ public partial class CSharpBinder
 			identifierToken,
 	        valueType: null,
 	        genericParameterListing: default,
-	        isKeywordType: false);
+	        isKeywordType: false);*/
 	}
 	
 	private IExpressionNode AmbiguousParenthesizedExpressionTransformTo_LambdaExpressionNode(
@@ -3091,7 +3091,8 @@ public partial class CSharpBinder
 	public IExpressionNode ParseFunctionParameterListing_Expression(
 		IInvocationNode invocationNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+	    return invocationNode;
+		/*if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
 			invocationNode.IsParsingFunctionParameters = false;
 	
 		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
@@ -3161,6 +3162,7 @@ public partial class CSharpBinder
 		// Just needs to be set to anything other than out, in, ref.
 		parserModel.ParameterModifierKind = ParameterModifierKind.None;
 		return invocationNode;
+		*/
 	}
 	
 	/// <summary>

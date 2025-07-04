@@ -37,7 +37,8 @@
 			var functionDefinitionNode = (FunctionDefinitionNode)syntaxViewModelLocal.DefinitionNode;
 			returnTypeClauseNode = functionDefinitionNode.ReturnTypeReference;
 			returnTypeClauseNodeText = null;
-			methodName = functionDefinitionNode.FunctionIdentifierToken.TextSpan.Text;
+			// methodName = functionDefinitionNode.FunctionIdentifierToken.TextSpan.Text;
+			methodName = null;
 			genericParameterListing = functionDefinitionNode.GenericParameterListing;
 			functionArgumentListing = functionDefinitionNode.FunctionArgumentListing;
 		}
@@ -70,7 +71,8 @@
 			var functionInvocationNode = (FunctionInvocationNode)syntaxViewModelLocal.TargetNode;
 			returnTypeClauseNode = functionInvocationNode.ResultTypeReference;
 			returnTypeClauseNodeText = null;
-			methodName = functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Text;
+			// methodName = functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Text;
+			methodName = "null";
 			genericParameterListing = functionInvocationNode.GenericParameterListing;
 			functionArgumentListing = null;
 		}
@@ -102,14 +104,16 @@
 		{
 			returnTypeClauseNode = default;
 			returnTypeClauseNodeText = null;
-			methodName = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.Text;
+			// methodName = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.Text;
+			methodName = null;
 			genericParameterListing = null;
 			functionArgumentListing = null;
 		}
 		else if (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.ConstructorSymbol)
 		{
 			returnTypeClauseNode = default;
-			returnTypeClauseNodeText = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.Text;
+			// returnTypeClauseNodeText = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.Text;
+			returnTypeClauseNodeText = null;
 			methodName = null;
 			genericParameterListing = null;
 			functionArgumentListing = null;
@@ -258,22 +262,28 @@
 			    switch (argumentEntry.OptionalCompileTimeConstantToken.SyntaxKind)
 			    {
 			        case SyntaxKind.NullTokenKeyword:
-			            <span class="di_te_keyword">@argumentEntry.OptionalCompileTimeConstantToken.TextSpan.Text</span>
+			            @*<span class="di_te_keyword">@argumentEntry.OptionalCompileTimeConstantToken.TextSpan.Text</span>*@
+			            <span class="di_te_keyword">aaa</span>
 			            break;
 			        case SyntaxKind.FalseTokenKeyword:
-			            <span class="di_te_keyword">@argumentEntry.OptionalCompileTimeConstantToken.TextSpan.Text</span>
+			            @*<span class="di_te_keyword">@argumentEntry.OptionalCompileTimeConstantToken.TextSpan.Text</span>*@
+			            <span class="di_te_keyword">aaa</span>
 			            break;
 			        case SyntaxKind.TrueTokenKeyword:
-			            <span class="di_te_keyword">@argumentEntry.OptionalCompileTimeConstantToken.TextSpan.Text</span>
+			            @*<span class="di_te_keyword">@argumentEntry.OptionalCompileTimeConstantToken.TextSpan.Text</span>*@
+			            <span class="di_te_keyword">aaa</span>
 			            break;
 			        case SyntaxKind.StringLiteralToken:
-			            <span class="di_te_string-literal">@(GetTextFromToken(argumentEntry.OptionalCompileTimeConstantToken))</span>
+			            @*<span class="di_te_string-literal">@(GetTextFromToken(argumentEntry.OptionalCompileTimeConstantToken))</span>*@
+			            <span class="di_te_string-literal">aaa</span>
 			            break;
 		            case SyntaxKind.CharLiteralToken:
-			            <span class="di_te_string-literal">@(GetTextFromToken(argumentEntry.OptionalCompileTimeConstantToken))</span>
+			            @*<span class="di_te_string-literal">@(GetTextFromToken(argumentEntry.OptionalCompileTimeConstantToken))</span>*@
+			            <span class="di_te_string-literal">aaa</span>
 			            break;
 		            case SyntaxKind.NumericLiteralToken:
-			            <span class="di_te_numeric-literal">@(GetTextFromToken(argumentEntry.OptionalCompileTimeConstantToken))</span>
+			            @*<span class="di_te_numeric-literal">@(GetTextFromToken(argumentEntry.OptionalCompileTimeConstantToken))</span>*@
+			            <span class="di_te_numeric-literal">aaa</span>
 			            break;
 		            default:
 			            <text>...</text>

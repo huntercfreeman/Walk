@@ -14,11 +14,15 @@ public partial class FunctionSyntaxDisplay : ComponentBase
 	
 	private string GetTextFromToken(SyntaxToken token)
 	{
+	    /*
 	    var model = TextEditorService.ModelApi.GetOrDefault(token.TextSpan.ResourceUri);
 	    
 	    if (model.PersistentState.CompilerService is IExtendedCompilerService extendedCompilerService)
 	        return extendedCompilerService.GetTextFromToken(token);
 	    
 	    return token.TextSpan.Text;
+	    */
+	    
+	    return "(2025-07-04) changing TextEditorTextSpan";
 	}
 }

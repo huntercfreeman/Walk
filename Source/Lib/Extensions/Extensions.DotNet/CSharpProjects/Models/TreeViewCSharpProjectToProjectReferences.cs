@@ -84,6 +84,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 
 	public override async Task LoadChildListAsync()
 	{
+	    /*
 		var previousChildren = new List<TreeViewNoType>(ChildList);
 
 		var content = await CommonUtilityService.FileSystemProvider.File.ReadAllTextAsync(
@@ -157,6 +158,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 		ChildList = newChildList;
 		LinkChildren(previousChildren, ChildList);
 		TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
+		*/
 	}
 
 	public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)

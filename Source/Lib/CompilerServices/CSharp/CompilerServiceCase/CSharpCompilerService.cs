@@ -360,11 +360,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			var textSpan = new TextEditorTextSpan(
 				filteringWordStartInclusiveIndex,
 				filteringWordEndExclusiveIndex,
-				DecorationByte: 0,
-				virtualizationResult.Model.PersistentState.ResourceUri,
-				virtualizationResult.Model.GetAllText());
+				DecorationByte: 0);
 				
-			filteringWord = textSpan.Text;
+			// filteringWord = textSpan.Text;
+			filteringWord = string.Empty;
 		}
 			
 		if (foundMemberAccessToken && operatingWordEndExclusiveIndex != -1)
@@ -401,7 +400,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	        
 	        if (foundMatch)
 	        {
-	        	var textEditorModel = _textEditorService.ModelApi.GetOrDefault(foundSymbol.TextSpan.ResourceUri);
+	            return null;
+	        	//var textEditorModel = _textEditorService.ModelApi.GetOrDefault(foundSymbol.TextSpan.ResourceUri);
+	        	var textEditorModel = (TextEditorModel?)null;
 		    	var extendedCompilerService = (IExtendedCompilerService)textEditorModel.PersistentState.CompilerService;
 		    	var compilerServiceResource = extendedCompilerService.GetResource(textEditorModel.PersistentState.ResourceUri);
 		
@@ -419,12 +420,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		    	        {
 		    	            namespacePrefixNode = namespaceClauseNode.NamespacePrefixNode;
 		    	        }
-		    	        else
+		    	        /*else
 		    	        {
 		    	            _ = __CSharpBinder.NamespacePrefixTree.__Root.Children.TryGetValue(
                     		    foundSymbol.TextSpan.Text, // This is the same value as the definition's TextSpan.
                     		    out namespacePrefixNode);
-		    	        }
+		    	        }*/
 
                         if (namespaceClauseNode is not null)
                 		{
@@ -436,7 +437,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     				                () => MemberAutocomplete(kvp.Key, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
                 		    }
                 		    
-                		    if (__CSharpBinder.NamespaceGroupMap.TryGetValue(foundSymbol.TextSpan.Text, out var namespaceGroup))
+                		    /*if (__CSharpBinder.NamespaceGroupMap.TryGetValue(foundSymbol.TextSpan.Text, out var namespaceGroup))
                 		    {
                 		        foreach (var typeDefinitionNode in namespaceGroup.GetTopLevelTypeDefinitionNodes().Where(x => x.TypeIdentifierToken.TextSpan.Text.Contains(filteringWord)).Take(5))
                 		        {
@@ -445,7 +446,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 						                AutocompleteEntryKind.Type,
 						                () => MemberAutocomplete(typeDefinitionNode.TypeIdentifierToken.TextSpan.Text, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
                 		        }
-                		    }
+                		    }*/
                 		    
                 		    return new MenuRecord(
                 				autocompleteEntryList.Select(entry => new MenuOptionRecord(
@@ -496,12 +497,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 					{
 						Symbol innerFoundSymbol = default;
 
-						if (typeReference.TypeIdentifierToken.TextSpan.ResourceUri != textEditorModel.PersistentState.ResourceUri)
+						/*if (typeReference.TypeIdentifierToken.TextSpan.ResourceUri != textEditorModel.PersistentState.ResourceUri)
 						{
 							var innerCompilerServiceResource = extendedCompilerService.GetResource(typeReference.TypeIdentifierToken.TextSpan.ResourceUri);
 							if (innerCompilerServiceResource is not null)
 								symbols = ((CSharpCompilationUnit)innerCompilerServiceResource.CompilationUnit).SymbolList;
-						}
+						}*/
 						
 				        if (symbols.Count != 0)
 				        {
@@ -527,7 +528,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 					    		
 					    		foreach (var member in memberList.Where(x => __CSharpBinder.GetName(x).Contains(filteringWord)).Take(25))
 			        			{
-			        				switch (member.SyntaxKind)
+			        				/*switch (member.SyntaxKind)
 			        				{
 			        					case SyntaxKind.VariableDeclarationNode:
 			        						var variableDeclarationNode = (VariableDeclarationNode)member;
@@ -550,7 +551,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 								                AutocompleteEntryKind.Type,
 								                () => MemberAutocomplete(innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.Text, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
 			        						break;
-			        				}
+			        				}*/
 			        			}
 							}
 				        }
@@ -592,9 +593,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var textSpan = new TextEditorTextSpan(
             positionIndex - 1,
             positionIndex,
-            0,
-            virtualizationResult.Model.PersistentState.ResourceUri,
-            virtualizationResult.Model.GetAllText());
+            0);
 	
 		var compilerServiceAutocompleteEntryList = OBSOLETE_GetAutocompleteEntries(
 			word,
@@ -660,7 +659,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				
 				var typeClauseNode = (TypeClauseNode)syntaxNode;
 				
-				if (allTypeDefinitions.TryGetValue(typeClauseNode.TypeIdentifierToken.TextSpan.Text, out var typeDefinitionNode))
+				/*if (allTypeDefinitions.TryGetValue(typeClauseNode.TypeIdentifierToken.TextSpan.Text, out var typeDefinitionNode))
 				{
 					var usingStatementText = $"using {typeDefinitionNode.NamespaceName};";
 						
@@ -678,7 +677,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 						"type not found",
 						MenuOptionKind.Other,
 						onClickFunc: async () => {}));
-				}
+				}*/
 			}
 			else
 			{
@@ -974,7 +973,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		string? resourceUriValue = null;
 		var indexInclusiveStart = -1;
 		
-		if (definitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+		/*if (definitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 		{
 			var typeDefinitionNode = (TypeDefinitionNode)definitionNode;
 			resourceUriValue = typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri.Value;
@@ -1003,7 +1002,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			var constructorDefinitionNode = (ConstructorDefinitionNode)definitionNode;
 			resourceUriValue = constructorDefinitionNode.FunctionIdentifier.TextSpan.ResourceUri.Value;
 			indexInclusiveStart = constructorDefinitionNode.FunctionIdentifier.TextSpan.StartInclusiveIndex;
-		}
+		}*/
 		
 		if (resourceUriValue is null || indexInclusiveStart == -1)
 			return;
@@ -1242,7 +1241,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         var targetScope = boundScope;
         
-        if (textSpan.Text == ".")
+        /*if (textSpan.Text == ".")
         {
         	var textEditorModel = _textEditorService.ModelApi.GetOrDefault(textSpan.ResourceUri);
 	    	if (textEditorModel is null)
@@ -1454,11 +1453,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	                                }
 	
 	                                return Task.CompletedTask;
-	                            });*/
+	                            });*//*
 							return Task.CompletedTask;
 	                    });
 	            }));
-	    }
+	    }*/
 	    
 	    foreach (var namespaceGroupKvp in __CSharpBinder.NamespacePrefixTree.__Root.Children.Where(x => x.Key.Contains(word)).Take(5))
 		{
@@ -1496,11 +1495,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     {
         _textEditorService.WorkerArbitrary.PostUnique((Func<TextEditorEditContext, ValueTask>)(editContext =>
         {
-            var modelModifier = editContext.GetModelModifier(textSpan.ResourceUri);
+            //var modelModifier = editContext.GetModelModifier(textSpan.ResourceUri);
+            var modelModifier = (TextEditorModel?)null;
 
             if (modelModifier is null)
                 return ValueTask.CompletedTask;
 
+            return ValueTask.CompletedTask;/*
             var viewModelList = _textEditorService.ModelApi.GetViewModelsOrEmpty(textSpan.ResourceUri);
             
             var viewModel = viewModelList.FirstOrDefault(x => x.PersistentState.Category.Value == "main")
@@ -1528,13 +1529,15 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			        1,
 			        expandWord: false,
                     TextEditorModel.DeleteKind.Delete);
-            }*/
+            }*//*
+            
 
             modelModifier.PersistentState.CompilerService.ResourceWasModified(
             	(ResourceUri)modelModifier.PersistentState.ResourceUri,
             	(IReadOnlyList<TextEditorTextSpan>)Array.Empty<TextEditorTextSpan>());
             	
             return ValueTask.CompletedTask;
+            */
         }));
 	        
 	    return Task.CompletedTask;
@@ -1554,7 +1557,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			{
 				foreach (var entry in extendedCompilationUnit.ScopeTypeDefinitionMap.Values)
 				{
-					if (entry.TypeIdentifierToken.TextSpan.ResourceUri != modelModifier.PersistentState.ResourceUri)
+					/*if (entry.TypeIdentifierToken.TextSpan.ResourceUri != modelModifier.PersistentState.ResourceUri)
 		    			continue;
 			    		
 			    	if (!_collapsePointUsedIdentifierHashSet.Add(entry.TypeIdentifierToken.TextSpan.Text))
@@ -1564,7 +1567,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.TypeIdentifierToken.TextSpan.StartInclusiveIndex).lineIndex,
 						false,
 						entry.TypeIdentifierToken.TextSpan.Text,
-						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.CloseCodeBlockTextSpan.StartInclusiveIndex).lineIndex + 1));
+						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.CloseCodeBlockTextSpan.StartInclusiveIndex).lineIndex + 1));*/
 				}
 			}
 			
@@ -1572,7 +1575,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			{
 				foreach (var entry in extendedCompilationUnit.ScopeFunctionDefinitionMap.Values)
 				{
-					if (entry.FunctionIdentifierToken.TextSpan.ResourceUri != modelModifier.PersistentState.ResourceUri)
+					/*if (entry.FunctionIdentifierToken.TextSpan.ResourceUri != modelModifier.PersistentState.ResourceUri)
 			    		continue;
 			    		
 					if (!_collapsePointUsedIdentifierHashSet.Add(entry.FunctionIdentifierToken.TextSpan.Text))
@@ -1582,7 +1585,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.FunctionIdentifierToken.TextSpan.StartInclusiveIndex).lineIndex,
 						false,
 						entry.FunctionIdentifierToken.TextSpan.Text,
-						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.CloseCodeBlockTextSpan.StartInclusiveIndex).lineIndex + 1));
+						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.CloseCodeBlockTextSpan.StartInclusiveIndex).lineIndex + 1));*/
 				}
 			}
 			
@@ -1621,7 +1624,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     public string GetTextFromToken(SyntaxToken token)
     {
-        if (token.TextSpan.Text == string.Empty)
+        /*if (token.TextSpan.Text == string.Empty)
         {
             var resource = GetResource(token.TextSpan.ResourceUri);
             var cSharpCompilationUnit = (CSharpCompilationUnit)resource.CompilationUnit;
@@ -1636,6 +1639,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             }
         }
         
-        return token.TextSpan.Text;
+        return token.TextSpan.Text;*/
+        
+        return string.Empty;
     }
 }

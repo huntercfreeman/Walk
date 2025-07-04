@@ -19,13 +19,15 @@
 	else if (syntaxViewModelLocal.DefinitionNode is not null && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 	{
 		prefixText = "(definition)";
-		text = ((VariableDeclarationNode)syntaxViewModelLocal.DefinitionNode).IdentifierToken.TextSpan.Text;
+		text = null;
+		// text = ((VariableDeclarationNode)syntaxViewModelLocal.DefinitionNode).IdentifierToken.TextSpan.Text;
 		variableDeclarationNode = null;
 	}
 	else if (syntaxViewModelLocal.TargetNode is not null && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
 	{
 		prefixText = "(reference)";
-		text = ((VariableReferenceNode)syntaxViewModelLocal.TargetNode).VariableIdentifierToken.TextSpan.Text;
+		text = null;
+		// text = ((VariableReferenceNode)syntaxViewModelLocal.TargetNode).VariableIdentifierToken.TextSpan.Text;
 		variableDeclarationNode = null;
 	}
 	else if (syntaxViewModelLocal.TargetSymbol is not null &&
@@ -34,7 +36,8 @@
 			  	syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.PropertySymbol))
 	{
 		prefixText = "(symbol)";
-		text = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.Text;
+		text = null;
+		// text = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.Text;
 		variableDeclarationNode = null;
 	}
 	else

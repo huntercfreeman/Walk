@@ -22,7 +22,8 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 	{
 		if (_textSpanTuple.TextEditorTextSpan != TextSpan)
 		{
-			_textSpanTuple = (TextSpan, TextSpan.Text);
+			// _textSpanTuple = (TextSpan, TextSpan.Text);
+			_textSpanTuple = (TextSpan, string.Empty);
 			InputValue = _textSpanTuple.GetTextResult;
 		}
 

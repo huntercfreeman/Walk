@@ -217,9 +217,7 @@ public class CodeSearchService : ICodeSearchService
 		        new TextEditorTextSpan(
 		        	0,
 			        0,
-			        (byte)GenericDecorationKind.None,
-			        new ResourceUri(x),
-			        string.Empty),
+			        (byte)GenericDecorationKind.None),
 				_commonUtilityService.EnvironmentProvider,
 				_commonUtilityService.FileSystemProvider,
 				false,
@@ -282,8 +280,10 @@ public class CodeSearchService : ICodeSearchService
 		
 			var inPreviewViewModelKey = GetCodeSearchState().PreviewViewModelKey;
 			var outPreviewViewModelKey = Key<TextEditorViewModel>.NewKey();
+			
+			return;
 	
-			var filePath = treeViewCodeSearchTextSpan.Item.ResourceUri.Value;
+			/*var filePath = treeViewCodeSearchTextSpan.Item.ResourceUri.Value;
 			var resourceUri = treeViewCodeSearchTextSpan.Item.ResourceUri;
 			
 			if (providedResourceUri != ResourceUri.Empty)
@@ -323,7 +323,7 @@ public class CodeSearchService : ICodeSearchService
 						_textEditorService.ViewModelApi.Dispose(editContext, inPreviewViewModelKey);
 					}
 	            }
-	        }
+	        }*/
 		});
     }
 }
