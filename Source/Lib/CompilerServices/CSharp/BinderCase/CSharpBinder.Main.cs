@@ -1537,8 +1537,10 @@ public partial class CSharpBinder
     }
 
     public ISyntaxNode? GetSyntaxNode(CSharpCompilationUnit? cSharpCompilationUnit, int positionIndex, ResourceUri resourceUri, CSharpResource? compilerServiceResource)
-    {    
-        var scope = GetScopeByPositionIndex(cSharpCompilationUnit, resourceUri, positionIndex);
+    {
+        return null;
+        
+        /*var scope = GetScopeByPositionIndex(cSharpCompilationUnit, resourceUri, positionIndex);
         if (!scope.ConstructorWasInvoked)
         	return null;
         
@@ -1622,6 +1624,7 @@ public partial class CSharpBinder
         	return GetChildNodeOrSelfByPositionIndex(closestNode, resourceUri, positionIndex);
         
         return closestNode;
+        */
     }
     
     public ISyntaxNode? GetChildNodeOrSelfByPositionIndex(ISyntaxNode node, ResourceUri resourceUri, int positionIndex)
@@ -1905,10 +1908,22 @@ public partial class CSharpBinder
     
     public ICodeBlockOwner SetCodeBlockNode(ICodeBlockOwner codeBlockOwner, CodeBlock codeBlock, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
     {
+        if (codeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+        {
+            ((NamespaceStatementNode)codeBlockOwner).CodeBlock = codeBlock;
+        }
+        else if (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+        {
+            ((TypeDefinitionNode)codeBlockOwner).CodeBlock = codeBlock;
+        }
+    
+        /*
 		if (codeBlockOwner.CodeBlock.ConstructorWasInvoked)
 			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException(diagnosticList, tokenWalker);
 
 		codeBlockOwner.CodeBlock = codeBlock;
+		*/
+		
 		return codeBlockOwner;
 	}
 	

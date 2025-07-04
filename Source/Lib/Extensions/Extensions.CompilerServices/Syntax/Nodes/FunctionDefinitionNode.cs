@@ -26,7 +26,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 		FunctionIdentifierToken = functionIdentifierToken;
 		GenericParameterListing = genericParameterListing;
 		FunctionArgumentListing = functionArgumentListing;
-		CodeBlock = codeBlock;
+		// CodeBlock = codeBlock;
 	}
 
 	public AccessModifierKind AccessModifierKind { get; }
@@ -38,7 +38,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
-	public CodeBlock CodeBlock { get; set; }
+	// public CodeBlock CodeBlock { get; set; }
 	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
 	public int ScopeIndexKey { get; set; } = -1;
 

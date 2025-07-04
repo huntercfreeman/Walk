@@ -30,7 +30,7 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
-	public CodeBlock CodeBlock { get; set; }
+	// public CodeBlock CodeBlock { get; set; }
 	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
 	public int ScopeIndexKey { get; set; } = -1;
 
