@@ -284,8 +284,6 @@ public static class CSharpParser
         	topLevelStatementsCodeBlock,
         	compilationUnit.__DiagnosticList,
         	parserModel.TokenWalker);
-                
-		compilationUnit.RootCodeBlockNode = globalCodeBlockNode;
 		
 		/*if (parserModel.AmbiguousIdentifierExpressionNode.FailCount > 0)
 		{

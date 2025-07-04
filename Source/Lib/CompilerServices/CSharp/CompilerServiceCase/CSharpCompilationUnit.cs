@@ -40,7 +40,6 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit
 
 	public ResourceUri ResourceUri { get; set; }
 	public string SourceText { get; set; }
-    public ISyntaxNode RootCodeBlockNode { get; set; }
     
 	public List<TextEditorDiagnostic> __DiagnosticList { get; } = new();
 	public List<Symbol> __SymbolList { get; set; } = new();

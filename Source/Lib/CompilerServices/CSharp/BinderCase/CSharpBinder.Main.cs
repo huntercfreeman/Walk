@@ -1548,8 +1548,6 @@ public partial class CSharpBinder
         
         if (codeBlockOwner is not null)
         	childList = codeBlockOwner.CodeBlock.ChildList;
-        else if (compilerServiceResource.CompilationUnit is not null)
-        	childList = ((ICodeBlockOwner)compilerServiceResource.CompilationUnit.RootCodeBlockNode).CodeBlock.ChildList;
         else
         	childList = null;
         
