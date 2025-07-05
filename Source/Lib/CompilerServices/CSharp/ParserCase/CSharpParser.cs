@@ -278,12 +278,6 @@ public static class CSharpParser
         }
 		
         var topLevelStatementsCodeBlock = parserModel.CurrentCodeBlockBuilder.Build(parserModel.Binder);
-                
-        parserModel.Binder.SetCodeBlockNode(
-        	globalCodeBlockNode,
-        	topLevelStatementsCodeBlock,
-        	compilationUnit.__DiagnosticList,
-        	parserModel.TokenWalker);
 		
 		/*if (parserModel.AmbiguousIdentifierExpressionNode.FailCount > 0)
 		{

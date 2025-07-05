@@ -2813,7 +2813,7 @@ public partial class CSharpBinder
                 
                 if (NamespaceGroupMap.TryGetValue(firstNamespaceClauseNode.IdentifierToken.TextSpan.Text, out var namespaceGroup))
     		    {
-    		        foreach (var typeDefinitionNode in namespaceGroup.GetTopLevelTypeDefinitionNodes())
+    		        foreach (var typeDefinitionNode in GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup))
     		        {
     		            if (typeDefinitionNode.TypeIdentifierToken.TextSpan.Text == memberIdentifierToken.TextSpan.Text)
     		            {
