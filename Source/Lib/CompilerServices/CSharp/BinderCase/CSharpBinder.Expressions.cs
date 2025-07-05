@@ -2647,7 +2647,7 @@ public partial class CSharpBinder
 			}
 				
 			var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
-			var memberList = typeDefinitionNode.GetMemberList();
+			var memberList = GetMemberList_TypeDefinitionNode(typeDefinitionNode);
 			ISyntaxNode? foundDefinitionNode = null;
 			
 			foreach (var node in memberList)

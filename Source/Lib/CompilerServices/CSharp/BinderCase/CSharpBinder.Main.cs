@@ -1980,4 +1980,24 @@ public partial class CSharpBinder
 				return default;
 		}
 	}
+	
+	public IEnumerable<ISyntaxNode> GetMemberList_TypeDefinitionNode(TypeDefinitionNode typeDefinitionNode)
+	{
+		if (!typeDefinitionNode.CodeBlock.ConstructorWasInvoked)
+			return Array.Empty<ISyntaxNode>();
+
+		var query = typeDefinitionNode.CodeBlock.ChildList
+			.Where(child => child.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+							child.SyntaxKind == SyntaxKind.VariableDeclarationNode ||
+							child.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+			.Select(x => (ISyntaxNode)x);
+	
+        if (typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList is not null)
+        {
+            query = query.Concat(typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList.Select(
+                x => x.VariableDeclarationNode));
+        }
+        
+        return query;
+	}
 }

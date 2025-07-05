@@ -110,37 +110,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		FunctionArgumentListing = functionArgumentListing;
 	}
 
-	public FunctionDefinitionNode[] GetFunctionDefinitionNodes()
-	{
-		if (!CodeBlock.ConstructorWasInvoked)
-			return Array.Empty<FunctionDefinitionNode>();
-
-		return CodeBlock.ChildList
-			.Where(child => child.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
-			.Select(fd => (FunctionDefinitionNode)fd)
-			.ToArray();
-	}
-
-	public IEnumerable<ISyntaxNode> GetMemberList()
-	{
-		if (!CodeBlock.ConstructorWasInvoked)
-			return Array.Empty<ISyntaxNode>();
-
-		var query = CodeBlock.ChildList
-			.Where(child => child.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
-							child.SyntaxKind == SyntaxKind.VariableDeclarationNode ||
-							child.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-			.Select(x => (ISyntaxNode)x);
-	
-        if (PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList is not null)
-        {
-            query = query.Concat(PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList.Select(
-                x => x.VariableDeclarationNode));
-        }
-        
-        return query;
-	}
-
 	public TypeClauseNode ToTypeClause()
 	{
 		return _toTypeClauseResult ??= new TypeClauseNode(
