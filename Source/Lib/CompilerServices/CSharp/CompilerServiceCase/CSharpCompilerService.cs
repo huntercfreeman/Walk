@@ -438,7 +438,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 		    
                 		    if (__CSharpBinder.NamespaceGroupMap.TryGetValue(foundSymbol.TextSpan.Text, out var namespaceGroup))
                 		    {
-                		        foreach (var typeDefinitionNode in namespaceGroup.GetTopLevelTypeDefinitionNodes().Where(x => x.TypeIdentifierToken.TextSpan.Text.Contains(filteringWord)).Take(5))
+                		        foreach (var typeDefinitionNode in __CSharpBinder.GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup).Where(x => x.TypeIdentifierToken.TextSpan.Text.Contains(filteringWord)).Take(5))
                 		        {
 	        						autocompleteEntryList.Add(new AutocompleteEntry(
 										typeDefinitionNode.TypeIdentifierToken.TextSpan.Text,
@@ -522,7 +522,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 							if (maybeTypeDefinitionNode is not null && maybeTypeDefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 							{
 								var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
-								var memberList = typeDefinitionNode.GetMemberList();
+								var memberList = __CSharpBinder.GetMemberList_TypeDefinitionNode(typeDefinitionNode);
 								ISyntaxNode? foundDefinitionNode = null;
 					    		
 					    		foreach (var member in memberList.Where(x => __CSharpBinder.GetName(x).Contains(filteringWord)).Take(25))
@@ -1299,7 +1299,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
 			
 			var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
-			var memberList = typeDefinitionNode.GetMemberList();
+			var memberList = __CSharpBinder.GetMemberList_TypeDefinitionNode(typeDefinitionNode);
 			
 			autocompleteEntryList.AddRange(
 	        	memberList

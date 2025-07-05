@@ -21,7 +21,7 @@ public class CSharpCodeBlockBuilder
         	PermitCodeBlockParsing = false;
     }
 
-    public List<ISyntax> ChildList { get; } = new();
+    // public List<ISyntax> ChildList { get; } = new();
     public CSharpCodeBlockBuilder? Parent { get; }
     /// <summary>
     /// Given: "public class MyClass { ... }"<br/><br/>Then: The 'MyClass' body-code-block would
@@ -72,7 +72,7 @@ public class CSharpCodeBlockBuilder
 	/// </summary>
 	public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
 	
-	public void AddChild(ISyntax syntax)
+	/*public void AddChild(ISyntax syntax)
 	{
 		switch (syntax.SyntaxKind)
 		{
@@ -129,7 +129,7 @@ public class CSharpCodeBlockBuilder
 					}
 				}
 				
-				break;*/
+				break;*//*
 			}
 			case SyntaxKind.DoWhileStatementNode:
 			{
@@ -139,19 +139,19 @@ public class CSharpCodeBlockBuilder
 				if (doWhileStatementNode.ExpressionNode is not null)
 					doWhileStatementNode.ExpressionNode = TryOptimizeStorageExpression(doWhileStatementNode.ExpressionNode);
 				
-				break;*/
+				break;*//*
 			}
 			case SyntaxKind.ReturnStatementNode:
 			{
 				return;
 				/*var returnStatementNode = (ReturnStatementNode)syntax;
 				returnStatementNode.ExpressionNode = TryOptimizeStorageExpression(returnStatementNode.ExpressionNode);
-				break;*/
+				break;*//*
 			}
 		}
 		
 		ChildList.Add(syntax);
-	}
+	}*/
 	
 	private IExpressionNode TryOptimizeStorageExpression(IExpressionNode syntax)
 	{
@@ -166,7 +166,7 @@ public class CSharpCodeBlockBuilder
 		return syntax;
 	}
 
-    public CodeBlock Build(CSharpBinder binder)
+    /*public CodeBlock Build(CSharpBinder binder)
     {
     	if (CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData &&
     		CodeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
@@ -178,5 +178,5 @@ public class CSharpCodeBlockBuilder
     	}
     
     	return new CodeBlock(ChildList);
-    }
+    }*/
 }

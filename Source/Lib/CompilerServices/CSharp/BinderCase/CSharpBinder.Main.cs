@@ -693,10 +693,10 @@ public partial class CSharpBinder
     	if (compilationUnit is null)
     		return;
     	
-        if (_namespaceGroupMap.TryGetValue(namespaceString, out var namespaceGroupNode) &&
-            namespaceGroupNode.ConstructorWasInvoked)
+        if (_namespaceGroupMap.TryGetValue(namespaceString, out var namespaceGroup) &&
+            namespaceGroup.ConstructorWasInvoked)
         {
-            var typeDefinitionNodes = namespaceGroupNode.GetTopLevelTypeDefinitionNodes();
+            var typeDefinitionNodes = GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup);
 
             foreach (var typeDefinitionNode in typeDefinitionNodes)
             {
@@ -747,12 +747,6 @@ public partial class CSharpBinder
     	// Update CodeBlockOwner
     	if (inOwner is not null)
     	{
-	        SetCodeBlockNode(
-	        	inOwner,
-	        	inBuilder.Build(parserModel.Binder),
-	        	compilationUnit.__DiagnosticList,
-	        	parserModel.TokenWalker);
-			
 			if (inOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 				parserModel.Binder.BindNamespaceStatementNode((NamespaceStatementNode)inOwner, compilationUnit, ref parserModel);
 			else if (inOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
@@ -763,13 +757,13 @@ public partial class CSharpBinder
 			{
 				parserModel.CurrentCodeBlockBuilder = outBuilder;
 				
-				if (inOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
+				/*if (inOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
 					inOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&
 					inOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode &&
 					inOwner.SyntaxKind != SyntaxKind.LambdaExpressionNode)
 				{
 					outBuilder.AddChild(inOwner);
-				}
+				}*/
 			}
 		}
 		
@@ -1905,27 +1899,6 @@ public partial class CSharpBinder
 		codeBlockOwner.CloseCodeBlockTextSpan = closeCodeBlockTextSpan;
 		return codeBlockOwner;
     }
-    
-    public ICodeBlockOwner SetCodeBlockNode(ICodeBlockOwner codeBlockOwner, CodeBlock codeBlock, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
-    {
-        if (codeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
-        {
-            ((NamespaceStatementNode)codeBlockOwner).CodeBlock = codeBlock;
-        }
-        else if (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-        {
-            ((TypeDefinitionNode)codeBlockOwner).CodeBlock = codeBlock;
-        }
-    
-        /*
-		if (codeBlockOwner.CodeBlock.ConstructorWasInvoked)
-			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException(diagnosticList, tokenWalker);
-
-		codeBlockOwner.CodeBlock = codeBlock;
-		*/
-		
-		return codeBlockOwner;
-	}
 	
 	public string GetName(ISyntaxNode node)
 	{
@@ -1979,5 +1952,54 @@ public partial class CSharpBinder
 			default:
 				return default;
 		}
+	}
+	
+	public IEnumerable<ISyntaxNode> GetMemberList_TypeDefinitionNode(TypeDefinitionNode typeDefinitionNode)
+	{
+		if (typeDefinitionNode.ScopeIndexKey == -1 ||
+		    !_compilationUnitMap.TryGetValue(typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri, out var compilationUnit))
+	    {
+			return Array.Empty<ISyntaxNode>();
+        }
+        
+		var query = compilationUnit.ScopeTypeDefinitionMap.Where(x => x.Key.ScopeIndexKey == typeDefinitionNode.ScopeIndexKey).Select(x => (ISyntaxNode)x.Value)
+		    .Concat(compilationUnit.ScopeFunctionDefinitionMap.Where(x => x.Key.ScopeIndexKey == typeDefinitionNode.ScopeIndexKey).Select(x => x.Value))
+		    .Concat(compilationUnit.ScopeVariableDeclarationMap.Where(x => x.Key.ScopeIndexKey == typeDefinitionNode.ScopeIndexKey).Select(x => x.Value));
+		
+        if (typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList is not null)
+        {
+            query = query.Concat(typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList.Select(
+                x => x.VariableDeclarationNode));
+        }
+        
+        return query;
+	}
+	
+	/// <summary>
+	/// <see cref="GetTopLevelTypeDefinitionNodes"/> provides a collection
+	/// which contains all top level type definitions of the <see cref="NamespaceStatementNode"/>.
+	/// </summary>
+	public IEnumerable<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
+	{
+	    if (namespaceStatementNode.ScopeIndexKey == -1 ||
+		    !_compilationUnitMap.TryGetValue(namespaceStatementNode.IdentifierToken.TextSpan.ResourceUri, out var compilationUnit))
+	    {
+			return Array.Empty<TypeDefinitionNode>();
+        }
+        
+		return compilationUnit.ScopeTypeDefinitionMap.Where(x => x.Key.ScopeIndexKey == namespaceStatementNode.ScopeIndexKey).Select(x => x.Value);
+	}
+	
+	/// <summary>
+	/// <see cref="GetTopLevelTypeDefinitionNodes"/> provides a collection
+	/// which contains all top level type definitions of the namespace.
+	/// <br/><br/>
+	/// This is to say that, any type definitions which are nested, would not
+	/// be in this collection.
+	/// </summary>
+	public IEnumerable<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes_NamespaceGroup(NamespaceGroup namespaceGroup)
+	{
+		return namespaceGroup.NamespaceStatementNodeList
+			.SelectMany(x => GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(x));
 	}
 }

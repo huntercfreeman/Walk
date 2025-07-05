@@ -142,7 +142,7 @@ public static class ParseTokens
 		((VariableDeclarationNode)variableDeclarationNode).VariableKind = variableKind;
 		
 		parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserModel);
-        parserModel.CurrentCodeBlockBuilder.AddChild(variableDeclarationNode);
+        // parserModel.CurrentCodeBlockBuilder.AddChild(variableDeclarationNode);
 		parserModel.StatementBuilder.ChildList.Add(variableDeclarationNode);
 		
 		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
@@ -559,7 +559,7 @@ public static class ParseTokens
 			parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
 		}
 		
-    	parserModel.CurrentCodeBlockBuilder.AddChild(expressionNode);
+    	// parserModel.CurrentCodeBlockBuilder.AddChild(expressionNode);
 	}
 
 	/// <summary>
@@ -624,7 +624,7 @@ public static class ParseTokens
 		else
 		{
         	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-        	parserModel.CurrentCodeBlockBuilder.AddChild(expressionNode);
+        	// parserModel.CurrentCodeBlockBuilder.AddChild(expressionNode);
 		}
     }
 

@@ -205,7 +205,7 @@ public static class ParseTypes
 				        VariableKind.EnumMember,
 				        false);
 				        
-				    parserModel.CurrentCodeBlockBuilder.AddChild(variableDeclarationNode);
+				    // parserModel.CurrentCodeBlockBuilder.AddChild(variableDeclarationNode);
 				        
 				    parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserModel);
 					

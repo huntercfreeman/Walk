@@ -2647,7 +2647,7 @@ public partial class CSharpBinder
 			}
 				
 			var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
-			var memberList = typeDefinitionNode.GetMemberList();
+			var memberList = GetMemberList_TypeDefinitionNode(typeDefinitionNode);
 			ISyntaxNode? foundDefinitionNode = null;
 			
 			foreach (var node in memberList)
@@ -2813,7 +2813,7 @@ public partial class CSharpBinder
                 
                 if (NamespaceGroupMap.TryGetValue(firstNamespaceClauseNode.IdentifierToken.TextSpan.Text, out var namespaceGroup))
     		    {
-    		        foreach (var typeDefinitionNode in namespaceGroup.GetTopLevelTypeDefinitionNodes())
+    		        foreach (var typeDefinitionNode in GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup))
     		        {
     		            if (typeDefinitionNode.TypeIdentifierToken.TextSpan.Text == memberIdentifierToken.TextSpan.Text)
     		            {

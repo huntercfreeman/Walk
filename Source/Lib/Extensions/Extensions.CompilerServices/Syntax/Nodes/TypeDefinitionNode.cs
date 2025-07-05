@@ -93,7 +93,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
-	public CodeBlock CodeBlock { get; set; }
+	// public CodeBlock CodeBlock { get; set; }
 	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
 	public int ScopeIndexKey { get; set; } = -1;
 
@@ -108,37 +108,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	public void SetFunctionArgumentListing(FunctionArgumentListing functionArgumentListing)
 	{
 		FunctionArgumentListing = functionArgumentListing;
-	}
-
-	public FunctionDefinitionNode[] GetFunctionDefinitionNodes()
-	{
-		if (!CodeBlock.ConstructorWasInvoked)
-			return Array.Empty<FunctionDefinitionNode>();
-
-		return CodeBlock.ChildList
-			.Where(child => child.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
-			.Select(fd => (FunctionDefinitionNode)fd)
-			.ToArray();
-	}
-
-	public IEnumerable<ISyntaxNode> GetMemberList()
-	{
-		if (!CodeBlock.ConstructorWasInvoked)
-			return Array.Empty<ISyntaxNode>();
-
-		var query = CodeBlock.ChildList
-			.Where(child => child.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
-							child.SyntaxKind == SyntaxKind.VariableDeclarationNode ||
-							child.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-			.Select(x => (ISyntaxNode)x);
-	
-        if (PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList is not null)
-        {
-            query = query.Concat(PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList.Select(
-                x => x.VariableDeclarationNode));
-        }
-        
-        return query;
 	}
 
 	public TypeClauseNode ToTypeClause()
