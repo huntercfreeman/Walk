@@ -188,7 +188,7 @@ public static class CSharpParser
                 {
                 	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
                 	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-	        		parserModel.CurrentCodeBlockBuilder.AddChild(expressionNode);
+	        		// parserModel.CurrentCodeBlockBuilder.AddChild(expressionNode);
                 	break;
             	}
                 case SyntaxKind.StatementDelimiterToken:
@@ -276,8 +276,6 @@ public static class CSharpParser
             // The current token here would be the EOF token.
             parserModel.Binder.CloseScope(parserModel.TokenWalker.Current.TextSpan, compilationUnit, ref parserModel);
         }
-		
-        var topLevelStatementsCodeBlock = parserModel.CurrentCodeBlockBuilder.Build(parserModel.Binder);
 		
 		/*if (parserModel.AmbiguousIdentifierExpressionNode.FailCount > 0)
 		{

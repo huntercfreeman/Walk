@@ -757,13 +757,13 @@ public partial class CSharpBinder
 			{
 				parserModel.CurrentCodeBlockBuilder = outBuilder;
 				
-				if (inOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
+				/*if (inOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
 					inOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&
 					inOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode &&
 					inOwner.SyntaxKind != SyntaxKind.LambdaExpressionNode)
 				{
 					outBuilder.AddChild(inOwner);
-				}
+				}*/
 			}
 		}
 		
