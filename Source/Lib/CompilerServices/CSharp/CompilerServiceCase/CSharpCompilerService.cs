@@ -1552,7 +1552,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		{
 			if (extendedCompilationUnit.DefinitionMap is not null)
 			{
-				foreach (var entry in extendedCompilationUnit.DefinitionMap.Values)
+				foreach (var entry in extendedCompilationUnit.DefinitionMap)
 				{
 			    	TextEditorTextSpan identifierTextSpan;
 			    	int closeCodeBlockTextSpanStartInclusiveIndex;

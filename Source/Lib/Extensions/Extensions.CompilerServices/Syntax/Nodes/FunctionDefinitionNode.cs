@@ -7,7 +7,7 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// TODO: Track the open and close braces for the function body.
 /// </summary>
-public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNode, IGenericParameterNode
+public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNode, IGenericParameterNode, ITrackedDefinition
 {
 	public FunctionDefinitionNode(
 		AccessModifierKind accessModifierKind,
@@ -48,6 +48,9 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 	
 	public bool IsParsingGenericParameters { get; set; }
+	
+	public string IdentifierText => FunctionIdentifierToken.TextSpan.Text;
+	public int ParentScopeIndexKey { get; set; }
 	
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()

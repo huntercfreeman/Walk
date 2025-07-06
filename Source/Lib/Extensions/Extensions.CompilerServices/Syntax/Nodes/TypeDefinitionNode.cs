@@ -7,7 +7,7 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// <see cref="TypeDefinitionNode"/> is used anywhere a type is defined.
 /// </summary>
-public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNode, IGenericParameterNode
+public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNode, IGenericParameterNode, ITrackedDefinition
 {
 	public TypeDefinitionNode(
 		AccessModifierKind accessModifierKind,
@@ -98,6 +98,9 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	public int ScopeIndexKey { get; set; } = -1;
 
 	public bool IsKeywordType { get; init; }
+	
+	public string IdentifierText => TypeIdentifierToken.TextSpan.Text;
+	public int ParentScopeIndexKey { get; set; }
 	
 	/// <summary>
 	/// TODO: TypeDefinitionNode(s) should use the expression loop to parse the...

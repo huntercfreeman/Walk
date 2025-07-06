@@ -3,6 +3,7 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.CompilerServices.CSharp.CompilerServiceCase;
 
@@ -45,7 +46,7 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit
 	public List<Symbol> __SymbolList { get; set; } = new();
 	
     public List<Scope> ScopeList { get; } = new();
-    public Dictionary<ScopeKeyAndIdentifierTextAndSyntaxKind, ISyntaxNode> DefinitionMap { get; } = new();
+    public List<ITrackedDefinition> DefinitionMap { get; } = new();
     
     public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => __DiagnosticList;
     public IReadOnlyList<Symbol> SymbolList => __SymbolList;

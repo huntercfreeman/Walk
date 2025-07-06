@@ -3,7 +3,7 @@ using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 
-public sealed class VariableDeclarationNode : IExpressionNode
+public sealed class VariableDeclarationNode : IExpressionNode, ITrackedDefinition
 {
 	public VariableDeclarationNode(
 		TypeReference typeReference,
@@ -50,6 +50,9 @@ public sealed class VariableDeclarationNode : IExpressionNode
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;
+	
+	public string IdentifierText => IdentifierToken.TextSpan.Text;
+	public int ParentScopeIndexKey { get; set; }
 
 	public VariableDeclarationNode SetImplicitTypeReference(TypeReference typeReference)
 	{
