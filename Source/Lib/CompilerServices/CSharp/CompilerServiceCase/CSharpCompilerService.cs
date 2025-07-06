@@ -1550,39 +1550,38 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		
 		if (resource.CompilationUnit is IExtendedCompilationUnit extendedCompilationUnit)
 		{
-			if (extendedCompilationUnit.ScopeTypeDefinitionMap is not null)
+			if (extendedCompilationUnit.DefinitionMap is not null)
 			{
-				foreach (var entry in extendedCompilationUnit.ScopeTypeDefinitionMap.Values)
+				foreach (var entry in extendedCompilationUnit.DefinitionMap.Values)
 				{
-					if (entry.TypeIdentifierToken.TextSpan.ResourceUri != modelModifier.PersistentState.ResourceUri)
+			    	TextEditorTextSpan identifierTextSpan;
+			    	int closeCodeBlockTextSpanStartInclusiveIndex;
+					if (entry.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+					{
+					    identifierTextSpan = ((TypeDefinitionNode)entry).TypeIdentifierToken.TextSpan;
+					    closeCodeBlockTextSpanStartInclusiveIndex = ((TypeDefinitionNode)entry).CloseCodeBlockTextSpan.StartInclusiveIndex;
+					}
+					else if (entry.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+					{
+					    identifierTextSpan = ((FunctionDefinitionNode)entry).FunctionIdentifierToken.TextSpan;
+					    closeCodeBlockTextSpanStartInclusiveIndex = ((FunctionDefinitionNode)entry).CloseCodeBlockTextSpan.StartInclusiveIndex;
+					}
+					else
+					{
+					    continue;
+					}
+					
+					if (identifierTextSpan.ResourceUri != modelModifier.PersistentState.ResourceUri)
 		    			continue;
-			    		
-			    	if (!_collapsePointUsedIdentifierHashSet.Add(entry.TypeIdentifierToken.TextSpan.Text))
+			    	
+			    	if (!_collapsePointUsedIdentifierHashSet.Add(identifierTextSpan.Text))
 		    			continue;
 					
 					collapsePointList.Add(new CollapsePoint(
-						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.TypeIdentifierToken.TextSpan.StartInclusiveIndex).lineIndex,
+						modelModifier.GetLineAndColumnIndicesFromPositionIndex(identifierTextSpan.StartInclusiveIndex).lineIndex,
 						false,
-						entry.TypeIdentifierToken.TextSpan.Text,
-						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.CloseCodeBlockTextSpan.StartInclusiveIndex).lineIndex + 1));
-				}
-			}
-			
-			if (extendedCompilationUnit.ScopeFunctionDefinitionMap is not null)
-			{
-				foreach (var entry in extendedCompilationUnit.ScopeFunctionDefinitionMap.Values)
-				{
-					if (entry.FunctionIdentifierToken.TextSpan.ResourceUri != modelModifier.PersistentState.ResourceUri)
-			    		continue;
-			    		
-					if (!_collapsePointUsedIdentifierHashSet.Add(entry.FunctionIdentifierToken.TextSpan.Text))
-		    			continue;
-					
-					collapsePointList.Add(new CollapsePoint(
-						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.FunctionIdentifierToken.TextSpan.StartInclusiveIndex).lineIndex,
-						false,
-						entry.FunctionIdentifierToken.TextSpan.Text,
-						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.CloseCodeBlockTextSpan.StartInclusiveIndex).lineIndex + 1));
+						identifierTextSpan.Text,
+						modelModifier.GetLineAndColumnIndicesFromPositionIndex(closeCodeBlockTextSpanStartInclusiveIndex).lineIndex + 1));
 				}
 			}
 			

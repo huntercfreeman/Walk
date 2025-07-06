@@ -279,25 +279,6 @@ public partial class CSharpBinder
             	labelDeclarationNode);
         }
     }
-    
-    public bool RemoveVariableDeclarationNodeFromActiveCompilationUnit(
-    	int scopeIndexKey, VariableDeclarationNode variableDeclarationNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
-    {
-    	var text = variableDeclarationNode.IdentifierToken.TextSpan.Text;
-    	
-    	if (TryGetVariableDeclarationNodeByScope(
-        		compilationUnit,
-        		compilationUnit.ResourceUri,
-        		scopeIndexKey,
-        		text,
-        		out var existingVariableDeclarationNode))
-        {
-            var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, text);
-	    	return compilationUnit.ScopeVariableDeclarationMap.Remove(scopeKeyAndIdentifierText);
-        }
-        
-        return false;
-    }
 
     public VariableReferenceNode ConstructAndBindVariableReferenceNode(
         SyntaxToken variableIdentifierToken,
@@ -1102,9 +1083,9 @@ public partial class CSharpBinder
     	if (!TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var compilationUnit))
     		return Array.Empty<TypeDefinitionNode>();
     	
-    	return compilationUnit.ScopeTypeDefinitionMap
-    		.Where(kvp => kvp.Key.ScopeIndexKey == scopeIndexKey)
-    		.Select(kvp => kvp.Value)
+    	return compilationUnit.DefinitionMap
+    		.Where(kvp => kvp.Key.ScopeIndexKey == scopeIndexKey && kvp.Key.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+    		.Select(kvp => (TypeDefinitionNode)kvp.Value)
     		.ToArray();
     }
     
@@ -1121,8 +1102,10 @@ public partial class CSharpBinder
     		return false;
     	}
     	
-    	var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, typeIdentifierText);
-    	return compilationUnit.ScopeTypeDefinitionMap.TryGetValue(scopeKeyAndIdentifierText, out typeDefinitionNode);
+    	var scopeKeyAndIdentifierTextAndSyntaxKind = new ScopeKeyAndIdentifierTextAndSyntaxKind(scopeIndexKey, typeIdentifierText, SyntaxKind.TypeDefinitionNode);
+    	var success = compilationUnit.DefinitionMap.TryGetValue(scopeKeyAndIdentifierTextAndSyntaxKind, out var node);
+    	typeDefinitionNode = (TypeDefinitionNode)node;
+    	return success;
     }
     
     public bool TryAddTypeDefinitionNodeByScope(
@@ -1135,8 +1118,8 @@ public partial class CSharpBinder
     	if (!TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var compilationUnit))
     		return false;
     		
-		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, typeIdentifierText);
-    	return compilationUnit.ScopeTypeDefinitionMap.TryAdd(scopeKeyAndIdentifierText, typeDefinitionNode);
+		var scopeKeyAndIdentifierTextAndSyntaxKind = new ScopeKeyAndIdentifierTextAndSyntaxKind(scopeIndexKey, typeIdentifierText, SyntaxKind.TypeDefinitionNode);
+    	return compilationUnit.DefinitionMap.TryAdd(scopeKeyAndIdentifierTextAndSyntaxKind, typeDefinitionNode);
     }
     
     public void SetTypeDefinitionNodeByScope(
@@ -1149,8 +1132,8 @@ public partial class CSharpBinder
     	if (!TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var compilationUnit))
     		return;
 
-		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, typeIdentifierText);
-    	compilationUnit.ScopeTypeDefinitionMap[scopeKeyAndIdentifierText] = typeDefinitionNode;
+		var scopeKeyAndIdentifierTextAndSyntaxKind = new ScopeKeyAndIdentifierTextAndSyntaxKind(scopeIndexKey, typeIdentifierText, SyntaxKind.TypeDefinitionNode);
+    	compilationUnit.DefinitionMap[scopeKeyAndIdentifierTextAndSyntaxKind] = typeDefinitionNode;
     }
     
     public FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(
@@ -1161,9 +1144,9 @@ public partial class CSharpBinder
     	if (!TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var compilationUnit))
     		return Array.Empty<FunctionDefinitionNode>();
 
-    	return compilationUnit.ScopeFunctionDefinitionMap
-    		.Where(kvp => kvp.Key.ScopeIndexKey == scopeIndexKey)
-    		.Select(kvp => kvp.Value)
+    	return compilationUnit.DefinitionMap
+    		.Where(kvp => kvp.Key.ScopeIndexKey == scopeIndexKey && kvp.Key.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+    		.Select(kvp => (FunctionDefinitionNode)kvp.Value)
     		.ToArray();
     }
     
@@ -1180,8 +1163,10 @@ public partial class CSharpBinder
     		return false;
     	}
     		
-    	var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, functionIdentifierText);
-    	return compilationUnit.ScopeFunctionDefinitionMap.TryGetValue(scopeKeyAndIdentifierText, out functionDefinitionNode);
+    	var scopeKeyAndIdentifierTextAndSyntaxKind = new ScopeKeyAndIdentifierTextAndSyntaxKind(scopeIndexKey, functionIdentifierText, SyntaxKind.FunctionDefinitionNode);
+    	var success = compilationUnit.DefinitionMap.TryGetValue(scopeKeyAndIdentifierTextAndSyntaxKind, out var node);
+    	functionDefinitionNode = (FunctionDefinitionNode)node;
+    	return success;
     }
     
     public bool TryAddFunctionDefinitionNodeByScope(
@@ -1194,8 +1179,8 @@ public partial class CSharpBinder
     	if (!TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var compilationUnit))
     		return false;
     	
-		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, functionIdentifierText);
-    	return compilationUnit.ScopeFunctionDefinitionMap.TryAdd(scopeKeyAndIdentifierText, functionDefinitionNode);
+		var scopeKeyAndIdentifierTextAndSyntaxKind = new ScopeKeyAndIdentifierTextAndSyntaxKind(scopeIndexKey, functionIdentifierText, SyntaxKind.FunctionDefinitionNode);
+    	return compilationUnit.DefinitionMap.TryAdd(scopeKeyAndIdentifierTextAndSyntaxKind, functionDefinitionNode);
     }
 
     public void SetFunctionDefinitionNodeByScope(
@@ -1208,8 +1193,8 @@ public partial class CSharpBinder
     	if (!TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var compilationUnit))
     		return;
     	
-		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, functionIdentifierText);
-    	compilationUnit.ScopeFunctionDefinitionMap[scopeKeyAndIdentifierText] = functionDefinitionNode;
+		var scopeKeyAndIdentifierTextAndSyntaxKind = new ScopeKeyAndIdentifierTextAndSyntaxKind(scopeIndexKey, functionIdentifierText, SyntaxKind.FunctionDefinitionNode);
+    	compilationUnit.DefinitionMap[scopeKeyAndIdentifierTextAndSyntaxKind] = functionDefinitionNode;
     }
     
     public VariableDeclarationNode[] GetVariableDeclarationNodesByScope(
@@ -1220,9 +1205,9 @@ public partial class CSharpBinder
     	if (!TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var binderSession))
     		return Array.Empty<VariableDeclarationNode>();
     	
-    	return binderSession.ScopeVariableDeclarationMap
-    		.Where(kvp => kvp.Key.ScopeIndexKey == scopeIndexKey)
-    		.Select(kvp => kvp.Value)
+    	return binderSession.DefinitionMap
+    		.Where(kvp => kvp.Key.ScopeIndexKey == scopeIndexKey && kvp.Key.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+    		.Select(kvp => (VariableDeclarationNode)kvp.Value)
     		.ToArray();
     }
     
@@ -1239,8 +1224,10 @@ public partial class CSharpBinder
     		return false;
     	}
     		
-    	var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, variableIdentifierText);
-    	return binderSession.ScopeVariableDeclarationMap.TryGetValue(scopeKeyAndIdentifierText, out variableDeclarationNode);
+    	var scopeKeyAndIdentifierTextAndSyntaxKind = new ScopeKeyAndIdentifierTextAndSyntaxKind(scopeIndexKey, variableIdentifierText, SyntaxKind.VariableDeclarationNode);
+    	var success = binderSession.DefinitionMap.TryGetValue(scopeKeyAndIdentifierTextAndSyntaxKind, out var node);
+    	variableDeclarationNode = (VariableDeclarationNode)node;
+    	return success;
     }
     
     public bool TryAddVariableDeclarationNodeByScope(
@@ -1253,8 +1240,8 @@ public partial class CSharpBinder
     	if (!TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var binderSession))
     		return false;
     		
-		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, variableIdentifierText);
-    	return binderSession.ScopeVariableDeclarationMap.TryAdd(scopeKeyAndIdentifierText, variableDeclarationNode);
+		var scopeKeyAndIdentifierTextAndSyntaxKind = new ScopeKeyAndIdentifierTextAndSyntaxKind(scopeIndexKey, variableIdentifierText, SyntaxKind.VariableDeclarationNode);
+    	return binderSession.DefinitionMap.TryAdd(scopeKeyAndIdentifierTextAndSyntaxKind, variableDeclarationNode);
     }
     
     public void SetVariableDeclarationNodeByScope(
@@ -1267,8 +1254,8 @@ public partial class CSharpBinder
     	if (!TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var binderSession))
     		return;
     		
-		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, variableIdentifierText);
-    	binderSession.ScopeVariableDeclarationMap[scopeKeyAndIdentifierText] = variableDeclarationNode;
+		var scopeKeyAndIdentifierTextAndSyntaxKind = new ScopeKeyAndIdentifierTextAndSyntaxKind(scopeIndexKey, variableIdentifierText, SyntaxKind.VariableDeclarationNode);
+    	binderSession.DefinitionMap[scopeKeyAndIdentifierTextAndSyntaxKind] = variableDeclarationNode;
     }
     
     public bool TryGetLabelDeclarationNodeByScope(
@@ -1284,8 +1271,10 @@ public partial class CSharpBinder
     		return false;
     	}
     		
-    	var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, labelIdentifierText);
-    	return binderSession.ScopeLabelDeclarationMap.TryGetValue(scopeKeyAndIdentifierText, out labelDeclarationNode);
+    	var scopeKeyAndIdentifierTextAndSyntaxKind = new ScopeKeyAndIdentifierTextAndSyntaxKind(scopeIndexKey, labelIdentifierText, SyntaxKind.LabelDeclarationNode);
+    	var success = binderSession.DefinitionMap.TryGetValue(scopeKeyAndIdentifierTextAndSyntaxKind, out var node);
+    	labelDeclarationNode = (LabelDeclarationNode)node;
+    	return success;
     }
     
     public bool TryAddLabelDeclarationNodeByScope(
@@ -1298,8 +1287,8 @@ public partial class CSharpBinder
     	if (!TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var binderSession))
     		return false;
     		
-		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, labelIdentifierText);
-    	return binderSession.ScopeLabelDeclarationMap.TryAdd(scopeKeyAndIdentifierText, labelDeclarationNode);
+		var scopeKeyAndIdentifierTextAndSyntaxKind = new ScopeKeyAndIdentifierTextAndSyntaxKind(scopeIndexKey, labelIdentifierText, SyntaxKind.LabelDeclarationNode);
+    	return binderSession.DefinitionMap.TryAdd(scopeKeyAndIdentifierTextAndSyntaxKind, labelDeclarationNode);
     }
     
     public void SetLabelDeclarationNodeByScope(
@@ -1312,11 +1301,11 @@ public partial class CSharpBinder
     	if (!TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var binderSession))
     		return;
     		
-		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, labelIdentifierText);
-    	binderSession.ScopeLabelDeclarationMap[scopeKeyAndIdentifierText] = labelDeclarationNode;
+		var scopeKeyAndIdentifierTextAndSyntaxKind = new ScopeKeyAndIdentifierTextAndSyntaxKind(scopeIndexKey, labelIdentifierText, SyntaxKind.LabelDeclarationNode);
+    	binderSession.DefinitionMap[scopeKeyAndIdentifierTextAndSyntaxKind] = labelDeclarationNode;
     }
 
-    public TypeClauseNode? GetReturnTypeClauseNodeByScope(
+    /*public TypeClauseNode? GetReturnTypeClauseNodeByScope(
     	CSharpCompilationUnit? cSharpCompilationUnit,
     	ResourceUri resourceUri,
     	int scopeIndexKey)
@@ -1343,7 +1332,7 @@ public partial class CSharpBinder
     	}
     		
     	return binderSession.ScopeReturnTypeClauseNodeMap.TryAdd(scopeIndexKey, typeClauseNode);
-    }
+    }*/
     
     public TextEditorTextSpan? GetDefinitionTextSpan(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource) =>
     	GetDefinitionTextSpan(cSharpCompilationUnit: null, textSpan, (CSharpResource)compilerServiceResource);
@@ -1962,9 +1951,12 @@ public partial class CSharpBinder
 			return Array.Empty<ISyntaxNode>();
         }
         
-		var query = compilationUnit.ScopeTypeDefinitionMap.Where(x => x.Key.ScopeIndexKey == typeDefinitionNode.ScopeIndexKey).Select(x => (ISyntaxNode)x.Value)
-		    .Concat(compilationUnit.ScopeFunctionDefinitionMap.Where(x => x.Key.ScopeIndexKey == typeDefinitionNode.ScopeIndexKey).Select(x => x.Value))
-		    .Concat(compilationUnit.ScopeVariableDeclarationMap.Where(x => x.Key.ScopeIndexKey == typeDefinitionNode.ScopeIndexKey).Select(x => x.Value));
+		var query = compilationUnit.DefinitionMap
+		    .Where(x => x.Key.ScopeIndexKey == typeDefinitionNode.ScopeIndexKey &&
+    		                (x.Key.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
+    		                 x.Key.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+    		                 x.Key.SyntaxKind == SyntaxKind.VariableDeclarationNode))
+		    .Select(x => x.Value);
 		
         if (typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList is not null)
         {
@@ -1987,7 +1979,7 @@ public partial class CSharpBinder
 			return Array.Empty<TypeDefinitionNode>();
         }
         
-		return compilationUnit.ScopeTypeDefinitionMap.Where(x => x.Key.ScopeIndexKey == namespaceStatementNode.ScopeIndexKey).Select(x => x.Value);
+		return compilationUnit.DefinitionMap.Where(x => x.Key.ScopeIndexKey == namespaceStatementNode.ScopeIndexKey && x.Key.SyntaxKind == SyntaxKind.TypeDefinitionNode).Select(x => (TypeDefinitionNode)x.Value);
 	}
 	
 	/// <summary>

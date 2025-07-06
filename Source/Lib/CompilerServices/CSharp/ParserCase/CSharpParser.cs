@@ -285,10 +285,10 @@ public static class CSharpParser
 		
 		if (compilationUnit.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData)
 		{
-			foreach (var kvp in compilationUnit.ScopeVariableDeclarationMap)
+			foreach (var kvp in compilationUnit.DefinitionMap)
 			{
 				if (binder.SolutionWide_MinimumLocalsData_ScopeIndexKey_HashSet.Contains(kvp.Key.ScopeIndexKey))
-					compilationUnit.ScopeVariableDeclarationMap.Remove(kvp.Key);
+					compilationUnit.DefinitionMap.Remove(kvp.Key);
 			}
 			
 			binder.SolutionWide_MinimumLocalsData_ScopeIndexKey_HashSet.Clear();
