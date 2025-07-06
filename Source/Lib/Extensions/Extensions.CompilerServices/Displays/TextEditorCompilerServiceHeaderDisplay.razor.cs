@@ -126,6 +126,10 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 			if (modelModifier.PersistentState.CompilerService is not IExtendedCompilerService extendedCompilerService)
 				return;
 	
+			var resource = modelModifier.PersistentState.CompilerService.GetResource(resourceUri);
+			if (resource.CompilationUnit is not IExtendedCompilationUnit extendedCompilationUnit)
+				return;
+				
 			var targetScope = extendedCompilerService.GetScopeByPositionIndex(
 				resourceUri,
 				modelModifier.GetPositionIndex(viewModelModifier));
@@ -135,7 +139,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     
 			TextEditorTextSpan textSpanStart;
     		
-    		if (!targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.ConstructorWasInvoked)
+    		if (!extendedCompilationUnit.CodeBlockOwnerList[targetScope.IndexCodeBlockOwner].OpenCodeBlockTextSpan.ConstructorWasInvoked)
     		{
     			textSpanStart = new TextEditorTextSpan(
 		            targetScope.StartInclusiveIndex,
@@ -148,8 +152,8 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     		else
     		{
     			textSpanStart = new TextEditorTextSpan(
-		            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.StartInclusiveIndex,
-		            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.StartInclusiveIndex + 1,
+		            extendedCompilationUnit.CodeBlockOwnerList[targetScope.IndexCodeBlockOwner].OpenCodeBlockTextSpan.StartInclusiveIndex,
+		            extendedCompilationUnit.CodeBlockOwnerList[targetScope.IndexCodeBlockOwner].OpenCodeBlockTextSpan.StartInclusiveIndex + 1,
 				    (byte)TextEditorDevToolsDecorationKind.Scope,
 				    resourceUri,
 				    sourceText: string.Empty,
@@ -206,9 +210,9 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				viewModelModifier.PersistentState.VirtualizedCollapsePointListVersion++;
 			}
 				
-			if (_codeBlockOwner != targetScope.CodeBlockOwner)
+			if (_codeBlockOwner != extendedCompilationUnit.CodeBlockOwnerList[targetScope.IndexCodeBlockOwner])
 			{
-				_codeBlockOwner = targetScope.CodeBlockOwner;
+				_codeBlockOwner = extendedCompilationUnit.CodeBlockOwnerList[targetScope.IndexCodeBlockOwner];
 				_shouldRender = true;
 			}
 			

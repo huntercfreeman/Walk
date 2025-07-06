@@ -3,6 +3,7 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.CompilerServices.CSharp.CompilerServiceCase;
 
@@ -45,6 +46,9 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit
 	public List<Symbol> __SymbolList { get; set; } = new();
 	
     public List<Scope> ScopeList { get; } = new();
+    
+    public List<ICodeBlockOwner> CodeBlockOwnerList { get; set; } = new();
+    
     public Dictionary<ScopeKeyAndIdentifierText, TypeDefinitionNode> ScopeTypeDefinitionMap { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, FunctionDefinitionNode> ScopeFunctionDefinitionMap { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, VariableDeclarationNode> ScopeVariableDeclarationMap { get; } = new();

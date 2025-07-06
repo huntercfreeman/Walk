@@ -598,9 +598,11 @@ public partial class CSharpBinder
     		//       a new instance of the node ends up being parsed.
     		throw new WalkTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockOwner.ScopeIndexKey is NOT '-1'; an infinite loop? _{codeBlockOwner.SyntaxKind}");
     	}
+    	
+    	compilationUnit.CodeBlockOwnerList.Add(codeBlockOwner);
     
     	var scope = new Scope(
-        	codeBlockOwner,
+        	indexCodeBlockOwner: compilationUnit.CodeBlockOwnerList.Count - 1,
         	indexKey: parserModel.GetNextIndexKey(),
 		    parentIndexKey: parserModel.CurrentScopeIndexKey,
 		    textSpan.StartInclusiveIndex,
@@ -646,8 +648,10 @@ public partial class CSharpBinder
     		throw new WalkTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockBuilder.ScopeIndexKey is NOT '-1'; an infinite loop?");
 		}    
     	
+    	compilationUnit.CodeBlockOwnerList.Add(codeBlockOwner);
+    	
     	var scope = new Scope(
-        	codeBlockOwner,
+        	indexCodeBlockOwner: compilationUnit.CodeBlockOwnerList.Count - 1,
         	indexKey: 0,
 		    parentIndexKey: -1,
 		    textSpan.StartInclusiveIndex,
