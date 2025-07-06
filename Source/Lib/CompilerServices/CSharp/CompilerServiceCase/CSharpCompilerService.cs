@@ -1550,21 +1550,21 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		
 		if (resource.CompilationUnit is IExtendedCompilationUnit extendedCompilationUnit)
 		{
-			if (extendedCompilationUnit.DefinitionMap is not null)
+			if (extendedCompilationUnit.DefinitionTupleList is not null)
 			{
-				foreach (var entry in extendedCompilationUnit.DefinitionMap)
+				foreach (var entry in extendedCompilationUnit.DefinitionTupleList)
 				{
 			    	TextEditorTextSpan identifierTextSpan;
 			    	int closeCodeBlockTextSpanStartInclusiveIndex;
-					if (entry.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+					if (entry.TrackedDefinition.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 					{
-					    identifierTextSpan = ((TypeDefinitionNode)entry).TypeIdentifierToken.TextSpan;
-					    closeCodeBlockTextSpanStartInclusiveIndex = ((TypeDefinitionNode)entry).CloseCodeBlockTextSpan.StartInclusiveIndex;
+					    identifierTextSpan = ((TypeDefinitionNode)entry.TrackedDefinition).TypeIdentifierToken.TextSpan;
+					    closeCodeBlockTextSpanStartInclusiveIndex = ((TypeDefinitionNode)entry.TrackedDefinition).CloseCodeBlockTextSpan.StartInclusiveIndex;
 					}
-					else if (entry.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+					else if (entry.TrackedDefinition.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
 					{
-					    identifierTextSpan = ((FunctionDefinitionNode)entry).FunctionIdentifierToken.TextSpan;
-					    closeCodeBlockTextSpanStartInclusiveIndex = ((FunctionDefinitionNode)entry).CloseCodeBlockTextSpan.StartInclusiveIndex;
+					    identifierTextSpan = ((FunctionDefinitionNode)entry.TrackedDefinition).FunctionIdentifierToken.TextSpan;
+					    closeCodeBlockTextSpanStartInclusiveIndex = ((FunctionDefinitionNode)entry.TrackedDefinition).CloseCodeBlockTextSpan.StartInclusiveIndex;
 					}
 					else
 					{

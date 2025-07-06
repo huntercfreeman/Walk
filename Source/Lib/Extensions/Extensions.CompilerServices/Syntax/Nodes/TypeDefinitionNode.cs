@@ -100,7 +100,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	public bool IsKeywordType { get; init; }
 	
 	public string IdentifierText => TypeIdentifierToken.TextSpan.Text;
-	public int ParentScopeIndexKey { get; set; }
 	
 	/// <summary>
 	/// TODO: TypeDefinitionNode(s) should use the expression loop to parse the...

@@ -50,7 +50,6 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 	public bool IsParsingGenericParameters { get; set; }
 	
 	public string IdentifierText => FunctionIdentifierToken.TextSpan.Text;
-	public int ParentScopeIndexKey { get; set; }
 	
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()

@@ -16,7 +16,6 @@ public sealed class LabelDeclarationNode : IExpressionNode, ITrackedDefinition
 	public SyntaxToken IdentifierToken { get; }
 	
 	public string IdentifierText => IdentifierToken.TextSpan.Text;
-	public int ParentScopeIndexKey { get; set; }
 
 	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
