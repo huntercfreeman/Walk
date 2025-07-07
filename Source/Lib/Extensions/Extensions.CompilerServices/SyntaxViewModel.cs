@@ -101,31 +101,31 @@ public struct SyntaxViewModel
 		if (DefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 		{
 			var typeDefinitionNode = (TypeDefinitionNode)DefinitionNode;
-			resourceUriValue = ResourceUri.Value;
+			resourceUriValue = typeDefinitionNode.ResourceUri.Value;
 			indexInclusiveStart = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 		{
 			var variableDeclarationNode = (VariableDeclarationNode)DefinitionNode;
-			resourceUriValue = ResourceUri.Value;
+			resourceUriValue = variableDeclarationNode.ResourceUri.Value;
 			indexInclusiveStart = variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 		{
 			var namespaceStatementNode = (NamespaceStatementNode)DefinitionNode;
-			resourceUriValue = ResourceUri.Value;
+			resourceUriValue = namespaceStatementNode.ResourceUri.Value;
 			indexInclusiveStart = namespaceStatementNode.IdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
 		{
 			var functionDefinitionNode = (FunctionDefinitionNode)DefinitionNode;
-			resourceUriValue = ResourceUri.Value;
+			resourceUriValue = functionDefinitionNode.ResourceUri.Value;
 			indexInclusiveStart = functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
 		{
 			var constructorDefinitionNode = (ConstructorDefinitionNode)DefinitionNode;
-			resourceUriValue = ResourceUri.Value;
+			resourceUriValue = constructorDefinitionNode.ResourceUri.Value;
 			indexInclusiveStart = constructorDefinitionNode.FunctionIdentifier.TextSpan.StartInclusiveIndex;
 		}
 		
