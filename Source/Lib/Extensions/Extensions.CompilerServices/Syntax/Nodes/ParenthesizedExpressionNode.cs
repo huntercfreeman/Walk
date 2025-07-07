@@ -31,7 +31,9 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ParenthesizedExpressionNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(ParenthesizedExpressionNode);
+
+#if DEBUG
 	~ParenthesizedExpressionNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ParenthesizedExpressionNode--;

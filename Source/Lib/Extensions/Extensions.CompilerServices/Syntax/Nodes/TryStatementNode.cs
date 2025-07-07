@@ -27,7 +27,9 @@ public sealed class TryStatementNode : ISyntaxNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TryStatementNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(TryStatementNode);
+
+#if DEBUG
 	~TryStatementNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TryStatementNode--;

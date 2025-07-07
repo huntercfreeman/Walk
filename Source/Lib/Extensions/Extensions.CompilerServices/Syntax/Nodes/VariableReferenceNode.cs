@@ -58,7 +58,9 @@ public sealed class VariableReferenceNode : IExpressionNode
 		}
 	}
 	public SyntaxKind SyntaxKind => SyntaxKind.VariableReferenceNode;
-	
+
+	public string IdentifierText => nameof(VariableReferenceNode);
+
 	public void SetSharedInstance(
 		SyntaxToken variableIdentifierToken,
 		VariableDeclarationNode variableDeclarationNode)

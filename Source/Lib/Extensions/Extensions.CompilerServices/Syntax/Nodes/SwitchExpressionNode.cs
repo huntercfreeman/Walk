@@ -16,6 +16,8 @@ public sealed class SwitchExpressionNode : IExpressionNode
 	
 	public TypeReference ResultTypeReference { get; }
 
+	public string IdentifierText => nameof(SwitchExpressionNode);
+
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()
 	{

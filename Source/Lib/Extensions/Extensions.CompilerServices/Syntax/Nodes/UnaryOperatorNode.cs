@@ -23,7 +23,9 @@ public sealed class UnaryOperatorNode : ISyntaxNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.UnaryOperatorNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(UnaryOperatorNode);
+
+#if DEBUG
 	~UnaryOperatorNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.UnaryOperatorNode--;

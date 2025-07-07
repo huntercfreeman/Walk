@@ -23,7 +23,9 @@ public sealed class UnaryExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.UnaryExpressionNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(UnaryExpressionNode);
+
+#if DEBUG
 	~UnaryExpressionNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.UnaryExpressionNode--;

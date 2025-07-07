@@ -102,6 +102,8 @@ public sealed class TypeClauseNode : IGenericParameterNode
 	
 	public bool IsParsingGenericParameters { get; set; }
 
+	public string IdentifierText => nameof(TypeClauseNode);
+
 	public void SetSharedInstance(
 		SyntaxToken typeIdentifier,
 		Type? valueType,

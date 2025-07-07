@@ -19,7 +19,9 @@ public sealed class UsingStatementListingNode : ISyntaxNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.UsingStatementListingNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(UsingStatementListingNode);
+
+#if DEBUG
 	~UsingStatementListingNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.UsingStatementListingNode--;
