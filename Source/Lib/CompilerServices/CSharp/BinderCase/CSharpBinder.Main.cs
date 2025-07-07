@@ -853,12 +853,18 @@ public partial class CSharpBinder
     /// If none of the searched scopes contained a match then set the out parameter to null and return false.
     /// </summary>
     public bool TryGetTypeDefinitionHierarchically(
-    	CSharpCompilationUnit? compilationUnit,
+    	CSharpCompilationUnit? cSharpCompilationUnit,
         ResourceUri resourceUri,
     	int initialScopeIndexKey,
         string identifierText,
         out TypeDefinitionNode? typeDefinitionNode)
     {
+        if (!TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var compilationUnit))
+        {
+            typeDefinitionNode = null;
+            return false;
+        }
+    
         var localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, initialScopeIndexKey);
 
         while (localScope is not null)
@@ -1018,7 +1024,7 @@ public partial class CSharpBinder
     /// If the resourceUri is the in progress CompilationUnit's ResourceUri,
     /// then the in progress instance should be returned via the out variable.
     ///
-    /// TODO: This is quite confusingly written at the moment. 
+    /// TODO: This is quite confusingly written at the moment.
     /// </summary>
     public bool TryGetCompilationUnit(CSharpCompilationUnit? cSharpCompilationUnit, ResourceUri resourceUri, out CSharpCompilationUnit compilationUnit)
     {
@@ -1096,7 +1102,7 @@ public partial class CSharpBinder
     	         var externalMatchNode = compilationUnit.ExternalTypeDefinitionList.FirstOrDefault(x => x.IdentifierText == typeIdentifierText);
     	         if (externalMatchNode is not null)
     	         {
-    	             typeDefinitionNode = (TypeDefinitionNode)matchNode;
+    	             typeDefinitionNode = (TypeDefinitionNode)externalMatchNode;
     	             return true;
     	         }
     	    }
@@ -1499,7 +1505,7 @@ public partial class CSharpBinder
 
         if (scope is null)
             return null;
-            
+
         var externalSyntaxKind = SyntaxKind.VariableDeclarationNode;
         
         switch (syntaxKind)
@@ -1549,14 +1555,14 @@ public partial class CSharpBinder
 	        case SyntaxKind.ConstructorSymbol:
 	        {
 	        	if (TryGetTypeDefinitionHierarchically(
-	        				 cSharpCompilationUnit,
-	        			     textSpan.ResourceUri,
+            				 cSharpCompilationUnit,
+            			     textSpan.ResourceUri,
         					 scope.Unsafe_SelfIndexKey,
-		                     getTextResult ?? textSpan.Text,
-		                     out var typeDefinitionNode)
-		                 && typeDefinitionNode is not null)
+                             getTextResult ?? textSpan.Text,
+                             out var typeDefinitionNode) &&
+                         typeDefinitionNode is not null)
 		        {
-		            return typeDefinitionNode;
+	                return typeDefinitionNode;
 		        }
 		        
 		        externalSyntaxKind = SyntaxKind.TypeDefinitionNode;
