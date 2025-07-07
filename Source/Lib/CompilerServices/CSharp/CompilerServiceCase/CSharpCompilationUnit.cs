@@ -46,7 +46,7 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit
 	public List<Symbol> __SymbolList { get; set; } = new();
 	
     public List<TypeDefinitionNode> ExternalTypeDefinitionList { get; } = new();
-    public List<ISyntaxNode> DefinitionTupleList { get; } = new();
+    public List<ISyntaxNode> NodeList { get; } = new();
     
     public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => __DiagnosticList;
     public IReadOnlyList<Symbol> SymbolList => __SymbolList;

@@ -283,11 +283,11 @@ public static class CSharpParser
 		
 		if (compilationUnit.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData)
 		{
-			for (int i = compilationUnit.DefinitionTupleList.Count - 1; i >= 0; i--)
+			for (int i = compilationUnit.NodeList.Count - 1; i >= 0; i--)
 			{
-			    var tuple = compilationUnit.DefinitionTupleList[i];
+			    var tuple = compilationUnit.NodeList[i];
                 if (binder.SolutionWide_MinimumLocalsData_ScopeIndexKey_HashSet.Contains(tuple.ParentScopeIndexKey))
-                    compilationUnit.DefinitionTupleList.RemoveAt(i);
+                    compilationUnit.NodeList.RemoveAt(i);
 			}
 			
 			binder.SolutionWide_MinimumLocalsData_ScopeIndexKey_HashSet.Clear();

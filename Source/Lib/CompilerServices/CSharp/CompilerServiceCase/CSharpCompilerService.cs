@@ -1551,9 +1551,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		
 		if (resource.CompilationUnit is IExtendedCompilationUnit extendedCompilationUnit)
 		{
-			if (extendedCompilationUnit.DefinitionTupleList is not null)
+			if (extendedCompilationUnit.NodeList is not null)
 			{
-				foreach (var entry in extendedCompilationUnit.DefinitionTupleList)
+				foreach (var entry in extendedCompilationUnit.NodeList)
 				{
 			    	TextEditorTextSpan identifierTextSpan;
 			    	int closeCodeBlockTextSpanStartInclusiveIndex;
