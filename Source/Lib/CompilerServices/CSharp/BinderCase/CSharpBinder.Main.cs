@@ -127,18 +127,18 @@ public partial class CSharpBinder
 
         compilationUnit.__SymbolList.Add(functionSymbol);
 
-        if (!TryAddFunctionDefinitionNodeByScope(
-        		compilationUnit,
-        		compilationUnit.ResourceUri,
-        		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-        		functionIdentifierText,
-                functionDefinitionNode))
-        {
-            /*DiagnosticHelper.ReportAlreadyDefinedFunction(
-            	compilationUnit.__DiagnosticList,
-                functionDefinitionNode.FunctionIdentifierToken.TextSpan,
-                functionIdentifierText);*/
-        }
+        //if (!TryAddFunctionDefinitionNodeByScope(
+        //		compilationUnit,
+        //		compilationUnit.ResourceUri,
+        //		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+        //		functionIdentifierText,
+        //        functionDefinitionNode))
+        //{
+        //    /*DiagnosticHelper.ReportAlreadyDefinedFunction(
+        //    	compilationUnit.__DiagnosticList,
+        //        functionDefinitionNode.FunctionIdentifierToken.TextSpan,
+        //        functionIdentifierText);*/
+        //}
     }
 
     public void SetCurrentNamespaceStatementNode(
@@ -508,39 +508,39 @@ public partial class CSharpBinder
 
         typeDefinitionNode.EncompassingNamespaceIdentifierString = currentNamespaceStatementText;
         
-        if (TryGetTypeDefinitionNodeByScope(
-        		compilationUnit,
-        		compilationUnit.ResourceUri,
-        		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-        		typeIdentifierText,
-        		out var existingTypeDefinitionNode))
-        {
-        	if (shouldOverwrite || existingTypeDefinitionNode.IsFabricated)
-        	{
-        		SetTypeDefinitionNodeByScope(
-        			compilationUnit,
-        			compilationUnit.ResourceUri,
-	        		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-	        		typeIdentifierText,
-	        		typeDefinitionNode);
-        	}
-        	else
-        	{
-        		/*DiagnosticHelper.ReportAlreadyDefinedType(
-	            	compilationUnit.__DiagnosticList,
-	                typeDefinitionNode.TypeIdentifierToken.TextSpan,
-	                typeIdentifierText);*/
-        	}
-        }
-        else
-        {
-        	_ = TryAddTypeDefinitionNodeByScope(
-        		compilationUnit,
-    			compilationUnit.ResourceUri,
-        		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-        		typeIdentifierText,
-        		typeDefinitionNode);
-        }
+       // if (TryGetTypeDefinitionNodeByScope(
+       // 		compilationUnit,
+       // 		compilationUnit.ResourceUri,
+       // 		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+       // 		typeIdentifierText,
+       // 		out var existingTypeDefinitionNode))
+       // {
+       // 	if (shouldOverwrite || existingTypeDefinitionNode.IsFabricated)
+       // 	{
+       // 		SetTypeDefinitionNodeByScope(
+       // 			compilationUnit,
+       // 			compilationUnit.ResourceUri,
+	      //  		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+	      //  		typeIdentifierText,
+	      //  		typeDefinitionNode);
+       // 	}
+       // 	else
+       // 	{
+       // 		/*DiagnosticHelper.ReportAlreadyDefinedType(
+	      //      	compilationUnit.__DiagnosticList,
+	      //          typeDefinitionNode.TypeIdentifierToken.TextSpan,
+	      //          typeIdentifierText);*/
+       // 	}
+       // }
+       // else
+       // {
+       // 	_ = TryAddTypeDefinitionNodeByScope(
+       // 		compilationUnit,
+    			//compilationUnit.ResourceUri,
+       // 		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+       // 		typeIdentifierText,
+       // 		typeDefinitionNode);
+       // }
 
         var success = _allTypeDefinitions.TryAdd(typeIdentifierText, typeDefinitionNode);
         if (!success)
@@ -574,27 +574,22 @@ public partial class CSharpBinder
     
     	if (codeBlockOwner.Unsafe_SelfIndexKey != -1)
     	{
-    		// TODO: This does not catch nearly as many infinite loop cases as I initially thought it would...
-    		//       ...When the token walker sets the token index for deferred parsing,
-    		//       a new instance of the node ends up being parsed.
-    		throw new WalkTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockOwner.ScopeIndexKey is NOT '-1'; an infinite loop? _{codeBlockOwner.SyntaxKind}");
-    	}
+			parserModel.CurrentCodeBlockOwner = codeBlockOwner;
+
+			// TODO: This does not catch nearly as many infinite loop cases as I initially thought it would...
+			//       ...When the token walker sets the token index for deferred parsing,
+			//       a new instance of the node ends up being parsed.
+			//
+			// throw new WalkTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockOwner.ScopeIndexKey is NOT '-1'; an infinite loop? _{codeBlockOwner.SyntaxKind}");
+		}
     	
     	codeBlockOwner.Unsafe_ParentIndexKey = parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
     	codeBlockOwner.Scope_StartInclusiveIndex = textSpan.StartInclusiveIndex;
 
-        switch (codeBlockOwner.SyntaxKind)
-        {
-            case SyntaxKind.TypeDefinitionNode:
-			case SyntaxKind.FunctionDefinitionNode:
-                break;
-            default:
-                codeBlockOwner.Unsafe_SelfIndexKey = compilationUnit.DefinitionTupleList.Count;
-                compilationUnit.DefinitionTupleList.Add((codeBlockOwner.Unsafe_ParentIndexKey, codeBlockOwner));
-                break;
-		}
-    	
-    	var parent = parserModel.GetParent(codeBlockOwner, compilationUnit);
+		codeBlockOwner.Unsafe_SelfIndexKey = compilationUnit.DefinitionTupleList.Count;
+		compilationUnit.DefinitionTupleList.Add((codeBlockOwner.Unsafe_ParentIndexKey, codeBlockOwner));
+
+		var parent = parserModel.GetParent(codeBlockOwner, compilationUnit);
     	
     	var parentScopeDirection = parent?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
         if (parentScopeDirection == ScopeDirectionKind.Both)
@@ -1089,7 +1084,7 @@ public partial class CSharpBinder
     	
     	if (matchNode.TrackedDefinition is null)
     	{
-    	    typeDefinitionNode.Unsafe_SelfIndexKey = compilationUnit.DefinitionTupleList.Count;
+    	    // typeDefinitionNode.Unsafe_SelfIndexKey = compilationUnit.DefinitionTupleList.Count;
     	    compilationUnit.DefinitionTupleList.Add((scopeIndexKey, typeDefinitionNode));
     	    return true;
     	}
@@ -1099,7 +1094,7 @@ public partial class CSharpBinder
     	}
     }
     
-    public void SetTypeDefinitionNodeByScope(
+    /*public void SetTypeDefinitionNodeByScope(
     	CSharpCompilationUnit? cSharpCompilationUnit,
     	ResourceUri resourceUri,
     	int scopeIndexKey,
@@ -1118,7 +1113,7 @@ public partial class CSharpBinder
 		    typeDefinitionNode.Unsafe_SelfIndexKey = index;
 		    compilationUnit.DefinitionTupleList[index] = (scopeIndexKey, typeDefinitionNode);
 		}
-    }
+    }*/
     
     public FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(
     	CSharpCompilationUnit? cSharpCompilationUnit,
@@ -1163,7 +1158,7 @@ public partial class CSharpBinder
     	}
     }
     
-    public bool TryAddFunctionDefinitionNodeByScope(
+    /*public bool TryAddFunctionDefinitionNodeByScope(
     	CSharpCompilationUnit? cSharpCompilationUnit,
     	ResourceUri resourceUri,
     	int scopeIndexKey,
@@ -1187,9 +1182,9 @@ public partial class CSharpBinder
     	{
     	    return false;
     	}
-    }
+    }*/
 
-    public void SetFunctionDefinitionNodeByScope(
+    /*public void SetFunctionDefinitionNodeByScope(
     	CSharpCompilationUnit? cSharpCompilationUnit,
     	ResourceUri resourceUri,
     	int scopeIndexKey,
@@ -1208,7 +1203,7 @@ public partial class CSharpBinder
 		    functionDefinitionNode.Unsafe_SelfIndexKey = index;
 		    compilationUnit.DefinitionTupleList[index] = (scopeIndexKey, functionDefinitionNode);
 		}
-    }
+    }*/
     
     public VariableDeclarationNode[] GetVariableDeclarationNodesByScope(
     	CSharpCompilationUnit? cSharpCompilationUnit,
