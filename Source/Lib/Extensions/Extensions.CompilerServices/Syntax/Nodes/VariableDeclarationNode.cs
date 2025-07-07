@@ -48,6 +48,7 @@ public sealed class VariableDeclarationNode : IExpressionNode
 
 	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
+	public int ParentScopeIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;
 	

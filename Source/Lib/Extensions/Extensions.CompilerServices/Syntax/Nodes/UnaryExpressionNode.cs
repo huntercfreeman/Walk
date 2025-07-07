@@ -20,6 +20,7 @@ public sealed class UnaryExpressionNode : IExpressionNode
 	public UnaryOperatorNode UnaryOperatorNode { get; }
 	public TypeReference ResultTypeReference => UnaryOperatorNode.ResultTypeReference;
 
+	public int ParentScopeIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.UnaryExpressionNode;
 

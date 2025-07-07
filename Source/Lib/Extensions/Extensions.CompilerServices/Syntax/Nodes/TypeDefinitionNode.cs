@@ -73,6 +73,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	public string NamespaceName { get; }
 	public bool IsInterface => StorageModifierKind == StorageModifierKind.Interface;
 
+	public int ParentScopeIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TypeDefinitionNode;
 	

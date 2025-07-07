@@ -27,6 +27,7 @@ public sealed class ExplicitCastNode : IExpressionNode
 	public TypeReference ResultTypeReference { get; }
 	public SyntaxToken CloseParenthesisToken { get; set; }
 
+	public int ParentScopeIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ExplicitCastNode;
 

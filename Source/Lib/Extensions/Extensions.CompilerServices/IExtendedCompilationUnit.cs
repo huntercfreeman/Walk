@@ -8,5 +8,6 @@ namespace Walk.Extensions.CompilerServices;
 public interface IExtendedCompilationUnit : ICompilationUnit
 {
 	public IReadOnlyList<Symbol> SymbolList { get; }
-	public List<(int ParentScopeIndexKey, ISyntaxNode TrackedDefinition)> DefinitionTupleList { get; }
+	public List<ISyntaxNode> DefinitionTupleList { get; }
+	public List<TypeDefinitionNode> ExternalTypeDefinitionList { get; }
 }

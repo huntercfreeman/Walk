@@ -56,6 +56,7 @@ public sealed class BinaryExpressionNode : IExpressionNode
 	}
 	public bool RightExpressionNodeWasSet { get; set; }
 
+	public int ParentScopeIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionNode;
 

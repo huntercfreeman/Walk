@@ -587,7 +587,7 @@ public partial class CSharpBinder
     	codeBlockOwner.Scope_StartInclusiveIndex = textSpan.StartInclusiveIndex;
 
 		codeBlockOwner.Unsafe_SelfIndexKey = compilationUnit.DefinitionTupleList.Count;
-		compilationUnit.DefinitionTupleList.Add((codeBlockOwner.Unsafe_ParentIndexKey, codeBlockOwner));
+		compilationUnit.DefinitionTupleList.Add(codeBlockOwner);
 
 		var parent = parserModel.GetParent(codeBlockOwner, compilationUnit);
     	
@@ -630,7 +630,7 @@ public partial class CSharpBinder
     	codeBlockOwner.Scope_StartInclusiveIndex = textSpan.StartInclusiveIndex;
     	codeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
 
-        compilationUnit.DefinitionTupleList.Add((-1, codeBlockOwner));
+        compilationUnit.DefinitionTupleList.Add(codeBlockOwner);
     	
     	return codeBlockOwner;
     }
@@ -668,15 +668,16 @@ public partial class CSharpBinder
             namespaceGroup.ConstructorWasInvoked)
         {
             var typeDefinitionNodes = GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup);
-
+            
             foreach (var typeDefinitionNode in typeDefinitionNodes)
             {
-            	_ = TryAddTypeDefinitionNodeByScope(
-        				compilationUnit,
-	            		compilationUnit.ResourceUri,
-	            		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-	            		typeDefinitionNode.TypeIdentifierToken.TextSpan.Text,
-	            		typeDefinitionNode);
+                if (typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri == compilationUnit.ResourceUri)
+                    continue;
+            
+        		var matchNode = compilationUnit.ExternalTypeDefinitionList.FirstOrDefault(x => x.IdentifierText == typeDefinitionNode.IdentifierText);
+            	
+            	if (matchNode is null)
+            	    compilationUnit.ExternalTypeDefinitionList.Add(typeDefinitionNode);
             }
         }
     }
@@ -839,7 +840,7 @@ public partial class CSharpBinder
 			if (localScope.Unsafe_ParentIndexKey == -1)
 				localScope = default;
 			else
-            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey, validationNode: localScope);
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey);
         }
 
         functionDefinitionNode = null;
@@ -876,7 +877,7 @@ public partial class CSharpBinder
 				localScope = default;
 			else
             {
-            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey, validationNode: localScope);
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey);
 			}
 		}
 
@@ -913,7 +914,7 @@ public partial class CSharpBinder
             if (localScope.Unsafe_ParentIndexKey == -1)
 				localScope = default;
 			else
-            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey, validationNode: localScope);
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey);
         }
 
         variableDeclarationStatementNode = null;
@@ -944,7 +945,7 @@ public partial class CSharpBinder
             if (localScope.Unsafe_ParentIndexKey == -1)
 				localScope = default;
 			else
-            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey, validationNode: localScope);
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey);
         }
 
         labelDeclarationNode = null;
@@ -963,8 +964,10 @@ public partial class CSharpBinder
         
         var possibleScopes = targetCompilationUnit.DefinitionTupleList.Where(x =>
         {
-            if (x.TrackedDefinition is not ICodeBlockOwner codeBlockOwner)
+            if (!ICodeBlockOwner.ImplementsICodeBlockOwner(x.SyntaxKind))
                 return false;
+        
+            var codeBlockOwner = (ICodeBlockOwner)x;
         
             return codeBlockOwner.Scope_StartInclusiveIndex <= positionIndex &&
             	   // Global Scope awkwardly has '-1' ending index exclusive (2023-10-15)
@@ -972,11 +975,11 @@ public partial class CSharpBinder
         });
 
         // TODO: Does MinBy return default when previous Where result is empty?
-		var tuple = possibleScopes.MinBy(x => positionIndex - ((ICodeBlockOwner)x.TrackedDefinition).Scope_StartInclusiveIndex);
-		if (tuple.TrackedDefinition is null)
+		var tuple = possibleScopes.MinBy(x => positionIndex - ((ICodeBlockOwner)x).Scope_StartInclusiveIndex);
+		if (tuple is null)
 		    return null;
 	    else
-	        return (ICodeBlockOwner)tuple.TrackedDefinition;
+	        return (ICodeBlockOwner)tuple;
     }
 
 	/// <summary>
@@ -988,7 +991,7 @@ public partial class CSharpBinder
 	/// So checking that the compilationUnit contains the provided validationNode at 'validationNode.Unsafe_SelfIndexKey'
     /// ensures that the compilationUnit is the same instance.
 	/// </summary>
-	public ICodeBlockOwner? GetScopeByScopeIndexKey(CSharpCompilationUnit? cSharpCompilationUnit, ResourceUri resourceUri, int scopeIndexKey, ICodeBlockOwner? validationNode = null)
+	public ICodeBlockOwner? GetScopeByScopeIndexKey(CSharpCompilationUnit? cSharpCompilationUnit, ResourceUri resourceUri, int scopeIndexKey)
     {
         if (scopeIndexKey < 0)
             return null;
@@ -999,22 +1002,12 @@ public partial class CSharpBinder
             {
                 var isValid = true;
 
-                if (validationNode is not null)
+                if (isValid)
                 {
-                    if (validationNode.Unsafe_SelfIndexKey > 0 &&
-                        validationNode.Unsafe_SelfIndexKey < compilationUnit.DefinitionTupleList.Count)
-                    {
-						isValid = compilationUnit.DefinitionTupleList[validationNode.Unsafe_SelfIndexKey].TrackedDefinition == validationNode;
-					}
-                    else
-                    {
-                        isValid = false;
-					}
-                }
-
-                // TODO: Do not use 'is' cast here.
-                if (isValid && compilationUnit.DefinitionTupleList[scopeIndexKey].TrackedDefinition is ICodeBlockOwner codeBlockOwner)
-					return codeBlockOwner;
+                    var node = compilationUnit.DefinitionTupleList[scopeIndexKey];
+                    if (ICodeBlockOwner.ImplementsICodeBlockOwner(node.SyntaxKind))
+					    return (ICodeBlockOwner)node;
+			    }
             }
         }
         
@@ -1069,10 +1062,14 @@ public partial class CSharpBinder
     	if (!TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var compilationUnit))
     		return Array.Empty<TypeDefinitionNode>();
     	
-    	return compilationUnit.DefinitionTupleList
-    		.Where(kvp => kvp.ParentScopeIndexKey == scopeIndexKey && kvp.TrackedDefinition.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-    		.Select(kvp => (TypeDefinitionNode)kvp.TrackedDefinition)
-    		.ToArray();
+    	var query = compilationUnit.DefinitionTupleList
+    		.Where(kvp => kvp.ParentScopeIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+    		.Select(kvp => (TypeDefinitionNode)kvp);
+    		
+		if (scopeIndexKey == 0)
+		    query = query.Concat(compilationUnit.ExternalTypeDefinitionList);
+		
+		return query.ToArray();
     }
     
     public bool TryGetTypeDefinitionNodeByScope(
@@ -1089,17 +1086,27 @@ public partial class CSharpBinder
     	}
     	
     	var matchNode = compilationUnit.DefinitionTupleList.FirstOrDefault(x => x.ParentScopeIndexKey == scopeIndexKey &&
-                    	                                                  x.TrackedDefinition.IdentifierText == typeIdentifierText &&
-                    	                                                  x.TrackedDefinition.SyntaxKind == SyntaxKind.TypeDefinitionNode);
+                            	                                                x.IdentifierText == typeIdentifierText &&
+                            	                                                x.SyntaxKind == SyntaxKind.TypeDefinitionNode);
     	
-    	if (matchNode.TrackedDefinition is null)
+    	if (matchNode is null)
     	{
+    	    if (scopeIndexKey == 0)
+    	    {
+    	         var externalMatchNode = compilationUnit.ExternalTypeDefinitionList.FirstOrDefault(x => x.IdentifierText == typeIdentifierText);
+    	         if (externalMatchNode is not null)
+    	         {
+    	             typeDefinitionNode = (TypeDefinitionNode)matchNode;
+    	             return true;
+    	         }
+    	    }
+    	
     	    typeDefinitionNode = null;
     	    return false;
     	}
     	else
     	{
-    	    typeDefinitionNode = (TypeDefinitionNode)matchNode.TrackedDefinition;
+    	    typeDefinitionNode = (TypeDefinitionNode)matchNode;
     	    return true;
     	}
     }
@@ -1115,13 +1122,12 @@ public partial class CSharpBinder
     		return false;
     		
 		var matchNode = compilationUnit.DefinitionTupleList.FirstOrDefault(x => x.ParentScopeIndexKey == scopeIndexKey &&
-                    	                                                  x.TrackedDefinition.IdentifierText == typeIdentifierText &&
-                    	                                                  x.TrackedDefinition.SyntaxKind == SyntaxKind.TypeDefinitionNode);
+                            	                                                x.IdentifierText == typeIdentifierText &&
+                            	                                                x.SyntaxKind == SyntaxKind.TypeDefinitionNode);
     	
-    	if (matchNode.TrackedDefinition is null)
+    	if (matchNode is null)
     	{
-    	    // typeDefinitionNode.Unsafe_SelfIndexKey = compilationUnit.DefinitionTupleList.Count;
-    	    compilationUnit.DefinitionTupleList.Add((scopeIndexKey, typeDefinitionNode));
+    	    compilationUnit.DefinitionTupleList.Add(typeDefinitionNode);
     	    return true;
     	}
     	else
@@ -1160,8 +1166,8 @@ public partial class CSharpBinder
     		return Array.Empty<FunctionDefinitionNode>();
 
     	return compilationUnit.DefinitionTupleList
-    		.Where(kvp => kvp.ParentScopeIndexKey == scopeIndexKey && kvp.TrackedDefinition.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
-    		.Select(kvp => (FunctionDefinitionNode)kvp.TrackedDefinition)
+    		.Where(kvp => kvp.ParentScopeIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+    		.Select(kvp => (FunctionDefinitionNode)kvp)
     		.ToArray();
     }
     
@@ -1179,17 +1185,17 @@ public partial class CSharpBinder
     	}
     	
     	var matchNode = compilationUnit.DefinitionTupleList.FirstOrDefault(x => x.ParentScopeIndexKey == scopeIndexKey &&
-                    	                                                  x.TrackedDefinition.IdentifierText == functionIdentifierText &&
-                    	                                                  x.TrackedDefinition.SyntaxKind == SyntaxKind.FunctionDefinitionNode);
+                    	                                                  x.IdentifierText == functionIdentifierText &&
+                    	                                                  x.SyntaxKind == SyntaxKind.FunctionDefinitionNode);
     	
-    	if (matchNode.TrackedDefinition is null)
+    	if (matchNode is null)
     	{
     	    functionDefinitionNode = null;
     	    return false;
     	}
     	else
     	{
-    	    functionDefinitionNode = (FunctionDefinitionNode)matchNode.TrackedDefinition;
+    	    functionDefinitionNode = (FunctionDefinitionNode)matchNode;
     	    return true;
     	}
     }
@@ -1250,8 +1256,8 @@ public partial class CSharpBinder
     		return Array.Empty<VariableDeclarationNode>();
     	
     	return compilationUnit.DefinitionTupleList
-    		.Where(kvp => kvp.ParentScopeIndexKey == scopeIndexKey && kvp.TrackedDefinition.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-    		.Select(kvp => (VariableDeclarationNode)kvp.TrackedDefinition)
+    		.Where(kvp => kvp.ParentScopeIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+    		.Select(kvp => (VariableDeclarationNode)kvp)
     		.ToArray();
     }
     
@@ -1269,17 +1275,17 @@ public partial class CSharpBinder
     	}
     	
     	var matchNode = compilationUnit.DefinitionTupleList.FirstOrDefault(x => x.ParentScopeIndexKey == scopeIndexKey &&
-                    	                                                  x.TrackedDefinition.IdentifierText == variableIdentifierText &&
-                    	                                                  x.TrackedDefinition.SyntaxKind == SyntaxKind.VariableDeclarationNode);
+                    	                                                  x.IdentifierText == variableIdentifierText &&
+                    	                                                  x.SyntaxKind == SyntaxKind.VariableDeclarationNode);
     	
-    	if (matchNode.TrackedDefinition is null)
+    	if (matchNode is null)
     	{
     	    variableDeclarationNode = null;
     	    return false;
     	}
     	else
     	{
-    	    variableDeclarationNode = (VariableDeclarationNode)matchNode.TrackedDefinition;
+    	    variableDeclarationNode = (VariableDeclarationNode)matchNode;
     	    return true;
     	}
     }
@@ -1295,12 +1301,13 @@ public partial class CSharpBinder
     		return false;
     	
     	var matchNode = compilationUnit.DefinitionTupleList.FirstOrDefault(x => x.ParentScopeIndexKey == scopeIndexKey &&
-                    	                                                  x.TrackedDefinition.IdentifierText == variableIdentifierText &&
-                    	                                                  x.TrackedDefinition.SyntaxKind == SyntaxKind.VariableDeclarationNode);
+                    	                                                  x.IdentifierText == variableIdentifierText &&
+                    	                                                  x.SyntaxKind == SyntaxKind.VariableDeclarationNode);
     	
-    	if (matchNode.TrackedDefinition is null)
+    	if (matchNode is null)
     	{
-    	    compilationUnit.DefinitionTupleList.Add((scopeIndexKey, variableDeclarationNode));
+    	    variableDeclarationNode.ParentScopeIndexKey = scopeIndexKey;
+    	    compilationUnit.DefinitionTupleList.Add(variableDeclarationNode);
     	    return true;
     	}
     	else
@@ -1320,12 +1327,13 @@ public partial class CSharpBinder
     		return;
 		
     	var index = compilationUnit.DefinitionTupleList.FindIndex(x => x.ParentScopeIndexKey == scopeIndexKey &&
-            	                                                 x.TrackedDefinition.IdentifierText == variableIdentifierText &&
-            	                                                 x.TrackedDefinition.SyntaxKind == SyntaxKind.VariableDeclarationNode);
+            	                                                 x.IdentifierText == variableIdentifierText &&
+            	                                                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode);
 
 		if (index != -1)
 		{
-		    compilationUnit.DefinitionTupleList[index] = (scopeIndexKey, variableDeclarationNode);
+		    variableDeclarationNode.ParentScopeIndexKey = scopeIndexKey;
+		    compilationUnit.DefinitionTupleList[index] = variableDeclarationNode;
 		}
     }
     
@@ -1343,17 +1351,17 @@ public partial class CSharpBinder
     	}
     	
     	var matchNode = compilationUnit.DefinitionTupleList.FirstOrDefault(x => x.ParentScopeIndexKey == scopeIndexKey &&
-                    	                                                  x.TrackedDefinition.IdentifierText == labelIdentifierText &&
-                    	                                                  x.TrackedDefinition.SyntaxKind == SyntaxKind.LabelDeclarationNode);
+                    	                                                  x.IdentifierText == labelIdentifierText &&
+                    	                                                  x.SyntaxKind == SyntaxKind.LabelDeclarationNode);
     	
-    	if (matchNode.TrackedDefinition is null)
+    	if (matchNode is null)
     	{
     	    labelDeclarationNode = null;
     	    return false;
     	}
     	else
     	{
-    	    labelDeclarationNode = (LabelDeclarationNode)matchNode.TrackedDefinition;
+    	    labelDeclarationNode = (LabelDeclarationNode)matchNode;
     	    return true;
     	}
     }
@@ -1369,12 +1377,13 @@ public partial class CSharpBinder
 		    return false;
     	
     	var matchNode = compilationUnit.DefinitionTupleList.FirstOrDefault(x => x.ParentScopeIndexKey == scopeIndexKey &&
-                    	                                                  x.TrackedDefinition.IdentifierText == labelIdentifierText &&
-                    	                                                  x.TrackedDefinition.SyntaxKind == SyntaxKind.LabelDeclarationNode);
+                    	                                                  x.IdentifierText == labelIdentifierText &&
+                    	                                                  x.SyntaxKind == SyntaxKind.LabelDeclarationNode);
     	
-    	if (matchNode.TrackedDefinition is null)
+    	if (matchNode is null)
     	{
-    	    compilationUnit.DefinitionTupleList.Add((scopeIndexKey, labelDeclarationNode));
+    	    labelDeclarationNode.ParentScopeIndexKey = scopeIndexKey;
+    	    compilationUnit.DefinitionTupleList.Add(labelDeclarationNode);
     	    return true;
     	}
     	else
@@ -1394,12 +1403,13 @@ public partial class CSharpBinder
     		return;
 		
     	var index = compilationUnit.DefinitionTupleList.FindIndex(x => x.ParentScopeIndexKey == scopeIndexKey &&
-            	                                                 x.TrackedDefinition.IdentifierText == labelIdentifierText &&
-            	                                                 x.TrackedDefinition.SyntaxKind == SyntaxKind.LabelDeclarationNode);
+            	                                                 x.IdentifierText == labelIdentifierText &&
+            	                                                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode);
 
 		if (index != -1)
 		{
-		    compilationUnit.DefinitionTupleList[index] = (scopeIndexKey, labelDeclarationNode);
+		    labelDeclarationNode.ParentScopeIndexKey = scopeIndexKey;
+		    compilationUnit.DefinitionTupleList[index] = labelDeclarationNode;
 		}
     }
 
@@ -2051,10 +2061,10 @@ public partial class CSharpBinder
         
 		var query = compilationUnit.DefinitionTupleList
 		    .Where(x => x.ParentScopeIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
-    		                (x.TrackedDefinition.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
-    		                 x.TrackedDefinition.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
-    		                 x.TrackedDefinition.SyntaxKind == SyntaxKind.VariableDeclarationNode))
-		    .Select(x => (ISyntaxNode)x.TrackedDefinition);
+    		                (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
+    		                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+    		                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode))
+		    .Select(x => (ISyntaxNode)x);
 		
         if (typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList is not null)
         {
@@ -2078,8 +2088,8 @@ public partial class CSharpBinder
         }
         
 		return compilationUnit.DefinitionTupleList
-		    .Where(x => x.ParentScopeIndexKey == namespaceStatementNode.Unsafe_SelfIndexKey && x.TrackedDefinition.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-		    .Select(x => (TypeDefinitionNode)x.TrackedDefinition);
+		    .Where(x => x.ParentScopeIndexKey == namespaceStatementNode.Unsafe_SelfIndexKey && x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+		    .Select(x => (TypeDefinitionNode)x);
 	}
 	
 	/// <summary>

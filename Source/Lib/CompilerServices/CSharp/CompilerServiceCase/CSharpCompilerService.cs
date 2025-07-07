@@ -1375,7 +1375,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				if (targetScope.Unsafe_ParentIndexKey == -1)
 					targetScope = default;
 				else
-	            	targetScope = __CSharpBinder.GetScopeByScopeIndexKey(cSharpCompilationUnit: null, textSpan.ResourceUri, targetScope.Unsafe_ParentIndexKey, validationNode: targetScope);
+	            	targetScope = __CSharpBinder.GetScopeByScopeIndexKey(cSharpCompilationUnit: null, textSpan.ResourceUri, targetScope.Unsafe_ParentIndexKey);
 	        }
         
 	        var allTypeDefinitions = __CSharpBinder.AllTypeDefinitions;
@@ -1557,15 +1557,15 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				{
 			    	TextEditorTextSpan identifierTextSpan;
 			    	int closeCodeBlockTextSpanStartInclusiveIndex;
-					if (entry.TrackedDefinition.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+					if (entry.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 					{
-					    identifierTextSpan = ((TypeDefinitionNode)entry.TrackedDefinition).TypeIdentifierToken.TextSpan;
-					    closeCodeBlockTextSpanStartInclusiveIndex = ((TypeDefinitionNode)entry.TrackedDefinition).CodeBlock_StartInclusiveIndex;
+					    identifierTextSpan = ((TypeDefinitionNode)entry).TypeIdentifierToken.TextSpan;
+					    closeCodeBlockTextSpanStartInclusiveIndex = ((TypeDefinitionNode)entry).CodeBlock_StartInclusiveIndex;
 					}
-					else if (entry.TrackedDefinition.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+					else if (entry.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
 					{
-					    identifierTextSpan = ((FunctionDefinitionNode)entry.TrackedDefinition).FunctionIdentifierToken.TextSpan;
-					    closeCodeBlockTextSpanStartInclusiveIndex = ((FunctionDefinitionNode)entry.TrackedDefinition).CodeBlock_EndExclusiveIndex;
+					    identifierTextSpan = ((FunctionDefinitionNode)entry).FunctionIdentifierToken.TextSpan;
+					    closeCodeBlockTextSpanStartInclusiveIndex = ((FunctionDefinitionNode)entry).CodeBlock_EndExclusiveIndex;
 					}
 					else
 					{

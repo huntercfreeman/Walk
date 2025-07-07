@@ -29,6 +29,7 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 
 	public ConstructorInvocationStageKind ConstructorInvocationStageKind { get; set; } = ConstructorInvocationStageKind.Unset;
 
+	public int ParentScopeIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ConstructorInvocationExpressionNode;
 	

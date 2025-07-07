@@ -178,7 +178,7 @@ public struct CSharpParserModel
         if (codeBlockOwner.Unsafe_ParentIndexKey == -1)
             return null;
             
-        return (ICodeBlockOwner)cSharpCompilationUnit.DefinitionTupleList[codeBlockOwner.Unsafe_ParentIndexKey].TrackedDefinition;
+        return (ICodeBlockOwner)cSharpCompilationUnit.DefinitionTupleList[codeBlockOwner.Unsafe_ParentIndexKey];
     }
     
     /// <summary>TODO: Delete this code it is only being used temporarily for debugging.</summary>

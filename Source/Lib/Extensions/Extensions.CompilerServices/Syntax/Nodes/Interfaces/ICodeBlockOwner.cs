@@ -81,6 +81,54 @@ public interface ICodeBlockOwner : ISyntaxNode
 
 	public TypeReference GetReturnTypeReference();
 	
+	/// <summary>
+	/// This isn't an ideal method.
+	/// More-so, there is an 'is cast' being done at a hot path in the code,
+	/// and I'm interested to see what the performance changes would be if I
+	/// removed that 'is cast'.
+	///
+	/// And this is the simplest way to quickly test out a non-'is cast' solution.
+	///
+	/// If not using the 'is cast' is effective, then this should be changed to
+	/// a more maintainable non-'is cast' solution.
+	///
+	/// In particular the 'is cast' is in reference to the new property on 'IExtendedCompilationUnit'
+	/// 'public List<(int ParentScopeIndexKey, ISyntaxNode TrackedDefinition)> DefinitionTupleList { get; }'
+	///
+	/// Since ICodeBlockOwner and Scope was combined into a single type,
+	/// and 'Scope' no longer has its own separate List, everything is stored in 'DefinitionTupleList'
+	/// (currently this is a bad name for the property it doesn't make much sense).
+	///
+	/// Thus, you need to quickly determine if an ISyntaxNode is an ICodeBlockOwner.
+	/// </summary>
+	public static bool ImplementsICodeBlockOwner(SyntaxKind syntaxKind)
+	{
+	    switch (syntaxKind)
+	    {
+	        case SyntaxKind.DoWhileStatementNode:
+            case SyntaxKind.ForeachStatementNode:
+            case SyntaxKind.ArbitraryCodeBlockNode:
+            case SyntaxKind.ConstructorDefinitionNode:
+            case SyntaxKind.ForStatementNode:
+            case SyntaxKind.FunctionDefinitionNode:
+            case SyntaxKind.IfStatementNode:
+            case SyntaxKind.GetterOrSetterNode:
+            case SyntaxKind.GlobalCodeBlockNode:
+            case SyntaxKind.NamespaceStatementNode:
+            case SyntaxKind.LambdaExpressionNode:
+            case SyntaxKind.LockStatementNode:
+            case SyntaxKind.TryStatementFinallyNode:
+            case SyntaxKind.SwitchStatementNode:
+            case SyntaxKind.TryStatementTryNode:
+            case SyntaxKind.WhileStatementNode:
+            case SyntaxKind.TryStatementCatchNode:
+            case SyntaxKind.TypeDefinitionNode:
+                return true;
+            default:
+                return false;
+	    }
+	}
+	
 	public static void ThrowMultipleScopeDelimiterException(List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
 	{
 		// 'model.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.

@@ -86,6 +86,7 @@ public sealed class TypeClauseNode : IGenericParameterNode
 	
 	public TextEditorTextSpan ExplicitDefinitionTextSpan { get; set; }
 
+	public int ParentScopeIndexKey { get; set; }
 	public bool IsFabricated
 	{
 		get

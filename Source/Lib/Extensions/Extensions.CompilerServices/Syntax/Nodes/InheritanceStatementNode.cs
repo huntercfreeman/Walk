@@ -13,6 +13,7 @@ public sealed class InheritanceStatementNode : ISyntaxNode
 
 	public TypeClauseNode ParentTypeClauseNode { get; }
 
+	public int ParentScopeIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.InheritanceStatementNode;
 

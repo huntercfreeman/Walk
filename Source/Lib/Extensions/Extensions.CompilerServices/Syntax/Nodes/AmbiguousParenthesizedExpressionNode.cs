@@ -135,6 +135,7 @@ public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
 	public List<ISyntaxNode> NodeList { get; set; } = new();
 	public bool? ShouldMatchVariableDeclarationNodes = null;
 
+	public int ParentScopeIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousParenthesizedExpressionNode;
 
