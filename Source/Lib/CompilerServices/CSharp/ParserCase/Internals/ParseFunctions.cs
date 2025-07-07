@@ -83,7 +83,8 @@ public class ParseFunctions
             consumedIdentifierToken,
             default,
             functionArgumentListing: default,
-            default);
+            default,
+            compilationUnit.ResourceUri);
     
     	parserModel.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, compilationUnit, ref parserModel);
     	

@@ -1178,8 +1178,8 @@ public partial class CSharpBinder
         VariableDeclarationNode variableDeclarationNode)
     {
     	var index = compilationUnit.NodeList.FindIndex(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
-            	                                                 x.IdentifierText == variableIdentifierText &&
-            	                                                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode);
+        	                                                x.IdentifierText == variableIdentifierText &&
+        	                                                x.SyntaxKind == SyntaxKind.VariableDeclarationNode);
 
 		if (index != -1)
 		{
@@ -1195,8 +1195,8 @@ public partial class CSharpBinder
     	out LabelDeclarationNode labelDeclarationNode)
     {
     	var matchNode = compilationUnit.NodeList.FirstOrDefault(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                    	                                                  x.IdentifierText == labelIdentifierText &&
-                    	                                                  x.SyntaxKind == SyntaxKind.LabelDeclarationNode);
+                	                                                 x.IdentifierText == labelIdentifierText &&
+                	                                                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode);
     	
     	if (matchNode is null)
     	{
@@ -1217,8 +1217,8 @@ public partial class CSharpBinder
         LabelDeclarationNode labelDeclarationNode)
     {
     	var matchNode = compilationUnit.NodeList.FirstOrDefault(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                    	                                                  x.IdentifierText == labelIdentifierText &&
-                    	                                                  x.SyntaxKind == SyntaxKind.LabelDeclarationNode);
+                	                                                 x.IdentifierText == labelIdentifierText &&
+                	                                                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode);
     	
     	if (matchNode is null)
     	{
@@ -1239,8 +1239,8 @@ public partial class CSharpBinder
         LabelDeclarationNode labelDeclarationNode)
     {
     	var index = compilationUnit.NodeList.FindIndex(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
-            	                                                 x.IdentifierText == labelIdentifierText &&
-            	                                                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode);
+        	                                                x.IdentifierText == labelIdentifierText &&
+        	                                                x.SyntaxKind == SyntaxKind.LabelDeclarationNode);
 
 		if (index != -1)
 		{

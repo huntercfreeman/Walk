@@ -981,31 +981,31 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		if (definitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 		{
 			var typeDefinitionNode = (TypeDefinitionNode)definitionNode;
-			resourceUriValue = modelModifier.PersistentState.ResourceUri.Value;
+			resourceUriValue = typeDefinitionNode.ResourceUri.Value;
 			indexInclusiveStart = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (definitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 		{
 			var variableDeclarationNode = (VariableDeclarationNode)definitionNode;
-			resourceUriValue = modelModifier.PersistentState.ResourceUri.Value;
+			resourceUriValue = variableDeclarationNode.ResourceUri.Value;
 			indexInclusiveStart = variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (definitionNode.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 		{
 			var namespaceStatementNode = (NamespaceStatementNode)definitionNode;
-			resourceUriValue = modelModifier.PersistentState.ResourceUri.Value;
+			resourceUriValue = namespaceStatementNode.ResourceUri.Value;
 			indexInclusiveStart = namespaceStatementNode.IdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (definitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
 		{
 			var functionDefinitionNode = (FunctionDefinitionNode)definitionNode;
-			resourceUriValue = modelModifier.PersistentState.ResourceUri.Value;
+			resourceUriValue = functionDefinitionNode.ResourceUri.Value;
 			indexInclusiveStart = functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (definitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
 		{
 			var constructorDefinitionNode = (ConstructorDefinitionNode)definitionNode;
-			resourceUriValue = modelModifier.PersistentState.ResourceUri.Value;
+			resourceUriValue = constructorDefinitionNode.ResourceUri.Value;
 			indexInclusiveStart = constructorDefinitionNode.FunctionIdentifier.TextSpan.StartInclusiveIndex;
 		}
 		

@@ -640,7 +640,7 @@ public partial class CSharpBinder
 				return ToBadExpressionNode(ambiguousIdentifierExpressionNode, token);
 		}
 	}
-		
+
 	public IExpressionNode AmbiguousIdentifierMergeExpression(
 		AmbiguousIdentifierExpressionNode ambiguousIdentifierExpressionNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
