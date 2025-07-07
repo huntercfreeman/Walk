@@ -979,8 +979,14 @@ public partial class CSharpBinder
     
     public ICodeBlockOwner? GetScopeByScopeIndexKey(CSharpCompilationUnit? cSharpCompilationUnit, ResourceUri resourceUri, int scopeIndexKey)
     {
-    	if (TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var compilationUnit))
-    		return (ICodeBlockOwner)compilationUnit.DefinitionTupleList[scopeIndexKey].TrackedDefinition;
+        if (scopeIndexKey < 0)
+            return null;
+
+        if (TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var compilationUnit))
+        {
+            if (scopeIndexKey < compilationUnit.DefinitionTupleList.Count)
+                return (ICodeBlockOwner)compilationUnit.DefinitionTupleList[scopeIndexKey].TrackedDefinition;
+        }
         
         return null;
     }
