@@ -15,10 +15,13 @@ public sealed class TupleExpressionNode : IExpressionNode
 
 	// public List<IExpressionNode> InnerExpressionList { get; } = new();
 
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TupleExpressionNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(TupleExpressionNode);
+
+#if DEBUG
 	~TupleExpressionNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TupleExpressionNode--;

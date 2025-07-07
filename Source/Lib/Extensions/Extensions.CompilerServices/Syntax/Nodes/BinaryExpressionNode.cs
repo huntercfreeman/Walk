@@ -56,10 +56,13 @@ public sealed class BinaryExpressionNode : IExpressionNode
 	}
 	public bool RightExpressionNodeWasSet { get; set; }
 
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(BinaryExpressionNode);
+
+#if DEBUG
 	~BinaryExpressionNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.BinaryExpressionNode--;

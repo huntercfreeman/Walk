@@ -29,12 +29,15 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 
 	public ConstructorInvocationStageKind ConstructorInvocationStageKind { get; set; } = ConstructorInvocationStageKind.Unset;
 
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ConstructorInvocationExpressionNode;
 	
 	public bool IsParsingFunctionParameters { get; set; }
 
-	#if DEBUG	
+	public string IdentifierText => nameof(ConstructorInvocationExpressionNode);
+
+#if DEBUG
 	~ConstructorInvocationExpressionNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ConstructorInvocationExpressionNode--;

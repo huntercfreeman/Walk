@@ -48,8 +48,11 @@ public sealed class VariableDeclarationNode : IExpressionNode
 
 	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;
+	
+	public string IdentifierText => IdentifierToken.TextSpan.Text;
 
 	public VariableDeclarationNode SetImplicitTypeReference(TypeReference typeReference)
 	{

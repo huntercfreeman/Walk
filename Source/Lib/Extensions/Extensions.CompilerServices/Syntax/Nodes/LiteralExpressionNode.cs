@@ -17,10 +17,13 @@ public sealed class LiteralExpressionNode : IExpressionNode
 	public SyntaxToken LiteralSyntaxToken { get; }
 	public TypeReference ResultTypeReference { get; }
 
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.LiteralExpressionNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(LiteralExpressionNode);
+
+#if DEBUG
 	~LiteralExpressionNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.LiteralExpressionNode--;

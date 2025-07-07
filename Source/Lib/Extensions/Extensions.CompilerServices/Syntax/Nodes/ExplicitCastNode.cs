@@ -27,10 +27,13 @@ public sealed class ExplicitCastNode : IExpressionNode
 	public TypeReference ResultTypeReference { get; }
 	public SyntaxToken CloseParenthesisToken { get; set; }
 
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ExplicitCastNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(ExplicitCastNode);
+
+#if DEBUG
 	~ExplicitCastNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ExplicitCastNode--;

@@ -28,10 +28,13 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
 	public SyntaxToken CloseParenthesisToken { get; set; }
 	public TypeReference ResultTypeReference => InnerExpression.ResultTypeReference;
 
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ParenthesizedExpressionNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(ParenthesizedExpressionNode);
+
+#if DEBUG
 	~ParenthesizedExpressionNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ParenthesizedExpressionNode--;

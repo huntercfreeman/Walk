@@ -26,6 +26,7 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 	public FunctionParameterListing FunctionParameterListing { get; set; }
 	public TypeReference ResultTypeReference { get; set; }
 
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.FunctionInvocationNode;
 	
@@ -34,7 +35,9 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 	
 	public TextEditorTextSpan ExplicitDefinitionTextSpan { get; set; }
 
-	#if DEBUG	
+	public string IdentifierText => nameof(FunctionInvocationNode);
+
+#if DEBUG
 	~FunctionInvocationNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.FunctionInvocationNode--;

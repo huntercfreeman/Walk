@@ -17,10 +17,13 @@ public sealed class WithExpressionNode : IExpressionNode
 	public VariableReference VariableReference { get; }
 	public TypeReference ResultTypeReference { get; }
 
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.WithExpressionNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(WithExpressionNode);
+
+#if DEBUG
 	~WithExpressionNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.WithExpressionNode--;

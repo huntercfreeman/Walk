@@ -17,7 +17,6 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 	
 		KeywordToken = keywordToken;
 		IdentifierToken = identifierToken;
-		// CodeBlock = codeBlock;
 	}
 
 	public SyntaxToken KeywordToken { get; }
@@ -25,13 +24,19 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
-	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
-	// public CodeBlock CodeBlock { get; set; }
-	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
-	public int ScopeIndexKey { get; set; } = -1;
+	public int Scope_StartInclusiveIndex { get; set; } = -1;
+	public int Scope_EndExclusiveIndex { get; set; } = -1;
+	public int CodeBlock_StartInclusiveIndex { get; set; } = -1;
+	public int CodeBlock_EndExclusiveIndex { get; set; } = -1;
+	public int Unsafe_ParentIndexKey { get; set; } = -1;
+	public int Unsafe_SelfIndexKey { get; set; } = -1;
+	public bool PermitCodeBlockParsing { get; set; } = true;
+	public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.NamespaceStatementNode;
+
+	public string IdentifierText => nameof(NamespaceStatementNode);
 
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()

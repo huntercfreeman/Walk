@@ -43,10 +43,13 @@ public sealed class BadExpressionNode : IExpressionNode
 
 	public TypeReference ResultTypeReference { get; }
 
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.BadExpressionNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(BadExpressionNode);
+
+#if DEBUG
 	~BadExpressionNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.BadExpressionNode--;

@@ -130,16 +130,16 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				resourceUri,
 				modelModifier.GetPositionIndex(viewModelModifier));
 			
-			if (!targetScope.ConstructorWasInvoked)
+			if (targetScope is null)
 				return;
     
 			TextEditorTextSpan textSpanStart;
     		
-    		if (!targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.ConstructorWasInvoked)
+    		if (targetScope.CodeBlock_StartInclusiveIndex == -1)
     		{
     			textSpanStart = new TextEditorTextSpan(
-		            targetScope.StartInclusiveIndex,
-		            targetScope.StartInclusiveIndex + 1,
+		            targetScope.Scope_StartInclusiveIndex,
+		            targetScope.Scope_StartInclusiveIndex + 1,
 				    (byte)TextEditorDevToolsDecorationKind.Scope,
 				    resourceUri,
 				    sourceText: string.Empty,
@@ -148,8 +148,8 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     		else
     		{
     			textSpanStart = new TextEditorTextSpan(
-		            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.StartInclusiveIndex,
-		            targetScope.CodeBlockOwner.OpenCodeBlockTextSpan.StartInclusiveIndex + 1,
+		            targetScope.CodeBlock_StartInclusiveIndex,
+		            targetScope.CodeBlock_StartInclusiveIndex + 1,
 				    (byte)TextEditorDevToolsDecorationKind.Scope,
 				    resourceUri,
 				    sourceText: string.Empty,
@@ -157,15 +157,15 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     		}
 
 			int useStartInclusiveIndex;
-			if (targetScope.EndExclusiveIndex == -1)
+			if (targetScope.Scope_EndExclusiveIndex == -1)
 				useStartInclusiveIndex = presentationModel.PendingCalculation.ContentAtRequest.Length - 1;
 			else
-				useStartInclusiveIndex = targetScope.EndExclusiveIndex - 1;
+				useStartInclusiveIndex = targetScope.Scope_EndExclusiveIndex - 1;
 
 			if (useStartInclusiveIndex < 0)
 				useStartInclusiveIndex = 0;
 
-			var useEndExclusiveIndex = targetScope.EndExclusiveIndex;
+			var useEndExclusiveIndex = targetScope.Scope_EndExclusiveIndex;
     		if (useEndExclusiveIndex == -1)
     			useEndExclusiveIndex = presentationModel.PendingCalculation.ContentAtRequest.Length;
     			
@@ -206,9 +206,9 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				viewModelModifier.PersistentState.VirtualizedCollapsePointListVersion++;
 			}
 				
-			if (_codeBlockOwner != targetScope.CodeBlockOwner)
+			if (_codeBlockOwner != targetScope)
 			{
-				_codeBlockOwner = targetScope.CodeBlockOwner;
+				_codeBlockOwner = targetScope;
 				_shouldRender = true;
 			}
 			

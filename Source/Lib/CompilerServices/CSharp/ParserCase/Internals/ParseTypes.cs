@@ -168,7 +168,7 @@ public static class ParseTypes
     		_ = parserModel.TokenWalker.Consume();
     	}
     	
-    	parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing = true;
+    	parserModel.CurrentCodeBlockOwner.PermitCodeBlockParsing = true;
     	
     	parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
 					

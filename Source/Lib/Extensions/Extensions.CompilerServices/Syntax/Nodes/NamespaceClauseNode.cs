@@ -31,11 +31,14 @@ public sealed class NamespaceClauseNode : IExpressionNode
 
 	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	
 	public SyntaxKind SyntaxKind => SyntaxKind.NamespaceClauseNode;
 
-	#if DEBUG
+	public string IdentifierText => nameof(NamespaceClauseNode);
+
+#if DEBUG
 	~NamespaceClauseNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.NamespaceClauseNode--;

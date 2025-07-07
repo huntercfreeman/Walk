@@ -18,10 +18,13 @@ public sealed class KeywordFunctionOperatorNode : IExpressionNode
 	public IExpressionNode ExpressionNodeToMakePrimary { get; set; }
 	public TypeReference ResultTypeReference => ExpressionNodeToMakePrimary.ResultTypeReference;
 
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.KeywordFunctionOperatorNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(KeywordFunctionOperatorNode);
+
+#if DEBUG
 	~KeywordFunctionOperatorNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.KeywordFunctionOperatorNode--;

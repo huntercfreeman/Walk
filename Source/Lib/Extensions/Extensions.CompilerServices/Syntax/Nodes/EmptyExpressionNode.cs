@@ -38,10 +38,13 @@ public sealed class EmptyExpressionNode : IExpressionNode
 	public TypeReference ResultTypeReference { get; }
 	public bool FollowsMemberAccessToken { get; init; }
 
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.EmptyExpressionNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(EmptyExpressionNode);
+
+#if DEBUG
 	~EmptyExpressionNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.EmptyExpressionNode--;

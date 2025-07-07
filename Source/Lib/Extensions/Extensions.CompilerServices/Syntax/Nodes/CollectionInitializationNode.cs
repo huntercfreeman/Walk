@@ -11,6 +11,7 @@ public sealed class CollectionInitializationNode : IExpressionNode
 		#endif
 	}
 
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.CollectionInitializationNode;
 	
@@ -18,7 +19,9 @@ public sealed class CollectionInitializationNode : IExpressionNode
 	
 	public bool IsClosed { get; set; }
 
-	#if DEBUG	
+	public string IdentifierText => nameof(CollectionInitializationNode);
+
+#if DEBUG
 	~CollectionInitializationNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.CollectionInitializationNode--;

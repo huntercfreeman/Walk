@@ -20,10 +20,13 @@ public sealed class UnaryOperatorNode : ISyntaxNode
 	public SyntaxToken OperatorToken { get; }
 	public TypeReference ResultTypeReference { get; }
 
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.UnaryOperatorNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(UnaryOperatorNode);
+
+#if DEBUG
 	~UnaryOperatorNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.UnaryOperatorNode--;

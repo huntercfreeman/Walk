@@ -86,6 +86,7 @@ public sealed class TypeClauseNode : IGenericParameterNode
 	
 	public TextEditorTextSpan ExplicitDefinitionTextSpan { get; set; }
 
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated
 	{
 		get
@@ -101,6 +102,8 @@ public sealed class TypeClauseNode : IGenericParameterNode
 	public SyntaxKind SyntaxKind => SyntaxKind.TypeClauseNode;
 	
 	public bool IsParsingGenericParameters { get; set; }
+
+	public string IdentifierText => nameof(TypeClauseNode);
 
 	public void SetSharedInstance(
 		SyntaxToken typeIdentifier,

@@ -17,6 +17,7 @@ using Walk.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Walk.Extensions.CompilerServices.Displays;
 using Walk.CompilerServices.CSharp.BinderCase;
 using Walk.CompilerServices.CSharp.LexerCase;
@@ -1223,7 +1224,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     	return __CSharpBinder.GetDefinitionTextSpan(textSpan, (CSharpResource)compilerServiceResource);
     }
 
-	public Scope GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
+	public ICodeBlockOwner GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
     {
     	return __CSharpBinder.GetScopeByPositionIndex(null, resourceUri, positionIndex);
     }
@@ -1235,7 +1236,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			
     	var boundScope = __CSharpBinder.GetScope(null, textSpan);
 
-        if (!boundScope.ConstructorWasInvoked)
+        if (boundScope is null)
             return null;
         
         var autocompleteEntryList = new List<AutocompleteEntry>();
@@ -1339,10 +1340,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         }
 		else
 		{
-			while (targetScope.ConstructorWasInvoked)
+			while (targetScope is not null)
 	        {
 	            autocompleteEntryList.AddRange(
-	            	__CSharpBinder.GetVariableDeclarationNodesByScope(cSharpCompilationUnit: null, textSpan.ResourceUri, targetScope.IndexKey)
+	            	__CSharpBinder.GetVariableDeclarationNodesByScope(cSharpCompilationUnit: null, textSpan.ResourceUri, targetScope.Unsafe_SelfIndexKey)
 	            	.Select(x => x.IdentifierToken.TextSpan.Text)
 	                .ToArray()
 	                .Where(x => x.Contains(word, StringComparison.InvariantCulture))
@@ -1357,7 +1358,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	                }));
 	
 	            autocompleteEntryList.AddRange(
-	                __CSharpBinder.GetFunctionDefinitionNodesByScope(cSharpCompilationUnit: null, textSpan.ResourceUri, targetScope.IndexKey)
+	                __CSharpBinder.GetFunctionDefinitionNodesByScope(cSharpCompilationUnit: null, textSpan.ResourceUri, targetScope.Unsafe_SelfIndexKey)
 	            	.Select(x => x.FunctionIdentifierToken.TextSpan.Text)
 	                .ToArray()
 	                .Where(x => x.Contains(word, StringComparison.InvariantCulture))
@@ -1371,10 +1372,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	                        null);
 	                }));
 	
-				if (targetScope.ParentIndexKey == -1)
+				if (targetScope.Unsafe_ParentIndexKey == -1)
 					targetScope = default;
 				else
-	            	targetScope = __CSharpBinder.GetScopeByScopeIndexKey(compilationUnit: null, textSpan.ResourceUri, targetScope.ParentIndexKey);
+	            	targetScope = __CSharpBinder.GetScopeByScopeIndexKey(cSharpCompilationUnit: null, textSpan.ResourceUri, targetScope.Unsafe_ParentIndexKey);
 	        }
         
 	        var allTypeDefinitions = __CSharpBinder.AllTypeDefinitions;
@@ -1550,39 +1551,38 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		
 		if (resource.CompilationUnit is IExtendedCompilationUnit extendedCompilationUnit)
 		{
-			if (extendedCompilationUnit.ScopeTypeDefinitionMap is not null)
+			if (extendedCompilationUnit.NodeList is not null)
 			{
-				foreach (var entry in extendedCompilationUnit.ScopeTypeDefinitionMap.Values)
+				foreach (var entry in extendedCompilationUnit.NodeList)
 				{
-					if (entry.TypeIdentifierToken.TextSpan.ResourceUri != modelModifier.PersistentState.ResourceUri)
+			    	TextEditorTextSpan identifierTextSpan;
+			    	int closeCodeBlockTextSpanStartInclusiveIndex;
+					if (entry.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+					{
+					    identifierTextSpan = ((TypeDefinitionNode)entry).TypeIdentifierToken.TextSpan;
+					    closeCodeBlockTextSpanStartInclusiveIndex = ((TypeDefinitionNode)entry).CodeBlock_StartInclusiveIndex;
+					}
+					else if (entry.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+					{
+					    identifierTextSpan = ((FunctionDefinitionNode)entry).FunctionIdentifierToken.TextSpan;
+					    closeCodeBlockTextSpanStartInclusiveIndex = ((FunctionDefinitionNode)entry).CodeBlock_EndExclusiveIndex;
+					}
+					else
+					{
+					    continue;
+					}
+					
+					if (identifierTextSpan.ResourceUri != modelModifier.PersistentState.ResourceUri)
 		    			continue;
-			    		
-			    	if (!_collapsePointUsedIdentifierHashSet.Add(entry.TypeIdentifierToken.TextSpan.Text))
+			    	
+			    	if (!_collapsePointUsedIdentifierHashSet.Add(identifierTextSpan.Text))
 		    			continue;
 					
 					collapsePointList.Add(new CollapsePoint(
-						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.TypeIdentifierToken.TextSpan.StartInclusiveIndex).lineIndex,
+						modelModifier.GetLineAndColumnIndicesFromPositionIndex(identifierTextSpan.StartInclusiveIndex).lineIndex,
 						false,
-						entry.TypeIdentifierToken.TextSpan.Text,
-						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.CloseCodeBlockTextSpan.StartInclusiveIndex).lineIndex + 1));
-				}
-			}
-			
-			if (extendedCompilationUnit.ScopeFunctionDefinitionMap is not null)
-			{
-				foreach (var entry in extendedCompilationUnit.ScopeFunctionDefinitionMap.Values)
-				{
-					if (entry.FunctionIdentifierToken.TextSpan.ResourceUri != modelModifier.PersistentState.ResourceUri)
-			    		continue;
-			    		
-					if (!_collapsePointUsedIdentifierHashSet.Add(entry.FunctionIdentifierToken.TextSpan.Text))
-		    			continue;
-					
-					collapsePointList.Add(new CollapsePoint(
-						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.FunctionIdentifierToken.TextSpan.StartInclusiveIndex).lineIndex,
-						false,
-						entry.FunctionIdentifierToken.TextSpan.Text,
-						modelModifier.GetLineAndColumnIndicesFromPositionIndex(entry.CloseCodeBlockTextSpan.StartInclusiveIndex).lineIndex + 1));
+						identifierTextSpan.Text,
+						modelModifier.GetLineAndColumnIndicesFromPositionIndex(closeCodeBlockTextSpanStartInclusiveIndex).lineIndex + 1));
 				}
 			}
 			

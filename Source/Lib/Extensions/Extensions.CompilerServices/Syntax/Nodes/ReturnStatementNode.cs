@@ -20,10 +20,13 @@ public sealed class ReturnStatementNode : IExpressionNode
 	// public IExpressionNode ExpressionNode { get; set; }
 	public TypeReference ResultTypeReference { get; }
 
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ReturnStatementNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(ReturnStatementNode);
+
+#if DEBUG
 	~ReturnStatementNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ReturnStatementNode--;
