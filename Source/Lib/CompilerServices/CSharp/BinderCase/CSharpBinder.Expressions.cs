@@ -2626,10 +2626,17 @@ public partial class CSharpBinder
 			
 			if (explicitDefinitionTextSpan.ConstructorWasInvoked)
 			{
-			    maybeTypeDefinitionNode = GetDefinitionNode(
-			        compilationUnit: null,
-			        explicitDefinitionTextSpan,
-			        SyntaxKind.TypeClauseNode);
+			    if (TryGetCompilationUnit(compilationUnit.ResourceUri, out var innerCompilationUnit))
+			    {
+			        maybeTypeDefinitionNode = GetDefinitionNode(
+    			        innerCompilationUnit,
+    			        explicitDefinitionTextSpan,
+    			        SyntaxKind.TypeClauseNode);
+			    }
+			    else
+			    {
+			        maybeTypeDefinitionNode = null;
+			    }
 			}
 			else
 			{
@@ -3133,10 +3140,17 @@ public partial class CSharpBinder
     		        
     		        if (functionInvocationNode.ExplicitDefinitionTextSpan.ConstructorWasInvoked)
         			{
-        			    maybeFunctionDefinitionNode = GetDefinitionNode(
-        			        compilationUnit: null,
-        			        functionInvocationNode.ExplicitDefinitionTextSpan,
-        			        SyntaxKind.FunctionInvocationNode);
+        			    if (TryGetCompilationUnit(compilationUnit.ResourceUri, out var innerCompilationUnit))
+        			    {
+        			        maybeFunctionDefinitionNode = GetDefinitionNode(
+            			        innerCompilationUnit,
+            			        functionInvocationNode.ExplicitDefinitionTextSpan,
+            			        SyntaxKind.FunctionInvocationNode);
+        			    }
+        			    else
+        			    {
+        			        maybeFunctionDefinitionNode = null;
+        			    }
         			}
         			else
         			{

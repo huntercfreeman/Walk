@@ -780,6 +780,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         {
                             "Symbol",
                             symbol
+                        },
+                        {
+                            "ResourceUri",
+                            modelModifier.PersistentState.ResourceUri
                         }
                     };
 
@@ -1211,13 +1215,19 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     {
     	if (symbol is null)
     		return null;
-    		
-    	return __CSharpBinder.GetDefinitionNode(compilationUnit: null, textSpan, symbol.Value.SyntaxKind, symbol);
+    	
+    	if (__CSharpBinder.TryGetCompilationUnit(compilerServiceResource.ResourceUri, out var compilationUnit))
+            return __CSharpBinder.GetDefinitionNode(compilationUnit, textSpan, symbol.Value.SyntaxKind, symbol);
+    	
+    	return null;
     }
 
-	public ICodeBlockOwner GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
+	public ICodeBlockOwner? GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
     {
-    	return __CSharpBinder.GetScopeByPositionIndex(compilationUnit: null, positionIndex);
+        if (__CSharpBinder.TryGetCompilationUnit(resourceUri, out var compilationUnit))
+            return __CSharpBinder.GetScopeByPositionIndex(compilationUnit, positionIndex);
+    	
+    	return null;
     }
     
     public List<AutocompleteEntry>? OBSOLETE_GetAutocompleteEntries(string word, TextEditorTextSpan textSpan, TextEditorVirtualizationResult virtualizationResult)
