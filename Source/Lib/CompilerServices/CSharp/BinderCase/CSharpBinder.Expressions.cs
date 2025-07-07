@@ -2694,9 +2694,12 @@ public partial class CSharpBinder
 		            variableDeclarationNode);
 		        var symbolId = CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
 		        
-		        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
-		        	symbolId,
-		        	(variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri, variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex));
+		        if (compilationUnit.SymbolIdToExternalTextSpanMap is not null)
+		        {
+		            compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
+    		        	symbolId,
+    		        	(variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri, variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex));
+		        }
 		        
 		    	expressionPrimary = variableReferenceNode;
 			}
@@ -2724,9 +2727,12 @@ public partial class CSharpBinder
 		        compilationUnit.__SymbolList.Add(functionSymbol);
 		        var symbolId = functionSymbol.SymbolId;
 		        
-		        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
-		        	symbolId,
-		        	(functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri, functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex));
+		        if (compilationUnit.SymbolIdToExternalTextSpanMap is not null)
+		        {
+    		        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
+    		        	symbolId,
+    		        	(functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri, functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex));
+		        }
 		        
 		        functionInvocationNode.ExplicitDefinitionTextSpan = functionDefinitionNode.FunctionIdentifierToken.TextSpan;
 		        
@@ -2832,10 +2838,13 @@ public partial class CSharpBinder
                 		        });
                 	        compilationUnit.__SymbolList.Add(typeSymbol);
             		        
-            		        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
-            		        	typeSymbol.SymbolId,
-            		        	(typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri, typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex));
-            		     
+            		        if (compilationUnit.SymbolIdToExternalTextSpanMap is not null)
+            		        {
+                		        compilationUnit.SymbolIdToExternalTextSpanMap.TryAdd(
+                		        	typeSymbol.SymbolId,
+                		        	(typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri, typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex));
+            		        }
+            		        
             		        typeClauseNode.ExplicitDefinitionTextSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
             		           
             		    	expressionPrimary = typeClauseNode;

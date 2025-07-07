@@ -1611,7 +1611,8 @@ public partial class CSharpBinder
 
 		if (symbol is not null)
         {
-	        if (TryGetCompilationUnit(cSharpCompilationUnit, textSpan.ResourceUri, out var targetBinderSession))
+	        if (TryGetCompilationUnit(cSharpCompilationUnit, textSpan.ResourceUri, out var targetBinderSession) &&
+	            ((CSharpCompilationUnit)targetBinderSession).SymbolIdToExternalTextSpanMap is not null)
 	        {
 	        	if (((CSharpCompilationUnit)targetBinderSession).SymbolIdToExternalTextSpanMap.TryGetValue(symbol.Value.SymbolId, out var definitionTuple))
 	        	{
