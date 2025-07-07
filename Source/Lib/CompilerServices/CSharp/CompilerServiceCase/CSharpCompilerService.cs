@@ -1375,7 +1375,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				if (targetScope.Unsafe_ParentIndexKey == -1)
 					targetScope = default;
 				else
-	            	targetScope = __CSharpBinder.GetScopeByScopeIndexKey(cSharpCompilationUnit: null, textSpan.ResourceUri, targetScope.Unsafe_ParentIndexKey);
+	            	targetScope = __CSharpBinder.GetScopeByScopeIndexKey(cSharpCompilationUnit: null, textSpan.ResourceUri, targetScope.Unsafe_ParentIndexKey, validationNode: targetScope);
 	        }
         
 	        var allTypeDefinitions = __CSharpBinder.AllTypeDefinitions;

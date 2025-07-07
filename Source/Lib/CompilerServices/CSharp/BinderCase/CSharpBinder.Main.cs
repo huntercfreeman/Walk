@@ -839,7 +839,7 @@ public partial class CSharpBinder
 			if (localScope.Unsafe_ParentIndexKey == -1)
 				localScope = default;
 			else
-            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey);
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey, validationNode: localScope);
         }
 
         functionDefinitionNode = null;
@@ -875,8 +875,10 @@ public partial class CSharpBinder
             if (localScope.Unsafe_ParentIndexKey == -1)
 				localScope = default;
 			else
-            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey);
-        }
+            {
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey, validationNode: localScope);
+			}
+		}
 
         typeDefinitionNode = null;
         return false;
@@ -911,7 +913,7 @@ public partial class CSharpBinder
             if (localScope.Unsafe_ParentIndexKey == -1)
 				localScope = default;
 			else
-            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey);
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey, validationNode: localScope);
         }
 
         variableDeclarationStatementNode = null;
@@ -942,7 +944,7 @@ public partial class CSharpBinder
             if (localScope.Unsafe_ParentIndexKey == -1)
 				localScope = default;
 			else
-            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey);
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey, validationNode: localScope);
         }
 
         labelDeclarationNode = null;
@@ -976,8 +978,17 @@ public partial class CSharpBinder
 	    else
 	        return (ICodeBlockOwner)tuple.TrackedDefinition;
     }
-    
-    public ICodeBlockOwner? GetScopeByScopeIndexKey(CSharpCompilationUnit? cSharpCompilationUnit, ResourceUri resourceUri, int scopeIndexKey)
+
+	/// <summary>
+	/// 'validationNode' avoids an infinite loop when invoking this within a while loop or etc...
+	/// 
+	/// The infinite loop happens due to using statements / namespace statements bringing in types that come from a different
+	/// CSharpCompilationUnit instance.
+	/// 
+	/// So checking that the compilationUnit contains the provided validationNode at 'validationNode.Unsafe_SelfIndexKey'
+    /// ensures that the compilationUnit is the same instance.
+	/// </summary>
+	public ICodeBlockOwner? GetScopeByScopeIndexKey(CSharpCompilationUnit? cSharpCompilationUnit, ResourceUri resourceUri, int scopeIndexKey, ICodeBlockOwner? validationNode = null)
     {
         if (scopeIndexKey < 0)
             return null;
@@ -985,7 +996,15 @@ public partial class CSharpBinder
         if (TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var compilationUnit))
         {
             if (scopeIndexKey < compilationUnit.DefinitionTupleList.Count)
-                return (ICodeBlockOwner)compilationUnit.DefinitionTupleList[scopeIndexKey].TrackedDefinition;
+            {
+                var isValid = true;
+
+                if (validationNode is not null)
+                    isValid = compilationUnit.DefinitionTupleList[validationNode.Unsafe_SelfIndexKey].TrackedDefinition == validationNode;
+
+                if (isValid)
+                    return (ICodeBlockOwner)compilationUnit.DefinitionTupleList[scopeIndexKey].TrackedDefinition;
+            }
         }
         
         return null;
