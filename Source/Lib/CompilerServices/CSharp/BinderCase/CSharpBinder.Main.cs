@@ -1000,7 +1000,17 @@ public partial class CSharpBinder
                 var isValid = true;
 
                 if (validationNode is not null)
-                    isValid = compilationUnit.DefinitionTupleList[validationNode.Unsafe_SelfIndexKey].TrackedDefinition == validationNode;
+                {
+                    if (validationNode.Unsafe_SelfIndexKey > 0 &&
+                        validationNode.Unsafe_SelfIndexKey < compilationUnit.DefinitionTupleList.Count)
+                    {
+						isValid = compilationUnit.DefinitionTupleList[validationNode.Unsafe_SelfIndexKey].TrackedDefinition == validationNode;
+					}
+                    else
+                    {
+                        isValid = false;
+					}
+                }
 
                 if (isValid)
                     return (ICodeBlockOwner)compilationUnit.DefinitionTupleList[scopeIndexKey].TrackedDefinition;
