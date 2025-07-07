@@ -9,7 +9,6 @@ public interface IExtendedCompilerService : ICompilerService
 {
 	public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource);
 	public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null);
-    public TextEditorTextSpan? GetDefinitionTextSpan(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource);
     public ICodeBlockOwner? GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex);
     /// <summary>
     /// This method presumes that all `TextEditorTextSpan` for string literals will store `string.Empty` as the `TextEditorTextSpan.Text`.

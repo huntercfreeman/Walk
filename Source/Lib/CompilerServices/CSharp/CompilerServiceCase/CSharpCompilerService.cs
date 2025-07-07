@@ -637,7 +637,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
 		var syntaxNode = primaryCursorPositionIndex is null || __CSharpBinder is null || compilerServiceResource?.CompilationUnit is null
 			? null
-			: __CSharpBinder.GetSyntaxNode(null, primaryCursorPositionIndex.Value, compilerServiceResource.ResourceUri, (CSharpResource)compilerServiceResource);
+			: __CSharpBinder.GetSyntaxNode(null, primaryCursorPositionIndex.Value, (CSharpResource)compilerServiceResource);
 			
 		var menuOptionList = new List<MenuOptionRecord>();
 			
@@ -1198,7 +1198,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// </summary>
     public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource)
     {
-    	return __CSharpBinder.GetSyntaxNode(cSharpCompilationUnit: null, positionIndex, resourceUri, (CSharpResource)compilerServiceResource);
+    	return __CSharpBinder.GetSyntaxNode(compilationUnit: null, positionIndex, (CSharpResource)compilerServiceResource);
     }
     
     /// <summary>
@@ -1212,20 +1212,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     	if (symbol is null)
     		return null;
     		
-    	return __CSharpBinder.GetDefinitionNode(cSharpCompilationUnit: null, textSpan, symbol.Value.SyntaxKind, symbol);
-    }
-
-	/// <summary>
-	/// Returns the text span at which the definition exists in the source code.
-	/// </summary>
-    public TextEditorTextSpan? GetDefinitionTextSpan(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
-    {
-    	return __CSharpBinder.GetDefinitionTextSpan(textSpan, (CSharpResource)compilerServiceResource);
+    	return __CSharpBinder.GetDefinitionNode(compilationUnit: null, textSpan, symbol.Value.SyntaxKind, symbol);
     }
 
 	public ICodeBlockOwner GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
     {
-    	return __CSharpBinder.GetScopeByPositionIndex(null, resourceUri, positionIndex);
+    	return __CSharpBinder.GetScopeByPositionIndex(compilationUnit: null, positionIndex);
     }
     
     public List<AutocompleteEntry>? OBSOLETE_GetAutocompleteEntries(string word, TextEditorTextSpan textSpan, TextEditorVirtualizationResult virtualizationResult)
@@ -1233,7 +1225,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     	if (word is null)
 			return null;
 			
-    	var boundScope = __CSharpBinder.GetScope(null, textSpan);
+    	var boundScope = __CSharpBinder.GetScope(compilationUnit: null, textSpan);
 
         if (boundScope is null)
             return null;
@@ -1257,7 +1249,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	    	var targetNode = __CSharpBinder.GetSyntaxNode(
 	    		(CSharpCompilationUnit)compilerServiceResource.CompilationUnit,
 	    		textSpan.StartInclusiveIndex - 1,
-	    		textEditorModel.PersistentState.ResourceUri,
 	    		(CSharpResource)compilerServiceResource);
 	    		
 	    	if (targetNode is null)
@@ -1342,7 +1333,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			while (targetScope is not null)
 	        {
 	            autocompleteEntryList.AddRange(
-	            	__CSharpBinder.GetVariableDeclarationNodesByScope(cSharpCompilationUnit: null, virtualizationResult.Model.PersistentState.ResourceUri, targetScope.Unsafe_SelfIndexKey)
+	            	__CSharpBinder.GetVariableDeclarationNodesByScope(compilationUnit: null, targetScope.Unsafe_SelfIndexKey)
 	            	.Select(x => x.IdentifierToken.TextSpan.Text)
 	                .ToArray()
 	                .Where(x => x.Contains(word, StringComparison.InvariantCulture))
@@ -1357,7 +1348,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	                }));
 	
 	            autocompleteEntryList.AddRange(
-	                __CSharpBinder.GetFunctionDefinitionNodesByScope(cSharpCompilationUnit: null, virtualizationResult.Model.PersistentState.ResourceUri, targetScope.Unsafe_SelfIndexKey)
+	                __CSharpBinder.GetFunctionDefinitionNodesByScope(compilationUnit: null, targetScope.Unsafe_SelfIndexKey)
 	            	.Select(x => x.FunctionIdentifierToken.TextSpan.Text)
 	                .ToArray()
 	                .Where(x => x.Contains(word, StringComparison.InvariantCulture))
@@ -1374,7 +1365,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				if (targetScope.Unsafe_ParentIndexKey == -1)
 					targetScope = default;
 				else
-	            	targetScope = __CSharpBinder.GetScopeByScopeIndexKey(cSharpCompilationUnit: null, virtualizationResult.Model.PersistentState.ResourceUri, targetScope.Unsafe_ParentIndexKey);
+	            	targetScope = __CSharpBinder.GetScopeByScopeIndexKey(compilationUnit: null, targetScope.Unsafe_ParentIndexKey);
 	        }
         
 	        var allTypeDefinitions = __CSharpBinder.AllTypeDefinitions;

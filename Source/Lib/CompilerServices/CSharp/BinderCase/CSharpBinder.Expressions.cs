@@ -686,7 +686,6 @@ public partial class CSharpBinder
 		{
 			if (TryGetVariableDeclarationHierarchically(
 			    	compilationUnit,
-			    	compilationUnit.ResourceUri,
 			    	parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
 			        ambiguousIdentifierExpressionNode.Token.TextSpan.Text,
 			        out var existingVariableDeclarationNode))
@@ -708,7 +707,6 @@ public partial class CSharpBinder
 		{
 			if (TryGetTypeDefinitionHierarchically(
 	        		compilationUnit,
-	        		compilationUnit.ResourceUri,
 	                parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
 	                ambiguousIdentifierExpressionNode.Token.TextSpan.Text,
 	                out var typeDefinitionNode))
@@ -739,7 +737,6 @@ public partial class CSharpBinder
     	{
     		if (!parserModel.Binder.TryGetVariableDeclarationHierarchically(
 			    	compilationUnit,
-			    	compilationUnit.ResourceUri,
 			    	parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
 			        ambiguousIdentifierExpressionNode.Token.TextSpan.Text,
 			        out _))
@@ -756,7 +753,6 @@ public partial class CSharpBinder
 		{
 			if (TryGetFunctionHierarchically(
 			    	compilationUnit,
-			        compilationUnit.ResourceUri,
 			    	parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
 			        ambiguousIdentifierExpressionNode.Token.TextSpan.Text,
 			        out var functionDefinitionNode))
@@ -794,7 +790,6 @@ public partial class CSharpBinder
     		
     		if (TryGetLabelDeclarationHierarchically(
     		    	compilationUnit,
-    		        compilationUnit.ResourceUri,
     		    	parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
     		        ambiguousIdentifierExpressionNode.Token.TextSpan.Text,
     		        out var labelDefinitionNode))
@@ -2632,7 +2627,7 @@ public partial class CSharpBinder
 			if (explicitDefinitionTextSpan.ConstructorWasInvoked)
 			{
 			    maybeTypeDefinitionNode = GetDefinitionNode(
-			        cSharpCompilationUnit: null,
+			        compilationUnit: null,
 			        explicitDefinitionTextSpan,
 			        SyntaxKind.TypeClauseNode);
 			}
@@ -3139,7 +3134,7 @@ public partial class CSharpBinder
     		        if (functionInvocationNode.ExplicitDefinitionTextSpan.ConstructorWasInvoked)
         			{
         			    maybeFunctionDefinitionNode = GetDefinitionNode(
-        			        cSharpCompilationUnit: null,
+        			        compilationUnit: null,
         			        functionInvocationNode.ExplicitDefinitionTextSpan,
         			        SyntaxKind.FunctionInvocationNode);
         			}
