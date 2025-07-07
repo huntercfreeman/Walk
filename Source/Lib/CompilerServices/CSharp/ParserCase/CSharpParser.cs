@@ -286,7 +286,7 @@ public static class CSharpParser
 			for (int i = compilationUnit.NodeList.Count - 1; i >= 0; i--)
 			{
 			    var tuple = compilationUnit.NodeList[i];
-                if (binder.SolutionWide_MinimumLocalsData_ScopeIndexKey_HashSet.Contains(tuple.ParentScopeIndexKey))
+                if (binder.SolutionWide_MinimumLocalsData_ScopeIndexKey_HashSet.Contains(tuple.Unsafe_ParentIndexKey))
                     compilationUnit.NodeList.RemoveAt(i);
 			}
 			

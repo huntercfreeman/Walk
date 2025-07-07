@@ -26,7 +26,7 @@ public sealed class VariableReferenceNode : IExpressionNode
 		IsFabricated = variableReference.IsFabricated;
 	}
 
-	public int ParentScopeIndexKey { get; set; }
+	public int Unsafe_ParentIndexKey { get; set; }
 	private bool _isFabricated;
 	
 	public bool IsBeingUsed { get; set; } = false;

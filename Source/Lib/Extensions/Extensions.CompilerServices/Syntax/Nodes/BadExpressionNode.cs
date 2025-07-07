@@ -43,7 +43,7 @@ public sealed class BadExpressionNode : IExpressionNode
 
 	public TypeReference ResultTypeReference { get; }
 
-	public int ParentScopeIndexKey { get; set; }
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.BadExpressionNode;
 

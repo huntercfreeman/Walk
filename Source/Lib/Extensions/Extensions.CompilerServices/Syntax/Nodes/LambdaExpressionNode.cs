@@ -43,7 +43,6 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
 	public bool HasReadParameters { get; set; }
 	public List<VariableDeclarationNode> VariableDeclarationNodeList { get; } = new();
 
-	public int ParentScopeIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.LambdaExpressionNode;
 

@@ -26,7 +26,7 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 	public FunctionParameterListing FunctionParameterListing { get; set; }
 	public TypeReference ResultTypeReference { get; set; }
 
-	public int ParentScopeIndexKey { get; set; }
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.FunctionInvocationNode;
 	

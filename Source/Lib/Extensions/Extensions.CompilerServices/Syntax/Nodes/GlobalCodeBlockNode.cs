@@ -40,7 +40,6 @@ public sealed class GlobalCodeBlockNode : ICodeBlockOwner
 	public bool PermitCodeBlockParsing { get; set; } = true;
 	public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
 
-	public int ParentScopeIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.GlobalCodeBlockNode;
 

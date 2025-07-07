@@ -11,7 +11,7 @@ public sealed class SwitchExpressionNode : IExpressionNode
 		#endif
 	}
 
-	public int ParentScopeIndexKey { get; set; }
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.SwitchExpressionNode;
 	

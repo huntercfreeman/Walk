@@ -17,7 +17,7 @@ public sealed class WithExpressionNode : IExpressionNode
 	public VariableReference VariableReference { get; }
 	public TypeReference ResultTypeReference { get; }
 
-	public int ParentScopeIndexKey { get; set; }
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.WithExpressionNode;
 

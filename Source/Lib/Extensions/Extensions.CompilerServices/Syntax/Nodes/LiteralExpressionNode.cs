@@ -17,7 +17,7 @@ public sealed class LiteralExpressionNode : IExpressionNode
 	public SyntaxToken LiteralSyntaxToken { get; }
 	public TypeReference ResultTypeReference { get; }
 
-	public int ParentScopeIndexKey { get; set; }
+	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.LiteralExpressionNode;
 
