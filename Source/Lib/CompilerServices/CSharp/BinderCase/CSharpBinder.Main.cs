@@ -1012,8 +1012,9 @@ public partial class CSharpBinder
 					}
                 }
 
-                if (isValid)
-                    return (ICodeBlockOwner)compilationUnit.DefinitionTupleList[scopeIndexKey].TrackedDefinition;
+                // TODO: Do not use 'is' cast here.
+                if (isValid && compilationUnit.DefinitionTupleList[scopeIndexKey].TrackedDefinition is ICodeBlockOwner codeBlockOwner)
+					return codeBlockOwner;
             }
         }
         
