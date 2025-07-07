@@ -687,7 +687,7 @@ public partial class CSharpBinder
 			if (TryGetVariableDeclarationHierarchically(
 			    	compilationUnit,
 			    	compilationUnit.ResourceUri,
-			    	parserModel.CurrentScopeIndexKey,
+			    	parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
 			        ambiguousIdentifierExpressionNode.Token.TextSpan.Text,
 			        out var existingVariableDeclarationNode))
 			{
@@ -709,7 +709,7 @@ public partial class CSharpBinder
 			if (TryGetTypeDefinitionHierarchically(
 	        		compilationUnit,
 	        		compilationUnit.ResourceUri,
-	                parserModel.CurrentScopeIndexKey,
+	                parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
 	                ambiguousIdentifierExpressionNode.Token.TextSpan.Text,
 	                out var typeDefinitionNode))
 	        {
@@ -740,7 +740,7 @@ public partial class CSharpBinder
     		if (!parserModel.Binder.TryGetVariableDeclarationHierarchically(
 			    	compilationUnit,
 			    	compilationUnit.ResourceUri,
-			    	parserModel.CurrentScopeIndexKey,
+			    	parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
 			        ambiguousIdentifierExpressionNode.Token.TextSpan.Text,
 			        out _))
 			{
@@ -757,7 +757,7 @@ public partial class CSharpBinder
 			if (TryGetFunctionHierarchically(
 			    	compilationUnit,
 			        compilationUnit.ResourceUri,
-			    	parserModel.CurrentScopeIndexKey,
+			    	parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
 			        ambiguousIdentifierExpressionNode.Token.TextSpan.Text,
 			        out var functionDefinitionNode))
 	        {
@@ -795,7 +795,7 @@ public partial class CSharpBinder
     		if (TryGetLabelDeclarationHierarchically(
     		    	compilationUnit,
     		        compilationUnit.ResourceUri,
-    		    	parserModel.CurrentScopeIndexKey,
+    		    	parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
     		        ambiguousIdentifierExpressionNode.Token.TextSpan.Text,
     		        out var labelDefinitionNode))
             {
@@ -1835,7 +1835,7 @@ public partial class CSharpBinder
 		switch (expressionSecondary.SyntaxKind)
 		{
 			default:
-				if (!lambdaExpressionNode.CloseCodeBlockTextSpan.ConstructorWasInvoked)
+				if (lambdaExpressionNode.CodeBlock_StartInclusiveIndex == -1)
 					CloseLambdaExpressionScope(lambdaExpressionNode, compilationUnit, ref parserModel);
 				
 				return lambdaExpressionNode;
@@ -2476,7 +2476,7 @@ public partial class CSharpBinder
 			_ = parserModel.TokenWalker.Consume();
 		}
 		
-		var lambdaCodeBlockBuilder = parserModel.CurrentCodeBlockBuilder;
+		var lambdaCodeBlockBuilder = parserModel.CurrentCodeBlockOwner;
 		CloseLambdaExpressionScope(lambdaExpressionNode, compilationUnit, ref parserModel);
 	
 		var closeTokenIndex = parserModel.TokenWalker.Index;
@@ -2488,7 +2488,7 @@ public partial class CSharpBinder
 		
 		parserModel.StatementBuilder.ParseChildScopeStack.Push(
 			(
-				parserModel.CurrentCodeBlockBuilder.CodeBlockOwner,
+				parserModel.CurrentCodeBlockOwner,
 				new CSharpDeferredChildScope(
 					openTokenIndex,
 					closeTokenIndex,

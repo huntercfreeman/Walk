@@ -130,7 +130,7 @@ public partial class CSharpBinder
         if (!TryAddFunctionDefinitionNodeByScope(
         		compilationUnit,
         		compilationUnit.ResourceUri,
-        		parserModel.CurrentScopeIndexKey,
+        		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
         		functionIdentifierText,
                 functionDefinitionNode))
         {
@@ -193,7 +193,7 @@ public partial class CSharpBinder
         if (TryGetVariableDeclarationNodeByScope(
         		compilationUnit,
         		compilationUnit.ResourceUri,
-        		parserModel.CurrentScopeIndexKey,
+        		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
         		text,
         		out var existingVariableDeclarationNode))
         {
@@ -206,7 +206,7 @@ public partial class CSharpBinder
                 SetVariableDeclarationNodeByScope(
         			compilationUnit,
                 	compilationUnit.ResourceUri,
-        			parserModel.CurrentScopeIndexKey,
+        			parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 	text,
                 	variableDeclarationNode);
             }
@@ -221,7 +221,7 @@ public partial class CSharpBinder
         	_ = TryAddVariableDeclarationNodeByScope(
         		compilationUnit,
         		compilationUnit.ResourceUri,
-    			parserModel.CurrentScopeIndexKey,
+    			parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
             	text,
             	variableDeclarationNode);
         }
@@ -246,7 +246,7 @@ public partial class CSharpBinder
         if (TryGetLabelDeclarationNodeByScope(
         		compilationUnit,
         		compilationUnit.ResourceUri,
-        		parserModel.CurrentScopeIndexKey,
+        		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
         		text,
         		out var existingLabelDeclarationNode))
         {
@@ -259,7 +259,7 @@ public partial class CSharpBinder
                 SetLabelDeclarationNodeByScope(
         			compilationUnit,
                 	compilationUnit.ResourceUri,
-        			parserModel.CurrentScopeIndexKey,
+        			parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 	text,
                 	labelDeclarationNode);
             }
@@ -274,7 +274,7 @@ public partial class CSharpBinder
         	_ = TryAddLabelDeclarationNodeByScope(
         		compilationUnit,
         		compilationUnit.ResourceUri,
-    			parserModel.CurrentScopeIndexKey,
+    			parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
             	text,
             	labelDeclarationNode);
         }
@@ -291,7 +291,7 @@ public partial class CSharpBinder
         if (TryGetVariableDeclarationHierarchically(
         		compilationUnit,
                 compilationUnit.ResourceUri,
-                parserModel.CurrentScopeIndexKey,
+                parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 text,
                 out var variableDeclarationNode)
             && variableDeclarationNode is not null)
@@ -376,7 +376,7 @@ public partial class CSharpBinder
         if (TryGetFunctionHierarchically(
         		compilationUnit,
                 compilationUnit.ResourceUri,
-                parserModel.CurrentScopeIndexKey,
+                parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 functionInvocationIdentifierText,
                 out var functionDefinitionNode) &&
             functionDefinitionNode is not null)
@@ -511,7 +511,7 @@ public partial class CSharpBinder
         if (TryGetTypeDefinitionNodeByScope(
         		compilationUnit,
         		compilationUnit.ResourceUri,
-        		parserModel.CurrentScopeIndexKey,
+        		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
         		typeIdentifierText,
         		out var existingTypeDefinitionNode))
         {
@@ -520,7 +520,7 @@ public partial class CSharpBinder
         		SetTypeDefinitionNodeByScope(
         			compilationUnit,
         			compilationUnit.ResourceUri,
-	        		parserModel.CurrentScopeIndexKey,
+	        		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
 	        		typeIdentifierText,
 	        		typeDefinitionNode);
         	}
@@ -537,7 +537,7 @@ public partial class CSharpBinder
         	_ = TryAddTypeDefinitionNodeByScope(
         		compilationUnit,
     			compilationUnit.ResourceUri,
-        		parserModel.CurrentScopeIndexKey,
+        		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
         		typeIdentifierText,
         		typeDefinitionNode);
         }
@@ -572,34 +572,37 @@ public partial class CSharpBinder
     	Console.WriteLine($"-------NewSBin: has console.write... that needs commented out");
     	#endif*/
     
-    	if (codeBlockOwner.ScopeIndexKey != -1)
+    	if (codeBlockOwner.Unsafe_SelfIndexKey != -1)
     	{
     		// TODO: This does not catch nearly as many infinite loop cases as I initially thought it would...
     		//       ...When the token walker sets the token index for deferred parsing,
     		//       a new instance of the node ends up being parsed.
     		throw new WalkTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockOwner.ScopeIndexKey is NOT '-1'; an infinite loop? _{codeBlockOwner.SyntaxKind}");
     	}
-    
-    	var scope = new Scope(
-        	codeBlockOwner,
-        	indexKey: parserModel.GetNextIndexKey(),
-		    parentIndexKey: parserModel.CurrentScopeIndexKey,
-		    textSpan.StartInclusiveIndex,
-		    endExclusiveIndex: -1);
+    	
+    	codeBlockOwner.Unsafe_ParentIndexKey = parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
+    	codeBlockOwner.Scope_StartInclusiveIndex = textSpan.StartInclusiveIndex;
 
-        compilationUnit.ScopeList.Insert(scope.IndexKey, scope);
-        parserModel.CurrentScopeIndexKey = scope.IndexKey;
+        switch (codeBlockOwner.SyntaxKind)
+        {
+            case SyntaxKind.TypeDefinitionNode:
+			case SyntaxKind.FunctionDefinitionNode:
+                break;
+            default:
+                codeBlockOwner.Unsafe_SelfIndexKey = compilationUnit.DefinitionTupleList.Count;
+                compilationUnit.DefinitionTupleList.Add((codeBlockOwner.Unsafe_ParentIndexKey, codeBlockOwner));
+                break;
+		}
+    	
+    	var parent = parserModel.GetParent(codeBlockOwner, compilationUnit);
+    	
+    	var parentScopeDirection = parent?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
+        if (parentScopeDirection == ScopeDirectionKind.Both)
+        	codeBlockOwner.PermitCodeBlockParsing = false;
+    
+        parserModel.CurrentCodeBlockOwner = codeBlockOwner;
         
-        codeBlockOwner.ScopeIndexKey = scope.IndexKey;
-        
-        var nextCodeBlockBuilder = new CSharpCodeBlockBuilder(
-        	parent: parserModel.CurrentCodeBlockBuilder,
-        	codeBlockOwner: codeBlockOwner,
-        	compilationUnit.CompilationUnitKind);
-        
-        parserModel.CurrentCodeBlockBuilder = nextCodeBlockBuilder;
-        
-        parserModel.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockBuilder.CodeBlockOwner, compilationUnit, ref parserModel);
+        parserModel.Binder.OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, compilationUnit, ref parserModel);
         
         /*#if DEBUG
     	Console.WriteLine($"-------NewSBout: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
@@ -614,38 +617,31 @@ public partial class CSharpBinder
     ///
     /// TODO: Determine a better solution.
     /// </summary>
-    public CSharpCodeBlockBuilder NewScopeAndBuilderFromOwner_GlobalScope_Hack(
+    public ICodeBlockOwner NewScopeAndBuilderFromOwner_GlobalScope_Hack(
     	ICodeBlockOwner codeBlockOwner,
         TextEditorTextSpan textSpan,
         CSharpCompilationUnit compilationUnit)
     {
-    	if (codeBlockOwner.ScopeIndexKey != -1)
+    	if (codeBlockOwner.Unsafe_SelfIndexKey != -1)
     	{
     		// TODO: This does not catch nearly as many infinite loop cases as I initially thought it would...
     		//       ...When the token walker sets the token index for deferred parsing,
     		//       a new instance of the node ends up being parsed.
     		throw new WalkTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockBuilder.ScopeIndexKey is NOT '-1'; an infinite loop?");
-		}    
+		}
     	
-    	var scope = new Scope(
-        	codeBlockOwner,
-        	indexKey: 0,
-		    parentIndexKey: -1,
-		    textSpan.StartInclusiveIndex,
-		    endExclusiveIndex: -1);
+    	codeBlockOwner.Unsafe_ParentIndexKey = -1;
+    	codeBlockOwner.Unsafe_SelfIndexKey = 0;
+    	codeBlockOwner.Scope_StartInclusiveIndex = textSpan.StartInclusiveIndex;
+    	codeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
 
-        compilationUnit.ScopeList.Insert(scope.IndexKey, scope);
-        
-        codeBlockOwner.ScopeIndexKey = scope.IndexKey;
-        
-        return new CSharpCodeBlockBuilder(parent: null, codeBlockOwner: codeBlockOwner, compilationUnit.CompilationUnitKind)
-        {
-        	IsImplicitOpenCodeBlockTextSpan = true
-        };
+        compilationUnit.DefinitionTupleList.Add((-1, codeBlockOwner));
+    	
+    	return codeBlockOwner;
     }
     
     public void SetCurrentScopeAndBuilder(
-    	CSharpCodeBlockBuilder codeBlockBuilder, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    	ICodeBlockOwner codeBlockOwner, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	/*#if DEBUG
     	Console.WriteLine($"-------SetSBin: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
@@ -653,11 +649,10 @@ public partial class CSharpBinder
     	Console.WriteLine($"-------SetSBin: has console.write... that needs commented out");
     	#endif*/
     
-    	if (codeBlockBuilder.CodeBlockOwner.ScopeIndexKey == -1)
+    	if (codeBlockOwner.Unsafe_SelfIndexKey == -1)
     		throw new WalkTextEditorException($"{nameof(SetCurrentScopeAndBuilder)} codeBlockBuilder.CodeBlockBuilder.ScopeIndexKey is '-1'. Invoke {NewScopeAndBuilderFromOwner}?");
     
-		parserModel.CurrentScopeIndexKey = codeBlockBuilder.CodeBlockOwner.ScopeIndexKey;
-		parserModel.CurrentCodeBlockBuilder = codeBlockBuilder;
+		parserModel.CurrentCodeBlockOwner = codeBlockOwner;
 		
 		/*#if DEBUG
     	Console.WriteLine($"-------SetSBout: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
@@ -684,7 +679,7 @@ public partial class CSharpBinder
             	_ = TryAddTypeDefinitionNodeByScope(
         				compilationUnit,
 	            		compilationUnit.ResourceUri,
-	            		parserModel.CurrentScopeIndexKey,
+	            		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
 	            		typeDefinitionNode.TypeIdentifierToken.TextSpan.Text,
 	            		typeDefinitionNode);
             }
@@ -703,26 +698,15 @@ public partial class CSharpBinder
     	#endif*/
     
     	// Check if it is the global scope, if so return early.
-    	if (parserModel.CurrentScopeIndexKey == 0)
+    	if (parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey == 0)
     		return;
     	
-    	var inBuilder = parserModel.CurrentCodeBlockBuilder;
-    	var inOwner = inBuilder.CodeBlockOwner;
-    	
-    	var outBuilder = parserModel.CurrentCodeBlockBuilder.Parent;
-    	var outOwner = outBuilder?.CodeBlockOwner;
+    	var inOwner = parserModel.CurrentCodeBlockOwner;
+    	var outOwner = parserModel.GetParent(inOwner, compilationUnit);
     	
     	// Update Scope
     	{
-	    	var scope = compilationUnit.ScopeList[parserModel.CurrentScopeIndexKey];
-	    	scope.EndExclusiveIndex = textSpan.EndExclusiveIndex;
-	    	compilationUnit.ScopeList[parserModel.CurrentScopeIndexKey] = scope;
-	    	
-	    	// Restore Parent Scope
-			if (scope.ParentIndexKey != -1)
-			{
-				parserModel.CurrentScopeIndexKey = scope.ParentIndexKey;
-			}
+	    	inOwner.Scope_EndExclusiveIndex = textSpan.EndExclusiveIndex;
     	}
     	
     	// Update CodeBlockOwner
@@ -734,18 +718,8 @@ public partial class CSharpBinder
 				parserModel.Binder.BindTypeDefinitionNode((TypeDefinitionNode)inOwner, compilationUnit, ref parserModel, true);
 			
 			// Restore Parent CodeBlockBuilder
-			if (outBuilder is not null)
-			{
-				parserModel.CurrentCodeBlockBuilder = outBuilder;
-				
-				/*if (inOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
-					inOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&
-					inOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode &&
-					inOwner.SyntaxKind != SyntaxKind.LambdaExpressionNode)
-				{
-					outBuilder.AddChild(inOwner);
-				}*/
-			}
+			if (outOwner is not null)
+				parserModel.CurrentCodeBlockOwner = outOwner;
 		}
 		
 		/*#if DEBUG
@@ -855,22 +829,22 @@ public partial class CSharpBinder
     {
         var localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, initialScopeIndexKey);
 
-        while (localScope.ConstructorWasInvoked)
+        while (localScope is not null)
         {
             if (TryGetFunctionDefinitionNodeByScope(
 	        		compilationUnit,
             		resourceUri,
-            		localScope.IndexKey,
+            		localScope.Unsafe_SelfIndexKey,
             		identifierText,
                     out functionDefinitionNode))
             {
                 return true;
             }
 
-			if (localScope.ParentIndexKey == -1)
+			if (localScope.Unsafe_ParentIndexKey == -1)
 				localScope = default;
 			else
-            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.ParentIndexKey);
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey);
         }
 
         functionDefinitionNode = null;
@@ -891,22 +865,22 @@ public partial class CSharpBinder
     {
         var localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, initialScopeIndexKey);
 
-        while (localScope.ConstructorWasInvoked)
+        while (localScope is not null)
         {
             if (TryGetTypeDefinitionNodeByScope(
 	        		compilationUnit,
             		resourceUri,
-            		localScope.IndexKey,
+            		localScope.Unsafe_SelfIndexKey,
             		identifierText,
                     out typeDefinitionNode))
             {
                 return true;
             }
 
-            if (localScope.ParentIndexKey == -1)
+            if (localScope.Unsafe_ParentIndexKey == -1)
 				localScope = default;
 			else
-            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.ParentIndexKey);
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey);
         }
 
         typeDefinitionNode = null;
@@ -927,22 +901,22 @@ public partial class CSharpBinder
     {
         var localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, initialScopeIndexKey);
 
-        while (localScope.ConstructorWasInvoked)
+        while (localScope is not null)
         {
             if (TryGetVariableDeclarationNodeByScope(
 	        		compilationUnit,
             		resourceUri,
-            		localScope.IndexKey,
+            		localScope.Unsafe_SelfIndexKey,
             		identifierText,
                     out variableDeclarationStatementNode))
             {
                 return true;
             }
 
-            if (localScope.ParentIndexKey == -1)
+            if (localScope.Unsafe_ParentIndexKey == -1)
 				localScope = default;
 			else
-            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.ParentIndexKey);
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey);
         }
 
         variableDeclarationStatementNode = null;
@@ -958,81 +932,62 @@ public partial class CSharpBinder
     {
         var localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, initialScopeIndexKey);
 
-        while (localScope.ConstructorWasInvoked)
+        while (localScope is not null)
         {
             if (TryGetLabelDeclarationNodeByScope(
 	        		compilationUnit,
             		resourceUri,
-            		localScope.IndexKey,
+            		localScope.Unsafe_SelfIndexKey,
             		identifierText,
                     out labelDeclarationNode))
             {
                 return true;
             }
 
-            if (localScope.ParentIndexKey == -1)
+            if (localScope.Unsafe_ParentIndexKey == -1)
 				localScope = default;
 			else
-            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.ParentIndexKey);
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, resourceUri, localScope.Unsafe_ParentIndexKey);
         }
 
         labelDeclarationNode = null;
         return false;
     }
 
-    public Scope GetScope(CSharpCompilationUnit? compilationUnit, TextEditorTextSpan textSpan)
+    public ICodeBlockOwner? GetScope(CSharpCompilationUnit? compilationUnit, TextEditorTextSpan textSpan)
     {
     	return GetScopeByPositionIndex(compilationUnit, textSpan.ResourceUri, textSpan.StartInclusiveIndex);
     }
     
-    public Scope GetScopeByPositionIndex(CSharpCompilationUnit? compilationUnit, ResourceUri resourceUri, int positionIndex)
+    public ICodeBlockOwner? GetScopeByPositionIndex(CSharpCompilationUnit? compilationUnit, ResourceUri resourceUri, int positionIndex)
     {
-    	var scopeList = new List<Scope>();
-    	
-    	if (TryGetCompilationUnit(compilationUnit, resourceUri, out var targetCompilationUnit))
-    		scopeList.AddRange(targetCompilationUnit.ScopeList);
-		//if (TryGetCompilationUnit(compilationUnit, ResourceUri.Empty, out var globalBinderSession))
-    	//	scopeList.AddRange(globalBinderSession.ScopeList);
+    	if (!TryGetCompilationUnit(compilationUnit, resourceUri, out var targetCompilationUnit))
+    	    return null;
         
-        var possibleScopes = scopeList.Where(x =>
+        var possibleScopes = targetCompilationUnit.DefinitionTupleList.Where(x =>
         {
-            return x.StartInclusiveIndex <= positionIndex &&
+            if (x.TrackedDefinition is not ICodeBlockOwner codeBlockOwner)
+                return false;
+        
+            return codeBlockOwner.Scope_StartInclusiveIndex <= positionIndex &&
             	   // Global Scope awkwardly has '-1' ending index exclusive (2023-10-15)
-                   (x.EndExclusiveIndex >= positionIndex || x.EndExclusiveIndex == -1);
+                   (codeBlockOwner.Scope_EndExclusiveIndex >= positionIndex || codeBlockOwner.Scope_EndExclusiveIndex == -1);
         });
 
-		if (!possibleScopes.Any())
-		{
-			return default;
-		}
-		else
-		{
-			return possibleScopes.MinBy(x => positionIndex - x.StartInclusiveIndex);
-		}
+        // TODO: Does MinBy return default when previous Where result is empty?
+		var tuple = possibleScopes.MinBy(x => positionIndex - ((ICodeBlockOwner)x.TrackedDefinition).Scope_StartInclusiveIndex);
+		if (tuple.TrackedDefinition is null)
+		    return null;
+	    else
+	        return (ICodeBlockOwner)tuple.TrackedDefinition;
     }
     
-    public Scope GetScopeByScopeIndexKey(CSharpCompilationUnit? compilationUnit, ResourceUri resourceUri, int scopeIndexKey)
+    public ICodeBlockOwner? GetScopeByScopeIndexKey(CSharpCompilationUnit? cSharpCompilationUnit, ResourceUri resourceUri, int scopeIndexKey)
     {
-    	var scopeList = new List<Scope>();
-    	
-    	if (TryGetCompilationUnit(compilationUnit, resourceUri, out var targetBinderSession))
-    		scopeList.AddRange(targetBinderSession.ScopeList);
-		//if (TryGetCompilationUnit(compilationUnit, ResourceUri.Empty, out var globalBinderSession))
-    	//	scopeList.AddRange(globalBinderSession.ScopeList);
+    	if (TryGetCompilationUnit(cSharpCompilationUnit, resourceUri, out var compilationUnit))
+    		return (ICodeBlockOwner)compilationUnit.DefinitionTupleList[scopeIndexKey].TrackedDefinition;
         
-        return scopeList[scopeIndexKey];
-    }
-    
-    public Scope[]? GetScopeList(CSharpCompilationUnit? compilationUnit, ResourceUri resourceUri)
-    {
-    	var scopeList = new List<Scope>();
-    
-    	if (TryGetCompilationUnit(compilationUnit, resourceUri, out var targetBinderSession))
-    		scopeList.AddRange(targetBinderSession.ScopeList);
-		//if (TryGetCompilationUnit(compilationUnit, ResourceUri.Empty, out var globalBinderSession))
-    	//	scopeList.AddRange(globalBinderSession.ScopeList);
-    		
-    	return scopeList.ToArray();
+        return null;
     }
     
     /// <summary>
@@ -1134,6 +1089,7 @@ public partial class CSharpBinder
     	
     	if (matchNode.TrackedDefinition is null)
     	{
+    	    typeDefinitionNode.Unsafe_SelfIndexKey = compilationUnit.DefinitionTupleList.Count;
     	    compilationUnit.DefinitionTupleList.Add((scopeIndexKey, typeDefinitionNode));
     	    return true;
     	}
@@ -1158,7 +1114,10 @@ public partial class CSharpBinder
             	                                                 x.TrackedDefinition.SyntaxKind == SyntaxKind.TypeDefinitionNode);
 
 		if (index != -1)
+		{
+		    typeDefinitionNode.Unsafe_SelfIndexKey = index;
 		    compilationUnit.DefinitionTupleList[index] = (scopeIndexKey, typeDefinitionNode);
+		}
     }
     
     public FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(
@@ -1220,6 +1179,7 @@ public partial class CSharpBinder
     	
     	if (matchNode.TrackedDefinition is null)
     	{
+    	    functionDefinitionNode.Unsafe_SelfIndexKey = compilationUnit.DefinitionTupleList.Count;
     	    compilationUnit.DefinitionTupleList.Add((scopeIndexKey, functionDefinitionNode));
     	    return true;
     	}
@@ -1244,7 +1204,10 @@ public partial class CSharpBinder
             	                                                 x.TrackedDefinition.SyntaxKind == SyntaxKind.FunctionDefinitionNode);
 
 		if (index != -1)
+		{
+		    functionDefinitionNode.Unsafe_SelfIndexKey = index;
 		    compilationUnit.DefinitionTupleList[index] = (scopeIndexKey, functionDefinitionNode);
+		}
     }
     
     public VariableDeclarationNode[] GetVariableDeclarationNodesByScope(
@@ -1330,7 +1293,9 @@ public partial class CSharpBinder
             	                                                 x.TrackedDefinition.SyntaxKind == SyntaxKind.VariableDeclarationNode);
 
 		if (index != -1)
+		{
 		    compilationUnit.DefinitionTupleList[index] = (scopeIndexKey, variableDeclarationNode);
+		}
     }
     
     public bool TryGetLabelDeclarationNodeByScope(
@@ -1402,7 +1367,9 @@ public partial class CSharpBinder
             	                                                 x.TrackedDefinition.SyntaxKind == SyntaxKind.LabelDeclarationNode);
 
 		if (index != -1)
+		{
 		    compilationUnit.DefinitionTupleList[index] = (scopeIndexKey, labelDeclarationNode);
+		}
     }
 
     /*public TypeClauseNode? GetReturnTypeClauseNodeByScope(
@@ -1489,7 +1456,7 @@ public partial class CSharpBinder
     {
     	var scope = GetScope(cSharpCompilationUnit, textSpan);
 
-        if (!scope.ConstructorWasInvoked)
+        if (scope is null)
             return null;
             
         var externalSyntaxKind = SyntaxKind.VariableDeclarationNode;
@@ -1506,7 +1473,7 @@ public partial class CSharpBinder
         		if (TryGetVariableDeclarationHierarchically(
         				cSharpCompilationUnit,
         				textSpan.ResourceUri,
-        				scope.IndexKey,
+        				scope.Unsafe_SelfIndexKey,
 		                getTextResult ?? textSpan.Text,
 		                out var variableDeclarationStatementNode)
 		            && variableDeclarationStatementNode is not null)
@@ -1524,7 +1491,7 @@ public partial class CSharpBinder
 	        	if (TryGetFunctionHierarchically(
 	        				 cSharpCompilationUnit,
 	        				 textSpan.ResourceUri,
-        					 scope.IndexKey,
+        					 scope.Unsafe_SelfIndexKey,
 		                     getTextResult ?? textSpan.Text,
 		                     out var functionDefinitionNode)
 		                 && functionDefinitionNode is not null)
@@ -1543,7 +1510,7 @@ public partial class CSharpBinder
 	        	if (TryGetTypeDefinitionHierarchically(
 	        				 cSharpCompilationUnit,
 	        			     textSpan.ResourceUri,
-        					 scope.IndexKey,
+        					 scope.Unsafe_SelfIndexKey,
 		                     getTextResult ?? textSpan.Text,
 		                     out var typeDefinitionNode)
 		                 && typeDefinitionNode is not null)
@@ -1751,7 +1718,7 @@ public partial class CSharpBinder
     /// 	  ...This should likely be changed, because function argument goto definition won't work if done from the argument listing, rather than the code block of the function.
     /// 	  This method will act as a temporary work around.
     /// </summary>
-    public ISyntaxNode? GetFallbackNode(CSharpCompilationUnit? cSharpCompilationUnit, int positionIndex, ResourceUri resourceUri, CSharpResource compilerServiceResource, Scope scope)
+    public ISyntaxNode? GetFallbackNode(CSharpCompilationUnit? cSharpCompilationUnit, int positionIndex, ResourceUri resourceUri, CSharpResource compilerServiceResource, ICodeBlockOwner codeBlockOwner)
     {
         if (compilerServiceResource.CompilationUnit is null)
         	return null;
@@ -1786,7 +1753,7 @@ public partial class CSharpBinder
         		if (TryGetVariableDeclarationHierarchically(
         				cSharpCompilationUnit,
         				foundSymbol.Value.TextSpan.ResourceUri,
-        				scope.IndexKey,
+        				codeBlockOwner.Unsafe_SelfIndexKey,
 		                foundSymbol.Value.TextSpan.Text,
 		                out var variableDeclarationStatementNode)
 		            && variableDeclarationStatementNode is not null)
@@ -1971,21 +1938,21 @@ public partial class CSharpBinder
     	}
     }
     
-    public ICodeBlockOwner SetOpenCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, TextEditorTextSpan openCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
+    public ICodeBlockOwner SetOpenCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, int codeBlock_StartInclusiveIndex, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
     {
-		if (codeBlockOwner.OpenCodeBlockTextSpan.ConstructorWasInvoked)
+		if (codeBlockOwner.CodeBlock_StartInclusiveIndex == -1)
 			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
 
-		codeBlockOwner.OpenCodeBlockTextSpan = openCodeBlockTextSpan;
+		codeBlockOwner.CodeBlock_StartInclusiveIndex = codeBlock_StartInclusiveIndex;
 		return codeBlockOwner;
     }
     
-    public ICodeBlockOwner SetCloseCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, TextEditorTextSpan closeCodeBlockTextSpan, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
+    public ICodeBlockOwner SetCloseCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, int codeBlock_EndExclusiveIndex, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
     {
-		if (codeBlockOwner.CloseCodeBlockTextSpan.ConstructorWasInvoked)
+		if (codeBlockOwner.CodeBlock_EndExclusiveIndex == -1)
 			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
 
-		codeBlockOwner.CloseCodeBlockTextSpan = closeCodeBlockTextSpan;
+		codeBlockOwner.CodeBlock_EndExclusiveIndex = codeBlock_EndExclusiveIndex;
 		return codeBlockOwner;
     }
 	
@@ -2045,14 +2012,14 @@ public partial class CSharpBinder
 	
 	public IEnumerable<ISyntaxNode> GetMemberList_TypeDefinitionNode(TypeDefinitionNode typeDefinitionNode)
 	{
-		if (typeDefinitionNode.ScopeIndexKey == -1 ||
+		if (typeDefinitionNode.Unsafe_SelfIndexKey == -1 ||
 		    !_compilationUnitMap.TryGetValue(typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri, out var compilationUnit))
 	    {
 			return Array.Empty<ISyntaxNode>();
         }
         
 		var query = compilationUnit.DefinitionTupleList
-		    .Where(x => x.ParentScopeIndexKey == typeDefinitionNode.ScopeIndexKey &&
+		    .Where(x => x.ParentScopeIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
     		                (x.TrackedDefinition.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
     		                 x.TrackedDefinition.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
     		                 x.TrackedDefinition.SyntaxKind == SyntaxKind.VariableDeclarationNode))
@@ -2073,13 +2040,15 @@ public partial class CSharpBinder
 	/// </summary>
 	public IEnumerable<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
 	{
-	    if (namespaceStatementNode.ScopeIndexKey == -1 ||
+	    if (namespaceStatementNode.Unsafe_SelfIndexKey == -1 ||
 		    !_compilationUnitMap.TryGetValue(namespaceStatementNode.IdentifierToken.TextSpan.ResourceUri, out var compilationUnit))
 	    {
 			return Array.Empty<TypeDefinitionNode>();
         }
         
-		return compilationUnit.DefinitionTupleList.Where(x => x.ParentScopeIndexKey == namespaceStatementNode.ScopeIndexKey && x.TrackedDefinition.SyntaxKind == SyntaxKind.TypeDefinitionNode).Select(x => (TypeDefinitionNode)x.TrackedDefinition);
+		return compilationUnit.DefinitionTupleList
+		    .Where(x => x.ParentScopeIndexKey == namespaceStatementNode.Unsafe_SelfIndexKey && x.TrackedDefinition.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+		    .Select(x => (TypeDefinitionNode)x.TrackedDefinition);
 	}
 	
 	/// <summary>

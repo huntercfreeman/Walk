@@ -34,7 +34,9 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 	
 	public TextEditorTextSpan ExplicitDefinitionTextSpan { get; set; }
 
-	#if DEBUG	
+	public string IdentifierText => nameof(FunctionInvocationNode);
+
+#if DEBUG
 	~FunctionInvocationNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.FunctionInvocationNode--;

@@ -96,7 +96,7 @@ public struct CSharpStatementBuilder
 		{
 			var tuple = ParseChildScopeStack.Peek();
 			
-			if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserModel.CurrentCodeBlockBuilder.CodeBlockOwner))
+			if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserModel.CurrentCodeBlockOwner))
 			{
 				tuple = ParseChildScopeStack.Pop();
 				tuple.DeferredChildScope.PrepareMainParserLoop(finishTokenIndex, compilationUnit, ref parserModel);

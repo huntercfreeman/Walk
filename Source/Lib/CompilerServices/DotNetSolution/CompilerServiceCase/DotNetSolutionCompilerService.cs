@@ -10,6 +10,7 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Walk.CompilerServices.Xml.Html.SyntaxActors;
 using Walk.CompilerServices.DotNetSolution.SyntaxActors;
 
@@ -260,7 +261,7 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
     	return null;
     }
 
-	public Scope GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
+	public ICodeBlockOwner GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
     {
     	return default;
     }

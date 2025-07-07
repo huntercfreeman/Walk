@@ -30,7 +30,9 @@ public sealed class ExplicitCastNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ExplicitCastNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(ExplicitCastNode);
+
+#if DEBUG
 	~ExplicitCastNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ExplicitCastNode--;

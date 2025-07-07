@@ -10,6 +10,7 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Walk.CompilerServices.Json.SyntaxActors;
 
 namespace Walk.CompilerServices.Json;
@@ -242,7 +243,7 @@ public sealed class JsonCompilerService : ICompilerService
     	return null;
     }
 
-	public Scope GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
+	public ICodeBlockOwner GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
     {
     	return default;
     }

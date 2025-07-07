@@ -34,7 +34,9 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 	
 	public bool IsParsingFunctionParameters { get; set; }
 
-	#if DEBUG	
+	public string IdentifierText => nameof(ConstructorInvocationExpressionNode);
+
+#if DEBUG
 	~ConstructorInvocationExpressionNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ConstructorInvocationExpressionNode--;

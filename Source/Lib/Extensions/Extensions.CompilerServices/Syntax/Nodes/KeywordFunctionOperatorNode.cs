@@ -21,7 +21,9 @@ public sealed class KeywordFunctionOperatorNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.KeywordFunctionOperatorNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(KeywordFunctionOperatorNode);
+
+#if DEBUG
 	~KeywordFunctionOperatorNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.KeywordFunctionOperatorNode--;

@@ -1,3 +1,4 @@
+using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Walk.CompilerServices.CSharp.ParserCase;
@@ -7,25 +8,25 @@ public struct CSharpDeferredChildScope
 	public CSharpDeferredChildScope(
 		int openTokenIndex,
 		int closeTokenIndex,
-		CSharpCodeBlockBuilder codeBlockBuilder)
+		ICodeBlockOwner codeBlockOwner)
 	{
 		OpenTokenIndex = openTokenIndex;
 		CloseTokenIndex = closeTokenIndex;
-		CodeBlockBuilder = codeBlockBuilder;
+		CodeBlockOwner = codeBlockOwner;
 	}
 	
 	public int OpenTokenIndex { get; }
 	public int CloseTokenIndex { get; }
-	public CSharpCodeBlockBuilder CodeBlockBuilder { get; }
+	public ICodeBlockOwner CodeBlockOwner { get; }
 	
 	public void PrepareMainParserLoop(int tokenIndexToRestore, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		parserModel.Binder.SetCurrentScopeAndBuilder(
-			CodeBlockBuilder,
+			CodeBlockOwner,
 			compilationUnit,
 			ref parserModel);
 		
-		parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing = true;
+		parserModel.CurrentCodeBlockOwner.PermitCodeBlockParsing = true;
 		
 		parserModel.TokenWalker.DeferredParsing(
 			OpenTokenIndex,

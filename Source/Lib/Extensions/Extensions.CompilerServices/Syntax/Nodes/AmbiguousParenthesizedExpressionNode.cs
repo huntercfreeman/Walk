@@ -138,7 +138,9 @@ public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousParenthesizedExpressionNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(AmbiguousParenthesizedExpressionNode);
+
+#if DEBUG
 	~AmbiguousParenthesizedExpressionNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AmbiguousParenthesizedExpressionNode--;

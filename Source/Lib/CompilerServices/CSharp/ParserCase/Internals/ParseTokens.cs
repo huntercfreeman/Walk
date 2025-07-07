@@ -17,7 +17,7 @@ public static class ParseTokens
     		if (!parserModel.Binder.TryGetVariableDeclarationHierarchically(
 			    	compilationUnit,
 			    	compilationUnit.ResourceUri,
-			    	parserModel.CurrentScopeIndexKey,
+			    	parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
 			        parserModel.TokenWalker.Current.TextSpan.Text,
 			        out _))
 			{
@@ -46,7 +46,7 @@ public static class ParseTokens
     	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableReferenceNode);
     	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.ConstructorInvocationExpressionNode);
     	
-    	if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.TypeDefinitionNode)
+    	if (parserModel.CurrentCodeBlockOwner.SyntaxKind != SyntaxKind.TypeDefinitionNode)
     	{
     		// There is a syntax conflict between a ConstructorDefinitionNode and a FunctionInvocationNode.
     		//
@@ -134,7 +134,7 @@ public static class ParseTokens
 		{
 			variableKind = VariableKind.Property;
 		}
-		else if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+		else if (parserModel.CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 		{
 			variableKind = VariableKind.Field;
 		}
@@ -195,7 +195,7 @@ public static class ParseTokens
 		{
 			parserModel.StatementBuilder.ChildList.Add(typeClauseNode);
 		}
-		else if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
+		else if (parserModel.CurrentCodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
 				 UtilityApi.IsConvertibleToIdentifierToken(typeClauseNode.TypeIdentifierToken.SyntaxKind) &&
 				 parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken &&
 			     typeDefinitionNode.TypeIdentifierToken.TextSpan.Text == typeClauseNode.TypeIdentifierToken.TextSpan.Text)
@@ -308,7 +308,7 @@ public static class ParseTokens
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
         {
-        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+        	parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
         }
         else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
         {
@@ -346,10 +346,10 @@ public static class ParseTokens
 	/// </summary>
     public static void ParseOpenBraceToken(SyntaxToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-		if (parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan ||
-    		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.OpenCodeBlockTextSpan.ConstructorWasInvoked)
+		if (parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan ||
+    		parserModel.CurrentCodeBlockOwner.CodeBlock_StartInclusiveIndex != -1)
 		{
-			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserModel.CurrentCodeBlockBuilder.CodeBlockOwner);
+			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserModel.CurrentCodeBlockOwner);
 			
 			parserModel.Binder.NewScopeAndBuilderFromOwner(
 		    	arbitraryCodeBlockNode,
@@ -358,27 +358,27 @@ public static class ParseTokens
 		        ref parserModel);
 		}
 		
-		parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = false;
+		parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = false;
 
 		// Global scope has a null parent.
-		var parentScopeDirection = parserModel.CurrentCodeBlockBuilder.Parent?.CodeBlockOwner.ScopeDirectionKind ?? ScopeDirectionKind.Both;
+		var parentScopeDirection = parserModel.GetParent(parserModel.CurrentCodeBlockOwner, compilationUnit)?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
 		
 		if (parentScopeDirection == ScopeDirectionKind.Both)
 		{
-			if (!parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing)
+			if (!parserModel.CurrentCodeBlockOwner.PermitCodeBlockParsing)
 			{
 				parserModel.TokenWalker.DeferParsingOfChildScope(compilationUnit, ref parserModel);
 				return;
 			}
 
-			parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing = false;
+			parserModel.CurrentCodeBlockOwner.PermitCodeBlockParsing = false;
 		}
 		
 		// This has to come after the 'DeferParsingOfChildScope(...)'
 		// or it makes an ArbitraryCodeBlockNode when it comes back around.
 		parserModel.Binder.SetOpenCodeBlockTextSpan(
-			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner,
-			openBraceToken.TextSpan,
+			parserModel.CurrentCodeBlockOwner,
+			openBraceToken.TextSpan.StartInclusiveIndex,
 			compilationUnit.__DiagnosticList,
 			parserModel.TokenWalker);
     }
@@ -400,7 +400,7 @@ public static class ParseTokens
 		{
 			var tuple = parserModel.ParseChildScopeStack.Peek();
 			
-			if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserModel.CurrentCodeBlockBuilder.CodeBlockOwner))
+			if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserModel.CurrentCodeBlockOwner))
 			{
 				tuple = parserModel.ParseChildScopeStack.Pop();
 				tuple.DeferredChildScope.PrepareMainParserLoop(closeBraceTokenIndex, compilationUnit, ref parserModel);
@@ -408,11 +408,11 @@ public static class ParseTokens
 			}
 		}
 
-		if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.GlobalCodeBlockNode)
+		if (parserModel.CurrentCodeBlockOwner.SyntaxKind != SyntaxKind.GlobalCodeBlockNode)
 		{
 			parserModel.Binder.SetCloseCodeBlockTextSpan(
-				parserModel.CurrentCodeBlockBuilder.CodeBlockOwner,
-				closeBraceToken.TextSpan,
+				parserModel.CurrentCodeBlockOwner,
+				closeBraceToken.TextSpan.EndExclusiveIndex,
 				compilationUnit.__DiagnosticList,
 				parserModel.TokenWalker);
         }
@@ -568,16 +568,16 @@ public static class ParseTokens
 	/// </summary>
     public static void ParseStatementDelimiterToken(SyntaxToken statementDelimiterToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+    	if (parserModel.CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
-        	var namespaceStatementNode = (NamespaceStatementNode)parserModel.CurrentCodeBlockBuilder.CodeBlockOwner;
+        	var namespaceStatementNode = (NamespaceStatementNode)parserModel.CurrentCodeBlockOwner;
         	
             ICodeBlockOwner nextCodeBlockOwner = namespaceStatementNode;
             TypeClauseNode? scopeReturnTypeClauseNode = null;
             
             parserModel.Binder.SetCloseCodeBlockTextSpan(
             	namespaceStatementNode,
-            	statementDelimiterToken.TextSpan,
+            	statementDelimiterToken.TextSpan.EndExclusiveIndex,
             	compilationUnit.__DiagnosticList,
             	parserModel.TokenWalker);
 
@@ -588,12 +588,12 @@ public static class ParseTokens
         }
         else 
         {
-        	while (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.GlobalCodeBlockNode &&
-        		   parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)
+        	while (parserModel.CurrentCodeBlockOwner.SyntaxKind != SyntaxKind.GlobalCodeBlockNode &&
+        		   parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan)
         	{
         		parserModel.Binder.SetCloseCodeBlockTextSpan(
-        			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner,
-        			statementDelimiterToken.TextSpan,
+        			parserModel.CurrentCodeBlockOwner,
+        			statementDelimiterToken.TextSpan.EndExclusiveIndex,
         			compilationUnit.__DiagnosticList,
         			parserModel.TokenWalker);
         		
@@ -606,20 +606,20 @@ public static class ParseTokens
     {
     	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
     
-    	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+    	parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
     	
     	// Global scope has a null parent.
-		var parentScopeDirection = parserModel.CurrentCodeBlockBuilder.Parent?.CodeBlockOwner.ScopeDirectionKind ?? ScopeDirectionKind.Both;
+		var parentScopeDirection = parserModel.GetParent(parserModel.CurrentCodeBlockOwner, compilationUnit)?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
 		
 		if (parentScopeDirection == ScopeDirectionKind.Both)
 		{
-			if (!parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing)
+			if (!parserModel.CurrentCodeBlockOwner.PermitCodeBlockParsing)
 			{
 				parserModel.TokenWalker.DeferParsingOfChildScope(compilationUnit, ref parserModel);
 				return;
 			}
 
-			parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing = false;
+			parserModel.CurrentCodeBlockOwner.PermitCodeBlockParsing = false;
 		}
 		else
 		{

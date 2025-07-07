@@ -46,7 +46,9 @@ public sealed class BadExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.BadExpressionNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(BadExpressionNode);
+
+#if DEBUG
 	~BadExpressionNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.BadExpressionNode--;

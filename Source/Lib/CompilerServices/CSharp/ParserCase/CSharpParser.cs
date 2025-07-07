@@ -37,9 +37,7 @@ public static class CSharpParser
         var parserModel = new CSharpParserModel(
             binder,
 	        lexerOutput.SyntaxTokenList,
-	        globalCodeBlockBuilder,
 	        currentCodeBlockBuilder,
-	        0,
             binder.TopLevelNamespaceStatementNode);
             
 		/*#if DEBUG
@@ -147,7 +145,7 @@ public static class CSharpParser
 					var closeBraceTokenIndex = parserModel.TokenWalker.Index;
 					
 					if (parserModel.ParseChildScopeStack.Count > 0 &&
-					    parserModel.ParseChildScopeStack.Peek().CodeBlockOwner == parserModel.CurrentCodeBlockBuilder.CodeBlockOwner)
+					    parserModel.ParseChildScopeStack.Peek().CodeBlockOwner == parserModel.CurrentCodeBlockOwner)
 					{
 						parserModel.TokenWalker.SetNullDeferredParsingTuple();
 					}
@@ -232,7 +230,7 @@ public static class CSharpParser
 				{
 					var tuple = parserModel.ParseChildScopeStack.Peek();
 					
-					if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserModel.CurrentCodeBlockBuilder.CodeBlockOwner))
+					if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserModel.CurrentCodeBlockOwner))
 					{
 						tuple = parserModel.ParseChildScopeStack.Pop();
 						tuple.DeferredChildScope.PrepareMainParserLoop(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
@@ -271,7 +269,7 @@ public static class CSharpParser
 			parserModel.TokenWalker.ConsumeCounterReset();
         }
 
-        if (parserModel.CurrentCodeBlockBuilder.Parent is not null)
+        if (parserModel.GetParent(parserModel.CurrentCodeBlockOwner, compilationUnit) is not null)
         {
             // The current token here would be the EOF token.
             parserModel.Binder.CloseScope(parserModel.TokenWalker.Current.TextSpan, compilationUnit, ref parserModel);

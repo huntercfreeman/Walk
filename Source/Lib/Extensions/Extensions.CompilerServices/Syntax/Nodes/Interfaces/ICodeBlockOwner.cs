@@ -7,29 +7,77 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 public interface ICodeBlockOwner : ISyntaxNode
 {
-	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind { get; }
-	public TextEditorTextSpan OpenCodeBlockTextSpan { get; set; }
-	// public CodeBlock CodeBlock { get; set; }
-	public TextEditorTextSpan CloseCodeBlockTextSpan { get; set; }
+	/// <summary>
+	/// This should be initialized to -1 as that will imply "null" / that it wasn't set yet.
+	/// </summary>
+	public int Scope_StartInclusiveIndex { get; set; }
+	/// <summary>
+	/// This should be initialized to -1 as that will imply "null" / that it wasn't set yet.
+	/// </summary>
+	public int Scope_EndExclusiveIndex { get; set; }
+	/// <summary>
+	/// This should be initialized to -1 as that will imply "null" / that it wasn't set yet.
+	/// </summary>
+	public int CodeBlock_StartInclusiveIndex { get; set; }
+	/// <summary>
+	/// This should be initialized to -1 as that will imply "null" / that it wasn't set yet.
+	/// </summary>
+	public int CodeBlock_EndExclusiveIndex { get; set; }
+	/// <summary>
+	/// This should be initialized to -1 as that will imply "null" / that it wasn't set yet.
+	///
+	/// This indicates the index that the parent 'ICodeBlockOwner' is at in the 'CSharpCompilationUnit.DefinitionTupleList'.
+	///
+	/// This is unsafe, because you must be certain that all data you're interacting with is coming from the same 'CSharpCompilationUnit'.
+	/// </summary>
+	public int Unsafe_ParentIndexKey { get; set; }
+	/// <summary>
+	/// This should be initialized to -1 as that will imply "null" / that it wasn't set yet.
+	///
+	/// This indicates the index that this 'ICodeBlockOwner' is at in the 'CSharpCompilationUnit.DefinitionTupleList'.
+	///
+	/// This is unsafe, because you must be certain that all data you're interacting with is coming from the same 'CSharpCompilationUnit'.
+	/// </summary>
+	public int Unsafe_SelfIndexKey { get; set; }
+	
+	public bool PermitCodeBlockParsing { get; set; }
 	
 	/// <summary>
-	/// The initializer for this should set it to '-1'
-	/// to signify that the scope was not yet assigned.
+	/// This belongs on the 'CSharpCodeBlockBuilder', not the 'ICodeBlockOwner'.
 	///
-	/// This is unfortunate, since the default value of 'int' is '0',
-	/// then this is sort of "omnipotent information" that absolutely would
-	/// cause a bug if someone were to miss this step when
-	/// creating a new implementation of the 'ICodeBlockOwner'.
+	/// This is computational state to know whether to search
+	/// for 'StatementDelimiterToken' (if this is true) as the terminator or a 'CloseBraceToken' (if this is false).
+	///
+	/// This is not necessary to disambiguate the SyntaxKind of the text spans that mark
+	/// the start and end of the code block.
+	///
+	/// This is mentioned because that might be an argument for this being moved to 'ICodeBlockOwner'.
+	///
+	/// But, .... interrupting my thought I think I'm wrong hang on....
+	///
+	/// ````public void SomeFunction() => }
 	/// 
-	/// Initially this was a nullable int, in order to ensure the implementations
-	/// of 'ICodeBlockOwner', didn't have to initialize the int to '-1'.
+	/// What should the above code snippet parse as?
+	/// Should the '}' be consumed as the closing delimiter token for 'SomeFunction()'?
 	///
-	/// The issue with the nullable approach, is that whenever you are parsing
-	/// and want to change scope, you're then reading a nullable int,
-	/// which results in the int being boxed.
+	/// Is it the case that the closing text span of a scope is only
+	/// a 'CloseBracetoken' if the start text span is from an 'OpenBraceToken'?
+	///
+	/// Furthermore, is it true that the start text span is only non-null
+	/// if it is an 'OpenBraceToken' that started the code block?
+	///
+	/// An implicitly opened code block can have its start text span
+	/// retrieved on a 'per ICodeBlockOwner' basis.
+	///
+	/// I am going to decide that:
+	/// ````public void SomeFunction() => }
+	///
+	/// will not consume the 'CloseBraceToken' as its delimiter.
+	/// This matter is open to be changed though,
+	/// this decision is only being made to create consistency.
 	/// </summary>
-	public int ScopeIndexKey { get; set; }
+	public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
 
 	public TypeReference GetReturnTypeReference();
 	

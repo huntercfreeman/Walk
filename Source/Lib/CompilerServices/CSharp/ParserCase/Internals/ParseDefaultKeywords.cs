@@ -83,7 +83,7 @@ public class ParseDefaultKeywords
 	    
 	    // Not valid C# -- catch requires brace deliminated code block --, but here for parser recovery.
 	    if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
-    		parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+    		parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleCharTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -142,7 +142,7 @@ public class ParseDefaultKeywords
 	        ref parserModel);
 	    
 	    if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
-        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+        	parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleDoubleTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -171,7 +171,7 @@ public class ParseDefaultKeywords
 	        ref parserModel);
 	    
 	    if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
-        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+        	parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleEnumTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -225,7 +225,7 @@ public class ParseDefaultKeywords
 	        ref parserModel);
 	
 		if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
-    		parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+    		parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleFixedTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -257,7 +257,7 @@ public class ParseDefaultKeywords
 	        compilationUnit,
 	        ref parserModel);
 	    
-	    parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = false;
+	    parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = false;
         
         for (int i = 0; i < 3; i++)
         {
@@ -273,7 +273,7 @@ public class ParseDefaultKeywords
 		var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
         
 		if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
-        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+        	parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleForeachTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -317,7 +317,7 @@ public class ParseDefaultKeywords
 		var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 	        
 	    if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
-    		parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+    		parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleGotoTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -369,7 +369,7 @@ public class ParseDefaultKeywords
 	        ref parserModel);
     
     	if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
-        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+        	parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleLongTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -514,7 +514,7 @@ public class ParseDefaultKeywords
 	        ref parserModel);
     
     	if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
-        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+        	parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleTypeofTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -592,7 +592,7 @@ public class ParseDefaultKeywords
 	        ref parserModel);
 	
 		if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
-    		parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+    		parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleUnrecognizedTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -695,7 +695,7 @@ public class ParseDefaultKeywords
 	        ref parserModel);
 	    
 	    if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
-        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+        	parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleUsingTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -847,7 +847,7 @@ public class ParseDefaultKeywords
 	        compilationUnit,
 	        ref parserModel);
 	        
-	    parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = false;
+	    parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = false;
 	    
 	    if (storageModifierKind == StorageModifierKind.Enum)
 	    {
@@ -900,7 +900,7 @@ public class ParseDefaultKeywords
     	}
     	
     	if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
-			parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+			parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleClassTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)

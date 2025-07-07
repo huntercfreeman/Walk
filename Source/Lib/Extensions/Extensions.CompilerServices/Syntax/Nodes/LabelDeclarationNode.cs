@@ -2,7 +2,7 @@ using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 
-public sealed class LabelDeclarationNode : IExpressionNode, ITrackedDefinition
+public sealed class LabelDeclarationNode : IExpressionNode
 {
 	public LabelDeclarationNode(SyntaxToken identifierToken)
 	{

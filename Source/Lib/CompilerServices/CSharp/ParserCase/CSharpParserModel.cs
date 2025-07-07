@@ -24,21 +24,16 @@ public struct CSharpParserModel
     public CSharpParserModel(
         CSharpBinder binder,
         List<SyntaxToken> tokenList,
-        CSharpCodeBlockBuilder globalCodeBlockBuilder,
-        CSharpCodeBlockBuilder currentCodeBlockBuilder,
-        int globalScopeIndexKey,
+        ICodeBlockOwner currentCodeBlockOwner,
 	    NamespaceStatementNode topLevelNamespaceStatementNode)
     {
     	Binder = binder;
-	    CurrentScopeIndexKey = globalScopeIndexKey;
+	    CurrentCodeBlockOwner = currentCodeBlockOwner;
 	    CurrentNamespaceStatementNode = topLevelNamespaceStatementNode;
     
     	TokenWalker = Binder.CSharpParserModel_TokenWalker;
     	TokenWalker.Reinitialize(tokenList);
     	
-        GlobalCodeBlockBuilder = globalCodeBlockBuilder;
-        CurrentCodeBlockBuilder = currentCodeBlockBuilder;
-        
         ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
         
         StatementBuilder = new(Binder);
@@ -116,12 +111,9 @@ public struct CSharpParserModel
     /// </summary>
     public CSharpParserContextKind ParserContextKind { get; set; }
     
-    public CSharpCodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
-    public CSharpCodeBlockBuilder CurrentCodeBlockBuilder { get; set; }
-    
     public CSharpBinder Binder { get; set; }
 
-    public int CurrentScopeIndexKey { get; set; }
+    public ICodeBlockOwner CurrentCodeBlockOwner { get; set; }
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
     public TypeReference MostRecentLeftHandSideAssignmentExpressionTypeClauseNode { get; set; } = CSharpFacts.Types.Void.ToTypeReference();
     
@@ -177,6 +169,16 @@ public struct CSharpParserModel
     
     	VariableReferenceNode.SetSharedInstance(variableIdentifierToken, variableDeclarationNode);
     	return VariableReferenceNode;
+    }
+    
+    public ICodeBlockOwner? GetParent(
+        ICodeBlockOwner codeBlockOwner,
+        Walk.CompilerServices.CSharp.CompilerServiceCase.CSharpCompilationUnit cSharpCompilationUnit)
+    {
+        if (codeBlockOwner.Unsafe_ParentIndexKey == -1)
+            return null;
+            
+        return (ICodeBlockOwner)cSharpCompilationUnit.DefinitionTupleList[codeBlockOwner.Unsafe_ParentIndexKey].TrackedDefinition;
     }
     
     /// <summary>TODO: Delete this code it is only being used temporarily for debugging.</summary>

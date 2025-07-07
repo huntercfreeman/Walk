@@ -3,7 +3,7 @@ using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 
-public sealed class VariableDeclarationNode : IExpressionNode, ITrackedDefinition
+public sealed class VariableDeclarationNode : IExpressionNode
 {
 	public VariableDeclarationNode(
 		TypeReference typeReference,

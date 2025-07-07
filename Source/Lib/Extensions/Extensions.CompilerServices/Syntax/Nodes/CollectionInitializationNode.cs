@@ -18,7 +18,9 @@ public sealed class CollectionInitializationNode : IExpressionNode
 	
 	public bool IsClosed { get; set; }
 
-	#if DEBUG	
+	public string IdentifierText => nameof(CollectionInitializationNode);
+
+#if DEBUG
 	~CollectionInitializationNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.CollectionInitializationNode--;

@@ -20,7 +20,9 @@ public sealed class LiteralExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.LiteralExpressionNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(LiteralExpressionNode);
+
+#if DEBUG
 	~LiteralExpressionNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.LiteralExpressionNode--;

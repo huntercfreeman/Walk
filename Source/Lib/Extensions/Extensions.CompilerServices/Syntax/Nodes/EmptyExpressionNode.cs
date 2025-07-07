@@ -41,7 +41,9 @@ public sealed class EmptyExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.EmptyExpressionNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(EmptyExpressionNode);
+
+#if DEBUG
 	~EmptyExpressionNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.EmptyExpressionNode--;

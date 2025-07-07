@@ -35,7 +35,9 @@ public sealed class NamespaceClauseNode : IExpressionNode
 	
 	public SyntaxKind SyntaxKind => SyntaxKind.NamespaceClauseNode;
 
-	#if DEBUG
+	public string IdentifierText => throw new NotImplementedException();
+
+#if DEBUG
 	~NamespaceClauseNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.NamespaceClauseNode--;

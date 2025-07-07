@@ -20,7 +20,9 @@ public sealed class LabelReferenceNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.LabelReferenceNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(LabelReferenceNode);
+
+#if DEBUG
 	~LabelReferenceNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.LabelReferenceNode--;

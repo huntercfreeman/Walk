@@ -45,7 +45,6 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit
 	public List<TextEditorDiagnostic> __DiagnosticList { get; } = new();
 	public List<Symbol> __SymbolList { get; set; } = new();
 	
-    public List<Scope> ScopeList { get; } = new();
     public List<(int ParentScopeIndexKey, ITrackedDefinition TrackedDefinition)> DefinitionTupleList { get; } = new();
     
     public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => __DiagnosticList;

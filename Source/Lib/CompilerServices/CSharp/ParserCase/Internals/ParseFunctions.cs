@@ -60,7 +60,7 @@ public class ParseFunctions
         HandleFunctionArguments(functionDefinitionNode, compilationUnit, ref parserModel);
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
-        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
+        	parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
         else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
         	ParseTokens.MoveToExpressionBody(compilationUnit, ref parserModel);
     }

@@ -16,7 +16,9 @@ public sealed class InheritanceStatementNode : ISyntaxNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.InheritanceStatementNode;
 
-	#if DEBUG	
+	public string IdentifierText => nameof(InheritanceStatementNode);
+
+#if DEBUG
 	~InheritanceStatementNode()
 	{
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.InheritanceStatementNode--;
