@@ -9,7 +9,8 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 	public NamespaceStatementNode(
 		SyntaxToken keywordToken,
 		SyntaxToken identifierToken,
-		CodeBlock codeBlock)
+		CodeBlock codeBlock,
+		ResourceUri resourceUri)
 	{
 		#if DEBUG
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.NamespaceStatementNode++;
@@ -17,10 +18,12 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 	
 		KeywordToken = keywordToken;
 		IdentifierToken = identifierToken;
+		ResourceUri = resourceUri;
 	}
 
 	public SyntaxToken KeywordToken { get; }
 	public SyntaxToken IdentifierToken { get; }
+	public ResourceUri ResourceUri { get; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;

@@ -21,7 +21,8 @@ public static class ParseVariables
 	        new TypeReference(consumedTypeClauseNode),
 	        consumedIdentifierToken,
 	        variableKind,
-	        false);
+	        false,
+	        compilationUnit.ResourceUri);
 
         parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserModel);
         // parserModel.CurrentCodeBlockBuilder.AddChild(variableDeclarationNode);

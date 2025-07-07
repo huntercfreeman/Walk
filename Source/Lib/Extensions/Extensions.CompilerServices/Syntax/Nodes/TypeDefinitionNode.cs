@@ -18,7 +18,8 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		GenericParameterListing genericParameterListing,
 		FunctionArgumentListing primaryConstructorFunctionArgumentListing,
 		TypeReference inheritedTypeReference,
-		string namespaceName
+		string namespaceName,
+		ResourceUri resourceUri
 		// FindAllReferences
 		// , HashSet<ResourceUri>? referenceHashSet
 		)
@@ -36,6 +37,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		FunctionArgumentListing = primaryConstructorFunctionArgumentListing;
 		InheritedTypeReference = inheritedTypeReference;
 		NamespaceName = namespaceName;
+		ResourceUri = resourceUri;
 		
 		// FindAllReferences
 		// ReferenceHashSet = referenceHashSet;
@@ -71,6 +73,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	/// </summary>
 	public TypeReference InheritedTypeReference { get; private set; }
 	public string NamespaceName { get; }
+	public ResourceUri ResourceUri { get; }
 	public bool IsInterface => StorageModifierKind == StorageModifierKind.Interface;
 
 	public bool IsFabricated { get; init; }

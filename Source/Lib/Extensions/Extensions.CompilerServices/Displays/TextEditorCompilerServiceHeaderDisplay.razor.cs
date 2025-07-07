@@ -141,7 +141,6 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 		            targetScope.Scope_StartInclusiveIndex,
 		            targetScope.Scope_StartInclusiveIndex + 1,
 				    (byte)TextEditorDevToolsDecorationKind.Scope,
-				    resourceUri,
 				    sourceText: string.Empty,
 				    getTextPrecalculatedResult: string.Empty);
     		}
@@ -151,7 +150,6 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 		            targetScope.CodeBlock_StartInclusiveIndex,
 		            targetScope.CodeBlock_StartInclusiveIndex + 1,
 				    (byte)TextEditorDevToolsDecorationKind.Scope,
-				    resourceUri,
 				    sourceText: string.Empty,
 				    getTextPrecalculatedResult: string.Empty);
     		}
@@ -173,7 +171,6 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	            useStartInclusiveIndex,
 			    useEndExclusiveIndex,
 			    (byte)TextEditorDevToolsDecorationKind.Scope,
-			    resourceUri,
 			    sourceText: string.Empty,
 			    getTextPrecalculatedResult: string.Empty);
 	

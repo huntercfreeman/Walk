@@ -9,10 +9,11 @@
 
 @{
 	var symbolLocal = Symbol;
-	var targetNode = GetTargetNode(TextEditorService, symbolLocal);
-	var definitionNode = GetDefinitionNode(TextEditorService, symbolLocal, targetNode);
+	var targetNode = GetTargetNode(TextEditorService, symbolLocal, ResourceUri);
+	var definitionNode = GetDefinitionNode(TextEditorService, symbolLocal, targetNode, ResourceUri);
 	
 	var syntaxViewModel = new SyntaxViewModel(
+	    ResourceUri,
 		symbolLocal,
 		targetNode,
 		definitionNode,

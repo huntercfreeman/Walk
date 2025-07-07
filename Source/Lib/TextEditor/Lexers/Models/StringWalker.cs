@@ -292,7 +292,6 @@ public class StringWalker
 				wordBuilderStartInclusiveIndex,
 				PositionIndex,
 				0,
-				ResourceUri,
 				SourceText),
 			_stringBuilder.ToString());
 	}

@@ -242,7 +242,7 @@ public class RazorSyntaxTree
                 if (inheritanceIdentifierText != "ComponentBase")
                     continue;
 
-                var compilerServiceResource = _razorCompilerService.GetResource(textSpan.ResourceUri);
+                var compilerServiceResource = _razorCompilerService.GetResource(stringWalker.ResourceUri);
 
                 if (compilerServiceResource is null)
                     continue;
@@ -280,7 +280,6 @@ public class RazorSyntaxTree
             startingPositionIndex,
             stringWalker.PositionIndex,
             (byte)HtmlDecorationKind.InjectedLanguageFragment,
-            stringWalker.ResourceUri,
             stringWalker.SourceText);
 
         return new AttributeNameNode(attributeNameTextSpan);
@@ -315,7 +314,6 @@ public class RazorSyntaxTree
                         stringWalker.PositionIndex +
                         1,
                         (byte)HtmlDecorationKind.InjectedLanguageFragment,
-                        stringWalker.ResourceUri,
                         stringWalker.SourceText)));
         }
 
@@ -377,7 +375,6 @@ public class RazorSyntaxTree
                                 injectedLanguageFragmentSyntaxStartingPositionIndex,
                                 stringWalker.PositionIndex + 1,
                                 (byte)HtmlDecorationKind.InjectedLanguageFragment,
-                                stringWalker.ResourceUri,
                                 stringWalker.SourceText)));
 
                     // Move beyond the "@" sign
@@ -427,7 +424,6 @@ public class RazorSyntaxTree
                                     stringWalker.PositionIndex +
                                     1,
                                     (byte)HtmlDecorationKind.InjectedLanguageFragment,
-                                    stringWalker.ResourceUri,
                                     stringWalker.SourceText)));
                     }
 
@@ -500,7 +496,6 @@ public class RazorSyntaxTree
                         stringWalker.PositionIndex +
                         1,
                         (byte)HtmlDecorationKind.InjectedLanguageFragment,
-                        stringWalker.ResourceUri,
                         stringWalker.SourceText)));
         }
 
@@ -530,7 +525,6 @@ public class RazorSyntaxTree
                                     stringWalker.PositionIndex +
                                     1,
                                     (byte)HtmlDecorationKind.InjectedLanguageFragment,
-                                    stringWalker.ResourceUri,
                                     stringWalker.SourceText)));
                     }
 
@@ -567,7 +561,6 @@ public class RazorSyntaxTree
             entryPositionIndex,
             stringWalker.PositionIndex,
             (byte)GenericDecorationKind.None,
-            stringWalker.ResourceUri,
             stringWalker.SourceText);
 
         ParseCSharpWithAdhocMethodWrapping(
@@ -598,7 +591,6 @@ public class RazorSyntaxTree
                         stringWalker.PositionIndex +
                         matchedOn.Length,
                         (byte)HtmlDecorationKind.InjectedLanguageFragment,
-                        stringWalker.ResourceUri,
                         stringWalker.SourceText)));
 
             stringWalker.SkipRange(matchedOn.Length);
@@ -863,7 +855,6 @@ public class RazorSyntaxTree
                         stringWalker.PositionIndex +
                         matchedOn.Length,
                         (byte)HtmlDecorationKind.InjectedLanguageFragment,
-                        stringWalker.ResourceUri,
                         stringWalker.SourceText)));
 
             stringWalker.SkipRange(matchedOn.Length);
@@ -932,7 +923,6 @@ public class RazorSyntaxTree
                 stringWalker.PositionIndex,
                 stringWalker.PositionIndex + 1,
                 (byte)HtmlDecorationKind.InjectedLanguageFragment,
-                stringWalker.ResourceUri,
                 stringWalker.SourceText);
 
             var commentStartSyntax = new InjectedLanguageFragmentNode(
@@ -960,7 +950,6 @@ public class RazorSyntaxTree
                 commentTextStartingPositionIndex,
                 stringWalker.PositionIndex,
                 (byte)HtmlDecorationKind.Comment,
-                stringWalker.ResourceUri,
                 stringWalker.SourceText);
 
         var commentValueSyntax = new InjectedLanguageFragmentNode(
@@ -975,7 +964,6 @@ public class RazorSyntaxTree
                 stringWalker.PositionIndex,
                 stringWalker.PositionIndex + 1,
                 (byte)HtmlDecorationKind.InjectedLanguageFragment,
-                stringWalker.ResourceUri,
                 stringWalker.SourceText);
 
             var commentEndSyntax = new InjectedLanguageFragmentNode(
@@ -1004,7 +992,6 @@ public class RazorSyntaxTree
                 stringWalker.PositionIndex,
                 stringWalker.PositionIndex + 1,
                 (byte)HtmlDecorationKind.InjectedLanguageFragment,
-                stringWalker.ResourceUri,
                 stringWalker.SourceText);
 
             var commentStartSyntax = new InjectedLanguageFragmentNode(
@@ -1144,7 +1131,6 @@ public class RazorSyntaxTree
                                 stringWalker.PositionIndex +
                                 elseIfKeywordCombo.Length,
                                 (byte)HtmlDecorationKind.InjectedLanguageFragment,
-                                stringWalker.ResourceUri,
                                 stringWalker.SourceText)));
 
                     // -1 is in the case that "else{" instead of a space between "else" and "{"
@@ -1217,7 +1203,6 @@ public class RazorSyntaxTree
                                 stringWalker.PositionIndex +
                                 CSharpRazorKeywords.ELSE_KEYWORD.Length,
                                 (byte)HtmlDecorationKind.InjectedLanguageFragment,
-                                stringWalker.ResourceUri,
                                 stringWalker.SourceText)));
 
                     // -1 is in the case that "else{" instead of a space between "else" and "{"
@@ -1274,7 +1259,6 @@ public class RazorSyntaxTree
                                 stringWalker.PositionIndex +
                                 CSharpRazorKeywords.WHILE_KEYWORD.Length,
                                 (byte)HtmlDecorationKind.InjectedLanguageFragment,
-                                stringWalker.ResourceUri,
                                 stringWalker.SourceText)));
 
                     // -1 is in the case that "while()" instead of a space between "while" and "("

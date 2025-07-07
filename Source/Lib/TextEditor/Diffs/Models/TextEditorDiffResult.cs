@@ -336,7 +336,6 @@ public class TextEditorDiffResult
                     startingIndexInclusive,
                     endingIndexExclusive,
                     decorationByte,
-                    resourceUri,
                     sourceText);
 
                 matchTextSpans.Add(textSpan);

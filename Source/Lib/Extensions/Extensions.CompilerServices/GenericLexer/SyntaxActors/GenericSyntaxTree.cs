@@ -73,7 +73,6 @@ public class GenericSyntaxTree
 				0,
 				stringWalker.PositionIndex,
 				(byte)GenericDecorationKind.None,
-				stringWalker.ResourceUri,
 				stringWalker.SourceText),
 			documentChildList);
 
@@ -113,7 +112,6 @@ public class GenericSyntaxTree
 			startingPositionIndex,
 			stringWalker.PositionIndex,
 			(byte)GenericDecorationKind.CommentSingleLine,
-			stringWalker.ResourceUri,
 			stringWalker.SourceText);
 
 		return new GenericCommentSingleLineSyntax(commentTextEditorTextSpan);
@@ -148,7 +146,6 @@ public class GenericSyntaxTree
 			startingPositionIndex,
 			stringWalker.PositionIndex + GenericLanguageDefinition.CommentMultiLineEnd.Length,
 			(byte)GenericDecorationKind.CommentMultiLine,
-			stringWalker.ResourceUri,
 			stringWalker.SourceText);
 
 		return new GenericCommentMultiLineSyntax(commentTextEditorTextSpan);
@@ -182,7 +179,6 @@ public class GenericSyntaxTree
 			startingPositionIndex,
 			stringWalker.PositionIndex + 1,
 			(byte)GenericDecorationKind.StringLiteral,
-			stringWalker.ResourceUri,
 			stringWalker.SourceText);
 
 		return new GenericStringSyntax(stringTextEditorTextSpan);
@@ -293,7 +289,6 @@ public class GenericSyntaxTree
 				stringWalker.PositionIndex + 1,
 				rememberPositionIndex,
 				(byte)GenericDecorationKind.Function,
-				stringWalker.ResourceUri,
 				stringWalker.SourceText));
 
 		stringWalker.SkipRange(rememberPositionIndex - stringWalker.PositionIndex);
@@ -336,7 +331,6 @@ public class GenericSyntaxTree
 			startingPositionIndex,
 			stringWalker.PositionIndex,
 			(byte)GenericDecorationKind.PreprocessorDirective,
-			stringWalker.ResourceUri,
 			stringWalker.SourceText);
 
 		var success = TryParsePreprocessorDirectiveDeliminationExtendedSyntaxes(
@@ -402,7 +396,6 @@ public class GenericSyntaxTree
 				deliminationExtendedSyntaxStartingInclusiveIndex,
 				stringWalker.PositionIndex,
 				(byte)matchedDeliminationExtendedSyntax.GenericDecorationKind,
-				stringWalker.ResourceUri,
 				stringWalker.SourceText);
 
 			genericSyntax = new GenericDeliminationExtendedSyntax(textSpan);

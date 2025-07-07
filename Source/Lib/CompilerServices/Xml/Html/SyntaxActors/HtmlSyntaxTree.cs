@@ -42,7 +42,6 @@ public static class HtmlSyntaxTree
                     0,
                     8,
                     (byte)HtmlDecorationKind.None,
-                    ResourceUri.Empty,
                     "document")),
         };
 
@@ -270,7 +269,6 @@ public static class HtmlSyntaxTree
 	            startingPositionIndex,
 	            stringWalker.PositionIndex,
 	            (byte)HtmlDecorationKind.TagName,
-	            stringWalker.ResourceUri,
 	            stringWalker.SourceText,
 	            textEditorService);
 
@@ -320,7 +318,6 @@ public static class HtmlSyntaxTree
 	                        textNodeStartingPositionIndex.Value,
 	                        stringWalker.PositionIndex,
 	                        (byte)GenericDecorationKind.None,
-	                        stringWalker.ResourceUri,
 	                        stringWalker.SourceText));
 	
 	                htmlSyntaxes.Add(tagTextSyntax);
@@ -395,7 +392,6 @@ public static class HtmlSyntaxTree
                         injectedLanguageFragmentSyntaxStartingPositionIndex,
                         stringWalker.PositionIndex + 1,
                         (byte)HtmlDecorationKind.InjectedLanguageFragment,
-                        stringWalker.ResourceUri,
                         stringWalker.SourceText)));
 
             injectedLanguageFragmentSyntaxes.AddRange(
@@ -434,7 +430,6 @@ public static class HtmlSyntaxTree
 			        attributeNameSyntax.TextEditorTextSpan.StartInclusiveIndex,
 			        attributeValueSyntax.TextEditorTextSpan.EndExclusiveIndex,
 			        (byte)GenericDecorationKind.None,
-			        attributeNameSyntax.TextEditorTextSpan.ResourceUri,
 			        stringWalker.SourceText));
         }
 
@@ -484,7 +479,6 @@ public static class HtmlSyntaxTree
                 startingPositionIndex,
                 stringWalker.PositionIndex,
                 (byte)HtmlDecorationKind.AttributeName,
-                stringWalker.ResourceUri,
                 stringWalker.SourceText,
                 textEditorService);
             
@@ -527,7 +521,6 @@ public static class HtmlSyntaxTree
 	            0,
 	            0,
 	            (byte)HtmlDecorationKind.AttributeValue,
-	            stringWalker.ResourceUri,
 	            stringWalker.SourceText);
             attributeValueSyntax = new AttributeValueNode(attributeValueTextSpan);
 
@@ -641,7 +634,6 @@ public static class HtmlSyntaxTree
 	            startingPositionIndex,
 	            endingIndexExclusive,
 	            (byte)HtmlDecorationKind.AttributeValue,
-	            stringWalker.ResourceUri,
 	            stringWalker.SourceText);
 
             return new AttributeValueNode(attributeValueTextSpan);
@@ -674,7 +666,6 @@ public static class HtmlSyntaxTree
                 startingPositionIndex,
                 stringWalker.PositionIndex + 1,
                 (byte)HtmlDecorationKind.Comment,
-                stringWalker.ResourceUri,
                 stringWalker.SourceText);
 
             return new CommentNode(commentTagTextSpan);

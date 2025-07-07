@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
@@ -9,7 +10,8 @@ public sealed class VariableDeclarationNode : IExpressionNode
 		TypeReference typeReference,
 		SyntaxToken identifierToken,
 		VariableKind variableKind,
-		bool isInitialized)
+		bool isInitialized,
+		ResourceUri resourceUri)
 	{
 		#if DEBUG
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.VariableDeclarationNode++;
@@ -19,6 +21,7 @@ public sealed class VariableDeclarationNode : IExpressionNode
 		IdentifierToken = identifierToken;
 		VariableKind = variableKind;
 		IsInitialized = isInitialized;
+		ResourceUri = resourceUri;
 	}
 
 	public TypeReference TypeReference { get; private set; }
@@ -29,6 +32,7 @@ public sealed class VariableDeclarationNode : IExpressionNode
 	/// </summary>
 	public VariableKind VariableKind { get; set; }
 	public bool IsInitialized { get; set; }
+	public ResourceUri ResourceUri { get; set; }
 	/// <summary>
 	/// TODO: Remove the 'set;' on this property
 	/// </summary>

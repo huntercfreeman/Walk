@@ -349,9 +349,9 @@ public static class DiagnosticHelper
 
 	public static void ClearByResourceUri(List<TextEditorDiagnostic> diagnosticList, ResourceUri resourceUri)
 	{
-		var keep = diagnosticList.Where(x => x.TextSpan.ResourceUri != resourceUri);
+		// var keep = diagnosticList.Where(x => x.TextSpan.ResourceUri != resourceUri);
 
 		diagnosticList.Clear();
-		diagnosticList.AddRange(keep);
+		// diagnosticList.AddRange(keep);
 	}
 }

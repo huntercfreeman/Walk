@@ -15,12 +15,13 @@ public partial class CSharpFacts
             AccessModifierKind.Public,
             false,
             StorageModifierKind.Class,
-            new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "void".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "void")),
+            new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "void".Length, (byte)GenericDecorationKind.None, "void")),
             typeof(void),
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty
+            string.Empty,
+		    ResourceUri.Empty
             // FindAllReferences
             // , referenceHashSet: new()
             )
@@ -32,12 +33,13 @@ public partial class CSharpFacts
             AccessModifierKind.Public,
             false,
             StorageModifierKind.Class,
-            new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "int".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "int")),
+            new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "int".Length, (byte)GenericDecorationKind.None, "int")),
             typeof(int),
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty
+            string.Empty,
+		    ResourceUri.Empty
             // FindAllReferences
             // , referenceHashSet: new()
             )
@@ -49,12 +51,13 @@ public partial class CSharpFacts
             AccessModifierKind.Public,
             false,
             StorageModifierKind.Class,
-            new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "char".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "char")),
+            new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "char".Length, (byte)GenericDecorationKind.None, "char")),
             typeof(char),
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty
+            string.Empty,
+		    ResourceUri.Empty
             // FindAllReferences
             // , referenceHashSet: new()
 			)
@@ -66,12 +69,13 @@ public partial class CSharpFacts
             AccessModifierKind.Public,
             false,
             StorageModifierKind.Class,
-            new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "string".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "string")),
+            new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "string".Length, (byte)GenericDecorationKind.None, "string")),
             typeof(string),
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty
+            string.Empty,
+		    ResourceUri.Empty
 			// FindAllReferences
 			// ,referenceHashSet: new()
 			)
@@ -83,12 +87,13 @@ public partial class CSharpFacts
             AccessModifierKind.Public,
             false,
             StorageModifierKind.Class,
-            new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "bool".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "bool")),
+            new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "bool".Length, (byte)GenericDecorationKind.None, "bool")),
             typeof(bool),
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty
+            string.Empty,
+		    ResourceUri.Empty
 			// FindAllReferences
 			// ,referenceHashSet: new()
 			)
@@ -100,12 +105,13 @@ public partial class CSharpFacts
             AccessModifierKind.Public,
             false,
             StorageModifierKind.Class,
-            new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "var".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "var")),
+            new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "var".Length, (byte)GenericDecorationKind.None, "var")),
             typeof(void),
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
-            string.Empty
+            string.Empty,
+		    ResourceUri.Empty
             // FindAllReferences
             // ,referenceHashSet: new()
             )

@@ -88,7 +88,6 @@ public record SemanticResultRazor
         	symbolSourceText_StartInclusiveIndex,
         	symbolSourceText_EndExclusiveIndex,
         	textSpan.DecorationByte,
-        	sourceResourceUri,
         	sourceText);
     }
 }

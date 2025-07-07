@@ -63,7 +63,6 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 				outputBuilder.Length,
 		        outputBuilder.Length + workingDirectoryText.Length,
 		        (byte)TerminalDecorationKind.Keyword,
-		        ResourceUri.Empty,
 		        string.Empty,
 		        workingDirectoryText);
 		    outTextSpanList.Add(workingDirectoryTextSpan);

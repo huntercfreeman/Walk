@@ -83,7 +83,7 @@ public partial class CSharpBinder
         	{
         		var x = namespaceGroupNodeKvp.Value.NamespaceStatementNodeList[i];
         		
-        		if (x.IdentifierToken.TextSpan.ResourceUri == resourceUri)
+        		if (x.ResourceUri == resourceUri)
         			namespaceGroupNodeKvp.Value.NamespaceStatementNodeList.RemoveAt(i);
         	}
         }
@@ -306,7 +306,8 @@ public partial class CSharpBinder
                 CSharpFacts.Types.Var.ToTypeReference(),
                 variableIdentifierToken,
                 VariableKind.Local,
-                false)
+                false,
+                compilationUnit.ResourceUri)
             {
                 IsFabricated = true,
             };
@@ -671,9 +672,6 @@ public partial class CSharpBinder
             
             foreach (var typeDefinitionNode in typeDefinitionNodes)
             {
-                if (typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri == compilationUnit.ResourceUri)
-                    continue;
-
         		var matchNode = compilationUnit.ExternalTypeDefinitionList.FirstOrDefault(x => x.IdentifierText == typeDefinitionNode.IdentifierText);
             	
             	if (matchNode is null)
@@ -799,7 +797,7 @@ public partial class CSharpBinder
         foreach (var namespaceGroupNodeKvp in _namespaceGroupMap)
         {
             var keepStatements = namespaceGroupNodeKvp.Value.NamespaceStatementNodeList
-                .Where(x => x.IdentifierToken.TextSpan.ResourceUri != resourceUri)
+                .Where(x => x.ResourceUri != resourceUri)
                 .ToList();
 
             _namespaceGroupMap[namespaceGroupNodeKvp.Key] =
@@ -960,7 +958,7 @@ public partial class CSharpBinder
 
     public ICodeBlockOwner? GetScope(CSharpCompilationUnit? compilationUnit, TextEditorTextSpan textSpan)
     {
-    	return GetScopeByPositionIndex(compilationUnit, textSpan.ResourceUri, textSpan.StartInclusiveIndex);
+    	return GetScopeByPositionIndex(compilationUnit, compilationUnit.ResourceUri, textSpan.StartInclusiveIndex);
     }
     
     public ICodeBlockOwner? GetScopeByPositionIndex(CSharpCompilationUnit? compilationUnit, ResourceUri resourceUri, int positionIndex)
@@ -1519,7 +1517,7 @@ public partial class CSharpBinder
         	{
         		if (TryGetVariableDeclarationHierarchically(
         				cSharpCompilationUnit,
-        				textSpan.ResourceUri,
+        				cSharpCompilationUnit.ResourceUri,
         				scope.Unsafe_SelfIndexKey,
 		                getTextResult ?? textSpan.Text,
 		                out var variableDeclarationStatementNode)
@@ -1537,7 +1535,7 @@ public partial class CSharpBinder
 	        {
 	        	if (TryGetFunctionHierarchically(
 	        				 cSharpCompilationUnit,
-	        				 textSpan.ResourceUri,
+	        				 cSharpCompilationUnit.ResourceUri,
         					 scope.Unsafe_SelfIndexKey,
 		                     getTextResult ?? textSpan.Text,
 		                     out var functionDefinitionNode)
@@ -1556,7 +1554,7 @@ public partial class CSharpBinder
 	        {
 	        	if (TryGetTypeDefinitionHierarchically(
             				 cSharpCompilationUnit,
-            			     textSpan.ResourceUri,
+            			     cSharpCompilationUnit.ResourceUri,
         					 scope.Unsafe_SelfIndexKey,
                              getTextResult ?? textSpan.Text,
                              out var typeDefinitionNode) &&
@@ -1611,7 +1609,7 @@ public partial class CSharpBinder
 
 		if (symbol is not null)
         {
-	        if (TryGetCompilationUnit(cSharpCompilationUnit, textSpan.ResourceUri, out var targetBinderSession) &&
+	        if (TryGetCompilationUnit(cSharpCompilationUnit, cSharpCompilationUnit.ResourceUri, out var targetBinderSession) &&
 	            ((CSharpCompilationUnit)targetBinderSession).SymbolIdToExternalTextSpanMap is not null)
 	        {
 	        	if (((CSharpCompilationUnit)targetBinderSession).SymbolIdToExternalTextSpanMap.TryGetValue(symbol.Value.SymbolId, out var definitionTuple))
@@ -1622,7 +1620,6 @@ public partial class CSharpBinder
 				            definitionTuple.StartInclusiveIndex,
 						    definitionTuple.StartInclusiveIndex + 1,
 						    default,
-						    definitionTuple.ResourceUri,
 						    string.Empty,
 						    string.Empty),
 	        			externalSyntaxKind,
@@ -1736,8 +1733,7 @@ public partial class CSharpBinder
     			if (variableDeclarationNode.TypeReference.TypeIdentifierToken.ConstructorWasInvoked)
     			{
     				if (variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.StartInclusiveIndex <= positionIndex &&
-        				variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.EndExclusiveIndex >= positionIndex  &&
-    			    	variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
+        				variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.EndExclusiveIndex >= positionIndex)
         			{
         				return new TypeClauseNode(variableDeclarationNode.TypeReference);
         			}
@@ -1746,8 +1742,7 @@ public partial class CSharpBinder
         				foreach (var entry in variableDeclarationNode.TypeReference.GenericParameterListing.GenericParameterEntryList)
         				{
         					if (entry.TypeReference.TypeIdentifierToken.TextSpan.StartInclusiveIndex <= positionIndex &&
-		        				entry.TypeReference.TypeIdentifierToken.TextSpan.EndExclusiveIndex >= positionIndex  &&
-		    			    	entry.TypeReference.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri)
+		        				entry.TypeReference.TypeIdentifierToken.TextSpan.EndExclusiveIndex >= positionIndex)
 		        			{
 		        				return new TypeClauseNode(entry.TypeReference);
 		        			}
@@ -1800,7 +1795,7 @@ public partial class CSharpBinder
         	{
         		if (TryGetVariableDeclarationHierarchically(
         				cSharpCompilationUnit,
-        				foundSymbol.Value.TextSpan.ResourceUri,
+        				cSharpCompilationUnit.ResourceUri,
         				codeBlockOwner.Unsafe_SelfIndexKey,
 		                foundSymbol.Value.TextSpan.Text,
 		                out var variableDeclarationStatementNode)
@@ -1892,15 +1887,13 @@ public partial class CSharpBinder
     			int? endExclusiveIndex = null;
     			
     			if (variableDeclarationNode.TypeReference.TypeIdentifierToken.ConstructorWasInvoked &&
-    			    variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.ResourceUri == resourceUri &&
     			    !variableDeclarationNode.TypeReference.IsImplicit)
     			{
     				startInclusiveIndex = variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
     				endExclusiveIndex = variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.EndExclusiveIndex;
     			}
     			
-    			if (variableDeclarationNode.IdentifierToken.ConstructorWasInvoked &&
-    			    variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri == resourceUri)
+    			if (variableDeclarationNode.IdentifierToken.ConstructorWasInvoked)
     			{
     				startInclusiveIndex ??= variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex;
     				endExclusiveIndex = variableDeclarationNode.IdentifierToken.TextSpan.EndExclusiveIndex;
@@ -1973,7 +1966,8 @@ public partial class CSharpBinder
 								entry.TypeReference.GenericParameterListing,
 								primaryConstructorFunctionArgumentListing: default,
 								inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
-								string.Empty
+								string.Empty,
+								cSharpCompilationUnit.ResourceUri
 								// FindAllReferences
 								// ,referenceHashSet: new()
 								),
@@ -2061,7 +2055,7 @@ public partial class CSharpBinder
 	public IEnumerable<ISyntaxNode> GetMemberList_TypeDefinitionNode(TypeDefinitionNode typeDefinitionNode)
 	{
 		if (typeDefinitionNode.Unsafe_SelfIndexKey == -1 ||
-		    !_compilationUnitMap.TryGetValue(typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri, out var compilationUnit))
+		    !_compilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var compilationUnit))
 	    {
 			return Array.Empty<ISyntaxNode>();
         }
@@ -2089,7 +2083,7 @@ public partial class CSharpBinder
 	public IEnumerable<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
 	{
 	    if (namespaceStatementNode.Unsafe_SelfIndexKey == -1 ||
-		    !_compilationUnitMap.TryGetValue(namespaceStatementNode.IdentifierToken.TextSpan.ResourceUri, out var compilationUnit))
+		    !_compilationUnitMap.TryGetValue(namespaceStatementNode.ResourceUri, out var compilationUnit))
 	    {
 			return Array.Empty<TypeDefinitionNode>();
         }

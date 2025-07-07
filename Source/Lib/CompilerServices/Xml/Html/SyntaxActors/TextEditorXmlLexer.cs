@@ -62,7 +62,6 @@ public class TextEditorXmlLexer
             SourceText.Length,
 		    SourceText.Length,
 		    (byte)GenericDecorationKind.None,
-		    ResourceUri,
 		    SourceText,
 		    getTextPrecalculatedResult: string.Empty);
 		

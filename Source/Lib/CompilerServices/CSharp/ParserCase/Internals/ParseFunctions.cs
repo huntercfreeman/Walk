@@ -21,7 +21,8 @@ public class ParseFunctions
             consumedIdentifierToken,
             genericParameterListing: default,
             functionArgumentListing: default,
-            default);
+            default,
+            compilationUnit.ResourceUri);
             
         parserModel.Binder.BindFunctionDefinitionNode(functionDefinitionNode, compilationUnit, ref parserModel);
         

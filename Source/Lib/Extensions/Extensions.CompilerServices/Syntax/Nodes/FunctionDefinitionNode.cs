@@ -15,7 +15,8 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 		SyntaxToken functionIdentifierToken,
 		GenericParameterListing genericParameterListing,
 		FunctionArgumentListing functionArgumentListing,
-		CodeBlock codeBlock)
+		CodeBlock codeBlock,
+		ResourceUri resourceUri)
 	{
 		#if DEBUG
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.FunctionDefinitionNode++;
@@ -26,6 +27,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 		FunctionIdentifierToken = functionIdentifierToken;
 		GenericParameterListing = genericParameterListing;
 		FunctionArgumentListing = functionArgumentListing;
+		ResourceUri = resourceUri;
 	}
 
 	public AccessModifierKind AccessModifierKind { get; }
@@ -33,6 +35,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 	public SyntaxToken FunctionIdentifierToken { get; }
 	public GenericParameterListing GenericParameterListing { get; set; }
 	public FunctionArgumentListing FunctionArgumentListing { get; set; }
+	public ResourceUri ResourceUri { get; set; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;

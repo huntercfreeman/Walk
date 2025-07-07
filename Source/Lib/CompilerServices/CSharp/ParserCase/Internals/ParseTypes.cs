@@ -203,7 +203,8 @@ public static class ParseTypes
 				        typeDefinitionNode.ToTypeReference(),
 				        identifierToken,
 				        VariableKind.EnumMember,
-				        false);
+				        false,
+				        compilationUnit.ResourceUri);
 				        
 				    // parserModel.CurrentCodeBlockBuilder.AddChild(variableDeclarationNode);
 				        

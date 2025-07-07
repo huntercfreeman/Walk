@@ -244,7 +244,6 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 			            startInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
 			            endExclusiveIndex: lineInformation.Position_StartInclusiveIndex + 1,
 			            decorationByte: 0,
-			            modelModifier.PersistentState.ResourceUri,
 			            sourceText: string.Empty,
 			            getTextPrecalculatedResult: string.Empty);
 			        

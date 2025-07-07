@@ -20,7 +20,6 @@ public class JsonPropertyValueSyntax : IJsonSyntax
                 0,
                 0,
                 default,
-                ResourceUri.Empty,
                 string.Empty),
             null);
     }

@@ -9,7 +9,7 @@ namespace Walk.Extensions.CompilerServices;
 public static class TypeFacts
 {
 	private static readonly TypeReference _notApplicableTypeReference = new TypeReference(
-		typeIdentifier: new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "NotApplicable".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "empty")),
+		typeIdentifier: new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "NotApplicable".Length, (byte)GenericDecorationKind.None, "empty")),
 		valueType: typeof(void),
 		genericParameterListing: default,
 		isKeywordType: false,
@@ -31,12 +31,13 @@ public static class TypeFacts
 		AccessModifierKind.Public,
 		false,
 		StorageModifierKind.Class,
-		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "NotApplicable".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "empty")),
+		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "NotApplicable".Length, (byte)GenericDecorationKind.None, "empty")),
 		typeof(void),
 		default,
 		primaryConstructorFunctionArgumentListing: default,
 		inheritedTypeReference: _notApplicableTypeReference,
-		string.Empty
+		string.Empty,
+		ResourceUri.Empty
 		// FindAllReferences
 		// , referenceHashSet: new()
 		);
@@ -51,12 +52,13 @@ public static class TypeFacts
 		AccessModifierKind.Public,
 		false,
 		StorageModifierKind.Class,
-		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "empty".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "empty")),
+		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "empty".Length, (byte)GenericDecorationKind.None, "empty")),
 		typeof(void),
 		default,
 		primaryConstructorFunctionArgumentListing: default,
 		inheritedTypeReference: _notApplicableTypeReference,
-		string.Empty
+		string.Empty,
+		ResourceUri.Empty
 		// FindAllReferences
 		// , referenceHashSet: new()
 		);
@@ -88,12 +90,13 @@ public static class TypeFacts
 		AccessModifierKind.Public,
 		false,
 		StorageModifierKind.Class,
-		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "empty".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "empty")),
+		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "empty".Length, (byte)GenericDecorationKind.None, "empty")),
 		typeof(void),
 		default,
 		primaryConstructorFunctionArgumentListing: default,
 		inheritedTypeReference: _notApplicableTypeReference,
-		string.Empty
+		string.Empty,
+		ResourceUri.Empty
 		// FindAllReferences
 		// , referenceHashSet: new()
 		);

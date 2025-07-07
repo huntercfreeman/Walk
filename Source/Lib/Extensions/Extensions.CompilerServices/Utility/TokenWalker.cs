@@ -52,7 +52,7 @@ public class TokenWalker
 	/// <summary>If there are any tokens, then assume the final token is the end of file token. Otherwise, fabricate an end of file token.</summary>
 	private SyntaxToken EOF => TokenList.Count > 0
 		? TokenList[TokenList.Count - 1]
-		: new SyntaxToken(SyntaxKind.EndOfFileToken, new(0, 0, 0, ResourceUri.Empty, string.Empty));
+		: new SyntaxToken(SyntaxKind.EndOfFileToken, new(0, 0, 0, string.Empty));
 
 	/// <summary>The input to this method can be positive OR negative.<br/><br/>Returns <see cref="BadToken"/> when an index out of bounds error would've occurred.</summary>
 	public SyntaxToken Peek(int offset)
@@ -207,5 +207,5 @@ public class TokenWalker
 		_deferredParsingTupleStack.Clear();
 	}
 
-	private SyntaxToken GetBadToken() => new SyntaxToken(SyntaxKind.BadToken, new(0, 0, 0, ResourceUri.Empty, string.Empty));
+	private SyntaxToken GetBadToken() => new SyntaxToken(SyntaxKind.BadToken, new(0, 0, 0, string.Empty));
 }

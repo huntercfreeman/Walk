@@ -898,7 +898,6 @@ public sealed class TextEditorViewModelApi
                 cursorPositionIndex,
                 cursorPositionIndex + 1,
                 0,
-                modelModifier.PersistentState.ResourceUri,
                 sourceText: string.Empty,
                 getTextPrecalculatedResult: string.Empty);
 
