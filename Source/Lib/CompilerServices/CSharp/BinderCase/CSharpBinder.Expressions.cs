@@ -2644,7 +2644,7 @@ public partial class CSharpBinder
 				expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, compilationUnit, ref parserModel);
 				continue;
 			}
-				 
+
 			if (foundDefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 			{
 				var variableDeclarationNode = (VariableDeclarationNode)foundDefinitionNode;

@@ -1382,21 +1382,23 @@ public partial class CSharpBinder
 
 		if (symbol is not null)
         {
-	        if (TryGetCompilationUnit(compilationUnit.ResourceUri, out var innerCompilationUnit) &&
-	            ((CSharpCompilationUnit)innerCompilationUnit).SymbolIdToExternalTextSpanMap is not null)
+	        if (compilationUnit.SymbolIdToExternalTextSpanMap is not null)
 	        {
-	        	if (((CSharpCompilationUnit)innerCompilationUnit).SymbolIdToExternalTextSpanMap.TryGetValue(symbol.Value.SymbolId, out var definitionTuple))
+	        	if (compilationUnit.SymbolIdToExternalTextSpanMap.TryGetValue(symbol.Value.SymbolId, out var definitionTuple))
 	        	{
-	        		return GetDefinitionNode(
-	        			compilationUnit,
-	        			new TextEditorTextSpan(
-				            definitionTuple.StartInclusiveIndex,
-						    definitionTuple.StartInclusiveIndex + 1,
-						    default,
-						    string.Empty,
-					        string.Empty),
-	        			externalSyntaxKind,
-	        			getTextResult: textSpan.Text);
+	        	    if (TryGetCompilationUnit(definitionTuple.ResourceUri, out var innerCompilationUnit))
+	        	    {
+	        	        return GetDefinitionNode(
+    	        			innerCompilationUnit,
+    	        			new TextEditorTextSpan(
+    				            definitionTuple.StartInclusiveIndex,
+    						    definitionTuple.StartInclusiveIndex + 1,
+    						    default,
+    						    string.Empty,
+    					        string.Empty),
+    	        			externalSyntaxKind,
+    	        			getTextResult: textSpan.Text);
+	        	    }
 	        	}
 	        }
         }
