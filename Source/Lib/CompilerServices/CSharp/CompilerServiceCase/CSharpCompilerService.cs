@@ -1232,10 +1232,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     public List<AutocompleteEntry>? OBSOLETE_GetAutocompleteEntries(string word, TextEditorTextSpan textSpan, TextEditorVirtualizationResult virtualizationResult)
     {
-    	if (word is null)
+    	if (word is null || !__CSharpBinder.TryGetCompilationUnit(virtualizationResult.Model.PersistentState.ResourceUri, out var compilationUnit))
 			return null;
 			
-    	var boundScope = __CSharpBinder.GetScope(compilationUnit: null, textSpan);
+    	var boundScope = __CSharpBinder.GetScope(compilationUnit, textSpan);
 
         if (boundScope is null)
             return null;
@@ -1343,7 +1343,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			while (targetScope is not null)
 	        {
 	            autocompleteEntryList.AddRange(
-	            	__CSharpBinder.GetVariableDeclarationNodesByScope(compilationUnit: null, targetScope.Unsafe_SelfIndexKey)
+	            	__CSharpBinder.GetVariableDeclarationNodesByScope(compilationUnit, targetScope.Unsafe_SelfIndexKey)
 	            	.Select(x => x.IdentifierToken.TextSpan.Text)
 	                .ToArray()
 	                .Where(x => x.Contains(word, StringComparison.InvariantCulture))
@@ -1358,7 +1358,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	                }));
 	
 	            autocompleteEntryList.AddRange(
-	                __CSharpBinder.GetFunctionDefinitionNodesByScope(compilationUnit: null, targetScope.Unsafe_SelfIndexKey)
+	                __CSharpBinder.GetFunctionDefinitionNodesByScope(compilationUnit, targetScope.Unsafe_SelfIndexKey)
 	            	.Select(x => x.FunctionIdentifierToken.TextSpan.Text)
 	                .ToArray()
 	                .Where(x => x.Contains(word, StringComparison.InvariantCulture))
@@ -1375,7 +1375,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				if (targetScope.Unsafe_ParentIndexKey == -1)
 					targetScope = default;
 				else
-	            	targetScope = __CSharpBinder.GetScopeByScopeIndexKey(compilationUnit: null, targetScope.Unsafe_ParentIndexKey);
+	            	targetScope = __CSharpBinder.GetScopeByScopeIndexKey(compilationUnit, targetScope.Unsafe_ParentIndexKey);
 	        }
         
 	        var allTypeDefinitions = __CSharpBinder.AllTypeDefinitions;
