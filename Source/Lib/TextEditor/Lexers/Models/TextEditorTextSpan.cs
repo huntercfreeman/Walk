@@ -6,7 +6,7 @@ public record struct TextEditorTextSpan(
     byte DecorationByte)
 {
     public int Length => EndExclusiveIndex - StartInclusiveIndex;
-    public bool ConstructorWasInvoked => true;
+    public bool ConstructorWasInvoked => this != default;
 
     public string? Text(string sourceText, TextEditorService? textEditorService)
     {
