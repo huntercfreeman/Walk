@@ -951,11 +951,11 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		var solutionFolderList = new List<SolutionFolder>();
 
 		var folderTagList = cSharpProjectSyntaxWalker.TagNodes
-			.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.Text ?? string.Empty) == "Folder")
+			.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.Text(content, _textEditorService) ?? string.Empty) == "Folder")
 			.ToList();
     	
     	var projectTagList = cSharpProjectSyntaxWalker.TagNodes
-			.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.Text ?? string.Empty) == "Project")
+			.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.Text(content, _textEditorService) ?? string.Empty) == "Project")
 			.ToList();
 		
 		var solutionFolderPathHashSet = new HashSet<string>();
@@ -968,10 +968,10 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 				.AttributeNodes
 				.Select(x => (
 					x.AttributeNameSyntax.TextEditorTextSpan
-						.Text
+						.Text(content, _textEditorService)
 						.Trim(),
 					x.AttributeValueSyntax.TextEditorTextSpan
-						.Text
+						.Text(content, _textEditorService)
 						.Replace("\"", string.Empty)
 						.Replace("=", string.Empty)
 						.Trim()))
@@ -1010,10 +1010,10 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 						.AttributeNodes
 						.Select(x => (
 							x.AttributeNameSyntax.TextEditorTextSpan
-								.Text
+								.Text(content, _textEditorService)
 								.Trim(),
 							x.AttributeValueSyntax.TextEditorTextSpan
-								.Text
+								.Text(content, _textEditorService)
 								.Replace("\"", string.Empty)
 								.Replace("=", string.Empty)
 								.Trim()))
@@ -1052,10 +1052,10 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 				.AttributeNodes
 				.Select(x => (
 					x.AttributeNameSyntax.TextEditorTextSpan
-						.Text
+						.Text(content, _textEditorService)
 						.Trim(),
 					x.AttributeValueSyntax.TextEditorTextSpan
-						.Text
+						.Text(content, _textEditorService)
 						.Replace("\"", string.Empty)
 						.Replace("=", string.Empty)
 						.Trim()))
@@ -1199,7 +1199,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 			cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
 	
 			var projectReferences = cSharpProjectSyntaxWalker.TagNodes
-				.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.Text ?? string.Empty) == "ProjectReference")
+				.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.Text(content, _textEditorService) ?? string.Empty) == "ProjectReference")
 				.ToList();
 	
 			foreach (var projectReference in projectReferences)
@@ -1208,10 +1208,10 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 					.AttributeNodes
 					.Select(x => (
 						x.AttributeNameSyntax.TextEditorTextSpan
-							.Text
+							.Text(content, _textEditorService)
 							.Trim(),
 						x.AttributeValueSyntax.TextEditorTextSpan
-							.Text
+							.Text(content, _textEditorService)
 							.Replace("\"", string.Empty)
 							.Replace("=", string.Empty)
 							.Trim()))

@@ -103,7 +103,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 		cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
 
 		var projectReferences = cSharpProjectSyntaxWalker.TagNodes
-			.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.Text ?? string.Empty) == "ProjectReference")
+			.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.Text(content, textEditorService: null) ?? string.Empty) == "ProjectReference")
 			.ToList();
 
 		List<CSharpProjectToProjectReference> cSharpProjectToProjectReferences = new();
@@ -114,10 +114,10 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 				.AttributeNodes
 				.Select(x => (
 					x.AttributeNameSyntax.TextEditorTextSpan
-						.Text
+						.Text(content, textEditorService: null)
 						.Trim(),
 					x.AttributeValueSyntax.TextEditorTextSpan
-						.Text
+						.Text(content, textEditorService: null)
 						.Replace("\"", string.Empty)
 						.Replace("=", string.Empty)
 						.Trim()))
