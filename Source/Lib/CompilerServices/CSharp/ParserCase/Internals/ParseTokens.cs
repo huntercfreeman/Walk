@@ -12,12 +12,12 @@ public static class ParseTokens
     public static void ParseIdentifierToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	if (parserModel.TokenWalker.Current.TextSpan.Length == 1 &&
-    		parserModel.TokenWalker.Current.TextSpan.Text == "_")
+    		parserModel.TokenWalker.Current.TextSpan.Text(compilationUnit.SourceText, parserModel.Binder.TextEditorService) == "_")
     	{
     		if (!parserModel.Binder.TryGetVariableDeclarationHierarchically(
 			    	compilationUnit,
 			    	parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-			        parserModel.TokenWalker.Current.TextSpan.Text,
+			        parserModel.TokenWalker.Current.TextSpan.Text(compilationUnit.SourceText, parserModel.Binder.TextEditorService),
 			        out _))
 			{
 				parserModel.Binder.BindDiscard(parserModel.TokenWalker.Current, compilationUnit, ref parserModel);
@@ -581,7 +581,7 @@ public static class ParseTokens
             	parserModel.TokenWalker);
 
             parserModel.Binder.AddNamespaceToCurrentScope(
-                namespaceStatementNode.IdentifierToken.TextSpan.Text,
+                namespaceStatementNode.IdentifierToken.TextSpan.Text(compilationUnit.SourceText, parserModel.Binder.TextEditorService),
                 compilationUnit,
                 ref parserModel);
         }

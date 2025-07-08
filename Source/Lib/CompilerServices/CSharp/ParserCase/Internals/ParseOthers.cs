@@ -40,17 +40,11 @@ public static class ParseOthers
                 
                 // NamespaceStatements will add the final symbol themselves.
                 
-				textSpan.Text = parserModel.Binder.TextEditorService.EditContext_GetText(
-					compilationUnit.SourceText.AsSpan(textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex - textSpan.StartInclusiveIndex));
-                
                 compilationUnit.__SymbolList.Add(
                 	new Symbol(
                 		SyntaxKind.NamespaceSymbol,
                 		parserModel.GetNextSymbolId(),
-                		matchedToken.TextSpan with
-                		{
-                		    Text = textSpan.Text
-                		}));
+                		matchedToken.TextSpan));
                 
                 if (isNamespaceStatement && (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken))
                 {
@@ -59,7 +53,7 @@ public static class ParseOthers
     		        // (I don't think the above statement is true... the final namespace gets handled only after the codeblock is parsed.
     		        //  so you should probably bring the other contributors of the namespace into scope immediately).
     		        // 
-		        	parserModel.Binder.AddNamespaceToCurrentScope(textSpan.Text, compilationUnit, ref parserModel);
+		        	parserModel.Binder.AddNamespaceToCurrentScope(textSpan.Text(compilationUnit.SourceText, parserModel.Binder.TextEditorService), compilationUnit, ref parserModel);
 		        }
 
                 if (matchedToken.IsFabricated)
