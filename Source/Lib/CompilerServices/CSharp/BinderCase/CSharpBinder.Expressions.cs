@@ -1326,9 +1326,7 @@ public partial class CSharpBinder
 				new TextEditorTextSpan(
 					0,
 				    0,
-				    0,
-				    string.Empty,
-				    string.Empty))
+				    0))
 				{
 					IsFabricated = true
 				};
@@ -1381,9 +1379,7 @@ public partial class CSharpBinder
 				new TextEditorTextSpan(
 					0,
 				    0,
-				    0,
-				    string.Empty,
-				    string.Empty))
+				    0))
 				{
 					IsFabricated = true
 				};
@@ -1728,8 +1724,7 @@ public partial class CSharpBinder
 			var textSpan = new TextEditorTextSpan(
 				token.TextSpan.StartInclusiveIndex,
 			    token.TextSpan.EndExclusiveIndex,
-			    (byte)GenericDecorationKind.None,
-			    compilationUnit.SourceText);
+			    (byte)GenericDecorationKind.None);
 		
 			compilationUnit.__SymbolList.Add(new Symbol(SyntaxKind.LambdaSymbol, parserModel.GetNextSymbolId(), textSpan));
 		
@@ -2925,8 +2920,7 @@ public partial class CSharpBinder
 			new TextEditorTextSpan(
 			    ambiguousParenthesizedExpressionNode.OpenParenthesisToken.TextSpan.StartInclusiveIndex,
 			    token.TextSpan.EndExclusiveIndex,
-			    default(byte),
-			    compilationUnit.SourceText));
+			    default(byte)));
 		
 		return parserModel.ConstructOrRecycleTypeClauseNode(
 			identifierToken,

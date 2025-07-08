@@ -52,7 +52,7 @@ public class TokenWalker
 	/// <summary>If there are any tokens, then assume the final token is the end of file token. Otherwise, fabricate an end of file token.</summary>
 	private SyntaxToken EOF => TokenList.Count > 0
 		? TokenList[TokenList.Count - 1]
-		: new SyntaxToken(SyntaxKind.EndOfFileToken, new(0, 0, 0, string.Empty));
+		: new SyntaxToken(SyntaxKind.EndOfFileToken, new(0, 0, 0));
 
 	/// <summary>The input to this method can be positive OR negative.<br/><br/>Returns <see cref="BadToken"/> when an index out of bounds error would've occurred.</summary>
 	public SyntaxToken Peek(int offset)
@@ -123,7 +123,7 @@ public class TokenWalker
 		var currentToken = Peek(0);
 
 		// TODO: Checking for the text 'args' is likely not a good solution. When parsing a main method, it might have the method arguments: 'string[] args'. The issue here is that 'args' comes up as a keyword while being the identifier for that method argument.
-		if (currentToken.TextSpan.Text == "args" && expectedSyntaxKind == SyntaxKind.IdentifierToken)
+		if (/*currentToken.TextSpan.Text == "args" && */expectedSyntaxKind == SyntaxKind.IdentifierToken)
 		{
 			_ = Consume();
 			return new SyntaxToken(SyntaxKind.IdentifierToken, currentToken.TextSpan);
@@ -207,5 +207,5 @@ public class TokenWalker
 		_deferredParsingTupleStack.Clear();
 	}
 
-	private SyntaxToken GetBadToken() => new SyntaxToken(SyntaxKind.BadToken, new(0, 0, 0, string.Empty));
+	private SyntaxToken GetBadToken() => new SyntaxToken(SyntaxKind.BadToken, new(0, 0, 0));
 }

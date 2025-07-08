@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -24,7 +25,7 @@ public sealed class UnaryExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.UnaryExpressionNode;
 
-	public string IdentifierText => nameof(UnaryExpressionNode);
+	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(UnaryExpressionNode);
 
 #if DEBUG
 	~UnaryExpressionNode()

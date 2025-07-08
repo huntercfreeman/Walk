@@ -277,17 +277,17 @@ public static class UtilityApi
     /// </summary>
     public static StorageModifierKind GetStorageModifierKindFromToken(SyntaxToken consumedToken)
     {
-        switch (consumedToken.TextSpan.Text)
+        switch (consumedToken.SyntaxKind)
         {
-            case "enum":
+            case SyntaxKind.EnumTokenKeyword:
                 return StorageModifierKind.Enum;
-            case "struct":
+            case SyntaxKind.StructTokenKeyword:
                 return StorageModifierKind.Struct;
-            case "class":
+            case SyntaxKind.ClassTokenKeyword:
                 return StorageModifierKind.Class;
-            case "interface":
+            case SyntaxKind.InterfaceTokenKeyword:
                 return StorageModifierKind.Interface;
-            case "record":
+            case SyntaxKind.RecordTokenContextualKeyword:
                 return StorageModifierKind.Record;
             default:
                 return StorageModifierKind.None;
@@ -296,15 +296,15 @@ public static class UtilityApi
     
     public static AccessModifierKind GetAccessModifierKindFromToken(SyntaxToken consumedToken)
     {
-        switch (consumedToken.TextSpan.Text)
+        switch (consumedToken.SyntaxKind)
         {
-            case "public":
+            case SyntaxKind.PublicTokenKeyword:
                 return AccessModifierKind.Public;
-            case "protected":
+            case SyntaxKind.ProtectedTokenKeyword:
                 return AccessModifierKind.Protected;
-            case "internal":
+            case SyntaxKind.InternalTokenKeyword:
                 return AccessModifierKind.Internal;
-            case "private":
+            case SyntaxKind.PrivateTokenKeyword:
                 return AccessModifierKind.Private;
             default:
                 return AccessModifierKind.None;

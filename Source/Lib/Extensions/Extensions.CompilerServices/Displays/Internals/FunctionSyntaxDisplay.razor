@@ -37,7 +37,7 @@
 			var functionDefinitionNode = (FunctionDefinitionNode)syntaxViewModelLocal.DefinitionNode;
 			returnTypeClauseNode = functionDefinitionNode.ReturnTypeReference;
 			returnTypeClauseNodeText = null;
-			methodName = functionDefinitionNode.FunctionIdentifierToken.TextSpan.Text;
+			methodName = syntaxViewModelLocal.GetText(functionDefinitionNode.FunctionIdentifierToken.TextSpan);
 			genericParameterListing = functionDefinitionNode.GenericParameterListing;
 			functionArgumentListing = functionDefinitionNode.FunctionArgumentListing;
 		}
@@ -70,7 +70,7 @@
 			var functionInvocationNode = (FunctionInvocationNode)syntaxViewModelLocal.TargetNode;
 			returnTypeClauseNode = functionInvocationNode.ResultTypeReference;
 			returnTypeClauseNodeText = null;
-			methodName = functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Text;
+			methodName = syntaxViewModelLocal.GetText(functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan);
 			genericParameterListing = functionInvocationNode.GenericParameterListing;
 			functionArgumentListing = null;
 		}
@@ -102,14 +102,14 @@
 		{
 			returnTypeClauseNode = default;
 			returnTypeClauseNodeText = null;
-			methodName = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.Text;
+			methodName = syntaxViewModelLocal.GetText(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
 			genericParameterListing = null;
 			functionArgumentListing = null;
 		}
 		else if (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.ConstructorSymbol)
 		{
 			returnTypeClauseNode = default;
-			returnTypeClauseNodeText = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.Text;
+			returnTypeClauseNodeText = syntaxViewModelLocal.GetText(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
 			methodName = null;
 			genericParameterListing = null;
 			functionArgumentListing = null;
@@ -146,6 +146,7 @@
 	@if (returnTypeClauseNode != default(TypeReference))
 	{
 		var syntaxViewModel = new SyntaxViewModel(
+		    SyntaxViewModel.TextEditorService,
 		    SyntaxViewModel.ResourceUri,
 			targetSymbol: null,
 			targetNode: null,
@@ -177,6 +178,7 @@
 	@if (genericParameterListing is not null)
 	{
 		var syntaxViewModel = new SyntaxViewModel(
+		    SyntaxViewModel.TextEditorService,
 		    SyntaxViewModel.ResourceUri,
 			targetSymbol: null,
 			targetNode: syntaxViewModelLocal.TargetNode,
@@ -247,6 +249,7 @@
 			}
 			
 			var syntaxViewModel = new SyntaxViewModel(
+				SyntaxViewModel.TextEditorService,
 				SyntaxViewModel.ResourceUri,
 				targetSymbol: null,
 				targetNode: argumentEntry.VariableDeclarationNode,

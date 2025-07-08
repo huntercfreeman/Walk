@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -36,7 +37,7 @@ public sealed class NamespaceClauseNode : IExpressionNode
 	
 	public SyntaxKind SyntaxKind => SyntaxKind.NamespaceClauseNode;
 
-	public string IdentifierText => nameof(NamespaceClauseNode);
+	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(NamespaceClauseNode);
 
 #if DEBUG
 	~NamespaceClauseNode()

@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -19,7 +20,7 @@ public sealed class CollectionInitializationNode : IExpressionNode
 	
 	public bool IsClosed { get; set; }
 
-	public string IdentifierText => nameof(CollectionInitializationNode);
+	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(CollectionInitializationNode);
 
 #if DEBUG
 	~CollectionInitializationNode()

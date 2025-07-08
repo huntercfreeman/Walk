@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
@@ -33,7 +34,7 @@ public sealed class TryStatementTryNode : ICodeBlockOwner
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TryStatementTryNode;
 
-	public string IdentifierText => nameof(TryStatementTryNode);
+	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(TryStatementTryNode);
 
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()

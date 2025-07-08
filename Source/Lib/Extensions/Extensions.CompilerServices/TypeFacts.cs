@@ -9,7 +9,7 @@ namespace Walk.Extensions.CompilerServices;
 public static class TypeFacts
 {
 	private static readonly TypeReference _notApplicableTypeReference = new TypeReference(
-		typeIdentifier: new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "NotApplicable".Length, (byte)GenericDecorationKind.None, "empty")),
+		typeIdentifier: new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "NotApplicable".Length, (byte)GenericDecorationKind.None)),
 		valueType: typeof(void),
 		genericParameterListing: default,
 		isKeywordType: false,
@@ -31,7 +31,7 @@ public static class TypeFacts
 		AccessModifierKind.Public,
 		false,
 		StorageModifierKind.Class,
-		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "NotApplicable".Length, (byte)GenericDecorationKind.None, "empty")),
+		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "NotApplicable".Length, (byte)GenericDecorationKind.None)),
 		typeof(void),
 		default,
 		primaryConstructorFunctionArgumentListing: default,
@@ -52,7 +52,7 @@ public static class TypeFacts
 		AccessModifierKind.Public,
 		false,
 		StorageModifierKind.Class,
-		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "empty".Length, (byte)GenericDecorationKind.None, "empty")),
+		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "empty".Length, (byte)GenericDecorationKind.None)),
 		typeof(void),
 		default,
 		primaryConstructorFunctionArgumentListing: default,
@@ -90,7 +90,7 @@ public static class TypeFacts
 		AccessModifierKind.Public,
 		false,
 		StorageModifierKind.Class,
-		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "empty".Length, (byte)GenericDecorationKind.None, "empty")),
+		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, "empty".Length, (byte)GenericDecorationKind.None)),
 		typeof(void),
 		default,
 		primaryConstructorFunctionArgumentListing: default,

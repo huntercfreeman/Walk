@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -60,7 +61,7 @@ public sealed class VariableReferenceNode : IExpressionNode
 	}
 	public SyntaxKind SyntaxKind => SyntaxKind.VariableReferenceNode;
 
-	public string IdentifierText => nameof(VariableReferenceNode);
+	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(VariableReferenceNode);
 
 	public void SetSharedInstance(
 		SyntaxToken variableIdentifierToken,

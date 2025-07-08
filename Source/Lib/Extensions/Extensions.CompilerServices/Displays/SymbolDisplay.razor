@@ -13,6 +13,7 @@
 	var definitionNode = GetDefinitionNode(TextEditorService, symbolLocal, targetNode, ResourceUri);
 	
 	var syntaxViewModel = new SyntaxViewModel(
+	    TextEditorService,
 	    ResourceUri,
 		symbolLocal,
 		targetNode,
@@ -103,7 +104,7 @@
 		                </span>
 		
 		                <button class="di_button di_te_source-file"
-		                        @onclick="() => OpenInEditorOnClick(symbolLocal.TextSpan.Text)">
+		                        @onclick="() => OpenInEditorOnClick(syntaxViewModel.GetText(symbolLocal.TextSpan))">
 		                    @symbolLocal.TextSpan.Text
 		                </button>
 		            </text>

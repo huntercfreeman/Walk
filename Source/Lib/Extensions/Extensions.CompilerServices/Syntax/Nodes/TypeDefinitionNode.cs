@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
@@ -106,7 +107,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 
 	public bool IsKeywordType { get; init; }
 	
-	public string IdentifierText => TypeIdentifierToken.TextSpan.Text;
+	public string IdentifierText(string sourceText, TextEditorService textEditorService) => TypeIdentifierToken.TextSpan.Text(sourceText, textEditorService);
 	
 	/// <summary>
 	/// TODO: TypeDefinitionNode(s) should use the expression loop to parse the...

@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 
 public sealed class PreprocessorLibraryReferenceStatementNode : ISyntaxNode
@@ -21,7 +22,7 @@ public sealed class PreprocessorLibraryReferenceStatementNode : ISyntaxNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorLibraryReferenceStatementNode;
 
-	public string IdentifierText => nameof(PreprocessorLibraryReferenceStatementNode);
+	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(PreprocessorLibraryReferenceStatementNode);
 
 #if DEBUG
 	~PreprocessorLibraryReferenceStatementNode()

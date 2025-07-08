@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
@@ -35,7 +36,7 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 	
 	public TextEditorTextSpan ExplicitDefinitionTextSpan { get; set; }
 
-	public string IdentifierText => nameof(FunctionInvocationNode);
+	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(FunctionInvocationNode);
 
 #if DEBUG
 	~FunctionInvocationNode()

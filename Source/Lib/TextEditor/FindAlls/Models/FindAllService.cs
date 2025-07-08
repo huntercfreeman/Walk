@@ -282,8 +282,7 @@ public class FindAllService : IFindAllService
 		                    	new TextEditorTextSpan(
 			                        outerI,
 			                        outerI + innerI,
-			                        (byte)FindOverlayDecorationKind.LongestCommonSubsequence,
-			                        text)
+			                        (byte)FindOverlayDecorationKind.LongestCommonSubsequence)
 	                        ));
 	                }
 	            }

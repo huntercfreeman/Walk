@@ -41,8 +41,7 @@ public static class HtmlSyntaxTree
                 new TextEditorTextSpan(
                     0,
                     8,
-                    (byte)HtmlDecorationKind.None,
-                    "document")),
+                    (byte)HtmlDecorationKind.None)),
         };
 
         var textEditorHtmlDiagnosticBag = new List<TextEditorDiagnostic>();
@@ -172,7 +171,7 @@ public static class HtmlSyntaxTree
                         if (stringWalker.PeekForSubstring(HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_ENDING))
                         {
                             tagBuilder.CloseTagNameSyntax = new TagNameNode(
-                                new(closeTagNameStartingPositionIndex, stringWalker, (byte)HtmlDecorationKind.TagName));
+                                new(closeTagNameStartingPositionIndex, stringWalker.PositionIndex, (byte)HtmlDecorationKind.TagName));
 
                             stringWalker.SkipRange(HtmlFacts.CLOSE_TAG_WITH_CHILD_CONTENT_ENDING.Length);
 
@@ -268,9 +267,7 @@ public static class HtmlSyntaxTree
 			var tagNameTextSpan = new TextEditorTextSpan(
 	            startingPositionIndex,
 	            stringWalker.PositionIndex,
-	            (byte)HtmlDecorationKind.TagName,
-	            stringWalker.SourceText,
-	            textEditorService);
+	            (byte)HtmlDecorationKind.TagName);
 
             injectedLanguageDefinition?.ParseTagName?.Invoke(
                 stringWalker,
@@ -317,8 +314,7 @@ public static class HtmlSyntaxTree
 	                    new TextEditorTextSpan(
 	                        textNodeStartingPositionIndex.Value,
 	                        stringWalker.PositionIndex,
-	                        (byte)GenericDecorationKind.None,
-	                        stringWalker.SourceText));
+	                        (byte)GenericDecorationKind.None));
 	
 	                htmlSyntaxes.Add(tagTextSyntax);
                 }
@@ -391,8 +387,7 @@ public static class HtmlSyntaxTree
                     new TextEditorTextSpan(
                         injectedLanguageFragmentSyntaxStartingPositionIndex,
                         stringWalker.PositionIndex + 1,
-                        (byte)HtmlDecorationKind.InjectedLanguageFragment,
-                        stringWalker.SourceText)));
+                        (byte)HtmlDecorationKind.InjectedLanguageFragment)));
 
             injectedLanguageFragmentSyntaxes.AddRange(
                 injectedLanguageDefinition.ParseInjectedLanguageFunc
@@ -429,8 +424,7 @@ public static class HtmlSyntaxTree
                 new(
 			        attributeNameSyntax.TextEditorTextSpan.StartInclusiveIndex,
 			        attributeValueSyntax.TextEditorTextSpan.EndExclusiveIndex,
-			        (byte)GenericDecorationKind.None,
-			        stringWalker.SourceText));
+			        (byte)GenericDecorationKind.None));
         }
 
         /// <summary>currentCharacterIn:<br/> -Any character that can start an attribute name<br/> currentCharacterOut:<br/> -<see cref="WhitespaceFacts.ALL_LIST"/> (whitespace)<br/> -<see cref="HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE"/><br/> -<see cref="HtmlFacts.OPEN_TAG_ENDING_OPTIONS"/></summary>
@@ -478,9 +472,7 @@ public static class HtmlSyntaxTree
             var attributeNameTextSpan = new TextEditorTextSpan(
                 startingPositionIndex,
                 stringWalker.PositionIndex,
-                (byte)HtmlDecorationKind.AttributeName,
-                stringWalker.SourceText,
-                textEditorService);
+                (byte)HtmlDecorationKind.AttributeName);
             
             return new AttributeNameNode(attributeNameTextSpan);
         }
@@ -520,8 +512,7 @@ public static class HtmlSyntaxTree
 			var attributeValueTextSpan = new TextEditorTextSpan(
 	            0,
 	            0,
-	            (byte)HtmlDecorationKind.AttributeValue,
-	            stringWalker.SourceText);
+	            (byte)HtmlDecorationKind.AttributeValue);
             attributeValueSyntax = new AttributeValueNode(attributeValueTextSpan);
 
             return false;
@@ -633,8 +624,7 @@ public static class HtmlSyntaxTree
 			var attributeValueTextSpan = new TextEditorTextSpan(
 	            startingPositionIndex,
 	            endingIndexExclusive,
-	            (byte)HtmlDecorationKind.AttributeValue,
-	            stringWalker.SourceText);
+	            (byte)HtmlDecorationKind.AttributeValue);
 
             return new AttributeValueNode(attributeValueTextSpan);
         }
@@ -665,8 +655,7 @@ public static class HtmlSyntaxTree
             var commentTagTextSpan = new TextEditorTextSpan(
                 startingPositionIndex,
                 stringWalker.PositionIndex + 1,
-                (byte)HtmlDecorationKind.Comment,
-                stringWalker.SourceText);
+                (byte)HtmlDecorationKind.Comment);
 
             return new CommentNode(commentTagTextSpan);
         }

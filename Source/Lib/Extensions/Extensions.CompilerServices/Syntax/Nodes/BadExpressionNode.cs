@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -47,7 +48,7 @@ public sealed class BadExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.BadExpressionNode;
 
-	public string IdentifierText => nameof(BadExpressionNode);
+	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(BadExpressionNode);
 
 #if DEBUG
 	~BadExpressionNode()

@@ -37,7 +37,7 @@
 		
 		prefixText = prefixBuilder.ToString();
 		prefixTextCssClass = "di_te_keyword";
-		text = typeDefinitionNode.TypeIdentifierToken.TextSpan.Text;
+		text = syntaxViewModelLocal.GetText(typeDefinitionNode.TypeIdentifierToken.TextSpan);
 		syntaxHighlightingClassCssString = "di_te_type";
 		genericParameterListing = typeDefinitionNode.GenericParameterListing;
 		hasQuestionMark = null;
@@ -49,7 +49,7 @@
 	
 		prefixText = "(reference)";
 		prefixTextCssClass = null;
-		text = typeClauseNode.TypeIdentifierToken.TextSpan.Text;
+		text = syntaxViewModelLocal.GetText(typeClauseNode.TypeIdentifierToken.TextSpan);
 		
 		if (typeClauseNode.IsKeywordType)
 			syntaxHighlightingClassCssString = "di_te_keyword";
@@ -65,7 +65,7 @@
 	{
 		prefixText = "(symbol)";
 		prefixTextCssClass = null;
-		text = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.Text;
+		text = syntaxViewModelLocal.GetText(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
 		syntaxHighlightingClassCssString = "di_te_type";
 		genericParameterListing = null;
 		hasQuestionMark = null;
@@ -75,7 +75,7 @@
 	{
 		prefixText = "(reference)";
 		prefixTextCssClass = null;
-		text = TypeReference.TypeIdentifierToken.TextSpan.Text;
+		text = syntaxViewModelLocal.GetText(TypeReference.TypeIdentifierToken.TextSpan);
 		
 		if (TypeReference.IsKeywordType)
 			syntaxHighlightingClassCssString = "di_te_keyword";
@@ -125,6 +125,7 @@
 		if (TypeReference != default)
 		{
 			var syntaxViewModel = new SyntaxViewModel(
+			    SyntaxViewModel.TextEditorService,
 			    SyntaxViewModel.ResourceUri,
 				targetSymbol: null,
 				targetNode: null,
@@ -135,6 +136,7 @@
 		else
 		{
 			var syntaxViewModel = new SyntaxViewModel(
+			    SyntaxViewModel.TextEditorService,
 			    SyntaxViewModel.ResourceUri,
 				targetSymbol: null,
 				targetNode: syntaxViewModelLocal.TargetNode,

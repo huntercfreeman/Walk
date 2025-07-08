@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -22,7 +23,7 @@ public sealed class KeywordFunctionOperatorNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.KeywordFunctionOperatorNode;
 
-	public string IdentifierText => nameof(KeywordFunctionOperatorNode);
+	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(KeywordFunctionOperatorNode);
 
 #if DEBUG
 	~KeywordFunctionOperatorNode()

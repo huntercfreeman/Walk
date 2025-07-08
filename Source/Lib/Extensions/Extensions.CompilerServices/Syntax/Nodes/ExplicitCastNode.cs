@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -31,7 +32,7 @@ public sealed class ExplicitCastNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ExplicitCastNode;
 
-	public string IdentifierText => nameof(ExplicitCastNode);
+	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(ExplicitCastNode);
 
 #if DEBUG
 	~ExplicitCastNode()

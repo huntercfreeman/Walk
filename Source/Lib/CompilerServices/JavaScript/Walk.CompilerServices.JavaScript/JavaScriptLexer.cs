@@ -124,10 +124,9 @@ public class JavaScriptLexer
 	    var textSpan = new TextEditorTextSpan(
 	        StartInclusiveIndex: positionStart,
 	        EndExclusiveIndex: positionEnd,
-	        DecorationByte: (byte)GenericDecorationKind.None,
-	        SourceText: _text);
+	        DecorationByte: (byte)GenericDecorationKind.None);
 	    
-	    if (JavaScriptKeywords.ALL_KEYWORDS.Contains(textSpan.Text))
+	    if (JavaScriptKeywords.ALL_KEYWORDS.Contains(textSpan.Text(_text, textEditorService: null)))
 	    {
 	    	textSpan = textSpan with
 	    	{

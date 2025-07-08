@@ -19,6 +19,6 @@ public partial class FunctionSyntaxDisplay : ComponentBase
 	    if (model.PersistentState.CompilerService is IExtendedCompilerService extendedCompilerService)
 	        return extendedCompilerService.GetTextFromToken(token, SyntaxViewModel.ResourceUri);
 	    
-	    return token.TextSpan.Text;
+	    return token.TextSpan.Text(model.GetAllText(), TextEditorService);
 	}
 }

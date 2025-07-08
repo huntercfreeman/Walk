@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -42,7 +43,7 @@ public sealed class EmptyExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.EmptyExpressionNode;
 
-	public string IdentifierText => nameof(EmptyExpressionNode);
+	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(EmptyExpressionNode);
 
 #if DEBUG
 	~EmptyExpressionNode()

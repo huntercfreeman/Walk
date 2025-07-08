@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
@@ -55,7 +56,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 	
 	public bool IsParsingGenericParameters { get; set; }
 	
-	public string IdentifierText => FunctionIdentifierToken.TextSpan.Text;
+	public string IdentifierText(string sourceText, TextEditorService textEditorService) => FunctionIdentifierToken.TextSpan.Text(sourceText, textEditorService);
 	
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()

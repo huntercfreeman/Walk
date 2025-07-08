@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -46,7 +47,7 @@ public sealed class InterpolatedStringNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.InterpolatedStringNode;
 
-	public string IdentifierText => nameof(InterpolatedStringNode);
+	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(InterpolatedStringNode);
 
 #if DEBUG
 	~InterpolatedStringNode()

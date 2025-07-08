@@ -241,11 +241,9 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 			        var originalScrollLeft = viewModelModifier.PersistentState.ScrollLeft;
 			        
 			        var textSpan = new TextEditorTextSpan(
-			            startInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
-			            endExclusiveIndex: lineInformation.Position_StartInclusiveIndex + 1,
-			            decorationByte: 0,
-			            sourceText: string.Empty,
-			            getTextPrecalculatedResult: string.Empty);
+			            StartInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
+			            EndExclusiveIndex: lineInformation.Position_StartInclusiveIndex + 1,
+			            DecorationByte: 0);
 			        
 			        TextEditorService.ViewModelApi.ScrollIntoView(
 			            editContext,

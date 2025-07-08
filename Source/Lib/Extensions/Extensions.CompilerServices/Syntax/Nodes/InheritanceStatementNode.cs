@@ -1,3 +1,5 @@
+using Walk.TextEditor.RazorLib;
+
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 
 public sealed class InheritanceStatementNode : ISyntaxNode
@@ -17,7 +19,7 @@ public sealed class InheritanceStatementNode : ISyntaxNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.InheritanceStatementNode;
 
-	public string IdentifierText => nameof(InheritanceStatementNode);
+	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(InheritanceStatementNode);
 
 #if DEBUG
 	~InheritanceStatementNode()

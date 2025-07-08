@@ -1393,9 +1393,7 @@ public partial class CSharpBinder
     	        			new TextEditorTextSpan(
     				            definitionTuple.StartInclusiveIndex,
     						    definitionTuple.StartInclusiveIndex + 1,
-    						    default,
-    						    string.Empty,
-    					        string.Empty),
+    						    default),
     	        			externalSyntaxKind,
     	        			getTextResult: textSpan.Text);
 	        	    }

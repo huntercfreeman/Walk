@@ -30,17 +30,22 @@ namespace Walk.Extensions.CompilerServices;
 public struct SyntaxViewModel
 {
 	public SyntaxViewModel(
+	    TextEditorService textEditorService,
 	    ResourceUri resourceUri,
 		Symbol? targetSymbol,
 		ISyntaxNode? targetNode,
 		ISyntaxNode? definitionNode,
 		int depth)
 	{
+	    TextEditorService = textEditorService;
+	    ResourceUri = resourceUri;
 		TargetSymbol = targetSymbol;
 		TargetNode = targetNode;
 		DefinitionNode = definitionNode;
 		Depth = depth;
 	}
+	
+	public TextEditorService TextEditorService { get; }
 	
 	public ResourceUri ResourceUri { get; }
 	
@@ -144,5 +149,15 @@ public struct SyntaxViewModel
 				.ContinueWith(_ => textEditorService.ViewModelApi.StopCursorBlinking());
 		});
 		return Task.CompletedTask;
+	}
+	
+	public string GetText(TextEditorTextSpan textSpan)
+	{
+	    var model = TextEditorService.ModelApi.GetOrDefault(ResourceUri);
+	    
+	    if (model is null)
+	        return null;
+	
+	    return textSpan.Text(model.GetAllText(), TextEditorService);
 	}
 }

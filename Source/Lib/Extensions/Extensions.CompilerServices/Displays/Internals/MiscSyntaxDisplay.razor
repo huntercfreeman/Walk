@@ -44,7 +44,7 @@
 			prefixText = "(symbol)";
 		}
 		
-		text = syntaxViewModelLocal.TargetSymbol.Value.TextSpan.Text;
+		text = syntaxViewModelLocal.GetText(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
 	}
 	else
 	{

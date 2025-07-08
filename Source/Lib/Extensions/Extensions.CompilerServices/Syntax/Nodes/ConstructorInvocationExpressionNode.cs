@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 
@@ -35,7 +36,7 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 	
 	public bool IsParsingFunctionParameters { get; set; }
 
-	public string IdentifierText => nameof(ConstructorInvocationExpressionNode);
+	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(ConstructorInvocationExpressionNode);
 
 #if DEBUG
 	~ConstructorInvocationExpressionNode()
