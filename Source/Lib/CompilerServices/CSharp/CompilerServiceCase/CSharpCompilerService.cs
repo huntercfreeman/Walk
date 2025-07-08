@@ -361,8 +361,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			var textSpan = new TextEditorTextSpan(
 				filteringWordStartInclusiveIndex,
 				filteringWordEndExclusiveIndex,
-				DecorationByte: 0,
-				virtualizationResult.Model.GetAllText());
+				DecorationByte: 0);
 				
 			filteringWord = textSpan.Text;
 		}
@@ -520,6 +519,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				        
 				        if (innerFoundSymbol != default)
 				        {
+				            // Console.WriteLine("innerFoundSymbol");
+				            // Console.WriteLine(innerFoundSymbol.TextSpan.Text);
+				            // Console.WriteLine(innerFoundSymbol.TextSpan.Text);
+				        
 				        	var maybeTypeDefinitionNode = GetDefinitionNode(innerFoundSymbol.TextSpan, compilerServiceResource, innerFoundSymbol);
 							
 							if (maybeTypeDefinitionNode is not null && maybeTypeDefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
@@ -595,8 +598,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var textSpan = new TextEditorTextSpan(
             positionIndex - 1,
             positionIndex,
-            0,
-            virtualizationResult.Model.GetAllText());
+            0);
 	
 		var compilerServiceAutocompleteEntryList = OBSOLETE_GetAutocompleteEntries(
 			word,
