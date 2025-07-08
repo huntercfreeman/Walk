@@ -925,6 +925,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             {
             	await ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_DefinitionsOnly);
             	await ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_MinimumLocalsData);
+
+				// _textEditorService.EditContext_GetText_Clear();
         	}));
 
 		await Do_SetDotNetSolutionTreeView(dotNetSolutionModel.Key).ConfigureAwait(false);
