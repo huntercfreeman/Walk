@@ -45,6 +45,14 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
         OnCursorShouldBlinkChanged();
     }
     
+    public string GetText(TextEditorTextSpan textSpan, TextEditorComponentData componentData)
+	{
+	    if (componentData?.Virtualization?.Model is null)
+	        return null;
+	
+	    return textSpan.Text(componentData.Virtualization.Model.GetAllText(), TextEditorService);
+	}
+    
     private TextEditorVirtualizationResult GetVirtualizationResult()
     {
     	return GetComponentData()?.Virtualization ?? TextEditorVirtualizationResult.Empty;
