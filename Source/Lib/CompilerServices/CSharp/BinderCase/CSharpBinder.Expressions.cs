@@ -2548,6 +2548,7 @@ public partial class CSharpBinder
 		
 			TypeReference typeReference = default;
 			TextEditorTextSpan explicitDefinitionTextSpan = default;
+			ResourceUri explicitDefinitionResourceUri = default;
 		
 			if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
 			{
@@ -2563,6 +2564,7 @@ public partial class CSharpBinder
 			{
 			    var typeClauseNode = (TypeClauseNode)expressionPrimary;
 			    explicitDefinitionTextSpan = typeClauseNode.ExplicitDefinitionTextSpan;
+			    explicitDefinitionResourceUri = typeClauseNode.ExplicitDefinitionResourceUri;
 				typeReference = new TypeReference(typeClauseNode);
 			}
 			else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeDefinitionNode)
@@ -2578,9 +2580,9 @@ public partial class CSharpBinder
 			
 			ISyntaxNode? maybeTypeDefinitionNode;
 			
-			if (explicitDefinitionTextSpan.ConstructorWasInvoked)
+			if (explicitDefinitionTextSpan.ConstructorWasInvoked && explicitDefinitionResourceUri.Value is not null)
 			{
-			    if (TryGetCompilationUnit(compilationUnit.ResourceUri, out var innerCompilationUnit))
+			    if (TryGetCompilationUnit(explicitDefinitionResourceUri, out var innerCompilationUnit))
 			    {
 			        maybeTypeDefinitionNode = GetDefinitionNode(
     			        innerCompilationUnit,
@@ -2806,6 +2808,7 @@ public partial class CSharpBinder
             		        }
             		        
             		        typeClauseNode.ExplicitDefinitionTextSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
+            		        typeClauseNode.ExplicitDefinitionResourceUri = typeDefinitionNode.ResourceUri;
             		           
             		    	expressionPrimary = typeClauseNode;
             		    	

@@ -86,6 +86,12 @@ public static class WalkDebugSomething
 	
 	public static int NamespacePrefixNode { get; set; }
 	
+	#if DEBUG
+	public class Asdfg
+	{
+	}
+	#endif
+	
 	public static string CreateText()
 	{
 		var builder = new StringBuilder();
