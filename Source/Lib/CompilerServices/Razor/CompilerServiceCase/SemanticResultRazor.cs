@@ -87,7 +87,6 @@ public record SemanticResultRazor
         return new TextEditorTextSpan(
         	symbolSourceText_StartInclusiveIndex,
         	symbolSourceText_EndExclusiveIndex,
-        	textSpan.DecorationByte,
-        	sourceText);
+        	textSpan.DecorationByte);
     }
 }

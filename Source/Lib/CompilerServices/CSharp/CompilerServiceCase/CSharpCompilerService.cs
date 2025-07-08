@@ -531,7 +531,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 								var memberList = __CSharpBinder.GetMemberList_TypeDefinitionNode(typeDefinitionNode);
 								ISyntaxNode? foundDefinitionNode = null;
 					    		
-					    		foreach (var member in memberList.Where(x => __CSharpBinder.GetName(x).Contains(filteringWord)).Take(25))
+					    		foreach (var member in memberList.Where(x => __CSharpBinder.GetName(x, compilationUnitLocal).Contains(filteringWord)).Take(25))
 			        			{
 			        				switch (member.SyntaxKind)
 			        				{
