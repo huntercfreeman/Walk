@@ -6,13 +6,11 @@ public record struct TextEditorTextSpan
 		int StartInclusiveIndex,
 	    int EndExclusiveIndex,
 	    byte DecorationByte,
-	    ResourceUri ResourceUri,
 	    string SourceText)
 	{
 		this.StartInclusiveIndex = StartInclusiveIndex;
 		this.EndExclusiveIndex = EndExclusiveIndex;
 		this.DecorationByte = DecorationByte;
-		this.ResourceUri = ResourceUri;
 		
 		// !!! WARNING THIS CODE IS DUPLICATED IN OTHER CONSTRUCTORS. !!!
 		if (Text is null && StartInclusiveIndex < SourceText.Length && EndExclusiveIndex <= SourceText.Length && EndExclusiveIndex >= StartInclusiveIndex)
@@ -35,7 +33,6 @@ public record struct TextEditorTextSpan
               StartInclusiveIndex,
               stringWalker.PositionIndex,
               decorationByte,
-              stringWalker.ResourceUri,
               stringWalker.SourceText)
     {
 		
@@ -57,14 +54,12 @@ public record struct TextEditorTextSpan
 	    int startInclusiveIndex,
 	    int endExclusiveIndex,
 	    byte decorationByte,
-	    ResourceUri resourceUri,
 	    string sourceText,
 	    string getTextPrecalculatedResult)
     {
     	StartInclusiveIndex = startInclusiveIndex;
 		EndExclusiveIndex = endExclusiveIndex;
 		DecorationByte = decorationByte;
-		ResourceUri = resourceUri;
 		Text = getTextPrecalculatedResult;
     }
     
@@ -72,14 +67,12 @@ public record struct TextEditorTextSpan
         int startInclusiveIndex,
 	    int endExclusiveIndex,
 	    byte decorationByte,
-	    ResourceUri resourceUri,
 	    string sourceText,
 	    TextEditorService textEditorService)
     {
     	StartInclusiveIndex = startInclusiveIndex;
 		EndExclusiveIndex = endExclusiveIndex;
 		DecorationByte = decorationByte;
-		ResourceUri = resourceUri;
 		
 		if (textEditorService is null)
 		{
@@ -100,9 +93,8 @@ public record struct TextEditorTextSpan
 	public int StartInclusiveIndex { get; set; }
     public int EndExclusiveIndex { get; set; }
     public byte DecorationByte { get; set; }
-    public ResourceUri ResourceUri { get; set; }
     public string? Text { get; set; }
 	
     public int Length => EndExclusiveIndex - StartInclusiveIndex;
-    public bool ConstructorWasInvoked => ResourceUri.Value is not null;
+    public bool ConstructorWasInvoked => Text is not null;
 }

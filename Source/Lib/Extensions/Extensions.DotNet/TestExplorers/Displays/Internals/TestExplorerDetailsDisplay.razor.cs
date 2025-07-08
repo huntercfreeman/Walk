@@ -96,7 +96,6 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 							startPositionInclusive,
 							endPositionExclusive,
 							(byte)TerminalDecorationKind.Comment,
-							ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
 							string.Empty));
 					}
 
@@ -172,7 +171,6 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 					    startInclusiveIndex: lineInformation.Position_StartInclusiveIndex,
 					    endExclusiveIndex: lineInformation.Position_StartInclusiveIndex + 1,
 					    decorationByte: 0,
-					    modelModifier.PersistentState.ResourceUri,
 					    sourceText: string.Empty,
 					    getTextPrecalculatedResult: string.Empty);
 				
@@ -251,7 +249,6 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 					startPositionInclusive,
 					endPositionExclusive,
 					(byte)TerminalDecorationKind.Keyword,
-					ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
 					string.Empty));
 			}
 
@@ -295,7 +292,6 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 					startPositionInclusive,
 					endPositionExclusive,
 					(byte)TerminalDecorationKind.Keyword,
-					ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
 					string.Empty));
 			}
 

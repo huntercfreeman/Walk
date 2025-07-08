@@ -235,14 +235,6 @@ public sealed class CSharpProjectCompilerService : ICompilerService
     	return null;
     }
 
-	/// <summary>
-	/// Returns the text span at which the definition exists in the source code.
-	/// </summary>
-    public TextEditorTextSpan? GetDefinitionTextSpan(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
-    {
-    	return null;
-    }
-
 	public ICodeBlockOwner? GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
     {
     	return default;

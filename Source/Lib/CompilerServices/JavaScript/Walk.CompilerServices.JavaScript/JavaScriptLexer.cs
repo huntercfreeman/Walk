@@ -125,7 +125,6 @@ public class JavaScriptLexer
 	        StartInclusiveIndex: positionStart,
 	        EndExclusiveIndex: positionEnd,
 	        DecorationByte: (byte)GenericDecorationKind.None,
-	        ResourceUri: _resourceUri,
 	        SourceText: _text);
 	    
 	    if (JavaScriptKeywords.ALL_KEYWORDS.Contains(textSpan.Text))

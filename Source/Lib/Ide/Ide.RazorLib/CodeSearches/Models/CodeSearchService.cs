@@ -218,8 +218,8 @@ public class CodeSearchService : ICodeSearchService
 		        	0,
 			        0,
 			        (byte)GenericDecorationKind.None,
-			        new ResourceUri(x),
 			        string.Empty),
+			    new AbsolutePath(x, false, _commonUtilityService.EnvironmentProvider),
 				_commonUtilityService.EnvironmentProvider,
 				_commonUtilityService.FileSystemProvider,
 				false,
@@ -283,11 +283,8 @@ public class CodeSearchService : ICodeSearchService
 			var inPreviewViewModelKey = GetCodeSearchState().PreviewViewModelKey;
 			var outPreviewViewModelKey = Key<TextEditorViewModel>.NewKey();
 	
-			var filePath = treeViewCodeSearchTextSpan.Item.ResourceUri.Value;
-			var resourceUri = treeViewCodeSearchTextSpan.Item.ResourceUri;
-			
-			if (providedResourceUri != ResourceUri.Empty)
-				resourceUri = providedResourceUri;
+			var filePath = treeViewCodeSearchTextSpan.AbsolutePath.Value;
+			var resourceUri = new ResourceUri(treeViewCodeSearchTextSpan.AbsolutePath.Value);
 	
 	        if (_textEditorConfig.RegisterModelFunc is null)
 	            return;

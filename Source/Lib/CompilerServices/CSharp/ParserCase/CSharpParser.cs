@@ -23,7 +23,6 @@ public static class CSharpParser
 		    0,
 		    1,
 		    decorationByte: default,
-		    compilationUnit.ResourceUri,
 		    string.Empty,
 		    string.Empty);
     	

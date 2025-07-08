@@ -146,6 +146,7 @@
 	@if (returnTypeClauseNode != default(TypeReference))
 	{
 		var syntaxViewModel = new SyntaxViewModel(
+		    SyntaxViewModel.ResourceUri,
 			targetSymbol: null,
 			targetNode: null,
 			definitionNode: null,
@@ -176,6 +177,7 @@
 	@if (genericParameterListing is not null)
 	{
 		var syntaxViewModel = new SyntaxViewModel(
+		    SyntaxViewModel.ResourceUri,
 			targetSymbol: null,
 			targetNode: syntaxViewModelLocal.TargetNode,
 			definitionNode: syntaxViewModelLocal.DefinitionNode,
@@ -245,6 +247,7 @@
 			}
 			
 			var syntaxViewModel = new SyntaxViewModel(
+				SyntaxViewModel.ResourceUri,
 				targetSymbol: null,
 				targetNode: argumentEntry.VariableDeclarationNode,
 				definitionNode: argumentEntry.VariableDeclarationNode,

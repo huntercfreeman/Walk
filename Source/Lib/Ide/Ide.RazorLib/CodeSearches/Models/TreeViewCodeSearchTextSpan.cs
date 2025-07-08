@@ -8,6 +8,7 @@ public class TreeViewCodeSearchTextSpan : TreeViewWithType<TextEditorTextSpan>
 {
 	public TreeViewCodeSearchTextSpan(
 			TextEditorTextSpan textSpan,
+			AbsolutePath absolutePath,
 			IEnvironmentProvider environmentProvider,
 			IFileSystemProvider fileSystemProvider,
 			bool isExpandable,
@@ -16,7 +17,7 @@ public class TreeViewCodeSearchTextSpan : TreeViewWithType<TextEditorTextSpan>
 	{
 		EnvironmentProvider = environmentProvider;
 		FileSystemProvider = fileSystemProvider;
-		AbsolutePath = EnvironmentProvider.AbsolutePathFactory(textSpan.ResourceUri.Value, false);
+		AbsolutePath = absolutePath;
 	}
 	
 	public IEnvironmentProvider EnvironmentProvider { get; }
@@ -31,7 +32,7 @@ public class TreeViewCodeSearchTextSpan : TreeViewWithType<TextEditorTextSpan>
 		return otherTreeView.GetHashCode() == GetHashCode();
 	}
 
-	public override int GetHashCode() => Item.ResourceUri.Value.GetHashCode();
+	public override int GetHashCode() => AbsolutePath.Value.GetHashCode();
 	
 	public override string GetDisplayText() => AbsolutePath.NameWithExtension;
 

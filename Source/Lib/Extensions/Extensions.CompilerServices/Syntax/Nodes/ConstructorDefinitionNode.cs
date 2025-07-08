@@ -11,7 +11,8 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 		SyntaxToken functionIdentifier,
 		GenericParameterListing genericParameterListing,
 		FunctionArgumentListing functionArgumentListing,
-		CodeBlock codeBlock)
+		CodeBlock codeBlock,
+		ResourceUri resourceUri)
 	{
 		#if DEBUG
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ConstructorDefinitionNode++;
@@ -21,12 +22,14 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 		FunctionIdentifier = functionIdentifier;
 		GenericParameterListing = genericParameterListing;
 		FunctionArgumentListing = functionArgumentListing;
+		ResourceUri = resourceUri;
 	}
 
 	public TypeReference ReturnTypeReference { get; }
 	public SyntaxToken FunctionIdentifier { get; }
 	public GenericParameterListing GenericParameterListing { get; }
 	public FunctionArgumentListing FunctionArgumentListing { get; set; }
+	public ResourceUri ResourceUri { get; set; }
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;

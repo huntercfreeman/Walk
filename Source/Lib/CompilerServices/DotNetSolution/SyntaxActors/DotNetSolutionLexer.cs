@@ -52,7 +52,6 @@ public class DotNetSolutionLexer
             _stringWalker.PositionIndex,
             _stringWalker.PositionIndex,
             (byte)GenericDecorationKind.None,
-            _stringWalker.ResourceUri,
             _stringWalker.SourceText);
 
         _syntaxTokenList.Add(new SyntaxToken(SyntaxKind.EndOfFileToken, endOfFileTextSpan));

@@ -4,10 +4,10 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 
 namespace Walk.TextEditor.RazorLib.FindAlls.Models;
 
-public class TreeViewFindAllTextSpan : TreeViewWithType<(string SourceText, TextEditorTextSpan TextSpan)>
+public class TreeViewFindAllTextSpan : TreeViewWithType<(string SourceText, ResourceUri ResourceUri, TextEditorTextSpan TextSpan)>
 {
 	public TreeViewFindAllTextSpan(
-			(string SourceText, TextEditorTextSpan TextSpan) tuple,
+			(string SourceText, ResourceUri ResourceUri, TextEditorTextSpan TextSpan) tuple,
 			AbsolutePath absolutePath,
 			bool isExpandable,
 			bool isExpanded)
@@ -28,7 +28,7 @@ public class TreeViewFindAllTextSpan : TreeViewWithType<(string SourceText, Text
 		return otherTreeView.GetHashCode() == GetHashCode();
 	}
 
-	public override int GetHashCode() => Item.TextSpan.ResourceUri.Value.GetHashCode();
+	public override int GetHashCode() => AbsolutePath.Value.GetHashCode();
 	
 	public override string GetDisplayText() => Item.TextSpan.Text;
 

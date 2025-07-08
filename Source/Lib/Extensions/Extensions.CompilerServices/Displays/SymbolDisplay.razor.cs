@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib;
+using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Extensions.CompilerServices.Syntax;
 
@@ -13,6 +14,8 @@ public partial class SymbolDisplay : ComponentBase
 
     [Parameter, EditorRequired]
     public Symbol Symbol { get; set; }
+    [Parameter, EditorRequired]
+    public ResourceUri ResourceUri { get; set; }
     
     private int _shouldRenderHashCode = 0;
     
@@ -36,7 +39,7 @@ public partial class SymbolDisplay : ComponentBase
 	    		Symbol.TextSpan.StartInclusiveIndex,
 	    		Symbol.TextSpan.EndExclusiveIndex,
 	    		Symbol.TextSpan.DecorationByte,
-	    		Symbol.TextSpan.ResourceUri.Value);
+	    		ResourceUri.Value);
 	    		
 	    	if (outShouldRenderHashCode != _shouldRenderHashCode)
 	    	{
@@ -76,11 +79,11 @@ public partial class SymbolDisplay : ComponentBase
 	///
 	/// The 'targetNode' is whichever node the ISymbol directly mapped to.
 	/// </summary>
-    public static ISyntaxNode? GetTargetNode(TextEditorService textEditorService, Symbol symbolLocal)
+    public static ISyntaxNode? GetTargetNode(TextEditorService textEditorService, Symbol symbolLocal, ResourceUri resourceUri)
     {
     	try
     	{
-	    	var textEditorModel = textEditorService.ModelApi.GetOrDefault(symbolLocal.TextSpan.ResourceUri);
+	    	var textEditorModel = textEditorService.ModelApi.GetOrDefault(resourceUri);
 	    	if (textEditorModel is null)
 	    		return null;
 	    	
@@ -107,7 +110,7 @@ public partial class SymbolDisplay : ComponentBase
 	///
 	/// Otherwise, ask the IBinder for the definition node:
 	/// </summary>
-    public static ISyntaxNode? GetDefinitionNode(TextEditorService textEditorService, Symbol symbolLocal, ISyntaxNode targetNode)
+    public static ISyntaxNode? GetDefinitionNode(TextEditorService textEditorService, Symbol symbolLocal, ISyntaxNode targetNode, ResourceUri resourceUri)
     {
     	try
     	{
@@ -124,7 +127,7 @@ public partial class SymbolDisplay : ComponentBase
 		    	}
 	    	}
 	    
-	    	var textEditorModel = textEditorService.ModelApi.GetOrDefault(symbolLocal.TextSpan.ResourceUri);
+	    	var textEditorModel = textEditorService.ModelApi.GetOrDefault(resourceUri);
 	    	var extendedCompilerService = (IExtendedCompilerService)textEditorModel.PersistentState.CompilerService;
 	    	var compilerServiceResource = extendedCompilerService.GetResource(textEditorModel.PersistentState.ResourceUri);
 	

@@ -1,5 +1,6 @@
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib;
+using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -29,6 +30,7 @@ namespace Walk.Extensions.CompilerServices;
 public struct SyntaxViewModel
 {
 	public SyntaxViewModel(
+	    ResourceUri resourceUri,
 		Symbol? targetSymbol,
 		ISyntaxNode? targetNode,
 		ISyntaxNode? definitionNode,
@@ -39,6 +41,8 @@ public struct SyntaxViewModel
 		DefinitionNode = definitionNode;
 		Depth = depth;
 	}
+	
+	public ResourceUri ResourceUri { get; }
 	
 	/// <summary>
 	/// The user interface gesture is to hover a symbol in the text editor.
@@ -97,31 +101,31 @@ public struct SyntaxViewModel
 		if (DefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 		{
 			var typeDefinitionNode = (TypeDefinitionNode)DefinitionNode;
-			resourceUriValue = typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri.Value;
+			resourceUriValue = typeDefinitionNode.ResourceUri.Value;
 			indexInclusiveStart = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 		{
 			var variableDeclarationNode = (VariableDeclarationNode)DefinitionNode;
-			resourceUriValue = variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri.Value;
+			resourceUriValue = variableDeclarationNode.ResourceUri.Value;
 			indexInclusiveStart = variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 		{
 			var namespaceStatementNode = (NamespaceStatementNode)DefinitionNode;
-			resourceUriValue = namespaceStatementNode.IdentifierToken.TextSpan.ResourceUri.Value;
+			resourceUriValue = namespaceStatementNode.ResourceUri.Value;
 			indexInclusiveStart = namespaceStatementNode.IdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
 		{
 			var functionDefinitionNode = (FunctionDefinitionNode)DefinitionNode;
-			resourceUriValue = functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri.Value;
+			resourceUriValue = functionDefinitionNode.ResourceUri.Value;
 			indexInclusiveStart = functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex;
 		}
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
 		{
 			var constructorDefinitionNode = (ConstructorDefinitionNode)DefinitionNode;
-			resourceUriValue = constructorDefinitionNode.FunctionIdentifier.TextSpan.ResourceUri.Value;
+			resourceUriValue = constructorDefinitionNode.ResourceUri.Value;
 			indexInclusiveStart = constructorDefinitionNode.FunctionIdentifier.TextSpan.StartInclusiveIndex;
 		}
 		

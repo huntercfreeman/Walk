@@ -43,7 +43,6 @@ public class CssSyntaxTree
                 0,
                 stringWalker.PositionIndex,
                 (byte)CssDecorationKind.None,
-                stringWalker.ResourceUri,
                 stringWalker.SourceText),
             cssDocumentChildren);
 
@@ -82,7 +81,6 @@ public class CssSyntaxTree
                     commentStartingPositionIndex,
                     stringWalker.PositionIndex + 1,
                     (byte)CssDecorationKind.Comment,
-                    stringWalker.ResourceUri,
                     stringWalker.SourceText);
 
                 var commentToken = new CssCommentSyntax(
@@ -171,7 +169,6 @@ public class CssSyntaxTree
                     pendingChildStartingPositionIndex,
                     stringWalker.PositionIndex,
                     (byte)childDecorationKind,
-                    stringWalker.ResourceUri,
                     stringWalker.SourceText);
 
                 ICssSyntax childSyntax;
@@ -226,7 +223,6 @@ public class CssSyntaxTree
                     pendingChildStartingPositionIndex,
                     stringWalker.PositionIndex,
                     (byte)CssDecorationKind.UnexpectedToken,
-                    stringWalker.ResourceUri,
                     stringWalker.SourceText);
 
                 /*diagnosticBag.ReportUnexpectedToken(
@@ -265,7 +261,6 @@ public class CssSyntaxTree
             startingPositionIndex,
             stringWalker.PositionIndex,
             (byte)CssDecorationKind.Identifier,
-            stringWalker.ResourceUri,
             stringWalker.SourceText);
 
         var identifierSyntax = new CssIdentifierSyntax(

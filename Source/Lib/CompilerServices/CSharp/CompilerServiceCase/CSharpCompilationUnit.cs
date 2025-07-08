@@ -23,6 +23,9 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit
 		ResourceUri = resourceUri;
 		SourceText = sourceText;
 		CompilationUnitKind = compilationUnitKind;
+		
+		if (CompilationUnitKind == CompilationUnitKind.IndividualFile_AllData)
+		    SymbolIdToExternalTextSpanMap = new();
 	}
 	
 	public IEnumerable<TextEditorTextSpan> GetTextTextSpans()
@@ -118,5 +121,5 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit
     /// Where each 'List<TextEditorTextSpan>' is a list containing all the text spans
     /// that reference the 'FullyQualifiedName' within that file.
     /// </summary>
-    public Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)> SymbolIdToExternalTextSpanMap { get; } = new();
+    public Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)> SymbolIdToExternalTextSpanMap { get; }
 }

@@ -55,6 +55,5 @@ public class TagNode : IHtmlSyntaxNode
         0,
         0,
         (byte)GenericDecorationKind.None,
-        ResourceUri.Empty,
         string.Empty);
 }

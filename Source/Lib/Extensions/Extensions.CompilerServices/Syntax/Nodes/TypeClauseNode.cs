@@ -85,6 +85,7 @@ public sealed class TypeClauseNode : IGenericParameterNode
 	public bool IsBeingUsed { get; set; } = false;
 	
 	public TextEditorTextSpan ExplicitDefinitionTextSpan { get; set; }
+	public ResourceUri ExplicitDefinitionResourceUri { get; set; }
 
 	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated
@@ -123,6 +124,7 @@ public sealed class TypeClauseNode : IGenericParameterNode
 		_isFabricated = false;
 		IsParsingGenericParameters = false;
 		ExplicitDefinitionTextSpan = default;
+		ExplicitDefinitionResourceUri = default;
 	}
 
 	public TypeClauseNode SetValueType(Type? valueType)

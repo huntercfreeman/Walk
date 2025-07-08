@@ -1275,7 +1275,6 @@ public sealed class TextEditorModel
                 initialCursorPositionIndex,
                 initialCursorPositionIndex + lineEndingsChangedValueBuilder.Length,
                 0,
-                ResourceUri.Empty,
                 string.Empty);
 
             var textModification = new TextEditorTextModification(true, textSpanForInsertion);
@@ -1740,7 +1739,6 @@ public sealed class TextEditorModel
                 positionIndex,
                 positionIndex + charCount,
                 0,
-                ResourceUri.Empty,
                 string.Empty);
 
             var textModification = new TextEditorTextModification(false, textSpanForInsertion);
@@ -2032,7 +2030,6 @@ public sealed class TextEditorModel
                 wordColumnIndexStartInclusive + lineInformation.Position_StartInclusiveIndex,
                 wordColumnIndexEndExclusive + lineInformation.Position_StartInclusiveIndex,
                 0,
-                PersistentState.ResourceUri,
                 GetAllText()));
         }
         else if (currentCharacterKind == CharacterKind.LetterOrDigit)
@@ -2049,7 +2046,6 @@ public sealed class TextEditorModel
                 columnIndex + lineInformation.Position_StartInclusiveIndex,
                 wordColumnIndexEndExclusive + lineInformation.Position_StartInclusiveIndex,
                 0,
-                PersistentState.ResourceUri,
                 GetAllText()));
         }
         else if (previousCharacterKind == CharacterKind.LetterOrDigit)
@@ -2066,7 +2062,6 @@ public sealed class TextEditorModel
                 wordColumnIndexStartInclusive + lineInformation.Position_StartInclusiveIndex,
                 columnIndex + lineInformation.Position_StartInclusiveIndex,
                 0,
-                PersistentState.ResourceUri,
                 GetAllText()));
         }
 
@@ -2096,7 +2091,6 @@ public sealed class TextEditorModel
                         outerI,
                         outerI + innerI,
                         (byte)FindOverlayDecorationKind.LongestCommonSubsequence,
-                        PersistentState.ResourceUri,
                         text));
                 }
             }
