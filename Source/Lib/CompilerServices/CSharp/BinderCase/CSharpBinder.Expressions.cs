@@ -2500,52 +2500,6 @@ public partial class CSharpBinder
 	public IExpressionNode ParseMemberAccessToken(
 		IExpressionNode expressionPrimary, ref SyntaxToken tokenIn, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		/*
-		(2025-01-26)
-		============
-		
-		````public class Aaa
-		````{
-		````    public Aaa(int number)
-		````    {
-		````    }
-		````
-		````    public class Bbb
-		````    {
-		````    }
-		````}
-		
-		// Type definition contains type definition, invoke inner type definition's constructor.
-		{
-			new Aaa.Bbb();
-			
-			// Current scenario:
-			// -----------------
-			// empty expression + new -> constructor invocation
-			// constructor invocation + Aaa -> constructor invocation typeof(Aaa)
-			
-			// Next scenario
-			// -------------
-			// empty expression + new -> constructor invocation
-			// constructor invocation + Aaa
-			//     | HandleAmbiguousIdentifier(Aaa)
-			//     | 
-			//     | ````HandleAmbiguousIdentifier(AmbiguousIdentifierExpressionNode node)
-			//     | ````{
-			//     | ````    // TODO: Static reference to a type where there exists a variable with the same identifier.
-			//     | ````    // TODO: Explicit namespace qualification.
-			//     | ````    // 
-			//     | ````    var boundNode = Binder.Bind(ambiguousIdentifierExpressionNode: node);
-			//     | ````    
-			//     | ````    while (TokenNext.SyntaxKind == SyntaxKind.MemberAccerAccessToken)
-			//     | ````        boundNode = boundNode.GetMember(TokenWalker.Peek(2));
-			//     | ````    
-			//     | ````    return boundNode;
-			//     | ````}
-			// constructor invocation + boundNode -> constructor invocation typeof(Bbb)
-		}
-		*/
-		
 		var token = tokenIn;
 		var loopIteration = 0;
 		
