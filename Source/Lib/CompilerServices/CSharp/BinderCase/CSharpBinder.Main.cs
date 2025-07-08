@@ -1038,8 +1038,8 @@ public partial class CSharpBinder
     	out TypeDefinitionNode typeDefinitionNode)
     {
     	var matchNode = compilationUnit.NodeList.FirstOrDefault(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                	                                                 x.IdentifierText(compilationUnit.SourceText, TextEditorService) == typeIdentifierText &&
-                	                                                 x.SyntaxKind == SyntaxKind.TypeDefinitionNode);
+                	                                                 x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                	                                                 x.IdentifierText(compilationUnit.SourceText, TextEditorService) == typeIdentifierText);
     	
     	if (matchNode is null)
     	{
@@ -1070,8 +1070,8 @@ public partial class CSharpBinder
         TypeDefinitionNode typeDefinitionNode)
     {
 		var matchNode = compilationUnit.NodeList.FirstOrDefault(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                	                                                 x.IdentifierText(compilationUnit.SourceText, TextEditorService) == typeIdentifierText &&
-                	                                                 x.SyntaxKind == SyntaxKind.TypeDefinitionNode);
+                	                                                 x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                	                                                 x.IdentifierText(compilationUnit.SourceText, TextEditorService) == typeIdentifierText);
     	
     	if (matchNode is null)
     	{
@@ -1102,8 +1102,8 @@ public partial class CSharpBinder
     	out FunctionDefinitionNode functionDefinitionNode)
     {
     	var matchNode = compilationUnit.NodeList.FirstOrDefault(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                	                                                 x.IdentifierText(compilationUnit.SourceText, TextEditorService) == functionIdentifierText &&
-                	                                                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode);
+                	                                                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
+                	                                                 x.IdentifierText(compilationUnit.SourceText, TextEditorService) == functionIdentifierText);
     	
     	if (matchNode is null)
     	{
@@ -1134,8 +1134,8 @@ public partial class CSharpBinder
     	out VariableDeclarationNode variableDeclarationNode)
     {
     	var matchNode = compilationUnit.NodeList.FirstOrDefault(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                	                                                 x.IdentifierText(compilationUnit.SourceText, TextEditorService) == variableIdentifierText &&
-                	                                                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode);
+                	                                                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
+                	                                                 x.IdentifierText(compilationUnit.SourceText, TextEditorService) == variableIdentifierText);
     	
     	if (matchNode is null)
     	{
@@ -1156,8 +1156,8 @@ public partial class CSharpBinder
         VariableDeclarationNode variableDeclarationNode)
     {
     	var matchNode = compilationUnit.NodeList.FirstOrDefault(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                	                                                 x.IdentifierText(compilationUnit.SourceText, TextEditorService) == variableIdentifierText &&
-                	                                                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode);
+                	                                                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
+                	                                                 x.IdentifierText(compilationUnit.SourceText, TextEditorService) == variableIdentifierText);
     	
     	if (matchNode is null)
     	{
@@ -1178,8 +1178,8 @@ public partial class CSharpBinder
         VariableDeclarationNode variableDeclarationNode)
     {
     	var index = compilationUnit.NodeList.FindIndex(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
-        	                                                x.IdentifierText(compilationUnit.SourceText, TextEditorService) == variableIdentifierText &&
-        	                                                x.SyntaxKind == SyntaxKind.VariableDeclarationNode);
+        	                                                x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
+        	                                                x.IdentifierText(compilationUnit.SourceText, TextEditorService) == variableIdentifierText);
 
 		if (index != -1)
 		{
@@ -1195,8 +1195,8 @@ public partial class CSharpBinder
     	out LabelDeclarationNode labelDeclarationNode)
     {
     	var matchNode = compilationUnit.NodeList.FirstOrDefault(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                	                                                 x.IdentifierText(compilationUnit.SourceText, TextEditorService) == labelIdentifierText &&
-                	                                                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode);
+                	                                                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
+                	                                                 x.IdentifierText(compilationUnit.SourceText, TextEditorService) == labelIdentifierText);
     	
     	if (matchNode is null)
     	{
@@ -1217,8 +1217,8 @@ public partial class CSharpBinder
         LabelDeclarationNode labelDeclarationNode)
     {
     	var matchNode = compilationUnit.NodeList.FirstOrDefault(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                	                                                 x.IdentifierText(compilationUnit.SourceText, TextEditorService) == labelIdentifierText &&
-                	                                                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode);
+                	                                                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
+                	                                                 x.IdentifierText(compilationUnit.SourceText, TextEditorService) == labelIdentifierText);
     	
     	if (matchNode is null)
     	{
@@ -1239,8 +1239,8 @@ public partial class CSharpBinder
         LabelDeclarationNode labelDeclarationNode)
     {
     	var index = compilationUnit.NodeList.FindIndex(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
-        	                                                x.IdentifierText(compilationUnit.SourceText, TextEditorService) == labelIdentifierText &&
-        	                                                x.SyntaxKind == SyntaxKind.LabelDeclarationNode);
+        	                                                x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
+        	                                                x.IdentifierText(compilationUnit.SourceText, TextEditorService) == labelIdentifierText);
 
 		if (index != -1)
 		{
