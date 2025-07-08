@@ -467,6 +467,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		    	    }
 		    	
 		    		TypeReference typeReference = default;
+		    		ResourceUri explicitDefinitionResourceUri = default;
 		    		
 					if (definitionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
 					{
@@ -490,6 +491,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 					else if (definitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 					{
 						var typeDefinitionNode = (TypeDefinitionNode)definitionNode;
+						explicitDefinitionResourceUri = typeDefinitionNode.ResourceUri;
 						typeReference = typeDefinitionNode.ToTypeReference();
 					}
 						
@@ -497,12 +499,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 					{
 						Symbol innerFoundSymbol = default;
 
-						//if (typeReference.TypeIdentifierToken.TextSpan.ResourceUri != textEditorModel.PersistentState.ResourceUri)
-						//{
-						//	var innerCompilerServiceResource = extendedCompilerService.GetResource(typeReference.TypeIdentifierToken.TextSpan.ResourceUri);
-						//	if (innerCompilerServiceResource is not null)
-						//		symbols = ((CSharpCompilationUnit)innerCompilerServiceResource.CompilationUnit).SymbolList;
-						//}
+						if (explicitDefinitionResourceUri.Value is not null && explicitDefinitionResourceUri != textEditorModel.PersistentState.ResourceUri)
+						{
+							var innerCompilerServiceResource = extendedCompilerService.GetResource(explicitDefinitionResourceUri);
+							if (innerCompilerServiceResource is not null)
+								symbols = ((CSharpCompilationUnit)innerCompilerServiceResource.CompilationUnit).SymbolList;
+						}
 						
 				        if (symbols.Count != 0)
 				        {
