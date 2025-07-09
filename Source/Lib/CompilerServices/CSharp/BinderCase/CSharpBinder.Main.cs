@@ -1037,9 +1037,36 @@ public partial class CSharpBinder
     	string typeIdentifierText,
     	out TypeDefinitionNode typeDefinitionNode)
     {
-    	var matchNode = compilationUnit.NodeList.FirstOrDefault(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
-                	                                                 x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                	                                                 x.IdentifierText(compilationUnit.SourceText, TextEditorService) == typeIdentifierText);
+    	var matchNode = compilationUnit.NodeList.FirstOrDefault(x =>
+    	{
+    	    if (x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+    	        Console.WriteLine(((TypeDefinitionNode)x).ResourceUri);
+    	    // if (((TypeDefinitionNode)x).ResourceUri == "")
+    	    
+    	    if (x.Unsafe_ParentIndexKey != scopeIndexKey ||
+    	        x.SyntaxKind != SyntaxKind.TypeDefinitionNode)
+    	    {
+    	        return false;
+    	    }
+    	    
+    	    var innerTypeDefinitionNode = (TypeDefinitionNode)x;
+    	
+    	    string sourceText;
+    	    
+    	    if (innerTypeDefinitionNode.ResourceUri == compilationUnit.ResourceUri)
+    	    {
+    	        sourceText = compilationUnit.SourceText;
+    	    }
+    	    else
+    	    {
+    	        if (TryGetCompilationUnit(innerTypeDefinitionNode.ResourceUri, out var innerCompilationUnit))
+    	            sourceText = innerCompilationUnit.SourceText;
+    	        else
+	                return false;
+    	    }
+    	    
+    	    return x.IdentifierText(sourceText, TextEditorService) == typeIdentifierText;
+	    });
     	
     	if (matchNode is null)
     	{
