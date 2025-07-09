@@ -4,6 +4,7 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.TextEditor.RazorLib.CompilerServices;
 
 namespace Walk.Extensions.CompilerServices;
 
@@ -30,6 +31,7 @@ namespace Walk.Extensions.CompilerServices;
 public struct SyntaxViewModel
 {
 	public SyntaxViewModel(
+	    ICompilerService compilerService,
 	    TextEditorService textEditorService,
 	    ResourceUri resourceUri,
 		Symbol? targetSymbol,
@@ -37,6 +39,7 @@ public struct SyntaxViewModel
 		ISyntaxNode? definitionNode,
 		int depth)
 	{
+	    CompilerService = compilerService;
 	    TextEditorService = textEditorService;
 	    ResourceUri = resourceUri;
 		TargetSymbol = targetSymbol;
@@ -44,6 +47,8 @@ public struct SyntaxViewModel
 		DefinitionNode = definitionNode;
 		Depth = depth;
 	}
+	
+	public ICompilerService CompilerService { get; }
 	
 	public TextEditorService TextEditorService { get; }
 	
@@ -153,17 +158,25 @@ public struct SyntaxViewModel
 	
 	public string GetIdentifierText(ISyntaxNode node)
 	{
-	    var model = TextEditorService.ModelApi.GetOrDefault(ResourceUri);
-	    
-	    if (model.PersistentState.CompilerService is IExtendedCompilerService extendedCompilerService)
+	    if (CompilerService is IExtendedCompilerService extendedCompilerService)
+	    {
+	        var compilationUnit = CompilerService.GetResource(ResourceUri);
 	        return extendedCompilerService.GetIdentifierText(node, ResourceUri);
+        }
 	    
-	    return string.Empty;
+	    return "null";
 	}
 	
 	public string GetTextFromTextSpan(TextEditorTextSpan textSpan)
 	{
-	    var model = TextEditorService.ModelApi.GetOrDefault(ResourceUri);
-	    return textSpan.GetText(model.GetAllText(), TextEditorService);
+	    if (CompilerService is IExtendedCompilerService extendedCompilerService)
+	    {
+	        var compilationUnit = CompilerService.GetResource(ResourceUri)?.CompilationUnit;
+	        
+	        if (compilationUnit is IExtendedCompilationUnit extendedCompilationUnit)
+	            return textSpan.GetText(extendedCompilationUnit.SourceText, TextEditorService);
+        }
+	    
+        return "null";
 	}
 }

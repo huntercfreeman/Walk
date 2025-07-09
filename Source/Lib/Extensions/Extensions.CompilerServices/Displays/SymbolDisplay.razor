@@ -1,6 +1,7 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Walk.TextEditor.RazorLib.TextEditors.Models.Internals
 @using Walk.TextEditor.RazorLib.CompilerServices
+@using Walk.TextEditor.RazorLib.Lexers.Models
 @using Walk.Extensions.CompilerServices.Syntax
 @using Walk.Extensions.CompilerServices.Syntax.Nodes
 @using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces
@@ -12,9 +13,47 @@
 	var targetNode = GetTargetNode(TextEditorService, symbolLocal, ResourceUri);
 	var definitionNode = GetDefinitionNode(TextEditorService, symbolLocal, targetNode, ResourceUri);
 	
+	ResourceUri resourceUri;
+	
+	if (definitionNode is null)
+	{
+    	resourceUri = ResourceUri;
+	}
+	else
+	{
+	    switch (definitionNode.SyntaxKind)
+    	{
+    	    case SyntaxKind.VariableDeclarationNode:
+            	var variableDeclarationNode = (VariableDeclarationNode)definitionNode;
+            	resourceUri = variableDeclarationNode.ResourceUri;
+            	break;
+            case SyntaxKind.FunctionDefinitionNode:
+            	var functionDefinitionNode = (FunctionDefinitionNode)definitionNode;
+            	resourceUri = functionDefinitionNode.ResourceUri;
+            	break;
+            case SyntaxKind.TypeDefinitionNode:
+            	var innerTypeDefinitionNode = (TypeDefinitionNode)definitionNode;
+            	resourceUri = innerTypeDefinitionNode.ResourceUri;
+            	break;
+    	    default:
+    	        resourceUri = ResourceUri;
+    	        break;
+    	}
+	}
+	
+	ICompilerService compilerService;
+	
+	var model = TextEditorService.ModelApi.GetOrDefault(ResourceUri);
+	
+	if (model is not null)
+	    compilerService = model.PersistentState.CompilerService;
+    else
+        compilerService = null;
+	
 	var syntaxViewModel = new SyntaxViewModel(
+	    compilerService,
 	    TextEditorService,
-	    ResourceUri,
+	    resourceUri,
 		symbolLocal,
 		targetNode,
 		definitionNode,

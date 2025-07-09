@@ -75,6 +75,7 @@
 	@if (variableDeclarationNode is not null)
 	{
 		var syntaxViewModel = new SyntaxViewModel(
+		    SyntaxViewModel.CompilerService,
 		    SyntaxViewModel.TextEditorService,
 		    SyntaxViewModel.ResourceUri,
 			targetSymbol: null,
