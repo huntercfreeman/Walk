@@ -723,6 +723,8 @@ public partial class CSharpBinder
 	            typeClauseNode.HasQuestionMark = ambiguousIdentifierExpressionNode.HasQuestionMark;
 				BindTypeClauseNode(typeClauseNode, compilationUnit, ref parserModel);
 				
+				typeClauseNode.ExplicitDefinitionTextSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
+				typeClauseNode.ExplicitDefinitionResourceUri = typeDefinitionNode.ResourceUri;
 				// FindAllReferences
 				// BindTypeClauseNodeSuccessfully(typeClauseNode, typeDefinitionNode, compilationUnit, ref parserModel);
 				

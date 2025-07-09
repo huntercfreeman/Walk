@@ -466,7 +466,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		    	    }
 		    	
 		    		TypeReference typeReference = default;
-		    		ResourceUri explicitDefinitionResourceUri = default;
 		    		
 					if (definitionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
 					{
@@ -490,27 +489,29 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 					else if (definitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 					{
 						var typeDefinitionNode = (TypeDefinitionNode)definitionNode;
-						explicitDefinitionResourceUri = typeDefinitionNode.ResourceUri;
 						typeReference = typeDefinitionNode.ToTypeReference();
 					}
 						
 					if (typeReference != default)
 					{
 						Symbol innerFoundSymbol = default;
+						var innerCompilationUnit = compilationUnitLocal;
 
-						if (explicitDefinitionResourceUri.Value is not null && explicitDefinitionResourceUri != textEditorModel.PersistentState.ResourceUri)
+						if (typeReference.ExplicitDefinitionResourceUri.Value is not null && typeReference.ExplicitDefinitionResourceUri != textEditorModel.PersistentState.ResourceUri)
 						{
-							var innerCompilerServiceResource = extendedCompilerService.GetResource(explicitDefinitionResourceUri);
-							if (innerCompilerServiceResource is not null)
-								symbols = ((CSharpCompilationUnit)innerCompilerServiceResource.CompilationUnit).SymbolList;
+						    if (__CSharpBinder.TryGetCompilationUnit(typeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
+						    {
+						        // innerCompilationUnit = compilationUnitLocal;
+						        symbols = innerCompilationUnit.SymbolList;
+						    }
 						}
 						
 				        if (symbols.Count != 0)
 				        {
 				            foreach (var symbol in symbols)
 				            {
-				                if (typeReference.TypeIdentifierToken.TextSpan.StartInclusiveIndex >= symbol.TextSpan.StartInclusiveIndex &&
-				                    typeReference.TypeIdentifierToken.TextSpan.StartInclusiveIndex < symbol.TextSpan.EndExclusiveIndex)
+				                if (typeReference.ExplicitDefinitionTextSpan.StartInclusiveIndex >= symbol.TextSpan.StartInclusiveIndex &&
+				                    typeReference.ExplicitDefinitionTextSpan.StartInclusiveIndex < symbol.TextSpan.EndExclusiveIndex)
 				                {
 				                    innerFoundSymbol = symbol;
 				                }
@@ -523,7 +524,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				            // Console.WriteLine(innerFoundSymbol.TextSpan.Text);
 				            // Console.WriteLine(innerFoundSymbol.TextSpan.Text);
 				        
-				        	var maybeTypeDefinitionNode = GetDefinitionNode(innerFoundSymbol.TextSpan, compilerServiceResource, innerFoundSymbol);
+				        	var maybeTypeDefinitionNode = __CSharpBinder.GetDefinitionNode(
+				        	    innerCompilationUnit, innerFoundSymbol.TextSpan, syntaxKind: innerFoundSymbol.SyntaxKind, symbol: innerFoundSymbol);
 							
 							if (maybeTypeDefinitionNode is not null && maybeTypeDefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 							{
@@ -531,30 +533,30 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 								var memberList = __CSharpBinder.GetMemberList_TypeDefinitionNode(typeDefinitionNode);
 								ISyntaxNode? foundDefinitionNode = null;
 					    		
-					    		foreach (var member in memberList.Where(x => __CSharpBinder.GetIdentifierText(x, compilationUnitLocal).Contains(filteringWord)).Take(25))
+					    		foreach (var member in memberList.Where(x => __CSharpBinder.GetIdentifierText(x, innerCompilationUnit).Contains(filteringWord)).Take(25))
 			        			{
 			        				switch (member.SyntaxKind)
 			        				{
 			        					case SyntaxKind.VariableDeclarationNode:
 			        						var variableDeclarationNode = (VariableDeclarationNode)member;
 			        						autocompleteEntryList.Add(new AutocompleteEntry(
-												variableDeclarationNode.IdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService),
+												variableDeclarationNode.IdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService),
 								                AutocompleteEntryKind.Variable,
-								                () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+								                () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
 			        						break;
 			    						case SyntaxKind.FunctionDefinitionNode:
 			        						var functionDefinitionNode = (FunctionDefinitionNode)member;
 			        						autocompleteEntryList.Add(new AutocompleteEntry(
-												functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService),
+												functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService),
 								                AutocompleteEntryKind.Function,
-								                () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+								                () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
 			        						break;
 		        						case SyntaxKind.TypeDefinitionNode:
 			        						var innerTypeDefinitionNode = (TypeDefinitionNode)member;
 			        						autocompleteEntryList.Add(new AutocompleteEntry(
-												innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService),
+												innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService),
 								                AutocompleteEntryKind.Type,
-								                () => MemberAutocomplete(innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+								                () => MemberAutocomplete(innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
 			        						break;
 			        				}
 			        			}
