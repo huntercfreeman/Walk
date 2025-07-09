@@ -23,7 +23,7 @@
 		variableDeclarationNode = (VariableDeclarationNode)syntaxViewModelLocal.DefinitionNode;
 		
 		prefixText = string.Empty;
-		text = syntaxViewModelLocal.GetText(variableDeclarationNode.IdentifierToken.TextSpan);
+		text = syntaxViewModelLocal.GetIdentifierText(variableDeclarationNode);
 		
 		if (variableDeclarationNode.VariableKind == VariableKind.Field)
 			textCssClass = "di_te_field";
@@ -39,7 +39,7 @@
 	else if (syntaxViewModelLocal.TargetNode is not null && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
 	{
 		prefixText = "(reference)";
-		text = syntaxViewModelLocal.GetText(((VariableReferenceNode)syntaxViewModelLocal.TargetNode).VariableIdentifierToken.TextSpan);
+		text = syntaxViewModelLocal.GetIdentifierText(syntaxViewModelLocal.TargetNode);
 		textCssClass = "di_te_variable";
 		variableDeclarationNode = null;
 	}
@@ -50,7 +50,7 @@
 			  	syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.EnumMemberSymbol))
 	{
 		prefixText = "(symbol)";
-		text = syntaxViewModelLocal.GetText(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
+		text = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
 		textCssClass = "di_te_variable";
 		variableDeclarationNode = null;
 	}

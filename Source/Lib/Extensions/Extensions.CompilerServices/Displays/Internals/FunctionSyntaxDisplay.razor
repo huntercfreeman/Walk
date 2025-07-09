@@ -37,7 +37,7 @@
 			var functionDefinitionNode = (FunctionDefinitionNode)syntaxViewModelLocal.DefinitionNode;
 			returnTypeClauseNode = functionDefinitionNode.ReturnTypeReference;
 			returnTypeClauseNodeText = null;
-			methodName = syntaxViewModelLocal.GetText(functionDefinitionNode.FunctionIdentifierToken.TextSpan);
+			methodName = syntaxViewModelLocal.GetIdentifierText(functionDefinitionNode);
 			genericParameterListing = functionDefinitionNode.GenericParameterListing;
 			functionArgumentListing = functionDefinitionNode.FunctionArgumentListing;
 		}
@@ -70,7 +70,7 @@
 			var functionInvocationNode = (FunctionInvocationNode)syntaxViewModelLocal.TargetNode;
 			returnTypeClauseNode = functionInvocationNode.ResultTypeReference;
 			returnTypeClauseNodeText = null;
-			methodName = syntaxViewModelLocal.GetText(functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan);
+			methodName = syntaxViewModelLocal.GetIdentifierText(functionInvocationNode);
 			genericParameterListing = functionInvocationNode.GenericParameterListing;
 			functionArgumentListing = null;
 		}
@@ -102,14 +102,14 @@
 		{
 			returnTypeClauseNode = default;
 			returnTypeClauseNodeText = null;
-			methodName = syntaxViewModelLocal.GetText(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
+			methodName = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
 			genericParameterListing = null;
 			functionArgumentListing = null;
 		}
 		else if (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.ConstructorSymbol)
 		{
 			returnTypeClauseNode = default;
-			returnTypeClauseNodeText = syntaxViewModelLocal.GetText(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
+			returnTypeClauseNodeText = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
 			methodName = null;
 			genericParameterListing = null;
 			functionArgumentListing = null;
@@ -264,22 +264,22 @@
 			    switch (argumentEntry.OptionalCompileTimeConstantToken.SyntaxKind)
 			    {
 			        case SyntaxKind.NullTokenKeyword:
-			            <span class="di_te_keyword">@(GetTextFromToken(argumentEntry.OptionalCompileTimeConstantToken))</span>
+			            <span class="di_te_keyword">@(GetTextFromTextSpan(argumentEntry.OptionalCompileTimeConstantToken.TextSpan))</span>
 			            break;
 			        case SyntaxKind.FalseTokenKeyword:
-			            <span class="di_te_keyword">@(GetTextFromToken(argumentEntry.OptionalCompileTimeConstantToken))</span>
+			            <span class="di_te_keyword">@(GetTextFromTextSpan(argumentEntry.OptionalCompileTimeConstantToken.TextSpan))</span>
 			            break;
 			        case SyntaxKind.TrueTokenKeyword:
-			            <span class="di_te_keyword">@(GetTextFromToken(argumentEntry.OptionalCompileTimeConstantToken))</span>
+			            <span class="di_te_keyword">@(GetTextFromTextSpan(argumentEntry.OptionalCompileTimeConstantToken.TextSpan))</span>
 			            break;
 			        case SyntaxKind.StringLiteralToken:
-			            <span class="di_te_string-literal">@(GetTextFromToken(argumentEntry.OptionalCompileTimeConstantToken))</span>
+			            <span class="di_te_string-literal">@(GetTextFromTextSpan(argumentEntry.OptionalCompileTimeConstantToken.TextSpan))</span>
 			            break;
 		            case SyntaxKind.CharLiteralToken:
-			            <span class="di_te_string-literal">@(GetTextFromToken(argumentEntry.OptionalCompileTimeConstantToken))</span>
+			            <span class="di_te_string-literal">@(GetTextFromTextSpan(argumentEntry.OptionalCompileTimeConstantToken.TextSpan))</span>
 			            break;
 		            case SyntaxKind.NumericLiteralToken:
-			            <span class="di_te_numeric-literal">@(GetTextFromToken(argumentEntry.OptionalCompileTimeConstantToken))</span>
+			            <span class="di_te_numeric-literal">@(GetTextFromTextSpan(argumentEntry.OptionalCompileTimeConstantToken.TextSpan))</span>
 			            break;
 		            default:
 			            <text>...</text>

@@ -1620,10 +1620,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		}
     }
     
-    public string GetTextFromToken(SyntaxToken token, ResourceUri resourceUri)
+    public string GetIdentifierText(ISyntaxNode node, ResourceUri resourceUri)
     {
-        var resource = GetResource(resourceUri);
-        var cSharpCompilationUnit = (CSharpCompilationUnit)resource.CompilationUnit;
-        return token.TextSpan.GetText(cSharpCompilationUnit.SourceText, _textEditorService);
+        if (__CSharpBinder.TryGetCompilationUnit(resourceUri, out var compilationUnit))
+            return __CSharpBinder.GetIdentifierText(node, compilationUnit);
+    
+        return string.Empty;
     }
 }

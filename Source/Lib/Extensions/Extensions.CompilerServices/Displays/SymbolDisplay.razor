@@ -65,7 +65,7 @@
 		                </span>
 		
 		                <span class="@(string.Empty /* Namespaces do not have their own css class as of (2023-07-20) */)">
-		                    @syntaxViewModel.GetText(symbolLocal.TextSpan)
+		                    @syntaxViewModel.GetTextFromTextSpan(symbolLocal.TextSpan)
 		                </span>
 		            </text>
 		            break;
@@ -78,7 +78,7 @@
 		                </span>
 		
 		                <span class="@(string.Empty /* Labels do not have their own css class as of (2023-07-20) */)">
-		                    @syntaxViewModel.GetText(symbolLocal.TextSpan)
+		                    @syntaxViewModel.GetTextFromTextSpan(symbolLocal.TextSpan)
 		                </span>
 		            </text>
 		            break;
@@ -91,7 +91,7 @@
 		                </span>
 		
 		                <span class="@(string.Empty /* Discards do not have their own css class as of (2023-07-20) */)">
-		                    @syntaxViewModel.GetText(symbolLocal.TextSpan)
+		                    @syntaxViewModel.GetTextFromTextSpan(symbolLocal.TextSpan)
 		                </span>
 		            </text>
 		            break;
@@ -104,8 +104,8 @@
 		                </span>
 		
 		                <button class="di_button di_te_source-file"
-		                        @onclick="() => OpenInEditorOnClick(syntaxViewModel.GetText(symbolLocal.TextSpan))">
-		                    @syntaxViewModel.GetText(symbolLocal.TextSpan)
+		                        @onclick="() => OpenInEditorOnClick(syntaxViewModel.GetTextFromTextSpan(symbolLocal.TextSpan))">
+		                    @syntaxViewModel.GetTextFromTextSpan(symbolLocal.TextSpan)
 		                </button>
 		            </text>
 		            break;
@@ -118,7 +118,7 @@
 		                </span>
 		
 		                <span class="@(string.Empty /* Unknown-symbol-kinds do not have their own css class as of (2023-07-20) */)">
-		                    @syntaxViewModel.GetText(symbolLocal.TextSpan)
+		                    @syntaxViewModel.GetTextFromTextSpan(symbolLocal.TextSpan)
 		                </span>
 		            </text>
 		            break;

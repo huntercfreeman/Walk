@@ -151,13 +151,19 @@ public struct SyntaxViewModel
 		return Task.CompletedTask;
 	}
 	
-	public string GetText(TextEditorTextSpan textSpan)
+	public string GetIdentifierText(ISyntaxNode node)
 	{
 	    var model = TextEditorService.ModelApi.GetOrDefault(ResourceUri);
 	    
-	    if (model is null)
-	        return null;
+	    if (model.PersistentState.CompilerService is IExtendedCompilerService extendedCompilerService)
+	        return extendedCompilerService.GetIdentifierText(node, ResourceUri);
+	    
+	    return string.Empty;
+	}
 	
+	public string GetTextFromTextSpan(TextEditorTextSpan textSpan)
+	{
+	    var model = TextEditorService.ModelApi.GetOrDefault(ResourceUri);
 	    return textSpan.GetText(model.GetAllText(), TextEditorService);
 	}
 }

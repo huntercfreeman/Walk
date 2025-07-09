@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Walk.TextEditor.RazorLib;
+using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax;
 
 namespace Walk.Extensions.CompilerServices.Displays.Internals;
@@ -12,13 +13,13 @@ public partial class FunctionSyntaxDisplay : ComponentBase
 	[Parameter, EditorRequired]
 	public SyntaxViewModel SyntaxViewModel { get; set; } = default!;
 	
-	private string GetTextFromToken(SyntaxToken token)
+	private string GetIdentifierText(ISyntaxNode node)
 	{
-	    var model = TextEditorService.ModelApi.GetOrDefault(SyntaxViewModel.ResourceUri);
-	    
-	    if (model.PersistentState.CompilerService is IExtendedCompilerService extendedCompilerService)
-	        return extendedCompilerService.GetTextFromToken(token, SyntaxViewModel.ResourceUri);
-	    
-	    return token.TextSpan.GetText(model.GetAllText(), TextEditorService);
+	    return SyntaxViewModel.GetIdentifierText(node);
+	}
+	
+	private string GetTextFromTextSpan(TextEditorTextSpan textSpan)
+	{
+	    return SyntaxViewModel.GetTextFromTextSpan(textSpan);
 	}
 }
