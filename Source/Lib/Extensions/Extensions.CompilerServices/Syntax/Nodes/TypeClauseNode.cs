@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
@@ -103,8 +104,6 @@ public sealed class TypeClauseNode : IGenericParameterNode
 	public SyntaxKind SyntaxKind => SyntaxKind.TypeClauseNode;
 	
 	public bool IsParsingGenericParameters { get; set; }
-
-	public string IdentifierText => nameof(TypeClauseNode);
 
 	public void SetSharedInstance(
 		SyntaxToken typeIdentifier,

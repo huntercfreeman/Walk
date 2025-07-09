@@ -22,9 +22,7 @@ public static class CSharpParser
     	var globalOpenCodeBlockTextSpan = new TextEditorTextSpan(
 		    0,
 		    1,
-		    decorationByte: default,
-		    string.Empty,
-		    string.Empty);
+		    DecorationByte: default);
     	
 		var globalCodeBlockBuilder = binder.NewScopeAndBuilderFromOwner_GlobalScope_Hack(
 	    	globalCodeBlockNode,

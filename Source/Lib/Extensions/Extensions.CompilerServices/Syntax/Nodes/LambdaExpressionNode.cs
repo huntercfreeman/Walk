@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
@@ -58,8 +59,6 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
 	public int Unsafe_SelfIndexKey { get; set; } = -1;
 	public bool PermitCodeBlockParsing { get; set; } = true;
 	public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
-
-	public string IdentifierText => nameof(LambdaExpressionNode);
 
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()

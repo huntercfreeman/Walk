@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
@@ -106,8 +107,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 
 	public bool IsKeywordType { get; init; }
 	
-	public string IdentifierText => TypeIdentifierToken.TextSpan.Text;
-	
 	/// <summary>
 	/// TODO: TypeDefinitionNode(s) should use the expression loop to parse the...
 	/// ...generic parameters. They currently use 'ParseTypes.HandleGenericArguments(...);'
@@ -125,7 +124,11 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 			TypeIdentifierToken,
 			ValueType,
 			genericParameterListing: default,
-			isKeywordType: IsKeywordType);
+			isKeywordType: IsKeywordType)
+		{
+		    ExplicitDefinitionTextSpan = TypeIdentifierToken.TextSpan,
+		    ExplicitDefinitionResourceUri = ResourceUri,
+		};
 	}
 	
 	public TypeReference ToTypeReference()

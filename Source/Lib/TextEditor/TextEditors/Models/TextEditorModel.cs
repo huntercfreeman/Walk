@@ -1274,8 +1274,7 @@ public sealed class TextEditorModel
             var textSpanForInsertion = new TextEditorTextSpan(
                 initialCursorPositionIndex,
                 initialCursorPositionIndex + lineEndingsChangedValueBuilder.Length,
-                0,
-                string.Empty);
+                0);
 
             var textModification = new TextEditorTextModification(true, textSpanForInsertion);
 
@@ -1738,8 +1737,7 @@ public sealed class TextEditorModel
             var textSpanForInsertion = new TextEditorTextSpan(
                 positionIndex,
                 positionIndex + charCount,
-                0,
-                string.Empty);
+                0);
 
             var textModification = new TextEditorTextModification(false, textSpanForInsertion);
 
@@ -2029,8 +2027,7 @@ public sealed class TextEditorModel
             return (GetWordTextSpanResultKind.Among, new TextEditorTextSpan(
                 wordColumnIndexStartInclusive + lineInformation.Position_StartInclusiveIndex,
                 wordColumnIndexEndExclusive + lineInformation.Position_StartInclusiveIndex,
-                0,
-                GetAllText()));
+                0));
         }
         else if (currentCharacterKind == CharacterKind.LetterOrDigit)
         {
@@ -2045,8 +2042,7 @@ public sealed class TextEditorModel
             return (GetWordTextSpanResultKind.Start, new TextEditorTextSpan(
                 columnIndex + lineInformation.Position_StartInclusiveIndex,
                 wordColumnIndexEndExclusive + lineInformation.Position_StartInclusiveIndex,
-                0,
-                GetAllText()));
+                0));
         }
         else if (previousCharacterKind == CharacterKind.LetterOrDigit)
         {
@@ -2061,8 +2057,7 @@ public sealed class TextEditorModel
             return (GetWordTextSpanResultKind.End, new TextEditorTextSpan(
                 wordColumnIndexStartInclusive + lineInformation.Position_StartInclusiveIndex,
                 columnIndex + lineInformation.Position_StartInclusiveIndex,
-                0,
-                GetAllText()));
+                0));
         }
 
         return (GetWordTextSpanResultKind.None, default);
@@ -2090,8 +2085,7 @@ public sealed class TextEditorModel
                     matchedTextSpans.Add(new TextEditorTextSpan(
                         outerI,
                         outerI + innerI,
-                        (byte)FindOverlayDecorationKind.LongestCommonSubsequence,
-                        text));
+                        (byte)FindOverlayDecorationKind.LongestCommonSubsequence));
                 }
             }
         }

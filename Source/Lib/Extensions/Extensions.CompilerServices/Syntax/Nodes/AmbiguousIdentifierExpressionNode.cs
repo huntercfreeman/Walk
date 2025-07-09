@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -42,8 +43,6 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
 	}
 	
 	public bool IsParsingGenericParameters { get; set; }
-
-	public string IdentifierText => nameof(AmbiguousIdentifierExpressionNode);
 
 #if DEBUG
 	~AmbiguousIdentifierExpressionNode()

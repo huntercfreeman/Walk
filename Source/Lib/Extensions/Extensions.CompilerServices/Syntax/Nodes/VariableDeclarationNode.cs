@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
@@ -55,8 +56,6 @@ public sealed class VariableDeclarationNode : IExpressionNode
 	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;
-	
-	public string IdentifierText => IdentifierToken.TextSpan.Text;
 
 	public VariableDeclarationNode SetImplicitTypeReference(TypeReference typeReference)
 	{

@@ -62,9 +62,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 			var workingDirectoryTextSpan = new TextEditorTextSpan(
 				outputBuilder.Length,
 		        outputBuilder.Length + workingDirectoryText.Length,
-		        (byte)TerminalDecorationKind.Keyword,
-		        string.Empty,
-		        workingDirectoryText);
+		        (byte)TerminalDecorationKind.Keyword);
 		    outTextSpanList.Add(workingDirectoryTextSpan);
 		    
 			outputBuilder

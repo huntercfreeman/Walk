@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 
 public sealed class UnaryOperatorNode : ISyntaxNode
@@ -23,8 +24,6 @@ public sealed class UnaryOperatorNode : ISyntaxNode
 	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.UnaryOperatorNode;
-
-	public string IdentifierText => nameof(UnaryOperatorNode);
 
 #if DEBUG
 	~UnaryOperatorNode()

@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -138,8 +139,6 @@ public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
 	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousParenthesizedExpressionNode;
-
-	public string IdentifierText => nameof(AmbiguousParenthesizedExpressionNode);
 
 #if DEBUG
 	~AmbiguousParenthesizedExpressionNode()

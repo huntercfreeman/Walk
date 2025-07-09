@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
@@ -40,8 +41,6 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.DoWhileStatementNode;
-
-	public string IdentifierText => nameof(DoWhileStatementNode);
 
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()

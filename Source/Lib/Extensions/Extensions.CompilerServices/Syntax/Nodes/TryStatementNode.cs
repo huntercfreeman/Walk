@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -27,8 +28,6 @@ public sealed class TryStatementNode : ISyntaxNode
 	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TryStatementNode;
-
-	public string IdentifierText => nameof(TryStatementNode);
 
 #if DEBUG
 	~TryStatementNode()

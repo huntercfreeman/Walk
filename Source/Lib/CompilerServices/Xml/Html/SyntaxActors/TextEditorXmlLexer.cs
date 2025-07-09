@@ -61,9 +61,7 @@ public class TextEditorXmlLexer
 		var endOfFileTextSpan = new TextEditorTextSpan(
             SourceText.Length,
 		    SourceText.Length,
-		    (byte)GenericDecorationKind.None,
-		    SourceText,
-		    getTextPrecalculatedResult: string.Empty);
+		    (byte)GenericDecorationKind.None);
 		
         SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EndOfFileToken, endOfFileTextSpan));
     }

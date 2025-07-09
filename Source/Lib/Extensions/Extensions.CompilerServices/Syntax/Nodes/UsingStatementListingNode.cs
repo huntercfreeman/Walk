@@ -1,3 +1,5 @@
+using Walk.TextEditor.RazorLib;
+
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 
 public sealed class UsingStatementListingNode : ISyntaxNode
@@ -19,8 +21,6 @@ public sealed class UsingStatementListingNode : ISyntaxNode
 	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.UsingStatementListingNode;
-
-	public string IdentifierText => nameof(UsingStatementListingNode);
 
 #if DEBUG
 	~UsingStatementListingNode()

@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -16,8 +17,6 @@ public sealed class SwitchExpressionNode : IExpressionNode
 	public SyntaxKind SyntaxKind => SyntaxKind.SwitchExpressionNode;
 	
 	public TypeReference ResultTypeReference { get; }
-
-	public string IdentifierText => nameof(SwitchExpressionNode);
 
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()

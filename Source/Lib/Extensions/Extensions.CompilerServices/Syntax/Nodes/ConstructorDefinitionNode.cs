@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
@@ -46,8 +47,6 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 	public SyntaxKind SyntaxKind => SyntaxKind.ConstructorDefinitionNode;
 	
 	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
-
-	public string IdentifierText => nameof(ConstructorDefinitionNode);
 
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()

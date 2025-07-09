@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
@@ -54,8 +55,6 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 	
 	public bool IsParsingGenericParameters { get; set; }
-	
-	public string IdentifierText => FunctionIdentifierToken.TextSpan.Text;
 	
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()

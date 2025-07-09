@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 
@@ -37,6 +38,8 @@ public record struct TypeReference
 		HasQuestionMark = typeClauseNode.HasQuestionMark;
 		ArrayRank = typeClauseNode.ArrayRank;
 		IsFabricated = typeClauseNode.IsFabricated;
+		ExplicitDefinitionTextSpan = typeClauseNode.ExplicitDefinitionTextSpan;
+    	ExplicitDefinitionResourceUri = typeClauseNode.ExplicitDefinitionResourceUri;
 	}
 
 	public SyntaxToken TypeIdentifierToken { get; }
@@ -47,6 +50,9 @@ public record struct TypeReference
 	public bool HasQuestionMark { get; }
 	public int ArrayRank { get; }
 	public bool IsFabricated { get; }
+	
+	public TextEditorTextSpan ExplicitDefinitionTextSpan { get; set; }
+	public ResourceUri ExplicitDefinitionResourceUri { get; set; }
 	
 	public bool IsImplicit { get; set; }
 }

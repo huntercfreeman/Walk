@@ -4,6 +4,7 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.TextEditor.RazorLib.CompilerServices;
 
 namespace Walk.Extensions.CompilerServices;
 
@@ -30,17 +31,26 @@ namespace Walk.Extensions.CompilerServices;
 public struct SyntaxViewModel
 {
 	public SyntaxViewModel(
+	    ICompilerService compilerService,
+	    TextEditorService textEditorService,
 	    ResourceUri resourceUri,
 		Symbol? targetSymbol,
 		ISyntaxNode? targetNode,
 		ISyntaxNode? definitionNode,
 		int depth)
 	{
+	    CompilerService = compilerService;
+	    TextEditorService = textEditorService;
+	    ResourceUri = resourceUri;
 		TargetSymbol = targetSymbol;
 		TargetNode = targetNode;
 		DefinitionNode = definitionNode;
 		Depth = depth;
 	}
+	
+	public ICompilerService CompilerService { get; }
+	
+	public TextEditorService TextEditorService { get; }
 	
 	public ResourceUri ResourceUri { get; }
 	
@@ -144,5 +154,29 @@ public struct SyntaxViewModel
 				.ContinueWith(_ => textEditorService.ViewModelApi.StopCursorBlinking());
 		});
 		return Task.CompletedTask;
+	}
+	
+	public string GetIdentifierText(ISyntaxNode node)
+	{
+	    if (CompilerService is IExtendedCompilerService extendedCompilerService)
+	    {
+	        var compilationUnit = CompilerService.GetResource(ResourceUri);
+	        return extendedCompilerService.GetIdentifierText(node, ResourceUri);
+        }
+	    
+	    return "null";
+	}
+	
+	public string GetTextFromTextSpan(TextEditorTextSpan textSpan)
+	{
+	    if (CompilerService is IExtendedCompilerService extendedCompilerService)
+	    {
+	        var compilationUnit = CompilerService.GetResource(ResourceUri)?.CompilationUnit;
+	        
+	        if (compilationUnit is IExtendedCompilationUnit extendedCompilationUnit)
+	            return textSpan.GetText(extendedCompilationUnit.SourceText, TextEditorService);
+        }
+	    
+        return "null";
 	}
 }

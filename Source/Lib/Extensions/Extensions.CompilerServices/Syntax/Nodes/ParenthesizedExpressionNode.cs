@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -31,8 +32,6 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
 	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ParenthesizedExpressionNode;
-
-	public string IdentifierText => nameof(ParenthesizedExpressionNode);
 
 #if DEBUG
 	~ParenthesizedExpressionNode()

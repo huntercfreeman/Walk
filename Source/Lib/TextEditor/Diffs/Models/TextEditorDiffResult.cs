@@ -335,8 +335,7 @@ public class TextEditorDiffResult
                 var textSpan = new TextEditorTextSpan(
                     startingIndexInclusive,
                     endingIndexExclusive,
-                    decorationByte,
-                    sourceText);
+                    decorationByte);
 
                 matchTextSpans.Add(textSpan);
 

@@ -19,8 +19,7 @@ public class JsonPropertyValueSyntax : IJsonSyntax
             new TextEditorTextSpan(
                 0,
                 0,
-                default,
-                string.Empty),
+                default),
             null);
     }
 

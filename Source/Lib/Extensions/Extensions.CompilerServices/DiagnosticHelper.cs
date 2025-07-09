@@ -106,7 +106,7 @@ public static class DiagnosticHelper
 			Guid.Parse("a72619a5-a7f4-4084-acc8-2fb2c76cdac4"));
 	}
 
-	public static void ReportNotDefinedInContext(
+	/*public static void ReportNotDefinedInContext(
 		List<TextEditorDiagnostic> diagnosticList,
 		TextEditorTextSpan textSpan,
 		string contextString)
@@ -114,10 +114,10 @@ public static class DiagnosticHelper
 		Report(
 			diagnosticList,
 			TextEditorDiagnosticLevel.Error,
-			$"'{textSpan.Text}' is not defined in the context '{contextString}'",
+			$"'{textSpan.GetText()}' is not defined in the context '{contextString}'",
 			textSpan,
 			Guid.Parse("89b61fa8-541d-4154-9425-82c5667842a8"));
-	}
+	}*/
 
 	public static void TheNameDoesNotExistInTheCurrentContext(
 		List<TextEditorDiagnostic> diagnosticList,

@@ -217,8 +217,7 @@ public class CodeSearchService : ICodeSearchService
 		        new TextEditorTextSpan(
 		        	0,
 			        0,
-			        (byte)GenericDecorationKind.None,
-			        string.Empty),
+			        (byte)GenericDecorationKind.None),
 			    new AbsolutePath(x, false, _commonUtilityService.EnvironmentProvider),
 				_commonUtilityService.EnvironmentProvider,
 				_commonUtilityService.FileSystemProvider,

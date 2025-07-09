@@ -209,7 +209,12 @@ public sealed class TextEditorService
 			return str;
 		}
 	}
-	
+
+	public void EditContext_GetText_Clear()
+	{
+		_stringMap.Clear();
+	}
+
 	public void InsertTab(TextEditorEditContext editContext, TextEditorModel modelModifier, TextEditorViewModel viewModel)
 	{
 	    if (OptionsApi.GetOptions().TabKeyBehavior)

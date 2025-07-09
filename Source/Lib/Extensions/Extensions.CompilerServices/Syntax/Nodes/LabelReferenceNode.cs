@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -20,8 +21,6 @@ public sealed class LabelReferenceNode : IExpressionNode
 	public int Unsafe_ParentIndexKey { get; set; }
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.LabelReferenceNode;
-
-	public string IdentifierText => nameof(LabelReferenceNode);
 
 #if DEBUG
 	~LabelReferenceNode()

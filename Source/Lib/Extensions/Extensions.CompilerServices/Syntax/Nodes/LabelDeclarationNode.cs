@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -14,8 +15,6 @@ public sealed class LabelDeclarationNode : IExpressionNode
 	}
 
 	public SyntaxToken IdentifierToken { get; }
-	
-	public string IdentifierText => IdentifierToken.TextSpan.Text;
 
 	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
