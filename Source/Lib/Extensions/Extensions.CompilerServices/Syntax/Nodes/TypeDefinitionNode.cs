@@ -124,7 +124,11 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 			TypeIdentifierToken,
 			ValueType,
 			genericParameterListing: default,
-			isKeywordType: IsKeywordType);
+			isKeywordType: IsKeywordType)
+		{
+		    ExplicitDefinitionTextSpan = TypeIdentifierToken.TextSpan,
+		    ExplicitDefinitionResourceUri = ResourceUri,
+		};
 	}
 	
 	public TypeReference ToTypeReference()

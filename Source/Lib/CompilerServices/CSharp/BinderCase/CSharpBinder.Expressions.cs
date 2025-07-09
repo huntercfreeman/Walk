@@ -2544,11 +2544,13 @@ public partial class CSharpBinder
 			}
 		
 			TypeReference typeReference = default;
-			TextEditorTextSpan explicitDefinitionTextSpan = default;
-			ResourceUri explicitDefinitionResourceUri = default;
+			// TextEditorTextSpan explicitDefinitionTextSpan = default;
+			// ResourceUri explicitDefinitionResourceUri = default;
 		
 			if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
 			{
+			    Console.WriteLine("if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)");
+			
 				var variableReferenceNode = (VariableReferenceNode)expressionPrimary;
 				if (variableReferenceNode.VariableDeclarationNode is not null)
 					typeReference = variableReferenceNode.VariableDeclarationNode.TypeReference;
@@ -2560,8 +2562,8 @@ public partial class CSharpBinder
 			else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
 			{
 			    var typeClauseNode = (TypeClauseNode)expressionPrimary;
-			    explicitDefinitionTextSpan = typeClauseNode.ExplicitDefinitionTextSpan;
-			    explicitDefinitionResourceUri = typeClauseNode.ExplicitDefinitionResourceUri;
+			    // explicitDefinitionTextSpan = typeClauseNode.ExplicitDefinitionTextSpan;
+			    // explicitDefinitionResourceUri = typeClauseNode.ExplicitDefinitionResourceUri;
 				typeReference = new TypeReference(typeClauseNode);
 			}
 			else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeDefinitionNode)
@@ -2577,18 +2579,28 @@ public partial class CSharpBinder
 			
 			ISyntaxNode? maybeTypeDefinitionNode;
 			
-			if (explicitDefinitionTextSpan.ConstructorWasInvoked && explicitDefinitionResourceUri.Value is not null)
+			Console.WriteLine(typeReference.ExplicitDefinitionTextSpan);
+			Console.WriteLine(typeReference.ExplicitDefinitionResourceUri.Value);
+			
+			CSharpCompilationUnit innerCompilationUnit;
+			
+			if (typeReference.ExplicitDefinitionTextSpan.ConstructorWasInvoked && typeReference.ExplicitDefinitionResourceUri.Value is not null)
 			{
-			    if (TryGetCompilationUnit(explicitDefinitionResourceUri, out var innerCompilationUnit))
+			    Console.WriteLine("asdf");
+			
+			    if (TryGetCompilationUnit(typeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
 			    {
+			        Console.WriteLine("fdsa");
+			    
 			        maybeTypeDefinitionNode = GetDefinitionNode(
     			        innerCompilationUnit,
-    			        explicitDefinitionTextSpan,
+    			        typeReference.ExplicitDefinitionTextSpan,
     			        SyntaxKind.TypeClauseNode);
 			    }
 			    else
 			    {
 			        maybeTypeDefinitionNode = null;
+			        innerCompilationUnit = compilationUnit;
 			    }
 			}
 			else
@@ -2597,13 +2609,18 @@ public partial class CSharpBinder
 			        compilationUnit,
 			        typeReference.TypeIdentifierToken.TextSpan,
 			        SyntaxKind.TypeClauseNode);
+			    innerCompilationUnit = compilationUnit;
 			}
 			
 			if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
 			{
+			    Console.WriteLine("is null");
+			
 				expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, compilationUnit, ref parserModel);
 				continue;
 			}
+			
+			Console.WriteLine("NOT");
 				
 			var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
 			var memberList = GetMemberList_TypeDefinitionNode(typeDefinitionNode);
@@ -2617,7 +2634,7 @@ public partial class CSharpBinder
 					if (!variableDeclarationNode.IdentifierToken.ConstructorWasInvoked)
 						continue;
 					
-					if (variableDeclarationNode.IdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService) == memberIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService))
+					if (variableDeclarationNode.IdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, parserModel.Binder.TextEditorService) == memberIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService))
 					{
 						foundDefinitionNode = variableDeclarationNode;
 						break;
@@ -2630,7 +2647,7 @@ public partial class CSharpBinder
 					if (!functionDefinitionNode.FunctionIdentifierToken.ConstructorWasInvoked)
 						continue;
 					
-					if (functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService) == memberIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService))
+					if (functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, parserModel.Binder.TextEditorService) == memberIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService))
 					{
 						foundDefinitionNode = functionDefinitionNode;
 						break;
