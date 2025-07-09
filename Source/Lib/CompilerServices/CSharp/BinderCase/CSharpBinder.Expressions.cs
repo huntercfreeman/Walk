@@ -2549,8 +2549,6 @@ public partial class CSharpBinder
 		
 			if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
 			{
-			    Console.WriteLine("if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)");
-			
 				var variableReferenceNode = (VariableReferenceNode)expressionPrimary;
 				if (variableReferenceNode.VariableDeclarationNode is not null)
 					typeReference = variableReferenceNode.VariableDeclarationNode.TypeReference;
@@ -2579,19 +2577,12 @@ public partial class CSharpBinder
 			
 			ISyntaxNode? maybeTypeDefinitionNode;
 			
-			Console.WriteLine(typeReference.ExplicitDefinitionTextSpan);
-			Console.WriteLine(typeReference.ExplicitDefinitionResourceUri.Value);
-			
 			CSharpCompilationUnit innerCompilationUnit;
 			
 			if (typeReference.ExplicitDefinitionTextSpan.ConstructorWasInvoked && typeReference.ExplicitDefinitionResourceUri.Value is not null)
 			{
-			    Console.WriteLine("asdf");
-			
 			    if (TryGetCompilationUnit(typeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
 			    {
-			        Console.WriteLine("fdsa");
-			    
 			        maybeTypeDefinitionNode = GetDefinitionNode(
     			        innerCompilationUnit,
     			        typeReference.ExplicitDefinitionTextSpan,
@@ -2614,14 +2605,10 @@ public partial class CSharpBinder
 			
 			if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
 			{
-			    Console.WriteLine("is null");
-			
 				expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, compilationUnit, ref parserModel);
 				continue;
 			}
-			
-			Console.WriteLine("NOT");
-				
+
 			var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
 			var memberList = GetMemberList_TypeDefinitionNode(typeDefinitionNode);
 			ISyntaxNode? foundDefinitionNode = null;
