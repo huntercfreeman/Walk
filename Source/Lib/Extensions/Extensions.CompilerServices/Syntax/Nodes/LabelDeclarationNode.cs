@@ -15,8 +15,6 @@ public sealed class LabelDeclarationNode : IExpressionNode
 	}
 
 	public SyntaxToken IdentifierToken { get; }
-	
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => IdentifierToken.TextSpan.GetText(sourceText, textEditorService);
 
 	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 

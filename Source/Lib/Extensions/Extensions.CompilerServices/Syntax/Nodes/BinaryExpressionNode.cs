@@ -61,8 +61,6 @@ public sealed class BinaryExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(BinaryExpressionNode);
-
 #if DEBUG
 	~BinaryExpressionNode()
 	{

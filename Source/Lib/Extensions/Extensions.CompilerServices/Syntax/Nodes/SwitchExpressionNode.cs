@@ -18,8 +18,6 @@ public sealed class SwitchExpressionNode : IExpressionNode
 	
 	public TypeReference ResultTypeReference { get; }
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(SwitchExpressionNode);
-
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()
 	{

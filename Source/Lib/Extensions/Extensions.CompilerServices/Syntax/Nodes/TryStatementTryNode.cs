@@ -34,8 +34,6 @@ public sealed class TryStatementTryNode : ICodeBlockOwner
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TryStatementTryNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(TryStatementTryNode);
-
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()
 	{

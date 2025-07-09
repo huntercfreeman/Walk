@@ -40,8 +40,6 @@ public sealed class WhileStatementNode : ICodeBlockOwner
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.WhileStatementNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(WhileStatementNode);
-
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()
 	{

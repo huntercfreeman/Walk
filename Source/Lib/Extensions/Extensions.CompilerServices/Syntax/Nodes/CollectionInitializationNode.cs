@@ -20,8 +20,6 @@ public sealed class CollectionInitializationNode : IExpressionNode
 	
 	public bool IsClosed { get; set; }
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(CollectionInitializationNode);
-
 #if DEBUG
 	~CollectionInitializationNode()
 	{

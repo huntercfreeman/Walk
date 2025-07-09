@@ -25,8 +25,6 @@ public sealed class UnaryOperatorNode : ISyntaxNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.UnaryOperatorNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(UnaryOperatorNode);
-
 #if DEBUG
 	~UnaryOperatorNode()
 	{

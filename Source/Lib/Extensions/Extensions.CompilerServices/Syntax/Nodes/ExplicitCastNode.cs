@@ -32,8 +32,6 @@ public sealed class ExplicitCastNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ExplicitCastNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(ExplicitCastNode);
-
 #if DEBUG
 	~ExplicitCastNode()
 	{

@@ -37,8 +37,6 @@ public sealed class NamespaceClauseNode : IExpressionNode
 	
 	public SyntaxKind SyntaxKind => SyntaxKind.NamespaceClauseNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(NamespaceClauseNode);
-
 #if DEBUG
 	~NamespaceClauseNode()
 	{

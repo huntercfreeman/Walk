@@ -44,8 +44,6 @@ public sealed class GlobalCodeBlockNode : ICodeBlockOwner
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.GlobalCodeBlockNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(GlobalCodeBlockNode);
-
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()
 	{

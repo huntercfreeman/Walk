@@ -48,8 +48,6 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
 	
 	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(ConstructorDefinitionNode);
-
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()
 	{

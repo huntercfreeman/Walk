@@ -46,8 +46,6 @@ public sealed class ForStatementNode : ICodeBlockOwner
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ForStatementNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(ForStatementNode);
-
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()
 	{

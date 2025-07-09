@@ -60,8 +60,6 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
 	public bool PermitCodeBlockParsing { get; set; } = true;
 	public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(LambdaExpressionNode);
-
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()
 	{

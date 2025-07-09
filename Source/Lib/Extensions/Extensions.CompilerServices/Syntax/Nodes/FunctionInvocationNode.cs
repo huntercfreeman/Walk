@@ -36,8 +36,6 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 	
 	public TextEditorTextSpan ExplicitDefinitionTextSpan { get; set; }
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(FunctionInvocationNode);
-
 #if DEBUG
 	~FunctionInvocationNode()
 	{

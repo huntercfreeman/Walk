@@ -47,8 +47,6 @@ public sealed class InterpolatedStringNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.InterpolatedStringNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(InterpolatedStringNode);
-
 #if DEBUG
 	~InterpolatedStringNode()
 	{

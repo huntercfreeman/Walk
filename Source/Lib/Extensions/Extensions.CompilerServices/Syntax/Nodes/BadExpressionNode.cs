@@ -48,8 +48,6 @@ public sealed class BadExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.BadExpressionNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(BadExpressionNode);
-
 #if DEBUG
 	~BadExpressionNode()
 	{

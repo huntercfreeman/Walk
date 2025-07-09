@@ -56,8 +56,6 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 	
 	public bool IsParsingGenericParameters { get; set; }
 	
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => FunctionIdentifierToken.TextSpan.GetText(sourceText, textEditorService);
-	
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()
 	{

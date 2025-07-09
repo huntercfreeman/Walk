@@ -22,8 +22,6 @@ public sealed class LiteralExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.LiteralExpressionNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(LiteralExpressionNode);
-
 #if DEBUG
 	~LiteralExpressionNode()
 	{

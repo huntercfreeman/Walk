@@ -34,8 +34,6 @@ public sealed class TryStatementFinallyNode : ICodeBlockOwner
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TryStatementFinallyNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(TryStatementFinallyNode);
-
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()
 	{

@@ -43,8 +43,6 @@ public sealed class EmptyExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.EmptyExpressionNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(EmptyExpressionNode);
-
 #if DEBUG
 	~EmptyExpressionNode()
 	{

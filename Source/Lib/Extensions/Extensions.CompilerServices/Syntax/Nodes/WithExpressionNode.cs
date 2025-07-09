@@ -22,8 +22,6 @@ public sealed class WithExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.WithExpressionNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(WithExpressionNode);
-
 #if DEBUG
 	~WithExpressionNode()
 	{

@@ -22,8 +22,6 @@ public sealed class LabelReferenceNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.LabelReferenceNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(LabelReferenceNode);
-
 #if DEBUG
 	~LabelReferenceNode()
 	{

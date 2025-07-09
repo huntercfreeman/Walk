@@ -23,8 +23,6 @@ public sealed class KeywordFunctionOperatorNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.KeywordFunctionOperatorNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(KeywordFunctionOperatorNode);
-
 #if DEBUG
 	~KeywordFunctionOperatorNode()
 	{

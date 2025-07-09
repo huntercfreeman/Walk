@@ -40,12 +40,6 @@ public static class ParseOthers
                 
                 // NamespaceStatements will add the final symbol themselves.
                 
-                compilationUnit.__SymbolList.Add(
-                	new Symbol(
-                		SyntaxKind.NamespaceSymbol,
-                		parserModel.GetNextSymbolId(),
-                		matchedToken.TextSpan));
-                
                 if (isNamespaceStatement && (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken))
                 {
                     // !StatementDelimiterToken because presumably the final namespace is already being handled.
@@ -75,6 +69,12 @@ public static class ParseOthers
 
         if (count == 0)
             return default;
+            
+        compilationUnit.__SymbolList.Add(
+        	new Symbol(
+        		SyntaxKind.NamespaceSymbol,
+        		parserModel.GetNextSymbolId(),
+        		textSpan));
 
         return new SyntaxToken(SyntaxKind.IdentifierToken, textSpan);
     }

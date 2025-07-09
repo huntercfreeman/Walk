@@ -36,8 +36,6 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 	
 	public bool IsParsingFunctionParameters { get; set; }
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(ConstructorInvocationExpressionNode);
-
 #if DEBUG
 	~ConstructorInvocationExpressionNode()
 	{

@@ -40,8 +40,6 @@ public sealed class LockStatementNode : ICodeBlockOwner
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.LockStatementNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(LockStatementNode);
-
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()
 	{

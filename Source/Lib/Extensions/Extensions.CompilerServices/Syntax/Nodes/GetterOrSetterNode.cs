@@ -28,8 +28,6 @@ public sealed class GetterOrSetterNode : ICodeBlockOwner
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.GetterOrSetterNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(GetterOrSetterNode);
-
 	#region ICodeBlockOwner_Methods
 	public TypeReference GetReturnTypeReference()
 	{

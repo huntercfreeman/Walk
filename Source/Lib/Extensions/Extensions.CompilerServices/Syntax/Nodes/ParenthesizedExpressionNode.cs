@@ -33,8 +33,6 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ParenthesizedExpressionNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(ParenthesizedExpressionNode);
-
 #if DEBUG
 	~ParenthesizedExpressionNode()
 	{

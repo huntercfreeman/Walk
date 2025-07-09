@@ -25,8 +25,6 @@ public sealed class ReturnStatementNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.ReturnStatementNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(ReturnStatementNode);
-
 #if DEBUG
 	~ReturnStatementNode()
 	{

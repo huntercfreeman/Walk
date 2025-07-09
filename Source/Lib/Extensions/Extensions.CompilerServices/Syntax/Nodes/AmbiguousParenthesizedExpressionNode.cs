@@ -140,8 +140,6 @@ public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousParenthesizedExpressionNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(AmbiguousParenthesizedExpressionNode);
-
 #if DEBUG
 	~AmbiguousParenthesizedExpressionNode()
 	{

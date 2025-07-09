@@ -29,8 +29,6 @@ public sealed class TryStatementNode : ISyntaxNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TryStatementNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(TryStatementNode);
-
 #if DEBUG
 	~TryStatementNode()
 	{

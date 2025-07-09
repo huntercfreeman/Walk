@@ -19,8 +19,6 @@ public sealed class InheritanceStatementNode : ISyntaxNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.InheritanceStatementNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(InheritanceStatementNode);
-
 #if DEBUG
 	~InheritanceStatementNode()
 	{

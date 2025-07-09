@@ -20,8 +20,6 @@ public sealed class TupleExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.TupleExpressionNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(TupleExpressionNode);
-
 #if DEBUG
 	~TupleExpressionNode()
 	{

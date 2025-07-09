@@ -25,8 +25,6 @@ public sealed class UnaryExpressionNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.UnaryExpressionNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(UnaryExpressionNode);
-
 #if DEBUG
 	~UnaryExpressionNode()
 	{

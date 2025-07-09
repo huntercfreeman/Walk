@@ -22,8 +22,6 @@ public sealed class UsingStatementListingNode : ISyntaxNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.UsingStatementListingNode;
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(UsingStatementListingNode);
-
 #if DEBUG
 	~UsingStatementListingNode()
 	{

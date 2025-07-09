@@ -44,8 +44,6 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
 	
 	public bool IsParsingGenericParameters { get; set; }
 
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => nameof(AmbiguousIdentifierExpressionNode);
-
 #if DEBUG
 	~AmbiguousIdentifierExpressionNode()
 	{
