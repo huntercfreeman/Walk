@@ -65,7 +65,7 @@
 		                </span>
 		
 		                <span class="@(string.Empty /* Namespaces do not have their own css class as of (2023-07-20) */)">
-		                    @symbolLocal.TextSpan.Text
+		                    @syntaxViewModel.GetText(symbolLocal.TextSpan)
 		                </span>
 		            </text>
 		            break;
@@ -78,7 +78,7 @@
 		                </span>
 		
 		                <span class="@(string.Empty /* Labels do not have their own css class as of (2023-07-20) */)">
-		                    @symbolLocal.TextSpan.Text
+		                    @syntaxViewModel.GetText(symbolLocal.TextSpan)
 		                </span>
 		            </text>
 		            break;
@@ -91,7 +91,7 @@
 		                </span>
 		
 		                <span class="@(string.Empty /* Discards do not have their own css class as of (2023-07-20) */)">
-		                    @symbolLocal.TextSpan.Text
+		                    @syntaxViewModel.GetText(symbolLocal.TextSpan)
 		                </span>
 		            </text>
 		            break;
@@ -105,7 +105,7 @@
 		
 		                <button class="di_button di_te_source-file"
 		                        @onclick="() => OpenInEditorOnClick(syntaxViewModel.GetText(symbolLocal.TextSpan))">
-		                    @symbolLocal.TextSpan.Text
+		                    @syntaxViewModel.GetText(symbolLocal.TextSpan)
 		                </button>
 		            </text>
 		            break;
@@ -118,7 +118,7 @@
 		                </span>
 		
 		                <span class="@(string.Empty /* Unknown-symbol-kinds do not have their own css class as of (2023-07-20) */)">
-		                    @symbolLocal.TextSpan.Text
+		                    @syntaxViewModel.GetText(symbolLocal.TextSpan)
 		                </span>
 		            </text>
 		            break;

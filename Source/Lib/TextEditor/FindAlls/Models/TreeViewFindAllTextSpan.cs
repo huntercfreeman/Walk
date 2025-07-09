@@ -30,7 +30,7 @@ public class TreeViewFindAllTextSpan : TreeViewWithType<(string SourceText, Reso
 
 	public override int GetHashCode() => AbsolutePath.Value.GetHashCode();
 	
-	public override string GetDisplayText() => Item.TextSpan.Text(Item.SourceText, textEditorService: null);
+	public override string GetDisplayText() => Item.TextSpan.GetText(Item.SourceText, textEditorService: null);
 
     /*public override TreeViewRenderer GetTreeViewRenderer()
 	{

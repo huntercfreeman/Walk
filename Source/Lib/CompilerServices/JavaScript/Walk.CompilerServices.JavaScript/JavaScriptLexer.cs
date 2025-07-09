@@ -126,7 +126,7 @@ public class JavaScriptLexer
 	        EndExclusiveIndex: positionEnd,
 	        DecorationByte: (byte)GenericDecorationKind.None);
 	    
-	    if (JavaScriptKeywords.ALL_KEYWORDS.Contains(textSpan.Text(_text, textEditorService: null)))
+	    if (JavaScriptKeywords.ALL_KEYWORDS.Contains(textSpan.GetText(_text, textEditorService: null)))
 	    {
 	    	textSpan = textSpan with
 	    	{

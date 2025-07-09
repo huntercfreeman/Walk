@@ -226,7 +226,7 @@ public class RazorSyntaxTree
     {
         var allTypeDefinitions = _cSharpCompilerService.__CSharpBinder.AllTypeDefinitions;
 
-        var text = textSpan.Text(stringWalker.SourceText, _textEditorService);
+        var text = textSpan.GetText(stringWalker.SourceText, _textEditorService);
         
         var matchingKvps = allTypeDefinitions.Where(x => x.Key == text);
 
@@ -237,7 +237,7 @@ public class RazorSyntaxTree
             if (typeDefinitionNode is not null && typeDefinitionNode.InheritedTypeReference != TypeFacts.NotApplicable.ToTypeReference())
             {
                 var inheritanceIdentifierText = typeDefinitionNode
-                    .InheritedTypeReference.TypeIdentifierToken.TextSpan.Text(stringWalker.SourceText, _textEditorService);
+                    .InheritedTypeReference.TypeIdentifierToken.TextSpan.GetText(stringWalker.SourceText, _textEditorService);
 
                 if (inheritanceIdentifierText != "ComponentBase")
                     continue;
@@ -557,7 +557,7 @@ public class RazorSyntaxTree
             (byte)GenericDecorationKind.None);
 
         ParseCSharpWithAdhocMethodWrapping(
-            textSpan.Text(stringWalker.SourceText, _textEditorService),
+            textSpan.GetText(stringWalker.SourceText, _textEditorService),
             entryPositionIndex,
             stringWalker);
 

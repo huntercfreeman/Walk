@@ -57,7 +57,7 @@ public sealed class VariableDeclarationNode : IExpressionNode
 	public bool IsFabricated { get; init; }
 	public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;
 	
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => IdentifierToken.TextSpan.Text(sourceText, textEditorService);
+	public string IdentifierText(string sourceText, TextEditorService textEditorService) => IdentifierToken.TextSpan.GetText(sourceText, textEditorService);
 
 	public VariableDeclarationNode SetImplicitTypeReference(TypeReference typeReference)
 	{

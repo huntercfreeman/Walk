@@ -105,7 +105,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 		cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
 
 		var packageReferences = cSharpProjectSyntaxWalker.TagNodes
-			.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.Text(content, textEditorService: null) ?? string.Empty) == "PackageReference")
+			.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText(content, textEditorService: null) ?? string.Empty) == "PackageReference")
 			.ToList();
 
 		List<LightWeightNugetPackageRecord> lightWeightNugetPackageRecords = new();
@@ -116,10 +116,10 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 				.AttributeNodes
 				.Select(x => (
 					x.AttributeNameSyntax.TextEditorTextSpan
-						.Text(content, textEditorService: null)
+						.GetText(content, textEditorService: null)
 						.Trim(),
 					x.AttributeValueSyntax.TextEditorTextSpan
-						.Text(content, textEditorService: null)
+						.GetText(content, textEditorService: null)
 						.Replace("\"", string.Empty)
 						.Replace("=", string.Empty)
 						.Trim()))

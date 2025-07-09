@@ -50,7 +50,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	    if (componentData?.Virtualization?.Model is null)
 	        return null;
 	
-	    return textSpan.Text(componentData.Virtualization.Model.GetAllText(), TextEditorService);
+	    return textSpan.GetText(componentData.Virtualization.Model.GetAllText(), TextEditorService);
 	}
     
     private TextEditorVirtualizationResult GetVirtualizationResult()

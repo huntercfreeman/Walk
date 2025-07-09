@@ -158,6 +158,6 @@ public struct SyntaxViewModel
 	    if (model is null)
 	        return null;
 	
-	    return textSpan.Text(model.GetAllText(), TextEditorService);
+	    return textSpan.GetText(model.GetAllText(), TextEditorService);
 	}
 }

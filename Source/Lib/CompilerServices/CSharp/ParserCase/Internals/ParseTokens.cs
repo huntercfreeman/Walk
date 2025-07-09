@@ -12,12 +12,12 @@ public static class ParseTokens
     public static void ParseIdentifierToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	if (parserModel.TokenWalker.Current.TextSpan.Length == 1 &&
-    		parserModel.TokenWalker.Current.TextSpan.Text(compilationUnit.SourceText, parserModel.Binder.TextEditorService) == "_")
+    		parserModel.TokenWalker.Current.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService) == "_")
     	{
     		if (!parserModel.Binder.TryGetVariableDeclarationHierarchically(
 			    	compilationUnit,
 			    	parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-			        parserModel.TokenWalker.Current.TextSpan.Text(compilationUnit.SourceText, parserModel.Binder.TextEditorService),
+			        parserModel.TokenWalker.Current.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService),
 			        out _))
 			{
 				parserModel.Binder.BindDiscard(parserModel.TokenWalker.Current, compilationUnit, ref parserModel);
@@ -169,8 +169,8 @@ public static class ParseTokens
 					parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
 				}
 				
-				if (variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.Text ==
-				        CSharpFacts.Types.Var.TypeIdentifierToken.TextSpan.Text)
+				if (variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService) ==
+				        CSharpFacts.Types.Var.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService))
 				{
 					if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode)
 					{
@@ -197,7 +197,7 @@ public static class ParseTokens
 		else if (parserModel.CurrentCodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
 				 UtilityApi.IsConvertibleToIdentifierToken(typeClauseNode.TypeIdentifierToken.SyntaxKind) &&
 				 parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken &&
-			     typeDefinitionNode.TypeIdentifierToken.TextSpan.Text == typeClauseNode.TypeIdentifierToken.TextSpan.Text)
+			     typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService) == typeClauseNode.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService))
 		{
 			// ConstructorDefinitionNode
 			
@@ -581,7 +581,7 @@ public static class ParseTokens
             	parserModel.TokenWalker);
 
             parserModel.Binder.AddNamespaceToCurrentScope(
-                namespaceStatementNode.IdentifierToken.TextSpan.Text(compilationUnit.SourceText, parserModel.Binder.TextEditorService),
+                namespaceStatementNode.IdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService),
                 compilationUnit,
                 ref parserModel);
         }

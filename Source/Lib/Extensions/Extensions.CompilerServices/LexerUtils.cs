@@ -235,7 +235,7 @@ public static class LexerUtils
 			stringWalker.PositionIndex,
 			(byte)GenericDecorationKind.None);
 
-		var textValue = textSpan.Text(sourceText, textEditorService);
+		var textValue = textSpan.GetText(sourceText, textEditorService);
 
 		if (lexerKeywords.AllKeywords.Contains(textValue))
 		{
@@ -685,7 +685,7 @@ public static class LexerUtils
 
 	public static SyntaxKind GetSyntaxKindForKeyword(TextEditorTextSpan textSpan, string sourceText, TextEditorService? textEditorService)
 	{
-		var text = textSpan.Text(sourceText, textEditorService);
+		var text = textSpan.GetText(sourceText, textEditorService);
 
 		switch (text)
 		{
@@ -850,7 +850,7 @@ public static class LexerUtils
 
 	public static SyntaxKind GetSyntaxKindForContextualKeyword(TextEditorTextSpan textSpan, string sourceText, TextEditorService? textEditorService)
 	{
-		var text = textSpan.Text(sourceText, textEditorService);
+		var text = textSpan.GetText(sourceText, textEditorService);
 
 		switch (text)
 		{

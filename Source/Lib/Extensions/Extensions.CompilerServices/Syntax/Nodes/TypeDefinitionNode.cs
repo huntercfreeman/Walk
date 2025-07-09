@@ -107,7 +107,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 
 	public bool IsKeywordType { get; init; }
 	
-	public string IdentifierText(string sourceText, TextEditorService textEditorService) => TypeIdentifierToken.TextSpan.Text(sourceText, textEditorService);
+	public string IdentifierText(string sourceText, TextEditorService textEditorService) => TypeIdentifierToken.TextSpan.GetText(sourceText, textEditorService);
 	
 	/// <summary>
 	/// TODO: TypeDefinitionNode(s) should use the expression loop to parse the...

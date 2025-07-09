@@ -8,7 +8,7 @@ public record struct TextEditorTextSpan(
     public int Length => EndExclusiveIndex - StartInclusiveIndex;
     public bool ConstructorWasInvoked => this != default;
 
-    public string? Text(string sourceText, TextEditorService? textEditorService)
+    public string? GetText(string sourceText, TextEditorService? textEditorService)
     {
         if (StartInclusiveIndex < sourceText.Length && EndExclusiveIndex <= sourceText.Length && EndExclusiveIndex >= StartInclusiveIndex)
         {

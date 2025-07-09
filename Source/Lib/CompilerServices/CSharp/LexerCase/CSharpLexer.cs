@@ -812,7 +812,7 @@ public static class CSharpLexer
             stringWalker.PositionIndex,
             (byte)GenericDecorationKind.None);
         
-        switch (textSpan.Text(stringWalker.SourceText, binder.TextEditorService))
+        switch (textSpan.GetText(stringWalker.SourceText, binder.TextEditorService))
         {
             // NonContextualKeywords-NonControl
             // ================================
