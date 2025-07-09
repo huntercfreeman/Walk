@@ -1039,8 +1039,8 @@ public partial class CSharpBinder
     {
     	var matchNode = compilationUnit.NodeList.FirstOrDefault(x =>
     	{
-    	    if (x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-    	        Console.WriteLine(((TypeDefinitionNode)x).ResourceUri);
+    	    //if (x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+    	    //    Console.WriteLine(((TypeDefinitionNode)x).ResourceUri);
     	    // if (((TypeDefinitionNode)x).ResourceUri == "")
     	    
     	    if (x.Unsafe_ParentIndexKey != scopeIndexKey ||
