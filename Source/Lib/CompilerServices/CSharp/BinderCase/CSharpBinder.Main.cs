@@ -657,7 +657,6 @@ public partial class CSharpBinder
         if (_namespaceGroupMap.TryGetValue(namespaceString, out var namespaceGroup) &&
             namespaceGroup.ConstructorWasInvoked)
         {
-            Console.WriteLine(namespaceString);
             var typeDefinitionNodes = GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup);
             
             foreach (var typeDefinitionNode in typeDefinitionNodes)
