@@ -48,6 +48,8 @@ public sealed class TypeClauseNode : IGenericParameterNode
 		TypeIdentifierToken = typeReference.TypeIdentifierToken;
 		ValueType = typeReference.ValueType;
 		GenericParameterListing = typeReference.GenericParameterListing;
+		ExplicitDefinitionTextSpan = typeReference.ExplicitDefinitionTextSpan;
+		ExplicitDefinitionResourceUri = typeReference.ExplicitDefinitionResourceUri;
 	}
 
 	private bool _isFabricated;

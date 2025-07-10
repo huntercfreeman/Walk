@@ -308,7 +308,7 @@ public class ParseDefaultKeywords
     	if (enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList is not null &&
     	    variableDeclarationNode is not null &&
     	    variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService) ==
-		        Walk.CompilerServices.CSharp.Facts.CSharpFacts.Types.Var.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService))
+		        "var")
     	{
     	    if (enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList.Count == 1)
     	        variableDeclarationNode.SetImplicitTypeReference(enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList[0].TypeReference);

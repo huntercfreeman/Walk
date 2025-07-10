@@ -3090,7 +3090,7 @@ public partial class CSharpBinder
 		    var variableDeclarationNode = (VariableDeclarationNode)expressionSecondary;
 		    
 		    if (variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService) ==
-		        CSharpFacts.Types.Var.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService))
+		        "var")
 	        {
 	            if (invocationNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
     		    {

@@ -170,7 +170,7 @@ public static class ParseTokens
 				}
 				
 				if (variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService) ==
-				        CSharpFacts.Types.Var.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService))
+				        "var")
 				{
 					if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode)
 					{
