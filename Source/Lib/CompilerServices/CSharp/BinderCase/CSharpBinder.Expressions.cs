@@ -1317,9 +1317,35 @@ public partial class CSharpBinder
 		// Consume either 'OpenBraceToken', or 'CommaToken'
 		_ = parserModel.TokenWalker.Consume();
 		
-		// Console.WriteLine($"bvc '{constructorInvocationExpressionNode.ResultTypeReference.ExplicitDefinitionResourceUri.Value}'");
+		var isVoidType = false;
 		
-		if (constructorInvocationExpressionNode.ResultTypeReference == default)
+		// TODO: This is not a good solution...:
+		//
+		// Out of the following 5 examples of object initialization.
+		// person1 to person4 inclusive work WITHOUT the need for this "void" check code.
+		// This "void" check code only pertains to this case: 'Person person5 = new() { FirstName = "Jane" };'
+		//
+		// var person1 = new Person() { FirstName = "Jane" };
+        // var person2 = new Person { FirstName = "Jane" };
+        // Person person3 = new Person() { FirstName = "Jane" };
+        // Person person4 = new Person { FirstName = "Jane" };
+        // Person person5 = new() { FirstName = "Jane" };
+        //
+        // The issue is that constructor invocation syntax marks that the type being constructed has been
+        // constructed. And in this person5 case, a 'void' type is assigned
+        // if no type had been provided, AND the position index no longer is valid to define the type.
+        //
+        // Since 'void' for some reason ends up being used in person5 case,
+        // then the 'constructorInvocationExpressionNode.ResultTypeReference == default'
+        // doesn't trigger the 'parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode'.
+        //
+		if (parserModel.Binder.TryGetCompilationUnit(constructorInvocationExpressionNode.ResultTypeReference.ExplicitDefinitionResourceUri, out var innerCompilationUnit))
+		{
+		    if ("void" == constructorInvocationExpressionNode.ResultTypeReference.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, parserModel.Binder.TextEditorService))
+		        isVoidType = true;
+		}
+		
+		if (constructorInvocationExpressionNode.ResultTypeReference == default || isVoidType)
 			constructorInvocationExpressionNode.ResultTypeReference = parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode;
 		
 		if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind) &&

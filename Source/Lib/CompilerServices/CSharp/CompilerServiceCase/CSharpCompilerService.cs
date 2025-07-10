@@ -46,10 +46,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     	
     	__CSharpBinder = new(_textEditorService);
     	
-    	_resourceMap.Add(new ResourceUri(string.Empty), new CSharpResource(new ResourceUri(string.Empty), this)
+    	var primitiveKeywordsTextFile = new CSharpResource(new ResourceUri(string.Empty), this)
     	{
     	    CompilationUnit = new(new ResourceUri(string.Empty), "NotApplicable empty" + " void int char string bool var", CompilationUnitKind.IndividualFile_AllData)
-    	});
+    	};
+    	
+    	_resourceMap.Add(primitiveKeywordsTextFile.ResourceUri, primitiveKeywordsTextFile);
+    	
+    	__CSharpBinder.UpsertCompilationUnit(primitiveKeywordsTextFile.CompilationUnit);
     }
 
     public event Action? ResourceRegistered;
