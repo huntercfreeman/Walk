@@ -2763,17 +2763,15 @@ public partial class CSharpBinder
             				    firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex,
             				    memberIdentifierToken.TextSpan.EndExclusiveIndex - firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex));
 		                
-		                var textSpan = memberIdentifierToken.TextSpan with
+		                /*memberIdentifierToken.TextSpan = memberIdentifierToken.TextSpan with
         	        	{
-        	        	    StartInclusiveIndex = firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex,
-        	        	};
+        	        	    Text = text
+        	        	};*/
 		                
 		                compilationUnit.__SymbolList.Add(new Symbol(
             	        	SyntaxKind.NamespaceSymbol,
             	        	parserModel.GetNextSymbolId(),
-            	        	textSpan));
-            	        	
-        	        	memberIdentifierToken.TextSpan = textSpan;
+            	        	memberIdentifierToken.TextSpan));
 
 		                return new NamespaceClauseNode(
 		                    memberIdentifierToken,
