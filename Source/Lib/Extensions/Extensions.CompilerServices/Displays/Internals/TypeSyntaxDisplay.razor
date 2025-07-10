@@ -76,7 +76,7 @@
 		prefixText = "(reference)";
 		prefixTextCssClass = null;
 		
-		if (TypeReference.IsImplicit)
+		if (TypeReference.IsImplicit && TypeReference.ExplicitDefinitionResourceUri.Value is not null)
     	{
     	    syntaxViewModelLocal.ResourceUri = TypeReference.ExplicitDefinitionResourceUri;
     	    text = syntaxViewModelLocal.GetTextFromTextSpan(TypeReference.ExplicitDefinitionTextSpan);
