@@ -2758,15 +2758,10 @@ public partial class CSharpBinder
                 		    memberIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService),
                 		    out var secondNamespacePrefixNode))
 		            {
-		                var text = parserModel.Binder.TextEditorService.EditContext_GetText(
-            				compilationUnit.SourceText.AsSpan(
-            				    firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex,
-            				    memberIdentifierToken.TextSpan.EndExclusiveIndex - firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex));
-		                
-		                /*memberIdentifierToken.TextSpan = memberIdentifierToken.TextSpan with
+		                memberIdentifierToken.TextSpan = memberIdentifierToken.TextSpan with
         	        	{
-        	        	    Text = text
-        	        	};*/
+        	        	    StartInclusiveIndex = firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex
+        	        	};
 		                
 		                compilationUnit.__SymbolList.Add(new Symbol(
             	        	SyntaxKind.NamespaceSymbol,
@@ -2782,9 +2777,17 @@ public partial class CSharpBinder
                 
                 if (NamespaceGroupMap.TryGetValue(firstNamespaceClauseNode.IdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService), out var namespaceGroup))
     		    {
+    		        var innerCompilationUnit = compilationUnit;
+    		    
     		        foreach (var typeDefinitionNode in GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup))
     		        {
-    		            if (typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService) == memberIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService))
+    		            if (innerCompilationUnit.ResourceUri != typeDefinitionNode.ResourceUri)
+    		            {
+    		                if (!TryGetCompilationUnit(typeDefinitionNode.ResourceUri, out innerCompilationUnit))
+    		                    continue;
+    		            }
+    		        
+    		            if (typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, parserModel.Binder.TextEditorService) == memberIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService))
     		            {
             				var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
             		            memberIdentifierToken,
