@@ -684,26 +684,8 @@ public partial class CSharpBinder
     	if (parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey == 0)
     		return;
     	
-    	var inOwner = parserModel.CurrentCodeBlockOwner;
-    	var outOwner = parserModel.GetParent(inOwner, compilationUnit);
-    	
-    	// Update Scope
-    	{
-	    	inOwner.Scope_EndExclusiveIndex = textSpan.EndExclusiveIndex;
-    	}
-    	
-    	// Update CodeBlockOwner
-    	if (inOwner is not null)
-    	{
-			if (inOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
-				parserModel.Binder.BindNamespaceStatementNode((NamespaceStatementNode)inOwner, compilationUnit, ref parserModel);
-			else if (inOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-				parserModel.Binder.BindTypeDefinitionNode((TypeDefinitionNode)inOwner, compilationUnit, ref parserModel, true);
-			
-			// Restore Parent CodeBlockBuilder
-			if (outOwner is not null)
-				parserModel.CurrentCodeBlockOwner = outOwner;
-		}
+    	parserModel.CurrentCodeBlockOwner.Scope_EndExclusiveIndex = textSpan.EndExclusiveIndex;
+		parserModel.CurrentCodeBlockOwner = parserModel.GetParent(parserModel.CurrentCodeBlockOwner, compilationUnit);
 		
 		/*#if DEBUG
     	Console.WriteLine($"-------{nameof(CloseScope)}out: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
@@ -1708,6 +1690,8 @@ public partial class CSharpBinder
     			var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
 	    		var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
 	        	parserModel.Binder.AddNamespaceToCurrentScope(namespaceString, compilationUnit, ref parserModel);
+	        	
+			    parserModel.Binder.BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner, compilationUnit, ref parserModel);
 	        	return;
 			case SyntaxKind.LambdaExpressionNode:
 				var lambdaExpressionNode = (LambdaExpressionNode)codeBlockOwner;
@@ -1726,6 +1710,9 @@ public partial class CSharpBinder
 		    		
 		    	return;
 		    case SyntaxKind.TypeDefinitionNode:
+		    
+				parserModel.Binder.BindTypeDefinitionNode((TypeDefinitionNode)codeBlockOwner, compilationUnit, ref parserModel, true);
+		    
 		    	var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
 		    	
 		    	if (typeDefinitionNode.GenericParameterListing.ConstructorWasInvoked)
