@@ -74,6 +74,27 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	/// </summary>
 	public TypeReference InheritedTypeReference { get; private set; }
 	public string NamespaceName { get; }
+	/// <summary>
+	/// 'string.Empty' is used as a special case to store language primitives,
+	/// since 'string.Empty' is not a valid 'ResourceUri' for the 'TextEditorService'.
+	///
+	/// Perhaps this is odd to do, but the TextEditorTextSpan requires "source text"
+	/// to read from.
+	///
+	/// So doing this means any special case handling of the language primitives
+	/// will "just work" regardless of who tries to read them.
+	///
+	/// go-to definition won't do anything since string.Empty isn't a valid file path.
+	///
+	/// In particular, this 'string.Empty' file only exists in the CSharpCompilerService's resources.
+	/// It never actually gets added to the TextEditorService as a TextEditorModel, only a CSharpResource.
+	/// 
+    /// The file contents:
+    ///     "NotApplicable empty"
+    /// 
+    /// I just got this to work.
+    /// It feels super hacky, so once I think of a better way to do this I'd like to change it.
+	/// </summary>
 	public ResourceUri ResourceUri { get; }
 	public bool IsInterface => StorageModifierKind == StorageModifierKind.Interface;
 

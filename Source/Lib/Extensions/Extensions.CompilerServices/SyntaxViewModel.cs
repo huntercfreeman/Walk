@@ -52,7 +52,7 @@ public struct SyntaxViewModel
 	
 	public TextEditorService TextEditorService { get; }
 	
-	public ResourceUri ResourceUri { get; }
+	public ResourceUri ResourceUri { get; set; }
 	
 	/// <summary>
 	/// The user interface gesture is to hover a symbol in the text editor.
