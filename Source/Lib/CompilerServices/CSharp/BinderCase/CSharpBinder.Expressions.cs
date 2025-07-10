@@ -1313,9 +1313,11 @@ public partial class CSharpBinder
 	/// </summary>
 	public IExpressionNode ParseObjectInitialization(
 		ConstructorInvocationExpressionNode constructorInvocationExpressionNode, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
-	{	
+	{
 		// Consume either 'OpenBraceToken', or 'CommaToken'
 		_ = parserModel.TokenWalker.Consume();
+		
+		// Console.WriteLine($"bvc '{constructorInvocationExpressionNode.ResultTypeReference.ExplicitDefinitionResourceUri.Value}'");
 		
 		if (constructorInvocationExpressionNode.ResultTypeReference == default)
 			constructorInvocationExpressionNode.ResultTypeReference = parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode;

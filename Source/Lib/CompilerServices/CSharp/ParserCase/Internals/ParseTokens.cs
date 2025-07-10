@@ -156,6 +156,7 @@ public static class ParseTokens
 			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
 			{
 				parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = variableDeclarationNode.TypeReference;
+				// Console.WriteLine(variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService));
 			
 				IExpressionNode expression;
 			
