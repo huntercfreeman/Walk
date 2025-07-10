@@ -7,11 +7,6 @@
 @{
 	var syntaxViewModelLocal = SyntaxViewModel;
 	
-	if (TypeReference != default)
-	{
-	    syntaxViewModelLocal.ResourceUri = TypeReference.ExplicitDefinitionResourceUri;
-	}
-	
 	string? prefixText;
 	string? prefixTextCssClass;
 	string? text;
@@ -80,7 +75,16 @@
 	{
 		prefixText = "(reference)";
 		prefixTextCssClass = null;
-		text = syntaxViewModelLocal.GetTextFromTextSpan(TypeReference.TypeIdentifierToken.TextSpan);
+		
+		if (TypeReference.IsImplicit)
+    	{
+    	    syntaxViewModelLocal.ResourceUri = TypeReference.ExplicitDefinitionResourceUri;
+    	    text = syntaxViewModelLocal.GetTextFromTextSpan(TypeReference.ExplicitDefinitionTextSpan);
+    	}
+    	else
+    	{
+    	    text = syntaxViewModelLocal.GetTextFromTextSpan(TypeReference.TypeIdentifierToken.TextSpan);
+    	}
 		
 		if (TypeReference.IsKeywordType)
 			syntaxHighlightingClassCssString = "di_te_keyword";
