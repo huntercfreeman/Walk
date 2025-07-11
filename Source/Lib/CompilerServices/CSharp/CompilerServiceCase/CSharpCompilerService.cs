@@ -1198,56 +1198,63 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     				initialActiveMenuOptionRecordIndex = i;
     		}
     		
-    		MenuRecord menu;
-    		
-    		if (menuOptionList.Count == 0)
-    			menu = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+    		if (menuOptionList.Count == 1)
+    		{
+    		    await menuOptionList[0].OnClickFunc.Invoke();
+    		}
     		else
-    			menu = new MenuRecord(menuOptionList);
-    		
-    		var dropdownRecord = new DropdownRecord(
-    			Key<DropdownRecord>.NewKey(),
-    			cursorDimensions.LeftInPixels,
-    			cursorDimensions.TopInPixels + cursorDimensions.HeightInPixels,
-    			typeof(MenuDisplay),
-    			new Dictionary<string, object?>
-    			{
-    				{
-    					nameof(MenuDisplay.MenuRecord),
-    					menu
-    				},
-    				{
-    					nameof(MenuDisplay.InitialActiveMenuOptionRecordIndex),
-    					initialActiveMenuOptionRecordIndex
-    				}
-    			},
-    			// TODO: this callback when the dropdown closes is suspect.
-    			//       The editContext is supposed to live the lifespan of the
-    			//       Post. But what if the Post finishes before the dropdown is closed?
-    			async () => 
-    			{
-    				// TODO: Even if this '.single or default' to get the main group works it is bad and I am ashamed...
-    				//       ...I'm too tired at the moment, need to make this sensible.
-    				//	   The key is in the IDE project yet its circular reference if I do so, gotta
-    				//       make groups more sensible I'm not sure what to say here I'm super tired and brain checked out.
-    				//       |
-    				//       I ran this and it didn't work. Its for the best that it doesn't.
-    				//	   maybe when I wake up tomorrow I'll realize what im doing here.
-    				var mainEditorGroup = _textEditorService.GroupApi.GetTextEditorGroupState().GroupList.SingleOrDefault();
-    				
-    				if (mainEditorGroup is not null &&
-    					mainEditorGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty)
-    				{
-    					var activeViewModel = _textEditorService.ViewModelApi.GetOrDefault(mainEditorGroup.ActiveViewModelKey);
-    
-    					if (activeViewModel is not null)
-    						await activeViewModel.FocusAsync();
-    				}
-    				
-    				await viewModelModifier.FocusAsync();
-    			});
-    
-            _commonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+    		{
+        		MenuRecord menu;
+        		
+        		if (menuOptionList.Count == 0)
+        			menu = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+        		else
+        			menu = new MenuRecord(menuOptionList);
+        		
+        		var dropdownRecord = new DropdownRecord(
+        			Key<DropdownRecord>.NewKey(),
+        			cursorDimensions.LeftInPixels,
+        			cursorDimensions.TopInPixels + cursorDimensions.HeightInPixels,
+        			typeof(MenuDisplay),
+        			new Dictionary<string, object?>
+        			{
+        				{
+        					nameof(MenuDisplay.MenuRecord),
+        					menu
+        				},
+        				{
+        					nameof(MenuDisplay.InitialActiveMenuOptionRecordIndex),
+        					initialActiveMenuOptionRecordIndex
+        				}
+        			},
+        			// TODO: this callback when the dropdown closes is suspect.
+        			//       The editContext is supposed to live the lifespan of the
+        			//       Post. But what if the Post finishes before the dropdown is closed?
+        			async () => 
+        			{
+        				// TODO: Even if this '.single or default' to get the main group works it is bad and I am ashamed...
+        				//       ...I'm too tired at the moment, need to make this sensible.
+        				//	   The key is in the IDE project yet its circular reference if I do so, gotta
+        				//       make groups more sensible I'm not sure what to say here I'm super tired and brain checked out.
+        				//       |
+        				//       I ran this and it didn't work. Its for the best that it doesn't.
+        				//	   maybe when I wake up tomorrow I'll realize what im doing here.
+        				var mainEditorGroup = _textEditorService.GroupApi.GetTextEditorGroupState().GroupList.SingleOrDefault();
+        				
+        				if (mainEditorGroup is not null &&
+        					mainEditorGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty)
+        				{
+        					var activeViewModel = _textEditorService.ViewModelApi.GetOrDefault(mainEditorGroup.ActiveViewModelKey);
+        
+        					if (activeViewModel is not null)
+        						await activeViewModel.FocusAsync();
+        				}
+        				
+        				await viewModelModifier.FocusAsync();
+        			});
+        
+                _commonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+            }
 		}
     }
     
