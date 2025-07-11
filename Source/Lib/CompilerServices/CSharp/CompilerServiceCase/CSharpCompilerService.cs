@@ -1,8 +1,10 @@
 using System.Text;
 using Walk.Common.RazorLib.Menus.Models;
+using Walk.Common.RazorLib.Menus.Displays;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Options.Models;
+using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Autocompletes.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
@@ -1022,12 +1024,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		
 		string? resourceUriValue = null;
 		var indexInclusiveStart = -1;
+		var indexPartialTypeDefinition = -1;
 		
 		if (definitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 		{
 			var typeDefinitionNode = (TypeDefinitionNode)definitionNode;
 			resourceUriValue = typeDefinitionNode.ResourceUri.Value;
 			indexInclusiveStart = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
+			indexPartialTypeDefinition = typeDefinitionNode.IndexPartialTypeDefinition;
 		}
 		else if (definitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 		{
@@ -1057,27 +1061,143 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		if (resourceUriValue is null || indexInclusiveStart == -1)
 			return;
 		
-		_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
+		if (indexPartialTypeDefinition == -1)
 		{
-			if (category.Value == "CodeSearchService")
-			{
-				await ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func.Invoke(
-					editContext,
-					resourceUriValue,
-					indexInclusiveStart);
-			}
-			else
-			{
-				await _textEditorService.OpenInEditorAsync(
-						editContext,
-						resourceUriValue,
-						true,
-						indexInclusiveStart,
-						category,
-						Key<TextEditorViewModel>.NewKey())
-					.ContinueWith(_ => _textEditorService.ViewModelApi.StopCursorBlinking());
-			}
-		});
+		    _textEditorService.WorkerArbitrary.PostUnique(async editContext =>
+    		{
+    			if (category.Value == "CodeSearchService")
+    			{
+    				await ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func.Invoke(
+    					editContext,
+    					resourceUriValue,
+    					indexInclusiveStart);
+    			}
+    			else
+    			{
+    				await _textEditorService.OpenInEditorAsync(
+    						editContext,
+    						resourceUriValue,
+    						true,
+    						indexInclusiveStart,
+    						category,
+    						Key<TextEditorViewModel>.NewKey())
+    					.ContinueWith(_ => _textEditorService.ViewModelApi.StopCursorBlinking());
+    			}
+    		});
+		}
+		else
+		{
+    		var componentData = viewModelModifier.PersistentState.ComponentData;
+        	if (componentData is null)
+        		return;
+        
+    		var cursorDimensions = await _commonUtilityService.JsRuntimeCommonApi
+    			.MeasureElementById(componentData.PrimaryCursorContentId)
+    			.ConfigureAwait(false);
+    
+    		var resourceAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(modelModifier.PersistentState.ResourceUri.Value, false);
+    		var parentDirectoryAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
+    	
+    		var siblingFileStringList = new List<string>();
+    		
+    		int positionExclusive = indexPartialTypeDefinition;
+            while (positionExclusive < __CSharpBinder.PartialTypeDefinitionList.Count)
+            {
+                if (__CSharpBinder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup == indexPartialTypeDefinition)
+                {
+                    siblingFileStringList.Add(__CSharpBinder.PartialTypeDefinitionList[positionExclusive].ResourceUri.Value);
+                    positionExclusive++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+    		
+    		var menuOptionList = new List<MenuOptionRecord>();
+    		
+    		siblingFileStringList = siblingFileStringList.OrderBy(x => x).ToList();
+    		
+    		var initialActiveMenuOptionRecordIndex = -1;
+    		
+    		for (int i = 0; i < siblingFileStringList.Count; i++)
+    		{
+    			var file = siblingFileStringList[i];
+    			
+    			var siblingAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(file, false);
+    			
+    			menuOptionList.Add(new MenuOptionRecord(
+    				siblingAbsolutePath.NameWithExtension,
+    				MenuOptionKind.Other,
+    				onClickFunc: async () => 
+    				{
+    					_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
+    			    	{
+    			    		await _textEditorService.OpenInEditorAsync(
+    			    			editContext,
+    			                file,
+    							true,
+    							null,
+    							new Category("main"),
+    							Key<TextEditorViewModel>.NewKey());
+    			    	});
+    				}));
+    					
+    			if (siblingAbsolutePath.NameWithExtension == resourceAbsolutePath.NameWithExtension)
+    				initialActiveMenuOptionRecordIndex = i;
+    		}
+    		
+    		MenuRecord menu;
+    		
+    		if (menuOptionList.Count == 0)
+    			menu = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+    		else
+    			menu = new MenuRecord(menuOptionList);
+    		
+    		var dropdownRecord = new DropdownRecord(
+    			Key<DropdownRecord>.NewKey(),
+    			cursorDimensions.LeftInPixels,
+    			cursorDimensions.TopInPixels + cursorDimensions.HeightInPixels,
+    			typeof(MenuDisplay),
+    			new Dictionary<string, object?>
+    			{
+    				{
+    					nameof(MenuDisplay.MenuRecord),
+    					menu
+    				},
+    				{
+    					nameof(MenuDisplay.InitialActiveMenuOptionRecordIndex),
+    					initialActiveMenuOptionRecordIndex
+    				}
+    			},
+    			// TODO: this callback when the dropdown closes is suspect.
+    			//       The editContext is supposed to live the lifespan of the
+    			//       Post. But what if the Post finishes before the dropdown is closed?
+    			async () => 
+    			{
+    				// TODO: Even if this '.single or default' to get the main group works it is bad and I am ashamed...
+    				//       ...I'm too tired at the moment, need to make this sensible.
+    				//	   The key is in the IDE project yet its circular reference if I do so, gotta
+    				//       make groups more sensible I'm not sure what to say here I'm super tired and brain checked out.
+    				//       |
+    				//       I ran this and it didn't work. Its for the best that it doesn't.
+    				//	   maybe when I wake up tomorrow I'll realize what im doing here.
+    				var mainEditorGroup = _textEditorService.GroupApi.GetTextEditorGroupState().GroupList.SingleOrDefault();
+    				
+    				if (mainEditorGroup is not null &&
+    					mainEditorGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty)
+    				{
+    					var activeViewModel = _textEditorService.ViewModelApi.GetOrDefault(mainEditorGroup.ActiveViewModelKey);
+    
+    					if (activeViewModel is not null)
+    						await activeViewModel.FocusAsync();
+    				}
+    				
+    				await viewModelModifier.FocusAsync();
+    			});
+    
+            _commonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		}
     }
     
     /// <summary>

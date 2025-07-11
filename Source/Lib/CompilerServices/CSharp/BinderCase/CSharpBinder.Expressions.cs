@@ -2696,6 +2696,7 @@ public partial class CSharpBinder
 						break;
 					}
 				}
+				// TODO: Nested type definitions needs to be added here.
 			}
 			
 			if (foundDefinitionNode is null)
