@@ -554,9 +554,21 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 								                () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
 			        						break;
 			    						case SyntaxKind.FunctionDefinitionNode:
-			        						var functionDefinitionNode = (FunctionDefinitionNode)member;
+			    						
+			    						    var sourceText = innerCompilationUnit.SourceText;
+			    						
+			    						    var functionDefinitionNode = (FunctionDefinitionNode)member;
+			    						    
+			    						    if (functionDefinitionNode.ResourceUri != innerCompilationUnit.ResourceUri)
+			    						    {
+			    						        if (__CSharpBinder.TryGetCompilationUnit(functionDefinitionNode.ResourceUri, out var functionDefinitionCompilationUnit))
+			    						        {
+			    						            sourceText = functionDefinitionCompilationUnit.SourceText;
+			    						        }
+			    						    }
+			        						
 			        						autocompleteEntryList.Add(new AutocompleteEntry(
-												functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService),
+												functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(sourceText, _textEditorService),
 								                AutocompleteEntryKind.Function,
 								                () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
 			        						break;

@@ -1892,10 +1892,19 @@ public partial class CSharpBinder
                 	        var innerScopeIndexKey = PartialTypeDefinitionList[positionExclusive].ScopeIndexKey;
                 	    
                             query = query.Concat(innerCompilationUnit.NodeList
-                    		    .Where(x => x.Unsafe_ParentIndexKey == innerScopeIndexKey &&
-                        		                (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
-                        		                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
-                        		                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode))
+                    		    .Where(x =>
+                		        {
+                		            if (x.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+                		            {
+                		                var functionDefinitionNode = (FunctionDefinitionNode)x;
+                		                Console.WriteLine(functionDefinitionNode.ResourceUri.Value);
+                		            }
+                		        
+                		            return x.Unsafe_ParentIndexKey == innerScopeIndexKey &&
+                		                (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
+                		                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+                		                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode);
+        		                })
                     		    .Select(x => (ISyntaxNode)x));
                         }
                     }
