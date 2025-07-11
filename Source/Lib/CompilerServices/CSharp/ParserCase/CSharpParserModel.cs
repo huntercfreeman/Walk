@@ -80,6 +80,8 @@ public struct CSharpParserModel
     /// CSharpStatementBuilder has a 'ParseChildScopeStack' for any expression-codeblocks.
     /// For example, when you define a Type, that is a statement-codeblock.
     /// When you write a lambda expression such as () => {}, I view this as an expression-codeblock.
+    /// Prior to closing a statement-codeblock, you must check whether CSharpParserModel.ParseChildScopeStack has a child that needs to be parsed.
+    /// Prior to closing an expression-codeblock, you must check whether CSharpStatementBuilder.ParseChildScopeStack has a child that needs to be parsed.
 	/// </summary>
     public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> ParseChildScopeStack { get; }
     
