@@ -67,7 +67,7 @@ public partial class CSharpBinder
 		EmptyExpressionNode.Empty);
     
     public List<ISyntax> CSharpStatementBuilder_ChildList { get; } = new();
-    public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> CSharpStatementBuilder_ParseChildScopeStack { get; } = new();
+    public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> CSharpStatementBuilder_ParseLambdaStatementScopeStack { get; } = new();
     
     public TextEditorService TextEditorService { get; set; }
     
