@@ -1877,6 +1877,38 @@ public partial class CSharpBinder
                 x => x.VariableDeclarationNode));
         }
         
+        if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
+        {
+            int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
+            while (positionExclusive < PartialTypeDefinitionList.Count)
+            {
+                if (PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
+                {
+                    if (PartialTypeDefinitionList[positionExclusive].ResourceUri != compilationUnit.ResourceUri)
+                    {
+                        if (PartialTypeDefinitionList[positionExclusive].ScopeIndexKey != -1 &&
+                		    _compilationUnitMap.TryGetValue(PartialTypeDefinitionList[positionExclusive].ResourceUri, out var innerCompilationUnit))
+                	    {
+                	        var innerScopeIndexKey = PartialTypeDefinitionList[positionExclusive].ScopeIndexKey;
+                	    
+                            query = query.Concat(innerCompilationUnit.NodeList
+                    		    .Where(x => x.Unsafe_ParentIndexKey == innerScopeIndexKey &&
+                        		                (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
+                        		                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+                        		                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode))
+                    		    .Select(x => (ISyntaxNode)x));
+                        }
+                    }
+                    
+                    positionExclusive++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+        
         return query;
 	}
 	
