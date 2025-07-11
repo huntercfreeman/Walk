@@ -837,6 +837,41 @@ public class ParseDefaultKeywords
 			// ,referenceHashSet: new()
 			);
 
+        if (typeDefinitionNode.HasPartialModifier)
+        {
+            if (parserModel.Binder.TryGetTypeDefinitionHierarchically(
+                    compilationUnit,
+                    parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                    identifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService),
+                    out TypeDefinitionNode innerTypeDefinitionNode))
+            {
+                typeDefinitionNode.IndexPartialTypeDefinition = innerTypeDefinitionNode.IndexPartialTypeDefinition;
+                
+                int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
+                while (positionExclusive < parserModel.Binder.PartialTypeDefinitionList.Count)
+                {
+                    if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
+                    {
+                        if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri == compilationUnit.ResourceUri)
+                        {
+                            var partialTypeDefinitionEntry = parserModel.Binder.PartialTypeDefinitionList[positionExclusive];
+                            partialTypeDefinitionEntry.ScopeIndexKey = -1;
+                            parserModel.Binder.PartialTypeDefinitionList[positionExclusive] = partialTypeDefinitionEntry;
+                            break;
+                        }
+                        else
+                        {
+                            positionExclusive++;
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        
         parserModel.Binder.BindTypeDefinitionNode(typeDefinitionNode, compilationUnit, ref parserModel);
         parserModel.Binder.BindTypeIdentifier(identifierToken, compilationUnit, ref parserModel);
         
@@ -902,6 +937,79 @@ public class ParseDefaultKeywords
     	
     	if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
 			parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
+    
+        if (typeDefinitionNode.HasPartialModifier)
+            HandlePartialTypeDefinition(typeDefinitionNode, compilationUnit, ref parserModel);
+    }
+    
+    public static void HandlePartialTypeDefinition(TypeDefinitionNode typeDefinitionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    {
+        var wroteToExistingSlot = false;
+    
+        int indexForInsertion;
+    
+        if (typeDefinitionNode.IndexPartialTypeDefinition == -1)
+        {
+            typeDefinitionNode.IndexPartialTypeDefinition = parserModel.Binder.PartialTypeDefinitionList.Count;
+            indexForInsertion = typeDefinitionNode.IndexPartialTypeDefinition;
+        }
+        else
+        {
+            typeDefinitionNode.IndexPartialTypeDefinition = typeDefinitionNode.IndexPartialTypeDefinition;
+        
+            int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
+            while (positionExclusive < parserModel.Binder.PartialTypeDefinitionList.Count)
+            {
+                if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
+                {
+                    if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri == compilationUnit.ResourceUri)
+                    {
+                        var partialTypeDefinitionEntry = parserModel.Binder.PartialTypeDefinitionList[positionExclusive];
+                        partialTypeDefinitionEntry.ScopeIndexKey = typeDefinitionNode.Unsafe_SelfIndexKey;
+                        parserModel.Binder.PartialTypeDefinitionList[positionExclusive] = partialTypeDefinitionEntry;
+                        wroteToExistingSlot = true;
+                        break;
+                    }
+                    else
+                    {
+                        positionExclusive++;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+            
+            indexForInsertion = positionExclusive;
+        }
+        
+        if (!wroteToExistingSlot)
+        {
+            parserModel.Binder.PartialTypeDefinitionList.Insert(
+                indexForInsertion,
+                new PartialTypeDefinitionEntry(
+                    typeDefinitionNode.IndexPartialTypeDefinition,
+                    typeDefinitionNode.ResourceUri,
+                    typeDefinitionNode.Unsafe_SelfIndexKey));
+        }
+        
+        Console.WriteLine();
+        Console.WriteLine("========");
+        
+        foreach (var entry in parserModel.Binder.PartialTypeDefinitionList)
+        {
+            Console.Write($"isg:{entry.IndexStartGroup}");
+            Console.Write(", ");
+            Console.Write($"sik:{entry.ScopeIndexKey}");
+            Console.Write(", ");
+            Console.Write($"ruv:{entry.ResourceUri.Value}");
+            Console.Write(",");
+            Console.WriteLine();
+        }
+        
+        Console.WriteLine("========");
+        Console.WriteLine();
     }
 
     public static void HandleClassTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)

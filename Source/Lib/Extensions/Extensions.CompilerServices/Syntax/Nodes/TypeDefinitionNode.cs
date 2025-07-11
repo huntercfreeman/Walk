@@ -50,7 +50,9 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	private TypeReference _toTypeReferenceResult;
 
 	public AccessModifierKind AccessModifierKind { get; }
+	/// <summary>TODO: Use 'IndexPartialTypeDefinition != -1' to signify this bool.</summary>
 	public bool HasPartialModifier { get; }
+	public int IndexPartialTypeDefinition { get; set; } = -1;
 	public StorageModifierKind StorageModifierKind { get; }
 	/// <summary>
 	/// Given: 'public class Person { /* class definition here */ }'<br/>
