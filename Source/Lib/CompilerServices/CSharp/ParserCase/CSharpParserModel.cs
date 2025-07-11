@@ -76,9 +76,10 @@ public struct CSharpParserModel
     public CSharpStatementBuilder StatementBuilder { get; set; }
     
     /// <summary>
-	/// TODO: Measure the cost of 'Peek(...)', 'TryPeek(...)' since now...
-	/// ...this is a value tuple and the dequeue alone does not mean success,
-	/// you have to peek first to see if the object references are equal.
+	/// CSharpParserModel has a 'ParseChildScopeStack' for any statement-codeblocks.
+    /// CSharpStatementBuilder has a 'ParseChildScopeStack' for any expression-codeblocks.
+    /// For example, when you define a Type, that is a statement-codeblock.
+    /// When you write a lambda expression such as () => {}, I view this as an expression-codeblock.
 	/// </summary>
     public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> ParseChildScopeStack { get; }
     
