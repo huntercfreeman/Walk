@@ -1173,13 +1173,24 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     				
     					_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
     			    	{
-    			    		await _textEditorService.OpenInEditorAsync(
-    			    			editContext,
-    			                file,
-    							true,
-    							positionIndex,
-    							new Category("main"),
-    							Key<TextEditorViewModel>.NewKey());
+    			    		if (category.Value == "CodeSearchService")
+                			{
+                				await ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func.Invoke(
+                					editContext,
+                					file,
+                					positionIndex);
+                			}
+                			else
+                			{
+                				await _textEditorService.OpenInEditorAsync(
+                						editContext,
+                						file,
+                						true,
+                						positionIndex,
+                						category,
+                						Key<TextEditorViewModel>.NewKey())
+                					.ContinueWith(_ => _textEditorService.ViewModelApi.StopCursorBlinking());
+                			}
     			    	});
     				}));
     					
