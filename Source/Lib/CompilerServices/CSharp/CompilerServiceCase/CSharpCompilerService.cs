@@ -799,7 +799,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                     };
 
-                    viewModelModifier.PersistentState.TooltipModel = new Walk.Common.RazorLib.Tooltips.Models.TooltipModel<(TextEditorService TextEditorService, Key<TextEditorViewModel> ViewModelKey)>(
+                    viewModelModifier.PersistentState.TooltipModel = new Walk.Common.RazorLib.Tooltips.Models.TooltipModel<(TextEditorService TextEditorService, Key<TextEditorViewModel> ViewModelKey, int PositionIndex)>(
 	                    modelModifier.PersistentState.CompilerService.DiagnosticRendererType ?? textEditorComponentRenderers.DiagnosticRendererType,
 	                    parameterMap,
 	                    clientX,
@@ -807,7 +807,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	                    cssClassString: null,
                         componentData.ContinueRenderingTooltipAsync,
                         Walk.TextEditor.RazorLib.Commands.Models.Defaults.TextEditorCommandDefaultFunctions.OnWheel,
-                        (_textEditorService, viewModelModifier.PersistentState.ViewModelKey));
+                        (_textEditorService, viewModelModifier.PersistentState.ViewModelKey, cursorPositionIndex));
                     componentData.TextEditorViewModelSlimDisplay.CommonUtilityService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
                 }
             }
@@ -834,7 +834,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                     };
 
-                    viewModelModifier.PersistentState.TooltipModel = new Walk.Common.RazorLib.Tooltips.Models.TooltipModel<(TextEditorService TextEditorService, Key<TextEditorViewModel> ViewModelKey)>(
+                    viewModelModifier.PersistentState.TooltipModel = new Walk.Common.RazorLib.Tooltips.Models.TooltipModel<(TextEditorService TextEditorService, Key<TextEditorViewModel> ViewModelKey, int PositionIndex)>(
                         typeof(Walk.Extensions.CompilerServices.Displays.SymbolDisplay),
                         parameters,
                         clientX,
@@ -842,7 +842,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         cssClassString: null,
                         componentData.ContinueRenderingTooltipAsync,
                         Walk.TextEditor.RazorLib.Commands.Models.Defaults.TextEditorCommandDefaultFunctions.OnWheel,
-                        (_textEditorService, viewModelModifier.PersistentState.ViewModelKey));
+                        (_textEditorService, viewModelModifier.PersistentState.ViewModelKey, cursorPositionIndex));
                     componentData.TextEditorViewModelSlimDisplay.CommonUtilityService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
                 }
             }

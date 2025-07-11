@@ -106,23 +106,22 @@ public struct SyntaxViewModel
 		var resourceUri = ResourceUri;
 		var compilerService = CompilerService;
 		
+		var tooltipState = textEditorService.CommonUtilityService.GetTooltipState();
+		
+		if (tooltipState.TooltipModel.ItemUntyped is not ValueTuple<TextEditorService, Key<TextEditorViewModel>, int> tuple)
+            return Task.CompletedTask;
+		
 		textEditorService.WorkerArbitrary.PostUnique(editContext =>
 		{
-		    var model = editContext.GetModelModifier(resourceUri);
-		    
-		    var tooltipState = textEditorService.CommonUtilityService.GetTooltipState();
-		    
-		    if (tooltipState.TooltipModel.ItemUntyped is not ValueTuple<TextEditorService, Key<TextEditorViewModel>> tuple)
-                return ValueTask.CompletedTask;
-            
             var viewModel = editContext.GetViewModelModifier(tuple.Item2);
+            var model = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
 		    
 		    return compilerService.GoToDefinition(
                 editContext,
                 model,
                 viewModel,
                 new Category("main"),
-        		model.GetPositionIndex(viewModel));
+        		tuple.Item3);
 		});
 		
 		return Task.CompletedTask;

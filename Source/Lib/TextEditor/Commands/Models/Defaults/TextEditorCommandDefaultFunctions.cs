@@ -1408,7 +1408,7 @@ public class TextEditorCommandDefaultFunctions
     {
         // (TextEditorService TextEditorService, Key<TextEditorViewModel> ViewModelKey) tuple
         // ValueTuple<TextEditorService, Key<TextEditorViewModel>> tuple
-        if (tooltipModel.ItemUntyped is not ValueTuple<TextEditorService, Key<TextEditorViewModel>> tuple)
+        if (tooltipModel.ItemUntyped is not ValueTuple<TextEditorService, Key<TextEditorViewModel>, int> tuple)
             return Task.CompletedTask;
         
         tuple.Item1.WorkerArbitrary.PostUnique(editContext =>
