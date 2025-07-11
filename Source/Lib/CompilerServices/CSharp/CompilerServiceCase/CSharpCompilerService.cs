@@ -529,10 +529,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				        
 				        if (innerFoundSymbol != default)
 				        {
-				            // Console.WriteLine("innerFoundSymbol");
-				            // Console.WriteLine(innerFoundSymbol.TextSpan.Text);
-				            // Console.WriteLine(innerFoundSymbol.TextSpan.Text);
-				        
 				        	var maybeTypeDefinitionNode = __CSharpBinder.GetDefinitionNode(
 				        	    innerCompilationUnit, innerFoundSymbol.TextSpan, syntaxKind: innerFoundSymbol.SyntaxKind, symbol: innerFoundSymbol);
 							
@@ -547,24 +543,43 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			        				switch (member.SyntaxKind)
 			        				{
 			        					case SyntaxKind.VariableDeclarationNode:
+			        					{
+			        					    string sourceText;
 			        						var variableDeclarationNode = (VariableDeclarationNode)member;
+			        						
+			        						if (variableDeclarationNode.ResourceUri != innerCompilationUnit.ResourceUri)
+			    						    {
+			    						        if (__CSharpBinder.TryGetCompilationUnit(variableDeclarationNode.ResourceUri, out var variableDeclarationCompilationUnit))
+			    						            sourceText = variableDeclarationCompilationUnit.SourceText;
+		    						            else
+		    						                sourceText = innerCompilationUnit.SourceText;
+			    						    }
+			    						    else
+			    						    {
+			    						        sourceText = innerCompilationUnit.SourceText;
+			    						    }
+			        						
 			        						autocompleteEntryList.Add(new AutocompleteEntry(
-												variableDeclarationNode.IdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService),
+												variableDeclarationNode.IdentifierToken.TextSpan.GetText(sourceText, _textEditorService),
 								                AutocompleteEntryKind.Variable,
-								                () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+								                () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.GetText(sourceText, _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
 			        						break;
+			    						}
 			    						case SyntaxKind.FunctionDefinitionNode:
-			    						
-			    						    var sourceText = innerCompilationUnit.SourceText;
-			    						
+			    						{
+			    						    string sourceText;
 			    						    var functionDefinitionNode = (FunctionDefinitionNode)member;
 			    						    
 			    						    if (functionDefinitionNode.ResourceUri != innerCompilationUnit.ResourceUri)
 			    						    {
 			    						        if (__CSharpBinder.TryGetCompilationUnit(functionDefinitionNode.ResourceUri, out var functionDefinitionCompilationUnit))
-			    						        {
 			    						            sourceText = functionDefinitionCompilationUnit.SourceText;
-			    						        }
+		    						            else
+		    						                sourceText = innerCompilationUnit.SourceText;
+			    						    }
+			    						    else
+			    						    {
+			    						        sourceText = innerCompilationUnit.SourceText;
 			    						    }
 			        						
 			        						autocompleteEntryList.Add(new AutocompleteEntry(
@@ -572,13 +587,16 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 								                AutocompleteEntryKind.Function,
 								                () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(sourceText, _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
 			        						break;
+		        						}
 		        						case SyntaxKind.TypeDefinitionNode:
+		        						{
 			        						var innerTypeDefinitionNode = (TypeDefinitionNode)member;
 			        						autocompleteEntryList.Add(new AutocompleteEntry(
 												innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService),
 								                AutocompleteEntryKind.Type,
 								                () => MemberAutocomplete(innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
 			        						break;
+			        				    }
 			        				}
 			        			}
 							}
