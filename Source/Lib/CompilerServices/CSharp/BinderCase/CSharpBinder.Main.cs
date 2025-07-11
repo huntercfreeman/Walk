@@ -1765,14 +1765,13 @@ public partial class CSharpBinder
 	
 	public string GetIdentifierText(ISyntaxNode node, CSharpCompilationUnit compilationUnit)
 	{
+	    string sourceText;
+	
 		switch (node.SyntaxKind)
 		{
 		    case SyntaxKind.TypeDefinitionNode:
 		    {
 		        var typeDefinitionNode = (TypeDefinitionNode)node;
-    	
-        	    string sourceText;
-        	    
         	    if (typeDefinitionNode.ResourceUri == compilationUnit.ResourceUri)
         	    {
         	        sourceText = compilationUnit.SourceText;
@@ -1784,28 +1783,71 @@ public partial class CSharpBinder
         	        else
     	                return string.Empty;
         	    }
-        	    
 				return typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(sourceText, TextEditorService);
 			}
 			case SyntaxKind.TypeClauseNode:
 			{
 				var typeClauseNode = (TypeClauseNode)node;
-				return typeClauseNode.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+        	    if (typeClauseNode.ExplicitDefinitionResourceUri == compilationUnit.ResourceUri)
+        	    {
+        	        sourceText = compilationUnit.SourceText;
+        	    }
+        	    else
+        	    {
+        	        if (TryGetCompilationUnit(typeClauseNode.ExplicitDefinitionResourceUri, out var innerCompilationUnit))
+        	            sourceText = innerCompilationUnit.SourceText;
+        	        else
+    	                return string.Empty;
+        	    }
+				return typeClauseNode.TypeIdentifierToken.TextSpan.GetText(sourceText, TextEditorService);
 			}
 			case SyntaxKind.FunctionDefinitionNode:
 			{
 				var functionDefinitionNode = (FunctionDefinitionNode)node;
-				return functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+				if (functionDefinitionNode.ResourceUri == compilationUnit.ResourceUri)
+        	    {
+        	        sourceText = compilationUnit.SourceText;
+        	    }
+        	    else
+        	    {
+        	        if (TryGetCompilationUnit(functionDefinitionNode.ResourceUri, out var innerCompilationUnit))
+        	            sourceText = innerCompilationUnit.SourceText;
+        	        else
+    	                return string.Empty;
+        	    }
+				return functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(sourceText, TextEditorService);
 			}
 			case SyntaxKind.FunctionInvocationNode:
 			{
 				var functionInvocationNode = (FunctionInvocationNode)node;
-				return functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+				if (functionInvocationNode.ResourceUri == compilationUnit.ResourceUri)
+        	    {
+        	        sourceText = compilationUnit.SourceText;
+        	    }
+        	    else
+        	    {
+        	        if (TryGetCompilationUnit(functionInvocationNode.ResourceUri, out var innerCompilationUnit))
+        	            sourceText = innerCompilationUnit.SourceText;
+        	        else
+    	                return string.Empty;
+        	    }
+				return functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.GetText(sourceText, TextEditorService);
 			}
 			case SyntaxKind.VariableDeclarationNode:
 			{
 				var variableDeclarationNode = (VariableDeclarationNode)node;
-				return variableDeclarationNode.IdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+				if (variableDeclarationNode.ResourceUri == compilationUnit.ResourceUri)
+        	    {
+        	        sourceText = compilationUnit.SourceText;
+        	    }
+        	    else
+        	    {
+        	        if (TryGetCompilationUnit(variableDeclarationNode.ResourceUri, out var innerCompilationUnit))
+        	            sourceText = innerCompilationUnit.SourceText;
+        	        else
+    	                return string.Empty;
+        	    }
+				return variableDeclarationNode.IdentifierToken.TextSpan.GetText(sourceText, TextEditorService);
 			}
 			case SyntaxKind.VariableReferenceNode:
 			{
