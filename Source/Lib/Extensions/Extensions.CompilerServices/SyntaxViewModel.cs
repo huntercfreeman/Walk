@@ -1,4 +1,5 @@
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
@@ -99,60 +100,30 @@ public struct SyntaxViewModel
 	
 	public Task HandleOnClick(TextEditorService textEditorService, SyntaxKind syntaxKindExpected)
 	{
-		if (DefinitionNode is null ||
-			DefinitionNode.SyntaxKind != syntaxKindExpected)
-		{
-			return Task.CompletedTask;
-		}
-		
-		string? resourceUriValue = null;
-		var indexInclusiveStart = -1;
-		
-		if (DefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-		{
-			var typeDefinitionNode = (TypeDefinitionNode)DefinitionNode;
-			resourceUriValue = typeDefinitionNode.ResourceUri.Value;
-			indexInclusiveStart = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
-		}
-		else if (DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-		{
-			var variableDeclarationNode = (VariableDeclarationNode)DefinitionNode;
-			resourceUriValue = variableDeclarationNode.ResourceUri.Value;
-			indexInclusiveStart = variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex;
-		}
-		else if (DefinitionNode.SyntaxKind == SyntaxKind.NamespaceStatementNode)
-		{
-			var namespaceStatementNode = (NamespaceStatementNode)DefinitionNode;
-			resourceUriValue = namespaceStatementNode.ResourceUri.Value;
-			indexInclusiveStart = namespaceStatementNode.IdentifierToken.TextSpan.StartInclusiveIndex;
-		}
-		else if (DefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
-		{
-			var functionDefinitionNode = (FunctionDefinitionNode)DefinitionNode;
-			resourceUriValue = functionDefinitionNode.ResourceUri.Value;
-			indexInclusiveStart = functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex;
-		}
-		else if (DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
-		{
-			var constructorDefinitionNode = (ConstructorDefinitionNode)DefinitionNode;
-			resourceUriValue = constructorDefinitionNode.ResourceUri.Value;
-			indexInclusiveStart = constructorDefinitionNode.FunctionIdentifier.TextSpan.StartInclusiveIndex;
-		}
-		
-		if (resourceUriValue is null || indexInclusiveStart == -1)
+		if (DefinitionNode is null || DefinitionNode.SyntaxKind != syntaxKindExpected)
 			return Task.CompletedTask;
 		
-		textEditorService.WorkerArbitrary.PostUnique(async editContext =>
+		var resourceUri = ResourceUri;
+		var compilerService = CompilerService;
+		
+		textEditorService.WorkerArbitrary.PostUnique(editContext =>
 		{
-			await textEditorService.OpenInEditorAsync(
-					editContext,
-					resourceUriValue,
-					true,
-					indexInclusiveStart,
-					new Category("main"),
-					Key<TextEditorViewModel>.NewKey())
-				.ContinueWith(_ => textEditorService.ViewModelApi.StopCursorBlinking());
+		    var model = editContext.GetModelModifier(resourceUri);
+		    
+		    var tooltipState = textEditorService.CommonUtilityService.GetTooltipState();
+		    
+		    if (tooltipState.TooltipModel.ItemUntyped is not ValueTuple<TextEditorService, Key<TextEditorViewModel>> tuple)
+                return ValueTask.CompletedTask;
+            
+            var viewModel = editContext.GetViewModelModifier(tuple.Item2);
+		    
+		    return compilerService.GoToDefinition(
+                editContext,
+                model,
+                viewModel,
+                new Category("main"));
 		});
+		
 		return Task.CompletedTask;
 	}
 	

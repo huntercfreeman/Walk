@@ -1020,8 +1020,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		if (definitionNode is null)
 			return;
 			
-		// TODO: Do not duplicate this code from SyntaxViewModel.HandleOnClick(...)
-		
 		string? resourceUriValue = null;
 		var indexInclusiveStart = -1;
 		var indexPartialTypeDefinition = -1;
