@@ -411,7 +411,8 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        		editContext,
 				        modelModifier,
 				        viewModel,
-        				new Category("CodeSearchService"));
+        				new Category("CodeSearchService"),
+        				modelModifier.GetPositionIndex(viewModel));
 			        break;
 				default:
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
@@ -493,7 +494,8 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			        		editContext,
 					        modelModifier,
 					        viewModel,
-	        				new Category("main"));
+	        				new Category("main"),
+        				    modelModifier.GetPositionIndex(viewModel));
 			        }
 			        break;
 		        case "F10":

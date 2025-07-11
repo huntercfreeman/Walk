@@ -108,7 +108,8 @@ public interface ICompilerService
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModelModifier,
-        Category category);
+        Category category,
+        int positionIndex);
 
 	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting);
 	

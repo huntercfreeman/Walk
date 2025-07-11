@@ -988,9 +988,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModelModifier,
-        Category category)
+        Category category,
+        int positionIndex)
     {
-        var cursorPositionIndex = modelModifier.GetPositionIndex(viewModelModifier);
+        var cursorPositionIndex = positionIndex;
 
         var foundMatch = false;
         

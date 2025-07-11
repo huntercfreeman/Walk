@@ -913,13 +913,15 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
-        Category category)
+        Category category,
+        int positionIndex)
     {
     	modelModifier.PersistentState.CompilerService.GoToDefinition(
 			editContext,
 	        modelModifier,
 	        viewModel,
-	        category);
+	        category,
+            positionIndex);
     }
 
     public static void ShowFindAllDialog(

@@ -121,7 +121,8 @@ public struct SyntaxViewModel
                 editContext,
                 model,
                 viewModel,
-                new Category("main"));
+                new Category("main"),
+        		model.GetPositionIndex(viewModel));
 		});
 		
 		return Task.CompletedTask;

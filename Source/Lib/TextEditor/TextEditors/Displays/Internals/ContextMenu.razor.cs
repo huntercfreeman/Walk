@@ -338,7 +338,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             	editContext,
             	modelModifier,
             	viewModelModifier,
-            	new Category("main"));
+            	new Category("main"),
+			    modelModifier.GetPositionIndex(viewModelModifier));
         	return ValueTask.CompletedTask;
         });
         return Task.CompletedTask;
@@ -364,7 +365,8 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             	editContext,
             	modelModifier,
             	viewModelModifier,
-            	new Category("CodeSearchService"));
+            	new Category("CodeSearchService"),
+			    modelModifier.GetPositionIndex(viewModelModifier));
         	return ValueTask.CompletedTask;
         });
         return Task.CompletedTask;

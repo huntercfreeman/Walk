@@ -174,7 +174,8 @@ public sealed class CSharpProjectCompilerService : ICompilerService
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModelModifier,
-        Category category)
+        Category category,
+        int positionIndex)
     {
     	return ValueTask.CompletedTask;
     }
