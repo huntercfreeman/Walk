@@ -2649,7 +2649,21 @@ public partial class CSharpBinder
 					if (!variableDeclarationNode.IdentifierToken.ConstructorWasInvoked)
 						continue;
 					
-					if (variableDeclarationNode.IdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, parserModel.Binder.TextEditorService) == memberIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService))
+					string sourceText;
+					
+					if (variableDeclarationNode.ResourceUri != compilationUnit.ResourceUri)
+					{
+					    if (TryGetCompilationUnit(variableDeclarationNode.ResourceUri, out var variableDeclarationCompilationUnit))
+					        sourceText = variableDeclarationCompilationUnit.SourceText;
+					    else
+					        sourceText = innerCompilationUnit.SourceText;
+					}
+					else
+					{
+					    sourceText = innerCompilationUnit.SourceText;
+					}
+					
+					if (variableDeclarationNode.IdentifierToken.TextSpan.GetText(sourceText, parserModel.Binder.TextEditorService) == memberIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService))
 					{
 						foundDefinitionNode = variableDeclarationNode;
 						break;
@@ -2662,12 +2676,27 @@ public partial class CSharpBinder
 					if (!functionDefinitionNode.FunctionIdentifierToken.ConstructorWasInvoked)
 						continue;
 					
-					if (functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, parserModel.Binder.TextEditorService) == memberIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService))
+					string sourceText;
+					
+					if (functionDefinitionNode.ResourceUri != compilationUnit.ResourceUri)
+					{
+					    if (TryGetCompilationUnit(functionDefinitionNode.ResourceUri, out var functionDefinitionCompilationUnit))
+					        sourceText = functionDefinitionCompilationUnit.SourceText;
+					    else
+					        sourceText = innerCompilationUnit.SourceText;
+					}
+					else
+					{
+					    sourceText = innerCompilationUnit.SourceText;
+					}
+					
+					if (functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(sourceText, parserModel.Binder.TextEditorService) == memberIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService))
 					{
 						foundDefinitionNode = functionDefinitionNode;
 						break;
 					}
 				}
+				// TODO: Nested type definitions needs to be added here.
 			}
 			
 			if (foundDefinitionNode is null)

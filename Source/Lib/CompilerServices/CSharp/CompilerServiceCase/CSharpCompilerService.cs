@@ -1,8 +1,11 @@
 using System.Text;
 using Walk.Common.RazorLib.Menus.Models;
+using Walk.Common.RazorLib.Menus.Displays;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Options.Models;
+using Walk.Common.RazorLib.Dropdowns.Models;
+using Walk.Common.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Autocompletes.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
@@ -529,10 +532,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				        
 				        if (innerFoundSymbol != default)
 				        {
-				            // Console.WriteLine("innerFoundSymbol");
-				            // Console.WriteLine(innerFoundSymbol.TextSpan.Text);
-				            // Console.WriteLine(innerFoundSymbol.TextSpan.Text);
-				        
 				        	var maybeTypeDefinitionNode = __CSharpBinder.GetDefinitionNode(
 				        	    innerCompilationUnit, innerFoundSymbol.TextSpan, syntaxKind: innerFoundSymbol.SyntaxKind, symbol: innerFoundSymbol);
 							
@@ -547,26 +546,60 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			        				switch (member.SyntaxKind)
 			        				{
 			        					case SyntaxKind.VariableDeclarationNode:
+			        					{
+			        					    string sourceText;
 			        						var variableDeclarationNode = (VariableDeclarationNode)member;
+			        						
+			        						if (variableDeclarationNode.ResourceUri != innerCompilationUnit.ResourceUri)
+			    						    {
+			    						        if (__CSharpBinder.TryGetCompilationUnit(variableDeclarationNode.ResourceUri, out var variableDeclarationCompilationUnit))
+			    						            sourceText = variableDeclarationCompilationUnit.SourceText;
+		    						            else
+		    						                sourceText = innerCompilationUnit.SourceText;
+			    						    }
+			    						    else
+			    						    {
+			    						        sourceText = innerCompilationUnit.SourceText;
+			    						    }
+			        						
 			        						autocompleteEntryList.Add(new AutocompleteEntry(
-												variableDeclarationNode.IdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService),
+												variableDeclarationNode.IdentifierToken.TextSpan.GetText(sourceText, _textEditorService),
 								                AutocompleteEntryKind.Variable,
-								                () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+								                () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.GetText(sourceText, _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
 			        						break;
+			    						}
 			    						case SyntaxKind.FunctionDefinitionNode:
-			        						var functionDefinitionNode = (FunctionDefinitionNode)member;
+			    						{
+			    						    string sourceText;
+			    						    var functionDefinitionNode = (FunctionDefinitionNode)member;
+			    						    
+			    						    if (functionDefinitionNode.ResourceUri != innerCompilationUnit.ResourceUri)
+			    						    {
+			    						        if (__CSharpBinder.TryGetCompilationUnit(functionDefinitionNode.ResourceUri, out var functionDefinitionCompilationUnit))
+			    						            sourceText = functionDefinitionCompilationUnit.SourceText;
+		    						            else
+		    						                sourceText = innerCompilationUnit.SourceText;
+			    						    }
+			    						    else
+			    						    {
+			    						        sourceText = innerCompilationUnit.SourceText;
+			    						    }
+			        						
 			        						autocompleteEntryList.Add(new AutocompleteEntry(
-												functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService),
+												functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(sourceText, _textEditorService),
 								                AutocompleteEntryKind.Function,
-								                () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+								                () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(sourceText, _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
 			        						break;
+		        						}
 		        						case SyntaxKind.TypeDefinitionNode:
+		        						{
 			        						var innerTypeDefinitionNode = (TypeDefinitionNode)member;
 			        						autocompleteEntryList.Add(new AutocompleteEntry(
 												innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService),
 								                AutocompleteEntryKind.Type,
 								                () => MemberAutocomplete(innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
 			        						break;
+			        				    }
 			        				}
 			        			}
 							}
@@ -767,7 +800,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                     };
 
-                    viewModelModifier.PersistentState.TooltipModel = new Walk.Common.RazorLib.Tooltips.Models.TooltipModel<(TextEditorService TextEditorService, Key<TextEditorViewModel> ViewModelKey)>(
+                    viewModelModifier.PersistentState.TooltipModel = new Walk.Common.RazorLib.Tooltips.Models.TooltipModel<(TextEditorService TextEditorService, Key<TextEditorViewModel> ViewModelKey, int PositionIndex)>(
 	                    modelModifier.PersistentState.CompilerService.DiagnosticRendererType ?? textEditorComponentRenderers.DiagnosticRendererType,
 	                    parameterMap,
 	                    clientX,
@@ -775,7 +808,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	                    cssClassString: null,
                         componentData.ContinueRenderingTooltipAsync,
                         Walk.TextEditor.RazorLib.Commands.Models.Defaults.TextEditorCommandDefaultFunctions.OnWheel,
-                        (_textEditorService, viewModelModifier.PersistentState.ViewModelKey));
+                        (_textEditorService, viewModelModifier.PersistentState.ViewModelKey, cursorPositionIndex));
                     componentData.TextEditorViewModelSlimDisplay.CommonUtilityService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
                 }
             }
@@ -802,7 +835,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         }
                     };
 
-                    viewModelModifier.PersistentState.TooltipModel = new Walk.Common.RazorLib.Tooltips.Models.TooltipModel<(TextEditorService TextEditorService, Key<TextEditorViewModel> ViewModelKey)>(
+                    viewModelModifier.PersistentState.TooltipModel = new Walk.Common.RazorLib.Tooltips.Models.TooltipModel<(TextEditorService TextEditorService, Key<TextEditorViewModel> ViewModelKey, int PositionIndex)>(
                         typeof(Walk.Extensions.CompilerServices.Displays.SymbolDisplay),
                         parameters,
                         clientX,
@@ -810,7 +843,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         cssClassString: null,
                         componentData.ContinueRenderingTooltipAsync,
                         Walk.TextEditor.RazorLib.Commands.Models.Defaults.TextEditorCommandDefaultFunctions.OnWheel,
-                        (_textEditorService, viewModelModifier.PersistentState.ViewModelKey));
+                        (_textEditorService, viewModelModifier.PersistentState.ViewModelKey, cursorPositionIndex));
                     componentData.TextEditorViewModelSlimDisplay.CommonUtilityService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
                 }
             }
@@ -956,9 +989,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModelModifier,
-        Category category)
+        Category category,
+        int positionIndex)
     {
-        var cursorPositionIndex = modelModifier.GetPositionIndex(viewModelModifier);
+        var cursorPositionIndex = positionIndex;
 
         var foundMatch = false;
         
@@ -988,16 +1022,16 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		if (definitionNode is null)
 			return;
 			
-		// TODO: Do not duplicate this code from SyntaxViewModel.HandleOnClick(...)
-		
 		string? resourceUriValue = null;
 		var indexInclusiveStart = -1;
+		var indexPartialTypeDefinition = -1;
 		
 		if (definitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 		{
 			var typeDefinitionNode = (TypeDefinitionNode)definitionNode;
 			resourceUriValue = typeDefinitionNode.ResourceUri.Value;
 			indexInclusiveStart = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
+			indexPartialTypeDefinition = typeDefinitionNode.IndexPartialTypeDefinition;
 		}
 		else if (definitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 		{
@@ -1027,27 +1061,201 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		if (resourceUriValue is null || indexInclusiveStart == -1)
 			return;
 		
-		_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
+		if (indexPartialTypeDefinition == -1)
 		{
-			if (category.Value == "CodeSearchService")
-			{
-				await ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func.Invoke(
-					editContext,
-					resourceUriValue,
-					indexInclusiveStart);
-			}
-			else
-			{
-				await _textEditorService.OpenInEditorAsync(
-						editContext,
-						resourceUriValue,
-						true,
-						indexInclusiveStart,
-						category,
-						Key<TextEditorViewModel>.NewKey())
-					.ContinueWith(_ => _textEditorService.ViewModelApi.StopCursorBlinking());
-			}
-		});
+		    _textEditorService.WorkerArbitrary.PostUnique(async editContext =>
+    		{
+    			if (category.Value == "CodeSearchService")
+    			{
+    				await ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func.Invoke(
+    					editContext,
+    					resourceUriValue,
+    					indexInclusiveStart);
+    			}
+    			else
+    			{
+    				await _textEditorService.OpenInEditorAsync(
+    						editContext,
+    						resourceUriValue,
+    						true,
+    						indexInclusiveStart,
+    						category,
+    						Key<TextEditorViewModel>.NewKey())
+    					.ContinueWith(_ => _textEditorService.ViewModelApi.StopCursorBlinking());
+    			}
+    		});
+		}
+		else
+		{
+    		var componentData = viewModelModifier.PersistentState.ComponentData;
+        	if (componentData is null)
+        		return;
+        
+            MeasuredHtmlElementDimensions cursorDimensions;
+            
+            var tooltipState = _textEditorService.CommonUtilityService.GetTooltipState();
+            
+            if (positionIndex != modelModifier.GetPositionIndex(viewModelModifier) &&
+                tooltipState.TooltipModel.ItemUntyped is ValueTuple<TextEditorService, Key<TextEditorViewModel>, int>)
+            {
+                cursorDimensions = new MeasuredHtmlElementDimensions(
+                    WidthInPixels: 0,
+                    HeightInPixels: 0,
+                    LeftInPixels: tooltipState.TooltipModel.X,
+                    TopInPixels: tooltipState.TooltipModel.Y,
+                    ZIndex: 0);
+                _textEditorService.CommonUtilityService.SetTooltipModel(tooltipModel: null);
+            }
+            else
+            {
+                cursorDimensions = await _commonUtilityService.JsRuntimeCommonApi
+        			.MeasureElementById(componentData.PrimaryCursorContentId)
+        			.ConfigureAwait(false);
+            }
+    
+    		var resourceAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(modelModifier.PersistentState.ResourceUri.Value, false);
+    		var parentDirectoryAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
+    	
+    		var siblingFileStringList = new List<(string ResourceUriValue, int ScopeIndexKey)>();
+    		
+    		int positionExclusive = indexPartialTypeDefinition;
+            while (positionExclusive < __CSharpBinder.PartialTypeDefinitionList.Count)
+            {
+                if (__CSharpBinder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup == indexPartialTypeDefinition)
+                {
+                    siblingFileStringList.Add(
+                        (
+                            __CSharpBinder.PartialTypeDefinitionList[positionExclusive].ResourceUri.Value,
+                            __CSharpBinder.PartialTypeDefinitionList[positionExclusive].ScopeIndexKey
+                        ));
+                    positionExclusive++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+    		
+    		var menuOptionList = new List<MenuOptionRecord>();
+    		
+    		siblingFileStringList = siblingFileStringList.OrderBy(x => x).ToList();
+    		
+    		var initialActiveMenuOptionRecordIndex = -1;
+    		
+    		for (int i = 0; i < siblingFileStringList.Count; i++)
+    		{
+    			var tuple = siblingFileStringList[i];
+    			var file = tuple.ResourceUriValue;
+    			
+    			var siblingAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(file, false);
+    			
+    			menuOptionList.Add(new MenuOptionRecord(
+    				siblingAbsolutePath.NameWithExtension,
+    				MenuOptionKind.Other,
+    				onClickFunc: async () => 
+    				{
+    				    int? positionIndex = null;
+    				    
+    				    if (__CSharpBinder.TryGetCompilationUnit(new ResourceUri(file), out var innerCompilationUnit))
+    				    {
+    				        var node = innerCompilationUnit.NodeList.FirstOrDefault(x =>
+    				        {
+    				            return x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
+    				                   ((TypeDefinitionNode)x).Unsafe_SelfIndexKey == tuple.ScopeIndexKey;
+				            });
+    				        
+    				        if (node is not null)
+    				        {
+    				            var typeDefinitionNode = (TypeDefinitionNode)node;
+    				            positionIndex = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
+    				        }
+    				    }
+    				
+    					_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
+    			    	{
+    			    		if (category.Value == "CodeSearchService")
+                			{
+                				await ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func.Invoke(
+                					editContext,
+                					file,
+                					positionIndex);
+                			}
+                			else
+                			{
+                				await _textEditorService.OpenInEditorAsync(
+                						editContext,
+                						file,
+                						true,
+                						positionIndex,
+                						category,
+                						Key<TextEditorViewModel>.NewKey())
+                					.ContinueWith(_ => _textEditorService.ViewModelApi.StopCursorBlinking());
+                			}
+    			    	});
+    				}));
+    					
+    			if (siblingAbsolutePath.NameWithExtension == resourceAbsolutePath.NameWithExtension)
+    				initialActiveMenuOptionRecordIndex = i;
+    		}
+    		
+    		if (menuOptionList.Count == 1)
+    		{
+    		    await menuOptionList[0].OnClickFunc.Invoke();
+    		}
+    		else
+    		{
+        		MenuRecord menu;
+        		
+        		if (menuOptionList.Count == 0)
+        			menu = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+        		else
+        			menu = new MenuRecord(menuOptionList);
+        		
+        		var dropdownRecord = new DropdownRecord(
+        			Key<DropdownRecord>.NewKey(),
+        			cursorDimensions.LeftInPixels,
+        			cursorDimensions.TopInPixels + cursorDimensions.HeightInPixels,
+        			typeof(MenuDisplay),
+        			new Dictionary<string, object?>
+        			{
+        				{
+        					nameof(MenuDisplay.MenuRecord),
+        					menu
+        				},
+        				{
+        					nameof(MenuDisplay.InitialActiveMenuOptionRecordIndex),
+        					initialActiveMenuOptionRecordIndex
+        				}
+        			},
+        			// TODO: this callback when the dropdown closes is suspect.
+        			//       The editContext is supposed to live the lifespan of the
+        			//       Post. But what if the Post finishes before the dropdown is closed?
+        			async () => 
+        			{
+        				// TODO: Even if this '.single or default' to get the main group works it is bad and I am ashamed...
+        				//       ...I'm too tired at the moment, need to make this sensible.
+        				//	   The key is in the IDE project yet its circular reference if I do so, gotta
+        				//       make groups more sensible I'm not sure what to say here I'm super tired and brain checked out.
+        				//       |
+        				//       I ran this and it didn't work. Its for the best that it doesn't.
+        				//	   maybe when I wake up tomorrow I'll realize what im doing here.
+        				var mainEditorGroup = _textEditorService.GroupApi.GetTextEditorGroupState().GroupList.SingleOrDefault();
+        				
+        				if (mainEditorGroup is not null &&
+        					mainEditorGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty)
+        				{
+        					var activeViewModel = _textEditorService.ViewModelApi.GetOrDefault(mainEditorGroup.ActiveViewModelKey);
+        
+        					if (activeViewModel is not null)
+        						await activeViewModel.FocusAsync();
+        				}
+        				
+        				await viewModelModifier.FocusAsync();
+        			});
+        
+                _commonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+            }
+		}
     }
     
     /// <summary>

@@ -27,6 +27,8 @@ public partial class CSharpBinder
     private readonly Dictionary<string, TypeDefinitionNode> _allTypeDefinitions = new();
     private readonly NamespaceStatementNode _topLevelNamespaceStatementNode = CSharpFacts.Namespaces.GetTopLevelNamespaceStatementNode();
     
+    public List<PartialTypeDefinitionEntry> PartialTypeDefinitionList { get; } = new();
+    
     /// <summary>
 	/// This is not thread safe to access because 'BindNamespaceStatementNode(...)' will directly modify the NamespaceGroup's List.
 	/// </summary>
@@ -1763,14 +1765,13 @@ public partial class CSharpBinder
 	
 	public string GetIdentifierText(ISyntaxNode node, CSharpCompilationUnit compilationUnit)
 	{
+	    string sourceText;
+	
 		switch (node.SyntaxKind)
 		{
 		    case SyntaxKind.TypeDefinitionNode:
 		    {
 		        var typeDefinitionNode = (TypeDefinitionNode)node;
-    	
-        	    string sourceText;
-        	    
         	    if (typeDefinitionNode.ResourceUri == compilationUnit.ResourceUri)
         	    {
         	        sourceText = compilationUnit.SourceText;
@@ -1782,28 +1783,71 @@ public partial class CSharpBinder
         	        else
     	                return string.Empty;
         	    }
-        	    
 				return typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(sourceText, TextEditorService);
 			}
 			case SyntaxKind.TypeClauseNode:
 			{
 				var typeClauseNode = (TypeClauseNode)node;
-				return typeClauseNode.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+        	    if (typeClauseNode.ExplicitDefinitionResourceUri == compilationUnit.ResourceUri)
+        	    {
+        	        sourceText = compilationUnit.SourceText;
+        	    }
+        	    else
+        	    {
+        	        if (TryGetCompilationUnit(typeClauseNode.ExplicitDefinitionResourceUri, out var innerCompilationUnit))
+        	            sourceText = innerCompilationUnit.SourceText;
+        	        else
+    	                return string.Empty;
+        	    }
+				return typeClauseNode.TypeIdentifierToken.TextSpan.GetText(sourceText, TextEditorService);
 			}
 			case SyntaxKind.FunctionDefinitionNode:
 			{
 				var functionDefinitionNode = (FunctionDefinitionNode)node;
-				return functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+				if (functionDefinitionNode.ResourceUri == compilationUnit.ResourceUri)
+        	    {
+        	        sourceText = compilationUnit.SourceText;
+        	    }
+        	    else
+        	    {
+        	        if (TryGetCompilationUnit(functionDefinitionNode.ResourceUri, out var innerCompilationUnit))
+        	            sourceText = innerCompilationUnit.SourceText;
+        	        else
+    	                return string.Empty;
+        	    }
+				return functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(sourceText, TextEditorService);
 			}
 			case SyntaxKind.FunctionInvocationNode:
 			{
 				var functionInvocationNode = (FunctionInvocationNode)node;
-				return functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+				if (functionInvocationNode.ResourceUri == compilationUnit.ResourceUri)
+        	    {
+        	        sourceText = compilationUnit.SourceText;
+        	    }
+        	    else
+        	    {
+        	        if (TryGetCompilationUnit(functionInvocationNode.ResourceUri, out var innerCompilationUnit))
+        	            sourceText = innerCompilationUnit.SourceText;
+        	        else
+    	                return string.Empty;
+        	    }
+				return functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.GetText(sourceText, TextEditorService);
 			}
 			case SyntaxKind.VariableDeclarationNode:
 			{
 				var variableDeclarationNode = (VariableDeclarationNode)node;
-				return variableDeclarationNode.IdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+				if (variableDeclarationNode.ResourceUri == compilationUnit.ResourceUri)
+        	    {
+        	        sourceText = compilationUnit.SourceText;
+        	    }
+        	    else
+        	    {
+        	        if (TryGetCompilationUnit(variableDeclarationNode.ResourceUri, out var innerCompilationUnit))
+        	            sourceText = innerCompilationUnit.SourceText;
+        	        else
+    	                return string.Empty;
+        	    }
+				return variableDeclarationNode.IdentifierToken.TextSpan.GetText(sourceText, TextEditorService);
 			}
 			case SyntaxKind.VariableReferenceNode:
 			{
@@ -1873,6 +1917,41 @@ public partial class CSharpBinder
         {
             query = query.Concat(typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList.Select(
                 x => x.VariableDeclarationNode));
+        }
+        
+        if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
+        {
+            int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
+            while (positionExclusive < PartialTypeDefinitionList.Count)
+            {
+                if (PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
+                {
+                    if (PartialTypeDefinitionList[positionExclusive].ResourceUri != compilationUnit.ResourceUri)
+                    {
+                        if (PartialTypeDefinitionList[positionExclusive].ScopeIndexKey != -1 &&
+                		    _compilationUnitMap.TryGetValue(PartialTypeDefinitionList[positionExclusive].ResourceUri, out var innerCompilationUnit))
+                	    {
+                	        var innerScopeIndexKey = PartialTypeDefinitionList[positionExclusive].ScopeIndexKey;
+                	    
+                            query = query.Concat(innerCompilationUnit.NodeList
+                    		    .Where(x =>
+                		        {
+                		            return x.Unsafe_ParentIndexKey == innerScopeIndexKey &&
+                		                (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
+                		                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+                		                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode);
+        		                })
+                    		    .Select(x => (ISyntaxNode)x));
+                        }
+                    }
+                    
+                    positionExclusive++;
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
         
         return query;
