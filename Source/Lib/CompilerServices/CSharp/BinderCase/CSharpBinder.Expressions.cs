@@ -2662,7 +2662,21 @@ public partial class CSharpBinder
 					if (!functionDefinitionNode.FunctionIdentifierToken.ConstructorWasInvoked)
 						continue;
 					
-					if (functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, parserModel.Binder.TextEditorService) == memberIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService))
+					string sourceText;
+					
+					if (functionDefinitionNode.ResourceUri != compilationUnit.ResourceUri)
+					{
+					    if (TryGetCompilationUnit(functionDefinitionNode.ResourceUri, out innerCompilationUnit))
+					        sourceText = innerCompilationUnit.SourceText;
+					    else
+					        sourceText = innerCompilationUnit.SourceText;
+					}
+					else
+					{
+					    sourceText = innerCompilationUnit.SourceText;
+					}
+					
+					if (functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(sourceText, parserModel.Binder.TextEditorService) == memberIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService))
 					{
 						foundDefinitionNode = functionDefinitionNode;
 						break;

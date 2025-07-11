@@ -1894,12 +1894,6 @@ public partial class CSharpBinder
                             query = query.Concat(innerCompilationUnit.NodeList
                     		    .Where(x =>
                 		        {
-                		            if (x.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
-                		            {
-                		                var functionDefinitionNode = (FunctionDefinitionNode)x;
-                		                Console.WriteLine(functionDefinitionNode.ResourceUri.Value);
-                		            }
-                		        
                 		            return x.Unsafe_ParentIndexKey == innerScopeIndexKey &&
                 		                (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
                 		                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||

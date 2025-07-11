@@ -993,23 +993,6 @@ public class ParseDefaultKeywords
                     typeDefinitionNode.ResourceUri,
                     typeDefinitionNode.Unsafe_SelfIndexKey));
         }
-        
-        Console.WriteLine();
-        Console.WriteLine("========");
-        
-        foreach (var entry in parserModel.Binder.PartialTypeDefinitionList)
-        {
-            Console.Write($"isg:{entry.IndexStartGroup}");
-            Console.Write(", ");
-            Console.Write($"sik:{entry.ScopeIndexKey}");
-            Console.Write(", ");
-            Console.Write($"ruv:{entry.ResourceUri.Value}");
-            Console.Write(",");
-            Console.WriteLine();
-        }
-        
-        Console.WriteLine("========");
-        Console.WriteLine();
     }
 
     public static void HandleClassTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
