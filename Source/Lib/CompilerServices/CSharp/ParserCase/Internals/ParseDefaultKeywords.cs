@@ -992,6 +992,31 @@ public class ParseDefaultKeywords
                     typeDefinitionNode.IndexPartialTypeDefinition,
                     typeDefinitionNode.ResourceUri,
                     typeDefinitionNode.Unsafe_SelfIndexKey));
+        
+            int positionExclusive = indexForInsertion + 1;
+            int lastSeenIndexStartGroup = typeDefinitionNode.IndexPartialTypeDefinition;
+            while (positionExclusive < parserModel.Binder.PartialTypeDefinitionList.Count)
+            {
+                if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup != typeDefinitionNode.IndexPartialTypeDefinition)
+                {
+                    var partialTypeDefinitionEntry = parserModel.Binder.PartialTypeDefinitionList[positionExclusive];
+                    
+                    if (lastSeenIndexStartGroup != partialTypeDefinitionEntry.IndexStartGroup)
+                    {
+                        lastSeenIndexStartGroup = partialTypeDefinitionEntry.IndexStartGroup;
+                        
+                        if (parserModel.Binder.TryGetCompilationUnit(partialTypeDefinitionEntry.ResourceUri, out var innerCompilationUnit))
+                        {
+                            ((TypeDefinitionNode)innerCompilationUnit.NodeList[partialTypeDefinitionEntry.ScopeIndexKey]).IndexPartialTypeDefinition = partialTypeDefinitionEntry.IndexStartGroup + 1;
+                        }
+                    }
+                    
+                    partialTypeDefinitionEntry.IndexStartGroup = partialTypeDefinitionEntry.IndexStartGroup + 1;
+                    parserModel.Binder.PartialTypeDefinitionList[positionExclusive] = partialTypeDefinitionEntry;
+                }
+                
+                positionExclusive++;
+            }
         }
     }
 
