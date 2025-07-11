@@ -5,6 +5,7 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
+using Walk.Common.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Autocompletes.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
@@ -1090,9 +1091,27 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         	if (componentData is null)
         		return;
         
-    		var cursorDimensions = await _commonUtilityService.JsRuntimeCommonApi
-    			.MeasureElementById(componentData.PrimaryCursorContentId)
-    			.ConfigureAwait(false);
+            MeasuredHtmlElementDimensions cursorDimensions;
+            
+            var tooltipState = _textEditorService.CommonUtilityService.GetTooltipState();
+            
+            if (positionIndex != modelModifier.GetPositionIndex(viewModelModifier) &&
+                tooltipState.TooltipModel.ItemUntyped is ValueTuple<TextEditorService, Key<TextEditorViewModel>, int>)
+            {
+                cursorDimensions = new MeasuredHtmlElementDimensions(
+                    WidthInPixels: 0,
+                    HeightInPixels: 0,
+                    LeftInPixels: tooltipState.TooltipModel.X,
+                    TopInPixels: tooltipState.TooltipModel.Y,
+                    ZIndex: 0);
+                _textEditorService.CommonUtilityService.SetTooltipModel(tooltipModel: null);
+            }
+            else
+            {
+                cursorDimensions = await _commonUtilityService.JsRuntimeCommonApi
+        			.MeasureElementById(componentData.PrimaryCursorContentId)
+        			.ConfigureAwait(false);
+            }
     
     		var resourceAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(modelModifier.PersistentState.ResourceUri.Value, false);
     		var parentDirectoryAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
