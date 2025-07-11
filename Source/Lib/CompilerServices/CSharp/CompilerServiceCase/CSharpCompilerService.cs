@@ -1098,14 +1098,18 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     		var resourceAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(modelModifier.PersistentState.ResourceUri.Value, false);
     		var parentDirectoryAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
     	
-    		var siblingFileStringList = new List<string>();
+    		var siblingFileStringList = new List<(string ResourceUriValue, int ScopeIndexKey)>();
     		
     		int positionExclusive = indexPartialTypeDefinition;
             while (positionExclusive < __CSharpBinder.PartialTypeDefinitionList.Count)
             {
                 if (__CSharpBinder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup == indexPartialTypeDefinition)
                 {
-                    siblingFileStringList.Add(__CSharpBinder.PartialTypeDefinitionList[positionExclusive].ResourceUri.Value);
+                    siblingFileStringList.Add(
+                        (
+                            __CSharpBinder.PartialTypeDefinitionList[positionExclusive].ResourceUri.Value,
+                            __CSharpBinder.PartialTypeDefinitionList[positionExclusive].ScopeIndexKey
+                        ));
                     positionExclusive++;
                 }
                 else
@@ -1122,7 +1126,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     		
     		for (int i = 0; i < siblingFileStringList.Count; i++)
     		{
-    			var file = siblingFileStringList[i];
+    			var tuple = siblingFileStringList[i];
+    			var file = tuple.ResourceUriValue;
     			
     			var siblingAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(file, false);
     			
@@ -1131,13 +1136,30 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     				MenuOptionKind.Other,
     				onClickFunc: async () => 
     				{
+    				    int? positionIndex = null;
+    				    
+    				    if (__CSharpBinder.TryGetCompilationUnit(new ResourceUri(file), out var innerCompilationUnit))
+    				    {
+    				        var node = innerCompilationUnit.NodeList.FirstOrDefault(x =>
+    				        {
+    				            return x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
+    				                   ((TypeDefinitionNode)x).Unsafe_SelfIndexKey == tuple.ScopeIndexKey;
+				            });
+    				        
+    				        if (node is not null)
+    				        {
+    				            var typeDefinitionNode = (TypeDefinitionNode)node;
+    				            positionIndex = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
+    				        }
+    				    }
+    				
     					_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
     			    	{
     			    		await _textEditorService.OpenInEditorAsync(
     			    			editContext,
     			                file,
     							true,
-    							null,
+    							positionIndex,
     							new Category("main"),
     							Key<TextEditorViewModel>.NewKey());
     			    	});
