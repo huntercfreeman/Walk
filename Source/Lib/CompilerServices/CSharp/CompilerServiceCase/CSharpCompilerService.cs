@@ -570,7 +570,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			        						autocompleteEntryList.Add(new AutocompleteEntry(
 												functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(sourceText, _textEditorService),
 								                AutocompleteEntryKind.Function,
-								                () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+								                () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(sourceText, _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
 			        						break;
 		        						case SyntaxKind.TypeDefinitionNode:
 			        						var innerTypeDefinitionNode = (TypeDefinitionNode)member;
