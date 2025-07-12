@@ -1927,13 +1927,25 @@ public partial class CSharpBinder
             {
                 if (PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
                 {
-                    if (PartialTypeDefinitionList[positionExclusive].ResourceUri != compilationUnit.ResourceUri)
-                    {
-                        if (PartialTypeDefinitionList[positionExclusive].ScopeIndexKey != -1 &&
-                		    _compilationUnitMap.TryGetValue(PartialTypeDefinitionList[positionExclusive].ResourceUri, out var innerCompilationUnit))
-                	    {
-                	        var innerScopeIndexKey = PartialTypeDefinitionList[positionExclusive].ScopeIndexKey;
-                	    
+                    CSharpCompilationUnit? innerCompilationUnit;
+                    
+                    if (PartialTypeDefinitionList[positionExclusive].ScopeIndexKey != -1)
+        		    {
+        		        if (PartialTypeDefinitionList[positionExclusive].ResourceUri != compilationUnit.ResourceUri)
+        		        {
+            		        if (_compilationUnitMap.TryGetValue(PartialTypeDefinitionList[positionExclusive].ResourceUri, out var temporaryCompilationUnit))
+            		            innerCompilationUnit = temporaryCompilationUnit;
+            		        else
+            		            innerCompilationUnit = null;
+        		        }
+        		        else
+        		        {
+        		            innerCompilationUnit = compilationUnit;
+    		            }
+    		            
+    		            if (innerCompilationUnit != null)
+    		            {
+    		                var innerScopeIndexKey = PartialTypeDefinitionList[positionExclusive].ScopeIndexKey;
                             query = query.Concat(innerCompilationUnit.NodeList
                     		    .Where(x =>
                 		        {
@@ -1943,8 +1955,8 @@ public partial class CSharpBinder
                 		                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode);
         		                })
                     		    .Select(x => (ISyntaxNode)x));
-                        }
-                    }
+    		            }
+        		    }
                     
                     positionExclusive++;
                 }
