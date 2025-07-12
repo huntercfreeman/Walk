@@ -70,6 +70,9 @@ public struct CSharpParserModel
 	    	variableIdentifierToken: default,
 			variableDeclarationNode: null);
 		VariableReferenceNode.IsBeingUsed = false;
+		
+		ClearedPartialDefinitionHashSet = binder.CSharpParserModel_ClearedPartialDefinitionHashSet;
+		ClearedPartialDefinitionHashSet.Clear();
     }
 
     public TokenWalker TokenWalker { get; }
@@ -124,6 +127,15 @@ public struct CSharpParserModel
     /// TODO: Consider the case where you have just a TypeClauseNode then StatementDelimiterToken.
     /// </summary>
     public TypeClauseNode TypeClauseNode { get; }
+    
+    /// <summary>
+    /// In order to have many partial definitions for the same type in the same file,
+    /// you need to set the ScopeIndexKey to -1 for any entry in the
+    /// 'CSharpBinder.PartialTypeDefinitionList' only once per parse.
+    ///
+    /// Thus, this will track whether a type had been handled already or not.
+    /// </summary>
+    public HashSet<string> ClearedPartialDefinitionHashSet { get; }
     
     public ParameterModifierKind ParameterModifierKind { get; set; } = ParameterModifierKind.None;
     

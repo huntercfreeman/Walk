@@ -847,28 +847,43 @@ public class ParseDefaultKeywords
             {
                 typeDefinitionNode.IndexPartialTypeDefinition = innerTypeDefinitionNode.IndexPartialTypeDefinition;
                 
-                int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
-                while (positionExclusive < parserModel.Binder.PartialTypeDefinitionList.Count)
+                if (parserModel.ClearedPartialDefinitionHashSet.Add(identifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService)))
                 {
-                    if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
+                    // Partial definitions of the same type from the same ResourceUri are made contiguous.
+                    var seenResourceUri = false;
+                    
+                    int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
+                    while (positionExclusive < parserModel.Binder.PartialTypeDefinitionList.Count)
                     {
-                        if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri == compilationUnit.ResourceUri)
+                        if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
                         {
-                            var partialTypeDefinitionEntry = parserModel.Binder.PartialTypeDefinitionList[positionExclusive];
-                            partialTypeDefinitionEntry.ScopeIndexKey = -1;
-                            parserModel.Binder.PartialTypeDefinitionList[positionExclusive] = partialTypeDefinitionEntry;
-                            break;
+                            if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri == compilationUnit.ResourceUri)
+                            {
+                                seenResourceUri = true;
+                            
+                                var partialTypeDefinitionEntry = parserModel.Binder.PartialTypeDefinitionList[positionExclusive];
+                                partialTypeDefinitionEntry.ScopeIndexKey = -1;
+                                parserModel.Binder.PartialTypeDefinitionList[positionExclusive] = partialTypeDefinitionEntry;
+                                
+                                positionExclusive++;
+                            }
+                            else
+                            {
+                                if (seenResourceUri)
+                                    break;
+                                positionExclusive++;
+                            }
                         }
                         else
                         {
-                            positionExclusive++;
+                            break;
                         }
                     }
-                    else
-                    {
-                        break;
-                    }
                 }
+            }
+            else
+            {
+                parserModel.ClearedPartialDefinitionHashSet.Add(identifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService));
             }
         }
         
@@ -955,6 +970,7 @@ public class ParseDefaultKeywords
         }
         else
         {
+            // What is this line doing lol?
             typeDefinitionNode.IndexPartialTypeDefinition = typeDefinitionNode.IndexPartialTypeDefinition;
         
             int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
@@ -962,7 +978,8 @@ public class ParseDefaultKeywords
             {
                 if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
                 {
-                    if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri == compilationUnit.ResourceUri)
+                    if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri == compilationUnit.ResourceUri &&
+                        parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ScopeIndexKey == -1)
                     {
                         var partialTypeDefinitionEntry = parserModel.Binder.PartialTypeDefinitionList[positionExclusive];
                         partialTypeDefinitionEntry.ScopeIndexKey = typeDefinitionNode.Unsafe_SelfIndexKey;

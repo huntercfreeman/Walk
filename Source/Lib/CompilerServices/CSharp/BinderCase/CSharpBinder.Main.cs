@@ -43,6 +43,7 @@ public partial class CSharpBinder
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> CSharpParserModel_ExpressionList { get; set; } = new();
     public List<SyntaxKind> CSharpParserModel_TryParseExpressionSyntaxKindList { get; } = new();
     public HashSet<int> SolutionWide_MinimumLocalsData_ScopeIndexKey_HashSet { get; } = new();
+    public HashSet<string> CSharpParserModel_ClearedPartialDefinitionHashSet { get; } = new();
     
     public TokenWalker CSharpParserModel_TokenWalker { get; } = new(Array.Empty<SyntaxToken>(), useDeferredParsing: true);
     
