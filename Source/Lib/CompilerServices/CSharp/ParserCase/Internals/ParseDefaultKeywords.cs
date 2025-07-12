@@ -972,23 +972,33 @@ public class ParseDefaultKeywords
         {
             // What is this line doing lol?
             typeDefinitionNode.IndexPartialTypeDefinition = typeDefinitionNode.IndexPartialTypeDefinition;
+            
+            var seenResourceUri = false;
         
             int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
             while (positionExclusive < parserModel.Binder.PartialTypeDefinitionList.Count)
             {
                 if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
                 {
-                    if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri == compilationUnit.ResourceUri &&
-                        parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ScopeIndexKey == -1)
+                    if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri == compilationUnit.ResourceUri)
                     {
-                        var partialTypeDefinitionEntry = parserModel.Binder.PartialTypeDefinitionList[positionExclusive];
-                        partialTypeDefinitionEntry.ScopeIndexKey = typeDefinitionNode.Unsafe_SelfIndexKey;
-                        parserModel.Binder.PartialTypeDefinitionList[positionExclusive] = partialTypeDefinitionEntry;
-                        wroteToExistingSlot = true;
-                        break;
+                        if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ScopeIndexKey == -1)
+                        {
+                            var partialTypeDefinitionEntry = parserModel.Binder.PartialTypeDefinitionList[positionExclusive];
+                            partialTypeDefinitionEntry.ScopeIndexKey = typeDefinitionNode.Unsafe_SelfIndexKey;
+                            parserModel.Binder.PartialTypeDefinitionList[positionExclusive] = partialTypeDefinitionEntry;
+                            wroteToExistingSlot = true;
+                            break;
+                        }
+                        
+                        seenResourceUri = true;
+                        positionExclusive++;
                     }
                     else
                     {
+                        if (seenResourceUri)
+                            break;
+                    
                         positionExclusive++;
                     }
                 }
