@@ -2510,7 +2510,7 @@ public partial class CSharpBinder
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
 		#endif
 		
-		parserModel.StatementBuilder.ParseChildScopeStack.Push(
+		parserModel.StatementBuilder.ParseLambdaStatementScopeStack.Push(
 			(
 				parserModel.CurrentCodeBlockOwner,
 				new CSharpDeferredChildScope(

@@ -13,18 +13,18 @@ public struct CSharpStatementBuilder
 		ChildList = binder.CSharpStatementBuilder_ChildList;
 		ChildList.Clear();
 		
-		ParseChildScopeStack = binder.CSharpStatementBuilder_ParseChildScopeStack;
-		ParseChildScopeStack.Clear();
+		ParseLambdaStatementScopeStack = binder.CSharpStatementBuilder_ParseLambdaStatementScopeStack;
+		ParseLambdaStatementScopeStack.Clear();
 	}
 
 	public List<ISyntax> ChildList { get; }
 	
 	/// <summary>
-	/// TODO: Measure the cost of 'Peek(...)', 'TryPeek(...)' since now...
-	/// ...this is a value tuple and the dequeue alone does not mean success,
-	/// you have to peek first to see if the object references are equal.
+    /// Prior to finishing a statement, you must check whether ParseLambdaStatementScopeStack has a child that needs to be parsed.
+    /// All currently known cases of finishing a statement will do so by invoking FinishStatement(...),
+    /// this method will perform this check internally.
 	/// </summary>
-	public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> ParseChildScopeStack { get; }
+	public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> ParseLambdaStatementScopeStack { get; }
 	
 	/// <summary>Invokes the other overload with index: ^1</summary>
 	public bool TryPeek(out ISyntax syntax)
@@ -63,7 +63,7 @@ public struct CSharpStatementBuilder
 	///
 	/// Lastly, clear the StatementBuilder.ChildList.
 	///
-	/// Returns the result of 'ParseChildScopeStack.TryPop(out var deferredChildScope)'.
+	/// Returns the result of 'ParseLambdaStatementScopeStack.TryPop(out var deferredChildScope)'.
 	/// </summary>
 	public bool FinishStatement(int finishTokenIndex, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
@@ -92,13 +92,13 @@ public struct CSharpStatementBuilder
 			ChildList.Clear();
 		}*/
 		
-		if (ParseChildScopeStack.Count > 0)
+		if (ParseLambdaStatementScopeStack.Count > 0)
 		{
-			var tuple = ParseChildScopeStack.Peek();
+			var tuple = ParseLambdaStatementScopeStack.Peek();
 			
 			if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserModel.CurrentCodeBlockOwner))
 			{
-				tuple = ParseChildScopeStack.Pop();
+				tuple = ParseLambdaStatementScopeStack.Pop();
 				tuple.DeferredChildScope.PrepareMainParserLoop(finishTokenIndex, compilationUnit, ref parserModel);
 				return true;
 			}
