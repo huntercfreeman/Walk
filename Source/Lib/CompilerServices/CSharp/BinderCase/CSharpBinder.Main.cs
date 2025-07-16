@@ -1320,18 +1320,9 @@ public partial class CSharpBinder
 		                compilationUnit.FunctionInvocationParameterMetadataList is not null &&
 		                symbol is not null)
 		            {
-		                foreach (var aaa in compilationUnit.FunctionInvocationParameterMetadataList)
-		                {
-		                    Console.WriteLine($"aaa.IdentifierStartInclusiveIndex: {aaa.IdentifierStartInclusiveIndex}");
-		                    //Console.WriteLine(aaa.TypeReference);
-		                    //Console.WriteLine(aaa.ParameterModifierKind);
-		                }
-		            
 		                var functionParameterList = compilationUnit.FunctionInvocationParameterMetadataList
 		                    .Where(x => x.IdentifierStartInclusiveIndex == symbol.Value.TextSpan.StartInclusiveIndex)
 		                    .ToList();
-		            
-		                Console.WriteLine($"functionParameterList.Count: {functionParameterList.Count}");
 		            
 		                for (int i = functionDefinitionNode.IndexMethodOverloadDefinition; i < MethodOverloadDefinitionList.Count; i++)
 		                {
@@ -1347,12 +1338,22 @@ public partial class CSharpBinder
 		                            {
 		                                var argument = innerFunctionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList[parameterIndex];
 		                                var parameter = functionParameterList[parameterIndex];
+                                        
+                                        string parameterTypeText;
+                                        
+                                        if (parameter.TypeReference.ExplicitDefinitionTextSpan != default &&
+                                            TryGetCompilationUnit(parameter.TypeReference.ExplicitDefinitionResourceUri, out var parameterCompilationUnit))
+                                        {
+                                            parameterTypeText = parameter.TypeReference.TypeIdentifierToken.TextSpan.GetText(parameterCompilationUnit.SourceText, TextEditorService);
+                                        }
+                                        else
+                                        {
+                                            parameterTypeText = parameter.TypeReference.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+                                        }
 		                                
 		                                if (ArgumentModifierEqualsParameterModifier(argument.ArgumentModifierKind, parameter.ParameterModifierKind) &&
 		                                    argument.VariableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, TextEditorService) ==
-		                                        parameter.TypeReference.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService) &&
-	                                        argument.VariableDeclarationNode.TypeReference.ExplicitDefinitionResourceUri ==
-		                                        parameter.TypeReference.ExplicitDefinitionResourceUri)
+		                                        parameterTypeText)
 		                                {
 		                                    return innerFunctionDefinitionNode;
 		                                }
