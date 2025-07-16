@@ -1316,6 +1316,8 @@ public partial class CSharpBinder
 		                     out var functionDefinitionNode)
 		                 && functionDefinitionNode is not null)
 		        {
+		            Console.WriteLine($"{functionDefinitionNode.IndexMethodOverloadDefinition}");
+		        
 		            return functionDefinitionNode;
 		        }
 		        

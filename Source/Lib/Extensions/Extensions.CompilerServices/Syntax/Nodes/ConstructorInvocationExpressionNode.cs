@@ -27,6 +27,7 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
 	public SyntaxToken NewKeywordToken { get; }
 	public TypeReference ResultTypeReference { get; set; }
 	public FunctionParameterListing FunctionParameterListing { get; set; }
+	public int IdentifierStartInclusiveIndex => NewKeywordToken.TextSpan.StartInclusiveIndex;
 
 	public ConstructorInvocationStageKind ConstructorInvocationStageKind { get; set; } = ConstructorInvocationStageKind.Unset;
 
