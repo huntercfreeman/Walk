@@ -1005,9 +1005,6 @@ public class ParseDefaultKeywords
         }
         else
         {
-            // What is this line doing lol?
-            typeDefinitionNode.IndexPartialTypeDefinition = typeDefinitionNode.IndexPartialTypeDefinition;
-            
             var seenResourceUri = false;
         
             int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
