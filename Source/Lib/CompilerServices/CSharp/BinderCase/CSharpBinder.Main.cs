@@ -1317,11 +1317,21 @@ public partial class CSharpBinder
 		                 && functionDefinitionNode is not null)
 		        {
 		            if (functionDefinitionNode.IndexMethodOverloadDefinition != -1 &&
-		                compilationUnit.FunctionInvocationParameterMetadataList is not null)
+		                compilationUnit.FunctionInvocationParameterMetadataList is not null &&
+		                symbol is not null)
 		            {
+		                foreach (var aaa in compilationUnit.FunctionInvocationParameterMetadataList)
+		                {
+		                    Console.WriteLine($"aaa.IdentifierStartInclusiveIndex: {aaa.IdentifierStartInclusiveIndex}");
+		                    //Console.WriteLine(aaa.TypeReference);
+		                    //Console.WriteLine(aaa.ParameterModifierKind);
+		                }
+		            
 		                var functionParameterList = compilationUnit.FunctionInvocationParameterMetadataList
-		                    .Where(x => x.IdentifierStartInclusiveIndex == functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex)
+		                    .Where(x => x.IdentifierStartInclusiveIndex == symbol.Value.TextSpan.StartInclusiveIndex)
 		                    .ToList();
+		            
+		                Console.WriteLine($"functionParameterList.Count: {functionParameterList.Count}");
 		            
 		                for (int i = functionDefinitionNode.IndexMethodOverloadDefinition; i < MethodOverloadDefinitionList.Count; i++)
 		                {
@@ -1432,6 +1442,7 @@ public partial class CSharpBinder
     						    definitionTuple.StartInclusiveIndex + 1,
     						    default),
     	        			externalSyntaxKind,
+    	        			symbol: symbol,
     	        			getTextResult: textSpan.GetText(compilationUnit.SourceText, TextEditorService));
 	        	    }
 	        	}
