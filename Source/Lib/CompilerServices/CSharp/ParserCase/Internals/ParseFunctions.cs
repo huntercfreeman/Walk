@@ -125,33 +125,35 @@ public class ParseFunctions
                 
                 if (existingNode.Unsafe_ParentIndexKey < previousCompilationUnit.NodeList.Count)
                 {
-                    var currentParent = parserModel.GetParent(newNode, compilationUnit);
-                    var previousParent = (ICodeBlockOwner)previousCompilationUnit.NodeList[existingNode.Unsafe_ParentIndexKey];
-                
-                    if (currentParent.SyntaxKind == previousParent.SyntaxKind &&
-                        parserModel.Binder.GetIdentifierText(currentParent, compilationUnit) == parserModel.Binder.GetIdentifierText(previousParent, previousCompilationUnit))
+                    if (previousCompilationUnit.NodeList[existingNode.Unsafe_ParentIndexKey] is ICodeBlockOwner previousParent)
                     {
-                        // All the existing entires will be "emptied"
-                        // so don't both with checking whether the arguments are the same here.
-                        //
-                        // All that matters is that they're put in the same "method group".
-                        //
-                        var binder = parserModel.Binder;
-                        var previousNode = previousCompilationUnit.NodeList.FirstOrDefault(x =>
-                            x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
-                            x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
-                            binder.GetIdentifierText(x, previousCompilationUnit) == binder.GetIdentifierText(existingNode, compilationUnit));
-                    
-                        if (previousNode is not null)
+                        var currentParent = parserModel.GetParent(newNode, compilationUnit);
+                        
+                        if (currentParent.SyntaxKind == previousParent.SyntaxKind &&
+                            parserModel.Binder.GetIdentifierText(currentParent, compilationUnit) == parserModel.Binder.GetIdentifierText(previousParent, previousCompilationUnit))
                         {
-                            existingWasFound = true;
-                            
-                            var previousFunctionDefinitionNode = (FunctionDefinitionNode)previousNode;
-                            existingNode.IndexMethodOverloadDefinition = previousFunctionDefinitionNode.IndexMethodOverloadDefinition;
-                            
-                            var entry = parserModel.Binder.MethodOverloadDefinitionList[existingNode.IndexMethodOverloadDefinition];
-                            entry.ScopeIndexKey = existingNode.Unsafe_SelfIndexKey;
-                            parserModel.Binder.MethodOverloadDefinitionList[existingNode.IndexMethodOverloadDefinition] = entry;
+                            // All the existing entires will be "emptied"
+                            // so don't both with checking whether the arguments are the same here.
+                            //
+                            // All that matters is that they're put in the same "method group".
+                            //
+                            var binder = parserModel.Binder;
+                            var previousNode = previousCompilationUnit.NodeList.FirstOrDefault(x =>
+                                x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
+                                x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
+                                binder.GetIdentifierText(x, previousCompilationUnit) == binder.GetIdentifierText(existingNode, compilationUnit));
+                        
+                            if (previousNode is not null)
+                            {
+                                existingWasFound = true;
+                                
+                                var previousFunctionDefinitionNode = (FunctionDefinitionNode)previousNode;
+                                existingNode.IndexMethodOverloadDefinition = previousFunctionDefinitionNode.IndexMethodOverloadDefinition;
+                                
+                                var entry = parserModel.Binder.MethodOverloadDefinitionList[existingNode.IndexMethodOverloadDefinition];
+                                entry.ScopeIndexKey = existingNode.Unsafe_SelfIndexKey;
+                                parserModel.Binder.MethodOverloadDefinitionList[existingNode.IndexMethodOverloadDefinition] = entry;
+                            }
                         }
                     }
                 }

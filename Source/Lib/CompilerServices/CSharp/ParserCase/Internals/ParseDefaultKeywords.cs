@@ -836,7 +836,7 @@ public class ParseDefaultKeywords
 			// FindAllReferences
 			// ,referenceHashSet: new()
 			);
-
+        
         if (typeDefinitionNode.HasPartialModifier)
         {
             if (parserModel.Binder.TryGetTypeDefinitionHierarchically(
@@ -846,44 +846,6 @@ public class ParseDefaultKeywords
                     out TypeDefinitionNode innerTypeDefinitionNode))
             {
                 typeDefinitionNode.IndexPartialTypeDefinition = innerTypeDefinitionNode.IndexPartialTypeDefinition;
-                
-                if (parserModel.ClearedPartialDefinitionHashSet.Add(identifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService)))
-                {
-                    // Partial definitions of the same type from the same ResourceUri are made contiguous.
-                    var seenResourceUri = false;
-                    
-                    int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
-                    while (positionExclusive < parserModel.Binder.PartialTypeDefinitionList.Count)
-                    {
-                        if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
-                        {
-                            if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri == compilationUnit.ResourceUri)
-                            {
-                                seenResourceUri = true;
-                            
-                                var partialTypeDefinitionEntry = parserModel.Binder.PartialTypeDefinitionList[positionExclusive];
-                                partialTypeDefinitionEntry.ScopeIndexKey = -1;
-                                parserModel.Binder.PartialTypeDefinitionList[positionExclusive] = partialTypeDefinitionEntry;
-                                
-                                positionExclusive++;
-                            }
-                            else
-                            {
-                                if (seenResourceUri)
-                                    break;
-                                positionExclusive++;
-                            }
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                parserModel.ClearedPartialDefinitionHashSet.Add(identifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService));
             }
         }
         
@@ -899,6 +861,79 @@ public class ParseDefaultKeywords
 	        ref parserModel);
 	        
 	    parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = false;
+	    
+	    if (typeDefinitionNode.HasPartialModifier)
+        {
+            if (typeDefinitionNode.IndexPartialTypeDefinition == -1)
+            {
+                if (parserModel.Binder.TryGetCompilationUnit_Previous(compilationUnit.ResourceUri, out var previousCompilationUnit))
+                {
+                    if (typeDefinitionNode.Unsafe_ParentIndexKey < previousCompilationUnit.NodeList.Count)
+                    {
+                        if (previousCompilationUnit.NodeList[typeDefinitionNode.Unsafe_ParentIndexKey] is Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces.ICodeBlockOwner previousParent)
+                        {
+                            var currentParent = parserModel.GetParent(typeDefinitionNode, compilationUnit);
+                            
+                            if (currentParent.SyntaxKind == previousParent.SyntaxKind &&
+                                parserModel.Binder.GetIdentifierText(currentParent, compilationUnit) == parserModel.Binder.GetIdentifierText(previousParent, previousCompilationUnit))
+                            {
+                                // All the existing entires will be "emptied"
+                                // so don't both with checking whether the arguments are the same here.
+                                //
+                                // All that matters is that they're put in the same "method group".
+                                //
+                                var binder = parserModel.Binder;
+                                var previousNode = previousCompilationUnit.NodeList.FirstOrDefault(x =>
+                                    x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
+                                    x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                                    binder.GetIdentifierText(x, previousCompilationUnit) == binder.GetIdentifierText(typeDefinitionNode, compilationUnit));
+                            
+                                if (previousNode is not null)
+                                {
+                                    var previousTypeDefinitionNode = (TypeDefinitionNode)previousNode;
+                                    typeDefinitionNode.IndexPartialTypeDefinition = previousTypeDefinitionNode.IndexPartialTypeDefinition;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if (parserModel.ClearedPartialDefinitionHashSet.Add(identifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService)) &&
+                typeDefinitionNode.IndexPartialTypeDefinition != -1)
+            {
+                // Partial definitions of the same type from the same ResourceUri are made contiguous.
+                var seenResourceUri = false;
+                
+                int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
+                while (positionExclusive < parserModel.Binder.PartialTypeDefinitionList.Count)
+                {
+                    if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
+                    {
+                        if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri == compilationUnit.ResourceUri)
+                        {
+                            seenResourceUri = true;
+                        
+                            var partialTypeDefinitionEntry = parserModel.Binder.PartialTypeDefinitionList[positionExclusive];
+                            partialTypeDefinitionEntry.ScopeIndexKey = -1;
+                            parserModel.Binder.PartialTypeDefinitionList[positionExclusive] = partialTypeDefinitionEntry;
+                            
+                            positionExclusive++;
+                        }
+                        else
+                        {
+                            if (seenResourceUri)
+                                break;
+                            positionExclusive++;
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+        }
 	    
 	    if (storageModifierKind == StorageModifierKind.Enum)
 	    {
