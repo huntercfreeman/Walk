@@ -28,6 +28,7 @@ public partial class CSharpBinder
     private readonly NamespaceStatementNode _topLevelNamespaceStatementNode = CSharpFacts.Namespaces.GetTopLevelNamespaceStatementNode();
     
     public List<PartialTypeDefinitionEntry> PartialTypeDefinitionList { get; } = new();
+    public List<MethodOverloadDefinitionEntry> MethodOverloadDefinitionList { get; } = new();
     
     /// <summary>
 	/// This is not thread safe to access because 'BindNamespaceStatementNode(...)' will directly modify the NamespaceGroup's List.
