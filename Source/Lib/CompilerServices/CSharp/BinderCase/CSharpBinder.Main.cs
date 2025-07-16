@@ -29,6 +29,7 @@ public partial class CSharpBinder
     
     public List<PartialTypeDefinitionEntry> PartialTypeDefinitionList { get; } = new();
     public List<MethodOverloadDefinitionEntry> MethodOverloadDefinitionList { get; } = new();
+    public bool MethodOverload_ResourceUri_WasCleared { get; set; }
     
     /// <summary>
 	/// This is not thread safe to access because 'BindNamespaceStatementNode(...)' will directly modify the NamespaceGroup's List.
@@ -974,6 +975,16 @@ public partial class CSharpBinder
     }
     
     public bool TryGetCompilationUnit(ResourceUri resourceUri, out CSharpCompilationUnit compilationUnit)
+    {
+    	var success = _compilationUnitMap.TryGetValue(resourceUri, out var x);
+    	compilationUnit = x;
+    	return success;
+    }
+    
+    /// <summary>
+    /// This overload exists for the sake of emphasis that the "previous" compilation unit is being read.
+    /// </summary>
+    public bool TryGetCompilationUnit_Previous(ResourceUri resourceUri, out CSharpCompilationUnit compilationUnit)
     {
     	var success = _compilationUnitMap.TryGetValue(resourceUri, out var x);
     	compilationUnit = x;

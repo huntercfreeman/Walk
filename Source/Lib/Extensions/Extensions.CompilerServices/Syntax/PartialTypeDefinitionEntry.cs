@@ -5,16 +5,16 @@ namespace Walk.Extensions.CompilerServices.Syntax;
 public struct PartialTypeDefinitionEntry
 {
     public PartialTypeDefinitionEntry(
-        int indexStartGroup,
         ResourceUri resourceUri,
+        int indexStartGroup,
         int scopeIndexKey)
     {
-        IndexStartGroup = indexStartGroup;
         ResourceUri = resourceUri;
+        IndexStartGroup = indexStartGroup;
         ScopeIndexKey = scopeIndexKey;
     }
 
-	public int IndexStartGroup { get; set; }
     public ResourceUri ResourceUri { get; set; }
+	public int IndexStartGroup { get; set; }
     public int ScopeIndexKey { get; set; }
 }

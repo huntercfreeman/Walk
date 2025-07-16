@@ -5,16 +5,16 @@ namespace Walk.Extensions.CompilerServices.Syntax;
 public class MethodOverloadDefinitionEntry
 {
 	public MethodOverloadDefinitionEntry(
-        int indexStartGroup,
         ResourceUri resourceUri,
+        int indexStartGroup,
         int scopeIndexKey)
     {
-        IndexStartGroup = indexStartGroup;
         ResourceUri = resourceUri;
+        IndexStartGroup = indexStartGroup;
         ScopeIndexKey = scopeIndexKey;
     }
 
-	public int IndexStartGroup { get; set; }
     public ResourceUri ResourceUri { get; set; }
+	public int IndexStartGroup { get; set; }
     public int ScopeIndexKey { get; set; }
 }

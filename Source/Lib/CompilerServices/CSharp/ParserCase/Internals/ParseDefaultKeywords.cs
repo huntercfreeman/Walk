@@ -1016,8 +1016,8 @@ public class ParseDefaultKeywords
             parserModel.Binder.PartialTypeDefinitionList.Insert(
                 indexForInsertion,
                 new PartialTypeDefinitionEntry(
-                    typeDefinitionNode.IndexPartialTypeDefinition,
                     typeDefinitionNode.ResourceUri,
+                    typeDefinitionNode.IndexPartialTypeDefinition,
                     typeDefinitionNode.Unsafe_SelfIndexKey));
         
             int positionExclusive = indexForInsertion + 1;

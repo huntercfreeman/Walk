@@ -71,8 +71,10 @@ public struct CSharpParserModel
 			variableDeclarationNode: null);
 		VariableReferenceNode.IsBeingUsed = false;
 		
-		ClearedPartialDefinitionHashSet = binder.CSharpParserModel_ClearedPartialDefinitionHashSet;
+		ClearedPartialDefinitionHashSet = Binder.CSharpParserModel_ClearedPartialDefinitionHashSet;
 		ClearedPartialDefinitionHashSet.Clear();
+		
+		Binder.MethodOverload_ResourceUri_WasCleared = false;
     }
 
     public TokenWalker TokenWalker { get; }
