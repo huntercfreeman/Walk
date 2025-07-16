@@ -1316,7 +1316,41 @@ public partial class CSharpBinder
 		                     out var functionDefinitionNode)
 		                 && functionDefinitionNode is not null)
 		        {
-		            Console.WriteLine($"{functionDefinitionNode.IndexMethodOverloadDefinition}");
+		            if (functionDefinitionNode.IndexMethodOverloadDefinition != -1 &&
+		                compilationUnit.FunctionInvocationParameterMetadataList is not null)
+		            {
+		                var functionParameterList = compilationUnit.FunctionInvocationParameterMetadataList
+		                    .Where(x => x.IdentifierStartInclusiveIndex == functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex)
+		                    .ToList();
+		            
+		                for (int i = functionDefinitionNode.IndexMethodOverloadDefinition; i < MethodOverloadDefinitionList.Count; i++)
+		                {
+		                    var entry = MethodOverloadDefinitionList[i];
+		                    
+		                    if (TryGetCompilationUnit(entry.ResourceUri, out var innerCompilationUnit))
+		                    {
+		                        var innerFunctionDefinitionNode = (FunctionDefinitionNode)innerCompilationUnit.NodeList[entry.ScopeIndexKey];
+		                        
+		                        if (innerFunctionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList.Count == functionParameterList.Count)
+		                        {
+		                            for (int parameterIndex = 0; parameterIndex < innerFunctionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList.Count; parameterIndex++)
+		                            {
+		                                var argument = innerFunctionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList[parameterIndex];
+		                                var parameter = functionParameterList[parameterIndex];
+		                                
+		                                if (ArgumentModifierEqualsParameterModifier(argument.ArgumentModifierKind, parameter.ParameterModifierKind) &&
+		                                    argument.VariableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, TextEditorService) ==
+		                                        parameter.TypeReference.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService) &&
+	                                        argument.VariableDeclarationNode.TypeReference.ExplicitDefinitionResourceUri ==
+		                                        parameter.TypeReference.ExplicitDefinitionResourceUri)
+		                                {
+		                                    return innerFunctionDefinitionNode;
+		                                }
+		                            }
+		                        }
+		                    }
+		                }
+		            }
 		        
 		            return functionDefinitionNode;
 		        }
@@ -1405,6 +1439,20 @@ public partial class CSharpBinder
         }
 
         return null;
+    }
+    
+    private bool ArgumentModifierEqualsParameterModifier(ArgumentModifierKind argumentModifier, ParameterModifierKind parameterModifier)
+    {
+        if (argumentModifier == ArgumentModifierKind.Out && parameterModifier != ParameterModifierKind.Out)
+            return false;
+        if (argumentModifier == ArgumentModifierKind.In && parameterModifier != ParameterModifierKind.In)
+            return false;
+        if (argumentModifier == ArgumentModifierKind.Ref && parameterModifier != ParameterModifierKind.Ref)
+            return false;
+        if (argumentModifier == ArgumentModifierKind.Params && parameterModifier != ParameterModifierKind.Params)
+            return false;
+        
+        return true;
     }
 
     public ISyntaxNode? GetSyntaxNode(CSharpCompilationUnit compilationUnit, int positionIndex, CSharpResource? compilerServiceResource)
