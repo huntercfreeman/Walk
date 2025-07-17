@@ -1,11 +1,28 @@
+I named it Walk because I like to go for a hour walk everyday.
 
-I teach C# and Blazor $100 an hour.
-Email me: huntercfreeman@gmail.com
+# Walk Ide
 
-I'll teach it to companies so long as it won't get me in legal trouble.
-I'm not sure the legality of consulting, but I'll get on a call with you at $100 an hour and help you with whatever you want as long as I won't get in legal trouble for doing so.
+Edit files:
+![person.gif](./Images/person.gif)
 
-I mean you can honestly just email me anything you want.
+Solution wide parse:
+![initialSolutionWideParse.gif](./Images/initialSolutionWideParse.gif)
 
-You could email me a ":)" if you wanted.
+## Demo:
+https://huntercfreeman.github.io/Walk/
+
+## Installation:
+[INSTALLATION.md](./INSTALLATION.md)
+
+## Introduction:
+
+- A free and open source IDE
+- Runs on Linux, Windows, and Mac
+- Written with the .NET environment: C#, [Blazor UI Framework](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor), and a [lightweight Photino webview](https://github.com/tryphotino/photino.Blazor).
+
+The IDE can support any programming language by way of the 'ICompilerService' interface.
+
+## Donations:
+
+[![Donate with PayPal](https://raw.githubusercontent.com/Luthetus/paypal-donate-button_Fork/master/paypal-donate-button.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RCG8QN3KL623Y)
 
