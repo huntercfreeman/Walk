@@ -12,7 +12,6 @@ public class ParseFunctions
     public static void HandleFunctionDefinition(
         SyntaxToken consumedIdentifierToken,
         TypeReference consumedTypeReference,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
     	var functionDefinitionNode = new FunctionDefinitionNode(
@@ -22,16 +21,16 @@ public class ParseFunctions
             genericParameterListing: default,
             functionArgumentListing: default,
             default,
-            compilationUnit.ResourceUri);
+            parserModel.Compilation.ResourceUri);
             
-        parserModel.Binder.BindFunctionDefinitionNode(functionDefinitionNode, compilationUnit, ref parserModel);
+        parserModel.Binder.BindFunctionDefinitionNode(functionDefinitionNode, ref parserModel);
         
         bool isFunctionOverloadCase;
         
         if (parserModel.Binder.TryGetFunctionDefinitionNodeByScope(
-            compilationUnit,
+            parserModel.Compilation,
         	parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-        	consumedIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService),
+        	consumedIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
         	out var existingFunctionDefinitionNode))
         {
             isFunctionOverloadCase = true;
@@ -44,7 +43,6 @@ public class ParseFunctions
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	functionDefinitionNode,
 	        parserModel.TokenWalker.Current.TextSpan,
-	        compilationUnit,
 	        ref parserModel);
     
     	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
@@ -54,11 +52,10 @@ public class ParseFunctions
 			var openAngleBracketToken = parserModel.TokenWalker.Consume();
     		
     		ParseExpressions.ParseGenericParameterNode_Start(
-    			functionDefinitionNode, ref openAngleBracketToken, compilationUnit, ref parserModel);
+    			functionDefinitionNode, ref openAngleBracketToken, ref parserModel);
     		
     		parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.FunctionDefinitionNode);
     		var successGenericParametersListingNode = ParseExpressions.TryParseExpression(
-    			compilationUnit,
     			ref parserModel,
     			out var expressionNode);
     		
@@ -73,27 +70,25 @@ public class ParseFunctions
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
             return;
 
-        HandleFunctionArguments(functionDefinitionNode, compilationUnit, ref parserModel);
+        HandleFunctionArguments(functionDefinitionNode, ref parserModel);
         
         if (isFunctionOverloadCase)
         {
             HandleFunctionOverloadDefinition(
                 newNode: functionDefinitionNode,
                 existingNode: existingFunctionDefinitionNode,
-                compilationUnit,
                 ref parserModel);
         }
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
         	parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
         else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
-        	ParseTokens.MoveToExpressionBody(compilationUnit, ref parserModel);
+        	ParseTokens.MoveToExpressionBody(ref parserModel);
     }
     
     public static void HandleFunctionOverloadDefinition(
         FunctionDefinitionNode newNode,
         FunctionDefinitionNode existingNode,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
         if (!parserModel.Binder.MethodOverload_ResourceUri_WasCleared)
@@ -102,7 +97,7 @@ public class ParseFunctions
             for (int clearIndex = 0; clearIndex < parserModel.Binder.MethodOverloadDefinitionList.Count; clearIndex++)
             {
                 var entry = parserModel.Binder.MethodOverloadDefinitionList[clearIndex];
-                if (entry.ResourceUri == compilationUnit.ResourceUri)
+                if (entry.ResourceUri == parserModel.Compilation.ResourceUri)
                 {
                     entry.ScopeIndexKey = -1;
                     parserModel.Binder.MethodOverloadDefinitionList[clearIndex] = entry;
@@ -119,17 +114,17 @@ public class ParseFunctions
             
             var existingWasFound = false;
         
-            if (parserModel.Binder.__CompilationUnitMap.TryGetValue(compilationUnit.ResourceUri, out var previousCompilationUnit))
+            if (parserModel.Binder.__CompilationUnitMap.TryGetValue(parserModel.Compilation.ResourceUri, out var previousCompilationUnit))
             {
                 existingWasFound = false;
                 
                 if (existingNode.Unsafe_ParentIndexKey < previousCompilationUnit.CodeBlockOwnerList.Count)
                 {
                     var previousParent = previousCompilationUnit.CodeBlockOwnerList[existingNode.Unsafe_ParentIndexKey];
-                    var currentParent = parserModel.GetParent(newNode, compilationUnit);
+                    var currentParent = parserModel.GetParent(newNode, parserModel.Compilation);
                     
                     if (currentParent.SyntaxKind == previousParent.SyntaxKind &&
-                        parserModel.Binder.GetIdentifierText(currentParent, compilationUnit) == parserModel.Binder.GetIdentifierText(previousParent, previousCompilationUnit))
+                        parserModel.Binder.GetIdentifierText(currentParent, parserModel.Compilation) == parserModel.Binder.GetIdentifierText(previousParent, previousCompilationUnit))
                     {
                         // All the existing entires will be "emptied"
                         // so don't both with checking whether the arguments are the same here.
@@ -137,10 +132,14 @@ public class ParseFunctions
                         // All that matters is that they're put in the same "method group".
                         //
                         var binder = parserModel.Binder;
+                        
+                        // TODO: Cannot use ref, out, or in...
+                        var compilation = parserModel.Compilation;
+                        
                         var previousNode = previousCompilationUnit.CodeBlockOwnerList.FirstOrDefault(x =>
                             x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
                             x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
-                            binder.GetIdentifierText(x, previousCompilationUnit) == binder.GetIdentifierText(existingNode, compilationUnit));
+                            binder.GetIdentifierText(x, previousCompilationUnit) == binder.GetIdentifierText(existingNode, compilation));
                     
                         if (previousNode is not null)
                         {
@@ -164,7 +163,7 @@ public class ParseFunctions
             {
                 existingNode.IndexMethodOverloadDefinition = parserModel.Binder.MethodOverloadDefinitionList.Count;
                 parserModel.Binder.MethodOverloadDefinitionList.Add(new MethodOverloadDefinitionEntry(
-                    compilationUnit.ResourceUri,
+                    parserModel.Compilation.ResourceUri,
                     parserModel.Binder.MethodOverloadDefinitionList.Count,
                     existingNode.Unsafe_SelfIndexKey));
             }
@@ -180,7 +179,7 @@ public class ParseFunctions
             {
                 usedExistingSlot = true;
                 parserModel.Binder.MethodOverloadDefinitionList[i] = new MethodOverloadDefinitionEntry(
-                    compilationUnit.ResourceUri,
+                    parserModel.Compilation.ResourceUri,
                     existingNode.IndexMethodOverloadDefinition,
                     newNode.Unsafe_SelfIndexKey);
             }
@@ -191,7 +190,7 @@ public class ParseFunctions
             parserModel.Binder.MethodOverloadDefinitionList.Insert(
                 i,
                 new MethodOverloadDefinitionEntry(
-                    compilationUnit.ResourceUri,
+                    parserModel.Compilation.ResourceUri,
                     existingNode.IndexMethodOverloadDefinition,
                     newNode.Unsafe_SelfIndexKey));
         }
@@ -217,7 +216,6 @@ public class ParseFunctions
     public static void HandleConstructorDefinition(
     	TypeDefinitionNode typeDefinitionNodeCodeBlockOwner,
         SyntaxToken consumedIdentifierToken,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
     	var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
@@ -232,17 +230,16 @@ public class ParseFunctions
             default,
             functionArgumentListing: default,
             default,
-            compilationUnit.ResourceUri);
+            parserModel.Compilation.ResourceUri);
     
-    	parserModel.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, compilationUnit, ref parserModel);
+    	parserModel.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, ref parserModel);
     	
     	parserModel.Binder.NewScopeAndBuilderFromOwner(
         	constructorDefinitionNode,
 	        parserModel.TokenWalker.Current.TextSpan,
-	        compilationUnit,
 	        ref parserModel);
     	
-    	HandleFunctionArguments(constructorDefinitionNode, compilationUnit, ref parserModel);
+    	HandleFunctionArguments(constructorDefinitionNode, ref parserModel);
 
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
         {
@@ -310,27 +307,26 @@ public class ParseFunctions
 				//
 				// So, explicitly adding this invocation so that the first named parameter parses correctly.
 				//
-				_ = ParseExpressions.ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(compilationUnit, ref parserModel, guaranteeConsume: true);
+				_ = ParseExpressions.ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(ref parserModel, guaranteeConsume: true);
 				
 				// This invocation will parse all of the parameters because the 'parserModel.ExpressionList'
 				// contains (SyntaxKind.CommaToken, functionParametersListingNode).
 				//
 				// Upon encountering a CommaToken the expression loop will set 'functionParametersListingNode'
 				// to the primary expression, then return an EmptyExpressionNode in order to parse the next parameter.
-				_ = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
+				_ = ParseExpressions.ParseExpression(ref parserModel);
             }
         }
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
         {
-        	ParseTokens.MoveToExpressionBody(compilationUnit, ref parserModel);
+        	ParseTokens.MoveToExpressionBody(ref parserModel);
         }
     }
 
     /// <summary>Use this method for function definition, whereas <see cref="HandleFunctionParameters"/> should be used for function invocation.</summary>
     public static void HandleFunctionArguments(
     	IFunctionDefinitionNode functionDefinitionNode,
-    	CSharpCompilationUnit compilationUnit,
     	ref CSharpParserModel parserModel,
     	VariableKind variableKind = VariableKind.Local)
     {
@@ -427,13 +423,13 @@ public class ParseFunctions
             
             	var tokenIndexOriginal = parserModel.TokenWalker.Index;
             	
-            	var successParse = ParseExpressions.TryParseVariableDeclarationNode(compilationUnit, ref parserModel, out var variableDeclarationNode);
+            	var successParse = ParseExpressions.TryParseVariableDeclarationNode(ref parserModel, out var variableDeclarationNode);
             	
             	if (successParse)
             	{
-                    parserModel.Binder.CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
+                    parserModel.Binder.CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, ref parserModel);
     	    		variableDeclarationNode.VariableKind = variableKind;
-    	    		parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserModel, shouldCreateVariableSymbol: false);
+    	    		parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, ref parserModel, shouldCreateVariableSymbol: false);
                     
                     SyntaxToken optionalCompileTimeConstantToken;
                     
@@ -444,7 +440,7 @@ public class ParseFunctions
         				
         				parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
         				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, null));
-        				_ = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
+        				_ = ParseExpressions.ParseExpression(ref parserModel);
         			}
         			else
         			{
