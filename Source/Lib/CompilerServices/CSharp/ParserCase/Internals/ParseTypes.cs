@@ -11,7 +11,7 @@ public static class ParseTypes
 	/// TODO: TypeDefinitionNode(s) should use the expression loop to parse the...
 	/// ...generic parameters. They currently use 'ParseTypes.HandleGenericParameters(...);'
 	/// </summary>
-    public static GenericParameterListing HandleGenericParameters(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static GenericParameterListing HandleGenericParameters(ref CSharpParserModel parserModel)
     {
     	var openAngleBracketToken = parserModel.TokenWalker.Consume();
     
@@ -28,7 +28,7 @@ public static class ParseTypes
         while (true)
         {
             // TypeClause
-            var typeClauseNode = MatchTypeClause(compilationUnit, ref parserModel);
+            var typeClauseNode = MatchTypeClause(ref parserModel);
 
             if (typeClauseNode.IsFabricated)
                 break;
@@ -58,7 +58,7 @@ public static class ParseTypes
             closeAngleBracketToken);
     }
 
-    public static TypeClauseNode MatchTypeClause(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static TypeClauseNode MatchTypeClause(ref CSharpParserModel parserModel)
     {
         parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.TypeClauseNode);
     	if (ParseExpressions.TryParseExpression(ref parserModel, out var expressionNode))
@@ -149,7 +149,6 @@ public static class ParseTypes
 
     public static void HandlePrimaryConstructorDefinition(
         TypeDefinitionNode typeDefinitionNode,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
     	ParseFunctions.HandleFunctionArguments(typeDefinitionNode, ref parserModel, variableKind: VariableKind.Property);
@@ -157,7 +156,6 @@ public static class ParseTypes
     
     public static void HandleEnumDefinitionNode(
         TypeDefinitionNode typeDefinitionNode,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
     	while (!parserModel.TokenWalker.IsEof)
@@ -196,7 +194,7 @@ public static class ParseTypes
 				        identifierToken,
 				        VariableKind.EnumMember,
 				        false,
-				        compilationUnit.ResourceUri);
+				        parserModel.Compilation.ResourceUri);
 				        
 				    // parserModel.CurrentCodeBlockBuilder.AddChild(variableDeclarationNode);
 				        

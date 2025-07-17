@@ -132,10 +132,14 @@ public class ParseFunctions
                         // All that matters is that they're put in the same "method group".
                         //
                         var binder = parserModel.Binder;
+                        
+                        // TODO: Cannot use ref, out, or in...
+                        var compilation = parserModel.Compilation;
+                        
                         var previousNode = previousCompilationUnit.CodeBlockOwnerList.FirstOrDefault(x =>
                             x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
                             x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
-                            binder.GetIdentifierText(x, previousCompilationUnit) == binder.GetIdentifierText(existingNode, parserModel.Compilation));
+                            binder.GetIdentifierText(x, previousCompilationUnit) == binder.GetIdentifierText(existingNode, compilation));
                     
                         if (previousNode is not null)
                         {

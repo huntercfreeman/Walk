@@ -392,8 +392,11 @@ public class CSharpBinder
             parserModel.Compilation.__SymbolList.Add(typeSymbol);
         }
 
+        // TODO: Cannot use ref, out, or in...
+        var compilation = parserModel.Compilation;
+
         var matchingTypeDefintionNode = CSharpFacts.Types.TypeDefinitionNodes.SingleOrDefault(
-            x => x.TypeIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService) == typeClauseNode.TypeIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService));
+            x => x.TypeIdentifierToken.TextSpan.GetText(compilation.SourceText, TextEditorService) == typeClauseNode.TypeIdentifierToken.TextSpan.GetText(compilation.SourceText, TextEditorService));
 
         if (matchingTypeDefintionNode is not null)
         {
@@ -487,9 +490,12 @@ public class CSharpBinder
         {
             var typeDefinitionNodes = GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup);
             
+            // TODO: Cannot use ref, out, or in...
+            var compilation = parserModel.Compilation;
+            
             foreach (var typeDefinitionNode in typeDefinitionNodes)
             {
-        		var matchNode = parserModel.Compilation.ExternalTypeDefinitionList.FirstOrDefault(x => GetIdentifierText(x, parserModel.Compilation) == GetIdentifierText(typeDefinitionNode, parserModel.Compilation));
+        		var matchNode = parserModel.Compilation.ExternalTypeDefinitionList.FirstOrDefault(x => GetIdentifierText(x, compilation) == GetIdentifierText(typeDefinitionNode, compilation));
             	
             	if (matchNode is null)
             	    parserModel.Compilation.ExternalTypeDefinitionList.Add(typeDefinitionNode);

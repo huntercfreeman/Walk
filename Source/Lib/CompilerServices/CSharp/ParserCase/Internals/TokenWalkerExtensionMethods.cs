@@ -8,9 +8,9 @@ namespace Walk.CompilerServices.CSharp.ParserCase.Internals;
 
 internal static class TokenWalkerExtensionMethods
 {
-    public static TypeClauseNode MatchTypeClauseNode(this TokenWalker tokenWalker, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static TypeClauseNode MatchTypeClauseNode(this TokenWalker tokenWalker, ref CSharpParserModel parserModel)
     {
-        return ParseTypes.MatchTypeClause(compilationUnit, ref parserModel);
+        return ParseTypes.MatchTypeClause(ref parserModel);
     }
     
     /*#if DEBUG
@@ -19,13 +19,12 @@ internal static class TokenWalkerExtensionMethods
 
 	public static void DeferParsingOfChildScope(
 		this TokenWalker tokenWalker,
-		CSharpCompilationUnit compilationUnit,
 		ref CSharpParserModel parserModel)
     {    
 		// Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
 		var deferredCodeBlockBuilder = parserModel.CurrentCodeBlockOwner;
 		
-		parserModel.CurrentCodeBlockOwner = parserModel.GetParent(deferredCodeBlockBuilder, compilationUnit);
+		parserModel.CurrentCodeBlockOwner = parserModel.GetParent(deferredCodeBlockBuilder, parserModel.Compilation);
 
 		var openTokenIndex = tokenWalker.Index - 1;
 		
@@ -80,7 +79,7 @@ internal static class TokenWalkerExtensionMethods
 			var closeBraceToken = tokenWalker.Match(SyntaxKind.CloseBraceToken);
 		}
 
-		if (compilationUnit.CompilationUnitKind == CompilationUnitKind.SolutionWide_DefinitionsOnly &&
+		if (parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_DefinitionsOnly &&
 			deferredCodeBlockBuilder.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
     		deferredCodeBlockBuilder.SyntaxKind == SyntaxKind.ArbitraryCodeBlockNode)
 		{

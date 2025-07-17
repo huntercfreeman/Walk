@@ -910,7 +910,7 @@ public static class ParseExpressions
     		ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService) == "_")
     	{
     		if (!parserModel.Binder.TryGetVariableDeclarationHierarchically(
-			    	compilationUnit,
+			    	parserModel.Compilation,
 			    	parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
 			        ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
 			        out _))
@@ -1832,7 +1832,7 @@ public static class ParseExpressions
 						token,
 						VariableKind.Local,
 						isInitialized: true,
-						compilationUnit.ResourceUri));
+						parserModel.Compilation.ResourceUri));
 			default:
 				return parserModel.Binder.Shared_BadExpressionNode;
 		}
@@ -1916,7 +1916,7 @@ public static class ParseExpressions
 			    token.TextSpan.EndExclusiveIndex,
 			    (byte)GenericDecorationKind.None);
 		
-			compilationUnit.__SymbolList.Add(new Symbol(SyntaxKind.LambdaSymbol, parserModel.GetNextSymbolId(), textSpan));
+			parserModel.Compilation.__SymbolList.Add(new Symbol(SyntaxKind.LambdaSymbol, parserModel.GetNextSymbolId(), textSpan));
 		
 			if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
 			{
@@ -2360,7 +2360,7 @@ public static class ParseExpressions
 		if (typeClauseNode.IsParsingGenericParameters)
 		{
 			return GenericParametersListingMergeExpression(
-				typeClauseNode, expressionSecondary, compilationUnit, ref parserModel);
+				typeClauseNode, expressionSecondary, ref parserModel);
 		}
 	
 		switch (expressionSecondary.SyntaxKind)
@@ -2978,7 +2978,7 @@ public static class ParseExpressions
                 
                 if (parserModel.Binder.NamespaceGroupMap.TryGetValue(firstNamespaceClauseNode.IdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService), out var namespaceGroup))
     		    {
-    		        var innerCompilationUnit = compilationUnit;
+    		        var innerCompilationUnit = parserModel.Compilation;
     		    
     		        foreach (var typeDefinitionNode in parserModel.Binder.GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup))
     		        {
@@ -3026,7 +3026,7 @@ public static class ParseExpressions
 			var variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(
 	            memberIdentifierToken,
 	            variableDeclarationNode: null);
-	        _ = parserModel.Binder.CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, VariableKind.Property, parserModel.Compilation, ref parserModel);
+	        _ = parserModel.Binder.CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, VariableKind.Property, ref parserModel);
 			return variableReferenceNode;
 		}
 	}
@@ -3113,7 +3113,7 @@ public static class ParseExpressions
 			return parserModel.Binder.Shared_BadExpressionNode;
 		}
 			
-		parserModel.Binder.BindTypeClauseNode(typeClauseNode, compilationUnit, ref parserModel);
+		parserModel.Binder.BindTypeClauseNode(typeClauseNode, ref parserModel);
 		
 		var explicitCastNode = new ExplicitCastNode(ambiguousParenthesizedExpressionNode.OpenParenthesisToken, new TypeReference(typeClauseNode), closeParenthesisToken);
 		return explicitCastNode;

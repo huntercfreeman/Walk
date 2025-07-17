@@ -341,7 +341,7 @@ public static class ParseTokens
 		parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = false;
 
 		// Global scope has a null parent.
-		var parentScopeDirection = parserModel.GetParent(parserModel.CurrentCodeBlockOwner, compilationUnit)?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
+		var parentScopeDirection = parserModel.GetParent(parserModel.CurrentCodeBlockOwner, parserModel.Compilation)?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
 		
 		if (parentScopeDirection == ScopeDirectionKind.Both)
 		{
@@ -383,7 +383,7 @@ public static class ParseTokens
 			if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserModel.CurrentCodeBlockOwner))
 			{
 				tuple = parserModel.ParseChildScopeStack.Pop();
-				tuple.DeferredChildScope.PrepareMainParserLoop(closeBraceTokenIndex, compilationUnit, ref parserModel);
+				tuple.DeferredChildScope.PrepareMainParserLoop(closeBraceTokenIndex, ref parserModel);
 				return;
 			}
 		}
@@ -580,7 +580,7 @@ public static class ParseTokens
     	parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
     	
     	// Global scope has a null parent.
-		var parentScopeDirection = parserModel.GetParent(parserModel.CurrentCodeBlockOwner, compilationUnit)?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
+		var parentScopeDirection = parserModel.GetParent(parserModel.CurrentCodeBlockOwner, parserModel.Compilation)?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
 		
 		if (parentScopeDirection == ScopeDirectionKind.Both)
 		{

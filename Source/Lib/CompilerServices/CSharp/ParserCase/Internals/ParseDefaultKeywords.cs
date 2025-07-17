@@ -862,7 +862,7 @@ public class ParseDefaultKeywords
                         var currentParent = parserModel.GetParent(typeDefinitionNode, parserModel.Compilation);
                         
                         if (currentParent.SyntaxKind == previousParent.SyntaxKind &&
-                            parserModel.Binder.GetIdentifierText(currentParent, parserModel.CompilationUnit) == parserModel.Binder.GetIdentifierText(previousParent, previousCompilationUnit))
+                            parserModel.Binder.GetIdentifierText(currentParent, parserModel.Compilation) == parserModel.Binder.GetIdentifierText(previousParent, previousCompilationUnit))
                         {
                             // All the existing entires will be "emptied"
                             // so don't both with checking whether the arguments are the same here.
@@ -870,10 +870,14 @@ public class ParseDefaultKeywords
                             // All that matters is that they're put in the same "method group".
                             //
                             var binder = parserModel.Binder;
+                            
+                            // TODO: Cannot use ref, out, or in...
+                            var compilation = parserModel.Compilation;
+                            
                             var previousNode = previousCompilationUnit.CodeBlockOwnerList.FirstOrDefault(x =>
                                 x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
                                 x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                                binder.GetIdentifierText(x, previousCompilationUnit) == binder.GetIdentifierText(typeDefinitionNode, parserModel.Compilation));
+                                binder.GetIdentifierText(x, previousCompilationUnit) == binder.GetIdentifierText(typeDefinitionNode, compilation));
                         
                             if (previousNode is not null)
                             {
@@ -950,7 +954,7 @@ public class ParseDefaultKeywords
 					var consumeCounter = parserModel.TokenWalker.ConsumeCounter;
 					
             		parserModel.Binder.BindTypeClauseNode(
-            			parserModel.TokenWalker.MatchTypeClauseNode(parserModel.Compilation, ref parserModel),
+            			parserModel.TokenWalker.MatchTypeClauseNode(ref parserModel),
             			ref parserModel);
             		
             		if (consumeCounter == parserModel.TokenWalker.ConsumeCounter)
