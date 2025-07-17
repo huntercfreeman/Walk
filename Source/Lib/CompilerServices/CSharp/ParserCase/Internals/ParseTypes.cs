@@ -152,7 +152,7 @@ public static class ParseTypes
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-    	ParseFunctions.HandleFunctionArguments(typeDefinitionNode, compilationUnit, ref parserModel, variableKind: VariableKind.Property);
+    	ParseFunctions.HandleFunctionArguments(typeDefinitionNode, ref parserModel, variableKind: VariableKind.Property);
     }
     
     public static void HandleEnumDefinitionNode(
@@ -189,7 +189,7 @@ public static class ParseTypes
     		{
     			if (UtilityApi.IsConvertibleToIdentifierToken(token.SyntaxKind))
 				{
-					var identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, compilationUnit, ref parserModel);
+					var identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, ref parserModel);
 					
 					var variableDeclarationNode = new VariableDeclarationNode(
 				        typeDefinitionNode.ToTypeReference(),
@@ -200,7 +200,7 @@ public static class ParseTypes
 				        
 				    // parserModel.CurrentCodeBlockBuilder.AddChild(variableDeclarationNode);
 				        
-				    parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserModel);
+				    parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, ref parserModel);
 					
 					shouldFindIdentifier = !shouldFindIdentifier;
 	    		}

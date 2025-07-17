@@ -106,10 +106,9 @@ public class CSharpBinder
 
     public void BindDiscard(
         SyntaxToken identifierToken,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-    	compilationUnit.__SymbolList.Add(
+    	parserModel.Compilation.__SymbolList.Add(
     		new Symbol(
         		SyntaxKind.DiscardSymbol,
 	        	parserModel.GetNextSymbolId(),
@@ -121,10 +120,9 @@ public class CSharpBinder
 
     public void BindFunctionDefinitionNode(
         FunctionDefinitionNode functionDefinitionNode,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-        var functionIdentifierText = functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService);
+        var functionIdentifierText = functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService);
 
         var functionSymbol = new Symbol(
         	SyntaxKind.FunctionSymbol,
@@ -134,12 +132,11 @@ public class CSharpBinder
 	            DecorationByte = (byte)GenericDecorationKind.Function
 	        });
 
-        compilationUnit.__SymbolList.Add(functionSymbol);
+        parserModel.Compilation.__SymbolList.Add(functionSymbol);
     }
 
     public void SetCurrentNamespaceStatementNode(
         NamespaceStatementNode namespaceStatementNode,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
         parserModel.CurrentNamespaceStatementNode = namespaceStatementNode;
@@ -147,10 +144,9 @@ public class CSharpBinder
 
     public void BindNamespaceStatementNode(
         NamespaceStatementNode namespaceStatementNode,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-        var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+        var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService);
 
         if (_namespaceGroupMap.TryGetValue(namespaceString, out var inNamespaceGroupNode))
         {
@@ -162,7 +158,7 @@ public class CSharpBinder
                 namespaceString,
                 new List<NamespaceStatementNode> { namespaceStatementNode }));
                 
-            var fullNamespaceName = namespaceStatementNode.IdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+            var fullNamespaceName = namespaceStatementNode.IdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService);
             
             var splitResult = fullNamespaceName.Split('.');
             
@@ -177,17 +173,16 @@ public class CSharpBinder
 
     public void BindVariableDeclarationNode(
         VariableDeclarationNode variableDeclarationNode,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel,
         bool shouldCreateVariableSymbol = true)
     {
     	if (shouldCreateVariableSymbol)
-        	CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
+        	CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, ref parserModel);
         	
-        var text = variableDeclarationNode.IdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+        var text = variableDeclarationNode.IdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService);
         
         if (TryGetVariableDeclarationNodeByScope(
-        		compilationUnit,
+        		parserModel.Compilation,
         		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
         		text,
         		out var existingVariableDeclarationNode))
@@ -199,21 +194,21 @@ public class CSharpBinder
                 // TODO: Track one or many declarations?...
                 // (if there is an error where something is defined twice for example)
                 SetVariableDeclarationNodeByScope(
-        			compilationUnit,
+        			parserModel.Compilation,
         			parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 	text,
                 	variableDeclarationNode);
             }
 
             DiagnosticHelper.ReportAlreadyDefinedVariable(
-            	compilationUnit.__DiagnosticList,
+            	parserModel.Compilation.__DiagnosticList,
                 variableDeclarationNode.IdentifierToken.TextSpan,
                 text);
         }
         else
         {
         	_ = TryAddVariableDeclarationNodeByScope(
-        		compilationUnit,
+        		parserModel.Compilation,
     			parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
             	text,
             	variableDeclarationNode);
@@ -222,10 +217,9 @@ public class CSharpBinder
     
     public void BindLabelDeclarationNode(
         LabelDeclarationNode labelDeclarationNode,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-    	compilationUnit.__SymbolList.Add(
+    	parserModel.Compilation.__SymbolList.Add(
         	new Symbol(
         		SyntaxKind.LabelSymbol,
             	parserModel.GetNextSymbolId(),
@@ -234,10 +228,10 @@ public class CSharpBinder
             	    DecorationByte = (byte)GenericDecorationKind.None
             	}));
         	
-        var text = labelDeclarationNode.IdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+        var text = labelDeclarationNode.IdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService);
         
         if (TryGetLabelDeclarationNodeByScope(
-        		compilationUnit,
+        		parserModel.Compilation,
         		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
         		text,
         		out var existingLabelDeclarationNode))
@@ -249,21 +243,21 @@ public class CSharpBinder
                 // TODO: Track one or many declarations?...
                 // (if there is an error where something is defined twice for example)
                 SetLabelDeclarationNodeByScope(
-        			compilationUnit,
+        			parserModel.Compilation,
         			parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 	text,
                 	labelDeclarationNode);
             }
 
             DiagnosticHelper.ReportAlreadyDefinedLabel(
-            	compilationUnit.__DiagnosticList,
+            	parserModel.Compilation.__DiagnosticList,
                 labelDeclarationNode.IdentifierToken.TextSpan,
                 text);
         }
         else
         {
         	_ = TryAddLabelDeclarationNodeByScope(
-        		compilationUnit,
+        		parserModel.Compilation,
     			parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
             	text,
             	labelDeclarationNode);
@@ -272,14 +266,13 @@ public class CSharpBinder
 
     public VariableReferenceNode ConstructAndBindVariableReferenceNode(
         SyntaxToken variableIdentifierToken,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-        var text = variableIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+        var text = variableIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService);
         VariableReferenceNode? variableReferenceNode;
 
         if (TryGetVariableDeclarationHierarchically(
-        		compilationUnit,
+        		parserModel.Compilation,
                 parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 text,
                 out var variableDeclarationNode)
@@ -296,7 +289,7 @@ public class CSharpBinder
                 variableIdentifierToken,
                 VariableKind.Local,
                 false,
-                compilationUnit.ResourceUri)
+                parserModel.Compilation.ResourceUri)
             {
                 IsFabricated = true,
             };
@@ -306,16 +299,15 @@ public class CSharpBinder
                 variableDeclarationNode);
         }
 
-        CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
+        CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, ref parserModel);
         return variableReferenceNode;
     }
     
     public void BindLabelReferenceNode(
         LabelReferenceNode labelReferenceNode,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-        compilationUnit.__SymbolList.Add(
+        parserModel.Compilation.__SymbolList.Add(
         	new Symbol(
         		SyntaxKind.LabelSymbol,
             	parserModel.GetNextSymbolId(),
@@ -327,7 +319,6 @@ public class CSharpBinder
 
     public void BindConstructorDefinitionIdentifierToken(
         SyntaxToken identifierToken,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
         var constructorSymbol = new Symbol(
@@ -338,16 +329,15 @@ public class CSharpBinder
 	            DecorationByte = (byte)GenericDecorationKind.Type
 	        });
 
-        compilationUnit.__SymbolList.Add(constructorSymbol);
+        parserModel.Compilation.__SymbolList.Add(constructorSymbol);
     }
 
     public void BindFunctionInvocationNode(
         FunctionInvocationNode functionInvocationNode,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
         var functionInvocationIdentifierText = functionInvocationNode
-            .FunctionInvocationIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+            .FunctionInvocationIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService);
 
         var functionSymbol = new Symbol(
         	SyntaxKind.FunctionSymbol,
@@ -357,10 +347,10 @@ public class CSharpBinder
 	            DecorationByte = (byte)GenericDecorationKind.Function
 	        });
 
-        compilationUnit.__SymbolList.Add(functionSymbol);
+        parserModel.Compilation.__SymbolList.Add(functionSymbol);
 
         if (TryGetFunctionHierarchically(
-        		compilationUnit,
+        		parserModel.Compilation,
                 parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 functionInvocationIdentifierText,
                 out var functionDefinitionNode) &&
@@ -372,7 +362,6 @@ public class CSharpBinder
 
     public void BindNamespaceReference(
         SyntaxToken namespaceIdentifierToken,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
         var namespaceSymbol = new Symbol(
@@ -383,12 +372,11 @@ public class CSharpBinder
 	            DecorationByte = (byte)GenericDecorationKind.None
 	        });
 
-        compilationUnit.__SymbolList.Add(namespaceSymbol);
+        parserModel.Compilation.__SymbolList.Add(namespaceSymbol);
     }
 
     public void BindTypeClauseNode(
         TypeClauseNode typeClauseNode,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
         if (!typeClauseNode.IsKeywordType)
@@ -401,11 +389,11 @@ public class CSharpBinder
 	                DecorationByte = (byte)GenericDecorationKind.Type
 	            });
 
-            compilationUnit.__SymbolList.Add(typeSymbol);
+            parserModel.Compilation.__SymbolList.Add(typeSymbol);
         }
 
         var matchingTypeDefintionNode = CSharpFacts.Types.TypeDefinitionNodes.SingleOrDefault(
-            x => x.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService) == typeClauseNode.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService));
+            x => x.TypeIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService) == typeClauseNode.TypeIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService));
 
         if (matchingTypeDefintionNode is not null)
         {
@@ -415,7 +403,6 @@ public class CSharpBinder
     
     public void BindTypeIdentifier(
         SyntaxToken identifierToken,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
         if (identifierToken.SyntaxKind == SyntaxKind.IdentifierToken)
@@ -428,27 +415,25 @@ public class CSharpBinder
 	                DecorationByte = (byte)GenericDecorationKind.Type
 	            });
 
-            compilationUnit.__SymbolList.Add(typeSymbol);
+            parserModel.Compilation.__SymbolList.Add(typeSymbol);
         }
     }
 
     public void BindUsingStatementTuple(
         SyntaxToken usingKeywordToken,
         SyntaxToken namespaceIdentifierToken,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-        AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService), compilationUnit, ref parserModel);
+        AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService), ref parserModel);
     }
     
     public void BindTypeDefinitionNode(
         TypeDefinitionNode typeDefinitionNode,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel,
         bool shouldOverwrite = false)
     {
-        var typeIdentifierText = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
-        var currentNamespaceStatementText = parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+        var typeIdentifierText = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService);
+        var currentNamespaceStatementText = parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService);
         var namespaceAndTypeIdentifiers = new NamespaceAndTypeIdentifiers(currentNamespaceStatementText, typeIdentifierText);
 
         typeDefinitionNode.EncompassingNamespaceIdentifierString = currentNamespaceStatementText;
@@ -474,16 +459,15 @@ public class CSharpBinder
     public void NewScopeAndBuilderFromOwner(
     	ICodeBlockOwner codeBlockOwner,
         TextEditorTextSpan textSpan,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
     	codeBlockOwner.Unsafe_ParentIndexKey = parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
     	codeBlockOwner.Scope_StartInclusiveIndex = textSpan.StartInclusiveIndex;
 
-		codeBlockOwner.Unsafe_SelfIndexKey = compilationUnit.CodeBlockOwnerList.Count;
-		compilationUnit.CodeBlockOwnerList.Add(codeBlockOwner);
+		codeBlockOwner.Unsafe_SelfIndexKey = parserModel.Compilation.CodeBlockOwnerList.Count;
+		parserModel.Compilation.CodeBlockOwnerList.Add(codeBlockOwner);
 
-		var parent = parserModel.GetParent(codeBlockOwner, compilationUnit);
+		var parent = parserModel.GetParent(codeBlockOwner, parserModel.Compilation);
     	
     	var parentScopeDirection = parent?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
         if (parentScopeDirection == ScopeDirectionKind.Both)
@@ -491,12 +475,11 @@ public class CSharpBinder
     
         parserModel.CurrentCodeBlockOwner = codeBlockOwner;
         
-        parserModel.Binder.OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, compilationUnit, ref parserModel);
+        parserModel.Binder.OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, parserModel.Compilation, ref parserModel);
     }
 
     public void AddNamespaceToCurrentScope(
         string namespaceString,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
         if (_namespaceGroupMap.TryGetValue(namespaceString, out var namespaceGroup) &&
@@ -506,46 +489,44 @@ public class CSharpBinder
             
             foreach (var typeDefinitionNode in typeDefinitionNodes)
             {
-        		var matchNode = compilationUnit.ExternalTypeDefinitionList.FirstOrDefault(x => GetIdentifierText(x, compilationUnit) == GetIdentifierText(typeDefinitionNode, compilationUnit));
+        		var matchNode = parserModel.Compilation.ExternalTypeDefinitionList.FirstOrDefault(x => GetIdentifierText(x, parserModel.Compilation) == GetIdentifierText(typeDefinitionNode, parserModel.Compilation));
             	
             	if (matchNode is null)
-            	    compilationUnit.ExternalTypeDefinitionList.Add(typeDefinitionNode);
+            	    parserModel.Compilation.ExternalTypeDefinitionList.Add(typeDefinitionNode);
             }
         }
     }
 
     public void CloseScope(
         TextEditorTextSpan textSpan,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
     	// Check if it is the global scope, if so return early.
     	if (parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey == 0)
     		return;
     	
-    	if (compilationUnit.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData &&
+    	if (parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData &&
     	    (parserModel.CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
     	     parserModel.CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.ArbitraryCodeBlockNode))
 		{
-			for (int i = compilationUnit.NodeList.Count - 1; i >= 0; i--)
+			for (int i = parserModel.Compilation.NodeList.Count - 1; i >= 0; i--)
     		{
-    		    if (compilationUnit.NodeList[i].Unsafe_ParentIndexKey == parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey)
-    		        compilationUnit.NodeList.RemoveAt(i);
+    		    if (parserModel.Compilation.NodeList[i].Unsafe_ParentIndexKey == parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey)
+    		        parserModel.Compilation.NodeList.RemoveAt(i);
     		}
 		}
     	
     	parserModel.CurrentCodeBlockOwner.Scope_EndExclusiveIndex = textSpan.EndExclusiveIndex;
-		parserModel.CurrentCodeBlockOwner = parserModel.GetParent(parserModel.CurrentCodeBlockOwner, compilationUnit);
+		parserModel.CurrentCodeBlockOwner = parserModel.GetParent(parserModel.CurrentCodeBlockOwner, parserModel.Compilation);
     }
 
 	/// <summary>
-	/// Returns the 'symbolId: compilationUnit.BinderSession.GetNextSymbolId();'
+	/// Returns the 'symbolId: parserModel.Compilation.BinderSession.GetNextSymbolId();'
 	/// that was used to construct the ITextEditorSymbol.
 	/// </summary>
     public int CreateVariableSymbol(
         SyntaxToken identifierToken,
         VariableKind variableKind,
-        CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
     	var symbolId = parserModel.GetNextSymbolId();
@@ -553,7 +534,7 @@ public class CSharpBinder
         switch (variableKind)
         {
             case VariableKind.Field:
-                compilationUnit.__SymbolList.Add(
+                parserModel.Compilation.__SymbolList.Add(
                 	new Symbol(
                 		SyntaxKind.FieldSymbol,
 	                	symbolId,
@@ -563,7 +544,7 @@ public class CSharpBinder
 		                }));
                 break;
             case VariableKind.Property:
-                compilationUnit.__SymbolList.Add(
+                parserModel.Compilation.__SymbolList.Add(
                 	new Symbol(
                 		SyntaxKind.PropertySymbol,
                 		symbolId,
@@ -573,7 +554,7 @@ public class CSharpBinder
 		                }));
                 break;
             case VariableKind.EnumMember:
-            	compilationUnit.__SymbolList.Add(
+            	parserModel.Compilation.__SymbolList.Add(
                 	new Symbol(
                 		SyntaxKind.EnumMemberSymbol,
                 		symbolId,
@@ -587,7 +568,7 @@ public class CSharpBinder
             case VariableKind.Closure:
                 goto default;
             default:
-                compilationUnit.__SymbolList.Add(
+                parserModel.Compilation.__SymbolList.Add(
                 	new Symbol(
                 		SyntaxKind.VariableSymbol,
                 		symbolId,
@@ -1467,80 +1448,6 @@ public class CSharpBinder
     		}
     	}
     }
-    
-    public void OnBoundScopeCreatedAndSetAsCurrent(ICodeBlockOwner codeBlockOwner, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
-    {
-    	switch (codeBlockOwner.SyntaxKind)
-    	{
-    		case SyntaxKind.NamespaceStatementNode:
-    			var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
-	    		var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
-	        	parserModel.Binder.AddNamespaceToCurrentScope(namespaceString, compilationUnit, ref parserModel);
-	        	
-			    parserModel.Binder.BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner, compilationUnit, ref parserModel);
-	        	return;
-			case SyntaxKind.LambdaExpressionNode:
-				var lambdaExpressionNode = (LambdaExpressionNode)codeBlockOwner;
-	    		foreach (var variableDeclarationNode in lambdaExpressionNode.VariableDeclarationNodeList)
-		    	{
-		    		parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserModel);
-		    	}
-		    	return;
-		    case SyntaxKind.TryStatementCatchNode:
-		    	var tryStatementCatchNode = (TryStatementCatchNode)codeBlockOwner;
-    		
-	    		if (tryStatementCatchNode.VariableDeclarationNode is not null)
-		    		parserModel.Binder.BindVariableDeclarationNode(tryStatementCatchNode.VariableDeclarationNode, compilationUnit, ref parserModel);
-		    		
-		    	return;
-		    case SyntaxKind.TypeDefinitionNode:
-		    
-				parserModel.Binder.BindTypeDefinitionNode((TypeDefinitionNode)codeBlockOwner, compilationUnit, ref parserModel, true);
-		    
-		    	var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
-		    	
-		    	if (typeDefinitionNode.GenericParameterListing.ConstructorWasInvoked)
-		    	{
-		    		foreach (var entry in typeDefinitionNode.GenericParameterListing.GenericParameterEntryList)
-		    		{
-		    			parserModel.Binder.BindTypeDefinitionNode(
-					        new TypeDefinitionNode(
-								AccessModifierKind.Public,
-								hasPartialModifier: false,
-								StorageModifierKind.Class,
-								entry.TypeReference.TypeIdentifierToken,
-								entry.TypeReference.ValueType,
-								entry.TypeReference.GenericParameterListing,
-								primaryConstructorFunctionArgumentListing: default,
-								inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
-								string.Empty,
-								compilationUnit.ResourceUri),
-					        compilationUnit,
-					        ref parserModel);
-		    		}
-		    	}
-		    	
-		    	return;
-    	}
-    }
-    
-    public ICodeBlockOwner SetOpenCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, int codeBlock_StartInclusiveIndex, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
-    {
-		if (codeBlockOwner.CodeBlock_StartInclusiveIndex == -1)
-			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
-
-		codeBlockOwner.CodeBlock_StartInclusiveIndex = codeBlock_StartInclusiveIndex;
-		return codeBlockOwner;
-    }
-    
-    public ICodeBlockOwner SetCloseCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, int codeBlock_EndExclusiveIndex, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
-    {
-		if (codeBlockOwner.CodeBlock_EndExclusiveIndex == -1)
-			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
-
-		codeBlockOwner.CodeBlock_EndExclusiveIndex = codeBlock_EndExclusiveIndex;
-		return codeBlockOwner;
-    }
 	
 	public string GetIdentifierText(ISyntaxNode node, CSharpCompilationUnit compilationUnit)
 	{
@@ -1779,4 +1686,77 @@ public class CSharpBinder
 		return namespaceGroup.NamespaceStatementNodeList
 			.SelectMany(x => GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(x));
 	}
+	
+	public void OnBoundScopeCreatedAndSetAsCurrent(ICodeBlockOwner codeBlockOwner, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    {
+    	switch (codeBlockOwner.SyntaxKind)
+    	{
+    		case SyntaxKind.NamespaceStatementNode:
+    			var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
+	    		var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+	        	parserModel.Binder.AddNamespaceToCurrentScope(namespaceString, ref parserModel);
+	        	
+			    parserModel.Binder.BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner, ref parserModel);
+	        	return;
+			case SyntaxKind.LambdaExpressionNode:
+				var lambdaExpressionNode = (LambdaExpressionNode)codeBlockOwner;
+	    		foreach (var variableDeclarationNode in lambdaExpressionNode.VariableDeclarationNodeList)
+		    	{
+		    		parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, ref parserModel);
+		    	}
+		    	return;
+		    case SyntaxKind.TryStatementCatchNode:
+		    	var tryStatementCatchNode = (TryStatementCatchNode)codeBlockOwner;
+    		
+	    		if (tryStatementCatchNode.VariableDeclarationNode is not null)
+		    		parserModel.Binder.BindVariableDeclarationNode(tryStatementCatchNode.VariableDeclarationNode, ref parserModel);
+		    		
+		    	return;
+		    case SyntaxKind.TypeDefinitionNode:
+		    
+				parserModel.Binder.BindTypeDefinitionNode((TypeDefinitionNode)codeBlockOwner, ref parserModel, true);
+		    
+		    	var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
+		    	
+		    	if (typeDefinitionNode.GenericParameterListing.ConstructorWasInvoked)
+		    	{
+		    		foreach (var entry in typeDefinitionNode.GenericParameterListing.GenericParameterEntryList)
+		    		{
+		    			parserModel.Binder.BindTypeDefinitionNode(
+					        new TypeDefinitionNode(
+								AccessModifierKind.Public,
+								hasPartialModifier: false,
+								StorageModifierKind.Class,
+								entry.TypeReference.TypeIdentifierToken,
+								entry.TypeReference.ValueType,
+								entry.TypeReference.GenericParameterListing,
+								primaryConstructorFunctionArgumentListing: default,
+								inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
+								string.Empty,
+								compilationUnit.ResourceUri),
+					        ref parserModel);
+		    		}
+		    	}
+		    	
+		    	return;
+    	}
+    }
+    
+    public ICodeBlockOwner SetOpenCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, int codeBlock_StartInclusiveIndex, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
+    {
+		if (codeBlockOwner.CodeBlock_StartInclusiveIndex == -1)
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
+
+		codeBlockOwner.CodeBlock_StartInclusiveIndex = codeBlock_StartInclusiveIndex;
+		return codeBlockOwner;
+    }
+    
+    public ICodeBlockOwner SetCloseCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, int codeBlock_EndExclusiveIndex, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
+    {
+		if (codeBlockOwner.CodeBlock_EndExclusiveIndex == -1)
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
+
+		codeBlockOwner.CodeBlock_EndExclusiveIndex = codeBlock_EndExclusiveIndex;
+		return codeBlockOwner;
+    }
 }

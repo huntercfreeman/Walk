@@ -14,7 +14,7 @@ public static class ParseOthers
 	///
 	/// 'isNamespaceStatement' refers to 'namespace Walk.CompilerServices;'
 	/// </summary>
-	public static SyntaxToken HandleNamespaceIdentifier(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel, bool isNamespaceStatement)
+	public static SyntaxToken HandleNamespaceIdentifier(ref CSharpParserModel parserModel, bool isNamespaceStatement)
     {
         TextEditorTextSpan textSpan = default;
         int count = 0;
@@ -47,7 +47,7 @@ public static class ParseOthers
     		        // (I don't think the above statement is true... the final namespace gets handled only after the codeblock is parsed.
     		        //  so you should probably bring the other contributors of the namespace into scope immediately).
     		        // 
-		        	parserModel.Binder.AddNamespaceToCurrentScope(textSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService), compilationUnit, ref parserModel);
+		        	parserModel.Binder.AddNamespaceToCurrentScope(textSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService), ref parserModel);
 		        }
 
                 if (matchedToken.IsFabricated)
@@ -70,7 +70,7 @@ public static class ParseOthers
         if (count == 0)
             return default;
             
-        compilationUnit.__SymbolList.Add(
+        parserModel.Compilation.__SymbolList.Add(
         	new Symbol(
         		SyntaxKind.NamespaceSymbol,
         		parserModel.GetNextSymbolId(),
@@ -83,13 +83,12 @@ public static class ParseOthers
     /// parserModel.TokenWalker.Current is a NameableToken
     /// parserModel.TokenWalker.Next is a ColonToken
     /// </summary>
-    public static void HandleLabelDeclaration(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleLabelDeclaration(ref CSharpParserModel parserModel)
     {
         var labelDeclarationNode = new LabelDeclarationNode(parserModel.TokenWalker.Current);
 		
 	    parserModel.Binder.BindLabelDeclarationNode(
             labelDeclarationNode,
-            compilationUnit,
             ref parserModel);
             
         var labelReferenceNode = new LabelReferenceNode(labelDeclarationNode.IdentifierToken);

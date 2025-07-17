@@ -5,6 +5,7 @@ using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Walk.CompilerServices.CSharp.BinderCase;
 using Walk.CompilerServices.CSharp.Facts;
+using Walk.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Walk.CompilerServices.CSharp.ParserCase;
 
@@ -15,7 +16,7 @@ namespace Walk.CompilerServices.CSharp.ParserCase;
 public struct CSharpParserModel
 {
 	/// <summary>
-	/// Should 0 be the global scope?
+	/// 0 is the global scope
 	/// </summary>
 	private int _indexKey = 0;
 	
@@ -23,11 +24,13 @@ public struct CSharpParserModel
 
     public CSharpParserModel(
         CSharpBinder binder,
+        CSharpCompilationUnit compilationUnit,
         List<SyntaxToken> tokenList,
         ICodeBlockOwner currentCodeBlockOwner,
 	    NamespaceStatementNode topLevelNamespaceStatementNode)
     {
     	Binder = binder;
+    	Compilation = compilationUnit;
 	    CurrentCodeBlockOwner = currentCodeBlockOwner;
 	    CurrentNamespaceStatementNode = topLevelNamespaceStatementNode;
     
@@ -115,6 +118,7 @@ public struct CSharpParserModel
     public CSharpParserContextKind ParserContextKind { get; set; }
     
     public CSharpBinder Binder { get; set; }
+    public CSharpCompilationUnit Compilation { get; set; }
 
     public ICodeBlockOwner CurrentCodeBlockOwner { get; set; }
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }

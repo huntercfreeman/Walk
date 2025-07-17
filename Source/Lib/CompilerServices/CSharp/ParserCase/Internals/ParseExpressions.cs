@@ -22,7 +22,7 @@ public static class ParseExpressions
 	/// In the case where the first token of the expression had already been 'Consume()'-ed then 'parserModel.TokenWalker.Backtrack();'
 	/// might be of use in order to move the parserModel.TokenWalker backwards prior to invoking this method.
 	/// </summary>
-	public static IExpressionNode ParseExpression(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	public static IExpressionNode ParseExpression(ref CSharpParserModel parserModel)
     {
     	var expressionPrimary = parserModel.ForceParseExpressionInitialPrimaryExpression;
     	var indexToken = parserModel.TokenWalker.Index;
@@ -3623,7 +3623,7 @@ public static class ParseExpressions
     ///
     /// This method does NOT invoke parserModel.Binder.BindVariableDeclarationNode(...), and does NOT create a Symbol.
     /// </summary>
-    public static bool TryParseVariableDeclarationNode(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel, out VariableDeclarationNode? variableDeclarationNode)
+    public static bool TryParseVariableDeclarationNode(ref CSharpParserModel parserModel, out VariableDeclarationNode? variableDeclarationNode)
     {
     	var originalTokenIndex = parserModel.TokenWalker.Index;
     	

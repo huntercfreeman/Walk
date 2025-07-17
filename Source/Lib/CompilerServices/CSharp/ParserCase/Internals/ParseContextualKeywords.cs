@@ -4,225 +4,225 @@ namespace Walk.CompilerServices.CSharp.ParserCase.Internals;
 
 public class ParseContextualKeywords
 {
-    public static void HandleVarTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleVarTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	if (parserModel.StatementBuilder.ChildList.Count == 0)
-    		ParseTokens.ParseIdentifierToken(compilationUnit, ref parserModel);
+    		ParseTokens.ParseIdentifierToken(ref parserModel);
     	else
-    	    _ = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
+    	    _ = ParseExpressions.ParseExpression(ref parserModel);
     }
 
-    public static void HandlePartialTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandlePartialTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleAddTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleAddTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleAndTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleAndTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleAliasTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleAliasTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleAscendingTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleAscendingTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleArgsTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleArgsTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleAsyncTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleAsyncTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleAwaitTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleAwaitTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleByTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleByTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleDescendingTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleDescendingTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleDynamicTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleDynamicTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleEqualsTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleEqualsTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleFileTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleFileTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleFromTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleFromTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleGetTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleGetTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleGlobalTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleGlobalTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleGroupTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleGroupTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleInitTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleInitTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleIntoTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleIntoTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleJoinTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleJoinTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleLetTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleLetTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleManagedTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleManagedTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleNameofTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleNameofTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
-    	_ = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
+    	_ = ParseExpressions.ParseExpression(ref parserModel);
     }
 
-    public static void HandleNintTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
-    {
-    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
-    }
-
-    public static void HandleNotTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleNintTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleNotnullTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleNotTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleNuintTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleNotnullTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleOnTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleNuintTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleOrTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleOnTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleOrderbyTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleOrTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleRecordTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
-    {
-        ParseDefaultKeywords.HandleStorageModifierTokenKeyword(compilationUnit, ref parserModel);
-    }
-
-    public static void HandleRemoveTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleOrderbyTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleRequiredTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleRecordTokenContextualKeyword(ref CSharpParserModel parserModel)
+    {
+        ParseDefaultKeywords.HandleStorageModifierTokenKeyword(ref parserModel);
+    }
+
+    public static void HandleRemoveTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleScopedTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleRequiredTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleSelectTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleScopedTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleSetTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleSelectTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleUnmanagedTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleSetTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleValueTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleUnmanagedTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleWhenTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleValueTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleWhereTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleWhenTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleWithTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleWhereTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleYieldTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleWithTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }
 
-    public static void HandleUnrecognizedTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void HandleYieldTokenContextualKeyword(ref CSharpParserModel parserModel)
+    {
+    	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleUnrecognizedTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
     }

@@ -24,7 +24,7 @@ public class ParseFunctions
             default,
             compilationUnit.ResourceUri);
             
-        parserModel.Binder.BindFunctionDefinitionNode(functionDefinitionNode, compilationUnit, ref parserModel);
+        parserModel.Binder.BindFunctionDefinitionNode(functionDefinitionNode, ref parserModel);
         
         bool isFunctionOverloadCase;
         
@@ -44,7 +44,6 @@ public class ParseFunctions
         parserModel.Binder.NewScopeAndBuilderFromOwner(
         	functionDefinitionNode,
 	        parserModel.TokenWalker.Current.TextSpan,
-	        compilationUnit,
 	        ref parserModel);
     
     	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
@@ -73,7 +72,7 @@ public class ParseFunctions
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
             return;
 
-        HandleFunctionArguments(functionDefinitionNode, compilationUnit, ref parserModel);
+        HandleFunctionArguments(functionDefinitionNode, ref parserModel);
         
         if (isFunctionOverloadCase)
         {
@@ -87,7 +86,7 @@ public class ParseFunctions
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
         	parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
         else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
-        	ParseTokens.MoveToExpressionBody(compilationUnit, ref parserModel);
+        	ParseTokens.MoveToExpressionBody(ref parserModel);
     }
     
     public static void HandleFunctionOverloadDefinition(
@@ -234,15 +233,14 @@ public class ParseFunctions
             default,
             compilationUnit.ResourceUri);
     
-    	parserModel.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, compilationUnit, ref parserModel);
+    	parserModel.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, ref parserModel);
     	
     	parserModel.Binder.NewScopeAndBuilderFromOwner(
         	constructorDefinitionNode,
 	        parserModel.TokenWalker.Current.TextSpan,
-	        compilationUnit,
 	        ref parserModel);
     	
-    	HandleFunctionArguments(constructorDefinitionNode, compilationUnit, ref parserModel);
+    	HandleFunctionArguments(constructorDefinitionNode, ref parserModel);
 
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
         {
@@ -310,27 +308,26 @@ public class ParseFunctions
 				//
 				// So, explicitly adding this invocation so that the first named parameter parses correctly.
 				//
-				_ = ParseExpressions.ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(compilationUnit, ref parserModel, guaranteeConsume: true);
+				_ = ParseExpressions.ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(ref parserModel, guaranteeConsume: true);
 				
 				// This invocation will parse all of the parameters because the 'parserModel.ExpressionList'
 				// contains (SyntaxKind.CommaToken, functionParametersListingNode).
 				//
 				// Upon encountering a CommaToken the expression loop will set 'functionParametersListingNode'
 				// to the primary expression, then return an EmptyExpressionNode in order to parse the next parameter.
-				_ = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
+				_ = ParseExpressions.ParseExpression(ref parserModel);
             }
         }
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
         {
-        	ParseTokens.MoveToExpressionBody(compilationUnit, ref parserModel);
+        	ParseTokens.MoveToExpressionBody(ref parserModel);
         }
     }
 
     /// <summary>Use this method for function definition, whereas <see cref="HandleFunctionParameters"/> should be used for function invocation.</summary>
     public static void HandleFunctionArguments(
     	IFunctionDefinitionNode functionDefinitionNode,
-    	CSharpCompilationUnit compilationUnit,
     	ref CSharpParserModel parserModel,
     	VariableKind variableKind = VariableKind.Local)
     {
@@ -427,13 +424,13 @@ public class ParseFunctions
             
             	var tokenIndexOriginal = parserModel.TokenWalker.Index;
             	
-            	var successParse = ParseExpressions.TryParseVariableDeclarationNode(compilationUnit, ref parserModel, out var variableDeclarationNode);
+            	var successParse = ParseExpressions.TryParseVariableDeclarationNode(ref parserModel, out var variableDeclarationNode);
             	
             	if (successParse)
             	{
-                    parserModel.Binder.CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
+                    parserModel.Binder.CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, ref parserModel);
     	    		variableDeclarationNode.VariableKind = variableKind;
-    	    		parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserModel, shouldCreateVariableSymbol: false);
+    	    		parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, ref parserModel, shouldCreateVariableSymbol: false);
                     
                     SyntaxToken optionalCompileTimeConstantToken;
                     
@@ -444,7 +441,7 @@ public class ParseFunctions
         				
         				parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
         				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, null));
-        				_ = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
+        				_ = ParseExpressions.ParseExpression(ref parserModel);
         			}
         			else
         			{

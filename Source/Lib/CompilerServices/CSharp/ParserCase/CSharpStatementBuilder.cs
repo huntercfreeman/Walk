@@ -65,7 +65,7 @@ public struct CSharpStatementBuilder
 	///
 	/// Returns the result of 'ParseLambdaStatementScopeStack.TryPop(out var deferredChildScope)'.
 	/// </summary>
-	public bool FinishStatement(int finishTokenIndex, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	public bool FinishStatement(int finishTokenIndex, ref CSharpParserModel parserModel)
 	{
 		// TODO: This is bad. Only do this when constructing the struct version.
 		parserModel.TypeClauseNode.IsBeingUsed = false;
@@ -99,24 +99,12 @@ public struct CSharpStatementBuilder
 			if (Object.ReferenceEquals(tuple.CodeBlockOwner, parserModel.CurrentCodeBlockOwner))
 			{
 				tuple = ParseLambdaStatementScopeStack.Pop();
-				tuple.DeferredChildScope.PrepareMainParserLoop(finishTokenIndex, compilationUnit, ref parserModel);
+				tuple.DeferredChildScope.PrepareMainParserLoop(finishTokenIndex, ref parserModel);
 				return true;
 			}
 		}
 		
 		return false;
-	}
-	
-	public void WriteToConsole()
-	{
-		Console.Write("StatementBuilder: ");
-	
-		foreach (var child in ChildList)
-		{
-			Console.Write($"{child.SyntaxKind}, ");
-		}
-		
-		Console.WriteLine();
 	}
 }
 

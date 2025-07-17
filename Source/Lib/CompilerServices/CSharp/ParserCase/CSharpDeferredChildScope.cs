@@ -19,7 +19,7 @@ public struct CSharpDeferredChildScope
 	public int CloseTokenIndex { get; }
 	public ICodeBlockOwner CodeBlockOwner { get; }
 	
-	public void PrepareMainParserLoop(int tokenIndexToRestore, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	public void PrepareMainParserLoop(int tokenIndexToRestore, ref CSharpParserModel parserModel)
 	{
 	    parserModel.CurrentCodeBlockOwner = CodeBlockOwner;
 		

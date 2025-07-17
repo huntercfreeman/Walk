@@ -24,8 +24,7 @@ public static class ParseVariables
 	        false,
 	        compilationUnit.ResourceUri);
 
-        parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit, ref parserModel);
-        // parserModel.CurrentCodeBlockBuilder.AddChild(variableDeclarationNode);
+        parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, ref parserModel);
         return variableDeclarationNode;
     }
 }
