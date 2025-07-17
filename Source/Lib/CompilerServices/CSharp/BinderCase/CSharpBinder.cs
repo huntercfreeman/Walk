@@ -20,8 +20,8 @@ public class CSharpBinder
 	/// <summary>
 	/// This is not thread safe to access because 'BindNamespaceStatementNode(...)' will directly modify the NamespaceGroup's List.
 	/// </summary>
-    private readonly Dictionary<string, NamespaceGroup> _namespaceGroupMap = CSharpFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
-    private readonly Dictionary<string, TypeDefinitionNode> _allTypeDefinitions = new();
+    public readonly Dictionary<string, NamespaceGroup> _namespaceGroupMap = CSharpFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
+    public readonly Dictionary<string, TypeDefinitionNode> _allTypeDefinitions = new();
     private readonly NamespaceStatementNode _topLevelNamespaceStatementNode = CSharpFacts.Namespaces.GetTopLevelNamespaceStatementNode();
     
     public List<PartialTypeDefinitionEntry> PartialTypeDefinitionList { get; } = new();
@@ -103,490 +103,6 @@ public class CSharpBinder
 	{
 		UpsertCompilationUnit(compilationUnit);
 	}
-
-    public void BindDiscard(
-        SyntaxToken identifierToken,
-        ref CSharpParserModel parserModel)
-    {
-    	parserModel.Compilation.__SymbolList.Add(
-    		new Symbol(
-        		SyntaxKind.DiscardSymbol,
-	        	parserModel.GetNextSymbolId(),
-	        	identifierToken.TextSpan with
-		        {
-		            DecorationByte = (byte)GenericDecorationKind.None,
-		        }));
-    }
-
-    public void BindFunctionDefinitionNode(
-        FunctionDefinitionNode functionDefinitionNode,
-        ref CSharpParserModel parserModel)
-    {
-        var functionIdentifierText = functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService);
-
-        var functionSymbol = new Symbol(
-        	SyntaxKind.FunctionSymbol,
-        	parserModel.GetNextSymbolId(),
-        	functionDefinitionNode.FunctionIdentifierToken.TextSpan with
-	        {
-	            DecorationByte = (byte)GenericDecorationKind.Function
-	        });
-
-        parserModel.Compilation.__SymbolList.Add(functionSymbol);
-    }
-
-    public void SetCurrentNamespaceStatementNode(
-        NamespaceStatementNode namespaceStatementNode,
-        ref CSharpParserModel parserModel)
-    {
-        parserModel.CurrentNamespaceStatementNode = namespaceStatementNode;
-    }
-
-    public void BindNamespaceStatementNode(
-        NamespaceStatementNode namespaceStatementNode,
-        ref CSharpParserModel parserModel)
-    {
-        var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService);
-
-        if (_namespaceGroupMap.TryGetValue(namespaceString, out var inNamespaceGroupNode))
-        {
-        	inNamespaceGroupNode.NamespaceStatementNodeList.Add(namespaceStatementNode);
-        }
-        else
-        {
-            _namespaceGroupMap.Add(namespaceString, new NamespaceGroup(
-                namespaceString,
-                new List<NamespaceStatementNode> { namespaceStatementNode }));
-                
-            var fullNamespaceName = namespaceStatementNode.IdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService);
-            
-            var splitResult = fullNamespaceName.Split('.');
-            
-            NamespacePrefixNode? namespacePrefixNode = null;
-            
-            foreach (var namespacePrefix in splitResult)
-            {
-                namespacePrefixNode = parserModel.Binder.NamespacePrefixTree.AddNamespacePrefix(namespacePrefix, namespacePrefixNode);
-            }
-        }
-    }
-
-    public void BindVariableDeclarationNode(
-        VariableDeclarationNode variableDeclarationNode,
-        ref CSharpParserModel parserModel,
-        bool shouldCreateVariableSymbol = true)
-    {
-    	if (shouldCreateVariableSymbol)
-        	CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, ref parserModel);
-        	
-        var text = variableDeclarationNode.IdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService);
-        
-        if (TryGetVariableDeclarationNodeByScope(
-        		parserModel.Compilation,
-        		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-        		text,
-        		out var existingVariableDeclarationNode))
-        {
-            if (existingVariableDeclarationNode.IsFabricated)
-            {
-                // Overwrite the fabricated definition with a real one
-                //
-                // TODO: Track one or many declarations?...
-                // (if there is an error where something is defined twice for example)
-                SetVariableDeclarationNodeByScope(
-        			parserModel.Compilation,
-        			parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                	text,
-                	variableDeclarationNode);
-            }
-
-            DiagnosticHelper.ReportAlreadyDefinedVariable(
-            	parserModel.Compilation.__DiagnosticList,
-                variableDeclarationNode.IdentifierToken.TextSpan,
-                text);
-        }
-        else
-        {
-        	_ = TryAddVariableDeclarationNodeByScope(
-        		parserModel.Compilation,
-    			parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-            	text,
-            	variableDeclarationNode);
-        }
-    }
-    
-    public void BindLabelDeclarationNode(
-        LabelDeclarationNode labelDeclarationNode,
-        ref CSharpParserModel parserModel)
-    {
-    	parserModel.Compilation.__SymbolList.Add(
-        	new Symbol(
-        		SyntaxKind.LabelSymbol,
-            	parserModel.GetNextSymbolId(),
-            	labelDeclarationNode.IdentifierToken.TextSpan with
-            	{
-            	    DecorationByte = (byte)GenericDecorationKind.None
-            	}));
-        	
-        var text = labelDeclarationNode.IdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService);
-        
-        if (TryGetLabelDeclarationNodeByScope(
-        		parserModel.Compilation,
-        		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-        		text,
-        		out var existingLabelDeclarationNode))
-        {
-            if (existingLabelDeclarationNode.IsFabricated)
-            {
-                // Overwrite the fabricated definition with a real one
-                //
-                // TODO: Track one or many declarations?...
-                // (if there is an error where something is defined twice for example)
-                SetLabelDeclarationNodeByScope(
-        			parserModel.Compilation,
-        			parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                	text,
-                	labelDeclarationNode);
-            }
-
-            DiagnosticHelper.ReportAlreadyDefinedLabel(
-            	parserModel.Compilation.__DiagnosticList,
-                labelDeclarationNode.IdentifierToken.TextSpan,
-                text);
-        }
-        else
-        {
-        	_ = TryAddLabelDeclarationNodeByScope(
-        		parserModel.Compilation,
-    			parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-            	text,
-            	labelDeclarationNode);
-        }
-    }
-
-    public VariableReferenceNode ConstructAndBindVariableReferenceNode(
-        SyntaxToken variableIdentifierToken,
-        ref CSharpParserModel parserModel)
-    {
-        var text = variableIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService);
-        VariableReferenceNode? variableReferenceNode;
-
-        if (TryGetVariableDeclarationHierarchically(
-        		parserModel.Compilation,
-                parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                text,
-                out var variableDeclarationNode)
-            && variableDeclarationNode is not null)
-        {
-            variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(
-                variableIdentifierToken,
-                variableDeclarationNode);
-        }
-        else
-        {
-            variableDeclarationNode = new VariableDeclarationNode(
-                CSharpFacts.Types.Var.ToTypeReference(),
-                variableIdentifierToken,
-                VariableKind.Local,
-                false,
-                parserModel.Compilation.ResourceUri)
-            {
-                IsFabricated = true,
-            };
-
-            variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(
-                variableIdentifierToken,
-                variableDeclarationNode);
-        }
-
-        CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, ref parserModel);
-        return variableReferenceNode;
-    }
-    
-    public void BindLabelReferenceNode(
-        LabelReferenceNode labelReferenceNode,
-        ref CSharpParserModel parserModel)
-    {
-        parserModel.Compilation.__SymbolList.Add(
-        	new Symbol(
-        		SyntaxKind.LabelSymbol,
-            	parserModel.GetNextSymbolId(),
-            	labelReferenceNode.IdentifierToken.TextSpan with
-            	{
-            	    DecorationByte = (byte)GenericDecorationKind.None
-            	}));
-    }
-
-    public void BindConstructorDefinitionIdentifierToken(
-        SyntaxToken identifierToken,
-        ref CSharpParserModel parserModel)
-    {
-        var constructorSymbol = new Symbol(
-        	SyntaxKind.ConstructorSymbol,
-	        parserModel.GetNextSymbolId(),
-	        identifierToken.TextSpan with
-	        {
-	            DecorationByte = (byte)GenericDecorationKind.Type
-	        });
-
-        parserModel.Compilation.__SymbolList.Add(constructorSymbol);
-    }
-
-    public void BindFunctionInvocationNode(
-        FunctionInvocationNode functionInvocationNode,
-        ref CSharpParserModel parserModel)
-    {
-        var functionInvocationIdentifierText = functionInvocationNode
-            .FunctionInvocationIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService);
-
-        var functionSymbol = new Symbol(
-        	SyntaxKind.FunctionSymbol,
-        	parserModel.GetNextSymbolId(),
-        	functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
-	        {
-	            DecorationByte = (byte)GenericDecorationKind.Function
-	        });
-
-        parserModel.Compilation.__SymbolList.Add(functionSymbol);
-
-        if (TryGetFunctionHierarchically(
-        		parserModel.Compilation,
-                parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                functionInvocationIdentifierText,
-                out var functionDefinitionNode) &&
-            functionDefinitionNode is not null)
-        {
-            functionInvocationNode.ResultTypeReference = functionDefinitionNode.ReturnTypeReference;
-        }
-    }
-
-    public void BindNamespaceReference(
-        SyntaxToken namespaceIdentifierToken,
-        ref CSharpParserModel parserModel)
-    {
-        var namespaceSymbol = new Symbol(
-        	SyntaxKind.NamespaceSymbol,
-        	parserModel.GetNextSymbolId(),
-        	namespaceIdentifierToken.TextSpan with
-	        {
-	            DecorationByte = (byte)GenericDecorationKind.None
-	        });
-
-        parserModel.Compilation.__SymbolList.Add(namespaceSymbol);
-    }
-
-    public void BindTypeClauseNode(
-        TypeClauseNode typeClauseNode,
-        ref CSharpParserModel parserModel)
-    {
-        if (!typeClauseNode.IsKeywordType)
-        {
-            var typeSymbol = new Symbol(
-            	SyntaxKind.TypeSymbol,
-            	parserModel.GetNextSymbolId(),
-            	typeClauseNode.TypeIdentifierToken.TextSpan with
-	            {
-	                DecorationByte = (byte)GenericDecorationKind.Type
-	            });
-
-            parserModel.Compilation.__SymbolList.Add(typeSymbol);
-        }
-
-        // TODO: Cannot use ref, out, or in...
-        var compilation = parserModel.Compilation;
-
-        var matchingTypeDefintionNode = CSharpFacts.Types.TypeDefinitionNodes.SingleOrDefault(
-            x => x.TypeIdentifierToken.TextSpan.GetText(compilation.SourceText, TextEditorService) == typeClauseNode.TypeIdentifierToken.TextSpan.GetText(compilation.SourceText, TextEditorService));
-
-        if (matchingTypeDefintionNode is not null)
-        {
-        	typeClauseNode.SetValueType(matchingTypeDefintionNode.ValueType);
-        }
-    }
-    
-    public void BindTypeIdentifier(
-        SyntaxToken identifierToken,
-        ref CSharpParserModel parserModel)
-    {
-        if (identifierToken.SyntaxKind == SyntaxKind.IdentifierToken)
-        {
-            var typeSymbol = new Symbol(
-            	SyntaxKind.TypeSymbol,
-            	parserModel.GetNextSymbolId(),
-            	identifierToken.TextSpan with
-	            {
-	                DecorationByte = (byte)GenericDecorationKind.Type
-	            });
-
-            parserModel.Compilation.__SymbolList.Add(typeSymbol);
-        }
-    }
-
-    public void BindUsingStatementTuple(
-        SyntaxToken usingKeywordToken,
-        SyntaxToken namespaceIdentifierToken,
-        ref CSharpParserModel parserModel)
-    {
-        AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService), ref parserModel);
-    }
-    
-    public void BindTypeDefinitionNode(
-        TypeDefinitionNode typeDefinitionNode,
-        ref CSharpParserModel parserModel,
-        bool shouldOverwrite = false)
-    {
-        var typeIdentifierText = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService);
-        var currentNamespaceStatementText = parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, TextEditorService);
-        var namespaceAndTypeIdentifiers = new NamespaceAndTypeIdentifiers(currentNamespaceStatementText, typeIdentifierText);
-
-        typeDefinitionNode.EncompassingNamespaceIdentifierString = currentNamespaceStatementText;
-
-        var success = _allTypeDefinitions.TryAdd(typeIdentifierText, typeDefinitionNode);
-        if (!success)
-        {
-        	var entryFromAllTypeDefinitions = _allTypeDefinitions[typeIdentifierText];
-        	
-        	if (shouldOverwrite || entryFromAllTypeDefinitions.IsFabricated)
-        		_allTypeDefinitions[typeIdentifierText] = typeDefinitionNode;
-        }
-    }
-
-	/// <summary>
-	/// If the 'codeBlockBuilder.ScopeIndexKey' is null then a scope will be instantiated
-	/// added to the list of scopes. The 'codeBlockBuilder.ScopeIndexKey' will then be set
-	/// to the instantiated scope's 'IndexKey'. As well, the current scope index key will be set to the
-	/// instantiated scope's 'IndexKey'.
-	/// 
-	/// Also will update the 'parserModel.CurrentCodeBlockBuilder'.
-	/// </summary>
-    public void NewScopeAndBuilderFromOwner(
-    	ICodeBlockOwner codeBlockOwner,
-        TextEditorTextSpan textSpan,
-        ref CSharpParserModel parserModel)
-    {
-    	codeBlockOwner.Unsafe_ParentIndexKey = parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
-    	codeBlockOwner.Scope_StartInclusiveIndex = textSpan.StartInclusiveIndex;
-
-		codeBlockOwner.Unsafe_SelfIndexKey = parserModel.Compilation.CodeBlockOwnerList.Count;
-		parserModel.Compilation.CodeBlockOwnerList.Add(codeBlockOwner);
-
-		var parent = parserModel.GetParent(codeBlockOwner, parserModel.Compilation);
-    	
-    	var parentScopeDirection = parent?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
-        if (parentScopeDirection == ScopeDirectionKind.Both)
-        	codeBlockOwner.PermitCodeBlockParsing = false;
-    
-        parserModel.CurrentCodeBlockOwner = codeBlockOwner;
-        
-        parserModel.Binder.OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, parserModel.Compilation, ref parserModel);
-    }
-
-    public void AddNamespaceToCurrentScope(
-        string namespaceString,
-        ref CSharpParserModel parserModel)
-    {
-        if (_namespaceGroupMap.TryGetValue(namespaceString, out var namespaceGroup) &&
-            namespaceGroup.ConstructorWasInvoked)
-        {
-            var typeDefinitionNodes = GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup);
-            
-            // TODO: Cannot use ref, out, or in...
-            var compilation = parserModel.Compilation;
-            
-            foreach (var typeDefinitionNode in typeDefinitionNodes)
-            {
-        		var matchNode = parserModel.Compilation.ExternalTypeDefinitionList.FirstOrDefault(x => GetIdentifierText(x, compilation) == GetIdentifierText(typeDefinitionNode, compilation));
-            	
-            	if (matchNode is null)
-            	    parserModel.Compilation.ExternalTypeDefinitionList.Add(typeDefinitionNode);
-            }
-        }
-    }
-
-    public void CloseScope(
-        TextEditorTextSpan textSpan,
-        ref CSharpParserModel parserModel)
-    {
-    	// Check if it is the global scope, if so return early.
-    	if (parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey == 0)
-    		return;
-    	
-    	if (parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData &&
-    	    (parserModel.CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
-    	     parserModel.CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.ArbitraryCodeBlockNode))
-		{
-			for (int i = parserModel.Compilation.NodeList.Count - 1; i >= 0; i--)
-    		{
-    		    if (parserModel.Compilation.NodeList[i].Unsafe_ParentIndexKey == parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey)
-    		        parserModel.Compilation.NodeList.RemoveAt(i);
-    		}
-		}
-    	
-    	parserModel.CurrentCodeBlockOwner.Scope_EndExclusiveIndex = textSpan.EndExclusiveIndex;
-		parserModel.CurrentCodeBlockOwner = parserModel.GetParent(parserModel.CurrentCodeBlockOwner, parserModel.Compilation);
-    }
-
-	/// <summary>
-	/// Returns the 'symbolId: parserModel.Compilation.BinderSession.GetNextSymbolId();'
-	/// that was used to construct the ITextEditorSymbol.
-	/// </summary>
-    public int CreateVariableSymbol(
-        SyntaxToken identifierToken,
-        VariableKind variableKind,
-        ref CSharpParserModel parserModel)
-    {
-    	var symbolId = parserModel.GetNextSymbolId();
-    	
-        switch (variableKind)
-        {
-            case VariableKind.Field:
-                parserModel.Compilation.__SymbolList.Add(
-                	new Symbol(
-                		SyntaxKind.FieldSymbol,
-	                	symbolId,
-	                	identifierToken.TextSpan with
-		                {
-		                    DecorationByte = (byte)GenericDecorationKind.Field
-		                }));
-                break;
-            case VariableKind.Property:
-                parserModel.Compilation.__SymbolList.Add(
-                	new Symbol(
-                		SyntaxKind.PropertySymbol,
-                		symbolId,
-                		identifierToken.TextSpan with
-		                {
-		                    DecorationByte = (byte)GenericDecorationKind.Property
-		                }));
-                break;
-            case VariableKind.EnumMember:
-            	parserModel.Compilation.__SymbolList.Add(
-                	new Symbol(
-                		SyntaxKind.EnumMemberSymbol,
-                		symbolId,
-                		identifierToken.TextSpan with
-		                {
-		                    DecorationByte = (byte)GenericDecorationKind.Property
-		                }));
-            	break;
-            case VariableKind.Local:
-                goto default;
-            case VariableKind.Closure:
-                goto default;
-            default:
-                parserModel.Compilation.__SymbolList.Add(
-                	new Symbol(
-                		SyntaxKind.VariableSymbol,
-                		symbolId,
-                		identifierToken.TextSpan with
-		                {
-		                    DecorationByte = (byte)GenericDecorationKind.Variable
-		                }));
-                break;
-        }
-        
-        return symbolId;
-    }
 
 	/// <summary>
 	/// Do not invoke this when re-parsing the same file.
@@ -1700,27 +1216,27 @@ public class CSharpBinder
     		case SyntaxKind.NamespaceStatementNode:
     			var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
 	    		var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
-	        	parserModel.Binder.AddNamespaceToCurrentScope(namespaceString, ref parserModel);
+	        	parserModel.AddNamespaceToCurrentScope(namespaceString);
 	        	
-			    parserModel.Binder.BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner, ref parserModel);
+			    parserModel.BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner);
 	        	return;
 			case SyntaxKind.LambdaExpressionNode:
 				var lambdaExpressionNode = (LambdaExpressionNode)codeBlockOwner;
 	    		foreach (var variableDeclarationNode in lambdaExpressionNode.VariableDeclarationNodeList)
 		    	{
-		    		parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, ref parserModel);
+		    		parserModel.BindVariableDeclarationNode(variableDeclarationNode);
 		    	}
 		    	return;
 		    case SyntaxKind.TryStatementCatchNode:
 		    	var tryStatementCatchNode = (TryStatementCatchNode)codeBlockOwner;
     		
 	    		if (tryStatementCatchNode.VariableDeclarationNode is not null)
-		    		parserModel.Binder.BindVariableDeclarationNode(tryStatementCatchNode.VariableDeclarationNode, ref parserModel);
+		    		parserModel.BindVariableDeclarationNode(tryStatementCatchNode.VariableDeclarationNode);
 		    		
 		    	return;
 		    case SyntaxKind.TypeDefinitionNode:
 		    
-				parserModel.Binder.BindTypeDefinitionNode((TypeDefinitionNode)codeBlockOwner, ref parserModel, true);
+				parserModel.BindTypeDefinitionNode((TypeDefinitionNode)codeBlockOwner, true);
 		    
 		    	var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
 		    	
@@ -1728,7 +1244,7 @@ public class CSharpBinder
 		    	{
 		    		foreach (var entry in typeDefinitionNode.GenericParameterListing.GenericParameterEntryList)
 		    		{
-		    			parserModel.Binder.BindTypeDefinitionNode(
+		    			parserModel.BindTypeDefinitionNode(
 					        new TypeDefinitionNode(
 								AccessModifierKind.Public,
 								hasPartialModifier: false,
@@ -1739,8 +1255,7 @@ public class CSharpBinder
 								primaryConstructorFunctionArgumentListing: default,
 								inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
 								string.Empty,
-								compilationUnit.ResourceUri),
-					        ref parserModel);
+								compilationUnit.ResourceUri));
 		    		}
 		    	}
 		    	

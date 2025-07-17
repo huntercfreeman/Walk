@@ -23,7 +23,7 @@ public class ParseFunctions
             default,
             parserModel.Compilation.ResourceUri);
             
-        parserModel.Binder.BindFunctionDefinitionNode(functionDefinitionNode, ref parserModel);
+        parserModel.BindFunctionDefinitionNode(functionDefinitionNode);
         
         bool isFunctionOverloadCase;
         
@@ -40,10 +40,9 @@ public class ParseFunctions
             isFunctionOverloadCase = false;
         }
         
-        parserModel.Binder.NewScopeAndBuilderFromOwner(
+        parserModel.NewScopeAndBuilderFromOwner(
         	functionDefinitionNode,
-	        parserModel.TokenWalker.Current.TextSpan,
-	        ref parserModel);
+	        parserModel.TokenWalker.Current.TextSpan);
     
     	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
     	{
@@ -232,12 +231,11 @@ public class ParseFunctions
             default,
             parserModel.Compilation.ResourceUri);
     
-    	parserModel.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, ref parserModel);
+    	parserModel.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken);
     	
-    	parserModel.Binder.NewScopeAndBuilderFromOwner(
+    	parserModel.NewScopeAndBuilderFromOwner(
         	constructorDefinitionNode,
-	        parserModel.TokenWalker.Current.TextSpan,
-	        ref parserModel);
+	        parserModel.TokenWalker.Current.TextSpan);
     	
     	HandleFunctionArguments(constructorDefinitionNode, ref parserModel);
 
@@ -427,9 +425,9 @@ public class ParseFunctions
             	
             	if (successParse)
             	{
-                    parserModel.Binder.CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, ref parserModel);
+                    parserModel.CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind);
     	    		variableDeclarationNode.VariableKind = variableKind;
-    	    		parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, ref parserModel, shouldCreateVariableSymbol: false);
+    	    		parserModel.BindVariableDeclarationNode(variableDeclarationNode, shouldCreateVariableSymbol: false);
                     
                     SyntaxToken optionalCompileTimeConstantToken;
                     

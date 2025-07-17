@@ -196,9 +196,7 @@ public static class ParseTypes
 				        false,
 				        parserModel.Compilation.ResourceUri);
 				        
-				    // parserModel.CurrentCodeBlockBuilder.AddChild(variableDeclarationNode);
-				        
-				    parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, ref parserModel);
+				    parserModel.BindVariableDeclarationNode(variableDeclarationNode);
 					
 					shouldFindIdentifier = !shouldFindIdentifier;
 	    		}

@@ -23,7 +23,7 @@ public static class ParseVariables
 	        false,
 	        parserModel.Compilation.ResourceUri);
 
-        parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, ref parserModel);
+        parserModel.BindVariableDeclarationNode(variableDeclarationNode);
         return variableDeclarationNode;
     }
 }

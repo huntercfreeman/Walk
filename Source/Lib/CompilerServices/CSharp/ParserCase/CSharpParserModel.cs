@@ -1,3 +1,7 @@
+using Walk.TextEditor.RazorLib.Lexers.Models;
+using Walk.TextEditor.RazorLib.Decorations.Models;
+using Walk.TextEditor.RazorLib.CompilerServices;
+using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Utility;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -208,5 +212,448 @@ public struct CSharpParserModel
     public int GetNextSymbolId()
     {
     	return ++_symbolId;
+    }
+    
+    public void BindDiscard(SyntaxToken identifierToken)
+    {
+    	Compilation.__SymbolList.Add(
+    		new Symbol(
+        		SyntaxKind.DiscardSymbol,
+	        	GetNextSymbolId(),
+	        	identifierToken.TextSpan with
+		        {
+		            DecorationByte = (byte)GenericDecorationKind.None,
+		        }));
+    }
+	
+    public void BindFunctionDefinitionNode(FunctionDefinitionNode functionDefinitionNode)
+    {
+        var functionIdentifierText = functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
+
+        var functionSymbol = new Symbol(
+        	SyntaxKind.FunctionSymbol,
+        	GetNextSymbolId(),
+        	functionDefinitionNode.FunctionIdentifierToken.TextSpan with
+	        {
+	            DecorationByte = (byte)GenericDecorationKind.Function
+	        });
+
+        Compilation.__SymbolList.Add(functionSymbol);
+    }
+	
+	public void BindNamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
+    {
+        var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
+
+        if (Binder._namespaceGroupMap.TryGetValue(namespaceString, out var inNamespaceGroupNode))
+        {
+        	inNamespaceGroupNode.NamespaceStatementNodeList.Add(namespaceStatementNode);
+        }
+        else
+        {
+            Binder._namespaceGroupMap.Add(namespaceString, new NamespaceGroup(
+                namespaceString,
+                new List<NamespaceStatementNode> { namespaceStatementNode }));
+                
+            var fullNamespaceName = namespaceStatementNode.IdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
+            
+            var splitResult = fullNamespaceName.Split('.');
+            
+            NamespacePrefixNode? namespacePrefixNode = null;
+            
+            foreach (var namespacePrefix in splitResult)
+            {
+                namespacePrefixNode = Binder.NamespacePrefixTree.AddNamespacePrefix(namespacePrefix, namespacePrefixNode);
+            }
+        }
+    }
+	
+	public void BindVariableDeclarationNode(VariableDeclarationNode variableDeclarationNode, bool shouldCreateVariableSymbol = true)
+    {
+    	if (shouldCreateVariableSymbol)
+        	CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind);
+        	
+        var text = variableDeclarationNode.IdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
+        
+        if (Binder.TryGetVariableDeclarationNodeByScope(
+        		Compilation,
+        		CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+        		text,
+        		out var existingVariableDeclarationNode))
+        {
+            if (existingVariableDeclarationNode.IsFabricated)
+            {
+                // Overwrite the fabricated definition with a real one
+                //
+                // TODO: Track one or many declarations?...
+                // (if there is an error where something is defined twice for example)
+                Binder.SetVariableDeclarationNodeByScope(
+        			Compilation,
+        			CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                	text,
+                	variableDeclarationNode);
+            }
+
+            DiagnosticHelper.ReportAlreadyDefinedVariable(
+            	Compilation.__DiagnosticList,
+                variableDeclarationNode.IdentifierToken.TextSpan,
+                text);
+        }
+        else
+        {
+        	_ = Binder.TryAddVariableDeclarationNodeByScope(
+        		Compilation,
+    			CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+            	text,
+            	variableDeclarationNode);
+        }
+    }
+    
+    public void BindLabelDeclarationNode(LabelDeclarationNode labelDeclarationNode)
+    {
+    	Compilation.__SymbolList.Add(
+        	new Symbol(
+        		SyntaxKind.LabelSymbol,
+            	GetNextSymbolId(),
+            	labelDeclarationNode.IdentifierToken.TextSpan with
+            	{
+            	    DecorationByte = (byte)GenericDecorationKind.None
+            	}));
+        	
+        var text = labelDeclarationNode.IdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
+        
+        if (Binder.TryGetLabelDeclarationNodeByScope(
+        		Compilation,
+        		CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+        		text,
+        		out var existingLabelDeclarationNode))
+        {
+            if (existingLabelDeclarationNode.IsFabricated)
+            {
+                // Overwrite the fabricated definition with a real one
+                //
+                // TODO: Track one or many declarations?...
+                // (if there is an error where something is defined twice for example)
+                Binder.SetLabelDeclarationNodeByScope(
+        			Compilation,
+        			CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                	text,
+                	labelDeclarationNode);
+            }
+
+            DiagnosticHelper.ReportAlreadyDefinedLabel(
+            	Compilation.__DiagnosticList,
+                labelDeclarationNode.IdentifierToken.TextSpan,
+                text);
+        }
+        else
+        {
+        	_ = Binder.TryAddLabelDeclarationNodeByScope(
+        		Compilation,
+    			CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+            	text,
+            	labelDeclarationNode);
+        }
+    }
+
+    public VariableReferenceNode ConstructAndBindVariableReferenceNode(SyntaxToken variableIdentifierToken)
+    {
+        var text = variableIdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
+        VariableReferenceNode? variableReferenceNode;
+
+        if (Binder.TryGetVariableDeclarationHierarchically(
+        		Compilation,
+                CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                text,
+                out var variableDeclarationNode)
+            && variableDeclarationNode is not null)
+        {
+            variableReferenceNode = ConstructOrRecycleVariableReferenceNode(
+                variableIdentifierToken,
+                variableDeclarationNode);
+        }
+        else
+        {
+            variableDeclarationNode = new VariableDeclarationNode(
+                CSharpFacts.Types.Var.ToTypeReference(),
+                variableIdentifierToken,
+                VariableKind.Local,
+                false,
+                Compilation.ResourceUri)
+            {
+                IsFabricated = true,
+            };
+
+            variableReferenceNode = ConstructOrRecycleVariableReferenceNode(
+                variableIdentifierToken,
+                variableDeclarationNode);
+        }
+
+        CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind);
+        return variableReferenceNode;
+    }
+    
+    public void BindLabelReferenceNode(LabelReferenceNode labelReferenceNode)
+    {
+        Compilation.__SymbolList.Add(
+        	new Symbol(
+        		SyntaxKind.LabelSymbol,
+            	GetNextSymbolId(),
+            	labelReferenceNode.IdentifierToken.TextSpan with
+            	{
+            	    DecorationByte = (byte)GenericDecorationKind.None
+            	}));
+    }
+
+    public void BindConstructorDefinitionIdentifierToken(SyntaxToken identifierToken)
+    {
+        var constructorSymbol = new Symbol(
+        	SyntaxKind.ConstructorSymbol,
+	        GetNextSymbolId(),
+	        identifierToken.TextSpan with
+	        {
+	            DecorationByte = (byte)GenericDecorationKind.Type
+	        });
+
+        Compilation.__SymbolList.Add(constructorSymbol);
+    }
+
+    public void BindFunctionInvocationNode(FunctionInvocationNode functionInvocationNode)
+    {
+        var functionInvocationIdentifierText = functionInvocationNode
+            .FunctionInvocationIdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
+
+        var functionSymbol = new Symbol(
+        	SyntaxKind.FunctionSymbol,
+        	GetNextSymbolId(),
+        	functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
+	        {
+	            DecorationByte = (byte)GenericDecorationKind.Function
+	        });
+
+        Compilation.__SymbolList.Add(functionSymbol);
+
+        if (Binder.TryGetFunctionHierarchically(
+        		Compilation,
+                CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                functionInvocationIdentifierText,
+                out var functionDefinitionNode) &&
+            functionDefinitionNode is not null)
+        {
+            functionInvocationNode.ResultTypeReference = functionDefinitionNode.ReturnTypeReference;
+        }
+    }
+
+    public void BindNamespaceReference(SyntaxToken namespaceIdentifierToken)
+    {
+        var namespaceSymbol = new Symbol(
+        	SyntaxKind.NamespaceSymbol,
+        	GetNextSymbolId(),
+        	namespaceIdentifierToken.TextSpan with
+	        {
+	            DecorationByte = (byte)GenericDecorationKind.None
+	        });
+
+        Compilation.__SymbolList.Add(namespaceSymbol);
+    }
+
+    public void BindTypeClauseNode(TypeClauseNode typeClauseNode)
+    {
+        if (!typeClauseNode.IsKeywordType)
+        {
+            var typeSymbol = new Symbol(
+            	SyntaxKind.TypeSymbol,
+            	GetNextSymbolId(),
+            	typeClauseNode.TypeIdentifierToken.TextSpan with
+	            {
+	                DecorationByte = (byte)GenericDecorationKind.Type
+	            });
+
+            Compilation.__SymbolList.Add(typeSymbol);
+        }
+        
+        // TODO: Cannot use ref, out, or in...
+        var compilation = Compilation;
+        var binder = Binder;
+
+        var matchingTypeDefintionNode = CSharpFacts.Types.TypeDefinitionNodes.SingleOrDefault(
+            x => x.TypeIdentifierToken.TextSpan.GetText(compilation.SourceText, binder.TextEditorService) == typeClauseNode.TypeIdentifierToken.TextSpan.GetText(compilation.SourceText, binder.TextEditorService));
+
+        if (matchingTypeDefintionNode is not null)
+        {
+        	typeClauseNode.SetValueType(matchingTypeDefintionNode.ValueType);
+        }
+    }
+    
+    public void BindTypeIdentifier(SyntaxToken identifierToken)
+    {
+        if (identifierToken.SyntaxKind == SyntaxKind.IdentifierToken)
+        {
+            var typeSymbol = new Symbol(
+            	SyntaxKind.TypeSymbol,
+            	GetNextSymbolId(),
+            	identifierToken.TextSpan with
+	            {
+	                DecorationByte = (byte)GenericDecorationKind.Type
+	            });
+
+            Compilation.__SymbolList.Add(typeSymbol);
+        }
+    }
+
+    public void BindUsingStatementTuple(SyntaxToken usingKeywordToken, SyntaxToken namespaceIdentifierToken)
+    {
+        AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService));
+    }
+    
+    public void BindTypeDefinitionNode(TypeDefinitionNode typeDefinitionNode, bool shouldOverwrite = false)
+    {
+        var typeIdentifierText = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
+        var currentNamespaceStatementText = CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
+        var namespaceAndTypeIdentifiers = new NamespaceAndTypeIdentifiers(currentNamespaceStatementText, typeIdentifierText);
+
+        typeDefinitionNode.EncompassingNamespaceIdentifierString = currentNamespaceStatementText;
+
+        var success = Binder._allTypeDefinitions.TryAdd(typeIdentifierText, typeDefinitionNode);
+        if (!success)
+        {
+        	var entryFromAllTypeDefinitions = Binder._allTypeDefinitions[typeIdentifierText];
+        	
+        	if (shouldOverwrite || entryFromAllTypeDefinitions.IsFabricated)
+        		Binder._allTypeDefinitions[typeIdentifierText] = typeDefinitionNode;
+        }
+    }
+
+	/// <summary>
+	/// If the 'codeBlockBuilder.ScopeIndexKey' is null then a scope will be instantiated
+	/// added to the list of scopes. The 'codeBlockBuilder.ScopeIndexKey' will then be set
+	/// to the instantiated scope's 'IndexKey'. As well, the current scope index key will be set to the
+	/// instantiated scope's 'IndexKey'.
+	/// 
+	/// Also will update the 'CurrentCodeBlockBuilder'.
+	/// </summary>
+    public void NewScopeAndBuilderFromOwner(ICodeBlockOwner codeBlockOwner, TextEditorTextSpan textSpan)
+    {
+    	codeBlockOwner.Unsafe_ParentIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
+    	codeBlockOwner.Scope_StartInclusiveIndex = textSpan.StartInclusiveIndex;
+
+		codeBlockOwner.Unsafe_SelfIndexKey = Compilation.CodeBlockOwnerList.Count;
+		Compilation.CodeBlockOwnerList.Add(codeBlockOwner);
+
+		var parent = GetParent(codeBlockOwner, Compilation);
+    	
+    	var parentScopeDirection = parent?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
+        if (parentScopeDirection == ScopeDirectionKind.Both)
+        	codeBlockOwner.PermitCodeBlockParsing = false;
+    
+        CurrentCodeBlockOwner = codeBlockOwner;
+        
+        Binder.OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, Compilation, ref this);
+    }
+
+    public void AddNamespaceToCurrentScope(string namespaceString)
+    {
+        if (Binder._namespaceGroupMap.TryGetValue(namespaceString, out var namespaceGroup) &&
+            namespaceGroup.ConstructorWasInvoked)
+        {
+            var typeDefinitionNodes = Binder.GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup);
+            
+            // TODO: Cannot use ref, out, or in...
+            var compilation = Compilation;
+            var binder = Binder;
+            
+            foreach (var typeDefinitionNode in typeDefinitionNodes)
+            {
+        		var matchNode = Compilation.ExternalTypeDefinitionList.FirstOrDefault(x => binder.GetIdentifierText(x, compilation) == binder.GetIdentifierText(typeDefinitionNode, compilation));
+            	
+            	if (matchNode is null)
+            	    Compilation.ExternalTypeDefinitionList.Add(typeDefinitionNode);
+            }
+        }
+    }
+
+    public void CloseScope(TextEditorTextSpan textSpan)
+    {
+    	// Check if it is the global scope, if so return early.
+    	if (CurrentCodeBlockOwner.Unsafe_SelfIndexKey == 0)
+    		return;
+    	
+    	if (Compilation.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData &&
+    	    (CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+    	     CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.ArbitraryCodeBlockNode))
+		{
+			for (int i = Compilation.NodeList.Count - 1; i >= 0; i--)
+    		{
+    		    if (Compilation.NodeList[i].Unsafe_ParentIndexKey == CurrentCodeBlockOwner.Unsafe_SelfIndexKey)
+    		        Compilation.NodeList.RemoveAt(i);
+    		}
+		}
+    	
+    	CurrentCodeBlockOwner.Scope_EndExclusiveIndex = textSpan.EndExclusiveIndex;
+		CurrentCodeBlockOwner = GetParent(CurrentCodeBlockOwner, Compilation);
+    }
+
+	/// <summary>
+	/// Returns the 'symbolId: Compilation.BinderSession.GetNextSymbolId();'
+	/// that was used to construct the ITextEditorSymbol.
+	/// </summary>
+    public int CreateVariableSymbol(SyntaxToken identifierToken, VariableKind variableKind)
+    {
+    	var symbolId = GetNextSymbolId();
+    	
+        switch (variableKind)
+        {
+            case VariableKind.Field:
+                Compilation.__SymbolList.Add(
+                	new Symbol(
+                		SyntaxKind.FieldSymbol,
+	                	symbolId,
+	                	identifierToken.TextSpan with
+		                {
+		                    DecorationByte = (byte)GenericDecorationKind.Field
+		                }));
+                break;
+            case VariableKind.Property:
+                Compilation.__SymbolList.Add(
+                	new Symbol(
+                		SyntaxKind.PropertySymbol,
+                		symbolId,
+                		identifierToken.TextSpan with
+		                {
+		                    DecorationByte = (byte)GenericDecorationKind.Property
+		                }));
+                break;
+            case VariableKind.EnumMember:
+            	Compilation.__SymbolList.Add(
+                	new Symbol(
+                		SyntaxKind.EnumMemberSymbol,
+                		symbolId,
+                		identifierToken.TextSpan with
+		                {
+		                    DecorationByte = (byte)GenericDecorationKind.Property
+		                }));
+            	break;
+            case VariableKind.Local:
+                goto default;
+            case VariableKind.Closure:
+                goto default;
+            default:
+                Compilation.__SymbolList.Add(
+                	new Symbol(
+                		SyntaxKind.VariableSymbol,
+                		symbolId,
+                		identifierToken.TextSpan with
+		                {
+		                    DecorationByte = (byte)GenericDecorationKind.Variable
+		                }));
+                break;
+        }
+        
+        return symbolId;
+    }
+	
+	public void SetCurrentNamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
+    {
+        CurrentNamespaceStatementNode = namespaceStatementNode;
     }
 }

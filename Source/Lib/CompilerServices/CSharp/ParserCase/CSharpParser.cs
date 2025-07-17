@@ -183,7 +183,7 @@ public static class CSharpParser
         }
 
         if (parserModel.GetParent(parserModel.CurrentCodeBlockOwner, compilationUnit) is not null)
-            parserModel.Binder.CloseScope(parserModel.TokenWalker.Current.TextSpan, ref parserModel); // The current token here would be the EOF token.
+            parserModel.CloseScope(parserModel.TokenWalker.Current.TextSpan); // The current token here would be the EOF token.
 		
 		parserModel.Binder.FinalizeCompilationUnit(compilationUnit);
 	}
