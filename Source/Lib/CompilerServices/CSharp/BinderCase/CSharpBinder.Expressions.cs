@@ -2472,10 +2472,6 @@ public partial class CSharpBinder
 	/// </summary>
 	public IExpressionNode SkipLambdaExpressionStatements(LambdaExpressionNode lambdaExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		#if DEBUG
-		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
-		#endif
-		
 		parserModel.TokenWalker.Consume(); // Skip the EqualsCloseAngleBracketToken
 		
 		var openTokenIndex = parserModel.TokenWalker.Index;
@@ -2506,10 +2502,6 @@ public partial class CSharpBinder
 	
 		var closeTokenIndex = parserModel.TokenWalker.Index;
 		var closeBraceToken = parserModel.TokenWalker.Match(SyntaxKind.CloseBraceToken);
-		
-		#if DEBUG
-		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
-		#endif
 		
 		parserModel.StatementBuilder.ParseLambdaStatementScopeStack.Push(
 			(

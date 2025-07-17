@@ -171,16 +171,8 @@ public static class ParseTypes
     	parserModel.CurrentCodeBlockOwner.PermitCodeBlockParsing = true;
     	
     	parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
-					
-		#if DEBUG
-		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
-		#endif
 		
 		var openBraceToken = parserModel.TokenWalker.Consume();
-		
-		#if DEBUG
-		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
-		#endif
 		
         ParseTokens.ParseOpenBraceToken(openBraceToken, compilationUnit, ref parserModel);
         

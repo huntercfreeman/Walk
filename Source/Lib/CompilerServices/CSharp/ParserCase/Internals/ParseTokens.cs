@@ -221,10 +221,6 @@ public static class ParseTokens
     
     public static void ParsePropertyDefinition(CSharpCompilationUnit compilationUnit, VariableDeclarationNode variableDeclarationNode, ref CSharpParserModel parserModel)
     {
-		#if DEBUG
-		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
-		#endif
-		
 		var openBraceToken = parserModel.TokenWalker.Consume();
     	
     	var openBraceCounter = 1;
@@ -284,10 +280,6 @@ public static class ParseTokens
 
 		var closeTokenIndex = parserModel.TokenWalker.Index;
 		var closeBraceToken = parserModel.TokenWalker.Match(SyntaxKind.CloseBraceToken);
-		
-		#if DEBUG
-		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
-		#endif
     }
     
     /// <summary>
@@ -319,16 +311,8 @@ public static class ParseTokens
         	//var deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
 			//if (deferredParsingOccurred)
 			//	break;
-				
-			#if DEBUG
-			parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
-			#endif
 			
 			var openBraceToken = parserModel.TokenWalker.Consume();
-			
-			#if DEBUG
-			parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
-			#endif
 			
             ParseTokens.ParseOpenBraceToken(openBraceToken, compilationUnit, ref parserModel);
         }
@@ -474,10 +458,6 @@ public static class ParseTokens
     	var openSquareBracketCounter = 1;
 		var corruptState = false;
 		
-		#if DEBUG
-		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
-		#endif
-		
 		while (!parserModel.TokenWalker.IsEof)
 		{
 			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenSquareBracketToken)
@@ -509,10 +489,6 @@ public static class ParseTokens
 
 		var closeTokenIndex = parserModel.TokenWalker.Index;
 		var closeSquareBracketToken = parserModel.TokenWalker.Match(SyntaxKind.CloseSquareBracketToken);
-		
-		#if DEBUG
-		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
-		#endif
     }
 
     public static void ParseEqualsToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)

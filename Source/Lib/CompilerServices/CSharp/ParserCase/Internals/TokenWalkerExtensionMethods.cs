@@ -43,10 +43,6 @@ internal static class TokenWalkerExtensionMethods
 		
 		int closeTokenIndex;
 		
-		#if DEBUG
-		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
-		#endif
-		
 		if (deferredCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)
 		{
 			while (true)
@@ -86,10 +82,6 @@ internal static class TokenWalkerExtensionMethods
 			closeTokenIndex = tokenWalker.Index;
 			var closeBraceToken = tokenWalker.Match(SyntaxKind.CloseBraceToken);
 		}
-		
-		#if DEBUG
-		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
-		#endif
 
 		if (compilationUnit.CompilationUnitKind == CompilationUnitKind.SolutionWide_DefinitionsOnly &&
 			deferredCodeBlockBuilder.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||

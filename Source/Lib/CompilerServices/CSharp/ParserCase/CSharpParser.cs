@@ -112,16 +112,8 @@ public static class CSharpParser
                 	var deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
 					if (deferredParsingOccurred)
 						break;
-						
-					#if DEBUG
-					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
-					#endif
 					
 					var openBraceToken = parserModel.TokenWalker.Consume();
-					
-					#if DEBUG
-					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
-					#endif
 					
                     ParseTokens.ParseOpenBraceToken(openBraceToken, compilationUnit, ref parserModel);
                     break;
@@ -131,10 +123,6 @@ public static class CSharpParser
                 	var deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
 					if (deferredParsingOccurred)
 						break;
-					
-					#if DEBUG
-					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
-					#endif
 					
 					// When consuming a 'CloseBraceToken' it is possible for the
 					// TokenWalker to change the 'Index' to a value that is
@@ -156,10 +144,6 @@ public static class CSharpParser
 					}
 					
 					var closeBraceToken = parserModel.TokenWalker.Consume();
-					
-					#if DEBUG
-					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
-					#endif
 					
                     ParseTokens.ParseCloseBraceToken(closeBraceToken, closeBraceTokenIndex, compilationUnit, ref parserModel);
                     break;
@@ -204,15 +188,7 @@ public static class CSharpParser
 					if (deferredParsingOccurred)
 						break;
 					
-					#if DEBUG
-					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
-					#endif
-					
 					var statementDelimiterToken = parserModel.TokenWalker.Consume();
-					
-					#if DEBUG
-					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
-					#endif
 					
                     ParseTokens.ParseStatementDelimiterToken(statementDelimiterToken, compilationUnit, ref parserModel);
                     break;
