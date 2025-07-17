@@ -44,30 +44,9 @@ public static class CSharpParser
 	        lexerOutput.SyntaxTokenList,
 	        currentCodeBlockBuilder,
             binder.TopLevelNamespaceStatementNode);
-            
-		/*#if DEBUG
-		parserModel.TokenWalker.ProtectedTokenSyntaxKindList = new() { SyntaxKind.StatementDelimiterToken, SyntaxKind.OpenBraceToken, SyntaxKind.CloseBraceToken, };
-		#endif*/
-		
-		var loopCount = 0;
-		
-		// + 10 because a valid case where 'parserModel.TokenWalker.TokenList.Count + 1' was found
-		// and adding an extra 9 of padding shouldn't matter to the CPU.
-		// (I think the case referred to was 'public class Abc { }' but this is from memory alone).
-		// 
-        var loopLimit = parserModel.TokenWalker.TokenList.Count + 10;
         
         while (true)
         {
-        	if (loopCount++ > loopLimit)
-        	{
-        		++ErrorCount;
-        		
-        		Console.WriteLine(
-        			$"ErrorCount:{ErrorCount}; ResourceUri:{compilationUnit.ResourceUri.Value}; loopLimit:{loopLimit}; tokenCount:{lexerOutput.SyntaxTokenList.Count};");
-        		break;
-        	}
-
         	// The last statement in this while loop is conditionally: '_ = parserModel.TokenWalker.Consume();'.
         	// Knowing this to be the case is extremely important.
             var token = parserModel.TokenWalker.Current;
