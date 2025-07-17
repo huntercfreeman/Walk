@@ -17,7 +17,15 @@ public static class CSharpParser
 
     public static void Parse(CSharpCompilationUnit compilationUnit, CSharpBinder binder, ref CSharpLexerOutput lexerOutput)
     {
-    	var globalCodeBlockNode = new GlobalCodeBlockNode();
+    	var globalCodeBlockNode = binder.GlobalCodeBlockNode;
+    	globalCodeBlockNode.Scope_StartInclusiveIndex = -1;
+    	globalCodeBlockNode.Scope_EndExclusiveIndex = -1;
+    	globalCodeBlockNode.CodeBlock_StartInclusiveIndex = -1;
+    	globalCodeBlockNode.CodeBlock_EndExclusiveIndex = -1;
+    	globalCodeBlockNode.Unsafe_ParentIndexKey = -1;
+    	globalCodeBlockNode.Unsafe_SelfIndexKey = -1;
+    	globalCodeBlockNode.PermitCodeBlockParsing = true;
+    	globalCodeBlockNode.IsImplicitOpenCodeBlockTextSpan = false;
     	
     	var globalOpenCodeBlockTextSpan = new TextEditorTextSpan(
 		    0,
@@ -104,16 +112,8 @@ public static class CSharpParser
                 	var deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
 					if (deferredParsingOccurred)
 						break;
-						
-					#if DEBUG
-					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
-					#endif
 					
 					var openBraceToken = parserModel.TokenWalker.Consume();
-					
-					#if DEBUG
-					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
-					#endif
 					
                     ParseTokens.ParseOpenBraceToken(openBraceToken, compilationUnit, ref parserModel);
                     break;
@@ -123,10 +123,6 @@ public static class CSharpParser
                 	var deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
 					if (deferredParsingOccurred)
 						break;
-					
-					#if DEBUG
-					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
-					#endif
 					
 					// When consuming a 'CloseBraceToken' it is possible for the
 					// TokenWalker to change the 'Index' to a value that is
@@ -148,10 +144,6 @@ public static class CSharpParser
 					}
 					
 					var closeBraceToken = parserModel.TokenWalker.Consume();
-					
-					#if DEBUG
-					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
-					#endif
 					
                     ParseTokens.ParseCloseBraceToken(closeBraceToken, closeBraceTokenIndex, compilationUnit, ref parserModel);
                     break;
@@ -196,15 +188,7 @@ public static class CSharpParser
 					if (deferredParsingOccurred)
 						break;
 					
-					#if DEBUG
-					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
-					#endif
-					
 					var statementDelimiterToken = parserModel.TokenWalker.Consume();
-					
-					#if DEBUG
-					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
-					#endif
 					
                     ParseTokens.ParseStatementDelimiterToken(statementDelimiterToken, compilationUnit, ref parserModel);
                     break;

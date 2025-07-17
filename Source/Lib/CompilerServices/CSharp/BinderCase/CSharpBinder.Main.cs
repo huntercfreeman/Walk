@@ -17,9 +17,6 @@ namespace Walk.CompilerServices.CSharp.BinderCase;
 
 public partial class CSharpBinder
 {
-	public readonly Dictionary<ResourceUri, CSharpCompilationUnit> _compilationUnitMap = new();
-	//private readonly object _compilationUnitMapLock = new();
-
 	/// <summary>
 	/// This is not thread safe to access because 'BindNamespaceStatementNode(...)' will directly modify the NamespaceGroup's List.
 	/// </summary>
@@ -36,6 +33,12 @@ public partial class CSharpBinder
 	/// </summary>
     public IReadOnlyDictionary<string, NamespaceGroup> NamespaceGroupMap => _namespaceGroupMap;
     public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions;
+    
+    /// <summary>
+    /// CONFUSING: During a parse the "previous" CSharpCompilationUnit gets read from here...
+    /// ...because the currently being parsed CSharpCompilationUnit has not been written to this map yet.
+    /// </summary>
+    public Dictionary<ResourceUri, CSharpCompilationUnit> __CompilationUnitMap { get; } = new();
     
     public NamespacePrefixTree NamespacePrefixTree { get; } = new();
     
@@ -72,6 +75,8 @@ public partial class CSharpBinder
     public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> CSharpStatementBuilder_ParseLambdaStatementScopeStack { get; } = new();
     
     public TextEditorService TextEditorService { get; set; }
+    
+    public GlobalCodeBlockNode GlobalCodeBlockNode { get; } = new GlobalCodeBlockNode();
     
     public CSharpBinder(TextEditorService textEditorService)
     {
@@ -563,12 +568,6 @@ public partial class CSharpBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-        /*#if DEBUG
-    	Console.WriteLine($"-------NewSBin: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    	#else
-    	Console.WriteLine($"-------NewSBin: has console.write... that needs commented out");
-    	#endif*/
-    
     	if (codeBlockOwner.Unsafe_SelfIndexKey != -1)
     	{
 			parserModel.CurrentCodeBlockOwner = codeBlockOwner;
@@ -595,12 +594,6 @@ public partial class CSharpBinder
         parserModel.CurrentCodeBlockOwner = codeBlockOwner;
         
         parserModel.Binder.OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, compilationUnit, ref parserModel);
-        
-        /*#if DEBUG
-    	Console.WriteLine($"-------NewSBout: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    	#else
-    	Console.WriteLine($"-------NewSBout: has console.write... that needs commented out");
-    	#endif*/
     }
     
     /// <summary>
@@ -635,22 +628,10 @@ public partial class CSharpBinder
     public void SetCurrentScopeAndBuilder(
     	ICodeBlockOwner codeBlockOwner, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	/*#if DEBUG
-    	Console.WriteLine($"-------SetSBin: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    	#else
-    	Console.WriteLine($"-------SetSBin: has console.write... that needs commented out");
-    	#endif*/
-    
     	if (codeBlockOwner.Unsafe_SelfIndexKey == -1)
     		throw new WalkTextEditorException($"{nameof(SetCurrentScopeAndBuilder)} codeBlockBuilder.CodeBlockBuilder.ScopeIndexKey is '-1'. Invoke {NewScopeAndBuilderFromOwner}?");
     
 		parserModel.CurrentCodeBlockOwner = codeBlockOwner;
-		
-		/*#if DEBUG
-    	Console.WriteLine($"-------SetSBout: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    	#else
-    	Console.WriteLine($"-------SetSBout: has console.write... that needs commented out");
-    	#endif*/
     }
 
     public void AddNamespaceToCurrentScope(
@@ -678,12 +659,6 @@ public partial class CSharpBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-    	/*#if DEBUG
-    	Console.WriteLine($"-------{nameof(CloseScope)}in: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    	#else
-    	Console.WriteLine($"-------{nameof(CloseScope)}in: has console.write... that needs commented out");
-    	#endif*/
-    
     	// Check if it is the global scope, if so return early.
     	if (parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey == 0)
     		return;
@@ -701,12 +676,6 @@ public partial class CSharpBinder
     	
     	parserModel.CurrentCodeBlockOwner.Scope_EndExclusiveIndex = textSpan.EndExclusiveIndex;
 		parserModel.CurrentCodeBlockOwner = parserModel.GetParent(parserModel.CurrentCodeBlockOwner, compilationUnit);
-		
-		/*#if DEBUG
-    	Console.WriteLine($"-------{nameof(CloseScope)}out: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    	#else
-    	Console.WriteLine($"-------{nameof(CloseScope)}out: has console.write... that needs commented out");
-    	#endif*/
     }
 
 	/// <summary>
@@ -792,7 +761,7 @@ public partial class CSharpBinder
                     keepStatements);
         }
 
-		_compilationUnitMap.Remove(resourceUri);
+		__CompilationUnitMap.Remove(resourceUri);
     }
     
     /// <summary>
@@ -975,36 +944,19 @@ public partial class CSharpBinder
         return null;
     }
     
-    public bool TryGetCompilationUnit(ResourceUri resourceUri, out CSharpCompilationUnit compilationUnit)
-    {
-    	var success = _compilationUnitMap.TryGetValue(resourceUri, out var x);
-    	compilationUnit = x;
-    	return success;
-    }
-    
-    /// <summary>
-    /// This overload exists for the sake of emphasis that the "previous" compilation unit is being read.
-    /// </summary>
-    public bool TryGetCompilationUnit_Previous(ResourceUri resourceUri, out CSharpCompilationUnit compilationUnit)
-    {
-    	var success = _compilationUnitMap.TryGetValue(resourceUri, out var x);
-    	compilationUnit = x;
-    	return success;
-    }
-    
     /// <summary>TextEditorEditContext is required for thread safety.</summary>
     public void UpsertCompilationUnit(CSharpCompilationUnit compilationUnit)
     {
-		if (_compilationUnitMap.ContainsKey(compilationUnit.ResourceUri))
-    		_compilationUnitMap[compilationUnit.ResourceUri] = compilationUnit;
+		if (__CompilationUnitMap.ContainsKey(compilationUnit.ResourceUri))
+    		__CompilationUnitMap[compilationUnit.ResourceUri] = compilationUnit;
     	else
-    		_compilationUnitMap.Add(compilationUnit.ResourceUri, compilationUnit);
+    		__CompilationUnitMap.Add(compilationUnit.ResourceUri, compilationUnit);
     }
     
     /// <summary>TextEditorEditContext is required for thread safety.</summary>
     public bool RemoveCompilationUnit(ResourceUri resourceUri)
     {
-    	return _compilationUnitMap.Remove(resourceUri);
+    	return __CompilationUnitMap.Remove(resourceUri);
     }
     
     public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(
@@ -1324,7 +1276,7 @@ public partial class CSharpBinder
 		                {
 		                    var entry = MethodOverloadDefinitionList[i];
 		                    
-		                    if (TryGetCompilationUnit(entry.ResourceUri, out var innerCompilationUnit))
+		                    if (__CompilationUnitMap.TryGetValue(entry.ResourceUri, out var innerCompilationUnit))
 		                    {
 		                        var innerFunctionDefinitionNode = (FunctionDefinitionNode)innerCompilationUnit.CodeBlockOwnerList[entry.ScopeIndexKey];
 		                        
@@ -1338,7 +1290,7 @@ public partial class CSharpBinder
                                         string parameterTypeText;
                                         
                                         if (parameter.TypeReference.ExplicitDefinitionTextSpan != default &&
-                                            TryGetCompilationUnit(parameter.TypeReference.ExplicitDefinitionResourceUri, out var parameterCompilationUnit))
+                                            __CompilationUnitMap.TryGetValue(parameter.TypeReference.ExplicitDefinitionResourceUri, out var parameterCompilationUnit))
                                         {
                                             parameterTypeText = parameter.TypeReference.TypeIdentifierToken.TextSpan.GetText(parameterCompilationUnit.SourceText, TextEditorService);
                                         }
@@ -1430,7 +1382,7 @@ public partial class CSharpBinder
 	        {
 	        	if (compilationUnit.SymbolIdToExternalTextSpanMap.TryGetValue(symbol.Value.SymbolId, out var definitionTuple))
 	        	{
-	        	    if (TryGetCompilationUnit(definitionTuple.ResourceUri, out var innerCompilationUnit))
+	        	    if (__CompilationUnitMap.TryGetValue(definitionTuple.ResourceUri, out var innerCompilationUnit))
 	        	    {
 	        	        return GetDefinitionNode(
     	        			innerCompilationUnit,
@@ -1849,7 +1801,7 @@ public partial class CSharpBinder
         	    }
         	    else
         	    {
-        	        if (TryGetCompilationUnit(typeDefinitionNode.ResourceUri, out var innerCompilationUnit))
+        	        if (__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var innerCompilationUnit))
         	            sourceText = innerCompilationUnit.SourceText;
         	        else
     	                return string.Empty;
@@ -1865,7 +1817,7 @@ public partial class CSharpBinder
         	    }
         	    else
         	    {
-        	        if (TryGetCompilationUnit(typeClauseNode.ExplicitDefinitionResourceUri, out var innerCompilationUnit))
+        	        if (__CompilationUnitMap.TryGetValue(typeClauseNode.ExplicitDefinitionResourceUri, out var innerCompilationUnit))
         	            sourceText = innerCompilationUnit.SourceText;
         	        else
     	                return string.Empty;
@@ -1881,7 +1833,7 @@ public partial class CSharpBinder
         	    }
         	    else
         	    {
-        	        if (TryGetCompilationUnit(functionDefinitionNode.ResourceUri, out var innerCompilationUnit))
+        	        if (__CompilationUnitMap.TryGetValue(functionDefinitionNode.ResourceUri, out var innerCompilationUnit))
         	            sourceText = innerCompilationUnit.SourceText;
         	        else
     	                return string.Empty;
@@ -1897,7 +1849,7 @@ public partial class CSharpBinder
         	    }
         	    else
         	    {
-        	        if (TryGetCompilationUnit(functionInvocationNode.ResourceUri, out var innerCompilationUnit))
+        	        if (__CompilationUnitMap.TryGetValue(functionInvocationNode.ResourceUri, out var innerCompilationUnit))
         	            sourceText = innerCompilationUnit.SourceText;
         	        else
     	                return string.Empty;
@@ -1913,7 +1865,7 @@ public partial class CSharpBinder
         	    }
         	    else
         	    {
-        	        if (TryGetCompilationUnit(variableDeclarationNode.ResourceUri, out var innerCompilationUnit))
+        	        if (__CompilationUnitMap.TryGetValue(variableDeclarationNode.ResourceUri, out var innerCompilationUnit))
         	            sourceText = innerCompilationUnit.SourceText;
         	        else
     	                return string.Empty;
@@ -1972,7 +1924,7 @@ public partial class CSharpBinder
 	public IEnumerable<ISyntaxNode> GetMemberList_TypeDefinitionNode(TypeDefinitionNode typeDefinitionNode)
 	{
 		if (typeDefinitionNode.Unsafe_SelfIndexKey == -1 ||
-		    !_compilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var compilationUnit))
+		    !__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var compilationUnit))
 	    {
 			return Array.Empty<ISyntaxNode>();
         }
@@ -2004,7 +1956,7 @@ public partial class CSharpBinder
         		    {
         		        if (PartialTypeDefinitionList[positionExclusive].ResourceUri != compilationUnit.ResourceUri)
         		        {
-            		        if (_compilationUnitMap.TryGetValue(PartialTypeDefinitionList[positionExclusive].ResourceUri, out var temporaryCompilationUnit))
+            		        if (__CompilationUnitMap.TryGetValue(PartialTypeDefinitionList[positionExclusive].ResourceUri, out var temporaryCompilationUnit))
             		            innerCompilationUnit = temporaryCompilationUnit;
             		        else
             		            innerCompilationUnit = null;
@@ -2049,7 +2001,7 @@ public partial class CSharpBinder
 	public IEnumerable<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
 	{
 	    if (namespaceStatementNode.Unsafe_SelfIndexKey == -1 ||
-		    !_compilationUnitMap.TryGetValue(namespaceStatementNode.ResourceUri, out var compilationUnit))
+		    !__CompilationUnitMap.TryGetValue(namespaceStatementNode.ResourceUri, out var compilationUnit))
 	    {
 			return Array.Empty<TypeDefinitionNode>();
         }

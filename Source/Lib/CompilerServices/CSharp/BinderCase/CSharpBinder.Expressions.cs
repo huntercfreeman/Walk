@@ -1340,7 +1340,7 @@ public partial class CSharpBinder
         // then the 'constructorInvocationExpressionNode.ResultTypeReference == default'
         // doesn't trigger the 'parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode'.
         //
-		if (parserModel.Binder.TryGetCompilationUnit(constructorInvocationExpressionNode.ResultTypeReference.ExplicitDefinitionResourceUri, out var innerCompilationUnit))
+		if (parserModel.Binder.__CompilationUnitMap.TryGetValue(constructorInvocationExpressionNode.ResultTypeReference.ExplicitDefinitionResourceUri, out var innerCompilationUnit))
 		{
 		    if ("void" == constructorInvocationExpressionNode.ResultTypeReference.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, parserModel.Binder.TextEditorService))
 		        isVoidType = true;
@@ -2472,10 +2472,6 @@ public partial class CSharpBinder
 	/// </summary>
 	public IExpressionNode SkipLambdaExpressionStatements(LambdaExpressionNode lambdaExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		#if DEBUG
-		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
-		#endif
-		
 		parserModel.TokenWalker.Consume(); // Skip the EqualsCloseAngleBracketToken
 		
 		var openTokenIndex = parserModel.TokenWalker.Index;
@@ -2506,10 +2502,6 @@ public partial class CSharpBinder
 	
 		var closeTokenIndex = parserModel.TokenWalker.Index;
 		var closeBraceToken = parserModel.TokenWalker.Match(SyntaxKind.CloseBraceToken);
-		
-		#if DEBUG
-		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
-		#endif
 		
 		parserModel.StatementBuilder.ParseLambdaStatementScopeStack.Push(
 			(
@@ -2610,7 +2602,7 @@ public partial class CSharpBinder
 			
 			if (typeReference.ExplicitDefinitionTextSpan.ConstructorWasInvoked && typeReference.ExplicitDefinitionResourceUri.Value is not null)
 			{
-			    if (TryGetCompilationUnit(typeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
+			    if (__CompilationUnitMap.TryGetValue(typeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
 			    {
 			        maybeTypeDefinitionNode = GetDefinitionNode(
     			        innerCompilationUnit,
@@ -2654,7 +2646,7 @@ public partial class CSharpBinder
 					
 					if (variableDeclarationNode.ResourceUri != compilationUnit.ResourceUri)
 					{
-					    if (TryGetCompilationUnit(variableDeclarationNode.ResourceUri, out var variableDeclarationCompilationUnit))
+					    if (__CompilationUnitMap.TryGetValue(variableDeclarationNode.ResourceUri, out var variableDeclarationCompilationUnit))
 					        sourceText = variableDeclarationCompilationUnit.SourceText;
 					    else
 					        sourceText = innerCompilationUnit.SourceText;
@@ -2681,7 +2673,7 @@ public partial class CSharpBinder
 					
 					if (functionDefinitionNode.ResourceUri != compilationUnit.ResourceUri)
 					{
-					    if (TryGetCompilationUnit(functionDefinitionNode.ResourceUri, out var functionDefinitionCompilationUnit))
+					    if (__CompilationUnitMap.TryGetValue(functionDefinitionNode.ResourceUri, out var functionDefinitionCompilationUnit))
 					        sourceText = functionDefinitionCompilationUnit.SourceText;
 					    else
 					        sourceText = innerCompilationUnit.SourceText;
@@ -2841,7 +2833,7 @@ public partial class CSharpBinder
     		        {
     		            if (innerCompilationUnit.ResourceUri != typeDefinitionNode.ResourceUri)
     		            {
-    		                if (!TryGetCompilationUnit(typeDefinitionNode.ResourceUri, out innerCompilationUnit))
+    		                if (!__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out innerCompilationUnit))
     		                    continue;
     		            }
     		        
@@ -3158,7 +3150,7 @@ public partial class CSharpBinder
     		        
     		        if (functionInvocationNode.ExplicitDefinitionTextSpan.ConstructorWasInvoked)
         			{
-        			    if (TryGetCompilationUnit(compilationUnit.ResourceUri, out var innerCompilationUnit))
+        			    if (__CompilationUnitMap.TryGetValue(compilationUnit.ResourceUri, out var innerCompilationUnit))
         			    {
         			        maybeFunctionDefinitionNode = GetDefinitionNode(
             			        innerCompilationUnit,

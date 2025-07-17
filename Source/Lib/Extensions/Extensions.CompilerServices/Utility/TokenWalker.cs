@@ -37,11 +37,6 @@ public class TokenWalker
 
 	public int ConsumeCounter { get; private set; }
 
-#if DEBUG
-	public bool SuppressProtectedSyntaxKindConsumption { get; set; } = true;
-	public List<SyntaxKind> ProtectedTokenSyntaxKindList { get; set; }
-#endif
-
 	public IReadOnlyList<SyntaxToken> TokenList { get; private set; }
 	public SyntaxToken Current => Peek(0);
 	public SyntaxToken Next => Peek(1);

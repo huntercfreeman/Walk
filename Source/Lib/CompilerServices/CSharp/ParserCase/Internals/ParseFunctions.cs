@@ -119,7 +119,7 @@ public class ParseFunctions
             
             var existingWasFound = false;
         
-            if (parserModel.Binder.TryGetCompilationUnit_Previous(compilationUnit.ResourceUri, out var previousCompilationUnit))
+            if (parserModel.Binder.__CompilationUnitMap.TryGetValue(compilationUnit.ResourceUri, out var previousCompilationUnit))
             {
                 existingWasFound = false;
                 
