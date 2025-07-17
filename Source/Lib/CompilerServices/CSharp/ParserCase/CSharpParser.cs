@@ -50,12 +50,6 @@ public static class CSharpParser
         	// The last statement in this while loop is conditionally: '_ = parserModel.TokenWalker.Consume();'.
         	// Knowing this to be the case is extremely important.
             var token = parserModel.TokenWalker.Current;
-           
-			/*#if DEBUG
-			Console.WriteLine(token.SyntaxKind + "___" + token.TextSpan.Text + "___" + parserModel.TokenWalker.Index);
-			#else
-			Console.WriteLine($"{nameof(CSharpParser)}.{nameof(Parse)} has debug 'Console.Write...' that needs commented out.");
-			#endif*/
 
             switch (token.SyntaxKind)
             {
@@ -84,17 +78,11 @@ public static class CSharpParser
                     break;
                 case SyntaxKind.OpenBraceToken:
                 {
-                	// TODO: This is being inlined within ParseTokens.ParseGetterOrSetter(...)...
-                	// just to check whether this code running is a valid solution.
-                	// If this is found to work, the inlined code should not stay there long term.
-                
                 	var deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
 					if (deferredParsingOccurred)
 						break;
-					
-					var openBraceToken = parserModel.TokenWalker.Consume();
-					
-                    ParseTokens.ParseOpenBraceToken(openBraceToken, compilationUnit, ref parserModel);
+
+                    ParseTokens.ParseOpenBraceToken(parserModel.TokenWalker.Consume(), compilationUnit, ref parserModel);
                     break;
                 }
                 case SyntaxKind.CloseBraceToken:
@@ -103,17 +91,14 @@ public static class CSharpParser
 					if (deferredParsingOccurred)
 						break;
 					
-					// When consuming a 'CloseBraceToken' it is possible for the
-					// TokenWalker to change the 'Index' to a value that is
-					// more than 1 larger than the current index.
+					// When consuming a 'CloseBraceToken' it is possible for the TokenWalker to change the 'Index'
+					// to a value that is more than 1 larger than the current index.
 					//
-					// This is an issue because some code presumes that
-					// 'parserModel.TokenWalker.Index - 1' will always give them
-					// the index of the previous token.
+					// This is an issue because some code presumes that 'parserModel.TokenWalker.Index - 1'
+					// will always give them the index of the previous token.
 					//
-					// So, the ParseCloseBraceToken(...) method needs
-					// to be passed the index that was consumed in order to
-					// get the CloseBraceToken.
+					// So, the ParseCloseBraceToken(...) method needs to be passed the index that was consumed
+					// in order to get the CloseBraceToken.
 					var closeBraceTokenIndex = parserModel.TokenWalker.Index;
 					
 					if (parserModel.ParseChildScopeStack.Count > 0 &&
@@ -122,9 +107,7 @@ public static class CSharpParser
 						parserModel.TokenWalker.SetNullDeferredParsingTuple();
 					}
 					
-					var closeBraceToken = parserModel.TokenWalker.Consume();
-					
-                    ParseTokens.ParseCloseBraceToken(closeBraceToken, closeBraceTokenIndex, compilationUnit, ref parserModel);
+                    ParseTokens.ParseCloseBraceToken(parserModel.TokenWalker.Consume(), closeBraceTokenIndex, compilationUnit, ref parserModel);
                     break;
                 }
                 case SyntaxKind.OpenParenthesisToken:
@@ -154,22 +137,15 @@ public static class CSharpParser
                 {
                 	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
                 	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-	        		// parserModel.CurrentCodeBlockBuilder.AddChild(expressionNode);
                 	break;
             	}
                 case SyntaxKind.StatementDelimiterToken:
                 {
-                	// TODO: This is being inlined within ParseTokens.ParseGetterOrSetter(...)...
-                	// just to check whether this code running is a valid solution.
-                	// If this is found to work, the inlined code should not stay there long term.
-
                 	var deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
 					if (deferredParsingOccurred)
 						break;
-					
-					var statementDelimiterToken = parserModel.TokenWalker.Consume();
-					
-                    ParseTokens.ParseStatementDelimiterToken(statementDelimiterToken, compilationUnit, ref parserModel);
+
+                    ParseTokens.ParseStatementDelimiterToken(parserModel.TokenWalker.Consume(), compilationUnit, ref parserModel);
                     break;
                 }
                 case SyntaxKind.EndOfFileToken:
