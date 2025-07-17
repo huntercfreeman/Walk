@@ -868,9 +868,9 @@ public class ParseDefaultKeywords
             {
                 if (parserModel.Binder.TryGetCompilationUnit_Previous(compilationUnit.ResourceUri, out var previousCompilationUnit))
                 {
-                    if (typeDefinitionNode.Unsafe_ParentIndexKey < previousCompilationUnit.NodeList.Count)
+                    if (typeDefinitionNode.Unsafe_ParentIndexKey < previousCompilationUnit.CodeBlockOwnerList.Count)
                     {
-                        if (previousCompilationUnit.NodeList[typeDefinitionNode.Unsafe_ParentIndexKey] is Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces.ICodeBlockOwner previousParent)
+                        if (previousCompilationUnit.CodeBlockOwnerList[typeDefinitionNode.Unsafe_ParentIndexKey] is Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces.ICodeBlockOwner previousParent)
                         {
                             var currentParent = parserModel.GetParent(typeDefinitionNode, compilationUnit);
                             
@@ -883,7 +883,7 @@ public class ParseDefaultKeywords
                                 // All that matters is that they're put in the same "method group".
                                 //
                                 var binder = parserModel.Binder;
-                                var previousNode = previousCompilationUnit.NodeList.FirstOrDefault(x =>
+                                var previousNode = previousCompilationUnit.CodeBlockOwnerList.FirstOrDefault(x =>
                                     x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
                                     x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
                                     binder.GetIdentifierText(x, previousCompilationUnit) == binder.GetIdentifierText(typeDefinitionNode, compilationUnit));
@@ -1066,7 +1066,7 @@ public class ParseDefaultKeywords
                         
                         if (parserModel.Binder.TryGetCompilationUnit(partialTypeDefinitionEntry.ResourceUri, out var innerCompilationUnit))
                         {
-                            ((TypeDefinitionNode)innerCompilationUnit.NodeList[partialTypeDefinitionEntry.ScopeIndexKey]).IndexPartialTypeDefinition = partialTypeDefinitionEntry.IndexStartGroup + 1;
+                            ((TypeDefinitionNode)innerCompilationUnit.CodeBlockOwnerList[partialTypeDefinitionEntry.ScopeIndexKey]).IndexPartialTypeDefinition = partialTypeDefinitionEntry.IndexStartGroup + 1;
                         }
                     }
                     

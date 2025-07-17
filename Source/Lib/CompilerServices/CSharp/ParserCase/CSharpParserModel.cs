@@ -190,7 +190,7 @@ public struct CSharpParserModel
         if (codeBlockOwner.Unsafe_ParentIndexKey == -1)
             return null;
             
-        return (ICodeBlockOwner)cSharpCompilationUnit.NodeList[codeBlockOwner.Unsafe_ParentIndexKey];
+        return (ICodeBlockOwner)cSharpCompilationUnit.CodeBlockOwnerList[codeBlockOwner.Unsafe_ParentIndexKey];
     }
     
     /// <summary>TODO: Delete this code it is only being used temporarily for debugging.</summary>

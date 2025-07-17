@@ -123,9 +123,9 @@ public class ParseFunctions
             {
                 existingWasFound = false;
                 
-                if (existingNode.Unsafe_ParentIndexKey < previousCompilationUnit.NodeList.Count)
+                if (existingNode.Unsafe_ParentIndexKey < previousCompilationUnit.CodeBlockOwnerList.Count)
                 {
-                    if (previousCompilationUnit.NodeList[existingNode.Unsafe_ParentIndexKey] is ICodeBlockOwner previousParent)
+                    if (previousCompilationUnit.CodeBlockOwnerList[existingNode.Unsafe_ParentIndexKey] is ICodeBlockOwner previousParent)
                     {
                         var currentParent = parserModel.GetParent(newNode, compilationUnit);
                         
@@ -138,7 +138,7 @@ public class ParseFunctions
                             // All that matters is that they're put in the same "method group".
                             //
                             var binder = parserModel.Binder;
-                            var previousNode = previousCompilationUnit.NodeList.FirstOrDefault(x =>
+                            var previousNode = previousCompilationUnit.CodeBlockOwnerList.FirstOrDefault(x =>
                                 x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
                                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
                                 binder.GetIdentifierText(x, previousCompilationUnit) == binder.GetIdentifierText(existingNode, compilationUnit));

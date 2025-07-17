@@ -54,6 +54,7 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit
 	public List<FunctionInvocationParameterMetadata> FunctionInvocationParameterMetadataList { get; }
 	
     public List<TypeDefinitionNode> ExternalTypeDefinitionList { get; } = new();
+    public List<ICodeBlockOwner> CodeBlockOwnerList { get; } = new();
     public List<ISyntaxNode> NodeList { get; } = new();
     
     public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => __DiagnosticList;
