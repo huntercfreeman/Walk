@@ -596,35 +596,6 @@ public partial class CSharpBinder
         parserModel.Binder.OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, compilationUnit, ref parserModel);
     }
     
-    /// <summary>
-    /// 'NewScopeAndBuilderFromOwner' takes a 'ref CSharpParserModel parserModel',
-    /// but the 'CSharpParserModel' takes the global scope in its constructor.
-    ///
-    /// TODO: Determine a better solution.
-    /// </summary>
-    public ICodeBlockOwner NewScopeAndBuilderFromOwner_GlobalScope_Hack(
-    	ICodeBlockOwner codeBlockOwner,
-        TextEditorTextSpan textSpan,
-        CSharpCompilationUnit compilationUnit)
-    {
-    	if (codeBlockOwner.Unsafe_SelfIndexKey != -1)
-    	{
-    		// TODO: This does not catch nearly as many infinite loop cases as I initially thought it would...
-    		//       ...When the token walker sets the token index for deferred parsing,
-    		//       a new instance of the node ends up being parsed.
-    		throw new WalkTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockBuilder.ScopeIndexKey is NOT '-1'; an infinite loop?");
-		}
-    	
-    	codeBlockOwner.Unsafe_ParentIndexKey = -1;
-    	codeBlockOwner.Unsafe_SelfIndexKey = 0;
-    	codeBlockOwner.Scope_StartInclusiveIndex = textSpan.StartInclusiveIndex;
-    	codeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
-
-        compilationUnit.CodeBlockOwnerList.Add(codeBlockOwner);
-    	
-    	return codeBlockOwner;
-    }
-    
     public void SetCurrentScopeAndBuilder(
     	ICodeBlockOwner codeBlockOwner, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {

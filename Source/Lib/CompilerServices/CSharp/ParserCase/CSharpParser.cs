@@ -12,71 +12,21 @@ namespace Walk.CompilerServices.CSharp.ParserCase;
 
 public static class CSharpParser
 {
-	public static int ErrorCount { get; set; }
-	public static int TotalAmbiguousIdentifierExpressionNodeFailCount { get; set; }
-
     public static void Parse(CSharpCompilationUnit compilationUnit, CSharpBinder binder, ref CSharpLexerOutput lexerOutput)
     {
-    	var globalCodeBlockNode = binder.GlobalCodeBlockNode;
-    	globalCodeBlockNode.Scope_StartInclusiveIndex = -1;
-    	globalCodeBlockNode.Scope_EndExclusiveIndex = -1;
-    	globalCodeBlockNode.CodeBlock_StartInclusiveIndex = -1;
-    	globalCodeBlockNode.CodeBlock_EndExclusiveIndex = -1;
-    	globalCodeBlockNode.Unsafe_ParentIndexKey = -1;
-    	globalCodeBlockNode.Unsafe_SelfIndexKey = -1;
-    	globalCodeBlockNode.PermitCodeBlockParsing = true;
-    	globalCodeBlockNode.IsImplicitOpenCodeBlockTextSpan = false;
-    	
-    	var globalOpenCodeBlockTextSpan = new TextEditorTextSpan(
-		    0,
-		    1,
-		    DecorationByte: default);
-    	
-		var globalCodeBlockBuilder = binder.NewScopeAndBuilderFromOwner_GlobalScope_Hack(
-	    	globalCodeBlockNode,
-	        globalOpenCodeBlockTextSpan,
-	        compilationUnit);
-        
-        var currentCodeBlockBuilder = globalCodeBlockBuilder;
+        compilationUnit.CodeBlockOwnerList.Add(binder.GlobalCodeBlockNode);
 
         var parserModel = new CSharpParserModel(
             binder,
 	        lexerOutput.SyntaxTokenList,
-	        currentCodeBlockBuilder,
+	        currentCodeBlockOwner: binder.GlobalCodeBlockNode,
             binder.TopLevelNamespaceStatementNode);
-            
-		/*#if DEBUG
-		parserModel.TokenWalker.ProtectedTokenSyntaxKindList = new() { SyntaxKind.StatementDelimiterToken, SyntaxKind.OpenBraceToken, SyntaxKind.CloseBraceToken, };
-		#endif*/
-		
-		var loopCount = 0;
-		
-		// + 10 because a valid case where 'parserModel.TokenWalker.TokenList.Count + 1' was found
-		// and adding an extra 9 of padding shouldn't matter to the CPU.
-		// (I think the case referred to was 'public class Abc { }' but this is from memory alone).
-		// 
-        var loopLimit = parserModel.TokenWalker.TokenList.Count + 10;
         
         while (true)
         {
-        	if (loopCount++ > loopLimit)
-        	{
-        		++ErrorCount;
-        		
-        		Console.WriteLine(
-        			$"ErrorCount:{ErrorCount}; ResourceUri:{compilationUnit.ResourceUri.Value}; loopLimit:{loopLimit}; tokenCount:{lexerOutput.SyntaxTokenList.Count};");
-        		break;
-        	}
-
         	// The last statement in this while loop is conditionally: '_ = parserModel.TokenWalker.Consume();'.
         	// Knowing this to be the case is extremely important.
             var token = parserModel.TokenWalker.Current;
-           
-			/*#if DEBUG
-			Console.WriteLine(token.SyntaxKind + "___" + token.TextSpan.Text + "___" + parserModel.TokenWalker.Index);
-			#else
-			Console.WriteLine($"{nameof(CSharpParser)}.{nameof(Parse)} has debug 'Console.Write...' that needs commented out.");
-			#endif*/
 
             switch (token.SyntaxKind)
             {
@@ -105,17 +55,11 @@ public static class CSharpParser
                     break;
                 case SyntaxKind.OpenBraceToken:
                 {
-                	// TODO: This is being inlined within ParseTokens.ParseGetterOrSetter(...)...
-                	// just to check whether this code running is a valid solution.
-                	// If this is found to work, the inlined code should not stay there long term.
-                
                 	var deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
 					if (deferredParsingOccurred)
 						break;
-					
-					var openBraceToken = parserModel.TokenWalker.Consume();
-					
-                    ParseTokens.ParseOpenBraceToken(openBraceToken, compilationUnit, ref parserModel);
+
+                    ParseTokens.ParseOpenBraceToken(parserModel.TokenWalker.Consume(), compilationUnit, ref parserModel);
                     break;
                 }
                 case SyntaxKind.CloseBraceToken:
@@ -124,17 +68,14 @@ public static class CSharpParser
 					if (deferredParsingOccurred)
 						break;
 					
-					// When consuming a 'CloseBraceToken' it is possible for the
-					// TokenWalker to change the 'Index' to a value that is
-					// more than 1 larger than the current index.
+					// When consuming a 'CloseBraceToken' it is possible for the TokenWalker to change the 'Index'
+					// to a value that is more than 1 larger than the current index.
 					//
-					// This is an issue because some code presumes that
-					// 'parserModel.TokenWalker.Index - 1' will always give them
-					// the index of the previous token.
+					// This is an issue because some code presumes that 'parserModel.TokenWalker.Index - 1'
+					// will always give them the index of the previous token.
 					//
-					// So, the ParseCloseBraceToken(...) method needs
-					// to be passed the index that was consumed in order to
-					// get the CloseBraceToken.
+					// So, the ParseCloseBraceToken(...) method needs to be passed the index that was consumed
+					// in order to get the CloseBraceToken.
 					var closeBraceTokenIndex = parserModel.TokenWalker.Index;
 					
 					if (parserModel.ParseChildScopeStack.Count > 0 &&
@@ -143,9 +84,7 @@ public static class CSharpParser
 						parserModel.TokenWalker.SetNullDeferredParsingTuple();
 					}
 					
-					var closeBraceToken = parserModel.TokenWalker.Consume();
-					
-                    ParseTokens.ParseCloseBraceToken(closeBraceToken, closeBraceTokenIndex, compilationUnit, ref parserModel);
+                    ParseTokens.ParseCloseBraceToken(parserModel.TokenWalker.Consume(), closeBraceTokenIndex, compilationUnit, ref parserModel);
                     break;
                 }
                 case SyntaxKind.OpenParenthesisToken:
@@ -175,22 +114,15 @@ public static class CSharpParser
                 {
                 	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
                 	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-	        		// parserModel.CurrentCodeBlockBuilder.AddChild(expressionNode);
                 	break;
             	}
                 case SyntaxKind.StatementDelimiterToken:
                 {
-                	// TODO: This is being inlined within ParseTokens.ParseGetterOrSetter(...)...
-                	// just to check whether this code running is a valid solution.
-                	// If this is found to work, the inlined code should not stay there long term.
-
                 	var deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
 					if (deferredParsingOccurred)
 						break;
-					
-					var statementDelimiterToken = parserModel.TokenWalker.Consume();
-					
-                    ParseTokens.ParseStatementDelimiterToken(statementDelimiterToken, compilationUnit, ref parserModel);
+
+                    ParseTokens.ParseStatementDelimiterToken(parserModel.TokenWalker.Consume(), compilationUnit, ref parserModel);
                     break;
                 }
                 case SyntaxKind.EndOfFileToken:
@@ -251,16 +183,7 @@ public static class CSharpParser
         }
 
         if (parserModel.GetParent(parserModel.CurrentCodeBlockOwner, compilationUnit) is not null)
-        {
-            // The current token here would be the EOF token.
-            parserModel.Binder.CloseScope(parserModel.TokenWalker.Current.TextSpan, compilationUnit, ref parserModel);
-        }
-		
-		/*if (parserModel.AmbiguousIdentifierExpressionNode.FailCount > 0)
-		{
-			++TotalAmbiguousIdentifierExpressionNodeFailCount;
-			Console.WriteLine($"AmbiguousIdentifierExpressionNode !_wasDecided FailCount:{parserModel.AmbiguousIdentifierExpressionNode.FailCount} SuccessCount:{parserModel.AmbiguousIdentifierExpressionNode.SuccessCount} ResourceUri:{compilationUnit.ResourceUri.Value}; TotalAmbiguousIdentifierExpressionNodeFailCount:{TotalAmbiguousIdentifierExpressionNodeFailCount}");
-		}*/
+            parserModel.Binder.CloseScope(parserModel.TokenWalker.Current.TextSpan, compilationUnit, ref parserModel); // The current token here would be the EOF token.
 		
 		parserModel.Binder.FinalizeCompilationUnit(compilationUnit);
 	}
