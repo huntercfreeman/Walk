@@ -12,37 +12,14 @@ namespace Walk.CompilerServices.CSharp.ParserCase;
 
 public static class CSharpParser
 {
-	public static int ErrorCount { get; set; }
-	public static int TotalAmbiguousIdentifierExpressionNodeFailCount { get; set; }
-
     public static void Parse(CSharpCompilationUnit compilationUnit, CSharpBinder binder, ref CSharpLexerOutput lexerOutput)
     {
-    	var globalCodeBlockNode = binder.GlobalCodeBlockNode;
-    	globalCodeBlockNode.Scope_StartInclusiveIndex = -1;
-    	globalCodeBlockNode.Scope_EndExclusiveIndex = -1;
-    	globalCodeBlockNode.CodeBlock_StartInclusiveIndex = -1;
-    	globalCodeBlockNode.CodeBlock_EndExclusiveIndex = -1;
-    	globalCodeBlockNode.Unsafe_ParentIndexKey = -1;
-    	globalCodeBlockNode.Unsafe_SelfIndexKey = -1;
-    	globalCodeBlockNode.PermitCodeBlockParsing = true;
-    	globalCodeBlockNode.IsImplicitOpenCodeBlockTextSpan = false;
-    	
-    	var globalOpenCodeBlockTextSpan = new TextEditorTextSpan(
-		    0,
-		    1,
-		    DecorationByte: default);
-    	
-		var globalCodeBlockBuilder = binder.NewScopeAndBuilderFromOwner_GlobalScope_Hack(
-	    	globalCodeBlockNode,
-	        globalOpenCodeBlockTextSpan,
-	        compilationUnit);
-        
-        var currentCodeBlockBuilder = globalCodeBlockBuilder;
+        compilationUnit.CodeBlockOwnerList.Add(binder.GlobalCodeBlockNode);
 
         var parserModel = new CSharpParserModel(
             binder,
 	        lexerOutput.SyntaxTokenList,
-	        currentCodeBlockBuilder,
+	        currentCodeBlockOwner: binder.GlobalCodeBlockNode,
             binder.TopLevelNamespaceStatementNode);
         
         while (true)
