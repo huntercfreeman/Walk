@@ -17,7 +17,7 @@ namespace Walk.CompilerServices.CSharp.BinderCase;
 
 public partial class CSharpBinder
 {
-	private readonly Dictionary<ResourceUri, CSharpCompilationUnit> _compilationUnitMap = new();
+	public readonly Dictionary<ResourceUri, CSharpCompilationUnit> _compilationUnitMap = new();
 	//private readonly object _compilationUnitMapLock = new();
 
 	/// <summary>
@@ -44,7 +44,6 @@ public partial class CSharpBinder
     public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> CSharpParserModel_ParseChildScopeStack { get; } = new();
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> CSharpParserModel_ExpressionList { get; set; } = new();
     public List<SyntaxKind> CSharpParserModel_TryParseExpressionSyntaxKindList { get; } = new();
-    public HashSet<int> SolutionWide_MinimumLocalsData_ScopeIndexKey_HashSet { get; } = new();
     public HashSet<string> CSharpParserModel_ClearedPartialDefinitionHashSet { get; } = new();
     
     public TokenWalker CSharpParserModel_TokenWalker { get; } = new(Array.Empty<SyntaxToken>(), useDeferredParsing: true);
@@ -688,6 +687,17 @@ public partial class CSharpBinder
     	// Check if it is the global scope, if so return early.
     	if (parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey == 0)
     		return;
+    	
+    	/*if (compilationUnit.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData &&
+    	    (parserModel.CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+    	     parserModel.CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.ArbitraryCodeBlockNode))
+		{
+			for (int i = compilationUnit.NodeList.Count - 1; i >= 0; i--)
+    		{
+    		    if (compilationUnit.NodeList[i].Unsafe_ParentIndexKey == parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey)
+    		        compilationUnit.NodeList.RemoveAt(i);
+    		}
+		}*/
     	
     	parserModel.CurrentCodeBlockOwner.Scope_EndExclusiveIndex = textSpan.EndExclusiveIndex;
 		parserModel.CurrentCodeBlockOwner = parserModel.GetParent(parserModel.CurrentCodeBlockOwner, compilationUnit);

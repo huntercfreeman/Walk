@@ -746,6 +746,18 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     	return ValueTask.FromResult(menu);
     }
+    
+    private void DEBUG_WriteNodeCounts()
+    {
+        var nodeCount = 0;
+        
+        foreach (var compilationUnit in __CSharpBinder._compilationUnitMap.Values)
+        {
+            nodeCount += compilationUnit.NodeList.Count;
+        }
+        
+        Console.WriteLine($"nodeCount: {nodeCount}");
+    }
 	
 	public async ValueTask OnInspect(
 		TextEditorEditContext editContext,
@@ -760,6 +772,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
     {
+        DEBUG_WriteNodeCounts();
+    
+    
     	// Lazily calculate row and column index a second time. Otherwise one has to calculate it every mouse moved event.
         var lineAndColumnIndex = await EventUtils.CalculateLineAndColumnIndex(
 				modelModifier,

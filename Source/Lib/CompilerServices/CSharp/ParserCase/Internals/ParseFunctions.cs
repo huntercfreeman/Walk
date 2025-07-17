@@ -145,14 +145,17 @@ public class ParseFunctions
                         
                             if (previousNode is not null)
                             {
-                                existingWasFound = true;
-                                
                                 var previousFunctionDefinitionNode = (FunctionDefinitionNode)previousNode;
                                 existingNode.IndexMethodOverloadDefinition = previousFunctionDefinitionNode.IndexMethodOverloadDefinition;
                                 
-                                var entry = parserModel.Binder.MethodOverloadDefinitionList[existingNode.IndexMethodOverloadDefinition];
-                                entry.ScopeIndexKey = existingNode.Unsafe_SelfIndexKey;
-                                parserModel.Binder.MethodOverloadDefinitionList[existingNode.IndexMethodOverloadDefinition] = entry;
+                                if (existingNode.IndexMethodOverloadDefinition != -1)
+                                {
+                                    existingWasFound = true;
+                                    
+                                    var entry = parserModel.Binder.MethodOverloadDefinitionList[existingNode.IndexMethodOverloadDefinition];
+                                    entry.ScopeIndexKey = existingNode.Unsafe_SelfIndexKey;
+                                    parserModel.Binder.MethodOverloadDefinitionList[existingNode.IndexMethodOverloadDefinition] = entry;
+                                }
                             }
                         }
                     }
