@@ -870,29 +870,27 @@ public class ParseDefaultKeywords
                 {
                     if (typeDefinitionNode.Unsafe_ParentIndexKey < previousCompilationUnit.CodeBlockOwnerList.Count)
                     {
-                        if (previousCompilationUnit.CodeBlockOwnerList[typeDefinitionNode.Unsafe_ParentIndexKey] is Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces.ICodeBlockOwner previousParent)
+                        var previousParent = previousCompilationUnit.CodeBlockOwnerList[typeDefinitionNode.Unsafe_ParentIndexKey];
+                        var currentParent = parserModel.GetParent(typeDefinitionNode, compilationUnit);
+                        
+                        if (currentParent.SyntaxKind == previousParent.SyntaxKind &&
+                            parserModel.Binder.GetIdentifierText(currentParent, compilationUnit) == parserModel.Binder.GetIdentifierText(previousParent, previousCompilationUnit))
                         {
-                            var currentParent = parserModel.GetParent(typeDefinitionNode, compilationUnit);
-                            
-                            if (currentParent.SyntaxKind == previousParent.SyntaxKind &&
-                                parserModel.Binder.GetIdentifierText(currentParent, compilationUnit) == parserModel.Binder.GetIdentifierText(previousParent, previousCompilationUnit))
+                            // All the existing entires will be "emptied"
+                            // so don't both with checking whether the arguments are the same here.
+                            //
+                            // All that matters is that they're put in the same "method group".
+                            //
+                            var binder = parserModel.Binder;
+                            var previousNode = previousCompilationUnit.CodeBlockOwnerList.FirstOrDefault(x =>
+                                x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
+                                x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                                binder.GetIdentifierText(x, previousCompilationUnit) == binder.GetIdentifierText(typeDefinitionNode, compilationUnit));
+                        
+                            if (previousNode is not null)
                             {
-                                // All the existing entires will be "emptied"
-                                // so don't both with checking whether the arguments are the same here.
-                                //
-                                // All that matters is that they're put in the same "method group".
-                                //
-                                var binder = parserModel.Binder;
-                                var previousNode = previousCompilationUnit.CodeBlockOwnerList.FirstOrDefault(x =>
-                                    x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
-                                    x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                                    binder.GetIdentifierText(x, previousCompilationUnit) == binder.GetIdentifierText(typeDefinitionNode, compilationUnit));
-                            
-                                if (previousNode is not null)
-                                {
-                                    var previousTypeDefinitionNode = (TypeDefinitionNode)previousNode;
-                                    typeDefinitionNode.IndexPartialTypeDefinition = previousTypeDefinitionNode.IndexPartialTypeDefinition;
-                                }
+                                var previousTypeDefinitionNode = (TypeDefinitionNode)previousNode;
+                                typeDefinitionNode.IndexPartialTypeDefinition = previousTypeDefinitionNode.IndexPartialTypeDefinition;
                             }
                         }
                     }

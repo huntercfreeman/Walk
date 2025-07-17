@@ -937,22 +937,17 @@ public partial class CSharpBinder
     {
         var possibleScopes = compilationUnit.CodeBlockOwnerList.Where(x =>
         {
-            if (!ICodeBlockOwner.ImplementsICodeBlockOwner(x.SyntaxKind))
-                return false;
-        
-            var codeBlockOwner = (ICodeBlockOwner)x;
-        
-            return codeBlockOwner.Scope_StartInclusiveIndex <= positionIndex &&
+            return x.Scope_StartInclusiveIndex <= positionIndex &&
             	   // Global Scope awkwardly has '-1' ending index exclusive (2023-10-15)
-                   (codeBlockOwner.Scope_EndExclusiveIndex >= positionIndex || codeBlockOwner.Scope_EndExclusiveIndex == -1);
+                   (x.Scope_EndExclusiveIndex >= positionIndex || x.Scope_EndExclusiveIndex == -1);
         });
 
         // TODO: Does MinBy return default when previous Where result is empty?
-		var tuple = possibleScopes.MinBy(x => positionIndex - ((ICodeBlockOwner)x).Scope_StartInclusiveIndex);
+		var tuple = possibleScopes.MinBy(x => positionIndex - x.Scope_StartInclusiveIndex);
 		if (tuple is null)
 		    return null;
 	    else
-	        return (ICodeBlockOwner)tuple;
+	        return tuple;
     }
 
 	/// <summary>
@@ -974,11 +969,7 @@ public partial class CSharpBinder
             var isValid = true;
 
             if (isValid)
-            {
-                var node = compilationUnit.CodeBlockOwnerList[scopeIndexKey];
-                if (ICodeBlockOwner.ImplementsICodeBlockOwner(node.SyntaxKind))
-				    return (ICodeBlockOwner)node;
-		    }
+                return compilationUnit.CodeBlockOwnerList[scopeIndexKey];
         }
         
         return null;
@@ -1001,21 +992,16 @@ public partial class CSharpBinder
     	return success;
     }
     
+    /// <summary>TextEditorEditContext is required for thread safety.</summary>
     public void UpsertCompilationUnit(CSharpCompilationUnit compilationUnit)
     {
-    	try
-    	{
-    		if (_compilationUnitMap.ContainsKey(compilationUnit.ResourceUri))
-	    		_compilationUnitMap[compilationUnit.ResourceUri] = compilationUnit;
-	    	else
-	    		_compilationUnitMap.Add(compilationUnit.ResourceUri, compilationUnit);
-    	}
-    	catch (Exception e)
-    	{
-    		Console.WriteLine(e);
-    	}
+		if (_compilationUnitMap.ContainsKey(compilationUnit.ResourceUri))
+    		_compilationUnitMap[compilationUnit.ResourceUri] = compilationUnit;
+    	else
+    		_compilationUnitMap.Add(compilationUnit.ResourceUri, compilationUnit);
     }
     
+    /// <summary>TextEditorEditContext is required for thread safety.</summary>
     public bool RemoveCompilationUnit(ResourceUri resourceUri)
     {
     	return _compilationUnitMap.Remove(resourceUri);
