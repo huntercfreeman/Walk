@@ -89,15 +89,6 @@ public class TokenWalker
 		var consumedToken = TokenList[_index++];
 		ConsumeCounter++;
 
-		/*#if DEBUG
-		if (!SuppressProtectedSyntaxKindConsumption)
-		{
-			if (ProtectedTokenSyntaxKindList.Contains(consumedToken.SyntaxKind))
-				Console.WriteLine($"The protected syntax kind: '{consumedToken.SyntaxKind}' was unexpectedly consumed.");
-				// throw new Exception($"The protected syntax kind: '{consumedToken.SyntaxKind}' was unexpectedly consumed.");
-		}
-		#endif*/
-
 		return consumedToken;
 	}
 

@@ -208,12 +208,6 @@ public static class ParseOthers
     	
 		expressionNode = ParseExpression(compilationUnit, ref parserModel);
 		
-		/*#if DEBUG
-		Console.WriteLine($"try => {expressionNode.SyntaxKind}\n");
-		#else
-		Console.WriteLine($"{nameof(TryParseExpression)} has debug 'Console.Write...' that needs commented out.");
-		#endif*/
-		
 		var success = parserModel.TryParseExpressionSyntaxKindList.Contains(expressionNode.SyntaxKind);
 		
 		parserModel.TryParseExpressionSyntaxKindList.Clear();
@@ -253,12 +247,6 @@ public static class ParseOthers
 	/// </summary>
 	public static IExpressionNode ParseExpression(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	/*#if DEBUG
-    	Console.WriteLine("\nParseExpression(...)");
-		#else
-		Console.WriteLine($"{nameof(ParseExpression)} has debug 'Console.Write...' that needs commented out.");
-    	#endif*/
-    
     	var expressionPrimary = parserModel.ForceParseExpressionInitialPrimaryExpression;
     	var indexToken = parserModel.TokenWalker.Index;
     	var forceExit = false;
@@ -268,12 +256,6 @@ public static class ParseOthers
     	
     	while (true)
         {
-        	/*#if DEBUG
-        	WriteExpressionList(parserModel.ExpressionList);
-        	#else
-			Console.WriteLine($"{nameof(ParseExpression)} has debug 'Console.Write...' that needs commented out.");
-        	#endif*/
-        
         	var tokenCurrent = parserModel.TokenWalker.Current;
     		
     		if (SyntaxIsEndDelimiter(tokenCurrent.SyntaxKind)) // Check if the tokenCurrent is a token that is used as a end-delimiter before iterating the list?
@@ -315,12 +297,6 @@ public static class ParseOthers
 			}
 			
     		expressionPrimary = parserModel.Binder.AnyMergeToken(expressionPrimary, ref tokenCurrent, compilationUnit, ref parserModel);
-    		
-    		/*#if DEBUG
-    		Console.WriteLine($"\t=> {expressionPrimary.SyntaxKind}");
-			#else
-			Console.WriteLine($"{nameof(ParseExpression)} has debug 'Console.Write...' that needs commented out.");
-    		#endif*/
     		
     		if (parserModel.TokenWalker.Index == indexToken)
     			_ = parserModel.TokenWalker.Consume();
@@ -379,13 +355,6 @@ public static class ParseOthers
 	    			expressionPrimary = expressionPrimaryPreviousRoot;
 	    			
 		    		forceExit = true;
-		    		
-		    		/*#if DEBUG
-		    		WriteExpressionList(parserModel.ExpressionList);
-		    		Console.WriteLine("----TryParseExpressionSyntaxKindList");
-					#else
-					Console.WriteLine($"{nameof(ParseExpression)} has debug 'Console.Write...' that needs commented out.");
-		    		#endif*/
     			}
     		}
     		
@@ -411,12 +380,6 @@ public static class ParseOthers
 				compilationUnit,
 				ref parserModel);
     	}
-    	
-    	/*#if DEBUG
-    	Console.WriteLine();
-		#else
-		Console.WriteLine($"{nameof(ParseExpression)} has debug 'Console.Write...' that needs commented out.");
-    	#endif*/
     	
     	return expressionPrimary;
     }
@@ -446,11 +409,6 @@ public static class ParseOthers
     	IExpressionNode? previousDelimiterExpressionNode = null;
     	
     	var initialExpressionListCount = parserModel.ExpressionList.Count;
-    	
-    	/*#if DEBUG
-    	var nullNodeSyntaxKindText = "null";
-		Console.WriteLine($"BREAK_({triggeredDelimiterTuple.DelimiterSyntaxKind}, {triggeredDelimiterTuple.ExpressionNode?.SyntaxKind.ToString() ?? nullNodeSyntaxKindText})");
-		#endif*/
 		
 		for (int i = initialExpressionListCount - 1; i > indexTriggered - 1; i--)
 		{
@@ -483,20 +441,5 @@ public static class ParseOthers
 		}
 		
 		return expressionPrimary;
-    }
-    
-    private static void WriteExpressionList(List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> expressionList)
-    {
-    	foreach (var tuple in expressionList)
-    	{
-    		Console.Write('{');
-    		Console.Write(tuple.DelimiterSyntaxKind);
-    		Console.Write(',');
-    		Console.Write(tuple.ExpressionNode?.SyntaxKind.ToString() ?? "null");
-    		Console.Write('}');
-    		Console.Write(", ");
-    	}
-    	
-    	Console.WriteLine();
     }
 }
