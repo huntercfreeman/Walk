@@ -866,7 +866,7 @@ public class ParseDefaultKeywords
         {
             if (typeDefinitionNode.IndexPartialTypeDefinition == -1)
             {
-                if (parserModel.Binder.TryGetCompilationUnit_Previous(compilationUnit.ResourceUri, out var previousCompilationUnit))
+                if (parserModel.Binder.__CompilationUnitMap.TryGetValue(compilationUnit.ResourceUri, out var previousCompilationUnit))
                 {
                     if (typeDefinitionNode.Unsafe_ParentIndexKey < previousCompilationUnit.CodeBlockOwnerList.Count)
                     {
@@ -1062,7 +1062,7 @@ public class ParseDefaultKeywords
                     {
                         lastSeenIndexStartGroup = partialTypeDefinitionEntry.IndexStartGroup;
                         
-                        if (parserModel.Binder.TryGetCompilationUnit(partialTypeDefinitionEntry.ResourceUri, out var innerCompilationUnit))
+                        if (parserModel.Binder.__CompilationUnitMap.TryGetValue(partialTypeDefinitionEntry.ResourceUri, out var innerCompilationUnit))
                         {
                             ((TypeDefinitionNode)innerCompilationUnit.CodeBlockOwnerList[partialTypeDefinitionEntry.ScopeIndexKey]).IndexPartialTypeDefinition = partialTypeDefinitionEntry.IndexStartGroup + 1;
                         }

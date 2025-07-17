@@ -511,7 +511,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
 						if (typeReference.ExplicitDefinitionResourceUri.Value is not null && typeReference.ExplicitDefinitionResourceUri != textEditorModel.PersistentState.ResourceUri)
 						{
-						    if (__CSharpBinder.TryGetCompilationUnit(typeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
+						    if (__CSharpBinder.__CompilationUnitMap.TryGetValue(typeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
 						    {
 						        // innerCompilationUnit = compilationUnitLocal;
 						        symbols = innerCompilationUnit.SymbolList;
@@ -552,7 +552,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			        						
 			        						if (variableDeclarationNode.ResourceUri != innerCompilationUnit.ResourceUri)
 			    						    {
-			    						        if (__CSharpBinder.TryGetCompilationUnit(variableDeclarationNode.ResourceUri, out var variableDeclarationCompilationUnit))
+			    						        if (__CSharpBinder.__CompilationUnitMap.TryGetValue(variableDeclarationNode.ResourceUri, out var variableDeclarationCompilationUnit))
 			    						            sourceText = variableDeclarationCompilationUnit.SourceText;
 		    						            else
 		    						                sourceText = innerCompilationUnit.SourceText;
@@ -575,7 +575,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			    						    
 			    						    if (functionDefinitionNode.ResourceUri != innerCompilationUnit.ResourceUri)
 			    						    {
-			    						        if (__CSharpBinder.TryGetCompilationUnit(functionDefinitionNode.ResourceUri, out var functionDefinitionCompilationUnit))
+			    						        if (__CSharpBinder.__CompilationUnitMap.TryGetValue(functionDefinitionNode.ResourceUri, out var functionDefinitionCompilationUnit))
 			    						            sourceText = functionDefinitionCompilationUnit.SourceText;
 		    						            else
 		    						                sourceText = innerCompilationUnit.SourceText;
@@ -1156,7 +1156,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     				{
     				    int? positionIndex = null;
     				    
-    				    if (__CSharpBinder.TryGetCompilationUnit(new ResourceUri(file), out var innerCompilationUnit))
+    				    if (__CSharpBinder.__CompilationUnitMap.TryGetValue(new ResourceUri(file), out var innerCompilationUnit))
     				    {
     				        var node = innerCompilationUnit.CodeBlockOwnerList.FirstOrDefault(x =>
     				        {
@@ -1439,7 +1439,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     	if (symbol is null)
     		return null;
     	
-    	if (__CSharpBinder.TryGetCompilationUnit(compilerServiceResource.ResourceUri, out var compilationUnit))
+    	if (__CSharpBinder.__CompilationUnitMap.TryGetValue(compilerServiceResource.ResourceUri, out var compilationUnit))
             return __CSharpBinder.GetDefinitionNode(compilationUnit, textSpan, symbol.Value.SyntaxKind, symbol);
     	
     	return null;
@@ -1447,7 +1447,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
 	public ICodeBlockOwner? GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
     {
-        if (__CSharpBinder.TryGetCompilationUnit(resourceUri, out var compilationUnit))
+        if (__CSharpBinder.__CompilationUnitMap.TryGetValue(resourceUri, out var compilationUnit))
             return __CSharpBinder.GetScopeByPositionIndex(compilationUnit, positionIndex);
     	
     	return null;
@@ -1455,7 +1455,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     public List<AutocompleteEntry>? OBSOLETE_GetAutocompleteEntries(string word, TextEditorTextSpan textSpan, TextEditorVirtualizationResult virtualizationResult)
     {
-    	if (word is null || !__CSharpBinder.TryGetCompilationUnit(virtualizationResult.Model.PersistentState.ResourceUri, out var compilationUnit))
+    	if (word is null || !__CSharpBinder.__CompilationUnitMap.TryGetValue(virtualizationResult.Model.PersistentState.ResourceUri, out var compilationUnit))
 			return null;
 			
     	var boundScope = __CSharpBinder.GetScope(compilationUnit, textSpan);
@@ -1841,7 +1841,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     public string GetIdentifierText(ISyntaxNode node, ResourceUri resourceUri)
     {
-        if (__CSharpBinder.TryGetCompilationUnit(resourceUri, out var compilationUnit))
+        if (__CSharpBinder.__CompilationUnitMap.TryGetValue(resourceUri, out var compilationUnit))
             return __CSharpBinder.GetIdentifierText(node, compilationUnit);
     
         return string.Empty;
