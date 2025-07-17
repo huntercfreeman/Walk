@@ -26,9 +26,8 @@ public static class CSharpParser
         {
         	// The last statement in this while loop is conditionally: '_ = parserModel.TokenWalker.Consume();'.
         	// Knowing this to be the case is extremely important.
-            var token = parserModel.TokenWalker.Current;
 
-            switch (token.SyntaxKind)
+            switch (parserModel.TokenWalker.Current.SyntaxKind)
             {
                 case SyntaxKind.NumericLiteralToken:
                 case SyntaxKind.CharLiteralToken:
@@ -128,14 +127,14 @@ public static class CSharpParser
                 case SyntaxKind.EndOfFileToken:
                     break;
                 default:
-                    if (UtilityApi.IsContextualKeywordSyntaxKind(token.SyntaxKind))
+                    if (UtilityApi.IsContextualKeywordSyntaxKind(parserModel.TokenWalker.Current.SyntaxKind))
                         ParseTokens.ParseKeywordContextualToken(compilationUnit, ref parserModel);
-                    else if (UtilityApi.IsKeywordSyntaxKind(token.SyntaxKind))
+                    else if (UtilityApi.IsKeywordSyntaxKind(parserModel.TokenWalker.Current.SyntaxKind))
                         ParseTokens.ParseKeywordToken(compilationUnit, ref parserModel);
                     break;
             }
 
-            if (token.SyntaxKind == SyntaxKind.EndOfFileToken)
+            if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EndOfFileToken)
 			{
 				bool deferredParsingOccurred = false;
 				
