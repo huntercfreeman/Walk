@@ -135,19 +135,6 @@ public class CSharpBinder
 	        });
 
         compilationUnit.__SymbolList.Add(functionSymbol);
-
-        //if (!TryAddFunctionDefinitionNodeByScope(
-        //		compilationUnit,
-        //		compilationUnit.ResourceUri,
-        //		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-        //		functionIdentifierText,
-        //        functionDefinitionNode))
-        //{
-        //    /*DiagnosticHelper.ReportAlreadyDefinedFunction(
-        //    	compilationUnit.__DiagnosticList,
-        //        functionDefinitionNode.FunctionIdentifierToken.TextSpan,
-        //        functionIdentifierText);*/
-        //}
     }
 
     public void SetCurrentNamespaceStatementNode(
@@ -317,10 +304,6 @@ public class CSharpBinder
             variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(
                 variableIdentifierToken,
                 variableDeclarationNode);
-
-            /*compilationUnit.BinderSession.DiagnosticBag.ReportUndefinedVariable(
-                variableIdentifierToken.TextSpan,
-                text);*/
         }
 
         CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit, ref parserModel);
@@ -384,12 +367,6 @@ public class CSharpBinder
             functionDefinitionNode is not null)
         {
             functionInvocationNode.ResultTypeReference = functionDefinitionNode.ReturnTypeReference;
-        }
-        else
-        {
-            /*compilationUnit.BinderSession.DiagnosticBag.ReportUndefinedFunction(
-                functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan,
-                functionInvocationIdentifierText);*/
         }
     }
 
@@ -500,17 +477,6 @@ public class CSharpBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-    	if (codeBlockOwner.Unsafe_SelfIndexKey != -1)
-    	{
-			parserModel.CurrentCodeBlockOwner = codeBlockOwner;
-
-			// TODO: This does not catch nearly as many infinite loop cases as I initially thought it would...
-			//       ...When the token walker sets the token index for deferred parsing,
-			//       a new instance of the node ends up being parsed.
-			//
-			// throw new WalkTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockOwner.ScopeIndexKey is NOT '-1'; an infinite loop? _{codeBlockOwner.SyntaxKind}");
-		}
-    	
     	codeBlockOwner.Unsafe_ParentIndexKey = parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
     	codeBlockOwner.Scope_StartInclusiveIndex = textSpan.StartInclusiveIndex;
 
@@ -526,15 +492,6 @@ public class CSharpBinder
         parserModel.CurrentCodeBlockOwner = codeBlockOwner;
         
         parserModel.Binder.OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, compilationUnit, ref parserModel);
-    }
-    
-    public void SetCurrentScopeAndBuilder(
-    	ICodeBlockOwner codeBlockOwner, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
-    {
-    	if (codeBlockOwner.Unsafe_SelfIndexKey == -1)
-    		throw new WalkTextEditorException($"{nameof(SetCurrentScopeAndBuilder)} codeBlockBuilder.CodeBlockBuilder.ScopeIndexKey is '-1'. Invoke {NewScopeAndBuilderFromOwner}?");
-    
-		parserModel.CurrentCodeBlockOwner = codeBlockOwner;
     }
 
     public void AddNamespaceToCurrentScope(
@@ -926,7 +883,6 @@ public class CSharpBinder
     	    return false;
     	}
     }
-    
     
     public FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(
     	CSharpCompilationUnit compilationUnit,

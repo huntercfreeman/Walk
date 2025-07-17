@@ -25,10 +25,7 @@ internal static class TokenWalkerExtensionMethods
 		// Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
 		var deferredCodeBlockBuilder = parserModel.CurrentCodeBlockOwner;
 		
-		parserModel.Binder.SetCurrentScopeAndBuilder(
-			parserModel.GetParent(deferredCodeBlockBuilder, compilationUnit),
-			compilationUnit,
-			ref parserModel);
+		parserModel.CurrentCodeBlockOwner = parserModel.GetParent(deferredCodeBlockBuilder, compilationUnit);
 
 		var openTokenIndex = tokenWalker.Index - 1;
 		

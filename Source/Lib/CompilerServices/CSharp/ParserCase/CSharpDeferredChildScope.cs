@@ -21,10 +21,7 @@ public struct CSharpDeferredChildScope
 	
 	public void PrepareMainParserLoop(int tokenIndexToRestore, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		parserModel.Binder.SetCurrentScopeAndBuilder(
-			CodeBlockOwner,
-			compilationUnit,
-			ref parserModel);
+	    parserModel.CurrentCodeBlockOwner = CodeBlockOwner;
 		
 		parserModel.CurrentCodeBlockOwner.PermitCodeBlockParsing = true;
 		
