@@ -22,27 +22,6 @@ public partial class CSharpBinder
 	public IExpressionNode AnyMergeToken(
 		IExpressionNode expressionPrimary, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		/*#if DEBUG
-		if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
-		{
-			var variableReferenceNode = (VariableReferenceNode)expressionPrimary;
-			Console.Write($"{variableReferenceNode.VariableIdentifierToken.TextSpan.Text}____");
-		}
-		else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
-		{
-			var typeClauseNode = (TypeClauseNode)expressionPrimary;
-			Console.Write($"{typeClauseNode.TypeIdentifierToken.TextSpan.Text}____");
-		}
-		Console.Write($"{expressionPrimary.SyntaxKind} + {token.SyntaxKind}:{parserModel.TokenWalker.Index}");
-		if (token.SyntaxKind == SyntaxKind.IdentifierToken)
-		{
-			Console.Write($"____{token.TextSpan.Text}");
-		}
-		Console.WriteLine();
-		#else
-		Console.WriteLine($"{nameof(AnyMergeToken)} has debug 'Console.Write...' that needs commented out.");
-		#endif*/
-		
 		if (parserModel.ParserContextKind != CSharpParserContextKind.ForceParseGenericParameters &&
 			UtilityApi.IsBinaryOperatorSyntaxKind(token.SyntaxKind))
 		{
@@ -112,12 +91,6 @@ public partial class CSharpBinder
 	public IExpressionNode AnyMergeExpression(
 		IExpressionNode expressionPrimary, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		/*#if DEBUG
-		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {expressionSecondary.SyntaxKind}");
-		#else
-		Console.WriteLine($"{nameof(AnyMergeExpression)} has debug 'Console.Write...' that needs commented out.");
-		#endif*/
-	
 		switch (expressionPrimary.SyntaxKind)
 		{
 			case SyntaxKind.CollectionInitializationNode:
@@ -273,13 +246,6 @@ public partial class CSharpBinder
 				ClearFromExpressionList(expressionPrimary, compilationUnit, ref parserModel);
 				ClearFromExpressionList(binaryExpressionAntecedent, compilationUnit, ref parserModel);
 				return ToBadExpressionNode(binaryExpressionAntecedent, expressionPrimary);
-				
-				// TODO: The new constructor for 'BadExpressionNode' doesn't take a List, I can only choose 2 syntax to provide now...
-				// ...and yet this previous constructor was giving the List 3 syntax.
-				// I'm going to take the first two for now, but if it ever feels like information is missing here.
-				// It might be due to the token having disappeared from existence.
-				//
-				// return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeReference(), new List<ISyntax> { binaryExpressionAntecedent, expressionPrimary, token });
 			}
 		}
 		else
@@ -619,12 +585,7 @@ public partial class CSharpBinder
 					ref parserModel);
 				
 				if (decidedExpression.SyntaxKind != SyntaxKind.TypeClauseNode)
-				{
-					/*parserModel.DiagnosticBag.ReportTodoException(
-			    		parserModel.TokenWalker.Current.TextSpan,
-			    		"if (decidedExpression.SyntaxKind != SyntaxKind.TypeClauseNode)");*/
 					return decidedExpression;
-				}
 			
 				var identifierToken = parserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
 				
@@ -726,8 +687,6 @@ public partial class CSharpBinder
 				
 				typeClauseNode.ExplicitDefinitionTextSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
 				typeClauseNode.ExplicitDefinitionResourceUri = typeDefinitionNode.ResourceUri;
-				// FindAllReferences
-				// BindTypeClauseNodeSuccessfully(typeClauseNode, typeDefinitionNode, compilationUnit, ref parserModel);
 				
 			    result = typeClauseNode;
     			goto finalize;

@@ -41,11 +41,11 @@ public static class CSharpParser
                 case SyntaxKind.AtToken:
                 	if (parserModel.StatementBuilder.ChildList.Count == 0)
                 	{
-                		ParseOthers.StartStatement_Expression(compilationUnit, ref parserModel);
+                		_ = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
                 	}
                 	else
                 	{
-                		var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+                		var expressionNode = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
                 		parserModel.StatementBuilder.ChildList.Add(expressionNode);
                 	}
                 	break;
@@ -94,7 +94,7 @@ public static class CSharpParser
                     break;
                 case SyntaxKind.OpenAngleBracketToken:
                 	if (parserModel.StatementBuilder.ChildList.Count == 0)
-                		ParseOthers.StartStatement_Expression(compilationUnit, ref parserModel);
+                		_ = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
                 	else
                     	_ = parserModel.TokenWalker.Consume();
                     break;
@@ -112,7 +112,7 @@ public static class CSharpParser
                 case SyntaxKind.EqualsCloseAngleBracketToken:
                 {
                 	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
-                	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+                	var expressionNode = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
                 	break;
             	}
                 case SyntaxKind.StatementDelimiterToken:

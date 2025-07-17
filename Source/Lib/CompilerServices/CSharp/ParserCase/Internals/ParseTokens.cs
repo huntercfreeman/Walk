@@ -62,11 +62,11 @@ public static class ParseTokens
     	
     	parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
     	
-		var successParse = ParseOthers.TryParseExpression(compilationUnit, ref parserModel, out var expressionNode);
+		var successParse = ParseExpressions.TryParseExpression(compilationUnit, ref parserModel, out var expressionNode);
 		
 		if (!successParse)
 		{
-			expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+			expressionNode = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
 			parserModel.StatementBuilder.ChildList.Add(expressionNode);
 	    	return;
 		}
@@ -98,7 +98,7 @@ public static class ParseTokens
 	        		originalTokenIndex == parserModel.TokenWalker.Index - 1)
 				{
 					_ = parserModel.TokenWalker.Backtrack();
-					expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+					expressionNode = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
 					parserModel.StatementBuilder.ChildList.Add(expressionNode);
 					return;
 				}
@@ -163,7 +163,7 @@ public static class ParseTokens
 				try
 				{
 					parserModel.ForceParseExpressionInitialPrimaryExpression = variableDeclarationNode;
-					expression = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+					expression = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
 				}
 				finally
 				{
@@ -414,11 +414,11 @@ public static class ParseTokens
     	
     	parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
     	
-		var successParse = ParseOthers.TryParseExpression(compilationUnit, ref parserModel, out var expressionNode);
+		var successParse = ParseExpressions.TryParseExpression(compilationUnit, ref parserModel, out var expressionNode);
 		
 		if (!successParse)
 		{
-			expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+			expressionNode = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
 			parserModel.StatementBuilder.ChildList.Add(expressionNode);
 	    	return;
 		}
@@ -475,7 +475,7 @@ public static class ParseTokens
 				
 				parserModel.ExpressionList.Add((SyntaxKind.CloseSquareBracketToken, null));
 				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, null));
-				var expression = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+				var expression = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
 				
 				if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
 					_ = parserModel.TokenWalker.Consume();
@@ -528,7 +528,7 @@ public static class ParseTokens
 			if (shouldBacktrack)
     			parserModel.ForceParseExpressionInitialPrimaryExpression = backtrackNode;
 			
-			expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+			expressionNode = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
 		}
 		finally
 		{
@@ -599,7 +599,7 @@ public static class ParseTokens
 		}
 		else
 		{
-        	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+        	var expressionNode = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
         	// parserModel.CurrentCodeBlockBuilder.AddChild(expressionNode);
 		}
     }

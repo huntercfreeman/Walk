@@ -9,7 +9,7 @@ public class ParseContextualKeywords
     	if (parserModel.StatementBuilder.ChildList.Count == 0)
     		ParseTokens.ParseIdentifierToken(compilationUnit, ref parserModel);
     	else
-    		ParseOthers.StartStatement_Expression(compilationUnit, ref parserModel);
+    	    _ = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
     }
 
     public static void HandlePartialTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -124,7 +124,7 @@ public class ParseContextualKeywords
 
     public static void HandleNameofTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	ParseOthers.StartStatement_Expression(compilationUnit, ref parserModel);
+    	_ = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
     }
 
     public static void HandleNintTokenContextualKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
