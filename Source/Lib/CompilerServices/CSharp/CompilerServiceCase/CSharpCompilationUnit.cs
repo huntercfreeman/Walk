@@ -25,7 +25,10 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit
 		CompilationUnitKind = compilationUnitKind;
 		
 		if (CompilationUnitKind == CompilationUnitKind.IndividualFile_AllData)
+		{
 		    SymbolIdToExternalTextSpanMap = new();
+		    FunctionInvocationParameterMetadataList = new();
+		}
 	}
 	
 	public IEnumerable<TextEditorTextSpan> GetTextTextSpans()
@@ -48,7 +51,10 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit
 	public List<TextEditorDiagnostic> __DiagnosticList { get; } = new();
 	public List<Symbol> __SymbolList { get; set; } = new();
 	
+	public List<FunctionInvocationParameterMetadata> FunctionInvocationParameterMetadataList { get; }
+	
     public List<TypeDefinitionNode> ExternalTypeDefinitionList { get; } = new();
+    public List<ICodeBlockOwner> CodeBlockOwnerList { get; } = new();
     public List<ISyntaxNode> NodeList { get; } = new();
     
     public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => __DiagnosticList;

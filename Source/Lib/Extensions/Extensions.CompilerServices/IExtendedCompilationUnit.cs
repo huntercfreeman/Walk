@@ -19,7 +19,8 @@ public interface IExtendedCompilationUnit : ICompilationUnit
 	/// Was it a solution wide parse? Then take as little information as necessary.
 	/// Did the user open a file? Then take more information.
 	/// </summary>
-	public List<ISyntaxNode> NodeList { get; }
+	public List<ICodeBlockOwner> CodeBlockOwnerList { get; }
+    public List<ISyntaxNode> NodeList { get; }
 	public List<TypeDefinitionNode> ExternalTypeDefinitionList { get; }
 	public string SourceText { get; }
 }

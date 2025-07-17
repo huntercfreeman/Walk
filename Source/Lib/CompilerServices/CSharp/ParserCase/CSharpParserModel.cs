@@ -71,8 +71,10 @@ public struct CSharpParserModel
 			variableDeclarationNode: null);
 		VariableReferenceNode.IsBeingUsed = false;
 		
-		ClearedPartialDefinitionHashSet = binder.CSharpParserModel_ClearedPartialDefinitionHashSet;
+		ClearedPartialDefinitionHashSet = Binder.CSharpParserModel_ClearedPartialDefinitionHashSet;
 		ClearedPartialDefinitionHashSet.Clear();
+		
+		Binder.MethodOverload_ResourceUri_WasCleared = false;
     }
 
     public TokenWalker TokenWalker { get; }
@@ -188,7 +190,7 @@ public struct CSharpParserModel
         if (codeBlockOwner.Unsafe_ParentIndexKey == -1)
             return null;
             
-        return (ICodeBlockOwner)cSharpCompilationUnit.NodeList[codeBlockOwner.Unsafe_ParentIndexKey];
+        return (ICodeBlockOwner)cSharpCompilationUnit.CodeBlockOwnerList[codeBlockOwner.Unsafe_ParentIndexKey];
     }
     
     /// <summary>TODO: Delete this code it is only being used temporarily for debugging.</summary>

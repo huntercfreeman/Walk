@@ -37,6 +37,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
 	public GenericParameterListing GenericParameterListing { get; set; }
 	public FunctionArgumentListing FunctionArgumentListing { get; set; }
 	public ResourceUri ResourceUri { get; set; }
+	public int IndexMethodOverloadDefinition { get; set; } = -1;
 
 	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;

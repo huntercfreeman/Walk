@@ -1,5 +1,6 @@
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
+using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -3196,6 +3197,14 @@ public partial class CSharpBinder
 		
 		invocationNode.FunctionParameterListing.FunctionParameterEntryList.Add(
 			new FunctionParameterEntry(parserModel.ParameterModifierKind));
+		
+		if (compilationUnit.CompilationUnitKind == CompilationUnitKind.IndividualFile_AllData)
+		{
+		    compilationUnit.FunctionInvocationParameterMetadataList.Add(new FunctionInvocationParameterMetadata(
+		        invocationNode.IdentifierStartInclusiveIndex,
+		        expressionSecondary.ResultTypeReference,
+                parserModel.ParameterModifierKind));
+		}
 		
 		// Just needs to be set to anything other than out, in, ref.
 		parserModel.ParameterModifierKind = ParameterModifierKind.None;

@@ -278,18 +278,6 @@ public static class CSharpParser
 			Console.WriteLine($"AmbiguousIdentifierExpressionNode !_wasDecided FailCount:{parserModel.AmbiguousIdentifierExpressionNode.FailCount} SuccessCount:{parserModel.AmbiguousIdentifierExpressionNode.SuccessCount} ResourceUri:{compilationUnit.ResourceUri.Value}; TotalAmbiguousIdentifierExpressionNodeFailCount:{TotalAmbiguousIdentifierExpressionNodeFailCount}");
 		}*/
 		
-		if (compilationUnit.CompilationUnitKind == CompilationUnitKind.SolutionWide_MinimumLocalsData)
-		{
-			for (int i = compilationUnit.NodeList.Count - 1; i >= 0; i--)
-			{
-			    var tuple = compilationUnit.NodeList[i];
-                if (binder.SolutionWide_MinimumLocalsData_ScopeIndexKey_HashSet.Contains(tuple.Unsafe_ParentIndexKey))
-                    compilationUnit.NodeList.RemoveAt(i);
-			}
-			
-			binder.SolutionWide_MinimumLocalsData_ScopeIndexKey_HashSet.Clear();
-		}
-		
 		parserModel.Binder.FinalizeCompilationUnit(compilationUnit);
 	}
 }

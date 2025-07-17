@@ -1158,7 +1158,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     				    
     				    if (__CSharpBinder.TryGetCompilationUnit(new ResourceUri(file), out var innerCompilationUnit))
     				    {
-    				        var node = innerCompilationUnit.NodeList.FirstOrDefault(x =>
+    				        var node = innerCompilationUnit.CodeBlockOwnerList.FirstOrDefault(x =>
     				        {
     				            return x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
     				                   ((TypeDefinitionNode)x).Unsafe_SelfIndexKey == tuple.ScopeIndexKey;
@@ -1774,9 +1774,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		
 		if (resource.CompilationUnit is IExtendedCompilationUnit extendedCompilationUnit)
 		{
-			if (extendedCompilationUnit.NodeList is not null)
+			if (extendedCompilationUnit.CodeBlockOwnerList is not null)
 			{
-				foreach (var entry in extendedCompilationUnit.NodeList)
+				foreach (var entry in extendedCompilationUnit.CodeBlockOwnerList)
 				{
 			    	TextEditorTextSpan identifierTextSpan;
 			    	int closeCodeBlockTextSpanStartInclusiveIndex;

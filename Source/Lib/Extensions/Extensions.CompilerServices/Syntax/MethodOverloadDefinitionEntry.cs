@@ -2,9 +2,9 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 
 namespace Walk.Extensions.CompilerServices.Syntax;
 
-public struct PartialTypeDefinitionEntry
+public class MethodOverloadDefinitionEntry
 {
-    public PartialTypeDefinitionEntry(
+	public MethodOverloadDefinitionEntry(
         ResourceUri resourceUri,
         int indexStartGroup,
         int scopeIndexKey)
