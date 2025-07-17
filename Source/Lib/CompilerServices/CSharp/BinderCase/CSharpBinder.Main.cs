@@ -565,12 +565,6 @@ public partial class CSharpBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-        /*#if DEBUG
-    	Console.WriteLine($"-------NewSBin: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    	#else
-    	Console.WriteLine($"-------NewSBin: has console.write... that needs commented out");
-    	#endif*/
-    
     	if (codeBlockOwner.Unsafe_SelfIndexKey != -1)
     	{
 			parserModel.CurrentCodeBlockOwner = codeBlockOwner;
@@ -597,12 +591,6 @@ public partial class CSharpBinder
         parserModel.CurrentCodeBlockOwner = codeBlockOwner;
         
         parserModel.Binder.OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, compilationUnit, ref parserModel);
-        
-        /*#if DEBUG
-    	Console.WriteLine($"-------NewSBout: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    	#else
-    	Console.WriteLine($"-------NewSBout: has console.write... that needs commented out");
-    	#endif*/
     }
     
     /// <summary>
@@ -637,22 +625,10 @@ public partial class CSharpBinder
     public void SetCurrentScopeAndBuilder(
     	ICodeBlockOwner codeBlockOwner, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	/*#if DEBUG
-    	Console.WriteLine($"-------SetSBin: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    	#else
-    	Console.WriteLine($"-------SetSBin: has console.write... that needs commented out");
-    	#endif*/
-    
     	if (codeBlockOwner.Unsafe_SelfIndexKey == -1)
     		throw new WalkTextEditorException($"{nameof(SetCurrentScopeAndBuilder)} codeBlockBuilder.CodeBlockBuilder.ScopeIndexKey is '-1'. Invoke {NewScopeAndBuilderFromOwner}?");
     
 		parserModel.CurrentCodeBlockOwner = codeBlockOwner;
-		
-		/*#if DEBUG
-    	Console.WriteLine($"-------SetSBout: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    	#else
-    	Console.WriteLine($"-------SetSBout: has console.write... that needs commented out");
-    	#endif*/
     }
 
     public void AddNamespaceToCurrentScope(
@@ -680,12 +656,6 @@ public partial class CSharpBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-    	/*#if DEBUG
-    	Console.WriteLine($"-------{nameof(CloseScope)}in: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    	#else
-    	Console.WriteLine($"-------{nameof(CloseScope)}in: has console.write... that needs commented out");
-    	#endif*/
-    
     	// Check if it is the global scope, if so return early.
     	if (parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey == 0)
     		return;
@@ -703,12 +673,6 @@ public partial class CSharpBinder
     	
     	parserModel.CurrentCodeBlockOwner.Scope_EndExclusiveIndex = textSpan.EndExclusiveIndex;
 		parserModel.CurrentCodeBlockOwner = parserModel.GetParent(parserModel.CurrentCodeBlockOwner, compilationUnit);
-		
-		/*#if DEBUG
-    	Console.WriteLine($"-------{nameof(CloseScope)}out: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    	#else
-    	Console.WriteLine($"-------{nameof(CloseScope)}out: has console.write... that needs commented out");
-    	#endif*/
     }
 
 	/// <summary>
