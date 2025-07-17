@@ -307,7 +307,7 @@ public static class ParseExpressions
 			case SyntaxKind.BadExpressionNode:
 				return BadMergeToken((BadExpressionNode)expressionPrimary, ref token, compilationUnit, ref parserModel);
 			default:
-				return ToBadExpressionNode(expressionPrimary, token);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		};
 	}
 	
@@ -366,7 +366,7 @@ public static class ParseExpressions
 			case SyntaxKind.BadExpressionNode:
 				return BadMergeExpression((BadExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			default:
-				return ToBadExpressionNode(expressionPrimary, expressionSecondary);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		};
 	}
 	
@@ -472,7 +472,7 @@ public static class ParseExpressions
 				// for the sake of parser recovery.
 				ClearFromExpressionList(expressionPrimary, compilationUnit, ref parserModel);
 				ClearFromExpressionList(binaryExpressionAntecedent, compilationUnit, ref parserModel);
-				return ToBadExpressionNode(binaryExpressionAntecedent, expressionPrimary);
+				return parserModel.Binder.Shared_BadExpressionNode;
 			}
 		}
 		else
@@ -542,7 +542,7 @@ public static class ParseExpressions
 			}
 		}
 		
-		return ToBadExpressionNode(ambiguousParenthesizedExpressionNode, token);
+		return parserModel.Binder.Shared_BadExpressionNode;
 	}
 	
 	public static IExpressionNode AmbiguousParenthesizedMergeExpression(
@@ -826,7 +826,7 @@ public static class ParseExpressions
 			    return variableDeclarationNode;
 			}
 			default:
-				return ToBadExpressionNode(ambiguousIdentifierExpressionNode, token);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 
@@ -845,7 +845,7 @@ public static class ParseExpressions
 			return ambiguousIdentifierExpressionNode;
 		}
 		
-		return ToBadExpressionNode(ambiguousIdentifierExpressionNode, expressionSecondary);
+		return parserModel.Binder.Shared_BadExpressionNode;
 	}
 	
 	public static IExpressionNode ForceDecisionAmbiguousIdentifier(
@@ -1136,7 +1136,7 @@ public static class ParseExpressions
             	}
 			}
 			default:
-				return ToBadExpressionNode(variableReferenceNode, token);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 	
@@ -1158,7 +1158,7 @@ public static class ParseExpressions
 	        return variableReferenceNode;
 	    }
 	
-	    return ToBadExpressionNode(variableReferenceNode, expressionSecondary);
+	    return parserModel.Binder.Shared_BadExpressionNode;
 	}
 		
 	public static IExpressionNode BadMergeToken(
@@ -1301,7 +1301,7 @@ public static class ParseExpressions
 	    			goto default;
 	    		}
 			default:
-				return ToBadExpressionNode(binaryExpressionNode, token);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 	
@@ -1324,7 +1324,7 @@ public static class ParseExpressions
 			return binaryExpressionNode;
 		}
 	
-		return ToBadExpressionNode(binaryExpressionNode, expressionSecondary);
+		return parserModel.Binder.Shared_BadExpressionNode;
 	}
 	
 	public static IExpressionNode CollectionInitializationMergeToken(
@@ -1347,7 +1347,7 @@ public static class ParseExpressions
     		}
     		default:
     		{
-    		    return ToBadExpressionNode(collectionInitializationNode, token);
+    		    return parserModel.Binder.Shared_BadExpressionNode;
     		}
 		}
 	}
@@ -1356,7 +1356,7 @@ public static class ParseExpressions
 		CollectionInitializationNode collectionInitializationNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 	    if (collectionInitializationNode.IsClosed)
-	        return ToBadExpressionNode(collectionInitializationNode, expressionSecondary);
+	        return parserModel.Binder.Shared_BadExpressionNode;
 
 	    return collectionInitializationNode;
 	}
@@ -1424,7 +1424,7 @@ public static class ParseExpressions
 				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
 				return ParseObjectInitialization(constructorInvocationExpressionNode, ref token, compilationUnit, ref parserModel);
 			default:
-				return ToBadExpressionNode(constructorInvocationExpressionNode, token);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 	
@@ -1490,7 +1490,7 @@ public static class ParseExpressions
 			}
 			default:
 			{
-				return ToBadExpressionNode(constructorInvocationExpressionNode, expressionSecondary);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		    }
 		}
 	}
@@ -1569,7 +1569,7 @@ public static class ParseExpressions
 				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, withExpressionNode));
 				return ParseWithExpressionNode(withExpressionNode, ref token, compilationUnit, ref parserModel);
 			default:
-				return ToBadExpressionNode(withExpressionNode, token);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 	
@@ -1795,7 +1795,7 @@ public static class ParseExpressions
 			case SyntaxKind.MinusMinusToken:
 				return emptyExpressionNode;
 			default:
-				return ToBadExpressionNode(emptyExpressionNode, token);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 	
@@ -1859,7 +1859,7 @@ public static class ParseExpressions
 						isInitialized: true,
 						compilationUnit.ResourceUri));
 			default:
-				return ToBadExpressionNode(explicitCastNode, token);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 	
@@ -1869,14 +1869,14 @@ public static class ParseExpressions
 		switch (token.SyntaxKind)
 		{
 			default:
-				return ToBadExpressionNode(returnStatementNode, token);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 	
 	public static IExpressionNode ReturnStatementMergeExpression(
 		ReturnStatementNode returnStatementNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		return ToBadExpressionNode(returnStatementNode, expressionSecondary);
+		return parserModel.Binder.Shared_BadExpressionNode;
 	}
 	
 	public static IExpressionNode KeywordFunctionOperatorMergeToken(
@@ -1912,7 +1912,7 @@ public static class ParseExpressions
 		    return EmptyExpressionNode.Empty;
 		}
 		
-		return ToBadExpressionNode(switchExpressionNode, token);
+		return parserModel.Binder.Shared_BadExpressionNode;
 	}
 	
 	public static IExpressionNode SwitchExpressionMergeExpression(
@@ -1930,7 +1930,7 @@ public static class ParseExpressions
 		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
 		    return switchExpressionNode;
 	
-		return ToBadExpressionNode(switchExpressionNode, expressionSecondary);
+		return parserModel.Binder.Shared_BadExpressionNode;
 	}
 	
 	public static IExpressionNode LambdaMergeToken(
@@ -1973,7 +1973,7 @@ public static class ParseExpressions
 		{
 			if (lambdaExpressionNode.CodeBlockNodeIsExpression)
 			{
-				return ToBadExpressionNode(lambdaExpressionNode, token);
+				return parserModel.Binder.Shared_BadExpressionNode;
 			}
 			else
 			{
@@ -1984,7 +1984,7 @@ public static class ParseExpressions
 		{
 			if (lambdaExpressionNode.HasReadParameters)
 			{
-				return ToBadExpressionNode(lambdaExpressionNode, token);
+				return parserModel.Binder.Shared_BadExpressionNode;
 			}
 			else
 			{
@@ -2003,7 +2003,7 @@ public static class ParseExpressions
 			if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
 				return lambdaExpressionNode;
 			
-			return ToBadExpressionNode(lambdaExpressionNode, token);
+			return parserModel.Binder.Shared_BadExpressionNode;
 		}
 		else if (token.SyntaxKind == SyntaxKind.CommaToken)
 		{
@@ -2014,7 +2014,7 @@ public static class ParseExpressions
 		{
 			if (lambdaExpressionNode.HasReadParameters)
 			{
-				return ToBadExpressionNode(lambdaExpressionNode, token);
+				return parserModel.Binder.Shared_BadExpressionNode;
 			}
 			else
 			{
@@ -2024,7 +2024,7 @@ public static class ParseExpressions
 		}
 		else
 		{
-			return ToBadExpressionNode(lambdaExpressionNode, token);
+			return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 	
@@ -2053,7 +2053,7 @@ public static class ParseExpressions
 	public static IExpressionNode LiteralMergeToken(
 		LiteralExpressionNode literalExpressionNode, ref SyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		return ToBadExpressionNode(literalExpressionNode, token);
+		return parserModel.Binder.Shared_BadExpressionNode;
 	}
 	
 	public static IExpressionNode InterpolatedStringMergeToken(
@@ -2069,7 +2069,7 @@ public static class ParseExpressions
 			return EmptyExpressionNode.Empty;
 		}
 
-		return ToBadExpressionNode(interpolatedStringNode, token);
+		return parserModel.Binder.Shared_BadExpressionNode;
 	}
 	
 	public static IExpressionNode InterpolatedStringMergeExpression(
@@ -2100,7 +2100,7 @@ public static class ParseExpressions
 		}
 		else
 		{
-			return ToBadExpressionNode(interpolatedStringNode, expressionSecondary);
+			return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 	
@@ -2127,7 +2127,7 @@ public static class ParseExpressions
 				SetLambdaExpressionNodeVariableDeclarationNodeList(lambdaExpressionNode, parenthesizedExpressionNode.InnerExpression, compilationUnit, ref parserModel);
 				return lambdaExpressionNode;
 			default:
-				return ToBadExpressionNode(parenthesizedExpressionNode, token);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 	
@@ -2158,7 +2158,7 @@ public static class ParseExpressions
 		}
 	
 		if (parenthesizedExpressionNode.InnerExpression.SyntaxKind != SyntaxKind.EmptyExpressionNode)
-			return ToBadExpressionNode(parenthesizedExpressionNode, expressionSecondary);
+			return parserModel.Binder.Shared_BadExpressionNode;
 		
 		// TODO: This seems like a bad idea?
 		if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
@@ -2195,7 +2195,7 @@ public static class ParseExpressions
 				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, tupleExpressionNode));
 				return EmptyExpressionNode.Empty;
 			default:
-				return ToBadExpressionNode(tupleExpressionNode, token);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 	
@@ -2222,7 +2222,7 @@ public static class ParseExpressions
 					return tupleExpressionNode;
 				}
 			
-				return ToBadExpressionNode(tupleExpressionNode, expressionSecondary);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 	
@@ -2382,7 +2382,7 @@ public static class ParseExpressions
 				    return variableDeclarationNode;
 				}
 				
-				return ToBadExpressionNode(typeClauseNode, token);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 	
@@ -2414,7 +2414,7 @@ public static class ParseExpressions
 			    
 			    goto default;
 			default:
-				return ToBadExpressionNode(typeClauseNode, expressionSecondary);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 	
@@ -2489,7 +2489,7 @@ public static class ParseExpressions
 				functionInvocationNode.FunctionParameterListing.SetCloseParenthesisToken(token);
 				return functionInvocationNode;
 			default:
-				return ToBadExpressionNode(functionInvocationNode, token);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 	
@@ -2519,7 +2519,7 @@ public static class ParseExpressions
 			case SyntaxKind.FunctionInvocationNode:
 				return functionInvocationNode;
 			default:
-				return ToBadExpressionNode(functionInvocationNode, expressionSecondary);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 	
@@ -3148,7 +3148,7 @@ public static class ParseExpressions
 		}
 		else
 		{
-			return ToBadExpressionNode(ambiguousParenthesizedExpressionNode, expressionNode);
+			return parserModel.Binder.Shared_BadExpressionNode;
 		}
 			
 		parserModel.Binder.BindTypeClauseNode(typeClauseNode, compilationUnit, ref parserModel);
@@ -3210,7 +3210,7 @@ public static class ParseExpressions
 						}
 						else
 						{
-							return ToBadExpressionNode(ambiguousParenthesizedExpressionNode, node);
+							return parserModel.Binder.Shared_BadExpressionNode;
 						}
 					
 						var variableDeclarationNode = new VariableDeclarationNode(
@@ -3295,7 +3295,7 @@ public static class ParseExpressions
 				parserModel.ExpressionList.Add((SyntaxKind.ColonToken, invocationNode));
 				return EmptyExpressionNode.Empty;
 			default:
-				return ToBadExpressionNode(invocationNode, token);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 	
@@ -3474,7 +3474,7 @@ public static class ParseExpressions
 				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, functionDefinitionNode));
 				return EmptyExpressionNode.Empty;
 			default:
-				return ToBadExpressionNode(functionDefinitionNode, token);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 	
@@ -3536,7 +3536,7 @@ public static class ParseExpressions
 			case SyntaxKind.OpenParenthesisToken:
 				return ShareEmptyExpressionNodeIntoOpenParenthesisTokenCase(ref token, compilationUnit, ref parserModel);
 			default:
-				return ToBadExpressionNode(genericParameterNode, token);
+				return parserModel.Binder.Shared_BadExpressionNode;
 		}
 	}
 	
@@ -3588,7 +3588,7 @@ public static class ParseExpressions
 			return genericParameterNode;
 		}
 		
-		return ToBadExpressionNode(genericParameterNode, expressionSecondary);
+		return parserModel.Binder.Shared_BadExpressionNode;
 	}
 	
 	public static IExpressionNode ParseGenericParameterNode_Start(
@@ -3611,24 +3611,6 @@ public static class ParseExpressions
 	    parserModel.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, nodeToRestoreAtCloseAngleBracketToken));
 		parserModel.ExpressionList.Add((SyntaxKind.CommaToken, genericParameterNode));
 		return genericParameterNode;
-	}
-	
-	public static IExpressionNode ToBadExpressionNode(ISyntax syntaxPrimary, ISyntax syntaxSecondary)
-	{
-	    #if DEBUG
-        return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeReference(), syntaxPrimary, syntaxSecondary);
-	    #else
-	    return Shared_BadExpressionNode;
-	    #endif
-	}
-	
-	public static IExpressionNode ToBadExpressionNode(ISyntax syntaxPrimary, SyntaxToken syntaxSecondary)
-	{
-	    #if DEBUG
-        return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeReference(), syntaxPrimary, syntaxSecondary);
-	    #else
-	    return Shared_BadExpressionNode;
-	    #endif
 	}
     
     /// <summary>
