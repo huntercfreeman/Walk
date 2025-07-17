@@ -61,7 +61,7 @@ public static class ParseTypes
     public static TypeClauseNode MatchTypeClause(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
         parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.TypeClauseNode);
-    	if (ParseExpressions.TryParseExpression(compilationUnit, ref parserModel, out var expressionNode))
+    	if (ParseExpressions.TryParseExpression(ref parserModel, out var expressionNode))
     	{
     		return (TypeClauseNode)expressionNode;
     	}
@@ -170,11 +170,11 @@ public static class ParseTypes
     	
     	parserModel.CurrentCodeBlockOwner.PermitCodeBlockParsing = true;
     	
-    	parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
+    	parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, ref parserModel);
 		
 		var openBraceToken = parserModel.TokenWalker.Consume();
 		
-        ParseTokens.ParseOpenBraceToken(openBraceToken, compilationUnit, ref parserModel);
+        ParseTokens.ParseOpenBraceToken(openBraceToken, ref parserModel);
         
         var shouldFindIdentifier = true;
         

@@ -154,7 +154,7 @@ public static class CSharpParser
 				if (!deferredParsingOccurred)
 				{
 					// This second 'deferredParsingOccurred' is for any lambda expressions with one or many statements in its body.
-					deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
+					deferredParsingOccurred = parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, ref parserModel);
 					if (!deferredParsingOccurred)
 						break;
 				}
