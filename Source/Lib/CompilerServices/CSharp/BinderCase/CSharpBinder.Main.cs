@@ -73,6 +73,8 @@ public partial class CSharpBinder
     
     public TextEditorService TextEditorService { get; set; }
     
+    public GlobalCodeBlockNode GlobalCodeBlockNode { get; } = new GlobalCodeBlockNode();
+    
     public CSharpBinder(TextEditorService textEditorService)
     {
     	TextEditorService = textEditorService;

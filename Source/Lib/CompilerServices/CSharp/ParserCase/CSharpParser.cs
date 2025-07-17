@@ -17,7 +17,15 @@ public static class CSharpParser
 
     public static void Parse(CSharpCompilationUnit compilationUnit, CSharpBinder binder, ref CSharpLexerOutput lexerOutput)
     {
-    	var globalCodeBlockNode = new GlobalCodeBlockNode();
+    	var globalCodeBlockNode = binder.GlobalCodeBlockNode;
+    	globalCodeBlockNode.Scope_StartInclusiveIndex = -1;
+    	globalCodeBlockNode.Scope_EndExclusiveIndex = -1;
+    	globalCodeBlockNode.CodeBlock_StartInclusiveIndex = -1;
+    	globalCodeBlockNode.CodeBlock_EndExclusiveIndex = -1;
+    	globalCodeBlockNode.Unsafe_ParentIndexKey = -1;
+    	globalCodeBlockNode.Unsafe_SelfIndexKey = -1;
+    	globalCodeBlockNode.PermitCodeBlockParsing = true;
+    	globalCodeBlockNode.IsImplicitOpenCodeBlockTextSpan = false;
     	
     	var globalOpenCodeBlockTextSpan = new TextEditorTextSpan(
 		    0,
