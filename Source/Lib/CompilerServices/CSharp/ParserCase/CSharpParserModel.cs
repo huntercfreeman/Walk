@@ -548,7 +548,7 @@ public struct CSharpParserModel
     
         CurrentCodeBlockOwner = codeBlockOwner;
         
-        Binder.OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, Compilation, ref this);
+        OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, Compilation);
     }
 
     public void AddNamespaceToCurrentScope(string namespaceString)
@@ -655,5 +655,69 @@ public struct CSharpParserModel
 	public void SetCurrentNamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
     {
         CurrentNamespaceStatementNode = namespaceStatementNode;
+    }
+    
+    public void OnBoundScopeCreatedAndSetAsCurrent(ICodeBlockOwner codeBlockOwner, CSharpCompilationUnit compilationUnit)
+    {
+    	switch (codeBlockOwner.SyntaxKind)
+    	{
+    		case SyntaxKind.NamespaceStatementNode:
+    			var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
+	    		var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText(compilationUnit.SourceText, Binder.TextEditorService);
+	        	AddNamespaceToCurrentScope(namespaceString);
+	        	
+			    BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner);
+	        	return;
+			case SyntaxKind.LambdaExpressionNode:
+				var lambdaExpressionNode = (LambdaExpressionNode)codeBlockOwner;
+	    		foreach (var variableDeclarationNode in lambdaExpressionNode.VariableDeclarationNodeList)
+		    	{
+		    		BindVariableDeclarationNode(variableDeclarationNode);
+		    	}
+		    	return;
+		    case SyntaxKind.TryStatementCatchNode:
+		    	var tryStatementCatchNode = (TryStatementCatchNode)codeBlockOwner;
+    		
+	    		if (tryStatementCatchNode.VariableDeclarationNode is not null)
+		    		BindVariableDeclarationNode(tryStatementCatchNode.VariableDeclarationNode);
+		    		
+		    	return;
+		    case SyntaxKind.TypeDefinitionNode:
+		    
+				BindTypeDefinitionNode((TypeDefinitionNode)codeBlockOwner, true);
+		    
+		    	var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
+		    	
+		    	if (typeDefinitionNode.GenericParameterListing.ConstructorWasInvoked)
+		    	{
+		    		foreach (var entry in typeDefinitionNode.GenericParameterListing.GenericParameterEntryList)
+		    		{
+		    			BindTypeDefinitionNode(
+					        new TypeDefinitionNode(
+								AccessModifierKind.Public,
+								hasPartialModifier: false,
+								StorageModifierKind.Class,
+								entry.TypeReference.TypeIdentifierToken,
+								entry.TypeReference.ValueType,
+								entry.TypeReference.GenericParameterListing,
+								primaryConstructorFunctionArgumentListing: default,
+								inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
+								string.Empty,
+								compilationUnit.ResourceUri));
+		    		}
+		    	}
+		    	
+		    	return;
+    	}
+    }
+    
+    public void SetOpenCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, int codeBlock_StartInclusiveIndex)
+    {
+		codeBlockOwner.CodeBlock_StartInclusiveIndex = codeBlock_StartInclusiveIndex;
+    }
+    
+    public void SetCloseCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, int codeBlock_EndExclusiveIndex)
+    {
+		codeBlockOwner.CodeBlock_EndExclusiveIndex = codeBlock_EndExclusiveIndex;
     }
 }

@@ -354,11 +354,7 @@ public static class ParseTokens
 		
 		// This has to come after the 'DeferParsingOfChildScope(...)'
 		// or it makes an ArbitraryCodeBlockNode when it comes back around.
-		parserModel.Binder.SetOpenCodeBlockTextSpan(
-			parserModel.CurrentCodeBlockOwner,
-			openBraceToken.TextSpan.StartInclusiveIndex,
-			parserModel.Compilation.__DiagnosticList,
-			parserModel.TokenWalker);
+		parserModel.CurrentCodeBlockOwner.CodeBlock_StartInclusiveIndex = openBraceToken.TextSpan.StartInclusiveIndex;
     }
 
 	/// <summary>
@@ -388,11 +384,7 @@ public static class ParseTokens
 
 		if (parserModel.CurrentCodeBlockOwner.SyntaxKind != SyntaxKind.GlobalCodeBlockNode)
 		{
-			parserModel.Binder.SetCloseCodeBlockTextSpan(
-				parserModel.CurrentCodeBlockOwner,
-				closeBraceToken.TextSpan.EndExclusiveIndex,
-				parserModel.Compilation.__DiagnosticList,
-				parserModel.TokenWalker);
+			parserModel.CurrentCodeBlockOwner.CodeBlock_EndExclusiveIndex = closeBraceToken.TextSpan.EndExclusiveIndex;
         }
         
         parserModel.CloseScope(closeBraceToken.TextSpan);
@@ -517,6 +509,7 @@ public static class ParseTokens
     	
     	IExpressionNode expressionNode;
     	
+    	// TODO: Why is this try-catch here?
     	try
 		{
 			if (shouldBacktrack)
@@ -528,8 +521,6 @@ public static class ParseTokens
 		{
 			parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
 		}
-		
-    	// parserModel.CurrentCodeBlockBuilder.AddChild(expressionNode);
 	}
 
 	/// <summary>
@@ -545,11 +536,7 @@ public static class ParseTokens
             ICodeBlockOwner nextCodeBlockOwner = namespaceStatementNode;
             TypeClauseNode? scopeReturnTypeClauseNode = null;
             
-            parserModel.Binder.SetCloseCodeBlockTextSpan(
-            	namespaceStatementNode,
-            	statementDelimiterToken.TextSpan.EndExclusiveIndex,
-            	parserModel.Compilation.__DiagnosticList,
-            	parserModel.TokenWalker);
+            namespaceStatementNode.CodeBlock_EndExclusiveIndex = statementDelimiterToken.TextSpan.EndExclusiveIndex;
 
             parserModel.AddNamespaceToCurrentScope(
                 namespaceStatementNode.IdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService));
@@ -559,12 +546,7 @@ public static class ParseTokens
         	while (parserModel.CurrentCodeBlockOwner.SyntaxKind != SyntaxKind.GlobalCodeBlockNode &&
         		   parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan)
         	{
-        		parserModel.Binder.SetCloseCodeBlockTextSpan(
-        			parserModel.CurrentCodeBlockOwner,
-        			statementDelimiterToken.TextSpan.EndExclusiveIndex,
-        			parserModel.Compilation.__DiagnosticList,
-        			parserModel.TokenWalker);
-        		
+        		parserModel.CurrentCodeBlockOwner.CodeBlock_EndExclusiveIndex = statementDelimiterToken.TextSpan.EndExclusiveIndex;
 	        	parserModel.CloseScope(statementDelimiterToken.TextSpan);
         	}
         }

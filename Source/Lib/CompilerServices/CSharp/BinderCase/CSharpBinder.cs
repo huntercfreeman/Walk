@@ -19,8 +19,13 @@ public class CSharpBinder
 {
 	/// <summary>
 	/// This is not thread safe to access because 'BindNamespaceStatementNode(...)' will directly modify the NamespaceGroup's List.
+	///
+	/// TODO: Don't have this be public
 	/// </summary>
     public readonly Dictionary<string, NamespaceGroup> _namespaceGroupMap = CSharpFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
+    /// <summary>
+    /// TODO: Don't have this be public
+    /// </summary>
     public readonly Dictionary<string, TypeDefinitionNode> _allTypeDefinitions = new();
     private readonly NamespaceStatementNode _topLevelNamespaceStatementNode = CSharpFacts.Namespaces.GetTopLevelNamespaceStatementNode();
     
@@ -103,6 +108,21 @@ public class CSharpBinder
 	{
 		UpsertCompilationUnit(compilationUnit);
 	}
+	
+	/// <summary>TextEditorEditContext is required for thread safety.</summary>
+    public void UpsertCompilationUnit(CSharpCompilationUnit compilationUnit)
+    {
+		if (__CompilationUnitMap.ContainsKey(compilationUnit.ResourceUri))
+    		__CompilationUnitMap[compilationUnit.ResourceUri] = compilationUnit;
+    	else
+    		__CompilationUnitMap.Add(compilationUnit.ResourceUri, compilationUnit);
+    }
+    
+    /// <summary>TextEditorEditContext is required for thread safety.</summary>
+    public bool RemoveCompilationUnit(ResourceUri resourceUri)
+    {
+    	return __CompilationUnitMap.Remove(resourceUri);
+    }
 
 	/// <summary>
 	/// Do not invoke this when re-parsing the same file.
@@ -125,139 +145,6 @@ public class CSharpBinder
         }
 
 		__CompilationUnitMap.Remove(resourceUri);
-    }
-    
-    /// <summary>
-    /// Search hierarchically through all the scopes, starting at the <see cref="initialScope"/>.<br/><br/>
-    /// If a match is found, then set the out parameter to it and return true.<br/><br/>
-    /// If none of the searched scopes contained a match then set the out parameter to null and return false.
-    /// </summary>
-    public bool TryGetFunctionHierarchically(
-    	CSharpCompilationUnit compilationUnit,
-    	int initialScopeIndexKey,
-        string identifierText,
-        out FunctionDefinitionNode? functionDefinitionNode)
-    {
-        var localScope = GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
-
-        while (localScope is not null)
-        {
-            if (TryGetFunctionDefinitionNodeByScope(
-	        		compilationUnit,
-            		localScope.Unsafe_SelfIndexKey,
-            		identifierText,
-                    out functionDefinitionNode))
-            {
-                return true;
-            }
-
-			if (localScope.Unsafe_ParentIndexKey == -1)
-				localScope = default;
-			else
-            	localScope = GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
-        }
-
-        functionDefinitionNode = null;
-        return false;
-    }
-
-    /// <summary>
-    /// Search hierarchically through all the scopes, starting at the <see cref="initialScope"/>.<br/><br/>
-    /// If a match is found, then set the out parameter to it and return true.<br/><br/>
-    /// If none of the searched scopes contained a match then set the out parameter to null and return false.
-    /// </summary>
-    public bool TryGetTypeDefinitionHierarchically(
-    	CSharpCompilationUnit compilationUnit,
-    	int initialScopeIndexKey,
-        string identifierText,
-        out TypeDefinitionNode? typeDefinitionNode)
-    {
-        var localScope = GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
-
-        while (localScope is not null)
-        {
-            if (TryGetTypeDefinitionNodeByScope(
-	        		compilationUnit,
-            		localScope.Unsafe_SelfIndexKey,
-            		identifierText,
-                    out typeDefinitionNode))
-            {
-                return true;
-            }
-
-            if (localScope.Unsafe_ParentIndexKey == -1)
-				localScope = default;
-			else
-            {
-            	localScope = GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
-			}
-		}
-
-        typeDefinitionNode = null;
-        return false;
-    }
-
-    /// <summary>
-    /// Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>
-    /// If a match is found, then set the out parameter to it and return true.<br/><br/>
-    /// If none of the searched scopes contained a match then set the out parameter to null and return false.
-    /// </summary>
-    public bool TryGetVariableDeclarationHierarchically(
-    	CSharpCompilationUnit compilationUnit,
-    	int initialScopeIndexKey,
-        string identifierText,
-        out VariableDeclarationNode? variableDeclarationStatementNode)
-    {
-        var localScope = GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
-
-        while (localScope is not null)
-        {
-            if (TryGetVariableDeclarationNodeByScope(
-	        		compilationUnit,
-            		localScope.Unsafe_SelfIndexKey,
-            		identifierText,
-                    out variableDeclarationStatementNode))
-            {
-                return true;
-            }
-
-            if (localScope.Unsafe_ParentIndexKey == -1)
-				localScope = default;
-			else
-            	localScope = GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
-        }
-
-        variableDeclarationStatementNode = null;
-        return false;
-    }
-    
-    public bool TryGetLabelDeclarationHierarchically(
-    	CSharpCompilationUnit compilationUnit,
-    	int initialScopeIndexKey,
-        string identifierText,
-        out LabelDeclarationNode? labelDeclarationNode)
-    {
-        var localScope = GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
-
-        while (localScope is not null)
-        {
-            if (TryGetLabelDeclarationNodeByScope(
-	        		compilationUnit,
-            		localScope.Unsafe_SelfIndexKey,
-            		identifierText,
-                    out labelDeclarationNode))
-            {
-                return true;
-            }
-
-            if (localScope.Unsafe_ParentIndexKey == -1)
-				localScope = default;
-			else
-            	localScope = GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
-        }
-
-        labelDeclarationNode = null;
-        return false;
     }
 
     public ICodeBlockOwner? GetScope(CSharpCompilationUnit compilationUnit, TextEditorTextSpan textSpan)
@@ -298,21 +185,6 @@ public class CSharpBinder
         return null;
     }
     
-    /// <summary>TextEditorEditContext is required for thread safety.</summary>
-    public void UpsertCompilationUnit(CSharpCompilationUnit compilationUnit)
-    {
-		if (__CompilationUnitMap.ContainsKey(compilationUnit.ResourceUri))
-    		__CompilationUnitMap[compilationUnit.ResourceUri] = compilationUnit;
-    	else
-    		__CompilationUnitMap.Add(compilationUnit.ResourceUri, compilationUnit);
-    }
-    
-    /// <summary>TextEditorEditContext is required for thread safety.</summary>
-    public bool RemoveCompilationUnit(ResourceUri resourceUri)
-    {
-    	return __CompilationUnitMap.Remove(resourceUri);
-    }
-    
     public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(
     	CSharpCompilationUnit compilationUnit,
     	int scopeIndexKey)
@@ -325,6 +197,42 @@ public class CSharpBinder
 		    query = query.Concat(compilationUnit.ExternalTypeDefinitionList);
 		
 		return query.ToArray();
+    }
+    
+    /// <summary>
+    /// Search hierarchically through all the scopes, starting at the <see cref="initialScope"/>.<br/><br/>
+    /// If a match is found, then set the out parameter to it and return true.<br/><br/>
+    /// If none of the searched scopes contained a match then set the out parameter to null and return false.
+    /// </summary>
+    public bool TryGetTypeDefinitionHierarchically(
+    	CSharpCompilationUnit compilationUnit,
+    	int initialScopeIndexKey,
+        string identifierText,
+        out TypeDefinitionNode? typeDefinitionNode)
+    {
+        var localScope = GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
+
+        while (localScope is not null)
+        {
+            if (TryGetTypeDefinitionNodeByScope(
+	        		compilationUnit,
+            		localScope.Unsafe_SelfIndexKey,
+            		identifierText,
+                    out typeDefinitionNode))
+            {
+                return true;
+            }
+
+            if (localScope.Unsafe_ParentIndexKey == -1)
+				localScope = default;
+			else
+            {
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
+			}
+		}
+
+        typeDefinitionNode = null;
+        return false;
     }
     
     public bool TryGetTypeDefinitionNodeByScope(
@@ -397,6 +305,40 @@ public class CSharpBinder
     		.ToArray();
     }
     
+    /// <summary>
+    /// Search hierarchically through all the scopes, starting at the <see cref="initialScope"/>.<br/><br/>
+    /// If a match is found, then set the out parameter to it and return true.<br/><br/>
+    /// If none of the searched scopes contained a match then set the out parameter to null and return false.
+    /// </summary>
+    public bool TryGetFunctionHierarchically(
+    	CSharpCompilationUnit compilationUnit,
+    	int initialScopeIndexKey,
+        string identifierText,
+        out FunctionDefinitionNode? functionDefinitionNode)
+    {
+        var localScope = GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
+
+        while (localScope is not null)
+        {
+            if (TryGetFunctionDefinitionNodeByScope(
+	        		compilationUnit,
+            		localScope.Unsafe_SelfIndexKey,
+            		identifierText,
+                    out functionDefinitionNode))
+            {
+                return true;
+            }
+
+			if (localScope.Unsafe_ParentIndexKey == -1)
+				localScope = default;
+			else
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
+        }
+
+        functionDefinitionNode = null;
+        return false;
+    }
+    
     public bool TryGetFunctionDefinitionNodeByScope(
     	CSharpCompilationUnit compilationUnit,
     	int scopeIndexKey,
@@ -427,6 +369,40 @@ public class CSharpBinder
     		.Where(kvp => kvp.Unsafe_ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.VariableDeclarationNode)
     		.Select(kvp => (VariableDeclarationNode)kvp)
     		.ToArray();
+    }
+    
+    /// <summary>
+    /// Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>
+    /// If a match is found, then set the out parameter to it and return true.<br/><br/>
+    /// If none of the searched scopes contained a match then set the out parameter to null and return false.
+    /// </summary>
+    public bool TryGetVariableDeclarationHierarchically(
+    	CSharpCompilationUnit compilationUnit,
+    	int initialScopeIndexKey,
+        string identifierText,
+        out VariableDeclarationNode? variableDeclarationStatementNode)
+    {
+        var localScope = GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
+
+        while (localScope is not null)
+        {
+            if (TryGetVariableDeclarationNodeByScope(
+	        		compilationUnit,
+            		localScope.Unsafe_SelfIndexKey,
+            		identifierText,
+                    out variableDeclarationStatementNode))
+            {
+                return true;
+            }
+
+            if (localScope.Unsafe_ParentIndexKey == -1)
+				localScope = default;
+			else
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
+        }
+
+        variableDeclarationStatementNode = null;
+        return false;
     }
     
     public bool TryGetVariableDeclarationNodeByScope(
@@ -488,6 +464,35 @@ public class CSharpBinder
 		    variableDeclarationNode.Unsafe_ParentIndexKey = scopeIndexKey;
 		    compilationUnit.NodeList[index] = variableDeclarationNode;
 		}
+    }
+    
+    public bool TryGetLabelDeclarationHierarchically(
+    	CSharpCompilationUnit compilationUnit,
+    	int initialScopeIndexKey,
+        string identifierText,
+        out LabelDeclarationNode? labelDeclarationNode)
+    {
+        var localScope = GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
+
+        while (localScope is not null)
+        {
+            if (TryGetLabelDeclarationNodeByScope(
+	        		compilationUnit,
+            		localScope.Unsafe_SelfIndexKey,
+            		identifierText,
+                    out labelDeclarationNode))
+            {
+                return true;
+            }
+
+            if (localScope.Unsafe_ParentIndexKey == -1)
+				localScope = default;
+			else
+            	localScope = GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
+        }
+
+        labelDeclarationNode = null;
+        return false;
     }
     
     public bool TryGetLabelDeclarationNodeByScope(
@@ -1208,76 +1213,4 @@ public class CSharpBinder
 		return namespaceGroup.NamespaceStatementNodeList
 			.SelectMany(x => GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(x));
 	}
-	
-	public void OnBoundScopeCreatedAndSetAsCurrent(ICodeBlockOwner codeBlockOwner, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
-    {
-    	switch (codeBlockOwner.SyntaxKind)
-    	{
-    		case SyntaxKind.NamespaceStatementNode:
-    			var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
-	    		var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
-	        	parserModel.AddNamespaceToCurrentScope(namespaceString);
-	        	
-			    parserModel.BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner);
-	        	return;
-			case SyntaxKind.LambdaExpressionNode:
-				var lambdaExpressionNode = (LambdaExpressionNode)codeBlockOwner;
-	    		foreach (var variableDeclarationNode in lambdaExpressionNode.VariableDeclarationNodeList)
-		    	{
-		    		parserModel.BindVariableDeclarationNode(variableDeclarationNode);
-		    	}
-		    	return;
-		    case SyntaxKind.TryStatementCatchNode:
-		    	var tryStatementCatchNode = (TryStatementCatchNode)codeBlockOwner;
-    		
-	    		if (tryStatementCatchNode.VariableDeclarationNode is not null)
-		    		parserModel.BindVariableDeclarationNode(tryStatementCatchNode.VariableDeclarationNode);
-		    		
-		    	return;
-		    case SyntaxKind.TypeDefinitionNode:
-		    
-				parserModel.BindTypeDefinitionNode((TypeDefinitionNode)codeBlockOwner, true);
-		    
-		    	var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
-		    	
-		    	if (typeDefinitionNode.GenericParameterListing.ConstructorWasInvoked)
-		    	{
-		    		foreach (var entry in typeDefinitionNode.GenericParameterListing.GenericParameterEntryList)
-		    		{
-		    			parserModel.BindTypeDefinitionNode(
-					        new TypeDefinitionNode(
-								AccessModifierKind.Public,
-								hasPartialModifier: false,
-								StorageModifierKind.Class,
-								entry.TypeReference.TypeIdentifierToken,
-								entry.TypeReference.ValueType,
-								entry.TypeReference.GenericParameterListing,
-								primaryConstructorFunctionArgumentListing: default,
-								inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
-								string.Empty,
-								compilationUnit.ResourceUri));
-		    		}
-		    	}
-		    	
-		    	return;
-    	}
-    }
-    
-    public ICodeBlockOwner SetOpenCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, int codeBlock_StartInclusiveIndex, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
-    {
-		if (codeBlockOwner.CodeBlock_StartInclusiveIndex == -1)
-			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
-
-		codeBlockOwner.CodeBlock_StartInclusiveIndex = codeBlock_StartInclusiveIndex;
-		return codeBlockOwner;
-    }
-    
-    public ICodeBlockOwner SetCloseCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, int codeBlock_EndExclusiveIndex, List<TextEditorDiagnostic> diagnosticList, TokenWalker tokenWalker)
-    {
-		if (codeBlockOwner.CodeBlock_EndExclusiveIndex == -1)
-			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticList, tokenWalker);
-
-		codeBlockOwner.CodeBlock_EndExclusiveIndex = codeBlock_EndExclusiveIndex;
-		return codeBlockOwner;
-    }
 }
