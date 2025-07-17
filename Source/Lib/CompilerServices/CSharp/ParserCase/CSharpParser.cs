@@ -183,16 +183,7 @@ public static class CSharpParser
         }
 
         if (parserModel.GetParent(parserModel.CurrentCodeBlockOwner, compilationUnit) is not null)
-        {
-            // The current token here would be the EOF token.
-            parserModel.Binder.CloseScope(parserModel.TokenWalker.Current.TextSpan, compilationUnit, ref parserModel);
-        }
-		
-		/*if (parserModel.AmbiguousIdentifierExpressionNode.FailCount > 0)
-		{
-			++TotalAmbiguousIdentifierExpressionNodeFailCount;
-			Console.WriteLine($"AmbiguousIdentifierExpressionNode !_wasDecided FailCount:{parserModel.AmbiguousIdentifierExpressionNode.FailCount} SuccessCount:{parserModel.AmbiguousIdentifierExpressionNode.SuccessCount} ResourceUri:{compilationUnit.ResourceUri.Value}; TotalAmbiguousIdentifierExpressionNodeFailCount:{TotalAmbiguousIdentifierExpressionNodeFailCount}");
-		}*/
+            parserModel.Binder.CloseScope(parserModel.TokenWalker.Current.TextSpan, compilationUnit, ref parserModel); // The current token here would be the EOF token.
 		
 		parserModel.Binder.FinalizeCompilationUnit(compilationUnit);
 	}
