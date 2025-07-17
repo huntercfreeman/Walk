@@ -15,7 +15,7 @@ using Walk.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Walk.CompilerServices.CSharp.BinderCase;
 
-public partial class CSharpBinder
+public class CSharpBinder
 {
 	/// <summary>
 	/// This is not thread safe to access because 'BindNamespaceStatementNode(...)' will directly modify the NamespaceGroup's List.
@@ -434,42 +434,8 @@ public partial class CSharpBinder
         {
         	typeClauseNode.SetValueType(matchingTypeDefintionNode.ValueType);
         }
-        /*else
-        {
-        	if (TryGetTypeDefinitionHierarchically(
-	        		compilationUnit,
-	                compilationUnit.BinderSession.ResourceUri,
-	                compilationUnit.BinderSession.CurrentScopeIndexKey,
-	                typeClauseNode.TypeIdentifierToken.TextSpan.GetText(),
-	                out var typeDefinitionNode) &&
-	            typeDefinitionNode is not null)
-	        {
-	            return;
-	        }
-	        else
-	        {
-	            // TODO: Diagnostics need to take the syntax token...
-	        	// ...so they can lazily invoke TextSpan.GetText().
-	        	DiagnosticHelper.ReportUndefinedTypeOrNamespace(
-	            	compilationUnit.__DiagnosticList,
-	                typeClauseNode.TypeIdentifierToken.TextSpan,
-	                typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
-	        }
-        }*/
     }
     
-    /*
-    // FindAllReferences
-    public void BindTypeClauseNodeSuccessfully(
-        TypeClauseNode typeClauseNode,
-        TypeDefinitionNode typeDefinitionNode,
-        CSharpCompilationUnit compilationUnit,
-        ref CSharpParserModel parserModel)
-    {
-    	typeDefinitionNode.ReferenceHashSet.Add(compilationUnit.ResourceUri);
-    }
-    */
-
     public void BindTypeIdentifier(
         SyntaxToken identifierToken,
         CSharpCompilationUnit compilationUnit,
@@ -509,40 +475,6 @@ public partial class CSharpBinder
         var namespaceAndTypeIdentifiers = new NamespaceAndTypeIdentifiers(currentNamespaceStatementText, typeIdentifierText);
 
         typeDefinitionNode.EncompassingNamespaceIdentifierString = currentNamespaceStatementText;
-        
-       // if (TryGetTypeDefinitionNodeByScope(
-       // 		compilationUnit,
-       // 		compilationUnit.ResourceUri,
-       // 		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-       // 		typeIdentifierText,
-       // 		out var existingTypeDefinitionNode))
-       // {
-       // 	if (shouldOverwrite || existingTypeDefinitionNode.IsFabricated)
-       // 	{
-       // 		SetTypeDefinitionNodeByScope(
-       // 			compilationUnit,
-       // 			compilationUnit.ResourceUri,
-	      //  		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-	      //  		typeIdentifierText,
-	      //  		typeDefinitionNode);
-       // 	}
-       // 	else
-       // 	{
-       // 		/*DiagnosticHelper.ReportAlreadyDefinedType(
-	      //      	compilationUnit.__DiagnosticList,
-	      //          typeDefinitionNode.TypeIdentifierToken.TextSpan,
-	      //          typeIdentifierText);*/
-       // 	}
-       // }
-       // else
-       // {
-       // 	_ = TryAddTypeDefinitionNodeByScope(
-       // 		compilationUnit,
-    			//compilationUnit.ResourceUri,
-       // 		parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-       // 		typeIdentifierText,
-       // 		typeDefinitionNode);
-       // }
 
         var success = _allTypeDefinitions.TryAdd(typeIdentifierText, typeDefinitionNode);
         if (!success)
@@ -890,15 +822,6 @@ public partial class CSharpBinder
 	        return tuple;
     }
 
-	/// <summary>
-	/// 'validationNode' avoids an infinite loop when invoking this within a while loop or etc...
-	/// 
-	/// The infinite loop happens due to using statements / namespace statements bringing in types that come from a different
-	/// CSharpCompilationUnit instance.
-	/// 
-	/// So checking that the compilationUnit contains the provided validationNode at 'validationNode.Unsafe_SelfIndexKey'
-    /// ensures that the compilationUnit is the same instance.
-	/// </summary>
 	public ICodeBlockOwner? GetScopeByScopeIndexKey(CSharpCompilationUnit compilationUnit, int scopeIndexKey)
     {
         if (scopeIndexKey < 0)
@@ -1388,93 +1311,8 @@ public partial class CSharpBinder
 
     public ISyntaxNode? GetSyntaxNode(CSharpCompilationUnit compilationUnit, int positionIndex, CSharpResource? compilerServiceResource)
     {
+        // TODO: Re-implement this given the changes to how nodes are stored.
         return null;
-        
-        /*var scope = GetScopeByPositionIndex(compilationUnit, resourceUri, positionIndex);
-        if (!scope.ConstructorWasInvoked)
-        	return null;
-        
-        IReadOnlyList<ISyntax> childList;
-        	
-        var codeBlockOwner = scope.CodeBlockOwner;
-        
-        if (codeBlockOwner is not null)
-        	childList = codeBlockOwner.CodeBlock.ChildList;
-        else
-        	childList = null;
-        
-        if (childList is null)
-        	return null;
-        
-        var possibleNodeList = new List<ISyntaxNode>();
-        
-        ISyntaxNode? fallbackDefinitionNode = null;
-        
-        foreach (var child in childList)
-        {
-        	if (child is not ISyntaxNode node)
-    			continue;
-    		
-    		if (node.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
-    			node.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
-    		{
-    			fallbackDefinitionNode = node;
-    		}
-        	
-        	var nodePositionIndices = GetNodePositionIndices(node, resourceUri);
-        	if (nodePositionIndices == (-1, -1))
-        		continue;
-        		
-        	if (nodePositionIndices.StartInclusiveIndex <= positionIndex &&
-        		nodePositionIndices.EndExclusiveIndex >= positionIndex)
-        	{
-        		possibleNodeList.Add(node);
-        	}
-        }
-        
-        if (possibleNodeList.Count <= 0)
-        {
-        	if (fallbackDefinitionNode is not null)
-        	{
-        		if (fallbackDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
-        			fallbackDefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
-        		{
-        			var fallbackCodeBlockOwner = ((ICodeBlockOwner)fallbackDefinitionNode);
-        			TextEditorTextSpan? fallbackTextSpan = null;
-        			
-        			if (fallbackCodeBlockOwner.OpenCodeBlockTextSpan.ConstructorWasInvoked)
-        				fallbackTextSpan = fallbackCodeBlockOwner.OpenCodeBlockTextSpan;
-        			else if (fallbackCodeBlockOwner.CloseCodeBlockTextSpan.ConstructorWasInvoked)
-        				fallbackTextSpan = fallbackCodeBlockOwner.CloseCodeBlockTextSpan;
-        				
-        			if (fallbackTextSpan is not null && compilerServiceResource is not null)
-        			{
-        				var fallbackScope = GetScopeByPositionIndex(compilationUnit, resourceUri, fallbackTextSpan.Value.StartInclusiveIndex);
-        				// RETROSPECTIVE: Shouldn't it be checking the 'fallbackScope.ConstructorWasInvoked'?
-        				if (scope.ConstructorWasInvoked)
-        					return GetFallbackNode(compilationUnit, positionIndex, resourceUri, compilerServiceResource, fallbackScope);
-        			}
-        		}
-        	}
-
-        	return null;
-        }
-        	
-        var closestNode = possibleNodeList.MinBy(node =>
-        {
-        	// TODO: Wasteful re-invocation of this method, can probably do this in one invocation.
-        	var nodePositionIndices = GetNodePositionIndices(node, resourceUri);
-        	if (nodePositionIndices == (-1, -1))
-        		return int.MaxValue;
-        	
-        	return positionIndex - nodePositionIndices.StartInclusiveIndex;
-        });
-        
-        if (closestNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-        	return GetChildNodeOrSelfByPositionIndex(closestNode, resourceUri, positionIndex);
-        
-        return closestNode;
-        */
     }
     
     public ISyntaxNode? GetChildNodeOrSelfByPositionIndex(ISyntaxNode node, int positionIndex)
@@ -1669,10 +1507,6 @@ public partial class CSharpBinder
     		}
     		default:
     		{
-    			/*#if DEBUG
-    			Console.WriteLine($"method: '{nameof(GetNodePositionIndices)}' The {nameof(SyntaxKind)}: '{syntaxNode}' defaulted in switch statement.");
-    			#endif*/
-    			
     			return (-1, -1);
     		}
     	}
@@ -1697,8 +1531,6 @@ public partial class CSharpBinder
 		    	}
 		    	return;
 		    case SyntaxKind.TryStatementCatchNode:
-		    	// (2025-03-13) Bug: this is showing as a tooltip for things above it...
-		    	// ...because it takes the TypeClauseNode position indices from 'codeBlockOwner'
 		    	var tryStatementCatchNode = (TryStatementCatchNode)codeBlockOwner;
     		
 	    		if (tryStatementCatchNode.VariableDeclarationNode is not null)
@@ -1726,10 +1558,7 @@ public partial class CSharpBinder
 								primaryConstructorFunctionArgumentListing: default,
 								inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
 								string.Empty,
-								compilationUnit.ResourceUri
-								// FindAllReferences
-								// ,referenceHashSet: new()
-								),
+								compilationUnit.ResourceUri),
 					        compilationUnit,
 					        ref parserModel);
 		    		}

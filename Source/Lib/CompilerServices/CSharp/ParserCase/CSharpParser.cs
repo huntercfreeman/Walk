@@ -26,9 +26,8 @@ public static class CSharpParser
         {
         	// The last statement in this while loop is conditionally: '_ = parserModel.TokenWalker.Consume();'.
         	// Knowing this to be the case is extremely important.
-            var token = parserModel.TokenWalker.Current;
 
-            switch (token.SyntaxKind)
+            switch (parserModel.TokenWalker.Current.SyntaxKind)
             {
                 case SyntaxKind.NumericLiteralToken:
                 case SyntaxKind.CharLiteralToken:
@@ -42,11 +41,11 @@ public static class CSharpParser
                 case SyntaxKind.AtToken:
                 	if (parserModel.StatementBuilder.ChildList.Count == 0)
                 	{
-                		ParseOthers.StartStatement_Expression(compilationUnit, ref parserModel);
+                		_ = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
                 	}
                 	else
                 	{
-                		var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+                		var expressionNode = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
                 		parserModel.StatementBuilder.ChildList.Add(expressionNode);
                 	}
                 	break;
@@ -95,7 +94,7 @@ public static class CSharpParser
                     break;
                 case SyntaxKind.OpenAngleBracketToken:
                 	if (parserModel.StatementBuilder.ChildList.Count == 0)
-                		ParseOthers.StartStatement_Expression(compilationUnit, ref parserModel);
+                		_ = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
                 	else
                     	_ = parserModel.TokenWalker.Consume();
                     break;
@@ -113,7 +112,7 @@ public static class CSharpParser
                 case SyntaxKind.EqualsCloseAngleBracketToken:
                 {
                 	_ = parserModel.TokenWalker.Consume(); // Consume 'EqualsCloseAngleBracketToken'
-                	var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+                	var expressionNode = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
                 	break;
             	}
                 case SyntaxKind.StatementDelimiterToken:
@@ -128,14 +127,14 @@ public static class CSharpParser
                 case SyntaxKind.EndOfFileToken:
                     break;
                 default:
-                    if (UtilityApi.IsContextualKeywordSyntaxKind(token.SyntaxKind))
+                    if (UtilityApi.IsContextualKeywordSyntaxKind(parserModel.TokenWalker.Current.SyntaxKind))
                         ParseTokens.ParseKeywordContextualToken(compilationUnit, ref parserModel);
-                    else if (UtilityApi.IsKeywordSyntaxKind(token.SyntaxKind))
+                    else if (UtilityApi.IsKeywordSyntaxKind(parserModel.TokenWalker.Current.SyntaxKind))
                         ParseTokens.ParseKeywordToken(compilationUnit, ref parserModel);
                     break;
             }
 
-            if (token.SyntaxKind == SyntaxKind.EndOfFileToken)
+            if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EndOfFileToken)
 			{
 				bool deferredParsingOccurred = false;
 				

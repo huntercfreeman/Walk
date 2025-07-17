@@ -53,11 +53,11 @@ public class ParseFunctions
 
 			var openAngleBracketToken = parserModel.TokenWalker.Consume();
     		
-    		parserModel.Binder.ParseGenericParameterNode_Start(
+    		ParseExpressions.ParseGenericParameterNode_Start(
     			functionDefinitionNode, ref openAngleBracketToken, compilationUnit, ref parserModel);
     		
     		parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.FunctionDefinitionNode);
-    		var successGenericParametersListingNode = ParseOthers.TryParseExpression(
+    		var successGenericParametersListingNode = ParseExpressions.TryParseExpression(
     			compilationUnit,
     			ref parserModel,
     			out var expressionNode);
@@ -310,14 +310,14 @@ public class ParseFunctions
 				//
 				// So, explicitly adding this invocation so that the first named parameter parses correctly.
 				//
-				_ = parserModel.Binder.ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(compilationUnit, ref parserModel, guaranteeConsume: true);
+				_ = ParseExpressions.ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(compilationUnit, ref parserModel, guaranteeConsume: true);
 				
 				// This invocation will parse all of the parameters because the 'parserModel.ExpressionList'
 				// contains (SyntaxKind.CommaToken, functionParametersListingNode).
 				//
 				// Upon encountering a CommaToken the expression loop will set 'functionParametersListingNode'
 				// to the primary expression, then return an EmptyExpressionNode in order to parse the next parameter.
-				_ = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+				_ = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
             }
         }
         
@@ -427,7 +427,7 @@ public class ParseFunctions
             
             	var tokenIndexOriginal = parserModel.TokenWalker.Index;
             	
-            	var successParse = ParseOthers.TryParseVariableDeclarationNode(compilationUnit, ref parserModel, out var variableDeclarationNode);
+            	var successParse = ParseExpressions.TryParseVariableDeclarationNode(compilationUnit, ref parserModel, out var variableDeclarationNode);
             	
             	if (successParse)
             	{
@@ -444,7 +444,7 @@ public class ParseFunctions
         				
         				parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
         				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, null));
-        				_ = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+        				_ = ParseExpressions.ParseExpression(compilationUnit, ref parserModel);
         			}
         			else
         			{
