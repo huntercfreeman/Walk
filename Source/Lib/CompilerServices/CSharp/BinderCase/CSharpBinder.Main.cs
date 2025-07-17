@@ -1980,9 +1980,10 @@ public partial class CSharpBinder
 		var query = compilationUnit.CodeBlockOwnerList
 		    .Where(x => x.Unsafe_ParentIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
     		                (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
-    		                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
-    		                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode))
-		    .Select(x => (ISyntaxNode)x);
+    		                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
+		    .Select(x => (ISyntaxNode)x)
+		    .Concat(compilationUnit.NodeList.Where(x => x.Unsafe_ParentIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
+		                x.SyntaxKind == SyntaxKind.VariableDeclarationNode));
 		
         if (typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList is not null)
         {
@@ -2021,10 +2022,11 @@ public partial class CSharpBinder
                 		        {
                 		            return x.Unsafe_ParentIndexKey == innerScopeIndexKey &&
                 		                (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
-                		                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
-                		                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode);
+                		                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode);
         		                })
-                    		    .Select(x => (ISyntaxNode)x));
+                    		    .Select(x => (ISyntaxNode)x))
+                    		    .Concat(innerCompilationUnit.NodeList.Where(x => x.Unsafe_ParentIndexKey == innerScopeIndexKey &&
+                    		                x.SyntaxKind == SyntaxKind.VariableDeclarationNode));
     		            }
         		    }
                     
