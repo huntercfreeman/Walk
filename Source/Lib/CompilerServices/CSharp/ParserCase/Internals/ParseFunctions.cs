@@ -53,7 +53,7 @@ public class ParseFunctions
 
 			var openAngleBracketToken = parserModel.TokenWalker.Consume();
     		
-    		parserModel.Binder.ParseGenericParameterNode_Start(
+    		ParseExpressions.ParseGenericParameterNode_Start(
     			functionDefinitionNode, ref openAngleBracketToken, compilationUnit, ref parserModel);
     		
     		parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.FunctionDefinitionNode);
@@ -310,7 +310,7 @@ public class ParseFunctions
 				//
 				// So, explicitly adding this invocation so that the first named parameter parses correctly.
 				//
-				_ = parserModel.Binder.ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(compilationUnit, ref parserModel, guaranteeConsume: true);
+				_ = ParseExpressions.ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(compilationUnit, ref parserModel, guaranteeConsume: true);
 				
 				// This invocation will parse all of the parameters because the 'parserModel.ExpressionList'
 				// contains (SyntaxKind.CommaToken, functionParametersListingNode).

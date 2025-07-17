@@ -15,7 +15,7 @@ using Walk.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Walk.CompilerServices.CSharp.BinderCase;
 
-public partial class CSharpBinder
+public class CSharpBinder
 {
 	/// <summary>
 	/// This is not thread safe to access because 'BindNamespaceStatementNode(...)' will directly modify the NamespaceGroup's List.
