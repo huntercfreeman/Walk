@@ -19,19 +19,16 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 	private readonly IMenuOptionsFactory _menuOptionsFactory;
 	private readonly TextEditorService _textEditorService;
-	private readonly CommonUtilityService _commonUtilityService;
 
 	public SolutionExplorerTreeViewKeyboardEventHandler(
 			IdeBackgroundTaskApi ideBackgroundTaskApi,
 			IMenuOptionsFactory menuOptionsFactory,
-			TextEditorService textEditorService,
-			CommonUtilityService commonUtilityService)
-		: base(commonUtilityService)
+			TextEditorService textEditorService)
+		: base(textEditorService.CommonUtilityService)
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
 		_menuOptionsFactory = menuOptionsFactory;
 		_textEditorService = textEditorService;
-		_commonUtilityService = commonUtilityService;
 	}
 
 	public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)

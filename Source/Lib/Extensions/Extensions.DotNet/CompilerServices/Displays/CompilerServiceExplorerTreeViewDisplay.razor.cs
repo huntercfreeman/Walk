@@ -28,7 +28,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 	private CompilerServiceExplorerTreeViewMouseEventHandler _compilerServiceExplorerTreeViewMouseEventHandler = null!;
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		TextEditorService.CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private static bool _hasInitialized;
 
@@ -39,11 +39,11 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
 		_compilerServiceExplorerTreeViewKeymap = new CompilerServiceExplorerTreeViewKeyboardEventHandler(
 			IdeBackgroundTaskApi,
-			CommonUtilityService);
+			TextEditorService.CommonUtilityService);
 
 		_compilerServiceExplorerTreeViewMouseEventHandler = new CompilerServiceExplorerTreeViewMouseEventHandler(
 			IdeBackgroundTaskApi,
-			CommonUtilityService);
+			TextEditorService.CommonUtilityService);
 	}
 
 	protected override Task OnAfterRenderAsync(bool firstRender)
@@ -81,13 +81,13 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 			},
 			restoreFocusOnClose: null);
 
-		CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		TextEditorService.CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 
 	private void ReloadOnClick()
 	{
-		CommonUtilityService.Continuous_EnqueueGroup(new BackgroundTask(
+		TextEditorService.CommonUtilityService.Continuous_EnqueueGroup(new BackgroundTask(
 			Key<IBackgroundTaskGroup>.Empty,
 			Do_SetCompilerServiceExplorerTreeView));
 	}
@@ -101,102 +101,102 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 		var compilerServiceExplorerState = DotNetBackgroundTaskApi.CompilerServiceExplorerService.GetCompilerServiceExplorerState();
 
 		var xmlCompilerServiceWatchWindowObject = new WatchWindowObject(
-			CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.XML),
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.XML).GetType(),
+			TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.XML),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.XML).GetType(),
 			"XML",
 			true);
 
 		var dotNetSolutionCompilerServiceWatchWindowObject = new WatchWindowObject(
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION),
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION).GetType(),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION).GetType(),
 			".NET Solution",
 			true);
 
 		var cSharpProjectCompilerServiceWatchWindowObject = new WatchWindowObject(
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_PROJECT),
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_PROJECT).GetType(),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_PROJECT),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_PROJECT).GetType(),
 			"C# Project",
 			true);
 
 		var cSharpCompilerServiceWatchWindowObject = new WatchWindowObject(
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS),
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS).GetType(),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS).GetType(),
 			"C#",
 			true);
 
 		var razorCompilerServiceWatchWindowObject = new WatchWindowObject(
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.RAZOR_MARKUP),
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.RAZOR_MARKUP).GetType(),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.RAZOR_MARKUP),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.RAZOR_MARKUP).GetType(),
 			"Razor",
 			true);
 
 		var cssCompilerServiceWatchWindowObject = new WatchWindowObject(
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.CSS),
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.CSS).GetType(),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.CSS),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.CSS).GetType(),
 			"Css",
 			true);
 
 		var fSharpCompilerServiceWatchWindowObject = new WatchWindowObject(
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.F_SHARP),
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.F_SHARP).GetType(),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.F_SHARP),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.F_SHARP).GetType(),
 			"F#",
 			true);
 
 		var javaScriptCompilerServiceWatchWindowObject = new WatchWindowObject(
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JAVA_SCRIPT),
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JAVA_SCRIPT).GetType(),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JAVA_SCRIPT),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JAVA_SCRIPT).GetType(),
 			"JavaScript",
 			true);
 
 		var typeScriptCompilerServiceWatchWindowObject = new WatchWindowObject(
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TYPE_SCRIPT),
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TYPE_SCRIPT).GetType(),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TYPE_SCRIPT),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TYPE_SCRIPT).GetType(),
 			"TypeScript",
 			true);
 
 		var jsonCompilerServiceWatchWindowObject = new WatchWindowObject(
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JSON),
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JSON).GetType(),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JSON),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JSON).GetType(),
 			"JSON",
 			true);
 
 		var terminalCompilerServiceWatchWindowObject = new WatchWindowObject(
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL),
-            CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL).GetType(),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL),
+            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL).GetType(),
 			"Terminal",
 			true);
 
 		var rootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
-			new TreeViewReflection(xmlCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(dotNetSolutionCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(cSharpProjectCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(cSharpCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(razorCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(cssCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(fSharpCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(javaScriptCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(typeScriptCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(jsonCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(terminalCompilerServiceWatchWindowObject, true, false, CommonUtilityService.CommonComponentRenderers));
+			new TreeViewReflection(xmlCompilerServiceWatchWindowObject, true, false, TextEditorService.CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(dotNetSolutionCompilerServiceWatchWindowObject, true, false, TextEditorService.CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(cSharpProjectCompilerServiceWatchWindowObject, true, false, TextEditorService.CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(cSharpCompilerServiceWatchWindowObject, true, false, TextEditorService.CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(razorCompilerServiceWatchWindowObject, true, false, TextEditorService.CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(cssCompilerServiceWatchWindowObject, true, false, TextEditorService.CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(fSharpCompilerServiceWatchWindowObject, true, false, TextEditorService.CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(javaScriptCompilerServiceWatchWindowObject, true, false, TextEditorService.CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(typeScriptCompilerServiceWatchWindowObject, true, false, TextEditorService.CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(jsonCompilerServiceWatchWindowObject, true, false, TextEditorService.CommonUtilityService.CommonComponentRenderers),
+			new TreeViewReflection(terminalCompilerServiceWatchWindowObject, true, false, TextEditorService.CommonUtilityService.CommonComponentRenderers));
 
 		await rootNode.LoadChildListAsync().ConfigureAwait(false);
 
-		if (!CommonUtilityService.TryGetTreeViewContainer(
+		if (!TextEditorService.CommonUtilityService.TryGetTreeViewContainer(
 				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 				out var treeViewState))
 		{
-			CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
+			TextEditorService.CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
 				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 				rootNode,
 				new List<TreeViewNoType> { rootNode }));
 		}
 		else
 		{
-			CommonUtilityService.TreeView_WithRootNodeAction(
+			TextEditorService.CommonUtilityService.TreeView_WithRootNodeAction(
 				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 				rootNode);
 
-			CommonUtilityService.TreeView_SetActiveNodeAction(
+			TextEditorService.CommonUtilityService.TreeView_SetActiveNodeAction(
 				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 				rootNode,
 				true,
