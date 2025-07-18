@@ -3,21 +3,22 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
+using Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Ide.RazorLib.InputFiles.Models;
 
 public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
-    private readonly IInputFileService _inputFileService;
+    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly Func<AbsolutePath, Task> _setInputFileContentTreeViewRootFunc;
 
     public InputFileTreeViewMouseEventHandler(
         CommonUtilityService commonUtilityService,
-        IInputFileService inputFileService,
+        IdeBackgroundTaskApi ideBackgroundTaskApi,
         Func<AbsolutePath, Task> setInputFileContentTreeViewRootFunc)
         : base(commonUtilityService)
     {
-        _inputFileService = inputFileService;
+        _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
     }
 
@@ -28,7 +29,7 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
         if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-        _inputFileService.SetSelectedTreeViewModel(treeViewAbsolutePath);
+        _ideBackgroundTaskApi.InputFile_SetSelectedTreeViewModel(treeViewAbsolutePath);
     }
 
     public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)

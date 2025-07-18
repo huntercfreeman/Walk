@@ -5,17 +5,14 @@ using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.Exceptions;
 using Walk.Ide.RazorLib.InputFiles.Models;
+using Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Ide.RazorLib.InputFiles.Displays;
 
 public partial class InputFileTopNavBar : ComponentBase
 {
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
-    [Inject]
-    private IInputFileService InputFileService { get; set; } = null!;
-    [Inject]
-    private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
+    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 
     [CascadingParameter(Name="SetInputFileContentTreeViewRootFunc")]
     public Func<AbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
@@ -47,7 +44,7 @@ public partial class InputFileTopNavBar : ComponentBase
     private async Task HandleUpwardButtonOnClick()
     {
         InputFileService.OpenParentDirectory(
-            IdeComponentRenderers,
+            IdeBackgroundTaskApi.IdeComponentRenderers,
             CommonUtilityService,
             parentDirectoryTreeViewModel: null);
 

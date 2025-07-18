@@ -3,15 +3,14 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
+using Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Ide.RazorLib.Terminals.Displays.Internals;
 
 public partial class AddIntegratedTerminalDisplay : ComponentBase
 {
 	[Inject]
-	private TextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-	private ITerminalService TerminalService { get; set; } = null!;
+	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	
 	[CascadingParameter]
 	public IDialog Dialog { get; set; } = null!;

@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Themes.Models;
 using Walk.Common.RazorLib.Options.Models;
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
@@ -12,10 +13,7 @@ using Walk.Ide.RazorLib.InputFiles.Displays;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.FileSystems.Displays;
 using Walk.Ide.RazorLib.FormsGenerics.Displays;
-using Walk.Ide.RazorLib.Commands;
 using Walk.Ide.RazorLib.CommandBars.Models;
-// FindAllReferences
-// using Walk.Ide.RazorLib.FindAllReferences.Models;
 using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
@@ -113,21 +111,12 @@ public static class ServiceCollectionExtensions
         	services.AddScoped<IAppDataService, DoNothingAppDataService>();
 
         services
-            .AddSingleton(ideConfig)
-            .AddSingleton<IIdeComponentRenderers>(_ideComponentRenderers)
-            .AddScoped<IdeBackgroundTaskApi>()
-            .AddScoped<ICommandFactory, CommandFactory>()
-            .AddScoped<IMenuOptionsFactory, MenuOptionsFactory>()
-            .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
-            .AddScoped<ICodeSearchService, CodeSearchService>()
-            .AddScoped<IInputFileService, InputFileService>()
-            .AddScoped<ITerminalService, TerminalService>()
-            .AddScoped<ITerminalGroupService, TerminalGroupService>()
-            .AddScoped<IFolderExplorerService, FolderExplorerService>()
-            .AddScoped<IIdeService, IdeService>()
-            .AddScoped<ICommandBarService, CommandBarService>();
-            // FindAllReferences
-            // .AddScoped<IFindAllReferencesService, FindAllReferencesService>();
+            .AddScoped<IdeBackgroundTaskApi>(sp =>
+            {
+                return new IdeBackgroundTaskApi(
+                    ideConfig,
+                    _ideComponentRenderers);
+            });
 
         return services;
     }

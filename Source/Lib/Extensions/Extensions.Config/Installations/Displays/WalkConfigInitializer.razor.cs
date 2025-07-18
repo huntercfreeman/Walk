@@ -6,6 +6,7 @@ using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Edits.Models;
+using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.InputFiles.Displays;
@@ -38,7 +39,7 @@ namespace Walk.Extensions.Config.Installations.Displays;
 public partial class WalkConfigInitializer : ComponentBase
 {
     [Inject]
-    private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
+    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
@@ -123,7 +124,7 @@ public partial class WalkConfigInitializer : ComponentBase
 
             var pseudoRootNode = new TreeViewAbsolutePath(
                 parentDirectoryAbsolutePath,
-                IdeComponentRenderers,
+                IdeBackgroundTaskApi.IdeComponentRenderers,
                 TextEditorService.CommonUtilityService,
                 true,
                 false);
@@ -162,7 +163,7 @@ public partial class WalkConfigInitializer : ComponentBase
 
             InputFileService.SetOpenedTreeViewModel(
                 pseudoRootNode,
-                IdeComponentRenderers,
+                IdeBackgroundTaskApi.IdeComponentRenderers,
                 TextEditorService.CommonUtilityService);
         }
 

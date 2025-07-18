@@ -13,7 +13,6 @@ using Walk.Common.RazorLib.Contexts.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Ide.RazorLib.Shareds.Displays.Internals;
-using Walk.Ide.RazorLib.Commands;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.JsRuntimes.Models;
@@ -24,17 +23,7 @@ namespace Walk.Ide.RazorLib.Shareds.Displays;
 public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 {
     [Inject]
-    private IIdeService IdeService { get; set; } = null!;
-    [Inject]
-    private TextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
-    [Inject]
-    private ITerminalService TerminalService { get; set; } = null!;
-    [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-    private ICommandFactory CommandFactory { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]

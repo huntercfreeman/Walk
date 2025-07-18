@@ -6,19 +6,14 @@ using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.Shareds.Models;
+using Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Ide.RazorLib.Shareds.Displays;
 
 public partial class StartupControlDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private ITerminalGroupService TerminalGroupService { get; set; } = null!;
-    [Inject]
-    private ITerminalService TerminalService { get; set; } = null!;
-    [Inject]
-    private IIdeService IdeService { get; set; } = null!;
-    [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 
     private const string _startButtonElementId = "di_ide_startup-controls-display_id";
 

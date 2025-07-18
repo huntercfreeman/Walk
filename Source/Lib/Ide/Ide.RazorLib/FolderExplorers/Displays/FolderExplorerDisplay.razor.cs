@@ -12,37 +12,21 @@ namespace Walk.Ide.RazorLib.FolderExplorers.Displays;
 public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IFolderExplorerService FolderExplorerService { get; set; } = null!;
-    [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
-    [Inject]
-    private TextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
-    [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 
     private FolderExplorerTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     private FolderExplorerTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+        IdeBackgroundTaskApi.CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
     protected override void OnInitialized()
     {
-        FolderExplorerService.FolderExplorerStateChanged += OnFolderExplorerStateChanged;
-        CommonUtilityService.AppOptionsStateChanged += OnAppOptionsStateChanged;
+        IdeBackgroundTaskApi.FolderExplorerStateChanged += OnFolderExplorerStateChanged;
+        IdeBackgroundTaskApi.CommonUtilityService.AppOptionsStateChanged += OnAppOptionsStateChanged;
 
-        _treeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(
-            IdeBackgroundTaskApi,
-            TextEditorService,
-            CommonUtilityService);
-
-        _treeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(
-            IdeBackgroundTaskApi,
-            TextEditorService,
-            MenuOptionsFactory,
-            CommonUtilityService);
+        _treeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(IdeBackgroundTaskApi);
+        _treeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(IdeBackgroundTaskApi);
     }
 
     private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)

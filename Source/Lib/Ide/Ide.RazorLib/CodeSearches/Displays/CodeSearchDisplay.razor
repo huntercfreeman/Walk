@@ -4,8 +4,8 @@
 @using Walk.Ide.RazorLib.CodeSearches.Models;
 
 @{
-	var codeSearchState = CodeSearchService.GetCodeSearchState();
-	var appOptionsState = TextEditorService.CommonUtilityService.GetAppOptionsState();
+	var codeSearchState = IdeBackgroundTaskApi.GetCodeSearchState();
+	var appOptionsState = IdeBackgroundTaskApi.CommonUtilityService.GetAppOptionsState();
 }
 
 <div class="di_ide_find-all">
@@ -58,7 +58,7 @@
                   ReRenderFuncAsync="HandleResizableRowReRenderAsync"/>
     
     <div class="di_ide_find-all-bottom-content"
-         style="@codeSearchState.BottomContentElementDimensions.GetStyleString(TextEditorService.CommonUtilityService.UiStringBuilder)">
+         style="@codeSearchState.BottomContentElementDimensions.GetStyleString(IdeBackgroundTaskApi.CommonUtilityService.UiStringBuilder)">
          
          <TextEditorViewModelDisplay TextEditorViewModelKey="codeSearchState.PreviewViewModelKey"
                                      ViewModelDisplayOptions="_textEditorViewModelDisplayOptions" />

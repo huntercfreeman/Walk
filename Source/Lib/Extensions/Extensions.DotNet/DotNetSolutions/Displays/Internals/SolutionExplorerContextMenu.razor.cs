@@ -37,8 +37,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	[Inject]
 	private IDotNetMenuOptionsFactory DotNetMenuOptionsFactory { get; set; } = null!;
 	[Inject]
-	private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
-	[Inject]
 	private DotNetBackgroundTaskApi CompilerServicesBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
@@ -171,7 +169,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			menuOptionList.Add(new MenuOptionRecord(
 				"Delete",
 				MenuOptionKind.Delete,
-				widgetRendererType: IdeComponentRenderers.BooleanPromptOrCancelRendererType,
+				widgetRendererType: IdeBackgroundTaskApi.IdeComponentRenderers.BooleanPromptOrCancelRendererType,
 				widgetParameterMap: new Dictionary<string, object?>
 				{
 					{ nameof(IBooleanPromptOrCancelRendererType.IncludeCancelOption), false },

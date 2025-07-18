@@ -6,30 +6,25 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
+using Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Ide.RazorLib.InputFiles.Models;
 
 public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
-    private readonly IInputFileService _inputFileService;
-    private readonly IIdeComponentRenderers _ideComponentRenderers;
-    private readonly CommonUtilityService _commonUtilityService;
+    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly Func<AbsolutePath, Task> _setInputFileContentTreeViewRootFunc;
     private readonly Func<Task> _focusSearchInputElementFunc;
     private readonly Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> _getSearchMatchTuplesFunc;
 
     public InputFileTreeViewKeyboardEventHandler(
-	        IInputFileService inputFileService,
-	        IIdeComponentRenderers ideComponentRenderers,
-	        CommonUtilityService commonUtilityService,
+	        IdeBackgroundTaskApi ideBackgroundTaskApi,
 	        Func<AbsolutePath, Task> setInputFileContentTreeViewRootFunc,
 	        Func<Task> focusSearchInputElementFunc,
 	        Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc)
-        : base(commonUtilityService)
+        : base(ideBackgroundTaskApi.CommonUtilityService)
     {
-        _inputFileService = inputFileService;
-        _ideComponentRenderers = ideComponentRenderers;
-        _commonUtilityService = commonUtilityService;
+        _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
         _focusSearchInputElementFunc = focusSearchInputElementFunc;
         _getSearchMatchTuplesFunc = getSearchMatchTuplesFunc;
@@ -115,29 +110,29 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 
     private void HandleBackButtonOnClick(TreeViewCommandArgs commandArgs)
     {
-        _inputFileService.MoveBackwardsInHistory();
-        ChangeContentRootToOpenedTreeView(_inputFileService.GetInputFileState());
+        _ideBackgroundTaskApi.InputFile_MoveBackwardsInHistory();
+        ChangeContentRootToOpenedTreeView(_ideBackgroundTaskApi.InputFile_GetInputFileState());
     }
 
     private void HandleForwardButtonOnClick(TreeViewCommandArgs commandArgs)
     {
-        _inputFileService.MoveForwardsInHistory();
-        ChangeContentRootToOpenedTreeView(_inputFileService.GetInputFileState());
+        _ideBackgroundTaskApi.InputFile_MoveForwardsInHistory();
+        ChangeContentRootToOpenedTreeView(_ideBackgroundTaskApi.InputFile_GetInputFileState());
     }
 
     private void HandleUpwardButtonOnClick(TreeViewCommandArgs commandArgs)
     {
-        _inputFileService.OpenParentDirectory(
-            _ideComponentRenderers,
-            _commonUtilityService,
+        _ideBackgroundTaskApi.InputFile_OpenParentDirectory(
+            _ideBackgroundTaskApi.IdeComponentRenderers,
+            _ideBackgroundTaskApi.CommonUtilityService,
             parentDirectoryTreeViewModel: null);
 
-        ChangeContentRootToOpenedTreeView(_inputFileService.GetInputFileState());
+        ChangeContentRootToOpenedTreeView(_ideBackgroundTaskApi.InputFile_GetInputFileState());
     }
 
     private void HandleRefreshButtonOnClick(TreeViewCommandArgs commandArgs)
     {
-        _inputFileService.RefreshCurrentSelection(currentSelection: null);
+        _ideBackgroundTaskApi.InputFile_RefreshCurrentSelection(currentSelection: null);
         ChangeContentRootToOpenedTreeView(_inputFileService.GetInputFileState());
     }
 
@@ -157,7 +152,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         if (treeViewAbsolutePath is null)
             return;
 
-        _inputFileService.SetSelectedTreeViewModel(treeViewAbsolutePath);
+        _ideBackgroundTaskApi.InputFile_SetSelectedTreeViewModel(treeViewAbsolutePath);
         return;
     }
 

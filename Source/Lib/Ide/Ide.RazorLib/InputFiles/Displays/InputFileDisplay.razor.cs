@@ -7,17 +7,14 @@ using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
+using Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Ide.RazorLib.InputFiles.Displays;
 
 public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, IDisposable
 {
     [Inject]
-    private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
-    [Inject]
-    private IInputFileService InputFileService { get; set; } = null!;
-    [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 
     /// <summary>
     /// Receives the <see cref="_selectedAbsolutePath"/> as
@@ -85,7 +82,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
 
         _inputFileTreeViewKeyboardEventHandler = new InputFileTreeViewKeyboardEventHandler(
             InputFileService,
-            IdeComponentRenderers,
+            IdeBackgroundTaskApi.IdeComponentRenderers,
             CommonUtilityService,
             SetInputFileContentTreeViewRootFunc,
             async () =>
@@ -146,7 +143,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
     {
         var pseudoRootNode = new TreeViewAbsolutePath(
             absolutePath,
-            IdeComponentRenderers,
+            IdeBackgroundTaskApi.IdeComponentRenderers,
             CommonUtilityService,
             true,
             false);
@@ -186,7 +183,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
 
         InputFileService.SetOpenedTreeViewModel(
             pseudoRootNode,
-            IdeComponentRenderers,
+            IdeBackgroundTaskApi.IdeComponentRenderers,
             CommonUtilityService);
     }
     

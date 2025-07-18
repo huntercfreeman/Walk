@@ -9,21 +9,20 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
+using Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Ide.RazorLib.Terminals.Models;
 
 public sealed class TerminalCompilerService : ICompilerService
 {
-    private readonly TextEditorService _textEditorService;
-    private readonly ITerminalService _terminalService;
+    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     
     private readonly Dictionary<ResourceUri, TerminalResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
 
-	public TerminalCompilerService(TextEditorService textEditorService, ITerminalService terminalService)
+	public TerminalCompilerService(IdeBackgroundTaskApi ideBackgroundTaskApi)
 	{
-		_textEditorService = textEditorService;
-		_terminalService = terminalService;
+		_ideBackgroundTaskApi = ideBackgroundTaskApi;
 	}
 
     public event Action? ResourceRegistered;

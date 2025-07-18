@@ -2,15 +2,14 @@ using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
+using Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Ide.RazorLib.InputFiles.Displays;
 
 public partial class InputFileBottomControls : ComponentBase
 {
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
-    [Inject]
-    private IInputFileService InputFileService { get; set; } = null!;
+    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 
     [CascadingParameter]
     public IDialog? DialogRecord { get; set; }

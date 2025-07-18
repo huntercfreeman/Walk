@@ -6,6 +6,7 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.Options.Models;
+using Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Ide.RazorLib.Terminals.Models;
 
@@ -14,8 +15,7 @@ namespace Walk.Ide.RazorLib.Terminals.Models;
 /// </summary>
 public class Terminal : ITerminal, IBackgroundTaskGroup
 {
-	private readonly CommonUtilityService _commonUtilityService;
-	private readonly ITerminalService _terminalService;
+    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 	
 	/// <summary>The TArgs of byte is unused</summary>
 	private readonly ThrottleOptimized<byte> _throttleUiUpdateFromSetHasExecutingProcess;
@@ -25,16 +25,14 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 		Func<Terminal, ITerminalInteractive> terminalInteractiveFactory,
 		Func<Terminal, ITerminalInput> terminalInputFactory,
 		Func<Terminal, ITerminalOutput> terminalOutputFactory,
-		CommonUtilityService commonUtilityService,
-		ITerminalService terminalService)
+		IdeBackgroundTaskApi ideBackgroundTaskApi)
 	{
 		DisplayName = displayName;
 		TerminalInteractive = terminalInteractiveFactory.Invoke(this);
 		TerminalInput = terminalInputFactory.Invoke(this);
 		TerminalOutput = terminalOutputFactory.Invoke(this);
 		
-		_commonUtilityService = commonUtilityService;
-		_terminalService = terminalService;
+		_ideBackgroundTaskApi = ideBackgroundTaskApi;
 		
 		_throttleUiUpdateFromSetHasExecutingProcess = new(
 			DelaySetHasExecutingProcess,

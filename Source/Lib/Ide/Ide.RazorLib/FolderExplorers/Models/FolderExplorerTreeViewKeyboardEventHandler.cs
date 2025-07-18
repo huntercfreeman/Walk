@@ -17,21 +17,11 @@ namespace Walk.Ide.RazorLib.FolderExplorers.Models;
 public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-    private readonly TextEditorService _textEditorService;
-    private readonly IMenuOptionsFactory _menuOptionsFactory;
-    private readonly CommonUtilityService _commonUtilityService;
 
-    public FolderExplorerTreeViewKeyboardEventHandler(
-            IdeBackgroundTaskApi ideBackgroundTaskApi,
-            TextEditorService textEditorService,
-            IMenuOptionsFactory menuOptionsFactory,
-            CommonUtilityService commonUtilityService)
-        : base(commonUtilityService)
+    public FolderExplorerTreeViewKeyboardEventHandler(IdeBackgroundTaskApi ideBackgroundTaskApi)
+        : base(ideBackgroundTaskApi.CommonUtilityService)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
-        _textEditorService = textEditorService;
-        _menuOptionsFactory = menuOptionsFactory;
-        _commonUtilityService = commonUtilityService;
     }
 
     public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
@@ -107,7 +97,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return Task.CompletedTask;
 
-        var copyFileMenuOption = _menuOptionsFactory.CopyFile(
+        var copyFileMenuOption = _ideBackgroundTaskApi.MenuOptionsFactory.CopyFile(
             treeViewAbsolutePath.Item,
             () =>
             {

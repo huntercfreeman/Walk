@@ -10,13 +10,14 @@ using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
+using Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Ide.RazorLib.InputFiles.Displays;
 
 public partial class InputFileSidebar : ComponentBase
 {
     [Inject]
-    private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
+    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
@@ -44,14 +45,14 @@ public partial class InputFileSidebar : ComponentBase
         {
             var directoryHomeNode = new TreeViewAbsolutePath(
                 CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath,
-                IdeComponentRenderers,
+                IdeBackgroundTaskApi.IdeComponentRenderers,
                 CommonUtilityService,
                 true,
                 false);
 
             var directoryRootNode = new TreeViewAbsolutePath(
                 CommonUtilityService.EnvironmentProvider.RootDirectoryAbsolutePath,
-                IdeComponentRenderers,
+                IdeBackgroundTaskApi.IdeComponentRenderers,
                 CommonUtilityService,
                 true,
                 false);
