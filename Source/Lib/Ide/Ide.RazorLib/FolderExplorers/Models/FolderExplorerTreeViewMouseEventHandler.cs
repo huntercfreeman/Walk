@@ -11,13 +11,13 @@ namespace Walk.Ide.RazorLib.FolderExplorers.Models;
 
 public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
-    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
+    private readonly IdeService _ideService;
 
     public FolderExplorerTreeViewMouseEventHandler(
-            IdeBackgroundTaskApi ideBackgroundTaskApi)
-        : base(ideBackgroundTaskApi.CommonUtilityService)
+            IdeService ideService)
+        : base(ideService.CommonUtilityService)
     {
-        _ideBackgroundTaskApi = ideBackgroundTaskApi;
+        _ideService = ideService;
     }
 
     public override async Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
@@ -27,7 +27,7 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
         if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-		_ideBackgroundTaskApi.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+		_ideService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
 		{
 			await _ideBackgroundTaskApi.TextEditorService.OpenInEditorAsync(
 				editContext,

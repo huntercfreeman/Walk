@@ -13,7 +13,7 @@ namespace Walk.Ide.RazorLib.Terminals.Displays;
 public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+	private IdeService IdeService { get; set; } = null!;
 	
 	[Parameter, EditorRequired]
 	public ITerminal Terminal { get; set; } = null!;

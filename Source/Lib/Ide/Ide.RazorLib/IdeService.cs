@@ -101,15 +101,17 @@ using Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 using Walk.Ide.RazorLib.Menus.Models;
 
-namespace Walk.Ide.RazorLib.BackgroundTasks.Models;
+using Walk.Ide.RazorLib.CommandBars.Models;
 
-public class IdeBackgroundTaskApi : IBackgroundTaskGroup
+namespace Walk.Ide.RazorLib;
+
+public class IdeService : IBackgroundTaskGroup
 {
 	public static readonly Key<TextEditorGroup> EditorTextEditorGroupKey = Key<TextEditorGroup>.NewKey();
 
 	private readonly IServiceProvider _serviceProvider;
 
-    public IdeBackgroundTaskApi(
+    public IdeService(
         WalkIdeConfig ideConfig,
         IIdeComponentRenderers ideComponentRenderers,
         TextEditorService textEditorService,
@@ -2504,10 +2506,6 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     /* End IIdeService */
     
     /* Start MenuOptionsFactory */
-    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-
-    private readonly Queue<MenuOptionsFactoryWorkKind> _workKindQueue = new();
-
     public MenuOptionRecord NewEmptyFile(AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("New Empty File", MenuOptionKind.Create,
@@ -2975,68 +2973,10 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
         return newDirectoryInfo;
     }
-
-    public ValueTask HandleEvent()
-    {
-        MenuOptionsFactoryWorkKind workKind;
-
-        lock (_workLock)
-        {
-            if (!_workKindQueue.TryDequeue(out workKind))
-                return ValueTask.CompletedTask;
-        }
-
-        switch (workKind)
-        {
-            case MenuOptionsFactoryWorkKind.PerformNewFile:
-            {
-                var args = _queue_PerformNewFile.Dequeue();
-                return Do_PerformNewFile(
-                    args.fileName, args.exactMatchFileTemplate, args.relatedMatchFileTemplatesList, args.namespacePath, args.onAfterCompletion);
-            }
-            case MenuOptionsFactoryWorkKind.PerformNewDirectory:
-            {
-                var args = _queue_PerformNewDirectory.Dequeue();
-                return Do_PerformNewDirectory(
-                    args.directoryName, args.parentDirectory, args.onAfterCompletion);
-            }
-            case MenuOptionsFactoryWorkKind.PerformDeleteFile:
-            {
-                var args = _queue_general_AbsolutePath_FuncTask.Dequeue();
-                return Do_PerformDeleteFile(
-                    args.absolutePath, args.onAfterCompletion);
-            }
-            case MenuOptionsFactoryWorkKind.PerformCopyFile:
-            {
-                var args = _queue_general_AbsolutePath_FuncTask.Dequeue();
-                return Do_PerformCopyFile(
-                    args.absolutePath, args.onAfterCompletion);
-            }
-            case MenuOptionsFactoryWorkKind.PerformCutFile:
-            {
-                var args = _queue_general_AbsolutePath_FuncTask.Dequeue();
-                return Do_PerformCutFile(
-                    args.absolutePath, args.onAfterCompletion);
-            }
-            case MenuOptionsFactoryWorkKind.PerformPasteFile:
-            {
-                var args = _queue_general_AbsolutePath_FuncTask.Dequeue();
-                return Do_PerformPasteFile(
-                    args.absolutePath, args.onAfterCompletion);
-            }
-            default:
-            {
-                Console.WriteLine($"{nameof(MenuOptionsFactory)} {nameof(HandleEvent)} default case");
-				return ValueTask.CompletedTask;
-            }
-        }
-    }
     /* End MenuOptionsFactory */
     
     /* Start CommandBar */
-    namespace Walk.Ide.RazorLib.CommandBars.Models;
-
-	private CommandBarState _commandBarState = new();
+    private CommandBarState _commandBarState = new();
 
 	public event Action? CommandBarStateChanged;
 	

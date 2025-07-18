@@ -10,7 +10,7 @@ namespace Walk.Ide.RazorLib.Terminals.Displays;
 public partial class TerminalGroupDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    private IdeService IdeService { get; set; } = null!;
 
 	private Key<IDynamicViewModel> _addIntegratedTerminalDialogKey = Key<IDynamicViewModel>.NewKey();
 

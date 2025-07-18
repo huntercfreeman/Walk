@@ -13,7 +13,7 @@ namespace Walk.Ide.RazorLib.Shareds.Displays;
 public partial class StartupControlDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    private IdeService IdeService { get; set; } = null!;
 
     private const string _startButtonElementId = "di_ide_startup-controls-display_id";
 

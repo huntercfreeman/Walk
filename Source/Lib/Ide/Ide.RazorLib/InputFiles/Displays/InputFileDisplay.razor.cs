@@ -14,7 +14,7 @@ namespace Walk.Ide.RazorLib.InputFiles.Displays;
 public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, IDisposable
 {
     [Inject]
-    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    private IdeService IdeService { get; set; } = null!;
 
     /// <summary>
     /// Receives the <see cref="_selectedAbsolutePath"/> as

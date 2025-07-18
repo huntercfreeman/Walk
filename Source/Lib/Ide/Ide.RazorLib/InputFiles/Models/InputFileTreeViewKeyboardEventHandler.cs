@@ -12,19 +12,19 @@ namespace Walk.Ide.RazorLib.InputFiles.Models;
 
 public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
-    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
+    private readonly IdeService _ideService;
     private readonly Func<AbsolutePath, Task> _setInputFileContentTreeViewRootFunc;
     private readonly Func<Task> _focusSearchInputElementFunc;
     private readonly Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> _getSearchMatchTuplesFunc;
 
     public InputFileTreeViewKeyboardEventHandler(
-	        IdeBackgroundTaskApi ideBackgroundTaskApi,
+	        IdeService ideService,
 	        Func<AbsolutePath, Task> setInputFileContentTreeViewRootFunc,
 	        Func<Task> focusSearchInputElementFunc,
 	        Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc)
         : base(ideBackgroundTaskApi.CommonUtilityService)
     {
-        _ideBackgroundTaskApi = ideBackgroundTaskApi;
+        _ideService = ideService;
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
         _focusSearchInputElementFunc = focusSearchInputElementFunc;
         _getSearchMatchTuplesFunc = getSearchMatchTuplesFunc;

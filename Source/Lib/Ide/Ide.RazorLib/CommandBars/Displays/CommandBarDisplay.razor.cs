@@ -8,15 +8,13 @@ namespace Walk.Ide.RazorLib.CommandBars.Displays;
 public partial class CommandBarDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private ICommandBarService CommandBarService { get; set; } = null!;
-	[Inject]
-	private CommonUtilityService CommonUtilityService { get; set; } = null!;
+	private IdeService IdeService { get; set; } = null!;
 	
 	public const string INPUT_HTML_ELEMENT_ID = "di_ide_command-bar-input-id";
 		
 	protected override void OnInitialized()
 	{
-		CommandBarService.CommandBarStateChanged += OnCommandBarStateChanged;
+		IdeService.CommandBarStateChanged += OnCommandBarStateChanged;
 	}
 	
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -42,6 +40,6 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
 	
 	public void Dispose()
 	{
-		CommandBarService.CommandBarStateChanged -= OnCommandBarStateChanged;
+		IdeService.CommandBarStateChanged -= OnCommandBarStateChanged;
 	}
 }

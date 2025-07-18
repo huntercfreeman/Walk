@@ -1,6 +1,6 @@
 @using Walk.Common.RazorLib.OutOfBoundsClicks.Displays
 
-@{ var commandBarState = CommandBarService.GetCommandBarState(); }
+@{ var commandBarState = IdeService.GetCommandBarState(); }
 
 <div class="di_ide_command-bar">
 	<input @onkeydown="HandleOnKeyDown"

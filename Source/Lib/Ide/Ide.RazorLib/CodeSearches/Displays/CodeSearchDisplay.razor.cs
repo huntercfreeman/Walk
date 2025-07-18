@@ -12,7 +12,7 @@ namespace Walk.Ide.RazorLib.CodeSearches.Displays;
 public partial class CodeSearchDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+	private IdeService IdeService { get; set; } = null!;
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 	
@@ -20,7 +20,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	private CodeSearchTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		IdeBackgroundTaskApi.TextEditorService.CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		IdeService.TextEditorService.CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private readonly ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
 	{
@@ -29,38 +29,38 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 
     private string InputValue
 	{
-		get => IdeBackgroundTaskApi.GetCodeSearchState().Query;
+		get => IdeService.GetCodeSearchState().Query;
 		set
 		{
 			if (value is null)
 				value = string.Empty;
 
-			IdeBackgroundTaskApi.CodeSearch_With(inState => inState with
+			IdeService.CodeSearch_With(inState => inState with
 			{
 				Query = value,
 			});
 
-			IdeBackgroundTaskApi.CodeSearch_HandleSearchEffect();
+			IdeService.CodeSearch_HandleSearchEffect();
 		}
 	}
 	
 	protected override void OnInitialized()
 	{
-		IdeBackgroundTaskApi.CodeSearchStateChanged += OnCodeSearchStateChanged;
-		IdeBackgroundTaskApi.CommonUtilityService.TreeViewStateChanged += OnTreeViewStateChanged;
+		IdeService.CodeSearchStateChanged += OnCodeSearchStateChanged;
+		IdeService.CommonUtilityService.TreeViewStateChanged += OnTreeViewStateChanged;
 	
 		_treeViewKeymap = new CodeSearchTreeViewKeyboardEventHandler(
-			IdeBackgroundTaskApi.TextEditorService,
+			IdeService.TextEditorService,
 			ServiceProvider);
 
 		_treeViewMouseEventHandler = new CodeSearchTreeViewMouseEventHandler(
-			IdeBackgroundTaskApi.TextEditorService,
+			IdeService.TextEditorService,
 			ServiceProvider);
 	}
 	
 	protected override void OnAfterRender(bool firstRender)
 	{
-		IdeBackgroundTaskApi.CodeSearch_updateContentThrottle.Run(_ => IdeBackgroundTaskApi.CodeSearch_UpdateContent(ResourceUri.Empty));
+		IdeService.CodeSearch_updateContentThrottle.Run(_ => IdeService.CodeSearch_UpdateContent(ResourceUri.Empty));
 	}
 	
 	private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
@@ -79,13 +79,13 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 			},
 			null);
 
-		IdeBackgroundTaskApi.CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		IdeService.CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 
 	private string GetIsActiveCssClass(CodeSearchFilterKind codeSearchFilterKind)
 	{
-		return IdeBackgroundTaskApi.GetCodeSearchState().CodeSearchFilterKind == codeSearchFilterKind
+		return IdeService.GetCodeSearchState().CodeSearchFilterKind == codeSearchFilterKind
 			? "di_active"
 			: string.Empty;
 	}
@@ -107,7 +107,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	IdeBackgroundTaskApi.CodeSearchStateChanged -= OnCodeSearchStateChanged;
-    	IdeBackgroundTaskApi.CommonUtilityService.TreeViewStateChanged -= OnTreeViewStateChanged;
+    	IdeService.CodeSearchStateChanged -= OnCodeSearchStateChanged;
+    	IdeService.CommonUtilityService.TreeViewStateChanged -= OnTreeViewStateChanged;
     }
 }

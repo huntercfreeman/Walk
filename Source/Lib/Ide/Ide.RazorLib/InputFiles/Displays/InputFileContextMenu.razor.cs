@@ -14,9 +14,7 @@ namespace Walk.Ide.RazorLib.InputFiles.Displays;
 public partial class InputFileContextMenu : ComponentBase
 {
     [Inject]
-    private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
-    [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private IdeService IdeService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TreeViewCommandArgs TreeViewCommandArgs { get; set; }

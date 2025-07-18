@@ -12,18 +12,18 @@ namespace Walk.Ide.RazorLib.FolderExplorers.Displays;
 public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    private IdeService IdeService { get; set; } = null!;
 
     private FolderExplorerTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     private FolderExplorerTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        IdeBackgroundTaskApi.CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+        IdeService.CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
     protected override void OnInitialized()
     {
-        IdeBackgroundTaskApi.FolderExplorerStateChanged += OnFolderExplorerStateChanged;
-        IdeBackgroundTaskApi.CommonUtilityService.AppOptionsStateChanged += OnAppOptionsStateChanged;
+        IdeService.FolderExplorerStateChanged += OnFolderExplorerStateChanged;
+        IdeService.CommonUtilityService.AppOptionsStateChanged += OnAppOptionsStateChanged;
 
         _treeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(IdeBackgroundTaskApi);
         _treeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(IdeBackgroundTaskApi);
@@ -45,7 +45,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 			},
 			restoreFocusOnClose: null);
 
-        CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        IdeService.CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 	
@@ -61,7 +61,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        FolderExplorerService.FolderExplorerStateChanged -= OnFolderExplorerStateChanged;
-        CommonUtilityService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
+        IdeService.FolderExplorerStateChanged -= OnFolderExplorerStateChanged;
+        IdeService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
     }
 }

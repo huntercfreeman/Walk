@@ -16,12 +16,12 @@ namespace Walk.Ide.RazorLib.FolderExplorers.Models;
 
 public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
-    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
+    private readonly IdeService _ideService;
 
-    public FolderExplorerTreeViewKeyboardEventHandler(IdeBackgroundTaskApi ideBackgroundTaskApi)
-        : base(ideBackgroundTaskApi.CommonUtilityService)
+    public FolderExplorerTreeViewKeyboardEventHandler(IdeService ideService)
+        : base(ideService.CommonUtilityService)
     {
-        _ideBackgroundTaskApi = ideBackgroundTaskApi;
+        _ideService = ideService;
     }
 
     public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
@@ -97,11 +97,11 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return Task.CompletedTask;
 
-        var copyFileMenuOption = _ideBackgroundTaskApi.MenuOptionsFactory.CopyFile(
+        var copyFileMenuOption = _ideService.CopyFile(
             treeViewAbsolutePath.Item,
             () =>
             {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewAbsolutePath.Item.NameWithExtension}", _commonUtilityService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewAbsolutePath.Item.NameWithExtension}", _ideService.CommonUtilityService, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
@@ -122,7 +122,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
         if (treeViewAbsolutePath.Item.IsDirectory)
         {
-            pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
+            pasteMenuOptionRecord = _ideService.PasteClipboard(
                 treeViewAbsolutePath.Item,
                 async () =>
                 {
@@ -139,11 +139,11 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         {
             var parentDirectory = treeViewAbsolutePath.Item.ParentDirectory;
 
-            var parentDirectoryAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+            var parentDirectoryAbsolutePath = _ideService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
                 parentDirectory,
                 true);
 
-            pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
+            pasteMenuOptionRecord = _ideService.PasteClipboard(
                 parentDirectoryAbsolutePath,
                 async () =>
                 {
@@ -172,12 +172,12 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
         var parent = treeViewAbsolutePath.Parent as TreeViewAbsolutePath;
 
-        MenuOptionRecord cutFileOptionRecord = _menuOptionsFactory.CutFile(
+        MenuOptionRecord cutFileOptionRecord = _ideService.CutFile(
             treeViewAbsolutePath.Item,
             () =>
             {
                 FolderExplorerContextMenu.ParentOfCutFile = parent;
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.NameWithExtension}", _commonUtilityService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.NameWithExtension}", _ideService.CommonUtilityService, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
@@ -194,7 +194,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return Task.CompletedTask;
 
-		_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
+		_ideService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
 		{
 			await _textEditorService.OpenInEditorAsync(
 				editContext,
@@ -214,11 +214,11 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
         await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-        _commonUtilityService.TreeView_ReRenderNodeAction(
+        _ideService.CommonUtilityService.TreeView_ReRenderNodeAction(
             FolderExplorerState.TreeViewContentStateKey,
             treeViewModel);
 
-        _commonUtilityService.TreeView_MoveUpAction(
+        _ideService.CommonUtilityService.TreeView_MoveUpAction(
             FolderExplorerState.TreeViewContentStateKey,
             false,
 			false);

@@ -10,7 +10,7 @@ namespace Walk.Ide.RazorLib.Terminals.Displays.Internals;
 public partial class AddIntegratedTerminalDisplay : ComponentBase
 {
 	[Inject]
-	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+	private IdeService IdeService { get; set; } = null!;
 	
 	[CascadingParameter]
 	public IDialog Dialog { get; set; } = null!;

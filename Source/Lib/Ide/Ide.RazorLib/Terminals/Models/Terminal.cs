@@ -15,7 +15,7 @@ namespace Walk.Ide.RazorLib.Terminals.Models;
 /// </summary>
 public class Terminal : ITerminal, IBackgroundTaskGroup
 {
-    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
+    private readonly IdeService _ideService;
 	
 	/// <summary>The TArgs of byte is unused</summary>
 	private readonly ThrottleOptimized<byte> _throttleUiUpdateFromSetHasExecutingProcess;
@@ -25,14 +25,14 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 		Func<Terminal, ITerminalInteractive> terminalInteractiveFactory,
 		Func<Terminal, ITerminalInput> terminalInputFactory,
 		Func<Terminal, ITerminalOutput> terminalOutputFactory,
-		IdeBackgroundTaskApi ideBackgroundTaskApi)
+		IdeService ideService)
 	{
 		DisplayName = displayName;
 		TerminalInteractive = terminalInteractiveFactory.Invoke(this);
 		TerminalInput = terminalInputFactory.Invoke(this);
 		TerminalOutput = terminalOutputFactory.Invoke(this);
 		
-		_ideBackgroundTaskApi = ideBackgroundTaskApi;
+		_ideService = ideService;
 		
 		_throttleUiUpdateFromSetHasExecutingProcess = new(
 			DelaySetHasExecutingProcess,

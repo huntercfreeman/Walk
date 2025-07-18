@@ -15,9 +15,7 @@ namespace Walk.Ide.RazorLib.FolderExplorers.Displays;
 public partial class FolderExplorerContextMenu : ComponentBase
 {
     [Inject]
-    private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
-    [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private IdeService IdeService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TreeViewCommandArgs TreeViewCommandArgs { get; set; }

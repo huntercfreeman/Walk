@@ -12,7 +12,7 @@ namespace Walk.Ide.RazorLib.InputFiles.Displays;
 public partial class InputFileTopNavBar : ComponentBase
 {
     [Inject]
-    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    private IdeService IdeService { get; set; } = null!;
 
     [CascadingParameter(Name="SetInputFileContentTreeViewRootFunc")]
     public Func<AbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;

@@ -9,7 +9,7 @@ namespace Walk.Ide.RazorLib.InputFiles.Displays;
 public partial class InputFileBottomControls : ComponentBase
 {
     [Inject]
-    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    private IdeService IdeService { get; set; } = null!;
 
     [CascadingParameter]
     public IDialog? DialogRecord { get; set; }

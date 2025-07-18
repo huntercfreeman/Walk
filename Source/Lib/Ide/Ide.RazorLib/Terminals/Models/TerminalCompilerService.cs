@@ -15,14 +15,14 @@ namespace Walk.Ide.RazorLib.Terminals.Models;
 
 public sealed class TerminalCompilerService : ICompilerService
 {
-    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
+    private readonly IdeService _ideService;
     
     private readonly Dictionary<ResourceUri, TerminalResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
 
-	public TerminalCompilerService(IdeBackgroundTaskApi ideBackgroundTaskApi)
+	public TerminalCompilerService(IdeService ideService)
 	{
-		_ideBackgroundTaskApi = ideBackgroundTaskApi;
+		_ideService = ideService;
 	}
 
     public event Action? ResourceRegistered;

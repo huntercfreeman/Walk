@@ -9,16 +9,16 @@ namespace Walk.Ide.RazorLib.InputFiles.Models;
 
 public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
-    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
+    private readonly IdeService _ideService;
     private readonly Func<AbsolutePath, Task> _setInputFileContentTreeViewRootFunc;
 
     public InputFileTreeViewMouseEventHandler(
         CommonUtilityService commonUtilityService,
-        IdeBackgroundTaskApi ideBackgroundTaskApi,
+        IdeService ideService,
         Func<AbsolutePath, Task> setInputFileContentTreeViewRootFunc)
         : base(commonUtilityService)
     {
-        _ideBackgroundTaskApi = ideBackgroundTaskApi;
+        _ideService = ideService;
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
     }
 

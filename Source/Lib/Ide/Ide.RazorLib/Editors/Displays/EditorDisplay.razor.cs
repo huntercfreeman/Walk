@@ -16,9 +16,7 @@ namespace Walk.Ide.RazorLib.Editors.Displays;
 public partial class EditorDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-    private TextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-	private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private IdeService IdeService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions EditorElementDimensions { get; set; } = null!;
@@ -58,7 +56,7 @@ public partial class EditorDisplay : ComponentBase, IDisposable
     private async void TextEditorGroupWrapOnStateChanged()
     {
     	var textEditorGroup = TextEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
-	        x => x.GroupKey == IdeBackgroundTaskApi.EditorTextEditorGroupKey);
+	        x => x.GroupKey == IdeService.EditorTextEditorGroupKey);
 	        
 	    if (_previousActiveViewModelKey != textEditorGroup.ActiveViewModelKey)
 	    {
