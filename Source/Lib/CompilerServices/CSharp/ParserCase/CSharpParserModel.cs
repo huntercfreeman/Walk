@@ -821,7 +821,7 @@ public struct CSharpParserModel
     	CSharpCompilationUnit compilationUnit,
     	int scopeIndexKey,
     	string typeIdentifierText,
-        TypeDefinitionNode? typeDefinitionNode)
+        TypeDefinitionNode typeDefinitionNode)
     {
         TypeDefinitionNode? matchNode = null;
         foreach (var x in compilationUnit.CodeBlockOwnerList)
