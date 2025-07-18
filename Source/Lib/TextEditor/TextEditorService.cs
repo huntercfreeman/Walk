@@ -90,12 +90,6 @@ public sealed class TextEditorService
 #endif
 
     public string ThemeCssClassString { get; set; }
-
-    public TextEditorModelApi ModelApi { get; }
-    public TextEditorViewModelApi ViewModelApi { get; }
-    public TextEditorGroupApi GroupApi { get; }
-    public TextEditorDiffApi DiffApi { get; }
-    public TextEditorOptionsApi OptionsApi { get; }
     
     public TextEditorState TextEditorState { get; }
     
@@ -870,4 +864,29 @@ public sealed class TextEditorService
 
         CommonUtilityService.RegisterKeymapLayer(Walk.TextEditor.RazorLib.Keymaps.Models.Defaults.TextEditorKeymapDefaultFacts.HasSelectionLayer);
     }
+    
+    
+    /* Start ModelApi */
+    public TextEditorModelApi ModelApi { get; }
+    /* End ModelApi */
+    
+    
+    /* Start ViewModelApi */
+    public TextEditorViewModelApi ViewModelApi { get; }
+    /* End ViewModelApi */
+    
+    
+    /* Start GroupApi */
+    public TextEditorGroupApi GroupApi { get; }
+    /* End GroupApi */
+    
+    
+    /* Start DiffApi */
+    public TextEditorDiffApi DiffApi { get; }
+    /* End DiffApi */
+    
+    
+    /* Start OptionsApi */
+    public TextEditorOptionsApi OptionsApi { get; }
+    /* End OptionsApi */
 }
