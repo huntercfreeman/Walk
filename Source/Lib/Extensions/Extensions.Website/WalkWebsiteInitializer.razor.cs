@@ -18,31 +18,15 @@ namespace Walk.Website.RazorLib;
 public partial class WalkWebsiteInitializer : ComponentBase
 {
     [Inject]
-    private ITextEditorRegistryWrap TextEditorRegistryWrap { get; set; } = null!;
-    [Inject]
-    private IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
-    [Inject]
-    private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
-    [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private ITextEditorHeaderRegistry TextEditorHeaderRegistry { get; set; } = null!;
-    [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
-
-    protected override void OnInitialized()
-    {
-        TextEditorRegistryWrap.DecorationMapperRegistry = DecorationMapperRegistry;
-        TextEditorRegistryWrap.CompilerServiceRegistry = CompilerServiceRegistry;
-    }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-        	CommonUtilityService.Continuous_EnqueueGroup(new BackgroundTask(
+        	TextEditorService.CommonUtilityService.Continuous_EnqueueGroup(new BackgroundTask(
         		Key<IBackgroundTaskGroup>.Empty,
         		Do_WalkWebsiteInitializerOnAfterRenderAsync));
         }
@@ -58,17 +42,17 @@ public partial class WalkWebsiteInitializer : ComponentBase
 
         // This code block is hacky. I want the Solution Explorer to from the get-go be fully expanded, so the user can see 'Program.cs'
         {
-            CommonUtilityService.TreeView_MoveRight(
+            TextEditorService.CommonUtilityService.TreeView_MoveRight(
                 DotNetSolutionState.TreeViewSolutionExplorerStateKey,
                 false,
                 false);
 
-            CommonUtilityService.TreeView_MoveRight(
+            TextEditorService.CommonUtilityService.TreeView_MoveRight(
                 DotNetSolutionState.TreeViewSolutionExplorerStateKey,
                 false,
                 false);
 
-            CommonUtilityService.TreeView_MoveRight(
+            TextEditorService.CommonUtilityService.TreeView_MoveRight(
                 DotNetSolutionState.TreeViewSolutionExplorerStateKey,
             false,
                 false);
@@ -81,20 +65,20 @@ public partial class WalkWebsiteInitializer : ComponentBase
         await WebsiteProjectTemplateFacts.HandleNewCSharpProjectAsync(
                 WebsiteProjectTemplateFacts.BlazorWasmEmptyProjectTemplate.ShortName!,
                 InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_CSPROJ_ABSOLUTE_FILE_PATH,
-                CommonUtilityService)
+                TextEditorService.CommonUtilityService)
             .ConfigureAwait(false);
 
-        await CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
+        await TextEditorService.CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
                 InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.PERSON_CS_CONTENTS)
             .ConfigureAwait(false);
 
-        await CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
+        await TextEditorService.CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CS_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CS_CONTENTS)
             .ConfigureAwait(false);
 
-        await CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
+        await TextEditorService.CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CONTENTS)
             .ConfigureAwait(false);
@@ -105,19 +89,19 @@ public partial class WalkWebsiteInitializer : ComponentBase
             .ConfigureAwait(false);*/
 
         // ExampleSolution.sln
-        await CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
+        await TextEditorService.CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
                 InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.SLN_CONTENTS)
             .ConfigureAwait(false);
 
-        var solutionAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+        var solutionAbsolutePath = TextEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
             InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
             false);
 
         // This line is also in WalkExtensionsDotNetInitializer,
         // but its duplicated here because the website
         // won't open the first file correctly without this.
-        TextEditorHeaderRegistry.UpsertHeader("cs", typeof(Walk.Extensions.CompilerServices.Displays.TextEditorCompilerServiceHeaderDisplay));
+        TextEditorService.UpsertHeader("cs", typeof(Walk.Extensions.CompilerServices.Displays.TextEditorCompilerServiceHeaderDisplay));
 
         DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
         {
@@ -139,11 +123,11 @@ public partial class WalkWebsiteInitializer : ComponentBase
         {
             foreach (var directory in directories)
             {
-                var childDirectories = await CommonUtilityService.FileSystemProvider.Directory
+                var childDirectories = await TextEditorService.CommonUtilityService.FileSystemProvider.Directory
                     .GetDirectoriesAsync(directory)
                     .ConfigureAwait(false);
                 allFiles.AddRange(
-                    await CommonUtilityService.FileSystemProvider.Directory.GetFilesAsync(directory).ConfigureAwait(false));
+                    await TextEditorService.CommonUtilityService.FileSystemProvider.Directory.GetFilesAsync(directory).ConfigureAwait(false));
 
                 await RecursiveStep(childDirectories, allFiles).ConfigureAwait(false);
             }
@@ -151,13 +135,13 @@ public partial class WalkWebsiteInitializer : ComponentBase
 
         foreach (var file in allFiles)
         {
-            var absolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(file, false);
+            var absolutePath = TextEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(file, false);
             var resourceUri = new ResourceUri(file);
-            var fileLastWriteTime = await CommonUtilityService.FileSystemProvider.File.GetLastWriteTimeAsync(file).ConfigureAwait(false);
-            var content = await CommonUtilityService.FileSystemProvider.File.ReadAllTextAsync(file).ConfigureAwait(false);
+            var fileLastWriteTime = await TextEditorService.CommonUtilityService.FileSystemProvider.File.GetLastWriteTimeAsync(file).ConfigureAwait(false);
+            var content = await TextEditorService.CommonUtilityService.FileSystemProvider.File.ReadAllTextAsync(file).ConfigureAwait(false);
 
-            var decorationMapper = DecorationMapperRegistry.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
-            var compilerService = CompilerServiceRegistry.GetCompilerService(absolutePath.ExtensionNoPeriod);
+            var decorationMapper = TextEditorService.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
+            var compilerService = TextEditorService.GetCompilerService(absolutePath.ExtensionNoPeriod);
 
             var textEditorModel = new TextEditorModel(
                 resourceUri,
@@ -207,7 +191,7 @@ public partial class WalkWebsiteInitializer : ComponentBase
 		TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
 		{
 			// Display a file from the get-go so the user is less confused on what the website is.
-	        var absolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+	        var absolutePath = TextEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 	            InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
 	            false);
 		
