@@ -152,7 +152,6 @@ public sealed class JsonCompilerService : ICompilerService
         bool ctrlKey,
         bool altKey,
 		TextEditorComponentData componentData,
-		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
     {
     	return ValueTask.CompletedTask;
@@ -164,7 +163,6 @@ public sealed class JsonCompilerService : ICompilerService
 		TextEditorViewModel viewModelModifier,
 		int positionIndex,
 		TextEditorComponentData componentData,
-		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
     {
     	return ValueTask.CompletedTask;

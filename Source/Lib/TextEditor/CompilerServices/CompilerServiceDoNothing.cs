@@ -95,7 +95,6 @@ public class CompilerServiceDoNothing : ICompilerService
         bool ctrlKey,
         bool altKey,
 		TextEditorComponentData componentData,
-		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
     {
     	return ValueTask.CompletedTask;
@@ -107,7 +106,6 @@ public class CompilerServiceDoNothing : ICompilerService
 		TextEditorViewModel viewModelModifier,
 		int positionIndex,
 		TextEditorComponentData componentData,
-		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
     {
     	return ValueTask.CompletedTask;

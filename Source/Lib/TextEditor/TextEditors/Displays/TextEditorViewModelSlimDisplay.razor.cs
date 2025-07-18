@@ -30,11 +30,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     [Inject]
     public IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
-    public IWalkTextEditorComponentRenderers TextEditorComponentRenderers { get; set; } = null!;
-    [Inject]
     public CommonUtilityService CommonUtilityService { get; set; } = null!;
-    [Inject]
-    public WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
     public IFindAllService FindAllService { get; set; } = null!;
 
@@ -493,7 +489,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                                 mouseMoveMouseEventArgs.CtrlKey,
                                 mouseMoveMouseEventArgs.AltKey,
 								_componentData,
-								TextEditorComponentRenderers,
 			                    viewModelModifier.PersistentState.ResourceUri);
 			            });
 

@@ -19,16 +19,13 @@ public sealed class TextEditorOptionsApi
 	public const int TAB_WIDTH_MAX = 4;
 
     private readonly TextEditorService _textEditorService;
-    private readonly WalkTextEditorConfig _textEditorConfig;
     private readonly CommonUtilityService _commonUtilityService;
 
     public TextEditorOptionsApi(
         TextEditorService textEditorService,
-        WalkTextEditorConfig textEditorConfig,
         CommonUtilityService commonUtilityService)
     {
         _textEditorService = textEditorService;
-        _textEditorConfig = textEditorConfig;
         _commonUtilityService = commonUtilityService;
     }
     
@@ -77,10 +74,10 @@ public sealed class TextEditorOptionsApi
         var settingsDialog = new DialogViewModel(
             Key<IDynamicViewModel>.NewKey(),
             "Text Editor Settings",
-            _textEditorConfig.SettingsDialogConfig.ComponentRendererType,
+            _textEditorService.TextEditorConfig.SettingsDialogConfig.ComponentRendererType,
             null,
             cssClassString,
-            isResizableOverride ?? _textEditorConfig.SettingsDialogConfig.ComponentIsResizable,
+            isResizableOverride ?? _textEditorService.TextEditorConfig.SettingsDialogConfig.ComponentIsResizable,
             null);
 
         _commonUtilityService.Dialog_ReduceRegisterAction(settingsDialog);
@@ -93,10 +90,10 @@ public sealed class TextEditorOptionsApi
         _findAllDialog ??= new DialogViewModel(
             Key<IDynamicViewModel>.NewKey(),
             "Find All",
-            _textEditorConfig.FindAllDialogConfig.ComponentRendererType,
+            _textEditorService.TextEditorConfig.FindAllDialogConfig.ComponentRendererType,
             null,
             cssClassString,
-            isResizableOverride ?? _textEditorConfig.FindAllDialogConfig.ComponentIsResizable,
+            isResizableOverride ?? _textEditorService.TextEditorConfig.FindAllDialogConfig.ComponentIsResizable,
             null);
 
         _commonUtilityService.Dialog_ReduceRegisterAction(_findAllDialog);

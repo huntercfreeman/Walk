@@ -757,7 +757,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         bool ctrlKey,
         bool altKey,
 		TextEditorComponentData componentData,
-		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
     {
     	// Lazily calculate row and column index a second time. Otherwise one has to calculate it every mouse moved event.
@@ -801,7 +800,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     };
 
                     viewModelModifier.PersistentState.TooltipModel = new Walk.Common.RazorLib.Tooltips.Models.TooltipModel<(TextEditorService TextEditorService, Key<TextEditorViewModel> ViewModelKey, int PositionIndex)>(
-	                    modelModifier.PersistentState.CompilerService.DiagnosticRendererType ?? textEditorComponentRenderers.DiagnosticRendererType,
+	                    modelModifier.PersistentState.CompilerService.DiagnosticRendererType ?? _textEditorService.TextEditorComponentRenderers.DiagnosticRendererType,
 	                    parameterMap,
 	                    clientX,
 	                    clientY,
@@ -864,7 +863,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		TextEditorViewModel viewModelModifier,
 		int positionIndex,
 		TextEditorComponentData componentData,
-		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
     {
     	return;

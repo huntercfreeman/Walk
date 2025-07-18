@@ -200,8 +200,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                modelModifier,
 		                viewModel,
 		                componentData.TextEditorViewModelSlimDisplay.TextEditorService,
-		                componentData,
-		                componentData.TextEditorViewModelSlimDisplay.TextEditorComponentRenderers);
+		                componentData);
 		            shouldRevealCursor = true;
 		            break;
 	            case "KeyM":
@@ -372,7 +371,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 							viewModel,
 							modelModifier.GetPositionIndex(viewModel),
 							componentData,
-							componentData.TextEditorViewModelSlimDisplay.TextEditorComponentRenderers,
 					        modelModifier.PersistentState.ResourceUri);
 	            	}
 	            	else

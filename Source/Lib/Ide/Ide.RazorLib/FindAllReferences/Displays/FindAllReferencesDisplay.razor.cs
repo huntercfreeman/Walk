@@ -29,8 +29,6 @@ public partial class FindAllReferencesDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
-	private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
-	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;

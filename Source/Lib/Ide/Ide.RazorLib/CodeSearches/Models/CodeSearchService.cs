@@ -19,7 +19,6 @@ public class CodeSearchService : ICodeSearchService
 	private readonly Throttle _throttle = new(TimeSpan.FromMilliseconds(300));
     private readonly CommonUtilityService _commonUtilityService;
     private readonly TextEditorService _textEditorService;
-    private readonly WalkTextEditorConfig _textEditorConfig;
     private readonly IServiceProvider _serviceProvider;
     
     // Moving things from 'CodeSearchDisplay.razor.cs'
@@ -29,12 +28,10 @@ public class CodeSearchService : ICodeSearchService
     public CodeSearchService(
         CommonUtilityService commonUtilityService,
         TextEditorService textEditorService,
-        WalkTextEditorConfig textEditorConfig,
         IServiceProvider serviceProvider)
     {
         _commonUtilityService = commonUtilityService;
         _textEditorService = textEditorService;
-        _textEditorConfig = textEditorConfig;
         _serviceProvider = serviceProvider;
     }
     
@@ -285,16 +282,16 @@ public class CodeSearchService : ICodeSearchService
 			var filePath = treeViewCodeSearchTextSpan.AbsolutePath.Value;
 			var resourceUri = new ResourceUri(treeViewCodeSearchTextSpan.AbsolutePath.Value);
 	
-	        if (_textEditorConfig.RegisterModelFunc is null)
+	        if (_textEditorService.TextEditorConfig.RegisterModelFunc is null)
 	            return;
 	
-	        await _textEditorConfig.RegisterModelFunc.Invoke(
+	        await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(
 	                new RegisterModelArgs(editContext, resourceUri, _commonUtilityService, _textEditorService.IdeBackgroundTaskApi))
 	            .ConfigureAwait(false);
 	
-	        if (_textEditorConfig.TryRegisterViewModelFunc is not null)
+	        if (_textEditorService.TextEditorConfig.TryRegisterViewModelFunc is not null)
 	        {
-	            var viewModelKey = await _textEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
+	            var viewModelKey = await _textEditorService.TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
 	            		editContext,
 	                    outPreviewViewModelKey,
 	                    resourceUri,
@@ -305,7 +302,7 @@ public class CodeSearchService : ICodeSearchService
 	                .ConfigureAwait(false);
 	
 	            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
-	                _textEditorConfig.TryShowViewModelFunc is not null)
+	                _textEditorService.TextEditorConfig.TryShowViewModelFunc is not null)
 	            {
 	                With(inState => inState with
 	                {

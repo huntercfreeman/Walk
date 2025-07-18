@@ -9,18 +9,15 @@ namespace Walk.Extensions.DotNet.Outputs.Models;
 public class OutputTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
 	private readonly TextEditorService _textEditorService;
-	private readonly WalkTextEditorConfig _textEditorConfig;
 	private readonly IServiceProvider _serviceProvider;
 
 	public OutputTreeViewMouseEventHandler(
 			TextEditorService textEditorService,
-			WalkTextEditorConfig textEditorConfig,
 			IServiceProvider serviceProvider,
 			CommonUtilityService commonUtilityService)
 		: base(commonUtilityService)
 	{
 		_textEditorService = textEditorService;
-		_textEditorConfig = textEditorConfig;
 		_serviceProvider = serviceProvider;
 	}
 

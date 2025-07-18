@@ -11,19 +11,16 @@ namespace Walk.Ide.RazorLib.FindAllReferences.Models;
 public class FindAllReferencesTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
 	private readonly ITextEditorService _textEditorService;
-	private readonly WalkTextEditorConfig _textEditorConfig;
 	private readonly IServiceProvider _serviceProvider;
 
 	public FindAllReferencesTreeViewMouseEventHandler(
 			ITextEditorService textEditorService,
-			WalkTextEditorConfig textEditorConfig,
 			IServiceProvider serviceProvider,
 			ITreeViewService treeViewService,
 			IBackgroundTaskService backgroundTaskService)
 		: base(treeViewService, backgroundTaskService)
 	{
 		_textEditorService = textEditorService;
-		_textEditorConfig = textEditorConfig;
 		_serviceProvider = serviceProvider;
 	}
 
