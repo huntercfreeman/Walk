@@ -13,10 +13,6 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
-	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
-	[Inject]
-	private CommonUtilityService CommonUtilityService { get; set; } = null!;
-	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	
 	[CascadingParameter]
@@ -31,7 +27,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 	{
 		var terminalCommandRequest = new TerminalCommandRequest(
         	"bash -c \"type bash\"",
-        	CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+        	TextEditorService.CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
         	TypeBashTerminalCommandRequestKey)
         {
         	ContinueWithFunc = parsedCommand =>
@@ -72,10 +68,8 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 				terminal,
 				new TerminalOutputFormatterExpand(
 					terminal,
-					TextEditorService,
-					CompilerServiceRegistry,
-					CommonUtilityService)),
-			CommonUtilityService,
+					TextEditorService)),
+			TextEditorService.CommonUtilityService,
 			_pathToShellExecutable)
 		{
 			Key = Key<ITerminal>.NewKey()
@@ -85,6 +79,6 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 		
 		TerminalService.Register(terminalIntegrated);
 			
-		CommonUtilityService.Dialog_ReduceDisposeAction(Dialog.DynamicViewModelKey);
+		TextEditorService.CommonUtilityService.Dialog_ReduceDisposeAction(Dialog.DynamicViewModelKey);
 	}
 }

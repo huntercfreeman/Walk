@@ -15,8 +15,6 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
-	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
-	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
 	
 	[Parameter, EditorRequired]

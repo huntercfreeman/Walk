@@ -19,8 +19,6 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 	[Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
-    [Inject]
 	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
     [Parameter, EditorRequired]
@@ -55,7 +53,7 @@ public partial class EditorDisplay : ComponentBase, IDisposable
         _componentDataKey = new Key<TextEditorComponentData>(_viewModelDisplayOptions.TextEditorHtmlElementId);
         
         TextEditorService.Group_TextEditorGroupStateChanged += TextEditorGroupWrapOnStateChanged;
-        DirtyResourceUriService.DirtyResourceUriStateChanged += DirtyResourceUriServiceOnStateChanged;
+        TextEditorService.DirtyResourceUriStateChanged += DirtyResourceUriServiceOnStateChanged;
     }
 
     private async void TextEditorGroupWrapOnStateChanged()
@@ -104,6 +102,6 @@ public partial class EditorDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         TextEditorService.Group_TextEditorGroupStateChanged -= TextEditorGroupWrapOnStateChanged;
-        DirtyResourceUriService.DirtyResourceUriStateChanged -= DirtyResourceUriServiceOnStateChanged;
+        TextEditorService.DirtyResourceUriStateChanged -= DirtyResourceUriServiceOnStateChanged;
     }
 }

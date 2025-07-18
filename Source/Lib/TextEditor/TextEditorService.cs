@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.JSInterop;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Keys.Models;
@@ -7,6 +8,9 @@ using Walk.Common.RazorLib.JsRuntimes.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.Options.Models;
+using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
+using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.Lines.Models;
 using Walk.TextEditor.RazorLib.Diffs.Models;
 using Walk.TextEditor.RazorLib.FindAlls.Models;
@@ -73,17 +77,12 @@ namespace Walk.TextEditor.RazorLib;
 
 public sealed class TextEditorService
 {
-    private readonly IDirtyResourceUriService _dirtyResourceUriService;
-    private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
     private readonly IJSRuntime _jsRuntime;
     private readonly IServiceProvider _serviceProvider;
 
     public TextEditorService(
         WalkTextEditorConfig textEditorConfig,
         IWalkTextEditorComponentRenderers textEditorComponentRenderers,
-        IFindAllService findAllService,
-        IDirtyResourceUriService dirtyResourceUriService,
-        ITextEditorRegistryWrap textEditorRegistryWrap,
         IJSRuntime jsRuntime,
         CommonUtilityService commonUtilityService,
 		IServiceProvider serviceProvider)
@@ -105,12 +104,8 @@ public sealed class TextEditorService
     	    });
 		
 		_serviceProvider = serviceProvider;
-
-        FindAllService = findAllService;
-        _dirtyResourceUriService = dirtyResourceUriService;
         TextEditorConfig = textEditorConfig;
         TextEditorComponentRenderers = textEditorComponentRenderers;
-        _textEditorRegistryWrap = textEditorRegistryWrap;
         _jsRuntime = jsRuntime;
 		JsRuntimeTextEditorApi = _jsRuntime.GetWalkTextEditorApi();
         
@@ -118,7 +113,6 @@ public sealed class TextEditorService
     }
 
     public CommonUtilityService CommonUtilityService { get; }
-    public IFindAllService FindAllService { get; }
 
 	public WalkTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
 	public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi => CommonUtilityService.JsRuntimeCommonApi;
@@ -297,9 +291,9 @@ public sealed class TextEditorService
             	model.IsDirty = modelModifier.IsDirty;
             
                 if (modelModifier.IsDirty)
-                    _dirtyResourceUriService.AddDirtyResourceUri(modelModifier.PersistentState.ResourceUri);
+                    AddDirtyResourceUri(modelModifier.PersistentState.ResourceUri);
                 else
-                    _dirtyResourceUriService.RemoveDirtyResourceUri(modelModifier.PersistentState.ResourceUri);
+                    RemoveDirtyResourceUri(modelModifier.PersistentState.ResourceUri);
             }
             
 			TextEditorState._modelMap[modelModifier.PersistentState.ResourceUri] = modelModifier;
@@ -928,8 +922,8 @@ public sealed class TextEditorService
             resourceLastWriteTime,
             overrideDisplayTextForFileExtension ?? extensionNoPeriod,
             initialContent,
-            _textEditorRegistryWrap.DecorationMapperRegistry.GetDecorationMapper(extensionNoPeriod),
-            _textEditorRegistryWrap.CompilerServiceRegistry.GetCompilerService(extensionNoPeriod),
+            GetDecorationMapper(extensionNoPeriod),
+            GetCompilerService(extensionNoPeriod),
             this);
 
         RegisterModel(editContext, model);
@@ -1244,7 +1238,6 @@ public sealed class TextEditorService
 			viewModelKey,
 			resourceUri,
 			this,
-			CommonUtilityService,
 			TextEditorVirtualizationResult.ConstructEmpty(),
 			new TextEditorDimensions(0, 0, 0, 0),
 			scrollLeft: 0,
@@ -3593,4 +3586,491 @@ public sealed class TextEditorService
             Options_SetShowWhitespace(optionsJson.ShowWhitespace.Value, false);
     }
     /* End OptionsApi */
+    
+    
+    /* Start ITextEditorRegistryWrap */
+    private Dictionary<string, IDecorationMapper> _decorationMapperMap { get; } = new();
+
+    public IReadOnlyDictionary<string, IDecorationMapper> Map => _decorationMapperMap;
+
+    public TextEditorDecorationMapperDefault DefaultDecorationMapper { get; }
+
+    public IDecorationMapper GetDecorationMapper(string extensionNoPeriod)
+    {
+        if (_decorationMapperMap.TryGetValue(extensionNoPeriod, out var decorationMapper))
+            return decorationMapper;
+
+        return DefaultDecorationMapper;
+    }
+    
+    private readonly Dictionary<string, ICompilerService> _compilerServiceMap = new();
+
+    public IReadOnlyList<ICompilerService> CompilerServiceList => _compilerServiceMap.Values.ToList();
+
+    public CompilerServiceDoNothing CompilerServiceDoNothing { get; }
+    
+    public ICompilerService GetCompilerService(string extensionNoPeriod)
+    {
+        if (_compilerServiceMap.TryGetValue(extensionNoPeriod, out var compilerService))
+            return compilerService;
+
+        return CompilerServiceDoNothing;
+    }
+    /* End ITextEditorRegistryWrap */
+    
+    
+    /* Start ITextEditorHeaderRegistry */
+    /// <summary>
+	/// Map an 'extensionNoPeriod' to a 'Type' that inherits 'ComponentBase'.
+	/// </summary>
+	private readonly Dictionary<string, Type?> _map = new();
+
+    public Type? GetHeader(string extensionNoPeriod)
+    {
+    	if (_map.TryGetValue(extensionNoPeriod, out var type))
+    		return type;
+    	else
+    		return typeof(TextEditorDefaultHeaderDisplay);
+    }
+    
+    public void UpsertHeader(string extensionNoPeriod, Type? type)
+    {
+    	if (_map.ContainsKey(extensionNoPeriod))
+    		_map[extensionNoPeriod] = type;
+    	else
+    		_map.Add(extensionNoPeriod, type);
+    }
+    
+    public void RemoveHeader(string extensionNoPeriod)
+    {
+		_map.Remove(extensionNoPeriod);
+    }
+    /* End ITextEditorHeaderRegistry */
+    
+    
+    /* Start IFindAllService */
+    private readonly object _stateModificationLock = new();
+
+	private readonly CommonUtilityService _commonUtilityService;
+	private readonly Throttle _throttleSetSearchQuery = new Throttle(TimeSpan.FromMilliseconds(500));
+	private readonly Throttle _throttleUiUpdate = new Throttle(ThrottleFacts.TwentyFour_Frames_Per_Second);
+	
+	private readonly object _flushSearchResultsLock = new();
+	
+    /// <summary>
+    /// Each instance of the state will share this cancellation token source because the 'with' keyword
+    /// will copy any private members too, and <see cref="CancellationTokenSource"/> is a reference type.
+    /// </summary>
+    private CancellationTokenSource _searchCancellationTokenSource = new();
+	
+	private TextEditorFindAllState _findAllState = new();
+	
+	public event Action? FindAllStateChanged;
+	
+	public TextEditorFindAllState GetFindAllState() => _findAllState;
+    
+    public void SetSearchQuery(string searchQuery)
+    {
+		lock (_stateModificationLock)
+		{
+			_findAllState = _findAllState with
+			{
+				SearchQuery = searchQuery
+			};
+        }
+
+        FindAllStateChanged?.Invoke();
+    }
+
+    public void SetStartingDirectoryPath(string startingDirectoryPath)
+    {
+		lock (_stateModificationLock)
+		{
+			_findAllState = _findAllState with
+			{
+				StartingDirectoryPath = startingDirectoryPath
+			};
+        }
+
+        FindAllStateChanged?.Invoke();
+    }
+
+    public void CancelSearch()
+    {
+		lock (_stateModificationLock)
+		{
+			_searchCancellationTokenSource.Cancel();
+			_searchCancellationTokenSource = new();
+
+			_findAllState = _findAllState with { };
+        }
+
+        FindAllStateChanged?.Invoke();
+    }
+
+    public void SetProgressBarModel(ProgressBarModel progressBarModel)
+    {
+		lock (_stateModificationLock)
+		{
+			_findAllState = _findAllState with
+			{
+				ProgressBarModel = progressBarModel,
+			};
+        }
+
+        FindAllStateChanged?.Invoke();
+    }
+
+    public void FlushSearchResults(List<(string SourceText, ResourceUri ResourceUri, TextEditorTextSpan TextSpan)> searchResultList)
+    {
+		lock (_stateModificationLock)
+		{
+			var inState = GetFindAllState();
+
+			List<(string SourceText, ResourceUri ResourceUri, TextEditorTextSpan TextSpan)> localSearchResultList;
+			lock (_flushSearchResultsLock)
+			{
+				localSearchResultList = new List<(string SourceText, ResourceUri ResourceUri, TextEditorTextSpan TextSpan)>(inState.SearchResultList);
+				localSearchResultList.AddRange(searchResultList);
+				searchResultList.Clear();
+			}
+
+			_findAllState = inState with
+			{
+				SearchResultList = localSearchResultList
+			};
+        }
+
+        FindAllStateChanged?.Invoke();
+    }
+
+    public void ClearSearch()
+    {
+		lock (_stateModificationLock)
+		{
+			var inState = GetFindAllState();
+
+			_findAllState = inState with
+			{
+				SearchResultList = new()
+			};
+        }
+
+        FindAllStateChanged?.Invoke();
+    }
+	
+	public Task HandleStartSearchAction()
+	{
+    	_throttleSetSearchQuery.Run(async _ =>
+		{
+			CancelSearch();
+			ClearSearch();
+			
+			var textEditorFindAllState = GetFindAllState();
+
+			if (string.IsNullOrWhiteSpace(textEditorFindAllState.StartingDirectoryPath) ||
+				string.IsNullOrWhiteSpace(textEditorFindAllState.SearchQuery))
+			{
+				return;
+			}
+			
+			var cancellationToken = _searchCancellationTokenSource.Token;
+			var progressBarModel = new ProgressBarModel();
+
+			ConstructTreeView(textEditorFindAllState);
+
+			SetProgressBarModel(progressBarModel);
+			
+			try
+			{
+				await StartSearchTask(
+					progressBarModel,
+					textEditorFindAllState,
+					cancellationToken);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+			}
+		});
+
+		return Task.CompletedTask;
+	}
+	
+	private async Task StartSearchTask(
+		ProgressBarModel progressBarModel,
+		TextEditorFindAllState textEditorFindAllState,
+		CancellationToken cancellationToken)
+	{
+		var filesProcessedCount = 0;
+		var textSpanList = new List<(string SourceText, ResourceUri ResourceUri, TextEditorTextSpan TextSpan)>();
+		var searchException = (Exception?)null;
+		
+		try
+		{
+			ShowFilesProcessedCountOnUi(0);
+			await RecursiveSearch(textEditorFindAllState.StartingDirectoryPath);
+		}
+		catch (Exception e)
+		{
+			searchException = e;
+		}
+		finally
+		{
+			FlushSearchResults(textSpanList);
+		
+			if (searchException is null)
+			{
+				ShowFilesProcessedCountOnUi(1, true);
+			}
+			else
+			{
+				progressBarModel.SetProgress(
+					progressBarModel.DecimalPercentProgress,
+					searchException.ToString());
+					
+				progressBarModel.Dispose();
+				// The use of '_textEditorFindAllStateWrap.Value' is purposeful.
+				ConstructTreeView(GetFindAllState());
+				SetProgressBarModel(progressBarModel);
+			}
+		}
+		
+		async Task RecursiveSearch(string directoryPath)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			
+			// Considering the use a breadth first algorithm
+
+			// Search Files
+			{
+				var childFileList = await CommonUtilityService.FileSystemProvider.Directory
+					.GetFilesAsync(directoryPath)
+					.ConfigureAwait(false);
+	
+				foreach (var childFile in childFileList)
+				{
+					// TODO: Don't hardcode file extensions here to avoid searching through them.
+					//       Reason being, hardcoding them isn't going to work well as a long term solution.
+					//       How does one detect if a file is not text?
+					//       |
+					//       I seem to get away with opening some non-text files, but I think a gif I opened
+					//       had 1 million characters in it? So this takes 2 million bytes in a 2byte char?
+					//       I'm not sure exactly what happened, I opened the gif and the app froze,
+					//       I saw the character only at a glance. (2024-07-20)
+					if (!childFile.EndsWith(".jpg") &&
+						!childFile.EndsWith(".png") &&
+						!childFile.EndsWith(".pdf") &&
+						!childFile.EndsWith(".gif"))
+					{
+						await PerformSearchFile(childFile).ConfigureAwait(false);
+					}
+					
+					filesProcessedCount++;
+					ShowFilesProcessedCountOnUi(0);
+				}
+			}
+	
+			// Recurse into subdirectories
+			{
+				var subdirectoryList = await CommonUtilityService.FileSystemProvider.Directory
+					.GetDirectoriesAsync(directoryPath)
+					.ConfigureAwait(false);
+	
+				foreach (var subdirectory in subdirectoryList)
+				{
+					if (IFileSystemProvider.IsDirectoryIgnored(subdirectory))
+						continue;
+	
+					await RecursiveSearch(subdirectory).ConfigureAwait(false);
+				}
+			}
+		}
+		
+		async Task PerformSearchFile(string filePath)
+		{
+			var text = await CommonUtilityService.FileSystemProvider.File.ReadAllTextAsync(filePath).ConfigureAwait(false);
+			var query = textEditorFindAllState.SearchQuery;
+				
+	        var matchedTextSpanList = new List<(string SourceText, ResourceUri ResourceUri, TextEditorTextSpan TextSpan)>();
+	
+	        for (int outerI = 0; outerI < text.Length; outerI++)
+	        {
+	            if (outerI + query.Length <= text.Length)
+	            {
+	                int innerI = 0;
+	                for (; innerI < query.Length; innerI++)
+	                {
+	                    if (text[outerI + innerI] != query[innerI])
+	                        break;
+	                }
+	
+	                if (innerI == query.Length)
+	                {
+	                    // Then the entire query was matched
+	                    matchedTextSpanList.Add(
+	                    	(
+	                    		text,
+	                    		new ResourceUri(filePath),
+		                    	new TextEditorTextSpan(
+			                        outerI,
+			                        outerI + innerI,
+			                        (byte)FindOverlayDecorationKind.LongestCommonSubsequence)
+	                        ));
+	                }
+	            }
+	        }
+	
+	        foreach (var matchedTextSpan in matchedTextSpanList)
+	        {
+				textSpanList.Add(matchedTextSpan);
+	        }
+		}
+		
+		void ShowFilesProcessedCountOnUi(double decimalPercentProgress, bool shouldDisposeProgressBarModel = false)
+		{
+			_throttleUiUpdate.Run(_ =>
+			{
+				progressBarModel.SetProgress(
+					decimalPercentProgress,
+					$"{filesProcessedCount:N0} files processed");
+					
+				if (shouldDisposeProgressBarModel)
+				{
+					progressBarModel.Dispose();
+					// The use of 'GetFindAllState()' is purposeful.
+					ConstructTreeView(GetFindAllState());
+					SetProgressBarModel(progressBarModel);
+				}
+					
+				return Task.CompletedTask;
+			});
+		}
+	}
+	
+	private void ConstructTreeView(TextEditorFindAllState textEditorFindAllState)
+	{
+		var groupedResults = textEditorFindAllState.SearchResultList.GroupBy(x => x.ResourceUri);
+	
+	    var treeViewList = groupedResults.Select(group =>
+	    {
+	    	var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+	    		group.Key.Value,
+	    		false);
+	    		
+	    	return (TreeViewNoType)new TreeViewFindAllGroup(
+		        group.Select(textSpan => new TreeViewFindAllTextSpan(
+		        	textSpan,
+		        	absolutePath,
+		        	false,
+		        	false)).ToList(),
+		        absolutePath,
+				true,
+				false);
+	    }).ToArray();
+	
+	    var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(treeViewList);
+	    var firstNode = treeViewList.FirstOrDefault();
+	
+	    IReadOnlyList<TreeViewNoType> activeNodes = firstNode is null
+	        ? Array.Empty<TreeViewNoType>()
+	        : new List<TreeViewNoType> { firstNode };
+	
+	    if (!_commonUtilityService.TryGetTreeViewContainer(TextEditorFindAllState.TreeViewFindAllContainerKey, out _))
+	    {
+	        _commonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
+	            TextEditorFindAllState.TreeViewFindAllContainerKey,
+	            adhocRoot,
+	            activeNodes));
+	    }
+	    else
+	    {
+	        _commonUtilityService.TreeView_WithRootNodeAction(TextEditorFindAllState.TreeViewFindAllContainerKey, adhocRoot);
+	
+	        _commonUtilityService.TreeView_SetActiveNodeAction(
+	            TextEditorFindAllState.TreeViewFindAllContainerKey,
+	            firstNode,
+	            true,
+	            false);
+	    }
+	}
+	
+	public void Dispose()
+	{
+		CancelSearch();
+	}
+	
+	public record struct TextEditorFindAllState(
+    	string SearchQuery,
+    	string StartingDirectoryPath,
+    	List<(string SourceText, ResourceUri ResourceUri, TextEditorTextSpan TextSpan)> SearchResultList,
+    	ProgressBarModel? ProgressBarModel)
+    {
+    	public static readonly Key<TreeViewContainer> TreeViewFindAllContainerKey = Key<TreeViewContainer>.NewKey();
+    
+        public TextEditorFindAllState() : this(
+        	string.Empty,
+        	string.Empty,
+        	new(),
+        	null)
+        {
+        }
+    }
+    /* End IFindAllService */
+    
+    
+    /* Start IDirtyResourceUriService */
+    private DirtyResourceUriState _dirtyResourceUriState = new();
+	
+	public event Action DirtyResourceUriStateChanged;
+	
+	public DirtyResourceUriState GetDirtyResourceUriState() => _dirtyResourceUriState;
+
+    public void AddDirtyResourceUri(ResourceUri resourceUri)
+    {
+        lock (_stateModificationLock)
+        {
+            if (!resourceUri.Value.StartsWith(ResourceUriFacts.Terminal_ReservedResourceUri_Prefix) &&
+                !resourceUri.Value.StartsWith(ResourceUriFacts.Git_ReservedResourceUri_Prefix))
+            {
+                if (resourceUri != ResourceUriFacts.SettingsPreviewTextEditorResourceUri &&
+                    resourceUri != ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri)
+                {
+                    var outDirtyResourceUriList = new List<ResourceUri>(_dirtyResourceUriState.DirtyResourceUriList);
+                    outDirtyResourceUriList.Add(resourceUri);
+        
+        			_dirtyResourceUriState = _dirtyResourceUriState with
+                    {
+                        DirtyResourceUriList = outDirtyResourceUriList
+                    };
+                }
+            }
+        }
+
+        DirtyResourceUriStateChanged?.Invoke();
+    }
+
+    public void RemoveDirtyResourceUri(ResourceUri resourceUri)
+    {
+        lock (_stateModificationLock)
+        {
+            var outDirtyResourceUriList = new List<ResourceUri>(_dirtyResourceUriState.DirtyResourceUriList);
+            outDirtyResourceUriList.Remove(resourceUri);
+
+			_dirtyResourceUriState = _dirtyResourceUriState with
+            {
+                DirtyResourceUriList = outDirtyResourceUriList
+			};
+        }
+
+        DirtyResourceUriStateChanged?.Invoke();
+    }
+    
+    public record struct DirtyResourceUriState(List<ResourceUri> DirtyResourceUriList)
+    {
+        public DirtyResourceUriState() : this(new())
+        {
+        }
+    }
+    /* End IDirtyResourceUriService */
 }

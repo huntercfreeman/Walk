@@ -17,8 +17,6 @@ namespace Walk.Extensions.DotNet.DotNetSolutions.Displays;
 public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private CommonUtilityService CommonUtilityService { get; set; } = null!;
-	[Inject]
 	private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
 	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;

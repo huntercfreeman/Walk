@@ -64,20 +64,14 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 {
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 	private readonly IAppDataService _appDataService;
-	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 	private readonly TextEditorService _textEditorService;
-	private readonly IFindAllService _findAllService;
 	private readonly ICodeSearchService _codeSearchService;
-	// FindAllReferences
-	// private readonly IFindAllReferencesService _findAllReferencesService;
 	private readonly ITerminalService _terminalService;
 	private readonly IDotNetCommandFactory _dotNetCommandFactory;
-	private readonly CommonUtilityService _commonUtilityService;
 	private readonly IIdeService _ideService;
-	private readonly ITextEditorHeaderRegistry _textEditorHeaderRegistry;
 	private readonly INugetPackageManagerProvider _nugetPackageManagerProvider;
 	
 	#region DotNetSolutionIdeApi
@@ -90,20 +84,14 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
     public DotNetBackgroundTaskApi(
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
         IAppDataService appDataService,
-		ICompilerServiceRegistry compilerServiceRegistry,
 		IDotNetComponentRenderers dotNetComponentRenderers,
 		IIdeComponentRenderers ideComponentRenderers,
 		DotNetCliOutputParser dotNetCliOutputParser,
 		TextEditorService textEditorService,
-		IFindAllService findAllService,
 		ICodeSearchService codeSearchService,
-		// FindAllReferences
-		// IFindAllReferencesService findAllReferencesService,
 		ITerminalService terminalService,
         IDotNetCommandFactory dotNetCommandFactory,
-        CommonUtilityService commonUtilityService,
         IIdeService ideService,
-        ITextEditorHeaderRegistry textEditorHeaderRegistry,
         INugetPackageManagerProvider nugetPackageManagerProvider,
         IServiceProvider serviceProvider)
 	{
@@ -113,16 +101,10 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 		_ideComponentRenderers = ideComponentRenderers;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
 		_textEditorService = textEditorService;
-		_findAllService = findAllService;
 		_codeSearchService = codeSearchService;
-		// FindAllReferences
-		// _findAllReferencesService = findAllReferencesService;
-		_compilerServiceRegistry = compilerServiceRegistry;
 		_terminalService = terminalService;
         _dotNetCommandFactory = dotNetCommandFactory;
-        _commonUtilityService = commonUtilityService;
         _ideService = ideService;
-        _textEditorHeaderRegistry = textEditorHeaderRegistry;
         _nugetPackageManagerProvider = nugetPackageManagerProvider;
 
         DotNetSolutionService = new DotNetSolutionService(this);
@@ -134,14 +116,12 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 			_ideBackgroundTaskApi,
 			DotNetSolutionService,
             _textEditorService,
-            _commonUtilityService,
             _dotNetCliOutputParser,
             _terminalService);
 
         OutputService = new OutputService(
         	this,
-        	_dotNetCliOutputParser,
-        	_commonUtilityService);
+        	_dotNetCliOutputParser);
 			
 			NuGetPackageManagerService = new NuGetPackageManagerService();
 			

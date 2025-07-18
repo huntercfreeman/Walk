@@ -22,19 +22,13 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 
 	private readonly ITerminal _terminal;
 	private readonly TextEditorService _textEditorService;
-	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
-	private readonly CommonUtilityService _commonUtilityService;
 
 	public TerminalOutputFormatterExpand(
 		ITerminal terminal,
-		TextEditorService textEditorService,
-		ICompilerServiceRegistry compilerServiceRegistry,
-		CommonUtilityService commonUtilityService)
+		TextEditorService textEditorService)
 	{
 		_terminal = terminal;
 		_textEditorService = textEditorService;
-		_compilerServiceRegistry = compilerServiceRegistry;
-		_commonUtilityService = commonUtilityService;
 		
 		TextEditorModelResourceUri = new(
 			ResourceUriFacts.Terminal_ReservedResourceUri_Prefix + Id.ToString());
@@ -102,7 +96,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	            "terminal",
 	            string.Empty,
 	            new TerminalDecorationMapper(),
-	            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL),
+	            _textEditorService.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL),
             	_textEditorService)
 	        {
 	        	UseUnsetOverride = true,
@@ -126,7 +120,6 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	            TextEditorViewModelKey,
 	            TextEditorModelResourceUri,
 	            _textEditorService,
-	            _commonUtilityService,
 	            TextEditorVirtualizationResult.Empty,
 				new TextEditorDimensions(0, 0, 0, 0),
 				scrollLeft: 0,

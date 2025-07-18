@@ -21,8 +21,6 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 	private ITerminalService TerminalService { get; set; } = null!;
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
 	[CascadingParameter]
 	public TestExplorerRenderBatchValidated RenderBatch { get; set; } = null!;

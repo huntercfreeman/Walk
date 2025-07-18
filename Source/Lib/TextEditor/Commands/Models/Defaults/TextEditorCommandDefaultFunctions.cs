@@ -1384,8 +1384,7 @@ public class TextEditorCommandDefaultFunctions
     public static void PopulateSearchFindAll(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
-        TextEditorViewModel viewModel,
-        IFindAllService findAllService)
+        TextEditorViewModel viewModel)
     {
 		// If the user has an active text selection,
 		// then populate the find overlay with their selection.
@@ -1397,7 +1396,7 @@ public class TextEditorCommandDefaultFunctions
 		if (selectedText is null)
 			return;
 			
-		findAllService.SetSearchQuery(selectedText);
+		editContext.TextEditorService.SetSearchQuery(selectedText);
     }
     
     public static Task OnWheel(Walk.Common.RazorLib.Tooltips.Models.ITooltipModel tooltipModel, WheelEventArgs wheelEventArgs)

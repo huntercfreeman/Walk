@@ -233,8 +233,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        		TextEditorCommandDefaultFunctions.PopulateSearchFindAll(
 			                editContext,
 			                modelModifier,
-			                viewModel,
-			                componentData.TextEditorViewModelSlimDisplay.FindAllService);
+			                viewModel);
 		        	}
 		        	else
 		        	{

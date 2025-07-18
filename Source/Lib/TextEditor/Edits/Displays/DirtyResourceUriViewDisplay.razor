@@ -1,4 +1,4 @@
-@{ var dirtyResourceUriState = DirtyResourceUriService.GetDirtyResourceUriState(); }
+@{ var dirtyResourceUriState = TextEditorService.GetDirtyResourceUriState(); }
 
 <div class="di_web_dirty-text-editor-models-view">
     <h3>DirtyResourceUriViewDisplay</h3>
@@ -8,7 +8,7 @@
     @{ var localDirtyResourceUriList = dirtyResourceUriState.DirtyResourceUriList; }
     @foreach (var dirtyResourceUri in localDirtyResourceUriList)
     {
-        var absolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(dirtyResourceUri.Value, false);
+        var absolutePath = TextEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(dirtyResourceUri.Value, false);
 
         <div>
             <label>Open in editor:</label>

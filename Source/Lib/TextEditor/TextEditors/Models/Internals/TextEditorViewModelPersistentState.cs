@@ -41,7 +41,6 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 	    ITooltipModel tooltipModel,
 	    bool shouldRevealCursor,
 		VirtualAssociativityKind virtualAssociativityKind,
-		CommonUtilityService commonUtilityService,
         TextEditorDimensions textEditorDimensions,
 		int scrollLeft,
 	    int scrollTop,
@@ -70,8 +69,6 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 
 	    ShouldRevealCursor = shouldRevealCursor;
 		VirtualAssociativityKind = virtualAssociativityKind;
-		
-		CommonUtilityService = commonUtilityService;
         
         ComponentType = typeof(TextEditorViewModelDisplay);
         ComponentParameterMap = new()

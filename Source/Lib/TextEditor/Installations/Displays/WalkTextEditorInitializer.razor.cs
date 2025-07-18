@@ -20,12 +20,6 @@ namespace Walk.TextEditor.RazorLib.Installations.Displays;
 public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
 {
     [Inject]
-    public ITextEditorRegistryWrap TextEditorRegistryWrap { get; set; } = null!;
-    [Inject]
-    public ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
-    [Inject]
-    public IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
-    [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private CommonUtilityService CommonUtilityService { get; set; } = null!;
@@ -44,9 +38,6 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
     	_countOfTestCharacters = TEST_STRING_REPEAT_COUNT * TEST_STRING_FOR_MEASUREMENT.Length;
-    	
-    	TextEditorRegistryWrap.CompilerServiceRegistry = CompilerServiceRegistry;
-    	TextEditorRegistryWrap.DecorationMapperRegistry = DecorationMapperRegistry;
     	
     	TextEditorService.Options_NeedsMeasured += OnNeedsMeasured;
 

@@ -10,21 +10,15 @@ namespace Walk.Extensions.DotNet.TestExplorers.Models;
 
 public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
-	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly TextEditorService _textEditorService;
-	private readonly CommonUtilityService _commonUtilityService;
 	private readonly IServiceProvider _serviceProvider;
 
 	public TestExplorerTreeViewKeyboardEventHandler(
-			ICompilerServiceRegistry compilerServiceRegistry,
 			TextEditorService textEditorService,
-			CommonUtilityService commonUtilityService,
 			IServiceProvider serviceProvider)
 		: base(commonUtilityService)
 	{
-		_compilerServiceRegistry = compilerServiceRegistry;
 		_textEditorService = textEditorService;
-		_commonUtilityService = commonUtilityService;
 		_serviceProvider = serviceProvider;
 	}
 

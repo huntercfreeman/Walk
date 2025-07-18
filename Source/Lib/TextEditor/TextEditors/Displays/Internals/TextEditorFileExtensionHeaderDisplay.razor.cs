@@ -8,8 +8,6 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
 public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private ITextEditorHeaderRegistry TextEditorHeaderRegistry { get; set; } = null!;
-	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 
 	[Parameter, EditorRequired]

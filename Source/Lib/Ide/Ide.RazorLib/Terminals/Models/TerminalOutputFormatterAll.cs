@@ -18,16 +18,13 @@ public class TerminalOutputFormatterAll : ITerminalOutputFormatter
 
 	private readonly ITerminal _terminal;
 	private readonly TextEditorService _textEditorService;
-	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 
 	public TerminalOutputFormatterAll(
 		ITerminal terminal,
-		TextEditorService textEditorService,
-		ICompilerServiceRegistry compilerServiceRegistry)
+		TextEditorService textEditorService)
 	{
 		_terminal = terminal;
 		_textEditorService = textEditorService;
-		_compilerServiceRegistry = compilerServiceRegistry;
 	}
 
 	public string Name { get; } = nameof(TerminalOutputFormatterAll);

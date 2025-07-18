@@ -23,8 +23,6 @@ public partial class OutputDisplay : ComponentBase, IDisposable
 	private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
-	[Inject]
-	private CommonUtilityService CommonUtilityService { get; set; } = null!;
     
     private readonly Throttle _eventThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
     

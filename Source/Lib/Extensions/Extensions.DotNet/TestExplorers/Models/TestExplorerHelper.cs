@@ -13,8 +13,6 @@ public static class TestExplorerHelper
 	public static Func<TextEditorEditContext, ValueTask> ShowTestInEditorFactory(
 		string className,
 		string methodName,
-		CommonUtilityService commonUtilityService,
-		ICompilerServiceRegistry compilerServiceRegistry,
 		TextEditorService textEditorService,
 		IServiceProvider serviceProvider)
 	{

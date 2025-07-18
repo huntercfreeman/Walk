@@ -20,13 +20,9 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
-	private CommonUtilityService CommonUtilityService { get; set; } = null!;
-	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 
 	private CompilerServiceExplorerTreeViewKeyboardEventHandler _compilerServiceExplorerTreeViewKeymap = null!;
 	private CompilerServiceExplorerTreeViewMouseEventHandler _compilerServiceExplorerTreeViewMouseEventHandler = null!;

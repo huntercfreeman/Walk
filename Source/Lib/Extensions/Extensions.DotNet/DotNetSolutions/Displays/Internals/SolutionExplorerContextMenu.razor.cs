@@ -44,8 +44,6 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	[Inject]
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private CommonUtilityService CommonUtilityService { get; set; } = null!;
-	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
