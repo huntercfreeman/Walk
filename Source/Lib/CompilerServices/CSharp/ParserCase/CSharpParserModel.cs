@@ -1178,8 +1178,6 @@ public struct CSharpParserModel
     // TODO: Are these adds being invoked separately?
     public string GetIdentifierText(ISyntaxNode node, CSharpCompilationUnit compilationUnit)
 	{
-	    string sourceText;
-	
 		switch (node.SyntaxKind)
 		{
 		    case SyntaxKind.TypeDefinitionNode:
@@ -1187,100 +1185,87 @@ public struct CSharpParserModel
 		        var typeDefinitionNode = (TypeDefinitionNode)node;
         	    if (typeDefinitionNode.ResourceUri == compilationUnit.ResourceUri)
         	    {
-        	        sourceText = compilationUnit.SourceText;
+        	        return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeDefinitionNode.TypeIdentifierToken.TextSpan.Length));
         	    }
         	    else
         	    {
         	        if (Binder.__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var innerCompilationUnit))
-        	            sourceText = innerCompilationUnit.SourceText;
+        	            return Binder.TextEditorService.EditContext_GetText(innerCompilationUnit.SourceText.AsSpan(typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeDefinitionNode.TypeIdentifierToken.TextSpan.Length));
         	        else
     	                return string.Empty;
         	    }
-				
-				return Binder.TextEditorService.EditContext_GetText(sourceText.AsSpan(typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeDefinitionNode.TypeIdentifierToken.TextSpan.Length));
 			}
 			case SyntaxKind.TypeClauseNode:
 			{
 				var typeClauseNode = (TypeClauseNode)node;
         	    if (typeClauseNode.ExplicitDefinitionResourceUri == compilationUnit.ResourceUri)
         	    {
-        	        sourceText = compilationUnit.SourceText;
+        	        return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(typeClauseNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeClauseNode.TypeIdentifierToken.TextSpan.Length));
         	    }
         	    else
         	    {
         	        if (Binder.__CompilationUnitMap.TryGetValue(typeClauseNode.ExplicitDefinitionResourceUri, out var innerCompilationUnit))
-        	            sourceText = innerCompilationUnit.SourceText;
+        	            return Binder.TextEditorService.EditContext_GetText(innerCompilationUnit.SourceText.AsSpan(typeClauseNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeClauseNode.TypeIdentifierToken.TextSpan.Length));
         	        else
     	                return string.Empty;
         	    }
-				
-				return Binder.TextEditorService.EditContext_GetText(sourceText.AsSpan(typeClauseNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeClauseNode.TypeIdentifierToken.TextSpan.Length));
 			}
 			case SyntaxKind.FunctionDefinitionNode:
 			{
 				var functionDefinitionNode = (FunctionDefinitionNode)node;
 				if (functionDefinitionNode.ResourceUri == compilationUnit.ResourceUri)
         	    {
-        	        sourceText = compilationUnit.SourceText;
+        	        return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex, functionDefinitionNode.FunctionIdentifierToken.TextSpan.Length));
         	    }
         	    else
         	    {
         	        if (Binder.__CompilationUnitMap.TryGetValue(functionDefinitionNode.ResourceUri, out var innerCompilationUnit))
-        	            sourceText = innerCompilationUnit.SourceText;
+        	            return Binder.TextEditorService.EditContext_GetText(innerCompilationUnit.SourceText.AsSpan(functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex, functionDefinitionNode.FunctionIdentifierToken.TextSpan.Length));
         	        else
     	                return string.Empty;
         	    }
-				
-				return Binder.TextEditorService.EditContext_GetText(sourceText.AsSpan(functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex, functionDefinitionNode.FunctionIdentifierToken.TextSpan.Length));
 			}
 			case SyntaxKind.FunctionInvocationNode:
 			{
 				var functionInvocationNode = (FunctionInvocationNode)node;
 				if (functionInvocationNode.ResourceUri == compilationUnit.ResourceUri)
         	    {
-        	        sourceText = compilationUnit.SourceText;
+        	        return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Length));
         	    }
         	    else
         	    {
         	        if (Binder.__CompilationUnitMap.TryGetValue(functionInvocationNode.ResourceUri, out var innerCompilationUnit))
-        	            sourceText = innerCompilationUnit.SourceText;
+        	            return Binder.TextEditorService.EditContext_GetText(innerCompilationUnit.SourceText.AsSpan(functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Length));
         	        else
     	                return string.Empty;
         	    }
-				
-				return Binder.TextEditorService.EditContext_GetText(sourceText.AsSpan(functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Length));
 			}
 			case SyntaxKind.VariableDeclarationNode:
 			{
 				var variableDeclarationNode = (VariableDeclarationNode)node;
 				if (variableDeclarationNode.ResourceUri == compilationUnit.ResourceUri)
         	    {
-        	        sourceText = compilationUnit.SourceText;
+        	        return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, variableDeclarationNode.IdentifierToken.TextSpan.Length));
         	    }
         	    else
         	    {
         	        if (Binder.__CompilationUnitMap.TryGetValue(variableDeclarationNode.ResourceUri, out var innerCompilationUnit))
-        	            sourceText = innerCompilationUnit.SourceText;
+        	            return Binder.TextEditorService.EditContext_GetText(innerCompilationUnit.SourceText.AsSpan(variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, variableDeclarationNode.IdentifierToken.TextSpan.Length));
         	        else
     	                return string.Empty;
         	    }
-				
-				return Binder.TextEditorService.EditContext_GetText(sourceText.AsSpan(variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, variableDeclarationNode.IdentifierToken.TextSpan.Length));
 			}
 			case SyntaxKind.VariableReferenceNode:
 			{
-				var variableReferenceNode = (VariableReferenceNode)node;
-				return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(variableReferenceNode.VariableIdentifierToken.TextSpan.StartInclusiveIndex, variableReferenceNode.VariableIdentifierToken.TextSpan.Length));
+				return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(((VariableReferenceNode)node).VariableIdentifierToken.TextSpan.StartInclusiveIndex, ((VariableReferenceNode)node).VariableIdentifierToken.TextSpan.Length));
 			}
 			case SyntaxKind.LabelDeclarationNode:
 			{
-				var labelDeclarationNode = (LabelDeclarationNode)node;
-				return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(labelDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, labelDeclarationNode.IdentifierToken.TextSpan.Length));
+				return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(((LabelDeclarationNode)node).IdentifierToken.TextSpan.StartInclusiveIndex, ((LabelDeclarationNode)node).IdentifierToken.TextSpan.Length));
 			}
 			case SyntaxKind.LabelReferenceNode:
 			{
-				var labelReferenceNode = (LabelReferenceNode)node;
-				return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(labelReferenceNode.IdentifierToken.TextSpan.StartInclusiveIndex, labelReferenceNode.IdentifierToken.TextSpan.Length));
+				return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(((LabelReferenceNode)node).IdentifierToken.TextSpan.StartInclusiveIndex, ((LabelReferenceNode)node).IdentifierToken.TextSpan.Length));
 			}
 			default:
 			{
