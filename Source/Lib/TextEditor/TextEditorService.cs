@@ -3661,7 +3661,6 @@ public sealed class TextEditorService
     /* Start IFindAllService */
     private readonly object _stateModificationLock = new();
 
-	private readonly CommonUtilityService _commonUtilityService;
 	private readonly Throttle _throttleSetSearchQuery = new Throttle(TimeSpan.FromMilliseconds(500));
 	private readonly Throttle _throttleUiUpdate = new Throttle(ThrottleFacts.TwentyFour_Frames_Per_Second);
 	
@@ -3964,7 +3963,7 @@ public sealed class TextEditorService
 	
 	    var treeViewList = groupedResults.Select(group =>
 	    {
-	    	var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+	    	var absolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 	    		group.Key.Value,
 	    		false);
 	    		
@@ -3986,18 +3985,18 @@ public sealed class TextEditorService
 	        ? Array.Empty<TreeViewNoType>()
 	        : new List<TreeViewNoType> { firstNode };
 	
-	    if (!_commonUtilityService.TryGetTreeViewContainer(TextEditorFindAllState.TreeViewFindAllContainerKey, out _))
+	    if (!CommonUtilityService.TryGetTreeViewContainer(TextEditorFindAllState.TreeViewFindAllContainerKey, out _))
 	    {
-	        _commonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
+	        CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
 	            TextEditorFindAllState.TreeViewFindAllContainerKey,
 	            adhocRoot,
 	            activeNodes));
 	    }
 	    else
 	    {
-	        _commonUtilityService.TreeView_WithRootNodeAction(TextEditorFindAllState.TreeViewFindAllContainerKey, adhocRoot);
+	        CommonUtilityService.TreeView_WithRootNodeAction(TextEditorFindAllState.TreeViewFindAllContainerKey, adhocRoot);
 	
-	        _commonUtilityService.TreeView_SetActiveNodeAction(
+	        CommonUtilityService.TreeView_SetActiveNodeAction(
 	            TextEditorFindAllState.TreeViewFindAllContainerKey,
 	            firstNode,
 	            true,
