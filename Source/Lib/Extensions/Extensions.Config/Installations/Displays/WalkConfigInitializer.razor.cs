@@ -34,24 +34,20 @@ using Walk.CompilerServices.Css.Decoration;
 using Walk.CompilerServices.Json.Decoration;
 using Walk.CompilerServices.Xml.Html.Decoration;
 
+using Walk.Ide.RazorLib;
+
 namespace Walk.Extensions.Config.Installations.Displays;
 
 public partial class WalkConfigInitializer : ComponentBase
 {
     [Inject]
-    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    private IdeService IdeService { get; set; } = null!;
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private IAppDataService AppDataService { get; set; } = null!;
 	[Inject]
-	private IInputFileService InputFileService { get; set; } = null!;
-	[Inject]
-	private IIdeService IdeService { get; set; } = null!;
-	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-	private ITerminalService TerminalService { get; set; } = null!;
 	
     private static Key<IDynamicViewModel> _notificationRecordKey = Key<IDynamicViewModel>.NewKey();
 
@@ -89,10 +85,10 @@ public partial class WalkConfigInitializer : ComponentBase
     
     public ValueTask Do_InitializeFooterBadges()
     {
-        IdeService.RegisterFooterBadge(
+        IdeService.Ide_RegisterFooterBadge(
             new DirtyResourceUriBadge(TextEditorService));
 
-        IdeService.RegisterFooterBadge(
+        IdeService.Ide_RegisterFooterBadge(
             new NotificationBadge(TextEditorService.CommonUtilityService));
 
         return ValueTask.CompletedTask;
@@ -124,7 +120,7 @@ public partial class WalkConfigInitializer : ComponentBase
 
             var pseudoRootNode = new TreeViewAbsolutePath(
                 parentDirectoryAbsolutePath,
-                IdeBackgroundTaskApi.IdeComponentRenderers,
+                IdeService.IdeComponentRenderers,
                 TextEditorService.CommonUtilityService,
                 true,
                 false);
@@ -161,9 +157,9 @@ public partial class WalkConfigInitializer : ComponentBase
             }
             await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
 
-            InputFileService.SetOpenedTreeViewModel(
+            IdeService.InputFile_SetOpenedTreeViewModel(
                 pseudoRootNode,
-                IdeBackgroundTaskApi.IdeComponentRenderers,
+                IdeService.IdeComponentRenderers,
                 TextEditorService.CommonUtilityService);
         }
 
@@ -196,7 +192,7 @@ public partial class WalkConfigInitializer : ComponentBase
         var jsonCompilerService = new JsonCompilerService(TextEditorService);
         var razorCompilerService = new RazorCompilerService(TextEditorService, cSharpCompilerService);
         var xmlCompilerService = new XmlCompilerService(TextEditorService);
-        var terminalCompilerService = new TerminalCompilerService(TextEditorService, TerminalService);
+        var terminalCompilerService = new TerminalCompilerService(IdeService);
         var defaultCompilerService = new CompilerServiceDoNothing();
 
         TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.HTML, xmlCompilerService);

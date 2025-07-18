@@ -6,6 +6,7 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;
@@ -128,7 +129,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
     {
 		_nodeList.Clear();
 
-		var group = _textEditorService.Group_GetOrDefault(IdeBackgroundTaskApi.EditorTextEditorGroupKey);
+		var group = _textEditorService.Group_GetOrDefault(IdeService.EditorTextEditorGroupKey);
 
 		if (group is not null)
 		{

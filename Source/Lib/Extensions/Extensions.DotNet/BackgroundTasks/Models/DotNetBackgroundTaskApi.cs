@@ -98,9 +98,9 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
         TestExplorerService = new TestExplorerService(
 			this,
-			_ideService,
 			DotNetSolutionService,
-            _dotNetCliOutputParser);
+            _dotNetCliOutputParser,
+            _ideService);
 
         OutputService = new OutputService(
         	this,
@@ -299,11 +299,11 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
             MenuOptionKind.Other,
             () =>
             {
-                DotNetSolutionState.ShowInputFile(_ideBackgroundTaskApi, this);
+                DotNetSolutionState.ShowInputFile(_ideService, this);
                 return Task.CompletedTask;
             });
 
-        _ideService.ModifyMenuFile(
+        _ideService.Ide_ModifyMenuFile(
             inMenu =>
             {
                 var indexMenuOptionOpen = inMenu.MenuOptionList.FindIndex(x => x.DisplayName == "Open");
@@ -440,7 +440,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
                 return Task.CompletedTask;
             }));
 
-        _ideService.ModifyMenuRun(inMenu =>
+        _ideService.Ide_ModifyMenuRun(inMenu =>
         {
             // UI foreach enumeration was modified nightmare. (2025-02-07)
             var copyMenuOptionList = new List<MenuOptionRecord>(inMenu.MenuOptionList);

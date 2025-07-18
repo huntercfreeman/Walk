@@ -22,15 +22,15 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		var model = TextEditorService.Model_GetOrDefault(
+		var model = IdeService.TextEditorService.Model_GetOrDefault(
 			ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
 
 		if (model is null)
 		{
-			TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+			IdeService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
 			{
-				var terminalDecorationMapper = TextEditorService.GetDecorationMapper(ExtensionNoPeriodFacts.TERMINAL);
-				var terminalCompilerService = TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL);
+				var terminalDecorationMapper = IdeService.TextEditorService.GetDecorationMapper(ExtensionNoPeriodFacts.TERMINAL);
+				var terminalCompilerService = IdeService.TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL);
 
 				model = new TextEditorModel(
 					ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
@@ -39,11 +39,11 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 					"initialContent:TestExplorerDetailsTextEditorResourceUri",
                     terminalDecorationMapper,
                     terminalCompilerService,
-                    TextEditorService);
+                    IdeService.TextEditorService);
 
-				TextEditorService.Model_RegisterCustom(editContext, model);
+				IdeService.TextEditorService.Model_RegisterCustom(editContext, model);
 
-				TextEditorService.ViewModel_Register(
+				IdeService.TextEditorService.ViewModel_Register(
 					editContext,
 					TestExplorerDetailsDisplay.DetailsTextEditorViewModelKey,
 					ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
@@ -51,17 +51,17 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 
 				var modelModifier = editContext.GetModelModifier(model.PersistentState.ResourceUri);
 		
-				TextEditorService.Model_AddPresentationModel(
+				IdeService.TextEditorService.Model_AddPresentationModel(
 					editContext,
 					modelModifier,
 					TerminalPresentationFacts.EmptyPresentationModel);
 
-				TextEditorService.Model_AddPresentationModel(
+				IdeService.TextEditorService.Model_AddPresentationModel(
 					editContext,
 					modelModifier,
 					CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
 
-				TextEditorService.Model_AddPresentationModel(
+				IdeService.TextEditorService.Model_AddPresentationModel(
 					editContext,
 					modelModifier,
 					FindOverlayPresentationFacts.EmptyPresentationModel);
@@ -86,8 +86,8 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 		}
 	
 		DotNetBackgroundTaskApi.TestExplorerService.TestExplorerStateChanged += OnTestExplorerStateChanged;
-		TextEditorService.CommonUtilityService.TreeViewStateChanged += OnTreeViewStateChanged;
-		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
+		IdeService.TextEditorService.CommonUtilityService.TreeViewStateChanged += OnTreeViewStateChanged;
+		IdeService.TerminalStateChanged += OnTerminalStateChanged;
 
 		_ = Task.Run(async () =>
 		{
@@ -109,14 +109,14 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 	
 	private void KillExecutionProcessOnClick()
 	{
-		var terminalState = TerminalService.GetTerminalState();
+		var terminalState = IdeService.GetTerminalState();
 		var executionTerminal = terminalState.TerminalMap[TerminalFacts.EXECUTION_KEY];
 		executionTerminal.KillProcess();
 	}
 	
 	private bool GetIsKillProcessDisabled()
 	{
-		var terminalState = TerminalService.GetTerminalState();
+		var terminalState = IdeService.GetTerminalState();
 		var executionTerminal = terminalState.TerminalMap[TerminalFacts.EXECUTION_KEY];
 		return !executionTerminal.HasExecutingProcess;
 	}
@@ -139,7 +139,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 	public void Dispose()
 	{
 		DotNetBackgroundTaskApi.TestExplorerService.TestExplorerStateChanged -= OnTestExplorerStateChanged;
-		TextEditorService.CommonUtilityService.TreeViewStateChanged -= OnTreeViewStateChanged;
-		TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
+		IdeService.TextEditorService.CommonUtilityService.TreeViewStateChanged -= OnTreeViewStateChanged;
+		IdeService.TerminalStateChanged -= OnTerminalStateChanged;
 	}
 }

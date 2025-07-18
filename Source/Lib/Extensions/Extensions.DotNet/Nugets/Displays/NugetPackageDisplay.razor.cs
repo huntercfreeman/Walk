@@ -99,12 +99,12 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
         {
         	ContinueWithFunc = parsedCommand =>
         	{
-        		NotificationHelper.DispatchInformative("Add Nuget Package Reference", $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}", CommonUtilityService, TimeSpan.FromSeconds(7));
+        		NotificationHelper.DispatchInformative("Add Nuget Package Reference", $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}", IdeService.CommonUtilityService, TimeSpan.FromSeconds(7));
 				return Task.CompletedTask;
         	}
         };
         	
-        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 	
 	private async void OnNuGetPackageManagerStateChanged()

@@ -27,9 +27,9 @@ public class SolutionExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandl
 		if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewNamespacePath treeViewNamespacePath)
 			return Task.CompletedTask;
 		
-		_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
+		_ideService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
 		{
-			await _textEditorService.OpenInEditorAsync(
+			await _ideService.TextEditorService.OpenInEditorAsync(
 				editContext,
 				treeViewNamespacePath.Item.AbsolutePath.Value,
 				true,

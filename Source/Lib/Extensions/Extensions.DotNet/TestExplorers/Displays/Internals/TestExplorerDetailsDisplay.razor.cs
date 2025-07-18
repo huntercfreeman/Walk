@@ -43,7 +43,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 	
 	protected override void OnInitialized()
 	{
-		var terminalState = TerminalService.GetTerminalState();
+		var terminalState = IdeService.GetTerminalState();
 		_executionTerminal = terminalState.TerminalMap[TerminalFacts.EXECUTION_KEY];
 		_executionTerminal.TerminalOutput.OnWriteOutput += OnWriteOutput;
 	}
@@ -123,7 +123,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 				};*/
 			}
 
-			TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+			IdeService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
 			{
 				var modelModifier = editContext.GetModelModifier(ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
 				var viewModelModifier = editContext.GetViewModelModifier(DetailsTextEditorViewModelKey);
@@ -167,7 +167,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 					    EndExclusiveIndex: lineInformation.Position_StartInclusiveIndex + 1,
 					    DecorationByte: 0);
 				
-					TextEditorService.ViewModel_ScrollIntoView(
+					IdeService.TextEditorService.ViewModel_ScrollIntoView(
 				        editContext,
 				        modelModifier,
 				        viewModelModifier,

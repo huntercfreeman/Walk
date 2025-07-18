@@ -147,10 +147,10 @@ public partial class TestExplorerContextMenu : ComponentBase
 				    });
 			        
 					treeViewProjectTestModel.Item.TestNameFullyQualifiedList = null;
-					CommonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
+					IdeService.CommonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
 					await treeViewProjectTestModel.LoadChildListAsync();
-					CommonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
+					IdeService.CommonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
 					DotNetBackgroundTaskApi.TestExplorerService.MoveNodeToCorrectBranch(treeViewProjectTestModel);
 					
@@ -346,7 +346,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		
 		DotNetCliOutputParser.ParseOutputEntireDotNetRun(output, "Unit-Test_results");
 		
-		CommonUtilityService.SetPanelTabAsActiveByContextRecordKey(contextRecord.ContextKey);
+		IdeService.CommonUtilityService.SetPanelTabAsActiveByContextRecordKey(contextRecord.ContextKey);
 	
 		if (contextRecord != default)
 		{
@@ -354,8 +354,8 @@ public partial class TestExplorerContextMenu : ComponentBase
 		        contextRecord,
 		        nameof(ContextHelper.ConstructFocusContextElementCommand),
 		        nameof(ContextHelper.ConstructFocusContextElementCommand),
-		        CommonUtilityService.JsRuntimeCommonApi,
-		        CommonUtilityService);
+		        IdeService.CommonUtilityService.JsRuntimeCommonApi,
+		        IdeService.CommonUtilityService);
 		        
 		    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
 		}

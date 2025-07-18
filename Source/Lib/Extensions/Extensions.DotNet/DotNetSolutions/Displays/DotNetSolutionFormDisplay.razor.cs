@@ -43,14 +43,14 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	
 	protected override void OnInitialized()
 	{
-		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
+		IdeService.TerminalStateChanged += OnTerminalStateChanged;
 	}
 
 	private void RequestInputFileForParentDirectory()
 	{
-		IdeBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
+		IdeService.Enqueue(new IdeBackgroundTaskApiWorkArgs
 		{
-			WorkKind = IdeBackgroundTaskApiWorkKind.RequestInputFileStateForm,
+			WorkKind = IdeWorkKind.RequestInputFileStateForm,
 			Message = "Directory for new .NET Solution",
 			OnAfterSubmitFunc = async absolutePath =>
 			{
@@ -86,7 +86,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 			return;
 		}
 
-		if (CommonUtilityService.WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
+		if (IdeService.CommonUtilityService.WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
 		{
 			await HackForWebsite_StartNewDotNetSolutionCommandOnClick(
 					localSolutionName,
@@ -103,22 +103,22 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	        	ContinueWithFunc = parsedCommand =>
 	        	{
 	        		// Close Dialog
-					CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+					IdeService.CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
 					// Open the created .NET Solution
-					var parentDirectoryAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+					var parentDirectoryAbsolutePath = IdeService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 						localParentDirectoryName,
 						true);
 
 					var solutionAbsolutePathString =
 						parentDirectoryAbsolutePath.Value +
 						localSolutionName +
-						CommonUtilityService.EnvironmentProvider.DirectorySeparatorChar +
+						IdeService.CommonUtilityService.EnvironmentProvider.DirectorySeparatorChar +
 						localSolutionName +
 						'.' +
 						ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-					var solutionAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+					var solutionAbsolutePath = IdeService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 						solutionAbsolutePathString,
 						false);
 
@@ -131,7 +131,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	        	}
 	        };
 	        	
-	        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+	        IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		}
 	}
 
@@ -140,10 +140,10 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 		string localParentDirectoryName)
 	{
 		var directoryContainingSolution =
-			CommonUtilityService.EnvironmentProvider.JoinPaths(localParentDirectoryName, localSolutionName) +
-			CommonUtilityService.EnvironmentProvider.DirectorySeparatorChar;
+			IdeService.CommonUtilityService.EnvironmentProvider.JoinPaths(localParentDirectoryName, localSolutionName) +
+			IdeService.CommonUtilityService.EnvironmentProvider.DirectorySeparatorChar;
 
-		await CommonUtilityService.FileSystemProvider.Directory
+		await IdeService.CommonUtilityService.FileSystemProvider.Directory
 			.CreateDirectoryAsync(directoryContainingSolution)
 			.ConfigureAwait(false);
 
@@ -152,21 +152,21 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 			'.' +
 			ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-		var solutionAbsolutePathString = CommonUtilityService.EnvironmentProvider.JoinPaths(
+		var solutionAbsolutePathString = IdeService.CommonUtilityService.EnvironmentProvider.JoinPaths(
 			directoryContainingSolution,
 			localSolutionFilenameWithExtension);
 
-		await CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
+		await IdeService.CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
 				solutionAbsolutePathString,
 				HackForWebsite_NEW_SOLUTION_TEMPLATE)
 			.ConfigureAwait(false);
 
 		// Close Dialog
-		CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+		IdeService.CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
-		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", CommonUtilityService, TimeSpan.FromSeconds(7));
+		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", IdeService.CommonUtilityService, TimeSpan.FromSeconds(7));
 
-		var solutionAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+		var solutionAbsolutePath = IdeService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
 			solutionAbsolutePathString,
 			false);
 
@@ -209,6 +209,6 @@ EndGlobal
 
 	public void Dispose()
 	{
-		TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
+		IdeService.TerminalStateChanged -= OnTerminalStateChanged;
 	}
 }
