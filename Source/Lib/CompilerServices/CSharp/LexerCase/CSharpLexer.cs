@@ -12,7 +12,7 @@ public static class CSharpLexer
 	/// </summary>
     public static CSharpLexerOutput Lex(CSharpBinder binder, ResourceUri resourceUri, string sourceText, bool shouldUseSharedStringWalker)
     {
-    	var lexerOutput = new CSharpLexerOutput();
+    	var lexerOutput = new CSharpLexerOutput(sourceText);
     	StringWalker stringWalker;
     	
     	if (shouldUseSharedStringWalker)
