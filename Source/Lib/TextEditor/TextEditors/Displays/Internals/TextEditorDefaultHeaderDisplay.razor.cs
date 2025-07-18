@@ -38,8 +38,8 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
 	protected override void OnInitialized()
     {
-        TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
-        TextEditorService.OptionsApi.TextEditorWrapperCssStateChanged += OnTextEditorWrapperCssStateChanged;
+        TextEditorService.ViewModel_CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
+        TextEditorService.Options_TextEditorWrapperCssStateChanged += OnTextEditorWrapperCssStateChanged;
         OnCursorShouldBlinkChanged();
     }
     
@@ -305,9 +305,9 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 		    {
 			    TextEditorService.WorkerArbitrary.PostUnique(editContext =>
 	            {
-	            	editContext.TextEditorService.ViewModelApi.Dispose(editContext, virtualizationResult.ViewModel.PersistentState.ViewModelKey);
+	            	editContext.TextEditorService.ViewModel_Dispose(editContext, virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 	            	DirtyResourceUriService.RemoveDirtyResourceUri(virtualizationResult.Model.PersistentState.ResourceUri);
-	            	editContext.TextEditorService.ModelApi.Dispose(editContext, virtualizationResult.Model.PersistentState.ResourceUri);
+	            	editContext.TextEditorService.Model_Dispose(editContext, virtualizationResult.Model.PersistentState.ResourceUri);
 	            	return ValueTask.CompletedTask;
 	            });
 		    	return Task.CompletedTask;
@@ -397,7 +397,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 
 	public void Dispose()
     {
-    	TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
-    	TextEditorService.OptionsApi.TextEditorWrapperCssStateChanged -= OnTextEditorWrapperCssStateChanged;
+    	TextEditorService.ViewModel_CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
+    	TextEditorService.Options_TextEditorWrapperCssStateChanged -= OnTextEditorWrapperCssStateChanged;
     }
 }

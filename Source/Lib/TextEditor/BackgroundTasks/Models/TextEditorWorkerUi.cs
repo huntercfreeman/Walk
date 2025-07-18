@@ -210,7 +210,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 			
 			            // 1 of the character width is already accounted for
 			
-			            var extraWidthPerTabKey = _textEditorService.OptionsApi.GetOptions().TabWidth - 1;
+			            var extraWidthPerTabKey = _textEditorService.Options_GetOptions().TabWidth - 1;
 			
 			            lastValidColumnLeft += extraWidthPerTabKey *
 			                tabsOnSameLineBeforeCursor *
@@ -276,7 +276,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 		        
 		        finalize:
 		        
-		        editContext.TextEditorService.ViewModelApi.StopCursorBlinking();
+		        editContext.TextEditorService.ViewModel_StopCursorBlinking();
 		        
 		        await editContext.TextEditorService
 		        	.FinalizePost(editContext)
@@ -349,7 +349,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 		        
 		        finalize:
 			
-				editContext.TextEditorService.ViewModelApi.StopCursorBlinking();
+				editContext.TextEditorService.ViewModel_StopCursorBlinking();
 			
 				await editContext.TextEditorService
 					.FinalizePost(editContext)
@@ -365,7 +365,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 		        if (viewModelModifier is null)
 		            return;
 		
-		        editContext.TextEditorService.ViewModelApi.SetScrollPositionLeft(
+		        editContext.TextEditorService.ViewModel_SetScrollPositionLeft(
 		        	editContext,
 		    		viewModelModifier,
 		        	workArgsTuple.WorkerUiArgs.X);
@@ -384,7 +384,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 		        if (viewModelModifier is null)
 		            return;
 		
-		        editContext.TextEditorService.ViewModelApi.SetScrollPositionTop(
+		        editContext.TextEditorService.ViewModel_SetScrollPositionTop(
 		        	editContext,
 		    		viewModelModifier,
 		        	workArgsTuple.WorkerUiArgs.Y);
@@ -410,14 +410,14 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 				//       the OnWheel events have to be the same axis to batch.
 		        if (workArgsTuple.WorkerUiArgs.ShiftKey)
 		        {
-		            editContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
+		            editContext.TextEditorService.ViewModel_MutateScrollHorizontalPosition(
 		            	editContext,
 				        viewModelModifier,
 				        workArgsTuple.WorkerUiArgs.Y / 2);
 		        }
 		        else
 		        {
-		            editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+		            editContext.TextEditorService.ViewModel_MutateScrollVerticalPosition(
 		            	editContext,
 				        viewModelModifier,
 		            	workArgsTuple.WorkerUiArgs.Y);

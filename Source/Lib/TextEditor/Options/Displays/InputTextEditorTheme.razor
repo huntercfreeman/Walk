@@ -6,7 +6,7 @@
     @{
         var themesList = CommonUtilityService.GetThemeState().ThemeList;
 
-        var chosenThemeKey = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.CommonOptions?.ThemeKey
+        var chosenThemeKey = TextEditorService.Options_GetTextEditorOptionsState().Options.CommonOptions?.ThemeKey
             ?? ThemeFacts.VisualStudioDarkThemeClone.Key;
         
         foreach (var theme in themesList)

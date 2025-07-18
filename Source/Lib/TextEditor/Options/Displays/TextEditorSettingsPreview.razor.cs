@@ -35,7 +35,7 @@ public partial class TextEditorSettingsPreview : ComponentBase
         {
         	TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
         	{
-        		TextEditorService.ModelApi.RegisterTemplated(
+        		TextEditorService.Model_RegisterTemplated(
         			editContext,
 	                ExtensionNoPeriodFacts.TXT,
 	                ResourceUriFacts.SettingsPreviewTextEditorResourceUri,
@@ -43,7 +43,7 @@ public partial class TextEditorSettingsPreview : ComponentBase
 	                "Preview settings here",
 	                "Settings Preview");
 	
-	            TextEditorService.ViewModelApi.Register(
+	            TextEditorService.ViewModel_Register(
 	            	editContext,
 	                SettingsPreviewTextEditorViewModelKey,
 	                ResourceUriFacts.SettingsPreviewTextEditorResourceUri,

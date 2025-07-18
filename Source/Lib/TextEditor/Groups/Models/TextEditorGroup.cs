@@ -36,7 +36,7 @@ public record TextEditorGroup(
             return Task.CompletedTask;
 
         if (!GetIsActive(tab))
-            TextEditorService.GroupApi.SetActiveViewModel(GroupKey, textEditorTab.ViewModelKey);
+            TextEditorService.Group_SetActiveViewModel(GroupKey, textEditorTab.ViewModelKey);
 
         return Task.CompletedTask;
     }
@@ -89,6 +89,6 @@ public record TextEditorGroup(
     
     private void Close(Key<TextEditorViewModel> viewModelKey)
     {
-    	TextEditorService.GroupApi.RemoveViewModel(GroupKey, viewModelKey);
+    	TextEditorService.Group_RemoveViewModel(GroupKey, viewModelKey);
     }
 }

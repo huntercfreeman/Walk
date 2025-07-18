@@ -17,7 +17,7 @@ public partial class InputTextEditorTheme : ComponentBase, IDisposable
 	
 	protected override void OnInitialized()
     {
-    	TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
     }
     
     private void SelectedThemeChanged(ChangeEventArgs changeEventArgs)
@@ -33,11 +33,11 @@ public partial class InputTextEditorTheme : ComponentBase, IDisposable
             var foundTheme = themeList.FirstOrDefault(x => x.Key == chosenThemeKey);
 
             if (foundTheme is not null)
-                TextEditorService.OptionsApi.SetTheme(foundTheme);
+                TextEditorService.Options_SetTheme(foundTheme);
         }
         else
         {
-            TextEditorService.OptionsApi.SetTheme(ThemeFacts.VisualStudioDarkThemeClone);
+            TextEditorService.Options_SetTheme(ThemeFacts.VisualStudioDarkThemeClone);
         }
     }
     
@@ -48,6 +48,6 @@ public partial class InputTextEditorTheme : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TextEditorService.OptionsApi.StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.Options_StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
     }
 }

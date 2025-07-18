@@ -13,13 +13,13 @@ public partial class InputTextEditorShowWhitespace : ComponentBase, IDisposable
 
     public bool GlobalShowWhitespace
     {
-        get => TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowWhitespace;
-        set => TextEditorService.OptionsApi.SetShowWhitespace(value);
+        get => TextEditorService.Options_GetTextEditorOptionsState().Options.ShowWhitespace;
+        set => TextEditorService.Options_SetShowWhitespace(value);
     }
     
     protected override void OnInitialized()
     {
-    	TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
     }
     
     private async void TextEditorOptionsStateWrapOnStateChanged()
@@ -29,6 +29,6 @@ public partial class InputTextEditorShowWhitespace : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TextEditorService.OptionsApi.StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.Options_StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
     }
 }

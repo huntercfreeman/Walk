@@ -135,7 +135,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
-        editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+        editContext.TextEditorService.ViewModel_MutateScrollVerticalPosition(
     		editContext,
 	        viewModel,
 	        viewModel.PersistentState.CharAndLineMeasurements.LineHeight);
@@ -146,7 +146,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
-        editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+        editContext.TextEditorService.ViewModel_MutateScrollVerticalPosition(
             editContext,
 	        viewModel,
 	        -1 * viewModel.PersistentState.CharAndLineMeasurements.LineHeight);
@@ -157,7 +157,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
-        editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+        editContext.TextEditorService.ViewModel_MutateScrollVerticalPosition(
             editContext,
 	        viewModel,
 	        viewModel.PersistentState.TextEditorDimensions.Height);
@@ -168,7 +168,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
-        editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+        editContext.TextEditorService.ViewModel_MutateScrollVerticalPosition(
             editContext,
 	        viewModel,
 	        -1 * viewModel.PersistentState.TextEditorDimensions.Height);
@@ -276,7 +276,7 @@ public class TextEditorCommandDefaultFunctions
 		viewModel.SelectionEndingPositionIndex = before_SelectionEndingPositionIndex;
         
         int lowerBoundPositionIndexChange;
-        if (editContext.TextEditorService.OptionsApi.GetOptions().TabKeyBehavior)
+        if (editContext.TextEditorService.Options_GetOptions().TabKeyBehavior)
         {
 		    lowerBoundPositionIndexChange = 1;
 		    
@@ -350,7 +350,7 @@ public class TextEditorCommandDefaultFunctions
 		viewModel.SelectionEndingPositionIndex = 0;
 
         bool isFirstLoop = true;
-        var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
+        var tabWidth = editContext.TextEditorService.Options_GetOptions().TabWidth;
 
         for (var i = selectionBoundsInLineIndexUnits.Line_LowerIndexInclusive;
              i < selectionBoundsInLineIndexUnits.Line_UpperIndexExclusive;
@@ -697,7 +697,7 @@ public class TextEditorCommandDefaultFunctions
                 };
             }
 
-            editContext.TextEditorService.ViewModelApi.MoveCursorUnsafe(
+            editContext.TextEditorService.ViewModel_MoveCursorUnsafe(
         		keymapArgs.Key,
                 keymapArgs.Code,
                 keymapArgs.CtrlKey,
@@ -828,12 +828,12 @@ public class TextEditorCommandDefaultFunctions
 				//       |
 				//       I ran this and it didn't work. Its for the best that it doesn't.
 				//	   maybe when I wake up tomorrow I'll realize what im doing here.
-				var mainEditorGroup = textEditorService.GroupApi.GetTextEditorGroupState().GroupList.SingleOrDefault();
+				var mainEditorGroup = textEditorService.Group_GetTextEditorGroupState().GroupList.SingleOrDefault();
 				
 				if (mainEditorGroup is not null &&
 					mainEditorGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty)
 				{
-					var activeViewModel = textEditorService.ViewModelApi.GetOrDefault(mainEditorGroup.ActiveViewModelKey);
+					var activeViewModel = textEditorService.ViewModel_GetOrDefault(mainEditorGroup.ActiveViewModelKey);
 
 					if (activeViewModel is not null)
 						await activeViewModel.FocusAsync();
@@ -892,12 +892,12 @@ public class TextEditorCommandDefaultFunctions
 				//       |
 				//       I ran this and it didn't work. Its for the best that it doesn't.
 				//	   maybe when I wake up tomorrow I'll realize what im doing here.
-				var mainEditorGroup = textEditorService.GroupApi.GetTextEditorGroupState().GroupList.SingleOrDefault();
+				var mainEditorGroup = textEditorService.Group_GetTextEditorGroupState().GroupList.SingleOrDefault();
 				
 				if (mainEditorGroup is not null &&
 					mainEditorGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty)
 				{
-					var activeViewModel = textEditorService.ViewModelApi.GetOrDefault(mainEditorGroup.ActiveViewModelKey);
+					var activeViewModel = textEditorService.ViewModel_GetOrDefault(mainEditorGroup.ActiveViewModelKey);
 
 					if (activeViewModel is not null)
 						await activeViewModel.FocusAsync();
@@ -930,7 +930,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorViewModel viewModel,
         TextEditorService textEditorService)
     {
-        textEditorService.OptionsApi.ShowFindAllDialog();
+        textEditorService.Options_ShowFindAllDialog();
     }
 
     public static async ValueTask ShowTooltipByCursorPositionAsync(
@@ -1234,7 +1234,7 @@ public class TextEditorCommandDefaultFunctions
         Dictionary<string, object?>? componentParameters)
     {
         var dropdownKey = new Key<DropdownRecord>(viewModel.PersistentState.ViewModelKey.Guid);
-        var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
+        var tabWidth = editContext.TextEditorService.Options_GetOptions().TabWidth;
         
         if (leftOffset is null)
         {

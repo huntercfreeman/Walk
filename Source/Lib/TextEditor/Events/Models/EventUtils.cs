@@ -254,12 +254,12 @@ public static class EventUtils
 		TextEditorComponentData componentData,
 		TextEditorEditContext editContext)
     {
-        var globalTextEditorOptions = editContext.TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
+        var globalTextEditorOptions = editContext.TextEditorService.Options_GetTextEditorOptionsState().Options;
 
         if (modelModifier is null || viewModel is null)
             return (0, 0, 0, 0);
             
-        var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
+        var tabWidth = editContext.TextEditorService.Options_GetOptions().TabWidth;
     
         var positionX = clientX - viewModel.PersistentState.TextEditorDimensions.BoundingClientRectLeft;
         var positionY = clientY - viewModel.PersistentState.TextEditorDimensions.BoundingClientRectTop;

@@ -13,19 +13,19 @@ public partial class InputTextEditorFontFamily : ComponentBase, IDisposable
 
     public string FontFamily
     {
-        get => TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.CommonOptions.FontFamily ?? "unset";
+        get => TextEditorService.Options_GetTextEditorOptionsState().Options.CommonOptions.FontFamily ?? "unset";
         set
         {
             if (string.IsNullOrWhiteSpace(value))
-                TextEditorService.OptionsApi.SetFontFamily(null);
+                TextEditorService.Options_SetFontFamily(null);
 
-            TextEditorService.OptionsApi.SetFontFamily(value.Trim());
+            TextEditorService.Options_SetFontFamily(value.Trim());
         }
     }
 
     protected override void OnInitialized()
     {
-        TextEditorService.OptionsApi.StaticStateChanged += OptionsWrapOnStateChanged;
+        TextEditorService.Options_StaticStateChanged += OptionsWrapOnStateChanged;
     }
 
     private async void OptionsWrapOnStateChanged()
@@ -35,6 +35,6 @@ public partial class InputTextEditorFontFamily : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TextEditorService.OptionsApi.StaticStateChanged -= OptionsWrapOnStateChanged;
+        TextEditorService.Options_StaticStateChanged -= OptionsWrapOnStateChanged;
     }
 }

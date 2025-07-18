@@ -13,13 +13,13 @@ public partial class InputTextEditorShowNewLines : ComponentBase, IDisposable
 
     public bool GlobalShowNewlines
     {
-        get => TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowNewlines;
-        set => TextEditorService.OptionsApi.SetShowNewlines(value);
+        get => TextEditorService.Options_GetTextEditorOptionsState().Options.ShowNewlines;
+        set => TextEditorService.Options_SetShowNewlines(value);
     }
     
     protected override void OnInitialized()
     {
-    	TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
     }
     
     private async void TextEditorOptionsStateWrapOnStateChanged()
@@ -29,6 +29,6 @@ public partial class InputTextEditorShowNewLines : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TextEditorService.OptionsApi.StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.Options_StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
     }
 }

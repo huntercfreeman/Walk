@@ -66,7 +66,7 @@ public sealed class TextEditorViewModel : IDisposable
     	    scrollWidth,
     	    scrollHeight,
     	    marginScrollHeight,
-            textEditorService.OptionsApi.GetOptions().CharAndLineMeasurements);
+            textEditorService.Options_GetOptions().CharAndLineMeasurements);
     
         Virtualization = virtualizationResult;
         
@@ -188,7 +188,7 @@ public sealed class TextEditorViewModel : IDisposable
     	if (componentData is null)
     		return ValueTask.CompletedTask;
     	
-        return PersistentState.TextEditorService.ViewModelApi.FocusPrimaryCursorAsync(componentData.PrimaryCursorContentId);
+        return PersistentState.TextEditorService.ViewModel_FocusPrimaryCursorAsync(componentData.PrimaryCursorContentId);
     }
     
     public void ApplyCollapsePointState(TextEditorEditContext editContext)

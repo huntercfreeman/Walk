@@ -38,7 +38,7 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase, IDisp
         // ShouldRender does not invoke on the initial render.
         _ = ShouldRender();
         
-        TextEditorService.OptionsApi.TextEditorWrapperCssStateChanged += OnTextEditorWrapperCssStateChanged;
+        TextEditorService.Options_TextEditorWrapperCssStateChanged += OnTextEditorWrapperCssStateChanged;
 	}
 	
 	protected override bool ShouldRender()
@@ -76,6 +76,6 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase, IDisp
 	
 	public void Dispose()
 	{
-	    TextEditorService.OptionsApi.TextEditorWrapperCssStateChanged -= OnTextEditorWrapperCssStateChanged;
+	    TextEditorService.Options_TextEditorWrapperCssStateChanged -= OnTextEditorWrapperCssStateChanged;
 	}
 }

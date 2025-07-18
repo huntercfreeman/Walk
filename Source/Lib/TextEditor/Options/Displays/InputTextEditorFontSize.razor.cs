@@ -31,7 +31,7 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
 
 			_throttle.Run(_ =>
 			{
-				TextEditorService.OptionsApi.SetFontSize(_fontSizeInPixels);
+				TextEditorService.Options_SetFontSize(_fontSizeInPixels);
 				return Task.CompletedTask;
 			});
         }
@@ -39,13 +39,13 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        TextEditorService.OptionsApi.StaticStateChanged += OptionsWrapOnStateChanged;
+        TextEditorService.Options_StaticStateChanged += OptionsWrapOnStateChanged;
         ReadActualFontSizeInPixels();
     }
     
     private void ReadActualFontSizeInPixels()
     {
-    	var temporaryFontSizeInPixels = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.CommonOptions?.FontSizeInPixels;
+    	var temporaryFontSizeInPixels = TextEditorService.Options_GetTextEditorOptionsState().Options.CommonOptions?.FontSizeInPixels;
     	
     	if (temporaryFontSizeInPixels is null)
     	{
@@ -53,7 +53,7 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
 
     		_throttle.Run(_ =>
 			{
-				TextEditorService.OptionsApi.SetFontSize(temporaryFontSizeInPixels.Value);
+				TextEditorService.Options_SetFontSize(temporaryFontSizeInPixels.Value);
 				return Task.CompletedTask;
 			});
     	}
@@ -82,6 +82,6 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TextEditorService.OptionsApi.StaticStateChanged -= OptionsWrapOnStateChanged;
+        TextEditorService.Options_StaticStateChanged -= OptionsWrapOnStateChanged;
     }
 }

@@ -88,7 +88,7 @@ public struct TextEditorEditContext
         {
             if (!TextEditorService.__DiffModelCache.TryGetValue(diffModelKey, out var diffModelModifier))
             {
-                var diffModel = TextEditorService.DiffApi.GetOrDefault(diffModelKey);
+                var diffModel = TextEditorService.Diff_GetOrDefault(diffModelKey);
                 diffModelModifier = diffModel is null ? null : new(diffModel);
 
                 TextEditorService.__DiffModelCache.Add(diffModelKey, diffModelModifier);

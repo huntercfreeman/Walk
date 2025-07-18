@@ -13,7 +13,7 @@ public partial class InputTextEditorKeymap : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
     {
-    	TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
     }
 
     private void SelectedKeymapChanged(ChangeEventArgs changeEventArgs)
@@ -42,6 +42,6 @@ public partial class InputTextEditorKeymap : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TextEditorService.OptionsApi.StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.Options_StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
     }
 }

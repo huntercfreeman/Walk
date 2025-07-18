@@ -113,12 +113,6 @@ public sealed class TextEditorService
         _textEditorRegistryWrap = textEditorRegistryWrap;
         _jsRuntime = jsRuntime;
 		JsRuntimeTextEditorApi = _jsRuntime.GetWalkTextEditorApi();
-
-        ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap, CommonUtilityService);
-        ViewModelApi = new TextEditorViewModelApi(this, CommonUtilityService);
-        GroupApi = new TextEditorGroupApi(this, CommonUtilityService);
-        DiffApi = new TextEditorDiffApi(this);
-        OptionsApi = new TextEditorOptionsApi(this, CommonUtilityService);
         
         TextEditorState = new();
     }
@@ -263,7 +257,7 @@ public sealed class TextEditorService
 
 	public void InsertTab(TextEditorEditContext editContext, TextEditorModel modelModifier, TextEditorViewModel viewModel)
 	{
-	    if (OptionsApi.GetOptions().TabKeyBehavior)
+	    if (Options_GetOptions().TabKeyBehavior)
 		{
         	modelModifier.Insert(
                 "\t",
@@ -271,9 +265,9 @@ public sealed class TextEditorService
         }
         else
         {
-        	if (TabKeyBehavior_SeenTabWidth != OptionsApi.GetOptions().TabWidth)
+        	if (TabKeyBehavior_SeenTabWidth != Options_GetOptions().TabWidth)
         	{
-        	    TabKeyBehavior_SeenTabWidth = OptionsApi.GetOptions().TabWidth;
+        	    TabKeyBehavior_SeenTabWidth = Options_GetOptions().TabWidth;
         	    TabKeyBehavior_TabSpaces = new string(' ', TabKeyBehavior_SeenTabWidth);
         	}
         	modelModifier.Insert(
@@ -299,7 +293,7 @@ public sealed class TextEditorService
 
             if (modelModifier.WasDirty != modelModifier.IsDirty)
             {
-            	var model = ModelApi.GetOrDefault(modelModifier.PersistentState.ResourceUri);
+            	var model = Model_GetOrDefault(modelModifier.PersistentState.ResourceUri);
             	model.IsDirty = modelModifier.IsDirty;
             
                 if (modelModifier.IsDirty)
@@ -321,7 +315,7 @@ public sealed class TextEditorService
         
         	if (viewModelModifier.PersistentState.ShouldRevealCursor)
             {
-        		ViewModelApi.RevealCursor(
+        		ViewModel_RevealCursor(
             		editContext,
 			        modelModifier,
 			        viewModelModifier);
@@ -390,7 +384,7 @@ public sealed class TextEditorService
 				if (componentData is not null)
 				{
 					// TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
-		            editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResult(
+		            editContext.TextEditorService.ViewModel_CalculateVirtualizationResult(
 		            	editContext,
 		            	modelModifier,
 				        viewModelModifier,
@@ -470,7 +464,7 @@ public sealed class TextEditorService
 		
 		var originalScrollWidth = viewModelModifier.PersistentState.ScrollWidth;
 		var originalScrollHeight = viewModelModifier.PersistentState.ScrollHeight;
-		var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
+		var tabWidth = editContext.TextEditorService.Options_GetOptions().TabWidth;
 	
 		var totalWidth = (int)Math.Ceiling(modelModifier.MostCharactersOnASingleLineTuple.lineLength *
 			viewModelModifier.PersistentState.CharAndLineMeasurements.CharacterWidth);
@@ -851,9 +845,9 @@ public sealed class TextEditorService
             x => x.Key == TextEditorConfig.InitialThemeKey);
 
         if (initialThemeRecord is not null)
-            OptionsApi.SetTheme(initialThemeRecord, updateStorage: false);
+            Options_SetTheme(initialThemeRecord, updateStorage: false);
 
-        await OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
+        await Options_SetFromLocalStorageAsync().ConfigureAwait(false);
 
         CommonUtilityService.RegisterContextSwitchGroup(
             new ContextSwitchGroup(
@@ -863,7 +857,7 @@ public sealed class TextEditorService
                 {
                     var menuOptionList = new List<MenuOptionRecord>();
 
-                    var mainGroup = GroupApi.GetGroups()
+                    var mainGroup = Group_GetGroups()
                         .FirstOrDefault(x => x.Category.Value == "main");
 
                     if (mainGroup is not null)
@@ -872,7 +866,7 @@ public sealed class TextEditorService
 
                         foreach (var viewModelKey in mainGroup.ViewModelKeyList)
                         {
-                            var viewModel = ViewModelApi.GetOrDefault(viewModelKey);
+                            var viewModel = ViewModel_GetOrDefault(viewModelKey);
 
                             if (viewModel is not null)
                             {
@@ -1289,7 +1283,7 @@ public sealed class TextEditorService
         if (viewModel is null)
             return null;
 
-        return _textEditorService.ModelApi.GetOrDefault(viewModel.PersistentState.ResourceUri);
+        return _textEditorService.Model_GetOrDefault(viewModel.PersistentState.ResourceUri);
     }
 
     public string? ViewModel_GetAllText(Key<TextEditorViewModel> viewModelKey)
@@ -1298,7 +1292,7 @@ public sealed class TextEditorService
 
         return textEditorModel is null
             ? null
-            : _textEditorService.ModelApi.GetAllText(textEditorModel.PersistentState.ResourceUri);
+            : _textEditorService.Model_GetAllText(textEditorModel.PersistentState.ResourceUri);
     }
 
     public async ValueTask<TextEditorDimensions> ViewModel_GetTextEditorMeasurementsAsync(string elementId)
@@ -2079,7 +2073,7 @@ public sealed class TextEditorService
     	var startTime = Stopwatch.GetTimestamp();
     	#endif
     	
-		var tabWidth = editContext.TextEditorService.OptionsApi.GetOptions().TabWidth;
+		var tabWidth = editContext.TextEditorService.Options_GetOptions().TabWidth;
 		viewModel.Virtualization.ShouldCalculateVirtualizationResult = false;
 	
 		var verticalStartingIndex = viewModel.PersistentState.ScrollTop /
@@ -2185,9 +2179,9 @@ public sealed class TextEditorService
 		else
 			componentData.LineIndexCache.UsedKeyHashSet.Clear();
 		
-		if (_textEditorService.SeenTabWidth != _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.TabWidth)
+		if (_textEditorService.SeenTabWidth != _textEditorService.Options_GetTextEditorOptionsState().Options.TabWidth)
 		{
-			_textEditorService.SeenTabWidth = _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.TabWidth;
+			_textEditorService.SeenTabWidth = _textEditorService.Options_GetTextEditorOptionsState().Options.TabWidth;
 			_textEditorService.TabKeyOutput_ShowWhitespaceTrue = new string('-', _textEditorService.SeenTabWidth - 1) + '>';
 			
 			var stringBuilder = new StringBuilder();
@@ -2202,7 +2196,7 @@ public sealed class TextEditorService
 		string tabKeyOutput;
 		string spaceKeyOutput;
 		
-		if (_textEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowWhitespace)
+		if (_textEditorService.Options_GetTextEditorOptionsState().Options.ShowWhitespace)
 		{
 			tabKeyOutput = _textEditorService.TabKeyOutput_ShowWhitespaceTrue;
 			spaceKeyOutput = "·";
@@ -2689,7 +2683,7 @@ public sealed class TextEditorService
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel)
     {
-        var options = _textEditorService.OptionsApi.GetOptions();
+        var options = _textEditorService.Options_GetOptions();
         
         var componentData = viewModel.PersistentState.ComponentData;
         if (componentData is null)
@@ -2760,7 +2754,7 @@ public sealed class TextEditorService
 
     public TextEditorGroup? Group_GetOrDefault(Key<TextEditorGroup> textEditorGroupKey)
     {
-        return _textEditorService.GroupApi.GetTextEditorGroupState().GroupList.FirstOrDefault(
+        return _textEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
             x => x.GroupKey == textEditorGroupKey);
     }
 
@@ -2773,7 +2767,7 @@ public sealed class TextEditorService
 
     public List<TextEditorGroup> Group_GetGroups()
     {
-        return _textEditorService.GroupApi.GetTextEditorGroupState().GroupList;
+        return _textEditorService.Group_GetTextEditorGroupState().GroupList;
     }
     
     // TextEditorGroupService.cs
@@ -2947,7 +2941,7 @@ public sealed class TextEditorService
 
 		finalize:
 		TextEditorGroupStateChanged?.Invoke();
-		PostScroll(groupKey, _textEditorService.GroupApi.GetOrDefault(groupKey).ActiveViewModelKey);
+		PostScroll(groupKey, _textEditorService.Group_GetOrDefault(groupKey).ActiveViewModelKey);
 	}
 
     public void Group_SetActiveViewModelOfGroup(
@@ -3082,7 +3076,7 @@ public sealed class TextEditorService
                 return Task.CompletedTask;
 
             // In
-            editContext.TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
+            editContext.TextEditorService.Model_StartPendingCalculatePresentationModel(
             	editContext,
 		        inModelModifier,
 		        DiffPresentationFacts.InPresentationKey,
@@ -3094,7 +3088,7 @@ public sealed class TextEditorService
             var inText = inPresentationModel.PendingCalculation.ContentAtRequest;
             
             // Out
-            editContext.TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
+            editContext.TextEditorService.Model_StartPendingCalculatePresentationModel(
             	editContext,
                 outModelModifier,
                 DiffPresentationFacts.OutPresentationKey,
@@ -3232,7 +3226,7 @@ public sealed class TextEditorService
 
     public TextEditorOptions Options_GetOptions()
     {
-        return _textEditorService.OptionsApi.GetTextEditorOptionsState().Options;
+        return _textEditorService.Options_GetTextEditorOptionsState().Options;
     }
     
     public void Options_InvokeTextEditorWrapperCssStateChanged()
@@ -3413,7 +3407,7 @@ public sealed class TextEditorService
         };
         StaticStateChanged?.Invoke();
 
-        /*var activeKeymap = _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.Keymap;
+        /*var activeKeymap = _textEditorService.Options_GetTextEditorOptionsState().Options.Keymap;
 
         if (activeKeymap is not null)
         {
@@ -3571,7 +3565,7 @@ public sealed class TextEditorService
 
             SetKeymap(matchedKeymap ?? TextEditorKeymapFacts.DefaultKeymap, false);
 
-            var activeKeymap = _textEditorService.OptionsApi.GetTextEditorOptionsState().Options.Keymap;
+            var activeKeymap = _textEditorService.Options_GetTextEditorOptionsState().Options.Keymap;
 
             if (activeKeymap is not null)
             {

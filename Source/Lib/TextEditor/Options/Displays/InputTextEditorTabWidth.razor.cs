@@ -13,13 +13,13 @@ public partial class InputTextEditorTabWidth : ComponentBase, IDisposable
 
     public int TabWidth
     {
-        get => TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.TabWidth;
-        set => TextEditorService.OptionsApi.SetTabWidth(value);
+        get => TextEditorService.Options_GetTextEditorOptionsState().Options.TabWidth;
+        set => TextEditorService.Options_SetTabWidth(value);
     }
     
     protected override void OnInitialized()
     {
-    	TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
     }
     
     private async void TextEditorOptionsStateWrapOnStateChanged()
@@ -29,6 +29,6 @@ public partial class InputTextEditorTabWidth : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TextEditorService.OptionsApi.StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.Options_StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
     }
 }

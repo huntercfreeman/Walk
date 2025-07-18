@@ -48,7 +48,7 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
     	TextEditorRegistryWrap.CompilerServiceRegistry = CompilerServiceRegistry;
     	TextEditorRegistryWrap.DecorationMapperRegistry = DecorationMapperRegistry;
     	
-    	TextEditorService.OptionsApi.NeedsMeasured += OnNeedsMeasured;
+    	TextEditorService.Options_NeedsMeasured += OnNeedsMeasured;
 
         TextEditorService.Enqueue_TextEditorInitializationBackgroundTaskGroupWorkKind();
     }
@@ -72,7 +72,7 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
         CommonUtilityService.UiStringBuilder.Append(TextEditorService.ThemeCssClassString);
     	_wrapperCssClass = CommonUtilityService.UiStringBuilder.ToString();
     	
-    	var options = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
+    	var options = TextEditorService.Options_GetTextEditorOptionsState().Options;
     	
     	var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
     	if (options.CommonOptions?.FontSizeInPixels is not null)
@@ -120,12 +120,12 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
 	                _countOfTestCharacters)
 	            .ConfigureAwait(false);
 	            
-	        TextEditorService.OptionsApi.SetCharAndLineMeasurements(editContext, charAndLineMeasurements);
+	        TextEditorService.Options_SetCharAndLineMeasurements(editContext, charAndLineMeasurements);
         });
     }
     
     public void Dispose()
     {
-    	TextEditorService.OptionsApi.NeedsMeasured -= OnNeedsMeasured;
+    	TextEditorService.Options_NeedsMeasured -= OnNeedsMeasured;
     }
 }

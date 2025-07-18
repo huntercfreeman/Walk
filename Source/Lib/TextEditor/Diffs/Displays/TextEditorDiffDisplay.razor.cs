@@ -60,7 +60,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        TextEditorService.DiffApi.TextEditorDiffStateChanged += TextEditorDiffWrapOnStateChanged;
+        TextEditorService.Diff_TextEditorDiffStateChanged += TextEditorDiffWrapOnStateChanged;
         TextEditorService.TextEditorStateChanged += TextEditorModelsCollectionWrapOnStateChanged;
         // TextEditorService.OptionsApi.TextEditorOptionsStateChanged += TextEditorOptionsStateWrapOnStateChanged;
     }
@@ -120,7 +120,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TextEditorService.DiffApi.TextEditorDiffStateChanged -= TextEditorDiffWrapOnStateChanged;
+        TextEditorService.Diff_TextEditorDiffStateChanged -= TextEditorDiffWrapOnStateChanged;
         TextEditorService.TextEditorStateChanged -= TextEditorModelsCollectionWrapOnStateChanged;
         // TextEditorService.OptionsApi.TextEditorOptionsStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
 
