@@ -1,9 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Walk.Common.RazorLib.Installations.Models;
-using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.Ide.RazorLib.Installations.Models;
 using Walk.Extensions.DotNet.Installations.Models;
-using Walk.TextEditor.RazorLib.CompilerServices;
 
 namespace Walk.Extensions.Config.Installations.Models;
 

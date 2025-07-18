@@ -3,8 +3,6 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Options.Models;
-using Walk.TextEditor.RazorLib.Decorations.Models;
-using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 

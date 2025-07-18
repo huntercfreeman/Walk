@@ -1,12 +1,10 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Reactives.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib;
-using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
 using Walk.Extensions.DotNet.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.Outputs.Models;

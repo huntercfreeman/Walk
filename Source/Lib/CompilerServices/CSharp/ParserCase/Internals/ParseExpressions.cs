@@ -8,8 +8,6 @@ using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
 using Walk.CompilerServices.CSharp.Facts;
-using Walk.CompilerServices.CSharp.ParserCase;
-using Walk.CompilerServices.CSharp.ParserCase.Internals;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Walk.CompilerServices.CSharp.ParserCase.Internals;

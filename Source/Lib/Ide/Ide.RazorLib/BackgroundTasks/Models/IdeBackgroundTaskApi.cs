@@ -11,7 +11,6 @@ using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.FileSystems.Displays;
 using Walk.Common.RazorLib.Keymaps.Models;

@@ -2,7 +2,6 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 
 namespace Walk.Ide.RazorLib.Terminals.Models;

@@ -4,7 +4,6 @@ using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.Ide.RazorLib.Menus.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;

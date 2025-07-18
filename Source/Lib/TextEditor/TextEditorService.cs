@@ -17,7 +17,6 @@ using Walk.TextEditor.RazorLib.FindAlls.Models;
 using Walk.TextEditor.RazorLib.Groups.Models;
 using Walk.TextEditor.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
-using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
@@ -25,53 +24,30 @@ using Walk.TextEditor.RazorLib.JsRuntimes.Models;
 using Walk.TextEditor.RazorLib.BackgroundTasks.Models;
 using Walk.TextEditor.RazorLib.ComponentRenderers.Models;
 /* Start ModelApi */
-using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
-using Walk.Common.RazorLib.Options.Models;
-using Walk.TextEditor.RazorLib.Decorations.Models;
-using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.TextEditor.RazorLib.Lines.Models;
-/*namespace*/ using Walk.TextEditor.RazorLib.TextEditors.Models;
-/* End ModelApi */
+/*namespace*/ /* End ModelApi */
 /* Start ViewModelApi */
 using System.Diagnostics;
-using System.Text;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
-using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Characters.Models;
 using Walk.TextEditor.RazorLib.Cursors.Models;
 using Walk.TextEditor.RazorLib.Exceptions;
-using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
-/*namespace*/ using Walk.TextEditor.RazorLib.TextEditors.Models;
-/* End ViewModelApi */
+/*namespace*/ /* End ViewModelApi */
 /* Start GroupApi */
-using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Options.Models;
-using Walk.TextEditor.RazorLib.TextEditors.Models;
-/*namespace*/ using Walk.TextEditor.RazorLib.Groups.Models;
-/* End GroupApi */
+/*namespace*/ /* End GroupApi */
 /* Start DiffApi */
-using Walk.Common.RazorLib.Keys.Models;
-using Walk.TextEditor.RazorLib.TextEditors.Models;
-/*namespace*/ using Walk.TextEditor.RazorLib.Diffs.Models;
-/* End DiffApi */
+/*namespace*/ /* End DiffApi */
 /* Start OptionsApi */
 using System.Text.Json;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.RenderStates.Models;
 using Walk.Common.RazorLib.Themes.Models;
-using Walk.Common.RazorLib.Options.Models;
-using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-/*namespace*/ using Walk.TextEditor.RazorLib.Options.Models;
-/* End OptionsApi */
+/*namespace*/ /* End OptionsApi */
 
 namespace Walk.TextEditor.RazorLib;
 

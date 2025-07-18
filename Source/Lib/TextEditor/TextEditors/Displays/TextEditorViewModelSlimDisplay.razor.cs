@@ -6,14 +6,10 @@ using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Icons.Displays;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
-using Walk.TextEditor.RazorLib.Edits.Models;
-using Walk.TextEditor.RazorLib.ComponentRenderers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
-using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Walk.TextEditor.RazorLib.FindAlls.Models;
 using Walk.TextEditor.RazorLib.Cursors.Models;
 using Walk.TextEditor.RazorLib.BackgroundTasks.Models;
 

@@ -2,7 +2,6 @@ using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Badges.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.TextEditor.RazorLib.Edits.Models;
 

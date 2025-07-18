@@ -1,4 +1,3 @@
-using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Extensions.DotNet.Websites.ProjectTemplates.Models;

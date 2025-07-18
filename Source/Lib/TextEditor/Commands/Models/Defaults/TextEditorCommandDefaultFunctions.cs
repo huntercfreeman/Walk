@@ -19,8 +19,6 @@ using Walk.TextEditor.RazorLib.Characters.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Events.Models;
-using Walk.TextEditor.RazorLib.ComponentRenderers.Models;
-using Walk.TextEditor.RazorLib.FindAlls.Models;
 
 namespace Walk.TextEditor.RazorLib.Commands.Models.Defaults;
 

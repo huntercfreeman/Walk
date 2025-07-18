@@ -3,10 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.ComponentRenderers.Models;
-using Walk.TextEditor.RazorLib.Decorations.Models;
-using Walk.TextEditor.RazorLib.TextEditors.Models;
-using Walk.TextEditor.RazorLib.FindAlls.Models;
-using Walk.TextEditor.RazorLib.Edits.Models;
 
 namespace Walk.TextEditor.RazorLib.Installations.Models;
 

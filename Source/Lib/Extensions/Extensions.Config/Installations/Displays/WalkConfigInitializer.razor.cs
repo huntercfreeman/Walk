@@ -4,7 +4,6 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Notifications.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
@@ -18,8 +17,6 @@ using Walk.Extensions.DotNet.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.AppDatas.Models;
 
 // CompilerServiceRegistry.cs
-using Walk.Common.RazorLib.Options.Models;
-using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.CompilerServices.CSharpProject.CompilerServiceCase;
@@ -28,16 +25,13 @@ using Walk.CompilerServices.DotNetSolution.CompilerServiceCase;
 using Walk.CompilerServices.Json;
 using Walk.CompilerServices.Razor.CompilerServiceCase;
 using Walk.CompilerServices.Xml;
-using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 
 // DecorationMapperRegistry.cs
 using Walk.TextEditor.RazorLib.Decorations.Models;
-using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.CompilerServices.Css.Decoration;
 using Walk.CompilerServices.Json.Decoration;
 using Walk.CompilerServices.Xml.Html.Decoration;
-using Walk.Ide.RazorLib.Terminals.Models;
 
 namespace Walk.Extensions.Config.Installations.Displays;
 

@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.TextEditor.RazorLib.FindAlls.Models;
-using Walk.TextEditor.RazorLib.Installations.Models;
 
 namespace Walk.TextEditor.RazorLib.FindAlls.Displays;
 
