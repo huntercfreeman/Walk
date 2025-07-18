@@ -915,34 +915,20 @@ public sealed class TextEditorService
     
     
     /* Start ModelApi */
-    private readonly TextEditorService _textEditorService;
-    private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
-    private readonly CommonUtilityService _commonUtilityService;
-
-    public TextEditorModelApi(
-        TextEditorService textEditorService,
-        ITextEditorRegistryWrap textEditorRegistryWrap,
-        CommonUtilityService commonUtilityService)
-    {
-        _textEditorService = textEditorService;
-        _textEditorRegistryWrap = textEditorRegistryWrap;
-        _commonUtilityService = commonUtilityService;
-    }
-
     #region CREATE_METHODS
-    public void RegisterCustom(TextEditorEditContext editContext, TextEditorModel model)
+    public void Model_RegisterCustom(TextEditorEditContext editContext, TextEditorModel model)
     {
         _textEditorService.RegisterModel(editContext, model);
     }
 
-    public void RegisterTemplated(
+    public void Model_RegisterTemplated(
     	TextEditorEditContext editContext,
         string extensionNoPeriod,
         ResourceUri resourceUri,
         DateTime resourceLastWriteTime,
         string initialContent,
         string? overrideDisplayTextForFileExtension = null)
-    {    
+    {
         var model = new TextEditorModel(
             resourceUri,
             resourceLastWriteTime,
@@ -958,42 +944,42 @@ public sealed class TextEditorService
 
     #region READ_METHODS
     [Obsolete("TextEditorModel.PersistentState.ViewModelKeyList")]
-    public List<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri)
+    public List<TextEditorViewModel> Model_GetViewModelsOrEmpty(ResourceUri resourceUri)
     {
     	return _textEditorService.TextEditorState.ModelGetViewModelsOrEmpty(resourceUri);
     }
 
-    public string? GetAllText(ResourceUri resourceUri)
+    public string? Model_GetAllText(ResourceUri resourceUri)
     {
     	return GetOrDefault(resourceUri)?.GetAllText();;
     }
 
-    public TextEditorModel? GetOrDefault(ResourceUri resourceUri)
+    public TextEditorModel? Model_GetOrDefault(ResourceUri resourceUri)
     {
         return _textEditorService.TextEditorState.ModelGetOrDefault(
         	resourceUri);
     }
 
-    public Dictionary<ResourceUri, TextEditorModel> GetModels()
+    public Dictionary<ResourceUri, TextEditorModel> Model_GetModels()
     {
         return _textEditorService.TextEditorState.ModelGetModels();
     }
     
-    public int GetModelsCount()
+    public int Model_GetModelsCount()
     {
     	return _textEditorService.TextEditorState.ModelGetModelsCount();
     }
     #endregion
 
     #region UPDATE_METHODS
-    /*public void UndoEdit(
+    /*public void Model_UndoEdit(
 	    TextEditorEditContext editContext,
         TextEditorModel modelModifier)
     {
         modelModifier.UndoEdit();
     }*/
 
-    public void SetUsingLineEndKind(
+    public void Model_SetUsingLineEndKind(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         LineEndKind lineEndKind)
@@ -1001,7 +987,7 @@ public sealed class TextEditorService
         modelModifier.SetLineEndKindPreference(lineEndKind);
     }
 
-    public void SetResourceData(
+    public void Model_SetResourceData(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         DateTime resourceLastWriteTime)
@@ -1009,7 +995,7 @@ public sealed class TextEditorService
         modelModifier.SetResourceData(modelModifier.PersistentState.ResourceUri, resourceLastWriteTime);
     }
 
-    public void Reload(
+    public void Model_Reload(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         string content,
@@ -1019,14 +1005,14 @@ public sealed class TextEditorService
         modelModifier.SetResourceData(modelModifier.PersistentState.ResourceUri, resourceLastWriteTime);
     }
 
-    /*public void RedoEdit(
+    /*public void Model_RedoEdit(
     	TextEditorEditContext editContext,
         TextEditorModel modelModifier)
     {
         modelModifier.RedoEdit();
     }*/
 
-    public void InsertText(
+    public void Model_InsertText(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
@@ -1035,7 +1021,7 @@ public sealed class TextEditorService
         modelModifier.Insert(content, viewModel);
     }
 
-    public void InsertTextUnsafe(
+    public void Model_InsertTextUnsafe(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
@@ -1044,7 +1030,7 @@ public sealed class TextEditorService
         modelModifier.Insert(content, viewModel);
     }
 
-    public void HandleKeyboardEvent(
+    public void Model_HandleKeyboardEvent(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
@@ -1053,7 +1039,7 @@ public sealed class TextEditorService
         modelModifier.HandleKeyboardEvent(keymapArgs, viewModel);
     }
 
-    public void HandleKeyboardEventUnsafe(
+    public void Model_HandleKeyboardEventUnsafe(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
@@ -1062,7 +1048,7 @@ public sealed class TextEditorService
         modelModifier.HandleKeyboardEvent(keymapArgs, viewModel);
     }
 
-    public void DeleteTextByRange(
+    public void Model_DeleteTextByRange(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
@@ -1071,7 +1057,7 @@ public sealed class TextEditorService
         modelModifier.DeleteByRange(count, viewModel);
     }
 
-    public void DeleteTextByRangeUnsafe(
+    public void Model_DeleteTextByRangeUnsafe(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
@@ -1080,7 +1066,7 @@ public sealed class TextEditorService
         modelModifier.DeleteByRange(count, viewModel);
     }
 
-    public void DeleteTextByMotion(
+    public void Model_DeleteTextByMotion(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
@@ -1089,7 +1075,7 @@ public sealed class TextEditorService
         modelModifier.DeleteTextByMotion(motionKind, viewModel);
     }
 
-    public void DeleteTextByMotionUnsafe(
+    public void Model_DeleteTextByMotionUnsafe(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
@@ -1098,7 +1084,7 @@ public sealed class TextEditorService
         modelModifier.DeleteTextByMotion(motionKind, viewModel);
     }
 
-    public void AddPresentationModel(
+    public void Model_AddPresentationModel(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorPresentationModel emptyPresentationModel)
@@ -1106,7 +1092,7 @@ public sealed class TextEditorService
         modelModifier.PerformRegisterPresentationModelAction(emptyPresentationModel);
     }
 
-    public void StartPendingCalculatePresentationModel(
+    public void Model_StartPendingCalculatePresentationModel(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         Key<TextEditorPresentationModel> presentationKey,
@@ -1115,7 +1101,7 @@ public sealed class TextEditorService
         modelModifier.StartPendingCalculatePresentationModel(presentationKey, emptyPresentationModel);
     }
 
-    public void CompletePendingCalculatePresentationModel(
+    public void Model_CompletePendingCalculatePresentationModel(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         Key<TextEditorPresentationModel> presentationKey,
@@ -1128,7 +1114,7 @@ public sealed class TextEditorService
             calculatedTextSpans);
     }
 
-    public void ApplyDecorationRange(
+    public void Model_ApplyDecorationRange(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         IEnumerable<TextEditorTextSpan> textSpans)
@@ -1161,7 +1147,7 @@ public sealed class TextEditorService
         modelModifier.ShouldCalculateVirtualizationResult = true;
     }
 
-    public void ApplySyntaxHighlighting(
+    public void Model_ApplySyntaxHighlighting(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier)
     {
@@ -1189,7 +1175,7 @@ public sealed class TextEditorService
     #endregion
 
     #region DELETE_METHODS
-    public void Dispose(TextEditorEditContext editContext, ResourceUri resourceUri)
+    public void Model_Dispose(TextEditorEditContext editContext, ResourceUri resourceUri)
     {
         _textEditorService.DisposeModel(editContext, resourceUri);
     }
@@ -1197,26 +1183,15 @@ public sealed class TextEditorService
     /* End ModelApi */
     
     /* Start ViewModelApi */
-    private readonly TextEditorService _textEditorService;
-    private readonly CommonUtilityService _commonUtilityService;
+    private Task ViewModel_cursorShouldBlinkTask = Task.CompletedTask;
+    private CancellationTokenSource ViewModel_cursorShouldBlinkCancellationTokenSource = new();
+    private TimeSpan ViewModel_blinkingCursorTaskDelay = TimeSpan.FromMilliseconds(1000);
     
-    public TextEditorViewModelApi(
-        TextEditorService textEditorService,
-        CommonUtilityService commonUtilityService)
-    {
-        _textEditorService = textEditorService;
-        _commonUtilityService = commonUtilityService;
-    }
+    public bool ViewModel_CursorShouldBlink { get; private set; } = true;
+    public event Action? ViewModel_CursorShouldBlinkChanged;
     
-    private Task _cursorShouldBlinkTask = Task.CompletedTask;
-    private CancellationTokenSource _cursorShouldBlinkCancellationTokenSource = new();
-    private TimeSpan _blinkingCursorTaskDelay = TimeSpan.FromMilliseconds(1000);
-    
-    public bool CursorShouldBlink { get; private set; } = true;
-    public event Action? CursorShouldBlinkChanged;
-    
-    private bool _intentStopCursorBlinking = false;
-    private int _stopCursorBlinkingId = 0;
+    private bool ViewModel_intentStopCursorBlinking = false;
+    private int ViewModel_stopCursorBlinkingId = 0;
     
     /// <summary>
     /// Thread Safety: most invocations of this are from the TextEditorEditContext,...
@@ -1227,7 +1202,7 @@ public sealed class TextEditorService
     /// Precise debounce timing: I think this implementation has an imprecise debounce delay,
     /// but that is very low importance from a triage perspective. There are more important things to work on.
     /// </summary>
-    public void StopCursorBlinking()
+    public void ViewModel_StopCursorBlinking()
     {
         if (CursorShouldBlink)
         {
@@ -1265,7 +1240,7 @@ public sealed class TextEditorService
     }
 
     #region CREATE_METHODS
-    public void Register(
+    public void ViewModel_Register(
     	TextEditorEditContext editContext,
         Key<TextEditorViewModel> viewModelKey,
         ResourceUri resourceUri,
@@ -1288,25 +1263,25 @@ public sealed class TextEditorService
 		_textEditorService.RegisterViewModel(editContext, viewModel);
     }
     
-    public void Register(TextEditorEditContext editContext, TextEditorViewModel viewModel)
+    public void ViewModel_Register(TextEditorEditContext editContext, TextEditorViewModel viewModel)
     {
         _textEditorService.RegisterViewModel(editContext, viewModel);
     }
     #endregion
 
     #region READ_METHODS
-    public TextEditorViewModel? GetOrDefault(Key<TextEditorViewModel> viewModelKey)
+    public TextEditorViewModel? ViewModel_GetOrDefault(Key<TextEditorViewModel> viewModelKey)
     {
         return _textEditorService.TextEditorState.ViewModelGetOrDefault(
             viewModelKey);
     }
 
-    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModel> GetViewModels()
+    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModel> ViewModel_GetViewModels()
     {
         return _textEditorService.TextEditorState.ViewModelGetViewModels();
     }
 
-    public TextEditorModel? GetModelOrDefault(Key<TextEditorViewModel> viewModelKey)
+    public TextEditorModel? ViewModel_GetModelOrDefault(Key<TextEditorViewModel> viewModelKey)
     {
         var viewModel = _textEditorService.TextEditorState.ViewModelGetOrDefault(
             viewModelKey);
@@ -1317,7 +1292,7 @@ public sealed class TextEditorService
         return _textEditorService.ModelApi.GetOrDefault(viewModel.PersistentState.ResourceUri);
     }
 
-    public string? GetAllText(Key<TextEditorViewModel> viewModelKey)
+    public string? ViewModel_GetAllText(Key<TextEditorViewModel> viewModelKey)
     {
         var textEditorModel = GetModelOrDefault(viewModelKey);
 
@@ -1326,7 +1301,7 @@ public sealed class TextEditorService
             : _textEditorService.ModelApi.GetAllText(textEditorModel.PersistentState.ResourceUri);
     }
 
-    public async ValueTask<TextEditorDimensions> GetTextEditorMeasurementsAsync(string elementId)
+    public async ValueTask<TextEditorDimensions> ViewModel_GetTextEditorMeasurementsAsync(string elementId)
     {
         return await _textEditorService.JsRuntimeTextEditorApi
             .GetTextEditorMeasurementsInPixelsById(elementId)
@@ -1335,7 +1310,7 @@ public sealed class TextEditorService
     #endregion
 
     #region UPDATE_METHODS
-    public void SetScrollPositionBoth(
+    public void ViewModel_SetScrollPositionBoth(
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel,
         double scrollLeftInPixels,
@@ -1348,7 +1323,7 @@ public sealed class TextEditorService
 		viewModel.SetScrollTop((int)Math.Floor(scrollTopInPixels), viewModel.PersistentState.TextEditorDimensions);
     }
         
-    public void SetScrollPositionLeft(
+    public void ViewModel_SetScrollPositionLeft(
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel,
         double scrollLeftInPixels)
@@ -1358,7 +1333,7 @@ public sealed class TextEditorService
 		viewModel.SetScrollLeft((int)Math.Floor(scrollLeftInPixels), viewModel.PersistentState.TextEditorDimensions);
     }
     
-    public void SetScrollPositionTop(
+    public void ViewModel_SetScrollPositionTop(
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel,
         double scrollTopInPixels)
@@ -1368,7 +1343,7 @@ public sealed class TextEditorService
 		viewModel.SetScrollTop((int)Math.Floor(scrollTopInPixels), viewModel.PersistentState.TextEditorDimensions);
     }
 
-    public void MutateScrollVerticalPosition(
+    public void ViewModel_MutateScrollVerticalPosition(
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel,
         double pixels)
@@ -1378,7 +1353,7 @@ public sealed class TextEditorService
         viewModel.MutateScrollTop((int)Math.Ceiling(pixels), viewModel.PersistentState.TextEditorDimensions);
     }
 
-    public void MutateScrollHorizontalPosition(
+    public void ViewModel_MutateScrollHorizontalPosition(
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel,
         double pixels)
@@ -1393,7 +1368,7 @@ public sealed class TextEditorService
 	///
 	/// Measurements are in pixels.
 	/// </summary>
-    public void ScrollIntoView(
+    public void ViewModel_ScrollIntoView(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
@@ -1471,13 +1446,13 @@ public sealed class TextEditorService
         	SetScrollPositionLeft(editContext, viewModel, targetScrollLeft);
     }
 
-    public ValueTask FocusPrimaryCursorAsync(string primaryCursorContentId)
+    public ValueTask ViewModel_FocusPrimaryCursorAsync(string primaryCursorContentId)
     {
         return _commonUtilityService.JsRuntimeCommonApi
             .FocusHtmlElementById(primaryCursorContentId, preventScroll: true);
     }
 
-    public void MoveCursor(
+    public void ViewModel_MoveCursor(
         string? key,
         string? code,
         bool ctrlKey,
@@ -1500,7 +1475,7 @@ public sealed class TextEditorService
         viewModel.PersistentState.ShouldRevealCursor = true;
     }
 
-    public void MoveCursorUnsafe(
+    public void ViewModel_MoveCursorUnsafe(
         string? key,
         string? code,
         bool ctrlKey,
@@ -2009,7 +1984,7 @@ public sealed class TextEditorService
         }
     }
 
-    public void CursorMovePageTop(
+    public void ViewModel_CursorMovePageTop(
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel)
     {
@@ -2018,7 +1993,7 @@ public sealed class TextEditorService
         	viewModel);
     }
 
-    public void CursorMovePageTopUnsafe(
+    public void ViewModel_CursorMovePageTopUnsafe(
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel)
     {
@@ -2030,18 +2005,18 @@ public sealed class TextEditorService
         }
     }
 
-    public void CursorMovePageBottom(
+    public void ViewModel_CursorMovePageBottom(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
-        CursorMovePageBottomUnsafe(
+        ViewModel_CursorMovePageBottomUnsafe(
         	editContext,
         	modelModifier,
         	viewModel);
     }
 
-    public void CursorMovePageBottomUnsafe(
+    public void ViewModel_CursorMovePageBottomUnsafe(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
@@ -2056,7 +2031,7 @@ public sealed class TextEditorService
         }
     }
     
-    public void RevealCursor(
+    public void ViewModel_RevealCursor(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
@@ -2094,7 +2069,7 @@ public sealed class TextEditorService
     	}
     }
 
-    public void CalculateVirtualizationResult(
+    public void ViewModel_CalculateVirtualizationResult(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
 		TextEditorViewModel viewModel,
@@ -2640,7 +2615,7 @@ public sealed class TextEditorService
 		#endif
     }
     
-    private static int CountDigits(int argumentNumber)
+    private static int ViewModel_CountDigits(int argumentNumber)
     {
     	var digitCount = 1;
     	var runningNumber = argumentNumber;
@@ -2653,7 +2628,7 @@ public sealed class TextEditorService
     	return digitCount;
     }
 
-    private int GetGutterWidthInPixels(TextEditorModel model, TextEditorViewModel viewModel, TextEditorComponentData componentData)
+    private int ViewModel_GetGutterWidthInPixels(TextEditorModel model, TextEditorViewModel viewModel, TextEditorComponentData componentData)
     {
         if (!componentData.ViewModelDisplayOptions.IncludeGutterComponent)
             return 0;
@@ -2671,7 +2646,7 @@ public sealed class TextEditorService
     /// <summary>
     /// Inlining this instead of invoking the function definition just to see what happens.
     /// </summary>
-    /*private void AppendTextEscaped(
+    /*private void ViewModel_AppendTextEscaped(
         StringBuilder spanBuilder,
         RichCharacter richCharacter,
         string tabKeyOutput,
@@ -2710,7 +2685,7 @@ public sealed class TextEditorService
         }
     }*/
 
-    public async ValueTask RemeasureAsync(
+    public async ValueTask ViewModel_RemeasureAsync(
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel)
     {
@@ -2728,7 +2703,7 @@ public sealed class TextEditorService
 		viewModel.PersistentState.TextEditorDimensions = textEditorMeasurements;
     }
 
-    public void ForceRender(
+    public void ViewModel_ForceRender(
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel)
     {
@@ -2743,7 +2718,7 @@ public sealed class TextEditorService
     #endregion
 
     #region DELETE_METHODS
-    public void Dispose(TextEditorEditContext editContext, Key<TextEditorViewModel> viewModelKey)
+    public void ViewModel_Dispose(TextEditorEditContext editContext, Key<TextEditorViewModel> viewModelKey)
     {
         _textEditorService.DisposeViewModel(editContext, viewModelKey);
     }
@@ -2751,34 +2726,24 @@ public sealed class TextEditorService
     /* End ViewModelApi */
     
     /* Start GroupApi */
-	private readonly object _stateModificationLock = new();
-
-	private readonly TextEditorService _textEditorService;
-    private readonly CommonUtilityService _commonUtilityService;
-
-    public TextEditorGroupApi(
-        TextEditorService textEditorService,
-        CommonUtilityService commonUtilityService)
-    {
-        _textEditorService = textEditorService;
-        _commonUtilityService = commonUtilityService;
-    }
-
-    public void SetActiveViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
+    // TODO: Is this lock used?
+	private readonly object Group_stateModificationLock = new();
+	
+    public void Group_SetActiveViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
     {
         SetActiveViewModelOfGroup(
             textEditorGroupKey,
             textEditorViewModelKey);
     }
 
-    public void RemoveViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
+    public void Group_RemoveViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
     {
         RemoveViewModelFromGroup(
             textEditorGroupKey,
             textEditorViewModelKey);
     }
 
-    public void Register(Key<TextEditorGroup> textEditorGroupKey, Category? category = null)
+    public void Group_Register(Key<TextEditorGroup> textEditorGroupKey, Category? category = null)
     {
     	category ??= new Category("main");
     
@@ -2793,32 +2758,32 @@ public sealed class TextEditorService
         Register(textEditorGroup);
     }
 
-    public TextEditorGroup? GetOrDefault(Key<TextEditorGroup> textEditorGroupKey)
+    public TextEditorGroup? Group_GetOrDefault(Key<TextEditorGroup> textEditorGroupKey)
     {
         return _textEditorService.GroupApi.GetTextEditorGroupState().GroupList.FirstOrDefault(
             x => x.GroupKey == textEditorGroupKey);
     }
 
-    public void AddViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
+    public void Group_AddViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
     {
         AddViewModelToGroup(
             textEditorGroupKey,
             textEditorViewModelKey);
     }
 
-    public List<TextEditorGroup> GetGroups()
+    public List<TextEditorGroup> Group_GetGroups()
     {
         return _textEditorService.GroupApi.GetTextEditorGroupState().GroupList;
     }
     
     // TextEditorGroupService.cs
-    private TextEditorGroupState _textEditorGroupState = new();
+    private TextEditorGroupState Group_textEditorGroupState = new();
 	
-	public event Action? TextEditorGroupStateChanged;
+	public event Action? Group_TextEditorGroupStateChanged;
 	
-	public TextEditorGroupState GetTextEditorGroupState() => _textEditorGroupState;
+	public TextEditorGroupState Group_GetTextEditorGroupState() => _textEditorGroupState;
         
-    public void Register(TextEditorGroup group)
+    public void Group_Register(TextEditorGroup group)
     {
         lock (_stateModificationLock)
         {
@@ -2845,7 +2810,7 @@ public sealed class TextEditorService
 		TextEditorGroupStateChanged?.Invoke();
 	}
 
-    public void AddViewModelToGroup(
+    public void Group_AddViewModelToGroup(
         Key<TextEditorGroup> groupKey,
         Key<TextEditorViewModel> viewModelKey)
     {
@@ -2899,7 +2864,7 @@ public sealed class TextEditorService
 		PostScroll(groupKey, viewModelKey);
 	}
 
-    public void RemoveViewModelFromGroup(
+    public void Group_RemoveViewModelFromGroup(
         Key<TextEditorGroup> groupKey,
         Key<TextEditorViewModel> viewModelKey)
     {
@@ -2985,7 +2950,7 @@ public sealed class TextEditorService
 		PostScroll(groupKey, _textEditorService.GroupApi.GetOrDefault(groupKey).ActiveViewModelKey);
 	}
 
-    public void SetActiveViewModelOfGroup(
+    public void Group_SetActiveViewModelOfGroup(
         Key<TextEditorGroup> groupKey,
         Key<TextEditorViewModel> viewModelKey)
     {
@@ -3024,7 +2989,7 @@ public sealed class TextEditorService
 		TextEditorGroupStateChanged?.Invoke();
 	}
 
-    public void Dispose(Key<TextEditorGroup> groupKey)
+    public void Group_Dispose(Key<TextEditorGroup> groupKey)
     {
         lock (_stateModificationLock)
         {
@@ -3051,7 +3016,7 @@ public sealed class TextEditorService
 		TextEditorGroupStateChanged?.Invoke();
 	}
 
-	private void PostScroll(
+	private void Group_PostScroll(
 		Key<TextEditorGroup> groupKey,
     	Key<TextEditorViewModel> viewModelKey)
 	{
@@ -3068,14 +3033,7 @@ public sealed class TextEditorService
     /* End GroupApi */
     
     /* Start DiffApi */
-    private readonly TextEditorService _textEditorService;
-
-    public TextEditorDiffApi(TextEditorService textEditorService)
-    {
-        _textEditorService = textEditorService;
-    }
-
-    public void Register(
+    public void Diff_Register(
         Key<TextEditorDiffModel> diffModelKey,
         Key<TextEditorViewModel> inViewModelKey,
         Key<TextEditorViewModel> outViewModelKey)
@@ -3086,18 +3044,18 @@ public sealed class TextEditorService
             outViewModelKey);
     }
 
-    public TextEditorDiffModel? GetOrDefault(Key<TextEditorDiffModel> diffModelKey)
+    public TextEditorDiffModel? Diff_GetOrDefault(Key<TextEditorDiffModel> diffModelKey)
     {
         return GetTextEditorDiffState().DiffModelList
             .FirstOrDefault(x => x.DiffKey == diffModelKey);
     }
 
-    public void Dispose(Key<TextEditorDiffModel> diffModelKey)
+    public void Diff_Dispose(Key<TextEditorDiffModel> diffModelKey)
     {
         ReduceDisposeAction(diffModelKey);
     }
 
-    public Func<TextEditorEditContext, Task> CalculateFactory(
+    public Func<TextEditorEditContext, Task> Diff_CalculateFactory(
         Key<TextEditorDiffModel> diffModelKey,
         CancellationToken cancellationToken)
     {
@@ -3167,18 +3125,18 @@ public sealed class TextEditorService
         };
     }
 
-    public IReadOnlyList<TextEditorDiffModel> GetDiffModels()
+    public IReadOnlyList<TextEditorDiffModel> Diff_GetDiffModels()
     {
         return GetTextEditorDiffState().DiffModelList;
     }
     
-    private TextEditorDiffState _textEditorDiffState = new();
+    private TextEditorDiffState Diff_textEditorDiffState = new();
     
-    public event Action? TextEditorDiffStateChanged;
+    public event Action? Diff_TextEditorDiffStateChanged;
     
-    public TextEditorDiffState GetTextEditorDiffState() => _textEditorDiffState;
+    public TextEditorDiffState Diff_GetTextEditorDiffState() => _textEditorDiffState;
     
-    public void ReduceDisposeAction(Key<TextEditorDiffModel> diffKey)
+    public void Diff_ReduceDisposeAction(Key<TextEditorDiffModel> diffKey)
     {
     	var inState = GetTextEditorDiffState();
     
@@ -3203,7 +3161,7 @@ public sealed class TextEditorService
         return;
     }
 
-    public void ReduceRegisterAction(
+    public void Diff_ReduceRegisterAction(
         Key<TextEditorDiffModel> diffKey,
         Key<TextEditorViewModel> inViewModelKey,
         Key<TextEditorViewModel> outViewModelKey)
@@ -3238,59 +3196,51 @@ public sealed class TextEditorService
     /* End DiffApi */
     
     /* Start OptionsApi */
-	public const int TAB_WIDTH_MIN = 2;
-	public const int TAB_WIDTH_MAX = 4;
+	public const int Options_TAB_WIDTH_MIN = 2;
+	public const int Options_TAB_WIDTH_MAX = 4;
 
-    private readonly TextEditorService _textEditorService;
-    private readonly CommonUtilityService _commonUtilityService;
-
-    public TextEditorOptionsApi(
-        TextEditorService textEditorService,
-        CommonUtilityService commonUtilityService)
-    {
-        _textEditorService = textEditorService;
-        _commonUtilityService = commonUtilityService;
-    }
+    private readonly TextEditorService Options_textEditorService;
+    private readonly CommonUtilityService Options_commonUtilityService;
     
-    private TextEditorOptionsState _textEditorOptionsState = new();
+    private TextEditorOptionsState Options_textEditorOptionsState = new();
 
-    private IDialog? _findAllDialog;
+    private IDialog? Options_findAllDialog;
 
     /// <summary>
     /// Step 1: Notifies the TextEditorViewModelDisplay to recalculate `_componentData.SetWrapperCssAndStyle();`
     ///         and invoke `StateHasChanged()`.
     /// </summary>
-	public event Action? StaticStateChanged;
+	public event Action? Options_StaticStateChanged;
 	/// <summary>
     /// Step 1: Notifies the WalkTextEditorInitializer to measure a tiny UI element that has the options applied to it.
     /// Step 2: WalkTextEditorInitializer then invokes `MeasuredStateChanged`.
     /// Step 3: TextEditorViewModelDisplay sees that second event fire, it enqueues a re-calculation of the virtualization result.
     /// Step 4: Eventually that virtualization result is finished and the editor re-renders.
     /// </summary>
-	public event Action? NeedsMeasured;
+	public event Action? Options_NeedsMeasured;
 	/// <summary>
 	/// Step 1: Notifies TextEditorViewModelDisplay to enqueue a re-calculation of the virtualization result.
 	/// Step 2: Eventually that virtualization result is finished and the editor re-renders.
 	/// </summary>
-    public event Action? MeasuredStateChanged;
+    public event Action? Options_MeasuredStateChanged;
     /// <summary>
     /// This event communicates from the text editor UI to the header and footer.
     /// </summary>
-    public event Action? TextEditorWrapperCssStateChanged;
+    public event Action? Options_TextEditorWrapperCssStateChanged;
 
-	public TextEditorOptionsState GetTextEditorOptionsState() => _textEditorOptionsState;
+	public TextEditorOptionsState Options_GetTextEditorOptionsState() => _textEditorOptionsState;
 
-    public TextEditorOptions GetOptions()
+    public TextEditorOptions Options_GetOptions()
     {
         return _textEditorService.OptionsApi.GetTextEditorOptionsState().Options;
     }
     
-    public void InvokeTextEditorWrapperCssStateChanged()
+    public void Options_InvokeTextEditorWrapperCssStateChanged()
     {
         TextEditorWrapperCssStateChanged?.Invoke();
     }
 
-    public void ShowSettingsDialog(bool? isResizableOverride = null, string? cssClassString = null)
+    public void Options_ShowSettingsDialog(bool? isResizableOverride = null, string? cssClassString = null)
     {
         // TODO: determine the actively focused element at time of invocation,
         //       then restore focus to that element when this dialog is closed.
@@ -3306,7 +3256,7 @@ public sealed class TextEditorService
         _commonUtilityService.Dialog_ReduceRegisterAction(settingsDialog);
     }
 
-    public void ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null)
+    public void Options_ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null)
     {
         // TODO: determine the actively focused element at time of invocation,
         //       then restore focus to that element when this dialog is closed.
@@ -3322,7 +3272,7 @@ public sealed class TextEditorService
         _commonUtilityService.Dialog_ReduceRegisterAction(_findAllDialog);
     }
 
-    public void SetTheme(ThemeRecord theme, bool updateStorage = true)
+    public void Options_SetTheme(ThemeRecord theme, bool updateStorage = true)
     {
     	var inState = GetTextEditorOptionsState();
     
@@ -3355,7 +3305,7 @@ public sealed class TextEditorService
             WriteToStorage();
     }
 
-    public void SetShowWhitespace(bool showWhitespace, bool updateStorage = true)
+    public void Options_SetShowWhitespace(bool showWhitespace, bool updateStorage = true)
     {
     	var inState = GetTextEditorOptionsState();
     
@@ -3374,7 +3324,7 @@ public sealed class TextEditorService
             WriteToStorage();
     }
 
-    public void SetUseMonospaceOptimizations(bool useMonospaceOptimizations, bool updateStorage = true)
+    public void Options_SetUseMonospaceOptimizations(bool useMonospaceOptimizations, bool updateStorage = true)
     {
     	var inState = GetTextEditorOptionsState();
     
@@ -3392,7 +3342,7 @@ public sealed class TextEditorService
             WriteToStorage();
     }
 
-    public void SetShowNewlines(bool showNewlines, bool updateStorage = true)
+    public void Options_SetShowNewlines(bool showNewlines, bool updateStorage = true)
     {
     	var inState = GetTextEditorOptionsState();
     
@@ -3410,7 +3360,7 @@ public sealed class TextEditorService
             WriteToStorage();
     }
     
-    public void SetTabKeyBehavior(bool tabKeyBehavior, bool updateStorage = true)
+    public void Options_SetTabKeyBehavior(bool tabKeyBehavior, bool updateStorage = true)
     {
     	var inState = GetTextEditorOptionsState();
     
@@ -3428,7 +3378,7 @@ public sealed class TextEditorService
             WriteToStorage();
     }
     
-    public void SetTabWidth(int tabWidth, bool updateStorage = true)
+    public void Options_SetTabWidth(int tabWidth, bool updateStorage = true)
     {
     	if (tabWidth < TAB_WIDTH_MIN || tabWidth > TAB_WIDTH_MAX)
     		return;
@@ -3449,7 +3399,7 @@ public sealed class TextEditorService
             WriteToStorage();
     }
 
-    public void SetKeymap(ITextEditorKeymap keymap, bool updateStorage = true)
+    public void Options_SetKeymap(ITextEditorKeymap keymap, bool updateStorage = true)
     {
     	var inState = GetTextEditorOptionsState();
     
@@ -3476,7 +3426,7 @@ public sealed class TextEditorService
             WriteToStorage();*/
     }
 
-    public void SetHeight(int? heightInPixels, bool updateStorage = true)
+    public void Options_SetHeight(int? heightInPixels, bool updateStorage = true)
     {
     	var inState = GetTextEditorOptionsState();
     
@@ -3494,7 +3444,7 @@ public sealed class TextEditorService
             WriteToStorage();
     }
 
-    public void SetFontSize(int fontSizeInPixels, bool updateStorage = true)
+    public void Options_SetFontSize(int fontSizeInPixels, bool updateStorage = true)
     {
     	var inState = GetTextEditorOptionsState();
     
@@ -3515,7 +3465,7 @@ public sealed class TextEditorService
             WriteToStorage();
     }
 
-    public void SetFontFamily(string? fontFamily, bool updateStorage = true)
+    public void Options_SetFontFamily(string? fontFamily, bool updateStorage = true)
     {
     	var inState = GetTextEditorOptionsState();
     
@@ -3536,7 +3486,7 @@ public sealed class TextEditorService
             WriteToStorage();
     }
 
-    public void SetCursorWidth(double cursorWidthInPixels, bool updateStorage = true)
+    public void Options_SetCursorWidth(double cursorWidthInPixels, bool updateStorage = true)
     {
     	var inState = GetTextEditorOptionsState();
 
@@ -3554,7 +3504,7 @@ public sealed class TextEditorService
             WriteToStorage();
     }
 
-    public void SetRenderStateKey(Key<RenderState> renderStateKey)
+    public void Options_SetRenderStateKey(Key<RenderState> renderStateKey)
     {
     	var inState = GetTextEditorOptionsState();
     
@@ -3568,7 +3518,7 @@ public sealed class TextEditorService
         StaticStateChanged?.Invoke();
     }
     
-    public void SetCharAndLineMeasurements(TextEditorEditContext editContext, CharAndLineMeasurements charAndLineMeasurements)
+    public void Options_SetCharAndLineMeasurements(TextEditorEditContext editContext, CharAndLineMeasurements charAndLineMeasurements)
     {
     	var inState = GetTextEditorOptionsState();
 
@@ -3584,7 +3534,7 @@ public sealed class TextEditorService
     	MeasuredStateChanged?.Invoke();
     }
 
-    public void WriteToStorage()
+    public void Options_WriteToStorage()
     {
         _commonUtilityService.Enqueue(new CommonWorkArgs
         {
@@ -3594,7 +3544,7 @@ public sealed class TextEditorService
         });
     }
 
-    public async Task SetFromLocalStorageAsync()
+    public async Task Options_SetFromLocalStorageAsync()
     {
         var optionsJsonString = await _commonUtilityService.Storage_GetValue(_textEditorService.StorageKey).ConfigureAwait(false) as string;
 
