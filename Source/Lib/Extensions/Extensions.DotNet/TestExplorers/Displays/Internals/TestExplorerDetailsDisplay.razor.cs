@@ -171,7 +171,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 					    EndExclusiveIndex: lineInformation.Position_StartInclusiveIndex + 1,
 					    DecorationByte: 0);
 				
-					TextEditorService.ViewModelApi.ScrollIntoView(
+					TextEditorService.ViewModel_ScrollIntoView(
 				        editContext,
 				        modelModifier,
 				        viewModelModifier,
@@ -195,7 +195,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 					terminalResource.CompilationUnit.ManualDecorationTextSpanList.Clear();
 					terminalResource.CompilationUnit.ManualDecorationTextSpanList.AddRange(newDecorationTextSpanList);
 
-					editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+					editContext.TextEditorService.Model_ApplySyntaxHighlighting(
 						editContext,
 						modelModifier);
 				}

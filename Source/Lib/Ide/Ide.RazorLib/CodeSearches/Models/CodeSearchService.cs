@@ -313,7 +313,7 @@ public class CodeSearchService : ICodeSearchService
 	                if (inPreviewViewModelKey != Key<TextEditorViewModel>.Empty &&
 	                    inPreviewViewModelKey != viewModelKey)
 					{
-						_textEditorService.ViewModelApi.Dispose(editContext, inPreviewViewModelKey);
+						_textEditorService.ViewModel_Dispose(editContext, inPreviewViewModelKey);
 					}
 	            }
 	        }

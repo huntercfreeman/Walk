@@ -128,11 +128,11 @@ public class DotNetCommandFactory : IDotNetCommandFactory
     {
 		_nodeList.Clear();
 
-		var group = _textEditorService.GroupApi.GetOrDefault(IdeBackgroundTaskApi.EditorTextEditorGroupKey);
+		var group = _textEditorService.Group_GetOrDefault(IdeBackgroundTaskApi.EditorTextEditorGroupKey);
 
 		if (group is not null)
 		{
-			var textEditorViewModel = _textEditorService.ViewModelApi.GetOrDefault(group.ActiveViewModelKey);
+			var textEditorViewModel = _textEditorService.ViewModel_GetOrDefault(group.ActiveViewModelKey);
 
 			if (textEditorViewModel is not null)
 			{

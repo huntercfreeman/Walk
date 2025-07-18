@@ -142,7 +142,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
     public ICompilerServiceResource? GetResource(ResourceUri resourceUri)
     {
-    	var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
+    	var model = _textEditorService.Model_GetOrDefault(resourceUri);
 
         lock (_resourceMapLock)
         {
@@ -1079,7 +1079,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     						indexInclusiveStart,
     						category,
     						Key<TextEditorViewModel>.NewKey())
-    					.ContinueWith(_ => _textEditorService.ViewModelApi.StopCursorBlinking());
+    					.ContinueWith(_ => _textEditorService.ViewModel_StopCursorBlinking());
     			}
     		});
 		}
@@ -1187,7 +1187,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 						positionIndex,
                 						category,
                 						Key<TextEditorViewModel>.NewKey())
-                					.ContinueWith(_ => _textEditorService.ViewModelApi.StopCursorBlinking());
+                					.ContinueWith(_ => _textEditorService.ViewModel_StopCursorBlinking());
                 			}
     			    	});
     				}));
@@ -1237,12 +1237,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         				//       |
         				//       I ran this and it didn't work. Its for the best that it doesn't.
         				//	   maybe when I wake up tomorrow I'll realize what im doing here.
-        				var mainEditorGroup = _textEditorService.GroupApi.GetTextEditorGroupState().GroupList.SingleOrDefault();
+        				var mainEditorGroup = _textEditorService.Group_GetTextEditorGroupState().GroupList.SingleOrDefault();
         				
         				if (mainEditorGroup is not null &&
         					mainEditorGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty)
         				{
-        					var activeViewModel = _textEditorService.ViewModelApi.GetOrDefault(mainEditorGroup.ActiveViewModelKey);
+        					var activeViewModel = _textEditorService.ViewModel_GetOrDefault(mainEditorGroup.ActiveViewModelKey);
         
         					if (activeViewModel is not null)
         						await activeViewModel.FocusAsync();
@@ -1266,7 +1266,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		if (!_resourceMap.ContainsKey(resourceUri))
 			return ValueTask.CompletedTask;
 	
-		_textEditorService.ModelApi.StartPendingCalculatePresentationModel(
+		_textEditorService.Model_StartPendingCalculatePresentationModel(
 			editContext,
 	        modelModifier,
 	        CompilerServiceDiagnosticPresentationFacts.PresentationKey,
@@ -1313,7 +1313,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			
 			if (shouldApplySyntaxHighlighting)
 			{
-				editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+				editContext.TextEditorService.Model_ApplySyntaxHighlighting(
 					editContext,
 					modelModifier);
 					
@@ -1723,7 +1723,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             if (modelModifier is null)
                 return ValueTask.CompletedTask;
 
-            var viewModelList = _textEditorService.ModelApi.GetViewModelsOrEmpty(resourceUri);
+            var viewModelList = _textEditorService.Model_GetViewModelsOrEmpty(resourceUri);
             
             var viewModel = viewModelList.FirstOrDefault(x => x.PersistentState.Category.Value == "main")
             	?? viewModelList.FirstOrDefault();

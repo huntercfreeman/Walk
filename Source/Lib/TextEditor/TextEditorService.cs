@@ -945,7 +945,7 @@ public sealed class TextEditorService
 
     public string? Model_GetAllText(ResourceUri resourceUri)
     {
-    	return GetOrDefault(resourceUri)?.GetAllText();;
+    	return Model_GetOrDefault(resourceUri)?.GetAllText();;
     }
 
     public TextEditorModel? Model_GetOrDefault(ResourceUri resourceUri)
@@ -1158,7 +1158,7 @@ public sealed class TextEditorService
         		componentData.LineIndexCache.IsInvalid = true;
         }
 
-        ApplyDecorationRange(
+        Model_ApplyDecorationRange(
 	        editContext,
 	        modelModifier,
 	        compilerServiceResource.CompilationUnit?.GetTextTextSpans() ?? Array.Empty<TextEditorTextSpan>());
@@ -1171,7 +1171,7 @@ public sealed class TextEditorService
     #region DELETE_METHODS
     public void Model_Dispose(TextEditorEditContext editContext, ResourceUri resourceUri)
     {
-        _textEditorService.DisposeModel(editContext, resourceUri);
+        DisposeModel(editContext, resourceUri);
     }
     #endregion
     /* End ModelApi */
@@ -1285,11 +1285,11 @@ public sealed class TextEditorService
 
     public string? ViewModel_GetAllText(Key<TextEditorViewModel> viewModelKey)
     {
-        var textEditorModel = GetModelOrDefault(viewModelKey);
+        var textEditorModel = ViewModel_GetModelOrDefault(viewModelKey);
 
         return textEditorModel is null
             ? null
-            : _textEditorService.Model_GetAllText(textEditorModel.PersistentState.ResourceUri);
+            : Model_GetAllText(textEditorModel.PersistentState.ResourceUri);
     }
 
     public async ValueTask<TextEditorDimensions> ViewModel_GetTextEditorMeasurementsAsync(string elementId)
@@ -1424,11 +1424,11 @@ public sealed class TextEditorService
         viewModel.PersistentState.Changed_Cursor_AnyState = true;
         
         if (targetScrollTop != -1 && targetScrollLeft != -1)
-        	SetScrollPositionBoth(editContext, viewModel, targetScrollLeft, targetScrollTop);
+        	ViewModel_SetScrollPositionBoth(editContext, viewModel, targetScrollLeft, targetScrollTop);
         else if (targetScrollTop != -1)
-        	SetScrollPositionTop(editContext, viewModel, targetScrollTop);
+        	ViewModel_SetScrollPositionTop(editContext, viewModel, targetScrollTop);
     	else
-        	SetScrollPositionLeft(editContext, viewModel, targetScrollLeft);
+        	ViewModel_SetScrollPositionLeft(editContext, viewModel, targetScrollLeft);
     }
 
     public ValueTask ViewModel_FocusPrimaryCursorAsync(string primaryCursorContentId)
@@ -1447,7 +1447,7 @@ public sealed class TextEditorService
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
-        MoveCursorUnsafe(
+        ViewModel_MoveCursorUnsafe(
             key,
             code,
             ctrlKey,
@@ -1973,7 +1973,7 @@ public sealed class TextEditorService
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel)
     {
-        CursorMovePageTopUnsafe(
+        ViewModel_CursorMovePageTopUnsafe(
 	        editContext,
         	viewModel);
     }
@@ -2042,7 +2042,7 @@ public sealed class TextEditorService
                 cursorPositionIndex + 1,
                 0);
 
-            ScrollIntoView(
+            ViewModel_ScrollIntoView(
         		editContext,
 		        modelModifier,
 		        viewModel,
@@ -2157,7 +2157,7 @@ public sealed class TextEditorService
 		viewModel.PersistentState.ScrollHeight = totalHeight;
 		viewModel.PersistentState.MarginScrollHeight = marginScrollHeight;
 		
-		viewModel.PersistentState.GutterWidth = GetGutterWidthInPixels(modelModifier, viewModel, componentData);
+		viewModel.PersistentState.GutterWidth = ViewModel_GetGutterWidthInPixels(modelModifier, viewModel, componentData);
 		
 		var absDiffScrollLeft = Math.Abs(componentData.LineIndexCache.ScrollLeftMarker - viewModel.PersistentState.ScrollLeft);
 		var useCache = absDiffScrollLeft < 0.01 && componentData.LineIndexCache.ViewModelKeyMarker == viewModel.PersistentState.ViewModelKey;
@@ -2618,7 +2618,7 @@ public sealed class TextEditorService
         if (!componentData.ViewModelDisplayOptions.IncludeGutterComponent)
             return 0;
 
-        var mostDigitsInARowLineNumber = CountDigits(model!.LineCount);
+        var mostDigitsInARowLineNumber = ViewModel_CountDigits(model!.LineCount);
 
         var gutterWidthInPixels = mostDigitsInARowLineNumber *
             viewModel!.PersistentState.CharAndLineMeasurements.CharacterWidth;
@@ -2714,14 +2714,14 @@ public sealed class TextEditorService
 	
     public void Group_SetActiveViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
     {
-        SetActiveViewModelOfGroup(
+        Group_SetActiveViewModelOfGroup(
             textEditorGroupKey,
             textEditorViewModelKey);
     }
 
     public void Group_RemoveViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
     {
-        RemoveViewModelFromGroup(
+        Group_RemoveViewModelFromGroup(
             textEditorGroupKey,
             textEditorViewModelKey);
     }
@@ -2738,7 +2738,7 @@ public sealed class TextEditorService
             this,
             CommonUtilityService);
 
-        Register(textEditorGroup);
+        Group_Register(textEditorGroup);
     }
 
     public TextEditorGroup? Group_GetOrDefault(Key<TextEditorGroup> textEditorGroupKey)
@@ -2749,7 +2749,7 @@ public sealed class TextEditorService
 
     public void Group_AddViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
     {
-        AddViewModelToGroup(
+        Group_AddViewModelToGroup(
             textEditorGroupKey,
             textEditorViewModelKey);
     }
@@ -2770,7 +2770,7 @@ public sealed class TextEditorService
     {
         lock (Group_stateModificationLock)
         {
-            var inState = GetTextEditorGroupState();
+            var inState = Group_GetTextEditorGroupState();
 
             var inGroup = inState.GroupList.FirstOrDefault(
                 x => x.GroupKey == group.GroupKey);
@@ -2799,7 +2799,7 @@ public sealed class TextEditorService
     {
         lock (Group_stateModificationLock)
         {
-            var inState = GetTextEditorGroupState();
+            var inState = Group_GetTextEditorGroupState();
 
             var inGroupIndex = inState.GroupList.FindIndex(
                 x => x.GroupKey == groupKey);
@@ -2844,7 +2844,7 @@ public sealed class TextEditorService
 
 		finalize:
 		Group_TextEditorGroupStateChanged?.Invoke();
-		PostScroll(groupKey, viewModelKey);
+		Group_PostScroll(groupKey, viewModelKey);
 	}
 
     public void Group_RemoveViewModelFromGroup(
@@ -2853,7 +2853,7 @@ public sealed class TextEditorService
     {
         lock (Group_stateModificationLock)
         {
-            var inState = GetTextEditorGroupState();
+            var inState = Group_GetTextEditorGroupState();
 
             var inGroupIndex = inState.GroupList.FindIndex(
                 x => x.GroupKey == groupKey);
@@ -2930,7 +2930,7 @@ public sealed class TextEditorService
 
 		finalize:
 		Group_TextEditorGroupStateChanged?.Invoke();
-		PostScroll(groupKey, Group_GetOrDefault(groupKey).ActiveViewModelKey);
+		Group_PostScroll(groupKey, Group_GetOrDefault(groupKey).ActiveViewModelKey);
 	}
 
     public void Group_SetActiveViewModelOfGroup(
@@ -2939,7 +2939,7 @@ public sealed class TextEditorService
     {
         lock (Group_stateModificationLock)
         {
-            var inState = GetTextEditorGroupState();
+            var inState = Group_GetTextEditorGroupState();
 
             var inGroupIndex = inState.GroupList.FindIndex(
                 x => x.GroupKey == groupKey);
@@ -2968,7 +2968,7 @@ public sealed class TextEditorService
 		}
 
 		finalize:
-		PostScroll(groupKey, viewModelKey);
+		Group_PostScroll(groupKey, viewModelKey);
 		Group_TextEditorGroupStateChanged?.Invoke();
 	}
 
@@ -2976,7 +2976,7 @@ public sealed class TextEditorService
     {
         lock (Group_stateModificationLock)
         {
-            var inState = GetTextEditorGroupState();
+            var inState = Group_GetTextEditorGroupState();
 
             var inGroup = inState.GroupList.FirstOrDefault(
                 x => x.GroupKey == groupKey);
@@ -3003,7 +3003,7 @@ public sealed class TextEditorService
 		Key<TextEditorGroup> groupKey,
     	Key<TextEditorViewModel> viewModelKey)
 	{
-		Group_textEditorService.WorkerArbitrary.PostUnique(editContext =>
+		WorkerArbitrary.PostUnique(editContext =>
 		{
 			var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
             if (viewModelModifier is null)
@@ -3021,7 +3021,7 @@ public sealed class TextEditorService
         Key<TextEditorViewModel> inViewModelKey,
         Key<TextEditorViewModel> outViewModelKey)
     {
-        ReduceRegisterAction(
+        Diff_ReduceRegisterAction(
             diffModelKey,
             inViewModelKey,
             outViewModelKey);
@@ -3029,13 +3029,13 @@ public sealed class TextEditorService
 
     public TextEditorDiffModel? Diff_GetOrDefault(Key<TextEditorDiffModel> diffModelKey)
     {
-        return GetTextEditorDiffState().DiffModelList
+        return Diff_GetTextEditorDiffState().DiffModelList
             .FirstOrDefault(x => x.DiffKey == diffModelKey);
     }
 
     public void Diff_Dispose(Key<TextEditorDiffModel> diffModelKey)
     {
-        ReduceDisposeAction(diffModelKey);
+        Diff_ReduceDisposeAction(diffModelKey);
     }
 
     public Func<TextEditorEditContext, Task> Diff_CalculateFactory(
@@ -3110,18 +3110,18 @@ public sealed class TextEditorService
 
     public IReadOnlyList<TextEditorDiffModel> Diff_GetDiffModels()
     {
-        return GetTextEditorDiffState().DiffModelList;
+        return Diff_GetTextEditorDiffState().DiffModelList;
     }
     
     private TextEditorDiffState Diff_textEditorDiffState = new();
     
     public event Action? Diff_TextEditorDiffStateChanged;
     
-    public TextEditorDiffState Diff_GetTextEditorDiffState() => _textEditorDiffState;
+    public TextEditorDiffState Diff_GetTextEditorDiffState() => Diff_textEditorDiffState;
     
     public void Diff_ReduceDisposeAction(Key<TextEditorDiffModel> diffKey)
     {
-    	var inState = GetTextEditorDiffState();
+    	var inState = Diff_GetTextEditorDiffState();
     
         var inDiff = inState.DiffModelList.FirstOrDefault(
             x => x.DiffKey == diffKey);
@@ -3149,7 +3149,7 @@ public sealed class TextEditorService
         Key<TextEditorViewModel> inViewModelKey,
         Key<TextEditorViewModel> outViewModelKey)
     {
-    	var inState = GetTextEditorDiffState();
+    	var inState = Diff_GetTextEditorDiffState();
     
         var inDiff = inState.DiffModelList.FirstOrDefault(
             x => x.DiffKey == diffKey);
@@ -3211,7 +3211,7 @@ public sealed class TextEditorService
     /// </summary>
     public event Action? Options_TextEditorWrapperCssStateChanged;
 
-	public TextEditorOptionsState Options_GetTextEditorOptionsState() => _textEditorOptionsState;
+	public TextEditorOptionsState Options_GetTextEditorOptionsState() => Options_textEditorOptionsState;
 
     public TextEditorOptions Options_GetOptions()
     {
@@ -3230,7 +3230,7 @@ public sealed class TextEditorService
         var settingsDialog = new DialogViewModel(
             Key<IDynamicViewModel>.NewKey(),
             "Text Editor Settings",
-            _textEditorService.TextEditorConfig.SettingsDialogConfig.ComponentRendererType,
+            TextEditorConfig.SettingsDialogConfig.ComponentRendererType,
             null,
             cssClassString,
             isResizableOverride ?? TextEditorConfig.SettingsDialogConfig.ComponentIsResizable,
@@ -3257,7 +3257,7 @@ public sealed class TextEditorService
 
     public void Options_SetTheme(ThemeRecord theme, bool updateStorage = true)
     {
-    	var inState = GetTextEditorOptionsState();
+    	var inState = Options_GetTextEditorOptionsState();
     
         Options_textEditorOptionsState = new TextEditorOptionsState
         {
@@ -3277,7 +3277,7 @@ public sealed class TextEditorService
 		// Can probably use 'theme' variable here but
 		// I don't want to touch that right now -- incase there are unexpected consequences.
         var usingThemeCssClassString = CommonUtilityService.GetThemeState().ThemeList
-        	.FirstOrDefault(x => x.Key == GetTextEditorOptionsState().Options.CommonOptions.ThemeKey)
+        	.FirstOrDefault(x => x.Key == Options_GetTextEditorOptionsState().Options.CommonOptions.ThemeKey)
         	?.CssClassString
             ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
         ThemeCssClassString = usingThemeCssClassString;
@@ -3285,12 +3285,12 @@ public sealed class TextEditorService
         Options_StaticStateChanged?.Invoke();
 
         if (updateStorage)
-            WriteToStorage();
+            Options_WriteToStorage();
     }
 
     public void Options_SetShowWhitespace(bool showWhitespace, bool updateStorage = true)
     {
-    	var inState = GetTextEditorOptionsState();
+    	var inState = Options_GetTextEditorOptionsState();
     
         Options_textEditorOptionsState = new TextEditorOptionsState
         {
@@ -3304,12 +3304,12 @@ public sealed class TextEditorService
         Options_MeasuredStateChanged?.Invoke();
 
         if (updateStorage)
-            WriteToStorage();
+            Options_WriteToStorage();
     }
 
     public void Options_SetUseMonospaceOptimizations(bool useMonospaceOptimizations, bool updateStorage = true)
     {
-    	var inState = GetTextEditorOptionsState();
+    	var inState = Options_GetTextEditorOptionsState();
     
 		Options_textEditorOptionsState = new TextEditorOptionsState
         {
@@ -3322,12 +3322,12 @@ public sealed class TextEditorService
         Options_StaticStateChanged?.Invoke();
         
         if (updateStorage)
-            WriteToStorage();
+            Options_WriteToStorage();
     }
 
     public void Options_SetShowNewlines(bool showNewlines, bool updateStorage = true)
     {
-    	var inState = GetTextEditorOptionsState();
+    	var inState = Options_GetTextEditorOptionsState();
     
 		Options_textEditorOptionsState = new TextEditorOptionsState
         {
@@ -3340,12 +3340,12 @@ public sealed class TextEditorService
         Options_StaticStateChanged?.Invoke();
         
         if (updateStorage)
-            WriteToStorage();
+            Options_WriteToStorage();
     }
     
     public void Options_SetTabKeyBehavior(bool tabKeyBehavior, bool updateStorage = true)
     {
-    	var inState = GetTextEditorOptionsState();
+    	var inState = Options_GetTextEditorOptionsState();
     
 		Options_textEditorOptionsState = new TextEditorOptionsState
         {
@@ -3358,7 +3358,7 @@ public sealed class TextEditorService
         Options_StaticStateChanged?.Invoke();
         
         if (updateStorage)
-            WriteToStorage();
+            Options_WriteToStorage();
     }
     
     public void Options_SetTabWidth(int tabWidth, bool updateStorage = true)
@@ -3366,7 +3366,7 @@ public sealed class TextEditorService
     	if (tabWidth < Options_TAB_WIDTH_MIN || tabWidth > Options_TAB_WIDTH_MAX)
     		return;
     
-    	var inState = GetTextEditorOptionsState();
+    	var inState = Options_GetTextEditorOptionsState();
     
 		Options_textEditorOptionsState = new TextEditorOptionsState
         {
@@ -3379,12 +3379,12 @@ public sealed class TextEditorService
         Options_MeasuredStateChanged?.Invoke();
         
         if (updateStorage)
-            WriteToStorage();
+            Options_WriteToStorage();
     }
 
     public void Options_SetKeymap(ITextEditorKeymap keymap, bool updateStorage = true)
     {
-    	var inState = GetTextEditorOptionsState();
+    	var inState = Options_GetTextEditorOptionsState();
     
         Options_textEditorOptionsState = new TextEditorOptionsState
         {
@@ -3411,7 +3411,7 @@ public sealed class TextEditorService
 
     public void Options_SetHeight(int? heightInPixels, bool updateStorage = true)
     {
-    	var inState = GetTextEditorOptionsState();
+    	var inState = Options_GetTextEditorOptionsState();
     
         Options_textEditorOptionsState = new TextEditorOptionsState
         {
@@ -3424,12 +3424,12 @@ public sealed class TextEditorService
         Options_StaticStateChanged?.Invoke();
 
         if (updateStorage)
-            WriteToStorage();
+            Options_WriteToStorage();
     }
 
     public void Options_SetFontSize(int fontSizeInPixels, bool updateStorage = true)
     {
-    	var inState = GetTextEditorOptionsState();
+    	var inState = Options_GetTextEditorOptionsState();
     
         Options_textEditorOptionsState = new TextEditorOptionsState
         {
@@ -3445,12 +3445,12 @@ public sealed class TextEditorService
         Options_NeedsMeasured?.Invoke();
 
         if (updateStorage)
-            WriteToStorage();
+            Options_WriteToStorage();
     }
 
     public void Options_SetFontFamily(string? fontFamily, bool updateStorage = true)
     {
-    	var inState = GetTextEditorOptionsState();
+    	var inState = Options_GetTextEditorOptionsState();
     
         Options_textEditorOptionsState = new TextEditorOptionsState
         {
@@ -3466,12 +3466,12 @@ public sealed class TextEditorService
         Options_NeedsMeasured?.Invoke();
 
         if (updateStorage)
-            WriteToStorage();
+            Options_WriteToStorage();
     }
 
     public void Options_SetCursorWidth(double cursorWidthInPixels, bool updateStorage = true)
     {
-    	var inState = GetTextEditorOptionsState();
+    	var inState = Options_GetTextEditorOptionsState();
 
         Options_textEditorOptionsState = new TextEditorOptionsState
         {
@@ -3484,12 +3484,12 @@ public sealed class TextEditorService
         Options_StaticStateChanged?.Invoke();
 
         if (updateStorage)
-            WriteToStorage();
+            Options_WriteToStorage();
     }
 
     public void Options_SetRenderStateKey(Key<RenderState> renderStateKey)
     {
-    	var inState = GetTextEditorOptionsState();
+    	var inState = Options_GetTextEditorOptionsState();
     
         Options_textEditorOptionsState = new TextEditorOptionsState
         {
@@ -3503,7 +3503,7 @@ public sealed class TextEditorService
     
     public void Options_SetCharAndLineMeasurements(TextEditorEditContext editContext, CharAndLineMeasurements charAndLineMeasurements)
     {
-    	var inState = GetTextEditorOptionsState();
+    	var inState = Options_GetTextEditorOptionsState();
 
         Options_textEditorOptionsState = new TextEditorOptionsState
         {
@@ -3544,7 +3544,7 @@ public sealed class TextEditorService
             var matchedTheme = CommonUtilityService.GetThemeState().ThemeList.FirstOrDefault(
                 x => x.Key == optionsJson.CommonOptionsJsonDto.ThemeKey);
 
-            SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false);
+            Options_SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false);
         }
 
         /*if (optionsJson.Keymap is not null)
@@ -3565,22 +3565,22 @@ public sealed class TextEditorService
         }*/
 
         if (optionsJson.CommonOptionsJsonDto?.FontSizeInPixels is not null)
-            SetFontSize(optionsJson.CommonOptionsJsonDto.FontSizeInPixels.Value, false);
+            Options_SetFontSize(optionsJson.CommonOptionsJsonDto.FontSizeInPixels.Value, false);
 
         if (optionsJson.CursorWidthInPixels is not null)
-            SetCursorWidth(optionsJson.CursorWidthInPixels.Value, false);
+            Options_SetCursorWidth(optionsJson.CursorWidthInPixels.Value, false);
 
         if (optionsJson.TextEditorHeightInPixels is not null)
-            SetHeight(optionsJson.TextEditorHeightInPixels.Value, false);
+            Options_SetHeight(optionsJson.TextEditorHeightInPixels.Value, false);
 
         if (optionsJson.ShowNewlines is not null)
-        	SetShowNewlines(optionsJson.ShowNewlines.Value, false);
+        	Options_SetShowNewlines(optionsJson.ShowNewlines.Value, false);
         
         if (optionsJson.TabKeyBehavior is not null)
-            SetTabKeyBehavior(optionsJson.TabKeyBehavior.Value, false);
+            Options_SetTabKeyBehavior(optionsJson.TabKeyBehavior.Value, false);
         
         if (optionsJson.TabWidth is not null)
-            SetTabWidth(optionsJson.TabWidth.Value, false);
+            Options_SetTabWidth(optionsJson.TabWidth.Value, false);
 
         // TODO: OptionsSetUseMonospaceOptimizations will always get set to false (default for bool)
         // for a first time user. This leads to a bad user experience since the proportional
@@ -3590,7 +3590,7 @@ public sealed class TextEditorService
         // OptionsSetUseMonospaceOptimizations(options.UseMonospaceOptimizations);
 
         if (optionsJson.ShowWhitespace is not null)
-            SetShowWhitespace(optionsJson.ShowWhitespace.Value, false);
+            Options_SetShowWhitespace(optionsJson.ShowWhitespace.Value, false);
     }
     /* End OptionsApi */
 }

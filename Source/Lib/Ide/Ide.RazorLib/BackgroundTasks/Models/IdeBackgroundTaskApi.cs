@@ -386,7 +386,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                 MenuOptionKind.Delete,
                 () =>
                 {
-                    _textEditorService.OptionsApi.ShowFindAllDialog();
+                    _textEditorService.Options_ShowFindAllDialog();
                     return Task.CompletedTask;
                 });
 
@@ -597,7 +597,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     
     public async Task Editor_RegisterModelFunc(RegisterModelArgs registerModelArgs)
     {
-        var model = _textEditorService.ModelApi.GetOrDefault(registerModelArgs.ResourceUri);
+        var model = _textEditorService.Model_GetOrDefault(registerModelArgs.ResourceUri);
         
         if (model is not null)
         {
@@ -639,7 +639,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         
         model = modelModifier;
 
-        _textEditorService.ModelApi.RegisterCustom(registerModelArgs.EditContext, model);
+        _textEditorService.Model_RegisterCustom(registerModelArgs.EditContext, model);
         
 		model.PersistentState.CompilerService.RegisterResource(
 			model.PersistentState.ResourceUri,
@@ -657,7 +657,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
     {
     	var viewModelKey = Key<TextEditorViewModel>.NewKey();
     	
-		var model = _textEditorService.ModelApi.GetOrDefault(registerViewModelArgs.ResourceUri);
+		var model = _textEditorService.Model_GetOrDefault(registerViewModelArgs.ResourceUri);
 
         if (model is null)
         {
@@ -665,8 +665,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             return Key<TextEditorViewModel>.Empty;
         }
 
-        var viewModel = _textEditorService.ModelApi
-            .GetViewModelsOrEmpty(registerViewModelArgs.ResourceUri)
+        var viewModel = _textEditorService.Model_GetViewModelsOrEmpty(registerViewModelArgs.ResourceUri)
             .FirstOrDefault(x => x.PersistentState.Category == registerViewModelArgs.Category);
 
         if (viewModel is not null)
@@ -700,7 +699,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
         viewModel.PersistentState.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
         viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
         
-        _textEditorService.ViewModelApi.Register(registerViewModelArgs.EditContext, viewModel);
+        _textEditorService.ViewModel_Register(registerViewModelArgs.EditContext, viewModel);
         return viewModelKey;
     }
     
@@ -727,7 +726,7 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
                     	if (modelModifier is null)
                     		return ValueTask.CompletedTask;
                     
-                    	_textEditorService.ModelApi.SetResourceData(
+                    	_textEditorService.Model_SetResourceData(
                     		editContext,
                             modelModifier,
                             writtenDateTime.Value);
@@ -743,9 +742,9 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
 
     public async Task<bool> Editor_TryShowViewModelFunc(TryShowViewModelArgs showViewModelArgs)
     {
-        _textEditorService.GroupApi.Register(EditorTextEditorGroupKey);
+        _textEditorService.Group_Register(EditorTextEditorGroupKey);
 
-        var viewModel = _textEditorService.ViewModelApi.GetOrDefault(showViewModelArgs.ViewModelKey);
+        var viewModel = _textEditorService.ViewModel_GetOrDefault(showViewModelArgs.ViewModelKey);
 
         if (viewModel is null)
             return false;
@@ -767,11 +766,11 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             return false;
         }
 
-        _textEditorService.GroupApi.AddViewModel(
+        _textEditorService.Group_AddViewModel(
             showViewModelArgs.GroupKey,
             showViewModelArgs.ViewModelKey);
 
-        _textEditorService.GroupApi.SetActiveViewModel(
+        _textEditorService.Group_SetActiveViewModel(
             showViewModelArgs.GroupKey,
             showViewModelArgs.ViewModelKey);
             
@@ -861,13 +860,13 @@ public class IdeBackgroundTaskApi : IBackgroundTaskGroup
             if (modelModifier is null)
                 return ValueTask.CompletedTask;
 
-            _textEditorService.ModelApi.Reload(
+            _textEditorService.Model_Reload(
                 editContext,
                 modelModifier,
                 content,
                 fileLastWriteTime);
 
-            editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+            editContext.TextEditorService.Model_ApplySyntaxHighlighting(
                 editContext,
                 modelModifier);
             return ValueTask.CompletedTask;

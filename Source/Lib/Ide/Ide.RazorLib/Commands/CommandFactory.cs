@@ -294,11 +294,11 @@ public class CommandFactory : ICommandFactory
                 "Focus: Text Editor", "focus-text-editor", false,
                 async commandArgs =>
                 {
-                    var group = _textEditorService.GroupApi.GetOrDefault(IdeBackgroundTaskApi.EditorTextEditorGroupKey);
+                    var group = _textEditorService.Group_GetOrDefault(IdeBackgroundTaskApi.EditorTextEditorGroupKey);
                     if (group is null)
                         return;
 
-                    var activeViewModel = _textEditorService.ViewModelApi.GetOrDefault(group.ActiveViewModelKey);
+                    var activeViewModel = _textEditorService.ViewModel_GetOrDefault(group.ActiveViewModelKey);
                     if (activeViewModel is null)
                         return;
 
@@ -327,7 +327,7 @@ public class CommandFactory : ICommandFactory
 	            "Open: Find", "open-find", false,
 	            commandArgs => 
 				{
-					_textEditorService.OptionsApi.ShowFindAllDialog();
+					_textEditorService.Options_ShowFindAllDialog();
 		            return ValueTask.CompletedTask;
 				});
 
@@ -494,11 +494,11 @@ public class CommandFactory : ICommandFactory
         
         _textEditorService.WorkerArbitrary.PostUnique(async editContext =>
         {
-        	var group = _textEditorService.GroupApi.GetOrDefault(IdeBackgroundTaskApi.EditorTextEditorGroupKey);
+        	var group = _textEditorService.Group_GetOrDefault(IdeBackgroundTaskApi.EditorTextEditorGroupKey);
             if (group is null)
                 return;
 
-            var activeViewModel = _textEditorService.ViewModelApi.GetOrDefault(group.ActiveViewModelKey);
+            var activeViewModel = _textEditorService.ViewModel_GetOrDefault(group.ActiveViewModelKey);
             if (activeViewModel is null)
                 return;
         
