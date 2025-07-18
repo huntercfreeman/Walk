@@ -6,6 +6,7 @@ using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.TreeViews.Models.Utils;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.TextEditor.RazorLib;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Extensions.DotNet.BackgroundTasks.Models;
@@ -20,25 +21,17 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 	private readonly object _stateModificationLock = new();
 
 	private readonly DotNetBackgroundTaskApi _dotNetBackgroundTaskApi;
-    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
+    private readonly IdeService _ideService;
     private readonly IDotNetSolutionService _dotNetSolutionService;
-    private readonly TextEditorService _textEditorService;
-	private readonly ITerminalService _terminalService;
     private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 
     public TestExplorerService(
 		DotNetBackgroundTaskApi dotNetBackgroundTaskApi,
-		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		IDotNetSolutionService dotNetSolutionService,
-        TextEditorService textEditorService,
-        DotNetCliOutputParser dotNetCliOutputParser,
-        ITerminalService terminalService)
+        DotNetCliOutputParser dotNetCliOutputParser)
 	{
         _dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
-        _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _dotNetSolutionService = dotNetSolutionService;
-		_textEditorService = textEditorService;
-		_terminalService = terminalService;
         _dotNetCliOutputParser = dotNetCliOutputParser;
         
         _dotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;

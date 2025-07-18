@@ -5,7 +5,7 @@ using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib;
-using Walk.Ide.RazorLib.Menus.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Displays.Internals;
@@ -16,13 +16,9 @@ namespace Walk.Extensions.DotNet.DotNetSolutions.Displays;
 public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
-	[Inject]
-	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+	private IdeService IdeService { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private TextEditorService TextEditorService { get; set; } = null!;
 
 	private SolutionExplorerTreeViewKeyboardEventHandler _solutionExplorerTreeViewKeymap = null!;
 	private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;

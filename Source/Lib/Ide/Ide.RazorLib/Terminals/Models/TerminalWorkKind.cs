@@ -1,4 +1,4 @@
-﻿namespace Walk.Ide.RazorLib.Terminals.Models;
+namespace Walk.Ide.RazorLib.Terminals.Models;
 
 public enum TerminalWorkKind
 {

@@ -17,5 +17,9 @@ public enum IdeWorkKind
     PerformDeleteFile,
     PerformCopyFile,
     PerformCutFile,
-    PerformPasteFile
+    PerformPasteFile,
+    
+    // InputFileServiceWorkKind
+    OpenParentDirectoryAction,
+    RefreshCurrentSelectionAction,
 }

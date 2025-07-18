@@ -6,8 +6,8 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
-using Walk.Ide.RazorLib.Menus.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Displays.Internals;
 using Walk.Extensions.DotNet.Namespaces.Models;
 
@@ -15,19 +15,12 @@ namespace Walk.Extensions.DotNet.DotNetSolutions.Models;
 
 public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
-	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-	private readonly IMenuOptionsFactory _menuOptionsFactory;
-	private readonly TextEditorService _textEditorService;
+	private readonly IdeService _ideService;
 
-	public SolutionExplorerTreeViewKeyboardEventHandler(
-			IdeBackgroundTaskApi ideBackgroundTaskApi,
-			IMenuOptionsFactory menuOptionsFactory,
-			TextEditorService textEditorService)
-		: base(textEditorService.CommonUtilityService)
+	public SolutionExplorerTreeViewKeyboardEventHandler(IdeService ideService)
+		: base(_ideService.CommonUtilityService)
 	{
-		_ideBackgroundTaskApi = ideBackgroundTaskApi;
-		_menuOptionsFactory = menuOptionsFactory;
-		_textEditorService = textEditorService;
+		_ideService = ideService;
 	}
 
 	public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)

@@ -4,6 +4,7 @@ using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Decorations.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Extensions.DotNet.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.TestExplorers.Displays.Internals;
@@ -15,11 +16,9 @@ namespace Walk.Extensions.DotNet.TestExplorers.Displays;
 public partial class TestExplorerDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private TextEditorService TextEditorService { get; set; } = null!;
+	private IdeService IdeService { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private ITerminalService TerminalService { get; set; } = null!;
 
 	protected override void OnInitialized()
 	{

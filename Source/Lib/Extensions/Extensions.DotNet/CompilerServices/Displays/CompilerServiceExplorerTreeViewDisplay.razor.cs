@@ -7,6 +7,7 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.CompilerServices.Models;
 using Walk.Extensions.DotNet.BackgroundTasks.Models;
@@ -16,9 +17,7 @@ namespace Walk.Extensions.DotNet.CompilerServices.Displays;
 public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private TextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+	private IdeService IdeService { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 

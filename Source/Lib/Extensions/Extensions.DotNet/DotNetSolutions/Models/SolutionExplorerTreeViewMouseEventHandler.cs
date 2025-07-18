@@ -3,6 +3,7 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;
 
@@ -10,16 +11,13 @@ namespace Walk.Extensions.DotNet.DotNetSolutions.Models;
 
 public class SolutionExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
-	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-	private readonly TextEditorService _textEditorService;
+	private readonly IdeService _ideService;
 
 	public SolutionExplorerTreeViewMouseEventHandler(
-			IdeBackgroundTaskApi ideBackgroundTaskApi,
-			TextEditorService textEditorService)
-		: base(textEditorService.CommonUtilityService)
+			IdeService ideService)
+		: base(ideService.CommonUtilityService)
 	{
-		_ideBackgroundTaskApi = ideBackgroundTaskApi;
-		_textEditorService = textEditorService;
+		_ideService = ideService;
 	}
 
 	public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)

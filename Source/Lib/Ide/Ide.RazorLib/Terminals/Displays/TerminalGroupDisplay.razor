@@ -6,7 +6,7 @@
 @* ContextRecord="ContextFacts.TerminalContext" *@
 <div id="@ContextFacts.TerminalContext.ContextElementId" class="di_ide_terminal" style="height: 100%; width: 100%; overflow: auto;">
     @{
-        var terminalGroupDisplayState = IdeService.TerminalGroupService.GetTerminalGroupState();
+        var terminalGroupDisplayState = IdeService.GetTerminalGroupState();
         var terminalState = IdeService.GetTerminalState();
 
         _ = terminalState.TerminalMap.TryGetValue(

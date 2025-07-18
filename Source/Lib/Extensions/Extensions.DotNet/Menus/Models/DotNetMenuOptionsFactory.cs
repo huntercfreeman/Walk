@@ -6,6 +6,7 @@ using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
@@ -21,18 +22,15 @@ namespace Walk.Extensions.DotNet.Menus.Models;
 
 public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTaskGroup
 {
-	private readonly CommonUtilityService _commonUtilityService;
+	private readonly IdeService _ideService;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
-	private readonly IIdeComponentRenderers _ideComponentRenderers;
 
 	public DotNetMenuOptionsFactory(
-	    CommonUtilityService commonUtilityService,
-		IDotNetComponentRenderers dotNetComponentRenderers,
-		IIdeComponentRenderers ideComponentRenderers)
+	    IdeService ideService,
+		IDotNetComponentRenderers dotNetComponentRenderers)
 	{
-	    _commonUtilityService = commonUtilityService;
+	    _ideService = ideService;
 		_dotNetComponentRenderers = dotNetComponentRenderers;
-		_ideComponentRenderers = ideComponentRenderers;
 	}
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
@@ -79,8 +77,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 	public MenuOptionRecord AddProjectToProjectReference(
 		TreeViewNamespacePath projectReceivingReference,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
-		IdeBackgroundTaskApi ideBackgroundTaskApi,
+		IdeService ideService,
 		Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Add Project Reference", MenuOptionKind.Other,
@@ -90,8 +87,8 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 				PerformAddProjectToProjectReference(
 					projectReceivingReference,
 					terminal,
-					commonUtilityService,
-					ideBackgroundTaskApi,
+					ideService.CommonUtilityService,
+					ideService.IdeBackgroundTaskApi,
 					onAfterCompletion);
 
 				return Task.CompletedTask;
@@ -220,11 +217,10 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 	public void PerformAddProjectToProjectReference(
 		TreeViewNamespacePath projectReceivingReference,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
-		IdeBackgroundTaskApi ideBackgroundTaskApi,
+		IdeService ideService,
 		Func<Task> onAfterCompletion)
 	{
-		ideBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
+		ideService.Enqueue(new IdeBackgroundTaskApiWorkArgs
 		{
 			WorkKind = IdeBackgroundTaskApiWorkKind.RequestInputFileStateForm,
 			Message = $"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
@@ -243,7 +239,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 				{
 					ContinueWithFunc = parsedCommand =>
 					{
-						NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", commonUtilityService, TimeSpan.FromSeconds(7));
+						NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", ideService.CommonUtilityService, TimeSpan.FromSeconds(7));
 						return onAfterCompletion.Invoke();
 					}
 				};

@@ -431,7 +431,7 @@ public class IdeService : IBackgroundTaskGroup
                 MenuOptionKind.Delete,
                 () =>
                 {
-                    CommandFactory_CodeSearchDialog ??= new DialogViewModel(
+                    CodeSearchDialog ??= new DialogViewModel(
                         Key<IDynamicViewModel>.NewKey(),
                         "Code Search",
                         typeof(CodeSearchDisplay),
@@ -440,7 +440,7 @@ public class IdeService : IBackgroundTaskGroup
                         true,
                         null);
 
-                    CommonUtilityService.Dialog_ReduceRegisterAction(CommandFactory_CodeSearchDialog);
+                    CommonUtilityService.Dialog_ReduceRegisterAction(CodeSearchDialog);
                     return Task.CompletedTask;
                 });
 
@@ -1124,7 +1124,7 @@ public class IdeService : IBackgroundTaskGroup
 	
 	public InputFileState GetInputFileState() => _inputFileState;
 
-    private readonly Queue<InputFileServiceWorkKind> _workKindQueue = new();
+    private readonly Queue<IdeWorkKind> _workKindQueue = new();
     private readonly object _workLock = new();
 
     public void InputFile_StartInputFileStateForm(
@@ -1336,7 +1336,7 @@ public class IdeService : IBackgroundTaskGroup
         {
             lock (_workLock)
             {
-                _workKindQueue.Enqueue(InputFileServiceWorkKind.OpenParentDirectoryAction);
+                _workKindQueue.Enqueue(IdeWorkKind.OpenParentDirectoryAction);
 
                 InputFile_queue_OpenParentDirectoryAction.Enqueue((
                     ideComponentRenderers, commonUtilityService, parentDirectoryTreeViewModel));
@@ -1365,7 +1365,7 @@ public class IdeService : IBackgroundTaskGroup
 
             lock (_workLock)
             {
-                _workKindQueue.Enqueue(InputFileServiceWorkKind.RefreshCurrentSelectionAction);
+                _workKindQueue.Enqueue(IdeWorkKind.RefreshCurrentSelectionAction);
                 InputFile_queue_RefreshCurrentSelectionAction.Enqueue((commonUtilityService, currentSelection));
                 commonUtilityService.Continuous_EnqueueGroup(this);
             }
@@ -1380,7 +1380,7 @@ public class IdeService : IBackgroundTaskGroup
 
     public ValueTask InputFile_HandleEvent()
     {
-        InputFileServiceWorkKind workKind;
+        IdeWorkKind workKind;
 
         lock (_workLock)
         {
@@ -1390,13 +1390,13 @@ public class IdeService : IBackgroundTaskGroup
 
         switch (workKind)
         {
-            case InputFileServiceWorkKind.OpenParentDirectoryAction:
+            case IdeWorkKind.OpenParentDirectoryAction:
             {
                 var args = InputFile_queue_OpenParentDirectoryAction.Dequeue();
                 return InputFile_Do_OpenParentDirectoryAction(
                     args.ideComponentRenderers, args.commonUtilityService, args.parentDirectoryTreeViewModel);
             }
-            case InputFileServiceWorkKind.RefreshCurrentSelectionAction:
+            case IdeWorkKind.RefreshCurrentSelectionAction:
             {
                 var args = InputFile_queue_RefreshCurrentSelectionAction.Dequeue();
                 return InputFile_Do_RefreshCurrentSelectionAction(args.Item2);

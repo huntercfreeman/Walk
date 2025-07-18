@@ -56,20 +56,17 @@ using Walk.CompilerServices.Xml.Html.SyntaxObjects;
 // using Walk.Ide.RazorLib.FindAllReferences.Models;
 using Walk.Extensions.DotNet.AppDatas.Models;
 
+using Walk.Ide.RazorLib;
+
 namespace Walk.Extensions.DotNet.BackgroundTasks.Models;
 
 public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 {
-	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
+	private readonly IdeService _ideService;
 	private readonly IAppDataService _appDataService;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
-	private readonly IIdeComponentRenderers _ideComponentRenderers;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
-	private readonly TextEditorService _textEditorService;
-	private readonly ICodeSearchService _codeSearchService;
-	private readonly ITerminalService _terminalService;
 	private readonly IDotNetCommandFactory _dotNetCommandFactory;
-	private readonly IIdeService _ideService;
 	private readonly INugetPackageManagerProvider _nugetPackageManagerProvider;
 	
 	#region DotNetSolutionIdeApi
@@ -80,27 +77,17 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 	#endregion
 
     public DotNetBackgroundTaskApi(
-		IdeBackgroundTaskApi ideBackgroundTaskApi,
         IAppDataService appDataService,
 		IDotNetComponentRenderers dotNetComponentRenderers,
-		IIdeComponentRenderers ideComponentRenderers,
 		DotNetCliOutputParser dotNetCliOutputParser,
-		TextEditorService textEditorService,
-		ICodeSearchService codeSearchService,
-		ITerminalService terminalService,
         IDotNetCommandFactory dotNetCommandFactory,
-        IIdeService ideService,
+        IdeService ideService,
         INugetPackageManagerProvider nugetPackageManagerProvider,
         IServiceProvider serviceProvider)
 	{
-		_ideBackgroundTaskApi = ideBackgroundTaskApi;
 		_appDataService = appDataService;
         _dotNetComponentRenderers = dotNetComponentRenderers;
-		_ideComponentRenderers = ideComponentRenderers;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
-		_textEditorService = textEditorService;
-		_codeSearchService = codeSearchService;
-		_terminalService = terminalService;
         _dotNetCommandFactory = dotNetCommandFactory;
         _ideService = ideService;
         _nugetPackageManagerProvider = nugetPackageManagerProvider;
@@ -111,16 +98,14 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
         TestExplorerService = new TestExplorerService(
 			this,
-			_ideBackgroundTaskApi,
+			_ideService,
 			DotNetSolutionService,
-            _textEditorService,
-            _dotNetCliOutputParser,
-            _terminalService);
+            _dotNetCliOutputParser);
 
         OutputService = new OutputService(
         	this,
         	_dotNetCliOutputParser,
-        	_textEditorService.CommonUtilityService);
+            _ideService.CommonUtilityService);
 			
 			NuGetPackageManagerService = new NuGetPackageManagerService();
 			

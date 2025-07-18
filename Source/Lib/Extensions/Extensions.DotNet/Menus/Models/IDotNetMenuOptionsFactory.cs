@@ -1,6 +1,7 @@
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.Options.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.CSharpProjects.Models;
@@ -21,8 +22,7 @@ public interface IDotNetMenuOptionsFactory
 	public MenuOptionRecord AddProjectToProjectReference(
 		TreeViewNamespacePath projectReceivingReference,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
-		IdeBackgroundTaskApi ideBackgroundTaskApi,
+		IdeService ideService,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord RemoveProjectToProjectReference(
