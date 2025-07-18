@@ -542,7 +542,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     private readonly Type? _dragDialogComponentType = null;
     private readonly Dictionary<string, object?>? _dragDialogComponentParameterMap = null;
 
-    public CommonUtilityService CommonUtilityService { get; }
+    public CommonUtilityService CommonUtilityService => TextEditorService.CommonUtilityService;
 
     public Key<Panel> Key { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
