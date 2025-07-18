@@ -777,46 +777,42 @@ public struct CSharpParserModel
     	CSharpCompilationUnit compilationUnit,
     	int scopeIndexKey,
     	string typeIdentifierText,
-    	out TypeDefinitionNode typeDefinitionNode)
+    	out TypeDefinitionNode? typeDefinitionNode)
     {
-        TypeDefinitionNode matchNode = null;
+        typeDefinitionNode = null;
         foreach (var x in compilationUnit.CodeBlockOwnerList)
         {
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
     	        x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
     	        GetIdentifierText(x, compilationUnit) == typeIdentifierText)
     	    {
-    	        matchNode = (TypeDefinitionNode)x;
+    	        typeDefinitionNode = (TypeDefinitionNode)x;
     	        break;
     	    }
         }
     	
-    	if (matchNode is null)
+    	if (typeDefinitionNode is null)
     	{
     	    if (scopeIndexKey == 0)
     	    {
-	            TypeDefinitionNode? externalMatchNode = null;
                 foreach (var x in compilationUnit.ExternalTypeDefinitionList)
                 {
                     if (GetIdentifierText(x, compilationUnit) == typeIdentifierText)
             	    {
-            	        externalMatchNode = (TypeDefinitionNode)x;
+            	        typeDefinitionNode = (TypeDefinitionNode)x;
             	        break;
             	    }
                 }
-    	         if (externalMatchNode is not null)
-    	         {
-    	             typeDefinitionNode = (TypeDefinitionNode)externalMatchNode;
-    	             return true;
-    	         }
+    	        if (typeDefinitionNode is not null)
+    	        {
+    	            return true;
+    	        }
     	    }
-    	
-    	    typeDefinitionNode = null;
+
     	    return false;
     	}
     	else
     	{
-    	    typeDefinitionNode = matchNode;
     	    return true;
     	}
     }
@@ -825,7 +821,7 @@ public struct CSharpParserModel
     	CSharpCompilationUnit compilationUnit,
     	int scopeIndexKey,
     	string typeIdentifierText,
-        TypeDefinitionNode typeDefinitionNode)
+        TypeDefinitionNode? typeDefinitionNode)
     {
         TypeDefinitionNode? matchNode = null;
         foreach (var x in compilationUnit.CodeBlockOwnerList)
@@ -900,28 +896,22 @@ public struct CSharpParserModel
     	string functionIdentifierText,
     	out FunctionDefinitionNode functionDefinitionNode)
     {
-        FunctionDefinitionNode? matchNode = null;
+        functionDefinitionNode = null;
         foreach (var x in compilationUnit.CodeBlockOwnerList)
         {
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
     	        x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
     	        GetIdentifierText(x, compilationUnit) == functionIdentifierText)
     	    {
-    	        matchNode = (FunctionDefinitionNode)x;
+    	        functionDefinitionNode = (FunctionDefinitionNode)x;
     	        break;
     	    }
         }
     	
-    	if (matchNode is null)
-    	{
-    	    functionDefinitionNode = null;
+    	if (functionDefinitionNode is null)
     	    return false;
-    	}
     	else
-    	{
-    	    functionDefinitionNode = matchNode;
     	    return true;
-    	}
     }
     
     public VariableDeclarationNode[] GetVariableDeclarationNodesByScope(
@@ -972,30 +962,24 @@ public struct CSharpParserModel
     	CSharpCompilationUnit compilationUnit,
     	int scopeIndexKey,
     	string variableIdentifierText,
-    	out VariableDeclarationNode variableDeclarationNode)
+    	out VariableDeclarationNode? variableDeclarationNode)
     {
-        VariableDeclarationNode? matchNode = null;
+        variableDeclarationNode = null;
         foreach (var x in compilationUnit.NodeList)
         {
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
     	        x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
     	        GetIdentifierText(x, compilationUnit) == variableIdentifierText)
     	    {
-    	        matchNode = (VariableDeclarationNode)x;
+    	        variableDeclarationNode = (VariableDeclarationNode)x;
     	        break;
     	    }
         }
     	
-    	if (matchNode is null)
-    	{
-    	    variableDeclarationNode = null;
+    	if (variableDeclarationNode is null)
     	    return false;
-    	}
     	else
-    	{
-    	    variableDeclarationNode = matchNode;
     	    return true;
-    	}
     }
     
     public bool TryAddVariableDeclarationNodeByScope(
@@ -1091,28 +1075,22 @@ public struct CSharpParserModel
     	string labelIdentifierText,
     	out LabelDeclarationNode labelDeclarationNode)
     {
-        LabelDeclarationNode? matchNode = null;
+        labelDeclarationNode = null;
         foreach (var x in compilationUnit.NodeList)
         {
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
     	        x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
     	        GetIdentifierText(x, compilationUnit) == labelIdentifierText)
     	    {
-    	        matchNode = (LabelDeclarationNode)x;
+    	        labelDeclarationNode = (LabelDeclarationNode)x;
     	        break;
     	    }
         }
     	
-    	if (matchNode is null)
-    	{
-    	    labelDeclarationNode = null;
+    	if (labelDeclarationNode is null)
     	    return false;
-    	}
     	else
-    	{
-    	    labelDeclarationNode = matchNode;
     	    return true;
-    	}
     }
     
     public bool TryAddLabelDeclarationNodeByScope(
@@ -1173,7 +1151,6 @@ public struct CSharpParserModel
 		}
     }
     
-    // TODO: Re-use the out parameter
     // TODO: don't pass the initial compilationUnit it is default.
     // TODO: Are these adds being invoked separately?
     public string GetIdentifierText(ISyntaxNode node, CSharpCompilationUnit compilationUnit)
