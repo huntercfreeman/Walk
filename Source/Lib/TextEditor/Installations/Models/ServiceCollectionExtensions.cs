@@ -1,4 +1,6 @@
+using Microsoft.JSInterop;
 using Microsoft.Extensions.DependencyInjection;
+using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.ComponentRenderers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
@@ -24,9 +26,18 @@ public static class ServiceCollectionExtensions
             services.AddWalkCommonServices(hostingInformation);
 
         services
-            .AddSingleton(textEditorConfig)
-            .AddSingleton<IWalkTextEditorComponentRenderers>(_textEditorComponentRenderers)
-            .AddScoped<TextEditorService>()
+            .AddScoped<TextEditorService>(sp =>
+            {
+                return new TextEditorService(
+                    textEditorConfig,
+                    _textEditorComponentRenderers,
+                    sp.GetRequiredService<IFindAllService>(),
+                    sp.GetRequiredService<IDirtyResourceUriService>(),
+                    sp.GetRequiredService<ITextEditorRegistryWrap>(),
+                    sp.GetRequiredService<IJSRuntime>(),
+                    sp.GetRequiredService<CommonUtilityService>(),
+            		sp.GetRequiredService<IServiceProvider>());
+            })
             .AddScoped<ITextEditorRegistryWrap, TextEditorRegistryWrap>()
             .AddScoped<ITextEditorHeaderRegistry, TextEditorHeaderRegistry>()
             .AddScoped<IFindAllService, FindAllService>()

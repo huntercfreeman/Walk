@@ -20,8 +20,6 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
-	private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
-	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
@@ -40,13 +38,11 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     {
     	_treeViewKeyboardEventHandler = new OutputTreeViewKeyboardEventHandler(
 			TextEditorService,
-			TextEditorConfig,
 			ServiceProvider,
 			CommonUtilityService);
 
 		_treeViewMouseEventHandler = new OutputTreeViewMouseEventHandler(
 			TextEditorService,
-			TextEditorConfig,
 			ServiceProvider,
 			CommonUtilityService);
     

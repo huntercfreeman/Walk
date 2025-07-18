@@ -11,18 +11,15 @@ namespace Walk.Ide.RazorLib.CodeSearches.Models;
 public class CodeSearchTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
 	private readonly TextEditorService _textEditorService;
-	private readonly WalkTextEditorConfig _textEditorConfig;
 	private readonly IServiceProvider _serviceProvider;
 
 	public CodeSearchTreeViewMouseEventHandler(
 			TextEditorService textEditorService,
-			WalkTextEditorConfig textEditorConfig,
 			IServiceProvider serviceProvider,
 			CommonUtilityService commonUtilityService)
 		: base(commonUtilityService)
 	{
 		_textEditorService = textEditorService;
-		_textEditorConfig = textEditorConfig;
 		_serviceProvider = serviceProvider;
 	}
 

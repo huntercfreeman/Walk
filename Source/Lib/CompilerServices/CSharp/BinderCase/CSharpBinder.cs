@@ -63,7 +63,6 @@ public class CSharpBinder
         
     public TypeClauseNode CSharpParserModel_TypeClauseNode { get; } = new TypeClauseNode(
 		typeIdentifier: default,
-		valueType: null,
 		genericParameterListing: default,
 		isKeywordType: false);
 		

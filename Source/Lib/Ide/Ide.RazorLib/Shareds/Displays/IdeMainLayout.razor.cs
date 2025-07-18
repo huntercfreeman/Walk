@@ -40,8 +40,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
     private IServiceProvider ServiceProvider { get; set; } = null!;
-    [Inject]
-    private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
     
     private bool _previousDragStateWrapShouldDisplay;
     private ElementDimensions _bodyElementDimensions = new();

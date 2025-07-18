@@ -19,6 +19,7 @@ using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.JsRuntimes.Models;
 using Walk.TextEditor.RazorLib.BackgroundTasks.Models;
+using Walk.TextEditor.RazorLib.ComponentRenderers.Models;
 
 namespace Walk.TextEditor.RazorLib;
 
@@ -30,9 +31,10 @@ public sealed class TextEditorService
     private readonly IServiceProvider _serviceProvider;
 
     public TextEditorService(
+        WalkTextEditorConfig textEditorConfig,
+        IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         IFindAllService findAllService,
         IDirtyResourceUriService dirtyResourceUriService,
-        WalkTextEditorConfig textEditorConfig,
         ITextEditorRegistryWrap textEditorRegistryWrap,
         IJSRuntime jsRuntime,
         CommonUtilityService commonUtilityService,
@@ -59,6 +61,7 @@ public sealed class TextEditorService
         FindAllService = findAllService;
         _dirtyResourceUriService = dirtyResourceUriService;
         TextEditorConfig = textEditorConfig;
+        TextEditorComponentRenderers = textEditorComponentRenderers;
         _textEditorRegistryWrap = textEditorRegistryWrap;
         _jsRuntime = jsRuntime;
 		JsRuntimeTextEditorApi = _jsRuntime.GetWalkTextEditorApi();
@@ -67,7 +70,7 @@ public sealed class TextEditorService
         ViewModelApi = new TextEditorViewModelApi(this, CommonUtilityService);
         GroupApi = new TextEditorGroupApi(this, CommonUtilityService);
         DiffApi = new TextEditorDiffApi(this);
-        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, CommonUtilityService);
+        OptionsApi = new TextEditorOptionsApi(this, CommonUtilityService);
         
         TextEditorState = new();
     }
@@ -78,6 +81,7 @@ public sealed class TextEditorService
 	public WalkTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
 	public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi => CommonUtilityService.JsRuntimeCommonApi;
 	public WalkTextEditorConfig TextEditorConfig { get; }
+	public IWalkTextEditorComponentRenderers TextEditorComponentRenderers { get; }
 
 #if DEBUG
     public string StorageKey => "di_te_text-editor-options-debug";

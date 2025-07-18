@@ -17,8 +17,6 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
     [Inject]
 	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
-	private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
-	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
@@ -58,13 +56,11 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	
 		_treeViewKeymap = new CodeSearchTreeViewKeyboardEventHandler(
 			TextEditorService,
-			TextEditorConfig,
 			ServiceProvider,
 			CommonUtilityService);
 
 		_treeViewMouseEventHandler = new CodeSearchTreeViewMouseEventHandler(
 			TextEditorService,
-			TextEditorConfig,
 			ServiceProvider,
 			CommonUtilityService);
 	}

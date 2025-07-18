@@ -153,7 +153,6 @@ public sealed class TerminalCompilerService : ICompilerService
         bool ctrlKey,
         bool altKey,
 		TextEditorComponentData componentData,
-		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
     {
     	return ValueTask.CompletedTask;
@@ -165,7 +164,6 @@ public sealed class TerminalCompilerService : ICompilerService
 		TextEditorViewModel viewModelModifier,
 		int positionIndex,
 		TextEditorComponentData componentData,
-		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
     {
     	return ValueTask.CompletedTask;

@@ -805,15 +805,11 @@ public class ParseDefaultKeywords
             hasPartialModifier,
             storageModifierKind,
             identifierToken,
-            valueType: null,
             genericParameterListing,
             primaryConstructorFunctionArgumentListing: default,
             inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
             namespaceName: parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
-            parserModel.Compilation.ResourceUri
-			// FindAllReferences
-			// ,referenceHashSet: new()
-			);
+            parserModel.Compilation.ResourceUri);
         
         if (typeDefinitionNode.HasPartialModifier)
         {

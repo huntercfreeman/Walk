@@ -11,18 +11,15 @@ namespace Walk.TextEditor.RazorLib.FindAlls.Models;
 public class FindAllTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
 	private readonly TextEditorService _textEditorService;
-	private readonly WalkTextEditorConfig _textEditorConfig;
 	private readonly IServiceProvider _serviceProvider;
 
 	public FindAllTreeViewKeyboardEventHandler(
 			TextEditorService textEditorService,
-			WalkTextEditorConfig textEditorConfig,
 			IServiceProvider serviceProvider,
 			CommonUtilityService commonUtilityService)
 		: base(commonUtilityService)
 	{
 		_textEditorService = textEditorService;
-		_textEditorConfig = textEditorConfig;
 		_serviceProvider = serviceProvider;
 	}
 

@@ -938,8 +938,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
         TextEditorService textEditorService,
-        TextEditorComponentData componentData,
-        IWalkTextEditorComponentRenderers textEditorComponentRenderers)
+        TextEditorComponentData componentData)
     {
     	componentData = viewModel.PersistentState.ComponentData;
     	if (componentData is null)
@@ -965,7 +964,6 @@ public class TextEditorCommandDefaultFunctions
         		ctrlKey: false,
         		altKey: false,
 				componentData,
-				textEditorComponentRenderers,
 				modelModifier.PersistentState.ResourceUri)
 			.ConfigureAwait(false);
     }
@@ -1204,7 +1202,6 @@ public class TextEditorCommandDefaultFunctions
         bool ctrlKey,
         bool altKey,
 		TextEditorComponentData componentData,
-		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)
     {
     	return modelModifier.PersistentState.CompilerService.OnInspect(
@@ -1217,7 +1214,6 @@ public class TextEditorCommandDefaultFunctions
             ctrlKey,
             altKey,
 			componentData,
-			textEditorComponentRenderers,
 	        resourceUri);
     }
     

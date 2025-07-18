@@ -10,18 +10,15 @@ namespace Walk.Extensions.DotNet.Outputs.Models;
 public class OutputTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
 	private readonly TextEditorService _textEditorService;
-	private readonly WalkTextEditorConfig _textEditorConfig;
 	private readonly IServiceProvider _serviceProvider;
 
 	public OutputTreeViewKeyboardEventHandler(
 			TextEditorService textEditorService,
-			WalkTextEditorConfig textEditorConfig,
 			IServiceProvider serviceProvider,
 			CommonUtilityService commonUtilityService)
 		: base(commonUtilityService)
 	{
 		_textEditorService = textEditorService;
-		_textEditorConfig = textEditorConfig;
 		_serviceProvider = serviceProvider;
 	}
 

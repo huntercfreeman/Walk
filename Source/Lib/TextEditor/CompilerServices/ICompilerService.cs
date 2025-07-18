@@ -92,7 +92,6 @@ public interface ICompilerService
         bool ctrlKey,
         bool altKey,
 		TextEditorComponentData componentData,
-		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri);
     
     public ValueTask ShowCallingSignature(
@@ -101,7 +100,6 @@ public interface ICompilerService
 		TextEditorViewModel viewModelModifier,
 		int positionIndex,
 		TextEditorComponentData componentData,
-		IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri);
         
     public ValueTask GoToDefinition(

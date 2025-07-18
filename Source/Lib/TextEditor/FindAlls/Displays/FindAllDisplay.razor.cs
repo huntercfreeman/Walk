@@ -14,9 +14,7 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
     [Inject]
 	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
-	private IServiceProvider ServiceProvider { get; set; } = null!;	
-	[Inject]
-	private WalkTextEditorConfig TextEditorConfig { get; set; } = null!;
+	private IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     
@@ -52,13 +50,11 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
 	
 		_treeViewKeymap = new FindAllTreeViewKeyboardEventHandler(
 			TextEditorService,
-			TextEditorConfig,
 			ServiceProvider,
 			CommonUtilityService);
 
 		_treeViewMouseEventHandler = new FindAllTreeViewMouseEventHandler(
 			TextEditorService,
-			TextEditorConfig,
 			ServiceProvider,
 			CommonUtilityService);
 	}

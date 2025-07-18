@@ -12,7 +12,6 @@ public sealed class TypeClauseNode : IGenericParameterNode
 {
 	public TypeClauseNode(
 		SyntaxToken typeIdentifier,
-		Type? valueType,
 		GenericParameterListing genericParameterListing,
 		bool isKeywordType)
 	{
@@ -22,7 +21,6 @@ public sealed class TypeClauseNode : IGenericParameterNode
 	
 		IsKeywordType = isKeywordType;
 		TypeIdentifierToken = typeIdentifier;
-		ValueType = valueType;
 		GenericParameterListing = genericParameterListing;
 	}
 	
@@ -46,7 +44,6 @@ public sealed class TypeClauseNode : IGenericParameterNode
 	
 		IsKeywordType = typeReference.IsKeywordType;
 		TypeIdentifierToken = typeReference.TypeIdentifierToken;
-		ValueType = typeReference.ValueType;
 		GenericParameterListing = typeReference.GenericParameterListing;
 		ExplicitDefinitionTextSpan = typeReference.ExplicitDefinitionTextSpan;
 		ExplicitDefinitionResourceUri = typeReference.ExplicitDefinitionResourceUri;
@@ -60,15 +57,6 @@ public sealed class TypeClauseNode : IGenericParameterNode
 	/// And: <see cref="GenericParametersListingNode"/> would be null
 	/// </summary>
 	public SyntaxToken TypeIdentifierToken { get; set; }
-	/// <summary>
-	/// Given: 'int x = 2;'<br/>
-	/// Then: 'typeof(int)' is the <see cref="ValueType"/>
-	/// And: <see cref="GenericParametersListingNode"/> would be null
-	///<br/>
-	/// In short, <see cref="ValueType"/> is non-null when the
-	/// <see cref="TypeIdentifierToken"/> maps to a C# primitive type.
-	/// </summary>
-	public Type? ValueType { get; set; }
 	/// <summary>
 	/// Given: 'int[] x = 2;'<br/>
 	/// Then: 'Array&lt;T&gt;' is the <see cref="TypeIdentifierToken"/><br/>
@@ -109,14 +97,12 @@ public sealed class TypeClauseNode : IGenericParameterNode
 
 	public void SetSharedInstance(
 		SyntaxToken typeIdentifier,
-		Type? valueType,
 		GenericParameterListing genericParameterListing,
 		bool isKeywordType)
 	{
 		IsBeingUsed = true;
 	
 		TypeIdentifierToken = typeIdentifier;
-		ValueType = valueType;
 		GenericParameterListing = genericParameterListing;
 		IsKeywordType = isKeywordType;
 		TypeKind = TypeKind.None;
@@ -126,12 +112,6 @@ public sealed class TypeClauseNode : IGenericParameterNode
 		IsParsingGenericParameters = false;
 		ExplicitDefinitionTextSpan = default;
 		ExplicitDefinitionResourceUri = default;
-	}
-
-	public TypeClauseNode SetValueType(Type? valueType)
-	{
-		ValueType = valueType;
-		return this;
 	}
 
 	#if DEBUG	

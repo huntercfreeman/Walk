@@ -12,19 +12,16 @@ namespace Walk.Ide.RazorLib.FindAllReferences.Models;
 public class FindAllReferencesTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
 	private readonly ITextEditorService _textEditorService;
-	private readonly WalkTextEditorConfig _textEditorConfig;
 	private readonly IServiceProvider _serviceProvider;
 
 	public FindAllReferencesTreeViewKeyboardEventHandler(
 			ITextEditorService textEditorService,
-			WalkTextEditorConfig textEditorConfig,
 			IServiceProvider serviceProvider,
 			ITreeViewService treeViewService,
 			IBackgroundTaskService backgroundTaskService)
 		: base(treeViewService, backgroundTaskService)
 	{
 		_textEditorService = textEditorService;
-		_textEditorConfig = textEditorConfig;
 		_serviceProvider = serviceProvider;
 	}
 
