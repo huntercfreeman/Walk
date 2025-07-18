@@ -80,13 +80,13 @@ public partial class FolderExplorerContextMenu : ComponentBase
     {
         return new[]
         {
-            MenuOptionsFactory.NewEmptyFile(
+            IdeService.NewEmptyFile(
                 treeViewModel.Item,
                 async () => await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false)),
-            MenuOptionsFactory.NewDirectory(
+            IdeService.NewDirectory(
                 treeViewModel.Item,
                 async () => await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false)),
-            MenuOptionsFactory.PasteClipboard(
+            IdeService.PasteClipboard(
                 treeViewModel.Item,
                 async () => 
                 {
@@ -107,25 +107,25 @@ public partial class FolderExplorerContextMenu : ComponentBase
     {
         return new[]
         {
-			MenuOptionsFactory.CopyFile(
+			IdeService.CopyFile(
                 treeViewModel.Item,
                 (Func<Task>)(() => {
-					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)IdeService.CommonUtilityService, TimeSpan.FromSeconds(7));
                     return Task.CompletedTask;
                 })),
-			MenuOptionsFactory.CutFile(
+			IdeService.CutFile(
                 treeViewModel.Item,
                 (Func<Task>)(() => {
-					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)IdeService.CommonUtilityService, TimeSpan.FromSeconds(7));
 					ParentOfCutFile = parentTreeViewModel;
                     return Task.CompletedTask;
                 })),
-			MenuOptionsFactory.DeleteFile(
+			IdeService.DeleteFile(
                 treeViewModel.Item,
                 async () => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
-			MenuOptionsFactory.RenameFile(
+			IdeService.RenameFile(
                 treeViewModel.Item,
-                (Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService,
+                (Common.RazorLib.Options.Models.CommonUtilityService)IdeService.CommonUtilityService,
                 async ()  => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false))
         };
     }
@@ -157,11 +157,11 @@ public partial class FolderExplorerContextMenu : ComponentBase
 
         await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-        CommonUtilityService.TreeView_ReRenderNodeAction(
+        IdeService.CommonUtilityService.TreeView_ReRenderNodeAction(
             FolderExplorerState.TreeViewContentStateKey,
             treeViewModel);
 
-        CommonUtilityService.TreeView_MoveUpAction(
+        IdeService.CommonUtilityService.TreeView_MoveUpAction(
             FolderExplorerState.TreeViewContentStateKey,
             false,
 			false);

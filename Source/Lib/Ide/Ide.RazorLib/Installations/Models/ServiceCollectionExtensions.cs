@@ -58,7 +58,7 @@ public static class ServiceCollectionExtensions
                     	ShouldBlockUntilBackgroundTaskIsCompleted = fastParseArgs.ShouldBlockUntilBackgroundTaskIsCompleted
                     };
 
-                    await ((IdeBackgroundTaskApi)fastParseArgs.IdeBackgroundTaskApi).Editor_FastParseFunc(fastParseArgs);
+                    await ((IdeService)fastParseArgs.IdeBackgroundTaskApi).Editor_FastParseFunc(fastParseArgs);
                 },
                 RegisterModelFunc = async (registerModelArgs) =>
                 {
@@ -77,7 +77,7 @@ public static class ServiceCollectionExtensions
                     	ShouldBlockUntilBackgroundTaskIsCompleted = registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted
                     };
 
-                    await ((IdeBackgroundTaskApi)registerModelArgs.IdeBackgroundTaskApi).Editor_RegisterModelFunc(registerModelArgs);
+                    await ((IdeService)registerModelArgs.IdeBackgroundTaskApi).Editor_RegisterModelFunc(registerModelArgs);
                 },
                 TryRegisterViewModelFunc = async (tryRegisterViewModelArgs) =>
                 {
@@ -96,11 +96,11 @@ public static class ServiceCollectionExtensions
                         tryRegisterViewModelArgs.CommonUtilityService,
                         tryRegisterViewModelArgs.IdeBackgroundTaskApi);
 
-                    return await ((IdeBackgroundTaskApi)tryRegisterViewModelArgs.IdeBackgroundTaskApi).Editor_TryRegisterViewModelFunc(tryRegisterViewModelArgs);
+                    return await ((IdeService)tryRegisterViewModelArgs.IdeBackgroundTaskApi).Editor_TryRegisterViewModelFunc(tryRegisterViewModelArgs);
                 },
                 TryShowViewModelFunc = (tryShowViewModelArgs) =>
                 {
-                    return ((IdeBackgroundTaskApi)tryShowViewModelArgs.IdeBackgroundTaskApi).Editor_TryShowViewModelFunc(tryShowViewModelArgs);
+                    return ((IdeService)tryShowViewModelArgs.IdeBackgroundTaskApi).Editor_TryShowViewModelFunc(tryShowViewModelArgs);
                 },
             })));
         }
@@ -111,11 +111,13 @@ public static class ServiceCollectionExtensions
         	services.AddScoped<IAppDataService, DoNothingAppDataService>();
 
         services
-            .AddScoped<IdeBackgroundTaskApi>(sp =>
+            .AddScoped<IdeService>(sp =>
             {
-                return new IdeBackgroundTaskApi(
+                return new IdeService(
                     ideConfig,
-                    _ideComponentRenderers);
+                    _ideComponentRenderers,
+                    sp.GetRequiredService<TextEditorService>(),
+                    sp);
             });
 
         return services;

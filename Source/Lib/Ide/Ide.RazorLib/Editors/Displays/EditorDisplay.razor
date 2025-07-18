@@ -8,15 +8,15 @@
 
 @* ContextRecord="_viewModelDisplayOptions.ContextRecord" *@
 
-<div id="@_viewModelDisplayOptions.ContextRecord.ContextElementId" class="di_ide_editor-display" style="@EditorElementDimensions.GetStyleString(CommonUtilityService.UiStringBuilder)">
-	@if (CommonUtilityService.Options_ShowPanelTitles)
+<div id="@_viewModelDisplayOptions.ContextRecord.ContextElementId" class="di_ide_editor-display" style="@EditorElementDimensions.GetStyleString(IdeService.CommonUtilityService.UiStringBuilder)">
+	@if (IdeService.CommonUtilityService.Options_ShowPanelTitles)
 	{
 	    <div class="di_ide_section-title">
 	        Editor
 	    </div>
     }
 
-    <div class="di_ide_section-body di_te_text-editor-group @CommonUtilityService.Options_ShowPanelTitlesCssClass"
+    <div class="di_ide_section-body di_te_text-editor-group @IdeService.CommonUtilityService.Options_ShowPanelTitlesCssClass"
          id="@HtmlId">
     
     	@{
@@ -34,7 +34,7 @@
 			<div class="di_te_text-editor-group-active-view-model">
 			
 				@{
-		            var textEditorModel = TextEditorService.ViewModel_GetModelOrDefault(
+		            var textEditorModel = IdeService.TextEditorService.ViewModel_GetModelOrDefault(
 		                textEditorGroup.ActiveViewModelKey);
 		    
 		            if (textEditorModel is null)

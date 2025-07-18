@@ -26,7 +26,7 @@ public partial class InputFileBottomControls : ComponentBase
             .FirstOrDefault(x => x.PatternName == patternName);
 
         if (pattern.ConstructorWasInvoked)
-            InputFileService.SetSelectedInputFilePattern(pattern);
+            IdeService.InputFile_SetSelectedInputFilePattern(pattern);
     }
 
     private string GetSelectedTreeViewModelAbsolutePathString(InputFileState inputFileState)
@@ -48,7 +48,7 @@ public partial class InputFileBottomControls : ComponentBase
         if (valid)
         {
             if (DialogRecord is not null)
-                CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+                IdeService.CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
             await InputFileState.OnAfterSubmitFunc
                 .Invoke(InputFileState.SelectedTreeViewModel?.Item ?? default)
@@ -65,7 +65,7 @@ public partial class InputFileBottomControls : ComponentBase
     private Task CancelOnClick()
     {
         if (DialogRecord is not null)
-            CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+            IdeService.CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
         return Task.CompletedTask;
     }

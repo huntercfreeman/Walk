@@ -29,7 +29,7 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
         if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-        _ideBackgroundTaskApi.InputFile_SetSelectedTreeViewModel(treeViewAbsolutePath);
+        _ideService.InputFile_SetSelectedTreeViewModel(treeViewAbsolutePath);
     }
 
     public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)

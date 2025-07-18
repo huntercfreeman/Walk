@@ -29,7 +29,7 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 
 		_ideService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
 		{
-			await _ideBackgroundTaskApi.TextEditorService.OpenInEditorAsync(
+			await _ideService.TextEditorService.OpenInEditorAsync(
 				editContext,
 				treeViewAbsolutePath.Item.Value,
 				true,

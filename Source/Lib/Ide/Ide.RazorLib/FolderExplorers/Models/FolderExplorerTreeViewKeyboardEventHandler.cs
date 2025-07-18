@@ -196,7 +196,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
 		_ideService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
 		{
-			await _textEditorService.OpenInEditorAsync(
+			await _ideService.TextEditorService.OpenInEditorAsync(
 				editContext,
 				treeViewAbsolutePath.Item.Value,
 				shouldSetFocusToEditor,

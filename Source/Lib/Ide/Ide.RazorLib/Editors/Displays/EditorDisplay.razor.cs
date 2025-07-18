@@ -31,7 +31,7 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 	private TabListDisplay? _tabListDisplay;
 
 	private string? _htmlId = null;
-	private string HtmlId => _htmlId ??= $"di_te_group_{IdeBackgroundTaskApi.EditorTextEditorGroupKey.Guid}";
+	private string HtmlId => _htmlId ??= $"di_te_group_{IdeService.EditorTextEditorGroupKey.Guid}";
 	
 	private Key<TextEditorViewModel> _previousActiveViewModelKey = Key<TextEditorViewModel>.Empty;
 	
@@ -49,19 +49,19 @@ public partial class EditorDisplay : ComponentBase, IDisposable
     
         _componentDataKey = new Key<TextEditorComponentData>(_viewModelDisplayOptions.TextEditorHtmlElementId);
         
-        TextEditorService.Group_TextEditorGroupStateChanged += TextEditorGroupWrapOnStateChanged;
-        TextEditorService.DirtyResourceUriStateChanged += DirtyResourceUriServiceOnStateChanged;
+        IdeService.TextEditorService.Group_TextEditorGroupStateChanged += TextEditorGroupWrapOnStateChanged;
+        IdeService.TextEditorService.DirtyResourceUriStateChanged += DirtyResourceUriServiceOnStateChanged;
     }
 
     private async void TextEditorGroupWrapOnStateChanged()
     {
-    	var textEditorGroup = TextEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
+    	var textEditorGroup = IdeService.TextEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
 	        x => x.GroupKey == IdeService.EditorTextEditorGroupKey);
 	        
 	    if (_previousActiveViewModelKey != textEditorGroup.ActiveViewModelKey)
 	    {
 	    	_previousActiveViewModelKey = textEditorGroup.ActiveViewModelKey;
-	    	TextEditorService.ViewModel_StopCursorBlinking();
+	    	IdeService.TextEditorService.ViewModel_StopCursorBlinking();
 	    }
     
         await InvokeAsync(StateHasChanged);
@@ -79,7 +79,7 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 
 	private List<ITab> GetTabList(TextEditorGroup textEditorGroup)
 	{
-        var textEditorState = TextEditorService.TextEditorState;
+        var textEditorState = IdeService.TextEditorService.TextEditorState;
 		var tabList = new List<ITab>();
 
 		foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
@@ -98,7 +98,7 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TextEditorService.Group_TextEditorGroupStateChanged -= TextEditorGroupWrapOnStateChanged;
-        TextEditorService.DirtyResourceUriStateChanged -= DirtyResourceUriServiceOnStateChanged;
+        IdeService.TextEditorService.Group_TextEditorGroupStateChanged -= TextEditorGroupWrapOnStateChanged;
+        IdeService.TextEditorService.DirtyResourceUriStateChanged -= DirtyResourceUriServiceOnStateChanged;
     }
 }

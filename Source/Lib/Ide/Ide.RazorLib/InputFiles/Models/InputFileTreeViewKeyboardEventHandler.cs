@@ -22,7 +22,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 	        Func<AbsolutePath, Task> setInputFileContentTreeViewRootFunc,
 	        Func<Task> focusSearchInputElementFunc,
 	        Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc)
-        : base(ideBackgroundTaskApi.CommonUtilityService)
+        : base(ideService.CommonUtilityService)
     {
         _ideService = ideService;
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
@@ -110,30 +110,30 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 
     private void HandleBackButtonOnClick(TreeViewCommandArgs commandArgs)
     {
-        _ideBackgroundTaskApi.InputFile_MoveBackwardsInHistory();
-        ChangeContentRootToOpenedTreeView(_ideBackgroundTaskApi.InputFile_GetInputFileState());
+        _ideService.InputFile_MoveBackwardsInHistory();
+        ChangeContentRootToOpenedTreeView(_ideService.GetInputFileState());
     }
 
     private void HandleForwardButtonOnClick(TreeViewCommandArgs commandArgs)
     {
-        _ideBackgroundTaskApi.InputFile_MoveForwardsInHistory();
-        ChangeContentRootToOpenedTreeView(_ideBackgroundTaskApi.InputFile_GetInputFileState());
+        _ideService.InputFile_MoveForwardsInHistory();
+        ChangeContentRootToOpenedTreeView(_ideService.GetInputFileState());
     }
 
     private void HandleUpwardButtonOnClick(TreeViewCommandArgs commandArgs)
     {
-        _ideBackgroundTaskApi.InputFile_OpenParentDirectory(
-            _ideBackgroundTaskApi.IdeComponentRenderers,
-            _ideBackgroundTaskApi.CommonUtilityService,
+        _ideService.InputFile_OpenParentDirectory(
+            _ideService.IdeComponentRenderers,
+            _ideService.CommonUtilityService,
             parentDirectoryTreeViewModel: null);
 
-        ChangeContentRootToOpenedTreeView(_ideBackgroundTaskApi.InputFile_GetInputFileState());
+        ChangeContentRootToOpenedTreeView(_ideService.GetInputFileState());
     }
 
     private void HandleRefreshButtonOnClick(TreeViewCommandArgs commandArgs)
     {
-        _ideBackgroundTaskApi.InputFile_RefreshCurrentSelection(currentSelection: null);
-        ChangeContentRootToOpenedTreeView(_inputFileService.GetInputFileState());
+        _ideService.InputFile_RefreshCurrentSelection(currentSelection: null);
+        ChangeContentRootToOpenedTreeView(_ideService.GetInputFileState());
     }
 
     private void ChangeContentRootToOpenedTreeView(InputFileState inputFileState)
@@ -152,7 +152,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
         if (treeViewAbsolutePath is null)
             return;
 
-        _ideBackgroundTaskApi.InputFile_SetSelectedTreeViewModel(treeViewAbsolutePath);
+        _ideService.InputFile_SetSelectedTreeViewModel(treeViewAbsolutePath);
         return;
     }
 

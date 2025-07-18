@@ -33,13 +33,13 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     			startupControlKey = new Key<IStartupControlModel>(guid);
     		}
     		
-    		IdeService.SetActiveStartupControlKey(startupControlKey);
+    		IdeService.Ide_SetActiveStartupControlKey(startupControlKey);
     	}
     }
     	
     protected override void OnInitialized()
     {
-    	TerminalService.TerminalStateChanged += Shared_OnStateChanged;
+    	IdeService.TerminalStateChanged += Shared_OnStateChanged;
     	IdeService.StartupControlStateChanged += Shared_OnStateChanged;
     }
 
@@ -134,7 +134,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TerminalService.TerminalStateChanged -= Shared_OnStateChanged;
+    	IdeService.TerminalStateChanged -= Shared_OnStateChanged;
     	IdeService.StartupControlStateChanged -= Shared_OnStateChanged;
     }
 }

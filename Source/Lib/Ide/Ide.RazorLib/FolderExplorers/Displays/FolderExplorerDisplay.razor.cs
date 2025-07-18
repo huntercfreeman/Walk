@@ -25,8 +25,8 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         IdeService.FolderExplorerStateChanged += OnFolderExplorerStateChanged;
         IdeService.CommonUtilityService.AppOptionsStateChanged += OnAppOptionsStateChanged;
 
-        _treeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(IdeBackgroundTaskApi);
-        _treeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(IdeBackgroundTaskApi);
+        _treeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(IdeService);
+        _treeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(IdeService);
     }
 
     private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
@@ -62,6 +62,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         IdeService.FolderExplorerStateChanged -= OnFolderExplorerStateChanged;
-        IdeService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
+        IdeService.CommonUtilityService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
     }
 }

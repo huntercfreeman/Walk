@@ -21,7 +21,7 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
 	{
 		if (firstRender)
 		{
-			await CommonUtilityService.JsRuntimeCommonApi
+			await IdeService.CommonUtilityService.JsRuntimeCommonApi
 				.FocusHtmlElementById(CommandBarDisplay.INPUT_HTML_ELEMENT_ID)
 	            .ConfigureAwait(false);
 		}
@@ -30,7 +30,7 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
 	private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
 	{
 		if (keyboardEventArgs.Key == "Enter")
-			CommonUtilityService.SetWidget(null);
+			IdeService.CommonUtilityService.SetWidget(null);
 	}
 	
 	private async void OnCommandBarStateChanged()

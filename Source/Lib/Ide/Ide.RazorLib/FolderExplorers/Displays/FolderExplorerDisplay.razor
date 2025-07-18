@@ -9,7 +9,7 @@
 @* ContextRecord="ContextFacts.FolderExplorerContext" *@
 
 <div id="@ContextFacts.FolderExplorerContext.ContextElementId" class="di_ide_folder-explorer-display" style="height: 100%">
-	@{ var appOptionsState = IdeBackgroundTaskApi.CommonUtilityService.GetAppOptionsState(); }
+	@{ var appOptionsState = IdeService.CommonUtilityService.GetAppOptionsState(); }
     
     @if (appOptionsState.Options.ShowPanelTitles)
     {
@@ -18,14 +18,14 @@
 	    </div>
     }
     
-    <div class="di_ide_section-body @IdeBackgroundTaskApi.CommonUtilityService.Options_ShowPanelTitlesCssClass">
+    <div class="di_ide_section-body @IdeService.CommonUtilityService.Options_ShowPanelTitlesCssClass">
 
-        @{ var folderExplorerState = IdeBackgroundTaskApi.GetFolderExplorerState(); }
+        @{ var folderExplorerState = IdeService.GetFolderExplorerState(); }
 
         @if (folderExplorerState.AbsolutePath is null)
         {
             <button class="di_button"
-                    @onclick="() => IdeBackgroundTaskApi.FolderExplorer_ShowInputFile()">
+                    @onclick="() => IdeService.FolderExplorer_ShowInputFile()">
                 Open Folder
             </button>
         }

@@ -1069,7 +1069,7 @@ public class IdeService : IBackgroundTaskGroup
                 return Do_RequestInputFileStateForm(
                     workArgs.Message, workArgs.OnAfterSubmitFunc, workArgs.SelectionIsValidFunc, workArgs.InputFilePatterns);
             default:
-                Console.WriteLine($"{nameof(IdeBackgroundTaskApi)} {nameof(HandleEvent)} default case");
+                Console.WriteLine($"{nameof(IdeService)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
         }
     }
@@ -1399,12 +1399,12 @@ public class IdeService : IBackgroundTaskGroup
             }
             case InputFileServiceWorkKind.RefreshCurrentSelectionAction:
             {
-                var args = _queue_RefreshCurrentSelectionAction.Dequeue();
+                var args = InputFile_queue_RefreshCurrentSelectionAction.Dequeue();
                 return InputFile_Do_RefreshCurrentSelectionAction(args.Item2);
             }
             default:
             {
-                Console.WriteLine($"{nameof(InputFileService)} {nameof(HandleEvent)} default case");
+                Console.WriteLine($"{nameof(IdeService)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
             }
         }
@@ -1553,7 +1553,7 @@ public class IdeService : IBackgroundTaskGroup
     /// <returns></returns>
     public Task CodeSearch_HandleSearchEffect(CancellationToken cancellationToken = default)
     {
-        _throttle.Run(async _ =>
+        CodeSearch_throttle.Run(async _ =>
         {
             ClearResultList();
 
@@ -1616,9 +1616,9 @@ public class IdeService : IBackgroundTaskGroup
 		        	0,
 			        0,
 			        (byte)GenericDecorationKind.None),
-			    new AbsolutePath(x, false, _commonUtilityService.EnvironmentProvider),
-				_commonUtilityService.EnvironmentProvider,
-				_commonUtilityService.FileSystemProvider,
+			    new AbsolutePath(x, false, CommonUtilityService.EnvironmentProvider),
+				CommonUtilityService.EnvironmentProvider,
+				CommonUtilityService.FileSystemProvider,
 				false,
 				false))
 			.ToArray();
@@ -1630,18 +1630,18 @@ public class IdeService : IBackgroundTaskGroup
 	        ? Array.Empty<TreeViewNoType>()
 	        : new List<TreeViewNoType> { firstNode };
 	
-	    if (!_commonUtilityService.TryGetTreeViewContainer(CodeSearchState.TreeViewCodeSearchContainerKey, out _))
+	    if (!CommonUtilityService.TryGetTreeViewContainer(CodeSearchState.TreeViewCodeSearchContainerKey, out _))
 	    {
-	        _commonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
+	        CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
 	            CodeSearchState.TreeViewCodeSearchContainerKey,
 	            adhocRoot,
 	            activeNodes));
 	    }
 	    else
 	    {
-	        _commonUtilityService.TreeView_WithRootNodeAction(CodeSearchState.TreeViewCodeSearchContainerKey, adhocRoot);
+	        CommonUtilityService.TreeView_WithRootNodeAction(CodeSearchState.TreeViewCodeSearchContainerKey, adhocRoot);
 	
-	        _commonUtilityService.TreeView_SetActiveNodeAction(
+	        CommonUtilityService.TreeView_SetActiveNodeAction(
 	            CodeSearchState.TreeViewCodeSearchContainerKey,
 	            firstNode,
 	            true,
@@ -1655,7 +1655,7 @@ public class IdeService : IBackgroundTaskGroup
 		{
 			Console.WriteLine(nameof(UpdateContent));
 		
-			if (!_commonUtilityService.TryGetTreeViewContainer(
+			if (!CommonUtilityService.TryGetTreeViewContainer(
 					CodeSearchState.TreeViewCodeSearchContainerKey,
 					out var treeViewContainer))
 			{
@@ -1687,7 +1687,7 @@ public class IdeService : IBackgroundTaskGroup
 	            return;
 	
 	        await TextEditorService.TextEditorConfig.RegisterModelFunc.Invoke(
-	                new RegisterModelArgs(editContext, resourceUri, _commonUtilityService, this))
+	                new RegisterModelArgs(editContext, resourceUri, CommonUtilityService, this))
 	            .ConfigureAwait(false);
 	
 	        if (TextEditorService.TextEditorConfig.TryRegisterViewModelFunc is not null)
@@ -1747,7 +1747,7 @@ public class IdeService : IBackgroundTaskGroup
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.ActiveContextsContext, "Focus: ActiveContexts", "focus-active-contexts", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.ActiveContextsContext, "Focus: ActiveContexts", "focus-active-contexts", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
         }
         // BackgroundServicesContext
         {
@@ -1762,7 +1762,7 @@ public class IdeService : IBackgroundTaskGroup
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.BackgroundServicesContext, "Focus: BackgroundServices", "focus-background-services", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.BackgroundServicesContext, "Focus: BackgroundServices", "focus-background-services", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
         }
         // CompilerServiceExplorerContext
         {
@@ -1778,7 +1778,7 @@ public class IdeService : IBackgroundTaskGroup
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.CompilerServiceExplorerContext, "Focus: CompilerServiceExplorer", "focus-compiler-service-explorer", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.CompilerServiceExplorerContext, "Focus: CompilerServiceExplorer", "focus-compiler-service-explorer", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
         }
         // CompilerServiceEditorContext
         {
@@ -1792,7 +1792,7 @@ public class IdeService : IBackgroundTaskGroup
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.CompilerServiceEditorContext, "Focus: CompilerServiceEditor", "focus-compiler-service-editor", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.CompilerServiceEditorContext, "Focus: CompilerServiceEditor", "focus-compiler-service-editor", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
         }
         // DialogDisplayContext
         {
@@ -1806,7 +1806,7 @@ public class IdeService : IBackgroundTaskGroup
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.DialogDisplayContext, "Focus: DialogDisplay", "focus-dialog-display", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.DialogDisplayContext, "Focus: DialogDisplay", "focus-dialog-display", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
         }
         // EditorContext
         {
@@ -1821,7 +1821,7 @@ public class IdeService : IBackgroundTaskGroup
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.EditorContext, "Focus: Editor", "focus-editor", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.EditorContext, "Focus: Editor", "focus-editor", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
         }
         // FolderExplorerContext
         {
@@ -1835,7 +1835,7 @@ public class IdeService : IBackgroundTaskGroup
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.FolderExplorerContext, "Focus: FolderExplorer", "focus-folder-explorer", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.FolderExplorerContext, "Focus: FolderExplorer", "focus-folder-explorer", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
         }
         // GitContext
         {
@@ -1849,7 +1849,7 @@ public class IdeService : IBackgroundTaskGroup
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.GitContext, "Focus: Git", "focus-git", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.GitContext, "Focus: Git", "focus-git", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
         }
         // GlobalContext
         {
@@ -1863,7 +1863,7 @@ public class IdeService : IBackgroundTaskGroup
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.GlobalContext, "Focus: Global", "focus-global", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.GlobalContext, "Focus: Global", "focus-global", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
         }
         // MainLayoutFooterContext
         {
@@ -1877,7 +1877,7 @@ public class IdeService : IBackgroundTaskGroup
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.MainLayoutFooterContext, "Focus: Footer", "focus-footer", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.MainLayoutFooterContext, "Focus: Footer", "focus-footer", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
         }
         // MainLayoutHeaderContext
         {
@@ -1891,7 +1891,7 @@ public class IdeService : IBackgroundTaskGroup
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.MainLayoutHeaderContext, "Focus: Header", "focus-header", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.MainLayoutHeaderContext, "Focus: Header", "focus-header", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
         }
         // ErrorListContext
         {
@@ -1905,7 +1905,7 @@ public class IdeService : IBackgroundTaskGroup
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.ErrorListContext, "Focus: Error List", "error-list", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.ErrorListContext, "Focus: Error List", "error-list", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
         }
         // OutputContext
         {
@@ -1919,7 +1919,7 @@ public class IdeService : IBackgroundTaskGroup
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.OutputContext, "Focus: Output", "focus-output", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.OutputContext, "Focus: Output", "focus-output", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
         }
 		// TerminalContext
         {
@@ -1933,7 +1933,7 @@ public class IdeService : IBackgroundTaskGroup
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.TerminalContext, "Focus: Terminal", "focus-terminal", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.TerminalContext, "Focus: Terminal", "focus-terminal", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
         }
         // TestExplorerContext
         {
@@ -1948,7 +1948,7 @@ public class IdeService : IBackgroundTaskGroup
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.TestExplorerContext, "Focus: Test Explorer", "focus-test-explorer", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.TestExplorerContext, "Focus: Test Explorer", "focus-test-explorer", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
         }
         // TextEditorContext
         {
@@ -1962,7 +1962,7 @@ public class IdeService : IBackgroundTaskGroup
                 	AltKey = true,
                 },
                 ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.TextEditorContext, "Focus: TextEditor", "focus-text-editor", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
+                    ContextFacts.TextEditorContext, "Focus: TextEditor", "focus-text-editor", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
         }
 
         // Focus the text editor itself (as to allow for typing into the editor)
@@ -1982,7 +1982,7 @@ public class IdeService : IBackgroundTaskGroup
 					var componentData = activeViewModel.PersistentState.ComponentData;
 					if (componentData is not null)
 					{
-						await _commonUtilityService.JsRuntimeCommonApi
+						await CommonUtilityService.JsRuntimeCommonApi
 	                        .FocusHtmlElementById(componentData.PrimaryCursorContentId)
 	                        .ConfigureAwait(false);
 					}
@@ -2050,11 +2050,11 @@ public class IdeService : IBackgroundTaskGroup
 	            "Open: Context Switch", "open-context-switch", false,
 	            async commandArgs =>
 				{
-					var elementDimensions = await _commonUtilityService.JsRuntimeCommonApi
+					var elementDimensions = await CommonUtilityService.JsRuntimeCommonApi
 						.MeasureElementById("di_ide_header-button-file")
 						.ConfigureAwait(false);
 						
-					var contextState = _commonUtilityService.GetContextState();
+					var contextState = CommonUtilityService.GetContextState();
 					
 					var menuOptionList = new List<MenuOptionRecord>();
 					
@@ -2088,13 +2088,13 @@ public class IdeService : IBackgroundTaskGroup
 			
 			        // _dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
 			        
-			        if (_commonUtilityService.GetContextState().FocusedContextKey == ContextFacts.TextEditorContext.ContextKey)
+			        if (CommonUtilityService.GetContextState().FocusedContextKey == ContextFacts.TextEditorContext.ContextKey)
 			        {
-			        	_commonUtilityService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = WalkTextEditorInitializer.ContextSwitchGroupKey;
+			        	CommonUtilityService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = WalkTextEditorInitializer.ContextSwitchGroupKey;
 			        }
 			        else
 			        {
-			        	_commonUtilityService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = WalkCommonInitializer.ContextSwitchGroupKey;
+			        	CommonUtilityService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = WalkCommonInitializer.ContextSwitchGroupKey;
 			        }
 				
                     _contextSwitchWidget ??= new WidgetModel(
@@ -2103,7 +2103,7 @@ public class IdeService : IBackgroundTaskGroup
                         cssClass: null,
                         cssStyle: null);
 
-                    _commonUtilityService.SetWidget(_contextSwitchWidget);
+                    CommonUtilityService.SetWidget(_contextSwitchWidget);
 				});
 
 			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
@@ -2167,7 +2167,7 @@ public class IdeService : IBackgroundTaskGroup
 			true,
 			null);
 
-        _commonUtilityService.Dialog_ReduceRegisterAction(CodeSearchDialog);
+        CommonUtilityService.Dialog_ReduceRegisterAction(CodeSearchDialog);
         
         TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
         {
@@ -2195,12 +2195,12 @@ public class IdeService : IBackgroundTaskGroup
 			if (selectedText is null)
 				return;
 			
-			_codeSearchService.With(inState => inState with
+			CodeSearch_With(inState => inState with
 			{
 				Query = selectedText,
 			});
 
-			_codeSearchService.HandleSearchEffect();
+			CodeSearch_HandleSearchEffect();
  	
 	 	   // I tried without the Yield and it works fine without it.
 	 	   // I'm gonna keep it though so I can sleep at night.
@@ -2208,7 +2208,7 @@ public class IdeService : IBackgroundTaskGroup
 	 	   await Task.Yield();
 			await Task.Delay(200).ConfigureAwait(false);
 			
-			_commonUtilityService.TreeView_MoveHomeAction(
+			CommonUtilityService.TreeView_MoveHomeAction(
 				CodeSearchState.TreeViewCodeSearchContainerKey,
 				false,
 				false);
@@ -2219,7 +2219,7 @@ public class IdeService : IBackgroundTaskGroup
     
     public async ValueTask CommandFactory_PeekCodeSearchDialog(TextEditorEditContext editContext, string? resourceUriValue, int? indexInclusiveStart)
     {
-    	var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(resourceUriValue, isDirectory: false);
+    	var absolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(resourceUriValue, isDirectory: false);
     
     	// Duplicated Code: 'OpenCodeSearchDialog(...)'
     	CodeSearchDialog ??= new DialogViewModel(
@@ -2231,14 +2231,14 @@ public class IdeService : IBackgroundTaskGroup
 			true,
 			null);
 
-        _commonUtilityService.Dialog_ReduceRegisterAction(CodeSearchDialog);
+        CommonUtilityService.Dialog_ReduceRegisterAction(CodeSearchDialog);
         
-        _codeSearchService.With(inState => inState with
+        CodeSearch_With(inState => inState with
 		{
 			Query = absolutePath.NameWithExtension,
 		});
 
-		await _codeSearchService.HandleSearchEffect().ConfigureAwait(false);
+		await CodeSearch_HandleSearchEffect().ConfigureAwait(false);
  	
  	   // I tried without the Yield and it works fine without it.
  	   // I'm gonna keep it though so I can sleep at night.
@@ -2246,7 +2246,7 @@ public class IdeService : IBackgroundTaskGroup
  	   await Task.Yield();
 		await Task.Delay(200).ConfigureAwait(false);
 		
-		_commonUtilityService.TreeView_MoveHomeAction(
+		CommonUtilityService.TreeView_MoveHomeAction(
 			CodeSearchState.TreeViewCodeSearchContainerKey,
 			false,
 			false);
@@ -2332,7 +2332,7 @@ public class IdeService : IBackgroundTaskGroup
     	    }
 		}
 
-        IdeStateChanged?.Invoke();
+        Ide_IdeStateChanged?.Invoke();
     }
     
     public void Ide_SetMenuFile(MenuRecord menu)
@@ -2442,7 +2442,7 @@ public class IdeService : IBackgroundTaskGroup
     	    }
         }
 
-        StartupControlStateChanged?.Invoke();
+        Ide_StartupControlStateChanged?.Invoke();
     }
 	
 	public void Ide_DisposeStartupControl(Key<IStartupControlModel> startupControlKey)
@@ -2469,7 +2469,7 @@ public class IdeService : IBackgroundTaskGroup
             }
         }
 
-        StartupControlStateChanged?.Invoke();
+        Ide_StartupControlStateChanged?.Invoke();
     }
 	
 	public void Ide_SetActiveStartupControlKey(Key<IStartupControlModel> startupControlKey)
@@ -2496,12 +2496,12 @@ public class IdeService : IBackgroundTaskGroup
 			}
         }
 
-        StartupControlStateChanged?.Invoke();
+        Ide_StartupControlStateChanged?.Invoke();
     }
 	
 	public void Ide_TriggerStartupControlStateChanged()
 	{
-		StartupControlStateChanged?.Invoke();
+		Ide_StartupControlStateChanged?.Invoke();
 	}
     /* End IIdeService */
     
@@ -2509,7 +2509,7 @@ public class IdeService : IBackgroundTaskGroup
     public MenuOptionRecord NewEmptyFile(AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("New Empty File", MenuOptionKind.Create,
-            widgetRendererType: _ideComponentRenderers.FileFormRendererType,
+            widgetRendererType: IdeComponentRenderers.FileFormRendererType,
             widgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(IFileFormRendererType.FileName), string.Empty },
@@ -2535,7 +2535,7 @@ public class IdeService : IBackgroundTaskGroup
     public MenuOptionRecord NewTemplatedFile(NamespacePath parentDirectory, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("New Templated File", MenuOptionKind.Create,
-            widgetRendererType: _ideComponentRenderers.FileFormRendererType,
+            widgetRendererType: IdeComponentRenderers.FileFormRendererType,
             widgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(IFileFormRendererType.FileName), string.Empty },
@@ -2561,7 +2561,7 @@ public class IdeService : IBackgroundTaskGroup
     public MenuOptionRecord NewDirectory(AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("New Directory", MenuOptionKind.Create,
-            widgetRendererType: _ideComponentRenderers.FileFormRendererType,
+            widgetRendererType: IdeComponentRenderers.FileFormRendererType,
             widgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(IFileFormRendererType.FileName), string.Empty },
@@ -2581,7 +2581,7 @@ public class IdeService : IBackgroundTaskGroup
     public MenuOptionRecord DeleteFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Delete", MenuOptionKind.Delete,
-            widgetRendererType: _ideComponentRenderers.DeleteFileFormRendererType,
+            widgetRendererType: IdeComponentRenderers.DeleteFileFormRendererType,
             widgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(IDeleteFileFormRendererType.AbsolutePath), absolutePath },
@@ -2601,7 +2601,7 @@ public class IdeService : IBackgroundTaskGroup
     public MenuOptionRecord RenameFile(AbsolutePath sourceAbsolutePath, CommonUtilityService commonUtilityService, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Rename", MenuOptionKind.Update,
-            widgetRendererType: _ideComponentRenderers.FileFormRendererType,
+            widgetRendererType: IdeComponentRenderers.FileFormRendererType,
             widgetParameterMap: new Dictionary<string, object?>
             {
                 {
@@ -2674,7 +2674,7 @@ public class IdeService : IBackgroundTaskGroup
                 namespacePath,
                 onAfterCompletion));
 
-            _commonUtilityService.Continuous_EnqueueGroup(this);
+            CommonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -2689,11 +2689,11 @@ public class IdeService : IBackgroundTaskGroup
         {
             var emptyFileAbsolutePathString = namespacePath.AbsolutePath.Value + fileName;
 
-            var emptyFileAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+            var emptyFileAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
                 emptyFileAbsolutePathString,
                 false);
 
-            await _commonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
+            await CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
                     emptyFileAbsolutePath.Value,
                     string.Empty,
                     CancellationToken.None)
@@ -2708,9 +2708,9 @@ public class IdeService : IBackgroundTaskGroup
             foreach (var fileTemplate in allTemplates)
             {
                 var templateResult = fileTemplate.ConstructFileContents.Invoke(
-                    new FileTemplateParameter(fileName, namespacePath, _commonUtilityService.EnvironmentProvider));
+                    new FileTemplateParameter(fileName, namespacePath, CommonUtilityService.EnvironmentProvider));
 
-                await _commonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
+                await CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
                         templateResult.FileNamespacePath.AbsolutePath.Value,
                         templateResult.Contents,
                         CancellationToken.None)
@@ -2731,16 +2731,16 @@ public class IdeService : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformNewDirectory);
             _queue_PerformNewDirectory.Enqueue((directoryName, parentDirectory, onAfterCompletion));
-            _commonUtilityService.Continuous_EnqueueGroup(this);
+            CommonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
     
     private async ValueTask Do_PerformNewDirectory(string directoryName, AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         var directoryAbsolutePathString = parentDirectory.Value + directoryName;
-        var directoryAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(directoryAbsolutePathString, true);
+        var directoryAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(directoryAbsolutePathString, true);
 
-        await _commonUtilityService.FileSystemProvider.Directory.CreateDirectoryAsync(
+        await CommonUtilityService.FileSystemProvider.Directory.CreateDirectoryAsync(
                 directoryAbsolutePath.Value,
                 CancellationToken.None)
             .ConfigureAwait(false);
@@ -2758,7 +2758,7 @@ public class IdeService : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformDeleteFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((absolutePath, onAfterCompletion));
-            _commonUtilityService.Continuous_EnqueueGroup(this);
+            CommonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -2766,13 +2766,13 @@ public class IdeService : IBackgroundTaskGroup
     {
         if (absolutePath.IsDirectory)
         {
-            await _commonUtilityService.FileSystemProvider.Directory
+            await CommonUtilityService.FileSystemProvider.Directory
                 .DeleteAsync(absolutePath.Value, true, CancellationToken.None)
                 .ConfigureAwait(false);
         }
         else
         {
-            await _commonUtilityService.FileSystemProvider.File
+            await CommonUtilityService.FileSystemProvider.File
                 .DeleteAsync(absolutePath.Value)
                 .ConfigureAwait(false);
         }
@@ -2786,13 +2786,13 @@ public class IdeService : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformCopyFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((absolutePath, onAfterCompletion));
-            _commonUtilityService.Continuous_EnqueueGroup(this);
+            CommonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
 
     private async ValueTask Do_PerformCopyFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
-        await _commonUtilityService.SetClipboard(ClipboardFacts.FormatPhrase(
+        await CommonUtilityService.SetClipboard(ClipboardFacts.FormatPhrase(
                 ClipboardFacts.CopyCommand,
                 ClipboardFacts.AbsolutePathDataType,
                 absolutePath.Value))
@@ -2809,7 +2809,7 @@ public class IdeService : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformCutFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((absolutePath, onAfterCompletion));
-            _commonUtilityService.Continuous_EnqueueGroup(this);
+            CommonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -2817,7 +2817,7 @@ public class IdeService : IBackgroundTaskGroup
         AbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
-        await _commonUtilityService.SetClipboard(ClipboardFacts.FormatPhrase(
+        await CommonUtilityService.SetClipboard(ClipboardFacts.FormatPhrase(
                 ClipboardFacts.CutCommand,
                 ClipboardFacts.AbsolutePathDataType,
                 absolutePath.Value))
@@ -2832,13 +2832,13 @@ public class IdeService : IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformPasteFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((receivingDirectory, onAfterCompletion));
-            _commonUtilityService.Continuous_EnqueueGroup(this);
+            CommonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
     
     private async ValueTask Do_PerformPasteFile(AbsolutePath receivingDirectory, Func<Task> onAfterCompletion)
     {
-        var clipboardContents = await _commonUtilityService.ReadClipboard().ConfigureAwait(false);
+        var clipboardContents = await CommonUtilityService.ReadClipboard().ConfigureAwait(false);
 
         if (ClipboardFacts.TryParseString(clipboardContents, out var clipboardPhrase))
         {
@@ -2852,15 +2852,15 @@ public class IdeService : IBackgroundTaskGroup
 
                     // Should the if and else if be kept as inline awaits?
                     // If kept as inline awaits then the else if won't execute if the first one succeeds.
-                    if (await _commonUtilityService.FileSystemProvider.Directory.ExistsAsync(clipboardPhrase.Value).ConfigureAwait(false))
+                    if (await CommonUtilityService.FileSystemProvider.Directory.ExistsAsync(clipboardPhrase.Value).ConfigureAwait(false))
                     {
-                        clipboardAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+                        clipboardAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
                             clipboardPhrase.Value,
                             true);
                     }
-                    else if (await _commonUtilityService.FileSystemProvider.File.ExistsAsync(clipboardPhrase.Value).ConfigureAwait(false))
+                    else if (await CommonUtilityService.FileSystemProvider.File.ExistsAsync(clipboardPhrase.Value).ConfigureAwait(false))
                     {
-                        clipboardAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+                        clipboardAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
                             clipboardPhrase.Value,
                             false);
                     }
@@ -2885,7 +2885,7 @@ public class IdeService : IBackgroundTaskGroup
 
                                 var sourceAbsolutePathString = clipboardAbsolutePath.Value;
 
-                                await _commonUtilityService.FileSystemProvider.File.CopyAsync(
+                                await CommonUtilityService.FileSystemProvider.File.CopyAsync(
                                         sourceAbsolutePathString,
                                         destinationAbsolutePathString)
                                     .ConfigureAwait(false);
@@ -2916,7 +2916,7 @@ public class IdeService : IBackgroundTaskGroup
         // Check if the current and next name match when compared with case insensitivity
         if (0 == string.Compare(sourceAbsolutePath.NameWithExtension, nextName, StringComparison.OrdinalIgnoreCase))
         {
-            var temporaryNextName = _commonUtilityService.EnvironmentProvider.GetRandomFileName();
+            var temporaryNextName = CommonUtilityService.EnvironmentProvider.GetRandomFileName();
 
             var temporaryRenameResult = PerformRename(
                 sourceAbsolutePath,
@@ -2942,9 +2942,9 @@ public class IdeService : IBackgroundTaskGroup
         try
         {
             if (sourceAbsolutePath.IsDirectory)
-                _commonUtilityService.FileSystemProvider.Directory.MoveAsync(sourceAbsolutePathString, destinationAbsolutePathString);
+                CommonUtilityService.FileSystemProvider.Directory.MoveAsync(sourceAbsolutePathString, destinationAbsolutePathString);
             else
-                _commonUtilityService.FileSystemProvider.File.MoveAsync(sourceAbsolutePathString, destinationAbsolutePathString);
+                CommonUtilityService.FileSystemProvider.File.MoveAsync(sourceAbsolutePathString, destinationAbsolutePathString);
         }
         catch (Exception e)
         {
@@ -2955,7 +2955,7 @@ public class IdeService : IBackgroundTaskGroup
 
         onAfterCompletion.Invoke();
 
-        return _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(destinationAbsolutePathString, sourceAbsolutePath.IsDirectory);
+        return CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(destinationAbsolutePathString, sourceAbsolutePath.IsDirectory);
     }
 
     /// <summary>
