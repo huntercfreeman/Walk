@@ -20,7 +20,7 @@ public static class ParseTokens
 			        parserModel.TokenWalker.Current.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
 			        out _))
 			{
-				parserModel.Binder.BindDiscard(parserModel.TokenWalker.Current, ref parserModel);
+				parserModel.BindDiscard(parserModel.TokenWalker.Current);
 	    		var identifierToken = parserModel.TokenWalker.Consume();
 	    		
 	    		var variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(
@@ -139,7 +139,7 @@ public static class ParseTokens
 		
 		((VariableDeclarationNode)variableDeclarationNode).VariableKind = variableKind;
 		
-		parserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, ref parserModel);
+		parserModel.BindVariableDeclarationNode(variableDeclarationNode);
         // parserModel.CurrentCodeBlockBuilder.AddChild(variableDeclarationNode);
 		parserModel.StatementBuilder.ChildList.Add(variableDeclarationNode);
 		
@@ -290,10 +290,9 @@ public static class ParseTokens
     
     	var getterOrSetterNode = new GetterOrSetterNode();
     
-    	parserModel.Binder.NewScopeAndBuilderFromOwner(
+    	parserModel.NewScopeAndBuilderFromOwner(
         	getterOrSetterNode,
-	        parserModel.TokenWalker.Current.TextSpan,
-	        ref parserModel);
+	        parserModel.TokenWalker.Current.TextSpan);
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
         {
@@ -332,10 +331,9 @@ public static class ParseTokens
 		{
 			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserModel.CurrentCodeBlockOwner);
 			
-			parserModel.Binder.NewScopeAndBuilderFromOwner(
+			parserModel.NewScopeAndBuilderFromOwner(
 		    	arbitraryCodeBlockNode,
-		        openBraceToken.TextSpan,
-		        ref parserModel);
+		        openBraceToken.TextSpan);
 		}
 		
 		parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = false;
@@ -356,11 +354,7 @@ public static class ParseTokens
 		
 		// This has to come after the 'DeferParsingOfChildScope(...)'
 		// or it makes an ArbitraryCodeBlockNode when it comes back around.
-		parserModel.Binder.SetOpenCodeBlockTextSpan(
-			parserModel.CurrentCodeBlockOwner,
-			openBraceToken.TextSpan.StartInclusiveIndex,
-			parserModel.Compilation.__DiagnosticList,
-			parserModel.TokenWalker);
+		parserModel.CurrentCodeBlockOwner.CodeBlock_StartInclusiveIndex = openBraceToken.TextSpan.StartInclusiveIndex;
     }
 
 	/// <summary>
@@ -390,14 +384,10 @@ public static class ParseTokens
 
 		if (parserModel.CurrentCodeBlockOwner.SyntaxKind != SyntaxKind.GlobalCodeBlockNode)
 		{
-			parserModel.Binder.SetCloseCodeBlockTextSpan(
-				parserModel.CurrentCodeBlockOwner,
-				closeBraceToken.TextSpan.EndExclusiveIndex,
-				parserModel.Compilation.__DiagnosticList,
-				parserModel.TokenWalker);
+			parserModel.CurrentCodeBlockOwner.CodeBlock_EndExclusiveIndex = closeBraceToken.TextSpan.EndExclusiveIndex;
         }
         
-        parserModel.Binder.CloseScope(closeBraceToken.TextSpan, ref parserModel);
+        parserModel.CloseScope(closeBraceToken.TextSpan);
     }
 
     public static void ParseOpenParenthesisToken(ref CSharpParserModel parserModel)
@@ -519,6 +509,7 @@ public static class ParseTokens
     	
     	IExpressionNode expressionNode;
     	
+    	// TODO: Why is this try-catch here?
     	try
 		{
 			if (shouldBacktrack)
@@ -530,8 +521,6 @@ public static class ParseTokens
 		{
 			parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
 		}
-		
-    	// parserModel.CurrentCodeBlockBuilder.AddChild(expressionNode);
 	}
 
 	/// <summary>
@@ -547,28 +536,18 @@ public static class ParseTokens
             ICodeBlockOwner nextCodeBlockOwner = namespaceStatementNode;
             TypeClauseNode? scopeReturnTypeClauseNode = null;
             
-            parserModel.Binder.SetCloseCodeBlockTextSpan(
-            	namespaceStatementNode,
-            	statementDelimiterToken.TextSpan.EndExclusiveIndex,
-            	parserModel.Compilation.__DiagnosticList,
-            	parserModel.TokenWalker);
+            namespaceStatementNode.CodeBlock_EndExclusiveIndex = statementDelimiterToken.TextSpan.EndExclusiveIndex;
 
-            parserModel.Binder.AddNamespaceToCurrentScope(
-                namespaceStatementNode.IdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
-                ref parserModel);
+            parserModel.AddNamespaceToCurrentScope(
+                namespaceStatementNode.IdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService));
         }
         else 
         {
         	while (parserModel.CurrentCodeBlockOwner.SyntaxKind != SyntaxKind.GlobalCodeBlockNode &&
         		   parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan)
         	{
-        		parserModel.Binder.SetCloseCodeBlockTextSpan(
-        			parserModel.CurrentCodeBlockOwner,
-        			statementDelimiterToken.TextSpan.EndExclusiveIndex,
-        			parserModel.Compilation.__DiagnosticList,
-        			parserModel.TokenWalker);
-        		
-	        	parserModel.Binder.CloseScope(statementDelimiterToken.TextSpan, ref parserModel);
+        		parserModel.CurrentCodeBlockOwner.CodeBlock_EndExclusiveIndex = statementDelimiterToken.TextSpan.EndExclusiveIndex;
+	        	parserModel.CloseScope(statementDelimiterToken.TextSpan);
         	}
         }
     }
