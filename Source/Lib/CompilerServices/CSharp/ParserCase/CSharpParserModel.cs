@@ -68,7 +68,6 @@ public ref struct CSharpParserModel
 	    TypeClauseNode = Binder.CSharpParserModel_TypeClauseNode;
 	    TypeClauseNode.SetSharedInstance(
 	    	typeIdentifier: default,
-			valueType: null,
 			genericParameterListing: default,
 			isKeywordType: false);
 		TypeClauseNode.IsBeingUsed = false;
@@ -166,14 +165,12 @@ public ref struct CSharpParserModel
     	{
     		return new TypeClauseNode(
     			typeIdentifier,
-				valueType,
 				genericParameterListing,
 				isKeywordType);
 		}    
     	
     	TypeClauseNode.SetSharedInstance(
     		typeIdentifier,
-			valueType,
 			genericParameterListing,
 			isKeywordType);
 			
@@ -471,18 +468,6 @@ public ref struct CSharpParserModel
 
             Compilation.__SymbolList.Add(typeSymbol);
         }
-        
-        // TODO: Cannot use ref, out, or in...
-        var compilation = Compilation;
-        var binder = Binder;
-
-        var typeClauseNodeText = Binder.TextEditorService.EditContext_GetText(Text.Slice(typeClauseNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeClauseNode.TypeIdentifierToken.TextSpan.Length));
-        
-        var matchingTypeDefintionNode = CSharpFacts.Types.TypeDefinitionNodes.FirstOrDefault(
-            x => x.TypeIdentifierToken.TextSpan.GetText(compilation.SourceText, binder.TextEditorService) == typeClauseNodeText);
-
-        if (matchingTypeDefintionNode is not null)
-        	typeClauseNode.SetValueType(matchingTypeDefintionNode.ValueType);
     }
     
     public void BindTypeIdentifier(SyntaxToken identifierToken)
@@ -700,7 +685,6 @@ public ref struct CSharpParserModel
 								hasPartialModifier: false,
 								StorageModifierKind.Class,
 								entry.TypeReference.TypeIdentifierToken,
-								entry.TypeReference.ValueType,
 								entry.TypeReference.GenericParameterListing,
 								primaryConstructorFunctionArgumentListing: default,
 								inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),

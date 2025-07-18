@@ -39,15 +39,11 @@ public partial class CSharpFacts
             false,
             StorageModifierKind.Class,
             new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(20, 24, (byte)GenericDecorationKind.None)),
-            typeof(void),
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
             string.Empty,
-		    ResourceUri.Empty
-            // FindAllReferences
-            // , referenceHashSet: new()
-            )
+		    ResourceUri.Empty)
             {
             	IsKeywordType = true
             };
@@ -57,15 +53,11 @@ public partial class CSharpFacts
             false,
             StorageModifierKind.Class,
             new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(25, 28, (byte)GenericDecorationKind.None)),
-            typeof(int),
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
             string.Empty,
-		    ResourceUri.Empty
-            // FindAllReferences
-            // , referenceHashSet: new()
-            )
+		    ResourceUri.Empty)
             {
             	IsKeywordType = true
             };
@@ -75,15 +67,11 @@ public partial class CSharpFacts
             false,
             StorageModifierKind.Class,
             new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(29, 33, (byte)GenericDecorationKind.None)),
-            typeof(char),
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
             string.Empty,
-		    ResourceUri.Empty
-            // FindAllReferences
-            // , referenceHashSet: new()
-			)
+		    ResourceUri.Empty)
             {
             	IsKeywordType = true
             };
@@ -93,15 +81,11 @@ public partial class CSharpFacts
             false,
             StorageModifierKind.Class,
             new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(34, 40, (byte)GenericDecorationKind.None)),
-            typeof(string),
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
             string.Empty,
-		    ResourceUri.Empty
-			// FindAllReferences
-			// ,referenceHashSet: new()
-			)
+		    ResourceUri.Empty)
             {
             	IsKeywordType = true
             };
@@ -111,15 +95,11 @@ public partial class CSharpFacts
             false,
             StorageModifierKind.Class,
             new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(41, 45, (byte)GenericDecorationKind.None)),
-            typeof(bool),
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
             string.Empty,
-		    ResourceUri.Empty
-			// FindAllReferences
-			// ,referenceHashSet: new()
-			)
+		    ResourceUri.Empty)
             {
             	IsKeywordType = true
             };
@@ -129,15 +109,11 @@ public partial class CSharpFacts
             false,
             StorageModifierKind.Class,
             new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(46, 49, (byte)GenericDecorationKind.None)),
-            typeof(void),
             default,
             primaryConstructorFunctionArgumentListing: default,
             TypeFacts.NotApplicable.ToTypeReference(),
             string.Empty,
-		    ResourceUri.Empty
-            // FindAllReferences
-            // ,referenceHashSet: new()
-            )
+		    ResourceUri.Empty)
             {
             	IsKeywordType = true
             };

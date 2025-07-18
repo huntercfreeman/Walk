@@ -15,15 +15,11 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		bool hasPartialModifier,
 		StorageModifierKind storageModifierKind,
 		SyntaxToken typeIdentifier,
-		Type? valueType,
 		GenericParameterListing genericParameterListing,
 		FunctionArgumentListing primaryConstructorFunctionArgumentListing,
 		TypeReference inheritedTypeReference,
 		string namespaceName,
-		ResourceUri resourceUri
-		// FindAllReferences
-		// , HashSet<ResourceUri>? referenceHashSet
-		)
+		ResourceUri resourceUri)
 	{
 		#if DEBUG
 		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TypeDefinitionNode++;
@@ -33,15 +29,11 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 		HasPartialModifier = hasPartialModifier;
 		StorageModifierKind = storageModifierKind;
 		TypeIdentifierToken = typeIdentifier;
-		ValueType = valueType;
 		GenericParameterListing = genericParameterListing;
 		FunctionArgumentListing = primaryConstructorFunctionArgumentListing;
 		InheritedTypeReference = inheritedTypeReference;
 		NamespaceName = namespaceName;
 		ResourceUri = resourceUri;
-		
-		// FindAllReferences
-		// ReferenceHashSet = referenceHashSet;
 	}
 
 	private TypeClauseNode? _toTypeClauseResult;
@@ -60,7 +52,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	/// And: <see cref="GenericArgumentsListingNode"/> would be null
 	/// </summary>
 	public SyntaxToken TypeIdentifierToken { get; }
-	public Type? ValueType { get; }
 	/// <summary>
 	/// Given: 'public struct Array&lt;T&gt; { /* struct definition here */ }'<br/>
 	/// Then: 'Array&lt;T&gt;' is the <see cref="TypeIdentifierToken"/><br/>
@@ -145,7 +136,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
 	{
 		return _toTypeClauseResult ??= new TypeClauseNode(
 			TypeIdentifierToken,
-			ValueType,
 			genericParameterListing: default,
 			isKeywordType: IsKeywordType)
 		{

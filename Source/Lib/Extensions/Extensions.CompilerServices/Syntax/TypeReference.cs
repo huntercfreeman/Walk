@@ -8,7 +8,6 @@ public record struct TypeReference
 {
 	public TypeReference(
 		SyntaxToken typeIdentifier,
-		Type? valueType,
 		GenericParameterListing genericParameterListing,
 		bool isKeywordType,
 		TypeKind typeKind,
@@ -18,7 +17,6 @@ public record struct TypeReference
 	{
 		IsKeywordType = isKeywordType;
 		TypeIdentifierToken = typeIdentifier;
-		ValueType = valueType;
 		GenericParameterListing = genericParameterListing;
 		TypeKind = typeKind;
 		HasQuestionMark = hasQuestionMark;
@@ -32,7 +30,6 @@ public record struct TypeReference
 	
 		IsKeywordType = typeClauseNode.IsKeywordType;
 		TypeIdentifierToken = typeClauseNode.TypeIdentifierToken;
-		ValueType = typeClauseNode.ValueType;
 		GenericParameterListing = typeClauseNode.GenericParameterListing;
 		TypeKind = typeClauseNode.TypeKind;
 		HasQuestionMark = typeClauseNode.HasQuestionMark;
@@ -43,7 +40,6 @@ public record struct TypeReference
 	}
 
 	public SyntaxToken TypeIdentifierToken { get; }
-	public Type? ValueType { get; }
 	public GenericParameterListing GenericParameterListing { get; }
 	public bool IsKeywordType { get; }
 	public TypeKind TypeKind { get; }

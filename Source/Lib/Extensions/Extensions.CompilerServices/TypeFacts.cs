@@ -30,7 +30,6 @@ public static class TypeFacts
 {
 	private static readonly TypeReference _notApplicableTypeReference = new TypeReference(
 		typeIdentifier: new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, 13, (byte)GenericDecorationKind.None)),
-		valueType: typeof(void),
 		genericParameterListing: default,
 		isKeywordType: false,
 		typeKind: TypeKind.None,
@@ -52,7 +51,6 @@ public static class TypeFacts
 		false,
 		StorageModifierKind.Class,
 		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(0, 13, (byte)GenericDecorationKind.None)),
-		typeof(void),
 		default,
 		primaryConstructorFunctionArgumentListing: default,
 		inheritedTypeReference: _notApplicableTypeReference,
@@ -73,7 +71,6 @@ public static class TypeFacts
 		false,
 		StorageModifierKind.Class,
 		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(14, 19, (byte)GenericDecorationKind.None)),
-		typeof(void),
 		default,
 		primaryConstructorFunctionArgumentListing: default,
 		inheritedTypeReference: _notApplicableTypeReference,
@@ -111,7 +108,6 @@ public static class TypeFacts
 		false,
 		StorageModifierKind.Class,
 		new SyntaxToken(SyntaxKind.IdentifierToken, new TextEditorTextSpan(14, 19, (byte)GenericDecorationKind.None)),
-		typeof(void),
 		default,
 		primaryConstructorFunctionArgumentListing: default,
 		inheritedTypeReference: _notApplicableTypeReference,
