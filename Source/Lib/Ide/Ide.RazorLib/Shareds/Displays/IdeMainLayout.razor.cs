@@ -11,7 +11,6 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.TextEditor.RazorLib;
-using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Ide.RazorLib.Shareds.Displays.Internals;
 using Walk.Ide.RazorLib.Commands;

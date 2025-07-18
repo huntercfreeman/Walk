@@ -4,7 +4,7 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Notifications.Models;
-using Walk.Common.RazorLib.Options.Models;
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
@@ -12,8 +12,26 @@ using Walk.Ide.RazorLib.InputFiles.Displays;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.AppDatas.Models;
 using Walk.Ide.RazorLib.Shareds.Models;
+using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Extensions.DotNet.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.AppDatas.Models;
+
+// CompilerServiceRegistry.cs
+using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.CompilerServices.CSharp.CompilerServiceCase;
+using Walk.CompilerServices.CSharpProject.CompilerServiceCase;
+using Walk.CompilerServices.Css;
+using Walk.CompilerServices.DotNetSolution.CompilerServiceCase;
+using Walk.CompilerServices.Json;
+using Walk.CompilerServices.Razor.CompilerServiceCase;
+using Walk.CompilerServices.Xml;
+using Walk.TextEditor.RazorLib.CompilerServices;
+
+// DecorationMapperRegistry.cs
+using Walk.TextEditor.RazorLib.Decorations.Models;
+using Walk.CompilerServices.Css.Decoration;
+using Walk.CompilerServices.Json.Decoration;
+using Walk.CompilerServices.Xml.Html.Decoration;
 
 namespace Walk.Extensions.Config.Installations.Displays;
 
@@ -30,15 +48,17 @@ public partial class WalkConfigInitializer : ComponentBase
 	[Inject]
 	private IIdeService IdeService { get; set; } = null!;
 	[Inject]
-	private CommonUtilityService CommonUtilityService { get; set; } = null!;
+	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
-	private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
+	private ITerminalService TerminalService { get; set; } = null!;
 	
     private static Key<IDynamicViewModel> _notificationRecordKey = Key<IDynamicViewModel>.NewKey();
 
 	protected override void OnInitialized()
 	{
-        CommonUtilityService.Continuous_EnqueueGroup(new BackgroundTask(
+	    HandleCompilerServicesAndDecorationMappers();
+	
+        TextEditorService.CommonUtilityService.Continuous_EnqueueGroup(new BackgroundTask(
         	Key<IBackgroundTaskGroup>.Empty,
         	Do_InitializeFooterBadges));
 	
@@ -69,13 +89,10 @@ public partial class WalkConfigInitializer : ComponentBase
     public ValueTask Do_InitializeFooterBadges()
     {
         IdeService.RegisterFooterBadge(
-            new DirtyResourceUriBadge(
-                DirtyResourceUriService,
-                CommonUtilityService));
+            new DirtyResourceUriBadge(TextEditorService));
 
         IdeService.RegisterFooterBadge(
-            new NotificationBadge(
-                CommonUtilityService));
+            new NotificationBadge(TextEditorService.CommonUtilityService));
 
         return ValueTask.CompletedTask;
     }
@@ -87,7 +104,7 @@ public partial class WalkConfigInitializer : ComponentBase
     	if (solutionMostRecent is null)
     		return;
     
-    	var slnAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+    	var slnAbsolutePath = TextEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
             solutionMostRecent,
             false);
 
@@ -100,14 +117,14 @@ public partial class WalkConfigInitializer : ComponentBase
         var parentDirectory = slnAbsolutePath.ParentDirectory;
         if (parentDirectory is not null)
         {
-            var parentDirectoryAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+            var parentDirectoryAbsolutePath = TextEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
                 parentDirectory,
                 true);
 
             var pseudoRootNode = new TreeViewAbsolutePath(
                 parentDirectoryAbsolutePath,
                 IdeComponentRenderers,
-                CommonUtilityService,
+                TextEditorService.CommonUtilityService,
                 true,
                 false);
 
@@ -122,9 +139,9 @@ public partial class WalkConfigInitializer : ComponentBase
 
             var activeNode = adhocRootNode.ChildList.FirstOrDefault();
 
-            if (!CommonUtilityService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
+            if (!TextEditorService.CommonUtilityService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
             {
-                CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
+                TextEditorService.CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
                     InputFileContent.TreeViewContainerKey,
                     adhocRootNode,
                     activeNode is null
@@ -133,9 +150,9 @@ public partial class WalkConfigInitializer : ComponentBase
             }
             else
             {
-                CommonUtilityService.TreeView_WithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
+                TextEditorService.CommonUtilityService.TreeView_WithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
 
-                CommonUtilityService.TreeView_SetActiveNodeAction(
+                TextEditorService.CommonUtilityService.TreeView_SetActiveNodeAction(
                     InputFileContent.TreeViewContainerKey,
                     activeNode,
                     true,
@@ -146,7 +163,7 @@ public partial class WalkConfigInitializer : ComponentBase
             InputFileService.SetOpenedTreeViewModel(
                 pseudoRootNode,
                 IdeComponentRenderers,
-                CommonUtilityService);
+                TextEditorService.CommonUtilityService);
         }
 
 		/*
@@ -166,5 +183,65 @@ public partial class WalkConfigInitializer : ComponentBase
 			Dispatcher.Dispatch(new StartupControlState.SetActiveStartupControlKeyAction(startupControl.Key));	
         }
         */
+    }
+    
+    private void HandleCompilerServicesAndDecorationMappers()
+    {
+        var cSharpCompilerService = new CSharpCompilerService(TextEditorService);
+        var cSharpProjectCompilerService = new CSharpProjectCompilerService(TextEditorService);
+        // var javaScriptCompilerService = new JavaScriptCompilerService(TextEditorService);
+        var cssCompilerService = new CssCompilerService(TextEditorService);
+        var dotNetSolutionCompilerService = new DotNetSolutionCompilerService(TextEditorService);
+        var jsonCompilerService = new JsonCompilerService(TextEditorService);
+        var razorCompilerService = new RazorCompilerService(TextEditorService, cSharpCompilerService);
+        var xmlCompilerService = new XmlCompilerService(TextEditorService);
+        var terminalCompilerService = new TerminalCompilerService(TextEditorService, TerminalService);
+        var defaultCompilerService = new CompilerServiceDoNothing();
+
+        TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.HTML, xmlCompilerService);
+        TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.XML, xmlCompilerService);
+        TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.C_SHARP_PROJECT, cSharpProjectCompilerService);
+        TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS, cSharpCompilerService);
+        // TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.JAVA_SCRIPT, JavaScriptCompilerService);
+        TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.RAZOR_CODEBEHIND, cSharpCompilerService);
+        TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.RAZOR_MARKUP, razorCompilerService);
+        TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.CSHTML_CLASS, razorCompilerService);
+        TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.CSS, cssCompilerService);
+        TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.JSON, jsonCompilerService);
+        TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION, dotNetSolutionCompilerService);
+        TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X, dotNetSolutionCompilerService);
+        TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.TERMINAL, terminalCompilerService);
+        
+        //
+        // Decoration Mapper starts after this point.
+        //
+        
+        var cssDecorationMapper = new TextEditorCssDecorationMapper();
+        var jsonDecorationMapper = new TextEditorJsonDecorationMapper();
+        var genericDecorationMapper = new GenericDecorationMapper();
+        var htmlDecorationMapper = new TextEditorHtmlDecorationMapper();
+        var terminalDecorationMapper = new TerminalDecorationMapper();
+        var defaultDecorationMapper = new TextEditorDecorationMapperDefault();
+
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.HTML, htmlDecorationMapper);
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.XML, htmlDecorationMapper);
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.C_SHARP_PROJECT, htmlDecorationMapper);
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.C_SHARP_CLASS, genericDecorationMapper);
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.RAZOR_CODEBEHIND, genericDecorationMapper);
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.RAZOR_MARKUP, htmlDecorationMapper);
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.CSHTML_CLASS, htmlDecorationMapper);
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.CSS, cssDecorationMapper);
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.JAVA_SCRIPT, genericDecorationMapper);
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.JSON, jsonDecorationMapper);
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.TYPE_SCRIPT, genericDecorationMapper);
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.F_SHARP, genericDecorationMapper);
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.C, genericDecorationMapper);
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.PYTHON, genericDecorationMapper);
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.H, genericDecorationMapper);
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.CPP, genericDecorationMapper);
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.HPP, genericDecorationMapper);
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.DOT_NET_SOLUTION, htmlDecorationMapper);
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X, htmlDecorationMapper);
+        TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.TERMINAL, terminalDecorationMapper);
     }
 }

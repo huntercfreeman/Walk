@@ -1,12 +1,10 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Reactives.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib;
-using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
 using Walk.Extensions.DotNet.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.Outputs.Models;
@@ -23,8 +21,6 @@ public partial class OutputDisplay : ComponentBase, IDisposable
 	private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
-	[Inject]
-	private CommonUtilityService CommonUtilityService { get; set; } = null!;
     
     private readonly Throttle _eventThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
     
@@ -32,19 +28,17 @@ public partial class OutputDisplay : ComponentBase, IDisposable
 	private OutputTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		TextEditorService.CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
     
     protected override void OnInitialized()
     {
     	_treeViewKeyboardEventHandler = new OutputTreeViewKeyboardEventHandler(
 			TextEditorService,
-			ServiceProvider,
-			CommonUtilityService);
+			ServiceProvider);
 
 		_treeViewMouseEventHandler = new OutputTreeViewMouseEventHandler(
 			TextEditorService,
-			ServiceProvider,
-			CommonUtilityService);
+			ServiceProvider);
     
     	DotNetCliOutputParser.StateChanged += DotNetCliOutputParser_StateChanged;
     	DotNetBackgroundTaskApi.OutputService.OutputStateChanged += OnOutputStateChanged;
@@ -60,7 +54,7 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     		if (DotNetBackgroundTaskApi.OutputService.GetOutputState().DotNetRunParseResultId == DotNetCliOutputParser.GetDotNetRunParseResult().Id)
     			return Task.CompletedTask;
 
-			CommonUtilityService.Continuous_EnqueueGroup((IBackgroundTaskGroup)new BackgroundTask(
+			TextEditorService.CommonUtilityService.Continuous_EnqueueGroup((IBackgroundTaskGroup)new BackgroundTask(
 				Key<IBackgroundTaskGroup>.Empty,
 				DotNetBackgroundTaskApi.OutputService.Do_ConstructTreeView));
     		return Task.CompletedTask;
@@ -88,7 +82,7 @@ public partial class OutputDisplay : ComponentBase, IDisposable
 			},
 			restoreFocusOnClose: null);
 
-		CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		TextEditorService.CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
     

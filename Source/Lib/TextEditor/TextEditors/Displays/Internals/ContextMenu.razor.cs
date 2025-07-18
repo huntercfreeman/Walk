@@ -9,7 +9,6 @@ using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
-using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models.Defaults;
 
 namespace Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;

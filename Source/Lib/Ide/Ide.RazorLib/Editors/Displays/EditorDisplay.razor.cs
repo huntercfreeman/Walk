@@ -5,7 +5,6 @@ using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Tabs.Displays;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib;
-using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.TextEditor.RazorLib.Groups.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -18,8 +17,6 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 {
 	[Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
     [Inject]
 	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
@@ -55,7 +52,7 @@ public partial class EditorDisplay : ComponentBase, IDisposable
         _componentDataKey = new Key<TextEditorComponentData>(_viewModelDisplayOptions.TextEditorHtmlElementId);
         
         TextEditorService.Group_TextEditorGroupStateChanged += TextEditorGroupWrapOnStateChanged;
-        DirtyResourceUriService.DirtyResourceUriStateChanged += DirtyResourceUriServiceOnStateChanged;
+        TextEditorService.DirtyResourceUriStateChanged += DirtyResourceUriServiceOnStateChanged;
     }
 
     private async void TextEditorGroupWrapOnStateChanged()
@@ -104,6 +101,6 @@ public partial class EditorDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         TextEditorService.Group_TextEditorGroupStateChanged -= TextEditorGroupWrapOnStateChanged;
-        DirtyResourceUriService.DirtyResourceUriStateChanged -= DirtyResourceUriServiceOnStateChanged;
+        TextEditorService.DirtyResourceUriStateChanged -= DirtyResourceUriServiceOnStateChanged;
     }
 }

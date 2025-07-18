@@ -4,7 +4,6 @@ using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
@@ -19,19 +18,16 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 	private readonly IMenuOptionsFactory _menuOptionsFactory;
 	private readonly TextEditorService _textEditorService;
-	private readonly CommonUtilityService _commonUtilityService;
 
 	public SolutionExplorerTreeViewKeyboardEventHandler(
 			IdeBackgroundTaskApi ideBackgroundTaskApi,
 			IMenuOptionsFactory menuOptionsFactory,
-			TextEditorService textEditorService,
-			CommonUtilityService commonUtilityService)
-		: base(commonUtilityService)
+			TextEditorService textEditorService)
+		: base(textEditorService.CommonUtilityService)
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
 		_menuOptionsFactory = menuOptionsFactory;
 		_textEditorService = textEditorService;
-		_commonUtilityService = commonUtilityService;
 	}
 
 	public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
@@ -109,7 +105,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 			treeViewNamespacePath.Item.AbsolutePath,
 			() =>
 			{
-				NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _commonUtilityService, TimeSpan.FromSeconds(7));
+				NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _textEditorService.CommonUtilityService, TimeSpan.FromSeconds(7));
 				return Task.CompletedTask;
 			});
 
@@ -146,7 +142,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 		else
 		{
 			var parentDirectory = treeViewNamespacePath.Item.AbsolutePath.ParentDirectory;
-			var parentDirectoryAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(parentDirectory, true);
+			var parentDirectoryAbsolutePath = _textEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(parentDirectory, true);
 
 			pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
 				parentDirectoryAbsolutePath,
@@ -181,7 +177,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 			treeViewNamespacePath.Item.AbsolutePath,
 			() =>
 			{
-				NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _commonUtilityService, TimeSpan.FromSeconds(7));
+				NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _textEditorService.CommonUtilityService, TimeSpan.FromSeconds(7));
 				SolutionExplorerContextMenu.ParentOfCutFile = parent;
 				return Task.CompletedTask;
 			});
@@ -217,11 +213,11 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 
 		await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-		_commonUtilityService.TreeView_ReRenderNodeAction(
+		_textEditorService.CommonUtilityService.TreeView_ReRenderNodeAction(
 			DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 			treeViewModel);
 
-		_commonUtilityService.TreeView_MoveUpAction(
+		_textEditorService.CommonUtilityService.TreeView_MoveUpAction(
 			DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 			false,
 			false);

@@ -2,19 +2,13 @@ using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.Extensions.DotNet.TestExplorers.Models;
-using Walk.TextEditor.RazorLib.CompilerServices;
 
 namespace Walk.Extensions.DotNet.TestExplorers.Displays.Internals;
 
 public partial class TestExplorerTreeViewDisplay : ComponentBase
 {
-	[Inject]
-	private CommonUtilityService CommonUtilityService { get; set; } = null!;
-	[Inject]
-	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
@@ -35,15 +29,11 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 	protected override void OnInitialized()
 	{
 		_treeViewKeyboardEventHandler = new TestExplorerTreeViewKeyboardEventHandler(
-			CompilerServiceRegistry,
 			TextEditorService,
-			CommonUtilityService,
 			ServiceProvider);
 
 		_treeViewMouseEventHandler = new TestExplorerTreeViewMouseEventHandler(
-			CompilerServiceRegistry,
 			TextEditorService,
-			CommonUtilityService,
 			ServiceProvider);
 	}
 
@@ -63,7 +53,7 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-		CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		TextEditorService.CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 }

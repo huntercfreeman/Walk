@@ -41,7 +41,6 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 	    ITooltipModel tooltipModel,
 	    bool shouldRevealCursor,
 		VirtualAssociativityKind virtualAssociativityKind,
-		CommonUtilityService commonUtilityService,
         TextEditorDimensions textEditorDimensions,
 		int scrollLeft,
 	    int scrollTop,
@@ -70,8 +69,6 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 
 	    ShouldRevealCursor = shouldRevealCursor;
 		VirtualAssociativityKind = virtualAssociativityKind;
-		
-		CommonUtilityService = commonUtilityService;
         
         ComponentType = typeof(TextEditorViewModelDisplay);
         ComponentParameterMap = new()
@@ -545,7 +542,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     private readonly Type? _dragDialogComponentType = null;
     private readonly Dictionary<string, object?>? _dragDialogComponentParameterMap = null;
 
-    public CommonUtilityService CommonUtilityService { get; }
+    public CommonUtilityService CommonUtilityService => TextEditorService.CommonUtilityService;
 
     public Key<Panel> Key { get; }
     public Key<ContextRecord> ContextRecordKey { get; }

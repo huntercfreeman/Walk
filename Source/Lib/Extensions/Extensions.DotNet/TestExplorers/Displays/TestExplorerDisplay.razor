@@ -6,9 +6,9 @@
 
 @{
 	var testExplorerState = DotNetBackgroundTaskApi.TestExplorerService.GetTestExplorerState();
-	var appOptionsState = CommonUtilityService.GetAppOptionsState();
+	var appOptionsState = TextEditorService.CommonUtilityService.GetAppOptionsState();
 
-	if (!CommonUtilityService.TryGetTreeViewContainer(
+	if (!TextEditorService.CommonUtilityService.TryGetTreeViewContainer(
 			TestExplorerState.TreeViewTestExplorerKey,
 			out var treeViewContainer))
 	{
@@ -31,7 +31,7 @@
 	    </div>
     }
 
-    <div class="di_ide_section-body @CommonUtilityService.Options_ShowPanelTitlesCssClass">
+    <div class="di_ide_section-body @TextEditorService.CommonUtilityService.Options_ShowPanelTitlesCssClass">
 
 		@if (renderBatch.TreeViewContainer is null)
 		{

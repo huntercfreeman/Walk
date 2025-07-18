@@ -3,10 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.ComponentRenderers.Models;
-using Walk.TextEditor.RazorLib.Decorations.Models;
-using Walk.TextEditor.RazorLib.TextEditors.Models;
-using Walk.TextEditor.RazorLib.FindAlls.Models;
-using Walk.TextEditor.RazorLib.Edits.Models;
 
 namespace Walk.TextEditor.RazorLib.Installations.Models;
 
@@ -31,17 +27,10 @@ public static class ServiceCollectionExtensions
                 return new TextEditorService(
                     textEditorConfig,
                     _textEditorComponentRenderers,
-                    sp.GetRequiredService<IFindAllService>(),
-                    sp.GetRequiredService<IDirtyResourceUriService>(),
-                    sp.GetRequiredService<ITextEditorRegistryWrap>(),
                     sp.GetRequiredService<IJSRuntime>(),
                     sp.GetRequiredService<CommonUtilityService>(),
             		sp.GetRequiredService<IServiceProvider>());
-            })
-            .AddScoped<ITextEditorRegistryWrap, TextEditorRegistryWrap>()
-            .AddScoped<ITextEditorHeaderRegistry, TextEditorHeaderRegistry>()
-            .AddScoped<IFindAllService, FindAllService>()
-            .AddScoped<IDirtyResourceUriService, DirtyResourceUriService>();
+            });
         
         return services;
     }

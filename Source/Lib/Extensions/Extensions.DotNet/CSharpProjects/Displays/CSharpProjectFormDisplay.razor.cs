@@ -4,7 +4,6 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.CompilerServices.DotNetSolution.Models;
 using Walk.Ide.RazorLib.Installations.Models;
@@ -23,8 +22,6 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 {
 	[Inject]
 	private ITerminalService TerminalService { get; set; } = null!;
-	[Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private WalkIdeConfig IdeConfig { get; set; } = null!;
 	[Inject]
@@ -49,7 +46,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		_viewModel = new(DotNetSolutionModel, CommonUtilityService.EnvironmentProvider);
+		_viewModel = new(DotNetSolutionModel, TextEditorService.CommonUtilityService.EnvironmentProvider);
 		
 		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
 		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
@@ -96,7 +93,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	private async Task ReadProjectTemplates()
 	{
-		if (CommonUtilityService.WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
+		if (TextEditorService.CommonUtilityService.WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
 		{
 			_viewModel.ProjectTemplateList = WebsiteProjectTemplateFacts.WebsiteProjectTemplatesContainer.ToList();
 			await InvokeAsync(StateHasChanged);
@@ -120,7 +117,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 				
 			var terminalCommandRequest = new TerminalCommandRequest(
 				formattedCommand.Value,
-				CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+				TextEditorService.CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
 				new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandRequestKey.Guid))
 			{
 				ContinueWithFunc = parsedTerminalCommand =>
@@ -155,7 +152,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 			var terminalCommandRequest = new TerminalCommandRequest(
 	        	formattedCommand.Value,
-	        	CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+	        	TextEditorService.CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
 	        	new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandRequestKey.Guid))
 	        {
 	        	ContinueWithFunc = parsedCommand =>
@@ -201,7 +198,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			return;
 		}
 
-		if (CommonUtilityService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
+		if (TextEditorService.CommonUtilityService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
 		{
 			var generalTerminal = TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY];
 
@@ -219,7 +216,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			        {
 			        	ContinueWithFunc = parsedCommand =>
 			        	{
-				        	CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+				        	TextEditorService.CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 	
 							DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
 							{
@@ -241,12 +238,12 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 		{
 			await WebsiteDotNetCliHelper.StartNewCSharpProjectCommand(
 					immutableView,
-					(IEnvironmentProvider)CommonUtilityService.EnvironmentProvider,
-					(IFileSystemProvider)CommonUtilityService.FileSystemProvider,
+					(IEnvironmentProvider)TextEditorService.CommonUtilityService.EnvironmentProvider,
+					(IFileSystemProvider)TextEditorService.CommonUtilityService.FileSystemProvider,
 					DotNetBackgroundTaskApi,
-					(Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService,
+					(Common.RazorLib.Options.Models.CommonUtilityService)TextEditorService.CommonUtilityService,
 					DialogRecord,
-					(ICommonComponentRenderers)CommonUtilityService.CommonComponentRenderers)
+					(ICommonComponentRenderers)TextEditorService.CommonUtilityService.CommonComponentRenderers)
 				.ConfigureAwait(false);
 		}
 	}

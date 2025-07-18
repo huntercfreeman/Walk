@@ -2,12 +2,10 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.CompilerServices;
-using Walk.TextEditor.RazorLib.ComponentRenderers.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
-using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
@@ -19,7 +17,6 @@ public sealed class RazorCompilerService : ICompilerService
 {
 	private readonly TextEditorService _textEditorService;
     private readonly CSharpCompilerService _cSharpCompilerService;
-    private readonly IEnvironmentProvider _environmentProvider;
     
     private readonly Dictionary<ResourceUri, RazorResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
@@ -31,12 +28,10 @@ public sealed class RazorCompilerService : ICompilerService
 
     public RazorCompilerService(
         TextEditorService textEditorService,
-        CSharpCompilerService cSharpCompilerService,
-        IEnvironmentProvider environmentProvider)
+        CSharpCompilerService cSharpCompilerService)
     {
     	_textEditorService = textEditorService;
         _cSharpCompilerService = cSharpCompilerService;
-        _environmentProvider = environmentProvider;
     }
     
     public event Action? ResourceRegistered;
@@ -208,7 +203,7 @@ public sealed class RazorCompilerService : ICompilerService
     		modelModifier.GetAllText(),
             this,
             _cSharpCompilerService,
-            _environmentProvider);
+            _textEditorService.CommonUtilityService.EnvironmentProvider);
             
     	lexer.Lex();
     

@@ -2,7 +2,6 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.CompilerServices;
-using Walk.TextEditor.RazorLib.ComponentRenderers.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;

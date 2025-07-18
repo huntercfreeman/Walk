@@ -1,9 +1,7 @@
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
-using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Walk.Ide.RazorLib.CodeSearches.Models;
@@ -15,9 +13,8 @@ public class CodeSearchTreeViewMouseEventHandler : TreeViewMouseEventHandler
 
 	public CodeSearchTreeViewMouseEventHandler(
 			TextEditorService textEditorService,
-			IServiceProvider serviceProvider,
-			CommonUtilityService commonUtilityService)
-		: base(commonUtilityService)
+			IServiceProvider serviceProvider)
+		: base(textEditorService.CommonUtilityService)
 	{
 		_textEditorService = textEditorService;
 		_serviceProvider = serviceProvider;

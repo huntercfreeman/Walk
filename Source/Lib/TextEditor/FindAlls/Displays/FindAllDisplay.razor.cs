@@ -1,18 +1,12 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.TextEditor.RazorLib.FindAlls.Models;
-using Walk.TextEditor.RazorLib.Installations.Models;
 
 namespace Walk.TextEditor.RazorLib.FindAlls.Displays;
 
 public partial class FindAllDisplay : ComponentBase, IDisposable
 {
-	[Inject]
-    private IFindAllService FindAllService { get; set; } = null!;
-    [Inject]
-	private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]
@@ -22,41 +16,41 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
 	private FindAllTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		TextEditorService.CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private string SearchQuery
     {
-        get => FindAllService.GetFindAllState().SearchQuery;
+        get => TextEditorService.GetFindAllState().SearchQuery;
         set
         {
             if (value is not null)
-                FindAllService.SetSearchQuery(value);
+                TextEditorService.SetSearchQuery(value);
         }
     }
 
 	private string StartingDirectoryPath
     {
-        get => FindAllService.GetFindAllState().StartingDirectoryPath;
+        get => TextEditorService.GetFindAllState().StartingDirectoryPath;
         set
         {
             if (value is not null)
-                FindAllService.SetStartingDirectoryPath(value);
+                TextEditorService.SetStartingDirectoryPath(value);
         }
     }
     
     protected override void OnInitialized()
 	{
-		FindAllService.FindAllStateChanged += OnFindAllStateChanged;
+		TextEditorService.FindAllStateChanged += OnFindAllStateChanged;
 	
 		_treeViewKeymap = new FindAllTreeViewKeyboardEventHandler(
 			TextEditorService,
 			ServiceProvider,
-			CommonUtilityService);
+			TextEditorService.CommonUtilityService);
 
 		_treeViewMouseEventHandler = new FindAllTreeViewMouseEventHandler(
 			TextEditorService,
 			ServiceProvider,
-			CommonUtilityService);
+			TextEditorService.CommonUtilityService);
 	}
 	
 	private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
@@ -75,18 +69,18 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
 			},
 			null);
 
-		CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		TextEditorService.CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 
 	private void DoSearchOnClick()
     {
-    	FindAllService.HandleStartSearchAction();
+    	TextEditorService.HandleStartSearchAction();
     }
 
 	private void CancelSearchOnClick()
     {
-    	FindAllService.CancelSearch();
+    	TextEditorService.CancelSearch();
     }
     
     public async void OnFindAllStateChanged()
@@ -96,6 +90,6 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	FindAllService.FindAllStateChanged -= OnFindAllStateChanged;
+    	TextEditorService.FindAllStateChanged -= OnFindAllStateChanged;
     }
 }

@@ -1,5 +1,4 @@
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 
@@ -31,7 +30,6 @@ public sealed class TextEditorViewModel : IDisposable
         Key<TextEditorViewModel> viewModelKey,
         ResourceUri resourceUri,
         TextEditorService textEditorService,
-        CommonUtilityService commonUtilityService,
         TextEditorVirtualizationResult virtualizationResult,
 		TextEditorDimensions textEditorDimensions,
 		int scrollLeft,
@@ -59,7 +57,6 @@ public sealed class TextEditorViewModel : IDisposable
 	    	tooltipModel: null,
 		    shouldRevealCursor: false,
 			virtualAssociativityKind: VirtualAssociativityKind.None,
-			commonUtilityService,
             textEditorDimensions,
     		scrollLeft,
     	    scrollTop,

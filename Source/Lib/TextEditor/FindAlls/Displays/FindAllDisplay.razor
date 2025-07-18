@@ -5,8 +5,8 @@
 @using Walk.TextEditor.RazorLib.FindAlls.Models;
 
 @{
-    var findAllState = FindAllService.GetFindAllState();
-    var appOptionsState = CommonUtilityService.GetAppOptionsState();
+    var findAllState = TextEditorService.GetFindAllState();
+    var appOptionsState = TextEditorService.CommonUtilityService.GetAppOptionsState();
 }
 
 <div class="di_te_find-all">
@@ -57,7 +57,7 @@
 		<div>Results: @($"{findAllState.SearchResultList.Count:N0}")</div>
 	
 		<div class="di_te_search-engine-file-system-results">
-            <TreeViewContainerDisplay TreeViewContainerKey="TextEditorFindAllState.TreeViewFindAllContainerKey"
+            <TreeViewContainerDisplay TreeViewContainerKey="TextEditorService.TextEditorFindAllState.TreeViewFindAllContainerKey"
                                       CssStyleString="height: 100%;"
                                       OnContextMenuFunc="OnTreeViewContextMenuFunc"
                                       TreeViewKeyboardEventHandler="_treeViewKeymap"

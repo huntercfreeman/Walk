@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib;
@@ -15,14 +14,8 @@ namespace Walk.Extensions.DotNet.TestExplorers.Displays;
 
 public partial class TestExplorerDisplay : ComponentBase, IDisposable
 {
-    [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-	private IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
-	[Inject]
-	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
@@ -37,8 +30,8 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 		{
 			TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
 			{
-				var terminalDecorationMapper = DecorationMapperRegistry.GetDecorationMapper(ExtensionNoPeriodFacts.TERMINAL);
-				var terminalCompilerService = CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL);
+				var terminalDecorationMapper = TextEditorService.GetDecorationMapper(ExtensionNoPeriodFacts.TERMINAL);
+				var terminalCompilerService = TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL);
 
 				model = new TextEditorModel(
 					ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
@@ -94,7 +87,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 		}
 	
 		DotNetBackgroundTaskApi.TestExplorerService.TestExplorerStateChanged += OnTestExplorerStateChanged;
-		CommonUtilityService.TreeViewStateChanged += OnTreeViewStateChanged;
+		TextEditorService.CommonUtilityService.TreeViewStateChanged += OnTreeViewStateChanged;
 		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
 
 		_ = Task.Run(async () =>
@@ -147,7 +140,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 	public void Dispose()
 	{
 		DotNetBackgroundTaskApi.TestExplorerService.TestExplorerStateChanged -= OnTestExplorerStateChanged;
-		CommonUtilityService.TreeViewStateChanged -= OnTreeViewStateChanged;
+		TextEditorService.CommonUtilityService.TreeViewStateChanged -= OnTreeViewStateChanged;
 		TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
 	}
 }

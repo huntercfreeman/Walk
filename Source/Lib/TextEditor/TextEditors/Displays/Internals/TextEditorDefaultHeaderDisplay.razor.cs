@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
-using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 // HeaderDriver.cs
@@ -25,8 +24,6 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private CommonUtilityService CommonUtilityService { get; set; } = null!;
-	[Inject]
-	private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public Key<TextEditorComponentData> ComponentDataKey { get; set; }
@@ -306,7 +303,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 			    TextEditorService.WorkerArbitrary.PostUnique(editContext =>
 	            {
 	            	editContext.TextEditorService.ViewModel_Dispose(editContext, virtualizationResult.ViewModel.PersistentState.ViewModelKey);
-	            	DirtyResourceUriService.RemoveDirtyResourceUri(virtualizationResult.Model.PersistentState.ResourceUri);
+	            	TextEditorService.RemoveDirtyResourceUri(virtualizationResult.Model.PersistentState.ResourceUri);
 	            	editContext.TextEditorService.Model_Dispose(editContext, virtualizationResult.Model.PersistentState.ResourceUri);
 	            	return ValueTask.CompletedTask;
 	            });

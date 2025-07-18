@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Options.Models;
-using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Walk.TextEditor.RazorLib.Edits.Displays;
@@ -9,15 +7,11 @@ namespace Walk.TextEditor.RazorLib.Edits.Displays;
 public partial class DirtyResourceUriViewDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IDirtyResourceUriService DirtyResourceUriService { get; set; } = null!;
-    [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
     
     protected override void OnInitialized()
 	{
-		DirtyResourceUriService.DirtyResourceUriStateChanged += OnDirtyResourceUriStateChanged;
+		TextEditorService.DirtyResourceUriStateChanged += OnDirtyResourceUriStateChanged;
 	}
 
     private Task OpenInEditorOnClick(string filePath)
@@ -42,6 +36,6 @@ public partial class DirtyResourceUriViewDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	DirtyResourceUriService.DirtyResourceUriStateChanged -= OnDirtyResourceUriStateChanged;
+    	TextEditorService.DirtyResourceUriStateChanged -= OnDirtyResourceUriStateChanged;
     }
 }

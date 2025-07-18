@@ -1,9 +1,7 @@
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
-using Walk.TextEditor.RazorLib.Installations.Models;
 
 namespace Walk.Extensions.DotNet.Outputs.Models;
 
@@ -14,9 +12,8 @@ public class OutputTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 
 	public OutputTreeViewKeyboardEventHandler(
 			TextEditorService textEditorService,
-			IServiceProvider serviceProvider,
-			CommonUtilityService commonUtilityService)
-		: base(commonUtilityService)
+			IServiceProvider serviceProvider)
+		: base(textEditorService.CommonUtilityService)
 	{
 		_textEditorService = textEditorService;
 		_serviceProvider = serviceProvider;
