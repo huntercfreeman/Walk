@@ -27,7 +27,7 @@ public class ParseFunctions
         
         bool isFunctionOverloadCase;
         
-        if (parserModel.Binder.TryGetFunctionDefinitionNodeByScope(
+        if (parserModel.TryGetFunctionDefinitionNodeByScope(
             parserModel.Compilation,
         	parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
         	consumedIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),

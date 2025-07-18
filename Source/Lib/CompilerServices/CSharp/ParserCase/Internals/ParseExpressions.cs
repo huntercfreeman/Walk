@@ -857,7 +857,7 @@ public static class ParseExpressions
 		if (parserModel.ParserContextKind != CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode &&
 			UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 		{
-			if (parserModel.Binder.TryGetVariableDeclarationHierarchically(
+			if (parserModel.TryGetVariableDeclarationHierarchically(
 			    	parserModel.Compilation,
 			    	parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
 			        ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
@@ -875,7 +875,7 @@ public static class ParseExpressions
 		
 		if (!forceVariableReferenceNode && UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 		{
-			if (parserModel.Binder.TryGetTypeDefinitionHierarchically(
+			if (parserModel.TryGetTypeDefinitionHierarchically(
 	        		parserModel.Compilation,
 	                parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
 	                ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
@@ -905,7 +905,7 @@ public static class ParseExpressions
 			ambiguousIdentifierExpressionNode.Token.TextSpan.Length == 1 &&
     		ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService) == "_")
     	{
-    		if (!parserModel.Binder.TryGetVariableDeclarationHierarchically(
+    		if (!parserModel.TryGetVariableDeclarationHierarchically(
 			    	parserModel.Compilation,
 			    	parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
 			        ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
@@ -921,7 +921,7 @@ public static class ParseExpressions
     	    parserModel.ParserContextKind != CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode &&
     	    UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 		{
-			if (parserModel.Binder.TryGetFunctionHierarchically(
+			if (parserModel.TryGetFunctionHierarchically(
 			    	parserModel.Compilation,
 			    	parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
 			        ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
@@ -955,7 +955,7 @@ public static class ParseExpressions
     			goto finalize;
     		}
     		
-    		if (parserModel.Binder.TryGetLabelDeclarationHierarchically(
+    		if (parserModel.TryGetLabelDeclarationHierarchically(
     		    	parserModel.Compilation,
     		    	parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
     		        ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),

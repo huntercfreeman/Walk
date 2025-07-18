@@ -275,7 +275,7 @@ public struct CSharpParserModel
         	
         var text = variableDeclarationNode.IdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
         
-        if (Binder.TryGetVariableDeclarationNodeByScope(
+        if (TryGetVariableDeclarationNodeByScope(
         		Compilation,
         		CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
         		text,
@@ -287,7 +287,7 @@ public struct CSharpParserModel
                 //
                 // TODO: Track one or many declarations?...
                 // (if there is an error where something is defined twice for example)
-                Binder.SetVariableDeclarationNodeByScope(
+                SetVariableDeclarationNodeByScope(
         			Compilation,
         			CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 	text,
@@ -301,7 +301,7 @@ public struct CSharpParserModel
         }
         else
         {
-        	_ = Binder.TryAddVariableDeclarationNodeByScope(
+        	_ = TryAddVariableDeclarationNodeByScope(
         		Compilation,
     			CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
             	text,
@@ -322,7 +322,7 @@ public struct CSharpParserModel
         	
         var text = labelDeclarationNode.IdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
         
-        if (Binder.TryGetLabelDeclarationNodeByScope(
+        if (TryGetLabelDeclarationNodeByScope(
         		Compilation,
         		CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
         		text,
@@ -334,7 +334,7 @@ public struct CSharpParserModel
                 //
                 // TODO: Track one or many declarations?...
                 // (if there is an error where something is defined twice for example)
-                Binder.SetLabelDeclarationNodeByScope(
+                SetLabelDeclarationNodeByScope(
         			Compilation,
         			CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 	text,
@@ -348,7 +348,7 @@ public struct CSharpParserModel
         }
         else
         {
-        	_ = Binder.TryAddLabelDeclarationNodeByScope(
+        	_ = TryAddLabelDeclarationNodeByScope(
         		Compilation,
     			CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
             	text,
@@ -361,7 +361,7 @@ public struct CSharpParserModel
         var text = variableIdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
         VariableReferenceNode? variableReferenceNode;
 
-        if (Binder.TryGetVariableDeclarationHierarchically(
+        if (TryGetVariableDeclarationHierarchically(
         		Compilation,
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 text,
@@ -433,7 +433,7 @@ public struct CSharpParserModel
 
         Compilation.__SymbolList.Add(functionSymbol);
 
-        if (Binder.TryGetFunctionHierarchically(
+        if (TryGetFunctionHierarchically(
         		Compilation,
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 functionInvocationIdentifierText,

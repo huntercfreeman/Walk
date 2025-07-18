@@ -14,7 +14,7 @@ public static class ParseTokens
     	if (parserModel.TokenWalker.Current.TextSpan.Length == 1 &&
     		parserModel.TokenWalker.Current.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService) == "_")
     	{
-    		if (!parserModel.Binder.TryGetVariableDeclarationHierarchically(
+    		if (!parserModel.TryGetVariableDeclarationHierarchically(
 			    	parserModel.Compilation,
 			    	parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
 			        parserModel.TokenWalker.Current.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
