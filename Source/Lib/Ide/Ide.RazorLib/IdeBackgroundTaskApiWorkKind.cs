@@ -1,6 +1,6 @@
 namespace Walk.Ide.RazorLib.BackgroundTasks.Models;
 
-public enum IdeBackgroundTaskApiWorkKind
+public enum IdeWorkKind
 {
 	None,
     WalkIdeInitializerOnInit,
@@ -10,4 +10,12 @@ public enum IdeBackgroundTaskApiWorkKind
     SetFolderExplorerState,
     SetFolderExplorerTreeView,
     RequestInputFileStateForm,
+    
+    // MenuOptionsFactoryWorkKind
+    PerformNewFile,
+    PerformNewDirectory,
+    PerformDeleteFile,
+    PerformCopyFile,
+    PerformCutFile,
+    PerformPasteFile
 }

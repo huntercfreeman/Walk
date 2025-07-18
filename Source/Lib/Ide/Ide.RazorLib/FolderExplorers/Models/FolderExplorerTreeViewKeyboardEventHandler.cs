@@ -8,7 +8,6 @@ using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib.FolderExplorers.Displays;
-using Walk.Ide.RazorLib.Menus.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 

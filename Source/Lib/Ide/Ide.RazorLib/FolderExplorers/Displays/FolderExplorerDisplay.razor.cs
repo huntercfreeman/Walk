@@ -4,7 +4,6 @@ using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.Ide.RazorLib.FolderExplorers.Models;
-using Walk.Ide.RazorLib.Menus.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Ide.RazorLib.FolderExplorers.Displays;

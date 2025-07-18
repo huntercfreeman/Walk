@@ -184,7 +184,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 	{
 		_throttle.Run(_ =>
         {
-        	TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        	IdeService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
 			{
 				var formatter = Terminal.TerminalOutput.OutputFormatterList.FirstOrDefault(
 					x => x.Name == nameof(TerminalOutputFormatterExpand));
@@ -241,7 +241,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 			            EndExclusiveIndex: lineInformation.Position_StartInclusiveIndex + 1,
 			            DecorationByte: 0);
 			        
-			        TextEditorService.ViewModel_ScrollIntoView(
+			        IdeService.TextEditorService.ViewModel_ScrollIntoView(
 			            editContext,
 			            modelModifier,
 			            viewModelModifier,

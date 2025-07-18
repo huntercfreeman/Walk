@@ -8,7 +8,6 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.CodeSearches.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
-using Walk.Ide.RazorLib.Menus.Models;
 using Walk.Ide.RazorLib.InputFiles.Displays;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.FileSystems.Displays;

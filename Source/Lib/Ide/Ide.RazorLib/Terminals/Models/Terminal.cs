@@ -38,7 +38,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 			DelaySetHasExecutingProcess,
 			(_, _) =>
 			{
-				_terminalService.StateHasChanged();
+				_ideService.TerminalService.StateHasChanged();
 				return Task.CompletedTask;
 			});
 	}
@@ -73,7 +73,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(TerminalWorkKind.Command);
 			_queue_general_TerminalCommandRequest.Enqueue(terminalCommandRequest);
-            _commonUtilityService.Indefinite_EnqueueGroup(this);
+            _ideService.CommonUtilityService.Indefinite_EnqueueGroup(this);
         }
     }
 
@@ -84,7 +84,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
     
     public Task EnqueueCommandAsync(TerminalCommandRequest terminalCommandRequest)
     {
-		return _commonUtilityService.Indefinite_EnqueueAsync(
+		return _ideService.CommonUtilityService.Indefinite_EnqueueAsync(
 			Key<IBackgroundTaskGroup>.NewKey(),
 			BackgroundTaskFacts.IndefiniteQueueKey,
 			"Enqueue Command",
@@ -171,7 +171,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 					" threw an exception" +
 					"\n"));
 		
-			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonUtilityService, TimeSpan.FromSeconds(14));
+			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _ideService.CommonUtilityService, TimeSpan.FromSeconds(14));
 		}
 		finally
 		{

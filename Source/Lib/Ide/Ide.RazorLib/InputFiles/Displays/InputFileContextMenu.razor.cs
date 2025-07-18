@@ -7,7 +7,6 @@ using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
-using Walk.Ide.RazorLib.Menus.Models;
 
 namespace Walk.Ide.RazorLib.InputFiles.Displays;
 
@@ -109,13 +108,13 @@ public partial class InputFileContextMenu : ComponentBase
 			IdeService.CopyFile(
                 treeViewModel.Item,
                 (Func<Task>)(() => {
-					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)IdeService.CommonUtilityService, TimeSpan.FromSeconds(7));
                     return Task.CompletedTask;
                 })),
 			IdeService.CutFile(
                 treeViewModel.Item,
                 (Func<Task>)(() => {
-					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)IdeService.CommonUtilityService, TimeSpan.FromSeconds(7));
 					ParentOfCutFile = parentTreeViewModel;
                     return Task.CompletedTask;
                 })),
@@ -124,7 +123,7 @@ public partial class InputFileContextMenu : ComponentBase
                 async () => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
 			IdeService.RenameFile(
                 treeViewModel.Item,
-                (Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService,
+                (Common.RazorLib.Options.Models.CommonUtilityService)IdeService.CommonUtilityService,
                 async ()  => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
         };
     }
@@ -156,9 +155,9 @@ public partial class InputFileContextMenu : ComponentBase
 
         await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-        CommonUtilityService.TreeView_ReRenderNodeAction(InputFileSidebar.TreeViewContainerKey, treeViewModel);
+        IdeService.CommonUtilityService.TreeView_ReRenderNodeAction(InputFileSidebar.TreeViewContainerKey, treeViewModel);
         
-		CommonUtilityService.TreeView_MoveUpAction(
+		IdeService.CommonUtilityService.TreeView_MoveUpAction(
 			InputFileSidebar.TreeViewContainerKey,
 			false,
 			false);

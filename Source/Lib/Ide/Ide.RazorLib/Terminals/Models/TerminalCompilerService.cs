@@ -95,7 +95,7 @@ public sealed class TerminalCompilerService : ICompilerService
 
     public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
     {
-    	_textEditorService.WorkerArbitrary.PostUnique(editContext =>
+    	_ideService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
 			var modelModifier = editContext.GetModelModifier(resourceUri);
 
@@ -108,7 +108,7 @@ public sealed class TerminalCompilerService : ICompilerService
 
     public ICompilerServiceResource? GetResource(ResourceUri resourceUri)
     {
-    	var model = _textEditorService.Model_GetOrDefault(resourceUri);
+    	var model = _ideService.TextEditorService.Model_GetOrDefault(resourceUri);
 
         if (model is null)
             return null;

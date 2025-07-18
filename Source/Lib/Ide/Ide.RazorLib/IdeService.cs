@@ -99,7 +99,6 @@ using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.Clipboards.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 
-using Walk.Ide.RazorLib.Menus.Models;
 
 using Walk.Ide.RazorLib.CommandBars.Models;
 
@@ -578,7 +577,7 @@ public class IdeService : IBackgroundTaskGroup
     {
         Enqueue(new IdeBackgroundTaskApiWorkArgs
         {
-        	WorkKind = IdeBackgroundTaskApiWorkKind.RequestInputFileStateForm,
+        	WorkKind = IdeWorkKind.RequestInputFileStateForm,
             Message = "TextEditor",
             OnAfterSubmitFunc = absolutePath =>
             {
@@ -744,7 +743,7 @@ public class IdeService : IBackgroundTaskGroup
 
         Enqueue(new IdeBackgroundTaskApiWorkArgs
         {
-        	WorkKind = IdeBackgroundTaskApiWorkKind.SaveFile,
+        	WorkKind = IdeWorkKind.SaveFile,
             AbsolutePath = absolutePath,
             Content = innerContent,
             OnAfterSaveCompletedWrittenDateTimeFunc = writtenDateTime =>
@@ -850,7 +849,7 @@ public class IdeService : IBackgroundTaskGroup
                             {
                             	Enqueue(new IdeBackgroundTaskApiWorkArgs
                             	{
-                            		WorkKind = IdeBackgroundTaskApiWorkKind.FileContentsWereModifiedOnDisk,
+                            		WorkKind = IdeWorkKind.FileContentsWereModifiedOnDisk,
                             		InputFileAbsolutePathString = inputFileAbsolutePathString,
                             		TextEditorModel = textEditorModel,
                             		FileLastWriteTime = fileLastWriteTime,
@@ -999,7 +998,7 @@ public class IdeService : IBackgroundTaskGroup
     {
         Enqueue(new IdeBackgroundTaskApiWorkArgs
         {
-        	WorkKind = IdeBackgroundTaskApiWorkKind.RequestInputFileStateForm,
+        	WorkKind = IdeWorkKind.RequestInputFileStateForm,
             Message = "Folder Explorer",
             OnAfterSubmitFunc = async absolutePath =>
             {
@@ -1052,20 +1051,20 @@ public class IdeService : IBackgroundTaskGroup
 
         switch (workArgs.WorkKind)
         {
-            case IdeBackgroundTaskApiWorkKind.WalkIdeInitializerOnInit:
+            case IdeWorkKind.WalkIdeInitializerOnInit:
                 return Do_WalkIdeInitializerOnInit();
-            case IdeBackgroundTaskApiWorkKind.IdeHeaderOnInit:
+            case IdeWorkKind.IdeHeaderOnInit:
             	return Do_IdeHeaderOnInit(workArgs.IdeMainLayout);
-            case IdeBackgroundTaskApiWorkKind.FileContentsWereModifiedOnDisk:
+            case IdeWorkKind.FileContentsWereModifiedOnDisk:
 	            return Editor_Do_FileContentsWereModifiedOnDisk(
 	                workArgs.InputFileAbsolutePathString, workArgs.TextEditorModel, workArgs.FileLastWriteTime, workArgs.NotificationInformativeKey);
-			case IdeBackgroundTaskApiWorkKind.SaveFile:
+			case IdeWorkKind.SaveFile:
                 return Do_SaveFile(workArgs.AbsolutePath, workArgs.Content, workArgs.OnAfterSaveCompletedWrittenDateTimeFunc, workArgs.CancellationToken);
-            case IdeBackgroundTaskApiWorkKind.SetFolderExplorerState:
+            case IdeWorkKind.SetFolderExplorerState:
                 return Do_SetFolderExplorerState(workArgs.AbsolutePath);
-            case IdeBackgroundTaskApiWorkKind.SetFolderExplorerTreeView:
+            case IdeWorkKind.SetFolderExplorerTreeView:
                 return Do_SetFolderExplorerTreeView(workArgs.AbsolutePath);
-			case IdeBackgroundTaskApiWorkKind.RequestInputFileStateForm:
+			case IdeWorkKind.RequestInputFileStateForm:
                 return Do_RequestInputFileStateForm(
                     workArgs.Message, workArgs.OnAfterSubmitFunc, workArgs.SelectionIsValidFunc, workArgs.InputFilePatterns);
             default:
@@ -1574,22 +1573,22 @@ public class IdeService : IBackgroundTaskGroup
 
             async Task RecursiveHandleSearchEffect(string directoryPathParent)
             {
-                var directoryPathChildList = await _commonUtilityService.FileSystemProvider.Directory.GetDirectoriesAsync(
+                var directoryPathChildList = await CommonUtilityService.FileSystemProvider.Directory.GetDirectoriesAsync(
                         directoryPathParent,
                         cancellationToken)
                     .ConfigureAwait(false);
 
-                var filePathChildList = await _commonUtilityService.FileSystemProvider.Directory.GetFilesAsync(
+                var filePathChildList = await CommonUtilityService.FileSystemProvider.Directory.GetFilesAsync(
                         directoryPathParent,
                         cancellationToken)
                     .ConfigureAwait(false);
 
                 foreach (var filePathChild in filePathChildList)
                 {
-                	var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(filePathChild, false);
+                	var absolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(filePathChild, false);
                 
                     if (absolutePath.NameWithExtension.Contains(codeSearchState.Query))
-                        AddResult(filePathChild);
+                        CodeSearch_AddResult(filePathChild);
                 }
 
                 foreach (var directoryPathChild in directoryPathChildList)
@@ -1653,7 +1652,7 @@ public class IdeService : IBackgroundTaskGroup
 	{
 		TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
 		{
-			Console.WriteLine(nameof(UpdateContent));
+			Console.WriteLine(nameof(CodeSearch_UpdateContent));
 		
 			if (!CommonUtilityService.TryGetTreeViewContainer(
 					CodeSearchState.TreeViewCodeSearchContainerKey,
@@ -1696,16 +1695,16 @@ public class IdeService : IBackgroundTaskGroup
 	            		editContext,
 	                    outPreviewViewModelKey,
 	                    resourceUri,
-	                    new Category(nameof(CodeSearchService)),
+	                    new Category(nameof(IdeService)),
 	                    false,
-	                    _commonUtilityService,
+	                    CommonUtilityService,
 	                    this))
 	                .ConfigureAwait(false);
 	
 	            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
 	                TextEditorService.TextEditorConfig.TryShowViewModelFunc is not null)
 	            {
-	                With(inState => inState with
+	                CodeSearch_With(inState => inState with
 	                {
 	                    PreviewFilePath = filePath,
 	                    PreviewViewModelKey = viewModelKey,
@@ -1730,7 +1729,7 @@ public class IdeService : IBackgroundTaskGroup
 
 	public void CommandFactory_Initialize()
     {
-    	((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func = PeekCodeSearchDialog;
+    	((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func = CommandFactory_PeekCodeSearchDialog;
     	
     	// FindAllReferences
     	// ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).ShiftF12Func = ShowAllReferences;
@@ -2028,7 +2027,7 @@ public class IdeService : IBackgroundTaskGroup
 	            "Open: Code Search", "open-code-search", false,
 	            commandArgs => 
 				{
-                    return OpenCodeSearchDialog();
+                    return CommandFactory_OpenCodeSearchDialog();
 				});
 
             _ = ContextFacts.GlobalContext.Keymap.TryRegister(
@@ -2139,7 +2138,7 @@ public class IdeService : IBackgroundTaskGroup
                         cssClass: null,
                         cssStyle: "width: 80vw; height: 5em; left: 10vw; top: 0;");
 
-                    _commonUtilityService.SetWidget(_commandBarWidget);
+                    CommonUtilityService.SetWidget(_commandBarWidget);
                     return ValueTask.CompletedTask;
 				});
 		
@@ -2171,7 +2170,7 @@ public class IdeService : IBackgroundTaskGroup
         
         TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
         {
-        	var group = TextEditorService.Group_GetOrDefault(IdeBackgroundTaskApi.EditorTextEditorGroupKey);
+        	var group = TextEditorService.Group_GetOrDefault(EditorTextEditorGroupKey);
             if (group is null)
                 return;
 
@@ -2665,7 +2664,7 @@ public class IdeService : IBackgroundTaskGroup
     {
         lock (_workLock)
         {
-            _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformNewFile);
+            _workKindQueue.Enqueue(IdeWorkKind.PerformNewFile);
 
             _queue_PerformNewFile.Enqueue((
                 fileName,
@@ -2729,7 +2728,7 @@ public class IdeService : IBackgroundTaskGroup
     {
         lock (_workLock)
         {
-            _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformNewDirectory);
+            _workKindQueue.Enqueue(IdeWorkKind.PerformNewDirectory);
             _queue_PerformNewDirectory.Enqueue((directoryName, parentDirectory, onAfterCompletion));
             CommonUtilityService.Continuous_EnqueueGroup(this);
         }
@@ -2756,7 +2755,7 @@ public class IdeService : IBackgroundTaskGroup
     {
         lock (_workLock)
         {
-            _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformDeleteFile);
+            _workKindQueue.Enqueue(IdeWorkKind.PerformDeleteFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((absolutePath, onAfterCompletion));
             CommonUtilityService.Continuous_EnqueueGroup(this);
         }
@@ -2784,7 +2783,7 @@ public class IdeService : IBackgroundTaskGroup
     {
         lock (_workLock)
         {
-            _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformCopyFile);
+            _workKindQueue.Enqueue(IdeWorkKind.PerformCopyFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((absolutePath, onAfterCompletion));
             CommonUtilityService.Continuous_EnqueueGroup(this);
         }
@@ -2807,7 +2806,7 @@ public class IdeService : IBackgroundTaskGroup
     {
         lock (_workLock)
         {
-            _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformCutFile);
+            _workKindQueue.Enqueue(IdeWorkKind.PerformCutFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((absolutePath, onAfterCompletion));
             CommonUtilityService.Continuous_EnqueueGroup(this);
         }
@@ -2830,7 +2829,7 @@ public class IdeService : IBackgroundTaskGroup
     {
         lock (_workLock)
         {
-            _workKindQueue.Enqueue(MenuOptionsFactoryWorkKind.PerformPasteFile);
+            _workKindQueue.Enqueue(IdeWorkKind.PerformPasteFile);
             _queue_general_AbsolutePath_FuncTask.Enqueue((receivingDirectory, onAfterCompletion));
             CommonUtilityService.Continuous_EnqueueGroup(this);
         }

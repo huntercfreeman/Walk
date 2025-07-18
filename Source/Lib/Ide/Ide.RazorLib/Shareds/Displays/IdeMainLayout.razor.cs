@@ -90,18 +90,18 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
         IdeService.CommonUtilityService.DragStateChanged += DragStateWrapOnStateChanged;
         IdeService.CommonUtilityService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
-        IdeService.IdeStateChanged += OnIdeMainLayoutStateChanged;
+        IdeService.Ide_IdeStateChanged += OnIdeMainLayoutStateChanged;
         IdeService.TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrap_StateChanged;
 
     	IdeService.Enqueue(new IdeBackgroundTaskApiWorkArgs
     	{
-    		WorkKind = IdeBackgroundTaskApiWorkKind.IdeHeaderOnInit,
+    		WorkKind = IdeWorkKind.IdeHeaderOnInit,
     		IdeMainLayout = this,
     	});
     	
     	IdeService.Enqueue(new IdeBackgroundTaskApiWorkArgs
         {
-        	WorkKind = IdeBackgroundTaskApiWorkKind.WalkIdeInitializerOnInit,
+        	WorkKind = IdeWorkKind.WalkIdeInitializerOnInit,
         });
     }
 
@@ -320,11 +320,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
         if (menuOptionsList.Count == 0)
         {
-            IdeService.SetMenuView(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
+            IdeService.Ide_SetMenuView(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
         }
         else
         {
-            IdeService.SetMenuView(new MenuRecord(menuOptionsList));
+            IdeService.Ide_SetMenuView(new MenuRecord(menuOptionsList));
         }
     }
     
@@ -350,7 +350,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         IdeService.CommonUtilityService.DragStateChanged -= DragStateWrapOnStateChanged;
         IdeService.CommonUtilityService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
-        IdeService.IdeStateChanged -= OnIdeMainLayoutStateChanged;
+        IdeService.Ide_IdeStateChanged -= OnIdeMainLayoutStateChanged;
         IdeService.TextEditorService.Options_StaticStateChanged -= TextEditorOptionsStateWrap_StateChanged;
     }
 }

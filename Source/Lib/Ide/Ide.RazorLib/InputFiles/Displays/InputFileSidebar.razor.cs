@@ -42,24 +42,24 @@ public partial class InputFileSidebar : ComponentBase
         if (firstRender)
         {
             var directoryHomeNode = new TreeViewAbsolutePath(
-                CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath,
-                IdeBackgroundTaskApi.IdeComponentRenderers,
-                CommonUtilityService,
+                IdeService.CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath,
+                IdeService.IdeComponentRenderers,
+                IdeService.CommonUtilityService,
                 true,
                 false);
 
             var directoryRootNode = new TreeViewAbsolutePath(
-                CommonUtilityService.EnvironmentProvider.RootDirectoryAbsolutePath,
-                IdeBackgroundTaskApi.IdeComponentRenderers,
-                CommonUtilityService,
+                IdeService.CommonUtilityService.EnvironmentProvider.RootDirectoryAbsolutePath,
+                IdeService.IdeComponentRenderers,
+                IdeService.CommonUtilityService,
                 true,
                 false);
 
             var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(directoryHomeNode, directoryRootNode);
 
-            if (!CommonUtilityService.TryGetTreeViewContainer(TreeViewContainerKey, out var treeViewContainer))
+            if (!IdeService.CommonUtilityService.TryGetTreeViewContainer(TreeViewContainerKey, out var treeViewContainer))
             {
-                CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
+                IdeService.CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
                     TreeViewContainerKey,
                     adhocRootNode,
                     directoryHomeNode is null
@@ -87,7 +87,7 @@ public partial class InputFileSidebar : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-        CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        IdeService.CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 }

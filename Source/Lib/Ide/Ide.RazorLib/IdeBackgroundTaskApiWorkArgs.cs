@@ -14,7 +14,7 @@ to go through and lean these out.
 */
 public struct IdeBackgroundTaskApiWorkArgs
 {
-	public IdeBackgroundTaskApiWorkKind WorkKind { get; set; }
+	public IdeWorkKind WorkKind { get; set; }
     public IdeMainLayout IdeMainLayout { get; set; }
     public string InputFileAbsolutePathString { get; set; }
     public TextEditorModel TextEditorModel { get; set; }

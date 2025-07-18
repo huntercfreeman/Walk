@@ -6,25 +6,25 @@
 @* ContextRecord="ContextFacts.TerminalContext" *@
 <div id="@ContextFacts.TerminalContext.ContextElementId" class="di_ide_terminal" style="height: 100%; width: 100%; overflow: auto;">
     @{
-        var terminalGroupDisplayState = TerminalGroupService.GetTerminalGroupState();
-        var terminalState = TerminalService.GetTerminalState();
+        var terminalGroupDisplayState = IdeService.TerminalGroupService.GetTerminalGroupState();
+        var terminalState = IdeService.GetTerminalState();
 
         _ = terminalState.TerminalMap.TryGetValue(
                 terminalGroupDisplayState.ActiveTerminalKey,
                 out var activeTerminal);
     }
 
-	@if (CommonUtilityService.Options_ShowPanelTitles)
+	@if (IdeService.CommonUtilityService.Options_ShowPanelTitles)
 	{
 	    <div class="di_ide_section-title">
 	        Terminal
 	    </div>
     }
 
-    <div class="di_ide_section-body @CommonUtilityService.Options_ShowPanelTitlesCssClass">
+    <div class="di_ide_section-body @IdeService.CommonUtilityService.Options_ShowPanelTitlesCssClass">
 
         <div class="di_ide_terminal-body"
-             style="@terminalGroupDisplayState.BodyElementDimensions.GetStyleString(CommonUtilityService.UiStringBuilder)">
+             style="@terminalGroupDisplayState.BodyElementDimensions.GetStyleString(IdeService.CommonUtilityService.UiStringBuilder)">
 
             @if (activeTerminal is null)
             {
@@ -42,7 +42,7 @@
                                                                    ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged)" />
 
         <div class="di_ide_terminal-tabs"
-             style="@terminalGroupDisplayState.TabsElementDimensions.GetStyleString(CommonUtilityService.UiStringBuilder)">
+             style="@terminalGroupDisplayState.TabsElementDimensions.GetStyleString(IdeService.CommonUtilityService.UiStringBuilder)">
              
             @*
             Pause working on the integrated terminal for now.
@@ -93,7 +93,7 @@
                     <div style="margin-left: 15px;">
                     
                     	@{
-                    		var appOptionsState = CommonUtilityService.GetAppOptionsState();
+                    		var appOptionsState = IdeService.CommonUtilityService.GetAppOptionsState();
                     	
                     		var iconDriver = new IconDriver(
 								appOptionsState.Options.IconSizeInPixels,
