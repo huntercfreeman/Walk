@@ -833,6 +833,9 @@ public static class ParseExpressions
 		return parserModel.Binder.Shared_BadExpressionNode;
 	}
 	
+	/// <summary>
+	/// TODO: Combine searches for Types, Functions, etc... where possible?
+	/// </summary>
 	public static IExpressionNode ForceDecisionAmbiguousIdentifier(
 		IExpressionNode expressionPrimary,
 		AmbiguousIdentifierExpressionNode ambiguousIdentifierExpressionNode,

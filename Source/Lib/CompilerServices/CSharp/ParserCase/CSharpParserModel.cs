@@ -7,6 +7,7 @@ using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
+using Walk.CompilerServices.CSharp.LexerCase;
 using Walk.CompilerServices.CSharp.BinderCase;
 using Walk.CompilerServices.CSharp.Facts;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
@@ -17,7 +18,7 @@ namespace Walk.CompilerServices.CSharp.ParserCase;
 /// The computational state for the CSharpParser is contained within this type.
 /// The output of the CSharpParser is the <see cref="CSharpCompilationUnit"/>.<see cref="CSharpCompilationUnit.RootCodeBlockNode"/>
 /// </summary>
-public struct CSharpParserModel
+public ref struct CSharpParserModel
 {
 	/// <summary>
 	/// 0 is the global scope
@@ -29,7 +30,7 @@ public struct CSharpParserModel
     public CSharpParserModel(
         CSharpBinder binder,
         CSharpCompilationUnit compilationUnit,
-        List<SyntaxToken> tokenList,
+        ref CSharpLexerOutput lexerOutput,
         ICodeBlockOwner currentCodeBlockOwner,
 	    NamespaceStatementNode topLevelNamespaceStatementNode)
     {
@@ -39,7 +40,7 @@ public struct CSharpParserModel
 	    CurrentNamespaceStatementNode = topLevelNamespaceStatementNode;
     
     	TokenWalker = Binder.CSharpParserModel_TokenWalker;
-    	TokenWalker.Reinitialize(tokenList);
+    	TokenWalker.Reinitialize(lexerOutput.SyntaxTokenList);
     	
         ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
         
@@ -82,7 +83,11 @@ public struct CSharpParserModel
 		ClearedPartialDefinitionHashSet.Clear();
 		
 		Binder.MethodOverload_ResourceUri_WasCleared = false;
+		
+		Text = lexerOutput.Text;
     }
+    
+    public ReadOnlySpan<char> Text { get; }
 
     public TokenWalker TokenWalker { get; }
     public CSharpStatementBuilder StatementBuilder { get; set; }
@@ -718,22 +723,6 @@ public struct CSharpParserModel
 		codeBlockOwner.CodeBlock_EndExclusiveIndex = codeBlock_EndExclusiveIndex;
     }
     
-    // !!!!
-    // This will be a DRY code nightmare for a moment.
-    // Everything past this point was copy and pasted from CSharpBinder.
-    //
-    // The issue is, while parsing you want to get the text from the TextEditorTextSpan
-    // as quickly as possible.
-    //
-    // But, if someone wants to look at an already completed CSharpCompilationUnit,
-    // there are a great deal of timing issues that arise here.
-    // Thus, you'd want to take caution when getting the text.
-    //
-    // So, instead of invoking TextEditorTextSpan.GetText(...)
-    // I want to directly:
-    // 'textEditorService.EditContext_GetText(sourceText.AsSpan(textSpan.StartInclusiveIndex, textSpan.Length));'
-    // !!!!
-    
     /// <summary>
     /// Search hierarchically through all the scopes, starting at the <see cref="initialScope"/>.<br/><br/>
     /// If a match is found, then set the out parameter to it and return true.<br/><br/>
@@ -1148,8 +1137,27 @@ public struct CSharpParserModel
 		}
     }
     
-    // TODO: don't pass the initial compilationUnit it is default.
-    // TODO: Are these adds being invoked separately?
+    
+    /// <summary>
+    /// !!!!
+    /// This will be a DRY code nightmare for a moment.
+    /// Everything past this point was copy and pasted from CSharpBinder.
+    ///
+    /// The issue is, while parsing you want to get the text from the TextEditorTextSpan
+    /// as quickly as possible.
+    ///
+    /// But, if someone wants to look at an already completed CSharpCompilationUnit,
+    /// there are a great deal of timing issues that arise here.
+    /// Thus, you'd want to take caution when getting the text.
+    ///
+    /// So, instead of invoking TextEditorTextSpan.GetText(...)
+    /// I want to directly:
+    /// 'textEditorService.EditContext_GetText(sourceText.AsSpan(textSpan.StartInclusiveIndex, textSpan.Length));'
+    /// !!!!
+    ///
+    /// TODO: don't pass the initial compilationUnit it is default.
+    /// TODO: Are these adds being invoked separately?
+    /// </summary>
     public string GetIdentifierText(ISyntaxNode node, CSharpCompilationUnit compilationUnit)
 	{
 		switch (node.SyntaxKind)
@@ -1159,7 +1167,7 @@ public struct CSharpParserModel
 		        var typeDefinitionNode = (TypeDefinitionNode)node;
         	    if (typeDefinitionNode.ResourceUri == compilationUnit.ResourceUri)
         	    {
-        	        return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeDefinitionNode.TypeIdentifierToken.TextSpan.Length));
+        	        return Binder.TextEditorService.EditContext_GetText(Text.Slice(typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeDefinitionNode.TypeIdentifierToken.TextSpan.Length));
         	    }
         	    else
         	    {
@@ -1174,7 +1182,7 @@ public struct CSharpParserModel
 				var typeClauseNode = (TypeClauseNode)node;
         	    if (typeClauseNode.ExplicitDefinitionResourceUri == compilationUnit.ResourceUri)
         	    {
-        	        return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(typeClauseNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeClauseNode.TypeIdentifierToken.TextSpan.Length));
+        	        return Binder.TextEditorService.EditContext_GetText(Text.Slice(typeClauseNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeClauseNode.TypeIdentifierToken.TextSpan.Length));
         	    }
         	    else
         	    {
@@ -1189,7 +1197,7 @@ public struct CSharpParserModel
 				var functionDefinitionNode = (FunctionDefinitionNode)node;
 				if (functionDefinitionNode.ResourceUri == compilationUnit.ResourceUri)
         	    {
-        	        return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex, functionDefinitionNode.FunctionIdentifierToken.TextSpan.Length));
+        	        return Binder.TextEditorService.EditContext_GetText(Text.Slice(functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex, functionDefinitionNode.FunctionIdentifierToken.TextSpan.Length));
         	    }
         	    else
         	    {
@@ -1204,7 +1212,7 @@ public struct CSharpParserModel
 				var functionInvocationNode = (FunctionInvocationNode)node;
 				if (functionInvocationNode.ResourceUri == compilationUnit.ResourceUri)
         	    {
-        	        return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Length));
+        	        return Binder.TextEditorService.EditContext_GetText(Text.Slice(functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Length));
         	    }
         	    else
         	    {
@@ -1219,7 +1227,7 @@ public struct CSharpParserModel
 				var variableDeclarationNode = (VariableDeclarationNode)node;
 				if (variableDeclarationNode.ResourceUri == compilationUnit.ResourceUri)
         	    {
-        	        return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, variableDeclarationNode.IdentifierToken.TextSpan.Length));
+        	        return Binder.TextEditorService.EditContext_GetText(Text.Slice(variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, variableDeclarationNode.IdentifierToken.TextSpan.Length));
         	    }
         	    else
         	    {
@@ -1231,15 +1239,15 @@ public struct CSharpParserModel
 			}
 			case SyntaxKind.VariableReferenceNode:
 			{
-				return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(((VariableReferenceNode)node).VariableIdentifierToken.TextSpan.StartInclusiveIndex, ((VariableReferenceNode)node).VariableIdentifierToken.TextSpan.Length));
+				return Binder.TextEditorService.EditContext_GetText(Text.Slice(((VariableReferenceNode)node).VariableIdentifierToken.TextSpan.StartInclusiveIndex, ((VariableReferenceNode)node).VariableIdentifierToken.TextSpan.Length));
 			}
 			case SyntaxKind.LabelDeclarationNode:
 			{
-				return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(((LabelDeclarationNode)node).IdentifierToken.TextSpan.StartInclusiveIndex, ((LabelDeclarationNode)node).IdentifierToken.TextSpan.Length));
+				return Binder.TextEditorService.EditContext_GetText(Text.Slice(((LabelDeclarationNode)node).IdentifierToken.TextSpan.StartInclusiveIndex, ((LabelDeclarationNode)node).IdentifierToken.TextSpan.Length));
 			}
 			case SyntaxKind.LabelReferenceNode:
 			{
-				return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(((LabelReferenceNode)node).IdentifierToken.TextSpan.StartInclusiveIndex, ((LabelReferenceNode)node).IdentifierToken.TextSpan.Length));
+				return Binder.TextEditorService.EditContext_GetText(Text.Slice(((LabelReferenceNode)node).IdentifierToken.TextSpan.StartInclusiveIndex, ((LabelReferenceNode)node).IdentifierToken.TextSpan.Length));
 			}
 			default:
 			{

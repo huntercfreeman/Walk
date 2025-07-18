@@ -19,7 +19,7 @@ public static class CSharpParser
         var parserModel = new CSharpParserModel(
             binder,
             compilationUnit,
-	        lexerOutput.SyntaxTokenList,
+	        ref lexerOutput,
 	        currentCodeBlockOwner: binder.GlobalCodeBlockNode,
             binder.TopLevelNamespaceStatementNode);
         
