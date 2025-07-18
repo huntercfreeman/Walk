@@ -24,7 +24,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 	{
 		var terminalCommandRequest = new TerminalCommandRequest(
         	"bash -c \"type bash\"",
-        	TextEditorService.CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+        	IdeService.CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
         	TypeBashTerminalCommandRequestKey)
         {
         	ContinueWithFunc = parsedCommand =>
@@ -49,7 +49,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
         	}
         };
         	
-        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 	
 	private void SubmitOnClick()
@@ -65,8 +65,8 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 				terminal,
 				new TerminalOutputFormatterExpand(
 					terminal,
-					TextEditorService)),
-			TextEditorService.CommonUtilityService,
+					IdeService.TextEditorService)),
+			IdeService.CommonUtilityService,
 			_pathToShellExecutable)
 		{
 			Key = Key<ITerminal>.NewKey()
@@ -74,8 +74,8 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 		
 		terminalIntegrated.Start();
 		
-		TerminalService.Register(terminalIntegrated);
+		IdeService.TerminalService.Register(terminalIntegrated);
 			
-		TextEditorService.CommonUtilityService.Dialog_ReduceDisposeAction(Dialog.DynamicViewModelKey);
+		IdeService.CommonUtilityService.Dialog_ReduceDisposeAction(Dialog.DynamicViewModelKey);
 	}
 }

@@ -1555,10 +1555,10 @@ public class IdeService : IBackgroundTaskGroup
     {
         CodeSearch_throttle.Run(async _ =>
         {
-            ClearResultList();
+            CodeSearch_ClearResultList();
 
             var codeSearchState = GetCodeSearchState();
-            ConstructTreeView(codeSearchState);
+            CodeSearch_ConstructTreeView(codeSearchState);
 
             var startingAbsolutePathForSearch = codeSearchState.StartingAbsolutePathForSearch;
 
@@ -1570,7 +1570,7 @@ public class IdeService : IBackgroundTaskGroup
 
             await RecursiveHandleSearchEffect(startingAbsolutePathForSearch).ConfigureAwait(false);
             
-            ConstructTreeView(GetCodeSearchState());
+            CodeSearch_ConstructTreeView(GetCodeSearchState());
 
             async Task RecursiveHandleSearchEffect(string directoryPathParent)
             {

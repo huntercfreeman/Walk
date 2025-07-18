@@ -40,7 +40,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
     	IdeService.TerminalStateChanged += Shared_OnStateChanged;
-    	IdeService.StartupControlStateChanged += Shared_OnStateChanged;
+    	IdeService.Ide_StartupControlStateChanged += Shared_OnStateChanged;
     }
 
     private async Task StartProgramWithoutDebuggingOnClick(bool isExecuting)
@@ -65,7 +65,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	
 	                if (!success)
 	                {
-	                    CommonUtilityService.SetPanelTabAsActiveByContextRecordKey(
+	                    IdeService.CommonUtilityService.SetPanelTabAsActiveByContextRecordKey(
 	                        ContextFacts.OutputContext.ContextKey);
 	
 	                    _ = await TrySetFocus(ContextFacts.OutputContext).ConfigureAwait(false);
@@ -77,13 +77,13 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 			    MenuOptionKind.Other,
 			    onClickFunc: async () => 
 				{
-					TerminalGroupService.SetActiveTerminal(TerminalFacts.EXECUTION_KEY);
+					IdeService.TerminalGroup_SetActiveTerminal(TerminalFacts.EXECUTION_KEY);
 				
 					var success = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
 	
 	                if (!success)
 	                {
-	                    CommonUtilityService.SetPanelTabAsActiveByContextRecordKey(
+	                    IdeService.CommonUtilityService.SetPanelTabAsActiveByContextRecordKey(
 	                        ContextFacts.TerminalContext.ContextKey);
 	
 	                    _ = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
@@ -107,8 +107,8 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 			    }));
 			    
 			await DropdownHelper.RenderDropdownAsync(
-    			CommonUtilityService,
-    			CommonUtilityService.JsRuntimeCommonApi,
+    			IdeService.CommonUtilityService,
+    			IdeService.CommonUtilityService.JsRuntimeCommonApi,
 				_startButtonElementId,
 				DropdownOrientation.Bottom,
 				_startButtonDropdownKey,
@@ -125,7 +125,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	
 	private async Task<bool> TrySetFocus(ContextRecord contextRecord)
     {
-        return await CommonUtilityService.JsRuntimeCommonApi
+        return await IdeService.CommonUtilityService.JsRuntimeCommonApi
             .TryFocusHtmlElementById(contextRecord.ContextElementId)
             .ConfigureAwait(false);
     }
@@ -135,6 +135,6 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
     	IdeService.TerminalStateChanged -= Shared_OnStateChanged;
-    	IdeService.StartupControlStateChanged -= Shared_OnStateChanged;
+    	IdeService.Ide_StartupControlStateChanged -= Shared_OnStateChanged;
     }
 }

@@ -13,10 +13,9 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
     private readonly Func<AbsolutePath, Task> _setInputFileContentTreeViewRootFunc;
 
     public InputFileTreeViewMouseEventHandler(
-        CommonUtilityService commonUtilityService,
         IdeService ideService,
         Func<AbsolutePath, Task> setInputFileContentTreeViewRootFunc)
-        : base(commonUtilityService)
+        : base(ideService.CommonUtilityService)
     {
         _ideService = ideService;
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;

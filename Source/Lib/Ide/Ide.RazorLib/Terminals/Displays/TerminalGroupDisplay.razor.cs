@@ -16,18 +16,18 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		TerminalGroupService.TerminalGroupStateChanged += OnTerminalGroupStateChanged;
-    	TerminalService.TerminalStateChanged += OnTerminalStateChanged;
+		IdeService.TerminalGroupStateChanged += OnTerminalGroupStateChanged;
+    	IdeService.TerminalStateChanged += OnTerminalStateChanged;
 	}
 
     private void DispatchSetActiveTerminalAction(Key<ITerminal> terminalKey)
     {
-        TerminalGroupService.SetActiveTerminal(terminalKey);
+        IdeService.TerminalGroup_SetActiveTerminal(terminalKey);
     }
     
     private void ClearTerminalOnClick(Key<ITerminal> terminalKey)
     {
-    	TerminalService.GetTerminalState().TerminalMap[terminalKey]?.ClearFireAndForget();
+    	IdeService.GetTerminalState().TerminalMap[terminalKey]?.ClearFireAndForget();
     }
     
     private async void OnTerminalGroupStateChanged()
@@ -42,7 +42,7 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TerminalGroupService.TerminalGroupStateChanged -= OnTerminalGroupStateChanged;
-    	TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
+    	IdeService.TerminalGroupStateChanged -= OnTerminalGroupStateChanged;
+    	IdeService.TerminalStateChanged -= OnTerminalStateChanged;
     }
 }
