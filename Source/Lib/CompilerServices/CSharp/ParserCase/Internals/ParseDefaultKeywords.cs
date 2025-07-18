@@ -817,7 +817,7 @@ public class ParseDefaultKeywords
         
         if (typeDefinitionNode.HasPartialModifier)
         {
-            if (parserModel.Binder.TryGetTypeDefinitionHierarchically(
+            if (parserModel.TryGetTypeDefinitionHierarchically(
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                     identifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),

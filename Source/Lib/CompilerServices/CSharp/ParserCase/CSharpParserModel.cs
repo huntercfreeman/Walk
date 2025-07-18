@@ -228,8 +228,6 @@ public struct CSharpParserModel
 	
     public void BindFunctionDefinitionNode(FunctionDefinitionNode functionDefinitionNode)
     {
-        var functionIdentifierText = functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
-
         var functionSymbol = new Symbol(
         	SyntaxKind.FunctionSymbol,
         	GetNextSymbolId(),
@@ -243,7 +241,7 @@ public struct CSharpParserModel
 	
 	public void BindNamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
     {
-        var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
+        var namespaceString = Binder.TextEditorService.EditContext_GetText(Compilation.SourceText.AsSpan(namespaceStatementNode.IdentifierToken.TextSpan.StartInclusiveIndex, namespaceStatementNode.IdentifierToken.TextSpan.Length));
 
         if (Binder._namespaceGroupMap.TryGetValue(namespaceString, out var inNamespaceGroupNode))
         {
@@ -254,10 +252,8 @@ public struct CSharpParserModel
             Binder._namespaceGroupMap.Add(namespaceString, new NamespaceGroup(
                 namespaceString,
                 new List<NamespaceStatementNode> { namespaceStatementNode }));
-                
-            var fullNamespaceName = namespaceStatementNode.IdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
             
-            var splitResult = fullNamespaceName.Split('.');
+            var splitResult = namespaceString.Split('.');
             
             NamespacePrefixNode? namespacePrefixNode = null;
             
@@ -272,10 +268,10 @@ public struct CSharpParserModel
     {
     	if (shouldCreateVariableSymbol)
         	CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind);
-        	
-        var text = variableDeclarationNode.IdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
         
-        if (Binder.TryGetVariableDeclarationNodeByScope(
+        var text = Binder.TextEditorService.EditContext_GetText(Compilation.SourceText.AsSpan(variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, variableDeclarationNode.IdentifierToken.TextSpan.Length));
+        
+        if (TryGetVariableDeclarationNodeByScope(
         		Compilation,
         		CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
         		text,
@@ -287,7 +283,7 @@ public struct CSharpParserModel
                 //
                 // TODO: Track one or many declarations?...
                 // (if there is an error where something is defined twice for example)
-                Binder.SetVariableDeclarationNodeByScope(
+                SetVariableDeclarationNodeByScope(
         			Compilation,
         			CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 	text,
@@ -301,7 +297,7 @@ public struct CSharpParserModel
         }
         else
         {
-        	_ = Binder.TryAddVariableDeclarationNodeByScope(
+        	_ = TryAddVariableDeclarationNodeByScope(
         		Compilation,
     			CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
             	text,
@@ -320,9 +316,9 @@ public struct CSharpParserModel
             	    DecorationByte = (byte)GenericDecorationKind.None
             	}));
         	
-        var text = labelDeclarationNode.IdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
+        var text = Binder.TextEditorService.EditContext_GetText(Compilation.SourceText.AsSpan(labelDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, labelDeclarationNode.IdentifierToken.TextSpan.Length));
         
-        if (Binder.TryGetLabelDeclarationNodeByScope(
+        if (TryGetLabelDeclarationNodeByScope(
         		Compilation,
         		CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
         		text,
@@ -334,7 +330,7 @@ public struct CSharpParserModel
                 //
                 // TODO: Track one or many declarations?...
                 // (if there is an error where something is defined twice for example)
-                Binder.SetLabelDeclarationNodeByScope(
+                SetLabelDeclarationNodeByScope(
         			Compilation,
         			CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 	text,
@@ -348,7 +344,7 @@ public struct CSharpParserModel
         }
         else
         {
-        	_ = Binder.TryAddLabelDeclarationNodeByScope(
+        	_ = TryAddLabelDeclarationNodeByScope(
         		Compilation,
     			CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
             	text,
@@ -358,10 +354,10 @@ public struct CSharpParserModel
 
     public VariableReferenceNode ConstructAndBindVariableReferenceNode(SyntaxToken variableIdentifierToken)
     {
-        var text = variableIdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
+        var text = Binder.TextEditorService.EditContext_GetText(Compilation.SourceText.AsSpan(variableIdentifierToken.TextSpan.StartInclusiveIndex, variableIdentifierToken.TextSpan.Length));
         VariableReferenceNode? variableReferenceNode;
 
-        if (Binder.TryGetVariableDeclarationHierarchically(
+        if (TryGetVariableDeclarationHierarchically(
         		Compilation,
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 text,
@@ -420,8 +416,7 @@ public struct CSharpParserModel
 
     public void BindFunctionInvocationNode(FunctionInvocationNode functionInvocationNode)
     {
-        var functionInvocationIdentifierText = functionInvocationNode
-            .FunctionInvocationIdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
+        var functionInvocationIdentifierText = Binder.TextEditorService.EditContext_GetText(Compilation.SourceText.AsSpan(functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Length));
 
         var functionSymbol = new Symbol(
         	SyntaxKind.FunctionSymbol,
@@ -433,7 +428,7 @@ public struct CSharpParserModel
 
         Compilation.__SymbolList.Add(functionSymbol);
 
-        if (Binder.TryGetFunctionHierarchically(
+        if (TryGetFunctionHierarchically(
         		Compilation,
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 functionInvocationIdentifierText,
@@ -476,13 +471,13 @@ public struct CSharpParserModel
         var compilation = Compilation;
         var binder = Binder;
 
-        var matchingTypeDefintionNode = CSharpFacts.Types.TypeDefinitionNodes.SingleOrDefault(
-            x => x.TypeIdentifierToken.TextSpan.GetText(compilation.SourceText, binder.TextEditorService) == typeClauseNode.TypeIdentifierToken.TextSpan.GetText(compilation.SourceText, binder.TextEditorService));
+        var typeClauseNodeText = Binder.TextEditorService.EditContext_GetText(Compilation.SourceText.AsSpan(typeClauseNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeClauseNode.TypeIdentifierToken.TextSpan.Length));
+        
+        var matchingTypeDefintionNode = CSharpFacts.Types.TypeDefinitionNodes.FirstOrDefault(
+            x => x.TypeIdentifierToken.TextSpan.GetText(compilation.SourceText, binder.TextEditorService) == typeClauseNodeText);
 
         if (matchingTypeDefintionNode is not null)
-        {
         	typeClauseNode.SetValueType(matchingTypeDefintionNode.ValueType);
-        }
     }
     
     public void BindTypeIdentifier(SyntaxToken identifierToken)
@@ -503,12 +498,14 @@ public struct CSharpParserModel
 
     public void BindUsingStatementTuple(SyntaxToken usingKeywordToken, SyntaxToken namespaceIdentifierToken)
     {
-        AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService));
+        AddNamespaceToCurrentScope(
+            Binder.TextEditorService.EditContext_GetText(Compilation.SourceText.AsSpan(namespaceIdentifierToken.TextSpan.StartInclusiveIndex, namespaceIdentifierToken.TextSpan.Length)));
     }
     
     public void BindTypeDefinitionNode(TypeDefinitionNode typeDefinitionNode, bool shouldOverwrite = false)
     {
-        var typeIdentifierText = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
+        var typeIdentifierText = Binder.TextEditorService.EditContext_GetText(Compilation.SourceText.AsSpan(typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeDefinitionNode.TypeIdentifierToken.TextSpan.Length));
+
         var currentNamespaceStatementText = CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
         var namespaceAndTypeIdentifiers = new NamespaceAndTypeIdentifiers(currentNamespaceStatementText, typeIdentifierText);
 
@@ -663,7 +660,7 @@ public struct CSharpParserModel
     	{
     		case SyntaxKind.NamespaceStatementNode:
     			var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
-	    		var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText(compilationUnit.SourceText, Binder.TextEditorService);
+    			var namespaceString = Binder.TextEditorService.EditContext_GetText(Compilation.SourceText.AsSpan(namespaceStatementNode.IdentifierToken.TextSpan.StartInclusiveIndex, namespaceStatementNode.IdentifierToken.TextSpan.Length));
 	        	AddNamespaceToCurrentScope(namespaceString);
 	        	
 			    BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner);
@@ -720,4 +717,534 @@ public struct CSharpParserModel
     {
 		codeBlockOwner.CodeBlock_EndExclusiveIndex = codeBlock_EndExclusiveIndex;
     }
+    
+    // !!!!
+    // This will be a DRY code nightmare for a moment.
+    // Everything past this point was copy and pasted from CSharpBinder.
+    //
+    // The issue is, while parsing you want to get the text from the TextEditorTextSpan
+    // as quickly as possible.
+    //
+    // But, if someone wants to look at an already completed CSharpCompilationUnit,
+    // there are a great deal of timing issues that arise here.
+    // Thus, you'd want to take caution when getting the text.
+    //
+    // So, instead of invoking TextEditorTextSpan.GetText(...)
+    // I want to directly:
+    // 'textEditorService.EditContext_GetText(sourceText.AsSpan(textSpan.StartInclusiveIndex, textSpan.Length));'
+    // !!!!
+    
+    /// <summary>
+    /// Search hierarchically through all the scopes, starting at the <see cref="initialScope"/>.<br/><br/>
+    /// If a match is found, then set the out parameter to it and return true.<br/><br/>
+    /// If none of the searched scopes contained a match then set the out parameter to null and return false.
+    /// </summary>
+    public bool TryGetTypeDefinitionHierarchically(
+    	CSharpCompilationUnit compilationUnit,
+    	int initialScopeIndexKey,
+        string identifierText,
+        out TypeDefinitionNode? typeDefinitionNode)
+    {
+        var localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
+
+        while (localScope is not null)
+        {
+            if (TryGetTypeDefinitionNodeByScope(
+	        		compilationUnit,
+            		localScope.Unsafe_SelfIndexKey,
+            		identifierText,
+                    out typeDefinitionNode))
+            {
+                return true;
+            }
+
+            if (localScope.Unsafe_ParentIndexKey == -1)
+				localScope = default;
+			else
+            {
+            	localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
+			}
+		}
+
+        typeDefinitionNode = null;
+        return false;
+    }
+    
+    public bool TryGetTypeDefinitionNodeByScope(
+    	CSharpCompilationUnit compilationUnit,
+    	int scopeIndexKey,
+    	string typeIdentifierText,
+    	out TypeDefinitionNode? typeDefinitionNode)
+    {
+        typeDefinitionNode = null;
+        foreach (var x in compilationUnit.CodeBlockOwnerList)
+        {
+            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
+    	        x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
+    	        GetIdentifierText(x, compilationUnit) == typeIdentifierText)
+    	    {
+    	        typeDefinitionNode = (TypeDefinitionNode)x;
+    	        break;
+    	    }
+        }
+    	
+    	if (typeDefinitionNode is null)
+    	{
+    	    if (scopeIndexKey == 0)
+    	    {
+                foreach (var x in compilationUnit.ExternalTypeDefinitionList)
+                {
+                    if (GetIdentifierText(x, compilationUnit) == typeIdentifierText)
+            	    {
+            	        typeDefinitionNode = (TypeDefinitionNode)x;
+            	        break;
+            	    }
+                }
+    	        if (typeDefinitionNode is not null)
+    	        {
+    	            return true;
+    	        }
+    	    }
+
+    	    return false;
+    	}
+    	else
+    	{
+    	    return true;
+    	}
+    }
+    
+    public bool TryAddTypeDefinitionNodeByScope(
+    	CSharpCompilationUnit compilationUnit,
+    	int scopeIndexKey,
+    	string typeIdentifierText,
+        TypeDefinitionNode typeDefinitionNode)
+    {
+        TypeDefinitionNode? matchNode = null;
+        foreach (var x in compilationUnit.CodeBlockOwnerList)
+        {
+            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
+    	        x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
+    	        GetIdentifierText(x, compilationUnit) == typeIdentifierText)
+    	    {
+    	        matchNode = (TypeDefinitionNode)x;
+    	        break;
+    	    }
+        }
+    	
+    	if (matchNode is null)
+    	{
+    	    compilationUnit.CodeBlockOwnerList.Add(typeDefinitionNode);
+    	    return true;
+    	}
+    	else
+    	{
+    	    return false;
+    	}
+    }
+    
+    public FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(
+    	CSharpCompilationUnit compilationUnit,
+    	int scopeIndexKey)
+    {
+    	return compilationUnit.CodeBlockOwnerList
+    		.Where(kvp => kvp.Unsafe_ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+    		.Select(kvp => (FunctionDefinitionNode)kvp)
+    		.ToArray();
+    }
+    
+    /// <summary>
+    /// Search hierarchically through all the scopes, starting at the <see cref="initialScope"/>.<br/><br/>
+    /// If a match is found, then set the out parameter to it and return true.<br/><br/>
+    /// If none of the searched scopes contained a match then set the out parameter to null and return false.
+    /// </summary>
+    public bool TryGetFunctionHierarchically(
+    	CSharpCompilationUnit compilationUnit,
+    	int initialScopeIndexKey,
+        string identifierText,
+        out FunctionDefinitionNode? functionDefinitionNode)
+    {
+        var localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
+
+        while (localScope is not null)
+        {
+            if (TryGetFunctionDefinitionNodeByScope(
+	        		compilationUnit,
+            		localScope.Unsafe_SelfIndexKey,
+            		identifierText,
+                    out functionDefinitionNode))
+            {
+                return true;
+            }
+
+			if (localScope.Unsafe_ParentIndexKey == -1)
+				localScope = default;
+			else
+            	localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
+        }
+
+        functionDefinitionNode = null;
+        return false;
+    }
+    
+    public bool TryGetFunctionDefinitionNodeByScope(
+    	CSharpCompilationUnit compilationUnit,
+    	int scopeIndexKey,
+    	string functionIdentifierText,
+    	out FunctionDefinitionNode functionDefinitionNode)
+    {
+        functionDefinitionNode = null;
+        foreach (var x in compilationUnit.CodeBlockOwnerList)
+        {
+            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
+    	        x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
+    	        GetIdentifierText(x, compilationUnit) == functionIdentifierText)
+    	    {
+    	        functionDefinitionNode = (FunctionDefinitionNode)x;
+    	        break;
+    	    }
+        }
+    	
+    	if (functionDefinitionNode is null)
+    	    return false;
+    	else
+    	    return true;
+    }
+    
+    public VariableDeclarationNode[] GetVariableDeclarationNodesByScope(
+    	CSharpCompilationUnit compilationUnit,
+    	int scopeIndexKey)
+    {
+    	return compilationUnit.NodeList
+    		.Where(kvp => kvp.Unsafe_ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+    		.Select(kvp => (VariableDeclarationNode)kvp)
+    		.ToArray();
+    }
+    
+    /// <summary>
+    /// Search hierarchically through all the scopes, starting at the <see cref="_currentScope"/>.<br/><br/>
+    /// If a match is found, then set the out parameter to it and return true.<br/><br/>
+    /// If none of the searched scopes contained a match then set the out parameter to null and return false.
+    /// </summary>
+    public bool TryGetVariableDeclarationHierarchically(
+    	CSharpCompilationUnit compilationUnit,
+    	int initialScopeIndexKey,
+        string identifierText,
+        out VariableDeclarationNode? variableDeclarationStatementNode)
+    {
+        var localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
+
+        while (localScope is not null)
+        {
+            if (TryGetVariableDeclarationNodeByScope(
+	        		compilationUnit,
+            		localScope.Unsafe_SelfIndexKey,
+            		identifierText,
+                    out variableDeclarationStatementNode))
+            {
+                return true;
+            }
+
+            if (localScope.Unsafe_ParentIndexKey == -1)
+				localScope = default;
+			else
+            	localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
+        }
+
+        variableDeclarationStatementNode = null;
+        return false;
+    }
+    
+    public bool TryGetVariableDeclarationNodeByScope(
+    	CSharpCompilationUnit compilationUnit,
+    	int scopeIndexKey,
+    	string variableIdentifierText,
+    	out VariableDeclarationNode? variableDeclarationNode)
+    {
+        variableDeclarationNode = null;
+        foreach (var x in compilationUnit.NodeList)
+        {
+            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
+    	        x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
+    	        GetIdentifierText(x, compilationUnit) == variableIdentifierText)
+    	    {
+    	        variableDeclarationNode = (VariableDeclarationNode)x;
+    	        break;
+    	    }
+        }
+    	
+    	if (variableDeclarationNode is null)
+    	    return false;
+    	else
+    	    return true;
+    }
+    
+    public bool TryAddVariableDeclarationNodeByScope(
+    	CSharpCompilationUnit compilationUnit,
+    	int scopeIndexKey,
+    	string variableIdentifierText,
+        VariableDeclarationNode variableDeclarationNode)
+    {
+        VariableDeclarationNode? matchNode = null;
+        foreach (var x in compilationUnit.NodeList)
+        {
+            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
+    	        x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
+    	        GetIdentifierText(x, compilationUnit) == variableIdentifierText)
+    	    {
+    	        matchNode = (VariableDeclarationNode)x;
+    	        break;
+    	    }
+        }
+    	
+    	if (matchNode is null)
+    	{
+    	    variableDeclarationNode.Unsafe_ParentIndexKey = scopeIndexKey;
+    	    compilationUnit.NodeList.Add(variableDeclarationNode);
+    	    return true;
+    	}
+    	else
+    	{
+    	    return false;
+    	}
+    }
+    
+    public void SetVariableDeclarationNodeByScope(
+    	CSharpCompilationUnit compilationUnit,
+    	int scopeIndexKey,
+    	string variableIdentifierText,
+        VariableDeclarationNode variableDeclarationNode)
+    {
+        VariableDeclarationNode? matchNode = null;
+        int index = 0;
+        for (; index < compilationUnit.NodeList.Count; index++)
+        {
+            var x = compilationUnit.NodeList[index];
+            
+            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
+    	        x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
+    	        GetIdentifierText(x, compilationUnit) == variableIdentifierText)
+    	    {
+    	        matchNode = (VariableDeclarationNode)x;
+    	        break;
+    	    }
+        }
+        
+		if (index != -1)
+		{
+		    variableDeclarationNode.Unsafe_ParentIndexKey = scopeIndexKey;
+		    compilationUnit.NodeList[index] = variableDeclarationNode;
+		}
+    }
+    
+    public bool TryGetLabelDeclarationHierarchically(
+    	CSharpCompilationUnit compilationUnit,
+    	int initialScopeIndexKey,
+        string identifierText,
+        out LabelDeclarationNode? labelDeclarationNode)
+    {
+        var localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
+
+        while (localScope is not null)
+        {
+            if (TryGetLabelDeclarationNodeByScope(
+	        		compilationUnit,
+            		localScope.Unsafe_SelfIndexKey,
+            		identifierText,
+                    out labelDeclarationNode))
+            {
+                return true;
+            }
+
+            if (localScope.Unsafe_ParentIndexKey == -1)
+				localScope = default;
+			else
+            	localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
+        }
+
+        labelDeclarationNode = null;
+        return false;
+    }
+    
+    public bool TryGetLabelDeclarationNodeByScope(
+    	CSharpCompilationUnit compilationUnit,
+    	int scopeIndexKey,
+    	string labelIdentifierText,
+    	out LabelDeclarationNode labelDeclarationNode)
+    {
+        labelDeclarationNode = null;
+        foreach (var x in compilationUnit.NodeList)
+        {
+            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
+    	        x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
+    	        GetIdentifierText(x, compilationUnit) == labelIdentifierText)
+    	    {
+    	        labelDeclarationNode = (LabelDeclarationNode)x;
+    	        break;
+    	    }
+        }
+    	
+    	if (labelDeclarationNode is null)
+    	    return false;
+    	else
+    	    return true;
+    }
+    
+    public bool TryAddLabelDeclarationNodeByScope(
+    	CSharpCompilationUnit compilationUnit,
+    	int scopeIndexKey,
+    	string labelIdentifierText,
+        LabelDeclarationNode labelDeclarationNode)
+    {
+        LabelDeclarationNode? matchNode = null;
+        foreach (var x in compilationUnit.NodeList)
+        {
+            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
+    	        x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
+    	        GetIdentifierText(x, compilationUnit) == labelIdentifierText)
+    	    {
+    	        matchNode = (LabelDeclarationNode)x;
+    	        break;
+    	    }
+        }
+    	
+    	if (matchNode is null)
+    	{
+    	    labelDeclarationNode.Unsafe_ParentIndexKey = scopeIndexKey;
+    	    compilationUnit.NodeList.Add(labelDeclarationNode);
+    	    return true;
+    	}
+    	else
+    	{
+    	    return false;
+    	}
+    }
+    
+    public void SetLabelDeclarationNodeByScope(
+    	CSharpCompilationUnit compilationUnit,
+    	int scopeIndexKey,
+    	string labelIdentifierText,
+        LabelDeclarationNode labelDeclarationNode)
+    {
+        LabelDeclarationNode? matchNode = null;
+        int index = 0;
+        for (; index < compilationUnit.NodeList.Count; index++)
+        {
+            var x = compilationUnit.NodeList[index];
+            
+            if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
+    	        x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
+    	        GetIdentifierText(x, compilationUnit) == labelIdentifierText)
+    	    {
+    	        matchNode = (LabelDeclarationNode)x;
+    	        break;
+    	    }
+        }
+
+		if (index != -1)
+		{
+		    labelDeclarationNode.Unsafe_ParentIndexKey = scopeIndexKey;
+		    compilationUnit.NodeList[index] = labelDeclarationNode;
+		}
+    }
+    
+    // TODO: don't pass the initial compilationUnit it is default.
+    // TODO: Are these adds being invoked separately?
+    public string GetIdentifierText(ISyntaxNode node, CSharpCompilationUnit compilationUnit)
+	{
+		switch (node.SyntaxKind)
+		{
+		    case SyntaxKind.TypeDefinitionNode:
+		    {
+		        var typeDefinitionNode = (TypeDefinitionNode)node;
+        	    if (typeDefinitionNode.ResourceUri == compilationUnit.ResourceUri)
+        	    {
+        	        return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeDefinitionNode.TypeIdentifierToken.TextSpan.Length));
+        	    }
+        	    else
+        	    {
+        	        if (Binder.__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var innerCompilationUnit))
+        	            return Binder.TextEditorService.EditContext_GetText(innerCompilationUnit.SourceText.AsSpan(typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeDefinitionNode.TypeIdentifierToken.TextSpan.Length));
+        	        else
+    	                return string.Empty;
+        	    }
+			}
+			case SyntaxKind.TypeClauseNode:
+			{
+				var typeClauseNode = (TypeClauseNode)node;
+        	    if (typeClauseNode.ExplicitDefinitionResourceUri == compilationUnit.ResourceUri)
+        	    {
+        	        return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(typeClauseNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeClauseNode.TypeIdentifierToken.TextSpan.Length));
+        	    }
+        	    else
+        	    {
+        	        if (Binder.__CompilationUnitMap.TryGetValue(typeClauseNode.ExplicitDefinitionResourceUri, out var innerCompilationUnit))
+        	            return Binder.TextEditorService.EditContext_GetText(innerCompilationUnit.SourceText.AsSpan(typeClauseNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeClauseNode.TypeIdentifierToken.TextSpan.Length));
+        	        else
+    	                return string.Empty;
+        	    }
+			}
+			case SyntaxKind.FunctionDefinitionNode:
+			{
+				var functionDefinitionNode = (FunctionDefinitionNode)node;
+				if (functionDefinitionNode.ResourceUri == compilationUnit.ResourceUri)
+        	    {
+        	        return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex, functionDefinitionNode.FunctionIdentifierToken.TextSpan.Length));
+        	    }
+        	    else
+        	    {
+        	        if (Binder.__CompilationUnitMap.TryGetValue(functionDefinitionNode.ResourceUri, out var innerCompilationUnit))
+        	            return Binder.TextEditorService.EditContext_GetText(innerCompilationUnit.SourceText.AsSpan(functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex, functionDefinitionNode.FunctionIdentifierToken.TextSpan.Length));
+        	        else
+    	                return string.Empty;
+        	    }
+			}
+			case SyntaxKind.FunctionInvocationNode:
+			{
+				var functionInvocationNode = (FunctionInvocationNode)node;
+				if (functionInvocationNode.ResourceUri == compilationUnit.ResourceUri)
+        	    {
+        	        return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Length));
+        	    }
+        	    else
+        	    {
+        	        if (Binder.__CompilationUnitMap.TryGetValue(functionInvocationNode.ResourceUri, out var innerCompilationUnit))
+        	            return Binder.TextEditorService.EditContext_GetText(innerCompilationUnit.SourceText.AsSpan(functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Length));
+        	        else
+    	                return string.Empty;
+        	    }
+			}
+			case SyntaxKind.VariableDeclarationNode:
+			{
+				var variableDeclarationNode = (VariableDeclarationNode)node;
+				if (variableDeclarationNode.ResourceUri == compilationUnit.ResourceUri)
+        	    {
+        	        return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, variableDeclarationNode.IdentifierToken.TextSpan.Length));
+        	    }
+        	    else
+        	    {
+        	        if (Binder.__CompilationUnitMap.TryGetValue(variableDeclarationNode.ResourceUri, out var innerCompilationUnit))
+        	            return Binder.TextEditorService.EditContext_GetText(innerCompilationUnit.SourceText.AsSpan(variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, variableDeclarationNode.IdentifierToken.TextSpan.Length));
+        	        else
+    	                return string.Empty;
+        	    }
+			}
+			case SyntaxKind.VariableReferenceNode:
+			{
+				return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(((VariableReferenceNode)node).VariableIdentifierToken.TextSpan.StartInclusiveIndex, ((VariableReferenceNode)node).VariableIdentifierToken.TextSpan.Length));
+			}
+			case SyntaxKind.LabelDeclarationNode:
+			{
+				return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(((LabelDeclarationNode)node).IdentifierToken.TextSpan.StartInclusiveIndex, ((LabelDeclarationNode)node).IdentifierToken.TextSpan.Length));
+			}
+			case SyntaxKind.LabelReferenceNode:
+			{
+				return Binder.TextEditorService.EditContext_GetText(compilationUnit.SourceText.AsSpan(((LabelReferenceNode)node).IdentifierToken.TextSpan.StartInclusiveIndex, ((LabelReferenceNode)node).IdentifierToken.TextSpan.Length));
+			}
+			default:
+			{
+				return string.Empty;
+		    }
+		}
+	}
 }
