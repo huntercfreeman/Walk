@@ -15,7 +15,7 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 	public TestExplorerTreeViewMouseEventHandler(
 			TextEditorService textEditorService,
 			IServiceProvider serviceProvider)
-		: base(commonUtilityService)
+		: base(textEditorService.CommonUtilityService)
 	{
 		_textEditorService = textEditorService;
 		_serviceProvider = serviceProvider;
@@ -30,7 +30,7 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 			NotificationHelper.DispatchInformative(
 				nameof(TestExplorerTreeViewMouseEventHandler),
 				$"Could not open in editor because node is not type: {nameof(TreeViewStringFragment)}",
-				_commonUtilityService,
+				_textEditorService.CommonUtilityService,
 				TimeSpan.FromSeconds(5));
 
 			return Task.CompletedTask;
@@ -41,7 +41,7 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 			NotificationHelper.DispatchInformative(
 				nameof(TestExplorerTreeViewMouseEventHandler),
 				$"Could not open in editor because node's parent does not seem to include a class name",
-				_commonUtilityService,
+				_textEditorService.CommonUtilityService,
 				TimeSpan.FromSeconds(5));
 
 			return Task.CompletedTask;
@@ -52,7 +52,7 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 		NotificationHelper.DispatchInformative(
 			nameof(TestExplorerTreeViewMouseEventHandler),
 			className + ".cs",
-			_commonUtilityService,
+			_textEditorService.CommonUtilityService,
 			TimeSpan.FromSeconds(5));
 
 		var methodName = treeViewStringFragment.Item.Value.Trim();
@@ -60,15 +60,13 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 		NotificationHelper.DispatchInformative(
 			nameof(TestExplorerTreeViewMouseEventHandler),
 			methodName + "()",
-			_commonUtilityService,
+			_textEditorService.CommonUtilityService,
 			TimeSpan.FromSeconds(5));
 
 		_textEditorService.WorkerArbitrary.PostUnique(
 			TestExplorerHelper.ShowTestInEditorFactory(
 				className,
 				methodName,
-				_commonUtilityService,
-				_compilerServiceRegistry,
 				_textEditorService,
 				_serviceProvider));
 

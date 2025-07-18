@@ -218,7 +218,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 		ThrewAnExceptionTreeViewGroup.ChildList = new();
 		NotValidProjectForUnitTestTreeViewGroup.ChildList = new();
 		
-		_commonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, ContainsTestsTreeViewGroup);
+		_textEditorService.CommonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, ContainsTestsTreeViewGroup);
 		
 		if (!solutionFilePathWasNull)
 		{
@@ -247,7 +247,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
         lock (_workLock)
         {
             _workKindQueue.Enqueue(TestExplorerSchedulerWorkKind.ConstructTreeView);
-            _commonUtilityService.Continuous_EnqueueGroup(this);
+            _textEditorService.CommonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
     
@@ -256,7 +256,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
         lock (_workLock)
         {
             _workKindQueue.Enqueue(TestExplorerSchedulerWorkKind.DiscoverTests);
-            _commonUtilityService.Continuous_EnqueueGroup(this);
+            _textEditorService.CommonUtilityService.Continuous_EnqueueGroup(this);
         }
     }
 
@@ -310,7 +310,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 				x.ProjectIdGuid,
 				x.AbsolutePath,
 				callback => Task.CompletedTask,
-				node => _commonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, node)))
+				node => _textEditorService.CommonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, node)))
 			.ToList();
 
         var localFormattedCommand = DotNetCliCommandFormatter.FormatDotNetTestListTests();
@@ -318,7 +318,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
         var localTreeViewProjectTestModelList = localProjectTestModelList.Select(x =>
                 (TreeViewNoType)new TreeViewProjectTestModel(
                     x,
-                    _commonUtilityService.CommonComponentRenderers,
+                    _textEditorService.CommonUtilityService.CommonComponentRenderers,
                     true,
                     false))
             .ToArray();
@@ -330,7 +330,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
             if (string.IsNullOrWhiteSpace(treeViewProjectTestModel.Item.DirectoryNameForTestDiscovery))
                 return;
             
-            var projectFileText = await _commonUtilityService.FileSystemProvider.File.ReadAllTextAsync(treeViewProjectTestModel.Item.AbsolutePath.Value);
+            var projectFileText = await _textEditorService.CommonUtilityService.FileSystemProvider.File.ReadAllTextAsync(treeViewProjectTestModel.Item.AbsolutePath.Value);
             
             if (projectFileText.Contains("xunit"))
             {
@@ -449,18 +449,18 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 
         var activeNodes = new List<TreeViewNoType> { ContainsTestsTreeViewGroup };
 
-        if (!_commonUtilityService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out _))
+        if (!_textEditorService.CommonUtilityService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out _))
         {
-            _commonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
+            _textEditorService.CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
                 TestExplorerState.TreeViewTestExplorerKey,
                 adhocRoot,
                 activeNodes));
         }
         else
         {
-            _commonUtilityService.TreeView_WithRootNodeAction(TestExplorerState.TreeViewTestExplorerKey, adhocRoot);
+            _textEditorService.CommonUtilityService.TreeView_WithRootNodeAction(TestExplorerState.TreeViewTestExplorerKey, adhocRoot);
 
-            _commonUtilityService.TreeView_SetActiveNodeAction(
+            _textEditorService.CommonUtilityService.TreeView_SetActiveNodeAction(
                 TestExplorerState.TreeViewTestExplorerKey,
                 firstNode,
                 true,
@@ -501,7 +501,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 			NotificationHelper.DispatchProgress(
 				$"Test Discovery: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
 				progressBarModel,
-				_commonUtilityService,
+				_textEditorService.CommonUtilityService,
 				TimeSpan.FromMilliseconds(-1));
 				
 			var progressThrottle = new Throttle(TimeSpan.FromMilliseconds(100));
@@ -517,7 +517,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 				var completionPercentPerProject = 1.0 / (double)NoTestsTreeViewGroup.ChildList.Count;
 	    		var projectsHandled = 0;
 	    		
-	    		if (_commonUtilityService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
+	    		if (_textEditorService.CommonUtilityService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
 		        {
 		        	if (treeViewContainer.RootNode is not TreeViewAdhoc treeViewAdhoc)
 						return;
@@ -595,7 +595,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
     	var notRanTestHashSet = new HashSet<string>();
     	
     	Console.WriteLine($"NoTestsTreeViewGroup.ChildList.Count: {NoTestsTreeViewGroup.ChildList.Count}");
-    	if (_commonUtilityService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
+    	if (_textEditorService.CommonUtilityService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
         {
         	if (treeViewContainer.RootNode is not TreeViewAdhoc treeViewAdhoc)
         		return Task.CompletedTask;
@@ -655,7 +655,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
             	
             nextTreeViewAdhoc.LinkChildren(new(), nextTreeViewAdhoc.ChildList);
             
-            _commonUtilityService.TreeView_WithRootNodeAction(TestExplorerState.TreeViewTestExplorerKey, nextTreeViewAdhoc);
+            _textEditorService.CommonUtilityService.TreeView_WithRootNodeAction(TestExplorerState.TreeViewTestExplorerKey, nextTreeViewAdhoc);
         }
     
     	_dotNetBackgroundTaskApi.TestExplorerService.ReduceWithAction(inState => inState with
@@ -677,7 +677,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 		if (treeViewProjectTestModel.Parent is null)
 			return;
 		
-		if (!_commonUtilityService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
+		if (!_textEditorService.CommonUtilityService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
 			return;
 		
 		// containsTestsTreeViewGroup
@@ -720,7 +720,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
 		treeViewProjectTestModel.Parent.LinkChildren(
 			treeViewProjectTestModel.Parent.ChildList,
 			treeViewProjectTestModel.Parent.ChildList);
-		_commonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel.Parent);
+		_textEditorService.CommonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel.Parent);
 				
 		if (treeViewProjectTestModel.Item.TestNameFullyQualifiedList is not null)
     	{
@@ -730,7 +730,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
     			containsTestsTreeViewGroup.LinkChildren(
 					containsTestsTreeViewGroup.ChildList,
 					containsTestsTreeViewGroup.ChildList);
-				_commonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, containsTestsTreeViewGroup);
+				_textEditorService.CommonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, containsTestsTreeViewGroup);
     		}
     		else
     		{
@@ -738,7 +738,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
     			noTestsTreeViewGroup.LinkChildren(
 					noTestsTreeViewGroup.ChildList,
 					noTestsTreeViewGroup.ChildList);
-				_commonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, noTestsTreeViewGroup);
+				_textEditorService.CommonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, noTestsTreeViewGroup);
     		}
     	}
     	else
@@ -750,7 +750,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
     			threwAnExceptionTreeViewGroup.LinkChildren(
 					threwAnExceptionTreeViewGroup.ChildList,
 					threwAnExceptionTreeViewGroup.ChildList);
-				_commonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, threwAnExceptionTreeViewGroup);
+				_textEditorService.CommonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, threwAnExceptionTreeViewGroup);
     		}
     		else
     		{
@@ -758,7 +758,7 @@ public class TestExplorerService : ITestExplorerService, IBackgroundTaskGroup, I
     			notValidProjectForUnitTestTreeViewGroup.LinkChildren(
 					notValidProjectForUnitTestTreeViewGroup.ChildList,
 					notValidProjectForUnitTestTreeViewGroup.ChildList);
-				_commonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, notValidProjectForUnitTestTreeViewGroup);
+				_textEditorService.CommonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, notValidProjectForUnitTestTreeViewGroup);
     		}
     	}
 	}

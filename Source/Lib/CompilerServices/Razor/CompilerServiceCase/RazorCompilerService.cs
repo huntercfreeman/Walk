@@ -19,7 +19,6 @@ public sealed class RazorCompilerService : ICompilerService
 {
 	private readonly TextEditorService _textEditorService;
     private readonly CSharpCompilerService _cSharpCompilerService;
-    private readonly IEnvironmentProvider _environmentProvider;
     
     private readonly Dictionary<ResourceUri, RazorResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
@@ -31,12 +30,10 @@ public sealed class RazorCompilerService : ICompilerService
 
     public RazorCompilerService(
         TextEditorService textEditorService,
-        CSharpCompilerService cSharpCompilerService,
-        IEnvironmentProvider environmentProvider)
+        CSharpCompilerService cSharpCompilerService)
     {
     	_textEditorService = textEditorService;
         _cSharpCompilerService = cSharpCompilerService;
-        _environmentProvider = environmentProvider;
     }
     
     public event Action? ResourceRegistered;
@@ -208,7 +205,7 @@ public sealed class RazorCompilerService : ICompilerService
     		modelModifier.GetAllText(),
             this,
             _cSharpCompilerService,
-            _environmentProvider);
+            _textEditorService.CommonUtilityService.EnvironmentProvider);
             
     	lexer.Lex();
     

@@ -282,7 +282,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				return Array.Empty<MenuOptionRecord>();
 		}
 
-		var parentDirectoryAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(parentDirectory, true);
+		var parentDirectoryAbsolutePath = TextEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(parentDirectory, true);
 
 		return new[]
 		{
@@ -310,14 +310,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.AddProjectToProjectReference(
 				treeViewModel,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				CommonUtilityService,
+				TextEditorService.CommonUtilityService,
 				IdeBackgroundTaskApi,
 				() => Task.CompletedTask),
 			DotNetMenuOptionsFactory.MoveProjectToSolutionFolder(
 				treeViewSolution,
 				treeViewModel,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				CommonUtilityService,
+				TextEditorService.CommonUtilityService,
 				() =>
 				{
 					CompilerServicesBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
@@ -345,7 +345,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				treeViewSolution,
 				treeViewModel,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				CommonUtilityService,
+				TextEditorService.CommonUtilityService,
 				() =>
 				{
 					CompilerServicesBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
@@ -366,7 +366,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.RemoveProjectToProjectReference(
 				treeViewCSharpProjectToProjectReference,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				CommonUtilityService,
+				TextEditorService.CommonUtilityService,
 				() => Task.CompletedTask),
 		};
 	}
@@ -386,7 +386,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,
 				treeViewCSharpProjectNugetPackageReference,
 				TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				CommonUtilityService,
+				TextEditorService.CommonUtilityService,
 				() => Task.CompletedTask),
 		};
 	}
@@ -428,14 +428,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			MenuOptionsFactory.CopyFile(
 				treeViewModel.Item.AbsolutePath,
 				(Func<Task>)(() => {
-					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)TextEditorService.CommonUtilityService, TimeSpan.FromSeconds(7));
 					return Task.CompletedTask;
 				})),
 			MenuOptionsFactory.CutFile(
 				treeViewModel.Item.AbsolutePath,
 				(Func<Task>)(() => {
 					ParentOfCutFile = parentTreeViewModel;
-					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)TextEditorService.CommonUtilityService, TimeSpan.FromSeconds(7));
 					return Task.CompletedTask;
 				})),
 			MenuOptionsFactory.DeleteFile(
@@ -443,7 +443,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				async () => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
 			MenuOptionsFactory.RenameFile(
 				treeViewModel.Item.AbsolutePath,
-				(Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService,
+				(Common.RazorLib.Options.Models.CommonUtilityService)TextEditorService.CommonUtilityService,
 				async ()  => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
 		};
 	}
@@ -475,7 +475,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			true,
 			null);
 
-		CommonUtilityService.Dialog_ReduceRegisterAction(dialogRecord);
+		TextEditorService.CommonUtilityService.Dialog_ReduceRegisterAction(dialogRecord);
 		return Task.CompletedTask;
 	}
 
@@ -545,7 +545,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	
 	private Task OpenSolutionProperties(DotNetSolutionModel dotNetSolutionModel)
 	{
-		CommonUtilityService.Dialog_ReduceRegisterAction(new DialogViewModel(
+		TextEditorService.CommonUtilityService.Dialog_ReduceRegisterAction(new DialogViewModel(
 			dynamicViewModelKey: _solutionPropertiesDialogKey,
 			title: "Solution Properties",
 			componentType: typeof(SolutionPropertiesDisplay),
@@ -573,9 +573,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 		await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-		CommonUtilityService.TreeView_ReRenderNodeAction(DotNetSolutionState.TreeViewSolutionExplorerStateKey, treeViewModel);
+		TextEditorService.CommonUtilityService.TreeView_ReRenderNodeAction(DotNetSolutionState.TreeViewSolutionExplorerStateKey, treeViewModel);
 
-		CommonUtilityService.TreeView_MoveUpAction(
+		TextEditorService.CommonUtilityService.TreeView_MoveUpAction(
 			DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 			false,
 			false);

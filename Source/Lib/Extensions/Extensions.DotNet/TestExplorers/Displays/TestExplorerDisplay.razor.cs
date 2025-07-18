@@ -31,8 +31,8 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 		{
 			TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
 			{
-				var terminalDecorationMapper = DecorationMapperRegistry.GetDecorationMapper(ExtensionNoPeriodFacts.TERMINAL);
-				var terminalCompilerService = CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL);
+				var terminalDecorationMapper = TextEditorService.GetDecorationMapper(ExtensionNoPeriodFacts.TERMINAL);
+				var terminalCompilerService = TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL);
 
 				model = new TextEditorModel(
 					ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
@@ -88,7 +88,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 		}
 	
 		DotNetBackgroundTaskApi.TestExplorerService.TestExplorerStateChanged += OnTestExplorerStateChanged;
-		CommonUtilityService.TreeViewStateChanged += OnTreeViewStateChanged;
+		TextEditorService.CommonUtilityService.TreeViewStateChanged += OnTreeViewStateChanged;
 		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
 
 		_ = Task.Run(async () =>
@@ -141,7 +141,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 	public void Dispose()
 	{
 		DotNetBackgroundTaskApi.TestExplorerService.TestExplorerStateChanged -= OnTestExplorerStateChanged;
-		CommonUtilityService.TreeViewStateChanged -= OnTreeViewStateChanged;
+		TextEditorService.CommonUtilityService.TreeViewStateChanged -= OnTreeViewStateChanged;
 		TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
 	}
 }

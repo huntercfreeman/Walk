@@ -121,7 +121,8 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
         OutputService = new OutputService(
         	this,
-        	_dotNetCliOutputParser);
+        	_dotNetCliOutputParser,
+        	_textEditorService.CommonUtilityService);
 			
 			NuGetPackageManagerService = new NuGetPackageManagerService();
 			

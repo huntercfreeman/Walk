@@ -101,68 +101,68 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 		var compilerServiceExplorerState = DotNetBackgroundTaskApi.CompilerServiceExplorerService.GetCompilerServiceExplorerState();
 
 		var xmlCompilerServiceWatchWindowObject = new WatchWindowObject(
-			TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.XML),
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.XML).GetType(),
+			TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.XML),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.XML).GetType(),
 			"XML",
 			true);
 
 		var dotNetSolutionCompilerServiceWatchWindowObject = new WatchWindowObject(
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION),
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION).GetType(),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION).GetType(),
 			".NET Solution",
 			true);
 
 		var cSharpProjectCompilerServiceWatchWindowObject = new WatchWindowObject(
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_PROJECT),
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_PROJECT).GetType(),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_PROJECT),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_PROJECT).GetType(),
 			"C# Project",
 			true);
 
 		var cSharpCompilerServiceWatchWindowObject = new WatchWindowObject(
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS),
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS).GetType(),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS).GetType(),
 			"C#",
 			true);
 
 		var razorCompilerServiceWatchWindowObject = new WatchWindowObject(
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.RAZOR_MARKUP),
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.RAZOR_MARKUP).GetType(),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.RAZOR_MARKUP),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.RAZOR_MARKUP).GetType(),
 			"Razor",
 			true);
 
 		var cssCompilerServiceWatchWindowObject = new WatchWindowObject(
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.CSS),
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.CSS).GetType(),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.CSS),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.CSS).GetType(),
 			"Css",
 			true);
 
 		var fSharpCompilerServiceWatchWindowObject = new WatchWindowObject(
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.F_SHARP),
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.F_SHARP).GetType(),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.F_SHARP),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.F_SHARP).GetType(),
 			"F#",
 			true);
 
 		var javaScriptCompilerServiceWatchWindowObject = new WatchWindowObject(
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JAVA_SCRIPT),
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JAVA_SCRIPT).GetType(),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.JAVA_SCRIPT),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.JAVA_SCRIPT).GetType(),
 			"JavaScript",
 			true);
 
 		var typeScriptCompilerServiceWatchWindowObject = new WatchWindowObject(
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TYPE_SCRIPT),
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TYPE_SCRIPT).GetType(),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.TYPE_SCRIPT),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.TYPE_SCRIPT).GetType(),
 			"TypeScript",
 			true);
 
 		var jsonCompilerServiceWatchWindowObject = new WatchWindowObject(
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JSON),
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.JSON).GetType(),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.JSON),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.JSON).GetType(),
 			"JSON",
 			true);
 
 		var terminalCompilerServiceWatchWindowObject = new WatchWindowObject(
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL),
-            TextEditorService.CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL).GetType(),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL),
+            TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL).GetType(),
 			"Terminal",
 			true);
 

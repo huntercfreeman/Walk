@@ -13,15 +13,18 @@ public class OutputService : IOutputService
 {
 	private readonly DotNetBackgroundTaskApi _dotNetBackgroundTaskApi;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
+	private readonly CommonUtilityService _commonUtilityService;
 		
 	private readonly Throttle _throttleCreateTreeView = new Throttle(TimeSpan.FromMilliseconds(333));
 	
 	public OutputService(
 		DotNetBackgroundTaskApi dotNetBackgroundTaskApi,
-		DotNetCliOutputParser dotNetCliOutputParser)
+		DotNetCliOutputParser dotNetCliOutputParser,
+		CommonUtilityService commonUtilityService)
 	{
 		_dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
+		_commonUtilityService = commonUtilityService;
     }
     
     private OutputState _outputState = new();

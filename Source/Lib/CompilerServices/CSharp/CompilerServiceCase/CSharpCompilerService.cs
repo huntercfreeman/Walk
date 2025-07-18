@@ -40,12 +40,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     // Service dependencies
     private readonly TextEditorService _textEditorService;
-    private readonly CommonUtilityService _commonUtilityService;
     
-    public CSharpCompilerService(TextEditorService textEditorService, CommonUtilityService commonUtilityService)
+    public CSharpCompilerService(TextEditorService textEditorService)
     {
     	_textEditorService = textEditorService;
-    	_commonUtilityService = commonUtilityService;
     	
     	__CSharpBinder = new(_textEditorService);
     	
@@ -717,7 +715,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 						MenuOptionKind.Other,
 						onClickFunc: async () =>
 						{
-							await _commonUtilityService.SetClipboard(usingStatementText).ConfigureAwait(false);
+							await _textEditorService.CommonUtilityService.SetClipboard(usingStatementText).ConfigureAwait(false);
 						}));
 				}
 				else
@@ -1106,13 +1104,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             }
             else
             {
-                cursorDimensions = await _commonUtilityService.JsRuntimeCommonApi
+                cursorDimensions = await _textEditorService.CommonUtilityService.JsRuntimeCommonApi
         			.MeasureElementById(componentData.PrimaryCursorContentId)
         			.ConfigureAwait(false);
             }
     
-    		var resourceAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(modelModifier.PersistentState.ResourceUri.Value, false);
-    		var parentDirectoryAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
+    		var resourceAbsolutePath = _textEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(modelModifier.PersistentState.ResourceUri.Value, false);
+    		var parentDirectoryAbsolutePath = _textEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
     	
     		var siblingFileStringList = new List<(string ResourceUriValue, int ScopeIndexKey)>();
     		
@@ -1145,7 +1143,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     			var tuple = siblingFileStringList[i];
     			var file = tuple.ResourceUriValue;
     			
-    			var siblingAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(file, false);
+    			var siblingAbsolutePath = _textEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(file, false);
     			
     			menuOptionList.Add(new MenuOptionRecord(
     				siblingAbsolutePath.NameWithExtension,
@@ -1251,7 +1249,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         				await viewModelModifier.FocusAsync();
         			});
         
-                _commonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+                _textEditorService.CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
             }
 		}
     }

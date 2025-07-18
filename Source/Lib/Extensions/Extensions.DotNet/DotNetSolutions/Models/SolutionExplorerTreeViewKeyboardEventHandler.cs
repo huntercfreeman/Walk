@@ -106,7 +106,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 			treeViewNamespacePath.Item.AbsolutePath,
 			() =>
 			{
-				NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _commonUtilityService, TimeSpan.FromSeconds(7));
+				NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _textEditorService.CommonUtilityService, TimeSpan.FromSeconds(7));
 				return Task.CompletedTask;
 			});
 
@@ -143,7 +143,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 		else
 		{
 			var parentDirectory = treeViewNamespacePath.Item.AbsolutePath.ParentDirectory;
-			var parentDirectoryAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(parentDirectory, true);
+			var parentDirectoryAbsolutePath = _textEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(parentDirectory, true);
 
 			pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
 				parentDirectoryAbsolutePath,
@@ -178,7 +178,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 			treeViewNamespacePath.Item.AbsolutePath,
 			() =>
 			{
-				NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _commonUtilityService, TimeSpan.FromSeconds(7));
+				NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewNamespacePath.Item.AbsolutePath.NameWithExtension}", _textEditorService.CommonUtilityService, TimeSpan.FromSeconds(7));
 				SolutionExplorerContextMenu.ParentOfCutFile = parent;
 				return Task.CompletedTask;
 			});
@@ -214,11 +214,11 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 
 		await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-		_commonUtilityService.TreeView_ReRenderNodeAction(
+		_textEditorService.CommonUtilityService.TreeView_ReRenderNodeAction(
 			DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 			treeViewModel);
 
-		_commonUtilityService.TreeView_MoveUpAction(
+		_textEditorService.CommonUtilityService.TreeView_MoveUpAction(
 			DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 			false,
 			false);

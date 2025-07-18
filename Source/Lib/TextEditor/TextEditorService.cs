@@ -3591,10 +3591,15 @@ public sealed class TextEditorService
     /* Start ITextEditorRegistryWrap */
     private Dictionary<string, IDecorationMapper> _decorationMapperMap { get; } = new();
 
-    public IReadOnlyDictionary<string, IDecorationMapper> Map => _decorationMapperMap;
+    public IReadOnlyDictionary<string, IDecorationMapper> DecorationMapperMap => _decorationMapperMap;
 
     public TextEditorDecorationMapperDefault DefaultDecorationMapper { get; }
 
+    public void RegisterDecorationMapper(string fileExtensionNoPeriod, IDecorationMapper decorationMapper)
+    {
+        _decorationMapperMap.Add(fileExtensionNoPeriod, decorationMapper);
+    }
+    
     public IDecorationMapper GetDecorationMapper(string extensionNoPeriod)
     {
         if (_decorationMapperMap.TryGetValue(extensionNoPeriod, out var decorationMapper))
@@ -3608,6 +3613,11 @@ public sealed class TextEditorService
     public IReadOnlyList<ICompilerService> CompilerServiceList => _compilerServiceMap.Values.ToList();
 
     public CompilerServiceDoNothing CompilerServiceDoNothing { get; }
+    
+    public void RegisterCompilerService(string fileExtensionNoPeriod, ICompilerService compilerService)
+    {
+        _compilerServiceMap.Add(fileExtensionNoPeriod, compilerService);
+    }
     
     public ICompilerService GetCompilerService(string extensionNoPeriod)
     {
