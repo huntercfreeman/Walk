@@ -912,7 +912,7 @@ public sealed class TextEditorService
     #region CREATE_METHODS
     public void Model_RegisterCustom(TextEditorEditContext editContext, TextEditorModel model)
     {
-        _textEditorService.RegisterModel(editContext, model);
+        RegisterModel(editContext, model);
     }
 
     public void Model_RegisterTemplated(
@@ -930,9 +930,9 @@ public sealed class TextEditorService
             initialContent,
             _textEditorRegistryWrap.DecorationMapperRegistry.GetDecorationMapper(extensionNoPeriod),
             _textEditorRegistryWrap.CompilerServiceRegistry.GetCompilerService(extensionNoPeriod),
-            _textEditorService);
+            this);
 
-        _textEditorService.RegisterModel(editContext, model);
+        RegisterModel(editContext, model);
     }
     #endregion
 
@@ -940,7 +940,7 @@ public sealed class TextEditorService
     [Obsolete("TextEditorModel.PersistentState.ViewModelKeyList")]
     public List<TextEditorViewModel> Model_GetViewModelsOrEmpty(ResourceUri resourceUri)
     {
-    	return _textEditorService.TextEditorState.ModelGetViewModelsOrEmpty(resourceUri);
+    	return TextEditorState.ModelGetViewModelsOrEmpty(resourceUri);
     }
 
     public string? Model_GetAllText(ResourceUri resourceUri)
@@ -950,18 +950,18 @@ public sealed class TextEditorService
 
     public TextEditorModel? Model_GetOrDefault(ResourceUri resourceUri)
     {
-        return _textEditorService.TextEditorState.ModelGetOrDefault(
+        return TextEditorState.ModelGetOrDefault(
         	resourceUri);
     }
 
     public Dictionary<ResourceUri, TextEditorModel> Model_GetModels()
     {
-        return _textEditorService.TextEditorState.ModelGetModels();
+        return TextEditorState.ModelGetModels();
     }
     
     public int Model_GetModelsCount()
     {
-    	return _textEditorService.TextEditorState.ModelGetModelsCount();
+    	return TextEditorState.ModelGetModelsCount();
     }
     #endregion
 
@@ -1198,37 +1198,37 @@ public sealed class TextEditorService
     /// </summary>
     public void ViewModel_StopCursorBlinking()
     {
-        if (CursorShouldBlink)
+        if (ViewModel_CursorShouldBlink)
         {
-            CursorShouldBlink = false;
-            CursorShouldBlinkChanged?.Invoke();
+            ViewModel_CursorShouldBlink = false;
+            ViewModel_CursorShouldBlinkChanged?.Invoke();
         }
         
-        var localId = ++_stopCursorBlinkingId;
+        var localId = ++ViewModel_stopCursorBlinkingId;
         
-        if (!_intentStopCursorBlinking)
+        if (!ViewModel_intentStopCursorBlinking)
         {
-        	_intentStopCursorBlinking = true;
+        	ViewModel_intentStopCursorBlinking = true;
         	
-            _cursorShouldBlinkTask = Task.Run(async () =>
+            ViewModel_cursorShouldBlinkTask = Task.Run(async () =>
             {
                 while (true)
                 {
-                	var id = _stopCursorBlinkingId;
+                	var id = ViewModel_stopCursorBlinkingId;
                 
                     await Task
-                        .Delay(_blinkingCursorTaskDelay)
+                        .Delay(ViewModel_blinkingCursorTaskDelay)
                         .ConfigureAwait(false);
                         
-                    if (id == _stopCursorBlinkingId)
+                    if (id == ViewModel_stopCursorBlinkingId)
                     {
-	                    CursorShouldBlink = true;
-	                    CursorShouldBlinkChanged?.Invoke();
+	                    ViewModel_CursorShouldBlink = true;
+	                    ViewModel_CursorShouldBlinkChanged?.Invoke();
                     	break;
                     }
                 }
                 
-                _intentStopCursorBlinking = false;
+                ViewModel_intentStopCursorBlinking = false;
             });
         }
     }
@@ -1243,8 +1243,8 @@ public sealed class TextEditorService
 	    var viewModel = new TextEditorViewModel(
 			viewModelKey,
 			resourceUri,
-			_textEditorService,
-			_commonUtilityService,
+			this,
+			CommonUtilityService,
 			TextEditorVirtualizationResult.ConstructEmpty(),
 			new TextEditorDimensions(0, 0, 0, 0),
 			scrollLeft: 0,
@@ -1254,36 +1254,33 @@ public sealed class TextEditorService
 		    marginScrollHeight: 0,
 			category);
 			
-		_textEditorService.RegisterViewModel(editContext, viewModel);
+		RegisterViewModel(editContext, viewModel);
     }
     
     public void ViewModel_Register(TextEditorEditContext editContext, TextEditorViewModel viewModel)
     {
-        _textEditorService.RegisterViewModel(editContext, viewModel);
+        RegisterViewModel(editContext, viewModel);
     }
     #endregion
 
     #region READ_METHODS
     public TextEditorViewModel? ViewModel_GetOrDefault(Key<TextEditorViewModel> viewModelKey)
     {
-        return _textEditorService.TextEditorState.ViewModelGetOrDefault(
-            viewModelKey);
+        return TextEditorState.ViewModelGetOrDefault(viewModelKey);
     }
 
     public Dictionary<Key<TextEditorViewModel>, TextEditorViewModel> ViewModel_GetViewModels()
     {
-        return _textEditorService.TextEditorState.ViewModelGetViewModels();
+        return TextEditorState.ViewModelGetViewModels();
     }
 
     public TextEditorModel? ViewModel_GetModelOrDefault(Key<TextEditorViewModel> viewModelKey)
     {
-        var viewModel = _textEditorService.TextEditorState.ViewModelGetOrDefault(
-            viewModelKey);
-
+        var viewModel = TextEditorState.ViewModelGetOrDefault(viewModelKey);
         if (viewModel is null)
             return null;
 
-        return _textEditorService.Model_GetOrDefault(viewModel.PersistentState.ResourceUri);
+        return Model_GetOrDefault(viewModel.PersistentState.ResourceUri);
     }
 
     public string? ViewModel_GetAllText(Key<TextEditorViewModel> viewModelKey)
@@ -1297,7 +1294,7 @@ public sealed class TextEditorService
 
     public async ValueTask<TextEditorDimensions> ViewModel_GetTextEditorMeasurementsAsync(string elementId)
     {
-        return await _textEditorService.JsRuntimeTextEditorApi
+        return await JsRuntimeTextEditorApi
             .GetTextEditorMeasurementsInPixelsById(elementId)
             .ConfigureAwait(false);
     }
@@ -1311,9 +1308,7 @@ public sealed class TextEditorService
         double scrollTopInPixels)
     {
     	viewModel.ScrollWasModified = true;
-
 		viewModel.SetScrollLeft((int)Math.Floor(scrollLeftInPixels), viewModel.PersistentState.TextEditorDimensions);
-
 		viewModel.SetScrollTop((int)Math.Floor(scrollTopInPixels), viewModel.PersistentState.TextEditorDimensions);
     }
         
@@ -1323,7 +1318,6 @@ public sealed class TextEditorService
         double scrollLeftInPixels)
     {
     	viewModel.ScrollWasModified = true;
-
 		viewModel.SetScrollLeft((int)Math.Floor(scrollLeftInPixels), viewModel.PersistentState.TextEditorDimensions);
     }
     
@@ -1333,7 +1327,6 @@ public sealed class TextEditorService
         double scrollTopInPixels)
     {
     	viewModel.ScrollWasModified = true;
-
 		viewModel.SetScrollTop((int)Math.Floor(scrollTopInPixels), viewModel.PersistentState.TextEditorDimensions);
     }
 
@@ -1343,7 +1336,6 @@ public sealed class TextEditorService
         double pixels)
     {
         viewModel.ScrollWasModified = true;
-
         viewModel.MutateScrollTop((int)Math.Ceiling(pixels), viewModel.PersistentState.TextEditorDimensions);
     }
 
@@ -1353,7 +1345,6 @@ public sealed class TextEditorService
         double pixels)
     {
         viewModel.ScrollWasModified = true;
-
 		viewModel.MutateScrollLeft((int)Math.Ceiling(pixels), viewModel.PersistentState.TextEditorDimensions);
     }
 
@@ -1442,7 +1433,7 @@ public sealed class TextEditorService
 
     public ValueTask ViewModel_FocusPrimaryCursorAsync(string primaryCursorContentId)
     {
-        return _commonUtilityService.JsRuntimeCommonApi
+        return CommonUtilityService.JsRuntimeCommonApi
             .FocusHtmlElementById(primaryCursorContentId, preventScroll: true);
     }
 
@@ -2179,35 +2170,35 @@ public sealed class TextEditorService
 		else
 			componentData.LineIndexCache.UsedKeyHashSet.Clear();
 		
-		if (_textEditorService.SeenTabWidth != _textEditorService.Options_GetTextEditorOptionsState().Options.TabWidth)
+		if (SeenTabWidth != Options_GetTextEditorOptionsState().Options.TabWidth)
 		{
-			_textEditorService.SeenTabWidth = _textEditorService.Options_GetTextEditorOptionsState().Options.TabWidth;
-			_textEditorService.TabKeyOutput_ShowWhitespaceTrue = new string('-', _textEditorService.SeenTabWidth - 1) + '>';
+			SeenTabWidth = Options_GetTextEditorOptionsState().Options.TabWidth;
+			TabKeyOutput_ShowWhitespaceTrue = new string('-', SeenTabWidth - 1) + '>';
 			
 			var stringBuilder = new StringBuilder();
 			
-			for (int i = 0; i < _textEditorService.SeenTabWidth; i++)
+			for (int i = 0; i < SeenTabWidth; i++)
 			{
 				stringBuilder.Append("&nbsp;");
 			}
-			_textEditorService.TabKeyOutput_ShowWhitespaceFalse = stringBuilder.ToString();
+			TabKeyOutput_ShowWhitespaceFalse = stringBuilder.ToString();
 		}
 		
 		string tabKeyOutput;
 		string spaceKeyOutput;
 		
-		if (_textEditorService.Options_GetTextEditorOptionsState().Options.ShowWhitespace)
+		if (Options_GetTextEditorOptionsState().Options.ShowWhitespace)
 		{
-			tabKeyOutput = _textEditorService.TabKeyOutput_ShowWhitespaceTrue;
+			tabKeyOutput = TabKeyOutput_ShowWhitespaceTrue;
 			spaceKeyOutput = "·";
 		}
 		else
 		{
-			tabKeyOutput = _textEditorService.TabKeyOutput_ShowWhitespaceFalse;
+			tabKeyOutput = TabKeyOutput_ShowWhitespaceFalse;
 			spaceKeyOutput = "&nbsp;";
 		}
 		
-		_textEditorService.__StringBuilder.Clear();
+		__StringBuilder.Clear();
 		
 		var minLineWidthToTriggerVirtualizationExclusive = 2 * viewModel.PersistentState.TextEditorDimensions.Width;
 			
@@ -2456,32 +2447,32 @@ public sealed class TextEditorService
         		        switch (richCharacter.Value)
         		        {
         		            case '\t':
-        		                _textEditorService.__StringBuilder.Append(tabKeyOutput);
+        		                __StringBuilder.Append(tabKeyOutput);
         		                break;
         		            case ' ':
-        		                _textEditorService.__StringBuilder.Append(spaceKeyOutput);
+        		                __StringBuilder.Append(spaceKeyOutput);
         		                break;
         		            case '\r':
         		                break;
         		            case '\n':
         		                break;
         		            case '<':
-        		                _textEditorService.__StringBuilder.Append("&lt;");
+        		                __StringBuilder.Append("&lt;");
         		                break;
         		            case '>':
-        		                _textEditorService.__StringBuilder.Append("&gt;");
+        		                __StringBuilder.Append("&gt;");
         		                break;
         		            case '"':
-        		                _textEditorService.__StringBuilder.Append("&quot;");
+        		                __StringBuilder.Append("&quot;");
         		                break;
         		            case '\'':
-        		                _textEditorService.__StringBuilder.Append("&#39;");
+        		                __StringBuilder.Append("&#39;");
         		                break;
         		            case '&':
-        		                _textEditorService.__StringBuilder.Append("&amp;");
+        		                __StringBuilder.Append("&amp;");
         		                break;
         		            default:
-        		                _textEditorService.__StringBuilder.Append(richCharacter.Value);
+        		                __StringBuilder.Append(richCharacter.Value);
         		                break;
         		        }
         		        // END OF INLINING AppendTextEscaped
@@ -2490,39 +2481,39 @@ public sealed class TextEditorService
         		    {
         		    	viewModel.Virtualization.VirtualizationSpanList.Add(new TextEditorVirtualizationSpan(
         		    		cssClass: modelModifier.PersistentState.DecorationMapper.Map(currentDecorationByte),
-        		    		text: _textEditorService.__StringBuilder.ToString()));
-        		        _textEditorService.__StringBuilder.Clear();
+        		    		text: __StringBuilder.ToString()));
+        		        __StringBuilder.Clear();
         		        
         		        // AppendTextEscaped(textEditorService.__StringBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
         		        switch (richCharacter.Value)
         		        {
         		            case '\t':
-        		                _textEditorService.__StringBuilder.Append(tabKeyOutput);
+        		                __StringBuilder.Append(tabKeyOutput);
         		                break;
         		            case ' ':
-        		                _textEditorService.__StringBuilder.Append(spaceKeyOutput);
+        		                __StringBuilder.Append(spaceKeyOutput);
         		                break;
         		            case '\r':
         		                break;
         		            case '\n':
         		                break;
         		            case '<':
-        		                _textEditorService.__StringBuilder.Append("&lt;");
+        		                __StringBuilder.Append("&lt;");
         		                break;
         		            case '>':
-        		                _textEditorService.__StringBuilder.Append("&gt;");
+        		                __StringBuilder.Append("&gt;");
         		                break;
         		            case '"':
-        		                _textEditorService.__StringBuilder.Append("&quot;");
+        		                __StringBuilder.Append("&quot;");
         		                break;
         		            case '\'':
-        		                _textEditorService.__StringBuilder.Append("&#39;");
+        		                __StringBuilder.Append("&#39;");
         		                break;
         		            case '&':
-        		                _textEditorService.__StringBuilder.Append("&amp;");
+        		                __StringBuilder.Append("&amp;");
         		                break;
         		            default:
-        		                _textEditorService.__StringBuilder.Append(richCharacter.Value);
+        		                __StringBuilder.Append(richCharacter.Value);
         		                break;
         		        }
         		        // END OF INLINING AppendTextEscaped
@@ -2534,8 +2525,8 @@ public sealed class TextEditorService
         	    /* Final grouping of contiguous characters */
         		viewModel.Virtualization.VirtualizationSpanList.Add(new TextEditorVirtualizationSpan(
             		cssClass: modelModifier.PersistentState.DecorationMapper.Map(currentDecorationByte),
-            		text: _textEditorService.__StringBuilder.ToString()));
-        		_textEditorService.__StringBuilder.Clear();
+            		text: __StringBuilder.ToString()));
+        		__StringBuilder.Clear();
 
         		virtualizationSpan_EndExclusiveIndex = viewModel.Virtualization.VirtualizationSpanList.Count;
     		}
@@ -2582,7 +2573,7 @@ public sealed class TextEditorService
             	    virtualizedLineList[viewModel.Virtualization.Count - 1].LineCssStyle));
     		}
     		
-    	    _textEditorService.__StringBuilder.Clear();
+    	    __StringBuilder.Clear();
 		}
 		
 		viewModel.Virtualization.CreateUi();
@@ -2683,14 +2674,13 @@ public sealed class TextEditorService
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel)
     {
-        var options = _textEditorService.Options_GetOptions();
+        var options = Options_GetOptions();
         
         var componentData = viewModel.PersistentState.ComponentData;
         if (componentData is null)
         	return;
 		
-		var textEditorMeasurements = await _textEditorService.ViewModelApi
-			.GetTextEditorMeasurementsAsync(componentData.RowSectionElementId)
+		var textEditorMeasurements = await ViewModel_GetTextEditorMeasurementsAsync(componentData.RowSectionElementId)
 			.ConfigureAwait(false);
 
 		viewModel.PersistentState.CharAndLineMeasurements = options.CharAndLineMeasurements;
@@ -2714,13 +2704,12 @@ public sealed class TextEditorService
     #region DELETE_METHODS
     public void ViewModel_Dispose(TextEditorEditContext editContext, Key<TextEditorViewModel> viewModelKey)
     {
-        _textEditorService.DisposeViewModel(editContext, viewModelKey);
+        DisposeViewModel(editContext, viewModelKey);
     }
     #endregion
     /* End ViewModelApi */
     
     /* Start GroupApi */
-    // TODO: Is this lock used?
 	private readonly object Group_stateModificationLock = new();
 	
     public void Group_SetActiveViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
@@ -2746,15 +2735,15 @@ public sealed class TextEditorService
             Key<TextEditorViewModel>.Empty,
             new List<Key<TextEditorViewModel>>(),
             category.Value,
-            _textEditorService,
-            _commonUtilityService);
+            this,
+            CommonUtilityService);
 
         Register(textEditorGroup);
     }
 
     public TextEditorGroup? Group_GetOrDefault(Key<TextEditorGroup> textEditorGroupKey)
     {
-        return _textEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
+        return Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
             x => x.GroupKey == textEditorGroupKey);
     }
 
@@ -2767,7 +2756,7 @@ public sealed class TextEditorService
 
     public List<TextEditorGroup> Group_GetGroups()
     {
-        return _textEditorService.Group_GetTextEditorGroupState().GroupList;
+        return Group_GetTextEditorGroupState().GroupList;
     }
     
     // TextEditorGroupService.cs
@@ -2775,11 +2764,11 @@ public sealed class TextEditorService
 	
 	public event Action? Group_TextEditorGroupStateChanged;
 	
-	public TextEditorGroupState Group_GetTextEditorGroupState() => _textEditorGroupState;
+	public TextEditorGroupState Group_GetTextEditorGroupState() => Group_textEditorGroupState;
         
     public void Group_Register(TextEditorGroup group)
     {
-        lock (_stateModificationLock)
+        lock (Group_stateModificationLock)
         {
             var inState = GetTextEditorGroupState();
 
@@ -2792,7 +2781,7 @@ public sealed class TextEditorService
 			var outGroupList = new List<TextEditorGroup>(inState.GroupList);
             outGroupList.Add(group);
 
-            _textEditorGroupState = new TextEditorGroupState
+            Group_textEditorGroupState = new TextEditorGroupState
             {
                 GroupList = outGroupList
             };
@@ -2801,14 +2790,14 @@ public sealed class TextEditorService
         }
 
         finalize:
-		TextEditorGroupStateChanged?.Invoke();
+		Group_TextEditorGroupStateChanged?.Invoke();
 	}
 
     public void Group_AddViewModelToGroup(
         Key<TextEditorGroup> groupKey,
         Key<TextEditorViewModel> viewModelKey)
     {
-        lock (_stateModificationLock)
+        lock (Group_stateModificationLock)
         {
             var inState = GetTextEditorGroupState();
 
@@ -2845,7 +2834,7 @@ public sealed class TextEditorService
             var outGroupList = new List<TextEditorGroup>(inState.GroupList);
             outGroupList[inGroupIndex] = outGroup;
 
-            _textEditorGroupState = new TextEditorGroupState
+            Group_textEditorGroupState = new TextEditorGroupState
             {
                 GroupList = outGroupList
             };
@@ -2854,7 +2843,7 @@ public sealed class TextEditorService
 		}
 
 		finalize:
-		TextEditorGroupStateChanged?.Invoke();
+		Group_TextEditorGroupStateChanged?.Invoke();
 		PostScroll(groupKey, viewModelKey);
 	}
 
@@ -2862,7 +2851,7 @@ public sealed class TextEditorService
         Key<TextEditorGroup> groupKey,
         Key<TextEditorViewModel> viewModelKey)
     {
-        lock (_stateModificationLock)
+        lock (Group_stateModificationLock)
         {
             var inState = GetTextEditorGroupState();
 
@@ -2931,7 +2920,7 @@ public sealed class TextEditorService
                 ActiveViewModelKey = nextActiveTextEditorModelKey
             };
 
-            _textEditorGroupState = new TextEditorGroupState
+            Group_textEditorGroupState = new TextEditorGroupState
             {
                 GroupList = outGroupList
             };
@@ -2940,15 +2929,15 @@ public sealed class TextEditorService
 		}
 
 		finalize:
-		TextEditorGroupStateChanged?.Invoke();
-		PostScroll(groupKey, _textEditorService.Group_GetOrDefault(groupKey).ActiveViewModelKey);
+		Group_TextEditorGroupStateChanged?.Invoke();
+		PostScroll(groupKey, Group_GetOrDefault(groupKey).ActiveViewModelKey);
 	}
 
     public void Group_SetActiveViewModelOfGroup(
         Key<TextEditorGroup> groupKey,
         Key<TextEditorViewModel> viewModelKey)
     {
-        lock (_stateModificationLock)
+        lock (Group_stateModificationLock)
         {
             var inState = GetTextEditorGroupState();
 
@@ -2970,7 +2959,7 @@ public sealed class TextEditorService
                 ActiveViewModelKey = viewModelKey
             };
 
-            _textEditorGroupState = new TextEditorGroupState
+            Group_textEditorGroupState = new TextEditorGroupState
             {
                 GroupList = outGroupList
             };
@@ -2980,12 +2969,12 @@ public sealed class TextEditorService
 
 		finalize:
 		PostScroll(groupKey, viewModelKey);
-		TextEditorGroupStateChanged?.Invoke();
+		Group_TextEditorGroupStateChanged?.Invoke();
 	}
 
     public void Group_Dispose(Key<TextEditorGroup> groupKey)
     {
-        lock (_stateModificationLock)
+        lock (Group_stateModificationLock)
         {
             var inState = GetTextEditorGroupState();
 
@@ -2998,7 +2987,7 @@ public sealed class TextEditorService
 			var outGroupList = new List<TextEditorGroup>(inState.GroupList);
             outGroupList.Remove(inGroup);
 
-            _textEditorGroupState = new TextEditorGroupState
+            Group_textEditorGroupState = new TextEditorGroupState
             {
                 GroupList = outGroupList
             };
@@ -3007,14 +2996,14 @@ public sealed class TextEditorService
 		}
 
 		finalize:
-		TextEditorGroupStateChanged?.Invoke();
+		Group_TextEditorGroupStateChanged?.Invoke();
 	}
 
 	private void Group_PostScroll(
 		Key<TextEditorGroup> groupKey,
     	Key<TextEditorViewModel> viewModelKey)
 	{
-		_textEditorService.WorkerArbitrary.PostUnique(editContext =>
+		Group_textEditorService.WorkerArbitrary.PostUnique(editContext =>
 		{
 			var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
             if (viewModelModifier is null)
@@ -3139,19 +3128,19 @@ public sealed class TextEditorService
 
         if (inDiff is null)
         {
-            TextEditorDiffStateChanged?.Invoke();
+            Diff_TextEditorDiffStateChanged?.Invoke();
             return;
         }
 
 		var outDiffModelList = new List<TextEditorDiffModel>(inState.DiffModelList);
 		outDiffModelList.Remove(inDiff);
 
-		_textEditorDiffState = new TextEditorDiffState
+		Diff_textEditorDiffState = new TextEditorDiffState
         {
             DiffModelList = outDiffModelList
         };
         
-        TextEditorDiffStateChanged?.Invoke();
+        Diff_TextEditorDiffStateChanged?.Invoke();
         return;
     }
 
@@ -3167,7 +3156,7 @@ public sealed class TextEditorService
 
         if (inDiff is not null)
         {
-            TextEditorDiffStateChanged?.Invoke();
+            Diff_TextEditorDiffStateChanged?.Invoke();
             return;
         }
 
@@ -3179,12 +3168,12 @@ public sealed class TextEditorService
         var outDiffModelList = new List<TextEditorDiffModel>(inState.DiffModelList);
         outDiffModelList.Add(diff);
 
-        _textEditorDiffState = new TextEditorDiffState
+        Diff_textEditorDiffState = new TextEditorDiffState
         {
             DiffModelList = outDiffModelList
         };
         
-        TextEditorDiffStateChanged?.Invoke();
+        Diff_TextEditorDiffStateChanged?.Invoke();
         return;
     }
     /* End DiffApi */
@@ -3226,12 +3215,12 @@ public sealed class TextEditorService
 
     public TextEditorOptions Options_GetOptions()
     {
-        return _textEditorService.Options_GetTextEditorOptionsState().Options;
+        return Options_GetTextEditorOptionsState().Options;
     }
     
     public void Options_InvokeTextEditorWrapperCssStateChanged()
     {
-        TextEditorWrapperCssStateChanged?.Invoke();
+        Options_TextEditorWrapperCssStateChanged?.Invoke();
     }
 
     public void Options_ShowSettingsDialog(bool? isResizableOverride = null, string? cssClassString = null)
@@ -3244,33 +3233,33 @@ public sealed class TextEditorService
             _textEditorService.TextEditorConfig.SettingsDialogConfig.ComponentRendererType,
             null,
             cssClassString,
-            isResizableOverride ?? _textEditorService.TextEditorConfig.SettingsDialogConfig.ComponentIsResizable,
+            isResizableOverride ?? TextEditorConfig.SettingsDialogConfig.ComponentIsResizable,
             null);
 
-        _commonUtilityService.Dialog_ReduceRegisterAction(settingsDialog);
+        CommonUtilityService.Dialog_ReduceRegisterAction(settingsDialog);
     }
 
     public void Options_ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null)
     {
         // TODO: determine the actively focused element at time of invocation,
         //       then restore focus to that element when this dialog is closed.
-        _findAllDialog ??= new DialogViewModel(
+        Options_findAllDialog ??= new DialogViewModel(
             Key<IDynamicViewModel>.NewKey(),
             "Find All",
-            _textEditorService.TextEditorConfig.FindAllDialogConfig.ComponentRendererType,
+            TextEditorConfig.FindAllDialogConfig.ComponentRendererType,
             null,
             cssClassString,
-            isResizableOverride ?? _textEditorService.TextEditorConfig.FindAllDialogConfig.ComponentIsResizable,
+            isResizableOverride ?? TextEditorConfig.FindAllDialogConfig.ComponentIsResizable,
             null);
 
-        _commonUtilityService.Dialog_ReduceRegisterAction(_findAllDialog);
+        CommonUtilityService.Dialog_ReduceRegisterAction(Options_findAllDialog);
     }
 
     public void Options_SetTheme(ThemeRecord theme, bool updateStorage = true)
     {
     	var inState = GetTextEditorOptionsState();
     
-        _textEditorOptionsState = new TextEditorOptionsState
+        Options_textEditorOptionsState = new TextEditorOptionsState
         {
             Options = inState.Options with
             {
@@ -3287,13 +3276,13 @@ public sealed class TextEditorService
 		//
 		// Can probably use 'theme' variable here but
 		// I don't want to touch that right now -- incase there are unexpected consequences.
-        var usingThemeCssClassString = _commonUtilityService.GetThemeState().ThemeList
+        var usingThemeCssClassString = CommonUtilityService.GetThemeState().ThemeList
         	.FirstOrDefault(x => x.Key == GetTextEditorOptionsState().Options.CommonOptions.ThemeKey)
         	?.CssClassString
             ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
-        _textEditorService.ThemeCssClassString = usingThemeCssClassString;
+        ThemeCssClassString = usingThemeCssClassString;
         
-        StaticStateChanged?.Invoke();
+        Options_StaticStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -3303,7 +3292,7 @@ public sealed class TextEditorService
     {
     	var inState = GetTextEditorOptionsState();
     
-        _textEditorOptionsState = new TextEditorOptionsState
+        Options_textEditorOptionsState = new TextEditorOptionsState
         {
             Options = inState.Options with
             {
@@ -3312,7 +3301,7 @@ public sealed class TextEditorService
             },
         };
         // ShowWhitespace needs virtualization result to be re-calculated.
-        MeasuredStateChanged?.Invoke();
+        Options_MeasuredStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -3322,7 +3311,7 @@ public sealed class TextEditorService
     {
     	var inState = GetTextEditorOptionsState();
     
-		_textEditorOptionsState = new TextEditorOptionsState
+		Options_textEditorOptionsState = new TextEditorOptionsState
         {
             Options = inState.Options with
             {
@@ -3330,7 +3319,7 @@ public sealed class TextEditorService
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        StaticStateChanged?.Invoke();
+        Options_StaticStateChanged?.Invoke();
         
         if (updateStorage)
             WriteToStorage();
@@ -3340,7 +3329,7 @@ public sealed class TextEditorService
     {
     	var inState = GetTextEditorOptionsState();
     
-		_textEditorOptionsState = new TextEditorOptionsState
+		Options_textEditorOptionsState = new TextEditorOptionsState
         {
             Options = inState.Options with
             {
@@ -3348,7 +3337,7 @@ public sealed class TextEditorService
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        StaticStateChanged?.Invoke();
+        Options_StaticStateChanged?.Invoke();
         
         if (updateStorage)
             WriteToStorage();
@@ -3358,7 +3347,7 @@ public sealed class TextEditorService
     {
     	var inState = GetTextEditorOptionsState();
     
-		_textEditorOptionsState = new TextEditorOptionsState
+		Options_textEditorOptionsState = new TextEditorOptionsState
         {
             Options = inState.Options with
             {
@@ -3366,7 +3355,7 @@ public sealed class TextEditorService
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        StaticStateChanged?.Invoke();
+        Options_StaticStateChanged?.Invoke();
         
         if (updateStorage)
             WriteToStorage();
@@ -3374,12 +3363,12 @@ public sealed class TextEditorService
     
     public void Options_SetTabWidth(int tabWidth, bool updateStorage = true)
     {
-    	if (tabWidth < TAB_WIDTH_MIN || tabWidth > TAB_WIDTH_MAX)
+    	if (tabWidth < Options_TAB_WIDTH_MIN || tabWidth > Options_TAB_WIDTH_MAX)
     		return;
     
     	var inState = GetTextEditorOptionsState();
     
-		_textEditorOptionsState = new TextEditorOptionsState
+		Options_textEditorOptionsState = new TextEditorOptionsState
         {
             Options = inState.Options with
             {
@@ -3387,7 +3376,7 @@ public sealed class TextEditorService
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        MeasuredStateChanged?.Invoke();
+        Options_MeasuredStateChanged?.Invoke();
         
         if (updateStorage)
             WriteToStorage();
@@ -3397,7 +3386,7 @@ public sealed class TextEditorService
     {
     	var inState = GetTextEditorOptionsState();
     
-        _textEditorOptionsState = new TextEditorOptionsState
+        Options_textEditorOptionsState = new TextEditorOptionsState
         {
             Options = inState.Options with
             {
@@ -3405,7 +3394,7 @@ public sealed class TextEditorService
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        StaticStateChanged?.Invoke();
+        Options_StaticStateChanged?.Invoke();
 
         /*var activeKeymap = _textEditorService.Options_GetTextEditorOptionsState().Options.Keymap;
 
@@ -3424,7 +3413,7 @@ public sealed class TextEditorService
     {
     	var inState = GetTextEditorOptionsState();
     
-        _textEditorOptionsState = new TextEditorOptionsState
+        Options_textEditorOptionsState = new TextEditorOptionsState
         {
             Options = inState.Options with
             {
@@ -3432,7 +3421,7 @@ public sealed class TextEditorService
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        StaticStateChanged?.Invoke();
+        Options_StaticStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -3442,7 +3431,7 @@ public sealed class TextEditorService
     {
     	var inState = GetTextEditorOptionsState();
     
-        _textEditorOptionsState = new TextEditorOptionsState
+        Options_textEditorOptionsState = new TextEditorOptionsState
         {
             Options = inState.Options with
             {
@@ -3453,7 +3442,7 @@ public sealed class TextEditorService
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        NeedsMeasured?.Invoke();
+        Options_NeedsMeasured?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -3463,7 +3452,7 @@ public sealed class TextEditorService
     {
     	var inState = GetTextEditorOptionsState();
     
-        _textEditorOptionsState = new TextEditorOptionsState
+        Options_textEditorOptionsState = new TextEditorOptionsState
         {
             Options = inState.Options with
             {
@@ -3474,7 +3463,7 @@ public sealed class TextEditorService
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        NeedsMeasured?.Invoke();
+        Options_NeedsMeasured?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -3484,7 +3473,7 @@ public sealed class TextEditorService
     {
     	var inState = GetTextEditorOptionsState();
 
-        _textEditorOptionsState = new TextEditorOptionsState
+        Options_textEditorOptionsState = new TextEditorOptionsState
         {
             Options = inState.Options with
             {
@@ -3492,7 +3481,7 @@ public sealed class TextEditorService
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        StaticStateChanged?.Invoke();
+        Options_StaticStateChanged?.Invoke();
 
         if (updateStorage)
             WriteToStorage();
@@ -3502,21 +3491,21 @@ public sealed class TextEditorService
     {
     	var inState = GetTextEditorOptionsState();
     
-        _textEditorOptionsState = new TextEditorOptionsState
+        Options_textEditorOptionsState = new TextEditorOptionsState
         {
             Options = inState.Options with
             {
                 RenderStateKey = renderStateKey
             },
         };
-        StaticStateChanged?.Invoke();
+        Options_StaticStateChanged?.Invoke();
     }
     
     public void Options_SetCharAndLineMeasurements(TextEditorEditContext editContext, CharAndLineMeasurements charAndLineMeasurements)
     {
     	var inState = GetTextEditorOptionsState();
 
-        _textEditorOptionsState = new TextEditorOptionsState
+        Options_textEditorOptionsState = new TextEditorOptionsState
         {
             Options = inState.Options with
             {
@@ -3525,22 +3514,22 @@ public sealed class TextEditorService
             },
         };
         
-    	MeasuredStateChanged?.Invoke();
+    	Options_MeasuredStateChanged?.Invoke();
     }
 
     public void Options_WriteToStorage()
     {
-        _commonUtilityService.Enqueue(new CommonWorkArgs
+        CommonUtilityService.Enqueue(new CommonWorkArgs
         {
     		WorkKind = CommonWorkKind.WriteToLocalStorage,
-        	WriteToLocalStorage_Key = _textEditorService.StorageKey,
-            WriteToLocalStorage_Value = new TextEditorOptionsJsonDto(_textEditorService.OptionsApi.GetTextEditorOptionsState().Options),
+        	WriteToLocalStorage_Key = StorageKey,
+            WriteToLocalStorage_Value = new TextEditorOptionsJsonDto(Options_GetTextEditorOptionsState().Options),
         });
     }
 
     public async Task Options_SetFromLocalStorageAsync()
     {
-        var optionsJsonString = await _commonUtilityService.Storage_GetValue(_textEditorService.StorageKey).ConfigureAwait(false) as string;
+        var optionsJsonString = await CommonUtilityService.Storage_GetValue(StorageKey).ConfigureAwait(false) as string;
 
         if (string.IsNullOrWhiteSpace(optionsJsonString))
             return;
@@ -3552,7 +3541,7 @@ public sealed class TextEditorService
 
         if (optionsJson.CommonOptionsJsonDto?.ThemeKey is not null)
         {
-            var matchedTheme = _textEditorService.CommonUtilityService.GetThemeState().ThemeList.FirstOrDefault(
+            var matchedTheme = CommonUtilityService.GetThemeState().ThemeList.FirstOrDefault(
                 x => x.Key == optionsJson.CommonOptionsJsonDto.ThemeKey);
 
             SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false);
