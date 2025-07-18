@@ -95,9 +95,7 @@ public class CSharpBinder
         {
         	for (int i = namespaceGroupNodeKvp.Value.NamespaceStatementNodeList.Count - 1; i >= 0; i--)
         	{
-        		var x = namespaceGroupNodeKvp.Value.NamespaceStatementNodeList[i];
-        		
-        		if (x.ResourceUri == resourceUri)
+        		if (namespaceGroupNodeKvp.Value.NamespaceStatementNodeList[i].ResourceUri == resourceUri)
         			namespaceGroupNodeKvp.Value.NamespaceStatementNodeList.RemoveAt(i);
         	}
         }
@@ -134,14 +132,11 @@ public class CSharpBinder
     {
         foreach (var namespaceGroupNodeKvp in _namespaceGroupMap)
         {
-            var keepStatements = namespaceGroupNodeKvp.Value.NamespaceStatementNodeList
-                .Where(x => x.ResourceUri != resourceUri)
-                .ToList();
-
-            _namespaceGroupMap[namespaceGroupNodeKvp.Key] =
-                new NamespaceGroup(
-                    namespaceGroupNodeKvp.Value.NamespaceString,
-                    keepStatements);
+        	for (int i = namespaceGroupNodeKvp.Value.NamespaceStatementNodeList.Count - 1; i >= 0; i--)
+        	{
+        		if (namespaceGroupNodeKvp.Value.NamespaceStatementNodeList[i].ResourceUri == resourceUri)
+        			namespaceGroupNodeKvp.Value.NamespaceStatementNodeList.RemoveAt(i);
+        	}
         }
 
 		__CompilationUnitMap.Remove(resourceUri);
