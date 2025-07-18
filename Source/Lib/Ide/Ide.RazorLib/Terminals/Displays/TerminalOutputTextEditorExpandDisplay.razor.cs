@@ -245,7 +245,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 			            EndExclusiveIndex: lineInformation.Position_StartInclusiveIndex + 1,
 			            DecorationByte: 0);
 			        
-			        TextEditorService.ViewModelApi.ScrollIntoView(
+			        TextEditorService.ViewModel_ScrollIntoView(
 			            editContext,
 			            modelModifier,
 			            viewModelModifier,
@@ -277,11 +277,11 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 					terminalResource.CompilationUnit.ManualSymbolList.Clear();
 					terminalResource.CompilationUnit.ManualSymbolList.AddRange(outputFormatted.SymbolList);
 
-					editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+					editContext.TextEditorService.Model_ApplySyntaxHighlighting(
 						editContext,
 						modelModifier);
 						
-					editContext.TextEditorService.ModelApi.ApplyDecorationRange(
+					editContext.TextEditorService.Model_ApplyDecorationRange(
 						editContext,
 						modelModifier,
 						outputFormatted.TextSpanList);

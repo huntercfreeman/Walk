@@ -623,7 +623,7 @@ public class TextEditorVirtualizationResult
 		}
     
     	InlineUiStyleList = new();
-        var tabWidth = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetOptions().TabWidth;
+        var tabWidth = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.Options_GetOptions().TabWidth;
     	
     	for (int inlineUiIndex = 0; inlineUiIndex < ViewModel.PersistentState.InlineUiList.Count; inlineUiIndex++)
     	{
@@ -671,7 +671,7 @@ public class TextEditorVirtualizationResult
     public void GetCursorAndCaretRowStyleCss()
     {
     	var shouldAppearAfterCollapsePoint = false; // CursorIsOnHiddenLine;
-    	var tabWidth = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetOptions().TabWidth;
+    	var tabWidth = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.Options_GetOptions().TabWidth;
     	
     	double leftInPixels = ViewModel.PersistentState.GutterWidth;
     	var topInPixelsInvariantCulture = string.Empty;
@@ -896,7 +896,7 @@ public class TextEditorVirtualizationResult
             return string.Empty;
 
         var line = Model.GetLineInformation(lineIndex);
-        var tabWidth = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetOptions().TabWidth;
+        var tabWidth = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.Options_GetOptions().TabWidth;
 
         var selectionStartingColumnIndex = 0;
         var selectionEndingColumnIndex = line.Position_EndExclusiveIndex - 1;
@@ -1189,7 +1189,7 @@ public class TextEditorVirtualizationResult
             return string.Empty;
 
         var line = Model.GetLineInformation(lineIndex);
-        var tabWidth = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetOptions().TabWidth;
+        var tabWidth = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.Options_GetOptions().TabWidth;
 
         var startingColumnIndex = 0;
         var endingColumnIndex = line.Position_EndExclusiveIndex - 1;

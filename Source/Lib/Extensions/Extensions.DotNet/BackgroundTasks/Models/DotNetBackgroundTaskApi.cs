@@ -785,7 +785,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
 		var resourceUri = new ResourceUri(solutionAbsolutePath.Value);
 
-		if (_textEditorService.ModelApi.GetOrDefault(resourceUri) is null)
+		if (_textEditorService.Model_GetOrDefault(resourceUri) is null)
 		{
 			_textEditorService.WorkerArbitrary.PostUnique(editContext =>
 			{
@@ -794,7 +794,7 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 				if (dotNetSolutionAbsolutePathString.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
 					extension = ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X;
 			
-				_textEditorService.ModelApi.RegisterTemplated(
+				_textEditorService.Model_RegisterTemplated(
 					editContext,
 					extension,
 					resourceUri,

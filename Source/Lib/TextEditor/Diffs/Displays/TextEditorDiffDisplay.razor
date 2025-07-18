@@ -4,7 +4,7 @@
      style="@CssStyleString">
 
     @{
-        var textEditorDiff = TextEditorService.DiffApi.GetTextEditorDiffState().DiffModelList.FirstOrDefault(
+        var textEditorDiff = TextEditorService.Diff_GetTextEditorDiffState().DiffModelList.FirstOrDefault(
             x => x.DiffKey == TextEditorDiffKey);
     }
 

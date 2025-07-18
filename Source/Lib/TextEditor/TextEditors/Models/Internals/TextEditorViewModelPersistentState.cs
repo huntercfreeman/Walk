@@ -452,7 +452,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 				// It is the same issue as putting a 'loading...' icon or text
 				// for an asynchronous event, but that event finishes in sub 200ms so the user
 				// sees a "flicker" of the 'loading...' text and it just is disorienting to see.
-				editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+				editContext.TextEditorService.Model_ApplySyntaxHighlighting(
 					editContext,
 					modelModifier);
 				
@@ -490,8 +490,8 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 
 	public void PostScrollAndRemeasure(bool useExtraEvent = true)
 	{
-		var model = TextEditorService.ModelApi.GetOrDefault(ResourceUri);
-        var viewModel = TextEditorService.ViewModelApi.GetOrDefault(ViewModelKey);
+		var model = TextEditorService.Model_GetOrDefault(ResourceUri);
+        var viewModel = TextEditorService.ViewModel_GetOrDefault(ViewModelKey);
 
         if (model is null || viewModel is null)
         {
@@ -513,12 +513,11 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
             if (componentData is null)
             	return;
 			
-			var textEditorDimensions = await TextEditorService.ViewModelApi
-				.GetTextEditorMeasurementsAsync(componentData.RowSectionElementId)
+			var textEditorDimensions = await TextEditorService.ViewModel_GetTextEditorMeasurementsAsync(componentData.RowSectionElementId)
 				.ConfigureAwait(false);
 	
 			viewModelModifier.PersistentState.TextEditorDimensions = textEditorDimensions;
-			viewModelModifier.PersistentState.CharAndLineMeasurements = TextEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
+			viewModelModifier.PersistentState.CharAndLineMeasurements = TextEditorService.Options_GetOptions().CharAndLineMeasurements;
 			viewModelModifier.Virtualization.ShouldCalculateVirtualizationResult = true;
 			
 			// TODO: Where does the method: 'ValidateMaximumScrollLeftAndScrollTop(...)' belong?
@@ -558,7 +557,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     public string Title => GetTitle();
 
 	public string TitleVerbose =>
-		TextEditorService.ViewModelApi.GetModelOrDefault(ViewModelKey)?.PersistentState.ResourceUri.Value
+		TextEditorService.ViewModel_GetModelOrDefault(ViewModelKey)?.PersistentState.ResourceUri.Value
 			?? Title;
 
     public Type ComponentType { get; }
@@ -598,8 +597,8 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         if (TextEditorService is null)
             return "TextEditorService was null";
 
-        var model = TextEditorService.ViewModelApi.GetModelOrDefault(ViewModelKey);
-        var viewModel = TextEditorService.ViewModelApi.GetOrDefault(ViewModelKey);
+        var model = TextEditorService.ViewModel_GetModelOrDefault(ViewModelKey);
+        var viewModel = TextEditorService.ViewModel_GetOrDefault(ViewModelKey);
 
         if (viewModel is null)
         {
@@ -645,7 +644,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 
         var measuredHtmlElementDimensions = await CommonUtilityService.JsRuntimeCommonApi
             .MeasureElementById(
-                $"di_te_group_{TextEditorService.GroupApi.GetTextEditorGroupState().GroupList.Single().GroupKey.Guid}")
+                $"di_te_group_{TextEditorService.Group_GetTextEditorGroupState().GroupList.Single().GroupKey.Guid}")
             .ConfigureAwait(false);
 
         measuredHtmlElementDimensions = measuredHtmlElementDimensions with
@@ -691,7 +690,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 
         dropzoneList.Add(new TextEditorGroupDropzone(
             measuredHtmlElementDimensions,
-            TextEditorService.GroupApi.GetTextEditorGroupState().GroupList.Single().GroupKey,
+            TextEditorService.Group_GetTextEditorGroupState().GroupList.Single().GroupKey,
             elementDimensions));
 
         DropzoneList = dropzoneList;
@@ -711,7 +710,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                 {
                     if (localTextEditorGroup is not null)
                     {
-                        TextEditorService.GroupApi.RemoveViewModel(
+                        TextEditorService.Group_RemoveViewModel(
                             localTextEditorGroup.GroupKey,
                             ViewModelKey);
                     }
@@ -748,7 +747,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                 {
                     if (localTextEditorGroup is not null)
                     {
-                        TextEditorService.GroupApi.RemoveViewModel(
+                        TextEditorService.Group_RemoveViewModel(
                             localTextEditorGroup.GroupKey,
                             ViewModelKey);
                     }
@@ -765,7 +764,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                     TabGroup = null;
                 }
 
-                TextEditorService.GroupApi.AddViewModel(
+                TextEditorService.Group_AddViewModel(
                     textEditorGroupDropzone.TextEditorGroupKey,
                     ViewModelKey);
             }
@@ -780,7 +779,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
             {
                 if (localTextEditorGroup is not null)
                 {
-                    TextEditorService.GroupApi.RemoveViewModel(
+                    TextEditorService.Group_RemoveViewModel(
                         localTextEditorGroup.GroupKey,
                         ViewModelKey);
                 }

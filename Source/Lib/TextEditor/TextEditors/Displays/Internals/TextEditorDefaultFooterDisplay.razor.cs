@@ -54,7 +54,7 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
                 	if (modelModifier is null)
                 		return ValueTask.CompletedTask;
                 	
-                	TextEditorService.ModelApi.SetUsingLineEndKind(
+                	TextEditorService.Model_SetUsingLineEndKind(
                 		editContext,
 	                    modelModifier,
 	                    rowEndingKind);
@@ -66,8 +66,8 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
 	
 	protected override void OnInitialized()
     {
-        TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
-        TextEditorService.OptionsApi.TextEditorWrapperCssStateChanged += OnTextEditorWrapperCssStateChanged;
+        TextEditorService.ViewModel_CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
+        TextEditorService.Options_TextEditorWrapperCssStateChanged += OnTextEditorWrapperCssStateChanged;
         OnCursorShouldBlinkChanged();
     }
     
@@ -211,7 +211,7 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
 
 	public void Dispose()
     {
-    	TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
-    	TextEditorService.OptionsApi.TextEditorWrapperCssStateChanged -= OnTextEditorWrapperCssStateChanged;
+    	TextEditorService.ViewModel_CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
+    	TextEditorService.Options_TextEditorWrapperCssStateChanged -= OnTextEditorWrapperCssStateChanged;
     }
 }

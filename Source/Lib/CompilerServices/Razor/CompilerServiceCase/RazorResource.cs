@@ -36,7 +36,7 @@ public class RazorResource : ICompilerServiceResource
 
         var symbols = localRazorSyntaxTree.SemanticResultRazor.CompilationUnit.SymbolList;
 
-        var originalText = _textEditorService.ModelApi.GetAllText(ResourceUri);
+        var originalText = _textEditorService.Model_GetAllText(ResourceUri);
 
         if (originalText is null)
             return Array.Empty<Symbol>();

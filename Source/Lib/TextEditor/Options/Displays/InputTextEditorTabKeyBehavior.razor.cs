@@ -13,13 +13,13 @@ public partial class InputTextEditorTabKeyBehavior : ComponentBase, IDisposable
 
     public bool TabKeyBehavior
     {
-        get => TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.TabKeyBehavior;
-        set => TextEditorService.OptionsApi.SetTabKeyBehavior(value);
+        get => TextEditorService.Options_GetTextEditorOptionsState().Options.TabKeyBehavior;
+        set => TextEditorService.Options_SetTabKeyBehavior(value);
     }
     
     protected override void OnInitialized()
     {
-    	TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
     }
     
     private async void TextEditorOptionsStateWrapOnStateChanged()
@@ -29,6 +29,6 @@ public partial class InputTextEditorTabKeyBehavior : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TextEditorService.OptionsApi.StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.Options_StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
     }
 }

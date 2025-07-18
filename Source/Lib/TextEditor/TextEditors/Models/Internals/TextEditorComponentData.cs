@@ -78,7 +78,7 @@ public sealed class TextEditorComponentData
     public string CursorCssClassBlinkAnimationOff { get; set; }
     
     // _ = "di_te_text-editor-cursor " + BlinkAnimationCssClass + " " + _activeRenderBatch.Options.Keymap.GetCursorCssClassString();
-	public string BlinkAnimationCssClass => TextEditorViewModelSlimDisplay.TextEditorService.ViewModelApi.CursorShouldBlink
+	public string BlinkAnimationCssClass => TextEditorViewModelSlimDisplay.TextEditorService.ViewModel_CursorShouldBlink
         ? CursorCssClassBlinkAnimationOn
         : CursorCssClassBlinkAnimationOff;
 	
@@ -149,7 +149,7 @@ public sealed class TextEditorComponentData
     	
     	stringBuilder.Clear();
     	
-    	var options = TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
+    	var options = TextEditorViewModelSlimDisplay.TextEditorService.Options_GetTextEditorOptionsState().Options;
     	
     	var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
     	if (options.CommonOptions?.FontSizeInPixels is not null)
@@ -173,7 +173,7 @@ public sealed class TextEditorComponentData
     	stringBuilder.Append(" ");
     	// string GetGlobalHeightInPixelsStyling()
 	    {
-	        var heightInPixels = TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.TextEditorHeightInPixels;
+	        var heightInPixels = TextEditorViewModelSlimDisplay.TextEditorService.Options_GetTextEditorOptionsState().Options.TextEditorHeightInPixels;
 	
 	        if (heightInPixels is not null)
 	        {
@@ -211,7 +211,7 @@ public sealed class TextEditorComponentData
     	
     	TextEditorViewModelSlimDisplay.SetRenderBatchConstants();
     	
-    	TextEditorViewModelSlimDisplay.TextEditorService.OptionsApi.InvokeTextEditorWrapperCssStateChanged();
+    	TextEditorViewModelSlimDisplay.TextEditorService.Options_InvokeTextEditorWrapperCssStateChanged();
     }
     
     public void ThrottleApplySyntaxHighlighting(TextEditorModel modelModifier)

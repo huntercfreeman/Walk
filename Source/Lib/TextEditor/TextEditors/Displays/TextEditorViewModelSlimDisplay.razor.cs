@@ -93,7 +93,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 	
 	private Func<TextEditorEventArgs, MouseEventArgs, Task>? _dragEventHandler = null;
 	
-	public bool GlobalShowNewlines => TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.ShowNewlines;
+	public bool GlobalShowNewlines => TextEditorService.Options_GetTextEditorOptionsState().Options.ShowNewlines;
 	
     private readonly CancellationTokenSource _onMouseMoveCancellationTokenSource = new();
     private TextEditorEventArgs _onMouseMoveMouseEventArgsStruct = new TextEditorEventArgs
@@ -130,9 +130,9 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     	CssOnInitialized();
   	  
         TextEditorService.TextEditorStateChanged += GeneralOnStateChangedEventHandler;
-        TextEditorService.OptionsApi.StaticStateChanged += OnOptionStaticStateChanged;
-        TextEditorService.OptionsApi.MeasuredStateChanged += OnOptionMeasuredStateChanged;
-        TextEditorService.ViewModelApi.CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
+        TextEditorService.Options_StaticStateChanged += OnOptionStaticStateChanged;
+        TextEditorService.Options_MeasuredStateChanged += OnOptionMeasuredStateChanged;
+        TextEditorService.ViewModel_CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
         CommonUtilityService.DragStateChanged += DragStateWrapOnStateChanged;
     }
     
@@ -249,7 +249,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 		_componentData = new(
 			_textEditorHtmlElementId,
 			ViewModelDisplayOptions,
-			TextEditorService.OptionsApi.GetTextEditorOptionsState().Options,
+			TextEditorService.Options_GetTextEditorOptionsState().Options,
 			this);
 			
 		SetRenderBatchConstants();
@@ -257,7 +257,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     public void SetRenderBatchConstants()
     {
-    	var textEditorOptions = TextEditorService.OptionsApi.GetTextEditorOptionsState().Options;
+    	var textEditorOptions = TextEditorService.Options_GetTextEditorOptionsState().Options;
 			
 		string fontFamily;
 		if (!string.IsNullOrWhiteSpace(textEditorOptions.CommonOptions?.FontFamily))
@@ -623,12 +623,12 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			if (viewModelModifier is null)
 				return ValueTask.CompletedTask;
 			
-            TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
+            TextEditorService.ViewModel_MutateScrollHorizontalPosition(
             	editContext,
 		        viewModelModifier,
             	diffX);
 
-            TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+            TextEditorService.ViewModel_MutateScrollVerticalPosition(
             	editContext,
 		        viewModelModifier,
             	diffY);
@@ -684,7 +684,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			if (viewModelModifier is null)
 				return ValueTask.CompletedTask;
 
-        	return TextEditorService.ViewModelApi.RemeasureAsync(
+        	return TextEditorService.ViewModel_RemeasureAsync(
         		editContext,
 		        viewModelModifier);
         });
@@ -706,7 +706,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			if (modelModifier is null || viewModelModifier is null)
 				return ValueTask.CompletedTask;
         	
-        	viewModelModifier.PersistentState.CharAndLineMeasurements = TextEditorService.OptionsApi.GetOptions().CharAndLineMeasurements;
+        	viewModelModifier.PersistentState.CharAndLineMeasurements = TextEditorService.Options_GetOptions().CharAndLineMeasurements;
     	    viewModelModifier.Virtualization.ShouldCalculateVirtualizationResult = true;
     	    _componentData.InlineUiWidthStyleCssStringIsOutdated = true;
     	    
@@ -890,9 +890,9 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     	// TextEditorViewModelDisplay.razor.cs
         TextEditorService.TextEditorStateChanged -= GeneralOnStateChangedEventHandler;
-        TextEditorService.OptionsApi.StaticStateChanged -= OnOptionStaticStateChanged;
-        TextEditorService.OptionsApi.MeasuredStateChanged -= OnOptionMeasuredStateChanged;
-		TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
+        TextEditorService.Options_StaticStateChanged -= OnOptionStaticStateChanged;
+        TextEditorService.Options_MeasuredStateChanged -= OnOptionMeasuredStateChanged;
+		TextEditorService.ViewModel_CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
 
 		var linkedViewModel = _linkedViewModel;
         if (linkedViewModel is not null)

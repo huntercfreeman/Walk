@@ -13,13 +13,13 @@ public partial class InputTextEditorUseMonospaceOptimizations : ComponentBase, I
 
     public bool UseMonospaceOptimizations
     {
-        get => TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.UseMonospaceOptimizations;
-        set => TextEditorService.OptionsApi.SetUseMonospaceOptimizations(value);
+        get => TextEditorService.Options_GetTextEditorOptionsState().Options.UseMonospaceOptimizations;
+        set => TextEditorService.Options_SetUseMonospaceOptimizations(value);
     }
     
     protected override void OnInitialized()
     {
-    	TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
     }
     
     private async void TextEditorOptionsStateWrapOnStateChanged()
@@ -29,6 +29,6 @@ public partial class InputTextEditorUseMonospaceOptimizations : ComponentBase, I
     
     public void Dispose()
     {
-    	TextEditorService.OptionsApi.StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.Options_StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
     }
 }

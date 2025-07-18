@@ -103,7 +103,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         CommonUtilityService.DragStateChanged += DragStateWrapOnStateChanged;
         CommonUtilityService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
         IdeService.IdeStateChanged += OnIdeMainLayoutStateChanged;
-        TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrap_StateChanged;
+        TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrap_StateChanged;
 
     	IdeBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
     	{
@@ -121,8 +121,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         if (firstRender)
         {
-            await TextEditorService.OptionsApi
-                .SetFromLocalStorageAsync()
+            await TextEditorService.Options_SetFromLocalStorageAsync()
                 .ConfigureAwait(false);
 
             await CommonUtilityService.
@@ -364,6 +363,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         CommonUtilityService.DragStateChanged -= DragStateWrapOnStateChanged;
         CommonUtilityService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
         IdeService.IdeStateChanged -= OnIdeMainLayoutStateChanged;
-        TextEditorService.OptionsApi.StaticStateChanged -= TextEditorOptionsStateWrap_StateChanged;
+        TextEditorService.Options_StaticStateChanged -= TextEditorOptionsStateWrap_StateChanged;
     }
 }

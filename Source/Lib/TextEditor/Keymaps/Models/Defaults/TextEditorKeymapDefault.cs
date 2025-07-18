@@ -273,7 +273,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	            case "Home":
 	            case "End":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri, isReadOnly: true);
-					editContext.TextEditorService.ViewModelApi.MoveCursor(
+					editContext.TextEditorService.ViewModel_MoveCursor(
                 		key,
                         code,
                         ctrlKey,
@@ -457,7 +457,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 	                }
 	                else
 	                {
-						editContext.TextEditorService.ViewModelApi.MoveCursor(
+						editContext.TextEditorService.ViewModel_MoveCursor(
 	                		key,
                             code,
                             ctrlKey,
@@ -785,7 +785,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		
 		// TODO: Do this code first so the user gets immediate UI feedback in the event that
 		//       their keydown code takes a long time?
-		editContext.TextEditorService.ViewModelApi.StopCursorBlinking();
+		editContext.TextEditorService.ViewModel_StopCursorBlinking();
 		
 		await editContext.TextEditorService
 			.FinalizePost(editContext)

@@ -40,8 +40,8 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	
 	protected override void OnInitialized()
     {
-        TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
-        TextEditorService.OptionsApi.TextEditorWrapperCssStateChanged += OnTextEditorWrapperCssStateChanged;
+        TextEditorService.ViewModel_CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
+        TextEditorService.Options_TextEditorWrapperCssStateChanged += OnTextEditorWrapperCssStateChanged;
         OnCursorShouldBlinkChanged();
     }
     
@@ -79,7 +79,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 
 	private async void OnCursorShouldBlinkChanged()
     {
-    	if (TextEditorService.ViewModelApi.CursorShouldBlink)
+    	if (TextEditorService.ViewModel_CursorShouldBlink)
     		UpdateUi();
     }
     
@@ -117,7 +117,7 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 				viewModelModifier.PersistentState.FirstPresentationLayerKeysList = copy;
 	        }
     	
-    		TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
+    		TextEditorService.Model_StartPendingCalculatePresentationModel(
 				editContext,
 		        modelModifier,
 		        TextEditorDevToolsPresentationFacts.PresentationKey,
@@ -222,8 +222,8 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 
 	public void Dispose()
     {
-    	TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
-    	TextEditorService.OptionsApi.TextEditorWrapperCssStateChanged -= OnTextEditorWrapperCssStateChanged;
+    	TextEditorService.ViewModel_CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
+    	TextEditorService.Options_TextEditorWrapperCssStateChanged -= OnTextEditorWrapperCssStateChanged;
     	
     	_cancellationTokenSource.Cancel();
     	_cancellationTokenSource.Dispose();

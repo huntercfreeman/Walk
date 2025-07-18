@@ -72,7 +72,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
                     else
                         textSpanMatches = new();
 
-					TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
+					TextEditorService.Model_StartPendingCalculatePresentationModel(
                     	editContext,
                         modelModifier,
                         FindOverlayPresentationFacts.PresentationKey,
@@ -125,7 +125,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
     {
-        TextEditorService.ViewModelApi.CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
+        TextEditorService.ViewModel_CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
         OnCursorShouldBlinkChanged();
     }
 
@@ -219,7 +219,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
                 if (modelModifier is null)
                     return ValueTask.CompletedTask;
 
-                TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
+                TextEditorService.Model_StartPendingCalculatePresentationModel(
             		editContext,
                     modelModifier,
                     FindOverlayPresentationFacts.PresentationKey,
@@ -391,7 +391,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
 				
 				if (decorationByteChangedTargetTextSpanLocal is not null)
 				{
-					TextEditorService.ViewModelApi.ScrollIntoView(
+					TextEditorService.ViewModel_ScrollIntoView(
 						editContext,
 						modelModifier,						
 						viewModelModifier,
@@ -553,6 +553,6 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
+    	TextEditorService.ViewModel_CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
     }
 }

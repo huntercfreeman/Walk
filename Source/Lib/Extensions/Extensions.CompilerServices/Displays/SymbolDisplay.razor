@@ -43,7 +43,7 @@
 	
 	ICompilerService compilerService;
 	
-	var model = TextEditorService.ModelApi.GetOrDefault(ResourceUri);
+	var model = TextEditorService.Model_GetOrDefault(ResourceUri);
 	
 	if (model is not null)
 	    compilerService = model.PersistentState.CompilerService;

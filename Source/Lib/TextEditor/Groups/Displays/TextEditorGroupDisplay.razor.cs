@@ -41,7 +41,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        TextEditorService.GroupApi.TextEditorGroupStateChanged += TextEditorGroupWrapOnStateChanged;
+        TextEditorService.Group_TextEditorGroupStateChanged += TextEditorGroupWrapOnStateChanged;
         TextEditorService.TextEditorStateChanged += TextEditorViewModelStateWrapOnStateChanged;
     }
 
@@ -80,7 +80,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TextEditorService.GroupApi.TextEditorGroupStateChanged -= TextEditorGroupWrapOnStateChanged;
+        TextEditorService.Group_TextEditorGroupStateChanged -= TextEditorGroupWrapOnStateChanged;
 		TextEditorService.TextEditorStateChanged -= TextEditorViewModelStateWrapOnStateChanged;
     }
 }

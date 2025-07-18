@@ -20,7 +20,7 @@
          id="@HtmlId">
     
     	@{
-	        var textEditorGroup = TextEditorService.GroupApi.GetTextEditorGroupState().GroupList.FirstOrDefault(
+	        var textEditorGroup = TextEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
 	            x => x.GroupKey == IdeBackgroundTaskApi.EditorTextEditorGroupKey);
 	    }
     
@@ -34,7 +34,7 @@
 			<div class="di_te_text-editor-group-active-view-model">
 			
 				@{
-		            var textEditorModel = TextEditorService.ViewModelApi.GetModelOrDefault(
+		            var textEditorModel = TextEditorService.ViewModel_GetModelOrDefault(
 		                textEditorGroup.ActiveViewModelKey);
 		    
 		            if (textEditorModel is null)

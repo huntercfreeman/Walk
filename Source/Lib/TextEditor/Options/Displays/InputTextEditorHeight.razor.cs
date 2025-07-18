@@ -23,19 +23,19 @@ public partial class InputTextEditorHeight : ComponentBase, IDisposable
 
     private int TextEditorHeight
     {
-        get => TextEditorService.OptionsApi.GetTextEditorOptionsState().Options.TextEditorHeightInPixels ?? MINIMUM_HEIGHT_IN_PIXELS;
+        get => TextEditorService.Options_GetTextEditorOptionsState().Options.TextEditorHeightInPixels ?? MINIMUM_HEIGHT_IN_PIXELS;
         set
         {
             if (value < MINIMUM_HEIGHT_IN_PIXELS)
                 value = MINIMUM_HEIGHT_IN_PIXELS;
 
-            TextEditorService.OptionsApi.SetHeight(value);
+            TextEditorService.Options_SetHeight(value);
         }
     }
     
     protected override void OnInitialized()
     {
-    	TextEditorService.OptionsApi.StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
     }
 
     public string GetIsDisabledCssClassString(bool globalHeightInPixelsValueIsNull)
@@ -48,9 +48,9 @@ public partial class InputTextEditorHeight : ComponentBase, IDisposable
     private void ToggleUseGlobalHeightInPixels(bool globalHeightInPixelsValueIsNull)
     {
         if (globalHeightInPixelsValueIsNull)
-            TextEditorService.OptionsApi.SetHeight(MINIMUM_HEIGHT_IN_PIXELS);
+            TextEditorService.Options_SetHeight(MINIMUM_HEIGHT_IN_PIXELS);
         else
-            TextEditorService.OptionsApi.SetHeight(null);
+            TextEditorService.Options_SetHeight(null);
     }
     
     private async void TextEditorOptionsStateWrapOnStateChanged()
@@ -60,6 +60,6 @@ public partial class InputTextEditorHeight : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TextEditorService.OptionsApi.StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
+    	TextEditorService.Options_StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
     }
 }

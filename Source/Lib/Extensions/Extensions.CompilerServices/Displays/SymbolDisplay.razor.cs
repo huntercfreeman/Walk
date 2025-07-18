@@ -83,7 +83,7 @@ public partial class SymbolDisplay : ComponentBase
     {
     	try
     	{
-	    	var textEditorModel = textEditorService.ModelApi.GetOrDefault(resourceUri);
+	    	var textEditorModel = textEditorService.Model_GetOrDefault(resourceUri);
 	    	if (textEditorModel is null)
 	    		return null;
 	    	
@@ -127,7 +127,7 @@ public partial class SymbolDisplay : ComponentBase
 		    	}
 	    	}
 	    
-	    	var textEditorModel = textEditorService.ModelApi.GetOrDefault(resourceUri);
+	    	var textEditorModel = textEditorService.Model_GetOrDefault(resourceUri);
 	    	var extendedCompilerService = (IExtendedCompilerService)textEditorModel.PersistentState.CompilerService;
 	    	var compilerServiceResource = extendedCompilerService.GetResource(textEditorModel.PersistentState.ResourceUri);
 	

@@ -280,7 +280,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
             if (modelModifier is null || viewModelModifier is null)
                 return ValueTask.CompletedTask;
         
-        	TextEditorService.ModelApi.InsertText(
+        	TextEditorService.Model_InsertText(
         		editContext,
 		        modelModifier,
 		        viewModelModifier,

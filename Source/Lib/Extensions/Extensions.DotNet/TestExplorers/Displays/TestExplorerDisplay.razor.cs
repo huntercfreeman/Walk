@@ -30,7 +30,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		var model = TextEditorService.ModelApi.GetOrDefault(
+		var model = TextEditorService.Model_GetOrDefault(
 			ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
 
 		if (model is null)
@@ -49,9 +49,9 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
                     terminalCompilerService,
                     TextEditorService);
 
-				TextEditorService.ModelApi.RegisterCustom(editContext, model);
+				TextEditorService.Model_RegisterCustom(editContext, model);
 
-				TextEditorService.ViewModelApi.Register(
+				TextEditorService.ViewModel_Register(
 					editContext,
 					TestExplorerDetailsDisplay.DetailsTextEditorViewModelKey,
 					ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
@@ -59,17 +59,17 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 
 				var modelModifier = editContext.GetModelModifier(model.PersistentState.ResourceUri);
 		
-				TextEditorService.ModelApi.AddPresentationModel(
+				TextEditorService.Model_AddPresentationModel(
 					editContext,
 					modelModifier,
 					TerminalPresentationFacts.EmptyPresentationModel);
 
-				TextEditorService.ModelApi.AddPresentationModel(
+				TextEditorService.Model_AddPresentationModel(
 					editContext,
 					modelModifier,
 					CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
 
-				TextEditorService.ModelApi.AddPresentationModel(
+				TextEditorService.Model_AddPresentationModel(
 					editContext,
 					modelModifier,
 					FindOverlayPresentationFacts.EmptyPresentationModel);

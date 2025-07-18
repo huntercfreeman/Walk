@@ -116,7 +116,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	        
 	        model = modelModifier;
 	
-	        _textEditorService.ModelApi.RegisterCustom(editContext, model);
+	        _textEditorService.Model_RegisterCustom(editContext, model);
 	        
 			model.PersistentState.CompilerService.RegisterResource(
 				model.PersistentState.ResourceUri,
@@ -145,7 +145,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	            
 	        viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
 	        
-	        _textEditorService.ViewModelApi.Register(editContext, viewModel);
+	        _textEditorService.ViewModel_Register(editContext, viewModel);
 	        
 	        return ValueTask.CompletedTask;
     	});

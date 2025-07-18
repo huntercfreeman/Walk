@@ -171,29 +171,29 @@ public partial class WalkWebsiteInitializer : ComponentBase
 
             TextEditorService.WorkerArbitrary.PostUnique(editContext =>
             {
-            	TextEditorService.ModelApi.RegisterCustom(editContext, textEditorModel);
+            	TextEditorService.Model_RegisterCustom(editContext, textEditorModel);
             	
                 var modelModifier = editContext.GetModelModifier(textEditorModel.PersistentState.ResourceUri);
 
                 if (modelModifier is null)
                     return ValueTask.CompletedTask;
 
-                TextEditorService.ModelApi.AddPresentationModel(
+                TextEditorService.Model_AddPresentationModel(
                     editContext,
                     modelModifier,
                     CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
 
-                TextEditorService.ModelApi.AddPresentationModel(
+                TextEditorService.Model_AddPresentationModel(
                     editContext,
                     modelModifier,
                     FindOverlayPresentationFacts.EmptyPresentationModel);
 
-                TextEditorService.ModelApi.AddPresentationModel(
+                TextEditorService.Model_AddPresentationModel(
                     editContext,
                     modelModifier,
                     DiffPresentationFacts.EmptyInPresentationModel);
 
-                TextEditorService.ModelApi.AddPresentationModel(
+                TextEditorService.Model_AddPresentationModel(
                     editContext,
                     modelModifier,
                     DiffPresentationFacts.EmptyOutPresentationModel);

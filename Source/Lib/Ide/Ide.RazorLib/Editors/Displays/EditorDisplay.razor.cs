@@ -54,19 +54,19 @@ public partial class EditorDisplay : ComponentBase, IDisposable
     
         _componentDataKey = new Key<TextEditorComponentData>(_viewModelDisplayOptions.TextEditorHtmlElementId);
         
-        TextEditorService.GroupApi.TextEditorGroupStateChanged += TextEditorGroupWrapOnStateChanged;
+        TextEditorService.Group_TextEditorGroupStateChanged += TextEditorGroupWrapOnStateChanged;
         DirtyResourceUriService.DirtyResourceUriStateChanged += DirtyResourceUriServiceOnStateChanged;
     }
 
     private async void TextEditorGroupWrapOnStateChanged()
     {
-    	var textEditorGroup = TextEditorService.GroupApi.GetTextEditorGroupState().GroupList.FirstOrDefault(
+    	var textEditorGroup = TextEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
 	        x => x.GroupKey == IdeBackgroundTaskApi.EditorTextEditorGroupKey);
 	        
 	    if (_previousActiveViewModelKey != textEditorGroup.ActiveViewModelKey)
 	    {
 	    	_previousActiveViewModelKey = textEditorGroup.ActiveViewModelKey;
-	    	TextEditorService.ViewModelApi.StopCursorBlinking();
+	    	TextEditorService.ViewModel_StopCursorBlinking();
 	    }
     
         await InvokeAsync(StateHasChanged);
@@ -103,7 +103,7 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TextEditorService.GroupApi.TextEditorGroupStateChanged -= TextEditorGroupWrapOnStateChanged;
+        TextEditorService.Group_TextEditorGroupStateChanged -= TextEditorGroupWrapOnStateChanged;
         DirtyResourceUriService.DirtyResourceUriStateChanged -= DirtyResourceUriServiceOnStateChanged;
     }
 }

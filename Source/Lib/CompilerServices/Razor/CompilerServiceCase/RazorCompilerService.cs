@@ -122,7 +122,7 @@ public sealed class RazorCompilerService : ICompilerService
 
     public ICompilerServiceResource? GetResource(ResourceUri resourceUri)
     {
-    	var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
+    	var model = _textEditorService.Model_GetOrDefault(resourceUri);
 
         if (model is null)
             return null;
@@ -228,7 +228,7 @@ public sealed class RazorCompilerService : ICompilerService
 			}
 		}
 		
-		editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+		editContext.TextEditorService.Model_ApplySyntaxHighlighting(
 			editContext,
 			modelModifier);
 
