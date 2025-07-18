@@ -507,20 +507,12 @@ public static class ParseTokens
     		}
     	}
     	
-    	IExpressionNode expressionNode;
-    	
-    	// TODO: Why is this try-catch here?
-    	try
+		if (shouldBacktrack)
 		{
-			if (shouldBacktrack)
-    			parserModel.ForceParseExpressionInitialPrimaryExpression = backtrackNode;
-			
-			expressionNode = ParseExpressions.ParseExpression(ref parserModel);
-		}
-		finally
-		{
-			parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
-		}
+			parserModel.ForceParseExpressionInitialPrimaryExpression = backtrackNode;
+	    }
+		_ = ParseExpressions.ParseExpression(ref parserModel);
+		parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
 	}
 
 	/// <summary>
