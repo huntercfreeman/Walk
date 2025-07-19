@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
@@ -386,7 +387,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             	viewModelModifier,
             	(Common.RazorLib.JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonService.JsRuntimeCommonApi,
 				TextEditorService,
-            	(Common.RazorLib.Options.Models.CommonService)CommonService);
+            	CommonService);
         }));
         return Task.CompletedTask;
     }
@@ -449,7 +450,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 		        (IEnvironmentProvider)CommonService.EnvironmentProvider,
 		        (IFileSystemProvider)CommonService.FileSystemProvider,
 				TextEditorService,
-		        (Common.RazorLib.Options.Models.CommonService)CommonService);
+		        CommonService);
         }));
         return Task.CompletedTask;
     }

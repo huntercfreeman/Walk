@@ -405,14 +405,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetService.IdeService.CopyFile(
 				treeViewModel.Item.AbsolutePath,
 				(Func<Task>)(() => {
-					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", (Common.RazorLib.Options.Models.CommonService)DotNetService.IdeService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", DotNetService.IdeService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
 					return Task.CompletedTask;
 				})),
 			DotNetService.IdeService.CutFile(
 				treeViewModel.Item.AbsolutePath,
 				(Func<Task>)(() => {
 					ParentOfCutFile = parentTreeViewModel;
-					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", (Common.RazorLib.Options.Models.CommonService)DotNetService.IdeService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", DotNetService.IdeService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
 					return Task.CompletedTask;
 				})),
 			DotNetService.IdeService.DeleteFile(
@@ -420,7 +420,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				async () => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
 			DotNetService.IdeService.RenameFile(
 				treeViewModel.Item.AbsolutePath,
-				(Common.RazorLib.Options.Models.CommonService)DotNetService.IdeService.TextEditorService.CommonService,
+				DotNetService.IdeService.TextEditorService.CommonService,
 				async ()  => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
 		};
 	}

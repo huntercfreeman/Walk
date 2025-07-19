@@ -4,6 +4,7 @@ using System.Web;
 using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
 using CliWrap.EventStream;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Keys.Models;

@@ -81,7 +81,7 @@ public partial class MenuOptionDisplay : ComponentBase
     private Task RenderDropdownAsync(MenuRecord localSubMenu)
     {
     	return DropdownHelper.RenderDropdownAsync(
-    		(Options.Models.CommonService)CommonService,
+    		CommonService,
     		(JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonService.JsRuntimeCommonApi,
 			_menuOptionHtmlElementId,
 			DropdownOrientation.Right,

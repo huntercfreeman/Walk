@@ -1,3 +1,4 @@
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 
