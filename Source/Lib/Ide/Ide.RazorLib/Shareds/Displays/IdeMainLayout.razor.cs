@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Walk.Common.RazorLib.Dimensions.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
@@ -10,12 +9,9 @@ using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Contexts.Models;
-using Walk.TextEditor.RazorLib;
 using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Ide.RazorLib.Shareds.Displays.Internals;
-using Walk.Ide.RazorLib.Commands;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
-using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.JsRuntimes.Models;
 using Walk.Ide.RazorLib.Settings.Displays;
 
@@ -24,17 +20,7 @@ namespace Walk.Ide.RazorLib.Shareds.Displays;
 public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 {
     [Inject]
-    private IIdeService IdeService { get; set; } = null!;
-    [Inject]
-    private TextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
-    [Inject]
-    private ITerminalService TerminalService { get; set; } = null!;
-    [Inject]
-    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
-    [Inject]
-    private ICommandFactory CommandFactory { get; set; } = null!;
+    private IdeService IdeService { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
@@ -73,13 +59,13 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        TextEditorService.IdeBackgroundTaskApi = IdeBackgroundTaskApi;
+        IdeService.TextEditorService.IdeBackgroundTaskApi = IdeService;
     
         _bodyElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(78, DimensionUnitKind.Percentage),
             new DimensionUnit(
-            	CommonUtilityService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
+            	IdeService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
             	DimensionUnitKind.Pixels,
             	DimensionOperatorKind.Subtract),
             new DimensionUnit(
@@ -94,25 +80,25 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             	33.3333,
             	DimensionUnitKind.Percentage),
             new DimensionUnit(
-            	CommonUtilityService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+            	IdeService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
             	DimensionUnitKind.Pixels,
             	DimensionOperatorKind.Subtract)
         });
     
-        CommonUtilityService.DragStateChanged += DragStateWrapOnStateChanged;
-        CommonUtilityService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
-        IdeService.IdeStateChanged += OnIdeMainLayoutStateChanged;
-        TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrap_StateChanged;
+        IdeService.CommonService.DragStateChanged += DragStateWrapOnStateChanged;
+        IdeService.CommonService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
+        IdeService.Ide_IdeStateChanged += OnIdeMainLayoutStateChanged;
+        IdeService.TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrap_StateChanged;
 
-    	IdeBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
+    	IdeService.Enqueue(new IdeWorkArgs
     	{
-    		WorkKind = IdeBackgroundTaskApiWorkKind.IdeHeaderOnInit,
+    		WorkKind = IdeWorkKind.IdeHeaderOnInit,
     		IdeMainLayout = this,
     	});
     	
-    	IdeBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
+    	IdeService.Enqueue(new IdeWorkArgs
         {
-        	WorkKind = IdeBackgroundTaskApiWorkKind.WalkIdeInitializerOnInit,
+        	WorkKind = IdeWorkKind.WalkIdeInitializerOnInit,
         });
     }
 
@@ -120,14 +106,14 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         if (firstRender)
         {
-            await TextEditorService.Options_SetFromLocalStorageAsync()
+            await IdeService.TextEditorService.Options_SetFromLocalStorageAsync()
                 .ConfigureAwait(false);
 
-            await CommonUtilityService.
+            await IdeService.CommonService.
                 Options_SetFromLocalStorageAsync()
                 .ConfigureAwait(false);
                 
-            if (CommonUtilityService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
+            if (IdeService.CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
 			{
 				await JsRuntime.GetWalkIdeApi()
 					.PreventDefaultBrowserKeybindings()
@@ -147,9 +133,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     private async void DragStateWrapOnStateChanged()
     {
-        if (_previousDragStateWrapShouldDisplay != CommonUtilityService.GetDragState().ShouldDisplay)
+        if (_previousDragStateWrapShouldDisplay != IdeService.CommonService.GetDragState().ShouldDisplay)
         {
-            _previousDragStateWrapShouldDisplay = CommonUtilityService.GetDragState().ShouldDisplay;
+            _previousDragStateWrapShouldDisplay = IdeService.CommonService.GetDragState().ShouldDisplay;
             await InvokeAsync(() =>
             {
                 _shouldRecalculateCssStrings = true;
@@ -181,28 +167,28 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         {
             _shouldRecalculateCssStrings = false;
         
-            var uiStringBuilder = CommonUtilityService.UiStringBuilder;
+            var uiStringBuilder = IdeService.CommonService.UiStringBuilder;
             
             uiStringBuilder.Clear();
             uiStringBuilder.Append("di_ide_main-layout ");
             uiStringBuilder.Append(UnselectableClassCss);
             uiStringBuilder.Append(" ");
-            uiStringBuilder.Append(CommonUtilityService.Options_ThemeCssClassString);
+            uiStringBuilder.Append(IdeService.CommonService.Options_ThemeCssClassString);
             uiStringBuilder.Append(" ");
-            uiStringBuilder.Append(TextEditorService.ThemeCssClassString);
+            uiStringBuilder.Append(IdeService.TextEditorService.ThemeCssClassString);
             _classCssString = uiStringBuilder.ToString();
             
             uiStringBuilder.Clear();
-            uiStringBuilder.Append(CommonUtilityService.Options_FontSizeCssStyleString);
+            uiStringBuilder.Append(IdeService.CommonService.Options_FontSizeCssStyleString);
             uiStringBuilder.Append(" ");
-            uiStringBuilder.Append(CommonUtilityService.Options_FontFamilyCssStyleString);
+            uiStringBuilder.Append(IdeService.CommonService.Options_FontFamilyCssStyleString);
             uiStringBuilder.Append(" ");
-            uiStringBuilder.Append(CommonUtilityService.Options_ColorSchemeCssStyleString);
+            uiStringBuilder.Append(IdeService.CommonService.Options_ColorSchemeCssStyleString);
             _styleCssString = uiStringBuilder.ToString();
             
         	uiStringBuilder.Clear();
             uiStringBuilder.Append("display: flex; justify-content: space-between; border-bottom: ");
-            uiStringBuilder.Append(CommonUtilityService.GetAppOptionsState().Options.ResizeHandleHeightInPixels);
+            uiStringBuilder.Append(IdeService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels);
             uiStringBuilder.Append("px solid var(--di_primary-border-color);");
             _headerCssStyle = uiStringBuilder.ToString();
         }
@@ -211,8 +197,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public Task RenderFileDropdownOnClick()
     {
         return DropdownHelper.RenderDropdownAsync(
-            CommonUtilityService,
-            CommonUtilityService.JsRuntimeCommonApi,
+            IdeService.CommonService,
+            IdeService.CommonService.JsRuntimeCommonApi,
             IdeState.ButtonFileId,
             DropdownOrientation.Bottom,
             IdeState.DropdownKeyFile,
@@ -223,8 +209,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public Task RenderToolsDropdownOnClick()
     {
         return DropdownHelper.RenderDropdownAsync(
-            CommonUtilityService,
-            CommonUtilityService.JsRuntimeCommonApi,
+            IdeService.CommonService,
+            IdeService.CommonService.JsRuntimeCommonApi,
             IdeState.ButtonToolsId,
             DropdownOrientation.Bottom,
             IdeState.DropdownKeyTools,
@@ -237,8 +223,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         InitializeMenuView();
     
         return DropdownHelper.RenderDropdownAsync(
-            CommonUtilityService,
-            CommonUtilityService.JsRuntimeCommonApi,
+            IdeService.CommonService,
+            IdeService.CommonService.JsRuntimeCommonApi,
             IdeState.ButtonViewId,
             DropdownOrientation.Bottom,
             IdeState.DropdownKeyView,
@@ -249,8 +235,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public Task RenderRunDropdownOnClick()
     {
         return DropdownHelper.RenderDropdownAsync(
-            CommonUtilityService,
-            CommonUtilityService.JsRuntimeCommonApi,
+            IdeService.CommonService,
+            IdeService.CommonService.JsRuntimeCommonApi,
             IdeState.ButtonRunId,
             DropdownOrientation.Bottom,
             IdeState.DropdownKeyRun,
@@ -261,8 +247,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public void InitializeMenuView()
     {
         var menuOptionsList = new List<MenuOptionRecord>();
-        var panelState = CommonUtilityService.GetPanelState();
-        var dialogState = CommonUtilityService.GetDialogState();
+        var panelState = IdeService.CommonService.GetPanelState();
+        var dialogState = IdeService.CommonService.GetDialogState();
     
         foreach (var panel in panelState.PanelList)
         {
@@ -275,7 +261,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
                     if (panelGroup is not null)
                     {
-                        CommonUtilityService.SetActivePanelTab(panelGroup.Key, panel.Key);
+                        IdeService.CommonService.SetActivePanelTab(panelGroup.Key, panel.Key);
     
                         var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
     
@@ -285,8 +271,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                                 contextRecord,
                                 nameof(ContextHelper.ConstructFocusContextElementCommand),
                                 nameof(ContextHelper.ConstructFocusContextElementCommand),
-                                CommonUtilityService.JsRuntimeCommonApi,
-                                CommonUtilityService);
+                                IdeService.CommonService.JsRuntimeCommonApi,
+                                IdeService.CommonService);
     
                             await command.CommandFunc.Invoke(null).ConfigureAwait(false);
                         }
@@ -298,16 +284,16 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
                         if (existingDialog is not null)
                         {
-                            CommonUtilityService.Dialog_ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
+                            IdeService.CommonService.Dialog_ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
     
-                            await CommonUtilityService.JsRuntimeCommonApi
+                            await IdeService.CommonService.JsRuntimeCommonApi
                                 .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)
                                 .ConfigureAwait(false);
                         }
                         else
                         {
-                            CommonUtilityService.RegisterPanelTab(PanelFacts.LeftPanelGroupKey, panel, true);
-                            CommonUtilityService.SetActivePanelTab(PanelFacts.LeftPanelGroupKey, panel.Key);
+                            IdeService.CommonService.RegisterPanelTab(PanelFacts.LeftPanelGroupKey, panel, true);
+                            IdeService.CommonService.SetActivePanelTab(PanelFacts.LeftPanelGroupKey, panel.Key);
     
                             var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
     
@@ -317,8 +303,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                                     contextRecord,
                                     nameof(ContextHelper.ConstructFocusContextElementCommand),
                                     nameof(ContextHelper.ConstructFocusContextElementCommand),
-                                    CommonUtilityService.JsRuntimeCommonApi,
-                                    CommonUtilityService);
+                                    IdeService.CommonService.JsRuntimeCommonApi,
+                                    IdeService.CommonService);
     
                                 await command.CommandFunc.Invoke(null).ConfigureAwait(false);
                             }
@@ -331,11 +317,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
         if (menuOptionsList.Count == 0)
         {
-            IdeService.SetMenuView(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
+            IdeService.Ide_SetMenuView(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
         }
         else
         {
-            IdeService.SetMenuView(new MenuRecord(menuOptionsList));
+            IdeService.Ide_SetMenuView(new MenuRecord(menuOptionsList));
         }
     }
     
@@ -350,18 +336,18 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             true,
             null);
     
-        CommonUtilityService.Dialog_ReduceRegisterAction(dialogRecord);
+        IdeService.CommonService.Dialog_ReduceRegisterAction(dialogRecord);
         return Task.CompletedTask;
     }
 
     public void DispatchRegisterDialogRecordAction() =>
-        CommonUtilityService.Dialog_ReduceRegisterAction(_dialogRecord);
+        IdeService.CommonService.Dialog_ReduceRegisterAction(_dialogRecord);
 
     public void Dispose()
     {
-        CommonUtilityService.DragStateChanged -= DragStateWrapOnStateChanged;
-        CommonUtilityService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
-        IdeService.IdeStateChanged -= OnIdeMainLayoutStateChanged;
-        TextEditorService.Options_StaticStateChanged -= TextEditorOptionsStateWrap_StateChanged;
+        IdeService.CommonService.DragStateChanged -= DragStateWrapOnStateChanged;
+        IdeService.CommonService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
+        IdeService.Ide_IdeStateChanged -= OnIdeMainLayoutStateChanged;
+        IdeService.TextEditorService.Options_StaticStateChanged -= TextEditorOptionsStateWrap_StateChanged;
     }
 }

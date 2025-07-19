@@ -8,20 +8,20 @@
 
 @* ContextRecord="_viewModelDisplayOptions.ContextRecord" *@
 
-<div id="@_viewModelDisplayOptions.ContextRecord.ContextElementId" class="di_ide_editor-display" style="@EditorElementDimensions.GetStyleString(CommonUtilityService.UiStringBuilder)">
-	@if (CommonUtilityService.Options_ShowPanelTitles)
+<div id="@_viewModelDisplayOptions.ContextRecord.ContextElementId" class="di_ide_editor-display" style="@EditorElementDimensions.GetStyleString(IdeService.CommonService.UiStringBuilder)">
+	@if (IdeService.CommonService.Options_ShowPanelTitles)
 	{
 	    <div class="di_ide_section-title">
 	        Editor
 	    </div>
     }
 
-    <div class="di_ide_section-body di_te_text-editor-group @CommonUtilityService.Options_ShowPanelTitlesCssClass"
+    <div class="di_ide_section-body di_te_text-editor-group @IdeService.CommonService.Options_ShowPanelTitlesCssClass"
          id="@HtmlId">
     
     	@{
-	        var textEditorGroup = TextEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
-	            x => x.GroupKey == IdeBackgroundTaskApi.EditorTextEditorGroupKey);
+	        var textEditorGroup = IdeService.TextEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
+	            x => x.GroupKey == IdeService.EditorTextEditorGroupKey);
 	    }
     
     	@if (textEditorGroup is not null)
@@ -34,7 +34,7 @@
 			<div class="di_te_text-editor-group-active-view-model">
 			
 				@{
-		            var textEditorModel = TextEditorService.ViewModel_GetModelOrDefault(
+		            var textEditorModel = IdeService.TextEditorService.ViewModel_GetModelOrDefault(
 		                textEditorGroup.ActiveViewModelKey);
 		    
 		            if (textEditorModel is null)

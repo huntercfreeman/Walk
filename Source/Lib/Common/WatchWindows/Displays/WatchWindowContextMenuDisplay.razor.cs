@@ -8,7 +8,7 @@ namespace Walk.Common.RazorLib.WatchWindows.Displays;
 public partial class WatchWindowContextMenuDisplay : ComponentBase
 {
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonService CommonService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TreeViewCommandArgs TreeViewCommandArgs { get; set; }
@@ -41,7 +41,7 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
                                 .LoadChildListAsync()
                                 .ConfigureAwait(false);
 
-							CommonUtilityService.TreeView_ReRenderNodeAction(
+							CommonService.TreeView_ReRenderNodeAction(
 								WatchWindowDisplay.TreeViewContainerKey,
                                 treeViewCommandArgs.NodeThatReceivedMouseEvent);
 

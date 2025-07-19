@@ -18,19 +18,19 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 			CSharpProjectToProjectReferences cSharpProjectToProjectReferences,
 			IDotNetComponentRenderers dotNetComponentRenderers,
 			IIdeComponentRenderers ideComponentRenderers,
-			CommonUtilityService commonUtilityService,
+			CommonService commonService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(cSharpProjectToProjectReferences, isExpandable, isExpanded)
 	{
 		DotNetComponentRenderers = dotNetComponentRenderers;
 		IdeComponentRenderers = ideComponentRenderers;
-		CommonUtilityService = commonUtilityService;
+		CommonService = commonService;
 	}
 
 	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public IIdeComponentRenderers IdeComponentRenderers { get; }
-	public CommonUtilityService CommonUtilityService { get; }
+	public CommonService CommonService { get; }
 
 	public override bool Equals(object? obj)
 	{
@@ -86,7 +86,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 	{
 		var previousChildren = new List<TreeViewNoType>(ChildList);
 
-		var content = await CommonUtilityService.FileSystemProvider.File.ReadAllTextAsync(
+		var content = await CommonService.FileSystemProvider.File.ReadAllTextAsync(
 				Item.CSharpProjectNamespacePath.AbsolutePath.Value)
 			.ConfigureAwait(false);
 
@@ -128,9 +128,9 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 			var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
 				Item.CSharpProjectNamespacePath.AbsolutePath,
 				includeAttribute.Item2,
-				(IEnvironmentProvider)CommonUtilityService.EnvironmentProvider);
+				(IEnvironmentProvider)CommonService.EnvironmentProvider);
 
-			var referenceProjectAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+			var referenceProjectAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
 				referenceProjectAbsolutePathString,
 				false);
 
@@ -146,7 +146,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 				x,
 				DotNetComponentRenderers,
 				IdeComponentRenderers,
-				CommonUtilityService,
+				CommonService,
 				false,
 				false)
 			{

@@ -12,7 +12,7 @@ namespace Walk.Common.RazorLib.Dropdowns.Displays;
 public partial class DropdownDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	public CommonUtilityService CommonUtilityService { get; set; } = null!;
+	public CommonService CommonService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public DropdownRecord Dropdown { get; set; } = null!;
@@ -57,7 +57,7 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 			// Force the initial invocation (as opposed to waiting for the event)
 			await RemeasureAndRerender();
 		}
-		else if (CommonUtilityService.WalkHostingInformation.WalkPurposeKind == WalkPurposeKind.Ide && _hasPendingEvent)
+		else if (CommonService.WalkHostingInformation.WalkPurposeKind == WalkPurposeKind.Ide && _hasPendingEvent)
 		{		
 			if (_isOffScreenHorizontally || _isOffScreenVertically)
 			{
@@ -103,7 +103,7 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 					Top = outTop
 				};
 
-				CommonUtilityService.Dropdown_ReduceFitOnScreenAction(outDropdown);
+				CommonService.Dropdown_ReduceFitOnScreenAction(outDropdown);
 			}
 		}
 	}
@@ -120,8 +120,8 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 			_hasPendingEvent = true;
 		}
 
-		_htmlElementDimensions = await CommonUtilityService.JsRuntimeCommonApi.MeasureElementById(_htmlElementId);
-		_globalHtmlElementDimensions = await CommonUtilityService.JsRuntimeCommonApi.MeasureElementById(ContextFacts.RootHtmlElementId);
+		_htmlElementDimensions = await CommonService.JsRuntimeCommonApi.MeasureElementById(_htmlElementId);
+		_globalHtmlElementDimensions = await CommonService.JsRuntimeCommonApi.MeasureElementById(ContextFacts.RootHtmlElementId);
 		await InvokeAsync(StateHasChanged);
 	}
 

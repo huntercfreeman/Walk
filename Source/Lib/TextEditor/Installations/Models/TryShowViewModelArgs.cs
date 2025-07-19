@@ -11,13 +11,13 @@ public struct TryShowViewModelArgs
         Key<TextEditorViewModel> viewModelKey,
         Key<TextEditorGroup> groupKey,
         bool shouldSetFocusToEditor,
-        CommonUtilityService commonUtilityService,
+        CommonService commonService,
         object ideBackgroundTaskApi)
     {
         ViewModelKey = viewModelKey;
         GroupKey = groupKey;
         ShouldSetFocusToEditor = shouldSetFocusToEditor;
-        CommonUtilityService = commonUtilityService;
+        CommonService = commonService;
         IdeBackgroundTaskApi = ideBackgroundTaskApi;
     }
 
@@ -31,6 +31,6 @@ public struct TryShowViewModelArgs
     /// </summary>
     public Key<TextEditorGroup> GroupKey { get; }
     public bool ShouldSetFocusToEditor { get; }
-    public CommonUtilityService CommonUtilityService { get; }
+    public CommonService CommonService { get; }
     public object IdeBackgroundTaskApi { get; }
 }

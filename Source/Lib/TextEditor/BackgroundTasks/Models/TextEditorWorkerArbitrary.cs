@@ -31,7 +31,7 @@ public class TextEditorWorkerArbitrary : IBackgroundTaskGroup
 	public void EnqueueUniqueTextEditorWork(UniqueTextEditorWork uniqueTextEditorWork)
 	{
 		UniqueTextEditorWorkQueue.Enqueue(uniqueTextEditorWork);
-		_textEditorService.CommonUtilityService.Continuous_EnqueueGroup(this);
+		_textEditorService.CommonService.Continuous_EnqueueGroup(this);
 	}
 	
 	public ValueTask HandleEvent()

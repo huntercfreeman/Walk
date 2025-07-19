@@ -1,29 +1,25 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Walk.Common.RazorLib.Options.Models;
-using Walk.Ide.RazorLib.CommandBars.Models;
 
 namespace Walk.Ide.RazorLib.CommandBars.Displays;
 
 public partial class CommandBarDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private ICommandBarService CommandBarService { get; set; } = null!;
-	[Inject]
-	private CommonUtilityService CommonUtilityService { get; set; } = null!;
+	private IdeService IdeService { get; set; } = null!;
 	
 	public const string INPUT_HTML_ELEMENT_ID = "di_ide_command-bar-input-id";
 		
 	protected override void OnInitialized()
 	{
-		CommandBarService.CommandBarStateChanged += OnCommandBarStateChanged;
+		IdeService.CommandBarStateChanged += OnCommandBarStateChanged;
 	}
 	
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
 		{
-			await CommonUtilityService.JsRuntimeCommonApi
+			await IdeService.CommonService.JsRuntimeCommonApi
 				.FocusHtmlElementById(CommandBarDisplay.INPUT_HTML_ELEMENT_ID)
 	            .ConfigureAwait(false);
 		}
@@ -32,7 +28,7 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
 	private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
 	{
 		if (keyboardEventArgs.Key == "Enter")
-			CommonUtilityService.SetWidget(null);
+			IdeService.CommonService.SetWidget(null);
 	}
 	
 	private async void OnCommandBarStateChanged()
@@ -42,6 +38,6 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
 	
 	public void Dispose()
 	{
-		CommandBarService.CommandBarStateChanged -= OnCommandBarStateChanged;
+		IdeService.CommandBarStateChanged -= OnCommandBarStateChanged;
 	}
 }

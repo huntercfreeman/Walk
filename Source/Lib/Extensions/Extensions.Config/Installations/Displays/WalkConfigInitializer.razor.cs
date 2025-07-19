@@ -6,12 +6,9 @@ using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Edits.Models;
-using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.InputFiles.Displays;
-using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.AppDatas.Models;
-using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Extensions.DotNet.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.AppDatas.Models;
@@ -33,24 +30,20 @@ using Walk.CompilerServices.Css.Decoration;
 using Walk.CompilerServices.Json.Decoration;
 using Walk.CompilerServices.Xml.Html.Decoration;
 
+using Walk.Ide.RazorLib;
+
 namespace Walk.Extensions.Config.Installations.Displays;
 
 public partial class WalkConfigInitializer : ComponentBase
 {
     [Inject]
-    private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
+    private IdeService IdeService { get; set; } = null!;
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private IAppDataService AppDataService { get; set; } = null!;
 	[Inject]
-	private IInputFileService InputFileService { get; set; } = null!;
-	[Inject]
-	private IIdeService IdeService { get; set; } = null!;
-	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-	private ITerminalService TerminalService { get; set; } = null!;
 	
     private static Key<IDynamicViewModel> _notificationRecordKey = Key<IDynamicViewModel>.NewKey();
 
@@ -58,7 +51,7 @@ public partial class WalkConfigInitializer : ComponentBase
 	{
 	    HandleCompilerServicesAndDecorationMappers();
 	
-        TextEditorService.CommonUtilityService.Continuous_EnqueueGroup(new BackgroundTask(
+        TextEditorService.CommonService.Continuous_EnqueueGroup(new BackgroundTask(
         	Key<IBackgroundTaskGroup>.Empty,
         	Do_InitializeFooterBadges));
 	
@@ -88,11 +81,11 @@ public partial class WalkConfigInitializer : ComponentBase
     
     public ValueTask Do_InitializeFooterBadges()
     {
-        IdeService.RegisterFooterBadge(
+        IdeService.Ide_RegisterFooterBadge(
             new DirtyResourceUriBadge(TextEditorService));
 
-        IdeService.RegisterFooterBadge(
-            new NotificationBadge(TextEditorService.CommonUtilityService));
+        IdeService.Ide_RegisterFooterBadge(
+            new NotificationBadge(TextEditorService.CommonService));
 
         return ValueTask.CompletedTask;
     }
@@ -104,7 +97,7 @@ public partial class WalkConfigInitializer : ComponentBase
     	if (solutionMostRecent is null)
     		return;
     
-    	var slnAbsolutePath = TextEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+    	var slnAbsolutePath = TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
             solutionMostRecent,
             false);
 
@@ -117,14 +110,14 @@ public partial class WalkConfigInitializer : ComponentBase
         var parentDirectory = slnAbsolutePath.ParentDirectory;
         if (parentDirectory is not null)
         {
-            var parentDirectoryAbsolutePath = TextEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+            var parentDirectoryAbsolutePath = TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
                 parentDirectory,
                 true);
 
             var pseudoRootNode = new TreeViewAbsolutePath(
                 parentDirectoryAbsolutePath,
-                IdeComponentRenderers,
-                TextEditorService.CommonUtilityService,
+                IdeService.IdeComponentRenderers,
+                TextEditorService.CommonService,
                 true,
                 false);
 
@@ -139,9 +132,9 @@ public partial class WalkConfigInitializer : ComponentBase
 
             var activeNode = adhocRootNode.ChildList.FirstOrDefault();
 
-            if (!TextEditorService.CommonUtilityService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
+            if (!TextEditorService.CommonService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
             {
-                TextEditorService.CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
+                TextEditorService.CommonService.TreeView_RegisterContainerAction(new TreeViewContainer(
                     InputFileContent.TreeViewContainerKey,
                     adhocRootNode,
                     activeNode is null
@@ -150,9 +143,9 @@ public partial class WalkConfigInitializer : ComponentBase
             }
             else
             {
-                TextEditorService.CommonUtilityService.TreeView_WithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
+                TextEditorService.CommonService.TreeView_WithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
 
-                TextEditorService.CommonUtilityService.TreeView_SetActiveNodeAction(
+                TextEditorService.CommonService.TreeView_SetActiveNodeAction(
                     InputFileContent.TreeViewContainerKey,
                     activeNode,
                     true,
@@ -160,10 +153,10 @@ public partial class WalkConfigInitializer : ComponentBase
             }
             await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
 
-            InputFileService.SetOpenedTreeViewModel(
+            IdeService.InputFile_SetOpenedTreeViewModel(
                 pseudoRootNode,
-                IdeComponentRenderers,
-                TextEditorService.CommonUtilityService);
+                IdeService.IdeComponentRenderers,
+                TextEditorService.CommonService);
         }
 
 		/*
@@ -195,7 +188,7 @@ public partial class WalkConfigInitializer : ComponentBase
         var jsonCompilerService = new JsonCompilerService(TextEditorService);
         var razorCompilerService = new RazorCompilerService(TextEditorService, cSharpCompilerService);
         var xmlCompilerService = new XmlCompilerService(TextEditorService);
-        var terminalCompilerService = new TerminalCompilerService(TextEditorService, TerminalService);
+        var terminalCompilerService = new TerminalCompilerService(IdeService);
         var defaultCompilerService = new CompilerServiceDoNothing();
 
         TextEditorService.RegisterCompilerService(ExtensionNoPeriodFacts.HTML, xmlCompilerService);

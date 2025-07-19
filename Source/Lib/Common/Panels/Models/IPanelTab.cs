@@ -9,5 +9,5 @@ public interface IPanelTab : ITab
 {
     public Key<Panel> Key { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
-    public CommonUtilityService CommonUtilityService { get; }
+    public CommonService CommonService { get; }
 }

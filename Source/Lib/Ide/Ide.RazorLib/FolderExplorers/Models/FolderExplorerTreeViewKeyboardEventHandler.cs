@@ -4,34 +4,20 @@ using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Options.Models;
-using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib.FolderExplorers.Displays;
-using Walk.Ide.RazorLib.Menus.Models;
-using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 
 namespace Walk.Ide.RazorLib.FolderExplorers.Models;
 
 public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
-    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-    private readonly TextEditorService _textEditorService;
-    private readonly IMenuOptionsFactory _menuOptionsFactory;
-    private readonly CommonUtilityService _commonUtilityService;
+    private readonly IdeService _ideService;
 
-    public FolderExplorerTreeViewKeyboardEventHandler(
-            IdeBackgroundTaskApi ideBackgroundTaskApi,
-            TextEditorService textEditorService,
-            IMenuOptionsFactory menuOptionsFactory,
-            CommonUtilityService commonUtilityService)
-        : base(commonUtilityService)
+    public FolderExplorerTreeViewKeyboardEventHandler(IdeService ideService)
+        : base(ideService.CommonService)
     {
-        _ideBackgroundTaskApi = ideBackgroundTaskApi;
-        _textEditorService = textEditorService;
-        _menuOptionsFactory = menuOptionsFactory;
-        _commonUtilityService = commonUtilityService;
+        _ideService = ideService;
     }
 
     public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
@@ -107,11 +93,11 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return Task.CompletedTask;
 
-        var copyFileMenuOption = _menuOptionsFactory.CopyFile(
+        var copyFileMenuOption = _ideService.CopyFile(
             treeViewAbsolutePath.Item,
             () =>
             {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewAbsolutePath.Item.NameWithExtension}", _commonUtilityService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewAbsolutePath.Item.NameWithExtension}", _ideService.CommonService, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
@@ -132,7 +118,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
         if (treeViewAbsolutePath.Item.IsDirectory)
         {
-            pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
+            pasteMenuOptionRecord = _ideService.PasteClipboard(
                 treeViewAbsolutePath.Item,
                 async () =>
                 {
@@ -149,11 +135,11 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         {
             var parentDirectory = treeViewAbsolutePath.Item.ParentDirectory;
 
-            var parentDirectoryAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+            var parentDirectoryAbsolutePath = _ideService.CommonService.EnvironmentProvider.AbsolutePathFactory(
                 parentDirectory,
                 true);
 
-            pasteMenuOptionRecord = _menuOptionsFactory.PasteClipboard(
+            pasteMenuOptionRecord = _ideService.PasteClipboard(
                 parentDirectoryAbsolutePath,
                 async () =>
                 {
@@ -182,12 +168,12 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
         var parent = treeViewAbsolutePath.Parent as TreeViewAbsolutePath;
 
-        MenuOptionRecord cutFileOptionRecord = _menuOptionsFactory.CutFile(
+        MenuOptionRecord cutFileOptionRecord = _ideService.CutFile(
             treeViewAbsolutePath.Item,
             () =>
             {
                 FolderExplorerContextMenu.ParentOfCutFile = parent;
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.NameWithExtension}", _commonUtilityService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.NameWithExtension}", _ideService.CommonService, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
@@ -204,9 +190,9 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return Task.CompletedTask;
 
-		_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
+		_ideService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
 		{
-			await _textEditorService.OpenInEditorAsync(
+			await _ideService.TextEditorService.OpenInEditorAsync(
 				editContext,
 				treeViewAbsolutePath.Item.Value,
 				shouldSetFocusToEditor,
@@ -224,11 +210,11 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
         await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-        _commonUtilityService.TreeView_ReRenderNodeAction(
+        _ideService.CommonService.TreeView_ReRenderNodeAction(
             FolderExplorerState.TreeViewContentStateKey,
             treeViewModel);
 
-        _commonUtilityService.TreeView_MoveUpAction(
+        _ideService.CommonService.TreeView_MoveUpAction(
             FolderExplorerState.TreeViewContentStateKey,
             false,
 			false);

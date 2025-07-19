@@ -4,9 +4,8 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.TextEditor.RazorLib;
 using Walk.CompilerServices.DotNetSolution.Models;
-using Walk.Ide.RazorLib.Installations.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
@@ -21,13 +20,7 @@ namespace Walk.Extensions.DotNet.CSharpProjects.Displays;
 public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private ITerminalService TerminalService { get; set; } = null!;
-	[Inject]
-	private WalkIdeConfig IdeConfig { get; set; } = null!;
-	[Inject]
-	private TextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+	private IdeService IdeService { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
@@ -46,10 +39,10 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		_viewModel = new(DotNetSolutionModel, TextEditorService.CommonUtilityService.EnvironmentProvider);
+		_viewModel = new(DotNetSolutionModel, IdeService.TextEditorService.CommonService.EnvironmentProvider);
 		
 		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
-		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
+		IdeService.TerminalStateChanged += OnTerminalStateChanged;
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -65,10 +58,10 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	private void RequestInputFileForParentDirectory(string message)
 	{
-		IdeBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
+		IdeService.Enqueue(new IdeWorkArgs
 		{
-			WorkKind = IdeBackgroundTaskApiWorkKind.RequestInputFileStateForm,
-			Message = message,
+			WorkKind = IdeWorkKind.RequestInputFileStateForm,
+			StringValue = message,
 			OnAfterSubmitFunc = async absolutePath =>
 			{
 				if (absolutePath.ExactInput is null)
@@ -93,7 +86,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	private async Task ReadProjectTemplates()
 	{
-		if (TextEditorService.CommonUtilityService.WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
+		if (IdeService.TextEditorService.CommonService.WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
 		{
 			_viewModel.ProjectTemplateList = WebsiteProjectTemplateFacts.WebsiteProjectTemplatesContainer.ToList();
 			await InvokeAsync(StateHasChanged);
@@ -113,11 +106,11 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			await InvokeAsync(StateHasChanged);
 
 			var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewList();
-			var generalTerminal = TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY];
+			var generalTerminal = IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY];
 				
 			var terminalCommandRequest = new TerminalCommandRequest(
 				formattedCommand.Value,
-				TextEditorService.CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+				IdeService.CommonService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
 				new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandRequestKey.Guid))
 			{
 				ContinueWithFunc = parsedTerminalCommand =>
@@ -148,11 +141,11 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			await InvokeAsync(StateHasChanged);
 
 			var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewListDeprecated();
-			var generalTerminal = TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY];
+			var generalTerminal = IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY];
 
 			var terminalCommandRequest = new TerminalCommandRequest(
 	        	formattedCommand.Value,
-	        	TextEditorService.CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+	        	IdeService.TextEditorService.CommonService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
 	        	new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandRequestKey.Guid))
 	        {
 	        	ContinueWithFunc = parsedCommand =>
@@ -163,7 +156,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 				}
 	        };
 	        	
-	        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+	        IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		}
 		finally
 		{
@@ -198,9 +191,9 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			return;
 		}
 
-		if (TextEditorService.CommonUtilityService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
+		if (IdeService.TextEditorService.CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
 		{
-			var generalTerminal = TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY];
+			var generalTerminal = IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY];
 
 			var terminalCommandRequest = new TerminalCommandRequest(
 	        	immutableView.FormattedNewCSharpProjectCommand.Value,
@@ -216,7 +209,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			        {
 			        	ContinueWithFunc = parsedCommand =>
 			        	{
-				        	TextEditorService.CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+				        	IdeService.TextEditorService.CommonService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 	
 							DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
 							{
@@ -238,12 +231,12 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 		{
 			await WebsiteDotNetCliHelper.StartNewCSharpProjectCommand(
 					immutableView,
-					(IEnvironmentProvider)TextEditorService.CommonUtilityService.EnvironmentProvider,
-					(IFileSystemProvider)TextEditorService.CommonUtilityService.FileSystemProvider,
+					(IEnvironmentProvider)IdeService.TextEditorService.CommonService.EnvironmentProvider,
+					(IFileSystemProvider)IdeService.TextEditorService.CommonService.FileSystemProvider,
 					DotNetBackgroundTaskApi,
-					(Common.RazorLib.Options.Models.CommonUtilityService)TextEditorService.CommonUtilityService,
+					(Common.RazorLib.Options.Models.CommonService)IdeService.TextEditorService.CommonService,
 					DialogRecord,
-					(ICommonComponentRenderers)TextEditorService.CommonUtilityService.CommonComponentRenderers)
+					(ICommonComponentRenderers)IdeService.TextEditorService.CommonService.CommonComponentRenderers)
 				.ConfigureAwait(false);
 		}
 	}
@@ -261,6 +254,6 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 	public void Dispose()
 	{
 		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
-		TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
+		IdeService.TerminalStateChanged -= OnTerminalStateChanged;
 	}
 }

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 
@@ -9,28 +8,24 @@ namespace Walk.Ide.RazorLib.Terminals.Displays;
 public partial class TerminalGroupDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private ITerminalGroupService TerminalGroupService { get; set; } = null!;
-    [Inject]
-    private ITerminalService TerminalService { get; set; } = null!;
-    [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private IdeService IdeService { get; set; } = null!;
 
 	private Key<IDynamicViewModel> _addIntegratedTerminalDialogKey = Key<IDynamicViewModel>.NewKey();
 
 	protected override void OnInitialized()
 	{
-		TerminalGroupService.TerminalGroupStateChanged += OnTerminalGroupStateChanged;
-    	TerminalService.TerminalStateChanged += OnTerminalStateChanged;
+		IdeService.TerminalGroupStateChanged += OnTerminalGroupStateChanged;
+    	IdeService.TerminalStateChanged += OnTerminalStateChanged;
 	}
 
     private void DispatchSetActiveTerminalAction(Key<ITerminal> terminalKey)
     {
-        TerminalGroupService.SetActiveTerminal(terminalKey);
+        IdeService.TerminalGroup_SetActiveTerminal(terminalKey);
     }
     
     private void ClearTerminalOnClick(Key<ITerminal> terminalKey)
     {
-    	TerminalService.GetTerminalState().TerminalMap[terminalKey]?.ClearFireAndForget();
+    	IdeService.GetTerminalState().TerminalMap[terminalKey]?.ClearFireAndForget();
     }
     
     private async void OnTerminalGroupStateChanged()
@@ -45,7 +40,7 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TerminalGroupService.TerminalGroupStateChanged -= OnTerminalGroupStateChanged;
-    	TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
+    	IdeService.TerminalGroupStateChanged -= OnTerminalGroupStateChanged;
+    	IdeService.TerminalStateChanged -= OnTerminalStateChanged;
     }
 }

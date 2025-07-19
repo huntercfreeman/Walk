@@ -3,7 +3,7 @@
 @using Walk.Common.RazorLib.Badges.Displays;
 
 @{
-    var panelState = CommonUtilityService.GetPanelState();
+    var panelState = CommonService.GetPanelState();
 
     var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
@@ -24,7 +24,7 @@
         {
 			var tabList = GetTabList(panelGroup);
 			
-            _tabCascadingValueBatch.CommonUtilityService = CommonUtilityService;
+            _tabCascadingValueBatch.CommonService = CommonService;
         	_tabCascadingValueBatch.HandleTabButtonOnContextMenu = null;
 			
 			<CascadingValue Value="_tabCascadingValueBatch"

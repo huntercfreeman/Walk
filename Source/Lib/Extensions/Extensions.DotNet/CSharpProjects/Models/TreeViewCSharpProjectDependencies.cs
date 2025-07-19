@@ -15,19 +15,19 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 			CSharpProjectDependencies cSharpProjectDependencies,
 			IDotNetComponentRenderers dotNetComponentRenderers,
 			IIdeComponentRenderers ideComponentRenderers,
-			CommonUtilityService commonUtilityService,
+			CommonService commonService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(cSharpProjectDependencies, isExpandable, isExpanded)
 	{
 		DotNetComponentRenderers = dotNetComponentRenderers;
 		IdeComponentRenderers = ideComponentRenderers;
-		CommonUtilityService = commonUtilityService;
+		CommonService = commonService;
 	}
 
 	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public IIdeComponentRenderers IdeComponentRenderers { get; }
-	public CommonUtilityService CommonUtilityService { get; }
+	public CommonService CommonService { get; }
 
 	public override bool Equals(object? obj)
 	{
@@ -88,7 +88,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 			new CSharpProjectNugetPackageReferences(Item.CSharpProjectNamespacePath),
 			DotNetComponentRenderers,
 			IdeComponentRenderers,
-			CommonUtilityService,
+			CommonService,
 			true,
 			false)
 		{
@@ -99,7 +99,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 			new CSharpProjectToProjectReferences(Item.CSharpProjectNamespacePath),
 			DotNetComponentRenderers,
 			IdeComponentRenderers,
-			CommonUtilityService,
+			CommonService,
 			true,
 			false)
 		{

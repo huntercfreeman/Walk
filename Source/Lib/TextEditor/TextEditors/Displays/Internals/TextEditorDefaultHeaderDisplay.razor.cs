@@ -23,7 +23,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
-	private CommonUtilityService CommonUtilityService { get; set; } = null!;
+	private CommonService CommonService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public Key<TextEditorComponentData> ComponentDataKey { get; set; }
@@ -89,8 +89,8 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
         		editContext,
         		modelModifier,
         		viewModelModifier,
-        		(ICommonComponentRenderers)CommonUtilityService.CommonComponentRenderers,
-        		(Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService);
+        		(ICommonComponentRenderers)CommonService.CommonComponentRenderers,
+        		(Common.RazorLib.Options.Models.CommonService)CommonService);
         	return ValueTask.CompletedTask;
         }));
         return Task.CompletedTask;
@@ -128,7 +128,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 			true,
 			null);
 
-        CommonUtilityService.Dialog_ReduceRegisterAction(dialogRecord);
+        CommonService.Dialog_ReduceRegisterAction(dialogRecord);
     }
 
 	public Task DoCopyOnClick(MouseEventArgs arg)
@@ -284,14 +284,14 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 			
 		var menuOptionList = new List<MenuOptionRecord>();
 		
-		var absolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(virtualizationResult.Model.PersistentState.ResourceUri.Value, false);
+		var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(virtualizationResult.Model.PersistentState.ResourceUri.Value, false);
 
 		menuOptionList.Add(new MenuOptionRecord(
 		    "Cancel",
 		    MenuOptionKind.Read,
 		    onClickFunc: () =>
 		    {
-			    CommonUtilityService.Dropdown_ReduceDisposeAction(dropdownKey);
+			    CommonService.Dropdown_ReduceDisposeAction(dropdownKey);
 		    	return Task.CompletedTask;
 		    }));
 		    
@@ -326,7 +326,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 			},
 			async () => await TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(_reloadButtonHtmlElementId));
 
-        CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
     }
 
     public Task DoRefreshOnClick()

@@ -3,7 +3,6 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Contexts.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.Shareds.Models;
 
@@ -12,13 +11,7 @@ namespace Walk.Ide.RazorLib.Shareds.Displays;
 public partial class StartupControlDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private ITerminalGroupService TerminalGroupService { get; set; } = null!;
-    [Inject]
-    private ITerminalService TerminalService { get; set; } = null!;
-    [Inject]
-    private IIdeService IdeService { get; set; } = null!;
-    [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private IdeService IdeService { get; set; } = null!;
 
     private const string _startButtonElementId = "di_ide_startup-controls-display_id";
 
@@ -38,14 +31,14 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     			startupControlKey = new Key<IStartupControlModel>(guid);
     		}
     		
-    		IdeService.SetActiveStartupControlKey(startupControlKey);
+    		IdeService.Ide_SetActiveStartupControlKey(startupControlKey);
     	}
     }
     	
     protected override void OnInitialized()
     {
-    	TerminalService.TerminalStateChanged += Shared_OnStateChanged;
-    	IdeService.StartupControlStateChanged += Shared_OnStateChanged;
+    	IdeService.TerminalStateChanged += Shared_OnStateChanged;
+    	IdeService.Ide_StartupControlStateChanged += Shared_OnStateChanged;
     }
 
     private async Task StartProgramWithoutDebuggingOnClick(bool isExecuting)
@@ -70,7 +63,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	
 	                if (!success)
 	                {
-	                    CommonUtilityService.SetPanelTabAsActiveByContextRecordKey(
+	                    IdeService.CommonService.SetPanelTabAsActiveByContextRecordKey(
 	                        ContextFacts.OutputContext.ContextKey);
 	
 	                    _ = await TrySetFocus(ContextFacts.OutputContext).ConfigureAwait(false);
@@ -82,13 +75,13 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 			    MenuOptionKind.Other,
 			    onClickFunc: async () => 
 				{
-					TerminalGroupService.SetActiveTerminal(TerminalFacts.EXECUTION_KEY);
+					IdeService.TerminalGroup_SetActiveTerminal(TerminalFacts.EXECUTION_KEY);
 				
 					var success = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
 	
 	                if (!success)
 	                {
-	                    CommonUtilityService.SetPanelTabAsActiveByContextRecordKey(
+	                    IdeService.CommonService.SetPanelTabAsActiveByContextRecordKey(
 	                        ContextFacts.TerminalContext.ContextKey);
 	
 	                    _ = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
@@ -112,8 +105,8 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 			    }));
 			    
 			await DropdownHelper.RenderDropdownAsync(
-    			CommonUtilityService,
-    			CommonUtilityService.JsRuntimeCommonApi,
+    			IdeService.CommonService,
+    			IdeService.CommonService.JsRuntimeCommonApi,
 				_startButtonElementId,
 				DropdownOrientation.Bottom,
 				_startButtonDropdownKey,
@@ -130,7 +123,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	
 	private async Task<bool> TrySetFocus(ContextRecord contextRecord)
     {
-        return await CommonUtilityService.JsRuntimeCommonApi
+        return await IdeService.CommonService.JsRuntimeCommonApi
             .TryFocusHtmlElementById(contextRecord.ContextElementId)
             .ConfigureAwait(false);
     }
@@ -139,7 +132,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TerminalService.TerminalStateChanged -= Shared_OnStateChanged;
-    	IdeService.StartupControlStateChanged -= Shared_OnStateChanged;
+    	IdeService.TerminalStateChanged -= Shared_OnStateChanged;
+    	IdeService.Ide_StartupControlStateChanged -= Shared_OnStateChanged;
     }
 }

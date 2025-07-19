@@ -28,7 +28,7 @@ public partial class OutputDisplay : ComponentBase, IDisposable
 	private OutputTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		TextEditorService.CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		TextEditorService.CommonService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
     
     protected override void OnInitialized()
     {
@@ -54,7 +54,7 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     		if (DotNetBackgroundTaskApi.OutputService.GetOutputState().DotNetRunParseResultId == DotNetCliOutputParser.GetDotNetRunParseResult().Id)
     			return Task.CompletedTask;
 
-			TextEditorService.CommonUtilityService.Continuous_EnqueueGroup((IBackgroundTaskGroup)new BackgroundTask(
+			TextEditorService.CommonService.Continuous_EnqueueGroup((IBackgroundTaskGroup)new BackgroundTask(
 				Key<IBackgroundTaskGroup>.Empty,
 				DotNetBackgroundTaskApi.OutputService.Do_ConstructTreeView));
     		return Task.CompletedTask;
@@ -82,7 +82,7 @@ public partial class OutputDisplay : ComponentBase, IDisposable
 			},
 			restoreFocusOnClose: null);
 
-		TextEditorService.CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		TextEditorService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
     

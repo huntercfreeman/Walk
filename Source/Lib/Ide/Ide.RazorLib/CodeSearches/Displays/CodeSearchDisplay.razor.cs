@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
-using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Ide.RazorLib.CodeSearches.Models;
@@ -11,9 +10,7 @@ namespace Walk.Ide.RazorLib.CodeSearches.Displays;
 public partial class CodeSearchDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private ICodeSearchService CodeSearchService { get; set; } = null!;
-	[Inject]
-	private TextEditorService TextEditorService { get; set; } = null!;
+	private IdeService IdeService { get; set; } = null!;
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 	
@@ -21,7 +18,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	private CodeSearchTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		TextEditorService.CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		IdeService.TextEditorService.CommonService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private readonly ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
 	{
@@ -30,38 +27,38 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 
     private string InputValue
 	{
-		get => CodeSearchService.GetCodeSearchState().Query;
+		get => IdeService.GetCodeSearchState().Query;
 		set
 		{
 			if (value is null)
 				value = string.Empty;
 
-			CodeSearchService.With(inState => inState with
+			IdeService.CodeSearch_With(inState => inState with
 			{
 				Query = value,
 			});
 
-			CodeSearchService.HandleSearchEffect();
+			IdeService.CodeSearch_HandleSearchEffect();
 		}
 	}
 	
 	protected override void OnInitialized()
 	{
-		CodeSearchService.CodeSearchStateChanged += OnCodeSearchStateChanged;
-		TextEditorService.CommonUtilityService.TreeViewStateChanged += OnTreeViewStateChanged;
+		IdeService.CodeSearchStateChanged += OnCodeSearchStateChanged;
+		IdeService.CommonService.TreeViewStateChanged += OnTreeViewStateChanged;
 	
 		_treeViewKeymap = new CodeSearchTreeViewKeyboardEventHandler(
-			TextEditorService,
+			IdeService.TextEditorService,
 			ServiceProvider);
 
 		_treeViewMouseEventHandler = new CodeSearchTreeViewMouseEventHandler(
-			TextEditorService,
+			IdeService.TextEditorService,
 			ServiceProvider);
 	}
 	
 	protected override void OnAfterRender(bool firstRender)
 	{
-		CodeSearchService._updateContentThrottle.Run(_ => CodeSearchService.UpdateContent(ResourceUri.Empty));
+		IdeService.CodeSearch_updateContentThrottle.Run(_ => IdeService.CodeSearch_UpdateContent(ResourceUri.Empty));
 	}
 	
 	private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
@@ -80,13 +77,13 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 			},
 			null);
 
-		TextEditorService.CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		IdeService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 
 	private string GetIsActiveCssClass(CodeSearchFilterKind codeSearchFilterKind)
 	{
-		return CodeSearchService.GetCodeSearchState().CodeSearchFilterKind == codeSearchFilterKind
+		return IdeService.GetCodeSearchState().CodeSearchFilterKind == codeSearchFilterKind
 			? "di_active"
 			: string.Empty;
 	}
@@ -108,7 +105,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	CodeSearchService.CodeSearchStateChanged -= OnCodeSearchStateChanged;
-    	TextEditorService.CommonUtilityService.TreeViewStateChanged -= OnTreeViewStateChanged;
+    	IdeService.CodeSearchStateChanged -= OnCodeSearchStateChanged;
+    	IdeService.CommonService.TreeViewStateChanged -= OnTreeViewStateChanged;
     }
 }

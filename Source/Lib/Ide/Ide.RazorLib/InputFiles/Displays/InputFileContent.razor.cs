@@ -11,7 +11,7 @@ namespace Walk.Ide.RazorLib.InputFiles.Displays;
 public partial class InputFileContent : ComponentBase
 {
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonService CommonService { get; set; } = null!;
 
     [CascadingParameter(Name = "SetInputFileContentTreeViewRootFunc")]
     public Func<AbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
@@ -31,10 +31,10 @@ public partial class InputFileContent : ComponentBase
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!CommonUtilityService.TryGetTreeViewContainer(TreeViewContainerKey, out _))
+        if (!CommonService.TryGetTreeViewContainer(TreeViewContainerKey, out _))
         {
             await SetInputFileContentTreeViewRootFunc
-                .Invoke(CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath)
+                .Invoke(CommonService.EnvironmentProvider.HomeDirectoryAbsolutePath)
                 .ConfigureAwait(false);
         }
     }

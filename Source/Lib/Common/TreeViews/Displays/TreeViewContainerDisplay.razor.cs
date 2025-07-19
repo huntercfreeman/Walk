@@ -17,7 +17,7 @@ namespace Walk.Common.RazorLib.TreeViews.Displays;
 public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonService CommonService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<TreeViewContainer> TreeViewContainerKey { get; set; } = Key<TreeViewContainer>.Empty;
@@ -48,7 +48,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        CommonUtilityService.TreeViewStateChanged += OnTreeViewStateChanged;
+        CommonService.TreeViewStateChanged += OnTreeViewStateChanged;
     }
 
     private int GetRootDepth(TreeViewNoType rootNode)
@@ -64,7 +64,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             return;
 
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            CommonUtilityService,
+            CommonService,
             treeViewContainer,
             null,
             async () =>
@@ -108,7 +108,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         if (treeViewContainerKey == Key<TreeViewContainer>.Empty || mouseEventArgs is null)
             return;
 
-        var treeViewContainer = CommonUtilityService.GetTreeViewContainer(TreeViewContainerKey);
+        var treeViewContainer = CommonService.GetTreeViewContainer(TreeViewContainerKey);
         // Validate that the treeViewContainer did not change out from under us
         if (treeViewContainer is null || treeViewContainer.Key != treeViewContainerKey)
             return;
@@ -123,7 +123,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 
             // If dedicated context menu button or shift + F10 was pressed as opposed to
             // a mouse RightClick then use JavaScript to determine the ContextMenu position.
-            contextMenuFixedPosition = await CommonUtilityService.JsRuntimeCommonApi
+            contextMenuFixedPosition = await CommonService.JsRuntimeCommonApi
                 .GetTreeViewContextMenuFixedPosition(treeViewContainer.ActiveNodeElementId)
                 .ConfigureAwait(false);
 
@@ -149,7 +149,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         }
 
         _treeViewContextMenuCommandArgs = new TreeViewCommandArgs(
-            CommonUtilityService,
+            CommonService,
             treeViewContainer,
             contextMenuTargetTreeViewNoType,
             async () =>
@@ -182,7 +182,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 
         if (OnContextMenuFunc is not null)
 		{
-            CommonUtilityService.Enqueue(new CommonWorkArgs
+            CommonService.Enqueue(new CommonWorkArgs
             {
     			WorkKind = CommonWorkKind.TreeView_HandleTreeViewOnContextMenu,
             	OnContextMenuFunc = OnContextMenuFunc,
@@ -203,7 +203,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 
     private string GetContextMenuCssStyleString()
     {
-        if (_treeViewContextMenuCommandArgs.CommonUtilityService is null || _treeViewContextMenuCommandArgs.ContextMenuFixedPosition is null)
+        if (_treeViewContextMenuCommandArgs.CommonService is null || _treeViewContextMenuCommandArgs.ContextMenuFixedPosition is null)
         {
             // This should never happen.
             return "display: none;";
@@ -228,17 +228,17 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     /// </summary>
     private string GetContainerElementCssClass(TreeViewContainer treeViewContainer)
     {
-        CommonUtilityService.UiStringBuilder.Clear();
-        CommonUtilityService.UiStringBuilder.Append("di_tree-view-state di_unselectable ");
-        CommonUtilityService.UiStringBuilder.Append(GetHasActiveNodeCssClass(treeViewContainer));
-        CommonUtilityService.UiStringBuilder.Append(" ");
-        CommonUtilityService.UiStringBuilder.Append(CssClassString);
+        CommonService.UiStringBuilder.Clear();
+        CommonService.UiStringBuilder.Append("di_tree-view-state di_unselectable ");
+        CommonService.UiStringBuilder.Append(GetHasActiveNodeCssClass(treeViewContainer));
+        CommonService.UiStringBuilder.Append(" ");
+        CommonService.UiStringBuilder.Append(CssClassString);
         
-        return CommonUtilityService.UiStringBuilder.ToString();
+        return CommonService.UiStringBuilder.ToString();
     }
     
     public void Dispose()
     {
-    	CommonUtilityService.TreeViewStateChanged -= OnTreeViewStateChanged;
+    	CommonService.TreeViewStateChanged -= OnTreeViewStateChanged;
     }
 }

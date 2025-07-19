@@ -424,7 +424,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     	}
     
         ComponentData = componentData;
-		TextEditorService.CommonUtilityService.AppDimensionStateChanged += AppDimensionStateWrap_StateChanged;
+		TextEditorService.CommonService.AppDimensionStateChanged += AppDimensionStateWrap_StateChanged;
 
 		// Tell the view model what the (already known) font-size measurements and text-editor measurements are.
 		PostScrollAndRemeasure(useExtraEvent: false);
@@ -473,7 +473,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     	}
     
         ComponentData = null;
-		TextEditorService.CommonUtilityService.AppDimensionStateChanged -= AppDimensionStateWrap_StateChanged;
+		TextEditorService.CommonService.AppDimensionStateChanged -= AppDimensionStateWrap_StateChanged;
     }
 
     private void AppDimensionStateWrap_StateChanged()
@@ -542,7 +542,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     private readonly Type? _dragDialogComponentType = null;
     private readonly Dictionary<string, object?>? _dragDialogComponentParameterMap = null;
 
-    public CommonUtilityService CommonUtilityService => TextEditorService.CommonUtilityService;
+    public CommonService CommonService => TextEditorService.CommonService;
 
     public Key<Panel> Key { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
@@ -639,7 +639,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         AddFallbackDropzone(dropzoneList);
         await AddPanelDropzonesAsync(dropzoneList).ConfigureAwait(false);
 
-        var measuredHtmlElementDimensions = await CommonUtilityService.JsRuntimeCommonApi
+        var measuredHtmlElementDimensions = await CommonService.JsRuntimeCommonApi
             .MeasureElementById(
                 $"di_te_group_{TextEditorService.Group_GetTextEditorGroupState().GroupList.Single().GroupKey.Guid}")
             .ConfigureAwait(false);
@@ -726,7 +726,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                     TabGroup = null;
                 }
 
-                CommonUtilityService.Dialog_ReduceRegisterAction(this);
+                CommonService.Dialog_ReduceRegisterAction(this);
             }
 
             // Create TextEditor Tab
@@ -755,7 +755,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                     else
                     {
                         // Is a dialog
-                        CommonUtilityService.Dialog_ReduceDisposeAction(DynamicViewModelKey);
+                        CommonService.Dialog_ReduceDisposeAction(DynamicViewModelKey);
                     }
 
                     TabGroup = null;
@@ -787,13 +787,13 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                 else
                 {
                     // Is a dialog
-                    CommonUtilityService.Dialog_ReduceDisposeAction(DynamicViewModelKey);
+                    CommonService.Dialog_ReduceDisposeAction(DynamicViewModelKey);
                 }
 
                 TabGroup = null;
             }
 
-            CommonUtilityService.RegisterPanelTab(
+            CommonService.RegisterPanelTab(
                 panelDropzone.PanelGroupKey,
                 new Panel(
                     Title,
@@ -808,7 +808,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                             ViewModelKey
                         },
                     },
-                    CommonUtilityService),
+                    CommonService),
                 true);
 
             return Task.CompletedTask;
@@ -877,7 +877,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 
         foreach (var panelGroupHtmlIdTuple in panelGroupHtmlIdTupleList)
         {
-            var measuredHtmlElementDimensions = await CommonUtilityService.JsRuntimeCommonApi
+            var measuredHtmlElementDimensions = await CommonService.JsRuntimeCommonApi
                 .MeasureElementById(panelGroupHtmlIdTuple.HtmlElementId)
                 .ConfigureAwait(false);
 

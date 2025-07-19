@@ -1,24 +1,19 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Dimensions.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Tabs.Displays;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Groups.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
-using Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Ide.RazorLib.Editors.Displays;
 
 public partial class EditorDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-    private TextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-	private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private IdeService IdeService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions EditorElementDimensions { get; set; } = null!;
@@ -33,7 +28,7 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 	private TabListDisplay? _tabListDisplay;
 
 	private string? _htmlId = null;
-	private string HtmlId => _htmlId ??= $"di_te_group_{IdeBackgroundTaskApi.EditorTextEditorGroupKey.Guid}";
+	private string HtmlId => _htmlId ??= $"di_te_group_{IdeService.EditorTextEditorGroupKey.Guid}";
 	
 	private Key<TextEditorViewModel> _previousActiveViewModelKey = Key<TextEditorViewModel>.Empty;
 	
@@ -51,19 +46,19 @@ public partial class EditorDisplay : ComponentBase, IDisposable
     
         _componentDataKey = new Key<TextEditorComponentData>(_viewModelDisplayOptions.TextEditorHtmlElementId);
         
-        TextEditorService.Group_TextEditorGroupStateChanged += TextEditorGroupWrapOnStateChanged;
-        TextEditorService.DirtyResourceUriStateChanged += DirtyResourceUriServiceOnStateChanged;
+        IdeService.TextEditorService.Group_TextEditorGroupStateChanged += TextEditorGroupWrapOnStateChanged;
+        IdeService.TextEditorService.DirtyResourceUriStateChanged += DirtyResourceUriServiceOnStateChanged;
     }
 
     private async void TextEditorGroupWrapOnStateChanged()
     {
-    	var textEditorGroup = TextEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
-	        x => x.GroupKey == IdeBackgroundTaskApi.EditorTextEditorGroupKey);
+    	var textEditorGroup = IdeService.TextEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
+	        x => x.GroupKey == IdeService.EditorTextEditorGroupKey);
 	        
 	    if (_previousActiveViewModelKey != textEditorGroup.ActiveViewModelKey)
 	    {
 	    	_previousActiveViewModelKey = textEditorGroup.ActiveViewModelKey;
-	    	TextEditorService.ViewModel_StopCursorBlinking();
+	    	IdeService.TextEditorService.ViewModel_StopCursorBlinking();
 	    }
     
         await InvokeAsync(StateHasChanged);
@@ -81,7 +76,7 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 
 	private List<ITab> GetTabList(TextEditorGroup textEditorGroup)
 	{
-        var textEditorState = TextEditorService.TextEditorState;
+        var textEditorState = IdeService.TextEditorService.TextEditorState;
 		var tabList = new List<ITab>();
 
 		foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
@@ -100,7 +95,7 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TextEditorService.Group_TextEditorGroupStateChanged -= TextEditorGroupWrapOnStateChanged;
-        TextEditorService.DirtyResourceUriStateChanged -= DirtyResourceUriServiceOnStateChanged;
+        IdeService.TextEditorService.Group_TextEditorGroupStateChanged -= TextEditorGroupWrapOnStateChanged;
+        IdeService.TextEditorService.DirtyResourceUriStateChanged -= DirtyResourceUriServiceOnStateChanged;
     }
 }

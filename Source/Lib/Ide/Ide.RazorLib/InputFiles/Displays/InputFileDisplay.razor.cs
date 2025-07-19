@@ -3,7 +3,6 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
@@ -13,11 +12,7 @@ namespace Walk.Ide.RazorLib.InputFiles.Displays;
 public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, IDisposable
 {
     [Inject]
-    private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
-    [Inject]
-    private IInputFileService InputFileService { get; set; } = null!;
-    [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private IdeService IdeService { get; set; } = null!;
 
     /// <summary>
     /// Receives the <see cref="_selectedAbsolutePath"/> as
@@ -76,17 +71,14 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
     
     protected override void OnInitialized()
     {
-    	InputFileService.InputFileStateChanged += OnInputFileStateChanged;
+    	IdeService.InputFileStateChanged += OnInputFileStateChanged;
     	
         _inputFileTreeViewMouseEventHandler = new InputFileTreeViewMouseEventHandler(
-            CommonUtilityService,
-            InputFileService,
+            IdeService,
             SetInputFileContentTreeViewRootFunc);
 
         _inputFileTreeViewKeyboardEventHandler = new InputFileTreeViewKeyboardEventHandler(
-            InputFileService,
-            IdeComponentRenderers,
-            CommonUtilityService,
+            IdeService,
             SetInputFileContentTreeViewRootFunc,
             async () =>
             {
@@ -114,7 +106,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
 
     private void InitializeElementDimensions()
     {
-    	var appOptionsState = CommonUtilityService.GetAppOptionsState();
+    	var appOptionsState = IdeService.CommonService.GetAppOptionsState();
     
         _sidebarElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
@@ -146,8 +138,8 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
     {
         var pseudoRootNode = new TreeViewAbsolutePath(
             absolutePath,
-            IdeComponentRenderers,
-            CommonUtilityService,
+            IdeService.IdeComponentRenderers,
+            IdeService.CommonService,
             true,
             false);
 
@@ -162,9 +154,9 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
 
         var activeNode = adhocRootNode.ChildList.FirstOrDefault();
 
-        if (!CommonUtilityService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
+        if (!IdeService.CommonService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
         {
-            CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
+            IdeService.CommonService.TreeView_RegisterContainerAction(new TreeViewContainer(
                 InputFileContent.TreeViewContainerKey,
                 adhocRootNode,
                 activeNode is null
@@ -173,9 +165,9 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
         }
         else
         {
-            CommonUtilityService.TreeView_WithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
+            IdeService.CommonService.TreeView_WithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
             
-			CommonUtilityService.TreeView_SetActiveNodeAction(
+			IdeService.CommonService.TreeView_SetActiveNodeAction(
 				InputFileContent.TreeViewContainerKey,
 				activeNode,
 				true,
@@ -184,10 +176,10 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
 
         await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
 
-        InputFileService.SetOpenedTreeViewModel(
+        IdeService.InputFile_SetOpenedTreeViewModel(
             pseudoRootNode,
-            IdeComponentRenderers,
-            CommonUtilityService);
+            IdeService.IdeComponentRenderers,
+            IdeService.CommonService);
     }
     
     public async void OnInputFileStateChanged()
@@ -197,6 +189,6 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
     
     public void Dispose()
     {
-    	InputFileService.InputFileStateChanged -= OnInputFileStateChanged;
+    	IdeService.InputFileStateChanged -= OnInputFileStateChanged;
     }
 }

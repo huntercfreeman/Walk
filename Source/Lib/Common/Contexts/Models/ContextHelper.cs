@@ -14,7 +14,7 @@ public static class ContextHelper
         string displayName,
         string internalIdentifier,
         WalkCommonJavaScriptInteropApi jsRuntimeCommonApi,
-        CommonUtilityService commonUtilityService)
+        CommonService commonService)
     {
         return new CommonCommand(
             displayName, internalIdentifier, false,
@@ -24,7 +24,7 @@ public static class ContextHelper
 
                 if (!success)
                 {
-                    commonUtilityService.SetPanelTabAsActiveByContextRecordKey(
+                    commonService.SetPanelTabAsActiveByContextRecordKey(
                         contextRecord.ContextKey);
 
                     _ = await TrySetFocus().ConfigureAwait(false);

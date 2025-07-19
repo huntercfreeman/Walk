@@ -6,6 +6,7 @@ using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
@@ -21,18 +22,15 @@ namespace Walk.Extensions.DotNet.Menus.Models;
 
 public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTaskGroup
 {
-	private readonly CommonUtilityService _commonUtilityService;
+	private readonly IdeService _ideService;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
-	private readonly IIdeComponentRenderers _ideComponentRenderers;
 
 	public DotNetMenuOptionsFactory(
-	    CommonUtilityService commonUtilityService,
-		IDotNetComponentRenderers dotNetComponentRenderers,
-		IIdeComponentRenderers ideComponentRenderers)
+	    IdeService ideService,
+		IDotNetComponentRenderers dotNetComponentRenderers)
 	{
-	    _commonUtilityService = commonUtilityService;
+	    _ideService = ideService;
 		_dotNetComponentRenderers = dotNetComponentRenderers;
-		_ideComponentRenderers = ideComponentRenderers;
 	}
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
@@ -47,7 +45,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 		TreeViewSolution treeViewSolution,
 		TreeViewNamespacePath projectNode,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
+		CommonService commonService,
 		Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Remove (no files are deleted)", MenuOptionKind.Delete,
@@ -67,7 +65,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 								treeViewSolution,
 								projectNode,
 								terminal,
-								commonUtilityService,
+								commonService,
 								onAfterCompletion);
 
 							return Task.CompletedTask;
@@ -79,8 +77,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 	public MenuOptionRecord AddProjectToProjectReference(
 		TreeViewNamespacePath projectReceivingReference,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
-		IdeBackgroundTaskApi ideBackgroundTaskApi,
+		IdeService ideService,
 		Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Add Project Reference", MenuOptionKind.Other,
@@ -90,8 +87,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 				PerformAddProjectToProjectReference(
 					projectReceivingReference,
 					terminal,
-					commonUtilityService,
-					ideBackgroundTaskApi,
+					ideService,
 					onAfterCompletion);
 
 				return Task.CompletedTask;
@@ -101,7 +97,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 	public MenuOptionRecord RemoveProjectToProjectReference(
 		TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
+		CommonService commonService,
 		Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Remove Project Reference", MenuOptionKind.Other,
@@ -111,7 +107,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 					Enqueue_PerformRemoveProjectToProjectReference(
 						treeViewCSharpProjectToProjectReference,
 						terminal,
-						commonUtilityService,
+						commonService,
 						onAfterCompletion);
 
 					return Task.CompletedTask;
@@ -122,11 +118,11 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 		TreeViewSolution treeViewSolution,
 		TreeViewNamespacePath treeViewProjectToMove,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
+		CommonService commonService,
 		Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Move to Solution Folder", MenuOptionKind.Other,
-			widgetRendererType: _ideComponentRenderers.FileFormRendererType,
+			widgetRendererType: _ideService.IdeComponentRenderers.FileFormRendererType,
 			widgetParameterMap: new Dictionary<string, object?>
 			{
 				{ nameof(IFileFormRendererType.FileName), string.Empty },
@@ -140,7 +136,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 							treeViewProjectToMove,
 							nextName,
 							terminal,
-							commonUtilityService,
+							commonService,
 							onAfterCompletion);
 
 						return Task.CompletedTask;
@@ -153,7 +149,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 		NamespacePath modifyProjectNamespacePath,
 		TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
+		CommonService commonService,
 		Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Remove NuGet Package Reference", MenuOptionKind.Other,
@@ -163,7 +159,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 					modifyProjectNamespacePath,
 					treeViewCSharpProjectNugetPackageReference,
 					terminal,
-					commonUtilityService,
+					commonService,
 					onAfterCompletion);
 
 				return Task.CompletedTask;
@@ -171,7 +167,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 	}
 
 	private readonly
-		Queue<(TreeViewSolution treeViewSolution, TreeViewNamespacePath projectNode, ITerminal terminal, CommonUtilityService commonUtilityService, Func<Task> onAfterCompletion)>
+		Queue<(TreeViewSolution treeViewSolution, TreeViewNamespacePath projectNode, ITerminal terminal, CommonService commonService, Func<Task> onAfterCompletion)>
 		_queue_PerformRemoveCSharpProjectReferenceFromSolution = new();
 
 
@@ -179,7 +175,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 		TreeViewSolution treeViewSolution,
 		TreeViewNamespacePath projectNode,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
+		CommonService commonService,
 		Func<Task> onAfterCompletion)
 	{
         lock (_workLock)
@@ -187,9 +183,9 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
             _workKindQueue.Enqueue(DotNetMenuOptionsFactoryWorkKind.PerformRemoveCSharpProjectReferenceFromSolution);
 
             _queue_PerformRemoveCSharpProjectReferenceFromSolution.Enqueue(
-				(treeViewSolution, projectNode, terminal, commonUtilityService, onAfterCompletion));
+				(treeViewSolution, projectNode, terminal, commonService, onAfterCompletion));
 
-            _commonUtilityService.Continuous_EnqueueGroup(this);
+            _ideService.CommonService.Continuous_EnqueueGroup(this);
         }
 	}
 	
@@ -197,7 +193,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 		TreeViewSolution treeViewSolution,
 		TreeViewNamespacePath projectNode,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
+		CommonService commonService,
 		Func<Task> onAfterCompletion)
 	{
         var workingDirectory = treeViewSolution.Item.NamespacePath.AbsolutePath.ParentDirectory!;
@@ -220,14 +216,13 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 	public void PerformAddProjectToProjectReference(
 		TreeViewNamespacePath projectReceivingReference,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
-		IdeBackgroundTaskApi ideBackgroundTaskApi,
+		IdeService ideService,
 		Func<Task> onAfterCompletion)
 	{
-		ideBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
+		ideService.Enqueue(new IdeWorkArgs
 		{
-			WorkKind = IdeBackgroundTaskApiWorkKind.RequestInputFileStateForm,
-			Message = $"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
+			WorkKind = IdeWorkKind.RequestInputFileStateForm,
+			StringValue = $"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
 			OnAfterSubmitFunc = referencedProject =>
 			{
 				if (referencedProject.ExactInput is null)
@@ -243,7 +238,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 				{
 					ContinueWithFunc = parsedCommand =>
 					{
-						NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", commonUtilityService, TimeSpan.FromSeconds(7));
+						NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", ideService.CommonService, TimeSpan.FromSeconds(7));
 						return onAfterCompletion.Invoke();
 					}
 				};
@@ -269,13 +264,13 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 	}
 
 	private readonly
-		Queue<(TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference, ITerminal terminal, CommonUtilityService commonUtilityService, Func<Task> onAfterCompletion)>
+		Queue<(TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference, ITerminal terminal, CommonService commonService, Func<Task> onAfterCompletion)>
 		_queue_PerformRemoveProjectToProjectReference = new();
 
     public void Enqueue_PerformRemoveProjectToProjectReference(
 		TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
+		CommonService commonService,
 		Func<Task> onAfterCompletion)
 	{
         lock (_workLock)
@@ -283,16 +278,16 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
             _workKindQueue.Enqueue(DotNetMenuOptionsFactoryWorkKind.PerformRemoveProjectToProjectReference);
 
             _queue_PerformRemoveProjectToProjectReference.Enqueue(
-				(treeViewCSharpProjectToProjectReference, terminal, commonUtilityService, onAfterCompletion));
+				(treeViewCSharpProjectToProjectReference, terminal, commonService, onAfterCompletion));
 
-            _commonUtilityService.Continuous_EnqueueGroup(this);
+            _ideService.CommonService.Continuous_EnqueueGroup(this);
         }
 	}
 	
 	public ValueTask Do_PerformRemoveProjectToProjectReference(
 		TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
+		CommonService commonService,
 		Func<Task> onAfterCompletion)
 	{
         var formattedCommand = DotNetCliCommandFormatter.FormatRemoveProjectToProjectReference(
@@ -305,7 +300,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
         {
             ContinueWithFunc = parsedCommand =>
             {
-                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.NameWithExtension}", commonUtilityService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.NameWithExtension}", commonService, TimeSpan.FromSeconds(7));
                 return onAfterCompletion.Invoke();
             }
         };
@@ -315,7 +310,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
     }
 
 	private readonly
-		Queue<(TreeViewSolution treeViewSolution, TreeViewNamespacePath treeViewProjectToMove, string solutionFolderPath, ITerminal terminal, CommonUtilityService commonUtilityService, Func<Task> onAfterCompletion)>
+		Queue<(TreeViewSolution treeViewSolution, TreeViewNamespacePath treeViewProjectToMove, string solutionFolderPath, ITerminal terminal, CommonService commonService, Func<Task> onAfterCompletion)>
 		_queue_PerformMoveProjectToSolutionFolder = new();
 
     public void Enqueue_PerformMoveProjectToSolutionFolder(
@@ -323,7 +318,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 		TreeViewNamespacePath treeViewProjectToMove,
 		string solutionFolderPath,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
+		CommonService commonService,
 		Func<Task> onAfterCompletion)
 	{
         lock (_workLock)
@@ -331,9 +326,9 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
             _workKindQueue.Enqueue(DotNetMenuOptionsFactoryWorkKind.PerformMoveProjectToSolutionFolder);
 
             _queue_PerformMoveProjectToSolutionFolder.Enqueue(
-				(treeViewSolution, treeViewProjectToMove, solutionFolderPath, terminal, commonUtilityService, onAfterCompletion));
+				(treeViewSolution, treeViewProjectToMove, solutionFolderPath, terminal, commonService, onAfterCompletion));
 
-            _commonUtilityService.Continuous_EnqueueGroup(this);
+            _ideService.CommonService.Continuous_EnqueueGroup(this);
         }
 	}
 	
@@ -342,7 +337,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 		TreeViewNamespacePath treeViewProjectToMove,
 		string solutionFolderPath,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
+		CommonService commonService,
 		Func<Task> onAfterCompletion)
 	{
         var formattedCommand = DotNetCliCommandFormatter.FormatMoveProjectToSolutionFolder(
@@ -356,7 +351,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
         {
             ContinueWithFunc = parsedCommand =>
             {
-                NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.AbsolutePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}", commonUtilityService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.AbsolutePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}", commonService, TimeSpan.FromSeconds(7));
                 return onAfterCompletion.Invoke();
             }
         };
@@ -365,7 +360,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
             treeViewSolution,
             treeViewProjectToMove,
             terminal,
-            commonUtilityService,
+            commonService,
             () =>
             {
                 terminal.EnqueueCommand(terminalCommandRequest);
@@ -376,14 +371,14 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
     }
 
 	private readonly
-		Queue<(NamespacePath modifyProjectNamespacePath, TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference, ITerminal terminal, CommonUtilityService commonUtilityService, Func<Task> onAfterCompletion)>
+		Queue<(NamespacePath modifyProjectNamespacePath, TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference, ITerminal terminal, CommonService commonService, Func<Task> onAfterCompletion)>
 		_queue_PerformRemoveNuGetPackageReferenceFromProject = new();
 
     public void Enqueue_PerformRemoveNuGetPackageReferenceFromProject(
 		NamespacePath modifyProjectNamespacePath,
 		TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
+		CommonService commonService,
 		Func<Task> onAfterCompletion)
 	{
         lock (_workLock)
@@ -391,9 +386,9 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
             _workKindQueue.Enqueue(DotNetMenuOptionsFactoryWorkKind.PerformRemoveNuGetPackageReferenceFromProject);
 
             _queue_PerformRemoveNuGetPackageReferenceFromProject.Enqueue(
-				(modifyProjectNamespacePath, treeViewCSharpProjectNugetPackageReference, terminal, commonUtilityService, onAfterCompletion));
+				(modifyProjectNamespacePath, treeViewCSharpProjectNugetPackageReference, terminal, commonService, onAfterCompletion));
 
-            _commonUtilityService.Continuous_EnqueueGroup(this);
+            _ideService.CommonService.Continuous_EnqueueGroup(this);
         }
 	}
 	
@@ -401,7 +396,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
 		NamespacePath modifyProjectNamespacePath,
 		TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
+		CommonService commonService,
 		Func<Task> onAfterCompletion)
 	{
         var formattedCommand = DotNetCliCommandFormatter.FormatRemoveNugetPackageReferenceFromProject(
@@ -414,7 +409,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
         {
             ContinueWithFunc = parsedCommand =>
             {
-                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectNamespacePath.AbsolutePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", commonUtilityService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectNamespacePath.AbsolutePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", commonService, TimeSpan.FromSeconds(7));
                 return onAfterCompletion.Invoke();
             }
         };
@@ -439,7 +434,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
             {
                 var args = _queue_PerformRemoveCSharpProjectReferenceFromSolution.Dequeue();
                 return Do_PerformRemoveCSharpProjectReferenceFromSolution(
-					args.treeViewSolution, args.projectNode, args.terminal, args.commonUtilityService, args.onAfterCompletion);
+					args.treeViewSolution, args.projectNode, args.terminal, args.commonService, args.onAfterCompletion);
             }
 			case DotNetMenuOptionsFactoryWorkKind.PerformRemoveProjectToProjectReference:
             {
@@ -447,7 +442,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
                 return Do_PerformRemoveProjectToProjectReference(
                     args.treeViewCSharpProjectToProjectReference,
 					args.terminal,
-					args.commonUtilityService,
+					args.commonService,
                     args.onAfterCompletion);
             }
 			case DotNetMenuOptionsFactoryWorkKind.PerformMoveProjectToSolutionFolder:
@@ -458,7 +453,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
                     args.treeViewProjectToMove,
 					args.solutionFolderPath,
 					args.terminal,
-					args.commonUtilityService,
+					args.commonService,
                     args.onAfterCompletion);
             }
 			case DotNetMenuOptionsFactoryWorkKind.PerformRemoveNuGetPackageReferenceFromProject:
@@ -468,7 +463,7 @@ public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory, IBackgroundTa
                     args.modifyProjectNamespacePath,
                     args.treeViewCSharpProjectNugetPackageReference,
                     args.terminal,
-                    args.commonUtilityService,
+                    args.commonService,
                     args.onAfterCompletion);
             }
             default:

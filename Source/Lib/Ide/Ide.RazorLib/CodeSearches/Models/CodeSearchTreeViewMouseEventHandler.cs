@@ -14,7 +14,7 @@ public class CodeSearchTreeViewMouseEventHandler : TreeViewMouseEventHandler
 	public CodeSearchTreeViewMouseEventHandler(
 			TextEditorService textEditorService,
 			IServiceProvider serviceProvider)
-		: base(textEditorService.CommonUtilityService)
+		: base(textEditorService.CommonService)
 	{
 		_textEditorService = textEditorService;
 		_serviceProvider = serviceProvider;

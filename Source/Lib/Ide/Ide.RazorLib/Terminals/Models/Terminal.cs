@@ -5,7 +5,6 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Reactives.Models;
-using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Ide.RazorLib.Terminals.Models;
 
@@ -14,8 +13,7 @@ namespace Walk.Ide.RazorLib.Terminals.Models;
 /// </summary>
 public class Terminal : ITerminal, IBackgroundTaskGroup
 {
-	private readonly CommonUtilityService _commonUtilityService;
-	private readonly ITerminalService _terminalService;
+    private readonly IdeService _ideService;
 	
 	/// <summary>The TArgs of byte is unused</summary>
 	private readonly ThrottleOptimized<byte> _throttleUiUpdateFromSetHasExecutingProcess;
@@ -25,22 +23,20 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 		Func<Terminal, ITerminalInteractive> terminalInteractiveFactory,
 		Func<Terminal, ITerminalInput> terminalInputFactory,
 		Func<Terminal, ITerminalOutput> terminalOutputFactory,
-		CommonUtilityService commonUtilityService,
-		ITerminalService terminalService)
+		IdeService ideService)
 	{
 		DisplayName = displayName;
 		TerminalInteractive = terminalInteractiveFactory.Invoke(this);
 		TerminalInput = terminalInputFactory.Invoke(this);
 		TerminalOutput = terminalOutputFactory.Invoke(this);
 		
-		_commonUtilityService = commonUtilityService;
-		_terminalService = terminalService;
+		_ideService = ideService;
 		
 		_throttleUiUpdateFromSetHasExecutingProcess = new(
 			DelaySetHasExecutingProcess,
 			(_, _) =>
 			{
-				_terminalService.StateHasChanged();
+				_ideService.Terminal_StateHasChanged();
 				return Task.CompletedTask;
 			});
 	}
@@ -75,7 +71,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(TerminalWorkKind.Command);
 			_queue_general_TerminalCommandRequest.Enqueue(terminalCommandRequest);
-            _commonUtilityService.Indefinite_EnqueueGroup(this);
+            _ideService.CommonService.Indefinite_EnqueueGroup(this);
         }
     }
 
@@ -86,7 +82,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
     
     public Task EnqueueCommandAsync(TerminalCommandRequest terminalCommandRequest)
     {
-		return _commonUtilityService.Indefinite_EnqueueAsync(
+		return _ideService.CommonService.Indefinite_EnqueueAsync(
 			Key<IBackgroundTaskGroup>.NewKey(),
 			BackgroundTaskFacts.IndefiniteQueueKey,
 			"Enqueue Command",
@@ -173,7 +169,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 					" threw an exception" +
 					"\n"));
 		
-			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonUtilityService, TimeSpan.FromSeconds(14));
+			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _ideService.CommonService, TimeSpan.FromSeconds(14));
 		}
 		finally
 		{

@@ -10,7 +10,7 @@ public partial class IdeSettingsDisplay : ComponentBase
 	[Inject]
 	private IAppDataService AppDataService { get; set; } = null!;
 	[Inject]
-	private CommonUtilityService CommonUtilityService { get; set; } = null!;
+	private CommonService CommonService { get; set; } = null!;
 	
 	private void WriteWalkDebugSomethingToConsole()
 	{

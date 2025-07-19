@@ -60,7 +60,7 @@ public sealed class TextEditorService
         WalkTextEditorConfig textEditorConfig,
         IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         IJSRuntime jsRuntime,
-        CommonUtilityService commonUtilityService,
+        CommonService commonService,
 		IServiceProvider serviceProvider)
     {
     	__TextEditorViewModelLiason = new(this);
@@ -68,14 +68,14 @@ public sealed class TextEditorService
     	WorkerUi = new(this);
     	WorkerArbitrary = new(this);
     
-		CommonUtilityService = commonUtilityService;
+		CommonService = commonService;
 		
 		PostScrollAndRemeasure_DebounceExtraEvent = new(
         	TimeSpan.FromMilliseconds(250),
         	CancellationToken.None,
         	(_, _) =>
         	{
-        	    CommonUtilityService.AppDimension_NotifyIntraAppResize(useExtraEvent: false);
+        	    CommonService.AppDimension_NotifyIntraAppResize(useExtraEvent: false);
         	    return Task.CompletedTask;
     	    });
 		
@@ -88,10 +88,10 @@ public sealed class TextEditorService
         TextEditorState = new();
     }
 
-    public CommonUtilityService CommonUtilityService { get; }
+    public CommonService CommonService { get; }
 
 	public WalkTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
-	public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi => CommonUtilityService.JsRuntimeCommonApi;
+	public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi => CommonService.JsRuntimeCommonApi;
 	public WalkTextEditorConfig TextEditorConfig { get; }
 	public IWalkTextEditorComponentRenderers TextEditorComponentRenderers { get; }
 
@@ -569,7 +569,7 @@ public sealed class TextEditorService
 			return;
 			
 		var standardizedFilePathString = await TextEditorConfig.AbsolutePathStandardizeFunc
-			.Invoke(absolutePath, CommonUtilityService)
+			.Invoke(absolutePath, CommonService)
 			.ConfigureAwait(false);
 			
 		var resourceUri = new ResourceUri(standardizedFilePathString);
@@ -636,21 +636,21 @@ public sealed class TextEditorService
 		if (TextEditorConfig.RegisterModelFunc is null)
 			return Key<TextEditorViewModel>.Empty;
 		await TextEditorConfig.RegisterModelFunc
-			.Invoke(new RegisterModelArgs(editContext, resourceUri, CommonUtilityService, IdeBackgroundTaskApi))
+			.Invoke(new RegisterModelArgs(editContext, resourceUri, CommonService, IdeBackgroundTaskApi))
 			.ConfigureAwait(false);
 	
 		// TryRegisterViewModelFunc
 		if (TextEditorConfig.TryRegisterViewModelFunc is null)
 			return Key<TextEditorViewModel>.Empty;
 		var actualViewModelKey = await TextEditorConfig.TryRegisterViewModelFunc
-			.Invoke(new TryRegisterViewModelArgs(editContext, preferredViewModelKey, resourceUri, category, shouldSetFocusToEditor, CommonUtilityService, IdeBackgroundTaskApi))
+			.Invoke(new TryRegisterViewModelArgs(editContext, preferredViewModelKey, resourceUri, category, shouldSetFocusToEditor, CommonService, IdeBackgroundTaskApi))
 			.ConfigureAwait(false);
 	
 		// TryShowViewModelFunc
 		if (actualViewModelKey == Key<TextEditorViewModel>.Empty || TextEditorConfig.TryShowViewModelFunc is null)
 			return Key<TextEditorViewModel>.Empty;
 		await TextEditorConfig.TryShowViewModelFunc
-			.Invoke(new TryShowViewModelArgs(actualViewModelKey, Key<TextEditorGroup>.Empty, shouldSetFocusToEditor, CommonUtilityService, IdeBackgroundTaskApi))
+			.Invoke(new TryShowViewModelArgs(actualViewModelKey, Key<TextEditorGroup>.Empty, shouldSetFocusToEditor, CommonService, IdeBackgroundTaskApi))
 			.ConfigureAwait(false);
 		
 		return actualViewModelKey;
@@ -801,7 +801,7 @@ public sealed class TextEditorService
     
     public void Enqueue_TextEditorInitializationBackgroundTaskGroupWorkKind()
     {
-    	CommonUtilityService.Continuous_EnqueueGroup(new BackgroundTask(
+    	CommonService.Continuous_EnqueueGroup(new BackgroundTask(
     		Key<IBackgroundTaskGroup>.Empty,
     		Do_WalkTextEditorInitializerOnInit));
     }
@@ -809,9 +809,9 @@ public sealed class TextEditorService
     public async ValueTask Do_WalkTextEditorInitializerOnInit()
     {
         if (TextEditorConfig.CustomThemeRecordList is not null)
-            CommonUtilityService.Theme_RegisterRangeAction(TextEditorConfig.CustomThemeRecordList);
+            CommonService.Theme_RegisterRangeAction(TextEditorConfig.CustomThemeRecordList);
 
-        var initialThemeRecord = CommonUtilityService.GetThemeState().ThemeList.FirstOrDefault(
+        var initialThemeRecord = CommonService.GetThemeState().ThemeList.FirstOrDefault(
             x => x.Key == TextEditorConfig.InitialThemeKey);
 
         if (initialThemeRecord is not null)
@@ -819,7 +819,7 @@ public sealed class TextEditorService
 
         await Options_SetFromLocalStorageAsync().ConfigureAwait(false);
 
-        CommonUtilityService.RegisterContextSwitchGroup(
+        CommonService.RegisterContextSwitchGroup(
             new ContextSwitchGroup(
                 Walk.TextEditor.RazorLib.Installations.Displays.WalkTextEditorInitializer.ContextSwitchGroupKey,
                 "Text Editor",
@@ -842,7 +842,7 @@ public sealed class TextEditorService
                             {
                                 viewModelList.Add(viewModel);
 
-                                var absolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+                                var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
                                     viewModel.PersistentState.ResourceUri.Value,
                                     false);
 
@@ -874,7 +874,7 @@ public sealed class TextEditorService
                     return Task.FromResult(menu);
                 }));
 
-        CommonUtilityService.RegisterKeymapLayer(Walk.TextEditor.RazorLib.Keymaps.Models.Defaults.TextEditorKeymapDefaultFacts.HasSelectionLayer);
+        CommonService.RegisterKeymapLayer(Walk.TextEditor.RazorLib.Keymaps.Models.Defaults.TextEditorKeymapDefaultFacts.HasSelectionLayer);
     }
     
     
@@ -1402,7 +1402,7 @@ public sealed class TextEditorService
 
     public ValueTask ViewModel_FocusPrimaryCursorAsync(string primaryCursorContentId)
     {
-        return CommonUtilityService.JsRuntimeCommonApi
+        return CommonService.JsRuntimeCommonApi
             .FocusHtmlElementById(primaryCursorContentId, preventScroll: true);
     }
 
@@ -2705,7 +2705,7 @@ public sealed class TextEditorService
             new List<Key<TextEditorViewModel>>(),
             category.Value,
             this,
-            CommonUtilityService);
+            CommonService);
 
         Group_Register(textEditorGroup);
     }
@@ -3152,7 +3152,7 @@ public sealed class TextEditorService
 	public const int Options_TAB_WIDTH_MAX = 4;
 
     private readonly TextEditorService Options_textEditorService;
-    private readonly CommonUtilityService Options_commonUtilityService;
+    private readonly CommonService Options_commonUtilityService;
     
     private TextEditorOptionsState Options_textEditorOptionsState = new();
 
@@ -3205,7 +3205,7 @@ public sealed class TextEditorService
             isResizableOverride ?? TextEditorConfig.SettingsDialogConfig.ComponentIsResizable,
             null);
 
-        CommonUtilityService.Dialog_ReduceRegisterAction(settingsDialog);
+        CommonService.Dialog_ReduceRegisterAction(settingsDialog);
     }
 
     public void Options_ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null)
@@ -3221,7 +3221,7 @@ public sealed class TextEditorService
             isResizableOverride ?? TextEditorConfig.FindAllDialogConfig.ComponentIsResizable,
             null);
 
-        CommonUtilityService.Dialog_ReduceRegisterAction(Options_findAllDialog);
+        CommonService.Dialog_ReduceRegisterAction(Options_findAllDialog);
     }
 
     public void Options_SetTheme(ThemeRecord theme, bool updateStorage = true)
@@ -3245,7 +3245,7 @@ public sealed class TextEditorService
 		//
 		// Can probably use 'theme' variable here but
 		// I don't want to touch that right now -- incase there are unexpected consequences.
-        var usingThemeCssClassString = CommonUtilityService.GetThemeState().ThemeList
+        var usingThemeCssClassString = CommonService.GetThemeState().ThemeList
         	.FirstOrDefault(x => x.Key == Options_GetTextEditorOptionsState().Options.CommonOptions.ThemeKey)
         	?.CssClassString
             ?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
@@ -3488,7 +3488,7 @@ public sealed class TextEditorService
 
     public void Options_WriteToStorage()
     {
-        CommonUtilityService.Enqueue(new CommonWorkArgs
+        CommonService.Enqueue(new CommonWorkArgs
         {
     		WorkKind = CommonWorkKind.WriteToLocalStorage,
         	WriteToLocalStorage_Key = StorageKey,
@@ -3498,7 +3498,7 @@ public sealed class TextEditorService
 
     public async Task Options_SetFromLocalStorageAsync()
     {
-        var optionsJsonString = await CommonUtilityService.Storage_GetValue(StorageKey).ConfigureAwait(false) as string;
+        var optionsJsonString = await CommonService.Storage_GetValue(StorageKey).ConfigureAwait(false) as string;
 
         if (string.IsNullOrWhiteSpace(optionsJsonString))
             return;
@@ -3510,7 +3510,7 @@ public sealed class TextEditorService
 
         if (optionsJson.CommonOptionsJsonDto?.ThemeKey is not null)
         {
-            var matchedTheme = CommonUtilityService.GetThemeState().ThemeList.FirstOrDefault(
+            var matchedTheme = CommonService.GetThemeState().ThemeList.FirstOrDefault(
                 x => x.Key == optionsJson.CommonOptionsJsonDto.ThemeKey);
 
             Options_SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false);
@@ -3829,7 +3829,7 @@ public sealed class TextEditorService
 
 			// Search Files
 			{
-				var childFileList = await CommonUtilityService.FileSystemProvider.Directory
+				var childFileList = await CommonService.FileSystemProvider.Directory
 					.GetFilesAsync(directoryPath)
 					.ConfigureAwait(false);
 	
@@ -3858,7 +3858,7 @@ public sealed class TextEditorService
 	
 			// Recurse into subdirectories
 			{
-				var subdirectoryList = await CommonUtilityService.FileSystemProvider.Directory
+				var subdirectoryList = await CommonService.FileSystemProvider.Directory
 					.GetDirectoriesAsync(directoryPath)
 					.ConfigureAwait(false);
 	
@@ -3874,7 +3874,7 @@ public sealed class TextEditorService
 		
 		async Task PerformSearchFile(string filePath)
 		{
-			var text = await CommonUtilityService.FileSystemProvider.File.ReadAllTextAsync(filePath).ConfigureAwait(false);
+			var text = await CommonService.FileSystemProvider.File.ReadAllTextAsync(filePath).ConfigureAwait(false);
 			var query = textEditorFindAllState.SearchQuery;
 				
 	        var matchedTextSpanList = new List<(string SourceText, ResourceUri ResourceUri, TextEditorTextSpan TextSpan)>();
@@ -3939,7 +3939,7 @@ public sealed class TextEditorService
 	
 	    var treeViewList = groupedResults.Select(group =>
 	    {
-	    	var absolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+	    	var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
 	    		group.Key.Value,
 	    		false);
 	    		
@@ -3961,18 +3961,18 @@ public sealed class TextEditorService
 	        ? Array.Empty<TreeViewNoType>()
 	        : new List<TreeViewNoType> { firstNode };
 	
-	    if (!CommonUtilityService.TryGetTreeViewContainer(TextEditorFindAllState.TreeViewFindAllContainerKey, out _))
+	    if (!CommonService.TryGetTreeViewContainer(TextEditorFindAllState.TreeViewFindAllContainerKey, out _))
 	    {
-	        CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
+	        CommonService.TreeView_RegisterContainerAction(new TreeViewContainer(
 	            TextEditorFindAllState.TreeViewFindAllContainerKey,
 	            adhocRoot,
 	            activeNodes));
 	    }
 	    else
 	    {
-	        CommonUtilityService.TreeView_WithRootNodeAction(TextEditorFindAllState.TreeViewFindAllContainerKey, adhocRoot);
+	        CommonService.TreeView_WithRootNodeAction(TextEditorFindAllState.TreeViewFindAllContainerKey, adhocRoot);
 	
-	        CommonUtilityService.TreeView_SetActiveNodeAction(
+	        CommonService.TreeView_SetActiveNodeAction(
 	            TextEditorFindAllState.TreeViewFindAllContainerKey,
 	            firstNode,
 	            true,

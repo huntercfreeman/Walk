@@ -18,19 +18,19 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 			CSharpProjectNugetPackageReferences cSharpProjectNugetPackageReferences,
 			IDotNetComponentRenderers dotNetComponentRenderers,
 			IIdeComponentRenderers ideComponentRenderers,
-			CommonUtilityService commonUtilityService,
+			CommonService commonService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(cSharpProjectNugetPackageReferences, isExpandable, isExpanded)
 	{
 		DotNetComponentRenderers = dotNetComponentRenderers;
 		IdeComponentRenderers = ideComponentRenderers;
-		CommonUtilityService = commonUtilityService;
+		CommonService = commonService;
 	}
 
 	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public IIdeComponentRenderers IdeComponentRenderers { get; }
-	public CommonUtilityService CommonUtilityService { get; }
+	public CommonService CommonService { get; }
 
 	public override bool Equals(object? obj)
 	{
@@ -88,7 +88,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 	{
 		var previousChildren = new List<TreeViewNoType>(ChildList);
 
-		var content = await CommonUtilityService.FileSystemProvider.File.ReadAllTextAsync(
+		var content = await CommonService.FileSystemProvider.File.ReadAllTextAsync(
 				Item.CSharpProjectNamespacePath.AbsolutePath.Value)
 			.ConfigureAwait(false);
 
@@ -143,7 +143,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 				new(cSharpProjectAbsolutePathString, npr),
 				DotNetComponentRenderers,
 				IdeComponentRenderers,
-				CommonUtilityService,
+				CommonService,
 				false,
 				false)
 			{

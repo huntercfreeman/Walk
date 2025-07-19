@@ -15,7 +15,7 @@ public class CodeSearchTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandl
 	public CodeSearchTreeViewKeyboardEventHandler(
 			TextEditorService textEditorService,
 			IServiceProvider serviceProvider)
-		: base(textEditorService.CommonUtilityService)
+		: base(textEditorService.CommonService)
 	{
 		_textEditorService = textEditorService;
 		_serviceProvider = serviceProvider;

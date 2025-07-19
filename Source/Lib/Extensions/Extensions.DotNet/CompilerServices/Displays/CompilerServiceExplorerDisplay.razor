@@ -4,14 +4,14 @@
 
 @* ContextRecord="ContextFacts.CompilerServiceExplorerContext" *@
 <div id="@ContextFacts.CompilerServiceExplorerContext.ContextElementId" class="di_ide_compiler-service-explorer" style="height: 100%">
-    @if (CommonUtilityService.Options_ShowPanelTitles)
+    @if (CommonService.Options_ShowPanelTitles)
     {
 	    <div class="di_ide_section-title">
 	        Compiler Explorer Display
 	    </div>
     }
 
-    <div class="di_ide_section-body @CommonUtilityService.Options_ShowPanelTitlesCssClass">
+    <div class="di_ide_section-body @CommonService.Options_ShowPanelTitlesCssClass">
         <CompilerServiceExplorerTreeViewDisplay />
     </div>
 </div>

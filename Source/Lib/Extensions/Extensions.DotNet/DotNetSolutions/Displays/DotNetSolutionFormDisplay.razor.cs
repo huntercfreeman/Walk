@@ -3,12 +3,12 @@ using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib.CommandLines.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
+using Walk.Ide.RazorLib;
 using Walk.Extensions.DotNet.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
 
@@ -17,13 +17,9 @@ namespace Walk.Extensions.DotNet.DotNetSolutions.Displays;
 public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private ITerminalService TerminalService { get; set; } = null!;
-	[Inject]
-	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+	private IdeService IdeService { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
 
 	[CascadingParameter]
 	public IDialog DialogRecord { get; set; } = null!;
@@ -46,15 +42,15 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	
 	protected override void OnInitialized()
 	{
-		TerminalService.TerminalStateChanged += OnTerminalStateChanged;
+		IdeService.TerminalStateChanged += OnTerminalStateChanged;
 	}
 
 	private void RequestInputFileForParentDirectory()
 	{
-		IdeBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
+		IdeService.Enqueue(new IdeWorkArgs
 		{
-			WorkKind = IdeBackgroundTaskApiWorkKind.RequestInputFileStateForm,
-			Message = "Directory for new .NET Solution",
+			WorkKind = IdeWorkKind.RequestInputFileStateForm,
+			StringValue = "Directory for new .NET Solution",
 			OnAfterSubmitFunc = async absolutePath =>
 			{
 				if (absolutePath.ExactInput is null)
@@ -89,7 +85,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 			return;
 		}
 
-		if (CommonUtilityService.WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
+		if (IdeService.CommonService.WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
 		{
 			await HackForWebsite_StartNewDotNetSolutionCommandOnClick(
 					localSolutionName,
@@ -106,22 +102,22 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	        	ContinueWithFunc = parsedCommand =>
 	        	{
 	        		// Close Dialog
-					CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+					IdeService.CommonService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
 					// Open the created .NET Solution
-					var parentDirectoryAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+					var parentDirectoryAbsolutePath = IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
 						localParentDirectoryName,
 						true);
 
 					var solutionAbsolutePathString =
 						parentDirectoryAbsolutePath.Value +
 						localSolutionName +
-						CommonUtilityService.EnvironmentProvider.DirectorySeparatorChar +
+						IdeService.CommonService.EnvironmentProvider.DirectorySeparatorChar +
 						localSolutionName +
 						'.' +
 						ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-					var solutionAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+					var solutionAbsolutePath = IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
 						solutionAbsolutePathString,
 						false);
 
@@ -134,7 +130,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	        	}
 	        };
 	        	
-	        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+	        IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		}
 	}
 
@@ -143,10 +139,10 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 		string localParentDirectoryName)
 	{
 		var directoryContainingSolution =
-			CommonUtilityService.EnvironmentProvider.JoinPaths(localParentDirectoryName, localSolutionName) +
-			CommonUtilityService.EnvironmentProvider.DirectorySeparatorChar;
+			IdeService.CommonService.EnvironmentProvider.JoinPaths(localParentDirectoryName, localSolutionName) +
+			IdeService.CommonService.EnvironmentProvider.DirectorySeparatorChar;
 
-		await CommonUtilityService.FileSystemProvider.Directory
+		await IdeService.CommonService.FileSystemProvider.Directory
 			.CreateDirectoryAsync(directoryContainingSolution)
 			.ConfigureAwait(false);
 
@@ -155,21 +151,21 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 			'.' +
 			ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-		var solutionAbsolutePathString = CommonUtilityService.EnvironmentProvider.JoinPaths(
+		var solutionAbsolutePathString = IdeService.CommonService.EnvironmentProvider.JoinPaths(
 			directoryContainingSolution,
 			localSolutionFilenameWithExtension);
 
-		await CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
+		await IdeService.CommonService.FileSystemProvider.File.WriteAllTextAsync(
 				solutionAbsolutePathString,
 				HackForWebsite_NEW_SOLUTION_TEMPLATE)
 			.ConfigureAwait(false);
 
 		// Close Dialog
-		CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+		IdeService.CommonService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
-		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", CommonUtilityService, TimeSpan.FromSeconds(7));
+		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", IdeService.CommonService, TimeSpan.FromSeconds(7));
 
-		var solutionAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+		var solutionAbsolutePath = IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
 			solutionAbsolutePathString,
 			false);
 
@@ -212,6 +208,6 @@ EndGlobal
 
 	public void Dispose()
 	{
-		TerminalService.TerminalStateChanged -= OnTerminalStateChanged;
+		IdeService.TerminalStateChanged -= OnTerminalStateChanged;
 	}
 }

@@ -14,16 +14,14 @@ namespace Walk.Ide.RazorLib.Terminals.Models;
 
 public sealed class TerminalCompilerService : ICompilerService
 {
-    private readonly TextEditorService _textEditorService;
-    private readonly ITerminalService _terminalService;
+    private readonly IdeService _ideService;
     
     private readonly Dictionary<ResourceUri, TerminalResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
 
-	public TerminalCompilerService(TextEditorService textEditorService, ITerminalService terminalService)
+	public TerminalCompilerService(IdeService ideService)
 	{
-		_textEditorService = textEditorService;
-		_terminalService = terminalService;
+		_ideService = ideService;
 	}
 
     public event Action? ResourceRegistered;
@@ -96,7 +94,7 @@ public sealed class TerminalCompilerService : ICompilerService
 
     public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
     {
-    	_textEditorService.WorkerArbitrary.PostUnique(editContext =>
+    	_ideService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
 			var modelModifier = editContext.GetModelModifier(resourceUri);
 
@@ -109,7 +107,7 @@ public sealed class TerminalCompilerService : ICompilerService
 
     public ICompilerServiceResource? GetResource(ResourceUri resourceUri)
     {
-    	var model = _textEditorService.Model_GetOrDefault(resourceUri);
+    	var model = _ideService.TextEditorService.Model_GetOrDefault(resourceUri);
 
         if (model is null)
             return null;

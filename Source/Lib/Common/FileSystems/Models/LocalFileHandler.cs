@@ -7,11 +7,11 @@ public class LocalFileHandler : IFileHandler
 {
     private const bool IS_DIRECTORY_RESPONSE = true;
 
-    private readonly CommonUtilityService _commonUtilityService;
+    private readonly CommonService _commonService;
 
-    public LocalFileHandler(CommonUtilityService commonUtilityService)
+    public LocalFileHandler(CommonService commonService)
     {
-        _commonUtilityService = commonUtilityService;
+        _commonService = commonService;
     }
 
     public bool Exists(string absolutePathString)
@@ -33,7 +33,7 @@ public class LocalFileHandler : IFileHandler
     {
         try
         {
-            _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
+            _commonService.EnvironmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
             File.Delete(absolutePathString);
         }
         catch (Exception exception)
@@ -54,7 +54,7 @@ public class LocalFileHandler : IFileHandler
             sourceAbsolutePathString,
             destinationAbsolutePathString);
 
-        _commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(
+        _commonService.EnvironmentProvider.DeletionPermittedRegister(
             new SimplePath(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE));
 
         return Task.CompletedTask;
@@ -67,16 +67,16 @@ public class LocalFileHandler : IFileHandler
     {
         try
         {
-            _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
+            _commonService.EnvironmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
             if (await ExistsAsync(destinationAbsolutePathString).ConfigureAwait(false))
-                _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
+                _commonService.EnvironmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
             File.Move(
                 sourceAbsolutePathString,
                 destinationAbsolutePathString);
 
-            _commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(
+            _commonService.EnvironmentProvider.DeletionPermittedRegister(
                 new SimplePath(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE));
         }
         catch (Exception exception)
@@ -118,7 +118,7 @@ public class LocalFileHandler : IFileHandler
         try
         {
             if (await ExistsAsync(absolutePathString, cancellationToken).ConfigureAwait(false))
-                _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
+                _commonService.EnvironmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
 
             await File.WriteAllTextAsync(
                     absolutePathString,
@@ -126,7 +126,7 @@ public class LocalFileHandler : IFileHandler
                     cancellationToken)
 				.ConfigureAwait(false);
 
-            _commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(
+            _commonService.EnvironmentProvider.DeletionPermittedRegister(
                 new SimplePath(absolutePathString, IS_DIRECTORY_RESPONSE));
         }
         catch (Exception exception)
@@ -146,7 +146,7 @@ public class LocalFileHandler : IFileHandler
         NotificationHelper.DispatchError(
             title,
             exception.ToString(),
-            _commonUtilityService,
+            _commonService,
             TimeSpan.FromSeconds(10));
     }
 }

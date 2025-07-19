@@ -6,26 +6,26 @@ namespace Walk.Common.RazorLib.Options.Displays;
 public partial class InputAppFontSize : ComponentBase, IDisposable
 {
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonService CommonService { get; set; } = null!;
 
     [Parameter]
     public InputViewModel InputViewModel { get; set; } = InputViewModel.Empty;
 
     public int FontSizeInPixels
     {
-        get => CommonUtilityService.GetAppOptionsState().Options.FontSizeInPixels;
+        get => CommonService.GetAppOptionsState().Options.FontSizeInPixels;
         set
         {
             if (value < AppOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS)
                 value = AppOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS;
 
-            CommonUtilityService.Options_SetFontSize(value);
+            CommonService.Options_SetFontSize(value);
         }
     }
 
     protected override void OnInitialized()
     {
-        CommonUtilityService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
+        CommonService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
     }
 
     private async void AppOptionsStateWrapOnStateChanged()
@@ -35,6 +35,6 @@ public partial class InputAppFontSize : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        CommonUtilityService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
+        CommonService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }

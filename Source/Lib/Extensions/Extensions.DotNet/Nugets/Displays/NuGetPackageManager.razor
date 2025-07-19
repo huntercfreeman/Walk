@@ -4,14 +4,14 @@
 @* ContextRecord="ContextFacts.NuGetPackageManagerContext" *@
 
 <div id="@ContextFacts.NuGetPackageManagerContext.ContextElementId" class="di_ide_nu-get-package-manager-display" style="height: 100%; width: 100%;">
-    @if (CommonUtilityService.Options_ShowPanelTitles)
+    @if (CommonService.Options_ShowPanelTitles)
     {
 	    <div class="di_ide_section-title">
 	        NuGet
 	    </div>
 	}
 
-    <div class="di_ide_section-body @CommonUtilityService.Options_ShowPanelTitlesCssClass"
+    <div class="di_ide_section-body @CommonService.Options_ShowPanelTitlesCssClass"
          style="width: 100%;">
 
         @{
@@ -143,7 +143,7 @@
 
                 @if (_performingNugetQuery)
                 {
-                	var appOptionsState = CommonUtilityService.GetAppOptionsState();
+                	var appOptionsState = CommonService.GetAppOptionsState();
                 
                 	var iconDriver = new IconDriver(
 						appOptionsState.Options.IconSizeInPixels,

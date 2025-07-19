@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.Contexts.Models;
-using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
@@ -12,9 +11,7 @@ namespace Walk.Ide.RazorLib.Terminals.Displays;
 public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private TextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-	private ITerminalService TerminalService { get; set; } = null!;
+	private IdeService IdeService { get; set; } = null!;
 	
 	[Parameter, EditorRequired]
 	public ITerminal Terminal { get; set; } = null!;
@@ -185,7 +182,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 	{
 		_throttle.Run(_ =>
         {
-        	TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        	IdeService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
 			{
 				var formatter = Terminal.TerminalOutput.OutputFormatterList.FirstOrDefault(
 					x => x.Name == nameof(TerminalOutputFormatterExpand));
@@ -242,7 +239,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 			            EndExclusiveIndex: lineInformation.Position_StartInclusiveIndex + 1,
 			            DecorationByte: 0);
 			        
-			        TextEditorService.ViewModel_ScrollIntoView(
+			        IdeService.TextEditorService.ViewModel_ScrollIntoView(
 			            editContext,
 			            modelModifier,
 			            viewModelModifier,

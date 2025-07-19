@@ -2,24 +2,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Themes.Models;
 using Walk.Common.RazorLib.Options.Models;
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
-using Walk.Ide.RazorLib.CodeSearches.Models;
-using Walk.Ide.RazorLib.FileSystems.Models;
-using Walk.Ide.RazorLib.Menus.Models;
 using Walk.Ide.RazorLib.InputFiles.Displays;
-using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.FileSystems.Displays;
 using Walk.Ide.RazorLib.FormsGenerics.Displays;
-using Walk.Ide.RazorLib.Commands;
-using Walk.Ide.RazorLib.CommandBars.Models;
-// FindAllReferences
-// using Walk.Ide.RazorLib.FindAllReferences.Models;
-using Walk.Ide.RazorLib.Shareds.Models;
-using Walk.Ide.RazorLib.BackgroundTasks.Models;
-using Walk.Ide.RazorLib.Terminals.Models;
-using Walk.Ide.RazorLib.FolderExplorers.Models;
 using Walk.Ide.RazorLib.AppDatas.Models;
 
 namespace Walk.Ide.RazorLib.Installations.Models;
@@ -47,45 +36,45 @@ public static class ServiceCollectionExtensions
                 {    
                 	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
                 		fastParseArgs.ResourceUri.Value,
-                		fastParseArgs.CommonUtilityService);
+                		fastParseArgs.CommonService);
                 		
                 	var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
                 
                     fastParseArgs = new FastParseArgs(
                         standardizedResourceUri,
                         fastParseArgs.ExtensionNoPeriod,
-                        fastParseArgs.CommonUtilityService,
+                        fastParseArgs.CommonService,
                         fastParseArgs.IdeBackgroundTaskApi)
                     {
                     	ShouldBlockUntilBackgroundTaskIsCompleted = fastParseArgs.ShouldBlockUntilBackgroundTaskIsCompleted
                     };
 
-                    await ((IdeBackgroundTaskApi)fastParseArgs.IdeBackgroundTaskApi).Editor_FastParseFunc(fastParseArgs);
+                    await ((IdeService)fastParseArgs.IdeBackgroundTaskApi).Editor_FastParseFunc(fastParseArgs);
                 },
                 RegisterModelFunc = async (registerModelArgs) =>
                 {
                 	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
                 		registerModelArgs.ResourceUri.Value,
-                		registerModelArgs.CommonUtilityService);
+                		registerModelArgs.CommonService);
                 		
                 	var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
                 
                     registerModelArgs = new RegisterModelArgs(
                     	registerModelArgs.EditContext,
                         standardizedResourceUri,
-                        registerModelArgs.CommonUtilityService,
+                        registerModelArgs.CommonService,
                         registerModelArgs.IdeBackgroundTaskApi)
                     {
                     	ShouldBlockUntilBackgroundTaskIsCompleted = registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted
                     };
 
-                    await ((IdeBackgroundTaskApi)registerModelArgs.IdeBackgroundTaskApi).Editor_RegisterModelFunc(registerModelArgs);
+                    await ((IdeService)registerModelArgs.IdeBackgroundTaskApi).Editor_RegisterModelFunc(registerModelArgs);
                 },
                 TryRegisterViewModelFunc = async (tryRegisterViewModelArgs) =>
                 {
                 	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
                 		tryRegisterViewModelArgs.ResourceUri.Value,
-                		tryRegisterViewModelArgs.CommonUtilityService);
+                		tryRegisterViewModelArgs.CommonService);
                 		
                 	var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
                 	
@@ -95,14 +84,14 @@ public static class ServiceCollectionExtensions
                         standardizedResourceUri,
                         tryRegisterViewModelArgs.Category,
                         tryRegisterViewModelArgs.ShouldSetFocusToEditor,
-                        tryRegisterViewModelArgs.CommonUtilityService,
+                        tryRegisterViewModelArgs.CommonService,
                         tryRegisterViewModelArgs.IdeBackgroundTaskApi);
 
-                    return await ((IdeBackgroundTaskApi)tryRegisterViewModelArgs.IdeBackgroundTaskApi).Editor_TryRegisterViewModelFunc(tryRegisterViewModelArgs);
+                    return await ((IdeService)tryRegisterViewModelArgs.IdeBackgroundTaskApi).Editor_TryRegisterViewModelFunc(tryRegisterViewModelArgs);
                 },
                 TryShowViewModelFunc = (tryShowViewModelArgs) =>
                 {
-                    return ((IdeBackgroundTaskApi)tryShowViewModelArgs.IdeBackgroundTaskApi).Editor_TryShowViewModelFunc(tryShowViewModelArgs);
+                    return ((IdeService)tryShowViewModelArgs.IdeBackgroundTaskApi).Editor_TryShowViewModelFunc(tryShowViewModelArgs);
                 },
             })));
         }
@@ -113,31 +102,24 @@ public static class ServiceCollectionExtensions
         	services.AddScoped<IAppDataService, DoNothingAppDataService>();
 
         services
-            .AddSingleton(ideConfig)
-            .AddSingleton<IIdeComponentRenderers>(_ideComponentRenderers)
-            .AddScoped<IdeBackgroundTaskApi>()
-            .AddScoped<ICommandFactory, CommandFactory>()
-            .AddScoped<IMenuOptionsFactory, MenuOptionsFactory>()
-            .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
-            .AddScoped<ICodeSearchService, CodeSearchService>()
-            .AddScoped<IInputFileService, InputFileService>()
-            .AddScoped<ITerminalService, TerminalService>()
-            .AddScoped<ITerminalGroupService, TerminalGroupService>()
-            .AddScoped<IFolderExplorerService, FolderExplorerService>()
-            .AddScoped<IIdeService, IdeService>()
-            .AddScoped<ICommandBarService, CommandBarService>();
-            // FindAllReferences
-            // .AddScoped<IFindAllReferencesService, FindAllReferencesService>();
+            .AddScoped<IdeService>(sp =>
+            {
+                return new IdeService(
+                    ideConfig,
+                    _ideComponentRenderers,
+                    sp.GetRequiredService<TextEditorService>(),
+                    sp);
+            });
 
         return services;
     }
     
-    public static Task<string> AbsolutePathStandardizeFunc(string absolutePathString, CommonUtilityService commonUtilityService)
+    public static Task<string> AbsolutePathStandardizeFunc(string absolutePathString, CommonService commonService)
     {
-        if (absolutePathString.StartsWith(commonUtilityService.EnvironmentProvider.DriveExecutingFromNoDirectorySeparator))
+        if (absolutePathString.StartsWith(commonService.EnvironmentProvider.DriveExecutingFromNoDirectorySeparator))
         {
             var removeDriveFromResourceUriValue = absolutePathString[
-                commonUtilityService.EnvironmentProvider.DriveExecutingFromNoDirectorySeparator.Length..];
+                commonService.EnvironmentProvider.DriveExecutingFromNoDirectorySeparator.Length..];
 
             return Task.FromResult(removeDriveFromResourceUriValue);
         }

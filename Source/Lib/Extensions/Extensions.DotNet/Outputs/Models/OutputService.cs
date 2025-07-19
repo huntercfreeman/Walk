@@ -13,18 +13,18 @@ public class OutputService : IOutputService
 {
 	private readonly DotNetBackgroundTaskApi _dotNetBackgroundTaskApi;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
-	private readonly CommonUtilityService _commonUtilityService;
+	private readonly CommonService _commonService;
 		
 	private readonly Throttle _throttleCreateTreeView = new Throttle(TimeSpan.FromMilliseconds(333));
 	
 	public OutputService(
 		DotNetBackgroundTaskApi dotNetBackgroundTaskApi,
 		DotNetCliOutputParser dotNetCliOutputParser,
-		CommonUtilityService commonUtilityService)
+		CommonService commonService)
 	{
 		_dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
-		_commonUtilityService = commonUtilityService;
+		_commonService = commonService;
     }
     
     private OutputState _outputState = new();
@@ -71,7 +71,7 @@ public class OutputService : IOutputService
 
 		foreach (var group in filePathGrouping)
 		{
-			var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(group.Key, false);
+			var absolutePath = _commonService.EnvironmentProvider.AbsolutePathFactory(group.Key, false);
 			var groupEnumerated = group.ToList();
 			var groupNameBuilder = new StringBuilder();
 			
@@ -106,7 +106,7 @@ public class OutputService : IOutputService
 			if (firstEntry is not null)
 			{
 				var projectText = ((TreeViewDiagnosticLine)firstEntry).Item.ProjectTextSpan.Text;
-				var projectAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(projectText, false);
+				var projectAbsolutePath = _commonService.EnvironmentProvider.AbsolutePathFactory(projectText, false);
 			
 				if (!projectManualGrouping.ContainsKey(projectText))
 				{
@@ -163,18 +163,18 @@ public class OutputService : IOutputService
             ? new List<TreeViewNoType>()
             : new() { firstNode };
 
-        if (!_commonUtilityService.TryGetTreeViewContainer(OutputState.TreeViewContainerKey, out _))
+        if (!_commonService.TryGetTreeViewContainer(OutputState.TreeViewContainerKey, out _))
         {
-            _commonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
+            _commonService.TreeView_RegisterContainerAction(new TreeViewContainer(
                 OutputState.TreeViewContainerKey,
                 adhocRoot,
                 activeNodes));
         }
         else
         {
-            _commonUtilityService.TreeView_WithRootNodeAction(OutputState.TreeViewContainerKey, adhocRoot);
+            _commonService.TreeView_WithRootNodeAction(OutputState.TreeViewContainerKey, adhocRoot);
 
-            _commonUtilityService.TreeView_SetActiveNodeAction(
+            _commonService.TreeView_SetActiveNodeAction(
                 OutputState.TreeViewContainerKey,
                 firstNode,
                 true,

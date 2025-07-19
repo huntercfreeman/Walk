@@ -9,7 +9,7 @@ public class TreeViewHelperAbsolutePathDirectory
     {
         var directoryAbsolutePathString = directoryTreeView.Item.Value;
 
-        var directoryPathStringsList = await directoryTreeView.CommonUtilityService.FileSystemProvider.Directory
+        var directoryPathStringsList = await directoryTreeView.CommonService.FileSystemProvider.Directory
             .GetDirectoriesAsync(directoryAbsolutePathString)
             .ConfigureAwait(false);
 
@@ -18,9 +18,9 @@ public class TreeViewHelperAbsolutePathDirectory
             .Select(x =>
             {
                 return (TreeViewNoType)new TreeViewAbsolutePath(
-                    directoryTreeView.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(x, true),
+                    directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true),
                     directoryTreeView.IdeComponentRenderers,
-                    directoryTreeView.CommonUtilityService,
+                    directoryTreeView.CommonService,
                     true,
                     false)
                 {
@@ -28,7 +28,7 @@ public class TreeViewHelperAbsolutePathDirectory
                 };
             });
 
-        var filePathStringsList = await directoryTreeView.CommonUtilityService.FileSystemProvider.Directory
+        var filePathStringsList = await directoryTreeView.CommonService.FileSystemProvider.Directory
             .GetFilesAsync(directoryAbsolutePathString)
             .ConfigureAwait(false);
 
@@ -37,9 +37,9 @@ public class TreeViewHelperAbsolutePathDirectory
             .Select(x =>
             {
                 return (TreeViewNoType)new TreeViewAbsolutePath(
-                    directoryTreeView.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(x, false),
+                    directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false),
                     directoryTreeView.IdeComponentRenderers,
-                    directoryTreeView.CommonUtilityService,
+                    directoryTreeView.CommonService,
                     false,
                     false)
                 {

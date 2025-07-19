@@ -88,7 +88,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
 
         if (localTreeViewNoType.IsExpanded)
         {
-            RenderBatch.CommonUtilityService.Enqueue(new CommonWorkArgs
+            RenderBatch.CommonService.Enqueue(new CommonWorkArgs
             {
     			WorkKind = CommonWorkKind.TreeView_HandleExpansionChevronOnMouseDown,
             	TreeViewNoType = localTreeViewNoType,
@@ -97,7 +97,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
         }
         else
         {
-            RenderBatch.CommonUtilityService.TreeView_ReRenderNodeAction(RenderBatch.TreeViewContainer.Key, localTreeViewNoType);
+            RenderBatch.CommonService.TreeView_ReRenderNodeAction(RenderBatch.TreeViewContainer.Key, localTreeViewNoType);
         }
     }
 
@@ -107,7 +107,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
         TreeViewNoType treeViewNoType)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            RenderBatch.CommonUtilityService,
+            RenderBatch.CommonService,
             RenderBatch.TreeViewContainer,
             TreeViewNoType,
             FocusAsync,
@@ -119,7 +119,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
             .OnMouseDownAsync(treeViewCommandArgs)
             .ConfigureAwait(false);
 
-        RenderBatch.CommonUtilityService.Enqueue(new CommonWorkArgs
+        RenderBatch.CommonService.Enqueue(new CommonWorkArgs
         {
     		WorkKind = CommonWorkKind.TreeView_ManuallyPropagateOnContextMenu,
         	HandleTreeViewOnContextMenu = RenderBatch.HandleTreeViewOnContextMenu,
@@ -132,7 +132,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
     private async Task HandleOnClick(MouseEventArgs? mouseEventArgs)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            RenderBatch.CommonUtilityService,
+            RenderBatch.CommonService,
             RenderBatch.TreeViewContainer,
             TreeViewNoType,
             FocusAsync,
@@ -148,7 +148,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
     private async Task HandleOnDoubleClick(MouseEventArgs? mouseEventArgs)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            RenderBatch.CommonUtilityService,
+            RenderBatch.CommonService,
             RenderBatch.TreeViewContainer,
             TreeViewNoType,
             FocusAsync,
@@ -164,7 +164,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
     private async Task HandleOnMouseDown(MouseEventArgs? mouseEventArgs)
     {
         var treeViewCommandArgs = new TreeViewCommandArgs(
-            RenderBatch.CommonUtilityService,
+            RenderBatch.CommonService,
             RenderBatch.TreeViewContainer,
             TreeViewNoType,
             FocusAsync,
@@ -212,13 +212,13 @@ public partial class TreeViewNodeDisplay : ComponentBase
     /// </summary>
     private string GetNodeElementCssClass()
     {
-        RenderBatch.CommonUtilityService.UiStringBuilder.Clear();
-        RenderBatch.CommonUtilityService.UiStringBuilder.Append("di_tree-view-title ");
-        RenderBatch.CommonUtilityService.UiStringBuilder.Append(IsSelectedCssClass);
-        RenderBatch.CommonUtilityService.UiStringBuilder.Append(" ");
-        RenderBatch.CommonUtilityService.UiStringBuilder.Append(IsActiveCssClass);
+        RenderBatch.CommonService.UiStringBuilder.Clear();
+        RenderBatch.CommonService.UiStringBuilder.Append("di_tree-view-title ");
+        RenderBatch.CommonService.UiStringBuilder.Append(IsSelectedCssClass);
+        RenderBatch.CommonService.UiStringBuilder.Append(" ");
+        RenderBatch.CommonService.UiStringBuilder.Append(IsActiveCssClass);
         
-        return RenderBatch.CommonUtilityService.UiStringBuilder.ToString();
+        return RenderBatch.CommonService.UiStringBuilder.ToString();
     }
     
     /// <summary>
@@ -226,10 +226,10 @@ public partial class TreeViewNodeDisplay : ComponentBase
     /// </summary>
     private string GetNodeChevronCssClass()
     {
-        RenderBatch.CommonUtilityService.UiStringBuilder.Clear();
-        RenderBatch.CommonUtilityService.UiStringBuilder.Append("di_tree-view-expansion-chevron ");
-        RenderBatch.CommonUtilityService.UiStringBuilder.Append(GetShowDefaultCursorCssClass(TreeViewNoType.IsExpandable));
+        RenderBatch.CommonService.UiStringBuilder.Clear();
+        RenderBatch.CommonService.UiStringBuilder.Append("di_tree-view-expansion-chevron ");
+        RenderBatch.CommonService.UiStringBuilder.Append(GetShowDefaultCursorCssClass(TreeViewNoType.IsExpandable));
         
-        return RenderBatch.CommonUtilityService.UiStringBuilder.ToString();
+        return RenderBatch.CommonService.UiStringBuilder.ToString();
     }
 }

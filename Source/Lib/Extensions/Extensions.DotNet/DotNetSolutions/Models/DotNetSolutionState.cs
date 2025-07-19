@@ -4,6 +4,7 @@ using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.CompilerServices.DotNetSolution.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
+using Walk.Ide.RazorLib;
 using Walk.Extensions.DotNet.BackgroundTasks.Models;
 
 namespace Walk.Extensions.DotNet.DotNetSolutions.Models;
@@ -28,13 +29,13 @@ public record DotNetSolutionState(
         x.Key == DotNetSolutionModelKey);
 
     public static void ShowInputFile(
-    	IdeBackgroundTaskApi ideBackgroundTaskApi,
+    	IdeService ideService,
     	DotNetBackgroundTaskApi dotNetBackgroundTaskApi)
     {
-        ideBackgroundTaskApi.Enqueue(new IdeBackgroundTaskApiWorkArgs
+        ideService.Enqueue(new IdeWorkArgs
 		{
-			WorkKind = IdeBackgroundTaskApiWorkKind.RequestInputFileStateForm,
-			Message = "Solution Explorer",
+			WorkKind = IdeWorkKind.RequestInputFileStateForm,
+			StringValue = "Solution Explorer",
             OnAfterSubmitFunc = absolutePath =>
             {
                 if (absolutePath.ExactInput is not null)

@@ -100,8 +100,8 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                editContext,
 		                modelModifier,
 		                viewModel,
-		                componentData.TextEditorViewModelSlimDisplay.CommonUtilityService.CommonComponentRenderers,
-		                componentData.TextEditorViewModelSlimDisplay.CommonUtilityService);
+		                componentData.TextEditorViewModelSlimDisplay.CommonService.CommonComponentRenderers,
+		                componentData.TextEditorViewModelSlimDisplay.CommonService);
 		            
 		            componentData.ThrottleApplySyntaxHighlighting(modelModifier);
 		            
@@ -287,7 +287,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				    	TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
 					        viewModel,
-					        componentData.TextEditorViewModelSlimDisplay.CommonUtilityService);
+					        componentData.TextEditorViewModelSlimDisplay.CommonService);
 				    }
 
 	                break;
@@ -391,7 +391,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				        viewModel,
 				        componentData.TextEditorViewModelSlimDisplay.TextEditorService.JsRuntimeCommonApi,
 				        componentData.TextEditorViewModelSlimDisplay.TextEditorService,
-				        componentData.TextEditorViewModelSlimDisplay.CommonUtilityService);
+				        componentData.TextEditorViewModelSlimDisplay.CommonService);
 	            	break;
 	            default:
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
@@ -471,7 +471,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					    	TextEditorCommandDefaultFunctions.RemoveDropdown(
 						        editContext,
 						        viewModel,
-						        componentData.TextEditorViewModelSlimDisplay.CommonUtilityService);
+						        componentData.TextEditorViewModelSlimDisplay.CommonService);
 					    }
 					    
 					    break;
@@ -512,10 +512,10 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 				        modelModifier,
 				        viewModel,
 				        componentData.TextEditorViewModelSlimDisplay.TextEditorService.JsRuntimeCommonApi,
-				        componentData.TextEditorViewModelSlimDisplay.CommonUtilityService.EnvironmentProvider,
-				        componentData.TextEditorViewModelSlimDisplay.CommonUtilityService.FileSystemProvider,
+				        componentData.TextEditorViewModelSlimDisplay.CommonService.EnvironmentProvider,
+				        componentData.TextEditorViewModelSlimDisplay.CommonService.FileSystemProvider,
 				        componentData.TextEditorViewModelSlimDisplay.TextEditorService,
-				        componentData.TextEditorViewModelSlimDisplay.CommonUtilityService);
+				        componentData.TextEditorViewModelSlimDisplay.CommonService);
 				    break;
 		        case "ContextMenu":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
@@ -742,14 +742,14 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 					TextEditorCommandDefaultFunctions.RemoveDropdown(
 				        editContext,
 				        viewModel,
-			        	componentData.TextEditorViewModelSlimDisplay.CommonUtilityService);
+			        	componentData.TextEditorViewModelSlimDisplay.CommonService);
 			        break;
 				case MenuKind.ContextMenu:
 					TextEditorCommandDefaultFunctions.ShowContextMenu(
 				        editContext,
 				        modelModifier,
 				        viewModel,
-				        componentData.TextEditorViewModelSlimDisplay.CommonUtilityService,
+				        componentData.TextEditorViewModelSlimDisplay.CommonService,
 				        componentData);
 			        break;
 				case MenuKind.AutoCompleteMenu:
@@ -757,7 +757,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		        		editContext,
 				        modelModifier,
 				        viewModel,
-				        componentData.TextEditorViewModelSlimDisplay.CommonUtilityService,
+				        componentData.TextEditorViewModelSlimDisplay.CommonService,
 				        componentData);
 			        break;
 			}
@@ -768,7 +768,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 			if (viewModel.PersistentState.TooltipModel is not null)
 			{
 				viewModel.PersistentState.TooltipModel = null;
-		        componentData.TextEditorViewModelSlimDisplay.CommonUtilityService.SetTooltipModel(viewModel.PersistentState.TooltipModel);
+		        componentData.TextEditorViewModelSlimDisplay.CommonService.SetTooltipModel(viewModel.PersistentState.TooltipModel);
 			}
 		}
 		

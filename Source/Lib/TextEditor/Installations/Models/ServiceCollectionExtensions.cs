@@ -28,7 +28,7 @@ public static class ServiceCollectionExtensions
                     textEditorConfig,
                     _textEditorComponentRenderers,
                     sp.GetRequiredService<IJSRuntime>(),
-                    sp.GetRequiredService<CommonUtilityService>(),
+                    sp.GetRequiredService<CommonService>(),
             		sp.GetRequiredService<IServiceProvider>());
             });
         

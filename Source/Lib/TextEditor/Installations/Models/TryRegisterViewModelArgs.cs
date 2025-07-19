@@ -13,7 +13,7 @@ public struct TryRegisterViewModelArgs
         ResourceUri resourceUri,
         Category category,
         bool shouldSetFocusToEditor,
-        CommonUtilityService commonUtilityService,
+        CommonService commonService,
         object ideBackgroundTaskApi)
     {
         EditContext = editContext;
@@ -21,7 +21,7 @@ public struct TryRegisterViewModelArgs
         ResourceUri = resourceUri;
         Category = category;
         ShouldSetFocusToEditor = shouldSetFocusToEditor;
-        CommonUtilityService = commonUtilityService;
+        CommonService = commonService;
         IdeBackgroundTaskApi = ideBackgroundTaskApi;
     }
 
@@ -47,6 +47,6 @@ public struct TryRegisterViewModelArgs
     /// When this view model next gets rendered should browser focus be set to the text editor.
     /// </summary>
     public bool ShouldSetFocusToEditor { get; }
-    public CommonUtilityService CommonUtilityService { get; }
+    public CommonService CommonService { get; }
     public object IdeBackgroundTaskApi { get; }
 }

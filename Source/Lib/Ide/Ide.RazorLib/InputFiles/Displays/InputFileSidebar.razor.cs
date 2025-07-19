@@ -6,8 +6,6 @@ using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.Options.Models;
-using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 
@@ -16,9 +14,7 @@ namespace Walk.Ide.RazorLib.InputFiles.Displays;
 public partial class InputFileSidebar : ComponentBase
 {
     [Inject]
-    private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
-    [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private IdeService IdeService { get; set; } = null!;
 
     [CascadingParameter(Name="SetInputFileContentTreeViewRootFunc")]
     public Func<AbsolutePath, Task> SetInputFileContentTreeViewRootFunc { get; set; } = null!;
@@ -43,24 +39,24 @@ public partial class InputFileSidebar : ComponentBase
         if (firstRender)
         {
             var directoryHomeNode = new TreeViewAbsolutePath(
-                CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath,
-                IdeComponentRenderers,
-                CommonUtilityService,
+                IdeService.CommonService.EnvironmentProvider.HomeDirectoryAbsolutePath,
+                IdeService.IdeComponentRenderers,
+                IdeService.CommonService,
                 true,
                 false);
 
             var directoryRootNode = new TreeViewAbsolutePath(
-                CommonUtilityService.EnvironmentProvider.RootDirectoryAbsolutePath,
-                IdeComponentRenderers,
-                CommonUtilityService,
+                IdeService.CommonService.EnvironmentProvider.RootDirectoryAbsolutePath,
+                IdeService.IdeComponentRenderers,
+                IdeService.CommonService,
                 true,
                 false);
 
             var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(directoryHomeNode, directoryRootNode);
 
-            if (!CommonUtilityService.TryGetTreeViewContainer(TreeViewContainerKey, out var treeViewContainer))
+            if (!IdeService.CommonService.TryGetTreeViewContainer(TreeViewContainerKey, out var treeViewContainer))
             {
-                CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
+                IdeService.CommonService.TreeView_RegisterContainerAction(new TreeViewContainer(
                     TreeViewContainerKey,
                     adhocRootNode,
                     directoryHomeNode is null
@@ -88,7 +84,7 @@ public partial class InputFileSidebar : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-        CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        IdeService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 }

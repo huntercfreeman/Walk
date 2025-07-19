@@ -1,27 +1,20 @@
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Options.Models;
-using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
-using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 
 namespace Walk.Ide.RazorLib.FolderExplorers.Models;
 
 public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
-    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-    private readonly TextEditorService _textEditorService;
+    private readonly IdeService _ideService;
 
     public FolderExplorerTreeViewMouseEventHandler(
-            IdeBackgroundTaskApi ideBackgroundTaskApi,
-            TextEditorService textEditorService,
-            CommonUtilityService commonUtilityService)
-        : base(commonUtilityService)
+            IdeService ideService)
+        : base(ideService.CommonService)
     {
-        _ideBackgroundTaskApi = ideBackgroundTaskApi;
-        _textEditorService = textEditorService;
+        _ideService = ideService;
     }
 
     public override async Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
@@ -31,9 +24,9 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
         if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-		_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
+		_ideService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
 		{
-			await _textEditorService.OpenInEditorAsync(
+			await _ideService.TextEditorService.OpenInEditorAsync(
 				editContext,
 				treeViewAbsolutePath.Item.Value,
 				true,

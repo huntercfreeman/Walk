@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.TextEditor.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
 
 namespace Walk.Ide.RazorLib.Terminals.Displays.Internals;
@@ -9,9 +8,7 @@ namespace Walk.Ide.RazorLib.Terminals.Displays.Internals;
 public partial class AddIntegratedTerminalDisplay : ComponentBase
 {
 	[Inject]
-	private TextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-	private ITerminalService TerminalService { get; set; } = null!;
+	private IdeService IdeService { get; set; } = null!;
 	
 	[CascadingParameter]
 	public IDialog Dialog { get; set; } = null!;
@@ -25,7 +22,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 	{
 		var terminalCommandRequest = new TerminalCommandRequest(
         	"bash -c \"type bash\"",
-        	TextEditorService.CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+        	IdeService.CommonService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
         	TypeBashTerminalCommandRequestKey)
         {
         	ContinueWithFunc = parsedCommand =>
@@ -50,7 +47,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
         	}
         };
         	
-        TerminalService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 	
 	private void SubmitOnClick()
@@ -66,8 +63,8 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 				terminal,
 				new TerminalOutputFormatterExpand(
 					terminal,
-					TextEditorService)),
-			TextEditorService.CommonUtilityService,
+					IdeService.TextEditorService)),
+			IdeService.CommonService,
 			_pathToShellExecutable)
 		{
 			Key = Key<ITerminal>.NewKey()
@@ -75,8 +72,8 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 		
 		terminalIntegrated.Start();
 		
-		TerminalService.Register(terminalIntegrated);
+		IdeService.Terminal_Register(terminalIntegrated);
 			
-		TextEditorService.CommonUtilityService.Dialog_ReduceDisposeAction(Dialog.DynamicViewModelKey);
+		IdeService.CommonService.Dialog_ReduceDisposeAction(Dialog.DynamicViewModelKey);
 	}
 }

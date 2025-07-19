@@ -12,14 +12,14 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
         private const bool IS_DIRECTORY_RESPONSE = false;
 
         private readonly InMemoryFileSystemProvider _inMemoryFileSystemProvider;
-        private readonly CommonUtilityService _commonUtilityService;
+        private readonly CommonService _commonService;
 
         public InMemoryFileHandler(
             InMemoryFileSystemProvider inMemoryFileSystemProvider,
-            CommonUtilityService commonUtilityService)
+            CommonService commonService)
         {
             _inMemoryFileSystemProvider = inMemoryFileSystemProvider;
-            _commonUtilityService = commonUtilityService;
+            _commonService = commonService;
         }
 
         public bool Exists(string absolutePathString)
@@ -175,7 +175,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             string absolutePathString,
             CancellationToken cancellationToken = default)
         {
-            _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
+            _commonService.EnvironmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
 
             var indexOfExistingFile = _inMemoryFileSystemProvider._files.FindIndex(f =>
                 f.AbsolutePath.Value == absolutePathString &&
@@ -211,7 +211,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                     !f.IsDirectory);
 
                 if (indexOfDestination != -1)
-                    _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
+                    _commonService.EnvironmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
             }
 
             var contents = await UnsafeReadAllTextAsync(
@@ -231,10 +231,10 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             string destinationAbsolutePathString,
             CancellationToken cancellationToken = default)
         {
-            _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
+            _commonService.EnvironmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
             if (await ExistsAsync(destinationAbsolutePathString).ConfigureAwait(false))
-                _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
+                _commonService.EnvironmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
             await UnsafeCopyAsync(
                     sourceAbsolutePathString,
@@ -296,7 +296,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
 
             if (indexOfExistingFile != -1)
             {
-                _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
+                _commonService.EnvironmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
 
                 var existingFile = _inMemoryFileSystemProvider._files[indexOfExistingFile];
 
@@ -330,7 +330,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 }
             }
 
-            var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+            var absolutePath = _commonService.EnvironmentProvider.AbsolutePathFactory(
                 absolutePathString,
                 false);
 
@@ -342,7 +342,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
 
             _inMemoryFileSystemProvider._files.Add(outFile);
 
-            _commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(
+            _commonService.EnvironmentProvider.DeletionPermittedRegister(
                 new SimplePath(absolutePathString, IS_DIRECTORY_RESPONSE));
 
             return Task.CompletedTask;
@@ -358,7 +358,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             NotificationHelper.DispatchError(
                 title,
                 exception.ToString(),
-                _commonUtilityService,
+                _commonService,
                 TimeSpan.FromSeconds(10));
         }
     }

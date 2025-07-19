@@ -7,11 +7,11 @@ public class LocalDirectoryHandler : IDirectoryHandler
 {
     private const bool IS_DIRECTORY_RESPONSE = true;
 
-    private readonly CommonUtilityService _commonUtilityService;
+    private readonly CommonService _commonService;
 
-    public LocalDirectoryHandler(CommonUtilityService commonUtilityService)
+    public LocalDirectoryHandler(CommonService commonService)
     {
-        _commonUtilityService = commonUtilityService;
+        _commonService = commonService;
     }
 
     public async Task CreateDirectoryAsync(
@@ -31,7 +31,7 @@ public class LocalDirectoryHandler : IDirectoryHandler
 
         Directory.CreateDirectory(absolutePathString);
 
-        _commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(
+        _commonService.EnvironmentProvider.DeletionPermittedRegister(
             new SimplePath(absolutePathString, IS_DIRECTORY_RESPONSE));
     }
 
@@ -42,7 +42,7 @@ public class LocalDirectoryHandler : IDirectoryHandler
     {
         try
         {
-            _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
+            _commonService.EnvironmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
             Directory.Delete(absolutePathString, recursive);
         }
         catch (Exception exception)
@@ -85,16 +85,16 @@ public class LocalDirectoryHandler : IDirectoryHandler
     {
         try
         {
-			_commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
+			_commonService.EnvironmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
             if (await ExistsAsync(destinationAbsolutePathString).ConfigureAwait(false))
-                _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
+                _commonService.EnvironmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
             Directory.Move(
                 sourceAbsolutePathString,
                 destinationAbsolutePathString);
 
-            _commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(
+            _commonService.EnvironmentProvider.DeletionPermittedRegister(
                 new SimplePath(destinationAbsolutePathString, true));
         }
         catch (Exception exception)
@@ -141,7 +141,7 @@ public class LocalDirectoryHandler : IDirectoryHandler
 		NotificationHelper.DispatchError(
             title,
             exception.ToString(),
-            _commonUtilityService,
+            _commonService,
             TimeSpan.FromSeconds(10));
     }
 }

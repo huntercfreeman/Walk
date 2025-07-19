@@ -1,20 +1,18 @@
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
-using Walk.Common.RazorLib.Options.Models;
-using Walk.Ide.RazorLib.BackgroundTasks.Models;
+using Walk.Ide.RazorLib;
 
 namespace Walk.Extensions.DotNet.CompilerServices.Models;
 
 public class CompilerServiceExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
-	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
+	private readonly IdeService _ideService;
 
 	public CompilerServiceExplorerTreeViewMouseEventHandler(
-			IdeBackgroundTaskApi ideBackgroundTaskApi,
-			CommonUtilityService commonUtilityService)
-		: base(commonUtilityService)
+			IdeService ideService)
+		: base(ideService.CommonService)
 	{
-		_ideBackgroundTaskApi = ideBackgroundTaskApi;
+		_ideService = ideService;
 	}
 
 	public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)

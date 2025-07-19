@@ -10,18 +10,18 @@ public sealed class IndefiniteBackgroundTaskWorker
 
     public IndefiniteBackgroundTaskWorker(
         BackgroundTaskQueue queue,
-        CommonUtilityService commonUtilityService,
+        CommonService commonService,
         ILoggerFactory loggerFactory,
         WalkHostingKind walkHostingKind)
     {
         Queue = queue;
-        CommonUtilityService = commonUtilityService;
+        CommonService = commonService;
         _logger = loggerFactory.CreateLogger<IndefiniteBackgroundTaskWorker>();
         WalkHostingKind = walkHostingKind;
     }
     
     public BackgroundTaskQueue Queue { get; }
-    public CommonUtilityService CommonUtilityService { get; }
+    public CommonService CommonService { get; }
     public Task? StartAsyncTask { get; internal set; }
     public WalkHostingKind WalkHostingKind { get; }
 
@@ -53,7 +53,7 @@ public sealed class IndefiniteBackgroundTaskWorker
             finally
             {
             	if (backgroundTask.__TaskCompletionSourceWasCreated)
-            		CommonUtilityService.CompleteTaskCompletionSource(backgroundTask.BackgroundTaskKey);
+            		CommonService.CompleteTaskCompletionSource(backgroundTask.BackgroundTaskKey);
             }
     	}
 	}   

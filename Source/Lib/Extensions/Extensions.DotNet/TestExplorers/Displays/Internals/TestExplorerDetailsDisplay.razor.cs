@@ -7,8 +7,8 @@ using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Extensions.DotNet.TestExplorers.Models;
 
@@ -17,9 +17,7 @@ namespace Walk.Extensions.DotNet.TestExplorers.Displays.Internals;
 public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private ITerminalService TerminalService { get; set; } = null!;
-	[Inject]
-	private TextEditorService TextEditorService { get; set; } = null!;
+	private IdeService IdeService { get; set; } = null!;
 
 	[CascadingParameter]
 	public TestExplorerRenderBatchValidated RenderBatch { get; set; } = null!;
@@ -44,7 +42,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 	
 	protected override void OnInitialized()
 	{
-		var terminalState = TerminalService.GetTerminalState();
+		var terminalState = IdeService.GetTerminalState();
 		_executionTerminal = terminalState.TerminalMap[TerminalFacts.EXECUTION_KEY];
 		_executionTerminal.TerminalOutput.OnWriteOutput += OnWriteOutput;
 	}
@@ -124,7 +122,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 				};*/
 			}
 
-			TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+			IdeService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
 			{
 				var modelModifier = editContext.GetModelModifier(ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
 				var viewModelModifier = editContext.GetViewModelModifier(DetailsTextEditorViewModelKey);
@@ -168,7 +166,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 					    EndExclusiveIndex: lineInformation.Position_StartInclusiveIndex + 1,
 					    DecorationByte: 0);
 				
-					TextEditorService.ViewModel_ScrollIntoView(
+					IdeService.TextEditorService.ViewModel_ScrollIntoView(
 				        editContext,
 				        modelModifier,
 				        viewModelModifier,

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 
 namespace Walk.Ide.RazorLib.InputFiles.Displays;
@@ -8,9 +7,7 @@ namespace Walk.Ide.RazorLib.InputFiles.Displays;
 public partial class InputFileBottomControls : ComponentBase
 {
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
-    [Inject]
-    private IInputFileService InputFileService { get; set; } = null!;
+    private IdeService IdeService { get; set; } = null!;
 
     [CascadingParameter]
     public IDialog? DialogRecord { get; set; }
@@ -27,7 +24,7 @@ public partial class InputFileBottomControls : ComponentBase
             .FirstOrDefault(x => x.PatternName == patternName);
 
         if (pattern.ConstructorWasInvoked)
-            InputFileService.SetSelectedInputFilePattern(pattern);
+            IdeService.InputFile_SetSelectedInputFilePattern(pattern);
     }
 
     private string GetSelectedTreeViewModelAbsolutePathString(InputFileState inputFileState)
@@ -49,7 +46,7 @@ public partial class InputFileBottomControls : ComponentBase
         if (valid)
         {
             if (DialogRecord is not null)
-                CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+                IdeService.CommonService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
             await InputFileState.OnAfterSubmitFunc
                 .Invoke(InputFileState.SelectedTreeViewModel?.Item ?? default)
@@ -66,7 +63,7 @@ public partial class InputFileBottomControls : ComponentBase
     private Task CancelOnClick()
     {
         if (DialogRecord is not null)
-            CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+            IdeService.CommonService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
         return Task.CompletedTask;
     }
