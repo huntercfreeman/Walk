@@ -6,7 +6,7 @@ namespace Walk.Ide.RazorLib.FileSystems.Displays;
 public partial class FileTemplatesDisplay : ComponentBase
 {
     [Inject]
-    private IFileTemplateProvider FileTemplateProvider { get; set; } = null!;
+    private IdeService IdeService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public string FileName { get; set; } = null!;
@@ -23,7 +23,7 @@ public partial class FileTemplatesDisplay : ComponentBase
 
     protected override void OnInitialized()
     {
-        _fileTemplatesFormWrappersList = FileTemplateProvider.FileTemplatesList
+        _fileTemplatesFormWrappersList = IdeService.FileTemplatesList
             .Select(x => new FileTemplatesFormWrapper(x, true))
             .ToList();
     }
