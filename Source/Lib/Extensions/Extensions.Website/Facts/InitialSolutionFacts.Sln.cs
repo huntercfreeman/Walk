@@ -1,4 +1,4 @@
-﻿namespace Walk.Ide.Wasm.Facts;
+namespace Walk.Ide.Wasm.Facts;
 
 public partial class InitialSolutionFacts
 {
@@ -8,7 +8,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34018.315
 MinimumVisualStudioVersion = 10.0.40219.1
-Project(""{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"") = ""BlazorCrudApp.Wasm"", ""BlazorCrudApp.Wasm\BlazorCrudApp.Wasm.csproj"", ""{4A4A1AE7-B419-4C0B-8F04-5EC38984F98B}""
+Project(""{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"") = ""ConsoleApp"", ""ConsoleApp\ConsoleApp.csproj"", ""{4A4A1AE7-B419-4C0B-8F04-5EC38984F98B}""
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

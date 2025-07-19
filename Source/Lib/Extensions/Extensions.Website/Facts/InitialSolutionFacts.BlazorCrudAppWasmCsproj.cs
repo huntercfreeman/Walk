@@ -1,8 +1,8 @@
-﻿namespace Walk.Ide.Wasm.Facts;
+namespace Walk.Ide.Wasm.Facts;
 
 public partial class InitialSolutionFacts
 {
-    public const string BLAZOR_CRUD_APP_WASM_CSPROJ_ABSOLUTE_FILE_PATH = @"/BlazorCrudApp/BlazorCrudApp.Wasm/BlazorCrudApp.Wasm.csproj";
+    public const string BLAZOR_CRUD_APP_WASM_CSPROJ_ABSOLUTE_FILE_PATH = @"/BlazorCrudApp/ConsoleApp/ConsoleApp.csproj";
     public const string BLAZOR_CRUD_APP_WASM_CSPROJ_CONTENTS = @"<Project Sdk=""Microsoft.NET.Sdk.BlazorWebAssembly"">
 
   <PropertyGroup>
