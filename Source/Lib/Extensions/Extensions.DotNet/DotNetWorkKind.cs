@@ -19,11 +19,11 @@ public enum DotNetWorkKind
 	PerformRemoveCSharpProjectReferenceFromSolution,
     PerformRemoveProjectToProjectReference,
     PerformMoveProjectToSolutionFolder,
-    PerformRemoveNuGetPackageReferenceFromProject
+    PerformRemoveNuGetPackageReferenceFromProject,
 	/* End DotNetMenuOptionsFactoryWorkKind */
 	
 	/* Start TestExplorerSchedulerWorkKind */
 	ConstructTreeView,
-    DiscoverTests
+    DiscoverTests,
 	/* End TestExplorerSchedulerWorkKind */
 }
