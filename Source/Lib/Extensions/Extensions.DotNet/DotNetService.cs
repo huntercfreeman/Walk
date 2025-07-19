@@ -158,6 +158,12 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 
     private readonly ConcurrentQueue<DotNetWorkArgs> _workQueue = new();
     
+    public void Enqueue(DotNetWorkArgs workArgs)
+    {
+		_workQueue.Enqueue(workArgs);
+        IdeService.TextEditorService.CommonService.Continuous_EnqueueGroup(this);
+    }
+    
     public ValueTask HandleEvent()
     {
         if (!_workQueue.TryDequeue(out DotNetWorkArgs workArgs))
@@ -187,39 +193,35 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 	                workArgs.CSharpProjectAbsolutePath);
             case DotNetWorkKind.PerformRemoveCSharpProjectReferenceFromSolution:
             {
-                var args = _queue_PerformRemoveCSharpProjectReferenceFromSolution.Dequeue();
                 return Do_PerformRemoveCSharpProjectReferenceFromSolution(
-					args.treeViewSolution, args.projectNode, args.terminal, args.commonService, args.onAfterCompletion);
+					workArgs.TreeViewSolution, workArgs.ProjectNode, workArgs.Terminal, workArgs.CommonService, workArgs.OnAfterCompletion);
             }
 			case DotNetWorkKind.PerformRemoveProjectToProjectReference:
             {
-                var args = _queue_PerformRemoveProjectToProjectReference.Dequeue();
                 return Do_PerformRemoveProjectToProjectReference(
-                    args.treeViewCSharpProjectToProjectReference,
-					args.terminal,
-					args.commonService,
-                    args.onAfterCompletion);
+                    workArgs.TreeViewCSharpProjectToProjectReference,
+					workArgs.Terminal,
+					workArgs.CommonService,
+                    workArgs.OnAfterCompletion);
             }
 			case DotNetWorkKind.PerformMoveProjectToSolutionFolder:
             {
-                var args = _queue_PerformMoveProjectToSolutionFolder.Dequeue();
                 return Do_PerformMoveProjectToSolutionFolder(
-                    args.treeViewSolution,
-                    args.treeViewProjectToMove,
-					args.solutionFolderPath,
-					args.terminal,
-					args.commonService,
-                    args.onAfterCompletion);
+                    workArgs.TreeViewSolution,
+                    workArgs.TreeViewProjectToMove,
+					workArgs.SolutionFolderPath,
+					workArgs.Terminal,
+					workArgs.CommonService,
+                    workArgs.OnAfterCompletion);
             }
 			case DotNetWorkKind.PerformRemoveNuGetPackageReferenceFromProject:
             {
-                var args = _queue_PerformRemoveNuGetPackageReferenceFromProject.Dequeue();
                 return Do_PerformRemoveNuGetPackageReferenceFromProject(
-                    args.modifyProjectNamespacePath,
-                    args.treeViewCSharpProjectNugetPackageReference,
-                    args.terminal,
-                    args.commonService,
-                    args.onAfterCompletion);
+                    workArgs.ModifyProjectNamespacePath,
+                    workArgs.TreeViewCSharpProjectNugetPackageReference,
+                    workArgs.Terminal,
+                    workArgs.CommonService,
+                    workArgs.OnAfterCompletion);
             }
             case DotNetWorkKind.ConstructTreeView:
             {
@@ -1266,15 +1268,15 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 		CommonService commonService,
 		Func<Task> onAfterCompletion)
 	{
-        lock (_workLock)
+        Enqueue(new DotNetWorkArgs
         {
-            _workKindQueue.Enqueue(DotNetMenuOptionsFactoryWorkKind.PerformRemoveCSharpProjectReferenceFromSolution);
-
-            _queue_PerformRemoveCSharpProjectReferenceFromSolution.Enqueue(
-				(treeViewSolution, projectNode, terminal, commonService, onAfterCompletion));
-
-            IdeService.CommonService.Continuous_EnqueueGroup(this);
-        }
+            WorkKind = DotNetWorkKind.PerformRemoveCSharpProjectReferenceFromSolution,
+            TreeViewSolution = treeViewSolution,
+            ProjectNode = projectNode,
+            Terminal = terminal,
+            CommonService = commonService,
+            OnAfterCompletion = onAfterCompletion
+        });
 	}
 	
 	private ValueTask Do_PerformRemoveCSharpProjectReferenceFromSolution(
@@ -1357,15 +1359,14 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 		CommonService commonService,
 		Func<Task> onAfterCompletion)
 	{
-        lock (_workLock)
+	    Enqueue(new DotNetWorkArgs
         {
-            _workKindQueue.Enqueue(DotNetMenuOptionsFactoryWorkKind.PerformRemoveProjectToProjectReference);
-
-            _queue_PerformRemoveProjectToProjectReference.Enqueue(
-				(treeViewCSharpProjectToProjectReference, terminal, commonService, onAfterCompletion));
-
-            IdeService.CommonService.Continuous_EnqueueGroup(this);
-        }
+            WorkKind = DotNetWorkKind.PerformRemoveProjectToProjectReference,
+            TreeViewCSharpProjectToProjectReference = treeViewCSharpProjectToProjectReference,
+            Terminal = terminal,
+            CommonService = commonService,
+            OnAfterCompletion = onAfterCompletion
+        });
 	}
 	
 	public ValueTask Do_PerformRemoveProjectToProjectReference(
@@ -1401,15 +1402,16 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 		CommonService commonService,
 		Func<Task> onAfterCompletion)
 	{
-        lock (_workLock)
+	    Enqueue(new DotNetWorkArgs
         {
-            _workKindQueue.Enqueue(DotNetMenuOptionsFactoryWorkKind.PerformMoveProjectToSolutionFolder);
-
-            _queue_PerformMoveProjectToSolutionFolder.Enqueue(
-				(treeViewSolution, treeViewProjectToMove, solutionFolderPath, terminal, commonService, onAfterCompletion));
-
-            IdeService.CommonService.Continuous_EnqueueGroup(this);
-        }
+            WorkKind = DotNetWorkKind.PerformMoveProjectToSolutionFolder,
+            TreeViewSolution = treeViewSolution,
+            TreeViewProjectToMove = treeViewProjectToMove,
+            SolutionFolderPath = solutionFolderPath,
+            Terminal = terminal,
+            CommonService = commonService,
+            OnAfterCompletion = onAfterCompletion
+        });
 	}
 	
 	public ValueTask Do_PerformMoveProjectToSolutionFolder(
@@ -1457,15 +1459,15 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 		CommonService commonService,
 		Func<Task> onAfterCompletion)
 	{
-        lock (_workLock)
+	    Enqueue(new DotNetWorkArgs
         {
-            _workKindQueue.Enqueue(DotNetMenuOptionsFactoryWorkKind.PerformRemoveNuGetPackageReferenceFromProject);
-
-            _queue_PerformRemoveNuGetPackageReferenceFromProject.Enqueue(
-				(modifyProjectNamespacePath, treeViewCSharpProjectNugetPackageReference, terminal, commonService, onAfterCompletion));
-
-            IdeService.CommonService.Continuous_EnqueueGroup(this);
-        }
+            WorkKind = DotNetWorkKind.PerformRemoveNuGetPackageReferenceFromProject,
+            ModifyProjectNamespacePath = modifyProjectNamespacePath,
+            TreeViewCSharpProjectNugetPackageReference = treeViewCSharpProjectNugetPackageReference,
+            Terminal = terminal,
+            CommonService = commonService,
+            OnAfterCompletion = onAfterCompletion
+        });
 	}
 	
 	public ValueTask Do_PerformRemoveNuGetPackageReferenceFromProject(
@@ -1507,12 +1509,6 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
     private Key<Panel> _solutionExplorerPanelKey;
 
     private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
-    
-    public void Enqueue(DotNetWorkArgs workArgs)
-    {
-		_workQueue.Enqueue(workArgs);
-        IdeService.TextEditorService.CommonService.Continuous_EnqueueGroup(this);
-    }
 
     public async ValueTask Do_SolutionExplorer_TreeView_MultiSelect_DeleteFiles(TreeViewCommandArgs commandArgs)
     {
@@ -1575,7 +1571,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
             typeof(SolutionExplorerDisplay),
             null,
             IdeService.TextEditorService.CommonService);
-        IideService.TextEditorService.CommonService.RegisterPanel(solutionExplorerPanel);
+        IdeService.TextEditorService.CommonService.RegisterPanel(solutionExplorerPanel);
         IdeService.TextEditorService.CommonService.RegisterPanelTab(leftPanel.Key, solutionExplorerPanel, false);
 
         // SetActivePanelTabAction
@@ -1647,7 +1643,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
         IdeService.TextEditorService.CommonService.RegisterPanel(testExplorerPanel);
         IdeService.TextEditorService.CommonService.RegisterPanelTab(bottomPanel.Key, testExplorerPanel, false);
         // This UI has resizable parts that need to be initialized.
-        TestExplorerService.ReduceInitializeResizeHandleDimensionUnitAction(
+        ReduceInitializeResizeHandleDimensionUnitAction(
             new DimensionUnit(
                 () => IdeService.TextEditorService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
@@ -1792,7 +1788,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
             MenuOptionKind.Delete,
             () =>
             {
-                var dotNetSolutionState = DotNetSolutionService.GetDotNetSolutionState();
+                var dotNetSolutionState = GetDotNetSolutionState();
                 var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 
                 if (dotNetSolutionModel?.AbsolutePath is not null)
@@ -1808,7 +1804,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
             MenuOptionKind.Delete,
             () =>
             {
-                var dotNetSolutionState = DotNetSolutionService.GetDotNetSolutionState();
+                var dotNetSolutionState = GetDotNetSolutionState();
                 var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 
                 if (dotNetSolutionModel?.AbsolutePath is not null)
@@ -1845,14 +1841,14 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
         {
             BeginWithFunc = parsedCommand =>
             {
-                _dotNetCliOutputParser.ParseOutputEntireDotNetRun(
+                ParseOutputEntireDotNetRun(
                     string.Empty,
                     "Build-Project_started");
                 return Task.CompletedTask;
             },
             ContinueWithFunc = parsedCommand =>
             {
-                _dotNetCliOutputParser.ParseOutputEntireDotNetRun(
+                ParseOutputEntireDotNetRun(
                     parsedCommand.OutputCache.ToString(),
                     "Build-Project_completed");
                 return Task.CompletedTask;
@@ -1877,14 +1873,14 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
         {
             BeginWithFunc = parsedCommand =>
             {
-                _dotNetCliOutputParser.ParseOutputEntireDotNetRun(
+                ParseOutputEntireDotNetRun(
                     string.Empty,
                     "Clean-Project_started");
                 return Task.CompletedTask;
             },
             ContinueWithFunc = parsedCommand =>
             {
-                _dotNetCliOutputParser.ParseOutputEntireDotNetRun(
+                ParseOutputEntireDotNetRun(
                     parsedCommand.OutputCache.ToString(),
                     "Clean-Project_completed");
                 return Task.CompletedTask;
@@ -1909,14 +1905,14 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
         {
             BeginWithFunc = parsedCommand =>
             {
-                _dotNetCliOutputParser.ParseOutputEntireDotNetRun(
+                ParseOutputEntireDotNetRun(
                     string.Empty,
                     "Build-Solution_started");
                 return Task.CompletedTask;
             },
             ContinueWithFunc = parsedCommand =>
             {
-                _dotNetCliOutputParser.ParseOutputEntireDotNetRun(
+                ParseOutputEntireDotNetRun(
                     parsedCommand.OutputCache.ToString(),
                     "Build-Solution_completed");
                 return Task.CompletedTask;
@@ -1941,14 +1937,14 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
         {
             BeginWithFunc = parsedCommand =>
             {
-                _dotNetCliOutputParser.ParseOutputEntireDotNetRun(
+                ParseOutputEntireDotNetRun(
                     string.Empty,
                     "Clean-Solution_started");
                 return Task.CompletedTask;
             },
             ContinueWithFunc = parsedCommand =>
             {
-                _dotNetCliOutputParser.ParseOutputEntireDotNetRun(
+                ParseOutputEntireDotNetRun(
                     parsedCommand.OutputCache.ToString(),
                     "Clean-Solution_completed");
                 return Task.CompletedTask;
@@ -1975,8 +1971,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 
     public async ValueTask Do_SubmitNuGetQuery(INugetPackageManagerQuery query)
     {
-        var localNugetResult = await _nugetPackageManagerProvider
-            .QueryForNugetPackagesAsync(query)
+        var localNugetResult = await QueryForNugetPackagesAsync(query)
             .ConfigureAwait(false);
 
         NuGetPackageManagerService.ReduceSetMostRecentQueryResultAction(localNugetResult);
@@ -2026,7 +2021,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
                 {
                     if (output.Contains("Passed!"))
                     {
-                        TestExplorerService.ReduceWithAction(inState =>
+                        ReduceWithAction(inState =>
                         {
                             var passedTestHashSet = new HashSet<string>(inState.PassedTestHashSet);
                             passedTestHashSet.Add(fullyQualifiedName);
@@ -2047,7 +2042,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
                     }
                     else
                     {
-                        TestExplorerService.ReduceWithAction(inState =>
+                        ReduceWithAction(inState =>
                         {
 							var failedTestHashSet = new HashSet<string>(inState.FailedTestHashSet);
 							failedTestHashSet.Add(fullyQualifiedName);
@@ -2143,16 +2138,16 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 		*/
 
 		// TODO: If somehow model was registered already this won't write the state
-		DotNetSolutionService.ReduceRegisterAction(dotNetSolutionModel);
+		ReduceRegisterAction(dotNetSolutionModel);
 
-		DotNetSolutionService.ReduceWithAction(new WithAction(
+		ReduceWithAction(new WithAction(
 			inDotNetSolutionState => inDotNetSolutionState with
 			{
 				DotNetSolutionModelKey = dotNetSolutionModel.Key
 			}));
 
 		// TODO: Putting a hack for now to overwrite if somehow model was registered already
-		DotNetSolutionService.ReduceWithAction(ConstructModelReplacement(
+		ReduceWithAction(ConstructModelReplacement(
 			dotNetSolutionModel.Key,
 			dotNetSolutionModel));
 
