@@ -116,7 +116,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 				onClickFunc: async () =>
 				{
 					// TODO: This code is not concurrency safe with 'TestExplorerScheduler.Task_DiscoverTests()'
-					DotNetBackgroundTaskApi.TestExplorerService.ReduceWithAction(inState =>
+					DotNetService.ReduceWithAction(inState =>
 					{
 						if (treeViewProjectTestModel.Item.TestNameFullyQualifiedList is null)
 							return inState;
@@ -141,14 +141,14 @@ public partial class TestExplorerContextMenu : ComponentBase
 				    });
 			        
 					treeViewProjectTestModel.Item.TestNameFullyQualifiedList = null;
-					IdeService.CommonService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
+					DotNetService.IdeService.CommonService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
 					await treeViewProjectTestModel.LoadChildListAsync();
-					IdeService.CommonService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
+					DotNetService.IdeService.CommonService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
-					DotNetBackgroundTaskApi.TestExplorerService.MoveNodeToCorrectBranch(treeViewProjectTestModel);
+					DotNetService.MoveNodeToCorrectBranch(treeViewProjectTestModel);
 					
-					DotNetBackgroundTaskApi.TestExplorerService.ReduceWithAction(inState =>
+					DotNetService.ReduceWithAction(inState =>
 					{
 						if (treeViewProjectTestModel.Item.TestNameFullyQualifiedList is null)
 							return inState;
@@ -200,9 +200,9 @@ public partial class TestExplorerContextMenu : ComponentBase
 			
 				if (treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory is not null)
 				{
-					DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
+					DotNetService.Enqueue(new DotNetWorkArgs
 					{
-						WorkKind = DotNetBackgroundTaskApiWorkKind.RunTestByFullyQualifiedName,
+						WorkKind = DotNetWorkKind.RunTestByFullyQualifiedName,
                         TreeViewStringFragment = treeViewStringFragment,
                         FullyQualifiedName = fullyQualifiedName,
                         TreeViewProjectTestModel = treeViewProjectTestModel,
@@ -338,9 +338,9 @@ public partial class TestExplorerContextMenu : ComponentBase
 	{
 		var contextRecord = ContextFacts.OutputContext;
 		
-		DotNetCliOutputParser.ParseOutputEntireDotNetRun(output, "Unit-Test_results");
+		DotNetService.ParseOutputEntireDotNetRun(output, "Unit-Test_results");
 		
-		IdeService.CommonService.SetPanelTabAsActiveByContextRecordKey(contextRecord.ContextKey);
+		DotNetService.IdeService.CommonService.SetPanelTabAsActiveByContextRecordKey(contextRecord.ContextKey);
 	
 		if (contextRecord != default)
 		{
@@ -348,8 +348,8 @@ public partial class TestExplorerContextMenu : ComponentBase
 		        contextRecord,
 		        nameof(ContextHelper.ConstructFocusContextElementCommand),
 		        nameof(ContextHelper.ConstructFocusContextElementCommand),
-		        IdeService.CommonService.JsRuntimeCommonApi,
-		        IdeService.CommonService);
+		        DotNetService.IdeService.CommonService.JsRuntimeCommonApi,
+		        DotNetService.IdeService.CommonService);
 		        
 		    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
 		}

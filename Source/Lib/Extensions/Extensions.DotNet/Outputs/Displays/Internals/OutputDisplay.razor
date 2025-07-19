@@ -6,8 +6,8 @@
 <div class="di_output-display" style="height: 100%;">
 	
 	@{
-		var dotNetRunParseResult = DotNetCliOutputParser.GetDotNetRunParseResult();
-		var appOptionsState = TextEditorService.CommonService.GetAppOptionsState();
+		var dotNetRunParseResult = DotNetService.GetDotNetRunParseResult();
+		var appOptionsState = DotNetService.TextEditorService.CommonService.GetAppOptionsState();
 	}
 	
 	<div class="di_output-display-top-row" style="height: 1.8em;">

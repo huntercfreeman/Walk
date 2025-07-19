@@ -23,22 +23,22 @@ public partial class OutputDisplay : ComponentBase, IDisposable
 	private OutputTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		TextEditorService.CommonService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		DotNetService.TextEditorService.CommonService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
     
     protected override void OnInitialized()
     {
     	_treeViewKeyboardEventHandler = new OutputTreeViewKeyboardEventHandler(
-			TextEditorService,
+			DotNetService.TextEditorService,
 			ServiceProvider);
 
 		_treeViewMouseEventHandler = new OutputTreeViewMouseEventHandler(
-			TextEditorService,
+			DotNetService.TextEditorService,
 			ServiceProvider);
     
-    	DotNetCliOutputParser.StateChanged += DotNetCliOutputParser_StateChanged;
-    	DotNetBackgroundTaskApi.OutputService.OutputStateChanged += OnOutputStateChanged;
+    	DotNetService.StateChanged += DotNetCliOutputParser_StateChanged;
+    	DotNetService.OutputStateChanged += OnOutputStateChanged;
     	
-    	if (DotNetBackgroundTaskApi.OutputService.GetOutputState().DotNetRunParseResultId != DotNetCliOutputParser.GetDotNetRunParseResult().Id)
+    	if (DotNetService.GetOutputState().DotNetRunParseResultId != DotNetService.GetDotNetRunParseResult().Id)
     		DotNetCliOutputParser_StateChanged();
     }
     
@@ -46,12 +46,12 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     {
 		_eventThrottle.Run((Func<CancellationToken, Task>)(_ =>
     	{
-    		if (DotNetBackgroundTaskApi.OutputService.GetOutputState().DotNetRunParseResultId == DotNetCliOutputParser.GetDotNetRunParseResult().Id)
+    		if (DotNetService.GetOutputState().DotNetRunParseResultId == DotNetService.GetDotNetRunParseResult().Id)
     			return Task.CompletedTask;
 
-			TextEditorService.CommonService.Continuous_EnqueueGroup((IBackgroundTaskGroup)new BackgroundTask(
+			DotNetService.TextEditorService.CommonService.Continuous_EnqueueGroup((IBackgroundTaskGroup)new BackgroundTask(
 				Key<IBackgroundTaskGroup>.Empty,
-				DotNetBackgroundTaskApi.OutputService.Do_ConstructTreeView));
+				DotNetService.OutputService_Do_ConstructTreeView));
     		return Task.CompletedTask;
     	}));
     }
@@ -77,13 +77,13 @@ public partial class OutputDisplay : ComponentBase, IDisposable
 			},
 			restoreFocusOnClose: null);
 
-		TextEditorService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		DotNetService.TextEditorService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
     
     public void Dispose()
     {
-    	DotNetCliOutputParser.StateChanged -= DotNetCliOutputParser_StateChanged;
-    	DotNetBackgroundTaskApi.OutputService.OutputStateChanged -= OnOutputStateChanged;
+    	DotNetService.StateChanged -= DotNetCliOutputParser_StateChanged;
+    	DotNetService.OutputStateChanged -= OnOutputStateChanged;
     }
 }

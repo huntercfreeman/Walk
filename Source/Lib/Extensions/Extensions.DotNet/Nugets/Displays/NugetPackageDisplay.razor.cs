@@ -26,8 +26,8 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		DotNetBackgroundTaskApi.NuGetPackageManagerService.NuGetPackageManagerStateChanged += OnNuGetPackageManagerStateChanged;
-		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
+		DotNetService.NuGetPackageManagerStateChanged += OnNuGetPackageManagerStateChanged;
+		DotNetService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
 	}
 	
 	protected override void OnParametersSet()
@@ -95,12 +95,12 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
         {
         	ContinueWithFunc = parsedCommand =>
         	{
-        		NotificationHelper.DispatchInformative("Add Nuget Package Reference", $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}", IdeService.CommonService, TimeSpan.FromSeconds(7));
+        		NotificationHelper.DispatchInformative("Add Nuget Package Reference", $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}", DotNetService.IdeService.CommonService, TimeSpan.FromSeconds(7));
 				return Task.CompletedTask;
         	}
         };
         	
-        IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        DotNetService.IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 	
 	private async void OnNuGetPackageManagerStateChanged()
@@ -115,7 +115,7 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
 	
 	public void Dispose()
 	{
-		DotNetBackgroundTaskApi.NuGetPackageManagerService.NuGetPackageManagerStateChanged -= OnNuGetPackageManagerStateChanged;
-		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
+		DotNetService.NuGetPackageManagerStateChanged -= OnNuGetPackageManagerStateChanged;
+		DotNetService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
 	}
 }

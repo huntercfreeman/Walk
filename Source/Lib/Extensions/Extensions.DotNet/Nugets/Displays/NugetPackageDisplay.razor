@@ -1,8 +1,8 @@
 <div class="di_ide_nuget-package-display">
     
     @{
-        var dotNetSolutionState = DotNetBackgroundTaskApi.DotNetSolutionService.GetDotNetSolutionState();
-        var nuGetPackageManagerState = DotNetBackgroundTaskApi.NuGetPackageManagerService.GetNuGetPackageManagerState();
+        var dotNetSolutionState = DotNetService.GetDotNetSolutionState();
+        var nuGetPackageManagerState = DotNetService.GetNuGetPackageManagerState();
     }
 
     <div>

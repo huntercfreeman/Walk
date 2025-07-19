@@ -32,7 +32,7 @@
             <button class="di_button"
                     @onclick="RequestInputFileForParentDirectory">
                 @{
-                	var appOptionsState = IdeService.CommonService.GetAppOptionsState();
+                	var appOptionsState = DotNetService.IdeService.CommonService.GetAppOptionsState();
                  
 	            	var iconDriver = new IconDriver(
 	            		appOptionsState.Options.IconSizeInPixels,
