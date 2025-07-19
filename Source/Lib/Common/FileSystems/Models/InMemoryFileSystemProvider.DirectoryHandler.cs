@@ -10,14 +10,14 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
         private const bool IS_DIRECTORY_RESPONSE = true;
 
         private readonly InMemoryFileSystemProvider _inMemoryFileSystemProvider;
-        private readonly CommonUtilityService _commonUtilityService;
+        private readonly CommonService _commonService;
 
         public InMemoryDirectoryHandler(
             InMemoryFileSystemProvider inMemoryFileSystemProvider,
-            CommonUtilityService commonUtilityService)
+            CommonService commonService)
         {
             _inMemoryFileSystemProvider = inMemoryFileSystemProvider;
-            _commonUtilityService = commonUtilityService;
+            _commonService = commonService;
         }
 
         public Task<bool> ExistsAsync(
@@ -169,7 +169,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             if (existingFile.Data is not null)
                 return Task.CompletedTask;
 
-            var absolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(absolutePathString, true);
+            var absolutePath = _commonService.EnvironmentProvider.AbsolutePathFactory(absolutePathString, true);
 
             var outDirectory = new InMemoryFile(
                 string.Empty,
@@ -179,7 +179,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
 
             _inMemoryFileSystemProvider._files.Add(outDirectory);
 
-            _commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(new SimplePath(
+            _commonService.EnvironmentProvider.DeletionPermittedRegister(new SimplePath(
                 absolutePathString,
                 IS_DIRECTORY_RESPONSE));
 
@@ -191,7 +191,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             bool recursive,
             CancellationToken cancellationToken = default)
         {
-            _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
+            _commonService.EnvironmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
 
             var indexOfExistingFile = _inMemoryFileSystemProvider._files.FindIndex(f =>
                 f.AbsolutePath.Value == absolutePathString &&
@@ -239,14 +239,14 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             if (indexOfExistingFile == -1)
                 return;
 
-            var sourceAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(sourceAbsolutePathString, true);
+            var sourceAbsolutePath = _commonService.EnvironmentProvider.AbsolutePathFactory(sourceAbsolutePathString, true);
 
             var childDirectories = (await GetDirectoriesAsync(sourceAbsolutePathString, cancellationToken).ConfigureAwait(false))
-                .Select(x => _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(x, true))
+                .Select(x => _commonService.EnvironmentProvider.AbsolutePathFactory(x, true))
                 .ToArray();
 
             var childFiles = (await GetFilesAsync(sourceAbsolutePathString, cancellationToken).ConfigureAwait(false))
-                .Select(x => _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(x, false))
+                .Select(x => _commonService.EnvironmentProvider.AbsolutePathFactory(x, false))
                 .ToArray();
 
             var children = childDirectories.Union(childFiles);
@@ -255,11 +255,11 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
 
             if (destinationExists)
             {
-                _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
+                _commonService.EnvironmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
             }
             else
             {
-                var destinationAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+                var destinationAbsolutePath = _commonService.EnvironmentProvider.AbsolutePathFactory(
                     destinationAbsolutePathString,
                     true);
 
@@ -274,11 +274,11 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
 
             foreach (var child in children)
             {
-                var innerDestinationPath = _commonUtilityService.EnvironmentProvider.JoinPaths(
+                var innerDestinationPath = _commonService.EnvironmentProvider.JoinPaths(
                     destinationAbsolutePathString,
                     sourceAbsolutePath.NameWithExtension);
 
-                var destinationChild = _commonUtilityService.EnvironmentProvider.JoinPaths(
+                var destinationChild = _commonService.EnvironmentProvider.JoinPaths(
                     innerDestinationPath,
                     child.NameWithExtension);
 
@@ -309,7 +309,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             string destinationAbsolutePathString,
             CancellationToken cancellationToken = default)
         {
-            _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
+            _commonService.EnvironmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
             var indexOfExistingFile = _inMemoryFileSystemProvider._files.FindIndex(f =>
                 f.AbsolutePath.Value == sourceAbsolutePathString &&
@@ -319,7 +319,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 return;
 
             if (await ExistsAsync(destinationAbsolutePathString).ConfigureAwait(false))
-                _commonUtilityService.EnvironmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
+                _commonService.EnvironmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
             await UnsafeCopyAsync(sourceAbsolutePathString, destinationAbsolutePathString, cancellationToken).ConfigureAwait(false);
             await UnsafeDeleteAsync(sourceAbsolutePathString, true, cancellationToken).ConfigureAwait(false);
@@ -413,7 +413,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             NotificationHelper.DispatchError(
                 title,
                 exception.ToString(),
-                _commonUtilityService,
+                _commonService,
                 TimeSpan.FromSeconds(10));
         }
     }

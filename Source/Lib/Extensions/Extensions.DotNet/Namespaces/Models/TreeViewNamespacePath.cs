@@ -18,19 +18,19 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
             NamespacePath namespacePath,
             IDotNetComponentRenderers dotNetComponentRenderers,
             IIdeComponentRenderers ideComponentRenderers,
-            CommonUtilityService commonUtilityService,
+            CommonService commonService,
             bool isExpandable,
             bool isExpanded)
         : base(namespacePath, isExpandable, isExpanded)
     {
         DotNetComponentRenderers = dotNetComponentRenderers;
         IdeComponentRenderers = ideComponentRenderers;
-        CommonUtilityService = commonUtilityService;
+        CommonService = commonService;
     }
 
     public IDotNetComponentRenderers DotNetComponentRenderers { get; }
     public IIdeComponentRenderers IdeComponentRenderers { get; }
-    public CommonUtilityService CommonUtilityService { get; }
+    public CommonService CommonService { get; }
 
     public override bool Equals(object? obj)
     {
@@ -187,7 +187,7 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
         {
             ChildList = new List<TreeViewNoType>
             {
-                new TreeViewException(exception, false, false, CommonUtilityService.CommonComponentRenderers)
+                new TreeViewException(exception, false, false, CommonService.CommonComponentRenderers)
                 {
                     Parent = this,
                     IndexAmongSiblings = 0,

@@ -11,9 +11,9 @@ namespace Walk.Common.RazorLib.Drags.Displays;
 public partial class DragInitializer : ComponentBase, IDisposable
 {
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonService CommonService { get; set; } = null!;
     
-    private string StyleCss => CommonUtilityService.GetDragState().ShouldDisplay
+    private string StyleCss => CommonService.GetDragState().ShouldDisplay
         ? string.Empty
         : "display: none;";
 
@@ -42,9 +42,9 @@ public partial class DragInitializer : ComponentBase, IDisposable
 	    		if ((args.MouseEventArgs.Buttons & 1) != 1)
 	                DRAG_DispatchClearDragStateAction();
 	            else
-	                CommonUtilityService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, args.MouseEventArgs);
+	                CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, args.MouseEventArgs);
 	            
-	            var dragState = CommonUtilityService.GetDragState();
+	            var dragState = CommonService.GetDragState();
 	            
 	            if (dragState.Drag?.DragComponentType is not null)
 	            {
@@ -63,7 +63,7 @@ public partial class DragInitializer : ComponentBase, IDisposable
 	    	}
 	    	else
 	    	{
-	    		var dragState = CommonUtilityService.GetDragState();
+	    		var dragState = CommonService.GetDragState();
 				var localOnMouseOverDropzone = _onMouseOverDropzone;
 	    	
 	    		DRAG_DispatchClearDragStateAction();
@@ -78,7 +78,7 @@ public partial class DragInitializer : ComponentBase, IDisposable
 	    	}
 	    });
     
-        CommonUtilityService.DragStateChanged += OnDragStateChanged;
+        CommonService.DragStateChanged += OnDragStateChanged;
     }
     
     private async void OnDragStateChanged()
@@ -90,7 +90,7 @@ public partial class DragInitializer : ComponentBase, IDisposable
     {
 		_onMouseOverDropzone = null;
 		
-        CommonUtilityService.Drag_ShouldDisplayAndMouseEventArgsAndDragSetAction(
+        CommonService.Drag_ShouldDisplayAndMouseEventArgsAndDragSetAction(
         	false,
             null,
 			null);
@@ -117,6 +117,6 @@ public partial class DragInitializer : ComponentBase, IDisposable
     
     public void Dispose()
     {
-        CommonUtilityService.DragStateChanged -= OnDragStateChanged;
+        CommonService.DragStateChanged -= OnDragStateChanged;
     }
 }

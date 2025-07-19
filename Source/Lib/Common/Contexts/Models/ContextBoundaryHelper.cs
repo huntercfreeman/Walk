@@ -7,33 +7,33 @@ namespace Walk.Common.RazorLib.Contexts.Models;
 
 public static class ContextBoundaryHelper
 {
-    public static void SetActiveContextState(CommonUtilityService commonUtilityService, Key<ContextRecord> contextKey)
+    public static void SetActiveContextState(CommonService commonService, Key<ContextRecord> contextKey)
     {
-        commonUtilityService.SetFocusedContextKey(contextKey);
+        commonService.SetFocusedContextKey(contextKey);
     }
     
     /// <summary>NOTE: 'onfocus' event does not bubble, whereas 'onfocusin' does bubble. Usage of both events in this file is intentional.</summary>
-    public static void HandleOnFocus(CommonUtilityService commonUtilityService, string contextElementId)
+    public static void HandleOnFocus(CommonService commonService, string contextElementId)
     {
-    	commonUtilityService.SetOutline(
+    	commonService.SetOutline(
 	    	contextElementId,
 	    	null,
 	    	true);
     }
     
-    public static void HandleOnBlur(CommonUtilityService commonUtilityService)
+    public static void HandleOnBlur(CommonService commonService)
     {
-    	commonUtilityService.SetOutline(
+    	commonService.SetOutline(
 	    	null,
 	    	null,
 	    	false);
     }
 
     /// <summary>NOTE: 'onfocus' event does not bubble, whereas 'onfocusin' does bubble. Usage of both events in this file is intentional.</summary>
-    public static void HandleOnFocusIn(CommonUtilityService commonUtilityService, Key<ContextRecord> contextKey)
+    public static void HandleOnFocusIn(CommonService commonService, Key<ContextRecord> contextKey)
     {
-    	if (commonUtilityService.GetContextState().FocusedContextKey != contextKey)
-    		SetActiveContextState(commonUtilityService, contextKey);
+    	if (commonService.GetContextState().FocusedContextKey != contextKey)
+    		SetActiveContextState(commonService, contextKey);
     }
     
     public static Task HandleOnKeyDownAsync(ContextRecord contextRecord, KeyboardEventArgs keyboardEventArgs)

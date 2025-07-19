@@ -98,7 +98,7 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
         {
         	ContinueWithFunc = parsedCommand =>
         	{
-        		NotificationHelper.DispatchInformative("Add Nuget Package Reference", $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}", IdeService.CommonUtilityService, TimeSpan.FromSeconds(7));
+        		NotificationHelper.DispatchInformative("Add Nuget Package Reference", $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}", IdeService.CommonService, TimeSpan.FromSeconds(7));
 				return Task.CompletedTask;
         	}
         };

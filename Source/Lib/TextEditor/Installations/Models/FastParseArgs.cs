@@ -8,12 +8,12 @@ public struct FastParseArgs
     public FastParseArgs(
         ResourceUri resourceUri,
         string extensionNoPeriod,
-        CommonUtilityService commonUtilityService,
+        CommonService commonService,
         object ideBackgroundTaskApi)
     {
         ResourceUri = resourceUri;
         ExtensionNoPeriod = extensionNoPeriod;
-        CommonUtilityService = commonUtilityService;
+        CommonService = commonService;
         IdeBackgroundTaskApi = ideBackgroundTaskApi;
     }
 
@@ -23,7 +23,7 @@ public struct FastParseArgs
     /// </summary>
     public ResourceUri ResourceUri { get; }
     public string ExtensionNoPeriod { get; }
-    public CommonUtilityService CommonUtilityService { get; }
+    public CommonService CommonService { get; }
     public object IdeBackgroundTaskApi { get; }
     public bool ShouldBlockUntilBackgroundTaskIsCompleted { get; init; }
 }

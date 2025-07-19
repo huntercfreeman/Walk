@@ -24,7 +24,7 @@ public partial class WalkWebsiteInitializer : ComponentBase
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonService CommonService { get; set; } = null!;
 
     protected override void OnInitialized()
     {
@@ -36,7 +36,7 @@ public partial class WalkWebsiteInitializer : ComponentBase
     {
         if (firstRender)
         {
-        	CommonUtilityService.Continuous_EnqueueGroup(new BackgroundTask(
+        	CommonService.Continuous_EnqueueGroup(new BackgroundTask(
         		Key<IBackgroundTaskGroup>.Empty,
         		Do_WalkWebsiteInitializerOnAfterRenderAsync));
         }
@@ -52,17 +52,17 @@ public partial class WalkWebsiteInitializer : ComponentBase
 
         // This code block is hacky. I want the Solution Explorer to from the get-go be fully expanded, so the user can see 'Program.cs'
         {
-            CommonUtilityService.TreeView_MoveRight(
+            CommonService.TreeView_MoveRight(
                 DotNetSolutionState.TreeViewSolutionExplorerStateKey,
                 false,
                 false);
 
-            CommonUtilityService.TreeView_MoveRight(
+            CommonService.TreeView_MoveRight(
                 DotNetSolutionState.TreeViewSolutionExplorerStateKey,
                 false,
                 false);
 
-            CommonUtilityService.TreeView_MoveRight(
+            CommonService.TreeView_MoveRight(
                 DotNetSolutionState.TreeViewSolutionExplorerStateKey,
             false,
                 false);
@@ -75,20 +75,20 @@ public partial class WalkWebsiteInitializer : ComponentBase
         await WebsiteProjectTemplateFacts.HandleNewCSharpProjectAsync(
                 WebsiteProjectTemplateFacts.BlazorWasmEmptyProjectTemplate.ShortName!,
                 InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_CSPROJ_ABSOLUTE_FILE_PATH,
-                CommonUtilityService)
+                CommonService)
             .ConfigureAwait(false);
 
-        await CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
+        await CommonService.FileSystemProvider.File.WriteAllTextAsync(
                 InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.PERSON_CS_CONTENTS)
             .ConfigureAwait(false);
 
-        await CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
+        await CommonService.FileSystemProvider.File.WriteAllTextAsync(
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CS_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CS_CONTENTS)
             .ConfigureAwait(false);
 
-        await CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
+        await CommonService.FileSystemProvider.File.WriteAllTextAsync(
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CONTENTS)
             .ConfigureAwait(false);
@@ -99,12 +99,12 @@ public partial class WalkWebsiteInitializer : ComponentBase
             .ConfigureAwait(false);*/
 
         // ExampleSolution.sln
-        await CommonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
+        await CommonService.FileSystemProvider.File.WriteAllTextAsync(
                 InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.SLN_CONTENTS)
             .ConfigureAwait(false);
 
-        var solutionAbsolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+        var solutionAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
             InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
             false);
 
@@ -133,11 +133,11 @@ public partial class WalkWebsiteInitializer : ComponentBase
         {
             foreach (var directory in directories)
             {
-                var childDirectories = await CommonUtilityService.FileSystemProvider.Directory
+                var childDirectories = await CommonService.FileSystemProvider.Directory
                     .GetDirectoriesAsync(directory)
                     .ConfigureAwait(false);
                 allFiles.AddRange(
-                    await CommonUtilityService.FileSystemProvider.Directory.GetFilesAsync(directory).ConfigureAwait(false));
+                    await CommonService.FileSystemProvider.Directory.GetFilesAsync(directory).ConfigureAwait(false));
 
                 await RecursiveStep(childDirectories, allFiles).ConfigureAwait(false);
             }
@@ -145,10 +145,10 @@ public partial class WalkWebsiteInitializer : ComponentBase
 
         foreach (var file in allFiles)
         {
-            var absolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(file, false);
+            var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(file, false);
             var resourceUri = new ResourceUri(file);
-            var fileLastWriteTime = await CommonUtilityService.FileSystemProvider.File.GetLastWriteTimeAsync(file).ConfigureAwait(false);
-            var content = await CommonUtilityService.FileSystemProvider.File.ReadAllTextAsync(file).ConfigureAwait(false);
+            var fileLastWriteTime = await CommonService.FileSystemProvider.File.GetLastWriteTimeAsync(file).ConfigureAwait(false);
+            var content = await CommonService.FileSystemProvider.File.ReadAllTextAsync(file).ConfigureAwait(false);
 
             var decorationMapper = DecorationMapperRegistry.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
             var compilerService = CompilerServiceRegistry.GetCompilerService(absolutePath.ExtensionNoPeriod);
@@ -201,7 +201,7 @@ public partial class WalkWebsiteInitializer : ComponentBase
 		TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
 		{
 			// Display a file from the get-go so the user is less confused on what the website is.
-	        var absolutePath = CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+	        var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
 	            InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
 	            false);
 		

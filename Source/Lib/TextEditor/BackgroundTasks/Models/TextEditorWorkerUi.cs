@@ -42,7 +42,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 		        viewModelKey,
 		        workUiKind
 		    ));
-		_textEditorService.CommonUtilityService.Continuous_EnqueueGroup(this);
+		_textEditorService.CommonService.Continuous_EnqueueGroup(this);
 	}
 	
 	public async ValueTask HandleEvent()
@@ -169,7 +169,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 					TextEditorCommandDefaultFunctions.RemoveDropdown(
 				        editContext,
 				        viewModel,
-				        workArgsTuple.ComponentData.TextEditorViewModelSlimDisplay.CommonUtilityService);
+				        workArgsTuple.ComponentData.TextEditorViewModelSlimDisplay.CommonService);
 				}
 		
 		        // Remember the current cursor position prior to doing anything

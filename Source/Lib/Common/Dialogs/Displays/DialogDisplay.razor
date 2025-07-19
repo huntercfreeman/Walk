@@ -2,12 +2,12 @@
 @using Walk.Common.RazorLib.Resizes.Displays
 
 @{
-	var dialogState = CommonUtilityService.GetDialogState();
+	var dialogState = CommonService.GetDialogState();
 	var dialogStateIsActiveSelection = dialogState.ActiveDialogKey == Dialog.DynamicViewModelKey;
 }
 
 <div class="di_dialog-display @Dialog.DialogCssClass @GetCssClassForDialogStateIsActiveSelection(dialogStateIsActiveSelection)"
-     style="@Dialog.DialogElementDimensions.GetStyleString(CommonUtilityService.UiStringBuilder) @IsMaximizedStyleCssString"
+     style="@Dialog.DialogElementDimensions.GetStyleString(CommonService.UiStringBuilder) @IsMaximizedStyleCssString"
      id="@Dialog.DialogFocusPointHtmlElementId"
      tabindex="-1"
      @onfocusin="HandleOnFocusIn"
@@ -36,7 +36,7 @@
              @onmousedown:stopPropagation="true">
              
             @{
-            	var appOptionsState = CommonUtilityService.GetAppOptionsState();
+            	var appOptionsState = CommonService.GetAppOptionsState();
             
             	var iconDriver = new IconDriver(
 					appOptionsState.Options.IconSizeInPixels,

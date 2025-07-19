@@ -12,17 +12,17 @@ public class TreeViewAbsolutePath : TreeViewWithType<AbsolutePath>
     public TreeViewAbsolutePath(
             AbsolutePath absolutePath,
             IIdeComponentRenderers ideComponentRenderers,
-            CommonUtilityService commonUtilityService,
+            CommonService commonService,
             bool isExpandable,
             bool isExpanded)
         : base(absolutePath, isExpandable, isExpanded)
     {
         IdeComponentRenderers = ideComponentRenderers;
-        CommonUtilityService = commonUtilityService;
+        CommonService = commonService;
     }
 
     public IIdeComponentRenderers IdeComponentRenderers { get; }
-    public CommonUtilityService CommonUtilityService { get; }
+    public CommonService CommonService { get; }
 
     public override bool Equals(object? obj)
     {
@@ -144,7 +144,7 @@ public class TreeViewAbsolutePath : TreeViewWithType<AbsolutePath>
         {
             ChildList = new List<TreeViewNoType>
             {
-                new TreeViewException(exception, false, false, CommonUtilityService.CommonComponentRenderers)
+                new TreeViewException(exception, false, false, CommonService.CommonComponentRenderers)
                 {
                     Parent = this,
                     IndexAmongSiblings = 0,

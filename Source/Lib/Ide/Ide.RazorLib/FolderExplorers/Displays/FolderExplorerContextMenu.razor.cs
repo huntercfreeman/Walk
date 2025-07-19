@@ -108,13 +108,13 @@ public partial class FolderExplorerContextMenu : ComponentBase
 			IdeService.CopyFile(
                 treeViewModel.Item,
                 (Func<Task>)(() => {
-					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)IdeService.CommonUtilityService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", (Common.RazorLib.Options.Models.CommonService)IdeService.CommonService, TimeSpan.FromSeconds(7));
                     return Task.CompletedTask;
                 })),
 			IdeService.CutFile(
                 treeViewModel.Item,
                 (Func<Task>)(() => {
-					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)IdeService.CommonUtilityService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", (Common.RazorLib.Options.Models.CommonService)IdeService.CommonService, TimeSpan.FromSeconds(7));
 					ParentOfCutFile = parentTreeViewModel;
                     return Task.CompletedTask;
                 })),
@@ -123,7 +123,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
                 async () => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
 			IdeService.RenameFile(
                 treeViewModel.Item,
-                (Common.RazorLib.Options.Models.CommonUtilityService)IdeService.CommonUtilityService,
+                (Common.RazorLib.Options.Models.CommonService)IdeService.CommonService,
                 async ()  => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false))
         };
     }
@@ -155,11 +155,11 @@ public partial class FolderExplorerContextMenu : ComponentBase
 
         await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-        IdeService.CommonUtilityService.TreeView_ReRenderNodeAction(
+        IdeService.CommonService.TreeView_ReRenderNodeAction(
             FolderExplorerState.TreeViewContentStateKey,
             treeViewModel);
 
-        IdeService.CommonUtilityService.TreeView_MoveUpAction(
+        IdeService.CommonService.TreeView_MoveUpAction(
             FolderExplorerState.TreeViewContentStateKey,
             false,
 			false);

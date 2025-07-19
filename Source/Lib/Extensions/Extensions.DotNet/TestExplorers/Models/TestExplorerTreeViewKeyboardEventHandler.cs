@@ -14,7 +14,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 	public TestExplorerTreeViewKeyboardEventHandler(
 			TextEditorService textEditorService,
 			IServiceProvider serviceProvider)
-		: base(textEditorService.CommonUtilityService)
+		: base(textEditorService.CommonService)
 	{
 		_textEditorService = textEditorService;
 		_serviceProvider = serviceProvider;
@@ -47,7 +47,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 			NotificationHelper.DispatchInformative(
 				nameof(TestExplorerTreeViewKeyboardEventHandler),
 				$"Could not open in editor because node is not type: {nameof(TreeViewStringFragment)}",
-				_textEditorService.CommonUtilityService,
+				_textEditorService.CommonService,
 				TimeSpan.FromSeconds(5));
 
 			return Task.CompletedTask;
@@ -58,7 +58,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 			NotificationHelper.DispatchInformative(
 				nameof(TestExplorerTreeViewKeyboardEventHandler),
 				$"Could not open in editor because node's parent does not seem to include a class name",
-				_textEditorService.CommonUtilityService,
+				_textEditorService.CommonService,
 				TimeSpan.FromSeconds(5));
 
 			return Task.CompletedTask;
@@ -69,7 +69,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 		NotificationHelper.DispatchInformative(
 			nameof(TestExplorerTreeViewMouseEventHandler),
 			className + ".cs",
-			_textEditorService.CommonUtilityService,
+			_textEditorService.CommonService,
 			TimeSpan.FromSeconds(5));
 
 		var methodName = treeViewStringFragment.Item.Value.Trim();
@@ -77,7 +77,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 		NotificationHelper.DispatchInformative(
 			nameof(TestExplorerTreeViewMouseEventHandler),
 			methodName + "()",
-			_textEditorService.CommonUtilityService,
+			_textEditorService.CommonService,
 			TimeSpan.FromSeconds(5));
 
 		_textEditorService.WorkerArbitrary.PostUnique(

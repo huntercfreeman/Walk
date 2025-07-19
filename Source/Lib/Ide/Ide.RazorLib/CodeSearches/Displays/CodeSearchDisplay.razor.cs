@@ -18,7 +18,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	private CodeSearchTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		IdeService.TextEditorService.CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		IdeService.TextEditorService.CommonService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private readonly ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
 	{
@@ -45,7 +45,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 	protected override void OnInitialized()
 	{
 		IdeService.CodeSearchStateChanged += OnCodeSearchStateChanged;
-		IdeService.CommonUtilityService.TreeViewStateChanged += OnTreeViewStateChanged;
+		IdeService.CommonService.TreeViewStateChanged += OnTreeViewStateChanged;
 	
 		_treeViewKeymap = new CodeSearchTreeViewKeyboardEventHandler(
 			IdeService.TextEditorService,
@@ -77,7 +77,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
 			},
 			null);
 
-		IdeService.CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		IdeService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 
@@ -106,6 +106,6 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
     	IdeService.CodeSearchStateChanged -= OnCodeSearchStateChanged;
-    	IdeService.CommonUtilityService.TreeViewStateChanged -= OnTreeViewStateChanged;
+    	IdeService.CommonService.TreeViewStateChanged -= OnTreeViewStateChanged;
     }
 }

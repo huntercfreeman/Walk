@@ -5,14 +5,14 @@
 @* ContextRecord="ContextFacts.OutputContext" *@
 
 <div id="@ContextFacts.OutputContext.ContextElementId" class="di_output-panel-display" style="height: 100%; width: 100%; overflow: auto;">
-	@if (CommonUtilityService.Options_ShowPanelTitles)
+	@if (CommonService.Options_ShowPanelTitles)
 	{
 		<div class="di_ide_section-title">
 	        Output
 	    </div>
     }
 
-	<div class="di_ide_section-body @CommonUtilityService.Options_ShowPanelTitlesCssClass">
+	<div class="di_ide_section-body @CommonService.Options_ShowPanelTitlesCssClass">
 		<OutputDisplay/>
 	</div>
 </div>

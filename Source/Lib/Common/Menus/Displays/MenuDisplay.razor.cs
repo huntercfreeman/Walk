@@ -10,7 +10,7 @@ namespace Walk.Common.RazorLib.Menus.Displays;
 public partial class MenuDisplay : ComponentBase
 {
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonService CommonService { get; set; } = null!;
 
     [CascadingParameter(Name="ReturnFocusToParentFuncAsync")]
     public Func<Task>? ReturnFocusToParentFuncAsync { get; set; }
@@ -112,7 +112,7 @@ public partial class MenuDisplay : ComponentBase
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
             	if (Dropdown is not null)
-	                CommonUtilityService.Dropdown_ReduceDisposeAction(Dropdown.Key);
+	                CommonService.Dropdown_ReduceDisposeAction(Dropdown.Key);
 
                 if (ReturnFocusToParentFuncAsync is not null)
                     await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);
@@ -139,7 +139,7 @@ public partial class MenuDisplay : ComponentBase
                 break;
             case KeyboardKeyFacts.MetaKeys.ESCAPE:
             	if (Dropdown is not null)
-	                CommonUtilityService.Dropdown_ReduceDisposeAction(Dropdown.Key);
+	                CommonService.Dropdown_ReduceDisposeAction(Dropdown.Key);
 
                 if (ReturnFocusToParentFuncAsync is not null)
                     await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);

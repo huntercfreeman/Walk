@@ -11,13 +11,13 @@ public static class NotificationHelper
     public static void DispatchInformative(
         string title,
         string message,
-        CommonUtilityService commonUtilityService,
+        CommonService commonService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationInformative = new NotificationViewModel(
             Key<IDynamicViewModel>.NewKey(),
             title,
-            commonUtilityService.CommonComponentRenderers.InformativeNotificationRendererType,
+            commonService.CommonComponentRenderers.InformativeNotificationRendererType,
             new Dictionary<string, object?>
             {
                 {
@@ -29,18 +29,18 @@ public static class NotificationHelper
             true,
             null);
 
-        commonUtilityService.Notification_ReduceRegisterAction(notificationInformative);
+        commonService.Notification_ReduceRegisterAction(notificationInformative);
     }
 
     public static void DispatchError(
         string title,
         string message,
-        CommonUtilityService commonUtilityService,
+        CommonService commonService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
-            commonUtilityService.CommonComponentRenderers.ErrorNotificationRendererType,
+            commonService.CommonComponentRenderers.ErrorNotificationRendererType,
             new Dictionary<string, object?>
             {
                 { nameof(IErrorNotificationRendererType.Message), $"ERROR: {message}" },
@@ -49,18 +49,18 @@ public static class NotificationHelper
             true,
             IErrorNotificationRendererType.CSS_CLASS_STRING);
 
-        commonUtilityService.Notification_ReduceRegisterAction(notificationError);
+        commonService.Notification_ReduceRegisterAction(notificationError);
     }
 
     public static void DispatchProgress(
         string title,
         ProgressBarModel progressBarModel,
-        CommonUtilityService commonUtilityService,
+        CommonService commonService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationProgress = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
-            commonUtilityService.CommonComponentRenderers.ProgressNotificationRendererType,
+            commonService.CommonComponentRenderers.ProgressNotificationRendererType,
             new Dictionary<string, object?>
             {
                 {
@@ -72,7 +72,7 @@ public static class NotificationHelper
             true,
             null);
 
-        commonUtilityService.Notification_ReduceRegisterAction(notificationProgress);
+        commonService.Notification_ReduceRegisterAction(notificationProgress);
     }
 
     /// <summary>
@@ -88,12 +88,12 @@ public static class NotificationHelper
 	public static void DispatchDebugMessage(
         string title,
         Func<string> messageFunc,
-        CommonUtilityService commonUtilityService,
+        CommonService commonService,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
-            commonUtilityService.CommonComponentRenderers.ErrorNotificationRendererType,
+            commonService.CommonComponentRenderers.ErrorNotificationRendererType,
             new Dictionary<string, object?>
             {
                 { nameof(IErrorNotificationRendererType.Message), $"DEBUG: {messageFunc.Invoke()}" },
@@ -102,6 +102,6 @@ public static class NotificationHelper
             true,
             IErrorNotificationRendererType.CSS_CLASS_STRING);
 
-        commonUtilityService.Notification_ReduceRegisterAction(notificationError);
+        commonService.Notification_ReduceRegisterAction(notificationError);
     }
 }

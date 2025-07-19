@@ -4,7 +4,7 @@
      @onmouseup="DRAG_DispatchSetDragStateActionOnMouseUp">
     
 	@{
-		var dragState = CommonUtilityService.GetDragState();
+		var dragState = CommonService.GetDragState();
 		var draggableViewModel = dragState.Drag;
 	}
 
@@ -14,14 +14,14 @@
 
 		if (draggableViewModel.DragComponentType is not null)
 		{
-			<div style="@dragState.DragElementDimensions.GetStyleString(CommonUtilityService.UiStringBuilder)">
+			<div style="@dragState.DragElementDimensions.GetStyleString(CommonService.UiStringBuilder)">
 				<DragDisplay/>
 			</div>
 		}
 
 		foreach (var dropzone in dropzoneViewModelList)
 		{
-			<div style="z-index: @dropzone.MeasuredHtmlElementDimensions.ZIndex; @dropzone.ElementDimensions.GetStyleString(CommonUtilityService.UiStringBuilder)"
+			<div style="z-index: @dropzone.MeasuredHtmlElementDimensions.ZIndex; @dropzone.ElementDimensions.GetStyleString(CommonService.UiStringBuilder)"
 				 class="di_dropzone @DRAG_GetIsActiveCssClass(dropzone) @dropzone.CssClass"
 				 @onmouseover="() => _onMouseOverDropzone = dropzone"
 				 @onmouseover:stopPropagation="true">

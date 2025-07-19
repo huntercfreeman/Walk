@@ -30,7 +30,7 @@ using Walk.Common.RazorLib.Exceptions;
 
 namespace Walk.Common.RazorLib.Options.Models;
 
-public class CommonUtilityService : IBackgroundTaskGroup
+public class CommonService : IBackgroundTaskGroup
 {
     private readonly object _stateModificationLock = new();
 	
@@ -39,7 +39,7 @@ public class CommonUtilityService : IBackgroundTaskGroup
 	
 	public WalkHostingInformation WalkHostingInformation { get; }
 
-    public CommonUtilityService(
+    public CommonService(
         WalkHostingInformation hostingInformation,
         ICommonComponentRenderers commonComponentRenderers,
         WalkCommonConfig commonConfig,
@@ -1583,7 +1583,7 @@ public class CommonUtilityService : IBackgroundTaskGroup
             case CommonWorkKind.TreeViewService_LoadChildList:
 				return Do_TreeViewService_LoadChildList(workArgs.ContainerKey, workArgs.TreeViewNoType);
 			default:
-				Console.WriteLine($"{nameof(CommonUtilityService)} {nameof(HandleEvent)} default case");
+				Console.WriteLine($"{nameof(CommonService)} {nameof(HandleEvent)} default case");
 				return ValueTask.CompletedTask;
 		}
 	}

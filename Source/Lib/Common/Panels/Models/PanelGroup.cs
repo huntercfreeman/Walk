@@ -24,7 +24,7 @@ public record PanelGroup(
 	/// TODO: Make this property immutable. Until then in a hack needs to be done where this gets set...
 	///       ...for Walk.Ide this is done in WalkIdeInitializer.razor.cs (2024-04-08)
 	/// </summary>
-	public CommonUtilityService CommonUtilityService { get; set; } = null!;
+	public CommonService CommonService { get; set; } = null!;
 
     public bool GetIsActive(ITab tab)
 	{
@@ -40,9 +40,9 @@ public record PanelGroup(
 			return Task.CompletedTask;
 
 		if (GetIsActive(tab))
-			CommonUtilityService.SetActivePanelTab(Key, Key<Panel>.Empty);
+			CommonService.SetActivePanelTab(Key, Key<Panel>.Empty);
 		else
-			CommonUtilityService.SetActivePanelTab(Key, panelTab.Key);
+			CommonService.SetActivePanelTab(Key, panelTab.Key);
 		
 		return Task.CompletedTask;
 	}
@@ -57,7 +57,7 @@ public record PanelGroup(
 		if (tab is not IPanelTab panelTab)
 			return Task.CompletedTask;
 
-		CommonUtilityService.DisposePanelTab(Key, panelTab.Key);
+		CommonService.DisposePanelTab(Key, panelTab.Key);
 		return Task.CompletedTask;
 	}
 

@@ -63,7 +63,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	
 	                if (!success)
 	                {
-	                    IdeService.CommonUtilityService.SetPanelTabAsActiveByContextRecordKey(
+	                    IdeService.CommonService.SetPanelTabAsActiveByContextRecordKey(
 	                        ContextFacts.OutputContext.ContextKey);
 	
 	                    _ = await TrySetFocus(ContextFacts.OutputContext).ConfigureAwait(false);
@@ -81,7 +81,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	
 	                if (!success)
 	                {
-	                    IdeService.CommonUtilityService.SetPanelTabAsActiveByContextRecordKey(
+	                    IdeService.CommonService.SetPanelTabAsActiveByContextRecordKey(
 	                        ContextFacts.TerminalContext.ContextKey);
 	
 	                    _ = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
@@ -105,8 +105,8 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 			    }));
 			    
 			await DropdownHelper.RenderDropdownAsync(
-    			IdeService.CommonUtilityService,
-    			IdeService.CommonUtilityService.JsRuntimeCommonApi,
+    			IdeService.CommonService,
+    			IdeService.CommonService.JsRuntimeCommonApi,
 				_startButtonElementId,
 				DropdownOrientation.Bottom,
 				_startButtonDropdownKey,
@@ -123,7 +123,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	
 	private async Task<bool> TrySetFocus(ContextRecord contextRecord)
     {
-        return await IdeService.CommonUtilityService.JsRuntimeCommonApi
+        return await IdeService.CommonService.JsRuntimeCommonApi
             .TryFocusHtmlElementById(contextRecord.ContextElementId)
             .ConfigureAwait(false);
     }

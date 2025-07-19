@@ -22,7 +22,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 	{
 		var terminalCommandRequest = new TerminalCommandRequest(
         	"bash -c \"type bash\"",
-        	IdeService.CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+        	IdeService.CommonService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
         	TypeBashTerminalCommandRequestKey)
         {
         	ContinueWithFunc = parsedCommand =>
@@ -64,7 +64,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 				new TerminalOutputFormatterExpand(
 					terminal,
 					IdeService.TextEditorService)),
-			IdeService.CommonUtilityService,
+			IdeService.CommonService,
 			_pathToShellExecutable)
 		{
 			Key = Key<ITerminal>.NewKey()
@@ -74,6 +74,6 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
 		
 		IdeService.Terminal_Register(terminalIntegrated);
 			
-		IdeService.CommonUtilityService.Dialog_ReduceDisposeAction(Dialog.DynamicViewModelKey);
+		IdeService.CommonService.Dialog_ReduceDisposeAction(Dialog.DynamicViewModelKey);
 	}
 }

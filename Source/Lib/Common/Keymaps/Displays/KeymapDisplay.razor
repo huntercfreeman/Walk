@@ -164,7 +164,7 @@
                     </td>
 
                     @{
-                        var keymapState = CommonUtilityService.GetKeymapState();
+                        var keymapState = CommonService.GetKeymapState();
                         var keymapLayer = keymapState.KeymapLayerList.FirstOrDefault(x => x.Key == keymapArgs.LayerKey);
                     }
 

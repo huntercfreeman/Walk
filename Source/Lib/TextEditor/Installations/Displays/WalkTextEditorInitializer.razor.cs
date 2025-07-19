@@ -20,7 +20,7 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonService CommonService { get; set; } = null!;
 
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     
@@ -56,37 +56,37 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
     /// </summary>
     private async Task Ready()
     {
-        CommonUtilityService.UiStringBuilder.Clear();
-        CommonUtilityService.UiStringBuilder.Append("di_te_text-editor-css-wrapper ");
-        CommonUtilityService.UiStringBuilder.Append(TextEditorService.ThemeCssClassString);
-    	_wrapperCssClass = CommonUtilityService.UiStringBuilder.ToString();
+        CommonService.UiStringBuilder.Clear();
+        CommonService.UiStringBuilder.Append("di_te_text-editor-css-wrapper ");
+        CommonService.UiStringBuilder.Append(TextEditorService.ThemeCssClassString);
+    	_wrapperCssClass = CommonService.UiStringBuilder.ToString();
     	
     	var options = TextEditorService.Options_GetTextEditorOptionsState().Options;
     	
     	var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
     	if (options.CommonOptions?.FontSizeInPixels is not null)
             fontSizeInPixels = options!.CommonOptions.FontSizeInPixels;
-        CommonUtilityService.UiStringBuilder.Clear();
-        CommonUtilityService.UiStringBuilder.Append("font-size: ");
-        CommonUtilityService.UiStringBuilder.Append(fontSizeInPixels.ToCssValue());
-        CommonUtilityService.UiStringBuilder.Append("px;");
-    	var fontSizeCssStyle = CommonUtilityService.UiStringBuilder.ToString();
+        CommonService.UiStringBuilder.Clear();
+        CommonService.UiStringBuilder.Append("font-size: ");
+        CommonService.UiStringBuilder.Append(fontSizeInPixels.ToCssValue());
+        CommonService.UiStringBuilder.Append("px;");
+    	var fontSizeCssStyle = CommonService.UiStringBuilder.ToString();
     	
     	var fontFamily = TextEditorVirtualizationResult.DEFAULT_FONT_FAMILY;
     	if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
         	fontFamily = options!.CommonOptions!.FontFamily;
-    	CommonUtilityService.UiStringBuilder.Clear();
-    	CommonUtilityService.UiStringBuilder.Append("font-family: ");
-    	CommonUtilityService.UiStringBuilder.Append(fontFamily);
-    	CommonUtilityService.UiStringBuilder.Append(";");
-    	var fontFamilyCssStyle = CommonUtilityService.UiStringBuilder.ToString();
+    	CommonService.UiStringBuilder.Clear();
+    	CommonService.UiStringBuilder.Append("font-family: ");
+    	CommonService.UiStringBuilder.Append(fontFamily);
+    	CommonService.UiStringBuilder.Append(";");
+    	var fontFamilyCssStyle = CommonService.UiStringBuilder.ToString();
     	
-    	CommonUtilityService.UiStringBuilder.Clear();
-    	CommonUtilityService.UiStringBuilder.Append(fontSizeCssStyle);
-    	CommonUtilityService.UiStringBuilder.Append(" ");
-    	CommonUtilityService.UiStringBuilder.Append(fontFamilyCssStyle);
-    	CommonUtilityService.UiStringBuilder.Append(" position:absolute;");
-    	_wrapperCssStyle = CommonUtilityService.UiStringBuilder.ToString();
+    	CommonService.UiStringBuilder.Clear();
+    	CommonService.UiStringBuilder.Append(fontSizeCssStyle);
+    	CommonService.UiStringBuilder.Append(" ");
+    	CommonService.UiStringBuilder.Append(fontFamilyCssStyle);
+    	CommonService.UiStringBuilder.Append(" position:absolute;");
+    	_wrapperCssStyle = CommonService.UiStringBuilder.ToString();
     	
     	// I said "Only invoke this method from the UI thread due to the usage of the shared UiStringBuilder."
     	// But I'm still going to keep this InvokeAsync for the StateHasChanged due to superstituous anxiety.

@@ -25,7 +25,7 @@ public class DirtyResourceUriBadge : IBadgeModel
 	
 	public void OnClick()
 	{
-	    _textEditorService.CommonUtilityService.Dialog_ReduceRegisterAction(new DialogViewModel(
+	    _textEditorService.CommonService.Dialog_ReduceRegisterAction(new DialogViewModel(
             DialogRecordKey,
             "Unsaved Files",
             typeof(Walk.TextEditor.RazorLib.Edits.Displays.DirtyResourceUriViewDisplay),

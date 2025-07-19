@@ -40,7 +40,7 @@
                     @onclick="async () => DispatchRegisterDialogRecordAction()">
                     
                 @{
-                	var appOptionsState = IdeService.CommonUtilityService.GetAppOptionsState();
+                	var appOptionsState = IdeService.CommonService.GetAppOptionsState();
                 
                 	var iconDriver = new IconDriver(
             			appOptionsState.Options.IconSizeInPixels,
@@ -94,10 +94,10 @@
     @* End Header *@
     
     @* Start Body *@
-    @{ var panelState = IdeService.CommonUtilityService.GetPanelState(); }
+    @{ var panelState = IdeService.CommonService.GetPanelState(); }
     
     <div class="di_ide_body"
-         style="@_bodyElementDimensions.GetStyleString(IdeService.CommonUtilityService.UiStringBuilder)">
+         style="@_bodyElementDimensions.GetStyleString(IdeService.CommonService.UiStringBuilder)">
     
         <PanelGroupDisplay PanelGroupKey="PanelFacts.LeftPanelGroupKey"
                            AdjacentElementDimensions="_editorElementDimensions"
@@ -122,7 +122,7 @@
     @* End Body *@
 
     <ResizableRow TopElementDimensions="_bodyElementDimensions"
-                  BottomElementDimensions="PanelFacts.GetBottomPanelGroup(IdeService.CommonUtilityService.GetPanelState()).ElementDimensions"
+                  BottomElementDimensions="PanelFacts.GetBottomPanelGroup(IdeService.CommonService.GetPanelState()).ElementDimensions"
                   ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)" />
 
     <PanelGroupDisplay PanelGroupKey="PanelFacts.BottomPanelGroupKey"

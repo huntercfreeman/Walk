@@ -15,7 +15,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
     private readonly IdeService _ideService;
 
     public FolderExplorerTreeViewKeyboardEventHandler(IdeService ideService)
-        : base(ideService.CommonUtilityService)
+        : base(ideService.CommonService)
     {
         _ideService = ideService;
     }
@@ -97,7 +97,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             treeViewAbsolutePath.Item,
             () =>
             {
-                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewAbsolutePath.Item.NameWithExtension}", _ideService.CommonUtilityService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewAbsolutePath.Item.NameWithExtension}", _ideService.CommonService, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
@@ -135,7 +135,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         {
             var parentDirectory = treeViewAbsolutePath.Item.ParentDirectory;
 
-            var parentDirectoryAbsolutePath = _ideService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+            var parentDirectoryAbsolutePath = _ideService.CommonService.EnvironmentProvider.AbsolutePathFactory(
                 parentDirectory,
                 true);
 
@@ -173,7 +173,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             () =>
             {
                 FolderExplorerContextMenu.ParentOfCutFile = parent;
-                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.NameWithExtension}", _ideService.CommonUtilityService, TimeSpan.FromSeconds(7));
+                NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.NameWithExtension}", _ideService.CommonService, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
@@ -210,11 +210,11 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
         await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-        _ideService.CommonUtilityService.TreeView_ReRenderNodeAction(
+        _ideService.CommonService.TreeView_ReRenderNodeAction(
             FolderExplorerState.TreeViewContentStateKey,
             treeViewModel);
 
-        _ideService.CommonUtilityService.TreeView_MoveUpAction(
+        _ideService.CommonService.TreeView_MoveUpAction(
             FolderExplorerState.TreeViewContentStateKey,
             false,
 			false);

@@ -7,7 +7,7 @@ namespace Walk.Common.RazorLib.FileSystems.Displays;
 public partial class PermissionsDisplay : ComponentBase
 {
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonService CommonService { get; set; } = null!;
 
     private string _deleteAllowPathTextInput = string.Empty;
     private bool _deleteAllowPathIsDirectoryInput;
@@ -19,7 +19,7 @@ public partial class PermissionsDisplay : ComponentBase
         string localProtectPathTextInput,
         bool localProtectPathIsDirectoryInput)
     {
-        CommonUtilityService.EnvironmentProvider.DeletionPermittedRegister(new SimplePath(
+        CommonService.EnvironmentProvider.DeletionPermittedRegister(new SimplePath(
             localProtectPathTextInput,
             localProtectPathIsDirectoryInput));
     }
@@ -28,7 +28,7 @@ public partial class PermissionsDisplay : ComponentBase
         string localProtectPathTextInput,
         bool localProtectPathIsDirectoryInput)
     {
-        CommonUtilityService.EnvironmentProvider.ProtectedPathsRegister(new SimplePath(
+        CommonService.EnvironmentProvider.ProtectedPathsRegister(new SimplePath(
             localProtectPathTextInput,
             localProtectPathIsDirectoryInput));
     }

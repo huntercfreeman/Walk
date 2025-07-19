@@ -1,7 +1,7 @@
 @using Walk.Common.RazorLib.FileSystems.Models;
 
 @{
-	var appOptionsState = IdeService.CommonUtilityService.GetAppOptionsState();
+	var appOptionsState = IdeService.CommonService.GetAppOptionsState();
 
 	var iconDriver = new IconDriver(
 		appOptionsState.Options.IconSizeInPixels,
@@ -51,9 +51,9 @@
                     }
                     else
                     {
-                        foreach (var directory in openedTreeView.Item.GetAncestorDirectoryList(IdeService.CommonUtilityService.EnvironmentProvider))
+                        foreach (var directory in openedTreeView.Item.GetAncestorDirectoryList(IdeService.CommonService.EnvironmentProvider))
                         {
-                            var directoryAbsolutePath = IdeService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(directory, true);
+                            var directoryAbsolutePath = IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(directory, true);
                             <InputFileAddressHierarchyEntry AbsolutePath="directoryAbsolutePath" />
                         }
 

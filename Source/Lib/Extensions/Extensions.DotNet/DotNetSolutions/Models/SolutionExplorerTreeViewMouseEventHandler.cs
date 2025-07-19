@@ -13,7 +13,7 @@ public class SolutionExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandl
 
 	public SolutionExplorerTreeViewMouseEventHandler(
 			IdeService ideService)
-		: base(ideService.CommonUtilityService)
+		: base(ideService.CommonService)
 	{
 		_ideService = ideService;
 	}

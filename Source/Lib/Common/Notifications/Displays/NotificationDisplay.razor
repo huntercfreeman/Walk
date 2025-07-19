@@ -11,7 +11,7 @@
         <div class="di_notification-control-buttons">
         
         	@{
-        		var appOptionsState = CommonUtilityService.GetAppOptionsState();
+        		var appOptionsState = CommonService.GetAppOptionsState();
         	
 				var iconDriver = new IconDriver(
 					appOptionsState.Options.IconSizeInPixels,

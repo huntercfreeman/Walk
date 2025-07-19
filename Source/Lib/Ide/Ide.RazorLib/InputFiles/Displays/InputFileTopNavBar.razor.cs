@@ -42,7 +42,7 @@ public partial class InputFileTopNavBar : ComponentBase
     {
         IdeService.InputFile_OpenParentDirectory(
             IdeService.IdeComponentRenderers,
-            IdeService.CommonUtilityService,
+            IdeService.CommonService,
             parentDirectoryTreeViewModel: null);
 
         await ChangeContentRootToOpenedTreeView().ConfigureAwait(false);
@@ -95,22 +95,22 @@ public partial class InputFileTopNavBar : ComponentBase
     {
         try
         {
-            if (!await IdeService.CommonUtilityService.FileSystemProvider.Directory.ExistsAsync(address).ConfigureAwait(false))
+            if (!await IdeService.CommonService.FileSystemProvider.Directory.ExistsAsync(address).ConfigureAwait(false))
             {
-                if (await IdeService.CommonUtilityService.FileSystemProvider.File.ExistsAsync(address).ConfigureAwait(false))
+                if (await IdeService.CommonService.FileSystemProvider.File.ExistsAsync(address).ConfigureAwait(false))
                     throw new WalkIdeException($"Address provided was a file. Provide a directory instead. {address}");
 
                 throw new WalkIdeException($"Address provided does not exist. {address}");
             }
 
-            var absolutePath = IdeService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(address, true);
+            var absolutePath = IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(address, true);
             _showInputTextEditForAddress = false;
 
             await SetInputFileContentTreeViewRootFunc.Invoke(absolutePath).ConfigureAwait(false);
         }
         catch (Exception exception)
         {
-            NotificationHelper.DispatchError($"ERROR: {nameof(InputFileTopNavBar)}", exception.ToString(), IdeService.CommonUtilityService, TimeSpan.FromSeconds(14));
+            NotificationHelper.DispatchError($"ERROR: {nameof(InputFileTopNavBar)}", exception.ToString(), IdeService.CommonService, TimeSpan.FromSeconds(14));
         }
     }
 

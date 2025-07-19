@@ -51,7 +51,7 @@ public partial class WalkConfigInitializer : ComponentBase
 	{
 	    HandleCompilerServicesAndDecorationMappers();
 	
-        TextEditorService.CommonUtilityService.Continuous_EnqueueGroup(new BackgroundTask(
+        TextEditorService.CommonService.Continuous_EnqueueGroup(new BackgroundTask(
         	Key<IBackgroundTaskGroup>.Empty,
         	Do_InitializeFooterBadges));
 	
@@ -85,7 +85,7 @@ public partial class WalkConfigInitializer : ComponentBase
             new DirtyResourceUriBadge(TextEditorService));
 
         IdeService.Ide_RegisterFooterBadge(
-            new NotificationBadge(TextEditorService.CommonUtilityService));
+            new NotificationBadge(TextEditorService.CommonService));
 
         return ValueTask.CompletedTask;
     }
@@ -97,7 +97,7 @@ public partial class WalkConfigInitializer : ComponentBase
     	if (solutionMostRecent is null)
     		return;
     
-    	var slnAbsolutePath = TextEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+    	var slnAbsolutePath = TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
             solutionMostRecent,
             false);
 
@@ -110,14 +110,14 @@ public partial class WalkConfigInitializer : ComponentBase
         var parentDirectory = slnAbsolutePath.ParentDirectory;
         if (parentDirectory is not null)
         {
-            var parentDirectoryAbsolutePath = TextEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+            var parentDirectoryAbsolutePath = TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
                 parentDirectory,
                 true);
 
             var pseudoRootNode = new TreeViewAbsolutePath(
                 parentDirectoryAbsolutePath,
                 IdeService.IdeComponentRenderers,
-                TextEditorService.CommonUtilityService,
+                TextEditorService.CommonService,
                 true,
                 false);
 
@@ -132,9 +132,9 @@ public partial class WalkConfigInitializer : ComponentBase
 
             var activeNode = adhocRootNode.ChildList.FirstOrDefault();
 
-            if (!TextEditorService.CommonUtilityService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
+            if (!TextEditorService.CommonService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
             {
-                TextEditorService.CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
+                TextEditorService.CommonService.TreeView_RegisterContainerAction(new TreeViewContainer(
                     InputFileContent.TreeViewContainerKey,
                     adhocRootNode,
                     activeNode is null
@@ -143,9 +143,9 @@ public partial class WalkConfigInitializer : ComponentBase
             }
             else
             {
-                TextEditorService.CommonUtilityService.TreeView_WithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
+                TextEditorService.CommonService.TreeView_WithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
 
-                TextEditorService.CommonUtilityService.TreeView_SetActiveNodeAction(
+                TextEditorService.CommonService.TreeView_SetActiveNodeAction(
                     InputFileContent.TreeViewContainerKey,
                     activeNode,
                     true,
@@ -156,7 +156,7 @@ public partial class WalkConfigInitializer : ComponentBase
             IdeService.InputFile_SetOpenedTreeViewModel(
                 pseudoRootNode,
                 IdeService.IdeComponentRenderers,
-                TextEditorService.CommonUtilityService);
+                TextEditorService.CommonService);
         }
 
 		/*

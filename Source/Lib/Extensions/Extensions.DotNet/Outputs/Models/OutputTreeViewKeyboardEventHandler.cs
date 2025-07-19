@@ -13,7 +13,7 @@ public class OutputTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 	public OutputTreeViewKeyboardEventHandler(
 			TextEditorService textEditorService,
 			IServiceProvider serviceProvider)
-		: base(textEditorService.CommonUtilityService)
+		: base(textEditorService.CommonService)
 	{
 		_textEditorService = textEditorService;
 		_serviceProvider = serviceProvider;

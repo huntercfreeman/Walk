@@ -46,7 +46,7 @@ public partial class InputFileBottomControls : ComponentBase
         if (valid)
         {
             if (DialogRecord is not null)
-                IdeService.CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+                IdeService.CommonService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
             await InputFileState.OnAfterSubmitFunc
                 .Invoke(InputFileState.SelectedTreeViewModel?.Item ?? default)
@@ -63,7 +63,7 @@ public partial class InputFileBottomControls : ComponentBase
     private Task CancelOnClick()
     {
         if (DialogRecord is not null)
-            IdeService.CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+            IdeService.CommonService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
         return Task.CompletedTask;
     }

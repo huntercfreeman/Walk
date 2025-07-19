@@ -21,21 +21,21 @@ public class TreeViewHelperRazorMarkup
 		var parentDirectoryOfRazorMarkup = razorMarkupTreeView.Item.AbsolutePath.ParentDirectory;
 		var ancestorDirectory = parentDirectoryOfRazorMarkup;
 
-		var filePathStringsList = await razorMarkupTreeView.CommonUtilityService.FileSystemProvider.Directory
+		var filePathStringsList = await razorMarkupTreeView.CommonService.FileSystemProvider.Directory
 			.GetFilesAsync(ancestorDirectory)
 			.ConfigureAwait(false);
 
 		var childFileTreeViewModels = filePathStringsList
 			.Select(x =>
 			{
-				var absolutePath = razorMarkupTreeView.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(x, false);
+				var absolutePath = razorMarkupTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false);
 				var namespaceString = razorMarkupTreeView.Item.Namespace;
 
 				return (TreeViewNoType)new TreeViewNamespacePath(
 					new NamespacePath(namespaceString, absolutePath),
 					razorMarkupTreeView.DotNetComponentRenderers,
 					razorMarkupTreeView.IdeComponentRenderers,
-					razorMarkupTreeView.CommonUtilityService,
+					razorMarkupTreeView.CommonService,
 					false,
 					false);
 			}).ToList();

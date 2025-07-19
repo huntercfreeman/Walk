@@ -14,12 +14,12 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private FolderExplorerTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
 
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        IdeService.CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+        IdeService.CommonService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
     protected override void OnInitialized()
     {
         IdeService.FolderExplorerStateChanged += OnFolderExplorerStateChanged;
-        IdeService.CommonUtilityService.AppOptionsStateChanged += OnAppOptionsStateChanged;
+        IdeService.CommonService.AppOptionsStateChanged += OnAppOptionsStateChanged;
 
         _treeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(IdeService);
         _treeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(IdeService);
@@ -41,7 +41,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 			},
 			restoreFocusOnClose: null);
 
-        IdeService.CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        IdeService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 	
@@ -58,6 +58,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         IdeService.FolderExplorerStateChanged -= OnFolderExplorerStateChanged;
-        IdeService.CommonUtilityService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
+        IdeService.CommonService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
     }
 }

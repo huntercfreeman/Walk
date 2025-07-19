@@ -6,26 +6,26 @@ namespace Walk.Common.RazorLib.Options.Displays;
 public partial class InputAppFontFamily : ComponentBase, IDisposable
 {
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonService CommonService { get; set; } = null!;
 
     [Parameter]
     public InputViewModel InputViewModel { get; set; } = InputViewModel.Empty;
 
     public string FontFamily
     {
-        get => CommonUtilityService.GetAppOptionsState().Options.FontFamily ?? "unset";
+        get => CommonService.GetAppOptionsState().Options.FontFamily ?? "unset";
         set
         {
             if (string.IsNullOrWhiteSpace(value))
-                CommonUtilityService.Options_SetFontFamily(null);
+                CommonService.Options_SetFontFamily(null);
 
-            CommonUtilityService.Options_SetFontFamily(value.Trim());
+            CommonService.Options_SetFontFamily(value.Trim());
         }
     }
 
     protected override void OnInitialized()
     {
-        CommonUtilityService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
+        CommonService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
     }
 
     private async void AppOptionsStateWrapOnStateChanged()
@@ -35,6 +35,6 @@ public partial class InputAppFontFamily : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        CommonUtilityService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
+        CommonService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }

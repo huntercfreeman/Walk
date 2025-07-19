@@ -18,19 +18,19 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 			SolutionFolder dotNetSolutionFolder,
 			IDotNetComponentRenderers dotNetComponentRenderers,
 			IIdeComponentRenderers ideComponentRenderers,
-			CommonUtilityService commonUtilityService,
+			CommonService commonService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(dotNetSolutionFolder, isExpandable, isExpanded)
 	{
 		DotNetComponentRenderers = dotNetComponentRenderers;
 		IdeComponentRenderers = ideComponentRenderers;
-		CommonUtilityService = commonUtilityService;
+		CommonService = commonService;
 	}
 
 	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public IIdeComponentRenderers IdeComponentRenderers { get; }
-	public CommonUtilityService CommonUtilityService { get; }
+	public CommonService CommonService { get; }
 
 	public override bool Equals(object? obj)
 	{
@@ -116,7 +116,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 		{
 			ChildList = new List<TreeViewNoType>
 			{
-				new TreeViewException(exception, false, false, CommonUtilityService.CommonComponentRenderers)
+				new TreeViewException(exception, false, false, CommonService.CommonComponentRenderers)
 				{
 					Parent = this,
 					IndexAmongSiblings = 0,
@@ -266,7 +266,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 			dotNetSolutionFolder,
 			DotNetComponentRenderers,
 			IdeComponentRenderers,
-			CommonUtilityService,
+			CommonService,
 			true,
 			false)
 		{
@@ -284,7 +284,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 			namespacePath,
 			DotNetComponentRenderers,
 			IdeComponentRenderers,
-			CommonUtilityService,
+			CommonService,
 			true,
 			false)
 		{

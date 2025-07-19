@@ -53,7 +53,7 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-		TextEditorService.CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		TextEditorService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 }

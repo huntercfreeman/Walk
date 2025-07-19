@@ -8,7 +8,7 @@ namespace Walk.Ide.RazorLib.Shareds.Displays.Internals;
 public partial class IdeInfoDisplay : ComponentBase
 {
 	[Inject]
-	private CommonUtilityService CommonUtilityService { get; set; } = null!;
+	private CommonService CommonService { get; set; } = null!;
 
 #region
 	[Conditional("DEBUG")]

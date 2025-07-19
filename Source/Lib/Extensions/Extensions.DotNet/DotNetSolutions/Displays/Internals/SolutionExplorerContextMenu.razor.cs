@@ -269,7 +269,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				return Array.Empty<MenuOptionRecord>();
 		}
 
-		var parentDirectoryAbsolutePath = IdeService.TextEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(parentDirectory, true);
+		var parentDirectoryAbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(parentDirectory, true);
 
 		return new[]
 		{
@@ -303,7 +303,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				treeViewSolution,
 				treeViewModel,
 				IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				IdeService.TextEditorService.CommonUtilityService,
+				IdeService.TextEditorService.CommonService,
 				() =>
 				{
 					CompilerServicesBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
@@ -331,7 +331,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				treeViewSolution,
 				treeViewModel,
 				IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				IdeService.TextEditorService.CommonUtilityService,
+				IdeService.TextEditorService.CommonService,
 				() =>
 				{
 					CompilerServicesBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
@@ -352,7 +352,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.RemoveProjectToProjectReference(
 				treeViewCSharpProjectToProjectReference,
 				IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				IdeService.TextEditorService.CommonUtilityService,
+				IdeService.TextEditorService.CommonService,
 				() => Task.CompletedTask),
 		};
 	}
@@ -372,7 +372,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,
 				treeViewCSharpProjectNugetPackageReference,
 				IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
-				IdeService.TextEditorService.CommonUtilityService,
+				IdeService.TextEditorService.CommonService,
 				() => Task.CompletedTask),
 		};
 	}
@@ -414,14 +414,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			IdeService.CopyFile(
 				treeViewModel.Item.AbsolutePath,
 				(Func<Task>)(() => {
-					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)IdeService.TextEditorService.CommonUtilityService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.AbsolutePath.NameWithExtension}", (Common.RazorLib.Options.Models.CommonService)IdeService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
 					return Task.CompletedTask;
 				})),
 			IdeService.CutFile(
 				treeViewModel.Item.AbsolutePath,
 				(Func<Task>)(() => {
 					ParentOfCutFile = parentTreeViewModel;
-					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", (Common.RazorLib.Options.Models.CommonUtilityService)IdeService.TextEditorService.CommonUtilityService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.AbsolutePath.NameWithExtension}", (Common.RazorLib.Options.Models.CommonService)IdeService.TextEditorService.CommonService, TimeSpan.FromSeconds(7));
 					return Task.CompletedTask;
 				})),
 			IdeService.DeleteFile(
@@ -429,7 +429,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				async () => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
 			IdeService.RenameFile(
 				treeViewModel.Item.AbsolutePath,
-				(Common.RazorLib.Options.Models.CommonUtilityService)IdeService.TextEditorService.CommonUtilityService,
+				(Common.RazorLib.Options.Models.CommonService)IdeService.TextEditorService.CommonService,
 				async ()  => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
 		};
 	}
@@ -461,7 +461,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			true,
 			null);
 
-		IdeService.TextEditorService.CommonUtilityService.Dialog_ReduceRegisterAction(dialogRecord);
+		IdeService.TextEditorService.CommonService.Dialog_ReduceRegisterAction(dialogRecord);
 		return Task.CompletedTask;
 	}
 
@@ -531,7 +531,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	
 	private Task OpenSolutionProperties(DotNetSolutionModel dotNetSolutionModel)
 	{
-		IdeService.TextEditorService.CommonUtilityService.Dialog_ReduceRegisterAction(new DialogViewModel(
+		IdeService.TextEditorService.CommonService.Dialog_ReduceRegisterAction(new DialogViewModel(
 			dynamicViewModelKey: _solutionPropertiesDialogKey,
 			title: "Solution Properties",
 			componentType: typeof(SolutionPropertiesDisplay),
@@ -559,9 +559,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 		await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-		IdeService.TextEditorService.CommonUtilityService.TreeView_ReRenderNodeAction(DotNetSolutionState.TreeViewSolutionExplorerStateKey, treeViewModel);
+		IdeService.TextEditorService.CommonService.TreeView_ReRenderNodeAction(DotNetSolutionState.TreeViewSolutionExplorerStateKey, treeViewModel);
 
-		IdeService.TextEditorService.CommonUtilityService.TreeView_MoveUpAction(
+		IdeService.TextEditorService.CommonService.TreeView_MoveUpAction(
 			DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 			false,
 			false);

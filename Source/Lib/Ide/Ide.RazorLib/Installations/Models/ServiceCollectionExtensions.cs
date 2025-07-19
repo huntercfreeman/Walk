@@ -36,14 +36,14 @@ public static class ServiceCollectionExtensions
                 {    
                 	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
                 		fastParseArgs.ResourceUri.Value,
-                		fastParseArgs.CommonUtilityService);
+                		fastParseArgs.CommonService);
                 		
                 	var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
                 
                     fastParseArgs = new FastParseArgs(
                         standardizedResourceUri,
                         fastParseArgs.ExtensionNoPeriod,
-                        fastParseArgs.CommonUtilityService,
+                        fastParseArgs.CommonService,
                         fastParseArgs.IdeBackgroundTaskApi)
                     {
                     	ShouldBlockUntilBackgroundTaskIsCompleted = fastParseArgs.ShouldBlockUntilBackgroundTaskIsCompleted
@@ -55,14 +55,14 @@ public static class ServiceCollectionExtensions
                 {
                 	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
                 		registerModelArgs.ResourceUri.Value,
-                		registerModelArgs.CommonUtilityService);
+                		registerModelArgs.CommonService);
                 		
                 	var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
                 
                     registerModelArgs = new RegisterModelArgs(
                     	registerModelArgs.EditContext,
                         standardizedResourceUri,
-                        registerModelArgs.CommonUtilityService,
+                        registerModelArgs.CommonService,
                         registerModelArgs.IdeBackgroundTaskApi)
                     {
                     	ShouldBlockUntilBackgroundTaskIsCompleted = registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted
@@ -74,7 +74,7 @@ public static class ServiceCollectionExtensions
                 {
                 	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
                 		tryRegisterViewModelArgs.ResourceUri.Value,
-                		tryRegisterViewModelArgs.CommonUtilityService);
+                		tryRegisterViewModelArgs.CommonService);
                 		
                 	var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
                 	
@@ -84,7 +84,7 @@ public static class ServiceCollectionExtensions
                         standardizedResourceUri,
                         tryRegisterViewModelArgs.Category,
                         tryRegisterViewModelArgs.ShouldSetFocusToEditor,
-                        tryRegisterViewModelArgs.CommonUtilityService,
+                        tryRegisterViewModelArgs.CommonService,
                         tryRegisterViewModelArgs.IdeBackgroundTaskApi);
 
                     return await ((IdeService)tryRegisterViewModelArgs.IdeBackgroundTaskApi).Editor_TryRegisterViewModelFunc(tryRegisterViewModelArgs);
@@ -114,12 +114,12 @@ public static class ServiceCollectionExtensions
         return services;
     }
     
-    public static Task<string> AbsolutePathStandardizeFunc(string absolutePathString, CommonUtilityService commonUtilityService)
+    public static Task<string> AbsolutePathStandardizeFunc(string absolutePathString, CommonService commonService)
     {
-        if (absolutePathString.StartsWith(commonUtilityService.EnvironmentProvider.DriveExecutingFromNoDirectorySeparator))
+        if (absolutePathString.StartsWith(commonService.EnvironmentProvider.DriveExecutingFromNoDirectorySeparator))
         {
             var removeDriveFromResourceUriValue = absolutePathString[
-                commonUtilityService.EnvironmentProvider.DriveExecutingFromNoDirectorySeparator.Length..];
+                commonService.EnvironmentProvider.DriveExecutingFromNoDirectorySeparator.Length..];
 
             return Task.FromResult(removeDriveFromResourceUriValue);
         }

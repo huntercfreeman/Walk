@@ -9,11 +9,11 @@ namespace Walk.Common.RazorLib.TreeViews.Models;
 /// </summary>
 public class TreeViewMouseEventHandler
 {
-    protected readonly CommonUtilityService CommonUtilityService;
+    protected readonly CommonService CommonService;
 
-    public TreeViewMouseEventHandler(CommonUtilityService commonUtilityService)
+    public TreeViewMouseEventHandler(CommonService commonService)
     {
-        CommonUtilityService = commonUtilityService;
+        CommonService = commonService;
     }
 
     /// <summary>
@@ -109,7 +109,7 @@ public class TreeViewMouseEventHandler
             // This boolean asks: Should I ALSO SELECT the nodes between the currentNode and the targetNode.
             var selectNodesBetweenCurrentAndNextActiveNode = commandArgs.MouseEventArgs.ShiftKey;
 
-            CommonUtilityService.TreeView_SetActiveNodeAction(
+            CommonService.TreeView_SetActiveNodeAction(
                 commandArgs.TreeViewContainer.Key,
                 commandArgs.NodeThatReceivedMouseEvent,
                 addSelectedNodes,
@@ -132,7 +132,7 @@ public class TreeViewMouseEventHandler
                 else
                 {
                     // Move the active node, and open context menu
-                    CommonUtilityService.TreeView_SetActiveNodeAction(
+                    CommonService.TreeView_SetActiveNodeAction(
                         commandArgs.TreeViewContainer.Key,
                         commandArgs.NodeThatReceivedMouseEvent,
                         false,

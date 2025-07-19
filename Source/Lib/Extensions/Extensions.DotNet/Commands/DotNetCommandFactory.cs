@@ -15,14 +15,14 @@ namespace Walk.Extensions.DotNet.Commands;
 public class DotNetCommandFactory : IDotNetCommandFactory
 {
 	private readonly TextEditorService _textEditorService;
-	private readonly CommonUtilityService _commonUtilityService;
+	private readonly CommonService _commonService;
 
 	public DotNetCommandFactory(
         TextEditorService textEditorService,
-		CommonUtilityService commonUtilityService)
+		CommonService commonService)
 	{
 		_textEditorService = textEditorService;
-		_commonUtilityService = commonUtilityService;
+		_commonService = commonService;
     }
 
 	private List<TreeViewNoType> _nodeList = new();
@@ -44,7 +44,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
 				ContextHelper.ConstructFocusContextElementCommand(
-					ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
+					ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager", _commonService.JsRuntimeCommonApi, _commonService));
 		}
 		// CSharpReplContext
 		{
@@ -60,12 +60,12 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
 				ContextHelper.ConstructFocusContextElementCommand(
-					ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService));
+					ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl", _commonService.JsRuntimeCommonApi, _commonService));
 		}
 		// SolutionExplorerContext
 		{
 			var focusSolutionExplorerCommand = ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer", _commonUtilityService.JsRuntimeCommonApi, _commonUtilityService);
+				ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer", _commonService.JsRuntimeCommonApi, _commonService);
 
 			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
 					new KeymapArgs
@@ -95,13 +95,13 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 						if (localNodeOfViewModel is null)
 							return;
 
-						_commonUtilityService.TreeView_SetActiveNodeAction(
+						_commonService.TreeView_SetActiveNodeAction(
 							DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 							localNodeOfViewModel,
 							false,
 							false);
 
-						var elementId = _commonUtilityService.TreeView_GetActiveNodeElementId(DotNetSolutionState.TreeViewSolutionExplorerStateKey);
+						var elementId = _commonService.TreeView_GetActiveNodeElementId(DotNetSolutionState.TreeViewSolutionExplorerStateKey);
 
 						await focusSolutionExplorerCommand.CommandFunc
 							.Invoke(commandArgs)
@@ -136,7 +136,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 
 			if (textEditorViewModel is not null)
 			{
-				if (_commonUtilityService.TryGetTreeViewContainer(
+				if (_commonService.TryGetTreeViewContainer(
 						DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 						out var treeViewContainer) &&
                     treeViewContainer is not null)
@@ -157,7 +157,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
         {
             if (textEditorViewModel is not null)
             {
-                var viewModelAbsolutePath = _commonUtilityService.EnvironmentProvider.AbsolutePathFactory(
+                var viewModelAbsolutePath = _commonService.EnvironmentProvider.AbsolutePathFactory(
                     textEditorViewModel.PersistentState.ResourceUri.Value,
                     false);
 

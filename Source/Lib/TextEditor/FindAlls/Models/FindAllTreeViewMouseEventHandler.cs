@@ -14,8 +14,8 @@ public class FindAllTreeViewMouseEventHandler : TreeViewMouseEventHandler
 	public FindAllTreeViewMouseEventHandler(
 			TextEditorService textEditorService,
 			IServiceProvider serviceProvider,
-			CommonUtilityService commonUtilityService)
-		: base(commonUtilityService)
+			CommonService commonService)
+		: base(commonService)
 	{
 		_textEditorService = textEditorService;
 		_serviceProvider = serviceProvider;

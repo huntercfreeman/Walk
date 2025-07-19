@@ -10,7 +10,7 @@ public class TreeViewCascadingValueBatch
     public Func<MouseEventArgs?, Key<TreeViewContainer>, TreeViewNoType?, Task> HandleTreeViewOnContextMenu { get; set; } = null!;
     public TreeViewMouseEventHandler TreeViewMouseEventHandler { get; set; } = null!;
     public TreeViewKeyboardEventHandler TreeViewKeyboardEventHandler { get; set; } = null!;
-    public CommonUtilityService CommonUtilityService { get; set; } = null!;
+    public CommonService CommonService { get; set; } = null!;
     public int OffsetPerDepthInPixels { get; set; }
     public int WalkTreeViewIconWidth { get; set; }
 }

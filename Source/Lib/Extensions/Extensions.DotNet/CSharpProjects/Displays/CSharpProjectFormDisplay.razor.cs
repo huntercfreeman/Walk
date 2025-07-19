@@ -39,7 +39,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		_viewModel = new(DotNetSolutionModel, IdeService.TextEditorService.CommonUtilityService.EnvironmentProvider);
+		_viewModel = new(DotNetSolutionModel, IdeService.TextEditorService.CommonService.EnvironmentProvider);
 		
 		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
 		IdeService.TerminalStateChanged += OnTerminalStateChanged;
@@ -86,7 +86,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	private async Task ReadProjectTemplates()
 	{
-		if (IdeService.TextEditorService.CommonUtilityService.WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
+		if (IdeService.TextEditorService.CommonService.WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
 		{
 			_viewModel.ProjectTemplateList = WebsiteProjectTemplateFacts.WebsiteProjectTemplatesContainer.ToList();
 			await InvokeAsync(StateHasChanged);
@@ -110,7 +110,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 				
 			var terminalCommandRequest = new TerminalCommandRequest(
 				formattedCommand.Value,
-				IdeService.CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+				IdeService.CommonService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
 				new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandRequestKey.Guid))
 			{
 				ContinueWithFunc = parsedTerminalCommand =>
@@ -145,7 +145,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 			var terminalCommandRequest = new TerminalCommandRequest(
 	        	formattedCommand.Value,
-	        	IdeService.TextEditorService.CommonUtilityService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+	        	IdeService.TextEditorService.CommonService.EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
 	        	new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandRequestKey.Guid))
 	        {
 	        	ContinueWithFunc = parsedCommand =>
@@ -191,7 +191,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			return;
 		}
 
-		if (IdeService.TextEditorService.CommonUtilityService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
+		if (IdeService.TextEditorService.CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
 		{
 			var generalTerminal = IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY];
 
@@ -209,7 +209,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			        {
 			        	ContinueWithFunc = parsedCommand =>
 			        	{
-				        	IdeService.TextEditorService.CommonUtilityService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+				        	IdeService.TextEditorService.CommonService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 	
 							DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
 							{
@@ -231,12 +231,12 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 		{
 			await WebsiteDotNetCliHelper.StartNewCSharpProjectCommand(
 					immutableView,
-					(IEnvironmentProvider)IdeService.TextEditorService.CommonUtilityService.EnvironmentProvider,
-					(IFileSystemProvider)IdeService.TextEditorService.CommonUtilityService.FileSystemProvider,
+					(IEnvironmentProvider)IdeService.TextEditorService.CommonService.EnvironmentProvider,
+					(IFileSystemProvider)IdeService.TextEditorService.CommonService.FileSystemProvider,
 					DotNetBackgroundTaskApi,
-					(Common.RazorLib.Options.Models.CommonUtilityService)IdeService.TextEditorService.CommonUtilityService,
+					(Common.RazorLib.Options.Models.CommonService)IdeService.TextEditorService.CommonService,
 					DialogRecord,
-					(ICommonComponentRenderers)IdeService.TextEditorService.CommonUtilityService.CommonComponentRenderers)
+					(ICommonComponentRenderers)IdeService.TextEditorService.CommonService.CommonComponentRenderers)
 				.ConfigureAwait(false);
 		}
 	}

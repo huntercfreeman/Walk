@@ -106,7 +106,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
 
     private void InitializeElementDimensions()
     {
-    	var appOptionsState = IdeService.CommonUtilityService.GetAppOptionsState();
+    	var appOptionsState = IdeService.CommonService.GetAppOptionsState();
     
         _sidebarElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
@@ -139,7 +139,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
         var pseudoRootNode = new TreeViewAbsolutePath(
             absolutePath,
             IdeService.IdeComponentRenderers,
-            IdeService.CommonUtilityService,
+            IdeService.CommonService,
             true,
             false);
 
@@ -154,9 +154,9 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
 
         var activeNode = adhocRootNode.ChildList.FirstOrDefault();
 
-        if (!IdeService.CommonUtilityService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
+        if (!IdeService.CommonService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
         {
-            IdeService.CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
+            IdeService.CommonService.TreeView_RegisterContainerAction(new TreeViewContainer(
                 InputFileContent.TreeViewContainerKey,
                 adhocRootNode,
                 activeNode is null
@@ -165,9 +165,9 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
         }
         else
         {
-            IdeService.CommonUtilityService.TreeView_WithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
+            IdeService.CommonService.TreeView_WithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
             
-			IdeService.CommonUtilityService.TreeView_SetActiveNodeAction(
+			IdeService.CommonService.TreeView_SetActiveNodeAction(
 				InputFileContent.TreeViewContainerKey,
 				activeNode,
 				true,
@@ -179,7 +179,7 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
         IdeService.InputFile_SetOpenedTreeViewModel(
             pseudoRootNode,
             IdeService.IdeComponentRenderers,
-            IdeService.CommonUtilityService);
+            IdeService.CommonService);
     }
     
     public async void OnInputFileStateChanged()

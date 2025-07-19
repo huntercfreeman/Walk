@@ -23,7 +23,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 	private CompilerServiceExplorerTreeViewMouseEventHandler _compilerServiceExplorerTreeViewMouseEventHandler = null!;
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		IdeService.TextEditorService.CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		IdeService.TextEditorService.CommonService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private static bool _hasInitialized;
 
@@ -74,13 +74,13 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 			},
 			restoreFocusOnClose: null);
 
-		IdeService.TextEditorService.CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		IdeService.TextEditorService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 
 	private void ReloadOnClick()
 	{
-		IdeService.TextEditorService.CommonUtilityService.Continuous_EnqueueGroup(new BackgroundTask(
+		IdeService.TextEditorService.CommonService.Continuous_EnqueueGroup(new BackgroundTask(
 			Key<IBackgroundTaskGroup>.Empty,
 			Do_SetCompilerServiceExplorerTreeView));
 	}
@@ -160,36 +160,36 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 			true);
 
 		var rootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
-			new TreeViewReflection(xmlCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(dotNetSolutionCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(cSharpProjectCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(cSharpCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(razorCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(cssCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(fSharpCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(javaScriptCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(typeScriptCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(jsonCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonUtilityService.CommonComponentRenderers),
-			new TreeViewReflection(terminalCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonUtilityService.CommonComponentRenderers));
+			new TreeViewReflection(xmlCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonService.CommonComponentRenderers),
+			new TreeViewReflection(dotNetSolutionCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonService.CommonComponentRenderers),
+			new TreeViewReflection(cSharpProjectCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonService.CommonComponentRenderers),
+			new TreeViewReflection(cSharpCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonService.CommonComponentRenderers),
+			new TreeViewReflection(razorCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonService.CommonComponentRenderers),
+			new TreeViewReflection(cssCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonService.CommonComponentRenderers),
+			new TreeViewReflection(fSharpCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonService.CommonComponentRenderers),
+			new TreeViewReflection(javaScriptCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonService.CommonComponentRenderers),
+			new TreeViewReflection(typeScriptCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonService.CommonComponentRenderers),
+			new TreeViewReflection(jsonCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonService.CommonComponentRenderers),
+			new TreeViewReflection(terminalCompilerServiceWatchWindowObject, true, false, IdeService.TextEditorService.CommonService.CommonComponentRenderers));
 
 		await rootNode.LoadChildListAsync().ConfigureAwait(false);
 
-		if (!IdeService.TextEditorService.CommonUtilityService.TryGetTreeViewContainer(
+		if (!IdeService.TextEditorService.CommonService.TryGetTreeViewContainer(
 				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 				out var treeViewState))
 		{
-			IdeService.TextEditorService.CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
+			IdeService.TextEditorService.CommonService.TreeView_RegisterContainerAction(new TreeViewContainer(
 				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 				rootNode,
 				new List<TreeViewNoType> { rootNode }));
 		}
 		else
 		{
-			IdeService.TextEditorService.CommonUtilityService.TreeView_WithRootNodeAction(
+			IdeService.TextEditorService.CommonService.TreeView_WithRootNodeAction(
 				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 				rootNode);
 
-			IdeService.TextEditorService.CommonUtilityService.TreeView_SetActiveNodeAction(
+			IdeService.TextEditorService.CommonService.TreeView_SetActiveNodeAction(
 				CompilerServiceExplorerState.TreeViewCompilerServiceExplorerContentStateKey,
 				rootNode,
 				true,

@@ -5,13 +5,13 @@
 
 @{
 	var codeSearchState = IdeService.GetCodeSearchState();
-	var appOptionsState = IdeService.CommonUtilityService.GetAppOptionsState();
+	var appOptionsState = IdeService.CommonService.GetAppOptionsState();
 }
 
 <div class="di_ide_find-all">
 
     <div class="di_ide_find-all-top-content"
-         style="@codeSearchState.TopContentElementDimensions.GetStyleString(IdeService.TextEditorService.CommonUtilityService.UiStringBuilder)">
+         style="@codeSearchState.TopContentElementDimensions.GetStyleString(IdeService.TextEditorService.CommonService.UiStringBuilder)">
 		
 		@* <!-- Comment out currently unimplemented code -->
 	        <div class="di_ide_find-all-filter-list">
@@ -58,7 +58,7 @@
                   ReRenderFuncAsync="HandleResizableRowReRenderAsync"/>
     
     <div class="di_ide_find-all-bottom-content"
-         style="@codeSearchState.BottomContentElementDimensions.GetStyleString(IdeService.CommonUtilityService.UiStringBuilder)">
+         style="@codeSearchState.BottomContentElementDimensions.GetStyleString(IdeService.CommonService.UiStringBuilder)">
          
          <TextEditorViewModelDisplay TextEditorViewModelKey="codeSearchState.PreviewViewModelKey"
                                      ViewModelDisplayOptions="_textEditorViewModelDisplayOptions" />

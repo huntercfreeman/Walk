@@ -85,7 +85,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 		}
 	
 		DotNetBackgroundTaskApi.TestExplorerService.TestExplorerStateChanged += OnTestExplorerStateChanged;
-		IdeService.TextEditorService.CommonUtilityService.TreeViewStateChanged += OnTreeViewStateChanged;
+		IdeService.TextEditorService.CommonService.TreeViewStateChanged += OnTreeViewStateChanged;
 		IdeService.TerminalStateChanged += OnTerminalStateChanged;
 
 		_ = Task.Run(async () =>
@@ -138,7 +138,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 	public void Dispose()
 	{
 		DotNetBackgroundTaskApi.TestExplorerService.TestExplorerStateChanged -= OnTestExplorerStateChanged;
-		IdeService.TextEditorService.CommonUtilityService.TreeViewStateChanged -= OnTreeViewStateChanged;
+		IdeService.TextEditorService.CommonService.TreeViewStateChanged -= OnTreeViewStateChanged;
 		IdeService.TerminalStateChanged -= OnTerminalStateChanged;
 	}
 }

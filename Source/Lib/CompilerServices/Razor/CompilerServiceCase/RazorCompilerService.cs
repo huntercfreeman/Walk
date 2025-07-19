@@ -203,7 +203,7 @@ public sealed class RazorCompilerService : ICompilerService
     		modelModifier.GetAllText(),
             this,
             _cSharpCompilerService,
-            _textEditorService.CommonUtilityService.EnvironmentProvider);
+            _textEditorService.CommonService.EnvironmentProvider);
             
     	lexer.Lex();
     

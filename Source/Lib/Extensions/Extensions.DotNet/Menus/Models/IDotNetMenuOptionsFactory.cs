@@ -15,7 +15,7 @@ public interface IDotNetMenuOptionsFactory
 		TreeViewSolution solutionNode,
 		TreeViewNamespacePath projectNode,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
+		CommonService commonService,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord AddProjectToProjectReference(
@@ -27,20 +27,20 @@ public interface IDotNetMenuOptionsFactory
 	public MenuOptionRecord RemoveProjectToProjectReference(
 		TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
+		CommonService commonService,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord MoveProjectToSolutionFolder(
 		TreeViewSolution treeViewSolution,
 		TreeViewNamespacePath treeViewProjectToMove,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
+		CommonService commonService,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord RemoveNuGetPackageReferenceFromProject(
 		NamespacePath modifyProjectNamespacePath,
 		TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
 		ITerminal terminal,
-		CommonUtilityService commonUtilityService,
+		CommonService commonService,
 		Func<Task> onAfterCompletion);
 }

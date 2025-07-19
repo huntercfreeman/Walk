@@ -13,11 +13,11 @@ public class NativeAppDataService : IAppDataService
 	/// </summary>
 	private readonly Dictionary<string, IAppData> _appDataMap = new();
 	
-	private readonly CommonUtilityService _commonUtilityService;
+	private readonly CommonService _commonService;
 
-	public NativeAppDataService(CommonUtilityService commonUtilityService)
+	public NativeAppDataService(CommonService commonService)
 	{
-		_commonUtilityService = commonUtilityService;
+		_commonService = commonService;
 	}
 	
 	private bool _isInitialized;
@@ -29,26 +29,26 @@ public class NativeAppDataService : IAppDataService
 		{
 			_isInitialized = true;
 			
-			var directoryPath = _commonUtilityService.EnvironmentProvider.SafeRoamingApplicationDataDirectoryAbsolutePath.Value;
+			var directoryPath = _commonService.EnvironmentProvider.SafeRoamingApplicationDataDirectoryAbsolutePath.Value;
 			
-			var directoryExists = await _commonUtilityService.FileSystemProvider.Directory
+			var directoryExists = await _commonService.FileSystemProvider.Directory
 				.ExistsAsync(directoryPath)
 				.ConfigureAwait(false);
 			
 			if (!directoryExists)
 			{
-				await _commonUtilityService.FileSystemProvider.Directory
+				await _commonService.FileSystemProvider.Directory
 					.CreateDirectoryAsync(directoryPath)
 					.ConfigureAwait(false);
 			}
 			
-			_commonUtilityService.EnvironmentProvider.DeletionPermittedRegister(
+			_commonService.EnvironmentProvider.DeletionPermittedRegister(
 				new SimplePath(directoryPath, true));
 		}
 		
 		var options = new JsonSerializerOptions { WriteIndented = true };
 	
-		await _commonUtilityService.FileSystemProvider.File.WriteAllTextAsync(
+		await _commonService.FileSystemProvider.File.WriteAllTextAsync(
 		        GetFilePath(appData.AssemblyName, appData.TypeName, appData.UniqueIdentifier),
 		        JsonSerializer.Serialize(appData, options))
 	        .ConfigureAwait(false);
@@ -79,7 +79,7 @@ public class NativeAppDataService : IAppDataService
 			
 			if (!success || forceRefreshCache)
 			{
-				var appDataJson = await _commonUtilityService.FileSystemProvider.File
+				var appDataJson = await _commonService.FileSystemProvider.File
 					.ReadAllTextAsync(path)
 					.ConfigureAwait(false);
 				
@@ -116,8 +116,8 @@ public class NativeAppDataService : IAppDataService
 			typeName,
 			uniqueIdentifier);
 		
-		return _commonUtilityService.EnvironmentProvider.JoinPaths(
-	    	_commonUtilityService.EnvironmentProvider.SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
+		return _commonService.EnvironmentProvider.JoinPaths(
+	    	_commonService.EnvironmentProvider.SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
 	    	relativePath);
 	}
 }

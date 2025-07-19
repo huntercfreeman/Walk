@@ -11,7 +11,7 @@ namespace Walk.Ide.RazorLib.FileSystems.Displays;
 public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRendererType
 {
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonService CommonService { get; set; } = null!;
 
     [CascadingParameter]
     public MenuOptionCallbacks? MenuOptionCallbacks { get; set; }
@@ -40,7 +40,7 @@ public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRende
 
             if (AbsolutePath.IsDirectory)
             {
-                var fileSystemEntryList = await CommonUtilityService.FileSystemProvider.Directory
+                var fileSystemEntryList = await CommonService.FileSystemProvider.Directory
                     .EnumerateFileSystemEntriesAsync(AbsolutePath.Value)
                     .ConfigureAwait(false);
 

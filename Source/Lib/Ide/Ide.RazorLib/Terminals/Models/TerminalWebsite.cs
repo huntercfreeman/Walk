@@ -13,21 +13,21 @@ namespace Walk.Ide.RazorLib.Terminals.Models;
 /// </summary>
 public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 {
-	private readonly CommonUtilityService _commonUtilityService;
+	private readonly CommonService _commonService;
 
 	public TerminalWebsite(
 		string displayName,
 		Func<TerminalWebsite, ITerminalInteractive> terminalInteractiveFactory,
 		Func<TerminalWebsite, ITerminalInput> terminalInputFactory,
 		Func<TerminalWebsite, ITerminalOutput> terminalOutputFactory,
-		CommonUtilityService commonUtilityService)
+		CommonService commonService)
 	{
 		DisplayName = displayName;
 		TerminalInteractive = terminalInteractiveFactory.Invoke(this);
 		TerminalInput = terminalInputFactory.Invoke(this);
 		TerminalOutput = terminalOutputFactory.Invoke(this);
 		
-		_commonUtilityService = commonUtilityService;
+		_commonService = commonService;
 	}
 
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
@@ -58,7 +58,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(TerminalWorkKind.Command);
             _queue_general_TerminalCommandRequest.Enqueue(terminalCommandRequest);
-            _commonUtilityService.Indefinite_EnqueueGroup(this);
+            _commonService.Indefinite_EnqueueGroup(this);
         }
     }
 
@@ -69,7 +69,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 
     public Task EnqueueCommandAsync(TerminalCommandRequest terminalCommandRequest)
     {
-		return _commonUtilityService.Indefinite_EnqueueAsync(
+		return _commonService.Indefinite_EnqueueAsync(
 			Key<IBackgroundTaskGroup>.NewKey(),
 			BackgroundTaskFacts.IndefiniteQueueKey,
 			"Enqueue Command",
@@ -134,7 +134,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 				parsedCommand,
 				new StandardErrorCommandEvent(parsedCommand.SourceTerminalCommandRequest.CommandText + " threw an exception" + "\n"));
 		
-			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonUtilityService, TimeSpan.FromSeconds(14));
+			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonService, TimeSpan.FromSeconds(14));
 		}
 		finally
 		{

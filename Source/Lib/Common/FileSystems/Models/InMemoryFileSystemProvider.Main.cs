@@ -10,12 +10,12 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
     private readonly InMemoryFileHandler _file;
     private readonly InMemoryDirectoryHandler _directory;
 
-    public InMemoryFileSystemProvider(CommonUtilityService commonUtilityService)
+    public InMemoryFileSystemProvider(CommonService commonService)
     {
-        _environmentProvider = commonUtilityService.EnvironmentProvider;
+        _environmentProvider = commonService.EnvironmentProvider;
 
-        _file = new InMemoryFileHandler(this, commonUtilityService);
-        _directory = new InMemoryDirectoryHandler(this, commonUtilityService);
+        _file = new InMemoryFileHandler(this, commonService);
+        _directory = new InMemoryDirectoryHandler(this, commonService);
 
         Directory
             .CreateDirectoryAsync(_environmentProvider.RootDirectoryAbsolutePath.Value)

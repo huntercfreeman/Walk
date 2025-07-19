@@ -12,7 +12,7 @@ namespace Walk.Common.RazorLib.Notifications.Displays;
 public partial class NotificationDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonService CommonService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public INotification Notification  { get; set; } = null!;
@@ -34,7 +34,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     private string CssStyleString => GetCssStyleString();
 
     private string IconSizeInPixelsCssValue =>
-        $"{CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels.ToCssValue()}";
+        $"{CommonService.GetAppOptionsState().Options.IconSizeInPixels.ToCssValue()}";
 
     private string NotificationTitleCssStyleString =>
         "width: calc(100% -" +
@@ -43,7 +43,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        CommonUtilityService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
+        CommonService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
     }
 
     private async void AppOptionsStateWrapOnStateChanged()
@@ -136,7 +136,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
             
         if (wasCausedByUiEvent)
         {
-        	await CommonUtilityService.JsRuntimeCommonApi
+        	await CommonService.JsRuntimeCommonApi
 		        .FocusHtmlElementById(Notification.SetFocusOnCloseElementId
 		        	 ?? IDynamicViewModel.DefaultSetFocusOnCloseElementId)
 		        .ConfigureAwait(false);
@@ -145,12 +145,12 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 
     private void DeleteNotification()
     {
-        CommonUtilityService.Notification_ReduceMakeDeletedAction(Notification.DynamicViewModelKey);
+        CommonService.Notification_ReduceMakeDeletedAction(Notification.DynamicViewModelKey);
     }
 
     private void MarkNotificationAsRead()
     {
-        CommonUtilityService.Notification_ReduceMakeReadAction(Notification.DynamicViewModelKey);
+        CommonService.Notification_ReduceMakeReadAction(Notification.DynamicViewModelKey);
     }
 
     private Task ChangeNotificationToDialog()
@@ -164,7 +164,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 			true,
 			null);
 
-        CommonUtilityService.Dialog_ReduceRegisterAction(dialogRecord);
+        CommonService.Dialog_ReduceRegisterAction(dialogRecord);
 
         return HandleShouldNoLongerRender(wasCausedByUiEvent: false);
     }
@@ -173,6 +173,6 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     {
         _notificationOverlayCancellationTokenSource.Cancel();
 
-        CommonUtilityService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
+        CommonService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }

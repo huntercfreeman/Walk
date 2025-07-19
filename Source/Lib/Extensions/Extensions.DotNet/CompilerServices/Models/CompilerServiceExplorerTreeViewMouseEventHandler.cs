@@ -10,7 +10,7 @@ public class CompilerServiceExplorerTreeViewMouseEventHandler : TreeViewMouseEve
 
 	public CompilerServiceExplorerTreeViewMouseEventHandler(
 			IdeService ideService)
-		: base(ideService.CommonUtilityService)
+		: base(ideService.CommonService)
 	{
 		_ideService = ideService;
 	}

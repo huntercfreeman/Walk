@@ -146,10 +146,10 @@ public partial class TestExplorerContextMenu : ComponentBase
 				    });
 			        
 					treeViewProjectTestModel.Item.TestNameFullyQualifiedList = null;
-					IdeService.CommonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
+					IdeService.CommonService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
 					await treeViewProjectTestModel.LoadChildListAsync();
-					IdeService.CommonUtilityService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
+					IdeService.CommonService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
 					DotNetBackgroundTaskApi.TestExplorerService.MoveNodeToCorrectBranch(treeViewProjectTestModel);
 					
@@ -253,7 +253,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		};
 
 		var fabricateCommandArgs = new TreeViewCommandArgs(
-			commandArgs.CommonUtilityService,
+			commandArgs.CommonService,
 			fabricateTreeViewContainer,
 			commandArgs.NodeThatReceivedMouseEvent,
 			commandArgs.RestoreFocusToTreeView,
@@ -284,7 +284,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 			if (node is TreeViewStringFragment treeViewStringFragment)
 			{
 				var innerTreeViewCommandArgs = new TreeViewCommandArgs(
-					commandArgs.CommonUtilityService,
+					commandArgs.CommonService,
 					commandArgs.TreeViewContainer,
 					node,
 					commandArgs.RestoreFocusToTreeView,
@@ -345,7 +345,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		
 		DotNetCliOutputParser.ParseOutputEntireDotNetRun(output, "Unit-Test_results");
 		
-		IdeService.CommonUtilityService.SetPanelTabAsActiveByContextRecordKey(contextRecord.ContextKey);
+		IdeService.CommonService.SetPanelTabAsActiveByContextRecordKey(contextRecord.ContextKey);
 	
 		if (contextRecord != default)
 		{
@@ -353,8 +353,8 @@ public partial class TestExplorerContextMenu : ComponentBase
 		        contextRecord,
 		        nameof(ContextHelper.ConstructFocusContextElementCommand),
 		        nameof(ContextHelper.ConstructFocusContextElementCommand),
-		        IdeService.CommonUtilityService.JsRuntimeCommonApi,
-		        IdeService.CommonUtilityService);
+		        IdeService.CommonService.JsRuntimeCommonApi,
+		        IdeService.CommonService);
 		        
 		    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
 		}

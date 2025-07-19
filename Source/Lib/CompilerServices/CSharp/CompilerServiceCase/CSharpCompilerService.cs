@@ -714,7 +714,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 						MenuOptionKind.Other,
 						onClickFunc: async () =>
 						{
-							await _textEditorService.CommonUtilityService.SetClipboard(usingStatementText).ConfigureAwait(false);
+							await _textEditorService.CommonService.SetClipboard(usingStatementText).ConfigureAwait(false);
 						}));
 				}
 				else
@@ -805,7 +805,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         componentData.ContinueRenderingTooltipAsync,
                         Walk.TextEditor.RazorLib.Commands.Models.Defaults.TextEditorCommandDefaultFunctions.OnWheel,
                         (_textEditorService, viewModelModifier.PersistentState.ViewModelKey, cursorPositionIndex));
-                    componentData.TextEditorViewModelSlimDisplay.CommonUtilityService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
+                    componentData.TextEditorViewModelSlimDisplay.CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
                 }
             }
         }
@@ -840,7 +840,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         componentData.ContinueRenderingTooltipAsync,
                         Walk.TextEditor.RazorLib.Commands.Models.Defaults.TextEditorCommandDefaultFunctions.OnWheel,
                         (_textEditorService, viewModelModifier.PersistentState.ViewModelKey, cursorPositionIndex));
-                    componentData.TextEditorViewModelSlimDisplay.CommonUtilityService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
+                    componentData.TextEditorViewModelSlimDisplay.CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
                 }
             }
         }
@@ -848,7 +848,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         if (!foundMatch)
         {
 			viewModelModifier.PersistentState.TooltipModel = null;
-			componentData.TextEditorViewModelSlimDisplay.CommonUtilityService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
+			componentData.TextEditorViewModelSlimDisplay.CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
         }
 
         // TODO: Measure the tooltip, and reposition if it would go offscreen.
@@ -1088,7 +1088,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         
             MeasuredHtmlElementDimensions cursorDimensions;
             
-            var tooltipState = _textEditorService.CommonUtilityService.GetTooltipState();
+            var tooltipState = _textEditorService.CommonService.GetTooltipState();
             
             if (positionIndex != modelModifier.GetPositionIndex(viewModelModifier) &&
                 tooltipState.TooltipModel.ItemUntyped is ValueTuple<TextEditorService, Key<TextEditorViewModel>, int>)
@@ -1099,17 +1099,17 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     LeftInPixels: tooltipState.TooltipModel.X,
                     TopInPixels: tooltipState.TooltipModel.Y,
                     ZIndex: 0);
-                _textEditorService.CommonUtilityService.SetTooltipModel(tooltipModel: null);
+                _textEditorService.CommonService.SetTooltipModel(tooltipModel: null);
             }
             else
             {
-                cursorDimensions = await _textEditorService.CommonUtilityService.JsRuntimeCommonApi
+                cursorDimensions = await _textEditorService.CommonService.JsRuntimeCommonApi
         			.MeasureElementById(componentData.PrimaryCursorContentId)
         			.ConfigureAwait(false);
             }
     
-    		var resourceAbsolutePath = _textEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(modelModifier.PersistentState.ResourceUri.Value, false);
-    		var parentDirectoryAbsolutePath = _textEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
+    		var resourceAbsolutePath = _textEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(modelModifier.PersistentState.ResourceUri.Value, false);
+    		var parentDirectoryAbsolutePath = _textEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
     	
     		var siblingFileStringList = new List<(string ResourceUriValue, int ScopeIndexKey)>();
     		
@@ -1142,7 +1142,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     			var tuple = siblingFileStringList[i];
     			var file = tuple.ResourceUriValue;
     			
-    			var siblingAbsolutePath = _textEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(file, false);
+    			var siblingAbsolutePath = _textEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(file, false);
     			
     			menuOptionList.Add(new MenuOptionRecord(
     				siblingAbsolutePath.NameWithExtension,
@@ -1248,7 +1248,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         				await viewModelModifier.FocusAsync();
         			});
         
-                _textEditorService.CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+                _textEditorService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
             }
 		}
     }

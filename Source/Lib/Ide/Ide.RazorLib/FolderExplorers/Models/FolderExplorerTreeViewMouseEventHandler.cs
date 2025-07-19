@@ -12,7 +12,7 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 
     public FolderExplorerTreeViewMouseEventHandler(
             IdeService ideService)
-        : base(ideService.CommonUtilityService)
+        : base(ideService.CommonService)
     {
         _ideService = ideService;
     }

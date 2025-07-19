@@ -8,7 +8,7 @@
     @{ var localDirtyResourceUriList = dirtyResourceUriState.DirtyResourceUriList; }
     @foreach (var dirtyResourceUri in localDirtyResourceUriList)
     {
-        var absolutePath = TextEditorService.CommonUtilityService.EnvironmentProvider.AbsolutePathFactory(dirtyResourceUri.Value, false);
+        var absolutePath = TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(dirtyResourceUri.Value, false);
 
         <div>
             <label>Open in editor:</label>

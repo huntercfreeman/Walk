@@ -12,7 +12,7 @@ namespace Walk.Common.RazorLib.Badges.Displays;
 public partial class BadgeDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonService CommonService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public IBadgeModel BadgeModel { get; set; } = null!;

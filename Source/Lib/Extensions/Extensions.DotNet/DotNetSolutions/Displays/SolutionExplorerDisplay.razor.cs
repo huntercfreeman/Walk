@@ -22,7 +22,7 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 	private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		IdeService.TextEditorService.CommonUtilityService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		IdeService.TextEditorService.CommonService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
 
 	protected override void OnInitialized()
 	{
@@ -51,7 +51,7 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 			},
 			null);
 
-		IdeService.TextEditorService.CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		IdeService.TextEditorService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
 
@@ -66,7 +66,7 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 			true,
 			null);
 
-		IdeService.TextEditorService.CommonUtilityService.Dialog_ReduceRegisterAction(dialogRecord);
+		IdeService.TextEditorService.CommonService.Dialog_ReduceRegisterAction(dialogRecord);
 	}
 	
 	public async void OnDotNetSolutionStateChanged()

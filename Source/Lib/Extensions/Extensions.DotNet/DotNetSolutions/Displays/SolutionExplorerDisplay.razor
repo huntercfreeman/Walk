@@ -12,7 +12,7 @@
 <div id="@ContextFacts.SolutionExplorerContext.ContextElementId" class="di_ide_solution-explorer-display" style="height: 100%">
     @{
     	var dotNetSolutionState = DotNetBackgroundTaskApi.DotNetSolutionService.GetDotNetSolutionState();
-    	var appOptionsState = IdeService.TextEditorService.CommonUtilityService.GetAppOptionsState();
+    	var appOptionsState = IdeService.TextEditorService.CommonService.GetAppOptionsState();
     }
 
 	@if (appOptionsState.Options.ShowPanelTitles)
@@ -30,7 +30,7 @@
 	    </div>
     }
 
-    <div class="di_ide_section-body @IdeService.TextEditorService.CommonUtilityService.Options_ShowPanelTitlesCssClass">
+    <div class="di_ide_section-body @IdeService.TextEditorService.CommonService.Options_ShowPanelTitlesCssClass">
         @if (dotNetSolutionState.DotNetSolutionModel is null)
         {
             <button class="di_button"

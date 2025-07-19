@@ -16,7 +16,7 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
 public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 {
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonService CommonService { get; set; } = null!;
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
@@ -94,7 +94,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 					TextEditorCommandDefaultFunctions.RemoveDropdown(
 				        editContext,
 				        viewModelModifier,
-				        CommonUtilityService);
+				        CommonService);
 				}
 
 				return ValueTask.CompletedTask;
@@ -119,7 +119,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 					TextEditorCommandDefaultFunctions.RemoveDropdown(
 				        editContext,
 				        viewModelModifier,
-				        CommonUtilityService);
+				        CommonService);
 				}
 
 				return ValueTask.CompletedTask;
@@ -204,7 +204,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 						TextEditorCommandDefaultFunctions.RemoveDropdown(
 					        editContext,
 					        viewModelModifier,
-					        CommonUtilityService);
+					        CommonService);
 					}
 
 					return ValueTask.CompletedTask;
@@ -384,9 +384,9 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             	editContext,
             	modelModifier,
             	viewModelModifier,
-            	(Common.RazorLib.JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonUtilityService.JsRuntimeCommonApi,
+            	(Common.RazorLib.JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonService.JsRuntimeCommonApi,
 				TextEditorService,
-            	(Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService);
+            	(Common.RazorLib.Options.Models.CommonService)CommonService);
         }));
         return Task.CompletedTask;
     }
@@ -406,7 +406,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 		        editContext,
             	modelModifier,
             	viewModelModifier,
-		        (Common.RazorLib.JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonUtilityService.JsRuntimeCommonApi);
+		        (Common.RazorLib.JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonService.JsRuntimeCommonApi);
         }));
         return Task.CompletedTask;
     }
@@ -445,11 +445,11 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 		        editContext,
             	modelModifier,
             	viewModelModifier,
-		        (Common.RazorLib.JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonUtilityService.JsRuntimeCommonApi,
-		        (IEnvironmentProvider)CommonUtilityService.EnvironmentProvider,
-		        (IFileSystemProvider)CommonUtilityService.FileSystemProvider,
+		        (Common.RazorLib.JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonService.JsRuntimeCommonApi,
+		        (IEnvironmentProvider)CommonService.EnvironmentProvider,
+		        (IFileSystemProvider)CommonService.FileSystemProvider,
 				TextEditorService,
-		        (Common.RazorLib.Options.Models.CommonUtilityService)CommonUtilityService);
+		        (Common.RazorLib.Options.Models.CommonService)CommonService);
         }));
         return Task.CompletedTask;
     }

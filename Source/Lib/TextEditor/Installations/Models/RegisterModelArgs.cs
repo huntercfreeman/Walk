@@ -22,12 +22,12 @@ public struct RegisterModelArgs
     public RegisterModelArgs(
     	TextEditorEditContext editContext,
         ResourceUri resourceUri,
-        CommonUtilityService commonUtilityService,
+        CommonService commonService,
         object ideBackgroundTaskApi)
     {
         EditContext = editContext;
         ResourceUri = resourceUri;
-        CommonUtilityService = commonUtilityService;
+        CommonService = commonService;
         IdeBackgroundTaskApi = ideBackgroundTaskApi;
     }
 
@@ -38,7 +38,7 @@ public struct RegisterModelArgs
     /// providing the underlying data to be rendered by this view model.
     /// </summary>
     public ResourceUri ResourceUri { get; }
-    public CommonUtilityService CommonUtilityService { get; }
+    public CommonService CommonService { get; }
     public object IdeBackgroundTaskApi { get; }
     public bool ShouldBlockUntilBackgroundTaskIsCompleted { get; init; }
 }

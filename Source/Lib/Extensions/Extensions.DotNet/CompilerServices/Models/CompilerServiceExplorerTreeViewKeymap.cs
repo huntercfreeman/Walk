@@ -10,7 +10,7 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
 	private readonly IdeService _ideService;
 
 	public CompilerServiceExplorerTreeViewKeyboardEventHandler(IdeService ideService)
-		: base(ideService.CommonUtilityService)
+		: base(ideService.CommonService)
 	{
 		_ideService = ideService;
 	}

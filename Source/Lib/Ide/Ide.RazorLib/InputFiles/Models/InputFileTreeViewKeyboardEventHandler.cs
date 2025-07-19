@@ -19,7 +19,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 	        Func<AbsolutePath, Task> setInputFileContentTreeViewRootFunc,
 	        Func<Task> focusSearchInputElementFunc,
 	        Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc)
-        : base(ideService.CommonUtilityService)
+        : base(ideService.CommonService)
     {
         _ideService = ideService;
         _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
@@ -121,7 +121,7 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     {
         _ideService.InputFile_OpenParentDirectory(
             _ideService.IdeComponentRenderers,
-            _ideService.CommonUtilityService,
+            _ideService.CommonService,
             parentDirectoryTreeViewModel: null);
 
         ChangeContentRootToOpenedTreeView(_ideService.GetInputFileState());

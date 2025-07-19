@@ -9,7 +9,7 @@ namespace Walk.Common.RazorLib.Tabs.Displays;
 public partial class TabListDisplay : ComponentBase
 {
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonService CommonService { get; set; } = null!;
 
 	/// <summary>
 	/// The list provided should not be modified after passing it as a parameter..
@@ -41,7 +41,7 @@ public partial class TabListDisplay : ComponentBase
 			},
 			restoreFocusOnClose: null);
 
-        CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
         return Task.CompletedTask;
     }
 }

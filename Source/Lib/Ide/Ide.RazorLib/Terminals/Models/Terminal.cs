@@ -71,7 +71,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(TerminalWorkKind.Command);
 			_queue_general_TerminalCommandRequest.Enqueue(terminalCommandRequest);
-            _ideService.CommonUtilityService.Indefinite_EnqueueGroup(this);
+            _ideService.CommonService.Indefinite_EnqueueGroup(this);
         }
     }
 
@@ -82,7 +82,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
     
     public Task EnqueueCommandAsync(TerminalCommandRequest terminalCommandRequest)
     {
-		return _ideService.CommonUtilityService.Indefinite_EnqueueAsync(
+		return _ideService.CommonService.Indefinite_EnqueueAsync(
 			Key<IBackgroundTaskGroup>.NewKey(),
 			BackgroundTaskFacts.IndefiniteQueueKey,
 			"Enqueue Command",
@@ -169,7 +169,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
 					" threw an exception" +
 					"\n"));
 		
-			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _ideService.CommonUtilityService, TimeSpan.FromSeconds(14));
+			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _ideService.CommonService, TimeSpan.FromSeconds(14));
 		}
 		finally
 		{

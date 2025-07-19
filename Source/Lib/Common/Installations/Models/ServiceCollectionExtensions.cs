@@ -27,34 +27,34 @@ public static class ServiceCollectionExtensions
 
         services
             .AddScoped<BrowserResizeInterop>()
-            .AddScoped<CommonUtilityService, CommonUtilityService>(sp =>
+            .AddScoped<CommonService, CommonService>(sp =>
             {
-                var commonUtilityService = new CommonUtilityService(
+                var commonService = new CommonService(
                     hostingInformation,
                     _commonRendererTypes,
                     commonConfig,
                     sp.GetRequiredService<IJSRuntime>());
             
-                commonUtilityService.SetContinuousQueue(new BackgroundTaskQueue(
+                commonService.SetContinuousQueue(new BackgroundTaskQueue(
                     BackgroundTaskFacts.ContinuousQueueKey,
                     "Continuous"));
-                commonUtilityService.SetIndefiniteQueue(new BackgroundTaskQueue(
+                commonService.SetIndefiniteQueue(new BackgroundTaskQueue(
                     BackgroundTaskFacts.IndefiniteQueueKey,
                     "Blocking"));
             
-                commonUtilityService.SetContinuousWorker(new ContinuousBackgroundTaskWorker(
-				    commonUtilityService.ContinuousQueue,
-					commonUtilityService,
+                commonService.SetContinuousWorker(new ContinuousBackgroundTaskWorker(
+				    commonService.ContinuousQueue,
+					commonService,
 				    sp.GetRequiredService<ILoggerFactory>(),
 				    hostingInformation.WalkHostingKind));
 
-				commonUtilityService.SetIndefiniteWorker(new IndefiniteBackgroundTaskWorker(
-				    commonUtilityService.IndefiniteQueue,
-					commonUtilityService,
+				commonService.SetIndefiniteWorker(new IndefiniteBackgroundTaskWorker(
+				    commonService.IndefiniteQueue,
+					commonService,
 				    sp.GetRequiredService<ILoggerFactory>(),
 				    hostingInformation.WalkHostingKind));
             
-                return commonUtilityService;
+                return commonService;
             });
         
         return services;

@@ -10,18 +10,18 @@ public sealed class ContinuousBackgroundTaskWorker
 
     public ContinuousBackgroundTaskWorker(
         BackgroundTaskQueue queue,
-        CommonUtilityService commonUtilityService,
+        CommonService commonService,
         ILoggerFactory loggerFactory,
         WalkHostingKind walkHostingKind)
     {
         Queue = queue;
-        CommonUtilityService = commonUtilityService;
+        CommonService = commonService;
         _logger = loggerFactory.CreateLogger<ContinuousBackgroundTaskWorker>();
         WalkHostingKind = walkHostingKind;
     }
 
     public BackgroundTaskQueue Queue { get; }
-    public CommonUtilityService CommonUtilityService { get; }
+    public CommonService CommonService { get; }
     public Task? StartAsyncTask { get; internal set; }
     public WalkHostingKind WalkHostingKind { get; }
     

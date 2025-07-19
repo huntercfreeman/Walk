@@ -12,7 +12,7 @@ namespace Walk.Common.RazorLib.Contexts.Displays;
 public partial class ContextSwitchDisplay : ComponentBase
 {
 	[Inject]
-	private CommonUtilityService CommonUtilityService { get; set; } = null!;
+	private CommonService CommonService { get; set; } = null!;
 	
 	[CascadingParameter]
     public WidgetModel Widget { get; set; } = null!;
@@ -54,7 +54,7 @@ public partial class ContextSwitchDisplay : ComponentBase
 	{
 		if (firstRender)
 		{
-			var contextSwitchState = CommonUtilityService.GetContextSwitchState();
+			var contextSwitchState = CommonService.GetContextSwitchState();
 			
 			foreach (var contextSwitchGroup in contextSwitchState.ContextSwitchGroupList)
 			{
@@ -216,7 +216,7 @@ public partial class ContextSwitchDisplay : ComponentBase
                 _activeIndex = _flatMenuOptionList.Count - 1;
                 break;
             case "Enter":
-				CommonUtilityService.SetWidget(null);
+				CommonService.SetWidget(null);
                 break;
         }
     }

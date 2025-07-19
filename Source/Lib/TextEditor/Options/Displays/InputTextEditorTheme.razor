@@ -4,7 +4,7 @@
         class="di_select di_te_text-editor-input-theme @InputViewModel.CssClass"
 	   style="@InputViewModel.CssStyle">
     @{
-        var themesList = CommonUtilityService.GetThemeState().ThemeList;
+        var themesList = CommonService.GetThemeState().ThemeList;
 
         var chosenThemeKey = TextEditorService.Options_GetTextEditorOptionsState().Options.CommonOptions?.ThemeKey
             ?? ThemeFacts.VisualStudioDarkThemeClone.Key;

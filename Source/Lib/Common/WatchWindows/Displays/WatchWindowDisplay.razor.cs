@@ -16,7 +16,7 @@ namespace Walk.Common.RazorLib.WatchWindows.Displays;
 public partial class WatchWindowDisplay : ComponentBase
 {
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonService CommonService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public WatchWindowObject WatchWindowObject { get; set; } = null!;
@@ -29,23 +29,23 @@ public partial class WatchWindowDisplay : ComponentBase
 
     protected override void OnInitialized()
     {
-        _treeViewMouseEventHandler = new(CommonUtilityService);
-        _treeViewKeyboardEventHandler = new(CommonUtilityService);
+        _treeViewMouseEventHandler = new(CommonService);
+        _treeViewKeyboardEventHandler = new(CommonService);
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            if (!CommonUtilityService.TryGetTreeViewContainer(TreeViewContainerKey, out var treeViewContainer))
+            if (!CommonService.TryGetTreeViewContainer(TreeViewContainerKey, out var treeViewContainer))
             {
                 var rootNode = new TreeViewReflection(
                     WatchWindowObject,
                     true,
                     false,
-                    CommonUtilityService.CommonComponentRenderers);
+                    CommonService.CommonComponentRenderers);
 
-                CommonUtilityService.TreeView_RegisterContainerAction(new TreeViewContainer(
+                CommonService.TreeView_RegisterContainerAction(new TreeViewContainer(
                     TreeViewContainerKey,
                     rootNode,
                     new List<TreeViewNoType>() { rootNode }));
@@ -71,12 +71,12 @@ public partial class WatchWindowDisplay : ComponentBase
 			},
 			treeViewCommandArgs.RestoreFocusToTreeView);
 
-        CommonUtilityService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
         return Task.CompletedTask;
     }
     
     public void Dispose()
 	{
-		CommonUtilityService.TreeView_DisposeContainerAction(TreeViewContainerKey);
+		CommonService.TreeView_DisposeContainerAction(TreeViewContainerKey);
 	}
 }

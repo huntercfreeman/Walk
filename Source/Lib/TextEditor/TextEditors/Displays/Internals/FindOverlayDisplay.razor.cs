@@ -17,7 +17,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private CommonUtilityService CommonUtilityService { get; set; } = null!;
+    private CommonService CommonService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<TextEditorComponentData> ComponentDataKey { get; set; }
@@ -149,7 +149,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
             	var componentData = virtualizationResult.ViewModel.PersistentState.ComponentData;
             	if (componentData is not null)
             	{
-	                await CommonUtilityService.JsRuntimeCommonApi
+	                await CommonService.JsRuntimeCommonApi
 	                    .FocusHtmlElementById(componentData.FindOverlayId)
 	                    .ConfigureAwait(false);
                 }
@@ -200,7 +200,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
         	var componentData = virtualizationResult.ViewModel.PersistentState.ComponentData;
         	if (componentData is not null)
         	{
-	            await CommonUtilityService.JsRuntimeCommonApi
+	            await CommonService.JsRuntimeCommonApi
 	                .FocusHtmlElementById(componentData.PrimaryCursorContentId)
 	                .ConfigureAwait(false);
             }

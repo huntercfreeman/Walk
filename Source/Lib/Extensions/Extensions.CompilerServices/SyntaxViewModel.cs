@@ -104,7 +104,7 @@ public struct SyntaxViewModel
 		var resourceUri = ResourceUri;
 		var compilerService = CompilerService;
 		
-		var tooltipState = textEditorService.CommonUtilityService.GetTooltipState();
+		var tooltipState = textEditorService.CommonService.GetTooltipState();
 		
 		if (tooltipState.TooltipModel.ItemUntyped is not ValueTuple<TextEditorService, Key<TextEditorViewModel>, int> tuple)
             return Task.CompletedTask;

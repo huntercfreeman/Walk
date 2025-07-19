@@ -11,22 +11,22 @@ public class NotificationBadge : IBadgeModel
     public static readonly Key<IBadgeModel> NotificationBadgeKey = Key<IBadgeModel>.NewKey();
     public static readonly Key<IDynamicViewModel> DialogRecordKey = Key<IDynamicViewModel>.NewKey();
 
-    private readonly CommonUtilityService _commonUtilityService;
+    private readonly CommonService _commonService;
 
-    public NotificationBadge(CommonUtilityService commonUtilityService)
+    public NotificationBadge(CommonService commonService)
     {
-        _commonUtilityService = commonUtilityService;
+        _commonService = commonService;
     }
     
     private Func<Task>? _updateUiFunc;
 
     public Key<IBadgeModel> Key => NotificationBadgeKey;
 	public BadgeKind BadgeKind => BadgeKind.Notification;
-	public int Count => _commonUtilityService.GetNotificationState().DefaultList.Count;
+	public int Count => _commonService.GetNotificationState().DefaultList.Count;
 	
 	public void OnClick()
 	{
-	    _commonUtilityService.Dialog_ReduceRegisterAction(new DialogViewModel(
+	    _commonService.Dialog_ReduceRegisterAction(new DialogViewModel(
             DialogRecordKey,
             "Notifications",
             typeof(Walk.Common.RazorLib.Notifications.Displays.NotificationsViewDisplay),
@@ -39,7 +39,7 @@ public class NotificationBadge : IBadgeModel
 	public void AddSubscription(Func<Task> updateUiFunc)
 	{
 	    _updateUiFunc = updateUiFunc;
-	    _commonUtilityService.CommonUiStateChanged += DoSubscription;
+	    _commonService.CommonUiStateChanged += DoSubscription;
 	}
 	
 	public async void DoSubscription(CommonUiEventKind commonUiEventKind)
@@ -54,7 +54,7 @@ public class NotificationBadge : IBadgeModel
 	
 	public void DisposeSubscription()
 	{
-	    _commonUtilityService.CommonUiStateChanged -= DoSubscription;
+	    _commonService.CommonUiStateChanged -= DoSubscription;
 	    _updateUiFunc = null;
 	}
 }

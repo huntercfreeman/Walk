@@ -17,7 +17,7 @@ public record TextEditorGroup(
 		List<Key<TextEditorViewModel>> ViewModelKeyList,
         Category Category,
         TextEditorService TextEditorService,
-        CommonUtilityService CommonUtilityService)
+        CommonService CommonService)
      : ITabGroup
 {
     public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();

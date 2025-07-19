@@ -16,19 +16,19 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
 			DotNetSolutionModel dotNetSolutionModel,
 			IDotNetComponentRenderers dotNetComponentRenderers,
 			IIdeComponentRenderers ideComponentRenderers,
-			CommonUtilityService commonUtilityService,
+			CommonService commonService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(dotNetSolutionModel, isExpandable, isExpanded)
 	{
 		DotNetComponentRenderers = dotNetComponentRenderers;
 		IdeComponentRenderers = ideComponentRenderers;
-		CommonUtilityService = commonUtilityService;
+		CommonService = commonService;
 	}
 
 	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public IIdeComponentRenderers IdeComponentRenderers { get; }
-	public CommonUtilityService CommonUtilityService { get; }
+	public CommonService CommonService { get; }
 
 	public override bool Equals(object? obj)
 	{
@@ -75,7 +75,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
 		{
 			ChildList = new List<TreeViewNoType>
 			{
-				new TreeViewException(exception, false, false, CommonUtilityService.CommonComponentRenderers)
+				new TreeViewException(exception, false, false, CommonService.CommonComponentRenderers)
 				{
 					Parent = this,
 					IndexAmongSiblings = 0,
