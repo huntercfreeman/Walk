@@ -9,7 +9,7 @@ using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.Diffs.Models;
 using Walk.Extensions.DotNet;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
-using Walk.Extensions.DotNet.Websites.ProjectTemplates.Models;
+using Walk.Website.RazorLib.Websites.ProjectTemplates.Models;
 using Walk.Ide.Wasm.Facts;
 
 namespace Walk.Website.RazorLib;
@@ -65,7 +65,7 @@ public partial class WalkWebsiteInitializer : ComponentBase
                 DotNetService.TextEditorService.CommonService)
             .ConfigureAwait(false);
 
-        await DotNetService.TextEditorService.CommonService.FileSystemProvider.File.WriteAllTextAsync(
+        /*await DotNetService.TextEditorService.CommonService.FileSystemProvider.File.WriteAllTextAsync(
                 InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.PERSON_CS_CONTENTS)
             .ConfigureAwait(false);
@@ -78,7 +78,7 @@ public partial class WalkWebsiteInitializer : ComponentBase
         await DotNetService.TextEditorService.CommonService.FileSystemProvider.File.WriteAllTextAsync(
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CONTENTS)
-            .ConfigureAwait(false);
+            .ConfigureAwait(false);*/
 
         /*await _fileSystemProvider.File.WriteAllTextAsync(
                 InitialSolutionFacts.BLAZOR_CRUD_APP_ALL_C_SHARP_SYNTAX_ABSOLUTE_FILE_PATH,
@@ -189,7 +189,7 @@ public partial class WalkWebsiteInitializer : ComponentBase
 		{
 			// Display a file from the get-go so the user is less confused on what the website is.
 	        var absolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
-	            InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
+	            "/BlazorCrudApp/ConsoleApp/Program.cs",
 	            false);
 		
 			await DotNetService.TextEditorService.OpenInEditorAsync(

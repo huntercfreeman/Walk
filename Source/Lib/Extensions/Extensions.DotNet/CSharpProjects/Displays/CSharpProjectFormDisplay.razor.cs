@@ -11,8 +11,6 @@ using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Extensions.DotNet.CSharpProjects.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
-using Walk.Extensions.DotNet.Websites.ProjectTemplates.Models;
-using Walk.Extensions.DotNet.Websites;
 
 namespace Walk.Extensions.DotNet.CSharpProjects.Displays;
 
@@ -83,7 +81,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 	{
 		if (DotNetService.IdeService.TextEditorService.CommonService.WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
 		{
-			_viewModel.ProjectTemplateList = WebsiteProjectTemplateFacts.WebsiteProjectTemplatesContainer.ToList();
+			_viewModel.ProjectTemplateList = new();
 			await InvokeAsync(StateHasChanged);
 		}
 		else
@@ -221,14 +219,6 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 	        };
 	        	
 	        generalTerminal.EnqueueCommand(terminalCommandRequest);
-		}
-		else
-		{
-			await WebsiteDotNetCliHelper.StartNewCSharpProjectCommand(
-					immutableView,
-					DotNetService,
-					DialogRecord)
-				.ConfigureAwait(false);
 		}
 	}
 	

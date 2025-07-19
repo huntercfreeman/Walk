@@ -1,6 +1,8 @@
 using Walk.Common.RazorLib.Options.Models;
+using Walk.Extensions.DotNet;
+using Walk.Ide.Wasm.Facts;
 
-namespace Walk.Extensions.DotNet.Websites.ProjectTemplates.Models;
+namespace Walk.Website.RazorLib.Websites.ProjectTemplates.Models;
 
 public static class WebsiteProjectTemplateFacts
 {
@@ -54,7 +56,7 @@ public static class WebsiteProjectTemplateFacts
 
 			await commonService.FileSystemProvider.File.WriteAllTextAsync(
 					absolutePath,
-					ConsoleAppFacts.GetProgramCsContents(cSharpProjectAbsolutePath.NameNoExtension))
+					InitialSolutionFacts.PERSON_CS_CONTENTS)
 				.ConfigureAwait(false);
 		}
 

@@ -1,4 +1,4 @@
-namespace Walk.Extensions.DotNet.Websites.ProjectTemplates.Models;
+namespace Walk.Website.RazorLib.Websites.ProjectTemplates.Models;
 
 public partial class ConsoleAppFacts
 {
