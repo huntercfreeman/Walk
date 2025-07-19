@@ -194,14 +194,14 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
             case DotNetWorkKind.PerformRemoveCSharpProjectReferenceFromSolution:
             {
                 return Do_PerformRemoveCSharpProjectReferenceFromSolution(
-					workArgs.TreeViewSolution, workArgs.ProjectNode, workArgs.Terminal, workArgs.CommonService, workArgs.OnAfterCompletion);
+					workArgs.TreeViewSolution, workArgs.ProjectNode, workArgs.Terminal, CommonService, workArgs.OnAfterCompletion);
             }
 			case DotNetWorkKind.PerformRemoveProjectToProjectReference:
             {
                 return Do_PerformRemoveProjectToProjectReference(
                     workArgs.TreeViewCSharpProjectToProjectReference,
 					workArgs.Terminal,
-					workArgs.CommonService,
+					CommonService,
                     workArgs.OnAfterCompletion);
             }
 			case DotNetWorkKind.PerformMoveProjectToSolutionFolder:
@@ -211,7 +211,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
                     workArgs.TreeViewProjectToMove,
 					workArgs.SolutionFolderPath,
 					workArgs.Terminal,
-					workArgs.CommonService,
+					CommonService,
                     workArgs.OnAfterCompletion);
             }
 			case DotNetWorkKind.PerformRemoveNuGetPackageReferenceFromProject:
@@ -220,7 +220,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
                     workArgs.ModifyProjectNamespacePath,
                     workArgs.TreeViewCSharpProjectNugetPackageReference,
                     workArgs.Terminal,
-                    workArgs.CommonService,
+                    CommonService,
                     workArgs.OnAfterCompletion);
             }
             case DotNetWorkKind.ConstructTreeView:
@@ -1274,7 +1274,6 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
             TreeViewSolution = treeViewSolution,
             ProjectNode = projectNode,
             Terminal = terminal,
-            CommonService = commonService,
             OnAfterCompletion = onAfterCompletion
         });
 	}
@@ -1364,7 +1363,6 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
             WorkKind = DotNetWorkKind.PerformRemoveProjectToProjectReference,
             TreeViewCSharpProjectToProjectReference = treeViewCSharpProjectToProjectReference,
             Terminal = terminal,
-            CommonService = commonService,
             OnAfterCompletion = onAfterCompletion
         });
 	}
@@ -1409,7 +1407,6 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
             TreeViewProjectToMove = treeViewProjectToMove,
             SolutionFolderPath = solutionFolderPath,
             Terminal = terminal,
-            CommonService = commonService,
             OnAfterCompletion = onAfterCompletion
         });
 	}
@@ -1465,7 +1462,6 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
             ModifyProjectNamespacePath = modifyProjectNamespacePath,
             TreeViewCSharpProjectNugetPackageReference = treeViewCSharpProjectNugetPackageReference,
             Terminal = terminal,
-            CommonService = commonService,
             OnAfterCompletion = onAfterCompletion
         });
 	}
@@ -1587,6 +1583,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
         var rightPanel = PanelFacts.GetTopRightPanelGroup(IdeService.TextEditorService.CommonService.GetPanelState());
         rightPanel.CommonService = IdeService.TextEditorService.CommonService;
 
+        /*
         // compilerServiceExplorerPanel
         var compilerServiceExplorerPanel = new Panel(
             "Compiler Service Explorer",
@@ -1598,7 +1595,8 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
             IdeService.TextEditorService.CommonService);
         IdeService.TextEditorService.CommonService.RegisterPanel(compilerServiceExplorerPanel);
         IdeService.TextEditorService.CommonService.RegisterPanelTab(rightPanel.Key, compilerServiceExplorerPanel, false);
-
+        */
+        
         /*// compilerServiceEditorPanel
         var compilerServiceEditorPanel = new Panel(
             "Compiler Service Editor",
@@ -3123,14 +3121,18 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 
     public void Enqueue_ConstructTreeView()
     {
-        _workKindQueue.Enqueue(TestExplorerSchedulerWorkKind.ConstructTreeView);
-        IdeService.TextEditorService.CommonService.Continuous_EnqueueGroup(this);
+        Enqueue(new DotNetWorkArgs
+        {
+            WorkKind = DotNetWorkKind.ConstructTreeView
+        });
     }
     
     public void Enqueue_DiscoverTests()
     {
-        _workKindQueue.Enqueue(TestExplorerSchedulerWorkKind.DiscoverTests);
-        IdeService.TextEditorService.CommonService.Continuous_EnqueueGroup(this);
+        Enqueue(new DotNetWorkArgs
+        {
+            WorkKind = DotNetWorkKind.DiscoverTests
+        });
     }
     
     private readonly Throttle _throttleDiscoverTests = new(TimeSpan.FromMilliseconds(100));
@@ -3312,7 +3314,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
                 false);
         }
 
-        _dotNetBackgroundTaskApi.TestExplorerService.ReduceWithAction(inState => inState with
+        ReduceWithAction(inState => inState with
         {
             ProjectTestModelList = localProjectTestModelList,
             SolutionFilePath = dotNetSolutionModel.AbsolutePath.Value,
