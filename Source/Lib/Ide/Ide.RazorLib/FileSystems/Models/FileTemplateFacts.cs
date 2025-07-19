@@ -1,4 +1,4 @@
-﻿using Walk.Common.RazorLib.Namespaces.Models;
+using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Walk.Ide.RazorLib.FileSystems.Models;
@@ -30,7 +30,10 @@ public static class FileTemplateFacts
         "di_ide_razor-markup-class",
         FileTemplateKind.Razor,
         filename => filename.EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP),
-        _ => _empty,
+        fileName => new List<IFileTemplate>
+        {
+            RazorCodebehind
+        },
         true,
         RazorMarkupCreateFileFunc);
 
