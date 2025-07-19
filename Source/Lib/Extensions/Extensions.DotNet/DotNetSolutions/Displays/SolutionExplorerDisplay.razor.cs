@@ -4,7 +4,6 @@ using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Ide.RazorLib;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Displays.Internals;
 

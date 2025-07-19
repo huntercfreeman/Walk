@@ -1,6 +1,5 @@
 using System.Net.Http.Json;
 using System.Text;
-using System.Text;
 using System.Web;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
@@ -13,7 +12,6 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Extensions.DotNet.Nugets.Models;
-using Walk.Extensions.DotNet.Nugets.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;
@@ -25,10 +23,6 @@ using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Notifications.Models;
-using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Options.Models;
-using Walk.TextEditor.RazorLib.TextEditors.Models;
-using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
@@ -36,52 +30,29 @@ using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Extensions.DotNet.CSharpProjects.Models;
 using Walk.Extensions.DotNet.ComponentRenderers.Models;
-using Walk.Extensions.DotNet.DotNetSolutions.Models;
-using Walk.Extensions.DotNet.CommandLines.Models;
-using Walk.Extensions.DotNet.Namespaces.Models;
 
 using System.Collections.Concurrent;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.TreeViews.Models;
-using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
-using Walk.Common.RazorLib.Menus.Models;
-using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.ListExtensions;
-using Walk.TextEditor.RazorLib;
-using Walk.TextEditor.RazorLib.TextEditors.Models;
-using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.AppDatas.Models;
 using Walk.Ide.RazorLib.Shareds.Models;
 // FindAllReferences
 // using Walk.Ide.RazorLib.FindAllReferences.Models;
-using Walk.Extensions.DotNet.Nugets.Models;
-using Walk.Extensions.DotNet.DotNetSolutions.Models;
-using Walk.Extensions.DotNet.CommandLines.Models;
 using Walk.Extensions.DotNet.TestExplorers.Models;
-using Walk.Extensions.DotNet.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.Outputs.Models;
-using Walk.Extensions.DotNet.Namespaces.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Displays;
 using Walk.Extensions.DotNet.TestExplorers.Displays;
 using Walk.Extensions.DotNet.Nugets.Displays;
 using Walk.Extensions.DotNet.Outputs.Displays;
-using Walk.TextEditor.RazorLib.CompilerServices;
 
 // DotNetSolutionIdeApi
 using System.Runtime.InteropServices;
 using CliWrap.EventStream;
-using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.Reactives.Models;
-using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.BackgroundTasks.Models;
-using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.CompilerServices.DotNetSolution.Models;
 using Walk.CompilerServices.DotNetSolution.SyntaxActors;
 using Walk.CompilerServices.DotNetSolution.CompilerServiceCase;
@@ -91,39 +62,7 @@ using Walk.CompilerServices.Xml.Html.SyntaxObjects;
 // FindAllReferences
 // using Walk.Ide.RazorLib.FindAllReferences.Models;
 using Walk.Extensions.DotNet.AppDatas.Models;
-
-using Walk.Ide.RazorLib;
-
-
-using Walk.Common.RazorLib.Dimensions.Models;
-using Walk.Common.RazorLib.TreeViews.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.TreeViews.Models.Utils;
-using Walk.Common.RazorLib.Reactives.Models;
-using Walk.Ide.RazorLib;
-using Walk.Ide.RazorLib.Terminals.Models;
-using Walk.Extensions.DotNet.DotNetSolutions.Models;
-using Walk.Extensions.DotNet.CommandLines.Models;
-using Walk.CompilerServices.DotNetSolution.Models.Project;
-
-using Walk.Extensions.DotNet.TestExplorers.Models;
-
-using System.Text;
-using Walk.Common.RazorLib.Reactives.Models;
-using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Common.RazorLib.TreeViews.Models;
-using Walk.Common.RazorLib.TreeViews.Models.Utils;
-using Walk.Common.RazorLib.Options.Models;
-using Walk.Extensions.DotNet.CommandLines.Models;
-
-using Walk.Extensions.DotNet.Outputs.Models;
-
-using Walk.Common.RazorLib.Keys.Models;
-using Walk.CompilerServices.DotNetSolution.Models;
-
-using Walk.Extensions.DotNet.DotNetSolutions.Models;
 
 namespace Walk.Extensions.DotNet;
 

@@ -7,10 +7,8 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.TreeViews.Models.Utils;
-using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Extensions.DotNet.TestExplorers.Models;
-using Walk.Extensions.DotNet.CommandLines.Models;
 
 namespace Walk.Extensions.DotNet.TestExplorers.Displays.Internals;
 

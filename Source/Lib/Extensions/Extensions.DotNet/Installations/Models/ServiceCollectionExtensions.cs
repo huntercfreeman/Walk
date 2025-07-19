@@ -4,10 +4,8 @@ using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.AppDatas.Models;
 using Walk.Ide.RazorLib.Installations.Models;
 using Walk.Extensions.DotNet.CSharpProjects.Displays;
-using Walk.Extensions.DotNet.Nugets.Models;
 using Walk.Extensions.DotNet.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.Nugets.Displays;
-using Walk.Extensions.DotNet.CommandLines.Models;
 
 namespace Walk.Extensions.DotNet.Installations.Models;
 
