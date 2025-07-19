@@ -12,8 +12,9 @@ using Walk.Common.RazorLib.Tooltips.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.Options.Models;
 
-namespace Walk.Common.RazorLib.Options.Models;
+namespace Walk.Common.RazorLib;
 
 /* Start IAppDimensionService */
 /// <summary>
