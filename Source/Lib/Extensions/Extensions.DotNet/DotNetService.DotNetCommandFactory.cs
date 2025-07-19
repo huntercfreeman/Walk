@@ -1,4 +1,4 @@
-﻿using Walk.Common.RazorLib.Commands.Models;
+using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Keys.Models;
@@ -114,7 +114,7 @@ public partial class DotNetService
 	{
 		_nodeList.Clear();
 
-		var group = TextEditorService.Group_GetOrDefault(IdeService.EditorTextEditorGroupKey);
+		var group = TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
 
 		if (group is not null)
 		{
