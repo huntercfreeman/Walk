@@ -53,12 +53,10 @@ public static class ServiceCollectionExtensions
 		Func<WalkIdeConfig, WalkIdeConfig>? configure = null)
 	{
 		return services
-			.AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
-			.AddScoped<DotNetCliOutputParser>()
-			.AddScoped<DotNetBackgroundTaskApi>()
-			.AddScoped<IDotNetCommandFactory, DotNetCommandFactory>()
-			.AddScoped<IDotNetMenuOptionsFactory, DotNetMenuOptionsFactory>()
-			.AddScoped<IDotNetComponentRenderers>(_ => _dotNetComponentRenderers);
+		    .Add<DotNetService>(sp =>
+		    {
+		        return new DotNetService(_dotNetComponentRenderers);
+		    });
 	}
 
 	private static readonly DotNetComponentRenderers _dotNetComponentRenderers = new(

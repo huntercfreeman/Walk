@@ -1,3 +1,48 @@
+using System.Net.Http.Json;
+using System.Text;
+using System.Text;
+using System.Web;
+using Walk.Common.RazorLib.Contexts.Models;
+using Walk.Common.RazorLib.Keymaps.Models;
+using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Commands.Models;
+using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.Options.Models;
+using Walk.TextEditor.RazorLib.CompilerServices;
+using Walk.TextEditor.RazorLib.Lexers.Models;
+using Walk.TextEditor.RazorLib;
+using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.Extensions.DotNet.Nugets.Models;
+using Walk.Extensions.DotNet.Nugets.Models;
+using Walk.Extensions.DotNet.Websites.ProjectTemplates.Models;
+using Walk.Extensions.DotNet.CommandLines.Models;
+using Walk.Extensions.DotNet.DotNetSolutions.Models;
+using Walk.Extensions.DotNet.Namespaces.Models;
+using Walk.Extensions.DotNet.Commands;
+using Walk.CompilerServices.DotNetSolution.Models.Project;
+using Walk.Ide.RazorLib;
+
+using Walk.Common.RazorLib.Menus.Models;
+using Walk.Common.RazorLib.Namespaces.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
+using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Notifications.Models;
+using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Options.Models;
+using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.Ide.RazorLib;
+using Walk.Ide.RazorLib.InputFiles.Models;
+using Walk.Ide.RazorLib.ComponentRenderers.Models;
+using Walk.Ide.RazorLib.Terminals.Models;
+using Walk.Ide.RazorLib.BackgroundTasks.Models;
+using Walk.Ide.RazorLib.FileSystems.Models;
+using Walk.Extensions.DotNet.CSharpProjects.Models;
+using Walk.Extensions.DotNet.ComponentRenderers.Models;
+using Walk.Extensions.DotNet.DotNetSolutions.Models;
+using Walk.Extensions.DotNet.CommandLines.Models;
+using Walk.Extensions.DotNet.Namespaces.Models;
+using Walk.Extensions.DotNet.Menus.Models;
+
 using System.Collections.Concurrent;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
@@ -55,10 +100,1362 @@ using Walk.Extensions.DotNet.AppDatas.Models;
 
 using Walk.Ide.RazorLib;
 
-namespace Walk.Extensions.DotNet.BackgroundTasks.Models;
+using Walk.Extensions.DotNet.BackgroundTasks.Models;
 
-public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
+namespace Walk.Extensions.DotNet;
+
+public class DotNetService : IBackgroundTaskGroup
 {
+    private readonly HttpClient _httpClient;
+    private readonly IdeService _ideService;
+	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
+
+	public DotNetService(
+	    IdeService ideService,
+	    IDotNetComponentRenderers dotNetComponentRenderers,
+	    HttpClient httpClient)
+	{
+	    _ideService = ideService;
+	    _dotNetComponentRenderers = dotNetComponentRenderers;
+		_httpClient = httpClient;
+	}
+	
+	public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+
+    public bool __TaskCompletionSourceWasCreated { get; set; }
+
+    private readonly ConcurrentQueue<DotNetWorkArgs> _workQueue = new();
+    
+    public ValueTask HandleEvent()
+    {
+        if (!_workQueue.TryDequeue(out DotNetBackgroundTaskApiWorkArgs workArgs))
+            return ValueTask.CompletedTask;
+
+        switch (workArgs.WorkKind)
+        {
+            case DotNetBackgroundTaskApiWorkKind.SolutionExplorer_TreeView_MultiSelect_DeleteFiles:
+                return Do_SolutionExplorer_TreeView_MultiSelect_DeleteFiles(workArgs.TreeViewCommandArgs);
+            case DotNetBackgroundTaskApiWorkKind.WalkExtensionsDotNetInitializerOnInit:
+                return Do_WalkExtensionsDotNetInitializerOnInit();
+            case DotNetBackgroundTaskApiWorkKind.WalkExtensionsDotNetInitializerOnAfterRender:
+                return Do_WalkExtensionsDotNetInitializerOnAfterRender();
+            case DotNetBackgroundTaskApiWorkKind.SubmitNuGetQuery:
+                return Do_SubmitNuGetQuery(workArgs.NugetPackageManagerQuery);
+            case DotNetBackgroundTaskApiWorkKind.RunTestByFullyQualifiedName:
+                return Do_RunTestByFullyQualifiedName(workArgs.TreeViewStringFragment, workArgs.FullyQualifiedName, workArgs.TreeViewProjectTestModel);
+            case DotNetBackgroundTaskApiWorkKind.SetDotNetSolution:
+	            return Do_SetDotNetSolution(workArgs.DotNetSolutionAbsolutePath);
+			case DotNetBackgroundTaskApiWorkKind.SetDotNetSolutionTreeView:
+	            return Do_SetDotNetSolutionTreeView(workArgs.DotNetSolutionModelKey);
+			case DotNetBackgroundTaskApiWorkKind.Website_AddExistingProjectToSolution:
+	            return Do_Website_AddExistingProjectToSolution(
+	                workArgs.DotNetSolutionModelKey,
+					workArgs.ProjectTemplateShortName,
+					workArgs.CSharpProjectName,
+	                workArgs.CSharpProjectAbsolutePath);
+            case DotNetMenuOptionsFactoryWorkKind.PerformRemoveCSharpProjectReferenceFromSolution:
+            {
+                var args = _queue_PerformRemoveCSharpProjectReferenceFromSolution.Dequeue();
+                return Do_PerformRemoveCSharpProjectReferenceFromSolution(
+					args.treeViewSolution, args.projectNode, args.terminal, args.commonService, args.onAfterCompletion);
+            }
+			case DotNetMenuOptionsFactoryWorkKind.PerformRemoveProjectToProjectReference:
+            {
+                var args = _queue_PerformRemoveProjectToProjectReference.Dequeue();
+                return Do_PerformRemoveProjectToProjectReference(
+                    args.treeViewCSharpProjectToProjectReference,
+					args.terminal,
+					args.commonService,
+                    args.onAfterCompletion);
+            }
+			case DotNetMenuOptionsFactoryWorkKind.PerformMoveProjectToSolutionFolder:
+            {
+                var args = _queue_PerformMoveProjectToSolutionFolder.Dequeue();
+                return Do_PerformMoveProjectToSolutionFolder(
+                    args.treeViewSolution,
+                    args.treeViewProjectToMove,
+					args.solutionFolderPath,
+					args.terminal,
+					args.commonService,
+                    args.onAfterCompletion);
+            }
+			case DotNetMenuOptionsFactoryWorkKind.PerformRemoveNuGetPackageReferenceFromProject:
+            {
+                var args = _queue_PerformRemoveNuGetPackageReferenceFromProject.Dequeue();
+                return Do_PerformRemoveNuGetPackageReferenceFromProject(
+                    args.modifyProjectNamespacePath,
+                    args.treeViewCSharpProjectNugetPackageReference,
+                    args.terminal,
+                    args.commonService,
+                    args.onAfterCompletion);
+            }
+            default:
+                Console.WriteLine($"{nameof(DotNetBackgroundTaskApi)} {nameof(HandleEvent)} default case");
+                return ValueTask.CompletedTask;
+        }
+    }
+
+	/* Start INugetPackageManagerProvider */
+	public string ProviderWebsiteUrlNoFormatting { get; } = "https://azuresearch-usnc.nuget.org/";
+
+	public async Task<List<NugetPackageRecord>> QueryForNugetPackagesAsync(
+		string queryValue,
+		bool includePrerelease = false,
+		CancellationToken cancellationToken = default)
+	{
+		return await QueryForNugetPackagesAsync(
+				BuildQuery(queryValue, includePrerelease),
+				cancellationToken)
+			.ConfigureAwait(false);
+	}
+
+	public async Task<List<NugetPackageRecord>> QueryForNugetPackagesAsync(
+		INugetPackageManagerQuery nugetPackageManagerQuery,
+		CancellationToken cancellationToken = default)
+	{
+		var query = nugetPackageManagerQuery.Query;
+
+		var nugetPackages = await _httpClient
+			.GetFromJsonAsync<NugetResponse>(
+				query,
+				cancellationToken: cancellationToken)
+			.ConfigureAwait(false);
+
+		if (nugetPackages is not null)
+			return nugetPackages.Data;
+
+		return new();
+	}
+
+	public INugetPackageManagerQuery BuildQuery(string query, bool includePrerelease = false)
+	{
+		var queryBuilder = new StringBuilder(ProviderWebsiteUrlNoFormatting + "query?");
+
+		queryBuilder.Append($"q={HttpUtility.UrlEncode(query)}");
+
+		queryBuilder.Append('&');
+
+		queryBuilder.Append($"prerelease={includePrerelease}");
+
+		return new NugetPackageManagerQuery(queryBuilder.ToString());
+	}
+
+	private record NugetPackageManagerQuery(string Query) : INugetPackageManagerQuery;
+	/* End INugetPackageManagerProvider */
+	
+	/* Start INugetPackageManagerService */
+	private NuGetPackageManagerState _nuGetPackageManagerState = new();
+	
+	public event Action? NuGetPackageManagerStateChanged;
+	
+	public NuGetPackageManagerState GetNuGetPackageManagerState() => _nuGetPackageManagerState;
+	
+    public void ReduceSetSelectedProjectToModifyAction(IDotNetProject? selectedProjectToModify)
+    {
+    	var inState = GetNuGetPackageManagerState();
+    
+        _nuGetPackageManagerState = inState with
+        {
+            SelectedProjectToModify = selectedProjectToModify
+        };
+        
+        NuGetPackageManagerStateChanged?.Invoke();
+        return;
+    }
+
+    public void ReduceSetNugetQueryAction(string nugetQuery)
+    {
+    	var inState = GetNuGetPackageManagerState();
+    
+        _nuGetPackageManagerState = inState with { NugetQuery = nugetQuery };
+        
+        NuGetPackageManagerStateChanged?.Invoke();
+        return;
+    }
+
+    public void ReduceSetIncludePrereleaseAction(bool includePrerelease)
+    {
+    	var inState = GetNuGetPackageManagerState();
+    
+        _nuGetPackageManagerState = inState with { IncludePrerelease = includePrerelease };
+        
+        NuGetPackageManagerStateChanged?.Invoke();
+        return;
+    }
+
+    public void ReduceSetMostRecentQueryResultAction(List<NugetPackageRecord> queryResultList)
+    {
+    	var inState = GetNuGetPackageManagerState();
+    
+        _nuGetPackageManagerState = inState with { QueryResultList = queryResultList };
+        
+        NuGetPackageManagerStateChanged?.Invoke();
+        return;
+    }
+	/* End INugetPackageManagerService */
+	
+	/* Start DotNetCliOutputParser */
+	private readonly object _listLock = new();
+	
+	private DotNetRunParseResult _dotNetRunParseResult = new(
+		message: string.Empty,
+		allDiagnosticLineList: new(),
+		errorList: new(),
+		warningList: new(),
+		otherList: new());
+
+	public event Action? StateChanged;
+	
+	/// <summary>
+	/// This immutable list is calculated everytime, so if necessary invoke once and then store the result.
+	/// </summary>
+	public DotNetRunParseResult GetDotNetRunParseResult()
+	{
+		lock (_listLock)
+		{
+			return _dotNetRunParseResult;
+		}
+	}
+
+	public List<ProjectTemplate>? ProjectTemplateList { get; private set; }
+	public List<string>? TheFollowingTestsAreAvailableList { get; private set; }
+	public NewListModel NewListModelSession { get; private set; }
+	
+	/// <summary>The results can be retrieved by invoking <see cref="GetDiagnosticLineList"/></summary>
+	public void ParseOutputEntireDotNetRun(string output, string message)
+	{
+		var stringWalker = new StringWalker(
+			new ResourceUri("/__DEV_IN__/DotNetRunOutputParser.txt"),
+			output);
+			
+		var diagnosticLineList = new List<DiagnosticLine>();
+		
+		var diagnosticLine = new DiagnosticLine
+		{
+			StartInclusiveIndex = stringWalker.PositionIndex
+		};
+			
+		int? startInclusiveIndex = null;
+		int? endExclusiveIndex = null;
+		
+		var badState = false;
+			
+		while (!stringWalker.IsEof)
+		{
+			// Once inside this while loop for the first time
+			// stringWalker.CurrentCharacter == the first character of the output
+			
+			if (WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
+			{
+				if (stringWalker.CurrentCharacter == '\r' &&
+					stringWalker.NextCharacter == '\n')
+				{
+					_ = stringWalker.ReadCharacter();
+				}
+
+				// Make a decision
+				if (diagnosticLine.IsValid)
+				{
+					diagnosticLine.EndExclusiveIndex = stringWalker.PositionIndex;
+					
+					diagnosticLine.Text = stringWalker.SourceText.Substring(
+						diagnosticLine.StartInclusiveIndex,
+						diagnosticLine.EndExclusiveIndex - diagnosticLine.StartInclusiveIndex);
+						
+					var diagnosticLineKindText = stringWalker.SourceText.Substring(
+						diagnosticLine.DiagnosticKindTextSpan.StartInclusiveIndex,
+						diagnosticLine.DiagnosticKindTextSpan.EndExclusiveIndex -
+							diagnosticLine.DiagnosticKindTextSpan.StartInclusiveIndex);
+							
+					if (string.Equals(diagnosticLineKindText, nameof(DiagnosticLineKind.Warning), StringComparison.OrdinalIgnoreCase))
+						diagnosticLine.DiagnosticLineKind = DiagnosticLineKind.Warning;
+					else if (string.Equals(diagnosticLineKindText, nameof(DiagnosticLineKind.Error), StringComparison.OrdinalIgnoreCase))
+						diagnosticLine.DiagnosticLineKind = DiagnosticLineKind.Error;
+					else
+						diagnosticLine.DiagnosticLineKind = DiagnosticLineKind.Other;
+				
+					diagnosticLineList.Add(diagnosticLine);
+				}
+				
+				diagnosticLine = new DiagnosticLine
+				{
+					StartInclusiveIndex = stringWalker.PositionIndex
+				};
+				
+				startInclusiveIndex = null;
+				endExclusiveIndex = null;
+				badState = false;
+			}
+			else
+			{
+				if (diagnosticLine.FilePathTextSpan is null)
+				{
+					if (startInclusiveIndex is null) // Start: Char at index 0
+					{
+						startInclusiveIndex = stringWalker.PositionIndex;
+					}
+					else if (endExclusiveIndex is null) // Algorithm: start at position 0 inclusive until '(' exclusive
+					{
+						if (stringWalker.CurrentCharacter == '(')
+						{
+							endExclusiveIndex = stringWalker.PositionIndex;
+							
+							diagnosticLine.FilePathTextSpan = new(
+								startInclusiveIndex.Value,
+								endExclusiveIndex.Value,
+								stringWalker.SourceText);
+							
+							startInclusiveIndex = null;
+							endExclusiveIndex = null;
+							
+							_ = stringWalker.BacktrackCharacter();
+						}
+					}
+				}
+				else if (diagnosticLine.LineAndColumnIndicesTextSpan is null)
+				{
+					if (startInclusiveIndex is null)
+					{
+						startInclusiveIndex = stringWalker.PositionIndex;
+					}
+					else if (endExclusiveIndex is null)
+					{
+						if (stringWalker.CurrentCharacter == ')')
+						{
+							endExclusiveIndex = stringWalker.PositionIndex + 1;
+							
+							diagnosticLine.LineAndColumnIndicesTextSpan = new(
+								startInclusiveIndex.Value,
+								endExclusiveIndex.Value,
+								stringWalker.SourceText);
+							
+							startInclusiveIndex = null;
+							endExclusiveIndex = null;
+						}
+					}
+				}
+				else if (diagnosticLine.DiagnosticKindTextSpan is null)
+				{
+					if (startInclusiveIndex is null)
+					{
+						if (stringWalker.CurrentCharacter == ':')
+						{
+							// Skip the ':'
+							_ = stringWalker.ReadCharacter();
+							// Skip the ' '
+							_ = stringWalker.ReadCharacter();
+							
+							startInclusiveIndex = stringWalker.PositionIndex;
+						}
+					}
+					else if (endExclusiveIndex is null)
+					{
+						if (stringWalker.CurrentCharacter == ' ')
+						{
+							endExclusiveIndex = stringWalker.PositionIndex;
+							
+							diagnosticLine.DiagnosticKindTextSpan = new(
+								startInclusiveIndex.Value,
+								endExclusiveIndex.Value,
+								stringWalker.SourceText);
+							
+							startInclusiveIndex = null;
+							endExclusiveIndex = null;
+						}
+					}
+				}
+				else if (diagnosticLine.DiagnosticCodeTextSpan is null)
+				{
+					if (startInclusiveIndex is null)
+					{
+						startInclusiveIndex = stringWalker.PositionIndex;
+					}
+					else if (endExclusiveIndex is null)
+					{
+						if (stringWalker.CurrentCharacter == ':')
+						{
+							endExclusiveIndex = stringWalker.PositionIndex;
+							
+							diagnosticLine.DiagnosticCodeTextSpan = new(
+								startInclusiveIndex.Value,
+								endExclusiveIndex.Value,
+								stringWalker.SourceText);
+							
+							startInclusiveIndex = null;
+							endExclusiveIndex = null;
+						}
+					}
+				}
+				else if (diagnosticLine.MessageTextSpan is null)
+				{
+					if (startInclusiveIndex is null)
+					{
+						// Skip the ' '
+						_ = stringWalker.ReadCharacter();
+					
+						startInclusiveIndex = stringWalker.PositionIndex;
+					}
+					else if (endExclusiveIndex is null)
+					{
+						if (badState)
+						{
+							_ = stringWalker.ReadCharacter();
+							continue;
+						}
+						
+						if (stringWalker.CurrentCharacter == ']' &&
+							stringWalker.NextCharacter == '\n' || stringWalker.NextCharacter == '\r')
+						{
+							while (stringWalker.CurrentCharacter != '[')
+							{
+								if (stringWalker.BacktrackCharacter() == ParserFacts.END_OF_FILE)
+								{
+									badState = true;
+									break;
+								}
+							}
+
+							if (!badState)
+							{
+								_ = stringWalker.BacktrackCharacter();
+								endExclusiveIndex = stringWalker.PositionIndex;
+								
+								diagnosticLine.MessageTextSpan = new(
+									startInclusiveIndex.Value,
+									endExclusiveIndex.Value,
+									stringWalker.SourceText);
+						
+								startInclusiveIndex = null;
+								endExclusiveIndex = null;
+							}
+						}
+					}
+				}
+				else if (diagnosticLine.ProjectTextSpan is null)
+				{
+					if (startInclusiveIndex is null)
+					{
+						// Skip the ' '
+						_ = stringWalker.ReadCharacter();
+						// Skip the '['
+						_ = stringWalker.ReadCharacter();
+						
+						startInclusiveIndex = stringWalker.PositionIndex;
+					}
+					else if (endExclusiveIndex is null)
+					{
+						if (stringWalker.CurrentCharacter == ']')
+						{
+							endExclusiveIndex = stringWalker.PositionIndex;
+							
+							diagnosticLine.ProjectTextSpan = new(
+								startInclusiveIndex.Value,
+								endExclusiveIndex.Value,
+								stringWalker.SourceText);
+							
+							startInclusiveIndex = null;
+							endExclusiveIndex = null;
+						}
+					}
+				}
+			}
+		
+			_ = stringWalker.ReadCharacter();
+		}
+		
+		lock (_listLock)
+		{
+			var allDiagnosticLineList = diagnosticLineList.OrderBy(x => x.DiagnosticLineKind).ToList();
+		
+			_dotNetRunParseResult = new(
+				message: message,
+				allDiagnosticLineList: allDiagnosticLineList,
+				errorList: allDiagnosticLineList.Where(x => x.DiagnosticLineKind == DiagnosticLineKind.Error).ToList(),
+				warningList: allDiagnosticLineList.Where(x => x.DiagnosticLineKind == DiagnosticLineKind.Warning).ToList(),
+				otherList: allDiagnosticLineList.Where(x => x.DiagnosticLineKind == DiagnosticLineKind.Other).ToList());
+		}
+		
+		StateChanged?.Invoke();
+	}
+
+	/// <summary>
+	/// (NOTE: this has been fixed but the note is being left here as its a common issue with this code)
+	/// ================================================================================================
+	/// The following output breaks because the 'Language' for template name of 'dotnet gitignore file'
+	/// is left empty.
+	///
+	/// Template Name                             Short Name                  Language    Tags                                                                         
+	/// ----------------------------------------  --------------------------  ----------  -----------------------------------------------------------------------------
+	/// Console App                               console                     [C#],F#,VB  Common/Console                                                               
+	/// dotnet gitignore file                     gitignore,.gitignore                    Config      
+	/// </summary>
+	public List<TextEditorTextSpan> ParseOutputLineDotNetNewList(string outputEntire)
+	{
+		// TODO: This seems to have provided the desired output...
+		//       ...the code is quite nasty but I'm not feeling well,
+		//       so I'm going to leave it like this for now.
+		//       Some edge case in the future will probably break this.
+	
+		NewListModelSession = new();
+	
+		// The columns are titled: { "Template Name", "Short Name", "Language", "Tags" }
+		var keywordTags = "Tags";
+
+		var resourceUri = ResourceUri.Empty;
+		var stringWalker = new StringWalker(resourceUri, outputEntire);
+
+		var shouldCountSpaceBetweenColumns = true;
+		var spaceBetweenColumnsCount = 0;
+	
+		var isFirstColumn = true;
+		
+		var firstLocateDashes = true;
+
+		while (!stringWalker.IsEof)
+		{
+			var whitespaceWasRead = false;
+
+		
+			if (NewListModelSession.ShouldLocateKeywordTags)
+			{
+				switch (stringWalker.CurrentCharacter)
+				{
+					case 'T':
+						if (stringWalker.PeekForSubstring(keywordTags))
+						{
+							// The '-1' is due to the while loop always reading a character at the end.
+							stringWalker.SkipRange(keywordTags.Length - 1);
+
+							NewListModelSession.ShouldLocateKeywordTags = false;
+						}
+						break;
+				}
+			}
+			else if (NewListModelSession.ShouldCountDashes)
+			{
+				if (NewListModelSession.ShouldLocateDashes)
+				{
+					// Find the first dash to being counting
+					while (!stringWalker.IsEof)
+					{
+						if (stringWalker.CurrentCharacter != '-')
+						{
+							_ = stringWalker.ReadCharacter();
+							
+							if (!firstLocateDashes && shouldCountSpaceBetweenColumns)
+								spaceBetweenColumnsCount++;
+						}
+						else
+						{
+							break;
+						}
+					}
+
+					NewListModelSession.ShouldLocateDashes = false;
+				}
+				
+				shouldCountSpaceBetweenColumns = false;
+
+				// Count the '-' (dashes) to know the character length of each column.
+				if (stringWalker.CurrentCharacter != '-')
+				{
+					if (NewListModelSession.LengthOfTemplateNameColumn is null)
+						NewListModelSession.LengthOfTemplateNameColumn = NewListModelSession.DashCounter;
+					else if (NewListModelSession.LengthOfShortNameColumn is null)
+						NewListModelSession.LengthOfShortNameColumn = NewListModelSession.DashCounter;
+					else if (NewListModelSession.LengthOfLanguageColumn is null)
+						NewListModelSession.LengthOfLanguageColumn = NewListModelSession.DashCounter;
+					else if (NewListModelSession.LengthOfTagsColumn is null)
+					{
+						NewListModelSession.LengthOfTagsColumn = NewListModelSession.DashCounter;
+						NewListModelSession.ShouldCountDashes = false;
+
+						// Prep for the next step
+						NewListModelSession.ColumnLength = NewListModelSession.LengthOfTemplateNameColumn;
+					}
+
+					NewListModelSession.DashCounter = 0;
+					NewListModelSession.ShouldLocateDashes = true;
+
+					// If there were to be only one space character, the end of the while loop would read a dash.
+					_ = stringWalker.BacktrackCharacter();
+				}
+
+				NewListModelSession.DashCounter++;
+			}
+			else
+			{
+				/*
+				var startPositionIndex = stringWalker.PositionIndex;
+				
+				var templateName_StartInclusiveIndex = 0;
+				var templateName_EndExclusiveIndex = templateName_StartInclusiveIndex + NewListModelSession.LengthOfTemplateNameColumn;
+				
+				var shortName_StartInclusiveIndex = templateName_EndExclusiveIndex + spaceBetweenColumnsCount;
+				var shortName_EndExclusiveIndex = shortName_StartInclusiveIndex + NewListModelSession.LengthOfShortNameColumn;
+				
+				var language_StartInclusiveIndex = shortName_EndExclusiveIndex + spaceBetweenColumnsCount;
+				var language_EndExclusiveIndex = language_StartInclusiveIndex + NewListModelSession.LengthOfLanguageColumn;
+				
+				var tags_StartInclusiveIndex = language_EndExclusiveIndex + spaceBetweenColumnsCount;
+				var tags_EndExclusiveIndex = tags_StartInclusiveIndex + NewListModelSession.LengthOfTagsColumn;
+				
+				var columnWasEmpty = false;
+				*/
+				
+				if (isFirstColumn)
+					isFirstColumn = false;
+				else
+					stringWalker.SkipRange(spaceBetweenColumnsCount);
+
+				/*			
+				// Skip whitespace
+				while (!stringWalker.IsEof)
+				{
+					// TODO: What if a column starts with a lot of whitespace?
+					if (char.IsWhiteSpace(stringWalker.CurrentCharacter))
+					{
+						_ = stringWalker.ReadCharacter();
+						whitespaceWasRead = true;
+						
+						if (startPositionIndex + NewListModelSession.ColumnLength < stringWalker.PositionIndex)
+							columnWasEmpty = true;
+					}
+					else
+					{
+						break;
+					}
+				}
+				*/
+
+				for (int i = 0; i < NewListModelSession.ColumnLength; i++)
+				{
+					NewListModelSession.ColumnBuilder.Append(stringWalker.ReadCharacter());
+				}
+
+				if (NewListModelSession.ProjectTemplate.TemplateName is null)
+				{
+					NewListModelSession.ProjectTemplate = NewListModelSession.ProjectTemplate with
+					{
+						TemplateName = NewListModelSession.ColumnBuilder.ToString().Trim()
+					};
+
+					NewListModelSession.ColumnLength = NewListModelSession.LengthOfShortNameColumn;
+				}
+				else if (NewListModelSession.ProjectTemplate.ShortName is null)
+				{
+					NewListModelSession.ProjectTemplate = NewListModelSession.ProjectTemplate with
+					{
+						ShortName = NewListModelSession.ColumnBuilder.ToString().Trim()
+					};
+
+					NewListModelSession.ColumnLength = NewListModelSession.LengthOfLanguageColumn;
+				}
+				else if (NewListModelSession.ProjectTemplate.Language is null)
+				{
+					NewListModelSession.ProjectTemplate = NewListModelSession.ProjectTemplate with
+					{
+						Language = NewListModelSession.ColumnBuilder.ToString().Trim()
+					};
+
+					NewListModelSession.ColumnLength = NewListModelSession.LengthOfTagsColumn;
+				}
+				else if (NewListModelSession.ProjectTemplate.Tags is null)
+				{
+					NewListModelSession.ProjectTemplate = NewListModelSession.ProjectTemplate with
+					{
+						Tags = NewListModelSession.ColumnBuilder.ToString().Trim()
+					};
+
+					NewListModelSession.ProjectTemplateList.Add(NewListModelSession.ProjectTemplate);
+
+					NewListModelSession.ProjectTemplate = new(null, null, null, null);
+					NewListModelSession.ColumnLength = NewListModelSession.LengthOfTemplateNameColumn;
+					
+					isFirstColumn = true;
+				}
+
+				NewListModelSession.ColumnBuilder = new();
+			}
+
+			if (!whitespaceWasRead)
+				_ = stringWalker.ReadCharacter();
+		}
+
+		ProjectTemplateList = NewListModelSession.ProjectTemplateList;
+
+		return new();
+	}
+
+	public List<string> ParseOutputLineDotNetTestListTests(string outputEntire)
+	{
+		var textIndicatorForTheList = "The following Tests are available:";
+		var indicatorIndex = outputEntire.IndexOf(textIndicatorForTheList);
+	
+		if (indicatorIndex != -1)
+		{
+			var theFollowingTestsAreAvailableList = new List<string>();
+			var outputIndex = indicatorIndex;
+			var hasFoundFirstLineAfterIndicator = false;
+			
+			while (outputIndex < outputEntire.Length)
+			{
+				var character = outputEntire[outputIndex];
+				
+				if (!hasFoundFirstLineAfterIndicator)
+				{
+					if (character == '\r')
+					{
+						// Peek for "\r\n"
+						var peekIndex = outputIndex + 1;
+						if (peekIndex < outputEntire.Length)
+						{
+							if (outputEntire[peekIndex] == '\n')
+								outputIndex++;
+						}
+						
+						hasFoundFirstLineAfterIndicator = true;
+					}
+					else if (character == '\n')
+					{
+						hasFoundFirstLineAfterIndicator = true;
+					}
+				}
+				else
+				{
+					// Read line by line each test's fully qualified name
+					if (character == '\t' || character == ' ')
+					{
+						if (character == '\t')
+						{
+							outputIndex++;
+						}
+						if (character == ' ')
+						{
+							// This code skips 4 space characters
+							while (outputIndex < outputEntire.Length)
+							{
+								if (outputEntire[outputIndex] == ' ')
+									outputIndex++;
+								else
+									break;
+							}
+						}
+					
+						var startInclusiveIndex = outputIndex;
+						var endExclusiveIndex = -1; // Exclusive because don't include the line ending
+						
+						while (outputIndex < outputEntire.Length)
+						{
+							if (outputEntire[outputIndex] == '\r')
+							{
+								endExclusiveIndex = outputIndex;
+							
+								// Peek for "\r\n"
+								var peekIndex = outputIndex + 1;
+								if (peekIndex < outputEntire.Length)
+								{
+									if (outputEntire[peekIndex] == '\n')
+										outputIndex++;
+								}
+							}
+							else if (outputEntire[outputIndex] == '\n')
+							{
+								endExclusiveIndex = outputIndex;
+							}
+							
+							if (endExclusiveIndex != -1)
+								break;
+							
+							outputIndex++;
+						}
+						
+						// If final test didn't end with a newline. (this is a presumed possibility, NOT backed up by fact)
+						if (endExclusiveIndex == -1 && outputIndex == outputEntire.Length)
+							endExclusiveIndex = outputEntire.Length;
+					
+						theFollowingTestsAreAvailableList.Add(
+							outputEntire.Substring(startInclusiveIndex, endExclusiveIndex - startInclusiveIndex));
+					}
+					else
+					{
+						// The line did not start with '\t' or etc... therefore skip to the next line
+						while (outputIndex < outputEntire.Length)
+						{
+							if (outputEntire[outputIndex] == '\r')
+							{
+								// Peek for "\r\n"
+								var peekIndex = outputIndex + 1;
+								if (peekIndex < outputEntire.Length)
+								{
+									if (outputEntire[peekIndex] == '\n')
+										outputIndex++;
+								}
+								
+								break;
+							}
+							else if (outputEntire[outputIndex] == '\n')
+							{
+								break;
+							}
+							
+							outputIndex++;
+						}
+					}
+				}
+				
+				outputIndex++;
+			}
+			
+			return theFollowingTestsAreAvailableList;
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	public class NewListModel
+	{
+		public bool ShouldLocateKeywordTags { get; set; } = true;
+		public bool ShouldCountDashes { get; set; } = true;
+		public bool ShouldLocateDashes { get; set; } = true;
+		public int DashCounter { get; set; } = 0;
+		public int? LengthOfTemplateNameColumn { get; set; } = null;
+		public int? LengthOfShortNameColumn { get; set; } = null;
+		public int? LengthOfLanguageColumn { get; set; } = null;
+		public int? LengthOfTagsColumn { get; set; } = null;
+		public StringBuilder ColumnBuilder { get; set; } = new StringBuilder();
+		public int? ColumnLength { get; set; } = null;
+		public ProjectTemplate ProjectTemplate { get; set; } = new ProjectTemplate(null, null, null, null);
+		public List<ProjectTemplate> ProjectTemplateList { get; set; } = new List<ProjectTemplate>();
+	}
+	/* End DotNetCliOutputParser */
+	
+	/* Start IDotNetCommandFactory */
+	private List<TreeViewNoType> _nodeList = new();
+    private TreeViewNamespacePath? _nodeOfViewModel = null;
+
+	public void Initialize()
+	{
+		// NuGetPackageManagerContext
+		{
+			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+				new KeymapArgs
+				{
+					Key = "n",
+					Code = "KeyN",
+					ShiftKey = false,
+					CtrlKey = true,
+					AltKey = true,
+					MetaKey = false,
+					LayerKey = Key<KeymapLayer>.Empty,
+				},
+				ContextHelper.ConstructFocusContextElementCommand(
+					ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager", _commonService.JsRuntimeCommonApi, _commonService));
+		}
+		// CSharpReplContext
+		{
+			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+				new KeymapArgs
+				{
+					Key = "r",
+					Code = "KeyR",
+					ShiftKey = false,
+					CtrlKey = true,
+					AltKey = true,
+					MetaKey = false,
+					LayerKey = Key<KeymapLayer>.Empty,
+				},
+				ContextHelper.ConstructFocusContextElementCommand(
+					ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl", _commonService.JsRuntimeCommonApi, _commonService));
+		}
+		// SolutionExplorerContext
+		{
+			var focusSolutionExplorerCommand = ContextHelper.ConstructFocusContextElementCommand(
+				ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer", _commonService.JsRuntimeCommonApi, _commonService);
+
+			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+					new KeymapArgs
+					{
+						Key = "s",
+						Code = "KeyS",
+						ShiftKey = false,
+						CtrlKey = true,
+						AltKey = true,
+						MetaKey = false,
+						LayerKey = Key<KeymapLayer>.Empty,
+					},
+					focusSolutionExplorerCommand);
+
+			// Set active solution explorer tree view node to be the
+			// active text editor view model and,
+			// Set focus to the solution explorer;
+			{
+				var focusTextEditorCommand = new CommonCommand(
+					"Focus: SolutionExplorer (with text editor view model)", "focus-solution-explorer_with-text-editor-view-model", false,
+					async commandArgs =>
+					{
+						await PerformGetFlattenedTree().ConfigureAwait(false);
+
+						var localNodeOfViewModel = _nodeOfViewModel;
+
+						if (localNodeOfViewModel is null)
+							return;
+
+						_commonService.TreeView_SetActiveNodeAction(
+							DotNetSolutionState.TreeViewSolutionExplorerStateKey,
+							localNodeOfViewModel,
+							false,
+							false);
+
+						var elementId = _commonService.TreeView_GetActiveNodeElementId(DotNetSolutionState.TreeViewSolutionExplorerStateKey);
+
+						await focusSolutionExplorerCommand.CommandFunc
+							.Invoke(commandArgs)
+							.ConfigureAwait(false);
+					});
+
+				_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+						new KeymapArgs
+						{
+							Key = "S",
+							Code = "KeyS",
+							CtrlKey = true,
+							ShiftKey = true,
+							AltKey = true,
+							MetaKey = false,
+							LayerKey = Key<KeymapLayer>.Empty,
+						},
+						focusTextEditorCommand);
+			}
+		}
+	}
+
+    private async Task PerformGetFlattenedTree()
+    {
+		_nodeList.Clear();
+
+		var group = _textEditorService.Group_GetOrDefault(IdeService.EditorTextEditorGroupKey);
+
+		if (group is not null)
+		{
+			var textEditorViewModel = _textEditorService.ViewModel_GetOrDefault(group.ActiveViewModelKey);
+
+			if (textEditorViewModel is not null)
+			{
+				if (_commonService.TryGetTreeViewContainer(
+						DotNetSolutionState.TreeViewSolutionExplorerStateKey,
+						out var treeViewContainer) &&
+                    treeViewContainer is not null)
+				{
+					await RecursiveGetFlattenedTree(treeViewContainer.RootNode, textEditorViewModel).ConfigureAwait(false);
+				}
+			}
+		}
+    }
+
+    private async Task RecursiveGetFlattenedTree(
+        TreeViewNoType treeViewNoType,
+        TextEditorViewModel textEditorViewModel)
+    {
+        _nodeList.Add(treeViewNoType);
+
+        if (treeViewNoType is TreeViewNamespacePath treeViewNamespacePath)
+        {
+            if (textEditorViewModel is not null)
+            {
+                var viewModelAbsolutePath = _commonService.EnvironmentProvider.AbsolutePathFactory(
+                    textEditorViewModel.PersistentState.ResourceUri.Value,
+                    false);
+
+                if (viewModelAbsolutePath.Value ==
+                        treeViewNamespacePath.Item.AbsolutePath.Value)
+                {
+                    _nodeOfViewModel = treeViewNamespacePath;
+                }
+            }
+
+            switch (treeViewNamespacePath.Item.AbsolutePath.ExtensionNoPeriod)
+            {
+                case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
+                    await treeViewNamespacePath.LoadChildListAsync().ConfigureAwait(false);
+                    break;
+            }
+        }
+
+        await treeViewNoType.LoadChildListAsync().ConfigureAwait(false);
+
+        foreach (var node in treeViewNoType.ChildList)
+        {
+            await RecursiveGetFlattenedTree(node, textEditorViewModel).ConfigureAwait(false);
+        }
+    }
+	/* End IDotNetCommandFactory */
+	
+	/* Start IDotNetMenuOptionsFactory */
+    public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(
+		TreeViewSolution treeViewSolution,
+		TreeViewNamespacePath projectNode,
+		ITerminal terminal,
+		CommonService commonService,
+		Func<Task> onAfterCompletion)
+	{
+		return new MenuOptionRecord("Remove (no files are deleted)", MenuOptionKind.Delete,
+			widgetRendererType: _dotNetComponentRenderers.RemoveCSharpProjectFromSolutionRendererType,
+			widgetParameterMap: new Dictionary<string, object?>
+			{
+				{
+					nameof(IRemoveCSharpProjectFromSolutionRendererType.AbsolutePath),
+					projectNode.Item.AbsolutePath
+				},
+				{
+					nameof(IDeleteFileFormRendererType.OnAfterSubmitFunc),
+					new Func<AbsolutePath, Task>(
+						_ =>
+						{
+							Enqueue_PerformRemoveCSharpProjectReferenceFromSolution(
+								treeViewSolution,
+								projectNode,
+								terminal,
+								commonService,
+								onAfterCompletion);
+
+							return Task.CompletedTask;
+						})
+				},
+			});
+	}
+
+	public MenuOptionRecord AddProjectToProjectReference(
+		TreeViewNamespacePath projectReceivingReference,
+		ITerminal terminal,
+		IdeService ideService,
+		Func<Task> onAfterCompletion)
+	{
+		return new MenuOptionRecord("Add Project Reference", MenuOptionKind.Other,
+			onClickFunc:
+			() =>
+			{
+				PerformAddProjectToProjectReference(
+					projectReceivingReference,
+					terminal,
+					ideService,
+					onAfterCompletion);
+
+				return Task.CompletedTask;
+			});
+	}
+
+	public MenuOptionRecord RemoveProjectToProjectReference(
+		TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
+		ITerminal terminal,
+		CommonService commonService,
+		Func<Task> onAfterCompletion)
+	{
+		return new MenuOptionRecord("Remove Project Reference", MenuOptionKind.Other,
+			onClickFunc:
+				() =>
+				{
+					Enqueue_PerformRemoveProjectToProjectReference(
+						treeViewCSharpProjectToProjectReference,
+						terminal,
+						commonService,
+						onAfterCompletion);
+
+					return Task.CompletedTask;
+				});
+	}
+
+	public MenuOptionRecord MoveProjectToSolutionFolder(
+		TreeViewSolution treeViewSolution,
+		TreeViewNamespacePath treeViewProjectToMove,
+		ITerminal terminal,
+		CommonService commonService,
+		Func<Task> onAfterCompletion)
+	{
+		return new MenuOptionRecord("Move to Solution Folder", MenuOptionKind.Other,
+			widgetRendererType: _ideService.IdeComponentRenderers.FileFormRendererType,
+			widgetParameterMap: new Dictionary<string, object?>
+			{
+				{ nameof(IFileFormRendererType.FileName), string.Empty },
+				{ nameof(IFileFormRendererType.IsDirectory), false },
+				{
+					nameof(IFileFormRendererType.OnAfterSubmitFunc),
+					new Func<string, IFileTemplate?, List<IFileTemplate>, Task>((nextName, _, _) =>
+					{
+						Enqueue_PerformMoveProjectToSolutionFolder(
+							treeViewSolution,
+							treeViewProjectToMove,
+							nextName,
+							terminal,
+							commonService,
+							onAfterCompletion);
+
+						return Task.CompletedTask;
+					})
+				},
+			});
+	}
+
+	public MenuOptionRecord RemoveNuGetPackageReferenceFromProject(
+		NamespacePath modifyProjectNamespacePath,
+		TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
+		ITerminal terminal,
+		CommonService commonService,
+		Func<Task> onAfterCompletion)
+	{
+		return new MenuOptionRecord("Remove NuGet Package Reference", MenuOptionKind.Other,
+			onClickFunc: () =>
+			{
+				Enqueue_PerformRemoveNuGetPackageReferenceFromProject(
+					modifyProjectNamespacePath,
+					treeViewCSharpProjectNugetPackageReference,
+					terminal,
+					commonService,
+					onAfterCompletion);
+
+				return Task.CompletedTask;
+			});
+	}
+
+    private void Enqueue_PerformRemoveCSharpProjectReferenceFromSolution(
+		TreeViewSolution treeViewSolution,
+		TreeViewNamespacePath projectNode,
+		ITerminal terminal,
+		CommonService commonService,
+		Func<Task> onAfterCompletion)
+	{
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(DotNetMenuOptionsFactoryWorkKind.PerformRemoveCSharpProjectReferenceFromSolution);
+
+            _queue_PerformRemoveCSharpProjectReferenceFromSolution.Enqueue(
+				(treeViewSolution, projectNode, terminal, commonService, onAfterCompletion));
+
+            _ideService.CommonService.Continuous_EnqueueGroup(this);
+        }
+	}
+	
+	private ValueTask Do_PerformRemoveCSharpProjectReferenceFromSolution(
+		TreeViewSolution treeViewSolution,
+		TreeViewNamespacePath projectNode,
+		ITerminal terminal,
+		CommonService commonService,
+		Func<Task> onAfterCompletion)
+	{
+        var workingDirectory = treeViewSolution.Item.NamespacePath.AbsolutePath.ParentDirectory!;
+
+        var formattedCommand = DotNetCliCommandFormatter.FormatRemoveCSharpProjectReferenceFromSolutionAction(
+            treeViewSolution.Item.NamespacePath.AbsolutePath.Value,
+            projectNode.Item.AbsolutePath.Value);
+
+        var terminalCommandRequest = new TerminalCommandRequest(
+            formattedCommand.Value,
+            workingDirectory)
+        {
+            ContinueWithFunc = parsedCommand => onAfterCompletion.Invoke()
+        };
+
+        terminal.EnqueueCommand(terminalCommandRequest);
+        return ValueTask.CompletedTask;
+    }
+
+	public void PerformAddProjectToProjectReference(
+		TreeViewNamespacePath projectReceivingReference,
+		ITerminal terminal,
+		IdeService ideService,
+		Func<Task> onAfterCompletion)
+	{
+		ideService.Enqueue(new IdeWorkArgs
+		{
+			WorkKind = IdeWorkKind.RequestInputFileStateForm,
+			StringValue = $"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
+			OnAfterSubmitFunc = referencedProject =>
+			{
+				if (referencedProject.ExactInput is null)
+					return Task.CompletedTask;
+
+				var formattedCommand = DotNetCliCommandFormatter.FormatAddProjectToProjectReference(
+					projectReceivingReference.Item.AbsolutePath.Value,
+					referencedProject.Value);
+
+				var terminalCommandRequest = new TerminalCommandRequest(
+					formattedCommand.Value,
+					null)
+				{
+					ContinueWithFunc = parsedCommand =>
+					{
+						NotificationHelper.DispatchInformative("Add Project Reference", $"Modified {projectReceivingReference.Item.AbsolutePath.NameWithExtension} to have a reference to {referencedProject.NameWithExtension}", ideService.CommonService, TimeSpan.FromSeconds(7));
+						return onAfterCompletion.Invoke();
+					}
+				};
+
+				terminal.EnqueueCommand(terminalCommandRequest);
+				return Task.CompletedTask;
+			},
+			SelectionIsValidFunc = absolutePath =>
+			{
+				if (absolutePath.ExactInput is null || absolutePath.IsDirectory)
+					return Task.FromResult(false);
+
+				return Task.FromResult(
+					absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT));
+			},
+			InputFilePatterns = new()
+			{
+				new InputFilePattern(
+					"C# Project",
+					absolutePath => absolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+			}
+		});
+	}
+
+    public void Enqueue_PerformRemoveProjectToProjectReference(
+		TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
+		ITerminal terminal,
+		CommonService commonService,
+		Func<Task> onAfterCompletion)
+	{
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(DotNetMenuOptionsFactoryWorkKind.PerformRemoveProjectToProjectReference);
+
+            _queue_PerformRemoveProjectToProjectReference.Enqueue(
+				(treeViewCSharpProjectToProjectReference, terminal, commonService, onAfterCompletion));
+
+            _ideService.CommonService.Continuous_EnqueueGroup(this);
+        }
+	}
+	
+	public ValueTask Do_PerformRemoveProjectToProjectReference(
+		TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
+		ITerminal terminal,
+		CommonService commonService,
+		Func<Task> onAfterCompletion)
+	{
+        var formattedCommand = DotNetCliCommandFormatter.FormatRemoveProjectToProjectReference(
+            treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.Value,
+            treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.Value);
+
+        var terminalCommandRequest = new TerminalCommandRequest(
+            formattedCommand.Value,
+            null)
+        {
+            ContinueWithFunc = parsedCommand =>
+            {
+                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.NameWithExtension} to have a reference to {treeViewCSharpProjectToProjectReference.Item.ReferenceProjectAbsolutePath.NameWithExtension}", commonService, TimeSpan.FromSeconds(7));
+                return onAfterCompletion.Invoke();
+            }
+        };
+
+        terminal.EnqueueCommand(terminalCommandRequest);
+        return ValueTask.CompletedTask;
+    }
+
+    public void Enqueue_PerformMoveProjectToSolutionFolder(
+		TreeViewSolution treeViewSolution,
+		TreeViewNamespacePath treeViewProjectToMove,
+		string solutionFolderPath,
+		ITerminal terminal,
+		CommonService commonService,
+		Func<Task> onAfterCompletion)
+	{
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(DotNetMenuOptionsFactoryWorkKind.PerformMoveProjectToSolutionFolder);
+
+            _queue_PerformMoveProjectToSolutionFolder.Enqueue(
+				(treeViewSolution, treeViewProjectToMove, solutionFolderPath, terminal, commonService, onAfterCompletion));
+
+            _ideService.CommonService.Continuous_EnqueueGroup(this);
+        }
+	}
+	
+	public ValueTask Do_PerformMoveProjectToSolutionFolder(
+		TreeViewSolution treeViewSolution,
+		TreeViewNamespacePath treeViewProjectToMove,
+		string solutionFolderPath,
+		ITerminal terminal,
+		CommonService commonService,
+		Func<Task> onAfterCompletion)
+	{
+        var formattedCommand = DotNetCliCommandFormatter.FormatMoveProjectToSolutionFolder(
+            treeViewSolution.Item.NamespacePath.AbsolutePath.Value,
+            treeViewProjectToMove.Item.AbsolutePath.Value,
+            solutionFolderPath);
+
+        var terminalCommandRequest = new TerminalCommandRequest(
+            formattedCommand.Value,
+            null)
+        {
+            ContinueWithFunc = parsedCommand =>
+            {
+                NotificationHelper.DispatchInformative("Move Project To Solution Folder", $"Moved {treeViewProjectToMove.Item.AbsolutePath.NameWithExtension} to the Solution Folder path: {solutionFolderPath}", commonService, TimeSpan.FromSeconds(7));
+                return onAfterCompletion.Invoke();
+            }
+        };
+
+        Enqueue_PerformRemoveCSharpProjectReferenceFromSolution(
+            treeViewSolution,
+            treeViewProjectToMove,
+            terminal,
+            commonService,
+            () =>
+            {
+                terminal.EnqueueCommand(terminalCommandRequest);
+                return Task.CompletedTask;
+            });
+
+        return ValueTask.CompletedTask;
+    }
+
+    public void Enqueue_PerformRemoveNuGetPackageReferenceFromProject(
+		NamespacePath modifyProjectNamespacePath,
+		TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
+		ITerminal terminal,
+		CommonService commonService,
+		Func<Task> onAfterCompletion)
+	{
+        lock (_workLock)
+        {
+            _workKindQueue.Enqueue(DotNetMenuOptionsFactoryWorkKind.PerformRemoveNuGetPackageReferenceFromProject);
+
+            _queue_PerformRemoveNuGetPackageReferenceFromProject.Enqueue(
+				(modifyProjectNamespacePath, treeViewCSharpProjectNugetPackageReference, terminal, commonService, onAfterCompletion));
+
+            _ideService.CommonService.Continuous_EnqueueGroup(this);
+        }
+	}
+	
+	public ValueTask Do_PerformRemoveNuGetPackageReferenceFromProject(
+		NamespacePath modifyProjectNamespacePath,
+		TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
+		ITerminal terminal,
+		CommonService commonService,
+		Func<Task> onAfterCompletion)
+	{
+        var formattedCommand = DotNetCliCommandFormatter.FormatRemoveNugetPackageReferenceFromProject(
+            modifyProjectNamespacePath.AbsolutePath.Value,
+            treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id);
+
+        var terminalCommandRequest = new TerminalCommandRequest(
+            formattedCommand.Value,
+            null)
+        {
+            ContinueWithFunc = parsedCommand =>
+            {
+                NotificationHelper.DispatchInformative("Remove Project Reference", $"Modified {modifyProjectNamespacePath.AbsolutePath.NameWithExtension} to NOT have a reference to {treeViewCSharpProjectNugetPackageReference.Item.LightWeightNugetPackageRecord.Id}", commonService, TimeSpan.FromSeconds(7));
+                return onAfterCompletion.Invoke();
+            }
+        };
+
+        terminal.EnqueueCommand(terminalCommandRequest);
+        return ValueTask.CompletedTask;
+    }
+	/* End IDotNetMenuOptionsFactory */
+	
+	/* Start DotNetBackgroundTaskApi */
 	private readonly IdeService _ideService;
 	private readonly IAppDataService _appDataService;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
@@ -694,39 +2091,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 
         treeViewStringFragment.Item.TerminalCommandRequest = terminalCommandRequest;
         _ideService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
-    }
-
-    public ValueTask HandleEvent()
-    {
-        if (!_workQueue.TryDequeue(out DotNetBackgroundTaskApiWorkArgs workArgs))
-            return ValueTask.CompletedTask;
-
-        switch (workArgs.WorkKind)
-        {
-            case DotNetBackgroundTaskApiWorkKind.SolutionExplorer_TreeView_MultiSelect_DeleteFiles:
-                return Do_SolutionExplorer_TreeView_MultiSelect_DeleteFiles(workArgs.TreeViewCommandArgs);
-            case DotNetBackgroundTaskApiWorkKind.WalkExtensionsDotNetInitializerOnInit:
-                return Do_WalkExtensionsDotNetInitializerOnInit();
-            case DotNetBackgroundTaskApiWorkKind.WalkExtensionsDotNetInitializerOnAfterRender:
-                return Do_WalkExtensionsDotNetInitializerOnAfterRender();
-            case DotNetBackgroundTaskApiWorkKind.SubmitNuGetQuery:
-                return Do_SubmitNuGetQuery(workArgs.NugetPackageManagerQuery);
-            case DotNetBackgroundTaskApiWorkKind.RunTestByFullyQualifiedName:
-                return Do_RunTestByFullyQualifiedName(workArgs.TreeViewStringFragment, workArgs.FullyQualifiedName, workArgs.TreeViewProjectTestModel);
-            case DotNetBackgroundTaskApiWorkKind.SetDotNetSolution:
-	            return Do_SetDotNetSolution(workArgs.DotNetSolutionAbsolutePath);
-			case DotNetBackgroundTaskApiWorkKind.SetDotNetSolutionTreeView:
-	            return Do_SetDotNetSolutionTreeView(workArgs.DotNetSolutionModelKey);
-			case DotNetBackgroundTaskApiWorkKind.Website_AddExistingProjectToSolution:
-	            return Do_Website_AddExistingProjectToSolution(
-	                workArgs.DotNetSolutionModelKey,
-					workArgs.ProjectTemplateShortName,
-					workArgs.CSharpProjectName,
-	                workArgs.CSharpProjectAbsolutePath);
-            default:
-                Console.WriteLine($"{nameof(DotNetBackgroundTaskApi)} {nameof(HandleEvent)} default case");
-                return ValueTask.CompletedTask;
-        }
     }
     
     #region DotNetSolutionIdeApi
@@ -1587,6 +2951,6 @@ public class DotNetBackgroundTaskApi : IBackgroundTaskGroup
 			};
 		});
 	}
-
     #endregion
+	/* End DotNetBackgroundTaskApi */
 }
