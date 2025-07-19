@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
-using Walk.Extensions.DotNet.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.Nugets.Models;
 
@@ -11,31 +9,27 @@ namespace Walk.Extensions.DotNet.Nugets.Displays;
 public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPackageManagerRendererType
 {
 	[Inject]
-	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private INugetPackageManagerProvider NugetPackageManagerProvider { get; set; } = null!;
-	[Inject]
-	private CommonService CommonService { get; set; } = null!;
+	private DotNetService DotNetService { get; set; } = null!;
 
 	private bool _performingNugetQuery;
 	private Exception? _exceptionFromNugetQuery;
 
 	public string NugetQuery
 	{
-		get => DotNetBackgroundTaskApi.NuGetPackageManagerService.GetNuGetPackageManagerState().NugetQuery;
-		set => DotNetBackgroundTaskApi.NuGetPackageManagerService.ReduceSetNugetQueryAction(value);
+		get => DotNetService.GetNuGetPackageManagerState().NugetQuery;
+		set => DotNetService.ReduceSetNugetQueryAction(value);
 	}
 
 	public bool IncludePrerelease
 	{
-		get => DotNetBackgroundTaskApi.NuGetPackageManagerService.GetNuGetPackageManagerState().IncludePrerelease;
-		set => DotNetBackgroundTaskApi.NuGetPackageManagerService.ReduceSetIncludePrereleaseAction(value);
+		get => DotNetService.GetNuGetPackageManagerState().IncludePrerelease;
+		set => DotNetService.ReduceSetIncludePrereleaseAction(value);
 	}
 
 	protected override void OnInitialized()
 	{
-		DotNetBackgroundTaskApi.NuGetPackageManagerService.NuGetPackageManagerStateChanged += OnNuGetPackageManagerStateChanged;
-		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
+		DotNetService.NuGetPackageManagerStateChanged += OnNuGetPackageManagerStateChanged;
+		DotNetService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
 	}
 
 	private void SelectedProjectToModifyChanged(ChangeEventArgs changeEventArgs, DotNetSolutionState dotNetSolutionState)
@@ -53,7 +47,7 @@ public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPac
 				.SingleOrDefault(x => x.ProjectIdGuid == projectIdGuid);
 		}
 
-		DotNetBackgroundTaskApi.NuGetPackageManagerService.ReduceSetSelectedProjectToModifyAction(selectedProject);
+		DotNetService.ReduceSetSelectedProjectToModifyAction(selectedProject);
 	}
 
 	private bool CheckIfProjectIsSelected(IDotNetProject dotNetProject, NuGetPackageManagerState nuGetPackageManagerState)
@@ -75,7 +69,7 @@ public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPac
 
 	private async Task SubmitNuGetQueryOnClick()
 	{
-		var query = NugetPackageManagerProvider.BuildQuery(NugetQuery, IncludePrerelease);
+		var query = DotNetService.BuildQuery(NugetQuery, IncludePrerelease);
 
 		try
 		{
@@ -86,9 +80,9 @@ public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPac
 				await InvokeAsync(StateHasChanged);
 			}
 
-			DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
+			DotNetService.Enqueue(new DotNetWorkArgs
 			{
-				WorkKind = DotNetBackgroundTaskApiWorkKind.SubmitNuGetQuery,
+				WorkKind = DotNetWorkKind.SubmitNuGetQuery,
 				NugetPackageManagerQuery = query,
 			});
 		}
@@ -115,7 +109,7 @@ public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPac
 	
 	public void Dispose()
 	{
-		DotNetBackgroundTaskApi.NuGetPackageManagerService.NuGetPackageManagerStateChanged -= OnNuGetPackageManagerStateChanged;
-		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
+		DotNetService.NuGetPackageManagerStateChanged -= OnNuGetPackageManagerStateChanged;
+		DotNetService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
 	}
 }

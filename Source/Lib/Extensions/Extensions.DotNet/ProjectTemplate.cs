@@ -1,4 +1,4 @@
-namespace Walk.Extensions.DotNet.Websites.ProjectTemplates.Models;
+namespace Walk.Extensions.DotNet;
 
 public record ProjectTemplate(
 	string? TemplateName,

@@ -1,14 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using Walk.Common.RazorLib.Installations.Models;
+using Walk.Ide.RazorLib;
+using Walk.Ide.RazorLib.AppDatas.Models;
 using Walk.Ide.RazorLib.Installations.Models;
 using Walk.Extensions.DotNet.CSharpProjects.Displays;
-using Walk.Extensions.DotNet.Menus.Models;
-using Walk.Extensions.DotNet.Nugets.Models;
 using Walk.Extensions.DotNet.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.Nugets.Displays;
-using Walk.Extensions.DotNet.CommandLines.Models;
-using Walk.Extensions.DotNet.BackgroundTasks.Models;
-using Walk.Extensions.DotNet.Commands;
 
 namespace Walk.Extensions.DotNet.Installations.Models;
 
@@ -53,12 +50,15 @@ public static class ServiceCollectionExtensions
 		Func<WalkIdeConfig, WalkIdeConfig>? configure = null)
 	{
 		return services
-			.AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
-			.AddScoped<DotNetCliOutputParser>()
-			.AddScoped<DotNetBackgroundTaskApi>()
-			.AddScoped<IDotNetCommandFactory, DotNetCommandFactory>()
-			.AddScoped<IDotNetMenuOptionsFactory, DotNetMenuOptionsFactory>()
-			.AddScoped<IDotNetComponentRenderers>(_ => _dotNetComponentRenderers);
+		    .AddScoped<DotNetService>(sp =>
+		    {
+		        return new DotNetService(
+		            _dotNetComponentRenderers,
+		            sp.GetRequiredService<IdeService>(),
+            	    sp.GetRequiredService<HttpClient>(),
+            	    sp.GetRequiredService<IAppDataService>(),
+                    sp);
+		    });
 	}
 
 	private static readonly DotNetComponentRenderers _dotNetComponentRenderers = new(

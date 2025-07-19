@@ -1,6 +1,5 @@
 @using Walk.Ide.RazorLib.Terminals.Models;
 @using Walk.Extensions.DotNet.CSharpProjects.Models;
-@using Walk.Extensions.DotNet.Websites.ProjectTemplates.Models;
 
 <div class="di_ide_c-sharp-project-form di_ide_form @GetCssClassForActivePanelKind(_viewModel.ActivePanelKind)">
     
@@ -12,7 +11,7 @@
     }
     else
     {
-    	var appOptionsState = IdeService.TextEditorService.CommonService.GetAppOptionsState();
+    	var appOptionsState = DotNetService.IdeService.TextEditorService.CommonService.GetAppOptionsState();
     
     	var iconDriver = new IconDriver(
 			appOptionsState.Options.IconSizeInPixels,

@@ -5,7 +5,6 @@ using Walk.CompilerServices.DotNetSolution.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib;
-using Walk.Extensions.DotNet.BackgroundTasks.Models;
 
 namespace Walk.Extensions.DotNet.DotNetSolutions.Models;
 
@@ -30,7 +29,7 @@ public record DotNetSolutionState(
 
     public static void ShowInputFile(
     	IdeService ideService,
-    	DotNetBackgroundTaskApi dotNetBackgroundTaskApi)
+    	DotNetService dotNetService)
     {
         ideService.Enqueue(new IdeWorkArgs
 		{
@@ -39,9 +38,9 @@ public record DotNetSolutionState(
             OnAfterSubmitFunc = absolutePath =>
             {
                 if (absolutePath.ExactInput is not null)
-                    dotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
+                    dotNetService.Enqueue(new DotNetWorkArgs
                     {
-                    	WorkKind = DotNetBackgroundTaskApiWorkKind.SetDotNetSolution,
+                    	WorkKind = DotNetWorkKind.SetDotNetSolution,
                     	DotNetSolutionAbsolutePath = absolutePath,
                     });
 

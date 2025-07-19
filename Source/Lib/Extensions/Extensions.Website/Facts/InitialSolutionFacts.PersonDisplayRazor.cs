@@ -1,8 +1,8 @@
-﻿namespace Walk.Ide.Wasm.Facts;
+namespace Walk.Ide.Wasm.Facts;
 
 public partial class InitialSolutionFacts
 {
-    public const string PERSON_DISPLAY_RAZOR_ABSOLUTE_FILE_PATH = @"/BlazorCrudApp/BlazorCrudApp.Wasm/Persons/PersonDisplay.razor";
+    public const string PERSON_DISPLAY_RAZOR_ABSOLUTE_FILE_PATH = @"/BlazorCrudApp/ConsoleApp/Persons/PersonDisplay.razor";
     public const string PERSON_DISPLAY_RAZOR_CONTENTS = @"<div class=""bca_person"">
 	<div class=""bca_person-title"">
 		@Person.DisplayName

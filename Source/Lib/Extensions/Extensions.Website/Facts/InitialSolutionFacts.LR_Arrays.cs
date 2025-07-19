@@ -2,7 +2,7 @@ namespace Walk.Ide.Wasm.Facts;
 
 public partial class InitialSolutionFacts
 {
-    public const string PERSON_CS_ABSOLUTE_FILE_PATH = @"/BlazorCrudApp/BlazorCrudApp.Wasm/Persons/Person.cs";
+    public const string PERSON_CS_ABSOLUTE_FILE_PATH = @"/BlazorCrudApp/ConsoleApp/Persons/Person.cs";
     public const string PERSON_CS_CONTENTS =
 """""""""
 using Microsoft.AspNetCore.Components;

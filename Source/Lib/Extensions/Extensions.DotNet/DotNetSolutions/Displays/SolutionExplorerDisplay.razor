@@ -11,8 +11,8 @@
 
 <div id="@ContextFacts.SolutionExplorerContext.ContextElementId" class="di_ide_solution-explorer-display" style="height: 100%">
     @{
-    	var dotNetSolutionState = DotNetBackgroundTaskApi.DotNetSolutionService.GetDotNetSolutionState();
-    	var appOptionsState = IdeService.TextEditorService.CommonService.GetAppOptionsState();
+    	var dotNetSolutionState = DotNetService.GetDotNetSolutionState();
+    	var appOptionsState = DotNetService.IdeService.TextEditorService.CommonService.GetAppOptionsState();
     }
 
 	@if (appOptionsState.Options.ShowPanelTitles)
@@ -30,12 +30,12 @@
 	    </div>
     }
 
-    <div class="di_ide_section-body @IdeService.TextEditorService.CommonService.Options_ShowPanelTitlesCssClass">
+    <div class="di_ide_section-body @DotNetService.IdeService.TextEditorService.CommonService.Options_ShowPanelTitlesCssClass">
         @if (dotNetSolutionState.DotNetSolutionModel is null)
         {
             <button class="di_button"
                     style="display: inline; margin-right: 12px; margin-bottom: 12px;"
-                    @onclick="() => DotNetSolutionState.ShowInputFile(IdeService, DotNetBackgroundTaskApi)">
+                    @onclick="() => DotNetSolutionState.ShowInputFile(DotNetService.IdeService, DotNetService)">
                 Open Solution
             </button>
 

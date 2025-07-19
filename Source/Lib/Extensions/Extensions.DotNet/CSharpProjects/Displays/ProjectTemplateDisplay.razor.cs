@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Extensions.DotNet.Websites.ProjectTemplates.Models;
 
 namespace Walk.Extensions.DotNet.CSharpProjects.Displays;
 

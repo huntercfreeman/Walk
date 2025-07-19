@@ -4,9 +4,6 @@ using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.TextEditor.RazorLib;
-using Walk.Extensions.DotNet.CommandLines.Models;
-using Walk.Extensions.DotNet.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.Outputs.Models;
 
 namespace Walk.Extensions.DotNet.Outputs.Displays.Internals;
@@ -14,11 +11,7 @@ namespace Walk.Extensions.DotNet.Outputs.Displays.Internals;
 public partial class OutputDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
-    [Inject]
-    private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private TextEditorService TextEditorService { get; set; } = null!;
+    private DotNetService DotNetService { get; set; } = null!;
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
     
@@ -28,22 +21,22 @@ public partial class OutputDisplay : ComponentBase, IDisposable
 	private OutputTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		TextEditorService.CommonService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+		DotNetService.TextEditorService.CommonService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
     
     protected override void OnInitialized()
     {
     	_treeViewKeyboardEventHandler = new OutputTreeViewKeyboardEventHandler(
-			TextEditorService,
+			DotNetService.TextEditorService,
 			ServiceProvider);
 
 		_treeViewMouseEventHandler = new OutputTreeViewMouseEventHandler(
-			TextEditorService,
+			DotNetService.TextEditorService,
 			ServiceProvider);
     
-    	DotNetCliOutputParser.StateChanged += DotNetCliOutputParser_StateChanged;
-    	DotNetBackgroundTaskApi.OutputService.OutputStateChanged += OnOutputStateChanged;
+    	DotNetService.StateChanged += DotNetCliOutputParser_StateChanged;
+    	DotNetService.OutputStateChanged += OnOutputStateChanged;
     	
-    	if (DotNetBackgroundTaskApi.OutputService.GetOutputState().DotNetRunParseResultId != DotNetCliOutputParser.GetDotNetRunParseResult().Id)
+    	if (DotNetService.GetOutputState().DotNetRunParseResultId != DotNetService.GetDotNetRunParseResult().Id)
     		DotNetCliOutputParser_StateChanged();
     }
     
@@ -51,12 +44,12 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     {
 		_eventThrottle.Run((Func<CancellationToken, Task>)(_ =>
     	{
-    		if (DotNetBackgroundTaskApi.OutputService.GetOutputState().DotNetRunParseResultId == DotNetCliOutputParser.GetDotNetRunParseResult().Id)
+    		if (DotNetService.GetOutputState().DotNetRunParseResultId == DotNetService.GetDotNetRunParseResult().Id)
     			return Task.CompletedTask;
 
-			TextEditorService.CommonService.Continuous_EnqueueGroup((IBackgroundTaskGroup)new BackgroundTask(
+			DotNetService.TextEditorService.CommonService.Continuous_EnqueueGroup((IBackgroundTaskGroup)new BackgroundTask(
 				Key<IBackgroundTaskGroup>.Empty,
-				DotNetBackgroundTaskApi.OutputService.Do_ConstructTreeView));
+				DotNetService.OutputService_Do_ConstructTreeView));
     		return Task.CompletedTask;
     	}));
     }
@@ -82,13 +75,13 @@ public partial class OutputDisplay : ComponentBase, IDisposable
 			},
 			restoreFocusOnClose: null);
 
-		TextEditorService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
+		DotNetService.TextEditorService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
 		return Task.CompletedTask;
 	}
     
     public void Dispose()
     {
-    	DotNetCliOutputParser.StateChanged -= DotNetCliOutputParser_StateChanged;
-    	DotNetBackgroundTaskApi.OutputService.OutputStateChanged -= OnOutputStateChanged;
+    	DotNetService.StateChanged -= DotNetCliOutputParser_StateChanged;
+    	DotNetService.OutputStateChanged -= OnOutputStateChanged;
     }
 }
