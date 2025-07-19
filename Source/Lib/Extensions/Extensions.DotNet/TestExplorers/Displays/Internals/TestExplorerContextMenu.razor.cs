@@ -7,7 +7,6 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.TreeViews.Models.Utils;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Extensions.DotNet.BackgroundTasks.Models;

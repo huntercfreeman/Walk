@@ -5,8 +5,6 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Reactives.Models;
-using Walk.Common.RazorLib.Options.Models;
-using Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Ide.RazorLib.Terminals.Models;
 

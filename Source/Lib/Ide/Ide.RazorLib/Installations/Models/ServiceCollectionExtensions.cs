@@ -6,17 +6,9 @@ using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
-using Walk.Ide.RazorLib.CodeSearches.Models;
-using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.InputFiles.Displays;
-using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.FileSystems.Displays;
 using Walk.Ide.RazorLib.FormsGenerics.Displays;
-using Walk.Ide.RazorLib.CommandBars.Models;
-using Walk.Ide.RazorLib.Shareds.Models;
-using Walk.Ide.RazorLib.BackgroundTasks.Models;
-using Walk.Ide.RazorLib.Terminals.Models;
-using Walk.Ide.RazorLib.FolderExplorers.Models;
 using Walk.Ide.RazorLib.AppDatas.Models;
 
 namespace Walk.Ide.RazorLib.Installations.Models;

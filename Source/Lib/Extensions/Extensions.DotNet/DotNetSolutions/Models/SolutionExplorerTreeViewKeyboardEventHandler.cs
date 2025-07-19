@@ -4,10 +4,8 @@ using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib;
-using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Displays.Internals;
 using Walk.Extensions.DotNet.Namespaces.Models;
 

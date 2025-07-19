@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
-using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Ide.RazorLib.CodeSearches.Models;
-using Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Ide.RazorLib.CodeSearches.Displays;
 

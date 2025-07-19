@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
-using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.Ide.RazorLib;

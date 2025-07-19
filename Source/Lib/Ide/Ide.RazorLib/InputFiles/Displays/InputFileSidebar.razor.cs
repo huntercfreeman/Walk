@@ -6,11 +6,8 @@ using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.Options.Models;
-using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
-using Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Ide.RazorLib.InputFiles.Displays;
 

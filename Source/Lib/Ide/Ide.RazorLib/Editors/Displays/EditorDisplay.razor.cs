@@ -1,15 +1,12 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Dimensions.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Tabs.Displays;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Groups.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
-using Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Ide.RazorLib.Editors.Displays;
 

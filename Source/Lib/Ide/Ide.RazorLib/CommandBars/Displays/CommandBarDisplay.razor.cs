@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Walk.Common.RazorLib.Options.Models;
-using Walk.Ide.RazorLib.CommandBars.Models;
 
 namespace Walk.Ide.RazorLib.CommandBars.Displays;
 

@@ -14,11 +14,8 @@ using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.ListExtensions;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
-using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
-using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.AppDatas.Models;
-using Walk.Ide.RazorLib.CodeSearches.Models;
 using Walk.Ide.RazorLib.Shareds.Models;
 // FindAllReferences
 // using Walk.Ide.RazorLib.FindAllReferences.Models;

@@ -3,7 +3,6 @@ using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
-using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.CSharpProjects.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;

@@ -5,7 +5,6 @@ using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.FolderExplorers.Models;
 

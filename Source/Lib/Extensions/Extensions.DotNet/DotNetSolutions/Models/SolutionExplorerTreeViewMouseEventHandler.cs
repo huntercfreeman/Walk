@@ -1,10 +1,8 @@
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib;
-using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;
 
 namespace Walk.Extensions.DotNet.DotNetSolutions.Models;
