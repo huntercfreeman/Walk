@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
-using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Contexts.Models;
 

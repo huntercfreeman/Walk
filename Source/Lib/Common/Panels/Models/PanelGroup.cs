@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Panels.Models;
 

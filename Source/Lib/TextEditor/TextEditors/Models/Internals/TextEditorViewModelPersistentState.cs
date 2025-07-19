@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components.Web;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
@@ -8,7 +9,6 @@ using Walk.Common.RazorLib.JavaScriptObjects.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Tabs.Displays;
 using Walk.Common.RazorLib.Tooltips.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;

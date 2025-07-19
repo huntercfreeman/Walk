@@ -4,7 +4,6 @@ using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Menus.Displays;
 
@@ -81,7 +80,7 @@ public partial class MenuOptionDisplay : ComponentBase
     private Task RenderDropdownAsync(MenuRecord localSubMenu)
     {
     	return DropdownHelper.RenderDropdownAsync(
-    		(Options.Models.CommonService)CommonService,
+    		CommonService,
     		(JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonService.JsRuntimeCommonApi,
 			_menuOptionHtmlElementId,
 			DropdownOrientation.Right,

@@ -5,7 +5,6 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Notifications.Displays;
 using Walk.Common.RazorLib.Dimensions.Models;
-using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Installations.Models;
 

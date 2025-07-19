@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.Options.Models;
+using Walk.Common.RazorLib;
 
 namespace Walk.Extensions.DotNet.Outputs.Displays;
 

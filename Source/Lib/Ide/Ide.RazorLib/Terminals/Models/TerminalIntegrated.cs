@@ -2,10 +2,10 @@ using System.Reactive.Linq;
 using System.Text;
 using CliWrap;
 using CliWrap.EventStream;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Notifications.Models;
-using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Ide.RazorLib.Terminals.Models;
 

@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using Walk.Common.RazorLib.Installations.Models;
-using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.BackgroundTasks.Models;
 

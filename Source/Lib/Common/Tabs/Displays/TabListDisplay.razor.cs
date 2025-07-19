@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Tabs.Models;
-using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Tabs.Displays;
 

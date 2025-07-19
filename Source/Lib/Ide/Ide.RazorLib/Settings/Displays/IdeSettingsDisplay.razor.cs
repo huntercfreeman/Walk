@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Installations.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.AppDatas.Models;
 
 namespace Walk.Ide.RazorLib.Settings.Displays;

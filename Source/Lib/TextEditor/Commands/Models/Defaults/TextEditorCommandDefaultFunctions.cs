@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Components.Web;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.JsRuntimes.Models;
@@ -10,7 +11,6 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.Cursors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;

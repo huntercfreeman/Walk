@@ -1,3 +1,4 @@
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.Themes.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models;
@@ -12,8 +13,8 @@ public record struct TextEditorOptionsState
             new CommonOptions(
                 DEFAULT_FONT_SIZE_IN_PIXELS,
                 DEFAULT_ICON_SIZE_IN_PIXELS,
-                Walk.Common.RazorLib.Options.Models.AppOptionsState.DEFAULT_RESIZE_HANDLE_WIDTH_IN_PIXELS,
-                Walk.Common.RazorLib.Options.Models.AppOptionsState.DEFAULT_RESIZE_HANDLE_HEIGHT_IN_PIXELS,
+                AppOptionsState.DEFAULT_RESIZE_HANDLE_WIDTH_IN_PIXELS,
+                AppOptionsState.DEFAULT_RESIZE_HANDLE_HEIGHT_IN_PIXELS,
                 ThemeFacts.VisualStudioDarkThemeClone.Key,
                 FontFamily: null,
                 ShowPanelTitles: false),

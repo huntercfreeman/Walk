@@ -1,6 +1,5 @@
 using Microsoft.JSInterop;
 using Walk.Common.RazorLib.JsRuntimes.Models;
-using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Dimensions.Models;
 

@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.Options.Models;
+using Walk.Common.RazorLib;
 
 namespace Walk.Ide.RazorLib.Shareds.Displays.Internals;
 

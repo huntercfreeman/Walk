@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Keymaps.Models;
-using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Keymaps.Displays;
 

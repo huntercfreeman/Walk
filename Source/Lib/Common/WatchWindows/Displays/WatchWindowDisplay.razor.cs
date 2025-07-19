@@ -4,7 +4,6 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.WatchWindows.Models;
-using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.WatchWindows.Displays;
 

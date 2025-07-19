@@ -108,13 +108,13 @@ public partial class FolderExplorerContextMenu : ComponentBase
 			IdeService.CopyFile(
                 treeViewModel.Item,
                 (Func<Task>)(() => {
-					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", (Common.RazorLib.Options.Models.CommonService)IdeService.CommonService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", IdeService.CommonService, TimeSpan.FromSeconds(7));
                     return Task.CompletedTask;
                 })),
 			IdeService.CutFile(
                 treeViewModel.Item,
                 (Func<Task>)(() => {
-					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", (Common.RazorLib.Options.Models.CommonService)IdeService.CommonService, TimeSpan.FromSeconds(7));
+					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", IdeService.CommonService, TimeSpan.FromSeconds(7));
 					ParentOfCutFile = parentTreeViewModel;
                     return Task.CompletedTask;
                 })),
@@ -123,7 +123,7 @@ public partial class FolderExplorerContextMenu : ComponentBase
                 async () => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
 			IdeService.RenameFile(
                 treeViewModel.Item,
-                (Common.RazorLib.Options.Models.CommonService)IdeService.CommonService,
+                IdeService.CommonService,
                 async ()  => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false))
         };
     }
