@@ -32,10 +32,10 @@ public record DotNetSolutionState(
     	IdeService ideService,
     	DotNetBackgroundTaskApi dotNetBackgroundTaskApi)
     {
-        ideService.Enqueue(new IdeBackgroundTaskApiWorkArgs
+        ideService.Enqueue(new IdeWorkArgs
 		{
 			WorkKind = IdeWorkKind.RequestInputFileStateForm,
-			Message = "Solution Explorer",
+			StringValue = "Solution Explorer",
             OnAfterSubmitFunc = absolutePath =>
             {
                 if (absolutePath.ExactInput is not null)

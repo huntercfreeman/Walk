@@ -60,10 +60,10 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 	private void RequestInputFileForParentDirectory(string message)
 	{
-		IdeService.Enqueue(new IdeBackgroundTaskApiWorkArgs
+		IdeService.Enqueue(new IdeWorkArgs
 		{
 			WorkKind = IdeWorkKind.RequestInputFileStateForm,
-			Message = message,
+			StringValue = message,
 			OnAfterSubmitFunc = async absolutePath =>
 			{
 				if (absolutePath.ExactInput is null)

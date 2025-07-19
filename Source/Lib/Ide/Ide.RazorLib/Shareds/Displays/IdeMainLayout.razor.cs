@@ -93,13 +93,13 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         IdeService.Ide_IdeStateChanged += OnIdeMainLayoutStateChanged;
         IdeService.TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrap_StateChanged;
 
-    	IdeService.Enqueue(new IdeBackgroundTaskApiWorkArgs
+    	IdeService.Enqueue(new IdeWorkArgs
     	{
     		WorkKind = IdeWorkKind.IdeHeaderOnInit,
     		IdeMainLayout = this,
     	});
     	
-    	IdeService.Enqueue(new IdeBackgroundTaskApiWorkArgs
+    	IdeService.Enqueue(new IdeWorkArgs
         {
         	WorkKind = IdeWorkKind.WalkIdeInitializerOnInit,
         });

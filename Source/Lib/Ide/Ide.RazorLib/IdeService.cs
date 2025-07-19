@@ -131,16 +131,82 @@ public class IdeService : IBackgroundTaskGroup
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
 
-    private readonly ConcurrentQueue<IdeBackgroundTaskApiWorkArgs> _workQueue = new();
+    private readonly ConcurrentQueue<IdeWorkArgs> _workQueue = new();
 
     private static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
     private static readonly Key<IDynamicViewModel> _backgroundTaskDialogKey = Key<IDynamicViewModel>.NewKey();
     private static readonly Key<IDynamicViewModel> _solutionVisualizationDialogKey = Key<IDynamicViewModel>.NewKey();
 
-    public void Enqueue(IdeBackgroundTaskApiWorkArgs workArgs)
+    public void Enqueue(IdeWorkArgs workArgs)
     {
         _workQueue.Enqueue(workArgs);
         TextEditorService.CommonUtilityService.Continuous_EnqueueGroup(this);
+    }
+    
+    public ValueTask HandleEvent()
+    {
+        if (!_workQueue.TryDequeue(out IdeWorkArgs workArgs))
+            return ValueTask.CompletedTask;
+
+        switch (workArgs.WorkKind)
+        {
+            case IdeWorkKind.WalkIdeInitializerOnInit:
+                return Do_WalkIdeInitializerOnInit();
+            case IdeWorkKind.IdeHeaderOnInit:
+            	return Do_IdeHeaderOnInit(workArgs.IdeMainLayout);
+            case IdeWorkKind.FileContentsWereModifiedOnDisk:
+	            return Editor_Do_FileContentsWereModifiedOnDisk(
+	                workArgs.StringValue, workArgs.TextEditorModel, workArgs.FileLastWriteTime, workArgs.NotificationInformativeKey);
+			case IdeWorkKind.SaveFile:
+                return Do_SaveFile(workArgs.AbsolutePath, workArgs.StringValue, workArgs.OnAfterSaveCompletedWrittenDateTimeFunc, workArgs.CancellationToken);
+            case IdeWorkKind.SetFolderExplorerState:
+                return Do_SetFolderExplorerState(workArgs.AbsolutePath);
+            case IdeWorkKind.SetFolderExplorerTreeView:
+                return Do_SetFolderExplorerTreeView(workArgs.AbsolutePath);
+			case IdeWorkKind.RequestInputFileStateForm:
+                return Do_RequestInputFileStateForm(
+                    workArgs.StringValue, workArgs.OnAfterSubmitFunc, workArgs.SelectionIsValidFunc, workArgs.InputFilePatterns);
+            case IdeWorkKind.OpenParentDirectoryAction:
+            {
+                return InputFile_Do_OpenParentDirectoryAction(
+                    IdeComponentRenderers, CommonUtilityService, workArgs.TreeViewAbsolutePath);
+            }
+            case IdeWorkKind.RefreshCurrentSelectionAction:
+            {
+                return InputFile_Do_RefreshCurrentSelectionAction(workArgs.TreeViewAbsolutePath);
+            }
+            case IdeWorkKind.PerformNewFile:
+                return Do_PerformNewFile(
+                    workArgs.StringValue,
+                    workArgs.ExactMatchFileTemplate,
+                    workArgs.RelatedMatchFileTemplatesList,
+                    workArgs.NamespacePath,
+                    workArgs.OnAfterCompletion);
+            case IdeWorkKind.PerformNewDirectory:
+                return Do_PerformNewDirectory(
+                    workArgs.StringValue,
+                    workArgs.AbsolutePath,
+                    workArgs.OnAfterCompletion);
+            case IdeWorkKind.PerformDeleteFile:
+                return Do_PerformDeleteFile(
+                    workArgs.AbsolutePath,
+                    workArgs.OnAfterCompletion);
+            case IdeWorkKind.PerformCopyFile:
+                return Do_PerformCopyFile(
+                    workArgs.AbsolutePath,
+                    workArgs.OnAfterCompletion);
+            case IdeWorkKind.PerformCutFile:
+                return Do_PerformCutFile(
+                    workArgs.AbsolutePath,
+                    workArgs.OnAfterCompletion);
+            case IdeWorkKind.PerformPasteFile:
+                return Do_PerformPasteFile(
+                    workArgs.AbsolutePath,
+                    workArgs.OnAfterCompletion);
+            default:
+                Console.WriteLine($"{nameof(IdeService)} {nameof(HandleEvent)} default case");
+				return ValueTask.CompletedTask;
+        }
     }
 
     public ValueTask Do_WalkIdeInitializerOnInit()
@@ -165,46 +231,37 @@ public class IdeService : IBackgroundTaskGroup
     private void InitializePanelResizeHandleDimensionUnit()
     {
         // Left
-        {
-            var leftPanel = PanelFacts.GetTopLeftPanelGroup(CommonUtilityService.GetPanelState());
-            leftPanel.CommonUtilityService = CommonUtilityService;
-
-            CommonUtilityService.Panel_InitializeResizeHandleDimensionUnit(
-                leftPanel.Key,
-                new DimensionUnit(
-                    () => CommonUtilityService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
-                    DimensionUnitKind.Pixels,
-                    DimensionOperatorKind.Subtract,
-                    DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
-        }
+        var leftPanel = PanelFacts.GetTopLeftPanelGroup(CommonUtilityService.GetPanelState());
+        leftPanel.CommonUtilityService = CommonUtilityService;
+        CommonUtilityService.Panel_InitializeResizeHandleDimensionUnit(
+            leftPanel.Key,
+            new DimensionUnit(
+                () => CommonUtilityService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract,
+                DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
 
         // Right
-        {
-            var rightPanel = PanelFacts.GetTopRightPanelGroup(CommonUtilityService.GetPanelState());
-            rightPanel.CommonUtilityService = CommonUtilityService;
-
-            CommonUtilityService.Panel_InitializeResizeHandleDimensionUnit(
-                rightPanel.Key,
-                new DimensionUnit(
-                    () => CommonUtilityService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
-                    DimensionUnitKind.Pixels,
-                    DimensionOperatorKind.Subtract,
-                    DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
-        }
+        var rightPanel = PanelFacts.GetTopRightPanelGroup(CommonUtilityService.GetPanelState());
+        rightPanel.CommonUtilityService = CommonUtilityService;
+        CommonUtilityService.Panel_InitializeResizeHandleDimensionUnit(
+            rightPanel.Key,
+            new DimensionUnit(
+                () => CommonUtilityService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract,
+                DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
 
         // Bottom
-        {
-            var bottomPanel = PanelFacts.GetBottomPanelGroup(CommonUtilityService.GetPanelState());
-            bottomPanel.CommonUtilityService = CommonUtilityService;
-
-            CommonUtilityService.Panel_InitializeResizeHandleDimensionUnit(
-                bottomPanel.Key,
-                new DimensionUnit(
-                    () => CommonUtilityService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
-                    DimensionUnitKind.Pixels,
-                    DimensionOperatorKind.Subtract,
-                    DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW));
-        }
+        var bottomPanel = PanelFacts.GetBottomPanelGroup(CommonUtilityService.GetPanelState());
+        bottomPanel.CommonUtilityService = CommonUtilityService;
+        CommonUtilityService.Panel_InitializeResizeHandleDimensionUnit(
+            bottomPanel.Key,
+            new DimensionUnit(
+                () => CommonUtilityService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract,
+                DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW));
     }
 
     private void InitializePanelTabs()
@@ -362,46 +419,42 @@ public class IdeService : IBackgroundTaskGroup
         var menuOptionsList = new List<MenuOptionRecord>();
 
         // Menu Option Open
-        {
-            var menuOptionOpenFile = new MenuOptionRecord(
-                "File",
-                MenuOptionKind.Other,
-                () =>
-                {
-                    Editor_ShowInputFile();
-                    return Task.CompletedTask;
-                });
+        var menuOptionOpenFile = new MenuOptionRecord(
+            "File",
+            MenuOptionKind.Other,
+            () =>
+            {
+                Editor_ShowInputFile();
+                return Task.CompletedTask;
+            });
 
-            var menuOptionOpenDirectory = new MenuOptionRecord(
-                "Directory",
-                MenuOptionKind.Other,
-                () =>
-                {
-                    FolderExplorer_ShowInputFile();
-                    return Task.CompletedTask;
-                });
+        var menuOptionOpenDirectory = new MenuOptionRecord(
+            "Directory",
+            MenuOptionKind.Other,
+            () =>
+            {
+                FolderExplorer_ShowInputFile();
+                return Task.CompletedTask;
+            });
 
-            var menuOptionOpen = new MenuOptionRecord(
-                "Open",
-                MenuOptionKind.Other,
-                subMenu: new MenuRecord(new List<MenuOptionRecord>()
-                {
-                    menuOptionOpenFile,
-                    menuOptionOpenDirectory,
-                }));
+        var menuOptionOpen = new MenuOptionRecord(
+            "Open",
+            MenuOptionKind.Other,
+            subMenu: new MenuRecord(new List<MenuOptionRecord>()
+            {
+                menuOptionOpenFile,
+                menuOptionOpenDirectory,
+            }));
 
-            menuOptionsList.Add(menuOptionOpen);
-        }
+        menuOptionsList.Add(menuOptionOpen);
 
         // Menu Option Permissions
-        {
-            var menuOptionPermissions = new MenuOptionRecord(
-                "Permissions",
-                MenuOptionKind.Delete,
-                ShowPermissionsDialog);
+        var menuOptionPermissions = new MenuOptionRecord(
+            "Permissions",
+            MenuOptionKind.Delete,
+            ShowPermissionsDialog);
 
-            menuOptionsList.Add(menuOptionPermissions);
-        }
+        menuOptionsList.Add(menuOptionPermissions);
 
         Ide_SetMenuFile(new MenuRecord(menuOptionsList));
     }
@@ -411,41 +464,37 @@ public class IdeService : IBackgroundTaskGroup
         var menuOptionsList = new List<MenuOptionRecord>();
 
         // Menu Option Find All
-        {
-            var menuOptionFindAll = new MenuOptionRecord(
-                "Find All (Ctrl Shift f)",
-                MenuOptionKind.Delete,
-                () =>
-                {
-                    TextEditorService.Options_ShowFindAllDialog();
-                    return Task.CompletedTask;
-                });
+        var menuOptionFindAll = new MenuOptionRecord(
+            "Find All (Ctrl Shift f)",
+            MenuOptionKind.Delete,
+            () =>
+            {
+                TextEditorService.Options_ShowFindAllDialog();
+                return Task.CompletedTask;
+            });
 
-            menuOptionsList.Add(menuOptionFindAll);
-        }
+        menuOptionsList.Add(menuOptionFindAll);
 
         // Menu Option Code Search
-        {
-            var menuOptionCodeSearch = new MenuOptionRecord(
-                "Code Search (Ctrl ,)",
-                MenuOptionKind.Delete,
-                () =>
-                {
-                    CodeSearchDialog ??= new DialogViewModel(
-                        Key<IDynamicViewModel>.NewKey(),
-                        "Code Search",
-                        typeof(CodeSearchDisplay),
-                        null,
-                        null,
-                        true,
-                        null);
+        var menuOptionCodeSearch = new MenuOptionRecord(
+            "Code Search (Ctrl ,)",
+            MenuOptionKind.Delete,
+            () =>
+            {
+                CodeSearchDialog ??= new DialogViewModel(
+                    Key<IDynamicViewModel>.NewKey(),
+                    "Code Search",
+                    typeof(CodeSearchDisplay),
+                    null,
+                    null,
+                    true,
+                    null);
 
-                    CommonUtilityService.Dialog_ReduceRegisterAction(CodeSearchDialog);
-                    return Task.CompletedTask;
-                });
+                CommonUtilityService.Dialog_ReduceRegisterAction(CodeSearchDialog);
+                return Task.CompletedTask;
+            });
 
-            menuOptionsList.Add(menuOptionCodeSearch);
-        }
+        menuOptionsList.Add(menuOptionCodeSearch);
 
         /*// Menu Option BackgroundTasks
         {
@@ -575,10 +624,10 @@ public class IdeService : IBackgroundTaskGroup
     
     public void Editor_ShowInputFile()
     {
-        Enqueue(new IdeBackgroundTaskApiWorkArgs
+        Enqueue(new IdeWorkArgs
         {
         	WorkKind = IdeWorkKind.RequestInputFileStateForm,
-            Message = "TextEditor",
+            StringValue = "TextEditor",
             OnAfterSubmitFunc = absolutePath =>
             {
             	// TODO: Why does 'isDirectory: false' not work?
@@ -741,11 +790,11 @@ public class IdeService : IBackgroundTaskGroup
             innerTextEditor.PersistentState.ResourceUri.Value,
             false);
 
-        Enqueue(new IdeBackgroundTaskApiWorkArgs
+        Enqueue(new IdeWorkArgs
         {
         	WorkKind = IdeWorkKind.SaveFile,
             AbsolutePath = absolutePath,
-            Content = innerContent,
+            StringValue = innerContent,
             OnAfterSaveCompletedWrittenDateTimeFunc = writtenDateTime =>
             {
                 if (writtenDateTime is not null)
@@ -847,10 +896,10 @@ public class IdeService : IBackgroundTaskGroup
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptFunc),
                             new Func<Task>(() =>
                             {
-                            	Enqueue(new IdeBackgroundTaskApiWorkArgs
+                            	Enqueue(new IdeWorkArgs
                             	{
                             		WorkKind = IdeWorkKind.FileContentsWereModifiedOnDisk,
-                            		InputFileAbsolutePathString = inputFileAbsolutePathString,
+                            		StringValue = inputFileAbsolutePathString,
                             		TextEditorModel = textEditorModel,
                             		FileLastWriteTime = fileLastWriteTime,
                             		NotificationInformativeKey = notificationInformativeKey,
@@ -996,10 +1045,10 @@ public class IdeService : IBackgroundTaskGroup
 
     public void FolderExplorer_ShowInputFile()
     {
-        Enqueue(new IdeBackgroundTaskApiWorkArgs
+        Enqueue(new IdeWorkArgs
         {
         	WorkKind = IdeWorkKind.RequestInputFileStateForm,
-            Message = "Folder Explorer",
+            StringValue = "Folder Explorer",
             OnAfterSubmitFunc = async absolutePath =>
             {
                 if (absolutePath.ExactInput is not null)
@@ -1042,35 +1091,6 @@ public class IdeService : IBackgroundTaskGroup
         CommonUtilityService.Dialog_ReduceRegisterAction(inputFileDialog);
 
         return ValueTask.CompletedTask;
-    }
-    
-    public ValueTask HandleEvent()
-    {
-        if (!_workQueue.TryDequeue(out IdeBackgroundTaskApiWorkArgs workArgs))
-            return ValueTask.CompletedTask;
-
-        switch (workArgs.WorkKind)
-        {
-            case IdeWorkKind.WalkIdeInitializerOnInit:
-                return Do_WalkIdeInitializerOnInit();
-            case IdeWorkKind.IdeHeaderOnInit:
-            	return Do_IdeHeaderOnInit(workArgs.IdeMainLayout);
-            case IdeWorkKind.FileContentsWereModifiedOnDisk:
-	            return Editor_Do_FileContentsWereModifiedOnDisk(
-	                workArgs.InputFileAbsolutePathString, workArgs.TextEditorModel, workArgs.FileLastWriteTime, workArgs.NotificationInformativeKey);
-			case IdeWorkKind.SaveFile:
-                return Do_SaveFile(workArgs.AbsolutePath, workArgs.Content, workArgs.OnAfterSaveCompletedWrittenDateTimeFunc, workArgs.CancellationToken);
-            case IdeWorkKind.SetFolderExplorerState:
-                return Do_SetFolderExplorerState(workArgs.AbsolutePath);
-            case IdeWorkKind.SetFolderExplorerTreeView:
-                return Do_SetFolderExplorerTreeView(workArgs.AbsolutePath);
-			case IdeWorkKind.RequestInputFileStateForm:
-                return Do_RequestInputFileStateForm(
-                    workArgs.Message, workArgs.OnAfterSubmitFunc, workArgs.SelectionIsValidFunc, workArgs.InputFilePatterns);
-            default:
-                Console.WriteLine($"{nameof(IdeService)} {nameof(HandleEvent)} default case");
-				return ValueTask.CompletedTask;
-        }
     }
     
     /* Start ITerminalService */
@@ -1123,9 +1143,6 @@ public class IdeService : IBackgroundTaskGroup
 	public event Action? InputFileStateChanged;
 	
 	public InputFileState GetInputFileState() => _inputFileState;
-
-    private readonly Queue<IdeWorkKind> _workKindQueue = new();
-    private readonly object _workLock = new();
 
     public void InputFile_StartInputFileStateForm(
         string message,
@@ -1323,10 +1340,6 @@ public class IdeService : IBackgroundTaskGroup
         InputFileStateChanged?.Invoke();
     }
 
-    private readonly
-        Queue<(IIdeComponentRenderers ideComponentRenderers, CommonUtilityService commonUtilityService, TreeViewAbsolutePath? parentDirectoryTreeViewModel)>
-        InputFile_queue_OpenParentDirectoryAction = new();
-
     public void InputFile_Enqueue_OpenParentDirectoryAction(
     	IIdeComponentRenderers ideComponentRenderers,
         CommonUtilityService commonUtilityService,
@@ -1334,15 +1347,11 @@ public class IdeService : IBackgroundTaskGroup
     {
         if (parentDirectoryTreeViewModel is not null)
         {
-            lock (_workLock)
-            {
-                _workKindQueue.Enqueue(IdeWorkKind.OpenParentDirectoryAction);
-
-                InputFile_queue_OpenParentDirectoryAction.Enqueue((
-                    ideComponentRenderers, commonUtilityService, parentDirectoryTreeViewModel));
-
-                commonUtilityService.Continuous_EnqueueGroup(this);
-            }
+            Enqueue(new IdeWorkArgs
+    		{
+    			WorkKind = IdeWorkKind.OpenParentDirectoryAction,
+                TreeViewAbsolutePath = parentDirectoryTreeViewModel
+            });
         }
     }
     
@@ -1355,20 +1364,17 @@ public class IdeService : IBackgroundTaskGroup
             await parentDirectoryTreeViewModel.LoadChildListAsync().ConfigureAwait(false);
     }
 
-    private readonly Queue<(CommonUtilityService, TreeViewAbsolutePath)> InputFile_queue_RefreshCurrentSelectionAction = new();
-
     public void InputFile_Enqueue_RefreshCurrentSelectionAction(CommonUtilityService commonUtilityService, TreeViewAbsolutePath? currentSelection)
     {
         if (currentSelection is not null)
         {
             currentSelection.ChildList.Clear();
 
-            lock (_workLock)
-            {
-                _workKindQueue.Enqueue(IdeWorkKind.RefreshCurrentSelectionAction);
-                InputFile_queue_RefreshCurrentSelectionAction.Enqueue((commonUtilityService, currentSelection));
-                commonUtilityService.Continuous_EnqueueGroup(this);
-            }
+            Enqueue(new IdeWorkArgs
+    		{
+    			WorkKind = IdeWorkKind.RefreshCurrentSelectionAction,
+                TreeViewAbsolutePath = currentSelection
+            });
         }
     }
     
@@ -1376,37 +1382,6 @@ public class IdeService : IBackgroundTaskGroup
     {
         if (currentSelection is not null)
             await currentSelection.LoadChildListAsync().ConfigureAwait(false);
-    }
-
-    public ValueTask InputFile_HandleEvent()
-    {
-        IdeWorkKind workKind;
-
-        lock (_workLock)
-        {
-            if (!_workKindQueue.TryDequeue(out workKind))
-                return ValueTask.CompletedTask;
-        }
-
-        switch (workKind)
-        {
-            case IdeWorkKind.OpenParentDirectoryAction:
-            {
-                var args = InputFile_queue_OpenParentDirectoryAction.Dequeue();
-                return InputFile_Do_OpenParentDirectoryAction(
-                    args.ideComponentRenderers, args.commonUtilityService, args.parentDirectoryTreeViewModel);
-            }
-            case IdeWorkKind.RefreshCurrentSelectionAction:
-            {
-                var args = InputFile_queue_RefreshCurrentSelectionAction.Dequeue();
-                return InputFile_Do_RefreshCurrentSelectionAction(args.Item2);
-            }
-            default:
-            {
-                Console.WriteLine($"{nameof(IdeService)} {nameof(HandleEvent)} default case");
-				return ValueTask.CompletedTask;
-            }
-        }
     }
     /* End IInputFileService */
     
@@ -1735,423 +1710,397 @@ public class IdeService : IBackgroundTaskGroup
     	// ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).ShiftF12Func = ShowAllReferences;
     
         // ActiveContextsContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
-                new KeymapArgs()
-                {
-                    Key = "a",
-                    Code = "KeyA",
-                    LayerKey = Key<KeymapLayer>.Empty,
-                    CtrlKey = true,
-                	AltKey = true,
-                },
-                ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.ActiveContextsContext, "Focus: ActiveContexts", "focus-active-contexts", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
-        }
+        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+            new KeymapArgs()
+            {
+                Key = "a",
+                Code = "KeyA",
+                LayerKey = Key<KeymapLayer>.Empty,
+                CtrlKey = true,
+            	AltKey = true,
+            },
+            ContextHelper.ConstructFocusContextElementCommand(
+                ContextFacts.ActiveContextsContext, "Focus: ActiveContexts", "focus-active-contexts", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
+        
         // BackgroundServicesContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
-                new KeymapArgs()
-                {
-                    Key = "b",
-                    Code = "KeyB",
-                    LayerKey = Key<KeymapLayer>.Empty,
+        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+            new KeymapArgs()
+            {
+                Key = "b",
+                Code = "KeyB",
+                LayerKey = Key<KeymapLayer>.Empty,
 
-                    CtrlKey = true,
-                	AltKey = true,
-                },
-                ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.BackgroundServicesContext, "Focus: BackgroundServices", "focus-background-services", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
-        }
+                CtrlKey = true,
+            	AltKey = true,
+            },
+            ContextHelper.ConstructFocusContextElementCommand(
+                ContextFacts.BackgroundServicesContext, "Focus: BackgroundServices", "focus-background-services", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
+        
         // CompilerServiceExplorerContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
-                new KeymapArgs()
-                {
-                    Key = "C",
-                    Code = "KeyC",
-                    LayerKey = Key<KeymapLayer>.Empty,
+        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+            new KeymapArgs()
+            {
+                Key = "C",
+                Code = "KeyC",
+                LayerKey = Key<KeymapLayer>.Empty,
 
-                    ShiftKey = true,
-                	CtrlKey = true,
-                	AltKey = true,
-                },
-                ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.CompilerServiceExplorerContext, "Focus: CompilerServiceExplorer", "focus-compiler-service-explorer", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
-        }
+                ShiftKey = true,
+            	CtrlKey = true,
+            	AltKey = true,
+            },
+            ContextHelper.ConstructFocusContextElementCommand(
+                ContextFacts.CompilerServiceExplorerContext, "Focus: CompilerServiceExplorer", "focus-compiler-service-explorer", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
+        
         // CompilerServiceEditorContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
-                new KeymapArgs()
-                {
-                    Key = "c",
-                    Code = "KeyC",
-                    LayerKey = Key<KeymapLayer>.Empty,
-                    CtrlKey = true,
-                	AltKey = true,
-                },
-                ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.CompilerServiceEditorContext, "Focus: CompilerServiceEditor", "focus-compiler-service-editor", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
-        }
+        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+            new KeymapArgs()
+            {
+                Key = "c",
+                Code = "KeyC",
+                LayerKey = Key<KeymapLayer>.Empty,
+                CtrlKey = true,
+            	AltKey = true,
+            },
+            ContextHelper.ConstructFocusContextElementCommand(
+                ContextFacts.CompilerServiceEditorContext, "Focus: CompilerServiceEditor", "focus-compiler-service-editor", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
+        
         // DialogDisplayContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
-                new KeymapArgs()
-                {
-                    Key = "d",
-                    Code = "KeyD",
-                    LayerKey = Key<KeymapLayer>.Empty,
-                    CtrlKey = true,
-                	AltKey = true,
-                },
-                ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.DialogDisplayContext, "Focus: DialogDisplay", "focus-dialog-display", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
-        }
+        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+            new KeymapArgs()
+            {
+                Key = "d",
+                Code = "KeyD",
+                LayerKey = Key<KeymapLayer>.Empty,
+                CtrlKey = true,
+            	AltKey = true,
+            },
+            ContextHelper.ConstructFocusContextElementCommand(
+                ContextFacts.DialogDisplayContext, "Focus: DialogDisplay", "focus-dialog-display", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
+        
         // EditorContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
-                new KeymapArgs()
-                {
-                    Key = "E",
-                    Code = "KeyE",
-                    LayerKey = Key<KeymapLayer>.Empty,
-                    ShiftKey = true,
-                	CtrlKey = true,
-                	AltKey = true,
-                },
-                ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.EditorContext, "Focus: Editor", "focus-editor", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
-        }
+        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+            new KeymapArgs()
+            {
+                Key = "E",
+                Code = "KeyE",
+                LayerKey = Key<KeymapLayer>.Empty,
+                ShiftKey = true,
+            	CtrlKey = true,
+            	AltKey = true,
+            },
+            ContextHelper.ConstructFocusContextElementCommand(
+                ContextFacts.EditorContext, "Focus: Editor", "focus-editor", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
+        
         // FolderExplorerContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
-                new KeymapArgs()
-                {
-                    Key = "f",
-                    Code = "KeyF",
-                    LayerKey = Key<KeymapLayer>.Empty,
-                    CtrlKey = true,
-                	AltKey = true,
-                },
-                ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.FolderExplorerContext, "Focus: FolderExplorer", "focus-folder-explorer", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
-        }
+        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+            new KeymapArgs()
+            {
+                Key = "f",
+                Code = "KeyF",
+                LayerKey = Key<KeymapLayer>.Empty,
+                CtrlKey = true,
+            	AltKey = true,
+            },
+            ContextHelper.ConstructFocusContextElementCommand(
+                ContextFacts.FolderExplorerContext, "Focus: FolderExplorer", "focus-folder-explorer", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
+        
         // GitContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
-                new KeymapArgs()
-                {
-                    Key = "g",
-                    Code = "KeyG",
-                    LayerKey = Key<KeymapLayer>.Empty,
-                    CtrlKey = true,
-                	AltKey = true,
-                },
-                ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.GitContext, "Focus: Git", "focus-git", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
-        }
+        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+            new KeymapArgs()
+            {
+                Key = "g",
+                Code = "KeyG",
+                LayerKey = Key<KeymapLayer>.Empty,
+                CtrlKey = true,
+            	AltKey = true,
+            },
+            ContextHelper.ConstructFocusContextElementCommand(
+                ContextFacts.GitContext, "Focus: Git", "focus-git", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
+        
         // GlobalContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
-                new KeymapArgs()
-                {
-                    Key = "g",
-                    Code = "KeyG",
-                    LayerKey = Key<KeymapLayer>.Empty,
-                    CtrlKey = true,
-                	AltKey = true,
-                },
-                ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.GlobalContext, "Focus: Global", "focus-global", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
-        }
+        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+            new KeymapArgs()
+            {
+                Key = "g",
+                Code = "KeyG",
+                LayerKey = Key<KeymapLayer>.Empty,
+                CtrlKey = true,
+            	AltKey = true,
+            },
+            ContextHelper.ConstructFocusContextElementCommand(
+                ContextFacts.GlobalContext, "Focus: Global", "focus-global", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
+        
         // MainLayoutFooterContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
-                new KeymapArgs()
-                {
-                    Key = "f",
-                    Code = "KeyF",
-                    LayerKey = Key<KeymapLayer>.Empty,
-                    CtrlKey = true,
-                	AltKey = true,
-                },
-                ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.MainLayoutFooterContext, "Focus: Footer", "focus-footer", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
-        }
+        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+            new KeymapArgs()
+            {
+                Key = "f",
+                Code = "KeyF",
+                LayerKey = Key<KeymapLayer>.Empty,
+                CtrlKey = true,
+            	AltKey = true,
+            },
+            ContextHelper.ConstructFocusContextElementCommand(
+                ContextFacts.MainLayoutFooterContext, "Focus: Footer", "focus-footer", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
+        
         // MainLayoutHeaderContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
-                new KeymapArgs()
-                {
-                    Key = "h",
-                    Code = "KeyH",
-                    LayerKey = Key<KeymapLayer>.Empty,
-                    CtrlKey = true,
-                	AltKey = true,
-                },
-                ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.MainLayoutHeaderContext, "Focus: Header", "focus-header", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
-        }
+        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+            new KeymapArgs()
+            {
+                Key = "h",
+                Code = "KeyH",
+                LayerKey = Key<KeymapLayer>.Empty,
+                CtrlKey = true,
+            	AltKey = true,
+            },
+            ContextHelper.ConstructFocusContextElementCommand(
+                ContextFacts.MainLayoutHeaderContext, "Focus: Header", "focus-header", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
+        
         // ErrorListContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
-                new KeymapArgs()
-                {
-                    Key = "e",
-                    Code = "KeyE",
-                    LayerKey = Key<KeymapLayer>.Empty,
-                    CtrlKey = true,
-                	AltKey = true,
-                },
-                ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.ErrorListContext, "Focus: Error List", "error-list", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
-        }
+        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+            new KeymapArgs()
+            {
+                Key = "e",
+                Code = "KeyE",
+                LayerKey = Key<KeymapLayer>.Empty,
+                CtrlKey = true,
+            	AltKey = true,
+            },
+            ContextHelper.ConstructFocusContextElementCommand(
+                ContextFacts.ErrorListContext, "Focus: Error List", "error-list", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
+        
         // OutputContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
-                new KeymapArgs()
-                {
-                    Key = "o",
-                    Code = "KeyO",
-                    LayerKey = Key<KeymapLayer>.Empty,
-                    CtrlKey = true,
-                	AltKey = true,
-                },
-                ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.OutputContext, "Focus: Output", "focus-output", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
-        }
+        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+            new KeymapArgs()
+            {
+                Key = "o",
+                Code = "KeyO",
+                LayerKey = Key<KeymapLayer>.Empty,
+                CtrlKey = true,
+            	AltKey = true,
+            },
+            ContextHelper.ConstructFocusContextElementCommand(
+                ContextFacts.OutputContext, "Focus: Output", "focus-output", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
+		
 		// TerminalContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
-                new KeymapArgs()
-                {
-                    Key = "t",
-                    Code = "KeyT",
-                    LayerKey = Key<KeymapLayer>.Empty,
-                    CtrlKey = true,
-                	AltKey = true,
-                },
-                ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.TerminalContext, "Focus: Terminal", "focus-terminal", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
-        }
+        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+            new KeymapArgs()
+            {
+                Key = "t",
+                Code = "KeyT",
+                LayerKey = Key<KeymapLayer>.Empty,
+                CtrlKey = true,
+            	AltKey = true,
+            },
+            ContextHelper.ConstructFocusContextElementCommand(
+                ContextFacts.TerminalContext, "Focus: Terminal", "focus-terminal", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
+        
         // TestExplorerContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
-                new KeymapArgs()
-                {
-                    Key = "T",
-                    Code = "KeyT",
-                    LayerKey = Key<KeymapLayer>.Empty,
-                    ShiftKey = true,
-                	CtrlKey = true,
-                	AltKey = true,
-                },
-                ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.TestExplorerContext, "Focus: Test Explorer", "focus-test-explorer", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
-        }
+        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+            new KeymapArgs()
+            {
+                Key = "T",
+                Code = "KeyT",
+                LayerKey = Key<KeymapLayer>.Empty,
+                ShiftKey = true,
+            	CtrlKey = true,
+            	AltKey = true,
+            },
+            ContextHelper.ConstructFocusContextElementCommand(
+                ContextFacts.TestExplorerContext, "Focus: Test Explorer", "focus-test-explorer", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
+        
         // TextEditorContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
-                new KeymapArgs()
-                {
-                    Key = "t",
-                    Code = "KeyT",
-                    LayerKey = Key<KeymapLayer>.Empty,
-                    CtrlKey = true,
-                	AltKey = true,
-                },
-                ContextHelper.ConstructFocusContextElementCommand(
-                    ContextFacts.TextEditorContext, "Focus: TextEditor", "focus-text-editor", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
-        }
+        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+            new KeymapArgs()
+            {
+                Key = "t",
+                Code = "KeyT",
+                LayerKey = Key<KeymapLayer>.Empty,
+                CtrlKey = true,
+            	AltKey = true,
+            },
+            ContextHelper.ConstructFocusContextElementCommand(
+                ContextFacts.TextEditorContext, "Focus: TextEditor", "focus-text-editor", CommonUtilityService.JsRuntimeCommonApi, CommonUtilityService));
 
         // Focus the text editor itself (as to allow for typing into the editor)
-        {
-            var focusTextEditorCommand = new CommonCommand(
-                "Focus: Text Editor", "focus-text-editor", false,
-                async commandArgs =>
+        var focusTextEditorCommand = new CommonCommand(
+            "Focus: Text Editor", "focus-text-editor", false,
+            async commandArgs =>
+            {
+                var group = TextEditorService.Group_GetOrDefault(EditorTextEditorGroupKey);
+                if (group is null)
+                    return;
+
+                var activeViewModel = TextEditorService.ViewModel_GetOrDefault(group.ActiveViewModelKey);
+                if (activeViewModel is null)
+                    return;
+
+				var componentData = activeViewModel.PersistentState.ComponentData;
+				if (componentData is not null)
+				{
+					await CommonUtilityService.JsRuntimeCommonApi
+                        .FocusHtmlElementById(componentData.PrimaryCursorContentId)
+                        .ConfigureAwait(false);
+				}
+            });
+
+        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                new KeymapArgs()
                 {
-                    var group = TextEditorService.Group_GetOrDefault(EditorTextEditorGroupKey);
-                    if (group is null)
-                        return;
-
-                    var activeViewModel = TextEditorService.ViewModel_GetOrDefault(group.ActiveViewModelKey);
-                    if (activeViewModel is null)
-                        return;
-
-					var componentData = activeViewModel.PersistentState.ComponentData;
-					if (componentData is not null)
-					{
-						await CommonUtilityService.JsRuntimeCommonApi
-	                        .FocusHtmlElementById(componentData.PrimaryCursorContentId)
-	                        .ConfigureAwait(false);
-					}
-                });
-
-            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
-                    new KeymapArgs()
-                    {
-                        Key = "Escape",
-                        Code = "Escape",
-                        LayerKey = Key<KeymapLayer>.Empty
-                    },
-                    focusTextEditorCommand);
-        }
+                    Key = "Escape",
+                    Code = "Escape",
+                    LayerKey = Key<KeymapLayer>.Empty
+                },
+                focusTextEditorCommand);
 
 		// Add command to bring up a FindAll dialog. Example: { Ctrl + Shift + f }
-		{
-			var openFindDialogCommand = new CommonCommand(
-	            "Open: Find", "open-find", false,
-	            commandArgs => 
-				{
-					TextEditorService.Options_ShowFindAllDialog();
-		            return ValueTask.CompletedTask;
-				});
+		var openFindDialogCommand = new CommonCommand(
+            "Open: Find", "open-find", false,
+            commandArgs => 
+			{
+				TextEditorService.Options_ShowFindAllDialog();
+	            return ValueTask.CompletedTask;
+			});
 
-            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
-	                new KeymapArgs()
-	                {
-                        Key = "F",
-                        Code = "KeyF",
-                        LayerKey = Key<KeymapLayer>.Empty,
-                        ShiftKey = true,
-	                	CtrlKey = true,
-	                },
-	                openFindDialogCommand);
-        }
+        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                new KeymapArgs()
+                {
+                    Key = "F",
+                    Code = "KeyF",
+                    LayerKey = Key<KeymapLayer>.Empty,
+                    ShiftKey = true,
+                	CtrlKey = true,
+                },
+                openFindDialogCommand);
 
 		// Add command to bring up a CodeSearch dialog. Example: { Ctrl + , }
-		{
-		    // TODO: determine the actively focused element at time of invocation,
-            //       then restore focus to that element when this dialog is closed.
-			var openCodeSearchDialogCommand = new CommonCommand(
-	            "Open: Code Search", "open-code-search", false,
-	            commandArgs => 
-				{
-                    return CommandFactory_OpenCodeSearchDialog();
-				});
+	    // TODO: determine the actively focused element at time of invocation,
+        //       then restore focus to that element when this dialog is closed.
+		var openCodeSearchDialogCommand = new CommonCommand(
+            "Open: Code Search", "open-code-search", false,
+            commandArgs => 
+			{
+                return CommandFactory_OpenCodeSearchDialog();
+			});
 
-            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
-	                new KeymapArgs()
-	                {
-                        Key = ",",
-                        Code = "Comma",
-                        LayerKey = Key<KeymapLayer>.Empty,
-                        CtrlKey = true,
-	                },
-	                openCodeSearchDialogCommand);
-        }
+        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                new KeymapArgs()
+                {
+                    Key = ",",
+                    Code = "Comma",
+                    LayerKey = Key<KeymapLayer>.Empty,
+                    CtrlKey = true,
+                },
+                openCodeSearchDialogCommand);
 
 		// Add command to bring up a Context Switch dialog. Example: { Ctrl + Tab }
-		{
-			// TODO: determine the actively focused element at time of invocation,
-            //       then restore focus to that element when this dialog is closed.
-			var openContextSwitchDialogCommand = new CommonCommand(
-	            "Open: Context Switch", "open-context-switch", false,
-	            async commandArgs =>
-				{
-					var elementDimensions = await CommonUtilityService.JsRuntimeCommonApi
-						.MeasureElementById("di_ide_header-button-file")
-						.ConfigureAwait(false);
-						
-					var contextState = CommonUtilityService.GetContextState();
+		// TODO: determine the actively focused element at time of invocation,
+        //       then restore focus to that element when this dialog is closed.
+		var openContextSwitchDialogCommand = new CommonCommand(
+            "Open: Context Switch", "open-context-switch", false,
+            async commandArgs =>
+			{
+				var elementDimensions = await CommonUtilityService.JsRuntimeCommonApi
+					.MeasureElementById("di_ide_header-button-file")
+					.ConfigureAwait(false);
 					
-					var menuOptionList = new List<MenuOptionRecord>();
-					
-					foreach (var context in contextState.AllContextsList)
-			        {
-			        	menuOptionList.Add(new MenuOptionRecord(
-			        		context.DisplayNameFriendly,
-			        		MenuOptionKind.Other));
-			        }
-					
-					MenuRecord menu;
-					
-					if (menuOptionList.Count == 0)
-						menu = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
-					else
-						menu = new MenuRecord(menuOptionList);
-						
-					var dropdownRecord = new DropdownRecord(
-						Key<DropdownRecord>.NewKey(),
-						elementDimensions.LeftInPixels,
-						elementDimensions.TopInPixels + elementDimensions.HeightInPixels,
-						typeof(MenuDisplay),
-						new Dictionary<string, object?>
-						{
-							{
-								nameof(MenuDisplay.MenuRecord),
-								menu
-							}
-						},
-						() => Task.CompletedTask);
-			
-			        // _dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
-			        
-			        if (CommonUtilityService.GetContextState().FocusedContextKey == ContextFacts.TextEditorContext.ContextKey)
-			        {
-			        	CommonUtilityService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = WalkTextEditorInitializer.ContextSwitchGroupKey;
-			        }
-			        else
-			        {
-			        	CommonUtilityService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = WalkCommonInitializer.ContextSwitchGroupKey;
-			        }
+				var contextState = CommonUtilityService.GetContextState();
 				
-                    _contextSwitchWidget ??= new WidgetModel(
-                        typeof(ContextSwitchDisplay),
-                        componentParameterMap: null,
-                        cssClass: null,
-                        cssStyle: null);
-
-                    CommonUtilityService.SetWidget(_contextSwitchWidget);
-				});
-
-			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
-					new KeymapArgs()
-					{
-                        Key = "Tab",
-                        Code = "Tab",
-                        LayerKey = Key<KeymapLayer>.Empty,
-                        CtrlKey = true,
-					},
-					openContextSwitchDialogCommand);
+				var menuOptionList = new List<MenuOptionRecord>();
+				
+				foreach (var context in contextState.AllContextsList)
+		        {
+		        	menuOptionList.Add(new MenuOptionRecord(
+		        		context.DisplayNameFriendly,
+		        		MenuOptionKind.Other));
+		        }
+				
+				MenuRecord menu;
+				
+				if (menuOptionList.Count == 0)
+					menu = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+				else
+					menu = new MenuRecord(menuOptionList);
 					
-			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
-					new KeymapArgs()
+				var dropdownRecord = new DropdownRecord(
+					Key<DropdownRecord>.NewKey(),
+					elementDimensions.LeftInPixels,
+					elementDimensions.TopInPixels + elementDimensions.HeightInPixels,
+					typeof(MenuDisplay),
+					new Dictionary<string, object?>
 					{
-                        Key = "/",
-                        Code = "Slash",
-                        LayerKey = Key<KeymapLayer>.Empty,
-                        CtrlKey = true,
-						AltKey = true,
+						{
+							nameof(MenuDisplay.MenuRecord),
+							menu
+						}
 					},
-					openContextSwitchDialogCommand);
-		}
-		// Command bar
-		{
-			var openCommandBarCommand = new CommonCommand(
-	            "Open: Command Bar", "open-command-bar", false,
-	            commandArgs =>
-				{
-                    _commandBarWidget ??= new WidgetModel(
-                        typeof(Walk.Ide.RazorLib.CommandBars.Displays.CommandBarDisplay),
-                        componentParameterMap: null,
-                        cssClass: null,
-                        cssStyle: "width: 80vw; height: 5em; left: 10vw; top: 0;");
-
-                    CommonUtilityService.SetWidget(_commandBarWidget);
-                    return ValueTask.CompletedTask;
-				});
+					() => Task.CompletedTask);
 		
-			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
-					new KeymapArgs()
-					{
-                        Key = "p",
-                        Code = "KeyP",
-                        LayerKey = Key<KeymapLayer>.Empty,
-                        CtrlKey = true,
-					},
-					openCommandBarCommand);
-		}
+		        // _dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+		        
+		        if (CommonUtilityService.GetContextState().FocusedContextKey == ContextFacts.TextEditorContext.ContextKey)
+		        {
+		        	CommonUtilityService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = WalkTextEditorInitializer.ContextSwitchGroupKey;
+		        }
+		        else
+		        {
+		        	CommonUtilityService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = WalkCommonInitializer.ContextSwitchGroupKey;
+		        }
+			
+                _contextSwitchWidget ??= new WidgetModel(
+                    typeof(ContextSwitchDisplay),
+                    componentParameterMap: null,
+                    cssClass: null,
+                    cssStyle: null);
+
+                CommonUtilityService.SetWidget(_contextSwitchWidget);
+			});
+
+		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+				new KeymapArgs()
+				{
+                    Key = "Tab",
+                    Code = "Tab",
+                    LayerKey = Key<KeymapLayer>.Empty,
+                    CtrlKey = true,
+				},
+				openContextSwitchDialogCommand);
+				
+		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+				new KeymapArgs()
+				{
+                    Key = "/",
+                    Code = "Slash",
+                    LayerKey = Key<KeymapLayer>.Empty,
+                    CtrlKey = true,
+					AltKey = true,
+				},
+				openContextSwitchDialogCommand);
+		
+		// Command bar
+		var openCommandBarCommand = new CommonCommand(
+            "Open: Command Bar", "open-command-bar", false,
+            commandArgs =>
+			{
+                _commandBarWidget ??= new WidgetModel(
+                    typeof(Walk.Ide.RazorLib.CommandBars.Displays.CommandBarDisplay),
+                    componentParameterMap: null,
+                    cssClass: null,
+                    cssStyle: "width: 80vw; height: 5em; left: 10vw; top: 0;");
+
+                CommonUtilityService.SetWidget(_commandBarWidget);
+                return ValueTask.CompletedTask;
+			});
+	
+		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+				new KeymapArgs()
+				{
+                    Key = "p",
+                    Code = "KeyP",
+                    LayerKey = Key<KeymapLayer>.Empty,
+                    CtrlKey = true,
+				},
+				openCommandBarCommand);
     }
     
     public ValueTask CommandFactory_OpenCodeSearchDialog()
@@ -2651,10 +2600,6 @@ public class IdeService : IBackgroundTaskGroup
 			});
     }
 
-    private readonly
-        Queue<(string fileName, IFileTemplate? exactMatchFileTemplate, List<IFileTemplate> relatedMatchFileTemplatesList, NamespacePath namespacePath, Func<Task> onAfterCompletion)>
-        _queue_PerformNewFile = new();
-
     private void Enqueue_PerformNewFile(
         string fileName,
         IFileTemplate? exactMatchFileTemplate,
@@ -2662,19 +2607,15 @@ public class IdeService : IBackgroundTaskGroup
         NamespacePath namespacePath,
         Func<Task> onAfterCompletion)
     {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(IdeWorkKind.PerformNewFile);
-
-            _queue_PerformNewFile.Enqueue((
-                fileName,
-                exactMatchFileTemplate,
-                relatedMatchFileTemplatesList,
-                namespacePath,
-                onAfterCompletion));
-
-            CommonUtilityService.Continuous_EnqueueGroup(this);
-        }
+        Enqueue(new IdeWorkArgs
+		{
+			WorkKind = IdeWorkKind.PerformNewFile,
+            StringValue = fileName,
+            ExactMatchFileTemplate = exactMatchFileTemplate,
+            RelatedMatchFileTemplatesList = relatedMatchFileTemplatesList,
+            NamespacePath = namespacePath,
+            OnAfterCompletion = onAfterCompletion,
+        });
     }
     
     private async ValueTask Do_PerformNewFile(
@@ -2720,18 +2661,15 @@ public class IdeService : IBackgroundTaskGroup
         await onAfterCompletion.Invoke().ConfigureAwait(false);
     }
 
-    private readonly
-        Queue<(string directoryName, AbsolutePath parentDirectory, Func<Task> onAfterCompletion)>
-        _queue_PerformNewDirectory = new();
-
     private void Enqueue_PerformNewDirectory(string directoryName, AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(IdeWorkKind.PerformNewDirectory);
-            _queue_PerformNewDirectory.Enqueue((directoryName, parentDirectory, onAfterCompletion));
-            CommonUtilityService.Continuous_EnqueueGroup(this);
-        }
+        Enqueue(new IdeWorkArgs
+		{
+			WorkKind = IdeWorkKind.PerformNewDirectory,
+            StringValue = directoryName,
+            AbsolutePath = parentDirectory,
+            OnAfterCompletion = onAfterCompletion,
+        });
     }
     
     private async ValueTask Do_PerformNewDirectory(string directoryName, AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
@@ -2747,18 +2685,14 @@ public class IdeService : IBackgroundTaskGroup
         await onAfterCompletion.Invoke().ConfigureAwait(false);
     }
 
-    private readonly
-        Queue<(AbsolutePath absolutePath, Func<Task> onAfterCompletion)>
-        _queue_general_AbsolutePath_FuncTask = new();
-
     private void Enqueue_PerformDeleteFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(IdeWorkKind.PerformDeleteFile);
-            _queue_general_AbsolutePath_FuncTask.Enqueue((absolutePath, onAfterCompletion));
-            CommonUtilityService.Continuous_EnqueueGroup(this);
-        }
+        Enqueue(new IdeWorkArgs
+		{
+			WorkKind = IdeWorkKind.PerformDeleteFile,
+            AbsolutePath = absolutePath,
+            OnAfterCompletion = onAfterCompletion,
+        });
     }
     
     private async ValueTask Do_PerformDeleteFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
@@ -2781,12 +2715,12 @@ public class IdeService : IBackgroundTaskGroup
 
     private void Enqueue_PerformCopyFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(IdeWorkKind.PerformCopyFile);
-            _queue_general_AbsolutePath_FuncTask.Enqueue((absolutePath, onAfterCompletion));
-            CommonUtilityService.Continuous_EnqueueGroup(this);
-        }
+        Enqueue(new IdeWorkArgs
+		{
+			WorkKind = IdeWorkKind.PerformCopyFile,
+            AbsolutePath = absolutePath,
+            OnAfterCompletion = onAfterCompletion,
+        });
     }
 
     private async ValueTask Do_PerformCopyFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
@@ -2804,12 +2738,12 @@ public class IdeService : IBackgroundTaskGroup
         AbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(IdeWorkKind.PerformCutFile);
-            _queue_general_AbsolutePath_FuncTask.Enqueue((absolutePath, onAfterCompletion));
-            CommonUtilityService.Continuous_EnqueueGroup(this);
-        }
+        Enqueue(new IdeWorkArgs
+		{
+			WorkKind = IdeWorkKind.PerformCutFile,
+            AbsolutePath = absolutePath,
+            OnAfterCompletion = onAfterCompletion,
+        });
     }
     
     private async ValueTask Do_PerformCutFile(
@@ -2827,12 +2761,12 @@ public class IdeService : IBackgroundTaskGroup
 
     private void Enqueue_PerformPasteFile(AbsolutePath receivingDirectory, Func<Task> onAfterCompletion)
     {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(IdeWorkKind.PerformPasteFile);
-            _queue_general_AbsolutePath_FuncTask.Enqueue((receivingDirectory, onAfterCompletion));
-            CommonUtilityService.Continuous_EnqueueGroup(this);
-        }
+        Enqueue(new IdeWorkArgs
+		{
+			WorkKind = IdeWorkKind.PerformPasteFile,
+            AbsolutePath = receivingDirectory,
+            OnAfterCompletion = onAfterCompletion,
+        });
     }
     
     private async ValueTask Do_PerformPasteFile(AbsolutePath receivingDirectory, Func<Task> onAfterCompletion)

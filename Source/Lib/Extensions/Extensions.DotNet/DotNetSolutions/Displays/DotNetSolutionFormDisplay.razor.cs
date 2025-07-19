@@ -48,10 +48,10 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 
 	private void RequestInputFileForParentDirectory()
 	{
-		IdeService.Enqueue(new IdeBackgroundTaskApiWorkArgs
+		IdeService.Enqueue(new IdeWorkArgs
 		{
 			WorkKind = IdeWorkKind.RequestInputFileStateForm,
-			Message = "Directory for new .NET Solution",
+			StringValue = "Directory for new .NET Solution",
 			OnAfterSubmitFunc = async absolutePath =>
 			{
 				if (absolutePath.ExactInput is null)
