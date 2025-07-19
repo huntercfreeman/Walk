@@ -38,9 +38,9 @@ public record DotNetSolutionState(
             OnAfterSubmitFunc = absolutePath =>
             {
                 if (absolutePath.ExactInput is not null)
-                    dotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
+                    dotNetService.Enqueue(new DotNetWorkArgs
                     {
-                    	WorkKind = DotNetBackgroundTaskApiWorkKind.SetDotNetSolution,
+                    	WorkKind = DotNetWorkKind.SetDotNetSolution,
                     	DotNetSolutionAbsolutePath = absolutePath,
                     });
 

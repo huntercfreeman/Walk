@@ -133,8 +133,8 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
     private readonly HttpClient _httpClient;
 	
 	public DotNetService(
-	    IdeService ideService,
 	    IDotNetComponentRenderers dotNetComponentRenderers,
+	    IdeService ideService,
 	    HttpClient httpClient,
 	    IAppDataService appDataService,
         IServiceProvider serviceProvider)
@@ -992,7 +992,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
 				ContextHelper.ConstructFocusContextElementCommand(
-					ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager", _commonService.JsRuntimeCommonApi, _commonService));
+					ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager", CommonService.JsRuntimeCommonApi, CommonService));
 		}
 		// CSharpReplContext
 		{
@@ -1008,12 +1008,12 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
 				ContextHelper.ConstructFocusContextElementCommand(
-					ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl", _commonService.JsRuntimeCommonApi, _commonService));
+					ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl", CommonService.JsRuntimeCommonApi, CommonService));
 		}
 		// SolutionExplorerContext
 		{
 			var focusSolutionExplorerCommand = ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer", _commonService.JsRuntimeCommonApi, _commonService);
+				ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer", CommonService.JsRuntimeCommonApi, CommonService);
 
 			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
 					new KeymapArgs
@@ -1043,13 +1043,13 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 						if (localNodeOfViewModel is null)
 							return;
 
-						_commonService.TreeView_SetActiveNodeAction(
+						CommonService.TreeView_SetActiveNodeAction(
 							DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 							localNodeOfViewModel,
 							false,
 							false);
 
-						var elementId = _commonService.TreeView_GetActiveNodeElementId(DotNetSolutionState.TreeViewSolutionExplorerStateKey);
+						var elementId = CommonService.TreeView_GetActiveNodeElementId(DotNetSolutionState.TreeViewSolutionExplorerStateKey);
 
 						await focusSolutionExplorerCommand.CommandFunc
 							.Invoke(commandArgs)
@@ -1076,15 +1076,15 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
     {
 		_nodeList.Clear();
 
-		var group = _textEditorService.Group_GetOrDefault(IdeService.EditorTextEditorGroupKey);
+		var group = TextEditorService.Group_GetOrDefault(IdeService.EditorTextEditorGroupKey);
 
 		if (group is not null)
 		{
-			var textEditorViewModel = _textEditorService.ViewModel_GetOrDefault(group.ActiveViewModelKey);
+			var textEditorViewModel = TextEditorService.ViewModel_GetOrDefault(group.ActiveViewModelKey);
 
 			if (textEditorViewModel is not null)
 			{
-				if (_commonService.TryGetTreeViewContainer(
+				if (CommonService.TryGetTreeViewContainer(
 						DotNetSolutionState.TreeViewSolutionExplorerStateKey,
 						out var treeViewContainer) &&
                     treeViewContainer is not null)
@@ -1105,7 +1105,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
         {
             if (textEditorViewModel is not null)
             {
-                var viewModelAbsolutePath = _commonService.EnvironmentProvider.AbsolutePathFactory(
+                var viewModelAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
                     textEditorViewModel.PersistentState.ResourceUri.Value,
                     false);
 
@@ -3661,7 +3661,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 
 		foreach (var group in filePathGrouping)
 		{
-			var absolutePath = _commonService.EnvironmentProvider.AbsolutePathFactory(group.Key, false);
+			var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(group.Key, false);
 			var groupEnumerated = group.ToList();
 			var groupNameBuilder = new StringBuilder();
 			
@@ -3696,7 +3696,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 			if (firstEntry is not null)
 			{
 				var projectText = ((TreeViewDiagnosticLine)firstEntry).Item.ProjectTextSpan.Text;
-				var projectAbsolutePath = _commonService.EnvironmentProvider.AbsolutePathFactory(projectText, false);
+				var projectAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(projectText, false);
 			
 				if (!projectManualGrouping.ContainsKey(projectText))
 				{
@@ -3753,18 +3753,18 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
             ? new List<TreeViewNoType>()
             : new() { firstNode };
 
-        if (!_commonService.TryGetTreeViewContainer(OutputState.TreeViewContainerKey, out _))
+        if (!CommonService.TryGetTreeViewContainer(OutputState.TreeViewContainerKey, out _))
         {
-            _commonService.TreeView_RegisterContainerAction(new TreeViewContainer(
+            CommonService.TreeView_RegisterContainerAction(new TreeViewContainer(
                 OutputState.TreeViewContainerKey,
                 adhocRoot,
                 activeNodes));
         }
         else
         {
-            _commonService.TreeView_WithRootNodeAction(OutputState.TreeViewContainerKey, adhocRoot);
+            CommonService.TreeView_WithRootNodeAction(OutputState.TreeViewContainerKey, adhocRoot);
 
-            _commonService.TreeView_SetActiveNodeAction(
+            CommonService.TreeView_SetActiveNodeAction(
                 OutputState.TreeViewContainerKey,
                 firstNode,
                 true,

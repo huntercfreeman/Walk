@@ -39,12 +39,12 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	
 	protected override void OnInitialized()
 	{
-		IdeService.TerminalStateChanged += OnTerminalStateChanged;
+		DotNetService.IdeService.TerminalStateChanged += OnTerminalStateChanged;
 	}
 
 	private void RequestInputFileForParentDirectory()
 	{
-		IdeService.Enqueue(new IdeWorkArgs
+		DotNetService.IdeService.Enqueue(new IdeWorkArgs
 		{
 			WorkKind = IdeWorkKind.RequestInputFileStateForm,
 			StringValue = "Directory for new .NET Solution",
@@ -82,7 +82,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 			return;
 		}
 
-		if (IdeService.CommonService.WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
+		if (DotNetService.IdeService.CommonService.WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
 		{
 			await HackForWebsite_StartNewDotNetSolutionCommandOnClick(
 					localSolutionName,
@@ -99,35 +99,35 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	        	ContinueWithFunc = parsedCommand =>
 	        	{
 	        		// Close Dialog
-					IdeService.CommonService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+					DotNetService.IdeService.CommonService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
 					// Open the created .NET Solution
-					var parentDirectoryAbsolutePath = IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
+					var parentDirectoryAbsolutePath = DotNetService.IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
 						localParentDirectoryName,
 						true);
 
 					var solutionAbsolutePathString =
 						parentDirectoryAbsolutePath.Value +
 						localSolutionName +
-						IdeService.CommonService.EnvironmentProvider.DirectorySeparatorChar +
+						DotNetService.IdeService.CommonService.EnvironmentProvider.DirectorySeparatorChar +
 						localSolutionName +
 						'.' +
 						ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-					var solutionAbsolutePath = IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
+					var solutionAbsolutePath = DotNetService.IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
 						solutionAbsolutePathString,
 						false);
 
-					DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
+					DotNetService.Enqueue(new DotNetWorkArgs
 					{
-						WorkKind = DotNetBackgroundTaskApiWorkKind.SetDotNetSolution,
+						WorkKind = DotNetWorkKind.SetDotNetSolution,
 						DotNetSolutionAbsolutePath = solutionAbsolutePath,
 					});
 					return Task.CompletedTask;
 	        	}
 	        };
 	        	
-	        IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+	        DotNetService.IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		}
 	}
 
@@ -136,10 +136,10 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 		string localParentDirectoryName)
 	{
 		var directoryContainingSolution =
-			IdeService.CommonService.EnvironmentProvider.JoinPaths(localParentDirectoryName, localSolutionName) +
-			IdeService.CommonService.EnvironmentProvider.DirectorySeparatorChar;
+			DotNetService.IdeService.CommonService.EnvironmentProvider.JoinPaths(localParentDirectoryName, localSolutionName) +
+			DotNetService.IdeService.CommonService.EnvironmentProvider.DirectorySeparatorChar;
 
-		await IdeService.CommonService.FileSystemProvider.Directory
+		await DotNetService.IdeService.CommonService.FileSystemProvider.Directory
 			.CreateDirectoryAsync(directoryContainingSolution)
 			.ConfigureAwait(false);
 
@@ -148,27 +148,27 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 			'.' +
 			ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-		var solutionAbsolutePathString = IdeService.CommonService.EnvironmentProvider.JoinPaths(
+		var solutionAbsolutePathString = DotNetService.IdeService.CommonService.EnvironmentProvider.JoinPaths(
 			directoryContainingSolution,
 			localSolutionFilenameWithExtension);
 
-		await IdeService.CommonService.FileSystemProvider.File.WriteAllTextAsync(
+		await DotNetService.IdeService.CommonService.FileSystemProvider.File.WriteAllTextAsync(
 				solutionAbsolutePathString,
 				HackForWebsite_NEW_SOLUTION_TEMPLATE)
 			.ConfigureAwait(false);
 
 		// Close Dialog
-		IdeService.CommonService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+		DotNetService.IdeService.CommonService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
-		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", IdeService.CommonService, TimeSpan.FromSeconds(7));
+		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", DotNetService.IdeService.CommonService, TimeSpan.FromSeconds(7));
 
-		var solutionAbsolutePath = IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
+		var solutionAbsolutePath = DotNetService.IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
 			solutionAbsolutePathString,
 			false);
 
-		DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
+		DotNetService.Enqueue(new DotNetWorkArgs
 		{
-			WorkKind = DotNetBackgroundTaskApiWorkKind.SetDotNetSolution,
+			WorkKind = DotNetWorkKind.SetDotNetSolution,
 			DotNetSolutionAbsolutePath = solutionAbsolutePath,
 		});
 	}
@@ -205,6 +205,6 @@ EndGlobal
 
 	public void Dispose()
 	{
-		IdeService.TerminalStateChanged -= OnTerminalStateChanged;
+		DotNetService.IdeService.TerminalStateChanged -= OnTerminalStateChanged;
 	}
 }

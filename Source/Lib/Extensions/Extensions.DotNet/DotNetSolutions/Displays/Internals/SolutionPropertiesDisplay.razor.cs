@@ -9,7 +9,7 @@ public partial class SolutionPropertiesDisplay : ComponentBase, IDisposable
 	
 	protected override void OnInitialized()
 	{
-		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
+		DotNetService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
 	}
 	
 	private async void OnDotNetSolutionStateChanged()
@@ -19,6 +19,6 @@ public partial class SolutionPropertiesDisplay : ComponentBase, IDisposable
 	
 	public void Dispose()
 	{
-		DotNetBackgroundTaskApi.DotNetSolutionService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
+		DotNetService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
 	}
 }
