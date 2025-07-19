@@ -8,7 +8,6 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib;
 using Walk.Extensions.DotNet.CompilerServices.Models;
-using Walk.Extensions.DotNet.BackgroundTasks.Models;
 
 namespace Walk.Extensions.DotNet.CompilerServices.Displays;
 

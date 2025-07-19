@@ -2,13 +2,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Ide.RazorLib.Installations.Models;
 using Walk.Extensions.DotNet.CSharpProjects.Displays;
-using Walk.Extensions.DotNet.Menus.Models;
 using Walk.Extensions.DotNet.Nugets.Models;
 using Walk.Extensions.DotNet.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.Nugets.Displays;
 using Walk.Extensions.DotNet.CommandLines.Models;
-using Walk.Extensions.DotNet.BackgroundTasks.Models;
-using Walk.Extensions.DotNet.Commands;
 
 namespace Walk.Extensions.DotNet.Installations.Models;
 

@@ -7,7 +7,6 @@ using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Ide.RazorLib;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Displays.Internals;
-using Walk.Extensions.DotNet.BackgroundTasks.Models;
 
 namespace Walk.Extensions.DotNet.DotNetSolutions.Displays;
 

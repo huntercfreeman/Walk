@@ -5,7 +5,6 @@ using Walk.CompilerServices.DotNetSolution.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib;
-using Walk.Extensions.DotNet.BackgroundTasks.Models;
 
 namespace Walk.Extensions.DotNet.DotNetSolutions.Models;
 

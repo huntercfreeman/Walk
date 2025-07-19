@@ -18,7 +18,6 @@ using Walk.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;
-using Walk.Extensions.DotNet.Commands;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.Ide.RazorLib;
 
@@ -41,7 +40,6 @@ using Walk.Extensions.DotNet.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;
-using Walk.Extensions.DotNet.Menus.Models;
 
 using System.Collections.Concurrent;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
@@ -72,7 +70,6 @@ using Walk.Extensions.DotNet.TestExplorers.Models;
 using Walk.Extensions.DotNet.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.Outputs.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;
-using Walk.Extensions.DotNet.Commands;
 using Walk.Extensions.DotNet.DotNetSolutions.Displays;
 using Walk.Extensions.DotNet.TestExplorers.Displays;
 using Walk.Extensions.DotNet.Nugets.Displays;
@@ -100,7 +97,6 @@ using Walk.Extensions.DotNet.AppDatas.Models;
 
 using Walk.Ide.RazorLib;
 
-using Walk.Extensions.DotNet.BackgroundTasks.Models;
 
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
@@ -111,7 +107,6 @@ using Walk.Common.RazorLib.TreeViews.Models.Utils;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
-using Walk.Extensions.DotNet.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
@@ -125,9 +120,13 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.TreeViews.Models.Utils;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
-using Walk.Extensions.DotNet.BackgroundTasks.Models;
 
 using Walk.Extensions.DotNet.Outputs.Models;
+
+using Walk.Common.RazorLib.Keys.Models;
+using Walk.CompilerServices.DotNetSolution.Models;
+
+using Walk.Extensions.DotNet.DotNetSolutions.Models;
 
 namespace Walk.Extensions.DotNet;
 
@@ -136,15 +135,58 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
     private readonly HttpClient _httpClient;
     private readonly IdeService _ideService;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
-
+	
 	public DotNetService(
 	    IdeService ideService,
 	    IDotNetComponentRenderers dotNetComponentRenderers,
-	    HttpClient httpClient)
+	    HttpClient httpClient,
+	    IAppDataService appDataService,
+        IServiceProvider serviceProvider,
+		IDotNetSolutionService dotNetSolutionService)
 	{
 	    _ideService = ideService;
 	    _dotNetComponentRenderers = dotNetComponentRenderers;
 		_httpClient = httpClient;
+		
+		// OutputService
+		_dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
+		_dotNetCliOutputParser = dotNetCliOutputParser;
+		_commonService = commonService;
+		
+		// TestExplorerService
+		_dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
+        _dotNetSolutionService = dotNetSolutionService;
+        _dotNetCliOutputParser = dotNetCliOutputParser;
+        _ideService = ideService;
+        
+        _dotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
+        
+        // DotNetBackgroundTaskApi
+        _appDataService = appDataService;
+        _dotNetComponentRenderers = dotNetComponentRenderers;
+		_dotNetCliOutputParser = dotNetCliOutputParser;
+        _dotNetCommandFactory = dotNetCommandFactory;
+        _ideService = ideService;
+        _nugetPackageManagerProvider = nugetPackageManagerProvider;
+
+        DotNetSolutionService = new DotNetSolutionService(this);
+		
+		CompilerServiceExplorerService = new CompilerServiceExplorerService();
+
+        TestExplorerService = new TestExplorerService(
+			this,
+			DotNetSolutionService,
+            _dotNetCliOutputParser,
+            _ideService);
+
+        OutputService = new OutputService(
+        	this,
+        	_dotNetCliOutputParser,
+            _ideService.CommonService);
+			
+			NuGetPackageManagerService = new NuGetPackageManagerService();
+			
+			CompilerServiceEditorService = new CompilerServiceEditorService();
 	}
 	
 	public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
@@ -1504,42 +1546,6 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 	private readonly Key<TerminalCommandRequest> _newDotNetSolutionTerminalCommandRequestKey = Key<TerminalCommandRequest>.NewKey();
     private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
 	#endregion
-
-    public DotNetBackgroundTaskApi(
-        IAppDataService appDataService,
-		IDotNetComponentRenderers dotNetComponentRenderers,
-		DotNetCliOutputParser dotNetCliOutputParser,
-        IDotNetCommandFactory dotNetCommandFactory,
-        IdeService ideService,
-        INugetPackageManagerProvider nugetPackageManagerProvider,
-        IServiceProvider serviceProvider)
-	{
-		_appDataService = appDataService;
-        _dotNetComponentRenderers = dotNetComponentRenderers;
-		_dotNetCliOutputParser = dotNetCliOutputParser;
-        _dotNetCommandFactory = dotNetCommandFactory;
-        _ideService = ideService;
-        _nugetPackageManagerProvider = nugetPackageManagerProvider;
-
-        DotNetSolutionService = new DotNetSolutionService(this);
-		
-		CompilerServiceExplorerService = new CompilerServiceExplorerService();
-
-        TestExplorerService = new TestExplorerService(
-			this,
-			DotNetSolutionService,
-            _dotNetCliOutputParser,
-            _ideService);
-
-        OutputService = new OutputService(
-        	this,
-        	_dotNetCliOutputParser,
-            _ideService.CommonService);
-			
-			NuGetPackageManagerService = new NuGetPackageManagerService();
-			
-			CompilerServiceEditorService = new CompilerServiceEditorService();
-	}
 
     public IOutputService OutputService { get; }
     public ITestExplorerService TestExplorerService { get; }
@@ -2996,20 +3002,6 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
     private readonly IdeService _ideService;
     private readonly IDotNetSolutionService _dotNetSolutionService;
     private readonly DotNetCliOutputParser _dotNetCliOutputParser;
-
-    public TestExplorerService(
-		DotNetBackgroundTaskApi dotNetBackgroundTaskApi,
-		IDotNetSolutionService dotNetSolutionService,
-        DotNetCliOutputParser dotNetCliOutputParser,
-        IdeService ideService)
-	{
-        _dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
-        _dotNetSolutionService = dotNetSolutionService;
-        _dotNetCliOutputParser = dotNetCliOutputParser;
-        _ideService = ideService;
-        
-        _dotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
-    }
     
     /// <summary>
     /// Each time the user opens the 'Test Explorer' panel,
@@ -3708,16 +3700,6 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 	private readonly CommonService _commonService;
 		
 	private readonly Throttle _throttleCreateTreeView = new Throttle(TimeSpan.FromMilliseconds(333));
-	
-	public OutputService(
-		DotNetBackgroundTaskApi dotNetBackgroundTaskApi,
-		DotNetCliOutputParser dotNetCliOutputParser,
-		CommonService commonService)
-	{
-		_dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
-		_dotNetCliOutputParser = dotNetCliOutputParser;
-		_commonService = commonService;
-    }
     
     private OutputState _outputState = new();
     
@@ -3877,4 +3859,76 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
         return ValueTask.CompletedTask;
     }
 	/* End OutputService */
+	
+	/* Start DotNetSolutionService */
+	private DotNetSolutionState _dotNetSolutionState = new();
+	
+	public event Action? DotNetSolutionStateChanged;
+	
+	public DotNetSolutionState GetDotNetSolutionState() => _dotNetSolutionState;
+
+    public void ReduceRegisterAction(DotNetSolutionModel argumentDotNetSolutionModel)
+    {
+    	var inState = GetDotNetSolutionState();
+    
+        var dotNetSolutionModel = inState.DotNetSolutionModel;
+
+        if (dotNetSolutionModel is not null)
+        {
+            DotNetSolutionStateChanged?.Invoke();
+            return;
+        }
+
+        var nextList = new List<DotNetSolutionModel>(inState.DotNetSolutionsList);
+        nextList.Add(argumentDotNetSolutionModel);
+
+        _dotNetSolutionState = inState with
+        {
+            DotNetSolutionsList = nextList
+        };
+        
+        DotNetSolutionStateChanged?.Invoke();
+        return;
+    }
+
+    public void ReduceDisposeAction(Key<DotNetSolutionModel> dotNetSolutionModelKey)
+    {
+    	var inState = GetDotNetSolutionState();
+    
+        var dotNetSolutionModel = inState.DotNetSolutionModel;
+
+        if (dotNetSolutionModel is null)
+        {
+            DotNetSolutionStateChanged?.Invoke();
+        	return;
+        }
+
+        var nextList = new List<DotNetSolutionModel>(inState.DotNetSolutionsList);
+        nextList.Remove(dotNetSolutionModel);
+
+        _dotNetSolutionState = inState with
+        {
+            DotNetSolutionsList = nextList
+        };
+        
+        DotNetSolutionStateChanged?.Invoke();
+        return;
+    }
+
+    public void ReduceWithAction(DotNetBackgroundTaskApi.IWithAction withActionInterface)
+    {
+    	var inState = GetDotNetSolutionState();
+    
+        var withAction = (DotNetBackgroundTaskApi.WithAction)withActionInterface;
+        _dotNetSolutionState = withAction.WithFunc.Invoke(inState);
+        
+        DotNetSolutionStateChanged?.Invoke();
+        return;
+    }
+    
+	public Task NotifyDotNetSolutionStateStateHasChanged()
+	{
+		return Task.CompletedTask;
+	}
+	/* End DotNetSolutionService */
 }

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Extensions.DotNet.BackgroundTasks.Models;
 
 namespace Walk.Extensions.DotNet.DotNetSolutions.Displays.Internals;
 

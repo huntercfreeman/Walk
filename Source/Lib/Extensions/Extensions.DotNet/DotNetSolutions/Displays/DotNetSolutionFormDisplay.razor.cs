@@ -9,7 +9,6 @@ using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib;
-using Walk.Extensions.DotNet.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
 
 namespace Walk.Extensions.DotNet.DotNetSolutions.Displays;

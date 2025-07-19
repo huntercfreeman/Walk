@@ -9,7 +9,6 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.TreeViews.Models.Utils;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
-using Walk.Extensions.DotNet.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.TestExplorers.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
 

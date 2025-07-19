@@ -6,7 +6,6 @@ using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.Extensions.DotNet.CommandLines.Models;
-using Walk.Extensions.DotNet.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.Outputs.Models;
 
 namespace Walk.Extensions.DotNet.Outputs.Displays.Internals;

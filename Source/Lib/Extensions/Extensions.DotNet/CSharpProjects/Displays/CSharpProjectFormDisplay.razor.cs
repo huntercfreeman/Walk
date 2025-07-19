@@ -13,7 +13,6 @@ using Walk.Extensions.DotNet.CSharpProjects.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
 using Walk.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Walk.Extensions.DotNet.Websites;
-using Walk.Extensions.DotNet.BackgroundTasks.Models;
 
 namespace Walk.Extensions.DotNet.CSharpProjects.Displays;
 

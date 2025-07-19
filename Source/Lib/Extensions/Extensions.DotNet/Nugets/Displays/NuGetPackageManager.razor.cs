@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Options.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
-using Walk.Extensions.DotNet.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.Nugets.Models;
 
