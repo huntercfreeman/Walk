@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.FileSystems.Displays;
 

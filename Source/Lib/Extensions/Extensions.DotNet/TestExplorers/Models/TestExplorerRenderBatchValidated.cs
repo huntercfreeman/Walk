@@ -1,5 +1,4 @@
 using Walk.Common.RazorLib;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 
 namespace Walk.Extensions.DotNet.TestExplorers.Models;

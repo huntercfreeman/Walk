@@ -4,7 +4,6 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Icons.Displays;
 using Walk.Common.RazorLib.Icons.Displays.Codicon;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.CompilerServices.DotNetSolution.Models;
 using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.ComponentRenderers.Models;

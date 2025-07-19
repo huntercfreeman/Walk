@@ -4,7 +4,6 @@ using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 
 namespace Walk.Ide.RazorLib.InputFiles.Displays;

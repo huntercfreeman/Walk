@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
-using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.Commands.Models;
 

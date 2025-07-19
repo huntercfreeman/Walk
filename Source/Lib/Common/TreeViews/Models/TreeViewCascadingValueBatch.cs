@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.Common.RazorLib.TreeViews.Models;
 

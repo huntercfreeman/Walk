@@ -8,7 +8,6 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.JsRuntimes.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Reactives.Models;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Walk.TextEditor.RazorLib.CompilerServices;

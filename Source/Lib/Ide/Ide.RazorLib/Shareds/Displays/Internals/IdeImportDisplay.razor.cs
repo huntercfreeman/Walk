@@ -1,7 +1,6 @@
 using System.IO.Compression;
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib;
-using Walk.Common.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib.Exceptions;
 
