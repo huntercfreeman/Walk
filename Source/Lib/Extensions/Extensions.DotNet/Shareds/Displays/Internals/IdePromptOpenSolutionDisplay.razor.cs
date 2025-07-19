@@ -6,7 +6,7 @@ namespace Walk.Extensions.DotNet.Shareds.Displays.Internals;
 public partial class IdePromptOpenSolutionDisplay : ComponentBase
 {
 	[Inject]
-	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
+	private DotNetService DotNetService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public AbsolutePath AbsolutePath { get; set; }

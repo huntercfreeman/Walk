@@ -17,11 +17,7 @@ namespace Walk.Extensions.DotNet.TestExplorers.Displays.Internals;
 public partial class TestExplorerContextMenu : ComponentBase
 {
 	[Inject]
-	private IdeService IdeService { get; set; } = null!;
-	[Inject]
-	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
+	private DotNetService DotNetService { get; set; } = null!;
 
 	[CascadingParameter]
 	public TestExplorerRenderBatchValidated RenderBatch { get; set; } = null!;

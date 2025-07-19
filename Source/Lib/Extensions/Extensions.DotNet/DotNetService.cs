@@ -65,7 +65,6 @@ using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Extensions.DotNet.Nugets.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
-using Walk.Extensions.DotNet.CompilerServices.Models;
 using Walk.Extensions.DotNet.TestExplorers.Models;
 using Walk.Extensions.DotNet.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.Outputs.Models;
@@ -73,7 +72,6 @@ using Walk.Extensions.DotNet.Namespaces.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Displays;
 using Walk.Extensions.DotNet.TestExplorers.Displays;
 using Walk.Extensions.DotNet.Nugets.Displays;
-using Walk.Extensions.DotNet.CompilerServices.Displays;
 using Walk.Extensions.DotNet.Outputs.Displays;
 using Walk.TextEditor.RazorLib.CompilerServices;
 
@@ -133,102 +131,67 @@ namespace Walk.Extensions.DotNet;
 public class DotNetService : IBackgroundTaskGroup, IDisposable
 {
     private readonly HttpClient _httpClient;
-    private readonly IdeService _ideService;
-	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	
 	public DotNetService(
 	    IdeService ideService,
 	    IDotNetComponentRenderers dotNetComponentRenderers,
 	    HttpClient httpClient,
 	    IAppDataService appDataService,
-        IServiceProvider serviceProvider,
-		IDotNetSolutionService dotNetSolutionService)
+        IServiceProvider serviceProvider)
 	{
-	    _ideService = ideService;
-	    _dotNetComponentRenderers = dotNetComponentRenderers;
+	    IdeService = ideService;
+	    AppDataService = appDataService;
+	    DotNetComponentRenderers = dotNetComponentRenderers;
 		_httpClient = httpClient;
-		
-		// OutputService
-		_dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
-		_dotNetCliOutputParser = dotNetCliOutputParser;
-		_commonService = commonService;
-		
-		// TestExplorerService
-		_dotNetBackgroundTaskApi = dotNetBackgroundTaskApi;
-        _dotNetSolutionService = dotNetSolutionService;
-        _dotNetCliOutputParser = dotNetCliOutputParser;
-        _ideService = ideService;
         
-        _dotNetSolutionService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
-        
-        // DotNetBackgroundTaskApi
-        _appDataService = appDataService;
-        _dotNetComponentRenderers = dotNetComponentRenderers;
-		_dotNetCliOutputParser = dotNetCliOutputParser;
-        _dotNetCommandFactory = dotNetCommandFactory;
-        _ideService = ideService;
-        _nugetPackageManagerProvider = nugetPackageManagerProvider;
-
-        DotNetSolutionService = new DotNetSolutionService(this);
-		
-		CompilerServiceExplorerService = new CompilerServiceExplorerService();
-
-        TestExplorerService = new TestExplorerService(
-			this,
-			DotNetSolutionService,
-            _dotNetCliOutputParser,
-            _ideService);
-
-        OutputService = new OutputService(
-        	this,
-        	_dotNetCliOutputParser,
-            _ideService.CommonService);
-			
-			NuGetPackageManagerService = new NuGetPackageManagerService();
-			
-			CompilerServiceEditorService = new CompilerServiceEditorService();
+        DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
 	}
 	
 	public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
+    public IdeService IdeService { get; }
+    public TextEditorService TextEditorService => IdeService.TextEditorService;
+    public CommonService CommonService => IdeService.TextEditorService.CommonService;
+	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
+	public IAppDataService AppDataService { get; }
 
     private readonly ConcurrentQueue<DotNetWorkArgs> _workQueue = new();
     
     public ValueTask HandleEvent()
     {
-        if (!_workQueue.TryDequeue(out DotNetBackgroundTaskApiWorkArgs workArgs))
+        if (!_workQueue.TryDequeue(out DotNetWorkArgs workArgs))
             return ValueTask.CompletedTask;
 
         switch (workArgs.WorkKind)
         {
-            case DotNetBackgroundTaskApiWorkKind.SolutionExplorer_TreeView_MultiSelect_DeleteFiles:
+            case DotNetWorkKind.SolutionExplorer_TreeView_MultiSelect_DeleteFiles:
                 return Do_SolutionExplorer_TreeView_MultiSelect_DeleteFiles(workArgs.TreeViewCommandArgs);
-            case DotNetBackgroundTaskApiWorkKind.WalkExtensionsDotNetInitializerOnInit:
+            case DotNetWorkKind.WalkExtensionsDotNetInitializerOnInit:
                 return Do_WalkExtensionsDotNetInitializerOnInit();
-            case DotNetBackgroundTaskApiWorkKind.WalkExtensionsDotNetInitializerOnAfterRender:
+            case DotNetWorkKind.WalkExtensionsDotNetInitializerOnAfterRender:
                 return Do_WalkExtensionsDotNetInitializerOnAfterRender();
-            case DotNetBackgroundTaskApiWorkKind.SubmitNuGetQuery:
+            case DotNetWorkKind.SubmitNuGetQuery:
                 return Do_SubmitNuGetQuery(workArgs.NugetPackageManagerQuery);
-            case DotNetBackgroundTaskApiWorkKind.RunTestByFullyQualifiedName:
+            case DotNetWorkKind.RunTestByFullyQualifiedName:
                 return Do_RunTestByFullyQualifiedName(workArgs.TreeViewStringFragment, workArgs.FullyQualifiedName, workArgs.TreeViewProjectTestModel);
-            case DotNetBackgroundTaskApiWorkKind.SetDotNetSolution:
+            case DotNetWorkKind.SetDotNetSolution:
 	            return Do_SetDotNetSolution(workArgs.DotNetSolutionAbsolutePath);
-			case DotNetBackgroundTaskApiWorkKind.SetDotNetSolutionTreeView:
+			case DotNetWorkKind.SetDotNetSolutionTreeView:
 	            return Do_SetDotNetSolutionTreeView(workArgs.DotNetSolutionModelKey);
-			case DotNetBackgroundTaskApiWorkKind.Website_AddExistingProjectToSolution:
+			case DotNetWorkKind.Website_AddExistingProjectToSolution:
 	            return Do_Website_AddExistingProjectToSolution(
 	                workArgs.DotNetSolutionModelKey,
 					workArgs.ProjectTemplateShortName,
 					workArgs.CSharpProjectName,
 	                workArgs.CSharpProjectAbsolutePath);
-            case DotNetMenuOptionsFactoryWorkKind.PerformRemoveCSharpProjectReferenceFromSolution:
+            case DotNetWorkKind.PerformRemoveCSharpProjectReferenceFromSolution:
             {
                 var args = _queue_PerformRemoveCSharpProjectReferenceFromSolution.Dequeue();
                 return Do_PerformRemoveCSharpProjectReferenceFromSolution(
 					args.treeViewSolution, args.projectNode, args.terminal, args.commonService, args.onAfterCompletion);
             }
-			case DotNetMenuOptionsFactoryWorkKind.PerformRemoveProjectToProjectReference:
+			case DotNetWorkKind.PerformRemoveProjectToProjectReference:
             {
                 var args = _queue_PerformRemoveProjectToProjectReference.Dequeue();
                 return Do_PerformRemoveProjectToProjectReference(
@@ -237,7 +200,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 					args.commonService,
                     args.onAfterCompletion);
             }
-			case DotNetMenuOptionsFactoryWorkKind.PerformMoveProjectToSolutionFolder:
+			case DotNetWorkKind.PerformMoveProjectToSolutionFolder:
             {
                 var args = _queue_PerformMoveProjectToSolutionFolder.Dequeue();
                 return Do_PerformMoveProjectToSolutionFolder(
@@ -248,7 +211,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 					args.commonService,
                     args.onAfterCompletion);
             }
-			case DotNetMenuOptionsFactoryWorkKind.PerformRemoveNuGetPackageReferenceFromProject:
+			case DotNetWorkKind.PerformRemoveNuGetPackageReferenceFromProject:
             {
                 var args = _queue_PerformRemoveNuGetPackageReferenceFromProject.Dequeue();
                 return Do_PerformRemoveNuGetPackageReferenceFromProject(
@@ -258,11 +221,11 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
                     args.commonService,
                     args.onAfterCompletion);
             }
-            case TestExplorerSchedulerWorkKind.ConstructTreeView:
+            case DotNetWorkKind.ConstructTreeView:
             {
-                return Do_ConstructTreeView();
+                return TestExplorer_Do_ConstructTreeView();
             }
-            case TestExplorerSchedulerWorkKind.DiscoverTests:
+            case DotNetWorkKind.DiscoverTests:
             {
                 return Do_DiscoverTests();
             }
@@ -1533,13 +1496,6 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 	/* End IDotNetMenuOptionsFactory */
 	
 	/* Start DotNetBackgroundTaskApi */
-	private readonly IdeService _ideService;
-	private readonly IAppDataService _appDataService;
-	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
-	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
-	private readonly IDotNetCommandFactory _dotNetCommandFactory;
-	private readonly INugetPackageManagerProvider _nugetPackageManagerProvider;
-	
 	#region DotNetSolutionIdeApi
 	// private readonly IServiceProvider _serviceProvider;
 	
@@ -1547,25 +1503,12 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
     private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
 	#endregion
 
-    public IOutputService OutputService { get; }
-    public ITestExplorerService TestExplorerService { get; }
-    public IDotNetSolutionService DotNetSolutionService { get; }
-    public INuGetPackageManagerService NuGetPackageManagerService { get; }
-    public ICompilerServiceEditorService CompilerServiceEditorService { get; }
-    public ICompilerServiceExplorerService CompilerServiceExplorerService { get; }
-
-    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-
-    public bool __TaskCompletionSourceWasCreated { get; set; }
-
-	private readonly ConcurrentQueue<DotNetBackgroundTaskApiWorkArgs> _workQueue = new();
-
     private Key<PanelGroup> _leftPanelGroupKey;
     private Key<Panel> _solutionExplorerPanelKey;
 
     private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
     
-    public void Enqueue(DotNetBackgroundTaskApiWorkArgs workArgs)
+    public void Enqueue(DotNetWorkArgs workArgs)
     {
 		_workQueue.Enqueue(workArgs);
         _ideService.TextEditorService.CommonService.Continuous_EnqueueGroup(this);
@@ -2998,11 +2941,6 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 	/* Start TestExplorerService */
 	private readonly object _stateModificationLock = new();
 
-	private readonly DotNetBackgroundTaskApi _dotNetBackgroundTaskApi;
-    private readonly IdeService _ideService;
-    private readonly IDotNetSolutionService _dotNetSolutionService;
-    private readonly DotNetCliOutputParser _dotNetCliOutputParser;
-    
     /// <summary>
     /// Each time the user opens the 'Test Explorer' panel,
     /// a check is done to see if the data being displayed
@@ -3187,35 +3125,17 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 			});
 		}
 	}
-	
-	public void Dispose()
-	{
-		_dotNetSolutionService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
-	}
-
-    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
-
-    public bool __TaskCompletionSourceWasCreated { get; set; }
-
-    private readonly Queue<TestExplorerSchedulerWorkKind> _workKindQueue = new();
-    private readonly object _workLock = new();
 
     public void Enqueue_ConstructTreeView()
     {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(TestExplorerSchedulerWorkKind.ConstructTreeView);
-            _ideService.TextEditorService.CommonService.Continuous_EnqueueGroup(this);
-        }
+        _workKindQueue.Enqueue(TestExplorerSchedulerWorkKind.ConstructTreeView);
+        _ideService.TextEditorService.CommonService.Continuous_EnqueueGroup(this);
     }
     
     public void Enqueue_DiscoverTests()
     {
-        lock (_workLock)
-        {
-            _workKindQueue.Enqueue(TestExplorerSchedulerWorkKind.DiscoverTests);
-            _ideService.TextEditorService.CommonService.Continuous_EnqueueGroup(this);
-        }
+        _workKindQueue.Enqueue(TestExplorerSchedulerWorkKind.DiscoverTests);
+        _ideService.TextEditorService.CommonService.Continuous_EnqueueGroup(this);
     }
     
     private readonly Throttle _throttleDiscoverTests = new(TimeSpan.FromMilliseconds(100));
@@ -3225,7 +3145,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 	public TreeViewGroup ThrewAnExceptionTreeViewGroup { get; } = new("Projects that threw an exception during discovery", true, true);
 	public TreeViewGroup NotValidProjectForUnitTestTreeViewGroup { get; } = new("Not a test-project", true, true);
 
-    public async ValueTask Do_ConstructTreeView()
+    public async ValueTask TestExplorer_Do_ConstructTreeView()
     {
         var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
         var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
@@ -3695,10 +3615,6 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 	/* End TestExplorerService */
 	
 	/* Start OutputService */
-	private readonly DotNetBackgroundTaskApi _dotNetBackgroundTaskApi;
-	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
-	private readonly CommonService _commonService;
-		
 	private readonly Throttle _throttleCreateTreeView = new Throttle(TimeSpan.FromMilliseconds(333));
     
     private OutputState _outputState = new();
@@ -3722,11 +3638,11 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
     
 	public Task HandleConstructTreeViewEffect()
 	{
-		_throttleCreateTreeView.Run(async _ => await Do_ConstructTreeView());
+		_throttleCreateTreeView.Run(async _ => await OutputService_Do_ConstructTreeView());
         return Task.CompletedTask;
 	}
 	
-	public ValueTask Do_ConstructTreeView()
+	public ValueTask OutputService_Do_ConstructTreeView()
     {
     	var dotNetRunParseResult = _dotNetCliOutputParser.GetDotNetRunParseResult();
     	
@@ -3915,7 +3831,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
         return;
     }
 
-    public void ReduceWithAction(DotNetBackgroundTaskApi.IWithAction withActionInterface)
+    public void ReduceWithAction(IWithAction withActionInterface)
     {
     	var inState = GetDotNetSolutionState();
     
@@ -3931,4 +3847,9 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 		return Task.CompletedTask;
 	}
 	/* End DotNetSolutionService */
+	
+	public void Dispose()
+	{
+		DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
+	}
 }

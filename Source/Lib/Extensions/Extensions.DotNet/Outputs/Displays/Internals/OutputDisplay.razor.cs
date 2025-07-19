@@ -13,11 +13,7 @@ namespace Walk.Extensions.DotNet.Outputs.Displays.Internals;
 public partial class OutputDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
-    [Inject]
-    private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private TextEditorService TextEditorService { get; set; } = null!;
+    private DotNetService DotNetService { get; set; } = null!;
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
     

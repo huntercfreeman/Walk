@@ -29,7 +29,7 @@ public record DotNetSolutionState(
 
     public static void ShowInputFile(
     	IdeService ideService,
-    	DotNetBackgroundTaskApi dotNetBackgroundTaskApi)
+    	DotNetService dotNetService)
     {
         ideService.Enqueue(new IdeWorkArgs
 		{

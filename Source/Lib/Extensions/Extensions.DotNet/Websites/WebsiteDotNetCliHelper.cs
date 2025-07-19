@@ -10,12 +10,8 @@ public class WebsiteDotNetCliHelper
 {
 	public static async Task StartNewCSharpProjectCommand(
 		CSharpProjectFormViewModelImmutable immutableView,
-		IEnvironmentProvider environmentProvider,
-		IFileSystemProvider fileSystemProvider,
-		DotNetBackgroundTaskApi compilerServicesBackgroundTaskApi,
-		CommonService commonService,
-		IDialog dialogRecord,
-		ICommonComponentRenderers commonComponentRenderers)
+		DotNetService dotNetService,
+		IDialog dialogRecord)
 	{
 		return;
 	}

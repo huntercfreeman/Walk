@@ -12,9 +12,7 @@ namespace Walk.Extensions.DotNet.Nugets.Displays;
 public partial class NugetPackageDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private IdeService IdeService { get; set; } = null!;
+	private DotNetService DotNetService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public NugetPackageRecord NugetPackageRecord { get; set; } = null!;

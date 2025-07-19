@@ -27,13 +27,7 @@ namespace Walk.Extensions.DotNet.DotNetSolutions.Displays.Internals;
 public partial class SolutionExplorerContextMenu : ComponentBase
 {
 	[Inject]
-	private IDotNetMenuOptionsFactory DotNetMenuOptionsFactory { get; set; } = null!;
-	[Inject]
-	private DotNetBackgroundTaskApi CompilerServicesBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private IdeService IdeService { get; set; } = null!;
-	[Inject]
-	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
+	private DotNetService DotNetService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public TreeViewCommandArgs TreeViewCommandArgs { get; set; }

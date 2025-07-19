@@ -13,9 +13,7 @@ namespace Walk.Extensions.DotNet.DotNetSolutions.Displays;
 public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private IdeService IdeService { get; set; } = null!;
-	[Inject]
-	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
+	private DotNetService DotNetService { get; set; } = null!;
 
 	private SolutionExplorerTreeViewKeyboardEventHandler _solutionExplorerTreeViewKeymap = null!;
 	private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;

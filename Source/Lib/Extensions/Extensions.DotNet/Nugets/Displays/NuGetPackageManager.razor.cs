@@ -10,11 +10,7 @@ namespace Walk.Extensions.DotNet.Nugets.Displays;
 public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPackageManagerRendererType
 {
 	[Inject]
-	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private INugetPackageManagerProvider NugetPackageManagerProvider { get; set; } = null!;
-	[Inject]
-	private CommonService CommonService { get; set; } = null!;
+	private DotNetService DotNetService { get; set; } = null!;
 
 	private bool _performingNugetQuery;
 	private Exception? _exceptionFromNugetQuery;

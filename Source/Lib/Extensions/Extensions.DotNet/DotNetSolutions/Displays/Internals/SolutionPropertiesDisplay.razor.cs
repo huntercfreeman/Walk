@@ -5,7 +5,7 @@ namespace Walk.Extensions.DotNet.DotNetSolutions.Displays.Internals;
 public partial class SolutionPropertiesDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
+	private DotNetService DotNetService { get; set; } = null!;
 	
 	protected override void OnInitialized()
 	{

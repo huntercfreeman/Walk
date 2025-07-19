@@ -19,11 +19,7 @@ namespace Walk.Extensions.DotNet.CSharpProjects.Displays;
 public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private IdeService IdeService { get; set; } = null!;
-	[Inject]
-	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
-	[Inject]
-	private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
+	private DotNetService DotNetService { get; set; } = null!;
 
 	[CascadingParameter]
 	public IDialog DialogRecord { get; set; } = null!;

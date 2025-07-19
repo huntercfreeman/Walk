@@ -14,9 +14,7 @@ namespace Walk.Extensions.DotNet.TestExplorers.Displays;
 public partial class TestExplorerDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private IdeService IdeService { get; set; } = null!;
-	[Inject]
-	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
+	private DotNetService DotNetService { get; set; } = null!;
 
 	protected override void OnInitialized()
 	{

@@ -16,9 +16,7 @@ namespace Walk.Extensions.DotNet.DotNetSolutions.Displays;
 public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	private IdeService IdeService { get; set; } = null!;
-	[Inject]
-	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
+	private DotNetService DotNetService { get; set; } = null!;
 
 	[CascadingParameter]
 	public IDialog DialogRecord { get; set; } = null!;
