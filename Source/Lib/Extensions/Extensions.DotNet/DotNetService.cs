@@ -1546,7 +1546,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
     public ValueTask Do_WalkExtensionsDotNetInitializerOnInit()
     {
         InitializePanelTabs();
-        _dotNetCommandFactory.Initialize();
+        Initialize();
         return ValueTask.CompletedTask;
     }
 
@@ -1974,7 +1974,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
         var localNugetResult = await QueryForNugetPackagesAsync(query)
             .ConfigureAwait(false);
 
-        NuGetPackageManagerService.ReduceSetMostRecentQueryResultAction(localNugetResult);
+        ReduceSetMostRecentQueryResultAction(localNugetResult);
     }
     
     public ValueTask Do_RunTestByFullyQualifiedName(TreeViewStringFragment treeViewStringFragment, string fullyQualifiedName, TreeViewProjectTestModel treeViewProjectTestModel)
@@ -2173,7 +2173,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 			TerminalCommandRequest terminalCommandRequest;
 
             var slnFoundString = $"sln found: {solutionAbsolutePath.Value}";
-            var prefix = TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetBackgroundTaskApi);
+            var prefix = TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetService);
 
 			// Set 'generalTerminal' working directory
 			terminalCommandRequest = new TerminalCommandRequest(
@@ -2210,7 +2210,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 		
 		try
 		{
-			await _appDataService.WriteAppDataAsync(new DotNetAppData
+			await AppDataService.WriteAppDataAsync(new DotNetAppData
 			{
 				SolutionMostRecent = solutionAbsolutePath.Value
 			});
@@ -2600,7 +2600,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 		Key<DotNetSolutionModel> dotNetSolutionModelKey,
 		CompilationUnitKind compilationUnitKind)
 	{
-		var dotNetSolutionState = DotNetSolutionService.GetDotNetSolutionState();
+		var dotNetSolutionState = GetDotNetSolutionState();
 
 		var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionsList.FirstOrDefault(
 			x => x.Key == dotNetSolutionModelKey);
@@ -2778,7 +2778,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 
 	private async ValueTask Do_SetDotNetSolutionTreeView(Key<DotNetSolutionModel> dotNetSolutionModelKey)
 	{
-		var dotNetSolutionState = DotNetSolutionService.GetDotNetSolutionState();
+		var dotNetSolutionState = GetDotNetSolutionState();
 
 		var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionsList.FirstOrDefault(
 			x => x.Key == dotNetSolutionModelKey);
@@ -2788,7 +2788,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 
 		var rootNode = new TreeViewSolution(
 			dotNetSolutionModel,
-			_dotNetComponentRenderers,
+			DotNetComponentRenderers,
 			IdeService.IdeComponentRenderers,
 			IdeService.TextEditorService.CommonService,
 			true,
@@ -2817,7 +2817,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 		if (dotNetSolutionModel is null)
 			return;
 
-		DotNetSolutionService.ReduceWithAction(ConstructModelReplacement(
+		ReduceWithAction(ConstructModelReplacement(
 			dotNetSolutionModel.Key,
 			dotNetSolutionModel));
 	}
@@ -2855,7 +2855,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
         {
         	BeginWithFunc = parsedCommand =>
         	{
-        		_dotNetCliOutputParser.ParseOutputEntireDotNetRun(
+        		ParseOutputEntireDotNetRun(
         			string.Empty,
         			"Run-Project_started");
         			
@@ -2866,7 +2866,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
         		startupControlModel.ExecutingTerminalCommandRequest = null;
         		IdeService.Ide_TriggerStartupControlStateChanged();
         	
-        		_dotNetCliOutputParser.ParseOutputEntireDotNetRun(
+        		ParseOutputEntireDotNetRun(
         			parsedCommand.OutputCache.ToString(),
         			"Run-Project_completed");
         			
@@ -3042,7 +3042,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
     /// </summary>
 	public Task HandleUserInterfaceWasInitializedEffect()
 	{
-		var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
+		var dotNetSolutionState = GetDotNetSolutionState();
 		var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 
 		if (dotNetSolutionModel is null)
@@ -3057,13 +3057,13 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 				SolutionFilePath = dotNetSolutionModel.AbsolutePath.Value
 			});
 		
-			_dotNetBackgroundTaskApi.TestExplorerService.Enqueue_ConstructTreeView();
+			Enqueue_ConstructTreeView();
 		}
 		
 		if (_intentToDiscoverTestsInSolutionFilePath != dotNetSolutionModel.AbsolutePath.Value)
 		{
 			_intentToDiscoverTestsInSolutionFilePath = dotNetSolutionModel.AbsolutePath.Value;
-			_dotNetBackgroundTaskApi.TestExplorerService.Enqueue_DiscoverTests();
+			Enqueue_DiscoverTests();
 		}
 		
 		return Task.CompletedTask;
@@ -3071,7 +3071,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 	
 	public Task HandleShouldDiscoverTestsEffect()
 	{
-		var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
+		var dotNetSolutionState = GetDotNetSolutionState();
 		var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 
 		if (dotNetSolutionModel is null)
@@ -3086,11 +3086,11 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 				SolutionFilePath = dotNetSolutionModel.AbsolutePath.Value
 			});
 		
-			_dotNetBackgroundTaskApi.TestExplorerService.Enqueue_ConstructTreeView();
+			Enqueue_ConstructTreeView();
 		}
 		
 		_intentToDiscoverTestsInSolutionFilePath = dotNetSolutionModel.AbsolutePath.Value;
-		_dotNetBackgroundTaskApi.TestExplorerService.Enqueue_DiscoverTests();
+		Enqueue_DiscoverTests();
 	
         return Task.CompletedTask;
 	}
@@ -3142,7 +3142,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 
     public async ValueTask TestExplorer_Do_ConstructTreeView()
     {
-        var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
+        var dotNetSolutionState = GetDotNetSolutionState();
         var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 
         if (dotNetSolutionModel is null)
@@ -3211,7 +3211,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 		        	
 						try
 						{
-							treeViewProjectTestModel.Item.TestNameFullyQualifiedList = _dotNetCliOutputParser.ParseOutputLineDotNetTestListTests(
+							treeViewProjectTestModel.Item.TestNameFullyQualifiedList = ParseOutputLineDotNetTestListTests(
 		        				treeViewProjectTestModel.Item.TerminalCommandParsed.OutputCache.ToString());
 
 							// THINKING_ABOUT_TREE_VIEW();
@@ -3294,9 +3294,9 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 
         var activeNodes = new List<TreeViewNoType> { ContainsTestsTreeViewGroup };
 
-        if (!_ideService.TextEditorService.CommonService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out _))
+        if (!IdeService.TextEditorService.CommonService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out _))
         {
-            _ideService.TextEditorService.CommonService.TreeView_RegisterContainerAction(new TreeViewContainer(
+            IdeService.TextEditorService.CommonService.TreeView_RegisterContainerAction(new TreeViewContainer(
                 TestExplorerState.TreeViewTestExplorerKey,
                 adhocRoot,
                 activeNodes));
@@ -3323,7 +3323,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
     {
     	_throttleDiscoverTests.Run(async _ =>
     	{
-	    	var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
+	    	var dotNetSolutionState = GetDotNetSolutionState();
 	        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 	
 	        if (dotNetSolutionModel is null)
@@ -3430,7 +3430,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
     
     public Task Task_SumEachProjectTestCount()
     {
-		var dotNetSolutionState = _dotNetSolutionService.GetDotNetSolutionState();
+		var dotNetSolutionState = GetDotNetSolutionState();
         var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 
         if (dotNetSolutionModel is null)
@@ -3503,7 +3503,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
             IdeService.TextEditorService.CommonService.TreeView_WithRootNodeAction(TestExplorerState.TreeViewTestExplorerKey, nextTreeViewAdhoc);
         }
     
-    	_dotNetBackgroundTaskApi.TestExplorerService.ReduceWithAction(inState => inState with
+    	ReduceWithAction(inState => inState with
         {
             TotalTestCount = totalTestCount,
             NotRanTestHashSet = notRanTestHashSet,
@@ -3583,7 +3583,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
     			noTestsTreeViewGroup.LinkChildren(
 					noTestsTreeViewGroup.ChildList,
 					noTestsTreeViewGroup.ChildList);
-				_ideService.TextEditorService.CommonService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, noTestsTreeViewGroup);
+				IdeService.TextEditorService.CommonService.TreeView_ReRenderNodeAction(TestExplorerState.TreeViewTestExplorerKey, noTestsTreeViewGroup);
     		}
     	}
     	else
@@ -3639,7 +3639,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
 	
 	public ValueTask OutputService_Do_ConstructTreeView()
     {
-    	var dotNetRunParseResult = _dotNetCliOutputParser.GetDotNetRunParseResult();
+    	var dotNetRunParseResult = GetDotNetRunParseResult();
     	
     	var treeViewNodeList = dotNetRunParseResult.AllDiagnosticLineList.Select(x =>
     		(TreeViewNoType)new TreeViewDiagnosticLine(
@@ -3830,7 +3830,7 @@ public class DotNetService : IBackgroundTaskGroup, IDisposable
     {
     	var inState = GetDotNetSolutionState();
     
-        var withAction = (DotNetBackgroundTaskApi.WithAction)withActionInterface;
+        var withAction = (WithAction)withActionInterface;
         _dotNetSolutionState = withAction.WithFunc.Invoke(inState);
         
         DotNetSolutionStateChanged?.Invoke();
