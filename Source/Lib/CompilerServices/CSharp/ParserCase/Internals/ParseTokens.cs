@@ -307,9 +307,7 @@ public static class ParseTokens
 			//if (deferredParsingOccurred)
 			//	break;
 			
-			var openBraceToken = parserModel.TokenWalker.Consume();
-			
-            ParseTokens.ParseOpenBraceToken(openBraceToken, ref parserModel);
+            ParseTokens.ParseOpenBraceToken(ref parserModel);
         }
     }
     
@@ -319,12 +317,10 @@ public static class ParseTokens
 		ParseGetterOrSetter(variableDeclarationNode: null, ref parserModel);
     }
 
-	/// <summary>
-	/// OpenBraceToken is passed in to the method because it is a protected token,
-	/// and is preferably consumed from the main loop so it can be more easily tracked.
-	/// </summary>
-    public static void ParseOpenBraceToken(SyntaxToken openBraceToken, ref CSharpParserModel parserModel)
+    public static void ParseOpenBraceToken(ref CSharpParserModel parserModel)
     {
+        var openBraceToken = parserModel.TokenWalker.Consume();
+        
 		if (parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan ||
     		parserModel.CurrentCodeBlockOwner.CodeBlock_StartInclusiveIndex != -1)
 		{
@@ -360,8 +356,10 @@ public static class ParseTokens
 	/// CloseBraceToken is passed in to the method because it is a protected token,
 	/// and is preferably consumed from the main loop so it can be more easily tracked.
 	/// </summary>
-    public static void ParseCloseBraceToken(SyntaxToken closeBraceToken, int closeBraceTokenIndex, ref CSharpParserModel parserModel)
+    public static void ParseCloseBraceToken(int closeBraceTokenIndex, ref CSharpParserModel parserModel)
     {
+        var closeBraceToken = parserModel.TokenWalker.Consume();
+    
     	// while () if not CloseBraceToken accepting bubble up until someone takes it or null parent.
     	
     	/*if (parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)
@@ -518,8 +516,10 @@ public static class ParseTokens
 	/// StatementDelimiterToken is passed in to the method because it is a protected token,
 	/// and is preferably consumed from the main loop so it can be more easily tracked.
 	/// </summary>
-    public static void ParseStatementDelimiterToken(SyntaxToken statementDelimiterToken, ref CSharpParserModel parserModel)
+    public static void ParseStatementDelimiterToken(ref CSharpParserModel parserModel)
     {
+        var statementDelimiterToken = parserModel.TokenWalker.Consume();
+    
     	if (parserModel.CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
         	var namespaceStatementNode = (NamespaceStatementNode)parserModel.CurrentCodeBlockOwner;

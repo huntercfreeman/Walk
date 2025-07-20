@@ -56,7 +56,7 @@ public static class CSharpParser
 					if (deferredParsingOccurred)
 						break;
 
-                    ParseTokens.ParseOpenBraceToken(parserModel.TokenWalker.Consume(), ref parserModel);
+                    ParseTokens.ParseOpenBraceToken(ref parserModel);
                     break;
                 }
                 case SyntaxKind.CloseBraceToken:
@@ -81,7 +81,7 @@ public static class CSharpParser
 						parserModel.TokenWalker.SetNullDeferredParsingTuple();
 					}
 					
-                    ParseTokens.ParseCloseBraceToken(parserModel.TokenWalker.Consume(), closeBraceTokenIndex, ref parserModel);
+                    ParseTokens.ParseCloseBraceToken(closeBraceTokenIndex, ref parserModel);
                     break;
                 }
                 case SyntaxKind.OpenParenthesisToken:
@@ -119,7 +119,7 @@ public static class CSharpParser
 					if (deferredParsingOccurred)
 						break;
 
-                    ParseTokens.ParseStatementDelimiterToken(parserModel.TokenWalker.Consume(), ref parserModel);
+                    ParseTokens.ParseStatementDelimiterToken(ref parserModel);
                     break;
                 }
                 case SyntaxKind.EndOfFileToken:
