@@ -306,10 +306,80 @@ public static class ParseExpressions
 			
 			previousDelimiterExpressionNode = delimiterExpressionTuple.ExpressionNode;
 			
-			parserModel.ExpressionPrimary = ParseExpressions.AnyMergeExpression(
-				delimiterExpressionTuple.ExpressionNode,
-				parserModel.ExpressionPrimary, // expressionSecondary
-				ref parserModel);
+			var expressionSecondary = parserModel.ExpressionPrimary;
+			parserModel.ExpressionPrimary = delimiterExpressionTuple.ExpressionNode;
+			
+		    switch (parserModel.ExpressionPrimary.SyntaxKind)
+    		{
+    			case SyntaxKind.CollectionInitializationNode:
+    				parserModel.ExpressionPrimary = CollectionInitializationMergeExpression((CollectionInitializationNode)parserModel.ExpressionPrimary, expressionSecondary, ref parserModel);   
+    			    break;
+    			case SyntaxKind.BinaryExpressionNode:
+    				parserModel.ExpressionPrimary = BinaryMergeExpression((BinaryExpressionNode)parserModel.ExpressionPrimary, expressionSecondary, ref parserModel);
+    				break;
+    			case SyntaxKind.InterpolatedStringNode:
+    				parserModel.ExpressionPrimary = InterpolatedStringMergeExpression((InterpolatedStringNode)parserModel.ExpressionPrimary, expressionSecondary, ref parserModel);
+    				break;
+    			case SyntaxKind.FunctionDefinitionNode:
+    				var functionDefinitionNode = (FunctionDefinitionNode)parserModel.ExpressionPrimary;
+    				if (functionDefinitionNode.IsParsingGenericParameters)
+    				{
+    					parserModel.ExpressionPrimary = GenericParametersListingMergeExpression(
+    						functionDefinitionNode, expressionSecondary, ref parserModel);
+    				    break;
+    				}
+    				parserModel.ExpressionPrimary = FunctionDefinitionMergeExpression(functionDefinitionNode, expressionSecondary, ref parserModel);
+    				break;
+    			case SyntaxKind.ConstructorDefinitionNode:
+    			case SyntaxKind.TypeDefinitionNode:
+    				parserModel.ExpressionPrimary = FunctionDefinitionMergeExpression((IFunctionDefinitionNode)parserModel.ExpressionPrimary, expressionSecondary, ref parserModel);
+    				break;
+    			case SyntaxKind.ParenthesizedExpressionNode:
+    				parserModel.ExpressionPrimary = ParenthesizedMergeExpression((ParenthesizedExpressionNode)parserModel.ExpressionPrimary, expressionSecondary, ref parserModel);
+    				break;
+    			case SyntaxKind.FunctionInvocationNode:
+    				parserModel.ExpressionPrimary = FunctionInvocationMergeExpression((FunctionInvocationNode)parserModel.ExpressionPrimary, expressionSecondary, ref parserModel);
+    				break;
+    			case SyntaxKind.LambdaExpressionNode:
+    				parserModel.ExpressionPrimary = LambdaMergeExpression((LambdaExpressionNode)parserModel.ExpressionPrimary, expressionSecondary, ref parserModel);
+    				break;
+    			case SyntaxKind.ConstructorInvocationExpressionNode:
+    				parserModel.ExpressionPrimary = ConstructorInvocationMergeExpression((ConstructorInvocationExpressionNode)parserModel.ExpressionPrimary, expressionSecondary, ref parserModel);
+    				break;
+    			case SyntaxKind.WithExpressionNode:
+    				parserModel.ExpressionPrimary = WithMergeExpression((WithExpressionNode)parserModel.ExpressionPrimary, expressionSecondary, ref parserModel);
+    				break;
+    			case SyntaxKind.TupleExpressionNode:
+    				parserModel.ExpressionPrimary = TupleMergeExpression((TupleExpressionNode)parserModel.ExpressionPrimary, expressionSecondary, ref parserModel);
+    				break;
+    			case SyntaxKind.AmbiguousParenthesizedExpressionNode:
+    				parserModel.ExpressionPrimary = AmbiguousParenthesizedMergeExpression((AmbiguousParenthesizedExpressionNode)parserModel.ExpressionPrimary, expressionSecondary, ref parserModel);
+    				break;
+    			case SyntaxKind.AmbiguousIdentifierExpressionNode:
+    				parserModel.ExpressionPrimary = AmbiguousIdentifierMergeExpression((AmbiguousIdentifierExpressionNode)parserModel.ExpressionPrimary, expressionSecondary, ref parserModel);
+    				break;
+    			case SyntaxKind.VariableReferenceNode:
+    			    parserModel.ExpressionPrimary = VariableReferenceMergeExpression((VariableReferenceNode)parserModel.ExpressionPrimary, expressionSecondary, ref parserModel);
+    			    break;
+    			case SyntaxKind.TypeClauseNode:
+    				parserModel.ExpressionPrimary = TypeClauseMergeExpression((TypeClauseNode)parserModel.ExpressionPrimary, expressionSecondary, ref parserModel);
+    				break;
+    			case SyntaxKind.ReturnStatementNode:
+    				parserModel.ExpressionPrimary = ReturnStatementMergeExpression((ReturnStatementNode)parserModel.ExpressionPrimary, expressionSecondary, ref parserModel);
+    				break;
+    			case SyntaxKind.KeywordFunctionOperatorNode:
+    				parserModel.ExpressionPrimary = KeywordFunctionOperatorMergeExpression((KeywordFunctionOperatorNode)parserModel.ExpressionPrimary, expressionSecondary, ref parserModel);
+    				break;
+    			case SyntaxKind.SwitchExpressionNode:
+    				parserModel.ExpressionPrimary = SwitchExpressionMergeExpression((SwitchExpressionNode)parserModel.ExpressionPrimary, expressionSecondary, ref parserModel);
+    				break;
+    			case SyntaxKind.BadExpressionNode:
+    				parserModel.ExpressionPrimary = BadMergeExpression((BadExpressionNode)parserModel.ExpressionPrimary, expressionSecondary, ref parserModel);
+    				break;
+    			default:
+    				parserModel.ExpressionPrimary = parserModel.Binder.Shared_BadExpressionNode;
+    				break;
+    		};
 		}
 		
 		if (parserModel.NoLongerRelevantExpressionNode is not null) // try finally is not needed to guarantee setting 'parserModel.NoLongerRelevantExpressionNode = null;' because this is an object reference comparison 'Object.ReferenceEquals'. Versus something more general that would break future parses if not properly cleared, like a SyntaxKind.
@@ -320,65 +390,6 @@ public static class ParseExpressions
 		
 		return parserModel.ExpressionPrimary;
     }
-	
-	/// <summary>
-	/// Returns the new primary expression which will be 'BadExpressionNode'
-	/// if the parameters were not mergeable.
-	/// </summary>
-	public static IExpressionNode AnyMergeExpression(
-		IExpressionNode expressionPrimary, IExpressionNode expressionSecondary, ref CSharpParserModel parserModel)
-	{
-		switch (expressionPrimary.SyntaxKind)
-		{
-			case SyntaxKind.CollectionInitializationNode:
-				return CollectionInitializationMergeExpression((CollectionInitializationNode)expressionPrimary, expressionSecondary, ref parserModel);   
-			case SyntaxKind.BinaryExpressionNode:
-				return BinaryMergeExpression((BinaryExpressionNode)expressionPrimary, expressionSecondary, ref parserModel);
-			case SyntaxKind.InterpolatedStringNode:
-				return InterpolatedStringMergeExpression((InterpolatedStringNode)expressionPrimary, expressionSecondary, ref parserModel);
-			case SyntaxKind.FunctionDefinitionNode:
-				var functionDefinitionNode = (FunctionDefinitionNode)expressionPrimary;
-				if (functionDefinitionNode.IsParsingGenericParameters)
-				{
-					return GenericParametersListingMergeExpression(
-						functionDefinitionNode, expressionSecondary, ref parserModel);
-				}
-				return FunctionDefinitionMergeExpression(functionDefinitionNode, expressionSecondary, ref parserModel);
-			case SyntaxKind.ConstructorDefinitionNode:
-			case SyntaxKind.TypeDefinitionNode:
-				return FunctionDefinitionMergeExpression((IFunctionDefinitionNode)expressionPrimary, expressionSecondary, ref parserModel);
-			case SyntaxKind.ParenthesizedExpressionNode:
-				return ParenthesizedMergeExpression((ParenthesizedExpressionNode)expressionPrimary, expressionSecondary, ref parserModel);
-			case SyntaxKind.FunctionInvocationNode:
-				return FunctionInvocationMergeExpression((FunctionInvocationNode)expressionPrimary, expressionSecondary, ref parserModel);
-			case SyntaxKind.LambdaExpressionNode:
-				return LambdaMergeExpression((LambdaExpressionNode)expressionPrimary, expressionSecondary, ref parserModel);
-			case SyntaxKind.ConstructorInvocationExpressionNode:
-				return ConstructorInvocationMergeExpression((ConstructorInvocationExpressionNode)expressionPrimary, expressionSecondary, ref parserModel);
-			case SyntaxKind.WithExpressionNode:
-				return WithMergeExpression((WithExpressionNode)expressionPrimary, expressionSecondary, ref parserModel);
-			case SyntaxKind.TupleExpressionNode:
-				return TupleMergeExpression((TupleExpressionNode)expressionPrimary, expressionSecondary, ref parserModel);
-			case SyntaxKind.AmbiguousParenthesizedExpressionNode:
-				return AmbiguousParenthesizedMergeExpression((AmbiguousParenthesizedExpressionNode)expressionPrimary, expressionSecondary, ref parserModel);
-			case SyntaxKind.AmbiguousIdentifierExpressionNode:
-				return AmbiguousIdentifierMergeExpression((AmbiguousIdentifierExpressionNode)expressionPrimary, expressionSecondary, ref parserModel);
-			case SyntaxKind.VariableReferenceNode:
-			    return VariableReferenceMergeExpression((VariableReferenceNode)expressionPrimary, expressionSecondary, ref parserModel);
-			case SyntaxKind.TypeClauseNode:
-				return TypeClauseMergeExpression((TypeClauseNode)expressionPrimary, expressionSecondary, ref parserModel);
-			case SyntaxKind.ReturnStatementNode:
-				return ReturnStatementMergeExpression((ReturnStatementNode)expressionPrimary, expressionSecondary, ref parserModel);
-			case SyntaxKind.KeywordFunctionOperatorNode:
-				return KeywordFunctionOperatorMergeExpression((KeywordFunctionOperatorNode)expressionPrimary, expressionSecondary, ref parserModel);
-			case SyntaxKind.SwitchExpressionNode:
-				return SwitchExpressionMergeExpression((SwitchExpressionNode)expressionPrimary, expressionSecondary, ref parserModel);
-			case SyntaxKind.BadExpressionNode:
-				return BadMergeExpression((BadExpressionNode)expressionPrimary, expressionSecondary, ref parserModel);
-			default:
-				return parserModel.Binder.Shared_BadExpressionNode;
-		};
-	}
 	
 	public static IExpressionNode HandleBinaryOperator(
 		IExpressionNode expressionPrimary, ref CSharpParserModel parserModel)
