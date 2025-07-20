@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
@@ -81,7 +82,7 @@ public sealed class ViewModelDisplayOptions
 
     public bool IncludeContextMenuHelperComponent { get; set; } = true;
 
-    public ContextRecord ContextRecord { get; set; } = ContextFacts.TextEditorContext;
+    public ContextRecord ContextRecord { get; set; } = CommonFacts.TextEditorContext;
 
 	/// <summary>
 	/// The integrated terminal logic needs a keymap, separate to that of the 'global' keymap used by other text editors.

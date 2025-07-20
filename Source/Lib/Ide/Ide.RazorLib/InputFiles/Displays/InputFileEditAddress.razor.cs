@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Walk.Common.RazorLib.Keyboards.Models;
+using Walk.Common.RazorLib;
 
 namespace Walk.Ide.RazorLib.InputFiles.Displays;
 
@@ -57,12 +57,12 @@ public partial class InputFileEditAddress : ComponentBase
 
     private async Task InputTextEditForAddressOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
-        if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
+        if (keyboardEventArgs.Key == CommonFacts.MetaKeys.ESCAPE)
         {
             _isCancelled = true;
             await OnEscapeKeyDownCallbackAsync.Invoke().ConfigureAwait(false);
         }
-        else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+        else if (keyboardEventArgs.Code == CommonFacts.WhitespaceCodes.ENTER_CODE)
         {
             await InputTextEditForAddressOnFocusOutAsync().ConfigureAwait(false);
         }

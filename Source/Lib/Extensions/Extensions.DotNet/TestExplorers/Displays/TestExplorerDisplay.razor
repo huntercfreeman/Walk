@@ -1,3 +1,4 @@
+@using Walk.Common.RazorLib;
 @using Walk.Common.RazorLib.Contexts.Displays
 @using Walk.Common.RazorLib.Contexts.Models
 @using Walk.Common.RazorLib.Resizes.Displays
@@ -23,7 +24,7 @@
 
 @* ContextRecord="ContextFacts.TestExplorerContext" *@
 
-<div id="@ContextFacts.TestExplorerContext.ContextElementId" class="di_ide_test-explorer" style="height: 100%; width: 100%;">
+<div id="@CommonFacts.TestExplorerContext.ContextElementId" class="di_ide_test-explorer" style="height: 100%; width: 100%;">
 	@if (appOptionsState.Options.ShowPanelTitles)
 	{
 	    <div class="di_ide_section-title">

@@ -1,3 +1,4 @@
+@using Walk.Common.RazorLib
 @using Walk.Common.RazorLib.Contexts.Displays
 @using Walk.Common.RazorLib.Contexts.Models;
 @using Walk.Common.RazorLib.Dropdowns.Displays
@@ -9,7 +10,7 @@
 
 @* ContextRecord="ContextFacts.SolutionExplorerContext" *@
 
-<div id="@ContextFacts.SolutionExplorerContext.ContextElementId" class="di_ide_solution-explorer-display" style="height: 100%">
+<div id="@CommonFacts.SolutionExplorerContext.ContextElementId" class="di_ide_solution-explorer-display" style="height: 100%">
     @{
     	var dotNetSolutionState = DotNetService.GetDotNetSolutionState();
     	var appOptionsState = DotNetService.IdeService.TextEditorService.CommonService.GetAppOptionsState();

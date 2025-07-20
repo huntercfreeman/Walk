@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
-using Walk.Common.RazorLib.Keyboards.Models;
-
 namespace Walk.Common.RazorLib.Menus.Displays;
 
 public partial class MenuDisplay : ComponentBase
@@ -108,35 +106,35 @@ public partial class MenuDisplay : ComponentBase
 
         switch (keyboardEventArgs.Key)
         {
-            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
+            case CommonFacts.MovementKeys.ARROW_LEFT:
+            case CommonFacts.AlternateMovementKeys.ARROW_LEFT:
             	if (Dropdown is not null)
 	                CommonService.Dropdown_ReduceDisposeAction(Dropdown.Key);
 
                 if (ReturnFocusToParentFuncAsync is not null)
                     await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);
                 break;
-            case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN:
+            case CommonFacts.MovementKeys.ARROW_DOWN:
+            case CommonFacts.AlternateMovementKeys.ARROW_DOWN:
                 if (_activeMenuOptionRecordIndex >= MenuRecord.MenuOptionList.Count - 1)
                     _activeMenuOptionRecordIndex = 0;
                 else
                     _activeMenuOptionRecordIndex++;
                 break;
-            case KeyboardKeyFacts.MovementKeys.ARROW_UP:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP:
+            case CommonFacts.MovementKeys.ARROW_UP:
+            case CommonFacts.AlternateMovementKeys.ARROW_UP:
                 if (_activeMenuOptionRecordIndex <= 0)
                     _activeMenuOptionRecordIndex = MenuRecord.MenuOptionList.Count - 1;
                 else
                     _activeMenuOptionRecordIndex--;
                 break;
-            case KeyboardKeyFacts.MovementKeys.HOME:
+            case CommonFacts.MovementKeys.HOME:
                 _activeMenuOptionRecordIndex = 0;
                 break;
-            case KeyboardKeyFacts.MovementKeys.END:
+            case CommonFacts.MovementKeys.END:
                 _activeMenuOptionRecordIndex = MenuRecord.MenuOptionList.Count - 1;
                 break;
-            case KeyboardKeyFacts.MetaKeys.ESCAPE:
+            case CommonFacts.MetaKeys.ESCAPE:
             	if (Dropdown is not null)
 	                CommonService.Dropdown_ReduceDisposeAction(Dropdown.Key);
 

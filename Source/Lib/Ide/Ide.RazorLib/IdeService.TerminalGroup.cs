@@ -1,4 +1,5 @@
-﻿using Walk.Common.RazorLib.Dimensions.Models;
+using Walk.Common.RazorLib;
+using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 
@@ -29,7 +30,7 @@ public partial class IdeService
 	{
 		lock (_stateModificationLock)
 		{
-			if (dimensionUnit.Purpose == DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)
+			if (dimensionUnit.Purpose == CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN)
 			{
 				if (_terminalGroupState.BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList is not null)
 				{

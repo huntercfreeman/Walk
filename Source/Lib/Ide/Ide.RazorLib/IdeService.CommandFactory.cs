@@ -1,3 +1,4 @@
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Menus.Models;
@@ -35,7 +36,7 @@ public partial class IdeService
 		// ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).ShiftF12Func = ShowAllReferences;
 
 		// ActiveContextsContext
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 			new KeymapArgs()
 			{
 				Key = "a",
@@ -45,10 +46,10 @@ public partial class IdeService
 				AltKey = true,
 			},
 			ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.ActiveContextsContext, "Focus: ActiveContexts", "focus-active-contexts", CommonService.JsRuntimeCommonApi, CommonService));
+				CommonFacts.ActiveContextsContext, "Focus: ActiveContexts", "focus-active-contexts", CommonService.JsRuntimeCommonApi, CommonService));
 
 		// BackgroundServicesContext
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 			new KeymapArgs()
 			{
 				Key = "b",
@@ -59,10 +60,10 @@ public partial class IdeService
 				AltKey = true,
 			},
 			ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.BackgroundServicesContext, "Focus: BackgroundServices", "focus-background-services", CommonService.JsRuntimeCommonApi, CommonService));
+				CommonFacts.BackgroundServicesContext, "Focus: BackgroundServices", "focus-background-services", CommonService.JsRuntimeCommonApi, CommonService));
 
 		// CompilerServiceExplorerContext
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 			new KeymapArgs()
 			{
 				Key = "C",
@@ -74,10 +75,10 @@ public partial class IdeService
 				AltKey = true,
 			},
 			ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.CompilerServiceExplorerContext, "Focus: CompilerServiceExplorer", "focus-compiler-service-explorer", CommonService.JsRuntimeCommonApi, CommonService));
+				CommonFacts.CompilerServiceExplorerContext, "Focus: CompilerServiceExplorer", "focus-compiler-service-explorer", CommonService.JsRuntimeCommonApi, CommonService));
 
 		// CompilerServiceEditorContext
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 			new KeymapArgs()
 			{
 				Key = "c",
@@ -87,10 +88,10 @@ public partial class IdeService
 				AltKey = true,
 			},
 			ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.CompilerServiceEditorContext, "Focus: CompilerServiceEditor", "focus-compiler-service-editor", CommonService.JsRuntimeCommonApi, CommonService));
+				CommonFacts.CompilerServiceEditorContext, "Focus: CompilerServiceEditor", "focus-compiler-service-editor", CommonService.JsRuntimeCommonApi, CommonService));
 
 		// DialogDisplayContext
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 			new KeymapArgs()
 			{
 				Key = "d",
@@ -100,10 +101,10 @@ public partial class IdeService
 				AltKey = true,
 			},
 			ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.DialogDisplayContext, "Focus: DialogDisplay", "focus-dialog-display", CommonService.JsRuntimeCommonApi, CommonService));
+				CommonFacts.DialogDisplayContext, "Focus: DialogDisplay", "focus-dialog-display", CommonService.JsRuntimeCommonApi, CommonService));
 
 		// EditorContext
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 			new KeymapArgs()
 			{
 				Key = "E",
@@ -114,10 +115,10 @@ public partial class IdeService
 				AltKey = true,
 			},
 			ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.EditorContext, "Focus: Editor", "focus-editor", CommonService.JsRuntimeCommonApi, CommonService));
+				CommonFacts.EditorContext, "Focus: Editor", "focus-editor", CommonService.JsRuntimeCommonApi, CommonService));
 
 		// FolderExplorerContext
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 			new KeymapArgs()
 			{
 				Key = "f",
@@ -127,10 +128,10 @@ public partial class IdeService
 				AltKey = true,
 			},
 			ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.FolderExplorerContext, "Focus: FolderExplorer", "focus-folder-explorer", CommonService.JsRuntimeCommonApi, CommonService));
+				CommonFacts.FolderExplorerContext, "Focus: FolderExplorer", "focus-folder-explorer", CommonService.JsRuntimeCommonApi, CommonService));
 
 		// GitContext
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 			new KeymapArgs()
 			{
 				Key = "g",
@@ -140,10 +141,10 @@ public partial class IdeService
 				AltKey = true,
 			},
 			ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.GitContext, "Focus: Git", "focus-git", CommonService.JsRuntimeCommonApi, CommonService));
+				CommonFacts.GitContext, "Focus: Git", "focus-git", CommonService.JsRuntimeCommonApi, CommonService));
 
 		// GlobalContext
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 			new KeymapArgs()
 			{
 				Key = "g",
@@ -153,10 +154,10 @@ public partial class IdeService
 				AltKey = true,
 			},
 			ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.GlobalContext, "Focus: Global", "focus-global", CommonService.JsRuntimeCommonApi, CommonService));
+				CommonFacts.GlobalContext, "Focus: Global", "focus-global", CommonService.JsRuntimeCommonApi, CommonService));
 
 		// MainLayoutFooterContext
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 			new KeymapArgs()
 			{
 				Key = "f",
@@ -166,10 +167,10 @@ public partial class IdeService
 				AltKey = true,
 			},
 			ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.MainLayoutFooterContext, "Focus: Footer", "focus-footer", CommonService.JsRuntimeCommonApi, CommonService));
+				CommonFacts.MainLayoutFooterContext, "Focus: Footer", "focus-footer", CommonService.JsRuntimeCommonApi, CommonService));
 
 		// MainLayoutHeaderContext
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 			new KeymapArgs()
 			{
 				Key = "h",
@@ -179,10 +180,10 @@ public partial class IdeService
 				AltKey = true,
 			},
 			ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.MainLayoutHeaderContext, "Focus: Header", "focus-header", CommonService.JsRuntimeCommonApi, CommonService));
+				CommonFacts.MainLayoutHeaderContext, "Focus: Header", "focus-header", CommonService.JsRuntimeCommonApi, CommonService));
 
 		// ErrorListContext
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 			new KeymapArgs()
 			{
 				Key = "e",
@@ -192,10 +193,10 @@ public partial class IdeService
 				AltKey = true,
 			},
 			ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.ErrorListContext, "Focus: Error List", "error-list", CommonService.JsRuntimeCommonApi, CommonService));
+				CommonFacts.ErrorListContext, "Focus: Error List", "error-list", CommonService.JsRuntimeCommonApi, CommonService));
 
 		// OutputContext
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 			new KeymapArgs()
 			{
 				Key = "o",
@@ -205,10 +206,10 @@ public partial class IdeService
 				AltKey = true,
 			},
 			ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.OutputContext, "Focus: Output", "focus-output", CommonService.JsRuntimeCommonApi, CommonService));
+				CommonFacts.OutputContext, "Focus: Output", "focus-output", CommonService.JsRuntimeCommonApi, CommonService));
 
 		// TerminalContext
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 			new KeymapArgs()
 			{
 				Key = "t",
@@ -218,10 +219,10 @@ public partial class IdeService
 				AltKey = true,
 			},
 			ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.TerminalContext, "Focus: Terminal", "focus-terminal", CommonService.JsRuntimeCommonApi, CommonService));
+				CommonFacts.TerminalContext, "Focus: Terminal", "focus-terminal", CommonService.JsRuntimeCommonApi, CommonService));
 
 		// TestExplorerContext
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 			new KeymapArgs()
 			{
 				Key = "T",
@@ -232,10 +233,10 @@ public partial class IdeService
 				AltKey = true,
 			},
 			ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.TestExplorerContext, "Focus: Test Explorer", "focus-test-explorer", CommonService.JsRuntimeCommonApi, CommonService));
+				CommonFacts.TestExplorerContext, "Focus: Test Explorer", "focus-test-explorer", CommonService.JsRuntimeCommonApi, CommonService));
 
 		// TextEditorContext
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 			new KeymapArgs()
 			{
 				Key = "t",
@@ -245,7 +246,7 @@ public partial class IdeService
 				AltKey = true,
 			},
 			ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.TextEditorContext, "Focus: TextEditor", "focus-text-editor", CommonService.JsRuntimeCommonApi, CommonService));
+				CommonFacts.TextEditorContext, "Focus: TextEditor", "focus-text-editor", CommonService.JsRuntimeCommonApi, CommonService));
 
 		// Focus the text editor itself (as to allow for typing into the editor)
 		var focusTextEditorCommand = new CommonCommand(
@@ -269,7 +270,7 @@ public partial class IdeService
 				}
 			});
 
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 				new KeymapArgs()
 				{
 					Key = "Escape",
@@ -287,7 +288,7 @@ public partial class IdeService
 				return ValueTask.CompletedTask;
 			});
 
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 				new KeymapArgs()
 				{
 					Key = "F",
@@ -308,7 +309,7 @@ public partial class IdeService
 				return CommandFactory_OpenCodeSearchDialog();
 			});
 
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 				new KeymapArgs()
 				{
 					Key = ",",
@@ -363,7 +364,7 @@ public partial class IdeService
 
 				// _dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
 
-				if (CommonService.GetContextState().FocusedContextKey == ContextFacts.TextEditorContext.ContextKey)
+				if (CommonService.GetContextState().FocusedContextKey == CommonFacts.TextEditorContext.ContextKey)
 				{
 					CommonService.GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = WalkTextEditorInitializer.ContextSwitchGroupKey;
 				}
@@ -381,7 +382,7 @@ public partial class IdeService
 				CommonService.SetWidget(_contextSwitchWidget);
 			});
 
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 				new KeymapArgs()
 				{
 					Key = "Tab",
@@ -391,7 +392,7 @@ public partial class IdeService
 				},
 				openContextSwitchDialogCommand);
 
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 				new KeymapArgs()
 				{
 					Key = "/",
@@ -417,7 +418,7 @@ public partial class IdeService
 				return ValueTask.CompletedTask;
 			});
 
-		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 				new KeymapArgs()
 				{
 					Key = "p",

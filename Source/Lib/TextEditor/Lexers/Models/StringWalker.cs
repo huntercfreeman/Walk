@@ -1,5 +1,5 @@
 using System.Text;
-using Walk.Common.RazorLib.Keyboards.Models;
+using Walk.Common.RazorLib;
 using Walk.TextEditor.RazorLib.Exceptions;
 using Walk.TextEditor.RazorLib.CompilerServices;
 
@@ -117,7 +117,7 @@ public class StringWalker
 			peekedChar = PeekCharacter(i++);
 
 			if (WhitespaceFacts.ALL_LIST.Contains(peekedChar) ||
-				KeyboardKeyFacts.IsPunctuationCharacter(peekedChar))
+				CommonFacts.IsPunctuationCharacter(peekedChar))
 			{
 				break;
 			}

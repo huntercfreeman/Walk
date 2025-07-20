@@ -1,4 +1,5 @@
-﻿using Walk.Common.RazorLib.FileSystems.Models;
+using Walk.Common.RazorLib;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
@@ -13,7 +14,7 @@ public partial class TextEditorService
 	private readonly object _stateModificationLock = new();
 
 	private readonly Throttle _throttleSetSearchQuery = new Throttle(TimeSpan.FromMilliseconds(500));
-	private readonly Throttle _throttleUiUpdate = new Throttle(ThrottleFacts.TwentyFour_Frames_Per_Second);
+	private readonly Throttle _throttleUiUpdate = new Throttle(CommonFacts.ThrottleFacts_TwentyFour_Frames_Per_Second);
 
 	private readonly object _flushSearchResultsLock = new();
 

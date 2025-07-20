@@ -1,3 +1,4 @@
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
@@ -34,7 +35,7 @@ public record struct CodeSearchState(
 					0,
 					DimensionUnitKind.Pixels,
 					DimensionOperatorKind.Subtract,
-					DimensionUnitFacts.Purposes.OFFSET),
+					CommonFacts.PURPOSE_OFFSET),
 			});
         }
 
@@ -49,7 +50,7 @@ public record struct CodeSearchState(
 					0,
 					DimensionUnitKind.Pixels,
 					DimensionOperatorKind.Subtract,
-					DimensionUnitFacts.Purposes.OFFSET),
+					CommonFacts.PURPOSE_OFFSET),
 			});
         }
     }

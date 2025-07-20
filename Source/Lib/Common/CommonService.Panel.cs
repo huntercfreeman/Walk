@@ -241,10 +241,10 @@ public partial class CommonService
 
             if (inPanelGroup is not null)
             {
-                if (dimensionUnit.Purpose == DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW ||
-                    dimensionUnit.Purpose == DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)
+                if (dimensionUnit.Purpose == CommonFacts.PURPOSE_RESIZABLE_HANDLE_ROW ||
+                    dimensionUnit.Purpose == CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN)
                 {
-                    if (dimensionUnit.Purpose == DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW)
+                    if (dimensionUnit.Purpose == CommonFacts.PURPOSE_RESIZABLE_HANDLE_ROW)
                     {
                         if (inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList is not null)
                         {
@@ -255,7 +255,7 @@ public partial class CommonService
                                 inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
                         }
                     }
-                    else if (dimensionUnit.Purpose != DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)
+                    else if (dimensionUnit.Purpose != CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN)
                     {
                         if (inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList is not null)
                         {

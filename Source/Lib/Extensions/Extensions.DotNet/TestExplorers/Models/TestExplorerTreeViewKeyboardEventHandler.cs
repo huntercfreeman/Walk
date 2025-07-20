@@ -1,5 +1,5 @@
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Commands.Models;
-using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.TextEditor.RazorLib;
@@ -29,9 +29,9 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 
 		switch (commandArgs.KeyboardEventArgs.Code)
 		{
-			case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
+			case CommonFacts.WhitespaceCodes.ENTER_CODE:
 				return InvokeOpenInEditor(commandArgs, true);
-			case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
+			case CommonFacts.WhitespaceCodes.SPACE_CODE:
 				return InvokeOpenInEditor(commandArgs, false);
 		}
 

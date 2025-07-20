@@ -1,3 +1,4 @@
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Reactives.Models;
@@ -63,7 +64,7 @@ public partial class DotNetService
 		{
 			var inState = GetTestExplorerState();
 
-			if (dimensionUnit.Purpose != DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)
+			if (dimensionUnit.Purpose != CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN)
 			{
 				TestExplorerStateChanged?.Invoke();
 				return;

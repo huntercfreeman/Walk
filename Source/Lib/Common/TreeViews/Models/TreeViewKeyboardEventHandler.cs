@@ -1,5 +1,4 @@
 using Walk.Common.RazorLib.Commands.Models;
-using Walk.Common.RazorLib.Keyboards.Models;
 
 namespace Walk.Common.RazorLib.TreeViews.Models;
 
@@ -45,37 +44,37 @@ public class TreeViewKeyboardEventHandler
 
         switch (commandArgs.KeyboardEventArgs.Key)
         {
-            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
+            case CommonFacts.MovementKeys.ARROW_LEFT:
                 CommonService.TreeView_MoveLeftAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
-            case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
+            case CommonFacts.MovementKeys.ARROW_DOWN:
                 CommonService.TreeView_MoveDownAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
-            case KeyboardKeyFacts.MovementKeys.ARROW_UP:
+            case CommonFacts.MovementKeys.ARROW_UP:
                 CommonService.TreeView_MoveUpAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
-            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
+            case CommonFacts.MovementKeys.ARROW_RIGHT:
                 CommonService.TreeView_MoveRight(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
-            case KeyboardKeyFacts.MovementKeys.HOME:
+            case CommonFacts.MovementKeys.HOME:
                 CommonService.TreeView_MoveHomeAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
-            case KeyboardKeyFacts.MovementKeys.END:
+            case CommonFacts.MovementKeys.END:
                 CommonService.TreeView_MoveEndAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,

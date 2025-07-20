@@ -1,11 +1,250 @@
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Exceptions;
+using Walk.Common.RazorLib.Panels.Models;
+using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
+using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Contexts.Models;
+using Walk.Common.RazorLib.Themes.Models;
+using Walk.Common.RazorLib.Dimensions.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 
-namespace Walk.Common.RazorLib.Keyboards.Models;
+namespace Walk.Common.RazorLib;
 
-public static class KeyboardKeyFacts
+public static class CommonFacts
 {
+    /* Start ThemeFacts */
+	public static readonly ThemeRecord VisualStudioLightThemeClone = new ThemeRecord(
+        new Key<ThemeRecord>(Guid.Parse("3ea6a4a5-02b3-4b84-9d6f-e663465d3126")),
+        "Visual Studio Light Clone",
+        "di_visual-studio-light-theme-clone",
+        ThemeContrastKind.Default,
+        ThemeColorKind.Light,
+        new ThemeScope[] { ThemeScope.App, ThemeScope.TextEditor });
+
+    public static readonly ThemeRecord VisualStudioDarkThemeClone = new ThemeRecord(
+        new Key<ThemeRecord>(Guid.Parse("8eaabd97-186d-40d0-a57b-5fec1c158902")),
+        "Visual Studio Dark Clone",
+        "di_visual-studio-dark-theme-clone",
+        ThemeContrastKind.Default,
+        ThemeColorKind.Dark,
+        new ThemeScope[] { ThemeScope.App, ThemeScope.TextEditor });
+    /* End ThemeFacts */
+    
+    /* Start ContextFacts */
+    public static readonly ContextRecord GlobalContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Global",
+        "global",
+        new Keymap(Key<Keymap>.NewKey(), "Global"));
+
+    public static readonly ContextRecord ActiveContextsContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Active Contexts",
+        "active-contexts",
+        IKeymap.Empty);
+
+	public static readonly ContextRecord FindAllReferencesContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Find All References",
+        "find-all-references",
+        IKeymap.Empty);
+
+    public static readonly ContextRecord FolderExplorerContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Folder Explorer",
+        "folder-explorer",
+        IKeymap.Empty);
+
+    public static readonly ContextRecord SolutionExplorerContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Solution Explorer",
+        "solution-explorer",
+        IKeymap.Empty);
+
+    public static readonly ContextRecord CompilerServiceExplorerContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Compiler Service Explorer",
+        "compiler-service-explorer",
+        IKeymap.Empty);
+    
+    public static readonly ContextRecord CompilerServiceEditorContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Compiler Service Editor",
+        "compiler-service-editor",
+        IKeymap.Empty);
+
+	public static readonly ContextRecord TestExplorerContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Test Explorer",
+        "test-explorer",
+        IKeymap.Empty);
+    
+    public static readonly ContextRecord CSharpReplContext = new(
+        Key<ContextRecord>.NewKey(),
+        "C# REPL",
+        "c-sharp-repl",
+        IKeymap.Empty);
+
+    public static readonly ContextRecord BackgroundServicesContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Background Services",
+        "background-services",
+        IKeymap.Empty);
+
+    public static readonly ContextRecord DialogDisplayContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Dialog Display",
+        "dialog-display",
+        IKeymap.Empty);
+
+    public static readonly ContextRecord MainLayoutHeaderContext = new(
+        Key<ContextRecord>.NewKey(),
+        "MainLayout Header",
+        "main-layout-header",
+        IKeymap.Empty);
+
+    public static readonly ContextRecord MainLayoutFooterContext = new(
+        Key<ContextRecord>.NewKey(),
+        "MainLayout Footer",
+        "main-layout-footer",
+        IKeymap.Empty);
+
+    public static readonly ContextRecord EditorContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Editor",
+        "editor",
+        IKeymap.Empty);
+
+    public static readonly ContextRecord TextEditorContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Text Editor",
+        "text-editor",
+        IKeymap.Empty);
+
+    public static readonly ContextRecord ErrorListContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Error List",
+        "error-list",
+        IKeymap.Empty);
+
+    public static readonly ContextRecord OutputContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Output",
+        "output",
+        IKeymap.Empty);
+
+    public static readonly ContextRecord NuGetPackageManagerContext = new(
+        Key<ContextRecord>.NewKey(),
+        "NuGetPackageManager",
+        "nu-get-package-manager",
+        IKeymap.Empty);
+
+    public static readonly ContextRecord GitContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Git",
+        "git",
+        IKeymap.Empty);
+    
+    public static readonly ContextRecord TerminalContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Terminal",
+        "terminal",
+        IKeymap.Empty);
+        
+    public static readonly ContextRecord NotificationContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Notification",
+        "notification",
+        IKeymap.Empty);
+    
+    public static readonly ContextRecord DialogContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Dialog",
+        "dialog",
+        IKeymap.Empty);
+        
+    public static readonly ContextRecord WidgetContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Widget",
+        "widget",
+        IKeymap.Empty);
+    
+    public static readonly ContextRecord DropdownContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Dropdown",
+        "dropdown",
+        IKeymap.Empty);
+
+    public static readonly IReadOnlyList<ContextRecord> AllContextsList = new List<ContextRecord>()
+    {
+        GlobalContext,
+        ActiveContextsContext,
+        FolderExplorerContext,
+        SolutionExplorerContext,
+        CompilerServiceExplorerContext,
+        CompilerServiceEditorContext,
+        CSharpReplContext,
+        BackgroundServicesContext,
+        DialogDisplayContext,
+        MainLayoutHeaderContext,
+        MainLayoutFooterContext,
+        EditorContext,
+        TextEditorContext,
+		ErrorListContext,
+        OutputContext,
+        NuGetPackageManagerContext,
+        GitContext,
+        TerminalContext,
+        NotificationContext,
+        DialogContext,
+        WidgetContext,
+        DropdownContext,
+    };
+    
+    /// <summary>
+    /// Used when repositioning a dropdown so that it appears on screen.
+    /// </summary>
+    public static string RootHtmlElementId { get; set; } = GlobalContext.ContextElementId;
+    /* End ContextFacts */
+    
+    /* Start PanelFacts */
+    public static readonly Key<PanelGroup> LeftPanelGroupKey = Key<PanelGroup>.NewKey();
+    public static readonly Key<PanelGroup> RightPanelGroupKey = Key<PanelGroup>.NewKey();
+    public static readonly Key<PanelGroup> BottomPanelGroupKey = Key<PanelGroup>.NewKey();
+
+    public static PanelGroup GetTopLeftPanelGroup(PanelState panelState)
+    {
+        return panelState.PanelGroupList.First(x => x.Key == LeftPanelGroupKey);
+    }
+
+    public static PanelGroup GetTopRightPanelGroup(PanelState panelState)
+    {
+        return panelState.PanelGroupList.First(x => x.Key == RightPanelGroupKey);
+    }
+
+    public static PanelGroup GetBottomPanelGroup(PanelState panelState)
+    {
+        return panelState.PanelGroupList.First(x => x.Key == BottomPanelGroupKey);
+    }
+    /* End PanelFacts */
+    
+    /* Start DimensionUnitFacts */
+    public const string PURPOSE_OFFSET = "OFFSET";
+	public const string PURPOSE_RESIZABLE_HANDLE_ROW = "RESIZABLE_HANDLE_ROW";
+	public const string PURPOSE_RESIZABLE_HANDLE_COLUMN = "RESIZABLE_HANDLE_COLUMN";
+    /* End DimensionUnitFacts */
+    
+    /* Start SizeFacts */
+    public static readonly DimensionUnit Ide_Header_Height = new(3, DimensionUnitKind.RootCharacterHeight);
+    /* End SizeFacts */
+    
+    /* Start BackgroundTaskFacts */
+    public static Key<BackgroundTaskQueue> ContinuousQueueKey { get; } = new Key<BackgroundTaskQueue>(Guid.Parse("78912ee9-1b3f-4bc3-ab8b-5681fbf0b131"));
+	public static Key<BackgroundTaskQueue> IndefiniteQueueKey { get; } = new Key<BackgroundTaskQueue>(Guid.Parse("7905c763-c3fd-418e-b73d-4ca18666c20c"));
+    /* End BackgroundTaskFacts */
+    
+    /* Start KeyboardKeyFacts */
     public static bool IsMetaKey(KeyboardEventArgs keyboardEventArgs)
     {
         return IsMetaKey(keyboardEventArgs.Key, keyboardEventArgs.Code);
@@ -504,4 +743,33 @@ public static class KeyboardKeyFacts
             ARROW_RIGHT,
         };
     }
+    /* End KeyboardKeyFacts */
+    
+    /* Start HtmlFacts */
+    public const int HtmlFacts_Button_PADDING_IN_PIXELS = 6;
+
+    public static string HtmlFacts_Button_ButtonPaddingHorizontalTotalInPixelsCssValue =>
+        $"2 * {HtmlFacts_Button_PADDING_IN_PIXELS.ToCssValue()}px";
+    /* End HtmlFacts */
+    
+    /* Start DialogFacts */
+    public static readonly Key<IDynamicViewModel> InputFileDialogKey = Key<IDynamicViewModel>.NewKey();
+    /* End DialogFacts */
+    
+    /* Start ThrottleFacts */
+    /// <summary>
+    /// This <see cref="TimeSpan"/> represents '1000ms / 60 = 16.6...ms', whether this is equivalent to 60fps is unknown.
+    /// </summary>
+    public static readonly TimeSpan ThrottleFacts_Sixty_Frames_Per_Second = TimeSpan.FromMilliseconds(17);
+
+    /// <summary>
+    /// This <see cref="TimeSpan"/> represents '1000ms / 30 = 33.3...ms', whether this is equivalent to 30fps is unknown.
+    /// </summary>
+    public static readonly TimeSpan ThrottleFacts_Thirty_Frames_Per_Second = TimeSpan.FromMilliseconds(34);
+    
+    /// <summary>
+    /// This <see cref="TimeSpan"/> represents '1000ms / 24 = 41.6...ms', whether this is equivalent to 24fps is unknown.
+    /// </summary>
+    public static readonly TimeSpan ThrottleFacts_TwentyFour_Frames_Per_Second = TimeSpan.FromMilliseconds(42);
+    /* End ThrottleFacts */
 }

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.Htmls.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Resizes.Displays;
 using Walk.Common.RazorLib.Dynamics.Models;
@@ -28,7 +27,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     private string DialogTitleCssStyleString =>
         "width: calc(100% -" +
         $" ({COUNT_OF_CONTROL_BUTTONS} * ({IconSizeInPixelsCssValue}px)) -" +
-        $" ({COUNT_OF_CONTROL_BUTTONS} * ({HtmlFacts.Button.ButtonPaddingHorizontalTotalInPixelsCssValue})));";
+        $" ({COUNT_OF_CONTROL_BUTTONS} * ({CommonFacts.HtmlFacts_Button_ButtonPaddingHorizontalTotalInPixelsCssValue})));";
 
     protected override void OnInitialized()
     {

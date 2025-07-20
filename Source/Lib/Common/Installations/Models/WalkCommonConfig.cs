@@ -17,6 +17,6 @@ public record WalkCommonConfig
 	}
 
     /// <summary>The <see cref="Key{ThemeRecord}"/> to be used when the application starts</summary>
-    public Key<ThemeRecord> InitialThemeKey { get; init; } = ThemeFacts.VisualStudioDarkThemeClone.Key;
+    public Key<ThemeRecord> InitialThemeKey { get; init; } = CommonFacts.VisualStudioDarkThemeClone.Key;
     public string IsMaximizedStyleCssString { get; init; } = "width: 100vw; height: 100vh; left: 0; top: 0;";
 }

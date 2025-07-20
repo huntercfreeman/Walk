@@ -1,5 +1,6 @@
 using CliWrap.EventStream;
 using System.Runtime.InteropServices;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
@@ -104,7 +105,7 @@ public partial class DotNetService
 
 	private void InitializeLeftPanelTabs()
 	{
-		var leftPanel = PanelFacts.GetTopLeftPanelGroup(IdeService.TextEditorService.CommonService.GetPanelState());
+		var leftPanel = CommonFacts.GetTopLeftPanelGroup(IdeService.TextEditorService.CommonService.GetPanelState());
 		leftPanel.CommonService = IdeService.TextEditorService.CommonService;
 
 		// solutionExplorerPanel
@@ -112,7 +113,7 @@ public partial class DotNetService
 			"Solution Explorer",
 			Key<Panel>.NewKey(),
 			Key<IDynamicViewModel>.NewKey(),
-			ContextFacts.SolutionExplorerContext.ContextKey,
+			CommonFacts.SolutionExplorerContext.ContextKey,
 			typeof(SolutionExplorerDisplay),
 			null,
 			IdeService.TextEditorService.CommonService);
@@ -129,7 +130,7 @@ public partial class DotNetService
 
 	private void InitializeRightPanelTabs()
 	{
-		var rightPanel = PanelFacts.GetTopRightPanelGroup(IdeService.TextEditorService.CommonService.GetPanelState());
+		var rightPanel = CommonFacts.GetTopRightPanelGroup(IdeService.TextEditorService.CommonService.GetPanelState());
 		rightPanel.CommonService = IdeService.TextEditorService.CommonService;
 
 		/*
@@ -163,7 +164,7 @@ public partial class DotNetService
 
 	private void InitializeBottomPanelTabs()
 	{
-		var bottomPanel = PanelFacts.GetBottomPanelGroup(IdeService.TextEditorService.CommonService.GetPanelState());
+		var bottomPanel = CommonFacts.GetBottomPanelGroup(IdeService.TextEditorService.CommonService.GetPanelState());
 		bottomPanel.CommonService = IdeService.TextEditorService.CommonService;
 
 		// outputPanel
@@ -171,7 +172,7 @@ public partial class DotNetService
 			"Output",
 			Key<Panel>.NewKey(),
 			Key<IDynamicViewModel>.NewKey(),
-			ContextFacts.OutputContext.ContextKey,
+			CommonFacts.OutputContext.ContextKey,
 			typeof(OutputPanelDisplay),
 			null,
 			IdeService.TextEditorService.CommonService);
@@ -183,7 +184,7 @@ public partial class DotNetService
 			"Test Explorer",
 			Key<Panel>.NewKey(),
 			Key<IDynamicViewModel>.NewKey(),
-			ContextFacts.TestExplorerContext.ContextKey,
+			CommonFacts.TestExplorerContext.ContextKey,
 			typeof(TestExplorerDisplay),
 			null,
 			IdeService.TextEditorService.CommonService);
@@ -195,14 +196,14 @@ public partial class DotNetService
 				() => IdeService.TextEditorService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
 				DimensionUnitKind.Pixels,
 				DimensionOperatorKind.Subtract,
-				DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
+				CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN));
 
 		// nuGetPanel
 		var nuGetPanel = new Panel(
 			"NuGet",
 			Key<Panel>.NewKey(),
 			Key<IDynamicViewModel>.NewKey(),
-			ContextFacts.NuGetPackageManagerContext.ContextKey,
+			CommonFacts.NuGetPackageManagerContext.ContextKey,
 			typeof(NuGetPackageManager),
 			null,
 			IdeService.TextEditorService.CommonService);

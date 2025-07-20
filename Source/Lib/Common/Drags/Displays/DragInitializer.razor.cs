@@ -34,7 +34,7 @@ public partial class DragInitializer : ComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
-        _throttle = new(ThrottleFacts.TwentyFour_Frames_Per_Second, async (args, _) =>
+        _throttle = new(CommonFacts.ThrottleFacts_TwentyFour_Frames_Per_Second, async (args, _) =>
 	    {
 	    	if (args.IsOnMouseMove)
 	    	{

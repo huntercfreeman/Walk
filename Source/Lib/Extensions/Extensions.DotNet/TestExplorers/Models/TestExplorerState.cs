@@ -1,3 +1,4 @@
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
@@ -31,7 +32,7 @@ public record TestExplorerState(
                 	0,
                 	DimensionUnitKind.Pixels,
                 	DimensionOperatorKind.Subtract,
-                	DimensionUnitFacts.Purposes.OFFSET),
+                	CommonFacts.PURPOSE_OFFSET),
 			});
 		}
 
@@ -46,7 +47,7 @@ public record TestExplorerState(
                 	0,
                 	DimensionUnitKind.Pixels,
                 	DimensionOperatorKind.Subtract,
-                	DimensionUnitFacts.Purposes.OFFSET),
+                	CommonFacts.PURPOSE_OFFSET),
 			});
 		}
     }

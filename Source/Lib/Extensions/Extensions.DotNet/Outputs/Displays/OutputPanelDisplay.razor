@@ -1,10 +1,11 @@
-@using Walk.Extensions.DotNet.Outputs.Displays.Internals
+@using Walk.Common.RazorLib;
 @using Walk.Common.RazorLib.Contexts.Displays
 @using Walk.Common.RazorLib.Contexts.Models
+@using Walk.Extensions.DotNet.Outputs.Displays.Internals
 
 @* ContextRecord="ContextFacts.OutputContext" *@
 
-<div id="@ContextFacts.OutputContext.ContextElementId" class="di_output-panel-display" style="height: 100%; width: 100%; overflow: auto;">
+<div id="@CommonFacts.OutputContext.ContextElementId" class="di_output-panel-display" style="height: 100%; width: 100%; overflow: auto;">
 	@if (CommonService.Options_ShowPanelTitles)
 	{
 		<div class="di_ide_section-title">

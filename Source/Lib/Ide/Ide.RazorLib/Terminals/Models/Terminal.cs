@@ -1,6 +1,7 @@
 using System.Reactive.Linq;
 using CliWrap;
 using CliWrap.EventStream;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Notifications.Models;
@@ -84,7 +85,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
     {
 		return _ideService.CommonService.Indefinite_EnqueueAsync(
 			Key<IBackgroundTaskGroup>.NewKey(),
-			BackgroundTaskFacts.IndefiniteQueueKey,
+			CommonFacts.IndefiniteQueueKey,
 			"Enqueue Command",
 			() => HandleCommand(terminalCommandRequest));
     }

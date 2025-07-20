@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Text;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Installations.Models;
-using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib.Characters.Models;
 using Walk.TextEditor.RazorLib.Cursors.Models;
@@ -329,7 +329,7 @@ public partial class TextEditorService
 
 		switch (key)
 		{
-			case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
+			case CommonFacts.MovementKeys.ARROW_LEFT:
 				if (TextEditorSelectionHelper.HasSelectedText(viewModel) &&
 					!shiftKey)
 				{
@@ -426,7 +426,7 @@ public partial class TextEditorService
 				}
 
 				break;
-			case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
+			case CommonFacts.MovementKeys.ARROW_DOWN:
 				if (viewModel.LineIndex < modelModifier.LineCount - 1)
 				{
 					viewModel.LineIndex++;
@@ -439,7 +439,7 @@ public partial class TextEditorService
 				}
 
 				break;
-			case KeyboardKeyFacts.MovementKeys.ARROW_UP:
+			case CommonFacts.MovementKeys.ARROW_UP:
 				if (viewModel.LineIndex > 0)
 				{
 					viewModel.LineIndex--;
@@ -452,7 +452,7 @@ public partial class TextEditorService
 				}
 
 				break;
-			case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
+			case CommonFacts.MovementKeys.ARROW_RIGHT:
 				if (viewModel.PersistentState.VirtualAssociativityKind == VirtualAssociativityKind.Left)
 				{
 					viewModel.PersistentState.VirtualAssociativityKind = VirtualAssociativityKind.Right;
@@ -559,7 +559,7 @@ public partial class TextEditorService
 				}
 
 				break;
-			case KeyboardKeyFacts.MovementKeys.HOME:
+			case CommonFacts.MovementKeys.HOME:
 				if (ctrlKey)
 				{
 					viewModel.LineIndex = 0;
@@ -602,7 +602,7 @@ public partial class TextEditorService
 				}
 
 				break;
-			case KeyboardKeyFacts.MovementKeys.END:
+			case CommonFacts.MovementKeys.END:
 				if (ctrlKey)
 					viewModel.LineIndex = modelModifier.LineCount - 1;
 
@@ -617,7 +617,7 @@ public partial class TextEditorService
 		{
 			switch (key)
 			{
-				case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
+				case CommonFacts.MovementKeys.ARROW_LEFT:
 					{
 						CollapsePoint encompassingCollapsePoint = new CollapsePoint(-1, false, string.Empty, -1); ;
 
@@ -653,7 +653,7 @@ public partial class TextEditorService
 
 						break;
 					}
-				case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
+				case CommonFacts.MovementKeys.ARROW_DOWN:
 					{
 						var success = false;
 
@@ -693,7 +693,7 @@ public partial class TextEditorService
 
 						break;
 					}
-				case KeyboardKeyFacts.MovementKeys.ARROW_UP:
+				case CommonFacts.MovementKeys.ARROW_UP:
 					{
 						var success = false;
 
@@ -735,7 +735,7 @@ public partial class TextEditorService
 
 						break;
 					}
-				case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
+				case CommonFacts.MovementKeys.ARROW_RIGHT:
 					{
 						CollapsePoint encompassingCollapsePoint = new CollapsePoint(-1, false, string.Empty, -1); ;
 
@@ -760,8 +760,8 @@ public partial class TextEditorService
 
 						break;
 					}
-				case KeyboardKeyFacts.MovementKeys.HOME:
-				case KeyboardKeyFacts.MovementKeys.END:
+				case CommonFacts.MovementKeys.HOME:
+				case CommonFacts.MovementKeys.END:
 					{
 						break;
 					}

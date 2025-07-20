@@ -1,3 +1,4 @@
+@using Walk.Common.RazorLib
 @using Walk.Common.RazorLib.Contexts.Displays
 @using Walk.Common.RazorLib.Contexts.Models;
 @using Walk.Common.RazorLib.Dropdowns.Displays
@@ -8,7 +9,7 @@
 
 @* ContextRecord="ContextFacts.FolderExplorerContext" *@
 
-<div id="@ContextFacts.FolderExplorerContext.ContextElementId" class="di_ide_folder-explorer-display" style="height: 100%">
+<div id="@CommonFacts.FolderExplorerContext.ContextElementId" class="di_ide_folder-explorer-display" style="height: 100%">
 	@{ var appOptionsState = IdeService.CommonService.GetAppOptionsState(); }
     
     @if (appOptionsState.Options.ShowPanelTitles)

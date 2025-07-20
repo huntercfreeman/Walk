@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib;
-using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
@@ -195,7 +194,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
     	if (!virtualizationResult.IsValid)
     		return;
     	
-        if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
+        if (keyboardEventArgs.Key == CommonFacts.MetaKeys.ESCAPE)
         {
         	var componentData = virtualizationResult.ViewModel.PersistentState.ComponentData;
         	if (componentData is not null)

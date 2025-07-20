@@ -1,6 +1,5 @@
 using System.Text;
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.Htmls.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
@@ -38,7 +37,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     private string NotificationTitleCssStyleString =>
         "width: calc(100% -" +
         $" ({COUNT_OF_CONTROL_BUTTONS} * ({IconSizeInPixelsCssValue}px)) -" +
-        $" ({COUNT_OF_CONTROL_BUTTONS} * ({HtmlFacts.Button.ButtonPaddingHorizontalTotalInPixelsCssValue})));";
+        $" ({COUNT_OF_CONTROL_BUTTONS} * ({CommonFacts.HtmlFacts_Button_ButtonPaddingHorizontalTotalInPixelsCssValue})));";
 
     protected override void OnInitialized()
     {

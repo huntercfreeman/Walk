@@ -1,3 +1,4 @@
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Keys.Models;
 
@@ -18,7 +19,7 @@ public record struct TerminalGroupState(Key<ITerminal> ActiveTerminalKey)
                 	0,
                 	DimensionUnitKind.Pixels,
                 	DimensionOperatorKind.Subtract,
-                	DimensionUnitFacts.Purposes.OFFSET),
+                	CommonFacts.PURPOSE_OFFSET),
             });
         }
 
@@ -33,7 +34,7 @@ public record struct TerminalGroupState(Key<ITerminal> ActiveTerminalKey)
                 	0,
                 	DimensionUnitKind.Pixels,
                 	DimensionOperatorKind.Subtract,
-                	DimensionUnitFacts.Purposes.OFFSET),
+                	CommonFacts.PURPOSE_OFFSET),
             });
         }
     }

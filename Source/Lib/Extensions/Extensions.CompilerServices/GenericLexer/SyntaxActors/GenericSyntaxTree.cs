@@ -1,5 +1,5 @@
 using System.Text;
-using Walk.Common.RazorLib.Keyboards.Models;
+using Walk.Common.RazorLib;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.Extensions.CompilerServices.GenericLexer.SyntaxObjects;
 using Walk.TextEditor.RazorLib.CompilerServices;
@@ -52,7 +52,7 @@ public class GenericSyntaxTree
 				}
 			}
 			else if (!WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter) &&
-					 !KeyboardKeyFacts.PunctuationCharacters.AllList.Contains(stringWalker.CurrentCharacter))
+					 !CommonFacts.PunctuationCharacters.AllList.Contains(stringWalker.CurrentCharacter))
 			{
 				if (TryParseKeyword(stringWalker, diagnosticList, out var genericKeywordSyntax) &&
 					genericKeywordSyntax is not null)
@@ -199,14 +199,14 @@ public class GenericSyntaxTree
 				break;
 
 			if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter) ||
-				KeyboardKeyFacts.PunctuationCharacters.AllList.Contains(stringWalker.CurrentCharacter))
+				CommonFacts.PunctuationCharacters.AllList.Contains(stringWalker.CurrentCharacter))
 			{
 				_ = stringWalker.ReadCharacter();
 				break;
 			}
 		}
 
-		var wordTuple = stringWalker.ReadWordTuple(KeyboardKeyFacts.PunctuationCharacters.AllList);
+		var wordTuple = stringWalker.ReadWordTuple(CommonFacts.PunctuationCharacters.AllList);
 
 		var foundKeyword = GenericLanguageDefinition.KeywordsList.FirstOrDefault(
 			keyword => keyword == wordTuple.value);
@@ -257,7 +257,7 @@ public class GenericSyntaxTree
 				if (startedReadingWord)
 					break;
 			}
-			else if (KeyboardKeyFacts.IsPunctuationCharacter(stringWalker.CurrentCharacter) ||
+			else if (CommonFacts.IsPunctuationCharacter(stringWalker.CurrentCharacter) ||
 					 stringWalker.PeekForSubstring(GenericLanguageDefinition.MemberAccessToken) ||
 					 stringWalker.PeekForSubstring(GenericLanguageDefinition.FunctionInvocationEnd))
 			{

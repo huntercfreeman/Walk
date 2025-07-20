@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Menus.Models;
@@ -59,14 +60,14 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 			    MenuOptionKind.Other,
 			    onClickFunc: async () => 
 				{
-					var success = await TrySetFocus(ContextFacts.OutputContext).ConfigureAwait(false);
+					var success = await TrySetFocus(CommonFacts.OutputContext).ConfigureAwait(false);
 	
 	                if (!success)
 	                {
 	                    IdeService.CommonService.SetPanelTabAsActiveByContextRecordKey(
-	                        ContextFacts.OutputContext.ContextKey);
+	                        CommonFacts.OutputContext.ContextKey);
 	
-	                    _ = await TrySetFocus(ContextFacts.OutputContext).ConfigureAwait(false);
+	                    _ = await TrySetFocus(CommonFacts.OutputContext).ConfigureAwait(false);
 	                }
 				}));
 			    
@@ -77,14 +78,14 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 				{
 					IdeService.TerminalGroup_SetActiveTerminal(TerminalFacts.EXECUTION_KEY);
 				
-					var success = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
+					var success = await TrySetFocus(CommonFacts.TerminalContext).ConfigureAwait(false);
 	
 	                if (!success)
 	                {
 	                    IdeService.CommonService.SetPanelTabAsActiveByContextRecordKey(
-	                        ContextFacts.TerminalContext.ContextKey);
+	                        CommonFacts.TerminalContext.ContextKey);
 	
-	                    _ = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
+	                    _ = await TrySetFocus(CommonFacts.TerminalContext).ConfigureAwait(false);
 	                }
 				}));
 			    

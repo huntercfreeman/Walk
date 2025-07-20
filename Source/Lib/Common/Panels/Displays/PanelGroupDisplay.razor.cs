@@ -39,11 +39,11 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     {
         var position = string.Empty;
 
-        if (PanelFacts.LeftPanelGroupKey == PanelGroupKey)
+        if (CommonFacts.LeftPanelGroupKey == PanelGroupKey)
             position = "left";
-        else if (PanelFacts.RightPanelGroupKey == PanelGroupKey)
+        else if (CommonFacts.RightPanelGroupKey == PanelGroupKey)
             position = "right";
-        else if (PanelFacts.BottomPanelGroupKey == PanelGroupKey)
+        else if (CommonFacts.BottomPanelGroupKey == PanelGroupKey)
             position = "bottom";
 
         _panelPositionCss = $"di_ide_panel_{position}";

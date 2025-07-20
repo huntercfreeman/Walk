@@ -1,6 +1,6 @@
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
@@ -36,10 +36,10 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 
         switch (commandArgs.KeyboardEventArgs.Code)
         {
-            case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
+            case CommonFacts.WhitespaceCodes.ENTER_CODE:
                 SetInputFileContentTreeViewRoot(commandArgs);
                 return Task.CompletedTask;
-            case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
+            case CommonFacts.WhitespaceCodes.SPACE_CODE:
                 SetSelectedTreeViewModel(commandArgs);
                 return Task.CompletedTask;
         }
@@ -80,13 +80,13 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 
         switch (commandArgs.KeyboardEventArgs.Key)
         {
-            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
+            case CommonFacts.MovementKeys.ARROW_LEFT:
                 HandleBackButtonOnClick(commandArgs);
                 break;
-            case KeyboardKeyFacts.MovementKeys.ARROW_UP:
+            case CommonFacts.MovementKeys.ARROW_UP:
                 HandleUpwardButtonOnClick(commandArgs);
                 break;
-            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
+            case CommonFacts.MovementKeys.ARROW_RIGHT:
                 HandleForwardButtonOnClick(commandArgs);
                 break;
             case "r":

@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
@@ -334,7 +335,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 	
 	private async Task SendToOutputPanelAsync(string output)
 	{
-		var contextRecord = ContextFacts.OutputContext;
+		var contextRecord = CommonFacts.OutputContext;
 		
 		DotNetService.ParseOutputEntireDotNetRun(output, "Unit-Test_results");
 		

@@ -2,7 +2,6 @@ using System.Text;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.JsRuntimes.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Menus.Models;
@@ -60,7 +59,7 @@ public class TextEditorCommandDefaultFunctions
         await viewModel.FocusAsync().ConfigureAwait(false);
 
         modelModifier.HandleKeyboardEvent(
-            new KeymapArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
+            new KeymapArgs { Key = CommonFacts.MetaKeys.DELETE },
             viewModel);
     }
 
@@ -361,7 +360,7 @@ public class TextEditorCommandDefaultFunctions
             var readResult = modelModifier.GetString(rowPositionIndex, characterReadCount);
             var removeCharacterCount = 0;
 
-            if (readResult.StartsWith(KeyboardKeyFacts.WhitespaceCharacters.TAB))
+            if (readResult.StartsWith(CommonFacts.WhitespaceCharacters.TAB))
             {
                 removeCharacterCount = 1;
 
@@ -372,7 +371,7 @@ public class TextEditorCommandDefaultFunctions
                     removeCharacterCount, // Delete a single "Tab" character
                     viewModel);
             }
-            else if (readResult.StartsWith(KeyboardKeyFacts.WhitespaceCharacters.SPACE))
+            else if (readResult.StartsWith(CommonFacts.WhitespaceCharacters.SPACE))
             {
             	viewModel.LineIndex = i;
 				viewModel.SetColumnIndexAndPreferred(0);
@@ -381,7 +380,7 @@ public class TextEditorCommandDefaultFunctions
 
                 foreach (var character in readResult)
                 {
-                    if (character == KeyboardKeyFacts.WhitespaceCharacters.SPACE)
+                    if (character == CommonFacts.WhitespaceCharacters.SPACE)
                         contiguousSpaceCount++;
                 }
 
@@ -641,7 +640,7 @@ public class TextEditorCommandDefaultFunctions
         if (CharacterKindHelper.CharToCharacterKind(currentCharacter) == CharacterKind.Punctuation)
         {
             // Prefer current character
-            match = KeyboardKeyFacts.MatchPunctuationCharacter(currentCharacter);
+            match = CommonFacts.MatchPunctuationCharacter(currentCharacter);
 
             if (match is not null)
                 characterToMatch = currentCharacter;
@@ -650,7 +649,7 @@ public class TextEditorCommandDefaultFunctions
         if (characterToMatch is null && CharacterKindHelper.CharToCharacterKind(previousCharacter) == CharacterKind.Punctuation)
         {
             // Fallback to the previous current character
-            match = KeyboardKeyFacts.MatchPunctuationCharacter(previousCharacter);
+            match = CommonFacts.MatchPunctuationCharacter(previousCharacter);
 
             if (match is not null)
             {
@@ -662,7 +661,7 @@ public class TextEditorCommandDefaultFunctions
         if (characterToMatch is null || match is null)
             return;
 
-        var directionToFindMatchingPunctuationCharacter = KeyboardKeyFacts.DirectionToFindMatchingPunctuationCharacter(
+        var directionToFindMatchingPunctuationCharacter = CommonFacts.DirectionToFindMatchingPunctuationCharacter(
             characterToMatch.Value);
 
         if (directionToFindMatchingPunctuationCharacter is null)
@@ -680,7 +679,7 @@ public class TextEditorCommandDefaultFunctions
             {
                 keymapArgs = new KeymapArgs
                 {
-                    Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                    Key = CommonFacts.MovementKeys.ARROW_LEFT,
                     ShiftKey = shouldSelectText,
                 };
             }
@@ -688,7 +687,7 @@ public class TextEditorCommandDefaultFunctions
             {
                 keymapArgs = new KeymapArgs
                 {
-                    Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                    Key = CommonFacts.MovementKeys.ARROW_RIGHT,
                     ShiftKey = shouldSelectText,
                 };
             }

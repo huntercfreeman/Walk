@@ -1,3 +1,4 @@
+@using Walk.Common.RazorLib
 @using Walk.Common.RazorLib.Contexts.Displays
 @using Walk.Common.RazorLib.Contexts.Models
 @using Walk.Common.RazorLib.Installations.Displays
@@ -24,14 +25,14 @@
 
 @* ContextRecord="ContextFacts.GlobalContext" *@
 
-<div id="@ContextFacts.GlobalContext.ContextElementId" class="@_classCssString" style="@_styleCssString">
+<div id="@CommonFacts.GlobalContext.ContextElementId" class="@_classCssString" style="@_styleCssString">
     <Walk.Common.RazorLib.Drags.Displays.DragInitializer />
     <WalkCommonInitializer />
     <WalkTextEditorInitializer />
 
     @* Start Header *@
     @* ContextRecord="ContextFacts.MainLayoutHeaderContext" *@
-    <div id="@ContextFacts.MainLayoutHeaderContext.ContextElementId" class="di_ide_header" style="@_headerCssStyle">
+    <div id="@CommonFacts.MainLayoutHeaderContext.ContextElementId" class="di_ide_header" style="@_headerCssStyle">
         <div class="di_ide_header-left-content"
              style="display: flex;">
             
@@ -99,22 +100,22 @@
     <div class="di_ide_body"
          style="@_bodyElementDimensions.GetStyleString(IdeService.CommonService.UiStringBuilder)">
     
-        <PanelGroupDisplay PanelGroupKey="PanelFacts.LeftPanelGroupKey"
+        <PanelGroupDisplay PanelGroupKey="CommonFacts.LeftPanelGroupKey"
                            AdjacentElementDimensions="_editorElementDimensions"
                            DimensionAttributeKind="DimensionAttributeKind.Width"
                            ReRenderSelfAndAdjacentElementDimensionsFunc="() => InvokeAsync(StateHasChanged)" />
     
-        <ResizableColumn LeftElementDimensions="PanelFacts.GetTopLeftPanelGroup(panelState).ElementDimensions"
+        <ResizableColumn LeftElementDimensions="CommonFacts.GetTopLeftPanelGroup(panelState).ElementDimensions"
                          RightElementDimensions="_editorElementDimensions"
                          ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)" />
     
         <EditorDisplay EditorElementDimensions="_editorElementDimensions" />
         
         <ResizableColumn LeftElementDimensions="_editorElementDimensions"
-                         RightElementDimensions="PanelFacts.GetTopRightPanelGroup(panelState).ElementDimensions"
+                         RightElementDimensions="CommonFacts.GetTopRightPanelGroup(panelState).ElementDimensions"
                          ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)" />
     
-        <PanelGroupDisplay PanelGroupKey="PanelFacts.RightPanelGroupKey"
+        <PanelGroupDisplay PanelGroupKey="CommonFacts.RightPanelGroupKey"
                            AdjacentElementDimensions="_editorElementDimensions"
                            DimensionAttributeKind="DimensionAttributeKind.Width"
                            ReRenderSelfAndAdjacentElementDimensionsFunc="() => InvokeAsync(StateHasChanged)" />
@@ -122,10 +123,10 @@
     @* End Body *@
 
     <ResizableRow TopElementDimensions="_bodyElementDimensions"
-                  BottomElementDimensions="PanelFacts.GetBottomPanelGroup(IdeService.CommonService.GetPanelState()).ElementDimensions"
+                  BottomElementDimensions="CommonFacts.GetBottomPanelGroup(IdeService.CommonService.GetPanelState()).ElementDimensions"
                   ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)" />
 
-    <PanelGroupDisplay PanelGroupKey="PanelFacts.BottomPanelGroupKey"
+    <PanelGroupDisplay PanelGroupKey="CommonFacts.BottomPanelGroupKey"
                        CssClassString="di_ide_footer"
                        AdjacentElementDimensions="_bodyElementDimensions"
                        DimensionAttributeKind="DimensionAttributeKind.Height"
