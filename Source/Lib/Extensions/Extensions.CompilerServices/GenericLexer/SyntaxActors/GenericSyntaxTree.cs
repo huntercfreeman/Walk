@@ -51,8 +51,8 @@ public class GenericSyntaxTree
 					documentChildList.Add(genericFunctionSyntax);
 				}
 			}
-			else if (!WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter) &&
-					 !CommonFacts.PunctuationCharacters.AllList.Contains(stringWalker.CurrentCharacter))
+			else if (!WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter)/* &&
+					 !CommonFacts.PunctuationCharacters.AllList.Contains(stringWalker.CurrentCharacter)*/)
 			{
 				if (TryParseKeyword(stringWalker, diagnosticList, out var genericKeywordSyntax) &&
 					genericKeywordSyntax is not null)
@@ -198,15 +198,15 @@ public class GenericSyntaxTree
 			if (backtrackedToCharacter == ParserFacts.END_OF_FILE)
 				break;
 
-			if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter) ||
-				CommonFacts.PunctuationCharacters.AllList.Contains(stringWalker.CurrentCharacter))
+			if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter)/* ||
+				CommonFacts.PunctuationCharacters.AllList.Contains(stringWalker.CurrentCharacter)*/)
 			{
 				_ = stringWalker.ReadCharacter();
 				break;
 			}
 		}
 
-		var wordTuple = stringWalker.ReadWordTuple(CommonFacts.PunctuationCharacters.AllList);
+		var wordTuple = stringWalker.ReadWordTuple(/*CommonFacts.PunctuationCharacters.AllList*/);
 
 		var foundKeyword = GenericLanguageDefinition.KeywordsList.FirstOrDefault(
 			keyword => keyword == wordTuple.value);

@@ -548,16 +548,6 @@ public static class CommonFacts
         public const string F10 = "F10";
         public const string PAGE_UP = "PageUp";
         public const string PAGE_DOWN = "PageDown";
-
-        public static readonly IReadOnlyList<string> AllList = new List<string>()
-        {
-            BACKSPACE,
-            ESCAPE,
-            DELETE,
-            F10,
-            PAGE_UP,
-            PAGE_DOWN,
-        };
     }
 
     public static class WhitespaceCharacters
@@ -566,14 +556,6 @@ public static class CommonFacts
         public const char CARRIAGE_RETURN = '\r';
         public const char NEW_LINE = '\n';
         public const char SPACE = ' ';
-
-        public static readonly IReadOnlyList<char> AllList = new List<char>()
-        {
-            TAB,
-            CARRIAGE_RETURN,
-            NEW_LINE,
-            SPACE,
-        };
     }
 
     public static class WhitespaceCodes
@@ -585,13 +567,6 @@ public static class CommonFacts
 
         public const string ENTER_CODE = "Enter";
         public const string SPACE_CODE = "Space";
-
-        public static readonly IReadOnlyList<string> AllList = new List<string>()
-        {
-            TAB_CODE,
-            ENTER_CODE,
-            SPACE_CODE,
-        };
     }
 
     /// <summary>
@@ -634,42 +609,7 @@ public static class CommonFacts
         public const char FORWARD_SLASH = '/';
         public const char BACK_SLASH = '\\';
 
-        public static readonly IReadOnlyList<char> AllList = new List<char>()
-        {
-            OPEN_CURLY_BRACE,
-            CLOSE_CURLY_BRACE,
-            OPEN_PARENTHESIS,
-            CLOSE_PARENTHESIS,
-            OPEN_SQUARE_BRACKET,
-            CLOSE_SQUARE_BRACKET,
-            BANG,
-            QUESTION_MARK,
-            PERIOD,
-            COMMA,
-            HASHTAG,
-            DOLLARS,
-            PERCENT,
-            AMPERSAND,
-            CARET,
-            STAR,
-            PLUS,
-            SEMICOLON,
-            EQUAL,
-            AT,
-            DASH,
-            // TODO: Should 'PunctuationCharacters.UNDER_SCORE' count as punctuation? It makes expand selection (double mouse click) on a private field with the leading '_' convention annoying to select the whole word.
-            // PunctuationCharacters.UNDER_SCORE,
-            ACCENT,
-            TILDE,
-            PIPE,
-            COLON,
-            DOUBLE_QUOTE,
-            SINGLE_QUOTE,
-            OPEN_ARROW_BRACKET,
-            CLOSE_ARROW_BRACKET,
-            FORWARD_SLASH,
-            BACK_SLASH,
-        };
+        
     }
 
     public static class MovementKeys
@@ -680,16 +620,6 @@ public static class CommonFacts
         public const string ARROW_RIGHT = "ArrowRight";
         public const string HOME = "Home";
         public const string END = "End";
-
-        public static readonly IReadOnlyList<string> AllList = new List<string>()
-        {
-            ARROW_LEFT,
-            ARROW_DOWN,
-            ARROW_UP,
-            ARROW_RIGHT,
-            HOME,
-            END,
-        };
     }
     
     public static class MovementCodes
@@ -700,16 +630,6 @@ public static class CommonFacts
         public const string ARROW_RIGHT = "ArrowRight";
         public const string HOME = "Home";
         public const string END = "End";
-
-        public static readonly IReadOnlyList<string> AllList = new List<string>()
-        {
-            ARROW_LEFT,
-            ARROW_DOWN,
-            ARROW_UP,
-            ARROW_RIGHT,
-            HOME,
-            END,
-        };
     }
 
     public static class AlternateMovementKeys
@@ -718,14 +638,6 @@ public static class CommonFacts
         public const string ARROW_DOWN = "j";
         public const string ARROW_UP = "k";
         public const string ARROW_RIGHT = "l";
-
-        public static readonly IReadOnlyList<string> AllList = new List<string>()
-        {
-            ARROW_LEFT,
-            ARROW_DOWN,
-            ARROW_UP,
-            ARROW_RIGHT,
-        };
     }
     
     public static class AlternateMovementCodes
@@ -734,14 +646,6 @@ public static class CommonFacts
         public const string ARROW_DOWN = "KeyJ";
         public const string ARROW_UP = "KeyK";
         public const string ARROW_RIGHT = "KeyL";
-
-        public static readonly IReadOnlyList<string> AllList = new List<string>()
-        {
-            ARROW_LEFT,
-            ARROW_DOWN,
-            ARROW_UP,
-            ARROW_RIGHT,
-        };
     }
     /* End KeyboardKeyFacts */
     
