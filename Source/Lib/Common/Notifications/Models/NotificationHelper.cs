@@ -1,7 +1,7 @@
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Reactives.Models;
+using Walk.Common.RazorLib.Notifications.Displays;
 
 namespace Walk.Common.RazorLib.Notifications.Models;
 
@@ -16,11 +16,11 @@ public static class NotificationHelper
         var notificationInformative = new NotificationViewModel(
             Key<IDynamicViewModel>.NewKey(),
             title,
-            commonService.CommonComponentRenderers.InformativeNotificationRendererType,
+            typeof(CommonInformativeNotificationDisplay),
             new Dictionary<string, object?>
             {
                 {
-                    nameof(IInformativeNotificationRendererType.Message),
+                    nameof(CommonInformativeNotificationDisplay.Message),
                     message
                 },
             },
@@ -39,14 +39,14 @@ public static class NotificationHelper
     {
         var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
-            commonService.CommonComponentRenderers.ErrorNotificationRendererType,
+            typeof(CommonErrorNotificationDisplay),
             new Dictionary<string, object?>
             {
-                { nameof(IErrorNotificationRendererType.Message), $"ERROR: {message}" },
+                { nameof(CommonErrorNotificationDisplay.Message), $"ERROR: {message}" },
             },
             notificationOverlayLifespan,
             true,
-            IErrorNotificationRendererType.CSS_CLASS_STRING);
+            "di_error");
 
         commonService.Notification_ReduceRegisterAction(notificationError);
     }
@@ -59,11 +59,11 @@ public static class NotificationHelper
     {
         var notificationProgress = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
-            commonService.CommonComponentRenderers.ProgressNotificationRendererType,
+            typeof(CommonProgressNotificationDisplay),
             new Dictionary<string, object?>
             {
                 {
-					nameof(IProgressNotificationRendererType.ProgressBarModel),
+					nameof(CommonProgressNotificationDisplay.ProgressBarModel),
 					progressBarModel
 				},
             },
@@ -92,14 +92,14 @@ public static class NotificationHelper
     {
         var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
-            commonService.CommonComponentRenderers.ErrorNotificationRendererType,
+            typeof(CommonErrorNotificationDisplay),
             new Dictionary<string, object?>
             {
-                { nameof(IErrorNotificationRendererType.Message), $"DEBUG: {messageFunc.Invoke()}" },
+                { nameof(CommonErrorNotificationDisplay.Message), $"DEBUG: {messageFunc.Invoke()}" },
             },
             notificationOverlayLifespan,
             true,
-            IErrorNotificationRendererType.CSS_CLASS_STRING);
+            "di_error");
 
         commonService.Notification_ReduceRegisterAction(notificationError);
     }

@@ -1,4 +1,3 @@
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.WatchWindows.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
@@ -9,15 +8,11 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
 {
 	public TreeViewStringFragment(
 			StringFragment stringFragment,
-			ICommonComponentRenderers commonComponentRenderers,
 			bool isExpandable,
 			bool isExpanded)
 		: base(stringFragment, isExpandable, isExpanded)
 	{
-		CommonComponentRenderers = commonComponentRenderers;
 	}
-
-	public ICommonComponentRenderers CommonComponentRenderers { get; }
 
 	public override bool Equals(object? obj)
 	{
@@ -151,7 +146,6 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
 
 			var newChildList = Item.Map.Select(kvp => (TreeViewNoType)new TreeViewStringFragment(
 				kvp.Value,
-				CommonComponentRenderers,
 				true,
 				false)).ToList();
 
@@ -187,7 +181,7 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
 		{
 			ChildList = new List<TreeViewNoType>
 			{
-				new TreeViewException(exception, false, false, CommonComponentRenderers)
+				new TreeViewException(exception, false, false)
 				{
 					Parent = this,
 					IndexAmongSiblings = 0,

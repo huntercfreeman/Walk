@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 // HeaderDriver.cs
@@ -89,7 +88,6 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
         		editContext,
         		modelModifier,
         		viewModelModifier,
-        		(ICommonComponentRenderers)CommonService.CommonComponentRenderers,
         		CommonService);
         	return ValueTask.CompletedTask;
         }));

@@ -75,7 +75,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
 		{
 			ChildList = new List<TreeViewNoType>
 			{
-				new TreeViewException(exception, false, false, CommonService.CommonComponentRenderers)
+				new TreeViewException(exception, false, false)
 				{
 					Parent = this,
 					IndexAmongSiblings = 0,

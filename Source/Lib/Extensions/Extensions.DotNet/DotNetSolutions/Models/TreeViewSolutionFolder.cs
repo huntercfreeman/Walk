@@ -116,7 +116,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 		{
 			ChildList = new List<TreeViewNoType>
 			{
-				new TreeViewException(exception, false, false, CommonService.CommonComponentRenderers)
+				new TreeViewException(exception, false, false)
 				{
 					Parent = this,
 					IndexAmongSiblings = 0,

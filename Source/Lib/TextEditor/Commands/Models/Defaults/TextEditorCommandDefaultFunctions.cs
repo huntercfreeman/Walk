@@ -8,7 +8,6 @@ using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Menus.Displays;
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
@@ -78,7 +77,6 @@ public class TextEditorCommandDefaultFunctions
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
-        ICommonComponentRenderers commonComponentRenderers,
         CommonService commonService)
     {
     	if (viewModel.PersistentState.OnSaveRequested is null)

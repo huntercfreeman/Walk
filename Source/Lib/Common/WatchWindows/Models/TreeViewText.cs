@@ -1,20 +1,15 @@
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 
 namespace Walk.Common.RazorLib.WatchWindows.Models;
 
 public class TreeViewText : TreeViewWithType<string>
 {
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
-
     public TreeViewText(
             string text,
             bool isExpandable,
-            bool isExpanded,
-            ICommonComponentRenderers commonComponentRenderers)
+            bool isExpanded)
         : base(text, isExpandable, isExpanded)
     {
-        _commonComponentRenderers = commonComponentRenderers;
     }
 
     public override bool Equals(object? obj)
