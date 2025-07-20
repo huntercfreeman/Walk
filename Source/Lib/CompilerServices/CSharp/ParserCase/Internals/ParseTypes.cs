@@ -169,9 +169,7 @@ public static class ParseTypes
     	
     	parserModel.StatementBuilder.FinishStatement(parserModel.TokenWalker.Index, ref parserModel);
 		
-		var openBraceToken = parserModel.TokenWalker.Consume();
-		
-        ParseTokens.ParseOpenBraceToken(openBraceToken, ref parserModel);
+        ParseTokens.ParseOpenBraceToken(ref parserModel);
         
         var shouldFindIdentifier = true;
         
