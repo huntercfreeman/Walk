@@ -10,12 +10,6 @@ public class RazorCompilationUnit : ICompilationUnit
 	public RazorResource RazorResource { get; init; }
 	public IReadOnlyList<TextEditorDiagnostic> DiagnosticList { get; init; } = Array.Empty<TextEditorDiagnostic>();
 
-	public IEnumerable<TextEditorTextSpan> GetTextTextSpans()
-	{
-		return TokenList.Select(x => x.TextSpan)
-			.Concat(RazorResource.GetSymbols().Select(x => x.TextSpan));
-	}
-
 	public IEnumerable<TextEditorTextSpan> GetDiagnosticTextSpans()
 	{
 		return DiagnosticList.Select(x => x.TextSpan);

@@ -23,6 +23,7 @@ using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Diffs.Models;
+using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Ide.RazorLib.Installations.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.FolderExplorers.Models;
@@ -873,9 +874,8 @@ public partial class IdeService : IBackgroundTaskGroup
                 content,
                 fileLastWriteTime);
 
-            editContext.TextEditorService.Model_ApplySyntaxHighlighting(
-                editContext,
-                modelModifier);
+			if (modelModifier.PersistentState.CompilerService is not null)	
+				modelModifier.PersistentState.CompilerService.ResourceWasModified(modelModifier.PersistentState.ResourceUri, Array.Empty<TextEditorTextSpan>());
             return ValueTask.CompletedTask;
         });
     }

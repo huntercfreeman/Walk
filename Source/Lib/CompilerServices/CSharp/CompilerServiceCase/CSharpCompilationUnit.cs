@@ -31,13 +31,6 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit
 		}
 	}
 	
-	public IEnumerable<TextEditorTextSpan> GetTextTextSpans()
-	{
-		return TokenList.Select(x => x.TextSpan)
-			.Concat(MiscTextSpanList)
-			.Concat(SymbolList.Select(x => x.TextSpan));
-	}
-	
     public IEnumerable<TextEditorTextSpan> GetDiagnosticTextSpans()
     {
     	return DiagnosticList.Select(x => x.TextSpan);
@@ -59,8 +52,6 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit
     
     public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => __DiagnosticList;
     public IReadOnlyList<Symbol> SymbolList => __SymbolList;
-    public IReadOnlyList<SyntaxToken> TokenList { get; set; } = Array.Empty<SyntaxToken>();
-    public IReadOnlyList<TextEditorTextSpan> MiscTextSpanList { get; set; } = Array.Empty<TextEditorTextSpan>();
     
     /// <summary>
     /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

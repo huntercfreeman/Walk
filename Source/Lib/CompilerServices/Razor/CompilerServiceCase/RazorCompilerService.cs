@@ -173,6 +173,8 @@ public sealed class RazorCompilerService : ICompilerService
             
     	lexer.Lex();
     
+    	IEnumerable<TextEditorTextSpan>? textTextSpanList = null;
+    	
     	lock (_resourceMapLock)
 		{
 			if (_resourceMap.ContainsKey(modelModifier.PersistentState.ResourceUri))
@@ -182,17 +184,24 @@ public sealed class RazorCompilerService : ICompilerService
 	            resource.RazorSyntaxTree = lexer.RazorSyntaxTree;
 				
 				resource.CompilationUnit = new RazorCompilationUnit
-				{
-					TokenList = lexer.SyntaxTokenList,
-					RazorResource = resource,
-				};
+        		{
+        			TokenList = lexer.SyntaxTokenList,
+        			RazorResource = resource,
+        		};
+        		
+        		textTextSpanList = lexer.SyntaxTokenList.Select(x => x.TextSpan)
+			        .Concat(resource.GetSymbols().Select(x => x.TextSpan));
 			}
 		}
 		
-		editContext.TextEditorService.Model_ApplySyntaxHighlighting(
-			editContext,
-			modelModifier);
-
+		if (textTextSpanList is not null)
+		{
+    		editContext.TextEditorService.Model_ApplySyntaxHighlighting(
+    			editContext,
+    			modelModifier,
+    			textTextSpanList);
+        }
+		
 		ResourceParsed?.Invoke();
 		
 		return ValueTask.CompletedTask;

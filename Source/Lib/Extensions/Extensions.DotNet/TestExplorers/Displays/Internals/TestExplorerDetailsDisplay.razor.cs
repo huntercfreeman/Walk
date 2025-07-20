@@ -193,7 +193,10 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 
 					editContext.TextEditorService.Model_ApplySyntaxHighlighting(
 						editContext,
-						modelModifier);
+						modelModifier,
+						terminalResource.CompilationUnit.SyntaxTokenList.Select(x => x.TextSpan)
+                			.Concat(terminalResource.CompilationUnit.ManualDecorationTextSpanList)
+                			.Concat(terminalResource.CompilationUnit.ManualSymbolList.Select(x => x.TextSpan)));
 				}
 
 				return ValueTask.CompletedTask;

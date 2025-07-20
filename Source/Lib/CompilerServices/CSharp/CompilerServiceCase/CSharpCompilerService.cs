@@ -1243,8 +1243,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			CompilationUnitKind.IndividualFile_AllData);
 		
 		var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, presentationModel.PendingCalculation.ContentAtRequest, shouldUseSharedStringWalker: true);
-		cSharpCompilationUnit.TokenList = lexerOutput.SyntaxTokenList;
-		cSharpCompilationUnit.MiscTextSpanList = lexerOutput.MiscTextSpanList;
 
 		// Even if the parser throws an exception, be sure to
 		// make use of the Lexer to do whatever syntax highlighting is possible.
@@ -1277,7 +1275,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			{
 				editContext.TextEditorService.Model_ApplySyntaxHighlighting(
 					editContext,
-					modelModifier);
+					modelModifier,
+					lexerOutput.SyntaxTokenList.Select(x => x.TextSpan)
+            			.Concat(lexerOutput.MiscTextSpanList)
+            			.Concat(cSharpCompilationUnit.SymbolList.Select(x => x.TextSpan)));
 					
 				CreateCollapsePoints(
 					editContext,
@@ -1305,8 +1306,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			compilationUnitKind);
 		
 		var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, content, shouldUseSharedStringWalker: true);
-		cSharpCompilationUnit.TokenList = lexerOutput.SyntaxTokenList;
-		cSharpCompilationUnit.MiscTextSpanList = lexerOutput.MiscTextSpanList;
 
 		// Even if the parser throws an exception, be sure to
 		// make use of the Lexer to do whatever syntax highlighting is possible.
@@ -1343,8 +1342,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 			compilationUnitKind);
 		
 		var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, content, shouldUseSharedStringWalker: true);
-		cSharpCompilationUnit.TokenList = lexerOutput.SyntaxTokenList;
-		cSharpCompilationUnit.MiscTextSpanList = lexerOutput.MiscTextSpanList;
 
 		// Even if the parser throws an exception, be sure to
 		// make use of the Lexer to do whatever syntax highlighting is possible.

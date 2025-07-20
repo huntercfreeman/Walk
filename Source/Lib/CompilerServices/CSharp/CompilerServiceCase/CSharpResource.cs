@@ -15,21 +15,9 @@ public sealed class CSharpResource : ICompilerServiceResource
 	public ResourceUri ResourceUri { get; }
     public ICompilerService CompilerService { get; }
 	public CSharpCompilationUnit? CompilationUnit { get; set; }
-	public IReadOnlyList<SyntaxToken> SyntaxTokenList { get; set; } = Array.Empty<SyntaxToken>();
-	public IReadOnlyList<TextEditorTextSpan> MiscTextSpanList { get; set; } = Array.Empty<TextEditorTextSpan>();
 	
 	ICompilationUnit? ICompilerServiceResource.CompilationUnit { get => CompilationUnit; set => _ = value; }
     
-    public IReadOnlyList<SyntaxToken> GetTokens()
-    {
-        return SyntaxTokenList;
-    }
-    
-    public IReadOnlyList<TextEditorTextSpan> GetMiscTextSpans()
-    {
-		return MiscTextSpanList;
-    }
-
     public IReadOnlyList<Symbol> GetSymbols()
     {
         var localCompilationUnit = CompilationUnit;

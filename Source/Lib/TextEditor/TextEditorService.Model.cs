@@ -1,4 +1,4 @@
-﻿using Walk.Common.RazorLib.Keymaps.Models;
+using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
@@ -243,12 +243,9 @@ public partial class TextEditorService
 
 	public void Model_ApplySyntaxHighlighting(
 		TextEditorEditContext editContext,
-		TextEditorModel modelModifier)
+		TextEditorModel modelModifier,
+		IEnumerable<TextEditorTextSpan> textSpanList)
 	{
-		var compilerServiceResource = modelModifier.PersistentState.CompilerService.GetResource(modelModifier.PersistentState.ResourceUri);
-		if (compilerServiceResource is null)
-			return;
-
 		foreach (var viewModelKey in modelModifier.PersistentState.ViewModelKeyList)
 		{
 			var viewModel = editContext.GetViewModelModifier(viewModelKey);
@@ -261,7 +258,7 @@ public partial class TextEditorService
 		Model_ApplyDecorationRange(
 			editContext,
 			modelModifier,
-			compilerServiceResource.CompilationUnit?.GetTextTextSpans() ?? Array.Empty<TextEditorTextSpan>());
+			textSpanList);
 
 		// TODO: Why does painting reload virtualization result???
 		modelModifier.ShouldCalculateVirtualizationResult = true;
