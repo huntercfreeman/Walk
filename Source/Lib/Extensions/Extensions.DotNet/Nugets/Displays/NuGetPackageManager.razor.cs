@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Components;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
-using Walk.Extensions.DotNet.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.Nugets.Models;
 
 namespace Walk.Extensions.DotNet.Nugets.Displays;
 
-public partial class NuGetPackageManager : ComponentBase, IDisposable, INuGetPackageManagerRendererType
+public partial class NuGetPackageManager : ComponentBase, IDisposable
 {
 	[Inject]
 	private DotNetService DotNetService { get; set; } = null!;

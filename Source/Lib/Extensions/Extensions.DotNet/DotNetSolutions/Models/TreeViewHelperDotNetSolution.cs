@@ -13,7 +13,6 @@ public class TreeViewHelperDotNetSolution
 		var childSolutionFolders = treeViewSolution.Item.SolutionFolderList.Select(
 			x => (TreeViewNoType)new TreeViewSolutionFolder(
 				x,
-				treeViewSolution.DotNetComponentRenderers,
 				treeViewSolution.CommonService,
 				true,
 				false)
@@ -29,7 +28,6 @@ public class TreeViewHelperDotNetSolution
 			{
 				return (TreeViewNoType)new TreeViewNamespacePath(
 					new NamespacePath(x.AbsolutePath.NameNoExtension, x.AbsolutePath),
-					treeViewSolution.DotNetComponentRenderers,
 					treeViewSolution.CommonService,
 					true,
 					false)

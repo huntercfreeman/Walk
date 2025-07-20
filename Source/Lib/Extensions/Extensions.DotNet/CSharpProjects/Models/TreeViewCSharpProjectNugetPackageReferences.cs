@@ -7,7 +7,6 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.CompilerServices.Xml.Html.SyntaxActors;
 using Walk.Extensions.DotNet.Nugets.Models;
-using Walk.Extensions.DotNet.ComponentRenderers.Models;
 
 namespace Walk.Extensions.DotNet.CSharpProjects.Models;
 
@@ -15,17 +14,14 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 {
 	public TreeViewCSharpProjectNugetPackageReferences(
 			CSharpProjectNugetPackageReferences cSharpProjectNugetPackageReferences,
-			IDotNetComponentRenderers dotNetComponentRenderers,
 			CommonService commonService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(cSharpProjectNugetPackageReferences, isExpandable, isExpanded)
 	{
-		DotNetComponentRenderers = dotNetComponentRenderers;
 		CommonService = commonService;
 	}
 
-	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public CommonService CommonService { get; }
 
 	public override bool Equals(object? obj)
@@ -137,7 +133,6 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 		var newChildList = lightWeightNugetPackageRecords.Select(
 			npr => (TreeViewNoType)new TreeViewCSharpProjectNugetPackageReference(
 				new(cSharpProjectAbsolutePathString, npr),
-				DotNetComponentRenderers,
 				CommonService,
 				false,
 				false)

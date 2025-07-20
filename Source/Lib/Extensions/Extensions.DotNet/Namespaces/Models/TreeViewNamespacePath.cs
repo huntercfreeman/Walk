@@ -7,7 +7,6 @@ using Walk.Common.RazorLib.Icons.Displays;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib.FileSystems.Displays;
 using Walk.Ide.RazorLib.Namespaces.Models;
-using Walk.Extensions.DotNet.ComponentRenderers.Models;
 
 namespace Walk.Extensions.DotNet.Namespaces.Models;
 
@@ -15,17 +14,14 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
 {
     public TreeViewNamespacePath(
             NamespacePath namespacePath,
-            IDotNetComponentRenderers dotNetComponentRenderers,
             CommonService commonService,
             bool isExpandable,
             bool isExpanded)
         : base(namespacePath, isExpandable, isExpanded)
     {
-        DotNetComponentRenderers = dotNetComponentRenderers;
         CommonService = commonService;
     }
 
-    public IDotNetComponentRenderers DotNetComponentRenderers { get; }
     public CommonService CommonService { get; }
 
     public override bool Equals(object? obj)

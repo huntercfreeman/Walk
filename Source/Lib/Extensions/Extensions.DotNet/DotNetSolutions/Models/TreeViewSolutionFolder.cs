@@ -6,7 +6,6 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Icons.Displays;
 using Walk.Common.RazorLib.Icons.Displays.Codicon;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
-using Walk.Extensions.DotNet.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;
 
 namespace Walk.Extensions.DotNet.DotNetSolutions.Models;
@@ -15,17 +14,14 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 {
 	public TreeViewSolutionFolder(
 			SolutionFolder dotNetSolutionFolder,
-			IDotNetComponentRenderers dotNetComponentRenderers,
 			CommonService commonService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(dotNetSolutionFolder, isExpandable, isExpanded)
 	{
-		DotNetComponentRenderers = dotNetComponentRenderers;
 		CommonService = commonService;
 	}
 
-	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public CommonService CommonService { get; }
 
 	public override bool Equals(object? obj)
@@ -260,7 +256,6 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 	{
 		return new TreeViewSolutionFolder(
 			dotNetSolutionFolder,
-			DotNetComponentRenderers,
 			CommonService,
 			true,
 			false)
@@ -277,7 +272,6 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 
 		return new TreeViewNamespacePath(
 			namespacePath,
-			DotNetComponentRenderers,
 			CommonService,
 			true,
 			false)

@@ -5,7 +5,6 @@ using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
-using Walk.Extensions.DotNet.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.CSharpProjects.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;
@@ -27,11 +26,11 @@ public partial class DotNetService
 		Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Remove (no files are deleted)", MenuOptionKind.Delete,
-			widgetRendererType: DotNetComponentRenderers.RemoveCSharpProjectFromSolutionRendererType,
+			widgetRendererType: typeof(Walk.Extensions.DotNet.CSharpProjects.Displays.RemoveCSharpProjectFromSolutionDisplay),
 			widgetParameterMap: new Dictionary<string, object?>
 			{
 				{
-					nameof(IRemoveCSharpProjectFromSolutionRendererType.AbsolutePath),
+					nameof(Walk.Extensions.DotNet.CSharpProjects.Displays.RemoveCSharpProjectFromSolutionDisplay.AbsolutePath),
 					projectNode.Item.AbsolutePath
 				},
 				{

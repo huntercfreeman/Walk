@@ -7,7 +7,6 @@ using Walk.Common.RazorLib.Icons.Displays.Codicon;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.CompilerServices.Xml.Html.SyntaxActors;
-using Walk.Extensions.DotNet.ComponentRenderers.Models;
 
 namespace Walk.Extensions.DotNet.CSharpProjects.Models;
 
@@ -15,17 +14,14 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 {
 	public TreeViewCSharpProjectToProjectReferences(
 			CSharpProjectToProjectReferences cSharpProjectToProjectReferences,
-			IDotNetComponentRenderers dotNetComponentRenderers,
 			CommonService commonService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(cSharpProjectToProjectReferences, isExpandable, isExpanded)
 	{
-		DotNetComponentRenderers = dotNetComponentRenderers;
 		CommonService = commonService;
 	}
 
-	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public CommonService CommonService { get; }
 
 	public override bool Equals(object? obj)
@@ -140,7 +136,6 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 		var newChildList = cSharpProjectToProjectReferences
 			.Select(x => (TreeViewNoType)new TreeViewCSharpProjectToProjectReference(
 				x,
-				DotNetComponentRenderers,
 				CommonService,
 				false,
 				false)

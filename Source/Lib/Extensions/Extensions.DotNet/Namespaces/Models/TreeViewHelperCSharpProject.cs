@@ -32,7 +32,6 @@ public class TreeViewHelperCSharpProject
 					absolutePath.NameNoExtension;
 
 				return new TreeViewNamespacePath(new NamespacePath(namespaceString, absolutePath),
-					cSharpProjectTreeView.DotNetComponentRenderers,
 					cSharpProjectTreeView.CommonService,
 					true,
 					false);
@@ -66,7 +65,6 @@ public class TreeViewHelperCSharpProject
 				var namespaceString = cSharpProjectTreeView.Item.Namespace;
 
 				return (TreeViewNoType)new TreeViewNamespacePath(new NamespacePath(namespaceString, absolutePath),
-					cSharpProjectTreeView.DotNetComponentRenderers,
 					cSharpProjectTreeView.CommonService,
 					false,
 					false);
@@ -74,7 +72,6 @@ public class TreeViewHelperCSharpProject
 
 		var cSharpProjectDependenciesTreeViewNode = new TreeViewCSharpProjectDependencies(
 			new CSharpProjectDependencies(cSharpProjectTreeView.Item),
-            cSharpProjectTreeView.DotNetComponentRenderers,
 			cSharpProjectTreeView.CommonService,
 			true,
 			false);

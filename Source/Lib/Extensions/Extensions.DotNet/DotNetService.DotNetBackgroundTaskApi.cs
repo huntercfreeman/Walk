@@ -1335,7 +1335,6 @@ public partial class DotNetService
 
 		var rootNode = new TreeViewSolution(
 			dotNetSolutionModel,
-			DotNetComponentRenderers,
 			IdeService.TextEditorService.CommonService,
 			true,
 			true);

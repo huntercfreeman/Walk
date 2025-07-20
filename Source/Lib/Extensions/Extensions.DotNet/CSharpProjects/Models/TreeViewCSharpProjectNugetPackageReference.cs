@@ -4,7 +4,6 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Icons.Displays;
 using Walk.Common.RazorLib.Icons.Displays.Codicon;
 using Walk.Extensions.DotNet.Nugets.Models;
-using Walk.Extensions.DotNet.ComponentRenderers.Models;
 
 namespace Walk.Extensions.DotNet.CSharpProjects.Models;
 
@@ -12,17 +11,14 @@ public class TreeViewCSharpProjectNugetPackageReference : TreeViewWithType<CShar
 {
 	public TreeViewCSharpProjectNugetPackageReference(
 			CSharpProjectNugetPackageReference cSharpProjectNugetPackageReference,
-			IDotNetComponentRenderers dotNetComponentRenderers,
 			CommonService commonService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(cSharpProjectNugetPackageReference, isExpandable, isExpanded)
 	{
-		DotNetComponentRenderers = dotNetComponentRenderers;
 		CommonService = commonService;
 	}
 
-	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public CommonService CommonService { get; }
 
 	public override bool Equals(object? obj)

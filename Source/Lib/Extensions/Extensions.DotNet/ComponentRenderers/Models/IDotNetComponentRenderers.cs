@@ -1,7 +1,0 @@
-namespace Walk.Extensions.DotNet.ComponentRenderers.Models;
-
-public interface IDotNetComponentRenderers
-{
-	public Type NuGetPackageManagerRendererType { get; }
-	public Type RemoveCSharpProjectFromSolutionRendererType { get; }
-}
