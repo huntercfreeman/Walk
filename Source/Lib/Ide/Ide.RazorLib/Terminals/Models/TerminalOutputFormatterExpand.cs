@@ -103,7 +103,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	        };
 	            
 	        var modelModifier = new TextEditorModel(model);
-	        modelModifier.PerformRegisterPresentationModelAction(TerminalPresentationFacts.EmptyPresentationModel);
+	        modelModifier.PerformRegisterPresentationModelAction(IdeFacts.Terminal_EmptyPresentationModel);
 	        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.CompilerServiceDiagnosticPresentation_EmptyPresentationModel);
 	        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel);
 	        
@@ -130,7 +130,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	
 	        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>()
 	        {
-	            TerminalPresentationFacts.PresentationKey,
+	            IdeFacts.Terminal_PresentationKey,
 	            TextEditorFacts.CompilerServiceDiagnosticPresentation_PresentationKey,
 	            TextEditorFacts.FindOverlayPresentation_PresentationKey,
 	        };

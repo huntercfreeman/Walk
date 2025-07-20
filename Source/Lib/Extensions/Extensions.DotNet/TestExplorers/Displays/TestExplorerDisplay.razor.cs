@@ -4,6 +4,7 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Decorations.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Extensions.DotNet.TestExplorers.Displays.Internals;
 using Walk.Common.RazorLib.Keys.Models;
@@ -50,7 +51,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 				DotNetService.IdeService.TextEditorService.Model_AddPresentationModel(
 					editContext,
 					modelModifier,
-					TerminalPresentationFacts.EmptyPresentationModel);
+					IdeFacts.Terminal_EmptyPresentationModel);
 
 				DotNetService.IdeService.TextEditorService.Model_AddPresentationModel(
 					editContext,
@@ -70,7 +71,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 
 				var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
 				{
-					TerminalPresentationFacts.PresentationKey,
+					IdeFacts.Terminal_PresentationKey,
 					TextEditorFacts.CompilerServiceDiagnosticPresentation_PresentationKey,
 					TextEditorFacts.FindOverlayPresentation_PresentationKey,
 				};
@@ -104,14 +105,14 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 	private void KillExecutionProcessOnClick()
 	{
 		var terminalState = DotNetService.IdeService.GetTerminalState();
-		var executionTerminal = terminalState.TerminalMap[TerminalFacts.EXECUTION_KEY];
+		var executionTerminal = terminalState.TerminalMap[IdeFacts.EXECUTION_KEY];
 		executionTerminal.KillProcess();
 	}
 	
 	private bool GetIsKillProcessDisabled()
 	{
 		var terminalState = DotNetService.IdeService.GetTerminalState();
-		var executionTerminal = terminalState.TerminalMap[TerminalFacts.EXECUTION_KEY];
+		var executionTerminal = terminalState.TerminalMap[IdeFacts.EXECUTION_KEY];
 		return !executionTerminal.HasExecutingProcess;
 	}
 	

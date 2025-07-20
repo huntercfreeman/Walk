@@ -1,4 +1,4 @@
-﻿using Walk.Ide.RazorLib.FileSystems.Models;
+using Walk.Ide.RazorLib.FileSystems.Models;
 
 namespace Walk.Ide.RazorLib;
 
@@ -10,9 +10,9 @@ public partial class IdeService
 	/// </summary>
 	private List<IFileTemplate> _fileTemplatesList = new()
 	{
-		FileTemplateFacts.RazorCodebehind,
-		FileTemplateFacts.RazorMarkup,
-		FileTemplateFacts.CSharpClass
+		IdeFacts.RazorCodebehind,
+		IdeFacts.RazorMarkup,
+		IdeFacts.CSharpClass
 	};
 
 	public List<IFileTemplate> FileTemplatesList => _fileTemplatesList;

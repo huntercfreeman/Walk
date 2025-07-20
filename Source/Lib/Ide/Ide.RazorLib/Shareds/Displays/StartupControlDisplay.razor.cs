@@ -76,7 +76,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 			    MenuOptionKind.Other,
 			    onClickFunc: async () => 
 				{
-					IdeService.TerminalGroup_SetActiveTerminal(TerminalFacts.EXECUTION_KEY);
+					IdeService.TerminalGroup_SetActiveTerminal(IdeFacts.EXECUTION_KEY);
 				
 					var success = await TrySetFocus(CommonFacts.TerminalContext).ConfigureAwait(false);
 	

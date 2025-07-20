@@ -7,6 +7,7 @@ using Walk.Common.RazorLib.TreeViews.Models.Utils;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.Extensions.DotNet.CommandLines.Models;
 using Walk.Extensions.DotNet.TestExplorers.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
 
 namespace Walk.Extensions.DotNet;
@@ -352,7 +353,7 @@ public partial class DotNetService
 
 				treeViewProjectTestModel.Item.TerminalCommandRequest = terminalCommandRequest;
 
-				return IdeService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY]
+				return IdeService.GetTerminalState().TerminalMap[IdeFacts.EXECUTION_KEY]
 					.EnqueueCommandAsync(terminalCommandRequest);
 			};
 		}

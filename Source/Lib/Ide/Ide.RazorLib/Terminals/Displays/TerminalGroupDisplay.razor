@@ -57,7 +57,7 @@
             
             @{
             	var terminalList = terminalState.TerminalMap.Values
-            		.OrderByDescending(x => TerminalFacts.WELL_KNOWN_KEYS.Contains(x.Key))
+            		.OrderByDescending(x => IdeFacts.WELL_KNOWN_KEYS.Contains(x.Key))
             		.ToArray();
             }
              

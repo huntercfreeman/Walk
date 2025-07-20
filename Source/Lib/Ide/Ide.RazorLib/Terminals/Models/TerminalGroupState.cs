@@ -6,7 +6,7 @@ namespace Walk.Ide.RazorLib.Terminals.Models;
 
 public record struct TerminalGroupState(Key<ITerminal> ActiveTerminalKey)
 {
-    public TerminalGroupState() : this(TerminalFacts.GENERAL_KEY)
+    public TerminalGroupState() : this(IdeFacts.GENERAL_KEY)
     {
         // _bodyElementDimensions
         {

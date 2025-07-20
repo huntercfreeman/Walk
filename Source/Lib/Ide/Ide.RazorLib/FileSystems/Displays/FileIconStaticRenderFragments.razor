@@ -7,11 +7,11 @@
 	@<span class="di_ide_solution-explorer-icon-display">
     @if (tuple.AbsolutePath.IsDirectory)
     {
-        if (tuple.AbsolutePath.NameNoExtension == UniqueFileFacts.Properties)
+        if (tuple.AbsolutePath.NameNoExtension == IdeFacts.Properties)
         {
             @IconPropertiesFragment.Render(tuple.IconDriver)
         }
-        else if (tuple.AbsolutePath.NameNoExtension == UniqueFileFacts.WwwRoot)
+        else if (tuple.AbsolutePath.NameNoExtension == IdeFacts.WwwRoot)
         {
             @IconWwwRootFragment.Render(tuple.IconDriver)
         }

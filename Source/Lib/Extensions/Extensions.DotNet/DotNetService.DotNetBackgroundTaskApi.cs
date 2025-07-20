@@ -32,6 +32,7 @@ using Walk.Extensions.DotNet.Nugets.Models;
 using Walk.Extensions.DotNet.Outputs.Displays;
 using Walk.Extensions.DotNet.TestExplorers.Displays;
 using Walk.Extensions.DotNet.TestExplorers.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.TextEditor.RazorLib;
@@ -403,7 +404,7 @@ public partial class DotNetService
 			}
 		};
 
-		IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+		IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 
 	private void CleanProjectOnClick(string projectAbsolutePathString)
@@ -435,7 +436,7 @@ public partial class DotNetService
 			}
 		};
 
-		IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+		IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 
 	private void BuildSolutionOnClick(string solutionAbsolutePathString)
@@ -467,7 +468,7 @@ public partial class DotNetService
 			}
 		};
 
-		IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+		IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 
 	private void CleanSolutionOnClick(string solutionAbsolutePathString)
@@ -499,7 +500,7 @@ public partial class DotNetService
 			}
 		};
 
-		IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+		IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 
 	private Task OpenNewDotNetSolutionDialog()
@@ -617,7 +618,7 @@ public partial class DotNetService
 		};
 
 		treeViewStringFragment.Item.TerminalCommandRequest = terminalCommandRequest;
-		IdeService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
+		IdeService.GetTerminalState().TerminalMap[IdeFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 
 	#region DotNetSolutionIdeApi
@@ -730,14 +731,14 @@ public partial class DotNetService
 			{
 				BeginWithFunc = parsedCommand =>
 				{
-					IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
+					IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
 						parsedCommand,
 						// If newlines are added to this make sure to use '.ReplaceLineEndings("\n")' because the syntax highlighting and text editor are expecting this line ending.
 						new StandardOutputCommandEvent(slnFoundString));
 					return Task.CompletedTask;
 				}
 			};
-			IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+			IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 
 			// Set 'executionTerminal' working directory
 			terminalCommandRequest = new TerminalCommandRequest(
@@ -746,14 +747,14 @@ public partial class DotNetService
 			{
 				BeginWithFunc = parsedCommand =>
 				{
-					IdeService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].TerminalOutput.WriteOutput(
+					IdeService.GetTerminalState().TerminalMap[IdeFacts.EXECUTION_KEY].TerminalOutput.WriteOutput(
 						parsedCommand,
 						// If newlines are added to this make sure to use '.ReplaceLineEndings("\n")' because the syntax highlighting and text editor are expecting this line ending.
 						new StandardOutputCommandEvent(slnFoundString));
 					return Task.CompletedTask;
 				}
 			};
-			IdeService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
+			IdeService.GetTerminalState().TerminalMap[IdeFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 		}
 
 		try
@@ -1422,7 +1423,7 @@ public partial class DotNetService
 
 		startupControlModel.ExecutingTerminalCommandRequest = terminalCommandRequest;
 
-		IdeService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
+		IdeService.GetTerminalState().TerminalMap[IdeFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 		return Task.CompletedTask;
 	}
 
@@ -1430,7 +1431,7 @@ public partial class DotNetService
 	{
 		var startupControlModel = (StartupControlModel)interfaceStartupControlModel;
 
-		IdeService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].KillProcess();
+		IdeService.GetTerminalState().TerminalMap[IdeFacts.EXECUTION_KEY].KillProcess();
 		startupControlModel.ExecutingTerminalCommandRequest = null;
 
 		IdeService.Ide_TriggerStartupControlStateChanged();

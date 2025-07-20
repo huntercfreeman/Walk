@@ -272,7 +272,7 @@ public partial class IdeService : IBackgroundTaskGroup
                             TextEditorService)),
                     CommonService)
                 {
-                    Key = TerminalFacts.GENERAL_KEY
+                    Key = IdeFacts.GENERAL_KEY
                 });
         }
         else
@@ -289,7 +289,7 @@ public partial class IdeService : IBackgroundTaskGroup
                             TextEditorService)),
                     this)
                 {
-                    Key = TerminalFacts.GENERAL_KEY
+                    Key = IdeFacts.GENERAL_KEY
                 });
         }
     }
@@ -311,7 +311,7 @@ public partial class IdeService : IBackgroundTaskGroup
                             TextEditorService)),
                     CommonService)
                 {
-                    Key = TerminalFacts.EXECUTION_KEY
+                    Key = IdeFacts.EXECUTION_KEY
                 });
         }
         else
@@ -328,7 +328,7 @@ public partial class IdeService : IBackgroundTaskGroup
                             TextEditorService)),
                     this)
                 {
-                    Key = TerminalFacts.EXECUTION_KEY
+                    Key = IdeFacts.EXECUTION_KEY
                 });
         }
     }

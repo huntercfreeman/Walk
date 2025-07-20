@@ -3,6 +3,7 @@ using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.Extensions.DotNet.CSharpProjects.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.Namespaces.Models;
 
@@ -14,7 +15,7 @@ public class TreeViewHelperCSharpProject
 	{
 		var parentDirectoryOfCSharpProject = cSharpProjectTreeView.Item.AbsolutePath.ParentDirectory;
 		var ancestorDirectory = parentDirectoryOfCSharpProject;
-		var hiddenFiles = HiddenFileFacts.GetHiddenFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
+		var hiddenFiles = IdeFacts.GetHiddenFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
 
 		var directoryPathStringsList = await cSharpProjectTreeView.CommonService.FileSystemProvider.Directory
 			.GetDirectoriesAsync(ancestorDirectory)
@@ -37,7 +38,7 @@ public class TreeViewHelperCSharpProject
 					false);
 			});
 
-		var uniqueDirectories = UniqueFileFacts.GetUniqueFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
+		var uniqueDirectories = IdeFacts.GetUniqueFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
 		var foundUniqueDirectories = new List<TreeViewNamespacePath>();
 		var foundDefaultDirectories = new List<TreeViewNamespacePath>();
 
