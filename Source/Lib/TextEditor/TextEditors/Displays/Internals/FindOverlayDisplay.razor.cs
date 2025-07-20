@@ -194,7 +194,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
     	if (!virtualizationResult.IsValid)
     		return;
     	
-        if (keyboardEventArgs.Key == CommonFacts.MetaKeys.ESCAPE)
+        if (keyboardEventArgs.Key == CommonFacts.ESCAPE)
         {
         	var componentData = virtualizationResult.ViewModel.PersistentState.ComponentData;
         	if (componentData is not null)

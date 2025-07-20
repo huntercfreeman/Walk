@@ -89,7 +89,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     
-        if (CommonFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
+        if (CommonFacts.ESCAPE == keyboardEventArgs.Key)
 			return ReturnFocusToThisAsync();
 			
 		return Task.CompletedTask;

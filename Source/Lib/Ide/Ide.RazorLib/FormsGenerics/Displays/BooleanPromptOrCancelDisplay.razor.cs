@@ -63,7 +63,7 @@ public partial class BooleanPromptOrCancelDisplay : ComponentBase
     {
         if (MenuOptionCallbacks is not null)
         {
-            if (keyboardEventArgs.Key == CommonFacts.MetaKeys.ESCAPE)
+            if (keyboardEventArgs.Key == CommonFacts.ESCAPE)
             {
                 await MenuOptionCallbacks.HideWidgetAsync
                     .Invoke()

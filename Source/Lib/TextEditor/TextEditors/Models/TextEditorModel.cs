@@ -322,7 +322,7 @@ public sealed class TextEditorModel
     {
         if (CommonFacts.IsMetaKey(keymapArgs))
         {
-            if (CommonFacts.MetaKeys.BACKSPACE == keymapArgs.Key)
+            if (CommonFacts.BACKSPACE == keymapArgs.Key)
             {
                 Delete(
                 	viewModel,
@@ -330,7 +330,7 @@ public sealed class TextEditorModel
                     keymapArgs.CtrlKey,
                     DeleteKind.Backspace);
             }
-            else if (CommonFacts.MetaKeys.DELETE == keymapArgs.Key)
+            else if (CommonFacts.DELETE == keymapArgs.Key)
             {
                 Delete(
                     viewModel,
@@ -343,7 +343,7 @@ public sealed class TextEditorModel
         {
             var valueToInsert = keymapArgs.Key.First().ToString();
 
-            if (keymapArgs.Code == CommonFacts.WhitespaceCodes.ENTER_CODE)
+            if (keymapArgs.Code == CommonFacts.ENTER_CODE)
 			{
                 valueToInsert = LineEndKindPreference.AsCharacters();
 				
@@ -367,7 +367,7 @@ public sealed class TextEditorModel
 
 				valueToInsert += indentationBuilder.ToString();
 			}
-            else if (keymapArgs.Code == CommonFacts.WhitespaceCodes.TAB_CODE)
+            else if (keymapArgs.Code == CommonFacts.TAB_CODE)
 			{
                 valueToInsert = "\t";
 			}
@@ -427,8 +427,8 @@ public sealed class TextEditorModel
     {
         var keymapArgs = motionKind switch
         {
-            MotionKind.Backspace => new KeymapArgs { Key = CommonFacts.MetaKeys.BACKSPACE },
-            MotionKind.Delete => new KeymapArgs { Key = CommonFacts.MetaKeys.DELETE },
+            MotionKind.Backspace => new KeymapArgs { Key = CommonFacts.BACKSPACE },
+            MotionKind.Delete => new KeymapArgs { Key = CommonFacts.DELETE },
             _ => throw new WalkTextEditorException($"The {nameof(MotionKind)}: {motionKind} was not recognized.")
         };
 
@@ -445,8 +445,8 @@ public sealed class TextEditorModel
             HandleKeyboardEvent(
                 new KeymapArgs
                 {
-                    Code = CommonFacts.MetaKeys.DELETE,
-                    Key = CommonFacts.MetaKeys.DELETE,
+                    Code = CommonFacts.DELETE,
+                    Key = CommonFacts.DELETE,
                 },
                 viewModel);
         }
@@ -556,7 +556,7 @@ public sealed class TextEditorModel
 				rowIndex++;
 	            charactersOnLine = 0;
             }
-			else if (character == CommonFacts.WhitespaceCharacters.TAB)
+			else if (character == CommonFacts.TAB)
 			{
                 TabCharPositionIndexList.Add(richCharacterIndex);
                 richCharacterList.Add(new(character, default));
@@ -1617,7 +1617,7 @@ public sealed class TextEditorModel
                 {
                     charCount++;
 
-                    if (richCharacterToDelete.Value == CommonFacts.WhitespaceCharacters.TAB)
+                    if (richCharacterToDelete.Value == CommonFacts.TAB)
                     {
                         var indexTabKey = TabCharPositionIndexList.FindIndex(x => x == toDeletePositionIndex);
 
@@ -1688,7 +1688,7 @@ public sealed class TextEditorModel
                 {
                     charCount++;
 
-                    if (richCharacterToDelete.Value == CommonFacts.WhitespaceCharacters.TAB)
+                    if (richCharacterToDelete.Value == CommonFacts.TAB)
                     {
                         var indexTabKey = TabCharPositionIndexList.FindIndex(x => x == toDeletePositionIndex);
 

@@ -57,12 +57,12 @@ public partial class InputFileEditAddress : ComponentBase
 
     private async Task InputTextEditForAddressOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
-        if (keyboardEventArgs.Key == CommonFacts.MetaKeys.ESCAPE)
+        if (keyboardEventArgs.Key == CommonFacts.ESCAPE)
         {
             _isCancelled = true;
             await OnEscapeKeyDownCallbackAsync.Invoke().ConfigureAwait(false);
         }
-        else if (keyboardEventArgs.Code == CommonFacts.WhitespaceCodes.ENTER_CODE)
+        else if (keyboardEventArgs.Code == CommonFacts.ENTER_CODE)
         {
             await InputTextEditForAddressOnFocusOutAsync().ConfigureAwait(false);
         }

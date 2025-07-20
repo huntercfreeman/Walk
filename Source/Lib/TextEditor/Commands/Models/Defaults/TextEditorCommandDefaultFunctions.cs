@@ -59,7 +59,7 @@ public class TextEditorCommandDefaultFunctions
         await viewModel.FocusAsync().ConfigureAwait(false);
 
         modelModifier.HandleKeyboardEvent(
-            new KeymapArgs { Key = CommonFacts.MetaKeys.DELETE },
+            new KeymapArgs { Key = CommonFacts.DELETE },
             viewModel);
     }
 
@@ -360,7 +360,7 @@ public class TextEditorCommandDefaultFunctions
             var readResult = modelModifier.GetString(rowPositionIndex, characterReadCount);
             var removeCharacterCount = 0;
 
-            if (readResult.StartsWith(CommonFacts.WhitespaceCharacters.TAB))
+            if (readResult.StartsWith(CommonFacts.TAB))
             {
                 removeCharacterCount = 1;
 
@@ -371,7 +371,7 @@ public class TextEditorCommandDefaultFunctions
                     removeCharacterCount, // Delete a single "Tab" character
                     viewModel);
             }
-            else if (readResult.StartsWith(CommonFacts.WhitespaceCharacters.SPACE))
+            else if (readResult.StartsWith(CommonFacts.SPACE))
             {
             	viewModel.LineIndex = i;
 				viewModel.SetColumnIndexAndPreferred(0);
@@ -380,7 +380,7 @@ public class TextEditorCommandDefaultFunctions
 
                 foreach (var character in readResult)
                 {
-                    if (character == CommonFacts.WhitespaceCharacters.SPACE)
+                    if (character == CommonFacts.SPACE)
                         contiguousSpaceCount++;
                 }
 
@@ -679,7 +679,7 @@ public class TextEditorCommandDefaultFunctions
             {
                 keymapArgs = new KeymapArgs
                 {
-                    Key = CommonFacts.MovementKeys.ARROW_LEFT,
+                    Key = CommonFacts.ARROW_LEFT_KEY,
                     ShiftKey = shouldSelectText,
                 };
             }
@@ -687,7 +687,7 @@ public class TextEditorCommandDefaultFunctions
             {
                 keymapArgs = new KeymapArgs
                 {
-                    Key = CommonFacts.MovementKeys.ARROW_RIGHT,
+                    Key = CommonFacts.ARROW_RIGHT_KEY,
                     ShiftKey = shouldSelectText,
                 };
             }

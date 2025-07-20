@@ -36,10 +36,10 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 
         switch (commandArgs.KeyboardEventArgs.Code)
         {
-            case CommonFacts.WhitespaceCodes.ENTER_CODE:
+            case CommonFacts.ENTER_CODE:
                 SetInputFileContentTreeViewRoot(commandArgs);
                 return Task.CompletedTask;
-            case CommonFacts.WhitespaceCodes.SPACE_CODE:
+            case CommonFacts.SPACE_CODE:
                 SetSelectedTreeViewModel(commandArgs);
                 return Task.CompletedTask;
         }
@@ -80,13 +80,13 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 
         switch (commandArgs.KeyboardEventArgs.Key)
         {
-            case CommonFacts.MovementKeys.ARROW_LEFT:
+            case CommonFacts.ARROW_LEFT_KEY:
                 HandleBackButtonOnClick(commandArgs);
                 break;
-            case CommonFacts.MovementKeys.ARROW_UP:
+            case CommonFacts.ARROW_UP_KEY:
                 HandleUpwardButtonOnClick(commandArgs);
                 break;
-            case CommonFacts.MovementKeys.ARROW_RIGHT:
+            case CommonFacts.ARROW_RIGHT_KEY:
                 HandleForwardButtonOnClick(commandArgs);
                 break;
             case "r":

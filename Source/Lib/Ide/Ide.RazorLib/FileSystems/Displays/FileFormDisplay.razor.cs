@@ -68,13 +68,13 @@ public partial class FileFormDisplay : ComponentBase
     {
         if (MenuOptionCallbacks is not null)
         {
-            if (keyboardEventArgs.Key == CommonFacts.MetaKeys.ESCAPE)
+            if (keyboardEventArgs.Key == CommonFacts.ESCAPE)
             {
                 await MenuOptionCallbacks.HideWidgetAsync
                     .Invoke()
                     .ConfigureAwait(false);
             }
-            else if (keyboardEventArgs.Code == CommonFacts.WhitespaceCodes.ENTER_CODE)
+            else if (keyboardEventArgs.Code == CommonFacts.ENTER_CODE)
             {
                 await MenuOptionCallbacks.CompleteWidgetAsync
                     .Invoke(async () => await OnAfterSubmitFunc.Invoke(

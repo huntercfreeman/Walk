@@ -56,7 +56,7 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase
 	private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
 	{
 		if (MenuOptionCallbacks is not null &&
-			keyboardEventArgs.Key == CommonFacts.MetaKeys.ESCAPE)
+			keyboardEventArgs.Key == CommonFacts.ESCAPE)
 		{
 			await MenuOptionCallbacks.HideWidgetAsync
 				.Invoke()

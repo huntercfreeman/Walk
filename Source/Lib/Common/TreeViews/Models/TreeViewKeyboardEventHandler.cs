@@ -44,37 +44,37 @@ public class TreeViewKeyboardEventHandler
 
         switch (commandArgs.KeyboardEventArgs.Key)
         {
-            case CommonFacts.MovementKeys.ARROW_LEFT:
+            case CommonFacts.ARROW_LEFT_KEY:
                 CommonService.TreeView_MoveLeftAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
-            case CommonFacts.MovementKeys.ARROW_DOWN:
+            case CommonFacts.ARROW_DOWN_KEY:
                 CommonService.TreeView_MoveDownAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
-            case CommonFacts.MovementKeys.ARROW_UP:
+            case CommonFacts.ARROW_UP_KEY:
                 CommonService.TreeView_MoveUpAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
-            case CommonFacts.MovementKeys.ARROW_RIGHT:
+            case CommonFacts.ARROW_RIGHT_KEY:
                 CommonService.TreeView_MoveRight(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
-            case CommonFacts.MovementKeys.HOME:
+            case CommonFacts.HOME_KEY:
                 CommonService.TreeView_MoveHomeAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
-            case CommonFacts.MovementKeys.END:
+            case CommonFacts.END_KEY:
                 CommonService.TreeView_MoveEndAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,

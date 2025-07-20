@@ -133,16 +133,16 @@ public partial class ContextSwitchDisplay : ComponentBase
         	if (keyboardEventArgs.CtrlKey)
         	{
         		if (keyboardEventArgs.ShiftKey)
-        			keyboardEventArgs.Key = CommonFacts.MovementKeys.ARROW_UP;
+        			keyboardEventArgs.Key = CommonFacts.ARROW_UP_KEY;
         		else
-        			keyboardEventArgs.Key = CommonFacts.MovementKeys.ARROW_DOWN;
+        			keyboardEventArgs.Key = CommonFacts.ARROW_DOWN_KEY;
         	}
         }
         
         switch (keyboardEventArgs.Key)
         {
-            case CommonFacts.MovementKeys.ARROW_LEFT:
-            case CommonFacts.AlternateMovementKeys.ARROW_LEFT:
+            case CommonFacts.ARROW_LEFT_KEY:
+            case CommonFacts.ARROW_LEFT_ALTKEY:
             {
             	var inGroupIndex = GetActiveGroupIndex();
             	if (inGroupIndex < 0)
@@ -167,22 +167,22 @@ public partial class ContextSwitchDisplay : ComponentBase
             		outGroup.StartInclusiveIndex + outGroup.MenuOptionListLength - 1);
                 break;
             }
-            case CommonFacts.MovementKeys.ARROW_DOWN:
-            case CommonFacts.AlternateMovementKeys.ARROW_DOWN:
+            case CommonFacts.ARROW_DOWN_KEY:
+            case CommonFacts.ARROW_DOWN_ALTKEY:
                 if (_activeIndex >= _flatMenuOptionList.Count - 1)
                     _activeIndex = 0;
                 else
                     _activeIndex++;
                 break;
-            case CommonFacts.MovementKeys.ARROW_UP:
-            case CommonFacts.AlternateMovementKeys.ARROW_UP:
+            case CommonFacts.ARROW_UP_KEY:
+            case CommonFacts.ARROW_UP_ALTKEY:
                 if (_activeIndex <= 0)
                     _activeIndex = _flatMenuOptionList.Count - 1;
                 else
                     _activeIndex--;
                 break;
-            case CommonFacts.MovementKeys.ARROW_RIGHT:
-            case CommonFacts.AlternateMovementKeys.ARROW_RIGHT:
+            case CommonFacts.ARROW_RIGHT_KEY:
+            case CommonFacts.ARROW_RIGHT_ALTKEY:
             {
             	var inGroupIndex = GetActiveGroupIndex();
             	if (inGroupIndex < 0)
@@ -207,10 +207,10 @@ public partial class ContextSwitchDisplay : ComponentBase
             		outGroup.StartInclusiveIndex + outGroup.MenuOptionListLength - 1);
                 break;
             }
-            case CommonFacts.MovementKeys.HOME:
+            case CommonFacts.HOME_KEY:
                 _activeIndex = 0;
                 break;
-            case CommonFacts.MovementKeys.END:
+            case CommonFacts.END_KEY:
                 _activeIndex = _flatMenuOptionList.Count - 1;
                 break;
             case "Enter":

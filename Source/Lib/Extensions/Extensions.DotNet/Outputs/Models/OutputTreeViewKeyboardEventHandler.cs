@@ -28,9 +28,9 @@ public class OutputTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 
 		switch (commandArgs.KeyboardEventArgs.Code)
 		{
-			case CommonFacts.WhitespaceCodes.ENTER_CODE:
+			case CommonFacts.ENTER_CODE:
 				return InvokeOpenInEditor(commandArgs, true);
-			case CommonFacts.WhitespaceCodes.SPACE_CODE:
+			case CommonFacts.SPACE_CODE:
 				return InvokeOpenInEditor(commandArgs, false);
 		}
 		

@@ -106,35 +106,35 @@ public partial class MenuDisplay : ComponentBase
 
         switch (keyboardEventArgs.Key)
         {
-            case CommonFacts.MovementKeys.ARROW_LEFT:
-            case CommonFacts.AlternateMovementKeys.ARROW_LEFT:
+            case CommonFacts.ARROW_LEFT_KEY:
+            case CommonFacts.ARROW_LEFT_ALTKEY:
             	if (Dropdown is not null)
 	                CommonService.Dropdown_ReduceDisposeAction(Dropdown.Key);
 
                 if (ReturnFocusToParentFuncAsync is not null)
                     await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);
                 break;
-            case CommonFacts.MovementKeys.ARROW_DOWN:
-            case CommonFacts.AlternateMovementKeys.ARROW_DOWN:
+            case CommonFacts.ARROW_DOWN_KEY:
+            case CommonFacts.ARROW_DOWN_ALTKEY:
                 if (_activeMenuOptionRecordIndex >= MenuRecord.MenuOptionList.Count - 1)
                     _activeMenuOptionRecordIndex = 0;
                 else
                     _activeMenuOptionRecordIndex++;
                 break;
-            case CommonFacts.MovementKeys.ARROW_UP:
-            case CommonFacts.AlternateMovementKeys.ARROW_UP:
+            case CommonFacts.ARROW_UP_KEY:
+            case CommonFacts.ARROW_UP_ALTKEY:
                 if (_activeMenuOptionRecordIndex <= 0)
                     _activeMenuOptionRecordIndex = MenuRecord.MenuOptionList.Count - 1;
                 else
                     _activeMenuOptionRecordIndex--;
                 break;
-            case CommonFacts.MovementKeys.HOME:
+            case CommonFacts.HOME_KEY:
                 _activeMenuOptionRecordIndex = 0;
                 break;
-            case CommonFacts.MovementKeys.END:
+            case CommonFacts.END_KEY:
                 _activeMenuOptionRecordIndex = MenuRecord.MenuOptionList.Count - 1;
                 break;
-            case CommonFacts.MetaKeys.ESCAPE:
+            case CommonFacts.ESCAPE:
             	if (Dropdown is not null)
 	                CommonService.Dropdown_ReduceDisposeAction(Dropdown.Key);
 

@@ -121,8 +121,8 @@ public partial class MenuOptionDisplay : ComponentBase
     {
         switch (keyboardEventArgs.Key)
         {
-            case CommonFacts.MovementKeys.ARROW_RIGHT:
-            case CommonFacts.AlternateMovementKeys.ARROW_RIGHT:
+            case CommonFacts.ARROW_RIGHT_KEY:
+            case CommonFacts.ARROW_RIGHT_ALTKEY:
 				var localSubMenu = MenuOptionRecord.SubMenu;
                 if (localSubMenu is not null)
                     return RenderDropdownAsync(localSubMenu);
@@ -131,8 +131,8 @@ public partial class MenuOptionDisplay : ComponentBase
 
         switch (keyboardEventArgs.Code)
         {
-            case CommonFacts.WhitespaceCodes.ENTER_CODE:
-            case CommonFacts.WhitespaceCodes.SPACE_CODE:
+            case CommonFacts.ENTER_CODE:
+            case CommonFacts.SPACE_CODE:
 				return HandleOnClick();
         }
 

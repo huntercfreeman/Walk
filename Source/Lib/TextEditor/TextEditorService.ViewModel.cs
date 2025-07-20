@@ -329,7 +329,7 @@ public partial class TextEditorService
 
 		switch (key)
 		{
-			case CommonFacts.MovementKeys.ARROW_LEFT:
+			case CommonFacts.ARROW_LEFT_KEY:
 				if (TextEditorSelectionHelper.HasSelectedText(viewModel) &&
 					!shiftKey)
 				{
@@ -426,7 +426,7 @@ public partial class TextEditorService
 				}
 
 				break;
-			case CommonFacts.MovementKeys.ARROW_DOWN:
+			case CommonFacts.ARROW_DOWN_KEY:
 				if (viewModel.LineIndex < modelModifier.LineCount - 1)
 				{
 					viewModel.LineIndex++;
@@ -439,7 +439,7 @@ public partial class TextEditorService
 				}
 
 				break;
-			case CommonFacts.MovementKeys.ARROW_UP:
+			case CommonFacts.ARROW_UP_KEY:
 				if (viewModel.LineIndex > 0)
 				{
 					viewModel.LineIndex--;
@@ -452,7 +452,7 @@ public partial class TextEditorService
 				}
 
 				break;
-			case CommonFacts.MovementKeys.ARROW_RIGHT:
+			case CommonFacts.ARROW_RIGHT_KEY:
 				if (viewModel.PersistentState.VirtualAssociativityKind == VirtualAssociativityKind.Left)
 				{
 					viewModel.PersistentState.VirtualAssociativityKind = VirtualAssociativityKind.Right;
@@ -559,7 +559,7 @@ public partial class TextEditorService
 				}
 
 				break;
-			case CommonFacts.MovementKeys.HOME:
+			case CommonFacts.HOME_KEY:
 				if (ctrlKey)
 				{
 					viewModel.LineIndex = 0;
@@ -602,7 +602,7 @@ public partial class TextEditorService
 				}
 
 				break;
-			case CommonFacts.MovementKeys.END:
+			case CommonFacts.END_KEY:
 				if (ctrlKey)
 					viewModel.LineIndex = modelModifier.LineCount - 1;
 
@@ -617,7 +617,7 @@ public partial class TextEditorService
 		{
 			switch (key)
 			{
-				case CommonFacts.MovementKeys.ARROW_LEFT:
+				case CommonFacts.ARROW_LEFT_KEY:
 					{
 						CollapsePoint encompassingCollapsePoint = new CollapsePoint(-1, false, string.Empty, -1); ;
 
@@ -653,7 +653,7 @@ public partial class TextEditorService
 
 						break;
 					}
-				case CommonFacts.MovementKeys.ARROW_DOWN:
+				case CommonFacts.ARROW_DOWN_KEY:
 					{
 						var success = false;
 
@@ -693,7 +693,7 @@ public partial class TextEditorService
 
 						break;
 					}
-				case CommonFacts.MovementKeys.ARROW_UP:
+				case CommonFacts.ARROW_UP_KEY:
 					{
 						var success = false;
 
@@ -735,7 +735,7 @@ public partial class TextEditorService
 
 						break;
 					}
-				case CommonFacts.MovementKeys.ARROW_RIGHT:
+				case CommonFacts.ARROW_RIGHT_KEY:
 					{
 						CollapsePoint encompassingCollapsePoint = new CollapsePoint(-1, false, string.Empty, -1); ;
 
@@ -760,8 +760,8 @@ public partial class TextEditorService
 
 						break;
 					}
-				case CommonFacts.MovementKeys.HOME:
-				case CommonFacts.MovementKeys.END:
+				case CommonFacts.HOME_KEY:
+				case CommonFacts.END_KEY:
 					{
 						break;
 					}

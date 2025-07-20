@@ -82,7 +82,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	if (!virtualizationResult.IsValid)
     		return;
     	
-        if (CommonFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
+        if (CommonFacts.ESCAPE == keyboardEventArgs.Key)
         {
             TextEditorService.WorkerArbitrary.PostUnique(editContext =>
 			{
