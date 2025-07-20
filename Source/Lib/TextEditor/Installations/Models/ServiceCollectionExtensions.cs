@@ -2,7 +2,6 @@ using Microsoft.JSInterop;
 using Microsoft.Extensions.DependencyInjection;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Installations.Models;
-using Walk.TextEditor.RazorLib.ComponentRenderers.Models;
 
 namespace Walk.TextEditor.RazorLib.Installations.Models;
 
@@ -26,7 +25,6 @@ public static class ServiceCollectionExtensions
             {
                 return new TextEditorService(
                     textEditorConfig,
-                    _textEditorComponentRenderers,
                     sp.GetRequiredService<IJSRuntime>(),
                     sp.GetRequiredService<CommonService>(),
             		sp.GetRequiredService<IServiceProvider>());
@@ -34,7 +32,4 @@ public static class ServiceCollectionExtensions
         
         return services;
     }
-
-    private static readonly WalkTextEditorComponentRenderers _textEditorComponentRenderers = new(
-        typeof(TextEditors.Displays.Internals.DiagnosticDisplay));
 }

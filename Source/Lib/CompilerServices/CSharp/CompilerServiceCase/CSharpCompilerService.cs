@@ -8,7 +8,6 @@ using Walk.Common.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Autocompletes.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
-using Walk.TextEditor.RazorLib.ComponentRenderers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
@@ -63,40 +62,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     public IReadOnlyList<ICompilerServiceResource> CompilerServiceResources { get; }
     
     public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions { get; }
-    
-    /// <summary>
-    /// This overrides the default Blazor component: <see cref="Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.SymbolDisplay"/>.
-    /// It is shown when hovering with the cursor over a <see cref="Walk.TextEditor.RazorLib.CompilerServices.Syntax.Symbols.ISymbol"/>
-    /// (as well other actions will show it).
-    ///
-    /// If only a small change is necessary, It is recommended to replicate <see cref="Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.SymbolDisplay"/>
-    /// but with a component of your own name.
-    ///
-    /// There is a switch statement that renders content based on the symbol's SyntaxKind.
-    ///
-    /// So, if the small change is for a particular SyntaxKind, copy over the entire switch statement,
-    /// and change that case in particular.
-    ///
-    /// There are optimizations in the SymbolDisplay's codebehind to stop it from re-rendering
-    /// unnecessarily. So check the codebehind and copy over the code from there too if desired (this is recommended).
-    ///
-    /// The "all in" approach to overriding the default 'SymbolRenderer' was decided on over
-    /// a more fine tuned override of each individual case in the UI's switch statement.
-    ///
-    /// This was because it is firstly believed that the properties necessary to customize
-    /// the SymbolRenderer would massively increase.
-    /// 
-    /// And secondly because it is believed that the Nodes shouldn't even be shared
-    /// amongst the TextEditor and the ICompilerService.
-    ///
-    /// That is to say, it feels quite odd that a Node and SyntaxKind enum member needs
-    /// to be defined by the text editor, rather than the ICompilerService doing it.
-    ///
-    /// The solution to this isn't yet known but it is always in the back of the mind
-    /// while working on the text editor.
-    /// </summary>
-    public Type? SymbolRendererType { get; }
-    public Type? DiagnosticRendererType { get; }
 
     public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified)
     {
@@ -791,13 +756,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     var parameterMap = new Dictionary<string, object?>
                     {
                         {
-                            nameof(ITextEditorDiagnosticRenderer.Diagnostic),
+                            nameof(Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.DiagnosticDisplay.Diagnostic),
                             diagnostic
                         }
                     };
 
                     viewModelModifier.PersistentState.TooltipModel = new Walk.Common.RazorLib.Tooltips.Models.TooltipModel<(TextEditorService TextEditorService, Key<TextEditorViewModel> ViewModelKey, int PositionIndex)>(
-	                    modelModifier.PersistentState.CompilerService.DiagnosticRendererType ?? _textEditorService.TextEditorComponentRenderers.DiagnosticRendererType,
+	                    typeof(Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.DiagnosticDisplay),
 	                    parameterMap,
 	                    clientX,
 	                    clientY,
