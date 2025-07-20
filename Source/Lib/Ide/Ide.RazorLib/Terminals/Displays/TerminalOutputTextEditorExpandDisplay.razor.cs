@@ -264,7 +264,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 					terminalOutputFormatterExpand.TextEditorModelResourceUri);
 
 				if (compilerServiceResource is TerminalResource terminalResource)
-				{					
+				{
 					terminalResource.CompilationUnit.ManualDecorationTextSpanList.Clear();
 					terminalResource.CompilationUnit.ManualDecorationTextSpanList.AddRange(
 						outputFormatted.SymbolList.Select(x => x.TextSpan));
@@ -274,7 +274,10 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 
 					editContext.TextEditorService.Model_ApplySyntaxHighlighting(
 						editContext,
-						modelModifier);
+						modelModifier,
+						terminalResource.CompilationUnit.SyntaxTokenList.Select(x => x.TextSpan)
+                			.Concat(terminalResource.CompilationUnit.ManualDecorationTextSpanList)
+                			.Concat(terminalResource.CompilationUnit.ManualSymbolList.Select(x => x.TextSpan)));
 						
 					editContext.TextEditorService.Model_ApplyDecorationRange(
 						editContext,

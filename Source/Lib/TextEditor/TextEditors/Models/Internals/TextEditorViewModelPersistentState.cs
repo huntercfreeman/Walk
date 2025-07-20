@@ -436,23 +436,6 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 			var modelModifier = editContext.GetModelModifier(ResourceUri);
 			if (modelModifier is not null)
 			{
-				// If this 'ApplySyntaxHighlighting(...)' isn't redundantly invoked prior to
-				// the upcoming 'ResourceWasModified(...)' invocation,
-				// then there is an obnoxious "flicker" upon opening a file for the first time.
-				//
-				// This is because it initially opens with 'plain text' syntax highlighting
-				// for all the text.
-				//
-				// Then very soon after it gets the correct syntax highlighting applied.
-				// The issue is specifically how quickly it gets the correct syntax highlighting.
-				//
-				// It is the same issue as putting a 'loading...' icon or text
-				// for an asynchronous event, but that event finishes in sub 200ms so the user
-				// sees a "flicker" of the 'loading...' text and it just is disorienting to see.
-				editContext.TextEditorService.Model_ApplySyntaxHighlighting(
-					editContext,
-					modelModifier);
-				
 				if (modelModifier.PersistentState.CompilerService is not null)	
 					modelModifier.PersistentState.CompilerService.ResourceWasModified(ResourceUri, Array.Empty<TextEditorTextSpan>());
 			}

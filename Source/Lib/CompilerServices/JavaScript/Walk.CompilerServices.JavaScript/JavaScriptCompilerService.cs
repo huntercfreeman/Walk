@@ -163,7 +163,8 @@ public class JavaScriptCompilerService : ICompilerService
 		
 		editContext.TextEditorService.Model_ApplySyntaxHighlighting(
 			editContext,
-			modelModifier);
+			modelModifier,
+			lexer.SyntaxTokenList.Select(x => x.TextSpan));
 
 		ResourceParsed?.Invoke();
 		

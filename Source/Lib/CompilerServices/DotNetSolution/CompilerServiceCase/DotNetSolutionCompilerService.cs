@@ -181,7 +181,8 @@ public sealed class DotNetSolutionCompilerService : ICompilerService
 		
 		editContext.TextEditorService.Model_ApplySyntaxHighlighting(
 			editContext,
-			modelModifier);
+			modelModifier,
+			syntaxTokenList.Select(x => x.TextSpan));
 
 		ResourceParsed?.Invoke();
 		

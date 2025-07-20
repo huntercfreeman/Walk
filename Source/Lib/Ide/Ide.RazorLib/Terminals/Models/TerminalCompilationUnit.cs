@@ -10,13 +10,6 @@ public class TerminalCompilationUnit : ICompilationUnit
     public List<TextEditorTextSpan> ManualDecorationTextSpanList { get; } = new List<TextEditorTextSpan>();
     public List<Symbol> ManualSymbolList { get; } = new List<Symbol>();
 
-	public IEnumerable<TextEditorTextSpan> GetTextTextSpans()
-	{
-		return SyntaxTokenList.Select(x => x.TextSpan)
-			.Concat(ManualDecorationTextSpanList)
-			.Concat(ManualSymbolList.Select(x => x.TextSpan));
-	}
-	
 	public IEnumerable<TextEditorTextSpan> GetDiagnosticTextSpans()
 	{
 		return Array.Empty<TextEditorTextSpan>();
