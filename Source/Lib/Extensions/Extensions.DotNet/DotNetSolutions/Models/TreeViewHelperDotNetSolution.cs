@@ -14,7 +14,6 @@ public class TreeViewHelperDotNetSolution
 			x => (TreeViewNoType)new TreeViewSolutionFolder(
 				x,
 				treeViewSolution.DotNetComponentRenderers,
-				treeViewSolution.IdeComponentRenderers,
 				treeViewSolution.CommonService,
 				true,
 				false)
@@ -31,7 +30,6 @@ public class TreeViewHelperDotNetSolution
 				return (TreeViewNoType)new TreeViewNamespacePath(
 					new NamespacePath(x.AbsolutePath.NameNoExtension, x.AbsolutePath),
 					treeViewSolution.DotNetComponentRenderers,
-					treeViewSolution.IdeComponentRenderers,
 					treeViewSolution.CommonService,
 					true,
 					false)

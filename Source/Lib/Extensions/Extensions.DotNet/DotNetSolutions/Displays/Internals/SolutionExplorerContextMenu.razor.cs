@@ -12,7 +12,6 @@ using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.CompilerServices.DotNetSolution.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
-using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.FormsGenerics.Displays;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Extensions.DotNet.CSharpProjects.Displays;
@@ -150,16 +149,16 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			menuOptionList.Add(new MenuOptionRecord(
 				"Delete",
 				MenuOptionKind.Delete,
-				widgetRendererType: DotNetService.IdeService.IdeComponentRenderers.BooleanPromptOrCancelRendererType,
+				widgetRendererType: typeof(Walk.Ide.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay),
 				widgetParameterMap: new Dictionary<string, object?>
 				{
-					{ nameof(IBooleanPromptOrCancelRendererType.IncludeCancelOption), false },
-					{ nameof(IBooleanPromptOrCancelRendererType.Message), $"DELETE:" },
+					{ nameof(BooleanPromptOrCancelDisplay.IncludeCancelOption), false },
+					{ nameof(BooleanPromptOrCancelDisplay.Message), $"DELETE:" },
 					{ nameof(BooleanPromptOrCancelDisplay.ListOfMessages), filenameList },
-					{ nameof(IBooleanPromptOrCancelRendererType.AcceptOptionTextOverride), null },
-					{ nameof(IBooleanPromptOrCancelRendererType.DeclineOptionTextOverride), null },
+					{ nameof(BooleanPromptOrCancelDisplay.AcceptOptionTextOverride), null },
+					{ nameof(BooleanPromptOrCancelDisplay.DeclineOptionTextOverride), null },
 					{
-						nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptFunc),
+						nameof(BooleanPromptOrCancelDisplay.OnAfterAcceptFunc),
 						async () =>
 						{
 							await commandArgs.RestoreFocusToTreeView
@@ -173,8 +172,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                             });
 						}
 					},
-					{ nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineFunc), commandArgs.RestoreFocusToTreeView },
-					{ nameof(IBooleanPromptOrCancelRendererType.OnAfterCancelFunc), commandArgs.RestoreFocusToTreeView },
+					{ nameof(BooleanPromptOrCancelDisplay.OnAfterDeclineFunc), commandArgs.RestoreFocusToTreeView },
+					{ nameof(BooleanPromptOrCancelDisplay.OnAfterCancelFunc), commandArgs.RestoreFocusToTreeView },
 				}));
 		}
 

@@ -1,11 +1,10 @@
-﻿using Walk.Common.RazorLib;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.Clipboards.Models;
-using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 
 namespace Walk.Ide.RazorLib;
@@ -15,13 +14,13 @@ public partial class IdeService
 	public MenuOptionRecord NewEmptyFile(AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("New Empty File", MenuOptionKind.Create,
-			widgetRendererType: IdeComponentRenderers.FileFormRendererType,
+			widgetRendererType: typeof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay),
 			widgetParameterMap: new Dictionary<string, object?>
 			{
-				{ nameof(IFileFormRendererType.FileName), string.Empty },
-				{ nameof(IFileFormRendererType.CheckForTemplates), false },
+				{ nameof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay.FileName), string.Empty },
+				{ nameof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay.CheckForTemplates), false },
 				{
-					nameof(IFileFormRendererType.OnAfterSubmitFunc),
+					nameof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay.OnAfterSubmitFunc),
 					new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
 						(fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
 						{
@@ -41,13 +40,13 @@ public partial class IdeService
 	public MenuOptionRecord NewTemplatedFile(NamespacePath parentDirectory, Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("New Templated File", MenuOptionKind.Create,
-			widgetRendererType: IdeComponentRenderers.FileFormRendererType,
+			widgetRendererType: typeof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay),
 			widgetParameterMap: new Dictionary<string, object?>
 			{
-				{ nameof(IFileFormRendererType.FileName), string.Empty },
-				{ nameof(IFileFormRendererType.CheckForTemplates), true },
+				{ nameof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay.FileName), string.Empty },
+				{ nameof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay.CheckForTemplates), true },
 				{
-					nameof(IFileFormRendererType.OnAfterSubmitFunc),
+					nameof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay.OnAfterSubmitFunc),
 					new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
 						(fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
 						{
@@ -67,13 +66,13 @@ public partial class IdeService
 	public MenuOptionRecord NewDirectory(AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("New Directory", MenuOptionKind.Create,
-			widgetRendererType: IdeComponentRenderers.FileFormRendererType,
+			widgetRendererType: typeof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay),
 			widgetParameterMap: new Dictionary<string, object?>
 			{
-				{ nameof(IFileFormRendererType.FileName), string.Empty },
-				{ nameof(IFileFormRendererType.IsDirectory), true },
+				{ nameof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay.FileName), string.Empty },
+				{ nameof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay.IsDirectory), true },
 				{
-					nameof(IFileFormRendererType.OnAfterSubmitFunc),
+					nameof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay.OnAfterSubmitFunc),
 					new Func<string, IFileTemplate?, List<IFileTemplate>, Task>(
 						(directoryName, _, _) =>
 						{
@@ -87,13 +86,13 @@ public partial class IdeService
 	public MenuOptionRecord DeleteFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Delete", MenuOptionKind.Delete,
-			widgetRendererType: IdeComponentRenderers.DeleteFileFormRendererType,
+			widgetRendererType: typeof(Walk.Ide.RazorLib.FileSystems.Displays.DeleteFileFormDisplay),
 			widgetParameterMap: new Dictionary<string, object?>
 			{
-				{ nameof(IDeleteFileFormRendererType.AbsolutePath), absolutePath },
-				{ nameof(IDeleteFileFormRendererType.IsDirectory), true },
+				{ nameof(Walk.Ide.RazorLib.FileSystems.Displays.DeleteFileFormDisplay.AbsolutePath), absolutePath },
+				{ nameof(Walk.Ide.RazorLib.FileSystems.Displays.DeleteFileFormDisplay.IsDirectory), true },
 				{
-					nameof(IDeleteFileFormRendererType.OnAfterSubmitFunc),
+					nameof(Walk.Ide.RazorLib.FileSystems.Displays.DeleteFileFormDisplay.OnAfterSubmitFunc),
 					new Func<AbsolutePath, Task>(
 						x =>
 						{
@@ -107,18 +106,18 @@ public partial class IdeService
 	public MenuOptionRecord RenameFile(AbsolutePath sourceAbsolutePath, CommonService commonService, Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Rename", MenuOptionKind.Update,
-			widgetRendererType: IdeComponentRenderers.FileFormRendererType,
+			widgetRendererType: typeof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay),
 			widgetParameterMap: new Dictionary<string, object?>
 			{
 				{
-					nameof(IFileFormRendererType.FileName),
+					nameof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay.FileName),
 					sourceAbsolutePath.IsDirectory
 						? sourceAbsolutePath.NameNoExtension
 						: sourceAbsolutePath.NameWithExtension
 				},
-				{ nameof(IFileFormRendererType.IsDirectory), sourceAbsolutePath.IsDirectory },
+				{ nameof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay.IsDirectory), sourceAbsolutePath.IsDirectory },
 				{
-					nameof(IFileFormRendererType.OnAfterSubmitFunc),
+					nameof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay.OnAfterSubmitFunc),
 					new Func<string, IFileTemplate?, List<IFileTemplate>, Task>((nextName, _, _) =>
 					{
 						PerformRename(sourceAbsolutePath, nextName, commonService, onAfterCompletion);

@@ -40,14 +40,12 @@ public partial class InputFileSidebar : ComponentBase
         {
             var directoryHomeNode = new TreeViewAbsolutePath(
                 IdeService.CommonService.EnvironmentProvider.HomeDirectoryAbsolutePath,
-                IdeService.IdeComponentRenderers,
                 IdeService.CommonService,
                 true,
                 false);
 
             var directoryRootNode = new TreeViewAbsolutePath(
                 IdeService.CommonService.EnvironmentProvider.RootDirectoryAbsolutePath,
-                IdeService.IdeComponentRenderers,
                 IdeService.CommonService,
                 true,
                 false);

@@ -1,13 +1,12 @@
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Menus.Models;
-using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace Walk.Ide.RazorLib.FileSystems.Displays;
 
-public partial class FileFormDisplay : ComponentBase, IFileFormRendererType
+public partial class FileFormDisplay : ComponentBase
 {
     [CascadingParameter]
     public MenuOptionCallbacks? MenuOptionCallbacks { get; set; }

@@ -28,7 +28,6 @@ public class TreeViewHelperNamespacePathDirectory
                 return (TreeViewNoType)new TreeViewNamespacePath(
                     new NamespacePath(namespaceString, absolutePath),
                     directoryTreeView.DotNetComponentRenderers,
-                    directoryTreeView.IdeComponentRenderers,
                     directoryTreeView.CommonService,
                     true,
                     false);
@@ -48,7 +47,6 @@ public class TreeViewHelperNamespacePathDirectory
                 return (TreeViewNoType)new TreeViewNamespacePath(
                     new NamespacePath(namespaceString, absolutePath),
                     directoryTreeView.DotNetComponentRenderers,
-                    directoryTreeView.IdeComponentRenderers,
                     directoryTreeView.CommonService,
                     false,
                     false);

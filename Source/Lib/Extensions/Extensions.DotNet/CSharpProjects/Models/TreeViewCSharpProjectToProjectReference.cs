@@ -5,7 +5,6 @@ using Walk.Common.RazorLib.Icons.Displays;
 using Walk.Common.RazorLib.Icons.Displays.Codicon;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.Extensions.DotNet.ComponentRenderers.Models;
-using Walk.Ide.RazorLib.ComponentRenderers.Models;
 
 namespace Walk.Extensions.DotNet.CSharpProjects.Models;
 
@@ -14,19 +13,16 @@ public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpPr
 	public TreeViewCSharpProjectToProjectReference(
 			CSharpProjectToProjectReference cSharpProjectToProjectReference,
 			IDotNetComponentRenderers dotNetComponentRenderers,
-			IIdeComponentRenderers ideComponentRenderers,
 			CommonService commonService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(cSharpProjectToProjectReference, isExpandable, isExpanded)
 	{
 		DotNetComponentRenderers = dotNetComponentRenderers;
-		IdeComponentRenderers = ideComponentRenderers;
 		CommonService = commonService;
 	}
 
 	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
-	public IIdeComponentRenderers IdeComponentRenderers { get; }
 	public CommonService CommonService { get; }
 
 	public override bool Equals(object? obj)

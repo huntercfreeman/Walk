@@ -106,7 +106,6 @@ public partial class WalkConfigInitializer : ComponentBase
 
             var pseudoRootNode = new TreeViewAbsolutePath(
                 parentDirectoryAbsolutePath,
-                DotNetService.IdeService.IdeComponentRenderers,
                 DotNetService.TextEditorService.CommonService,
                 true,
                 false);
@@ -145,7 +144,6 @@ public partial class WalkConfigInitializer : ComponentBase
 
             DotNetService.IdeService.InputFile_SetOpenedTreeViewModel(
                 pseudoRootNode,
-                DotNetService.IdeService.IdeComponentRenderers,
                 DotNetService.TextEditorService.CommonService);
         }
 

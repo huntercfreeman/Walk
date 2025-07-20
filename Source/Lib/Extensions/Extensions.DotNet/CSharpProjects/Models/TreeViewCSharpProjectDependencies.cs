@@ -4,7 +4,6 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Icons.Displays;
 using Walk.Common.RazorLib.Icons.Displays.Codicon;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
-using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.ComponentRenderers.Models;
 
 namespace Walk.Extensions.DotNet.CSharpProjects.Models;
@@ -14,19 +13,16 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 	public TreeViewCSharpProjectDependencies(
 			CSharpProjectDependencies cSharpProjectDependencies,
 			IDotNetComponentRenderers dotNetComponentRenderers,
-			IIdeComponentRenderers ideComponentRenderers,
 			CommonService commonService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(cSharpProjectDependencies, isExpandable, isExpanded)
 	{
 		DotNetComponentRenderers = dotNetComponentRenderers;
-		IdeComponentRenderers = ideComponentRenderers;
 		CommonService = commonService;
 	}
 
 	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
-	public IIdeComponentRenderers IdeComponentRenderers { get; }
 	public CommonService CommonService { get; }
 
 	public override bool Equals(object? obj)
@@ -87,7 +83,6 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 		var treeViewCSharpProjectNugetPackageReferences = new TreeViewCSharpProjectNugetPackageReferences(
 			new CSharpProjectNugetPackageReferences(Item.CSharpProjectNamespacePath),
 			DotNetComponentRenderers,
-			IdeComponentRenderers,
 			CommonService,
 			true,
 			false)
@@ -98,7 +93,6 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 		var treeViewCSharpProjectToProjectReferences = new TreeViewCSharpProjectToProjectReferences(
 			new CSharpProjectToProjectReferences(Item.CSharpProjectNamespacePath),
 			DotNetComponentRenderers,
-			IdeComponentRenderers,
 			CommonService,
 			true,
 			false)

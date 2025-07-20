@@ -1,12 +1,11 @@
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Menus.Models;
-using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace Walk.Ide.RazorLib.FormsGenerics.Displays;
 
-public partial class BooleanPromptOrCancelDisplay : ComponentBase, IBooleanPromptOrCancelRendererType
+public partial class BooleanPromptOrCancelDisplay : ComponentBase
 {
     [CascadingParameter]
     public MenuOptionCallbacks? MenuOptionCallbacks { get; set; }

@@ -2,13 +2,12 @@ using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Menus.Models;
-using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace Walk.Ide.RazorLib.FileSystems.Displays;
 
-public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRendererType
+public partial class DeleteFileFormDisplay : ComponentBase
 {
     [Inject]
     private CommonService CommonService { get; set; } = null!;

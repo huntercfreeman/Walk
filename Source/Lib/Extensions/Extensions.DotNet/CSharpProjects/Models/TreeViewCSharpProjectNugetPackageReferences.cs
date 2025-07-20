@@ -6,7 +6,6 @@ using Walk.Common.RazorLib.Icons.Displays.Codicon;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.CompilerServices.Xml.Html.SyntaxActors;
-using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.Nugets.Models;
 using Walk.Extensions.DotNet.ComponentRenderers.Models;
 
@@ -17,19 +16,16 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 	public TreeViewCSharpProjectNugetPackageReferences(
 			CSharpProjectNugetPackageReferences cSharpProjectNugetPackageReferences,
 			IDotNetComponentRenderers dotNetComponentRenderers,
-			IIdeComponentRenderers ideComponentRenderers,
 			CommonService commonService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(cSharpProjectNugetPackageReferences, isExpandable, isExpanded)
 	{
 		DotNetComponentRenderers = dotNetComponentRenderers;
-		IdeComponentRenderers = ideComponentRenderers;
 		CommonService = commonService;
 	}
 
 	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
-	public IIdeComponentRenderers IdeComponentRenderers { get; }
 	public CommonService CommonService { get; }
 
 	public override bool Equals(object? obj)
@@ -142,7 +138,6 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 			npr => (TreeViewNoType)new TreeViewCSharpProjectNugetPackageReference(
 				new(cSharpProjectAbsolutePathString, npr),
 				DotNetComponentRenderers,
-				IdeComponentRenderers,
 				CommonService,
 				false,
 				false)

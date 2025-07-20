@@ -120,7 +120,6 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     private void HandleUpwardButtonOnClick(TreeViewCommandArgs commandArgs)
     {
         _ideService.InputFile_OpenParentDirectory(
-            _ideService.IdeComponentRenderers,
             _ideService.CommonService,
             parentDirectoryTreeViewModel: null);
 
