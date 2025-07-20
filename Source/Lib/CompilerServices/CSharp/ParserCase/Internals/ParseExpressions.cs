@@ -870,6 +870,60 @@ public static class ParseExpressions
 	}
 	
 	/// <summary>
+	/// This logic duplicated from `ForceDecisionAmbiguousIdentifier`.
+	/// 
+	/// The issue is:
+	/// - ExplicitCast
+	/// - GenericParameters
+	///
+	/// will forceable make a TypeClauseNode under certain scenarios.
+	/// But, the current token is not necessarily in the correct place during these scenarios.
+	/// Thus invoking `ForceDecisionAmbiguousIdentifier` needs to be looked into further.
+	/// </summary>
+	public static TypeClauseNode ExplicitCastAndGenericParametersForceType(
+		ref SyntaxToken token,
+		ref CSharpParserModel parserModel)
+	{
+	    _ = parserModel.TryGetTypeDefinitionHierarchically(
+        		parserModel.Compilation,
+                parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                token.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
+                out var typeDefinitionNode);
+        
+        var typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, ref parserModel);
+        
+        if (typeDefinitionNode is not null)
+        {
+    		typeClauseNode.ExplicitDefinitionTextSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
+    		typeClauseNode.ExplicitDefinitionResourceUri = typeDefinitionNode.ResourceUri;
+        }
+        
+        if (!typeClauseNode.IsKeywordType)
+        {
+            var typeSymbol = new Symbol(
+            	SyntaxKind.TypeSymbol,
+            	parserModel.GetNextSymbolId(),
+            	typeClauseNode.TypeIdentifierToken.TextSpan with
+	            {
+	                DecorationByte = (byte)GenericDecorationKind.Type
+	            });
+
+            parserModel.Compilation.__SymbolList.Add(typeSymbol);
+            
+            if (parserModel.Compilation.SymbolIdToExternalTextSpanMap is not null &&
+                typeDefinitionNode is not null &&
+			    typeClauseNode.ExplicitDefinitionResourceUri != parserModel.Compilation.ResourceUri)
+			{
+		        parserModel.Compilation.SymbolIdToExternalTextSpanMap.TryAdd(
+		        	typeSymbol.SymbolId,
+		        	(typeDefinitionNode.ResourceUri, typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex));
+			}
+        }
+        
+        return typeClauseNode;
+	}
+	
+	/// <summary>
 	/// TODO: Combine searches for Types, Functions, etc... where possible?
 	/// </summary>
 	public static IExpressionNode ForceDecisionAmbiguousIdentifier(
@@ -930,10 +984,30 @@ public static class ParseExpressions
 	        		typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, ref parserModel);
 	        	
 	            typeClauseNode.HasQuestionMark = ambiguousIdentifierExpressionNode.HasQuestionMark;
-				parserModel.BindTypeClauseNode(typeClauseNode);
-				
+
 				typeClauseNode.ExplicitDefinitionTextSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
 				typeClauseNode.ExplicitDefinitionResourceUri = typeDefinitionNode.ResourceUri;
+				
+				if (!typeClauseNode.IsKeywordType)
+                {
+                    var typeSymbol = new Symbol(
+                    	SyntaxKind.TypeSymbol,
+                    	parserModel.GetNextSymbolId(),
+                    	typeClauseNode.TypeIdentifierToken.TextSpan with
+        	            {
+        	                DecorationByte = (byte)GenericDecorationKind.Type
+        	            });
+        
+                    parserModel.Compilation.__SymbolList.Add(typeSymbol);
+                    
+                    if (parserModel.Compilation.SymbolIdToExternalTextSpanMap is not null &&
+    				    typeClauseNode.ExplicitDefinitionResourceUri != parserModel.Compilation.ResourceUri)
+    				{
+        		        parserModel.Compilation.SymbolIdToExternalTextSpanMap.TryAdd(
+        		        	typeSymbol.SymbolId,
+        		        	(typeDefinitionNode.ResourceUri, typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex));
+    				}
+                }
 				
 			    result = typeClauseNode;
     			goto finalize;
@@ -1873,15 +1947,15 @@ public static class ParseExpressions
 				explicitCastNode.CloseParenthesisToken = token;
 				return explicitCastNode;
 			case SyntaxKind.IdentifierToken:
-				var expressionNode = ForceDecisionAmbiguousIdentifier(
+			    var expressionNode = ForceDecisionAmbiguousIdentifier(
 					EmptyExpressionNode.Empty,
 					new AmbiguousIdentifierExpressionNode(
 						token,
 						genericParameterListing: default,
 						resultTypeReference: default),
-					ref parserModel);
-				
-			    return new VariableReferenceNode(
+					    ref parserModel);
+			
+				return new VariableReferenceNode(
 			    	token,
 					new VariableDeclarationNode(
 						explicitCastNode.ResultTypeReference,
@@ -3177,27 +3251,27 @@ public static class ParseExpressions
 		if (expressionNode.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
 		{
 			var token = ((AmbiguousIdentifierExpressionNode)expressionNode).Token;
-			typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(
-				ref token,
+			
+			typeClauseNode = ExplicitCastAndGenericParametersForceType(
+			    ref token,
 				ref parserModel);
 		}
 		else if (expressionNode.SyntaxKind == SyntaxKind.TypeClauseNode)
 		{
 			typeClauseNode = (TypeClauseNode)expressionNode;
+			parserModel.BindTypeClauseNode(typeClauseNode);
 		}
 		else if (expressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
 		{
 			var token = ((VariableReferenceNode)expressionNode).VariableIdentifierToken;
-			typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(
-				ref token,
+			typeClauseNode = ExplicitCastAndGenericParametersForceType(
+			    ref token,
 				ref parserModel);
 		}
 		else
 		{
 			return parserModel.Binder.Shared_BadExpressionNode;
 		}
-			
-		parserModel.BindTypeClauseNode(typeClauseNode);
 		
 		var explicitCastNode = new ExplicitCastNode(ambiguousParenthesizedExpressionNode.OpenParenthesisToken, new TypeReference(typeClauseNode), closeParenthesisToken);
 		return explicitCastNode;
@@ -3551,9 +3625,9 @@ public static class ParseExpressions
 	
 		if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind))
 		{
-			var typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, ref parserModel);
-			
-			parserModel.BindTypeClauseNode(typeClauseNode);
+			var typeClauseNode = ExplicitCastAndGenericParametersForceType(
+		        ref token,
+		        ref parserModel);
 			
 			// TODO: Does typeClauseNode -> Generic params?
 			return typeClauseNode;
