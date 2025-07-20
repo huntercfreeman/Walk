@@ -421,7 +421,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
         	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
-            return ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).ShiftF12Func.Invoke(
+            return ((TextEditorKeymapDefault)TextEditorFacts.Keymap_DefaultKeymap).ShiftF12Func.Invoke(
             	editContext,
     			modelModifier,
     			viewModelModifier);

@@ -30,7 +30,7 @@ public partial class IdeService
 
 	public void CommandFactory_Initialize()
 	{
-		((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func = CommandFactory_PeekCodeSearchDialog;
+		((TextEditorKeymapDefault)TextEditorFacts.Keymap_DefaultKeymap).AltF12Func = CommandFactory_PeekCodeSearchDialog;
 
 		// FindAllReferences
 		// ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).ShiftF12Func = ShowAllReferences;

@@ -109,10 +109,10 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
             _columnIndexPrevious = viewModelModifier.ColumnIndex;
             
             if (!viewModelModifier.PersistentState.FirstPresentationLayerKeysList.Contains(
-            		TextEditorDevToolsPresentationFacts.PresentationKey))
+            		TextEditorFacts.DevToolsPresentation_PresentationKey))
             {
 				var copy = new List<Key<TextEditorPresentationModel>>(viewModelModifier.PersistentState.FirstPresentationLayerKeysList);
-				copy.Add(TextEditorDevToolsPresentationFacts.PresentationKey);
+				copy.Add(TextEditorFacts.DevToolsPresentation_PresentationKey);
 
 				viewModelModifier.PersistentState.FirstPresentationLayerKeysList = copy;
 	        }
@@ -120,11 +120,11 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     		TextEditorService.Model_StartPendingCalculatePresentationModel(
 				editContext,
 		        modelModifier,
-		        TextEditorDevToolsPresentationFacts.PresentationKey,
-				TextEditorDevToolsPresentationFacts.EmptyPresentationModel);
+		        TextEditorFacts.DevToolsPresentation_PresentationKey,
+				TextEditorFacts.DevToolsPresentation_EmptyPresentationModel);
 	
 			var presentationModel = modelModifier.PresentationModelList.First(
-				x => x.TextEditorPresentationKey == TextEditorDevToolsPresentationFacts.PresentationKey);
+				x => x.TextEditorPresentationKey == TextEditorFacts.DevToolsPresentation_PresentationKey);
 	
 			if (presentationModel.PendingCalculation is null)
 				throw new WalkTextEditorException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
@@ -179,8 +179,8 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 			var diagnosticTextSpans = new List<TextEditorTextSpan> { textSpanStart, textSpanEnd };
 
 			modelModifier.CompletePendingCalculatePresentationModel(
-				TextEditorDevToolsPresentationFacts.PresentationKey,
-				TextEditorDevToolsPresentationFacts.EmptyPresentationModel,
+				TextEditorFacts.DevToolsPresentation_PresentationKey,
+				TextEditorFacts.DevToolsPresentation_EmptyPresentationModel,
 				diagnosticTextSpans);
 			
 			if (viewModelModifier.Virtualization.Count > 0)

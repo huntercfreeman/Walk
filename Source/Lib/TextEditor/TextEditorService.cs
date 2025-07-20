@@ -838,6 +838,6 @@ public sealed partial class TextEditorService
                     return Task.FromResult(menu);
                 }));
 
-        CommonService.RegisterKeymapLayer(Walk.TextEditor.RazorLib.Keymaps.Models.Defaults.TextEditorKeymapDefaultFacts.HasSelectionLayer);
+        CommonService.RegisterKeymapLayer(TextEditorFacts.KeymapDefault_HasSelectionLayer);
     }
 }

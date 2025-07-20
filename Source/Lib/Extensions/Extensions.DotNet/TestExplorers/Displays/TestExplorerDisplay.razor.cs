@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -54,12 +55,12 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 				DotNetService.IdeService.TextEditorService.Model_AddPresentationModel(
 					editContext,
 					modelModifier,
-					CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
+					TextEditorFacts.CompilerServiceDiagnosticPresentation_EmptyPresentationModel);
 
 				DotNetService.IdeService.TextEditorService.Model_AddPresentationModel(
 					editContext,
 					modelModifier,
-					FindOverlayPresentationFacts.EmptyPresentationModel);
+					TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel);
 
 				model.PersistentState.CompilerService.RegisterResource(
 					model.PersistentState.ResourceUri,
@@ -70,8 +71,8 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
 				var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
 				{
 					TerminalPresentationFacts.PresentationKey,
-					CompilerServiceDiagnosticPresentationFacts.PresentationKey,
-					FindOverlayPresentationFacts.PresentationKey,
+					TextEditorFacts.CompilerServiceDiagnosticPresentation_PresentationKey,
+					TextEditorFacts.FindOverlayPresentation_PresentationKey,
 				};
 
 				viewModelModifier.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;

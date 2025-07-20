@@ -641,10 +641,10 @@ public partial class IdeService : IBackgroundTaskGroup
             TextEditorService);
             
         var modelModifier = new TextEditorModel(model);
-        modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
-        modelModifier.PerformRegisterPresentationModelAction(FindOverlayPresentationFacts.EmptyPresentationModel);
-        modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyInPresentationModel);
-        modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyOutPresentationModel);
+        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.CompilerServiceDiagnosticPresentation_EmptyPresentationModel);
+        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel);
+        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.Diff_EmptyInPresentationModel);
+        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.Diff_EmptyOutPresentationModel);
         
         model = modelModifier;
 
@@ -695,8 +695,8 @@ public partial class IdeService : IBackgroundTaskGroup
 
         var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
         {
-            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
-            FindOverlayPresentationFacts.PresentationKey,
+            TextEditorFacts.CompilerServiceDiagnosticPresentation_PresentationKey,
+            TextEditorFacts.FindOverlayPresentation_PresentationKey,
         };
 
         var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(

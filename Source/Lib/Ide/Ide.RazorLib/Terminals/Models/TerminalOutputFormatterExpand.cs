@@ -104,8 +104,8 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	            
 	        var modelModifier = new TextEditorModel(model);
 	        modelModifier.PerformRegisterPresentationModelAction(TerminalPresentationFacts.EmptyPresentationModel);
-	        modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
-	        modelModifier.PerformRegisterPresentationModelAction(FindOverlayPresentationFacts.EmptyPresentationModel);
+	        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.CompilerServiceDiagnosticPresentation_EmptyPresentationModel);
+	        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel);
 	        
 	        model = modelModifier;
 	
@@ -131,8 +131,8 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	        var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>()
 	        {
 	            TerminalPresentationFacts.PresentationKey,
-	            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
-	            FindOverlayPresentationFacts.PresentationKey,
+	            TextEditorFacts.CompilerServiceDiagnosticPresentation_PresentationKey,
+	            TextEditorFacts.FindOverlayPresentation_PresentationKey,
 	        };
 	            
 	        viewModel.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;

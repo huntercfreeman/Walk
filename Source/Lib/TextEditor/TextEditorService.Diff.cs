@@ -64,10 +64,10 @@ public partial class TextEditorService
 			editContext.TextEditorService.Model_StartPendingCalculatePresentationModel(
 				editContext,
 				inModelModifier,
-				DiffPresentationFacts.InPresentationKey,
-				DiffPresentationFacts.EmptyInPresentationModel);
+				TextEditorFacts.Diff_InPresentationKey,
+				TextEditorFacts.Diff_EmptyInPresentationModel);
 			var inPresentationModel = inModelModifier.PresentationModelList.First(
-				x => x.TextEditorPresentationKey == DiffPresentationFacts.InPresentationKey);
+				x => x.TextEditorPresentationKey == TextEditorFacts.Diff_InPresentationKey);
 			if (inPresentationModel.PendingCalculation is null)
 				return Task.CompletedTask;
 			var inText = inPresentationModel.PendingCalculation.ContentAtRequest;
@@ -76,10 +76,10 @@ public partial class TextEditorService
 			editContext.TextEditorService.Model_StartPendingCalculatePresentationModel(
 				editContext,
 				outModelModifier,
-				DiffPresentationFacts.OutPresentationKey,
-				DiffPresentationFacts.EmptyOutPresentationModel);
+				TextEditorFacts.Diff_OutPresentationKey,
+				TextEditorFacts.Diff_EmptyOutPresentationModel);
 			var outPresentationModel = outModelModifier.PresentationModelList.First(
-				x => x.TextEditorPresentationKey == DiffPresentationFacts.OutPresentationKey);
+				x => x.TextEditorPresentationKey == TextEditorFacts.Diff_OutPresentationKey);
 			if (outPresentationModel.PendingCalculation is null)
 				return Task.CompletedTask;
 			var outText = outPresentationModel.PendingCalculation.ContentAtRequest;
@@ -91,13 +91,13 @@ public partial class TextEditorService
 				outText);
 
 			inModelModifier.CompletePendingCalculatePresentationModel(
-				DiffPresentationFacts.InPresentationKey,
-				DiffPresentationFacts.EmptyInPresentationModel,
+				TextEditorFacts.Diff_InPresentationKey,
+				TextEditorFacts.Diff_EmptyInPresentationModel,
 				diffResult.InResultTextSpanList);
 
 			outModelModifier.CompletePendingCalculatePresentationModel(
-				DiffPresentationFacts.OutPresentationKey,
-				DiffPresentationFacts.EmptyOutPresentationModel,
+				TextEditorFacts.Diff_OutPresentationKey,
+				TextEditorFacts.Diff_EmptyOutPresentationModel,
 				diffResult.OutResultTextSpanList);
 
 			return Task.CompletedTask;
