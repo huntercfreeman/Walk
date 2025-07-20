@@ -155,6 +155,8 @@ public ref struct CSharpParserModel
     
     public ArgumentModifierKind ArgumentModifierKind { get; set; } = ArgumentModifierKind.None;
     
+    public IExpressionNode ExpressionPrimary { get; set; }
+    
     public TypeClauseNode ConstructOrRecycleTypeClauseNode(
     	SyntaxToken typeIdentifier,
 		Type? valueType,

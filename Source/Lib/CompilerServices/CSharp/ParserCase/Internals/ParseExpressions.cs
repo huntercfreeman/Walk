@@ -22,12 +22,12 @@ public static class ParseExpressions
 	/// </summary>
 	public static IExpressionNode ParseExpression(ref CSharpParserModel parserModel)
     {
-    	var expressionPrimary = parserModel.ForceParseExpressionInitialPrimaryExpression;
+    	parserModel.ExpressionPrimary = parserModel.ForceParseExpressionInitialPrimaryExpression;
     	var indexToken = parserModel.TokenWalker.Index;
     	var forceExit = false;
     	
     	var indexTokenRoot = parserModel.TokenWalker.Index;
-    	var expressionPrimaryPreviousRoot = expressionPrimary;
+    	var expressionPrimaryPreviousRoot = parserModel.ExpressionPrimary;
     	
     	while (true)
         {
@@ -45,7 +45,7 @@ public static class ParseExpressions
 	    					break;
 	    				}
 	    				
-	    				expressionPrimary = BubbleUpParseExpression(i, expressionPrimary, ref parserModel);
+	    				parserModel.ExpressionPrimary = BubbleUpParseExpression(i, ref parserModel);
 	    				break;
 	    			}
 	    		}
@@ -65,11 +65,96 @@ public static class ParseExpressions
 			// If upon further inspection on way or the other is deemed safe then this redundancy can be removed.
 			if (forceExit || parserModel.TokenWalker.IsEof) // delimiterExpressionTuple.ExpressionNode is null
 			{
-				expressionPrimary = BubbleUpParseExpression(0, expressionPrimary, ref parserModel);
+				parserModel.ExpressionPrimary = BubbleUpParseExpression(0, ref parserModel);
 				break;
 			}
 			
-    		expressionPrimary = ParseExpressions.AnyMergeToken(expressionPrimary, ref parserModel);
+    		// parserModel.ExpressionPrimary = ParseExpressions.AnyMergeToken(parserModel.ExpressionPrimary, ref parserModel);
+    		if (parserModel.ParserContextKind != CSharpParserContextKind.ForceParseGenericParameters &&
+        		UtilityApi.IsBinaryOperatorSyntaxKind(parserModel.TokenWalker.Current.SyntaxKind))
+        	{
+        		parserModel.ExpressionPrimary = HandleBinaryOperator(parserModel.ExpressionPrimary, ref parserModel);
+        	}
+        	else
+        	{
+            	switch (parserModel.ExpressionPrimary.SyntaxKind)
+            	{
+            		case SyntaxKind.EmptyExpressionNode:
+            			parserModel.ExpressionPrimary = EmptyMergeToken((EmptyExpressionNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.CollectionInitializationNode:
+            			parserModel.ExpressionPrimary = CollectionInitializationMergeToken((CollectionInitializationNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.LiteralExpressionNode:
+            			parserModel.ExpressionPrimary = LiteralMergeToken((LiteralExpressionNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.InterpolatedStringNode:
+            			parserModel.ExpressionPrimary = InterpolatedStringMergeToken((InterpolatedStringNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.FunctionDefinitionNode:
+            			var functionDefinitionNode = (FunctionDefinitionNode)parserModel.ExpressionPrimary;
+            			if (functionDefinitionNode.IsParsingGenericParameters)
+            				parserModel.ExpressionPrimary = GenericParametersListingMergeToken(functionDefinitionNode, ref parserModel);
+            			else
+            				parserModel.ExpressionPrimary = FunctionDefinitionMergeToken(functionDefinitionNode, ref parserModel);
+            			break;
+            		case SyntaxKind.ConstructorDefinitionNode:
+            		case SyntaxKind.TypeDefinitionNode:
+            			parserModel.ExpressionPrimary = FunctionDefinitionMergeToken((IFunctionDefinitionNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.BinaryExpressionNode:
+            			parserModel.ExpressionPrimary = BinaryMergeToken((BinaryExpressionNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.ParenthesizedExpressionNode:
+            			parserModel.ExpressionPrimary = ParenthesizedMergeToken((ParenthesizedExpressionNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.FunctionInvocationNode:
+            			parserModel.ExpressionPrimary = FunctionInvocationMergeToken((FunctionInvocationNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.LambdaExpressionNode:
+            			parserModel.ExpressionPrimary = LambdaMergeToken((LambdaExpressionNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.ConstructorInvocationExpressionNode:
+            			parserModel.ExpressionPrimary = ConstructorInvocationMergeToken((ConstructorInvocationExpressionNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.WithExpressionNode:
+            			parserModel.ExpressionPrimary = WithMergeToken((WithExpressionNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.ExplicitCastNode:
+            			parserModel.ExpressionPrimary = ExplicitCastMergeToken((ExplicitCastNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.TupleExpressionNode:
+            			parserModel.ExpressionPrimary = TupleMergeToken((TupleExpressionNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.AmbiguousParenthesizedExpressionNode:
+            			parserModel.ExpressionPrimary = AmbiguousParenthesizedMergeToken((AmbiguousParenthesizedExpressionNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.AmbiguousIdentifierExpressionNode:
+            			parserModel.ExpressionPrimary = AmbiguousIdentifierMergeToken((AmbiguousIdentifierExpressionNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.VariableReferenceNode:
+            			parserModel.ExpressionPrimary = VariableReferenceMergeToken((VariableReferenceNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.TypeClauseNode:
+            			parserModel.ExpressionPrimary = TypeClauseMergeToken((TypeClauseNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.ReturnStatementNode:
+            			parserModel.ExpressionPrimary = ReturnStatementMergeToken((ReturnStatementNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.KeywordFunctionOperatorNode:
+            			parserModel.ExpressionPrimary = KeywordFunctionOperatorMergeToken((KeywordFunctionOperatorNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.SwitchExpressionNode:
+            			parserModel.ExpressionPrimary = SwitchExpressionMergeToken((SwitchExpressionNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		case SyntaxKind.BadExpressionNode:
+            			parserModel.ExpressionPrimary = BadMergeToken((BadExpressionNode)parserModel.ExpressionPrimary, ref parserModel);
+            			break;
+            		default:
+            			parserModel.ExpressionPrimary = parserModel.Binder.Shared_BadExpressionNode;
+            			break;
+            	};
+    		}
     		
     		if (parserModel.TokenWalker.Index == indexToken)
     			_ = parserModel.TokenWalker.Consume();
@@ -103,11 +188,11 @@ public static class ParseExpressions
     			
     			if (isExpressionRoot)
     			{
-    				success = parserModel.TryParseExpressionSyntaxKindList.Contains(expressionPrimary.SyntaxKind);
+    				success = parserModel.TryParseExpressionSyntaxKindList.Contains(parserModel.ExpressionPrimary.SyntaxKind);
     				
     				if (success)
     				{
-    					expressionPrimaryPreviousRoot = expressionPrimary;
+    					expressionPrimaryPreviousRoot = parserModel.ExpressionPrimary;
     					indexTokenRoot = parserModel.TokenWalker.Index;
     				}
     			}
@@ -125,7 +210,7 @@ public static class ParseExpressions
 	    				_ = parserModel.TokenWalker.Backtrack();
 	    			}
 	    			
-	    			expressionPrimary = expressionPrimaryPreviousRoot;
+	    			parserModel.ExpressionPrimary = expressionPrimaryPreviousRoot;
 	    			
 		    		forceExit = true;
     			}
@@ -145,15 +230,15 @@ public static class ParseExpressions
     	parserModel.ExpressionList.Add((SyntaxKind.CloseBraceToken, null));
     	parserModel.ExpressionList.Add((SyntaxKind.StatementDelimiterToken, null));
     	
-    	if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+    	if (parserModel.ExpressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
     	{
-    		expressionPrimary = ParseExpressions.ForceDecisionAmbiguousIdentifier(
+    		parserModel.ExpressionPrimary = ParseExpressions.ForceDecisionAmbiguousIdentifier(
 				EmptyExpressionNode.Empty,
-				(AmbiguousIdentifierExpressionNode)expressionPrimary,
+				(AmbiguousIdentifierExpressionNode)parserModel.ExpressionPrimary,
 				ref parserModel);
     	}
     	
-    	return expressionPrimary;
+    	return parserModel.ExpressionPrimary;
     }
 
     public static bool SyntaxIsEndDelimiter(SyntaxKind syntaxKind)
@@ -179,7 +264,7 @@ public static class ParseExpressions
     }
 
 	/// <summary>
-	/// 'BubbleUpParseExpression(i, expressionPrimary, compilationUnit);'
+	/// 'BubbleUpParseExpression(i, compilationUnit);'
 	/// 
     /// This is to have SyntaxKind.StatementDelimiterToken break out of the expression.
 	/// The parser is adding as the 0th item that
@@ -197,7 +282,7 @@ public static class ParseExpressions
 	///
 	/// LambdaExpressionNode for example, needs to override 'SyntaxKind.StatementDelimiterToken'.
 	/// </summary>
-    private static IExpressionNode BubbleUpParseExpression(int indexTriggered, IExpressionNode expressionPrimary, ref CSharpParserModel parserModel)
+    private static IExpressionNode BubbleUpParseExpression(int indexTriggered, ref CSharpParserModel parserModel)
     {
     	var triggeredDelimiterTuple = parserModel.ExpressionList[indexTriggered];
     	IExpressionNode? previousDelimiterExpressionNode = null;
@@ -221,9 +306,9 @@ public static class ParseExpressions
 			
 			previousDelimiterExpressionNode = delimiterExpressionTuple.ExpressionNode;
 			
-			expressionPrimary = ParseExpressions.AnyMergeExpression(
+			parserModel.ExpressionPrimary = ParseExpressions.AnyMergeExpression(
 				delimiterExpressionTuple.ExpressionNode,
-				expressionPrimary, // expressionSecondary
+				parserModel.ExpressionPrimary, // expressionSecondary
 				ref parserModel);
 		}
 		
@@ -233,77 +318,8 @@ public static class ParseExpressions
 			parserModel.NoLongerRelevantExpressionNode = null;
 		}
 		
-		return expressionPrimary;
+		return parserModel.ExpressionPrimary;
     }
-    
-    /// <summary>
-	/// Returns the new primary expression which will be 'BadExpressionNode'
-	/// if the parameters were not mergeable.
-	/// </summary>
-	public static IExpressionNode AnyMergeToken(
-		IExpressionNode expressionPrimary, ref CSharpParserModel parserModel)
-	{
-		if (parserModel.ParserContextKind != CSharpParserContextKind.ForceParseGenericParameters &&
-			UtilityApi.IsBinaryOperatorSyntaxKind(parserModel.TokenWalker.Current.SyntaxKind))
-		{
-			return HandleBinaryOperator(expressionPrimary, ref parserModel);
-		}
-		
-		switch (expressionPrimary.SyntaxKind)
-		{
-			case SyntaxKind.EmptyExpressionNode:
-				return EmptyMergeToken((EmptyExpressionNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.CollectionInitializationNode:
-				return CollectionInitializationMergeToken((CollectionInitializationNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.LiteralExpressionNode:
-				return LiteralMergeToken((LiteralExpressionNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.InterpolatedStringNode:
-				return InterpolatedStringMergeToken((InterpolatedStringNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.FunctionDefinitionNode:
-				var functionDefinitionNode = (FunctionDefinitionNode)expressionPrimary;
-				if (functionDefinitionNode.IsParsingGenericParameters)
-					return GenericParametersListingMergeToken(functionDefinitionNode, ref parserModel);
-				else
-					return FunctionDefinitionMergeToken(functionDefinitionNode, ref parserModel);
-			case SyntaxKind.ConstructorDefinitionNode:
-			case SyntaxKind.TypeDefinitionNode:
-				return FunctionDefinitionMergeToken((IFunctionDefinitionNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.BinaryExpressionNode:
-				return BinaryMergeToken((BinaryExpressionNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.ParenthesizedExpressionNode:
-				return ParenthesizedMergeToken((ParenthesizedExpressionNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.FunctionInvocationNode:
-				return FunctionInvocationMergeToken((FunctionInvocationNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.LambdaExpressionNode:
-				return LambdaMergeToken((LambdaExpressionNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.ConstructorInvocationExpressionNode:
-				return ConstructorInvocationMergeToken((ConstructorInvocationExpressionNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.WithExpressionNode:
-				return WithMergeToken((WithExpressionNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.ExplicitCastNode:
-				return ExplicitCastMergeToken((ExplicitCastNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.TupleExpressionNode:
-				return TupleMergeToken((TupleExpressionNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.AmbiguousParenthesizedExpressionNode:
-				return AmbiguousParenthesizedMergeToken((AmbiguousParenthesizedExpressionNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.AmbiguousIdentifierExpressionNode:
-				return AmbiguousIdentifierMergeToken((AmbiguousIdentifierExpressionNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.VariableReferenceNode:
-				return VariableReferenceMergeToken((VariableReferenceNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.TypeClauseNode:
-				return TypeClauseMergeToken((TypeClauseNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.ReturnStatementNode:
-				return ReturnStatementMergeToken((ReturnStatementNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.KeywordFunctionOperatorNode:
-				return KeywordFunctionOperatorMergeToken((KeywordFunctionOperatorNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.SwitchExpressionNode:
-				return SwitchExpressionMergeToken((SwitchExpressionNode)expressionPrimary, ref parserModel);
-			case SyntaxKind.BadExpressionNode:
-				return BadMergeToken((BadExpressionNode)expressionPrimary, ref parserModel);
-			default:
-				return parserModel.Binder.Shared_BadExpressionNode;
-		};
-	}
 	
 	/// <summary>
 	/// Returns the new primary expression which will be 'BadExpressionNode'
