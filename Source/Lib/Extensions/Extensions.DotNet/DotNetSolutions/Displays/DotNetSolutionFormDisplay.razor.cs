@@ -4,6 +4,7 @@ using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.CommandLines.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
@@ -126,7 +127,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 	        	}
 	        };
 	        	
-	        DotNetService.IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+	        DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		}
 	}
 

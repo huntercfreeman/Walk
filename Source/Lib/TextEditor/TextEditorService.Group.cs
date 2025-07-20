@@ -1,4 +1,4 @@
-﻿using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib.Groups.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 
@@ -7,6 +7,13 @@ namespace Walk.TextEditor.RazorLib;
 public partial class TextEditorService
 {
 	private readonly object Group_stateModificationLock = new();
+	
+	// TextEditorGroupService.cs
+	private TextEditorGroupState Group_textEditorGroupState = new();
+
+	public event Action? Group_TextEditorGroupStateChanged;
+
+	public TextEditorGroupState Group_GetTextEditorGroupState() => Group_textEditorGroupState;
 
 	public void Group_SetActiveViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)
 	{
@@ -54,13 +61,6 @@ public partial class TextEditorService
 	{
 		return Group_GetTextEditorGroupState().GroupList;
 	}
-
-	// TextEditorGroupService.cs
-	private TextEditorGroupState Group_textEditorGroupState = new();
-
-	public event Action? Group_TextEditorGroupStateChanged;
-
-	public TextEditorGroupState Group_GetTextEditorGroupState() => Group_textEditorGroupState;
 
 	public void Group_Register(TextEditorGroup group)
 	{

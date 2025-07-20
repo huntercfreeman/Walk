@@ -1,3 +1,4 @@
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
@@ -18,7 +19,7 @@ public partial class DotNetService
 	{
 		// NuGetPackageManagerContext
 		{
-			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+			_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 				new KeymapArgs
 				{
 					Key = "n",
@@ -30,11 +31,11 @@ public partial class DotNetService
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
 				ContextHelper.ConstructFocusContextElementCommand(
-					ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager", CommonService.JsRuntimeCommonApi, CommonService));
+					CommonFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager", CommonService.JsRuntimeCommonApi, CommonService));
 		}
 		// CSharpReplContext
 		{
-			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+			_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 				new KeymapArgs
 				{
 					Key = "r",
@@ -46,14 +47,14 @@ public partial class DotNetService
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
 				ContextHelper.ConstructFocusContextElementCommand(
-					ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl", CommonService.JsRuntimeCommonApi, CommonService));
+					CommonFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl", CommonService.JsRuntimeCommonApi, CommonService));
 		}
 		// SolutionExplorerContext
 		{
 			var focusSolutionExplorerCommand = ContextHelper.ConstructFocusContextElementCommand(
-				ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer", CommonService.JsRuntimeCommonApi, CommonService);
+				CommonFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer", CommonService.JsRuntimeCommonApi, CommonService);
 
-			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+			_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 					new KeymapArgs
 					{
 						Key = "s",
@@ -94,7 +95,7 @@ public partial class DotNetService
 							.ConfigureAwait(false);
 					});
 
-				_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+				_ = CommonFacts.GlobalContext.Keymap.TryRegister(
 						new KeymapArgs
 						{
 							Key = "S",

@@ -139,7 +139,7 @@ public class TerminalOutput : ITerminalOutput
 			_parsedCommandList.Clear();
 			
 			if (rememberLastCommand is not null &&
-				rememberLastCommand.OutputCache.GetLength() < TerminalOutputFacts.MAX_OUTPUT_LENGTH)
+				rememberLastCommand.OutputCache.GetLength() < IdeFacts.MAX_OUTPUT_LENGTH)
 			{
 				_parsedCommandList.Add(rememberLastCommand);
 			}
@@ -154,15 +154,15 @@ public class TerminalOutput : ITerminalOutput
 		{
 			var sumOutputLength = _parsedCommandList.Sum(x => x.OutputCache.GetLength());
 
-			if (sumOutputLength > TerminalOutputFacts.MAX_OUTPUT_LENGTH ||
-				_parsedCommandList.Count > TerminalOutputFacts.MAX_COMMAND_COUNT)
+			if (sumOutputLength > IdeFacts.MAX_OUTPUT_LENGTH ||
+				_parsedCommandList.Count > IdeFacts.MAX_COMMAND_COUNT)
 			{
 				var rememberLastCommand = _parsedCommandList.LastOrDefault();
 			
 				_parsedCommandList.Clear();
 				
 				if (rememberLastCommand is not null &&
-					rememberLastCommand.OutputCache.GetLength() < TerminalOutputFacts.OUTPUT_LENGTH_PADDING)
+					rememberLastCommand.OutputCache.GetLength() < IdeFacts.OUTPUT_LENGTH_PADDING)
 				{
 					// It feels odd to clear the entire terminal when there is too much text output
 					// that has accumulated.

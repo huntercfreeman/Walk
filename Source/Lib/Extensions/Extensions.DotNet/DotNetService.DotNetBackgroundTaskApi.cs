@@ -1,5 +1,6 @@
 using CliWrap.EventStream;
 using System.Runtime.InteropServices;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
@@ -31,6 +32,7 @@ using Walk.Extensions.DotNet.Nugets.Models;
 using Walk.Extensions.DotNet.Outputs.Displays;
 using Walk.Extensions.DotNet.TestExplorers.Displays;
 using Walk.Extensions.DotNet.TestExplorers.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.TextEditor.RazorLib;
@@ -104,7 +106,7 @@ public partial class DotNetService
 
 	private void InitializeLeftPanelTabs()
 	{
-		var leftPanel = PanelFacts.GetTopLeftPanelGroup(IdeService.TextEditorService.CommonService.GetPanelState());
+		var leftPanel = CommonFacts.GetTopLeftPanelGroup(IdeService.TextEditorService.CommonService.GetPanelState());
 		leftPanel.CommonService = IdeService.TextEditorService.CommonService;
 
 		// solutionExplorerPanel
@@ -112,7 +114,7 @@ public partial class DotNetService
 			"Solution Explorer",
 			Key<Panel>.NewKey(),
 			Key<IDynamicViewModel>.NewKey(),
-			ContextFacts.SolutionExplorerContext.ContextKey,
+			CommonFacts.SolutionExplorerContext.ContextKey,
 			typeof(SolutionExplorerDisplay),
 			null,
 			IdeService.TextEditorService.CommonService);
@@ -129,7 +131,7 @@ public partial class DotNetService
 
 	private void InitializeRightPanelTabs()
 	{
-		var rightPanel = PanelFacts.GetTopRightPanelGroup(IdeService.TextEditorService.CommonService.GetPanelState());
+		var rightPanel = CommonFacts.GetTopRightPanelGroup(IdeService.TextEditorService.CommonService.GetPanelState());
 		rightPanel.CommonService = IdeService.TextEditorService.CommonService;
 
 		/*
@@ -163,7 +165,7 @@ public partial class DotNetService
 
 	private void InitializeBottomPanelTabs()
 	{
-		var bottomPanel = PanelFacts.GetBottomPanelGroup(IdeService.TextEditorService.CommonService.GetPanelState());
+		var bottomPanel = CommonFacts.GetBottomPanelGroup(IdeService.TextEditorService.CommonService.GetPanelState());
 		bottomPanel.CommonService = IdeService.TextEditorService.CommonService;
 
 		// outputPanel
@@ -171,7 +173,7 @@ public partial class DotNetService
 			"Output",
 			Key<Panel>.NewKey(),
 			Key<IDynamicViewModel>.NewKey(),
-			ContextFacts.OutputContext.ContextKey,
+			CommonFacts.OutputContext.ContextKey,
 			typeof(OutputPanelDisplay),
 			null,
 			IdeService.TextEditorService.CommonService);
@@ -183,7 +185,7 @@ public partial class DotNetService
 			"Test Explorer",
 			Key<Panel>.NewKey(),
 			Key<IDynamicViewModel>.NewKey(),
-			ContextFacts.TestExplorerContext.ContextKey,
+			CommonFacts.TestExplorerContext.ContextKey,
 			typeof(TestExplorerDisplay),
 			null,
 			IdeService.TextEditorService.CommonService);
@@ -195,14 +197,14 @@ public partial class DotNetService
 				() => IdeService.TextEditorService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
 				DimensionUnitKind.Pixels,
 				DimensionOperatorKind.Subtract,
-				DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
+				CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN));
 
 		// nuGetPanel
 		var nuGetPanel = new Panel(
 			"NuGet",
 			Key<Panel>.NewKey(),
 			Key<IDynamicViewModel>.NewKey(),
-			ContextFacts.NuGetPackageManagerContext.ContextKey,
+			CommonFacts.NuGetPackageManagerContext.ContextKey,
 			typeof(NuGetPackageManager),
 			null,
 			IdeService.TextEditorService.CommonService);
@@ -402,7 +404,7 @@ public partial class DotNetService
 			}
 		};
 
-		IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+		IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 
 	private void CleanProjectOnClick(string projectAbsolutePathString)
@@ -434,7 +436,7 @@ public partial class DotNetService
 			}
 		};
 
-		IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+		IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 
 	private void BuildSolutionOnClick(string solutionAbsolutePathString)
@@ -466,7 +468,7 @@ public partial class DotNetService
 			}
 		};
 
-		IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+		IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 
 	private void CleanSolutionOnClick(string solutionAbsolutePathString)
@@ -498,7 +500,7 @@ public partial class DotNetService
 			}
 		};
 
-		IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+		IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 
 	private Task OpenNewDotNetSolutionDialog()
@@ -616,7 +618,7 @@ public partial class DotNetService
 		};
 
 		treeViewStringFragment.Item.TerminalCommandRequest = terminalCommandRequest;
-		IdeService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
+		IdeService.GetTerminalState().TerminalMap[IdeFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 
 	#region DotNetSolutionIdeApi
@@ -729,14 +731,14 @@ public partial class DotNetService
 			{
 				BeginWithFunc = parsedCommand =>
 				{
-					IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
+					IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
 						parsedCommand,
 						// If newlines are added to this make sure to use '.ReplaceLineEndings("\n")' because the syntax highlighting and text editor are expecting this line ending.
 						new StandardOutputCommandEvent(slnFoundString));
 					return Task.CompletedTask;
 				}
 			};
-			IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+			IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 
 			// Set 'executionTerminal' working directory
 			terminalCommandRequest = new TerminalCommandRequest(
@@ -745,14 +747,14 @@ public partial class DotNetService
 			{
 				BeginWithFunc = parsedCommand =>
 				{
-					IdeService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].TerminalOutput.WriteOutput(
+					IdeService.GetTerminalState().TerminalMap[IdeFacts.EXECUTION_KEY].TerminalOutput.WriteOutput(
 						parsedCommand,
 						// If newlines are added to this make sure to use '.ReplaceLineEndings("\n")' because the syntax highlighting and text editor are expecting this line ending.
 						new StandardOutputCommandEvent(slnFoundString));
 					return Task.CompletedTask;
 				}
 			};
-			IdeService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
+			IdeService.GetTerminalState().TerminalMap[IdeFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 		}
 
 		try
@@ -1421,7 +1423,7 @@ public partial class DotNetService
 
 		startupControlModel.ExecutingTerminalCommandRequest = terminalCommandRequest;
 
-		IdeService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
+		IdeService.GetTerminalState().TerminalMap[IdeFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 		return Task.CompletedTask;
 	}
 
@@ -1429,7 +1431,7 @@ public partial class DotNetService
 	{
 		var startupControlModel = (StartupControlModel)interfaceStartupControlModel;
 
-		IdeService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY].KillProcess();
+		IdeService.GetTerminalState().TerminalMap[IdeFacts.EXECUTION_KEY].KillProcess();
 		startupControlModel.ExecutingTerminalCommandRequest = null;
 
 		IdeService.Ide_TriggerStartupControlStateChanged();

@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib;
-using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
@@ -75,18 +74,18 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
 					TextEditorService.Model_StartPendingCalculatePresentationModel(
                     	editContext,
                         modelModifier,
-                        FindOverlayPresentationFacts.PresentationKey,
-                        FindOverlayPresentationFacts.EmptyPresentationModel);
+                        TextEditorFacts.FindOverlayPresentation_PresentationKey,
+                        TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel);
 
                     var presentationModel = modelModifier.PresentationModelList.First(
-                        x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
+                        x => x.TextEditorPresentationKey == TextEditorFacts.FindOverlayPresentation_PresentationKey);
 
                     if (presentationModel.PendingCalculation is null)
                         throw new WalkTextEditorException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
 
                     modelModifier.CompletePendingCalculatePresentationModel(
-                        FindOverlayPresentationFacts.PresentationKey,
-                        FindOverlayPresentationFacts.EmptyPresentationModel,
+                        TextEditorFacts.FindOverlayPresentation_PresentationKey,
+                        TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel,
                         textSpanMatches);
 
                     _activeIndexMatchedTextSpan = null;
@@ -195,7 +194,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
     	if (!virtualizationResult.IsValid)
     		return;
     	
-        if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
+        if (keyboardEventArgs.Key == CommonFacts.ESCAPE)
         {
         	var componentData = virtualizationResult.ViewModel.PersistentState.ComponentData;
         	if (componentData is not null)
@@ -222,18 +221,18 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
                 TextEditorService.Model_StartPendingCalculatePresentationModel(
             		editContext,
                     modelModifier,
-                    FindOverlayPresentationFacts.PresentationKey,
-                    FindOverlayPresentationFacts.EmptyPresentationModel);
+                    TextEditorFacts.FindOverlayPresentation_PresentationKey,
+                    TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel);
 
                 var presentationModel = modelModifier.PresentationModelList.First(
-                    x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
+                    x => x.TextEditorPresentationKey == TextEditorFacts.FindOverlayPresentation_PresentationKey);
 
                 if (presentationModel.PendingCalculation is null)
                     throw new WalkTextEditorException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
 
                 modelModifier.CompletePendingCalculatePresentationModel(
-                    FindOverlayPresentationFacts.PresentationKey,
-                    FindOverlayPresentationFacts.EmptyPresentationModel,
+                    TextEditorFacts.FindOverlayPresentation_PresentationKey,
+                    TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel,
                     new());
                 return ValueTask.CompletedTask;
             });
@@ -247,7 +246,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
     		return;
     	
         var findOverlayPresentationModel = virtualizationResult.Model.PresentationModelList.FirstOrDefault(
-            x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
+            x => x.TextEditorPresentationKey == TextEditorFacts.FindOverlayPresentation_PresentationKey);
 
         if (findOverlayPresentationModel is null)
             return;
@@ -285,7 +284,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
     		return;
     	
         var findOverlayPresentationModel = virtualizationResult.Model.PresentationModelList.FirstOrDefault(
-            x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
+            x => x.TextEditorPresentationKey == TextEditorFacts.FindOverlayPresentation_PresentationKey);
 
         if (findOverlayPresentationModel is null)
             return;
@@ -342,7 +341,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
                 return ValueTask.CompletedTask;
 
             var presentationModel = modelModifier.PresentationModelList.FirstOrDefault(x =>
-                x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
+                x.TextEditorPresentationKey == TextEditorFacts.FindOverlayPresentation_PresentationKey);
 
             if (presentationModel?.CompletedCalculation is not null)
             {
@@ -439,7 +438,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
                 return ValueTask.CompletedTask;
 
             var presentationModel = modelModifier.PresentationModelList.FirstOrDefault(x =>
-                x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
+                x.TextEditorPresentationKey == TextEditorFacts.FindOverlayPresentation_PresentationKey);
 
             if (presentationModel?.CompletedCalculation is null)
             	return ValueTask.CompletedTask;
@@ -483,7 +482,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
                 return ValueTask.CompletedTask;
 
             var presentationModel = modelModifier.PresentationModelList.FirstOrDefault(x =>
-                x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
+                x.TextEditorPresentationKey == TextEditorFacts.FindOverlayPresentation_PresentationKey);
 
             if (presentationModel?.CompletedCalculation is null)
             	return ValueTask.CompletedTask;

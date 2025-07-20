@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Menus.Models;
 
 namespace Walk.Extensions.DotNet.CSharpProjects.Displays;
@@ -56,7 +56,7 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase
 	private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
 	{
 		if (MenuOptionCallbacks is not null &&
-			keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
+			keyboardEventArgs.Key == CommonFacts.ESCAPE)
 		{
 			await MenuOptionCallbacks.HideWidgetAsync
 				.Invoke()

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Commands.Models;
-using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models;
@@ -30,7 +30,7 @@ public static class EventUtils
 
         var eventIsMovement = CheckIfKeyboardEventArgsMapsToMovement(keymapArgs, command);
 
-        var eventIsContextMenu = KeyboardKeyFacts.CheckIsContextMenuEvent(keymapArgs);
+        var eventIsContextMenu = CommonFacts.CheckIsContextMenuEvent(keymapArgs);
 
         if (eventIsMovement)
             return KeymapArgsKind.Movement;
@@ -158,21 +158,21 @@ public static class EventUtils
 
     public static bool CheckIfKeyboardEventArgsMapsToMovement(KeymapArgs keymapArgs, CommandNoType command)
     {
-        return KeyboardKeyFacts.IsMovementKey(keymapArgs.Key) && command is null;
+        return CommonFacts.IsMovementKey(keymapArgs.Key) && command is null;
     }
 
 	public static bool IsAutocompleteMenuInvoker(KeymapArgs keymapArgs)
     {
         // LetterOrDigit was hit without Ctrl being held
         return !keymapArgs.CtrlKey &&
-               !KeyboardKeyFacts.IsWhitespaceCode(keymapArgs.Code) &&
-               !KeyboardKeyFacts.IsMetaKey(keymapArgs);
+               !CommonFacts.IsWhitespaceCode(keymapArgs.Code) &&
+               !CommonFacts.IsMetaKey(keymapArgs);
     }
 
 	public static bool IsSyntaxHighlightingInvoker(KeymapArgs keymapArgs)
     {
     	if (keymapArgs.Key == ";" ||
-    		KeyboardKeyFacts.IsWhitespaceCode(keymapArgs.Code))
+    		CommonFacts.IsWhitespaceCode(keymapArgs.Code))
     	{
     		if (keymapArgs.CtrlKey && (keymapArgs.Key == " " || keymapArgs.Key == "SPACE"))
     		{
@@ -241,8 +241,8 @@ public static class EventUtils
     /// </summary>
     public static bool IsAutocompleteIndexerInvoker(KeymapArgs keymapArgs)
     {
-        return (KeyboardKeyFacts.IsWhitespaceCode(keymapArgs.Code) ||
-                    KeyboardKeyFacts.IsPunctuationCharacter(keymapArgs.Key.First())) &&
+        return (CommonFacts.IsWhitespaceCode(keymapArgs.Code) ||
+                    CommonFacts.IsPunctuationCharacter(keymapArgs.Key.First())) &&
                 !keymapArgs.CtrlKey;
     }
 

@@ -38,7 +38,7 @@ public partial class InputTextEditorTheme : ComponentBase, IDisposable
         }
         else
         {
-            TextEditorService.Options_SetTheme(ThemeFacts.VisualStudioDarkThemeClone);
+            TextEditorService.Options_SetTheme(CommonFacts.VisualStudioDarkThemeClone);
         }
     }
     

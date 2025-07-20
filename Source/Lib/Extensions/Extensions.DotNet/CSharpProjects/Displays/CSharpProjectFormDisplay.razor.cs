@@ -3,6 +3,7 @@ using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.CompilerServices.DotNetSolution.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
@@ -96,7 +97,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			await InvokeAsync(StateHasChanged);
 
 			var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewList();
-			var generalTerminal = DotNetService.IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY];
+			var generalTerminal = DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY];
 				
 			var terminalCommandRequest = new TerminalCommandRequest(
 				formattedCommand.Value,
@@ -131,7 +132,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 			await InvokeAsync(StateHasChanged);
 
 			var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewListDeprecated();
-			var generalTerminal = DotNetService.IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY];
+			var generalTerminal = DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY];
 
 			var terminalCommandRequest = new TerminalCommandRequest(
 	        	formattedCommand.Value,
@@ -146,7 +147,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 				}
 	        };
 	        	
-	        DotNetService.IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+	        DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		}
 		finally
 		{
@@ -183,7 +184,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
 
 		if (DotNetService.IdeService.TextEditorService.CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
 		{
-			var generalTerminal = DotNetService.IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY];
+			var generalTerminal = DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY];
 
 			var terminalCommandRequest = new TerminalCommandRequest(
 	        	immutableView.FormattedNewCSharpProjectCommand.Value,

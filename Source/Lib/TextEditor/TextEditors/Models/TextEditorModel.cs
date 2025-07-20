@@ -1,5 +1,5 @@
 using System.Text;
-using Walk.Common.RazorLib.Keyboards.Models;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.Characters.Models;
@@ -320,9 +320,9 @@ public sealed class TextEditorModel
 
 	public void HandleKeyboardEvent(KeymapArgs keymapArgs, TextEditorViewModel viewModel)
     {
-        if (KeyboardKeyFacts.IsMetaKey(keymapArgs))
+        if (CommonFacts.IsMetaKey(keymapArgs))
         {
-            if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keymapArgs.Key)
+            if (CommonFacts.BACKSPACE == keymapArgs.Key)
             {
                 Delete(
                 	viewModel,
@@ -330,7 +330,7 @@ public sealed class TextEditorModel
                     keymapArgs.CtrlKey,
                     DeleteKind.Backspace);
             }
-            else if (KeyboardKeyFacts.MetaKeys.DELETE == keymapArgs.Key)
+            else if (CommonFacts.DELETE == keymapArgs.Key)
             {
                 Delete(
                     viewModel,
@@ -343,7 +343,7 @@ public sealed class TextEditorModel
         {
             var valueToInsert = keymapArgs.Key.First().ToString();
 
-            if (keymapArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+            if (keymapArgs.Code == CommonFacts.ENTER_CODE)
 			{
                 valueToInsert = LineEndKindPreference.AsCharacters();
 				
@@ -367,7 +367,7 @@ public sealed class TextEditorModel
 
 				valueToInsert += indentationBuilder.ToString();
 			}
-            else if (keymapArgs.Code == KeyboardKeyFacts.WhitespaceCodes.TAB_CODE)
+            else if (keymapArgs.Code == CommonFacts.TAB_CODE)
 			{
                 valueToInsert = "\t";
 			}
@@ -427,8 +427,8 @@ public sealed class TextEditorModel
     {
         var keymapArgs = motionKind switch
         {
-            MotionKind.Backspace => new KeymapArgs { Key = KeyboardKeyFacts.MetaKeys.BACKSPACE },
-            MotionKind.Delete => new KeymapArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
+            MotionKind.Backspace => new KeymapArgs { Key = CommonFacts.BACKSPACE },
+            MotionKind.Delete => new KeymapArgs { Key = CommonFacts.DELETE },
             _ => throw new WalkTextEditorException($"The {nameof(MotionKind)}: {motionKind} was not recognized.")
         };
 
@@ -445,8 +445,8 @@ public sealed class TextEditorModel
             HandleKeyboardEvent(
                 new KeymapArgs
                 {
-                    Code = KeyboardKeyFacts.MetaKeys.DELETE,
-                    Key = KeyboardKeyFacts.MetaKeys.DELETE,
+                    Code = CommonFacts.DELETE,
+                    Key = CommonFacts.DELETE,
                 },
                 viewModel);
         }
@@ -556,7 +556,7 @@ public sealed class TextEditorModel
 				rowIndex++;
 	            charactersOnLine = 0;
             }
-			else if (character == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+			else if (character == CommonFacts.TAB)
 			{
                 TabCharPositionIndexList.Add(richCharacterIndex);
                 richCharacterList.Add(new(character, default));
@@ -1582,7 +1582,7 @@ public sealed class TextEditorModel
 
                 var richCharacterToDelete = RichCharacterList[toDeletePositionIndex];
 
-                if (KeyboardKeyFacts.IsLineEndingCharacter(richCharacterToDelete.Value))
+                if (CommonFacts.IsLineEndingCharacter(richCharacterToDelete.Value))
                 {
                     // A delete is a contiguous operation. Therefore, all that is needed to update the LineEndList
                     // is a starting index, and a count.
@@ -1617,7 +1617,7 @@ public sealed class TextEditorModel
                 {
                     charCount++;
 
-                    if (richCharacterToDelete.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+                    if (richCharacterToDelete.Value == CommonFacts.TAB)
                     {
                         var indexTabKey = TabCharPositionIndexList.FindIndex(x => x == toDeletePositionIndex);
 
@@ -1657,7 +1657,7 @@ public sealed class TextEditorModel
 
                 var richCharacterToDelete = RichCharacterList[toDeletePositionIndex];
 
-                if (KeyboardKeyFacts.IsLineEndingCharacter(richCharacterToDelete.Value))
+                if (CommonFacts.IsLineEndingCharacter(richCharacterToDelete.Value))
                 {
                     // A delete is a contiguous operation. Therefore, all that is needed to update the LineEndList
                     // is a starting index, and a count.
@@ -1688,7 +1688,7 @@ public sealed class TextEditorModel
                 {
                     charCount++;
 
-                    if (richCharacterToDelete.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+                    if (richCharacterToDelete.Value == CommonFacts.TAB)
                     {
                         var indexTabKey = TabCharPositionIndexList.FindIndex(x => x == toDeletePositionIndex);
 

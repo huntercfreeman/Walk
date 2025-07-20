@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Widgets.Models;
-using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Keys.Models;
 
 namespace Walk.Common.RazorLib.Contexts.Displays;
@@ -134,16 +133,16 @@ public partial class ContextSwitchDisplay : ComponentBase
         	if (keyboardEventArgs.CtrlKey)
         	{
         		if (keyboardEventArgs.ShiftKey)
-        			keyboardEventArgs.Key = KeyboardKeyFacts.MovementKeys.ARROW_UP;
+        			keyboardEventArgs.Key = CommonFacts.ARROW_UP_KEY;
         		else
-        			keyboardEventArgs.Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN;
+        			keyboardEventArgs.Key = CommonFacts.ARROW_DOWN_KEY;
         	}
         }
         
         switch (keyboardEventArgs.Key)
         {
-            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
+            case CommonFacts.ARROW_LEFT_KEY:
+            case CommonFacts.ARROW_LEFT_ALTKEY:
             {
             	var inGroupIndex = GetActiveGroupIndex();
             	if (inGroupIndex < 0)
@@ -168,22 +167,22 @@ public partial class ContextSwitchDisplay : ComponentBase
             		outGroup.StartInclusiveIndex + outGroup.MenuOptionListLength - 1);
                 break;
             }
-            case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN:
+            case CommonFacts.ARROW_DOWN_KEY:
+            case CommonFacts.ARROW_DOWN_ALTKEY:
                 if (_activeIndex >= _flatMenuOptionList.Count - 1)
                     _activeIndex = 0;
                 else
                     _activeIndex++;
                 break;
-            case KeyboardKeyFacts.MovementKeys.ARROW_UP:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP:
+            case CommonFacts.ARROW_UP_KEY:
+            case CommonFacts.ARROW_UP_ALTKEY:
                 if (_activeIndex <= 0)
                     _activeIndex = _flatMenuOptionList.Count - 1;
                 else
                     _activeIndex--;
                 break;
-            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT:
+            case CommonFacts.ARROW_RIGHT_KEY:
+            case CommonFacts.ARROW_RIGHT_ALTKEY:
             {
             	var inGroupIndex = GetActiveGroupIndex();
             	if (inGroupIndex < 0)
@@ -208,10 +207,10 @@ public partial class ContextSwitchDisplay : ComponentBase
             		outGroup.StartInclusiveIndex + outGroup.MenuOptionListLength - 1);
                 break;
             }
-            case KeyboardKeyFacts.MovementKeys.HOME:
+            case CommonFacts.HOME_KEY:
                 _activeIndex = 0;
                 break;
-            case KeyboardKeyFacts.MovementKeys.END:
+            case CommonFacts.END_KEY:
                 _activeIndex = _flatMenuOptionList.Count - 1;
                 break;
             case "Enter":

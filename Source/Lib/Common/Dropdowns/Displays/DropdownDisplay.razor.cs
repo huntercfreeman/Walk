@@ -120,7 +120,7 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 		}
 
 		_htmlElementDimensions = await CommonService.JsRuntimeCommonApi.MeasureElementById(_htmlElementId);
-		_globalHtmlElementDimensions = await CommonService.JsRuntimeCommonApi.MeasureElementById(ContextFacts.RootHtmlElementId);
+		_globalHtmlElementDimensions = await CommonService.JsRuntimeCommonApi.MeasureElementById(CommonFacts.RootHtmlElementId);
 		await InvokeAsync(StateHasChanged);
 	}
 

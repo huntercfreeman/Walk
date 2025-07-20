@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Menus.Models;
-using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Keys.Models;
 
 namespace Walk.Common.RazorLib.Menus.Displays;
@@ -122,8 +121,8 @@ public partial class MenuOptionDisplay : ComponentBase
     {
         switch (keyboardEventArgs.Key)
         {
-            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
-            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT:
+            case CommonFacts.ARROW_RIGHT_KEY:
+            case CommonFacts.ARROW_RIGHT_ALTKEY:
 				var localSubMenu = MenuOptionRecord.SubMenu;
                 if (localSubMenu is not null)
                     return RenderDropdownAsync(localSubMenu);
@@ -132,8 +131,8 @@ public partial class MenuOptionDisplay : ComponentBase
 
         switch (keyboardEventArgs.Code)
         {
-            case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
-            case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
+            case CommonFacts.ENTER_CODE:
+            case CommonFacts.SPACE_CODE:
 				return HandleOnClick();
         }
 

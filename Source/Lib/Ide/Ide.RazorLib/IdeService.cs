@@ -148,7 +148,7 @@ public partial class IdeService : IBackgroundTaskGroup
                 () => CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
-                DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW));
+                CommonFacts.PURPOSE_RESIZABLE_HANDLE_ROW));
 
         InitializePanelResizeHandleDimensionUnit();
         InitializePanelTabs();
@@ -160,7 +160,7 @@ public partial class IdeService : IBackgroundTaskGroup
     private void InitializePanelResizeHandleDimensionUnit()
     {
         // Left
-        var leftPanel = PanelFacts.GetTopLeftPanelGroup(CommonService.GetPanelState());
+        var leftPanel = CommonFacts.GetTopLeftPanelGroup(CommonService.GetPanelState());
         leftPanel.CommonService = CommonService;
         CommonService.Panel_InitializeResizeHandleDimensionUnit(
             leftPanel.Key,
@@ -168,10 +168,10 @@ public partial class IdeService : IBackgroundTaskGroup
                 () => CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
-                DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
+                CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN));
 
         // Right
-        var rightPanel = PanelFacts.GetTopRightPanelGroup(CommonService.GetPanelState());
+        var rightPanel = CommonFacts.GetTopRightPanelGroup(CommonService.GetPanelState());
         rightPanel.CommonService = CommonService;
         CommonService.Panel_InitializeResizeHandleDimensionUnit(
             rightPanel.Key,
@@ -179,10 +179,10 @@ public partial class IdeService : IBackgroundTaskGroup
                 () => CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
-                DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
+                CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN));
 
         // Bottom
-        var bottomPanel = PanelFacts.GetBottomPanelGroup(CommonService.GetPanelState());
+        var bottomPanel = CommonFacts.GetBottomPanelGroup(CommonService.GetPanelState());
         bottomPanel.CommonService = CommonService;
         CommonService.Panel_InitializeResizeHandleDimensionUnit(
             bottomPanel.Key,
@@ -190,7 +190,7 @@ public partial class IdeService : IBackgroundTaskGroup
                 () => CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
-                DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW));
+                CommonFacts.PURPOSE_RESIZABLE_HANDLE_ROW));
     }
 
     private void InitializePanelTabs()
@@ -202,7 +202,7 @@ public partial class IdeService : IBackgroundTaskGroup
 
     private void InitializeLeftPanelTabs()
     {
-        var leftPanel = PanelFacts.GetTopLeftPanelGroup(CommonService.GetPanelState());
+        var leftPanel = CommonFacts.GetTopLeftPanelGroup(CommonService.GetPanelState());
         leftPanel.CommonService = CommonService;
 
         // folderExplorerPanel
@@ -210,7 +210,7 @@ public partial class IdeService : IBackgroundTaskGroup
             "Folder Explorer",
             Key<Panel>.NewKey(),
             Key<IDynamicViewModel>.NewKey(),
-            ContextFacts.FolderExplorerContext.ContextKey,
+            CommonFacts.FolderExplorerContext.ContextKey,
             typeof(FolderExplorerDisplay),
             null,
             CommonService);
@@ -223,13 +223,13 @@ public partial class IdeService : IBackgroundTaskGroup
 
     private void InitializeRightPanelTabs()
     {
-        var rightPanel = PanelFacts.GetTopRightPanelGroup(CommonService.GetPanelState());
+        var rightPanel = CommonFacts.GetTopRightPanelGroup(CommonService.GetPanelState());
         rightPanel.CommonService = CommonService;
     }
 
     private void InitializeBottomPanelTabs()
     {
-        var bottomPanel = PanelFacts.GetBottomPanelGroup(CommonService.GetPanelState());
+        var bottomPanel = CommonFacts.GetBottomPanelGroup(CommonService.GetPanelState());
         bottomPanel.CommonService = CommonService;
 
         // terminalGroupPanel
@@ -237,7 +237,7 @@ public partial class IdeService : IBackgroundTaskGroup
             "Terminal",
             Key<Panel>.NewKey(),
             Key<IDynamicViewModel>.NewKey(),
-            ContextFacts.TerminalContext.ContextKey,
+            CommonFacts.TerminalContext.ContextKey,
             typeof(TerminalGroupDisplay),
             null,
             CommonService);
@@ -249,7 +249,7 @@ public partial class IdeService : IBackgroundTaskGroup
                 () => CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
-                DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN));
+                CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN));
 
         // SetActivePanelTabAction
         //_panelService.SetActivePanelTab(bottomPanel.Key, terminalGroupPanel.Key);
@@ -272,7 +272,7 @@ public partial class IdeService : IBackgroundTaskGroup
                             TextEditorService)),
                     CommonService)
                 {
-                    Key = TerminalFacts.GENERAL_KEY
+                    Key = IdeFacts.GENERAL_KEY
                 });
         }
         else
@@ -289,7 +289,7 @@ public partial class IdeService : IBackgroundTaskGroup
                             TextEditorService)),
                     this)
                 {
-                    Key = TerminalFacts.GENERAL_KEY
+                    Key = IdeFacts.GENERAL_KEY
                 });
         }
     }
@@ -311,7 +311,7 @@ public partial class IdeService : IBackgroundTaskGroup
                             TextEditorService)),
                     CommonService)
                 {
-                    Key = TerminalFacts.EXECUTION_KEY
+                    Key = IdeFacts.EXECUTION_KEY
                 });
         }
         else
@@ -328,7 +328,7 @@ public partial class IdeService : IBackgroundTaskGroup
                             TextEditorService)),
                     this)
                 {
-                    Key = TerminalFacts.EXECUTION_KEY
+                    Key = IdeFacts.EXECUTION_KEY
                 });
         }
     }
@@ -498,7 +498,7 @@ public partial class IdeService : IBackgroundTaskGroup
     /// </summary>
     private void AddAltKeymap(IdeMainLayout ideMainLayout)
     {
-        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+        _ = CommonFacts.GlobalContext.Keymap.TryRegister(
                 new KeymapArgs()
                 {
                     Key = "f",
@@ -511,7 +511,7 @@ public partial class IdeService : IBackgroundTaskGroup
                 },
                 new CommonCommand("Open File Dropdown", "open-file-dropdown", false, async _ => await ideMainLayout.RenderFileDropdownOnClick()));
 
-        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+        _ = CommonFacts.GlobalContext.Keymap.TryRegister(
                 new KeymapArgs
                 {
                     Key = "t",
@@ -524,7 +524,7 @@ public partial class IdeService : IBackgroundTaskGroup
                 },
                 new CommonCommand("Open Tools Dropdown", "open-tools-dropdown", false, async _ => await ideMainLayout.RenderToolsDropdownOnClick()));
 
-        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+        _ = CommonFacts.GlobalContext.Keymap.TryRegister(
                 new KeymapArgs
                 {
                     Key = "v",
@@ -537,7 +537,7 @@ public partial class IdeService : IBackgroundTaskGroup
                 },
                 new CommonCommand("Open View Dropdown", "open-view-dropdown", false, async _ => await ideMainLayout.RenderViewDropdownOnClick()));
 
-        _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+        _ = CommonFacts.GlobalContext.Keymap.TryRegister(
             new KeymapArgs
             {
                 Key = "r",
@@ -641,10 +641,10 @@ public partial class IdeService : IBackgroundTaskGroup
             TextEditorService);
             
         var modelModifier = new TextEditorModel(model);
-        modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
-        modelModifier.PerformRegisterPresentationModelAction(FindOverlayPresentationFacts.EmptyPresentationModel);
-        modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyInPresentationModel);
-        modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyOutPresentationModel);
+        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.CompilerServiceDiagnosticPresentation_EmptyPresentationModel);
+        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel);
+        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.Diff_EmptyInPresentationModel);
+        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.Diff_EmptyOutPresentationModel);
         
         model = modelModifier;
 
@@ -695,8 +695,8 @@ public partial class IdeService : IBackgroundTaskGroup
 
         var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
         {
-            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
-            FindOverlayPresentationFacts.PresentationKey,
+            TextEditorFacts.CompilerServiceDiagnosticPresentation_PresentationKey,
+            TextEditorFacts.FindOverlayPresentation_PresentationKey,
         };
 
         var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
@@ -1007,7 +1007,7 @@ public partial class IdeService : IBackgroundTaskGroup
             inputFilePatternsList);
 
         var inputFileDialog = new DialogViewModel(
-            DialogFacts.InputFileDialogKey,
+            CommonFacts.InputFileDialogKey,
             "Input File",
             typeof(Walk.Ide.RazorLib.InputFiles.Displays.InputFileDisplay),
             null,

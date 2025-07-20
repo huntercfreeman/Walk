@@ -29,7 +29,7 @@ public static class ServiceCollectionExtensions
             services.AddWalkTextEditor(hostingInformation, (Func<WalkTextEditorConfig, WalkTextEditorConfig>?)(inTextEditorOptions => (inTextEditorOptions with
             {
                 CustomThemeRecordList = WalkTextEditorCustomThemeFacts.AllCustomThemesList,
-                InitialThemeKey = ThemeFacts.VisualStudioDarkThemeClone.Key,
+                InitialThemeKey = CommonFacts.VisualStudioDarkThemeClone.Key,
                 AbsolutePathStandardizeFunc = ServiceCollectionExtensions.AbsolutePathStandardizeFunc,
                 FastParseFunc = async (fastParseArgs) =>
                 {    

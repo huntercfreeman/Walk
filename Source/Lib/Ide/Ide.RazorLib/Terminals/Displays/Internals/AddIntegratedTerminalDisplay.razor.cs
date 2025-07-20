@@ -47,7 +47,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
         	}
         };
         	
-        IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 	
 	private void SubmitOnClick()

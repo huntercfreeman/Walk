@@ -98,7 +98,7 @@
         <div class="di_te_find-overlay-bottom-row">
             @{
                 var findOverlayPresentationModel = renderBatchLocal.Model!.PresentationModelList.FirstOrDefault(
-                    x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
+                    x => x.TextEditorPresentationKey == TextEditorFacts.FindOverlayPresentation_PresentationKey);
 
                 var completedCalculation = findOverlayPresentationModel?.CompletedCalculation;
             }

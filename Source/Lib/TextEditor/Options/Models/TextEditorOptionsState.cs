@@ -15,7 +15,7 @@ public record struct TextEditorOptionsState
                 DEFAULT_ICON_SIZE_IN_PIXELS,
                 AppOptionsState.DEFAULT_RESIZE_HANDLE_WIDTH_IN_PIXELS,
                 AppOptionsState.DEFAULT_RESIZE_HANDLE_HEIGHT_IN_PIXELS,
-                ThemeFacts.VisualStudioDarkThemeClone.Key,
+                CommonFacts.VisualStudioDarkThemeClone.Key,
                 FontFamily: null,
                 ShowPanelTitles: false),
             false,
@@ -27,7 +27,7 @@ public record struct TextEditorOptionsState
             true,
             CharAndLineMeasurements: new(0, 0))
         {
-        	Keymap = TextEditorKeymapFacts.DefaultKeymap,
+        	Keymap = TextEditorFacts.Keymap_DefaultKeymap,
         };
     }
 

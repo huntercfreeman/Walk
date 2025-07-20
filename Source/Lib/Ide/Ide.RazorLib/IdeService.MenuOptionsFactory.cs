@@ -282,9 +282,9 @@ public partial class IdeService
 
 	private async ValueTask Do_PerformCopyFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
 	{
-		await CommonService.SetClipboard(ClipboardFacts.FormatPhrase(
-				ClipboardFacts.CopyCommand,
-				ClipboardFacts.AbsolutePathDataType,
+		await CommonService.SetClipboard(IdeFacts.FormatPhrase(
+				IdeFacts.CopyCommand,
+				IdeFacts.AbsolutePathDataType,
 				absolutePath.Value))
 			.ConfigureAwait(false);
 
@@ -307,9 +307,9 @@ public partial class IdeService
 		AbsolutePath absolutePath,
 		Func<Task> onAfterCompletion)
 	{
-		await CommonService.SetClipboard(ClipboardFacts.FormatPhrase(
-				ClipboardFacts.CutCommand,
-				ClipboardFacts.AbsolutePathDataType,
+		await CommonService.SetClipboard(IdeFacts.FormatPhrase(
+				IdeFacts.CutCommand,
+				IdeFacts.AbsolutePathDataType,
 				absolutePath.Value))
 			.ConfigureAwait(false);
 
@@ -330,13 +330,13 @@ public partial class IdeService
 	{
 		var clipboardContents = await CommonService.ReadClipboard().ConfigureAwait(false);
 
-		if (ClipboardFacts.TryParseString(clipboardContents, out var clipboardPhrase))
+		if (IdeFacts.TryParseString(clipboardContents, out var clipboardPhrase))
 		{
 			if (clipboardPhrase is not null &&
-				clipboardPhrase.DataType == ClipboardFacts.AbsolutePathDataType)
+				clipboardPhrase.DataType == IdeFacts.AbsolutePathDataType)
 			{
-				if (clipboardPhrase.Command == ClipboardFacts.CopyCommand ||
-					clipboardPhrase.Command == ClipboardFacts.CutCommand)
+				if (clipboardPhrase.Command == IdeFacts.CopyCommand ||
+					clipboardPhrase.Command == IdeFacts.CutCommand)
 				{
 					AbsolutePath clipboardAbsolutePath = default;
 
@@ -386,7 +386,7 @@ public partial class IdeService
 							successfullyPasted = false;
 						}
 
-						if (successfullyPasted && clipboardPhrase.Command == ClipboardFacts.CutCommand)
+						if (successfullyPasted && clipboardPhrase.Command == IdeFacts.CutCommand)
 						{
 							// TODO: Rerender the parent of the deleted due to cut file
 							Enqueue_PerformDeleteFile(clipboardAbsolutePath, onAfterCompletion);

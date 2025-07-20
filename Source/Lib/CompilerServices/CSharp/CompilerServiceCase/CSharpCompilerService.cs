@@ -1027,7 +1027,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     		{
     			if (category.Value == "CodeSearchService")
     			{
-    				await ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func.Invoke(
+    				await ((TextEditorKeymapDefault)TextEditorFacts.Keymap_DefaultKeymap).AltF12Func.Invoke(
     					editContext,
     					resourceUriValue,
     					indexInclusiveStart);
@@ -1135,7 +1135,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     			    	{
     			    		if (category.Value == "CodeSearchService")
                 			{
-                				await ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).AltF12Func.Invoke(
+                				await ((TextEditorKeymapDefault)TextEditorFacts.Keymap_DefaultKeymap).AltF12Func.Invoke(
                 					editContext,
                 					file,
                 					positionIndex);
@@ -1231,11 +1231,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		_textEditorService.Model_StartPendingCalculatePresentationModel(
 			editContext,
 	        modelModifier,
-	        CompilerServiceDiagnosticPresentationFacts.PresentationKey,
-			CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
+	        TextEditorFacts.CompilerServiceDiagnosticPresentation_PresentationKey,
+			TextEditorFacts.CompilerServiceDiagnosticPresentation_EmptyPresentationModel);
 
 		var presentationModel = modelModifier.PresentationModelList.First(
-			x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
+			x => x.TextEditorPresentationKey == TextEditorFacts.CompilerServiceDiagnosticPresentation_PresentationKey);
 		
 		var cSharpCompilationUnit = new CSharpCompilationUnit(
 			resourceUri,
@@ -1269,8 +1269,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 				.ToList();
 
 			modelModifier.CompletePendingCalculatePresentationModel(
-				CompilerServiceDiagnosticPresentationFacts.PresentationKey,
-				CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel,
+				TextEditorFacts.CompilerServiceDiagnosticPresentation_PresentationKey,
+				TextEditorFacts.CompilerServiceDiagnosticPresentation_EmptyPresentationModel,
 				diagnosticTextSpans);
 			
 			if (shouldApplySyntaxHighlighting)

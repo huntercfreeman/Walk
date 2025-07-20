@@ -10,6 +10,7 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.CompilerServices.DotNetSolution.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.FormsGenerics.Displays;
@@ -286,13 +287,13 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				}),
 			DotNetService.AddProjectToProjectReference(
 				treeViewModel,
-				DotNetService.IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
+				DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY],
 				DotNetService.IdeService,
 				() => Task.CompletedTask),
 			DotNetService.MoveProjectToSolutionFolder(
 				treeViewSolution,
 				treeViewModel,
-				DotNetService.IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
+				DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY],
 				DotNetService.IdeService.TextEditorService.CommonService,
 				() =>
 				{
@@ -320,7 +321,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetService.RemoveCSharpProjectReferenceFromSolution(
 				treeViewSolution,
 				treeViewModel,
-				DotNetService.IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
+				DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY],
 				DotNetService.IdeService.TextEditorService.CommonService,
 				() =>
 				{
@@ -341,7 +342,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		{
 			DotNetService.RemoveProjectToProjectReference(
 				treeViewCSharpProjectToProjectReference,
-				DotNetService.IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
+				DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY],
 				DotNetService.IdeService.TextEditorService.CommonService,
 				() => Task.CompletedTask),
 		};
@@ -361,7 +362,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetService.RemoveNuGetPackageReferenceFromProject(
 				treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,
 				treeViewCSharpProjectNugetPackageReference,
-				DotNetService.IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY],
+				DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY],
 				DotNetService.IdeService.TextEditorService.CommonService,
 				() => Task.CompletedTask),
 		};
@@ -485,7 +486,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		        	}
 		        };
 		        	
-		        DotNetService.IdeService.GetTerminalState().TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+		        DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			},
 			SelectionIsValidFunc = absolutePath =>

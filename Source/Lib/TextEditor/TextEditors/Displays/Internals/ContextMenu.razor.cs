@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Menus.Models;
-using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
@@ -83,7 +82,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     	if (!virtualizationResult.IsValid)
     		return;
     	
-        if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
+        if (CommonFacts.ESCAPE == keyboardEventArgs.Key)
         {
             TextEditorService.WorkerArbitrary.PostUnique(editContext =>
 			{
@@ -422,7 +421,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
         	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
-            return ((TextEditorKeymapDefault)TextEditorKeymapFacts.DefaultKeymap).ShiftF12Func.Invoke(
+            return ((TextEditorKeymapDefault)TextEditorFacts.Keymap_DefaultKeymap).ShiftF12Func.Invoke(
             	editContext,
     			modelModifier,
     			viewModelModifier);

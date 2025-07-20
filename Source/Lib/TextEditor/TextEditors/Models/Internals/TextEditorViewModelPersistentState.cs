@@ -870,9 +870,9 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     {
         var panelGroupHtmlIdTupleList = new (Key<PanelGroup> PanelGroupKey, string HtmlElementId)[]
         {
-            (PanelFacts.LeftPanelGroupKey, "di_ide_panel_left_tabs"),
-            (PanelFacts.RightPanelGroupKey, "di_ide_panel_right_tabs"),
-            (PanelFacts.BottomPanelGroupKey, "di_ide_panel_bottom_tabs"),
+            (CommonFacts.LeftPanelGroupKey, "di_ide_panel_left_tabs"),
+            (CommonFacts.RightPanelGroupKey, "di_ide_panel_right_tabs"),
+            (CommonFacts.BottomPanelGroupKey, "di_ide_panel_bottom_tabs"),
         };
 
         foreach (var panelGroupHtmlIdTuple in panelGroupHtmlIdTupleList)

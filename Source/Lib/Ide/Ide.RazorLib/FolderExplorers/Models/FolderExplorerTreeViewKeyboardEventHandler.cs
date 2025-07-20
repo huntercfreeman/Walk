@@ -1,5 +1,5 @@
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Commands.Models;
-using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
@@ -29,9 +29,9 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
         switch (commandArgs.KeyboardEventArgs.Code)
         {
-            case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
+            case CommonFacts.ENTER_CODE:
                 return InvokeOpenInEditorAsync(commandArgs, true);
-            case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
+            case CommonFacts.SPACE_CODE:
                 return InvokeOpenInEditorAsync(commandArgs, false);
         }
 

@@ -33,10 +33,10 @@ public static class ServiceCollectionExtensions
                     sp.GetRequiredService<IJSRuntime>());
             
                 commonService.SetContinuousQueue(new BackgroundTaskQueue(
-                    BackgroundTaskFacts.ContinuousQueueKey,
+                    CommonFacts.ContinuousQueueKey,
                     "Continuous"));
                 commonService.SetIndefiniteQueue(new BackgroundTaskQueue(
-                    BackgroundTaskFacts.IndefiniteQueueKey,
+                    CommonFacts.IndefiniteQueueKey,
                     "Blocking"));
             
                 commonService.SetContinuousWorker(new ContinuousBackgroundTaskWorker(

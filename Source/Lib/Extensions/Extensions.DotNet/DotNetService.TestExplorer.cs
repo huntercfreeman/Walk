@@ -1,3 +1,4 @@
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Reactives.Models;
@@ -6,6 +7,7 @@ using Walk.Common.RazorLib.TreeViews.Models.Utils;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.Extensions.DotNet.CommandLines.Models;
 using Walk.Extensions.DotNet.TestExplorers.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
 
 namespace Walk.Extensions.DotNet;
@@ -63,7 +65,7 @@ public partial class DotNetService
 		{
 			var inState = GetTestExplorerState();
 
-			if (dimensionUnit.Purpose != DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)
+			if (dimensionUnit.Purpose != CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN)
 			{
 				TestExplorerStateChanged?.Invoke();
 				return;
@@ -351,7 +353,7 @@ public partial class DotNetService
 
 				treeViewProjectTestModel.Item.TerminalCommandRequest = terminalCommandRequest;
 
-				return IdeService.GetTerminalState().TerminalMap[TerminalFacts.EXECUTION_KEY]
+				return IdeService.GetTerminalState().TerminalMap[IdeFacts.EXECUTION_KEY]
 					.EnqueueCommandAsync(terminalCommandRequest);
 			};
 		}

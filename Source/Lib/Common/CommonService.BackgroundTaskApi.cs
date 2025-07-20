@@ -64,7 +64,7 @@ public partial class CommonService
                                 {
                                     SetActivePanelTab(panelGroup.Key, panel.Key);
 
-                                    var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
+                                    var contextRecord = CommonFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 
                                     if (contextRecord != default)
                                     {
@@ -93,10 +93,10 @@ public partial class CommonService
                                     }
                                     else
                                     {
-                                        RegisterPanelTab(PanelFacts.LeftPanelGroupKey, panel, true);
-                                        SetActivePanelTab(PanelFacts.LeftPanelGroupKey, panel.Key);
+                                        RegisterPanelTab(CommonFacts.LeftPanelGroupKey, panel, true);
+                                        SetActivePanelTab(CommonFacts.LeftPanelGroupKey, panel.Key);
 
-                                        var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
+                                        var contextRecord = CommonFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
 
                                         if (contextRecord != default)
                                         {

@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
@@ -114,7 +114,7 @@ public partial class TextEditorService
 		var usingThemeCssClassString = CommonService.GetThemeState().ThemeList
 			.FirstOrDefault(x => x.Key == Options_GetTextEditorOptionsState().Options.CommonOptions.ThemeKey)
 			?.CssClassString
-			?? ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
+			?? CommonFacts.VisualStudioDarkThemeClone.CssClassString;
 		ThemeCssClassString = usingThemeCssClassString;
 
 		Options_StaticStateChanged?.Invoke();
@@ -379,7 +379,7 @@ public partial class TextEditorService
 			var matchedTheme = CommonService.GetThemeState().ThemeList.FirstOrDefault(
 				x => x.Key == optionsJson.CommonOptionsJsonDto.ThemeKey);
 
-			Options_SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false);
+			Options_SetTheme(matchedTheme ?? CommonFacts.VisualStudioDarkThemeClone, false);
 		}
 
 		/*if (optionsJson.Keymap is not null)

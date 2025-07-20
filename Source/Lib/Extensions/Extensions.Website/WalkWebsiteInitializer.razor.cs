@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.CompilerServices;
@@ -160,22 +161,22 @@ public partial class WalkWebsiteInitializer : ComponentBase
                 DotNetService.TextEditorService.Model_AddPresentationModel(
                     editContext,
                     modelModifier,
-                    CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
+                    TextEditorFacts.CompilerServiceDiagnosticPresentation_EmptyPresentationModel);
 
                 DotNetService.TextEditorService.Model_AddPresentationModel(
                     editContext,
                     modelModifier,
-                    FindOverlayPresentationFacts.EmptyPresentationModel);
+                    TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel);
 
                 DotNetService.TextEditorService.Model_AddPresentationModel(
                     editContext,
                     modelModifier,
-                    DiffPresentationFacts.EmptyInPresentationModel);
+                    TextEditorFacts.Diff_EmptyInPresentationModel);
 
                 DotNetService.TextEditorService.Model_AddPresentationModel(
                     editContext,
                     modelModifier,
-                    DiffPresentationFacts.EmptyOutPresentationModel);
+                    TextEditorFacts.Diff_EmptyOutPresentationModel);
 
                 textEditorModel.PersistentState.CompilerService.RegisterResource(
                     textEditorModel.PersistentState.ResourceUri,

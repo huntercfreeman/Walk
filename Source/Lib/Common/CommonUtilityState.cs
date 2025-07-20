@@ -94,7 +94,7 @@ public record struct AppOptionsState(CommonOptions Options)
         IconSizeInPixels: DEFAULT_ICON_SIZE_IN_PIXELS,
         ResizeHandleWidthInPixels: DEFAULT_RESIZE_HANDLE_WIDTH_IN_PIXELS,
         ResizeHandleHeightInPixels: DEFAULT_RESIZE_HANDLE_HEIGHT_IN_PIXELS,
-        ThemeKey: ThemeFacts.VisualStudioDarkThemeClone.Key,
+        ThemeKey: CommonFacts.VisualStudioDarkThemeClone.Key,
         FontFamily: null,
         ShowPanelTitles: false);
 
@@ -114,8 +114,8 @@ public record struct ThemeState(IReadOnlyList<ThemeRecord> ThemeList)
     public ThemeState()
         : this(new List<ThemeRecord>()
             {
-                ThemeFacts.VisualStudioDarkThemeClone,
-                ThemeFacts.VisualStudioLightThemeClone,
+                CommonFacts.VisualStudioDarkThemeClone,
+                CommonFacts.VisualStudioLightThemeClone,
             })
     {
         
@@ -178,7 +178,7 @@ public record struct PanelState(
     private static PanelGroup ConstructTopLeftGroup()
     {
         var leftPanelGroup = new PanelGroup(
-            PanelFacts.LeftPanelGroupKey,
+            CommonFacts.LeftPanelGroupKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
             Array.Empty<IPanelTab>());
@@ -186,7 +186,7 @@ public record struct PanelState(
         leftPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(33.3333, DimensionUnitKind.Percentage),
-            new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, DimensionUnitFacts.Purposes.OFFSET)
+            new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, CommonFacts.PURPOSE_OFFSET)
         });
 
         return leftPanelGroup;
@@ -195,7 +195,7 @@ public record struct PanelState(
     private static PanelGroup ConstructTopRightGroup()
     {
         var rightPanelGroup = new PanelGroup(
-            PanelFacts.RightPanelGroupKey,
+            CommonFacts.RightPanelGroupKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
             Array.Empty<IPanelTab>());
@@ -203,7 +203,7 @@ public record struct PanelState(
         rightPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(33.3333, DimensionUnitKind.Percentage),
-            new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, DimensionUnitFacts.Purposes.OFFSET),
+            new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, CommonFacts.PURPOSE_OFFSET),
         });
 
         return rightPanelGroup;
@@ -212,7 +212,7 @@ public record struct PanelState(
     private static PanelGroup ConstructBottomGroup()
     {
         var bottomPanelGroup = new PanelGroup(
-            PanelFacts.BottomPanelGroupKey,
+            CommonFacts.BottomPanelGroupKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
             Array.Empty<IPanelTab>());
@@ -220,8 +220,8 @@ public record struct PanelState(
         bottomPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(22, DimensionUnitKind.Percentage),
-            new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, DimensionUnitFacts.Purposes.OFFSET),
-            new DimensionUnit(SizeFacts.Ide.Header.Height.Value / 2, SizeFacts.Ide.Header.Height.DimensionUnitKind, DimensionOperatorKind.Subtract)
+            new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, CommonFacts.PURPOSE_OFFSET),
+            new DimensionUnit(CommonFacts.Ide_Header_Height.Value / 2, CommonFacts.Ide_Header_Height.DimensionUnitKind, DimensionOperatorKind.Subtract)
         });
 
         return bottomPanelGroup;
@@ -342,8 +342,8 @@ public record struct ContextState(
         Array.Empty<ContextRecord>(),
         Key<ContextRecord>.Empty)
     {
-        AllContextsList = ContextFacts.AllContextsList;
-        FocusedContextKey = ContextFacts.GlobalContext.ContextKey;
+        AllContextsList = CommonFacts.AllContextsList;
+        FocusedContextKey = CommonFacts.GlobalContext.ContextKey;
     }
 }
 /* End IContextService */

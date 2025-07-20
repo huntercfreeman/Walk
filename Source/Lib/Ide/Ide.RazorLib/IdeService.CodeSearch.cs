@@ -1,4 +1,5 @@
-﻿using Walk.Common.RazorLib.Dimensions.Models;
+using Walk.Common.RazorLib;
+using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Reactives.Models;
@@ -99,7 +100,7 @@ public partial class IdeService
 	{
 		lock (_stateModificationLock)
 		{
-			if (dimensionUnit.Purpose == DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW)
+			if (dimensionUnit.Purpose == CommonFacts.PURPOSE_RESIZABLE_HANDLE_ROW)
 			{
 				if (_codeSearchState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList is not null)
 				{

@@ -1,4 +1,4 @@
-using Walk.Common.RazorLib.Keyboards.Models;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Microsoft.AspNetCore.Components;
@@ -68,13 +68,13 @@ public partial class FileFormDisplay : ComponentBase
     {
         if (MenuOptionCallbacks is not null)
         {
-            if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
+            if (keyboardEventArgs.Key == CommonFacts.ESCAPE)
             {
                 await MenuOptionCallbacks.HideWidgetAsync
                     .Invoke()
                     .ConfigureAwait(false);
             }
-            else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+            else if (keyboardEventArgs.Code == CommonFacts.ENTER_CODE)
             {
                 await MenuOptionCallbacks.CompleteWidgetAsync
                     .Invoke(async () => await OnAfterSubmitFunc.Invoke(

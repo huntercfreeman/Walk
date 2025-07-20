@@ -18,7 +18,7 @@ public partial class CommonService
     public string Options_StorageKey => "walk-common_theme-storage-key";
 #endif
 
-	public string Options_ThemeCssClassString { get; set; } = ThemeFacts.VisualStudioDarkThemeClone.CssClassString;
+	public string Options_ThemeCssClassString { get; set; } = CommonFacts.VisualStudioDarkThemeClone.CssClassString;
 
     public string? Options_FontFamilyCssStyleString { get; set; }
 
@@ -213,7 +213,7 @@ public partial class CommonService
             var matchedTheme = GetThemeState().ThemeList.FirstOrDefault(
                 x => x.Key == optionsJson.ThemeKey);
 
-            Options_SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false);
+            Options_SetTheme(matchedTheme ?? CommonFacts.VisualStudioDarkThemeClone, false);
         }
 
         if (optionsJson.FontFamily is not null)
@@ -246,7 +246,7 @@ public partial class CommonService
     {
         var usingTheme = GetThemeState().ThemeList
         	.FirstOrDefault(x => x.Key == GetAppOptionsState().Options.ThemeKey)
-        	?? ThemeFacts.VisualStudioDarkThemeClone;
+        	?? CommonFacts.VisualStudioDarkThemeClone;
         
         Options_ThemeCssClassString = usingTheme.CssClassString;
 	    

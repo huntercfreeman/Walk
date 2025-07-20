@@ -1,3 +1,4 @@
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Keys.Models;
 
@@ -5,7 +6,7 @@ namespace Walk.Ide.RazorLib.Terminals.Models;
 
 public record struct TerminalGroupState(Key<ITerminal> ActiveTerminalKey)
 {
-    public TerminalGroupState() : this(TerminalFacts.GENERAL_KEY)
+    public TerminalGroupState() : this(IdeFacts.GENERAL_KEY)
     {
         // _bodyElementDimensions
         {
@@ -18,7 +19,7 @@ public record struct TerminalGroupState(Key<ITerminal> ActiveTerminalKey)
                 	0,
                 	DimensionUnitKind.Pixels,
                 	DimensionOperatorKind.Subtract,
-                	DimensionUnitFacts.Purposes.OFFSET),
+                	CommonFacts.PURPOSE_OFFSET),
             });
         }
 
@@ -33,7 +34,7 @@ public record struct TerminalGroupState(Key<ITerminal> ActiveTerminalKey)
                 	0,
                 	DimensionUnitKind.Pixels,
                 	DimensionOperatorKind.Subtract,
-                	DimensionUnitFacts.Purposes.OFFSET),
+                	CommonFacts.PURPOSE_OFFSET),
             });
         }
     }

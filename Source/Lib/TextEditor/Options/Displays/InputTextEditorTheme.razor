@@ -1,3 +1,4 @@
+@using Walk.Common.RazorLib;
 @using Walk.Common.RazorLib.Themes.Models;
 
 <select @onchange="SelectedThemeChanged"
@@ -7,7 +8,7 @@
         var themesList = CommonService.GetThemeState().ThemeList;
 
         var chosenThemeKey = TextEditorService.Options_GetTextEditorOptionsState().Options.CommonOptions?.ThemeKey
-            ?? ThemeFacts.VisualStudioDarkThemeClone.Key;
+            ?? CommonFacts.VisualStudioDarkThemeClone.Key;
         
         foreach (var theme in themesList)
         {

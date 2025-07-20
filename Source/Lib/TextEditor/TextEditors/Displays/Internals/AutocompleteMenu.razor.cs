@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Menus.Models;
-using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Menus.Displays;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib.Autocompletes.Models;
@@ -90,7 +89,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     	if (!virtualizationResult.IsValid)
     		return Task.CompletedTask;
     
-        if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
+        if (CommonFacts.ESCAPE == keyboardEventArgs.Key)
 			return ReturnFocusToThisAsync();
 			
 		return Task.CompletedTask;

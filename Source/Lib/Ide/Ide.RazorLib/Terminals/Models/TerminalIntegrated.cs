@@ -73,7 +73,7 @@ public class TerminalIntegrated : ITerminal, IBackgroundTaskGroup
     {
 		return _commonService.Indefinite_EnqueueAsync(
 			Key<IBackgroundTaskGroup>.NewKey(),
-			BackgroundTaskFacts.IndefiniteQueueKey,
+			CommonFacts.IndefiniteQueueKey,
 			"Enqueue Command",
 			() => HandleCommand(terminalCommandRequest));
     }

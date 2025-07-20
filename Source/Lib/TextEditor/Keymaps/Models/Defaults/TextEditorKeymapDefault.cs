@@ -23,8 +23,8 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
     public Key<KeymapLayer> GetLayer(bool hasSelection)
     {
         return hasSelection
-            ? TextEditorKeymapDefaultFacts.HasSelectionLayer.Key
-            : TextEditorKeymapDefaultFacts.DefaultLayer.Key;
+            ? TextEditorFacts.KeymapDefault_HasSelectionLayer.Key
+            : TextEditorFacts.KeymapDefault_DefaultLayer.Key;
     }
 
     public string GetCursorCssClassString()

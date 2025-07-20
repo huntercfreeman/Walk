@@ -20,7 +20,7 @@ public record WalkTextEditorConfig
     /// The initial theme for the text editor is NOT the same as <see cref="WalkCommonConfig.InitialThemeKey"/>.
     /// The text editor and application theme are separate.
     /// </summary>
-    public Key<ThemeRecord>? InitialThemeKey { get; init; } = ThemeFacts.VisualStudioDarkThemeClone.Key;
+    public Key<ThemeRecord>? InitialThemeKey { get; init; } = CommonFacts.VisualStudioDarkThemeClone.Key;
     /// <summary>
     /// By default the only themes are clones of the application "Visual Studio"('s) colors.
     /// That is to say, 2 themes total, one light, one dark.

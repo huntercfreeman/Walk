@@ -92,7 +92,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 	        CommonService.Tooltip_HtmlElementDimensions = await CommonService.JsRuntimeCommonApi.MeasureElementById(
     	        CommonService.Tooltip_HtmlElementId);
             CommonService.Tooltip_GlobalHtmlElementDimensions = await CommonService.JsRuntimeCommonApi.MeasureElementById(
-    	        ContextFacts.RootHtmlElementId);
+    	        CommonFacts.RootHtmlElementId);
 	    
     	    var xLarge = false;
     	    var yLarge = false;

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Menus.Models;
@@ -69,8 +70,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             	DimensionUnitKind.Pixels,
             	DimensionOperatorKind.Subtract),
             new DimensionUnit(
-            	SizeFacts.Ide.Header.Height.Value / 2,
-            	SizeFacts.Ide.Header.Height.DimensionUnitKind,
+            	CommonFacts.Ide_Header_Height.Value / 2,
+            	CommonFacts.Ide_Header_Height.DimensionUnitKind,
             	DimensionOperatorKind.Subtract)
         });
         
@@ -263,7 +264,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     {
                         IdeService.CommonService.SetActivePanelTab(panelGroup.Key, panel.Key);
     
-                        var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
+                        var contextRecord = CommonFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
     
                         if (contextRecord != default)
                         {
@@ -292,10 +293,10 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                         }
                         else
                         {
-                            IdeService.CommonService.RegisterPanelTab(PanelFacts.LeftPanelGroupKey, panel, true);
-                            IdeService.CommonService.SetActivePanelTab(PanelFacts.LeftPanelGroupKey, panel.Key);
+                            IdeService.CommonService.RegisterPanelTab(CommonFacts.LeftPanelGroupKey, panel, true);
+                            IdeService.CommonService.SetActivePanelTab(CommonFacts.LeftPanelGroupKey, panel.Key);
     
-                            var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
+                            var contextRecord = CommonFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
     
                             if (contextRecord != default)
                             {

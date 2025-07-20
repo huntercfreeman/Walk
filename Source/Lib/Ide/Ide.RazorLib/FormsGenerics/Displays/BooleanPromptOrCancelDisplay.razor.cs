@@ -1,4 +1,4 @@
-using Walk.Common.RazorLib.Keyboards.Models;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Menus.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -63,7 +63,7 @@ public partial class BooleanPromptOrCancelDisplay : ComponentBase
     {
         if (MenuOptionCallbacks is not null)
         {
-            if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
+            if (keyboardEventArgs.Key == CommonFacts.ESCAPE)
             {
                 await MenuOptionCallbacks.HideWidgetAsync
                     .Invoke()

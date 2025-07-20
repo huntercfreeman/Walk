@@ -4,7 +4,6 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Ide.RazorLib.Exceptions;
-using Walk.Ide.RazorLib.Terminals.Models.Internals;
 
 namespace Walk.Ide.RazorLib.Terminals.Models;
 
@@ -71,7 +70,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
     {
 		return _commonService.Indefinite_EnqueueAsync(
 			Key<IBackgroundTaskGroup>.NewKey(),
-			BackgroundTaskFacts.IndefiniteQueueKey,
+			CommonFacts.IndefiniteQueueKey,
 			"Enqueue Command",
 			() => HandleCommand(terminalCommandRequest));
     }
@@ -205,7 +204,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 	
 		switch (firstArgument)
 		{
-			case TerminalWebsiteFacts.InitialArguments.RUN:
+			case IdeFacts.InitialArguments_RUN:
 			{
 				var projectPath = (string?)null;
 			
@@ -215,9 +214,9 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
 				}
 				else if (argumentList.Length == 3)
 				{
-					if (argumentList[1] != TerminalWebsiteFacts.Options.PROJECT)
+					if (argumentList[1] != IdeFacts.Options_PROJECT)
 					{
-						TerminalOutput.WriteOutput(parsedCommand, new StandardErrorCommandEvent($"argumentList[1]:{argumentList[1]} != {TerminalWebsiteFacts.Options.PROJECT}"));
+						TerminalOutput.WriteOutput(parsedCommand, new StandardErrorCommandEvent($"argumentList[1]:{argumentList[1]} != {IdeFacts.Options_PROJECT}"));
 						return Task.CompletedTask;
 					}
 				

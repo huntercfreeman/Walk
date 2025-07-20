@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
@@ -37,13 +38,13 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
 		HeaderComponentType = null,
 		FooterComponentType = null,
 		IncludeGutterComponent = false,
-		ContextRecord = ContextFacts.TerminalContext,
+		ContextRecord = CommonFacts.TerminalContext,
 	};
 	
 	protected override void OnInitialized()
 	{
 		var terminalState = IdeService.GetTerminalState();
-		_executionTerminal = terminalState.TerminalMap[TerminalFacts.EXECUTION_KEY];
+		_executionTerminal = terminalState.TerminalMap[IdeFacts.EXECUTION_KEY];
 		_executionTerminal.TerminalOutput.OnWriteOutput += OnWriteOutput;
 	}
 

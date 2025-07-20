@@ -1,5 +1,4 @@
 using Walk.Common.RazorLib.Commands.Models;
-using Walk.Common.RazorLib.Keyboards.Models;
 
 namespace Walk.Common.RazorLib.TreeViews.Models;
 
@@ -45,37 +44,37 @@ public class TreeViewKeyboardEventHandler
 
         switch (commandArgs.KeyboardEventArgs.Key)
         {
-            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
+            case CommonFacts.ARROW_LEFT_KEY:
                 CommonService.TreeView_MoveLeftAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
-            case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
+            case CommonFacts.ARROW_DOWN_KEY:
                 CommonService.TreeView_MoveDownAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
-            case KeyboardKeyFacts.MovementKeys.ARROW_UP:
+            case CommonFacts.ARROW_UP_KEY:
                 CommonService.TreeView_MoveUpAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
-            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
+            case CommonFacts.ARROW_RIGHT_KEY:
                 CommonService.TreeView_MoveRight(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
-            case KeyboardKeyFacts.MovementKeys.HOME:
+            case CommonFacts.HOME_KEY:
                 CommonService.TreeView_MoveHomeAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
 					false);
                 break;
-            case KeyboardKeyFacts.MovementKeys.END:
+            case CommonFacts.END_KEY:
                 CommonService.TreeView_MoveEndAction(
                     commandArgs.TreeViewContainer.Key,
                     commandArgs.KeyboardEventArgs.ShiftKey,
