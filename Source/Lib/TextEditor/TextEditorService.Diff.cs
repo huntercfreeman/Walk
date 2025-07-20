@@ -1,4 +1,4 @@
-﻿using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib.Diffs.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 
@@ -6,6 +6,12 @@ namespace Walk.TextEditor.RazorLib;
 
 public partial class TextEditorService
 {
+    private TextEditorDiffState Diff_textEditorDiffState = new();
+
+	public event Action? Diff_TextEditorDiffStateChanged;
+
+	public TextEditorDiffState Diff_GetTextEditorDiffState() => Diff_textEditorDiffState;
+
 	public void Diff_Register(
 		Key<TextEditorDiffModel> diffModelKey,
 		Key<TextEditorViewModel> inViewModelKey,
@@ -102,12 +108,6 @@ public partial class TextEditorService
 	{
 		return Diff_GetTextEditorDiffState().DiffModelList;
 	}
-
-	private TextEditorDiffState Diff_textEditorDiffState = new();
-
-	public event Action? Diff_TextEditorDiffStateChanged;
-
-	public TextEditorDiffState Diff_GetTextEditorDiffState() => Diff_textEditorDiffState;
 
 	public void Diff_ReduceDisposeAction(Key<TextEditorDiffModel> diffKey)
 	{
