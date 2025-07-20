@@ -6,8 +6,6 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Icons.Displays;
 using Walk.Common.RazorLib.Icons.Displays.Codicon;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
-using Walk.Ide.RazorLib.ComponentRenderers.Models;
-using Walk.Extensions.DotNet.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;
 
 namespace Walk.Extensions.DotNet.DotNetSolutions.Models;
@@ -16,20 +14,14 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 {
 	public TreeViewSolutionFolder(
 			SolutionFolder dotNetSolutionFolder,
-			IDotNetComponentRenderers dotNetComponentRenderers,
-			IIdeComponentRenderers ideComponentRenderers,
 			CommonService commonService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(dotNetSolutionFolder, isExpandable, isExpanded)
 	{
-		DotNetComponentRenderers = dotNetComponentRenderers;
-		IdeComponentRenderers = ideComponentRenderers;
 		CommonService = commonService;
 	}
 
-	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
-	public IIdeComponentRenderers IdeComponentRenderers { get; }
 	public CommonService CommonService { get; }
 
 	public override bool Equals(object? obj)
@@ -116,7 +108,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 		{
 			ChildList = new List<TreeViewNoType>
 			{
-				new TreeViewException(exception, false, false, CommonService.CommonComponentRenderers)
+				new TreeViewException(exception, false, false)
 				{
 					Parent = this,
 					IndexAmongSiblings = 0,
@@ -264,8 +256,6 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 	{
 		return new TreeViewSolutionFolder(
 			dotNetSolutionFolder,
-			DotNetComponentRenderers,
-			IdeComponentRenderers,
 			CommonService,
 			true,
 			false)
@@ -282,8 +272,6 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 
 		return new TreeViewNamespacePath(
 			namespacePath,
-			DotNetComponentRenderers,
-			IdeComponentRenderers,
 			CommonService,
 			true,
 			false)

@@ -5,7 +5,6 @@ using Walk.Common.RazorLib.Themes.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.InputFiles.Displays;
 using Walk.Ide.RazorLib.FileSystems.Displays;
 using Walk.Ide.RazorLib.FormsGenerics.Displays;
@@ -106,7 +105,6 @@ public static class ServiceCollectionExtensions
             {
                 return new IdeService(
                     ideConfig,
-                    _ideComponentRenderers,
                     sp.GetRequiredService<TextEditorService>(),
                     sp);
             });
@@ -126,10 +124,4 @@ public static class ServiceCollectionExtensions
 
         return Task.FromResult(absolutePathString);
     }
-
-    private static readonly IdeComponentRenderers _ideComponentRenderers = new(
-        typeof(BooleanPromptOrCancelDisplay),
-        typeof(FileFormDisplay),
-        typeof(DeleteFileFormDisplay),
-        typeof(InputFileDisplay));
 }

@@ -1,4 +1,4 @@
-﻿using CliWrap.EventStream;
+using CliWrap.EventStream;
 using System.Runtime.InteropServices;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Contexts.Models;
@@ -1335,8 +1335,6 @@ public partial class DotNetService
 
 		var rootNode = new TreeViewSolution(
 			dotNetSolutionModel,
-			DotNetComponentRenderers,
-			IdeService.IdeComponentRenderers,
 			IdeService.TextEditorService.CommonService,
 			true,
 			true);

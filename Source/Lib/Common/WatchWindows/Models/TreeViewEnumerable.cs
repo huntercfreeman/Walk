@@ -1,5 +1,4 @@
 using System.Collections;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Exceptions;
 using Walk.Common.RazorLib.TreeViews.Models;
 
@@ -7,16 +6,12 @@ namespace Walk.Common.RazorLib.WatchWindows.Models;
 
 public class TreeViewEnumerable : TreeViewWithType<WatchWindowObject>
 {
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
-
     public TreeViewEnumerable(
             WatchWindowObject watchWindowObject,
             bool isExpandable,
-            bool isExpanded,
-            ICommonComponentRenderers commonComponentRenderers)
+            bool isExpanded)
         : base(watchWindowObject, isExpandable, isExpanded)
     {
-        _commonComponentRenderers = commonComponentRenderers;
     }
 
     public override bool Equals(object? obj)
@@ -106,8 +101,7 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObject>
                     ChildList.Add(new TreeViewReflection(
                         childNode,
                         true,
-                        false,
-                        _commonComponentRenderers));
+                        false));
                 }
             }
             else
@@ -120,8 +114,7 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObject>
                 ChildList.Add(new TreeViewText(
                     "Enumeration returned no results.",
                     false,
-                    false,
-                    _commonComponentRenderers));
+                    false));
             }
         }
         catch (Exception e)
@@ -131,8 +124,7 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObject>
             ChildList.Add(new TreeViewException(
                 e,
                 false,
-                false,
-                _commonComponentRenderers));
+                false));
         }
 
         LinkChildren(previousChildren, ChildList);

@@ -33,8 +33,6 @@ public class TreeViewHelperRazorMarkup
 
 				return (TreeViewNoType)new TreeViewNamespacePath(
 					new NamespacePath(namespaceString, absolutePath),
-					razorMarkupTreeView.DotNetComponentRenderers,
-					razorMarkupTreeView.IdeComponentRenderers,
 					razorMarkupTreeView.CommonService,
 					false,
 					false);

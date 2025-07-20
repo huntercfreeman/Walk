@@ -41,8 +41,7 @@ public partial class WatchWindowDisplay : ComponentBase
                 var rootNode = new TreeViewReflection(
                     WatchWindowObject,
                     true,
-                    false,
-                    CommonService.CommonComponentRenderers);
+                    false);
 
                 CommonService.TreeView_RegisterContainerAction(new TreeViewContainer(
                     TreeViewContainerKey,

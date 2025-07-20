@@ -1,21 +1,16 @@
 using System.Collections;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 
 namespace Walk.Common.RazorLib.WatchWindows.Models;
 
 public class TreeViewReflection : TreeViewWithType<WatchWindowObject>
 {
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
-
     public TreeViewReflection(
             WatchWindowObject watchWindowObject,
             bool isExpandable,
-            bool isExpanded,
-            ICommonComponentRenderers commonComponentRenderers)
+            bool isExpanded)
         : base(watchWindowObject, isExpandable, isExpanded)
     {
-        _commonComponentRenderers = commonComponentRenderers;
     }
 
     public override bool Equals(object? obj)
@@ -122,22 +117,19 @@ public class TreeViewReflection : TreeViewWithType<WatchWindowObject>
             ChildList.Add(new TreeViewFields(
                 Item,
                 true,
-                false,
-                _commonComponentRenderers));
+                false));
 
             ChildList.Add(new TreeViewProperties(
                 Item,
                 true,
-                false,
-                _commonComponentRenderers));
+                false));
 
             if (Item.Item is IEnumerable)
             {
                 ChildList.Add(new TreeViewEnumerable(
                     Item,
                     true,
-                    false,
-                    _commonComponentRenderers));
+                    false));
             }
 
             if (Item.ItemType.IsInterface && Item.Item is not null)
@@ -151,8 +143,7 @@ public class TreeViewReflection : TreeViewWithType<WatchWindowObject>
                 ChildList.Add(new TreeViewInterfaceImplementation(
                     interfaceImplementation,
                     true,
-                    false,
-                    _commonComponentRenderers));
+                    false));
             }
         }
         catch (Exception e)
@@ -162,8 +153,7 @@ public class TreeViewReflection : TreeViewWithType<WatchWindowObject>
             ChildList.Add(new TreeViewException(
                 e,
                 false,
-                false,
-                _commonComponentRenderers));
+                false));
         }
 
         LinkChildren(previousChildren, ChildList);

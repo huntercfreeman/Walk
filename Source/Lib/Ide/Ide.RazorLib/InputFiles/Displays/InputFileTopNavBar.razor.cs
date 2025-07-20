@@ -41,7 +41,6 @@ public partial class InputFileTopNavBar : ComponentBase
     private async Task HandleUpwardButtonOnClick()
     {
         IdeService.InputFile_OpenParentDirectory(
-            IdeService.IdeComponentRenderers,
             IdeService.CommonService,
             parentDirectoryTreeViewModel: null);
 

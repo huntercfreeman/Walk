@@ -2,7 +2,6 @@ using Microsoft.JSInterop;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Installations.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.JsRuntimes.Models;
 
@@ -13,20 +12,16 @@ public partial class CommonService : IBackgroundTaskGroup
     private readonly object _stateModificationLock = new();
 	
 	public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
-	public ICommonComponentRenderers CommonComponentRenderers { get; }
 	
 	public WalkHostingInformation WalkHostingInformation { get; }
 
     public CommonService(
         WalkHostingInformation hostingInformation,
-        ICommonComponentRenderers commonComponentRenderers,
         WalkCommonConfig commonConfig,
         IJSRuntime jsRuntime)
     {
         WalkHostingInformation = hostingInformation;
     
-        CommonComponentRenderers = commonComponentRenderers;
-        
         CommonConfig = commonConfig;
     
         switch (hostingInformation.WalkHostingKind)

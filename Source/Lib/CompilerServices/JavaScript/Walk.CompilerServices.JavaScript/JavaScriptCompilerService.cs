@@ -30,9 +30,6 @@ public class JavaScriptCompilerService : ICompilerService
     public IReadOnlyList<ICompilerServiceResource> CompilerServiceResources { get; }
     
     public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions { get; }
-    
-    public Type? SymbolRendererType { get; }
-    public Type? DiagnosticRendererType { get; }
 
     public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified)
     {

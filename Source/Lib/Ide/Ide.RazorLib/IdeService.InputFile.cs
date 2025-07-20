@@ -1,7 +1,6 @@
-﻿using Walk.Common.RazorLib;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
-using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 
@@ -51,7 +50,6 @@ public partial class IdeService
 
 	public void InputFile_SetOpenedTreeViewModel(
 		TreeViewAbsolutePath treeViewModel,
-		IIdeComponentRenderers ideComponentRenderers,
 		CommonService commonService)
 	{
 		lock (_stateModificationLock)
@@ -61,7 +59,6 @@ public partial class IdeService
 				_inputFileState = InputFileState.NewOpenedTreeViewModelHistory(
 					_inputFileState,
 					treeViewModel,
-					ideComponentRenderers,
 					commonService);
 			}
 			else
@@ -121,7 +118,6 @@ public partial class IdeService
 	}
 
 	public void InputFile_OpenParentDirectory(
-		IIdeComponentRenderers ideComponentRenderers,
 		CommonService commonService,
 		TreeViewAbsolutePath? parentDirectoryTreeViewModel)
 	{
@@ -142,7 +138,6 @@ public partial class IdeService
 
 				parentDirectoryTreeViewModel = new TreeViewAbsolutePath(
 					parentDirectoryAbsolutePath,
-					ideComponentRenderers,
 					commonService,
 					false,
 					true);
@@ -153,7 +148,6 @@ public partial class IdeService
 				_inputFileState = InputFileState.NewOpenedTreeViewModelHistory(
 					inState,
 					parentDirectoryTreeViewModel,
-					ideComponentRenderers,
 					commonService);
 
 				goto finalize;
@@ -212,7 +206,6 @@ public partial class IdeService
 	}
 
 	public void InputFile_Enqueue_OpenParentDirectoryAction(
-		IIdeComponentRenderers ideComponentRenderers,
 		CommonService commonService,
 		TreeViewAbsolutePath? parentDirectoryTreeViewModel)
 	{
@@ -227,7 +220,6 @@ public partial class IdeService
 	}
 
 	public async ValueTask InputFile_Do_OpenParentDirectoryAction(
-		IIdeComponentRenderers ideComponentRenderers,
 		CommonService commonService,
 		TreeViewAbsolutePath? parentDirectoryTreeViewModel)
 	{

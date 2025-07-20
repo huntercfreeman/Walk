@@ -3,7 +3,6 @@ using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.TextEditor.RazorLib;
-using Walk.Extensions.DotNet.ComponentRenderers.Models;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.AppDatas.Models;
 
@@ -14,7 +13,6 @@ public partial class DotNetService : IBackgroundTaskGroup, IDisposable
     private readonly HttpClient _httpClient;
 	
 	public DotNetService(
-	    IDotNetComponentRenderers dotNetComponentRenderers,
 	    IdeService ideService,
 	    HttpClient httpClient,
 	    IAppDataService appDataService,
@@ -22,7 +20,6 @@ public partial class DotNetService : IBackgroundTaskGroup, IDisposable
 	{
 	    IdeService = ideService;
 	    AppDataService = appDataService;
-	    DotNetComponentRenderers = dotNetComponentRenderers;
 		_httpClient = httpClient;
         
         DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
@@ -34,7 +31,6 @@ public partial class DotNetService : IBackgroundTaskGroup, IDisposable
     public IdeService IdeService { get; }
     public TextEditorService TextEditorService => IdeService.TextEditorService;
     public CommonService CommonService => IdeService.TextEditorService.CommonService;
-	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public IAppDataService AppDataService { get; }
 
     private readonly ConcurrentQueue<DotNetWorkArgs> _workQueue = new();

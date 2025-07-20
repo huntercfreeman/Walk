@@ -1,19 +1,14 @@
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 
 namespace Walk.Common.RazorLib.WatchWindows.Models;
 
 public class TreeViewInterfaceImplementation : TreeViewReflection
 {
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
-
     public TreeViewInterfaceImplementation(
             WatchWindowObject watchWindowObject,
             bool isExpandable,
-            bool isExpanded,
-            ICommonComponentRenderers commonComponentRenderers)
-        : base(watchWindowObject, isExpandable, isExpanded, commonComponentRenderers)
+            bool isExpanded)
+        : base(watchWindowObject, isExpandable, isExpanded)
     {
-        _commonComponentRenderers = commonComponentRenderers;
     }
 
     /*public override TreeViewRenderer GetTreeViewRenderer()

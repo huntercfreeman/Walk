@@ -1,19 +1,14 @@
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 namespace Walk.Common.RazorLib.TreeViews.Models.Utils;
 
 public class TreeViewSpinner : TreeViewWithType<Guid>
 {
     public TreeViewSpinner(
             Guid guid,
-            ICommonComponentRenderers commonComponentRenderers,
             bool isExpandable,
             bool isExpanded)
         : base(guid, isExpandable, isExpanded)
     {
-        CommonComponentRenderers = commonComponentRenderers;
     }
-
-    public ICommonComponentRenderers CommonComponentRenderers { get; }
 
     public override bool Equals(object? obj)
     {

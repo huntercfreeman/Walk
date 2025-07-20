@@ -100,7 +100,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                editContext,
 		                modelModifier,
 		                viewModel,
-		                componentData.TextEditorViewModelSlimDisplay.CommonService.CommonComponentRenderers,
 		                componentData.TextEditorViewModelSlimDisplay.CommonService);
 		            
 		            componentData.ThrottleApplySyntaxHighlighting(modelModifier);

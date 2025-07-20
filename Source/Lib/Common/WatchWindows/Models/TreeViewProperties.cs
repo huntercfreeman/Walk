@@ -1,21 +1,16 @@
 using System.Reflection;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 
 namespace Walk.Common.RazorLib.WatchWindows.Models;
 
 public class TreeViewProperties : TreeViewWithType<WatchWindowObject>
 {
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
-
     public TreeViewProperties(
             WatchWindowObject watchWindowObject,
             bool isExpandable,
-            bool isExpanded,
-            ICommonComponentRenderers commonComponentRenderers)
+            bool isExpanded)
         : base(watchWindowObject, isExpandable, isExpanded)
     {
-        _commonComponentRenderers = commonComponentRenderers;
     }
 
     public override bool Equals(object? obj)
@@ -116,8 +111,7 @@ public class TreeViewProperties : TreeViewWithType<WatchWindowObject>
                     ChildList.Add(new TreeViewReflection(
                         childNode,
                         true,
-                        false,
-                        _commonComponentRenderers));
+                        false));
                 }
                 catch (TargetParameterCountException)
                 {
@@ -135,8 +129,7 @@ public class TreeViewProperties : TreeViewWithType<WatchWindowObject>
                 ChildList.Add(new TreeViewText(
                     "No properties exist for this Type",
                     false,
-                    false,
-                    _commonComponentRenderers));
+                    false));
             }
         }
         catch (Exception e)
@@ -146,8 +139,7 @@ public class TreeViewProperties : TreeViewWithType<WatchWindowObject>
             ChildList.Add(new TreeViewException(
                 e,
                 false,
-                false,
-                _commonComponentRenderers));
+                false));
         }
 
         LinkChildren(previousChildren, ChildList);

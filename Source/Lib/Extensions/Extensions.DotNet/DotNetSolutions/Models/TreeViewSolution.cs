@@ -5,8 +5,6 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Icons.Displays;
 using Walk.Common.RazorLib.Icons.Displays.Codicon;
 using Walk.CompilerServices.DotNetSolution.Models;
-using Walk.Ide.RazorLib.ComponentRenderers.Models;
-using Walk.Extensions.DotNet.ComponentRenderers.Models;
 
 namespace Walk.Extensions.DotNet.DotNetSolutions.Models;
 
@@ -14,20 +12,14 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
 {
 	public TreeViewSolution(
 			DotNetSolutionModel dotNetSolutionModel,
-			IDotNetComponentRenderers dotNetComponentRenderers,
-			IIdeComponentRenderers ideComponentRenderers,
 			CommonService commonService,
 			bool isExpandable,
 			bool isExpanded)
 		: base(dotNetSolutionModel, isExpandable, isExpanded)
 	{
-		DotNetComponentRenderers = dotNetComponentRenderers;
-		IdeComponentRenderers = ideComponentRenderers;
 		CommonService = commonService;
 	}
 
-	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
-	public IIdeComponentRenderers IdeComponentRenderers { get; }
 	public CommonService CommonService { get; }
 
 	public override bool Equals(object? obj)
@@ -75,7 +67,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
 		{
 			ChildList = new List<TreeViewNoType>
 			{
-				new TreeViewException(exception, false, false, CommonService.CommonComponentRenderers)
+				new TreeViewException(exception, false, false)
 				{
 					Parent = this,
 					IndexAmongSiblings = 0,

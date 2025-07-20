@@ -1,4 +1,3 @@
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.WatchWindows.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
@@ -10,15 +9,11 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 {
 	public TreeViewProjectTestModel(
 			ProjectTestModel projectTestModel,
-			ICommonComponentRenderers commonComponentRenderers,
 			bool isExpandable,
 			bool isExpanded)
 		: base(projectTestModel, isExpandable, isExpanded)
 	{
-		CommonComponentRenderers = commonComponentRenderers;
 	}
-
-	public ICommonComponentRenderers CommonComponentRenderers { get; }
 
 	public override bool Equals(object? obj)
 	{
@@ -74,7 +69,6 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 		{
 			(TreeViewNoType)new TreeViewSpinner(
 				Item.ProjectIdGuid,
-				CommonComponentRenderers,
 				false,
 				false)
 		}.ToList();
@@ -97,7 +91,6 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 					var newChildList = rootStringFragment.Map.Select(kvp =>
 						(TreeViewNoType)new TreeViewStringFragment(
 							kvp.Value,
-							CommonComponentRenderers,
 							true,
 							true))
 						.ToArray();
@@ -114,7 +107,7 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 				{
 					ChildList = new List<TreeViewNoType>
 					{
-						new TreeViewException(new Exception("No results"), false, false, CommonComponentRenderers)
+						new TreeViewException(new Exception("No results"), false, false)
 						{
 							Parent = this,
 							IndexAmongSiblings = 0,
@@ -128,7 +121,7 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 			{
 				ChildList = new List<TreeViewNoType>
 				{
-					new TreeViewException(exception, false, false, CommonComponentRenderers)
+					new TreeViewException(exception, false, false)
 					{
 						Parent = this,
 						IndexAmongSiblings = 0,

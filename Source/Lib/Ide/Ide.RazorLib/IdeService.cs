@@ -24,7 +24,6 @@ using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Diffs.Models;
 using Walk.Ide.RazorLib.Installations.Models;
-using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.FolderExplorers.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
@@ -45,12 +44,10 @@ public partial class IdeService : IBackgroundTaskGroup
 
     public IdeService(
         WalkIdeConfig ideConfig,
-        IIdeComponentRenderers ideComponentRenderers,
         TextEditorService textEditorService,
         IServiceProvider serviceProvider)
     {
         IdeConfig = ideConfig;
-        IdeComponentRenderers = ideComponentRenderers;
         TextEditorService = textEditorService;
         _serviceProvider = serviceProvider;
     }
@@ -58,7 +55,6 @@ public partial class IdeService : IBackgroundTaskGroup
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
     
     public WalkIdeConfig IdeConfig { get; }
-    public IIdeComponentRenderers IdeComponentRenderers { get; }
     public TextEditorService TextEditorService { get; }
     public CommonService CommonService => TextEditorService.CommonService;
 
@@ -102,7 +98,7 @@ public partial class IdeService : IBackgroundTaskGroup
             case IdeWorkKind.OpenParentDirectoryAction:
             {
                 return InputFile_Do_OpenParentDirectoryAction(
-                    IdeComponentRenderers, CommonService, workArgs.TreeViewAbsolutePath);
+                    CommonService, workArgs.TreeViewAbsolutePath);
             }
             case IdeWorkKind.RefreshCurrentSelectionAction:
             {
@@ -806,27 +802,26 @@ public partial class IdeService : IBackgroundTaskGroup
             .GetLastWriteTimeAsync(inputFileAbsolutePathString)
             .ConfigureAwait(false);
 
-        if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime &&
-            IdeComponentRenderers.BooleanPromptOrCancelRendererType is not null)
+        if (fileLastWriteTime > textEditorModel.ResourceLastWriteTime)
         {
             var notificationInformativeKey = Key<IDynamicViewModel>.NewKey();
 
             var notificationInformative = new NotificationViewModel(
                 notificationInformativeKey,
                 "File contents were modified on disk",
-                IdeComponentRenderers.BooleanPromptOrCancelRendererType,
+                typeof(Walk.Ide.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay),
                 new Dictionary<string, object?>
                 {
                         {
-                            nameof(IBooleanPromptOrCancelRendererType.Message),
+                            nameof(Walk.Ide.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay.Message),
                             "File contents were modified on disk"
                         },
                         {
-                            nameof(IBooleanPromptOrCancelRendererType.AcceptOptionTextOverride),
+                            nameof(Walk.Ide.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay.AcceptOptionTextOverride),
                             "Reload"
                         },
                         {
-                            nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptFunc),
+                            nameof(Walk.Ide.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay.OnAfterAcceptFunc),
                             new Func<Task>(() =>
                             {
                             	Enqueue(new IdeWorkArgs
@@ -842,7 +837,7 @@ public partial class IdeService : IBackgroundTaskGroup
 							})
                         },
                         {
-                            nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineFunc),
+                            nameof(Walk.Ide.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay.OnAfterDeclineFunc),
                             new Func<Task>(() =>
                             {
                                 CommonService.Notification_ReduceDisposeAction(notificationInformativeKey);
@@ -943,7 +938,6 @@ public partial class IdeService : IBackgroundTaskGroup
 
         var rootNode = new TreeViewAbsolutePath(
             folderAbsolutePath,
-            IdeComponentRenderers,
             CommonService,
             true,
             true);
@@ -1015,7 +1009,7 @@ public partial class IdeService : IBackgroundTaskGroup
         var inputFileDialog = new DialogViewModel(
             DialogFacts.InputFileDialogKey,
             "Input File",
-            IdeComponentRenderers.InputFileRendererType,
+            typeof(Walk.Ide.RazorLib.InputFiles.Displays.InputFileDisplay),
             null,
             Walk.Ide.RazorLib.Htmls.Models.HtmlFacts.Classes.DIALOG_PADDING_0,
             true,

@@ -19,7 +19,6 @@ public class TreeViewHelperAbsolutePathDirectory
             {
                 return (TreeViewNoType)new TreeViewAbsolutePath(
                     directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true),
-                    directoryTreeView.IdeComponentRenderers,
                     directoryTreeView.CommonService,
                     true,
                     false)
@@ -38,7 +37,6 @@ public class TreeViewHelperAbsolutePathDirectory
             {
                 return (TreeViewNoType)new TreeViewAbsolutePath(
                     directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false),
-                    directoryTreeView.IdeComponentRenderers,
                     directoryTreeView.CommonService,
                     false,
                     false)

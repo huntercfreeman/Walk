@@ -1,4 +1,4 @@
-﻿using Walk.Common.RazorLib.Dimensions.Models;
+using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
@@ -245,7 +245,6 @@ public partial class DotNetService
 		var localTreeViewProjectTestModelList = localProjectTestModelList.Select(x =>
 				(TreeViewNoType)new TreeViewProjectTestModel(
 					x,
-					IdeService.TextEditorService.CommonService.CommonComponentRenderers,
 					true,
 					false))
 			.ToArray();

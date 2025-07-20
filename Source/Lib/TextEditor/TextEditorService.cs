@@ -15,17 +15,6 @@ using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.JsRuntimes.Models;
 using Walk.TextEditor.RazorLib.BackgroundTasks.Models;
-using Walk.TextEditor.RazorLib.ComponentRenderers.Models;
-/* Start ModelApi */
-/*namespace*/ /* End ModelApi */
-/* Start ViewModelApi */
-/*namespace*/ /* End ViewModelApi */
-/* Start GroupApi */
-/*namespace*/ /* End GroupApi */
-/* Start DiffApi */
-/*namespace*/ /* End DiffApi */
-/* Start OptionsApi */
-/*namespace*/ /* End OptionsApi */
 
 namespace Walk.TextEditor.RazorLib;
 
@@ -36,7 +25,6 @@ public sealed partial class TextEditorService
 
     public TextEditorService(
         WalkTextEditorConfig textEditorConfig,
-        IWalkTextEditorComponentRenderers textEditorComponentRenderers,
         IJSRuntime jsRuntime,
         CommonService commonService,
 		IServiceProvider serviceProvider)
@@ -59,7 +47,6 @@ public sealed partial class TextEditorService
 		
 		_serviceProvider = serviceProvider;
         TextEditorConfig = textEditorConfig;
-        TextEditorComponentRenderers = textEditorComponentRenderers;
         _jsRuntime = jsRuntime;
 		JsRuntimeTextEditorApi = _jsRuntime.GetWalkTextEditorApi();
         
@@ -71,7 +58,6 @@ public sealed partial class TextEditorService
 	public WalkTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
 	public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi => CommonService.JsRuntimeCommonApi;
 	public WalkTextEditorConfig TextEditorConfig { get; }
-	public IWalkTextEditorComponentRenderers TextEditorComponentRenderers { get; }
 
 #if DEBUG
     public string StorageKey => "di_te_text-editor-options-debug";

@@ -5,14 +5,12 @@ using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
-using Walk.Extensions.DotNet.ComponentRenderers.Models;
 using Walk.Extensions.DotNet.CSharpProjects.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
-using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 
@@ -28,15 +26,15 @@ public partial class DotNetService
 		Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Remove (no files are deleted)", MenuOptionKind.Delete,
-			widgetRendererType: DotNetComponentRenderers.RemoveCSharpProjectFromSolutionRendererType,
+			widgetRendererType: typeof(Walk.Extensions.DotNet.CSharpProjects.Displays.RemoveCSharpProjectFromSolutionDisplay),
 			widgetParameterMap: new Dictionary<string, object?>
 			{
 				{
-					nameof(IRemoveCSharpProjectFromSolutionRendererType.AbsolutePath),
+					nameof(Walk.Extensions.DotNet.CSharpProjects.Displays.RemoveCSharpProjectFromSolutionDisplay.AbsolutePath),
 					projectNode.Item.AbsolutePath
 				},
 				{
-					nameof(IDeleteFileFormRendererType.OnAfterSubmitFunc),
+					nameof(Walk.Ide.RazorLib.FileSystems.Displays.DeleteFileFormDisplay.OnAfterSubmitFunc),
 					new Func<AbsolutePath, Task>(
 						_ =>
 						{
@@ -101,13 +99,13 @@ public partial class DotNetService
 		Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Move to Solution Folder", MenuOptionKind.Other,
-			widgetRendererType: IdeService.IdeComponentRenderers.FileFormRendererType,
+			widgetRendererType: typeof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay),
 			widgetParameterMap: new Dictionary<string, object?>
 			{
-				{ nameof(IFileFormRendererType.FileName), string.Empty },
-				{ nameof(IFileFormRendererType.IsDirectory), false },
+				{ nameof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay.FileName), string.Empty },
+				{ nameof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay.IsDirectory), false },
 				{
-					nameof(IFileFormRendererType.OnAfterSubmitFunc),
+					nameof(Walk.Ide.RazorLib.FileSystems.Displays.FileFormDisplay.OnAfterSubmitFunc),
 					new Func<string, IFileTemplate?, List<IFileTemplate>, Task>((nextName, _, _) =>
 					{
 						Enqueue_PerformMoveProjectToSolutionFolder(

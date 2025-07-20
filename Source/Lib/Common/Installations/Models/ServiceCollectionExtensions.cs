@@ -2,7 +2,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.ComponentRenderers.Models;
 using Walk.Common.RazorLib.Notifications.Displays;
 using Walk.Common.RazorLib.Dimensions.Models;
 
@@ -30,7 +29,6 @@ public static class ServiceCollectionExtensions
             {
                 var commonService = new CommonService(
                     hostingInformation,
-                    _commonRendererTypes,
                     commonConfig,
                     sp.GetRequiredService<IJSRuntime>());
             
@@ -58,9 +56,4 @@ public static class ServiceCollectionExtensions
         
         return services;
     }
-
-    private static readonly CommonComponentRenderers _commonRendererTypes = new(
-        typeof(CommonErrorNotificationDisplay),
-        typeof(CommonInformativeNotificationDisplay),
-        typeof(CommonProgressNotificationDisplay));
 }

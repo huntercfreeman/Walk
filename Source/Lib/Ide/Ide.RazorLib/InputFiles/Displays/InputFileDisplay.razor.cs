@@ -3,13 +3,12 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Ide.RazorLib.ComponentRenderers.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 
 namespace Walk.Ide.RazorLib.InputFiles.Displays;
 
-public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, IDisposable
+public partial class InputFileDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private IdeService IdeService { get; set; } = null!;
@@ -138,7 +137,6 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
     {
         var pseudoRootNode = new TreeViewAbsolutePath(
             absolutePath,
-            IdeService.IdeComponentRenderers,
             IdeService.CommonService,
             true,
             false);
@@ -178,7 +176,6 @@ public partial class InputFileDisplay : ComponentBase, IInputFileRendererType, I
 
         IdeService.InputFile_SetOpenedTreeViewModel(
             pseudoRootNode,
-            IdeService.IdeComponentRenderers,
             IdeService.CommonService);
     }
     

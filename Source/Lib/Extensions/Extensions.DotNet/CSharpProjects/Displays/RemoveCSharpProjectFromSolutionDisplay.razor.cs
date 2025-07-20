@@ -3,12 +3,10 @@ using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keyboards.Models;
 using Walk.Common.RazorLib.Menus.Models;
-using Walk.Extensions.DotNet.ComponentRenderers.Models;
 
 namespace Walk.Extensions.DotNet.CSharpProjects.Displays;
 
-public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
-	IRemoveCSharpProjectFromSolutionRendererType
+public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase
 {
 	[CascadingParameter]
 	public MenuOptionCallbacks? MenuOptionCallbacks { get; set; }
