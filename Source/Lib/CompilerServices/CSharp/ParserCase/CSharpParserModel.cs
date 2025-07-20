@@ -107,6 +107,8 @@ public ref struct CSharpParserModel
     /// </summary>
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; }
     
+    public List<TypeDefinitionNode> ExternalTypeDefinitionList { get; } = new();
+    
     public IExpressionNode? NoLongerRelevantExpressionNode { get; set; }
     public List<SyntaxKind> TryParseExpressionSyntaxKindList { get; }
     public IExpressionNode ForceParseExpressionInitialPrimaryExpression { get; set; }
@@ -553,10 +555,10 @@ public ref struct CSharpParserModel
             
             foreach (var typeDefinitionNode in typeDefinitionNodes)
             {
-        		var matchNode = Compilation.ExternalTypeDefinitionList.FirstOrDefault(x => binder.GetIdentifierText(x, compilation) == binder.GetIdentifierText(typeDefinitionNode, compilation));
+        		var matchNode = ExternalTypeDefinitionList.FirstOrDefault(x => binder.GetIdentifierText(x, compilation) == binder.GetIdentifierText(typeDefinitionNode, compilation));
             	
             	if (matchNode is null)
-            	    Compilation.ExternalTypeDefinitionList.Add(typeDefinitionNode);
+            	    ExternalTypeDefinitionList.Add(typeDefinitionNode);
             }
         }
     }
@@ -767,7 +769,7 @@ public ref struct CSharpParserModel
     	{
     	    if (scopeIndexKey == 0)
     	    {
-                foreach (var x in compilationUnit.ExternalTypeDefinitionList)
+                foreach (var x in ExternalTypeDefinitionList)
                 {
                     if (GetIdentifierText(x, compilationUnit) == typeIdentifierText)
             	    {

@@ -21,6 +21,5 @@ public interface IExtendedCompilationUnit : ICompilationUnit
 	/// </summary>
 	public List<ICodeBlockOwner> CodeBlockOwnerList { get; }
     public List<ISyntaxNode> NodeList { get; }
-	public List<TypeDefinitionNode> ExternalTypeDefinitionList { get; }
 	public string SourceText { get; }
 }

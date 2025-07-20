@@ -183,8 +183,8 @@ public class CSharpBinder
     		.Where(kvp => kvp.Unsafe_ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.TypeDefinitionNode)
     		.Select(kvp => (TypeDefinitionNode)kvp);
     		
-		if (scopeIndexKey == 0)
-		    query = query.Concat(compilationUnit.ExternalTypeDefinitionList);
+		// if (scopeIndexKey == 0)
+		//    query = query.Concat(parserModel.ExternalTypeDefinitionList);
 		
 		return query.ToArray();
     }
@@ -244,7 +244,7 @@ public class CSharpBinder
     	
     	if (matchNode is null)
     	{
-    	    if (scopeIndexKey == 0)
+    	    /*if (scopeIndexKey == 0)
     	    {
     	         var externalMatchNode = compilationUnit.ExternalTypeDefinitionList.FirstOrDefault(x => GetIdentifierText(x, compilationUnit) == typeIdentifierText);
     	         if (externalMatchNode is not null)
@@ -252,7 +252,7 @@ public class CSharpBinder
     	             typeDefinitionNode = (TypeDefinitionNode)externalMatchNode;
     	             return true;
     	         }
-    	    }
+    	    }*/
     	
     	    typeDefinitionNode = null;
     	    return false;
