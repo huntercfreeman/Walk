@@ -8,8 +8,6 @@ public partial class TextEditorService
 {
     private TextEditorDiffState Diff_textEditorDiffState = new();
 
-	public event Action? Diff_TextEditorDiffStateChanged;
-
 	public TextEditorDiffState Diff_GetTextEditorDiffState() => Diff_textEditorDiffState;
 
 	public void Diff_Register(

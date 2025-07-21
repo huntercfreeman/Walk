@@ -126,8 +126,6 @@ public sealed partial class TextEditorService
     
     public int TabKeyBehavior_SeenTabWidth { get; set; }
 	public string TabKeyBehavior_TabSpaces { get; set; }
-	
-    public event Action? TextEditorStateChanged;
     
     private readonly Dictionary<int, List<string>> _stringMap = new();
 	

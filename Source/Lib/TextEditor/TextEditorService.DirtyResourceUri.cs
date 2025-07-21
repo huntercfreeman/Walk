@@ -1,12 +1,10 @@
-﻿using Walk.TextEditor.RazorLib.Lexers.Models;
+using Walk.TextEditor.RazorLib.Lexers.Models;
 
 namespace Walk.TextEditor.RazorLib;
 
 public partial class TextEditorService
 {
 	private DirtyResourceUriState _dirtyResourceUriState = new();
-
-	public event Action DirtyResourceUriStateChanged;
 
 	public DirtyResourceUriState GetDirtyResourceUriState() => _dirtyResourceUriState;
 
