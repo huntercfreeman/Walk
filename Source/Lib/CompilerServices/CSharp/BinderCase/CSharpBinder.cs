@@ -763,7 +763,7 @@ public class CSharpBinder
         return true;
     }
 
-    public ISyntaxNode? GetSyntaxNode(CSharpCompilationUnit compilationUnit, int positionIndex, CSharpResource? compilerServiceResource)
+    public ISyntaxNode? GetSyntaxNode(CSharpCompilationUnit compilationUnit, int positionIndex, CSharpCompilationUnit? compilerServiceResource)
     {
         // TODO: Re-implement this given the changes to how nodes are stored.
         return null;
@@ -808,13 +808,13 @@ public class CSharpBinder
     /// 	  ...This should likely be changed, because function argument goto definition won't work if done from the argument listing, rather than the code block of the function.
     /// 	  This method will act as a temporary work around.
     /// </summary>
-    public ISyntaxNode? GetFallbackNode(CSharpCompilationUnit compilationUnit, int positionIndex, CSharpResource compilerServiceResource, ICodeBlockOwner codeBlockOwner)
+    public ISyntaxNode? GetFallbackNode(CSharpCompilationUnit compilationUnit, int positionIndex, ICodeBlockOwner codeBlockOwner)
     {
-        if (compilerServiceResource.CompilationUnit is null)
+        if (compilationUnit is null)
         	return null;
         
         // Try to find a symbol at that cursor position.
-		IReadOnlyList<Symbol> symbolList = compilerServiceResource.CompilationUnit?.SymbolList ?? Array.Empty<Symbol>();
+		IReadOnlyList<Symbol> symbolList = compilationUnit?.SymbolList ?? Array.Empty<Symbol>();
 		var foundSymbol = (Symbol?)null;
 		
         foreach (var symbol in symbolList)
