@@ -21,8 +21,6 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 {
 	[Inject]
 	private TextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-	private CommonService CommonService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public Key<TextEditorComponentData> ComponentDataKey { get; set; }
@@ -88,7 +86,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
         		editContext,
         		modelModifier,
         		viewModelModifier,
-        		CommonService);
+        		TextEditorService.CommonService);
         	return ValueTask.CompletedTask;
         }));
         return Task.CompletedTask;
@@ -126,7 +124,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 			true,
 			null);
 
-        CommonService.Dialog_ReduceRegisterAction(dialogRecord);
+        TextEditorService.CommonService.Dialog_ReduceRegisterAction(dialogRecord);
     }
 
 	public Task DoCopyOnClick(MouseEventArgs arg)
@@ -282,14 +280,14 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 			
 		var menuOptionList = new List<MenuOptionRecord>();
 		
-		var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(virtualizationResult.Model.PersistentState.ResourceUri.Value, false);
+		var absolutePath = TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(virtualizationResult.Model.PersistentState.ResourceUri.Value, false);
 
 		menuOptionList.Add(new MenuOptionRecord(
 		    "Cancel",
 		    MenuOptionKind.Read,
 		    onClickFunc: () =>
 		    {
-			    CommonService.Dropdown_ReduceDisposeAction(dropdownKey);
+			    TextEditorService.CommonService.Dropdown_ReduceDisposeAction(dropdownKey);
 		    	return Task.CompletedTask;
 		    }));
 		    
@@ -324,7 +322,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 			},
 			async () => await TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(_reloadButtonHtmlElementId));
 
-        CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        TextEditorService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
     }
 
     public Task DoRefreshOnClick()

@@ -169,7 +169,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
 					TextEditorCommandDefaultFunctions.RemoveDropdown(
 				        editContext,
 				        viewModel,
-				        workArgsTuple.ComponentData.TextEditorViewModelSlimDisplay.CommonService);
+				        workArgsTuple.ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.CommonService);
 				}
 		
 		        // Remember the current cursor position prior to doing anything

@@ -753,7 +753,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         componentData.ContinueRenderingTooltipAsync,
                         Walk.TextEditor.RazorLib.Commands.Models.Defaults.TextEditorCommandDefaultFunctions.OnWheel,
                         (_textEditorService, viewModelModifier.PersistentState.ViewModelKey, cursorPositionIndex));
-                    componentData.TextEditorViewModelSlimDisplay.CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
+                    componentData.TextEditorViewModelSlimDisplay.TextEditorService.CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
                 }
             }
         }
@@ -788,7 +788,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         componentData.ContinueRenderingTooltipAsync,
                         Walk.TextEditor.RazorLib.Commands.Models.Defaults.TextEditorCommandDefaultFunctions.OnWheel,
                         (_textEditorService, viewModelModifier.PersistentState.ViewModelKey, cursorPositionIndex));
-                    componentData.TextEditorViewModelSlimDisplay.CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
+                    componentData.TextEditorViewModelSlimDisplay.TextEditorService.CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
                 }
             }
         }
@@ -796,7 +796,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         if (!foundMatch)
         {
 			viewModelModifier.PersistentState.TooltipModel = null;
-			componentData.TextEditorViewModelSlimDisplay.CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
+			componentData.TextEditorViewModelSlimDisplay.TextEditorService.CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
         }
 
         // TODO: Measure the tooltip, and reposition if it would go offscreen.
