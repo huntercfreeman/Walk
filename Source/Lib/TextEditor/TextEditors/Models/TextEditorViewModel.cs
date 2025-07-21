@@ -188,21 +188,6 @@ public sealed class TextEditorViewModel : IDisposable
         return PersistentState.TextEditorService.ViewModel_FocusPrimaryCursorAsync(componentData.PrimaryCursorContentId);
     }
     
-    public void ApplyCollapsePointState(TextEditorEditContext editContext)
-    {
-    	foreach (var collapsePoint in PersistentState.AllCollapsePointList)
-		{
-			if (!collapsePoint.IsCollapsed)
-				continue;
-			var firstToHideLineIndex = collapsePoint.AppendToLineIndex + 1;
-			for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex - 1; lineOffset++)
-			{
-				PersistentState.HiddenLineIndexHashSet.Add(firstToHideLineIndex + lineOffset);
-			}
-		}
-		PersistentState.VirtualizedCollapsePointListVersion++;
-    }
-    
     public void SetColumnIndexAndPreferred(int columnIndex)
     {
         ColumnIndex = columnIndex;

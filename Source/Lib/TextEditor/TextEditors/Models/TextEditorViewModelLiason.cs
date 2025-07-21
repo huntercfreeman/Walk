@@ -41,21 +41,6 @@ public class TextEditorViewModelLiason
 		{
 			var viewModel = editContext.GetViewModelModifier(viewModelKey);
 			
-			// TODO: Determine which viewmodel sent the event?
-			for (int i = 0; i < viewModel.PersistentState.InlineUiList.Count; i++)
-			{
-				var inlineUiTuple = viewModel.PersistentState.InlineUiList[i];
-				
-				if (initialCursorPositionIndex <= inlineUiTuple.InlineUi.PositionIndex)
-				{
-					if (viewModel.PersistentState.VirtualAssociativityKind == VirtualAssociativityKind.Right)
-						continue;
-				
-					inlineUiTuple.InlineUi = viewModel.PersistentState.InlineUiList[i].InlineUi.WithIncrementPositionIndex(insertionLength);
-					viewModel.PersistentState.InlineUiList[i] = inlineUiTuple;
-				}
-			}
-			
 			var componentData = viewModel.PersistentState.ComponentData;
 			if (componentData is not null)
 			{
@@ -83,18 +68,6 @@ public class TextEditorViewModelLiason
 		foreach (var viewModelKey in viewModelKeyList)
 		{
 			var viewModel = editContext.GetViewModelModifier(viewModelKey);
-			
-			// TODO: Determine which viewmodel sent the event?
-			for (int i = 0; i < viewModel.PersistentState.InlineUiList.Count; i++)
-			{
-				var inlineUiTuple = viewModel.PersistentState.InlineUiList[i];
-				
-				if (endExclusiveIndex - 1 < inlineUiTuple.InlineUi.PositionIndex)
-				{
-					inlineUiTuple.InlineUi = viewModel.PersistentState.InlineUiList[i].InlineUi.WithDecrementPositionIndex(endExclusiveIndex - startInclusiveIndex);
-					viewModel.PersistentState.InlineUiList[i] = inlineUiTuple;
-				}
-			}
 			
 			var componentData = viewModel.PersistentState.ComponentData;
 			if (componentData is not null)

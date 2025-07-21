@@ -202,29 +202,6 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
 		                componentData);
 		            shouldRevealCursor = true;
 		            break;
-	            case "KeyM":
-		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
-            		CollapsePoint encompassingCollapsePoint = new CollapsePoint(-1, false, string.Empty, -1);;
-
-					foreach (var collapsePoint in viewModel.PersistentState.AllCollapsePointList)
-					{
-						for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex; lineOffset++)
-						{
-							if (viewModel.LineIndex == collapsePoint.AppendToLineIndex + lineOffset)
-								encompassingCollapsePoint = collapsePoint;
-						}
-					}
-					
-	            	if (encompassingCollapsePoint.AppendToLineIndex != -1)
-	            	{
-	            		_ = TextEditorCommandDefaultFunctions.ToggleCollapsePoint(
-		            		encompassingCollapsePoint.AppendToLineIndex,
-	            			modelModifier,
-	            			viewModel);
-	            	}
-					
-		            shouldRevealCursor = true;
-		            break;
 		        case "KeyF":
 		        	modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
 		        	if (shiftKey)

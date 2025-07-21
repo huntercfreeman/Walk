@@ -272,34 +272,12 @@ public static class EventUtils
         
         var lineIndex = (int)(positionY / viewModel.PersistentState.CharAndLineMeasurements.LineHeight);
         
-        var hiddenLineCount = 0;
-        
-		for (int i = 0; i <= lineIndex; i++)
-		{
-			if (viewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
-				lineIndex++;
-		}
-        
         lineIndex = lineIndex > modelModifier.LineCount - 1
             ? modelModifier.LineCount - 1
             : lineIndex;
             
         var columnIndexDouble = positionX / viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth;
         int columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
-        
-        var inlineUi = default(InlineUi);
-        (int lineIndex, int columnIndex) inlineUiLineAndColumnPositionIndices = (-1, -1);
-        
-        foreach (var inlineUiTuple in viewModel.PersistentState.InlineUiList)
-        {
-        	inlineUiLineAndColumnPositionIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(inlineUiTuple.InlineUi.PositionIndex);
-        	
-        	if (inlineUiLineAndColumnPositionIndices.lineIndex == lineIndex)
-        	{
-        		inlineUi = inlineUiTuple.InlineUi;
-        		break;
-        	}
-        }
         
         var lineLength = modelModifier.GetLineLength(lineIndex);
         
@@ -312,7 +290,6 @@ public static class EventUtils
 		int visualLength = 0;
 		
 		var previousCharacterWidth = 1;
-		var previousCharacterWidthIsInlineUi = false;
 		var previousPosition = -1;
 		
 		for (int columnIndex = 0; columnIndex < lineLength; columnIndex++)
@@ -334,14 +311,7 @@ public static class EventUtils
 		    			//
 		    			//  ==
 		    			// |--->
-		    			if (previousCharacterWidthIsInlineUi)
-		    			{
-		    				viewModel.PersistentState.VirtualAssociativityKind = VirtualAssociativityKind.Left;
-		    			}
-		    			else
-		    			{
-		    				literalLength = literalLength - 1;
-		    			}
+	    				literalLength = literalLength - 1;
 		    			break;
 		    		}
 		    		else
@@ -352,10 +322,6 @@ public static class EventUtils
 		    			//
 		    			//    ==
 		    			//  --->|
-		    			if (previousCharacterWidthIsInlineUi)
-		    			{
-		    				viewModel.PersistentState.VirtualAssociativityKind = VirtualAssociativityKind.Right;
-		    			}
 		    			break;
 		    		}
 		    	}
@@ -363,28 +329,14 @@ public static class EventUtils
 		    	break;
 		    }
 		    
-		    if (inlineUiLineAndColumnPositionIndices.lineIndex == lineIndex &&
-		    	inlineUiLineAndColumnPositionIndices.columnIndex == columnIndex &&
-		    	previousPosition != columnIndex)
-		    {
-		    	previousCharacterWidth = 3;
-		    	previousCharacterWidthIsInlineUi = true;
-		    	previousPosition = columnIndex;
-		    	columnIndex--;
-		    	visualLength += previousCharacterWidth;
-		    }
-			else
-			{
-			    literalLength += 1;
-			    
-			    previousCharacterWidth = GetCharacterWidth(
-			    	modelModifier.RichCharacterList[
-			    		lineInformation.Position_StartInclusiveIndex + columnIndex]
-			    	.Value);
-			    
-			    visualLength += previousCharacterWidth;
-			    previousCharacterWidthIsInlineUi = false;
-		    }
+		    literalLength += 1;
+		    
+		    previousCharacterWidth = GetCharacterWidth(
+		    	modelModifier.RichCharacterList[
+		    		lineInformation.Position_StartInclusiveIndex + columnIndex]
+		    	.Value);
+		    
+		    visualLength += previousCharacterWidth;
 		}
 		
 		int GetCharacterWidth(char character)

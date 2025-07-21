@@ -188,19 +188,6 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	            
 	            var lowerLine = modelModifier.GetLineInformation(lowerLineIndexInclusive);
 	            var upperLine = modelModifier.GetLineInformation(upperLineIndexInclusive);
-				
-				viewModelModifier.PersistentState.VirtualizedCollapsePointList = new();
-				
-				foreach (var collapsePoint in viewModelModifier.PersistentState.AllCollapsePointList)
-				{
-					if (lowerLine.Index <= collapsePoint.AppendToLineIndex &&
-		    	    	upperLine.Index >= collapsePoint.AppendToLineIndex)
-		    	    {
-		    	    	viewModelModifier.PersistentState.VirtualizedCollapsePointList.Add(collapsePoint);
-		    	    }
-				}
-				
-				viewModelModifier.PersistentState.VirtualizedCollapsePointListVersion++;
 			}
 				
 			if (_codeBlockOwner != targetScope)
