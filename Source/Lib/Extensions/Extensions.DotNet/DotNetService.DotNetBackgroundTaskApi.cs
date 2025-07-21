@@ -93,7 +93,7 @@ public partial class DotNetService
 	public ValueTask Do_WalkExtensionsDotNetInitializerOnInit()
 	{
 		InitializePanelTabs();
-		Initialize();
+		// Initialize();
 		return ValueTask.CompletedTask;
 	}
 

@@ -20,7 +20,7 @@ public record Panel : IPanelTab, IDialog, IDrag
         string title,
         Key<Panel> key,
         Key<IDynamicViewModel> dynamicViewModelKey,
-        Key<ContextRecord> contextRecordKey,
+        int contextRecordKey,
         Type componentType,
         Dictionary<string, object?>? componentParameterMap,
         CommonService commonService)
@@ -43,7 +43,7 @@ public record Panel : IPanelTab, IDialog, IDrag
 	public string TitleVerbose => Title;
 	public Key<Panel> Key { get; }
 	public Key<IDynamicViewModel> DynamicViewModelKey { get; }
-    public Key<ContextRecord> ContextRecordKey { get; }
+    public int ContextRecordKey { get; }
 	public CommonService CommonService { get;}
 	public Type ComponentType { get; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; set; }

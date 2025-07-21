@@ -15,7 +15,7 @@ public partial class DotNetService
 	private List<TreeViewNoType> _nodeList = new();
 	private TreeViewNamespacePath? _nodeOfViewModel = null;
 
-	public void Initialize()
+	/*public void Initialize()
 	{
 		// NuGetPackageManagerContext
 		{
@@ -109,7 +109,7 @@ public partial class DotNetService
 						focusTextEditorCommand);
 			}
 		}
-	}
+	}*/
 
 	private async Task PerformGetFlattenedTree()
 	{

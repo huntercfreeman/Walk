@@ -124,9 +124,10 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
 	
 	private async Task<bool> TrySetFocus(ContextRecord contextRecord)
     {
-        return await IdeService.CommonService.JsRuntimeCommonApi
+        /*return await IdeService.CommonService.JsRuntimeCommonApi
             .TryFocusHtmlElementById(contextRecord.ContextElementId)
-            .ConfigureAwait(false);
+            .ConfigureAwait(false);*/
+        return false;
     }
     
     private async void Shared_OnStateChanged() => await InvokeAsync(StateHasChanged);

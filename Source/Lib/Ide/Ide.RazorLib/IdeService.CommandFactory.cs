@@ -28,7 +28,7 @@ public partial class IdeService
 
 	public IDialog? CodeSearchDialog { get; set; }
 
-	public void CommandFactory_Initialize()
+	/*public void CommandFactory_Initialize()
 	{
 		((TextEditorKeymapDefault)TextEditorFacts.Keymap_DefaultKeymap).AltF12Func = CommandFactory_PeekCodeSearchDialog;
 
@@ -427,7 +427,7 @@ public partial class IdeService
 					CtrlKey = true,
 				},
 				openCommandBarCommand);
-	}
+	}*/
 
 	public ValueTask CommandFactory_OpenCodeSearchDialog()
 	{

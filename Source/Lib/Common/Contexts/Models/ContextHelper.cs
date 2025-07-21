@@ -32,9 +32,11 @@ public static class ContextHelper
 
         async Task<bool> TrySetFocus()
         {
-            return await jsRuntimeCommonApi
+            return false;
+            
+            /*return await jsRuntimeCommonApi
                 .TryFocusHtmlElementById(contextRecord.ContextElementId)
-                .ConfigureAwait(false);
+                .ConfigureAwait(false);*/
         }
     }
 }

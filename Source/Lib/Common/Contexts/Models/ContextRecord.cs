@@ -3,9 +3,4 @@ using Walk.Common.RazorLib.Keys.Models;
 
 namespace Walk.Common.RazorLib.Contexts.Models;
 
-public record struct ContextRecord(
-    Key<ContextRecord> ContextKey,
-    IKeymap Keymap)
-{
-    public string ContextElementId => $"di_ide_context-{ContextKey.Guid}";
-}
+public record struct ContextRecord(int ContextKey);

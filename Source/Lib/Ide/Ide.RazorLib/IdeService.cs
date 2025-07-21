@@ -152,7 +152,7 @@ public partial class IdeService : IBackgroundTaskGroup
 
         InitializePanelResizeHandleDimensionUnit();
         InitializePanelTabs();
-        CommandFactory_Initialize();
+        // CommandFactory_Initialize();
 
         return ValueTask.CompletedTask;
     }
@@ -339,7 +339,7 @@ public partial class IdeService : IBackgroundTaskGroup
         InitializeMenuTools();
         ideMainLayout.InitializeMenuView();
 
-        AddAltKeymap(ideMainLayout);
+        // AddAltKeymap(ideMainLayout);
         return ValueTask.CompletedTask;
     }
 
@@ -496,7 +496,7 @@ public partial class IdeService : IBackgroundTaskGroup
     /// <summary>
     /// Add option to allow a user to disable the alt keymap to access to the header button dropdowns.
     /// </summary>
-    private void AddAltKeymap(IdeMainLayout ideMainLayout)
+    /*private void AddAltKeymap(IdeMainLayout ideMainLayout)
     {
         _ = CommonFacts.GlobalContext.Keymap.TryRegister(
                 new KeymapArgs()
@@ -549,7 +549,7 @@ public partial class IdeService : IBackgroundTaskGroup
                 LayerKey = -1,
             },
             new CommonCommand("Open Run Dropdown", "open-run-dropdown", false, async _ => await ideMainLayout.RenderRunDropdownOnClick()));
-    }
+    }*/
     
     public void Editor_ShowInputFile()
     {

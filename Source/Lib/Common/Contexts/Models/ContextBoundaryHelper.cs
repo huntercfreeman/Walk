@@ -6,7 +6,7 @@ namespace Walk.Common.RazorLib.Contexts.Models;
 
 public static class ContextBoundaryHelper
 {
-    public static void SetActiveContextState(CommonService commonService, Key<ContextRecord> contextKey)
+    public static void SetActiveContextState(CommonService commonService, int contextKey)
     {
         commonService.SetFocusedContextKey(contextKey);
     }
@@ -29,7 +29,7 @@ public static class ContextBoundaryHelper
     }
 
     /// <summary>NOTE: 'onfocus' event does not bubble, whereas 'onfocusin' does bubble. Usage of both events in this file is intentional.</summary>
-    public static void HandleOnFocusIn(CommonService commonService, Key<ContextRecord> contextKey)
+    public static void HandleOnFocusIn(CommonService commonService, int contextKey)
     {
     	if (commonService.GetContextState().FocusedContextKey != contextKey)
     		SetActiveContextState(commonService, contextKey);
@@ -63,9 +63,9 @@ public static class ContextBoundaryHelper
 	/// </summary>
     public static async Task HandleKeymapArgumentAsync(ContextRecord contextRecord, KeymapArgs keymapArgs)
     {
-        var success = contextRecord.Keymap.MapFirstOrDefault(keymapArgs, out var command);
+        /*var success = contextRecord.Keymap.MapFirstOrDefault(keymapArgs, out var command);
 
         if (success && command is not null)
-            await command.CommandFunc(keymapArgs).ConfigureAwait(false);
+            await command.CommandFunc(keymapArgs).ConfigureAwait(false);*/
     }
 }
