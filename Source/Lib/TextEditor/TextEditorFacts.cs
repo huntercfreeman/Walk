@@ -81,12 +81,6 @@ public static class TextEditorFacts
         ThemeColorKind.Dark,
         IncludeScopeApp: false,
         IncludeScopeTextEditor: true);
-
-    public static readonly List<ThemeRecord> AllCustomThemesList = new()
-    {
-        LightTheme,
-        DarkTheme
-    };
     /* End WalkTextEditorCustomThemeFacts */
     
     /* Start Aaa */
