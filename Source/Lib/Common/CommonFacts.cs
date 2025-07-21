@@ -242,8 +242,8 @@ public static class CommonFacts
     /* End SizeFacts */
     
     /* Start BackgroundTaskFacts */
-    public static Key<BackgroundTaskQueue> ContinuousQueueKey { get; } = new Key<BackgroundTaskQueue>(Guid.Parse("78912ee9-1b3f-4bc3-ab8b-5681fbf0b131"));
-	public static Key<BackgroundTaskQueue> IndefiniteQueueKey { get; } = new Key<BackgroundTaskQueue>(Guid.Parse("7905c763-c3fd-418e-b73d-4ca18666c20c"));
+    public static int ContinuousQueueKey { get; } = 0;
+	public static int IndefiniteQueueKey { get; } = 1;
     /* End BackgroundTaskFacts */
     
     /* Start KeyboardKeyFacts */

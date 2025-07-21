@@ -11,4 +11,4 @@ public record struct TextEditorDiagnostic(
     TextEditorDiagnosticLevel DiagnosticLevel,
     string Message,
     TextEditorTextSpan TextSpan,
-    Guid Id);
+    int Id);
