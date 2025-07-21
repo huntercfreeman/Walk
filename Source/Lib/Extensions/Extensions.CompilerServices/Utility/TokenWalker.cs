@@ -22,11 +22,13 @@ public class TokenWalker
 
 	public TokenWalker(IReadOnlyList<SyntaxToken> tokenList, bool useDeferredParsing = false)
 	{
+#if DEBUG
 		if (tokenList.Count > 0 &&
 			tokenList[tokenList.Count - 1].SyntaxKind != SyntaxKind.EndOfFileToken)
 		{
 			throw new WalkTextEditorException($"The last token must be 'SyntaxKind.EndOfFileToken'.");
 		}
+#endif
 
 		TokenList = tokenList;
 		
@@ -176,15 +178,14 @@ public class TokenWalker
 	public void Reinitialize(List<SyntaxToken> tokenList)
 	{
 		// TODO: Don't duplicate the constructor here...
+#if DEBUG
+		if (tokenList.Count > 0 &&
+			tokenList[tokenList.Count - 1].SyntaxKind != SyntaxKind.EndOfFileToken)
 		{
-			if (tokenList.Count > 0 &&
-				tokenList[tokenList.Count - 1].SyntaxKind != SyntaxKind.EndOfFileToken)
-			{
-				throw new WalkTextEditorException($"The last token must be 'SyntaxKind.EndOfFileToken'.");
-			}
-	
-			TokenList = tokenList;
+			throw new WalkTextEditorException($"The last token must be 'SyntaxKind.EndOfFileToken'.");
 		}
+#endif
+		TokenList = tokenList;
 		
 		_index = 0;
 		ConsumeCounter = 0;
