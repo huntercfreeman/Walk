@@ -1,4 +1,4 @@
-﻿namespace Walk.Common.RazorLib.RenderStates.Models;
+namespace Walk.Common.RazorLib.RenderStates.Models;
 
 /// <summary>
 /// TODO: SphagettiCode - What is this used for? (2023-09-19)

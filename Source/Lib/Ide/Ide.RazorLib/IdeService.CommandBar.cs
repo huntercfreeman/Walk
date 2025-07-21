@@ -1,4 +1,4 @@
-﻿using Walk.Ide.RazorLib.CommandBars.Models;
+using Walk.Ide.RazorLib.CommandBars.Models;
 
 namespace Walk.Ide.RazorLib;
 

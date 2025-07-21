@@ -1,4 +1,4 @@
-﻿namespace Walk.Extensions.CompilerServices;
+namespace Walk.Extensions.CompilerServices;
 
 public class EvaluatorResult
 {

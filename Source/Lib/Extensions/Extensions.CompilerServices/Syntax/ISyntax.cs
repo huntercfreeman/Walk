@@ -1,4 +1,4 @@
-﻿namespace Walk.Extensions.CompilerServices.Syntax;
+namespace Walk.Extensions.CompilerServices.Syntax;
 
 public interface ISyntax
 {

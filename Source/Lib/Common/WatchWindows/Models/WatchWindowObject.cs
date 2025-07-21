@@ -1,4 +1,4 @@
-﻿namespace Walk.Common.RazorLib.WatchWindows.Models;
+namespace Walk.Common.RazorLib.WatchWindows.Models;
 
 public class WatchWindowObject
 {

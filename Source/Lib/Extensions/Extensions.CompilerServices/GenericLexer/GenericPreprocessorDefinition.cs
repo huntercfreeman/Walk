@@ -1,4 +1,4 @@
-﻿namespace Walk.Extensions.CompilerServices.GenericLexer;
+namespace Walk.Extensions.CompilerServices.GenericLexer;
 
 public class GenericPreprocessorDefinition
 {

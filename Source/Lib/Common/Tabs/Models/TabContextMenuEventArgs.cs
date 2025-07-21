@@ -1,4 +1,4 @@
-﻿using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace Walk.Common.RazorLib.Tabs.Models;

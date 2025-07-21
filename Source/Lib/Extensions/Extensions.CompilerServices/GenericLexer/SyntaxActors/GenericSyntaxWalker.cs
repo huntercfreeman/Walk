@@ -1,4 +1,4 @@
-﻿using Walk.Extensions.CompilerServices.GenericLexer.SyntaxEnums;
+using Walk.Extensions.CompilerServices.GenericLexer.SyntaxEnums;
 using Walk.Extensions.CompilerServices.GenericLexer.SyntaxObjects;
 
 namespace Walk.Extensions.CompilerServices.GenericLexer.SyntaxActors;

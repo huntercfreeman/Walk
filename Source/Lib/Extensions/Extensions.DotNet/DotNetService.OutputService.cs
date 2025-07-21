@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.Common.RazorLib.TreeViews.Models;

@@ -1,4 +1,4 @@
-﻿using Walk.CompilerServices.DotNetSolution.Models.Project;
+using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.Extensions.DotNet.Nugets.Models;
 
 namespace Walk.Extensions.DotNet;

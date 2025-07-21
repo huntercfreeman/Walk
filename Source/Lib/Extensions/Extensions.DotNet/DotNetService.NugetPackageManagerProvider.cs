@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Json;
+using System.Net.Http.Json;
 using System.Text;
 using System.Web;
 using Walk.Extensions.DotNet.Nugets.Models;

@@ -1,4 +1,4 @@
-﻿using Walk.TextEditor.RazorLib.CompilerServices;
+using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 
 namespace Walk.TextEditor.RazorLib;

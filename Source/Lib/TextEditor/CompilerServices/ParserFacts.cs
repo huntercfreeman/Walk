@@ -1,4 +1,4 @@
-﻿namespace Walk.TextEditor.RazorLib.CompilerServices;
+namespace Walk.TextEditor.RazorLib.CompilerServices;
 
 public static class ParserFacts
 {

@@ -1,4 +1,4 @@
-﻿using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Keys.Models;
 using Walk.CompilerServices.DotNetSolution.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
 

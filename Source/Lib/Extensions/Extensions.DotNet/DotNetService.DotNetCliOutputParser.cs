@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Walk.Extensions.DotNet.CommandLines.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.Lexers.Models;

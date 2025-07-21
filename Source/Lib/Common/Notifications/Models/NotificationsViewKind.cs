@@ -1,4 +1,4 @@
-﻿namespace Walk.Common.RazorLib.Notifications.Models;
+namespace Walk.Common.RazorLib.Notifications.Models;
 
 public enum NotificationsViewKind
 {

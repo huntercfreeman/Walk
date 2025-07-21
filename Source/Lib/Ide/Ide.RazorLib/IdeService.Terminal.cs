@@ -1,4 +1,4 @@
-﻿using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Keys.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 
 namespace Walk.Ide.RazorLib;

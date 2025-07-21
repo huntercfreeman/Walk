@@ -1,4 +1,4 @@
-﻿namespace Walk.Ide.RazorLib.Htmls.Models;
+namespace Walk.Ide.RazorLib.Htmls.Models;
 
 public static partial class HtmlFacts
 {

@@ -1,4 +1,4 @@
-﻿using Walk.Ide.RazorLib.FolderExplorers.Models;
+using Walk.Ide.RazorLib.FolderExplorers.Models;
 
 namespace Walk.Ide.RazorLib;
 

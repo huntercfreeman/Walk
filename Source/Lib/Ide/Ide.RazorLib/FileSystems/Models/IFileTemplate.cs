@@ -1,4 +1,4 @@
-﻿namespace Walk.Ide.RazorLib.FileSystems.Models;
+namespace Walk.Ide.RazorLib.FileSystems.Models;
 
 public interface IFileTemplate
 {

@@ -1,4 +1,4 @@
-﻿using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
+using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 namespace Walk.TextEditor.RazorLib;
 

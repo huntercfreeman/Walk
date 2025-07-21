@@ -1,4 +1,4 @@
-﻿namespace Walk.Extensions.CompilerServices.GenericLexer.SyntaxEnums;
+namespace Walk.Extensions.CompilerServices.GenericLexer.SyntaxEnums;
 
 public enum GenericSyntaxKind
 {

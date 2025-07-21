@@ -1,4 +1,4 @@
-﻿namespace Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
+namespace Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 public enum HeaderButtonKind
 {
