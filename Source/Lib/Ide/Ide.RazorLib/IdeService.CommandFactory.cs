@@ -337,7 +337,7 @@ public partial class IdeService
 				foreach (var context in contextState.AllContextsList)
 				{
 					menuOptionList.Add(new MenuOptionRecord(
-						context.DisplayNameFriendly,
+						"context.Name was here",
 						MenuOptionKind.Other));
 				}
 
