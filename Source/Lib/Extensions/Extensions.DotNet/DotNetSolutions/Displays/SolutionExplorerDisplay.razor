@@ -10,7 +10,7 @@
 
 @* ContextRecord="ContextFacts.SolutionExplorerContext" *@
 
-<div id="@CommonFacts.SolutionExplorerContext.ContextElementId" class="di_ide_solution-explorer-display" style="height: 100%">
+<div class="di_ide_solution-explorer-display" style="height: 100%">
     @{
     	var dotNetSolutionState = DotNetService.GetDotNetSolutionState();
     	var appOptionsState = DotNetService.IdeService.TextEditorService.CommonService.GetAppOptionsState();

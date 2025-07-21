@@ -1105,7 +1105,7 @@ public class TextEditorCommandDefaultFunctions
         		editContext,
 		        modelModifier,
 		        viewModel,
-		        componentData.TextEditorViewModelSlimDisplay.CommonService,
+		        componentData.TextEditorViewModelSlimDisplay.TextEditorService.CommonService,
 		        componentData);
         }
         else if (EventUtils.IsSyntaxHighlightingInvoker(keymapArgs))
@@ -1177,7 +1177,7 @@ public class TextEditorCommandDefaultFunctions
         		editContext,
 		        modelModifier,
 		        viewModel,
-		        componentData.TextEditorViewModelSlimDisplay.CommonService,
+		        componentData.TextEditorViewModelSlimDisplay.TextEditorService.CommonService,
 		        componentData);
         }
 

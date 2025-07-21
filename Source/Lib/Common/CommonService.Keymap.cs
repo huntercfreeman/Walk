@@ -32,7 +32,7 @@ public partial class CommonService
         KeymapStateChanged?.Invoke();
     }
     
-    public void DisposeKeymapLayer(Key<KeymapLayer> keymapLayerKey)
+    public void DisposeKeymapLayer(int keymapLayerKey)
     {
         lock (_stateModificationLock)
         {

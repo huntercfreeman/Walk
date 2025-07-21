@@ -76,7 +76,7 @@ public partial class CommonService
 		return taskCompletionSource.Task;
     }
 
-    public Task Indefinite_EnqueueAsync(Key<IBackgroundTaskGroup> taskKey, Key<BackgroundTaskQueue> queueKey, string name, Func<ValueTask> runFunc)
+    public Task Indefinite_EnqueueAsync(Key<IBackgroundTaskGroup> taskKey, int queueKey, string name, Func<ValueTask> runFunc)
     {
         return Indefinite_EnqueueAsync(new BackgroundTask(taskKey, runFunc));
     }

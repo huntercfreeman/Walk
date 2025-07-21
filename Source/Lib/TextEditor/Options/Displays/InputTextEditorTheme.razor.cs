@@ -25,13 +25,11 @@ public partial class InputTextEditorTheme : ComponentBase, IDisposable
     {
         var themeList = CommonService.GetThemeState().ThemeList;
 
-        var chosenThemeKeyGuidString = changeEventArgs.Value?.ToString() ?? string.Empty;
+        var chosenThemeKeyIntString = changeEventArgs.Value?.ToString() ?? string.Empty;
 
-        if (Guid.TryParse(chosenThemeKeyGuidString,
-                out var chosenThemeKeyGuid))
+        if (int.TryParse(chosenThemeKeyIntString, out var chosenThemeKeyInt))
         {
-            var chosenThemeKey = new Key<ThemeRecord>(chosenThemeKeyGuid);
-            var foundTheme = themeList.FirstOrDefault(x => x.Key == chosenThemeKey);
+            var foundTheme = themeList.FirstOrDefault(x => x.Key == chosenThemeKeyInt);
 
             if (foundTheme is not null)
                 TextEditorService.Options_SetTheme(foundTheme);

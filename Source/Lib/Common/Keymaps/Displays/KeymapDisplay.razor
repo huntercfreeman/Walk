@@ -3,7 +3,7 @@
 <div class="di_ide_keymap">
     @{
         var keyKeymapKvpsList = Keymap.GetKeyKeyValuePairList()
-            .OrderByDescending(x => x.Key.LayerKey.Guid)
+            .OrderByDescending(x => x.Key.LayerKey)
             .ThenBy(x => x.Value.DisplayName)
             .ToArray();
     }
@@ -171,7 +171,7 @@
                     @if (keymapArgs.LayerKey == keymapLayer.Key)
                     {
                         <td>
-                            @keymapLayer.DisplayName
+                            keymapLayer.Name was here
                         </td>
                     }
                     else

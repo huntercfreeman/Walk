@@ -1,3 +1,4 @@
+using Walk.Common.RazorLib.Themes.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models;
@@ -5,22 +6,15 @@ using Walk.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Walk.TextEditor.RazorLib.Diffs.Models;
 
 namespace Walk.TextEditor.RazorLib;
 
 public static class TextEditorFacts
 {
     /* Start TextEditorKeymapDefaultFacts */
-	public static readonly KeymapLayer KeymapDefault_DefaultLayer = new KeymapLayer(
-        new Key<KeymapLayer>(Guid.Parse("d0ac9354-6671-44fd-b281-e652a6aa1f56")),
-        "Default Layer",
-        "default-layer");
+	public static readonly KeymapLayer KeymapDefault_DefaultLayer = new KeymapLayer(Key: 0);
 
-    public static readonly KeymapLayer KeymapDefault_HasSelectionLayer = new KeymapLayer(
-        new Key<KeymapLayer>(Guid.Parse("3ac23ee9-ea25-4b8a-bed4-f10367ad095e")),
-        "If Has Selection",
-        "if-has-selection");
+    public static readonly KeymapLayer KeymapDefault_HasSelectionLayer = new KeymapLayer(Key: 1);
     /* End TextEditorKeymapDefaultFacts */
     
     /* Start TextEditorKeymapFacts */
@@ -69,33 +63,25 @@ public static class TextEditorFacts
         new TextEditorDevToolsDecorationMapper());
     /* End TextEditorDevToolsPresentationFacts */
     
-    /* Start DiffPresentationFacts */
-    public const string Diff_CssClassString = "di_te_diff-presentation";
+    /* Start WalkTextEditorCustomThemeFacts */
+    public static readonly ThemeRecord LightTheme = new ThemeRecord(
+        Key: 2,
+        "Walk IDE Light Theme",
+        "di_light-theme",
+        ThemeContrastKind.Default,
+        ThemeColorKind.Light,
+        IncludeScopeApp: false,
+        IncludeScopeTextEditor: true);
 
-    public static readonly Key<TextEditorPresentationModel> Diff_InPresentationKey = Key<TextEditorPresentationModel>.NewKey();
-    public static readonly Key<TextEditorPresentationModel> Diff_OutPresentationKey = Key<TextEditorPresentationModel>.NewKey();
-
-    /// <summary>
-    /// TODO: Change the name of this from 'EmptyInPresentationModel' because its confusingly named.
-    /// </summary>
-    public static readonly TextEditorPresentationModel Diff_EmptyInPresentationModel = new(
-        Diff_InPresentationKey,
-        0,
-        Diff_CssClassString,
-        new TextEditorDiffDecorationMapper());
-
-    /// <summary>
-    /// TODO: Change the name of this from 'EmptyOutPresentationModel' because its confusingly named.
-    /// </summary>
-    public static readonly TextEditorPresentationModel Diff_EmptyOutPresentationModel = new(
-        Diff_OutPresentationKey,
-        0,
-        Diff_CssClassString,
-        new TextEditorDiffDecorationMapper());
-    /* End DiffPresentationFacts */
-    
-    /* Start Aaa */
-    /* End Aaa */
+    public static readonly ThemeRecord DarkTheme = new ThemeRecord(
+        Key: 3,
+        "Walk IDE Dark Theme",
+        "di_dark-theme",
+        ThemeContrastKind.Default,
+        ThemeColorKind.Dark,
+        IncludeScopeApp: false,
+        IncludeScopeTextEditor: true);
+    /* End WalkTextEditorCustomThemeFacts */
     
     /* Start Aaa */
     /* End Aaa */

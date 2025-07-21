@@ -17,8 +17,6 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 {
 	[Inject]
 	public TextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private CommonService CommonService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public Key<TextEditorComponentData> ComponentDataKey { get; set; }

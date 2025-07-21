@@ -24,28 +24,6 @@ public partial class TextEditorService
 
 	private IDialog? Options_findAllDialog;
 
-	/// <summary>
-	/// Step 1: Notifies the TextEditorViewModelDisplay to recalculate `_componentData.SetWrapperCssAndStyle();`
-	///         and invoke `StateHasChanged()`.
-	/// </summary>
-	public event Action? Options_StaticStateChanged;
-	/// <summary>
-	/// Step 1: Notifies the WalkTextEditorInitializer to measure a tiny UI element that has the options applied to it.
-	/// Step 2: WalkTextEditorInitializer then invokes `MeasuredStateChanged`.
-	/// Step 3: TextEditorViewModelDisplay sees that second event fire, it enqueues a re-calculation of the virtualization result.
-	/// Step 4: Eventually that virtualization result is finished and the editor re-renders.
-	/// </summary>
-	public event Action? Options_NeedsMeasured;
-	/// <summary>
-	/// Step 1: Notifies TextEditorViewModelDisplay to enqueue a re-calculation of the virtualization result.
-	/// Step 2: Eventually that virtualization result is finished and the editor re-renders.
-	/// </summary>
-	public event Action? Options_MeasuredStateChanged;
-	/// <summary>
-	/// This event communicates from the text editor UI to the header and footer.
-	/// </summary>
-	public event Action? Options_TextEditorWrapperCssStateChanged;
-
 	public TextEditorOptionsState Options_GetTextEditorOptionsState() => Options_textEditorOptionsState;
 
 	public TextEditorOptions Options_GetOptions()
@@ -369,11 +347,21 @@ public partial class TextEditorService
 		if (string.IsNullOrWhiteSpace(optionsJsonString))
 			return;
 
-		var optionsJson = JsonSerializer.Deserialize<TextEditorOptionsJsonDto>(optionsJsonString);
-
-		if (optionsJson is null)
-			return;
-
+        TextEditorOptionsJsonDto? optionsJson = null;
+        
+        try
+        {
+    		optionsJson = JsonSerializer.Deserialize<TextEditorOptionsJsonDto>(optionsJsonString);
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            // TODO: Preserve the values that do parse.
+            await CommonService.Storage_SetValue(StorageKey, null).ConfigureAwait(false);
+        }
+        
+        if (optionsJson is null)
+    		return;
+        
 		if (optionsJson.CommonOptionsJsonDto?.ThemeKey is not null)
 		{
 			var matchedTheme = CommonService.GetThemeState().ThemeList.FirstOrDefault(

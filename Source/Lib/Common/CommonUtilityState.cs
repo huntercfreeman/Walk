@@ -336,11 +336,11 @@ public record struct TooltipState
 /// </summary>
 public record struct ContextState(
     IReadOnlyList<ContextRecord> AllContextsList,
-    Key<ContextRecord> FocusedContextKey)
+    int FocusedContextKey)
 {
     public ContextState() : this(
         Array.Empty<ContextRecord>(),
-        Key<ContextRecord>.Empty)
+        0)
     {
         AllContextsList = CommonFacts.AllContextsList;
         FocusedContextKey = CommonFacts.GlobalContext.ContextKey;

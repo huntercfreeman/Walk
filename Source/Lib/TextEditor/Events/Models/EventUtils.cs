@@ -24,7 +24,7 @@ public static class EventUtils
             keymapArgs,
             hasSelection,
             textEditorService,
-            out Key<KeymapLayer> layerKey,
+            out int layerKey,
             out var success,
             out command);
 
@@ -122,7 +122,7 @@ public static class EventUtils
         KeymapArgs keymapArgs,
         bool hasSelection,
         TextEditorService textEditorService,
-        out Key<KeymapLayer> layerKey,
+        out int layerKey,
         out bool success,
         out CommandNoType command)
     {

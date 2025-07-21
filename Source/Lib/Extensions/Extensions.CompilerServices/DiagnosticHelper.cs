@@ -12,7 +12,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			"'End of file' was unexpected.",
 			textSpan,
-			Guid.Parse("37a0a353-cd10-4b9d-b7c1-ab820d1b2fee"));
+			0);
 	}
 
 	public static void ReportUnexpectedToken(
@@ -26,7 +26,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			$"Unexpected token: '{unexpectedToken}' | expected: '{expectedToken}'",
 			textSpan,
-			Guid.Parse("94a34c1f-e490-4d22-8bd9-98a100ea7487"));
+			1);
 	}
 
 	public static void ReportUnexpectedToken(
@@ -39,7 +39,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			$"Unexpected token: '{unexpectedToken}'",
 			textSpan,
-			Guid.Parse("f3c26886-e1eb-4e63-82e6-33e5f6105b5d"));
+			2);
 	}
 
 	public static void ReportUndefinedClass(
@@ -52,7 +52,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			$"Undefined class: '{undefinedClassIdentifier}'",
 			textSpan,
-			Guid.Parse("4bf6a7f1-c344-4ca4-828c-a0a4f7f91341"));
+			3);
 	}
 
 	public static void ReportImplicitlyTypedVariablesMustBeInitialized(
@@ -64,7 +64,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			$"Implicitly-typed variables must be initialized",
 			textSpan,
-			Guid.Parse("b087cb21-fa16-4ae1-bfd0-daeebe0c4b39"));
+			4);
 	}
 
 	public static void ReportUndefinedTypeOrNamespace(
@@ -77,7 +77,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			$"Undefined type or namespace: '{undefinedTypeOrNamespaceIdentifier}'",
 			textSpan,
-			Guid.Parse("856e27dc-2721-4645-821c-88dcb57a2516"));
+			5);
 	}
 
 	public static void ReportAlreadyDefinedType(
@@ -90,7 +90,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			$"Already defined type: '{alreadyDefinedTypeIdentifier}'",
 			textSpan,
-			Guid.Parse("9987db65-1054-4b64-ba64-761b75c4e5da"));
+			6);
 	}
 
 	public static void ReportUndefinedVariable(
@@ -103,7 +103,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			$"Undefined variable: '{undefinedVariableIdentifier}'",
 			textSpan,
-			Guid.Parse("a72619a5-a7f4-4084-acc8-2fb2c76cdac4"));
+			7);
 	}
 
 	/*public static void ReportNotDefinedInContext(
@@ -116,7 +116,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			$"'{textSpan.GetText()}' is not defined in the context '{contextString}'",
 			textSpan,
-			Guid.Parse("89b61fa8-541d-4154-9425-82c5667842a8"));
+			8);
 	}*/
 
 	public static void TheNameDoesNotExistInTheCurrentContext(
@@ -129,7 +129,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			$"The name '{name}' does not exist in the current context",
 			textSpan,
-			Guid.Parse("3c616af8-1c5d-41fa-962d-9836278ea570"));
+			9);
 	}
 
 	public static void ReportAlreadyDefinedVariable(
@@ -142,7 +142,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			$"Already defined variable: '{alreadyDefinedVariableIdentifier}'",
 			textSpan,
-			Guid.Parse("89b61fa8-541d-4154-9425-82c5667842a8"));
+			10);
 	}
 	
 	public static void ReportAlreadyDefinedLabel(
@@ -155,7 +155,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			$"Already defined variable: '{alreadyDefinedLabelIdentifier}'",
 			textSpan,
-			Guid.Parse("7478d96b-cb43-4dd9-898c-c3b0077966c2"));
+			11);
 	}
 
 	public static void ReportAlreadyDefinedProperty(
@@ -168,7 +168,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			$"Already defined property: '{alreadyDefinedPropertyIdentifier}'",
 			textSpan,
-			Guid.Parse("0f4681e2-abaa-46f6-9b05-56941a07dd98"));
+			12);
 	}
 
 	public static void ReportUndefinedFunction(
@@ -181,7 +181,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			$"Undefined function: '{undefinedFunctionIdentifier}'",
 			textSpan,
-			Guid.Parse("8703a2f9-fab3-46c2-8f50-05d8152a1510"));
+			13);
 	}
 
 	public static void ReportAlreadyDefinedFunction(
@@ -194,7 +194,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			$"Already defined function: '{alreadyDefinedFunctionIdentifier}'",
 			textSpan,
-			Guid.Parse("44193527-d94f-49bd-a588-cf75a18bc0f5"));
+			14);
 	}
 
 	public static void ReportBadFunctionOptionalArgumentDueToMismatchInType(
@@ -211,7 +211,7 @@ public static class DiagnosticHelper
 				$" expects the type: '{typeExpectedIdentifierString}'" +
 				$", but received the type: '{typeActualIdentifierString}'",
 			optionalArgumentTextSpan,
-			Guid.Parse("ea78765d-13b6-4aef-87b8-838d94daa82a"));
+			15);
 	}
 
 	public static void ReportReturnStatementsAreStillBeingImplemented(
@@ -223,7 +223,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Hint,
 			$"Parsing of return statements is still being implemented.",
 			textSpan,
-			Guid.Parse("3fb8071a-bd97-4bc5-97af-c7b147648e67"));
+			16);
 	}
 
 	public static void ReportTagNameMissing(List<TextEditorDiagnostic> diagnosticList, TextEditorTextSpan textSpan)
@@ -233,7 +233,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			"Missing tag name.",
 			textSpan,
-			Guid.Parse("d567ff67-dfaa-41a4-8953-962e7d596d3c"));
+			17);
 	}
 
 	public static void ReportOpenTagWithUnMatchedCloseTag(
@@ -247,7 +247,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			$"Open tag: '{openTagName}' has an unmatched close tag: {closeTagName}.",
 			textSpan,
-			Guid.Parse("755ccccd-736c-4c72-b828-939ffa244c97"));
+			18);
 	}
 
 	public static void ReportRazorExplicitExpressionPredicateWasExpected(
@@ -261,7 +261,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			$"An explicit expression predicate was expected to follow the {transitionSubstring}{keywordText} razor keyword.",
 			textSpan,
-			Guid.Parse("44c42198-66fd-4b8b-b8e1-4a55ab2aa8c1"));
+			19);
 	}
 
 	public static void ReportRazorCodeBlockWasExpectedToFollowRazorKeyword(
@@ -275,7 +275,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			$"A code block was expected to follow the {transitionSubstring}{keywordText} razor keyword.",
 			textSpan,
-			Guid.Parse("0d5b940d-d993-4607-9c4c-0452e8f8914c"));
+			20);
 	}
 
 	public static void ReportRazorWhitespaceImmediatelyFollowingTransitionCharacterIsUnexpected(
@@ -287,7 +287,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			"Whitespace immediately following the Razor transition character is unexpected.",
 			textSpan,
-			Guid.Parse("20b5922a-2b25-49ce-baf7-132006de3401"));
+			21);
 	}
 
 	public static void ReportConstructorsNeedToBeWithinTypeDefinition(List<TextEditorDiagnostic> diagnosticList, TextEditorTextSpan textSpan)
@@ -297,7 +297,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Error,
 			"Constructors need to be within a type definition.",
 			textSpan,
-			Guid.Parse("7ba92f4f-9d7e-49f8-b377-8e754d6a5f53"));
+			22);
 	}
 
 	/// <summary>
@@ -315,7 +315,7 @@ public static class DiagnosticHelper
 			TextEditorDiagnosticLevel.Hint,
 			$"TODO: {message}",
 			textSpan,
-			Guid.Parse("a595d93d-e4c7-4d30-9373-1b246b2668bf"));
+			23);
 	}
 
 	private static void Report(
@@ -323,7 +323,7 @@ public static class DiagnosticHelper
 		TextEditorDiagnosticLevel diagnosticLevel,
 		string message,
 		TextEditorTextSpan textSpan,
-		Guid diagnosticId)
+		int diagnosticId)
 	{
 		var compilerServiceDiagnosticDecorationKind = diagnosticLevel switch
 		{

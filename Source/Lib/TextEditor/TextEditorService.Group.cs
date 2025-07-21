@@ -11,8 +11,6 @@ public partial class TextEditorService
 	// TextEditorGroupService.cs
 	private TextEditorGroupState Group_textEditorGroupState = new();
 
-	public event Action? Group_TextEditorGroupStateChanged;
-
 	public TextEditorGroupState Group_GetTextEditorGroupState() => Group_textEditorGroupState;
 
 	public void Group_SetActiveViewModel(Key<TextEditorGroup> textEditorGroupKey, Key<TextEditorViewModel> textEditorViewModelKey)

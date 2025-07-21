@@ -188,7 +188,7 @@ public partial class CommonService
             AppDimension_NotifyIntraAppResize();
     }
 
-    public void SetPanelTabAsActiveByContextRecordKey(Key<ContextRecord> contextRecordKey)
+    public void SetPanelTabAsActiveByContextRecordKey(int contextRecordKey)
     {
         lock (_stateModificationLock)
         {

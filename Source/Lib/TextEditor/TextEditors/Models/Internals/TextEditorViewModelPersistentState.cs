@@ -528,7 +528,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     public CommonService CommonService => TextEditorService.CommonService;
 
     public Key<Panel> Key { get; }
-    public Key<ContextRecord> ContextRecordKey { get; }
+    public int ContextRecordKey { get; }
     public Key<IDynamicViewModel> DynamicViewModelKey { get; } = Key<IDynamicViewModel>.NewKey();
 	public string? SetFocusOnCloseElementId { get; set; }
 
@@ -782,7 +782,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                     Title,
                     new Key<Panel>(ViewModelKey.Guid),
                     DynamicViewModelKey,
-                    Key<ContextRecord>.Empty,
+                    0,
                     typeof(TextEditorViewModelDisplay),
                     new Dictionary<string, object?>
                     {

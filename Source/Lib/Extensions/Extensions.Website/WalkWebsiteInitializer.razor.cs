@@ -6,7 +6,6 @@ using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
-using Walk.TextEditor.RazorLib.Diffs.Models;
 using Walk.Extensions.DotNet;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Website.RazorLib.Websites.ProjectTemplates.Models;
@@ -167,16 +166,6 @@ public partial class WalkWebsiteInitializer : ComponentBase
                     editContext,
                     modelModifier,
                     TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel);
-
-                DotNetService.TextEditorService.Model_AddPresentationModel(
-                    editContext,
-                    modelModifier,
-                    TextEditorFacts.Diff_EmptyInPresentationModel);
-
-                DotNetService.TextEditorService.Model_AddPresentationModel(
-                    editContext,
-                    modelModifier,
-                    TextEditorFacts.Diff_EmptyOutPresentationModel);
 
                 textEditorModel.PersistentState.CompilerService.RegisterResource(
                     textEditorModel.PersistentState.ResourceUri,

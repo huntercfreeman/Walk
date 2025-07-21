@@ -7,6 +7,6 @@ namespace Walk.Common.RazorLib.Panels.Models;
 public interface IPanelTab : ITab
 {
     public Key<Panel> Key { get; }
-    public Key<ContextRecord> ContextRecordKey { get; }
+    public int ContextRecordKey { get; }
     public CommonService CommonService { get; }
 }

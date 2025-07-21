@@ -31,26 +31,26 @@ public partial class InputAppTheme : IDisposable
 
         var themeState = CommonService.GetThemeState();
 
-        var guidAsString = (string)changeEventArgs.Value;
+        var intAsString = (string)changeEventArgs.Value;
 
-        if (Guid.TryParse(guidAsString, out var guidValue))
+        if (int.TryParse(intAsString, out var intValue))
         {
-            var themesInScopeList = themeState.ThemeList.Where(x => x.ThemeScopeList.Contains(ThemeScope.App))
+            var themesInScopeList = themeState.ThemeList.Where(x => x.IncludeScopeApp)
                 .ToArray();
 
-            var existingThemeRecord = themesInScopeList.FirstOrDefault(btr => btr.Key.Guid == guidValue);
+            var existingThemeRecord = themesInScopeList.FirstOrDefault(btr => btr.Key == intValue);
 
             if (existingThemeRecord is not null)
                 CommonService.Options_SetActiveThemeRecordKey(existingThemeRecord.Key);
         }
     }
 
-    private bool CheckIsActiveValid(ThemeRecord[] themeRecordList, Key<ThemeRecord> activeThemeKey)
+    private bool CheckIsActiveValid(ThemeRecord[] themeRecordList, int activeThemeKey)
     {
         return themeRecordList.Any(btr => btr.Key == activeThemeKey);
     }
 
-    private bool CheckIsActiveSelection(Key<ThemeRecord> themeKey, Key<ThemeRecord> activeThemeKey)
+    private bool CheckIsActiveSelection(int themeKey, int activeThemeKey)
     {
         return themeKey == activeThemeKey;
     }

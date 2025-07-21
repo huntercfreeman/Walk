@@ -18,13 +18,9 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Displays;
 public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    public IServiceProvider ServiceProvider { get; set; } = null!;
-    [Inject]
     public TextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     public IJSRuntime JsRuntime { get; set; } = null!;
-    [Inject]
-    public CommonService CommonService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<TextEditorViewModel> TextEditorViewModelKey { get; set; } = Key<TextEditorViewModel>.Empty;
@@ -125,7 +121,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         TextEditorService.Options_StaticStateChanged += OnOptionStaticStateChanged;
         TextEditorService.Options_MeasuredStateChanged += OnOptionMeasuredStateChanged;
         TextEditorService.ViewModel_CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
-        CommonService.DragStateChanged += DragStateWrapOnStateChanged;
+        TextEditorService.CommonService.DragStateChanged += DragStateWrapOnStateChanged;
     }
     
     protected override void OnParametersSet()
@@ -383,7 +379,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 		        editContext,
 		        modelModifier,
 		        viewModelModifier,
-		        CommonService,
+		        TextEditorService.CommonService,
 		        ComponentData);
 			
 			return ValueTask.CompletedTask;
@@ -450,7 +446,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                                 return ValueTask.CompletedTask;
 
                             viewModelModifier.PersistentState.TooltipModel = null;
-							CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
+							TextEditorService.CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
 
 							return ValueTask.CompletedTask;
 						}));
@@ -536,7 +532,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			_mouseDownEventArgsStruct = eventArgs;
 			_dragEventHandler = HORIZONTAL_DragEventHandlerScrollAsync;
 	
-			CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
+			TextEditorService.CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
 		}
     }
     
@@ -567,7 +563,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 			_mouseDownEventArgsStruct = eventArgs;
 			_dragEventHandler = VERTICAL_DragEventHandlerScrollAsync;
 	
-			CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
+			TextEditorService.CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
 		}     
     }
     
@@ -727,7 +723,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
     private async void DragStateWrapOnStateChanged()
     {
-        if (!CommonService.GetDragState().ShouldDisplay)
+        if (!TextEditorService.CommonService.GetDragState().ShouldDisplay)
         {
             // NOTE: '_mouseDownEventArgs' being non-null is what indicates that the subscription is active.
 			//       So be wary if one intends to move its assignment elsewhere.
@@ -739,7 +735,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         else
         {
             var localMouseDownEventArgs = _mouseDownEventArgsStruct;
-            var dragEventArgs = CommonService.GetDragState().MouseEventArgs;
+            var dragEventArgs = TextEditorService.CommonService.GetDragState().MouseEventArgs;
 			var localDragEventHandler = _dragEventHandler;
 
             if (localMouseDownEventArgs.Buttons != -1 && dragEventArgs is not null)
@@ -878,7 +874,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     public void Dispose()
     {
     	// ScrollbarSection.razor.cs
-    	CommonService.DragStateChanged -= DragStateWrapOnStateChanged;
+    	TextEditorService.CommonService.DragStateChanged -= DragStateWrapOnStateChanged;
     
     	// TextEditorViewModelDisplay.razor.cs
         TextEditorService.TextEditorStateChanged -= GeneralOnStateChangedEventHandler;

@@ -15,166 +15,72 @@ public static class CommonFacts
 {
     /* Start ThemeFacts */
 	public static readonly ThemeRecord VisualStudioLightThemeClone = new ThemeRecord(
-        new Key<ThemeRecord>(Guid.Parse("3ea6a4a5-02b3-4b84-9d6f-e663465d3126")),
+        Key: 0,
         "Visual Studio Light Clone",
         "di_visual-studio-light-theme-clone",
         ThemeContrastKind.Default,
         ThemeColorKind.Light,
-        new ThemeScope[] { ThemeScope.App, ThemeScope.TextEditor });
+        IncludeScopeApp: true,
+        IncludeScopeTextEditor: true);
 
     public static readonly ThemeRecord VisualStudioDarkThemeClone = new ThemeRecord(
-        new Key<ThemeRecord>(Guid.Parse("8eaabd97-186d-40d0-a57b-5fec1c158902")),
+        Key: 1,
         "Visual Studio Dark Clone",
         "di_visual-studio-dark-theme-clone",
         ThemeContrastKind.Default,
         ThemeColorKind.Dark,
-        new ThemeScope[] { ThemeScope.App, ThemeScope.TextEditor });
+        IncludeScopeApp: true,
+        IncludeScopeTextEditor: true);
     /* End ThemeFacts */
     
     /* Start ContextFacts */
-    public static readonly ContextRecord GlobalContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Global",
-        "global",
-        new Keymap(Key<Keymap>.NewKey(), "Global"));
+    public static readonly ContextRecord GlobalContext = new(0);
 
-    public static readonly ContextRecord ActiveContextsContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Active Contexts",
-        "active-contexts",
-        IKeymap.Empty);
+    public static readonly ContextRecord ActiveContextsContext = new(1);
 
-	public static readonly ContextRecord FindAllReferencesContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Find All References",
-        "find-all-references",
-        IKeymap.Empty);
+	public static readonly ContextRecord FindAllReferencesContext = new(2);
 
-    public static readonly ContextRecord FolderExplorerContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Folder Explorer",
-        "folder-explorer",
-        IKeymap.Empty);
+    public static readonly ContextRecord FolderExplorerContext = new(3);
 
-    public static readonly ContextRecord SolutionExplorerContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Solution Explorer",
-        "solution-explorer",
-        IKeymap.Empty);
+    public static readonly ContextRecord SolutionExplorerContext = new(4);
 
-    public static readonly ContextRecord CompilerServiceExplorerContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Compiler Service Explorer",
-        "compiler-service-explorer",
-        IKeymap.Empty);
+    public static readonly ContextRecord CompilerServiceExplorerContext = new(5);
     
-    public static readonly ContextRecord CompilerServiceEditorContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Compiler Service Editor",
-        "compiler-service-editor",
-        IKeymap.Empty);
+    public static readonly ContextRecord CompilerServiceEditorContext = new(6);
 
-	public static readonly ContextRecord TestExplorerContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Test Explorer",
-        "test-explorer",
-        IKeymap.Empty);
+	public static readonly ContextRecord TestExplorerContext = new(7);
     
-    public static readonly ContextRecord CSharpReplContext = new(
-        Key<ContextRecord>.NewKey(),
-        "C# REPL",
-        "c-sharp-repl",
-        IKeymap.Empty);
+    public static readonly ContextRecord CSharpReplContext = new(8);
 
-    public static readonly ContextRecord BackgroundServicesContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Background Services",
-        "background-services",
-        IKeymap.Empty);
+    public static readonly ContextRecord BackgroundServicesContext = new(9);
 
-    public static readonly ContextRecord DialogDisplayContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Dialog Display",
-        "dialog-display",
-        IKeymap.Empty);
+    public static readonly ContextRecord DialogDisplayContext = new(10);
 
-    public static readonly ContextRecord MainLayoutHeaderContext = new(
-        Key<ContextRecord>.NewKey(),
-        "MainLayout Header",
-        "main-layout-header",
-        IKeymap.Empty);
+    public static readonly ContextRecord MainLayoutHeaderContext = new(11);
 
-    public static readonly ContextRecord MainLayoutFooterContext = new(
-        Key<ContextRecord>.NewKey(),
-        "MainLayout Footer",
-        "main-layout-footer",
-        IKeymap.Empty);
+    public static readonly ContextRecord MainLayoutFooterContext = new(12);
 
-    public static readonly ContextRecord EditorContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Editor",
-        "editor",
-        IKeymap.Empty);
+    public static readonly ContextRecord EditorContext = new(13);
 
-    public static readonly ContextRecord TextEditorContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Text Editor",
-        "text-editor",
-        IKeymap.Empty);
+    public static readonly ContextRecord TextEditorContext = new(14);
 
-    public static readonly ContextRecord ErrorListContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Error List",
-        "error-list",
-        IKeymap.Empty);
+    public static readonly ContextRecord ErrorListContext = new(15);
 
-    public static readonly ContextRecord OutputContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Output",
-        "output",
-        IKeymap.Empty);
+    public static readonly ContextRecord OutputContext = new(16);
 
-    public static readonly ContextRecord NuGetPackageManagerContext = new(
-        Key<ContextRecord>.NewKey(),
-        "NuGetPackageManager",
-        "nu-get-package-manager",
-        IKeymap.Empty);
+    public static readonly ContextRecord NuGetPackageManagerContext = new(17);
 
-    public static readonly ContextRecord GitContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Git",
-        "git",
-        IKeymap.Empty);
+    public static readonly ContextRecord GitContext = new(18);
     
-    public static readonly ContextRecord TerminalContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Terminal",
-        "terminal",
-        IKeymap.Empty);
+    public static readonly ContextRecord TerminalContext = new(19);
         
-    public static readonly ContextRecord NotificationContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Notification",
-        "notification",
-        IKeymap.Empty);
+    public static readonly ContextRecord NotificationContext = new(20);
     
-    public static readonly ContextRecord DialogContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Dialog",
-        "dialog",
-        IKeymap.Empty);
+    public static readonly ContextRecord DialogContext = new(21);
         
-    public static readonly ContextRecord WidgetContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Widget",
-        "widget",
-        IKeymap.Empty);
+    public static readonly ContextRecord WidgetContext = new(22);
     
-    public static readonly ContextRecord DropdownContext = new(
-        Key<ContextRecord>.NewKey(),
-        "Dropdown",
-        "dropdown",
-        IKeymap.Empty);
+    public static readonly ContextRecord DropdownContext = new(23);
 
     public static readonly IReadOnlyList<ContextRecord> AllContextsList = new List<ContextRecord>()
     {
@@ -205,7 +111,7 @@ public static class CommonFacts
     /// <summary>
     /// Used when repositioning a dropdown so that it appears on screen.
     /// </summary>
-    public static string RootHtmlElementId { get; set; } = GlobalContext.ContextElementId;
+    public static string RootHtmlElementId { get; set; } = "di_ide_context-global";
     /* End ContextFacts */
     
     /* Start PanelFacts */
@@ -240,8 +146,8 @@ public static class CommonFacts
     /* End SizeFacts */
     
     /* Start BackgroundTaskFacts */
-    public static Key<BackgroundTaskQueue> ContinuousQueueKey { get; } = new Key<BackgroundTaskQueue>(Guid.Parse("78912ee9-1b3f-4bc3-ab8b-5681fbf0b131"));
-	public static Key<BackgroundTaskQueue> IndefiniteQueueKey { get; } = new Key<BackgroundTaskQueue>(Guid.Parse("7905c763-c3fd-418e-b73d-4ca18666c20c"));
+    public static int ContinuousQueueKey { get; } = 0;
+	public static int IndefiniteQueueKey { get; } = 1;
     /* End BackgroundTaskFacts */
     
     /* Start KeyboardKeyFacts */

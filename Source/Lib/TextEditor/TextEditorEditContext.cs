@@ -1,5 +1,4 @@
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.TextEditor.RazorLib.Diffs.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 
@@ -78,28 +77,5 @@ public struct TextEditorEditContext
     	}
 
         return viewModelModifier;
-    }
-    
-    public TextEditorDiffModelModifier? GetDiffModelModifier(
-        Key<TextEditorDiffModel> diffModelKey,
-        bool isReadOnly = false)
-    {
-        if (diffModelKey != Key<TextEditorDiffModel>.Empty)
-        {
-            if (!TextEditorService.__DiffModelCache.TryGetValue(diffModelKey, out var diffModelModifier))
-            {
-                var diffModel = TextEditorService.Diff_GetOrDefault(diffModelKey);
-                diffModelModifier = diffModel is null ? null : new(diffModel);
-
-                TextEditorService.__DiffModelCache.Add(diffModelKey, diffModelModifier);
-            }
-
-            if (!isReadOnly && diffModelModifier is not null)
-                diffModelModifier.WasModified = true;
-
-            return diffModelModifier;
-        }
-
-        return null;
     }
 }

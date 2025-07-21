@@ -5,7 +5,7 @@
 @using Walk.Ide.RazorLib.Terminals.Models;
 
 @* ContextRecord="ContextFacts.TerminalContext" *@
-<div id="@CommonFacts.TerminalContext.ContextElementId" class="di_ide_terminal" style="height: 100%; width: 100%; overflow: auto;">
+<div class="di_ide_terminal" style="height: 100%; width: 100%; overflow: auto;">
     @{
         var terminalGroupDisplayState = IdeService.GetTerminalGroupState();
         var terminalState = IdeService.GetTerminalState();

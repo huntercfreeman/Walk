@@ -15,12 +15,12 @@ public partial class CommonService
     
     public ContextState GetContextState() => _contextState;
     
-    public ContextRecord GetContextRecord(Key<ContextRecord> contextKey) =>
+    public ContextRecord GetContextRecord(int contextKey) =>
     	_contextState.AllContextsList.FirstOrDefault(x => x.ContextKey == contextKey);
     
     public ContextSwitchState GetContextSwitchState() => _contextSwitchState;
     
-    public void SetFocusedContextKey(Key<ContextRecord> contextKey)
+    public void SetFocusedContextKey(int contextKey)
     {
     	lock (_stateModificationLock)
     	{
@@ -33,7 +33,7 @@ public partial class CommonService
         ContextStateChanged?.Invoke();
     }
     
-    public void SetContextKeymap(Key<ContextRecord> contextKey, IKeymap keymap)
+    public void SetContextKeymap(int contextKey, IKeymap keymap)
     {
     	lock (_stateModificationLock)
     	{
@@ -57,10 +57,10 @@ public partial class CommonService
             
             var outAllContextsList = new List<ContextRecord>(inState.AllContextsList);
 	
-	        outAllContextsList[index] = inContextRecord with
+	        /*outAllContextsList[index] = inContextRecord with
 	        {
 	            Keymap = keymap
-	        };
+	        };*/
 	
 	        _contextState = inState with { AllContextsList = outAllContextsList };
             goto finalize;

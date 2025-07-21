@@ -22,7 +22,6 @@ using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Walk.TextEditor.RazorLib.Diffs.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Ide.RazorLib.Installations.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
@@ -153,7 +152,7 @@ public partial class IdeService : IBackgroundTaskGroup
 
         InitializePanelResizeHandleDimensionUnit();
         InitializePanelTabs();
-        CommandFactory_Initialize();
+        // CommandFactory_Initialize();
 
         return ValueTask.CompletedTask;
     }
@@ -340,7 +339,7 @@ public partial class IdeService : IBackgroundTaskGroup
         InitializeMenuTools();
         ideMainLayout.InitializeMenuView();
 
-        AddAltKeymap(ideMainLayout);
+        // AddAltKeymap(ideMainLayout);
         return ValueTask.CompletedTask;
     }
 
@@ -497,7 +496,7 @@ public partial class IdeService : IBackgroundTaskGroup
     /// <summary>
     /// Add option to allow a user to disable the alt keymap to access to the header button dropdowns.
     /// </summary>
-    private void AddAltKeymap(IdeMainLayout ideMainLayout)
+    /*private void AddAltKeymap(IdeMainLayout ideMainLayout)
     {
         _ = CommonFacts.GlobalContext.Keymap.TryRegister(
                 new KeymapArgs()
@@ -508,7 +507,7 @@ public partial class IdeService : IBackgroundTaskGroup
                     CtrlKey = false,
                     AltKey = true,
                     MetaKey = false,
-                    LayerKey = Key<KeymapLayer>.Empty,
+                    LayerKey = -1,
                 },
                 new CommonCommand("Open File Dropdown", "open-file-dropdown", false, async _ => await ideMainLayout.RenderFileDropdownOnClick()));
 
@@ -521,7 +520,7 @@ public partial class IdeService : IBackgroundTaskGroup
                     CtrlKey = false,
                     AltKey = true,
                     MetaKey = false,
-                    LayerKey = Key<KeymapLayer>.Empty,
+                    LayerKey = -1,
                 },
                 new CommonCommand("Open Tools Dropdown", "open-tools-dropdown", false, async _ => await ideMainLayout.RenderToolsDropdownOnClick()));
 
@@ -534,7 +533,7 @@ public partial class IdeService : IBackgroundTaskGroup
                     CtrlKey = false,
                     AltKey = true,
                     MetaKey = false,
-                    LayerKey = Key<KeymapLayer>.Empty,
+                    LayerKey = -1,
                 },
                 new CommonCommand("Open View Dropdown", "open-view-dropdown", false, async _ => await ideMainLayout.RenderViewDropdownOnClick()));
 
@@ -547,10 +546,10 @@ public partial class IdeService : IBackgroundTaskGroup
                 CtrlKey = false,
                 AltKey = true,
                 MetaKey = false,
-                LayerKey = Key<KeymapLayer>.Empty,
+                LayerKey = -1,
             },
             new CommonCommand("Open Run Dropdown", "open-run-dropdown", false, async _ => await ideMainLayout.RenderRunDropdownOnClick()));
-    }
+    }*/
     
     public void Editor_ShowInputFile()
     {
@@ -644,8 +643,6 @@ public partial class IdeService : IBackgroundTaskGroup
         var modelModifier = new TextEditorModel(model);
         modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.CompilerServiceDiagnosticPresentation_EmptyPresentationModel);
         modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel);
-        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.Diff_EmptyInPresentationModel);
-        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.Diff_EmptyOutPresentationModel);
         
         model = modelModifier;
 

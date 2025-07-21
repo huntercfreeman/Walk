@@ -7,13 +7,13 @@ public sealed class BackgroundTaskQueue
 {
     private readonly ConcurrentQueue<IBackgroundTaskGroup> _queue = new();
 
-	public BackgroundTaskQueue(Key<BackgroundTaskQueue> key, string displayName)
+	public BackgroundTaskQueue(int key, string displayName)
     {
         Key = key;
         DisplayName = displayName;
     }
     
-	public Key<BackgroundTaskQueue> Key { get; }
+	public int Key { get; }
     public string DisplayName { get; }
 
     /// <summary>

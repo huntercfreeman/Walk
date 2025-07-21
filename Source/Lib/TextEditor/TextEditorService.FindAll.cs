@@ -26,8 +26,6 @@ public partial class TextEditorService
 
 	private TextEditorFindAllState _findAllState = new();
 
-	public event Action? FindAllStateChanged;
-
 	public TextEditorFindAllState GetFindAllState() => _findAllState;
 
 	public void SetSearchQuery(string searchQuery)
