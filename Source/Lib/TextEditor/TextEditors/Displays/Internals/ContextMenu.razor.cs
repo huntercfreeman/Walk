@@ -152,9 +152,6 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
         var paste = new MenuOptionRecord("Paste (Ctrl v)", MenuOptionKind.Other, () => SelectMenuOption(PasteMenuOption));
         menuOptionRecordsList.Add(paste);
         
-        var toggleCollapse = new MenuOptionRecord("Toggle Collapse (Ctrl m)", MenuOptionKind.Other, () => SelectMenuOption(ToggleCollapseOption));
-        menuOptionRecordsList.Add(toggleCollapse);
-        
         var findInTextEditor = new MenuOptionRecord("Find (Ctrl f)", MenuOptionKind.Other, () => SelectMenuOption(FindInTextEditor));
         menuOptionRecordsList.Add(findInTextEditor);
         
@@ -273,41 +270,6 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             	editContext,
 		        modelModifier,
 		        viewModelModifier);
-        });
-        return Task.CompletedTask;
-    }
-
-	public Task ToggleCollapseOption()
-    {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return Task.CompletedTask;
-
-        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
-        {
-        	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
-            var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
-    		
-    		CollapsePoint encompassingCollapsePoint = new CollapsePoint(-1, false, string.Empty, -1);;
-
-			foreach (var collapsePoint in viewModelModifier.PersistentState.AllCollapsePointList)
-			{
-				for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex; lineOffset++)
-				{
-					if (viewModelModifier.LineIndex == collapsePoint.AppendToLineIndex + lineOffset)
-						encompassingCollapsePoint = collapsePoint;
-				}
-			}
-			
-        	if (encompassingCollapsePoint.AppendToLineIndex != -1)
-        	{
-        		_ = TextEditorCommandDefaultFunctions.ToggleCollapsePoint(
-            		encompassingCollapsePoint.AppendToLineIndex,
-        			modelModifier,
-        			viewModelModifier);
-        	}
-        
-            return ValueTask.CompletedTask;
         });
         return Task.CompletedTask;
     }

@@ -31,16 +31,7 @@
     
     @if (virtualizationResult.IsValid)
     {
-    	<div class="di_te_three-dots-section">
-        	@for (int inlineUiIndex = 0; inlineUiIndex < virtualizationResult.InlineUiStyleList.Count; inlineUiIndex++)
-        	{
-        		<div style="@(virtualizationResult.InlineUiStyleList[inlineUiIndex])"><!--
-	    			-->...<!--
-	    		--></div>
-        	}
-        </div>
-
-        var presentationLayerGroupSpan = System.Runtime.InteropServices.CollectionsMarshal.AsSpan(virtualizationResult.PresentationLayerGroupList);
+    	var presentationLayerGroupSpan = System.Runtime.InteropServices.CollectionsMarshal.AsSpan(virtualizationResult.PresentationLayerGroupList);
         var presentationLayerStyleSpan = System.Runtime.InteropServices.CollectionsMarshal.AsSpan(virtualizationResult.PresentationLayerStyleList);
 
         var firstPresentationLayerGroupSpan = presentationLayerGroupSpan.Slice(
@@ -89,8 +80,6 @@
 			</div>
         }
     
-    	var collapsePoint = new CollapsePoint(-1, false, string.Empty, -1);
-    	
     	if (ViewModelDisplayOptions.IncludeGutterComponent)
     	{
     	    <div class="di_te_gutter-section"
@@ -105,31 +94,7 @@
 	    			  virtualizationResultIndex++)
 			    {
 			        <div style="@virtualizationResult.EntryList[virtualizationResultIndex].GutterCssStyle">
-			            
 			            @(virtualizationResult.EntryList[virtualizationResultIndex].LineNumberString)
-			            
-			            @for (int i = 0; i < virtualizationResult.VirtualizedCollapsePointList.Count; i++)
-		            	{
-		            		if (virtualizationResult.VirtualizedCollapsePointList[i].AppendToLineIndex == virtualizationResult.EntryList[virtualizationResultIndex].LineIndex)
-		            		{
-		            			collapsePoint = virtualizationResult.VirtualizedCollapsePointList[i];
-		            			break;
-		            		}
-		            	}
-		
-						@if (collapsePoint.AppendToLineIndex == virtualizationResult.EntryList[virtualizationResultIndex].LineIndex)
-						{
-						    <span class="di_te_gutter-chevron">
-						    	@if (collapsePoint.IsCollapsed)
-						    	{
-						    		@IconChevronRightFragment.Render(_iconDriver)
-						    	}
-						    	else
-						    	{
-						    		@IconChevronDownFragment.Render(_iconDriver)
-						    	}
-							</span>
-						}
 			        </div>
 		    	}
 			</div>

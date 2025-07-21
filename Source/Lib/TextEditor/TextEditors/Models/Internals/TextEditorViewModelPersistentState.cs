@@ -68,7 +68,6 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 	    TooltipModel = tooltipModel;
 
 	    ShouldRevealCursor = shouldRevealCursor;
-		VirtualAssociativityKind = virtualAssociativityKind;
         
         ComponentType = typeof(TextEditorViewModelDisplay);
         ComponentParameterMap = new()
@@ -80,11 +79,6 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 
         DialogFocusPointHtmlElementId = $"di_dialog-focus-point_{DynamicViewModelKey.Guid}";
 	
-		AllCollapsePointList = new();
-		VirtualizedCollapsePointList = new();
-		HiddenLineIndexHashSet = new();
-		InlineUiList = new();
-		
 		TextEditorDimensions = textEditorDimensions;
 		ScrollLeft = scrollLeft;
 	    ScrollTop = scrollTop;
@@ -176,18 +170,6 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     public ITooltipModel? TooltipModel { get; set; }
     
     public bool ShouldRevealCursor { get; set; }
-    public VirtualAssociativityKind VirtualAssociativityKind { get; set; } = VirtualAssociativityKind.None;
-    
-    public List<CollapsePoint> AllCollapsePointList { get; set; }
-    /// <summary>
-    /// This list can change out from under you at any point.
-    /// Use TextEditorVirtualizationResult.VirtualizedCollapsePointList because it is a snapshot to a reference
-    /// that will not be modified anymore.
-    /// </summary>
-	public List<CollapsePoint> VirtualizedCollapsePointList { get; set; }
-	public HashSet<int> HiddenLineIndexHashSet { get; set; }
-	public List<(InlineUi InlineUi, string Tag)> InlineUiList { get; set; }
-	public int VirtualizedCollapsePointListVersion { get; set; }
 	
 	private int _seenGutterWidth = -2;
 	private string _gutterWidthCssValue;

@@ -197,14 +197,8 @@ public partial class TextEditorService
 	{
 		var lineInformation = modelModifier.GetLineInformationFromPositionIndex(textSpan.StartInclusiveIndex);
 		var lineIndex = lineInformation.Index;
-		var hiddenLineCount = 0;
-		foreach (var index in viewModel.PersistentState.HiddenLineIndexHashSet)
-		{
-			if (index < lineIndex)
-				hiddenLineCount++;
-		}
 		// Scroll start
-		var targetScrollTop = (lineIndex - hiddenLineCount) * viewModel.PersistentState.CharAndLineMeasurements.LineHeight;
+		var targetScrollTop = (lineIndex) * viewModel.PersistentState.CharAndLineMeasurements.LineHeight;
 		bool lowerBoundInRange = viewModel.PersistentState.ScrollTop <= targetScrollTop;
 		bool upperBoundInRange = targetScrollTop < (viewModel.PersistentState.TextEditorDimensions.Height + viewModel.PersistentState.ScrollTop);
 		if (lowerBoundInRange && upperBoundInRange)
@@ -453,11 +447,7 @@ public partial class TextEditorService
 
 				break;
 			case CommonFacts.ARROW_RIGHT_KEY:
-				if (viewModel.PersistentState.VirtualAssociativityKind == VirtualAssociativityKind.Left)
-				{
-					viewModel.PersistentState.VirtualAssociativityKind = VirtualAssociativityKind.Right;
-				}
-				else if (TextEditorSelectionHelper.HasSelectedText(viewModel) && !shiftKey)
+				if (TextEditorSelectionHelper.HasSelectedText(viewModel) && !shiftKey)
 				{
 					var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(viewModel);
 
@@ -613,184 +603,6 @@ public partial class TextEditorService
 				break;
 		}
 
-		if (viewModel.PersistentState.HiddenLineIndexHashSet.Contains(viewModel.LineIndex))
-		{
-			switch (key)
-			{
-				case CommonFacts.ARROW_LEFT_KEY:
-					{
-						CollapsePoint encompassingCollapsePoint = new CollapsePoint(-1, false, string.Empty, -1); ;
-
-						foreach (var collapsePoint in viewModel.PersistentState.AllCollapsePointList)
-						{
-							var firstToHideLineIndex = collapsePoint.AppendToLineIndex + 1;
-							for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex - 1; lineOffset++)
-							{
-								if (viewModel.LineIndex == firstToHideLineIndex + lineOffset)
-									encompassingCollapsePoint = collapsePoint;
-							}
-						}
-
-						if (encompassingCollapsePoint.AppendToLineIndex != -1)
-						{
-							var lineIndex = encompassingCollapsePoint.EndExclusiveLineIndex - 1;
-							var lineInformation = modelModifier.GetLineInformation(lineIndex);
-
-							if (viewModel.ColumnIndex != lineInformation.LastValidColumnIndex)
-							{
-								for (int i = viewModel.LineIndex; i >= 0; i--)
-								{
-									if (!viewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
-									{
-										viewModel.LineIndex = i;
-										lineInformation = modelModifier.GetLineInformation(i);
-										viewModel.ColumnIndex = lineInformation.LastValidColumnIndex;
-										break;
-									}
-								}
-							}
-						}
-
-						break;
-					}
-				case CommonFacts.ARROW_DOWN_KEY:
-					{
-						var success = false;
-
-						for (int i = viewModel.LineIndex + 1; i < modelModifier.LineCount; i++)
-						{
-							if (!viewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
-							{
-								success = true;
-								viewModel.LineIndex = i;
-
-								var lineInformation = modelModifier.GetLineInformation(i);
-
-								if (viewModel.ColumnIndex > lineInformation.LastValidColumnIndex)
-									viewModel.ColumnIndex = lineInformation.LastValidColumnIndex;
-
-								break;
-							}
-						}
-
-						if (!success)
-						{
-							for (int i = viewModel.LineIndex; i >= 0; i--)
-							{
-								if (!viewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
-								{
-									viewModel.LineIndex = i;
-
-									var lineInformation = modelModifier.GetLineInformation(i);
-
-									if (viewModel.ColumnIndex > lineInformation.LastValidColumnIndex)
-										viewModel.ColumnIndex = lineInformation.LastValidColumnIndex;
-
-									break;
-								}
-							}
-						}
-
-						break;
-					}
-				case CommonFacts.ARROW_UP_KEY:
-					{
-						var success = false;
-
-						for (int i = viewModel.LineIndex; i >= 0; i--)
-						{
-							if (!viewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
-							{
-								success = true;
-								viewModel.LineIndex = i;
-
-								var lineInformation = modelModifier.GetLineInformation(i);
-
-								if (viewModel.PreferredColumnIndex <= lineInformation.LastValidColumnIndex)
-									viewModel.ColumnIndex = viewModel.PreferredColumnIndex;
-								else if (viewModel.ColumnIndex > lineInformation.LastValidColumnIndex)
-									viewModel.ColumnIndex = lineInformation.LastValidColumnIndex;
-
-								break;
-							}
-						}
-
-						if (!success)
-						{
-							for (int i = viewModel.LineIndex + 1; i < modelModifier.LineCount; i++)
-							{
-								if (!viewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
-								{
-									viewModel.LineIndex = i;
-
-									var lineInformation = modelModifier.GetLineInformation(i);
-
-									if (viewModel.ColumnIndex > lineInformation.LastValidColumnIndex)
-										viewModel.ColumnIndex = lineInformation.LastValidColumnIndex;
-
-									break;
-								}
-							}
-						}
-
-						break;
-					}
-				case CommonFacts.ARROW_RIGHT_KEY:
-					{
-						CollapsePoint encompassingCollapsePoint = new CollapsePoint(-1, false, string.Empty, -1); ;
-
-						foreach (var collapsePoint in viewModel.PersistentState.AllCollapsePointList)
-						{
-							var firstToHideLineIndex = collapsePoint.AppendToLineIndex + 1;
-							for (var lineOffset = 0; lineOffset < collapsePoint.EndExclusiveLineIndex - collapsePoint.AppendToLineIndex - 1; lineOffset++)
-							{
-								if (viewModel.LineIndex == firstToHideLineIndex + lineOffset)
-									encompassingCollapsePoint = collapsePoint;
-							}
-						}
-
-						if (encompassingCollapsePoint.AppendToLineIndex != -1)
-						{
-							var lineIndex = encompassingCollapsePoint.EndExclusiveLineIndex - 1;
-
-							var lineInformation = modelModifier.GetLineInformation(lineIndex);
-							viewModel.LineIndex = lineIndex;
-							viewModel.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
-						}
-
-						break;
-					}
-				case CommonFacts.HOME_KEY:
-				case CommonFacts.END_KEY:
-					{
-						break;
-					}
-			}
-		}
-
-		(int lineIndex, int columnIndex) lineAndColumnIndices = (0, 0);
-		var inlineUi = new InlineUi(0, InlineUiKind.None);
-
-		foreach (var inlineUiTuple in viewModel.PersistentState.InlineUiList)
-		{
-			lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(inlineUiTuple.InlineUi.PositionIndex);
-
-			if (lineAndColumnIndices.lineIndex == viewModel.LineIndex &&
-				lineAndColumnIndices.columnIndex == viewModel.ColumnIndex)
-			{
-				inlineUi = inlineUiTuple.InlineUi;
-			}
-		}
-
-		if (viewModel.PersistentState.VirtualAssociativityKind == VirtualAssociativityKind.None &&
-			inlineUi.InlineUiKind != InlineUiKind.None)
-		{
-			viewModel.PersistentState.VirtualAssociativityKind = VirtualAssociativityKind.Left;
-		}
-
-		if (inlineUi.InlineUiKind == InlineUiKind.None)
-			viewModel.PersistentState.VirtualAssociativityKind = VirtualAssociativityKind.None;
-
 		if (shiftKey)
 		{
 			viewModel.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(
@@ -920,17 +732,6 @@ public partial class TextEditorService
 			viewModel.PersistentState.TextEditorDimensions.Width /
 			viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth);
 
-		var hiddenCount = 0;
-
-		for (int i = 0; i < verticalStartingIndex; i++)
-		{
-			if (viewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
-			{
-				hiddenCount++;
-				verticalStartingIndex++;
-			}
-		}
-
 		verticalStartingIndex = Math.Max(0, verticalStartingIndex);
 
 		if (verticalStartingIndex + verticalTake > modelModifier.LineEndList.Count)
@@ -967,7 +768,7 @@ public partial class TextEditorService
 			tabCountOnLongestLine *
 			viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth);
 
-		var totalHeight = (modelModifier.LineEndList.Count - viewModel.PersistentState.HiddenLineIndexHashSet.Count) *
+		var totalHeight = (modelModifier.LineEndList.Count) *
 			viewModel.PersistentState.CharAndLineMeasurements.LineHeight;
 
 		// Add vertical margin so the user can scroll beyond the final line of content
@@ -1060,12 +861,6 @@ public partial class TextEditorService
 				break;
 
 			lineIndex = verticalStartingIndex + lineOffset;
-
-			if (viewModel.PersistentState.HiddenLineIndexHashSet.Contains(lineIndex))
-			{
-				hiddenCount++;
-				continue;
-			}
 
 			useCache = componentData.LineIndexCache.Map.ContainsKey(lineIndex) &&
 					   !componentData.LineIndexCache.ModifiedLineIndexList.Contains(lineIndex);
@@ -1222,7 +1017,7 @@ public partial class TextEditorService
 					leftCssValue = (viewModel.PersistentState.GutterWidth + leftInPixels).ToString(System.Globalization.CultureInfo.InvariantCulture);
 				}
 
-				topCssValue = (topInPixels - (viewModel.PersistentState.CharAndLineMeasurements.LineHeight * hiddenCount)).ToString();
+				topCssValue = (topInPixels).ToString();
 			}
 			else
 			{
@@ -1254,7 +1049,7 @@ public partial class TextEditorService
 				position_EndExclusiveIndex = lineInformation.UpperLineEnd.Position_StartInclusiveIndex;
 
 				leftCssValue = viewModel.PersistentState.GetGutterWidthCssValue();
-				topCssValue = ((lineIndex * viewModel.PersistentState.CharAndLineMeasurements.LineHeight) - (viewModel.PersistentState.CharAndLineMeasurements.LineHeight * hiddenCount)).ToString();
+				topCssValue = ((lineIndex * viewModel.PersistentState.CharAndLineMeasurements.LineHeight)).ToString();
 			}
 
 			componentData.LineIndexCache.UsedKeyHashSet.Add(lineIndex);

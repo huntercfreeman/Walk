@@ -1725,29 +1725,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 					collapsePointList = new(collapsePointList);
 				
 				var viewModel = editContext.GetViewModelModifier(viewModelKey);
-			
-				for (int i = 0; i < collapsePointList.Count; i++)
-				{
-					var collapsePoint = collapsePointList[i];
-					
-					var indexPreviousCollapsePoint = viewModel.PersistentState.AllCollapsePointList.FindIndex(
-						x => x.Identifier == collapsePoint.Identifier);
-						
-					bool isCollapsed;
-						
-					if (indexPreviousCollapsePoint != -1)
-					{
-						if (viewModel.PersistentState.AllCollapsePointList[indexPreviousCollapsePoint].IsCollapsed)
-						{
-							collapsePoint.IsCollapsed = true;
-							collapsePointList[i] = collapsePoint;
-						}
-					}
-				}
-				
-				viewModel.PersistentState.AllCollapsePointList = collapsePointList;
-				
-				viewModel.ApplyCollapsePointState(editContext);
 			}
 		}
     }

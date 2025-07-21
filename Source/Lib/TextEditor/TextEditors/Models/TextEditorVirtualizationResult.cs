@@ -227,8 +227,7 @@ public class TextEditorVirtualizationResult
 	public List<CollapsePoint> VirtualizedCollapsePointList { get; set; }
     public Key<TextEditorViewModel> SeenViewModelKey { get; set; }
     public int VirtualizedCollapsePointListVersion { get; set; }
-    
-    public bool CursorIsOnHiddenLine { get; set; }
+
 	public string? CursorCssStyle { get; set; }
     public string? CaretRowCssStyle { get; set; }
     public List<string> SelectionStyleList { get; set; }
@@ -364,11 +363,6 @@ public class TextEditorVirtualizationResult
         
         GutterColumnTopCss = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
 
-    	if (ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(ViewModel.LineIndex))
-	    	CursorIsOnHiddenLine = true;
-    	else
-    	    CursorIsOnHiddenLine = false;
-    	
     	if (ViewModel.PersistentState.Changed_LineHeight)
     	{
     	    ViewModel.PersistentState.Changed_LineHeight = false;
@@ -491,22 +485,6 @@ public class TextEditorVirtualizationResult
         	PresentationLayerGroupList,
         	PresentationLayerStyleList);
         LastPresentationLayerGroupEndExclusiveIndex = PresentationLayerGroupList.Count;
-        
-        if (_previousState.VirtualizedCollapsePointListVersion != ViewModel.PersistentState.VirtualizedCollapsePointListVersion ||
-        	_previousState.SeenViewModelKey != ViewModel.PersistentState.ViewModelKey)
-        {
-        	VirtualizedCollapsePointList = ViewModel.PersistentState.VirtualizedCollapsePointList;
-        	GetInlineUiStyleList();
-        	SeenViewModelKey = ViewModel.PersistentState.ViewModelKey;
-        	VirtualizedCollapsePointListVersion = ViewModel.PersistentState.VirtualizedCollapsePointListVersion;
-        }
-        else
-        {
-            VirtualizedCollapsePointList = _previousState.VirtualizedCollapsePointList;
-            InlineUiStyleList = _previousState.InlineUiStyleList;
-            SeenViewModelKey = _previousState.SeenViewModelKey;
-        	VirtualizedCollapsePointListVersion = _previousState.VirtualizedCollapsePointListVersion;
-        }
     }
     
     /// <summary>
@@ -612,158 +590,24 @@ public class TextEditorVirtualizationResult
         VERTICAL_SliderCssStyle = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString();
     }
     
-    private void GetInlineUiStyleList()
-    {
-    	if (InlineUiWidthStyleCssString is null || ComponentData.InlineUiWidthStyleCssStringIsOutdated)
-    	{
-	    	var widthPixels = ViewModel.PersistentState.CharAndLineMeasurements.CharacterWidth * 3;
-			var widthCssValue = widthPixels.ToString(System.Globalization.CultureInfo.InvariantCulture);
-			InlineUiWidthStyleCssString = $"width: {widthCssValue}px;";
-			// width: @(widthCssValue)px;
-		}
-    
-    	InlineUiStyleList = new();
-        var tabWidth = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.Options_GetOptions().TabWidth;
-    	
-    	for (int inlineUiIndex = 0; inlineUiIndex < ViewModel.PersistentState.InlineUiList.Count; inlineUiIndex++)
-    	{
-    		var entry = ViewModel.PersistentState.InlineUiList[inlineUiIndex];
-    		
-    		var lineAndColumnIndices = Model.GetLineAndColumnIndicesFromPositionIndex(entry.InlineUi.PositionIndex);
-    		
-    		if (!ComponentData.LineIndexCache.Map.TryGetValue(lineAndColumnIndices.lineIndex, out var cacheEntry))
-    			continue;
-    		
-    		var leftInPixels = ViewModel.PersistentState.GutterWidth + lineAndColumnIndices.columnIndex * ViewModel.PersistentState.CharAndLineMeasurements.CharacterWidth;
-    		
-    		// Tab key column offset
-    		var tabsOnSameLineBeforeCursor = Model.GetTabCountOnSameLineBeforeCursor(
-			    lineAndColumnIndices.lineIndex,
-			    lineAndColumnIndices.columnIndex);
-			// 1 of the character width is already accounted for
-			var extraWidthPerTabKey = tabWidth - 1;
-			leftInPixels += extraWidthPerTabKey *
-			    tabsOnSameLineBeforeCursor *
-			    ViewModel.PersistentState.CharAndLineMeasurements.CharacterWidth;
-    		
-    		var topCssValue = cacheEntry.TopCssValue;
-
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
-    		
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("position: absolute;");
-    		
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("left: ");
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(leftInPixels.ToString(System.Globalization.CultureInfo.InvariantCulture));
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
-    		
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("top: ");
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(topCssValue);
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
-    		
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(InlineUiWidthStyleCssString);
-    		
-    		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(LineHeightStyleCssString);
-    		
-    		InlineUiStyleList.Add(ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.ToString());
-    	}
-    }
-    
     public void GetCursorAndCaretRowStyleCss()
     {
-    	var shouldAppearAfterCollapsePoint = false; // CursorIsOnHiddenLine;
     	var tabWidth = ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.Options_GetOptions().TabWidth;
     	
     	double leftInPixels = ViewModel.PersistentState.GutterWidth;
     	var topInPixelsInvariantCulture = string.Empty;
 	
-		if (CursorIsOnHiddenLine)
-		{
-			for (int collapsePointIndex = 0; collapsePointIndex < ViewModel.PersistentState.AllCollapsePointList.Count; collapsePointIndex++)
-			{
-				var collapsePoint = ViewModel.PersistentState.AllCollapsePointList[collapsePointIndex];
-				
-				if (!collapsePoint.IsCollapsed)
-					continue;
-			
-				var lastLineIndex = collapsePoint.EndExclusiveLineIndex - 1;
-				
-				if (lastLineIndex == ViewModel.LineIndex)
-				{
-					var lastLineInformation = Model.GetLineInformation(lastLineIndex);
-					
-					var appendToLineInformation = Model.GetLineInformation(collapsePoint.AppendToLineIndex);
-					
-					// Tab key column offset
-			        {
-			            var tabsOnSameLineBeforeCursor = Model.GetTabCountOnSameLineBeforeCursor(
-			                collapsePoint.AppendToLineIndex,
-			                appendToLineInformation.LastValidColumnIndex);
-			
-			            // 1 of the character width is already accounted for
-			
-			            var extraWidthPerTabKey = tabWidth - 1;
-			
-			            leftInPixels += extraWidthPerTabKey *
-			                tabsOnSameLineBeforeCursor *
-			                ViewModel.PersistentState.CharAndLineMeasurements.CharacterWidth;
-			        }
-			        
-			        // +3 for the 3 dots: '[...]'
-			        leftInPixels += ViewModel.PersistentState.CharAndLineMeasurements.CharacterWidth * (appendToLineInformation.LastValidColumnIndex + 3);
-			        
-			        if (ComponentData.LineIndexCache.Map.TryGetValue(collapsePoint.AppendToLineIndex, out var cacheEntry1))
-			        {
-			        	topInPixelsInvariantCulture = cacheEntry1.TopCssValue;
-			        }
-			        else
-			        {
-			        	if (Count > 0 && ComponentData.LineIndexCache.Map.TryGetValue(EntryList[0].LineIndex, out var cacheEntry2))
-			        		topInPixelsInvariantCulture = cacheEntry2.TopCssValue;
-			        	else
-			        		topInPixelsInvariantCulture = 0.ToString();
-			        }
-			        
-			        break;
-				}
-			}
-		}
-
-		if (!shouldAppearAfterCollapsePoint)
-		{
-	        // Tab key column offset
-            var tabsOnSameLineBeforeCursor = Model.GetTabCountOnSameLineBeforeCursor(
-                ViewModel.LineIndex,
-                ViewModel.ColumnIndex);
-            // 1 of the character width is already accounted for
-            var extraWidthPerTabKey = tabWidth - 1;
-            leftInPixels += extraWidthPerTabKey *
-                tabsOnSameLineBeforeCursor *
-                ViewModel.PersistentState.CharAndLineMeasurements.CharacterWidth;
-	        
-	        leftInPixels += ViewModel.PersistentState.CharAndLineMeasurements.CharacterWidth * ViewModel.ColumnIndex;
-	        
-	        for (int inlineUiTupleIndex = 0; inlineUiTupleIndex < ViewModel.PersistentState.InlineUiList.Count; inlineUiTupleIndex++)
-			{
-				var inlineUiTuple = ViewModel.PersistentState.InlineUiList[inlineUiTupleIndex];
-				
-				var lineAndColumnIndices = Model.GetLineAndColumnIndicesFromPositionIndex(inlineUiTuple.InlineUi.PositionIndex);
-				
-				if (lineAndColumnIndices.lineIndex == ViewModel.LineIndex)
-				{
-					if (lineAndColumnIndices.columnIndex == ViewModel.ColumnIndex)
-					{
-						if (ViewModel.PersistentState.VirtualAssociativityKind == VirtualAssociativityKind.Right)
-						{
-							leftInPixels += ViewModel.PersistentState.CharAndLineMeasurements.CharacterWidth * 3;
-						}
-					}
-					else if (lineAndColumnIndices.columnIndex <= ViewModel.ColumnIndex)
-					{
-						leftInPixels += ViewModel.PersistentState.CharAndLineMeasurements.CharacterWidth * 3;
-					}
-				}
-			}
-	    }
+        // Tab key column offset
+        var tabsOnSameLineBeforeCursor = Model.GetTabCountOnSameLineBeforeCursor(
+            ViewModel.LineIndex,
+            ViewModel.ColumnIndex);
+        // 1 of the character width is already accounted for
+        var extraWidthPerTabKey = tabWidth - 1;
+        leftInPixels += extraWidthPerTabKey *
+            tabsOnSameLineBeforeCursor *
+            ViewModel.PersistentState.CharAndLineMeasurements.CharacterWidth;
+        
+        leftInPixels += ViewModel.PersistentState.CharAndLineMeasurements.CharacterWidth * ViewModel.ColumnIndex;
         
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Clear();
 
@@ -772,7 +616,7 @@ public class TextEditorVirtualizationResult
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append(leftInPixelsInvariantCulture);
         ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("px;");
 
-		if (!shouldAppearAfterCollapsePoint && ComponentData.LineIndexCache.Map.TryGetValue(ViewModel.LineIndex, out var cacheEntry))
+		if (ComponentData.LineIndexCache.Map.TryGetValue(ViewModel.LineIndex, out var cacheEntry))
 			topInPixelsInvariantCulture = cacheEntry.TopCssValue;
 
 		ComponentData.TextEditorViewModelSlimDisplay.TextEditorService.__StringBuilder.Append("top: ");
@@ -860,25 +704,8 @@ public class TextEditorVirtualizationResult
 	            ? virtualUpperBoundExclusiveLineIndex
             	: selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex;
             
-            var hiddenLineCount = 0;
-			var checkHiddenLineIndex = 0;
-            
-            for (; checkHiddenLineIndex < useLowerBoundInclusiveLineIndex; checkHiddenLineIndex++)
-            {
-            	if (ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(checkHiddenLineIndex))
-            		hiddenLineCount++;
-            }
-            
             for (var i = useLowerBoundInclusiveLineIndex; i < useUpperBoundExclusiveLineIndex; i++)
 	        {
-	        	checkHiddenLineIndex++;
-	        
-	        	if (ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
-	        	{
-	        		hiddenLineCount++;
-	        		continue;
-	        	}
-	        	
 	        	SelectionStyleList.Add(GetTextSelectionStyleCss(
 		     	   selectionBoundsInPositionIndexUnits.Position_LowerInclusiveIndex,
 		     	   selectionBoundsInPositionIndexUnits.Position_UpperExclusiveIndex,
@@ -1022,25 +849,11 @@ public class TextEditorVirtualizationResult
                 var boundsInPositionIndexUnits = (textSpan.StartInclusiveIndex, textSpan.EndExclusiveIndex);
 
                 var boundsInLineIndexUnits = PresentationGetBoundsInLineIndexUnits(boundsInPositionIndexUnits);
-                
-                for (; checkHiddenLineIndex < boundsInLineIndexUnits.FirstLineToSelectDataInclusive; checkHiddenLineIndex++)
-                {
-                	if (ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(checkHiddenLineIndex))
-                		hiddenLineCount++;
-                }
 
                 for (var i = boundsInLineIndexUnits.FirstLineToSelectDataInclusive;
                      i < boundsInLineIndexUnits.LastLineToSelectDataExclusive;
                      i++)
                 {
-                	checkHiddenLineIndex++;
-                	
-                	if (ViewModel.PersistentState.HiddenLineIndexHashSet.Contains(i))
-                	{
-                		hiddenLineCount++;
-                		continue;
-                	}
-                		
                 	presentationLayerStyleList.Add(PresentationGetCssStyleString(
                         boundsInPositionIndexUnits.StartInclusiveIndex,
                         boundsInPositionIndexUnits.EndExclusiveIndex,
