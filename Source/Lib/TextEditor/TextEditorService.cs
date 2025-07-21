@@ -8,7 +8,6 @@ using Walk.Common.RazorLib.JsRuntimes.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Reactives.Models;
 using Walk.TextEditor.RazorLib.Lines.Models;
-using Walk.TextEditor.RazorLib.Diffs.Models;
 using Walk.TextEditor.RazorLib.Groups.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.Installations.Models;
@@ -83,11 +82,6 @@ public sealed partial class TextEditorService
 	/// Do not touch this property, it is used for the ICompilerService implementations.
 	/// </summary>
 	public StringWalker __StringWalker { get; } = new StringWalker();
-	
-    /// <summary>
-	/// Do not touch this property, it is used for the TextEditorEditContext.
-	/// </summary>
-    public Dictionary<Key<TextEditorDiffModel>, TextEditorDiffModelModifier?> __DiffModelCache { get; } = new();
  
 	/// <summary>
 	/// Do not touch this property, it is used for the TextEditorEditContext.

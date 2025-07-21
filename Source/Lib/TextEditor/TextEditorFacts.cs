@@ -5,7 +5,6 @@ using Walk.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Walk.TextEditor.RazorLib.Diffs.Models;
 
 namespace Walk.TextEditor.RazorLib;
 
@@ -68,31 +67,6 @@ public static class TextEditorFacts
         DevToolsPresentation_CssClassString,
         new TextEditorDevToolsDecorationMapper());
     /* End TextEditorDevToolsPresentationFacts */
-    
-    /* Start DiffPresentationFacts */
-    public const string Diff_CssClassString = "di_te_diff-presentation";
-
-    public static readonly Key<TextEditorPresentationModel> Diff_InPresentationKey = Key<TextEditorPresentationModel>.NewKey();
-    public static readonly Key<TextEditorPresentationModel> Diff_OutPresentationKey = Key<TextEditorPresentationModel>.NewKey();
-
-    /// <summary>
-    /// TODO: Change the name of this from 'EmptyInPresentationModel' because its confusingly named.
-    /// </summary>
-    public static readonly TextEditorPresentationModel Diff_EmptyInPresentationModel = new(
-        Diff_InPresentationKey,
-        0,
-        Diff_CssClassString,
-        new TextEditorDiffDecorationMapper());
-
-    /// <summary>
-    /// TODO: Change the name of this from 'EmptyOutPresentationModel' because its confusingly named.
-    /// </summary>
-    public static readonly TextEditorPresentationModel Diff_EmptyOutPresentationModel = new(
-        Diff_OutPresentationKey,
-        0,
-        Diff_CssClassString,
-        new TextEditorDiffDecorationMapper());
-    /* End DiffPresentationFacts */
     
     /* Start Aaa */
     /* End Aaa */

@@ -22,7 +22,6 @@ using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.Installations.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Walk.TextEditor.RazorLib.Diffs.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Ide.RazorLib.Installations.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
@@ -644,8 +643,6 @@ public partial class IdeService : IBackgroundTaskGroup
         var modelModifier = new TextEditorModel(model);
         modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.CompilerServiceDiagnosticPresentation_EmptyPresentationModel);
         modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel);
-        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.Diff_EmptyInPresentationModel);
-        modelModifier.PerformRegisterPresentationModelAction(TextEditorFacts.Diff_EmptyOutPresentationModel);
         
         model = modelModifier;
 
