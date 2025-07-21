@@ -31,7 +31,7 @@ public struct KeymapArgs : ICommandArgs
 	    Type = keyboardEventArgs.Type;
     }
     
-    public Key<KeymapLayer> LayerKey { get; set; }
+    public int LayerKey { get; set; }
     
     public string? Key { get; set; }
     public string? Code { get; set; }

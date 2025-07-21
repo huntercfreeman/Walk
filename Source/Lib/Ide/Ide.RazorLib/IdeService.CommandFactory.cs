@@ -41,7 +41,7 @@ public partial class IdeService
 			{
 				Key = "a",
 				Code = "KeyA",
-				LayerKey = Key<KeymapLayer>.Empty,
+				LayerKey = -1,
 				CtrlKey = true,
 				AltKey = true,
 			},
@@ -54,7 +54,7 @@ public partial class IdeService
 			{
 				Key = "b",
 				Code = "KeyB",
-				LayerKey = Key<KeymapLayer>.Empty,
+				LayerKey = -1,
 
 				CtrlKey = true,
 				AltKey = true,
@@ -68,7 +68,7 @@ public partial class IdeService
 			{
 				Key = "C",
 				Code = "KeyC",
-				LayerKey = Key<KeymapLayer>.Empty,
+				LayerKey = -1,
 
 				ShiftKey = true,
 				CtrlKey = true,
@@ -83,7 +83,7 @@ public partial class IdeService
 			{
 				Key = "c",
 				Code = "KeyC",
-				LayerKey = Key<KeymapLayer>.Empty,
+				LayerKey = -1,
 				CtrlKey = true,
 				AltKey = true,
 			},
@@ -96,7 +96,7 @@ public partial class IdeService
 			{
 				Key = "d",
 				Code = "KeyD",
-				LayerKey = Key<KeymapLayer>.Empty,
+				LayerKey = -1,
 				CtrlKey = true,
 				AltKey = true,
 			},
@@ -109,7 +109,7 @@ public partial class IdeService
 			{
 				Key = "E",
 				Code = "KeyE",
-				LayerKey = Key<KeymapLayer>.Empty,
+				LayerKey = -1,
 				ShiftKey = true,
 				CtrlKey = true,
 				AltKey = true,
@@ -123,7 +123,7 @@ public partial class IdeService
 			{
 				Key = "f",
 				Code = "KeyF",
-				LayerKey = Key<KeymapLayer>.Empty,
+				LayerKey = -1,
 				CtrlKey = true,
 				AltKey = true,
 			},
@@ -136,7 +136,7 @@ public partial class IdeService
 			{
 				Key = "g",
 				Code = "KeyG",
-				LayerKey = Key<KeymapLayer>.Empty,
+				LayerKey = -1,
 				CtrlKey = true,
 				AltKey = true,
 			},
@@ -149,7 +149,7 @@ public partial class IdeService
 			{
 				Key = "g",
 				Code = "KeyG",
-				LayerKey = Key<KeymapLayer>.Empty,
+				LayerKey = -1,
 				CtrlKey = true,
 				AltKey = true,
 			},
@@ -162,7 +162,7 @@ public partial class IdeService
 			{
 				Key = "f",
 				Code = "KeyF",
-				LayerKey = Key<KeymapLayer>.Empty,
+				LayerKey = -1,
 				CtrlKey = true,
 				AltKey = true,
 			},
@@ -175,7 +175,7 @@ public partial class IdeService
 			{
 				Key = "h",
 				Code = "KeyH",
-				LayerKey = Key<KeymapLayer>.Empty,
+				LayerKey = -1,
 				CtrlKey = true,
 				AltKey = true,
 			},
@@ -188,7 +188,7 @@ public partial class IdeService
 			{
 				Key = "e",
 				Code = "KeyE",
-				LayerKey = Key<KeymapLayer>.Empty,
+				LayerKey = -1,
 				CtrlKey = true,
 				AltKey = true,
 			},
@@ -201,7 +201,7 @@ public partial class IdeService
 			{
 				Key = "o",
 				Code = "KeyO",
-				LayerKey = Key<KeymapLayer>.Empty,
+				LayerKey = -1,
 				CtrlKey = true,
 				AltKey = true,
 			},
@@ -214,7 +214,7 @@ public partial class IdeService
 			{
 				Key = "t",
 				Code = "KeyT",
-				LayerKey = Key<KeymapLayer>.Empty,
+				LayerKey = -1,
 				CtrlKey = true,
 				AltKey = true,
 			},
@@ -227,7 +227,7 @@ public partial class IdeService
 			{
 				Key = "T",
 				Code = "KeyT",
-				LayerKey = Key<KeymapLayer>.Empty,
+				LayerKey = -1,
 				ShiftKey = true,
 				CtrlKey = true,
 				AltKey = true,
@@ -241,7 +241,7 @@ public partial class IdeService
 			{
 				Key = "t",
 				Code = "KeyT",
-				LayerKey = Key<KeymapLayer>.Empty,
+				LayerKey = -1,
 				CtrlKey = true,
 				AltKey = true,
 			},
@@ -275,7 +275,7 @@ public partial class IdeService
 				{
 					Key = "Escape",
 					Code = "Escape",
-					LayerKey = Key<KeymapLayer>.Empty
+					LayerKey = -1
 				},
 				focusTextEditorCommand);
 
@@ -293,7 +293,7 @@ public partial class IdeService
 				{
 					Key = "F",
 					Code = "KeyF",
-					LayerKey = Key<KeymapLayer>.Empty,
+					LayerKey = -1,
 					ShiftKey = true,
 					CtrlKey = true,
 				},
@@ -314,7 +314,7 @@ public partial class IdeService
 				{
 					Key = ",",
 					Code = "Comma",
-					LayerKey = Key<KeymapLayer>.Empty,
+					LayerKey = -1,
 					CtrlKey = true,
 				},
 				openCodeSearchDialogCommand);
@@ -387,7 +387,7 @@ public partial class IdeService
 				{
 					Key = "Tab",
 					Code = "Tab",
-					LayerKey = Key<KeymapLayer>.Empty,
+					LayerKey = -1,
 					CtrlKey = true,
 				},
 				openContextSwitchDialogCommand);
@@ -397,7 +397,7 @@ public partial class IdeService
 				{
 					Key = "/",
 					Code = "Slash",
-					LayerKey = Key<KeymapLayer>.Empty,
+					LayerKey = -1,
 					CtrlKey = true,
 					AltKey = true,
 				},
@@ -423,7 +423,7 @@ public partial class IdeService
 				{
 					Key = "p",
 					Code = "KeyP",
-					LayerKey = Key<KeymapLayer>.Empty,
+					LayerKey = -1,
 					CtrlKey = true,
 				},
 				openCommandBarCommand);

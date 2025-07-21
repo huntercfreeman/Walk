@@ -28,7 +28,7 @@ public partial class DotNetService
 					CtrlKey = true,
 					AltKey = true,
 					MetaKey = false,
-					LayerKey = Key<KeymapLayer>.Empty,
+					LayerKey = -1,
 				},
 				ContextHelper.ConstructFocusContextElementCommand(
 					CommonFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager", CommonService.JsRuntimeCommonApi, CommonService));
@@ -44,7 +44,7 @@ public partial class DotNetService
 					CtrlKey = true,
 					AltKey = true,
 					MetaKey = false,
-					LayerKey = Key<KeymapLayer>.Empty,
+					LayerKey = -1,
 				},
 				ContextHelper.ConstructFocusContextElementCommand(
 					CommonFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl", CommonService.JsRuntimeCommonApi, CommonService));
@@ -63,7 +63,7 @@ public partial class DotNetService
 						CtrlKey = true,
 						AltKey = true,
 						MetaKey = false,
-						LayerKey = Key<KeymapLayer>.Empty,
+						LayerKey = -1,
 					},
 					focusSolutionExplorerCommand);
 
@@ -104,7 +104,7 @@ public partial class DotNetService
 							ShiftKey = true,
 							AltKey = true,
 							MetaKey = false,
-							LayerKey = Key<KeymapLayer>.Empty,
+							LayerKey = -1,
 						},
 						focusTextEditorCommand);
 			}

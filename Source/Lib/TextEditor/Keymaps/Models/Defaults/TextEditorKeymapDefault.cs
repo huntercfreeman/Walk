@@ -20,7 +20,7 @@ public class TextEditorKeymapDefault : ITextEditorKeymap
     public Func<TextEditorEditContext, string?, int?, ValueTask> AltF12Func { get; set; } = (_, _, _) => ValueTask.CompletedTask;
     public Func<TextEditorEditContext, TextEditorModel, TextEditorViewModel, ValueTask> ShiftF12Func { get; set; } = (_, _, _) => ValueTask.CompletedTask;
 
-    public Key<KeymapLayer> GetLayer(bool hasSelection)
+    public int GetLayer(bool hasSelection)
     {
         return hasSelection
             ? TextEditorFacts.KeymapDefault_HasSelectionLayer.Key

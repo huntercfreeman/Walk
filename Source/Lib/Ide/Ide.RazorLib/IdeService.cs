@@ -507,7 +507,7 @@ public partial class IdeService : IBackgroundTaskGroup
                     CtrlKey = false,
                     AltKey = true,
                     MetaKey = false,
-                    LayerKey = Key<KeymapLayer>.Empty,
+                    LayerKey = -1,
                 },
                 new CommonCommand("Open File Dropdown", "open-file-dropdown", false, async _ => await ideMainLayout.RenderFileDropdownOnClick()));
 
@@ -520,7 +520,7 @@ public partial class IdeService : IBackgroundTaskGroup
                     CtrlKey = false,
                     AltKey = true,
                     MetaKey = false,
-                    LayerKey = Key<KeymapLayer>.Empty,
+                    LayerKey = -1,
                 },
                 new CommonCommand("Open Tools Dropdown", "open-tools-dropdown", false, async _ => await ideMainLayout.RenderToolsDropdownOnClick()));
 
@@ -533,7 +533,7 @@ public partial class IdeService : IBackgroundTaskGroup
                     CtrlKey = false,
                     AltKey = true,
                     MetaKey = false,
-                    LayerKey = Key<KeymapLayer>.Empty,
+                    LayerKey = -1,
                 },
                 new CommonCommand("Open View Dropdown", "open-view-dropdown", false, async _ => await ideMainLayout.RenderViewDropdownOnClick()));
 
@@ -546,7 +546,7 @@ public partial class IdeService : IBackgroundTaskGroup
                 CtrlKey = false,
                 AltKey = true,
                 MetaKey = false,
-                LayerKey = Key<KeymapLayer>.Empty,
+                LayerKey = -1,
             },
             new CommonCommand("Open Run Dropdown", "open-run-dropdown", false, async _ => await ideMainLayout.RenderRunDropdownOnClick()));
     }

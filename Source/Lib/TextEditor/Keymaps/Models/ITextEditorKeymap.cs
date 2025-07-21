@@ -15,7 +15,7 @@ public interface ITextEditorKeymap
 {
 	public string DisplayName { get; }
 
-	public Key<KeymapLayer> GetLayer(bool hasSelection);
+	public int GetLayer(bool hasSelection);
 
     public string GetCursorCssClassString();
 

@@ -13,12 +13,12 @@ public static class TextEditorFacts
 {
     /* Start TextEditorKeymapDefaultFacts */
 	public static readonly KeymapLayer KeymapDefault_DefaultLayer = new KeymapLayer(
-        new Key<KeymapLayer>(Guid.Parse("d0ac9354-6671-44fd-b281-e652a6aa1f56")),
+        Key: 0,
         "Default Layer",
         "default-layer");
 
     public static readonly KeymapLayer KeymapDefault_HasSelectionLayer = new KeymapLayer(
-        new Key<KeymapLayer>(Guid.Parse("3ac23ee9-ea25-4b8a-bed4-f10367ad095e")),
+        Key: 1,
         "If Has Selection",
         "if-has-selection");
     /* End TextEditorKeymapDefaultFacts */
