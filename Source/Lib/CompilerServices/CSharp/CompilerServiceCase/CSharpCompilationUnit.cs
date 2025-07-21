@@ -16,7 +16,7 @@ namespace Walk.CompilerServices.CSharp.CompilerServiceCase;
 /// after the parse finished, or if the data should be cleared immediately after the parse finishes
 /// (respectively).
 /// </summary>
-public sealed class CSharpCompilationUnit : IExtendedCompilationUnit
+public sealed class CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerServiceResource
 {
 	public CSharpCompilationUnit(ResourceUri resourceUri, string sourceText, CompilationUnitKind compilationUnitKind)
 	{
@@ -35,6 +35,8 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit
     {
     	return DiagnosticList.Select(x => x.TextSpan);
     }
+    
+    ICompilationUnit ICompilerServiceResource.CompilationUnit { get => this; set => _ = value; }
     
     public CompilationUnitKind CompilationUnitKind { get; }
 

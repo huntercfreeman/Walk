@@ -31,7 +31,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	// <summary>Public because the RazorCompilerService uses it.</summary>
     public readonly CSharpBinder __CSharpBinder;
     
-    private readonly Dictionary<ResourceUri, CSharpResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
     private readonly HashSet<string> _collapsePointUsedIdentifierHashSet = new();
     private readonly StringBuilder _getAutocompleteMenuStringBuilder = new();
@@ -45,14 +44,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     	
     	__CSharpBinder = new(_textEditorService);
     	
-    	var primitiveKeywordsTextFile = new CSharpResource(new ResourceUri(string.Empty), this)
-    	{
-    	    CompilationUnit = new(new ResourceUri(string.Empty), "NotApplicable empty" + " void int char string bool var", CompilationUnitKind.IndividualFile_AllData)
-    	};
+    	var primitiveKeywordsTextFile = new CSharpCompilationUnit(
+    	    new ResourceUri(string.Empty),
+    	    "NotApplicable empty" + " void int char string bool var",
+    	    CompilationUnitKind.IndividualFile_AllData);
     	
-    	_resourceMap.Add(primitiveKeywordsTextFile.ResourceUri, primitiveKeywordsTextFile);
-    	
-    	__CSharpBinder.UpsertCompilationUnit(primitiveKeywordsTextFile.CompilationUnit);
+    	__CSharpBinder.UpsertCompilationUnit(primitiveKeywordsTextFile);
     }
 
     public event Action? ResourceRegistered;
@@ -65,14 +62,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
     public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified)
     {
-    	lock (_resourceMapLock)
-        {
-            if (_resourceMap.ContainsKey(resourceUri))
-                return;
-
-            _resourceMap.Add(resourceUri, new CSharpResource(resourceUri, this));
-        }
-
+        __CSharpBinder.UpsertCompilationUnit(new CSharpCompilationUnit(
+    	    resourceUri,
+    	    string.Empty,
+    	    CompilationUnitKind.IndividualFile_AllData));
+    	    
 		if (shouldTriggerResourceWasModified)
 	        ResourceWasModified(resourceUri, Array.Empty<TextEditorTextSpan>());
 	        
@@ -81,11 +75,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
     public void DisposeResource(ResourceUri resourceUri)
     {
-    	lock (_resourceMapLock)
-        {
-            _resourceMap.Remove(resourceUri);
-        }
-
+        __CSharpBinder.RemoveCompilationUnit(resourceUri);
         ResourceDisposed?.Invoke();
     }
 
@@ -104,15 +94,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
     public ICompilerServiceResource? GetResource(ResourceUri resourceUri)
     {
-    	var model = _textEditorService.Model_GetOrDefault(resourceUri);
-
-        lock (_resourceMapLock)
-        {
-            if (!_resourceMap.ContainsKey(resourceUri))
-                return null;
-
-            return _resourceMap[resourceUri];
-        }
+    	__CSharpBinder.__CompilationUnitMap.TryGetValue(resourceUri, out var compilerServiceResource);
+    	return compilerServiceResource;
     }
     
     public MenuRecord GetContextMenu(TextEditorVirtualizationResult virtualizationResult, ContextMenu contextMenu)
@@ -647,7 +630,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
 		var syntaxNode = primaryCursorPositionIndex is null || __CSharpBinder is null || compilerServiceResource?.CompilationUnit is null
 			? null
-			: __CSharpBinder.GetSyntaxNode(null, primaryCursorPositionIndex.Value, (CSharpResource)compilerServiceResource);
+			: __CSharpBinder.GetSyntaxNode(null, primaryCursorPositionIndex.Value, (CSharpCompilationUnit)compilerServiceResource);
 			
 		var menuOptionList = new List<MenuOptionRecord>();
 			
@@ -1225,7 +1208,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	{
 		var resourceUri = modelModifier.PersistentState.ResourceUri;
 	
-		if (!_resourceMap.ContainsKey(resourceUri))
+		if (!__CSharpBinder.__CompilationUnitMap.ContainsKey(resourceUri))
 			return ValueTask.CompletedTask;
 	
 		_textEditorService.Model_StartPendingCalculatePresentationModel(
@@ -1253,15 +1236,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		}
 		finally
 		{
-			lock (_resourceMapLock)
-			{
-				if (_resourceMap.ContainsKey(resourceUri))
-				{
-					var resource = (CSharpResource)_resourceMap[resourceUri];
-					resource.CompilationUnit = cSharpCompilationUnit;
-				}
-			}
-			
 			var diagnosticTextSpans = cSharpCompilationUnit.DiagnosticList
 				.Select(x => x.TextSpan)
 				.ToList();
@@ -1297,7 +1271,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             .ReadAllTextAsync(resourceUri.Value)
             .ConfigureAwait(false);
 	
-		if (!_resourceMap.ContainsKey(resourceUri))
+		if (!__CSharpBinder.__CompilationUnitMap.ContainsKey(resourceUri))
 			return;
 
 		var cSharpCompilationUnit = new CSharpCompilationUnit(
@@ -1316,22 +1290,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		}
 		finally
 		{
-			lock (_resourceMapLock)
-			{
-				if (_resourceMap.ContainsKey(resourceUri))
-				{
-					var resource = (CSharpResource)_resourceMap[resourceUri];
-					resource.CompilationUnit = cSharpCompilationUnit;
-				}
-			}
-			
 			ResourceParsed?.Invoke();
         }
 	}
 	
 	public void FastParse(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
 	{
-	    if (!_resourceMap.ContainsKey(resourceUri))
+	    if (!__CSharpBinder.__CompilationUnitMap.ContainsKey(resourceUri))
 			return;
 	
 		var content = fileSystemProvider.File.ReadAllText(resourceUri.Value);
@@ -1352,15 +1317,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 		}
 		finally
 		{
-			lock (_resourceMapLock)
-			{
-				if (_resourceMap.ContainsKey(resourceUri))
-				{
-					var resource = (CSharpResource)_resourceMap[resourceUri];
-					resource.CompilationUnit = cSharpCompilationUnit;
-				}
-			}
-			
 			// Do not invoke ResourceParsed for the fast parse
 			// TODO: Consider making this change to the async version too.
         }
@@ -1382,7 +1338,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// </summary>
     public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource)
     {
-    	return __CSharpBinder.GetSyntaxNode(compilationUnit: null, positionIndex, (CSharpResource)compilerServiceResource);
+    	return __CSharpBinder.GetSyntaxNode(compilationUnit: null, positionIndex, (CSharpCompilationUnit)compilerServiceResource);
     }
     
     /// <summary>
@@ -1439,7 +1395,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 	    	var targetNode = __CSharpBinder.GetSyntaxNode(
 	    		(CSharpCompilationUnit)compilerServiceResource.CompilationUnit,
 	    		textSpan.StartInclusiveIndex - 1,
-	    		(CSharpResource)compilerServiceResource);
+	    		(CSharpCompilationUnit)compilerServiceResource);
 	    		
 	    	if (targetNode is null)
 	    		return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
