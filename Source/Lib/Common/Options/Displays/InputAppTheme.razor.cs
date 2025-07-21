@@ -35,7 +35,7 @@ public partial class InputAppTheme : IDisposable
 
         if (Guid.TryParse(guidAsString, out var guidValue))
         {
-            var themesInScopeList = themeState.ThemeList.Where(x => x.ThemeScopeList.Contains(ThemeScope.App))
+            var themesInScopeList = themeState.ThemeList.Where(x => x.IncludeScopeApp)
                 .ToArray();
 
             var existingThemeRecord = themesInScopeList.FirstOrDefault(btr => btr.Key.Guid == guidValue);

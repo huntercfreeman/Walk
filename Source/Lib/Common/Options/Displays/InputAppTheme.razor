@@ -5,7 +5,7 @@
     var appOptionsState = CommonService.GetAppOptionsState();
 
     var themesInScopeList = themeState.ThemeList
-        .Where(x => x.ThemeScopeList.Contains(ThemeScope.App))
+        .Where(x => x.IncludeScopeApp)
         .ToArray();
         
     var isActiveValid = CheckIsActiveValid(

@@ -21,13 +21,8 @@ public record WalkTextEditorConfig
     /// The text editor and application theme are separate.
     /// </summary>
     public Key<ThemeRecord>? InitialThemeKey { get; init; } = CommonFacts.VisualStudioDarkThemeClone.Key;
-    /// <summary>
-    /// By default the only themes are clones of the application "Visual Studio"('s) colors.
-    /// That is to say, 2 themes total, one light, one dark.
-    /// <br/><br/>
-    /// Adding more themes here will allow them to be selected from the settings theme dropdown.
-    /// </summary>
-    public List<ThemeRecord>? CustomThemeRecordList { get; init; } = WalkTextEditorCustomThemeFacts.AllCustomThemesList;
+    public ThemeRecord CustomThemeOne { get; init; } = TextEditorFacts.LightTheme;
+    public ThemeRecord CustomThemeTwo { get; init; } = TextEditorFacts.DarkTheme;
     /// <summary>
     /// When a user wants to customize the text editor, this settings dialog will be rendered.
     /// </summary>

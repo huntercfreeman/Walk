@@ -26,7 +26,7 @@ public partial class CommonService
         ThemeStateChanged?.Invoke();
     }
     
-    public void Theme_RegisterRangeAction(IReadOnlyList<ThemeRecord> themeList)
+    public void Theme_RegisterRangeAction(IEnumerable<ThemeRecord> themeList)
     {
         var outThemeList = new List<ThemeRecord>(_themeState.ThemeList);
         
