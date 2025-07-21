@@ -29,12 +29,12 @@ class Program
 
         // customize window
         app.MainWindow
-			// Am doing development with a locally published version of the IDE
-			// on Ubuntu. The text editor isn't fully optimized,
-			// and the default Log for Photino is the console.
-			// So, to help the integrated terminal I'm
-			// setting verbosity to 0 (which turns off logging) for now (2024-05-14).
-			.SetLogVerbosity(0)
+            // Am doing development with a locally published version of the IDE
+            // on Ubuntu. The text editor isn't fully optimized,
+            // and the default Log for Photino is the console.
+            // So, to help the integrated terminal I'm
+            // setting verbosity to 0 (which turns off logging) for now (2024-05-14).
+            .SetLogVerbosity(0)
             .SetIconFile("favicon.ico")
             .SetTitle("Walk IDE")
             .SetDevToolsEnabled(true)
@@ -60,7 +60,7 @@ class Program
         // Personal settings to have closing and reopening the IDE be exactly where I want while developing.
         {
             var specialFolderUserProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-		    if (specialFolderUserProfile == "C:\\Users\\hunte")
+            if (specialFolderUserProfile == "C:\\Users\\hunte")
                 app.MainWindow.SetLeft(1_355);
             else if (specialFolderUserProfile == "/home/hunter")
                 app.MainWindow.SetLeft(1_200).SetTop(100).SetHeight(1900);

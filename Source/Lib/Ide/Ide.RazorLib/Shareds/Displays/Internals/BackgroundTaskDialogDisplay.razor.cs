@@ -13,8 +13,8 @@ public partial class BackgroundTaskDialogDisplay : ComponentBase, IDisposable
     private readonly List<IBackgroundTask> _seenBackgroundTasks = new List<IBackgroundTask>();
     private readonly object _seenBackgroundTasksLock = new();
 
-	private int _countTracked = 100;
-	private int _clearTo = 15;
+    private int _countTracked = 100;
+    private int _clearTo = 15;
 
     protected override void OnInitialized()
     {
@@ -27,17 +27,17 @@ public partial class BackgroundTaskDialogDisplay : ComponentBase, IDisposable
         
         if (executingBackgroundTask is not null)
         {
-			lock (_seenBackgroundTasksLock)
-			{
-	            if (_seenBackgroundTasks.Count > _countTracked)
-	            {
-	                var lastFifty = _seenBackgroundTasks.TakeLast(15).ToList();
-	                _seenBackgroundTasks.Clear();
-	                _seenBackgroundTasks.AddRange(lastFifty);
-	            }
-	
-	            _seenBackgroundTasks.Add(executingBackgroundTask);
-			}
+            lock (_seenBackgroundTasksLock)
+            {
+                if (_seenBackgroundTasks.Count > _countTracked)
+                {
+                    var lastFifty = _seenBackgroundTasks.TakeLast(15).ToList();
+                    _seenBackgroundTasks.Clear();
+                    _seenBackgroundTasks.AddRange(lastFifty);
+                }
+    
+                _seenBackgroundTasks.Add(executingBackgroundTask);
+            }
         }
 
         _executingBackgroundTaskChangedThrottle.Run(async _ =>
@@ -46,13 +46,13 @@ public partial class BackgroundTaskDialogDisplay : ComponentBase, IDisposable
         });
     }
 
-	private List<IBackgroundTask> GetThreadSafeCopyOfSeenBackgroundTasks()
-	{
-		lock (_seenBackgroundTasksLock)
-		{
-			return new List<IBackgroundTask>(_seenBackgroundTasks);
-		}
-	}
+    private List<IBackgroundTask> GetThreadSafeCopyOfSeenBackgroundTasks()
+    {
+        lock (_seenBackgroundTasksLock)
+        {
+            return new List<IBackgroundTask>(_seenBackgroundTasks);
+        }
+    }
 
     public void Dispose()
     {

@@ -14,7 +14,7 @@ namespace Walk.TextEditor.RazorLib.Groups.Models;
 public record TextEditorGroup(
         Key<TextEditorGroup> GroupKey,
         Key<TextEditorViewModel> ActiveViewModelKey,
-		List<Key<TextEditorViewModel>> ViewModelKeyList,
+        List<Key<TextEditorViewModel>> ViewModelKeyList,
         Category Category,
         TextEditorService TextEditorService,
         CommonService CommonService)
@@ -51,7 +51,7 @@ public record TextEditorGroup(
         if (tab is not TextEditorViewModelPersistentState textEditorTab)
             return Task.CompletedTask;
 
-		Close(textEditorTab.ViewModelKey);
+        Close(textEditorTab.ViewModelKey);
         return Task.CompletedTask;
     }
 
@@ -67,28 +67,28 @@ public record TextEditorGroup(
         return Task.CompletedTask;
     }
 
-	public async Task CloseOthersAsync(ITab safeTab)
+    public async Task CloseOthersAsync(ITab safeTab)
     {
         var localViewModelKeyList = ViewModelKeyList;
 
-		if (safeTab is not TextEditorViewModelPersistentState safeTextEditorTab)
-			return;
-		
-		// Invoke 'OnClickAsync' to set the active tab to the "safe tab"
-		// OnClickAsync does not currently use its mouse event args argument.
-		await OnClickAsync(safeTab, null);
+        if (safeTab is not TextEditorViewModelPersistentState safeTextEditorTab)
+            return;
+        
+        // Invoke 'OnClickAsync' to set the active tab to the "safe tab"
+        // OnClickAsync does not currently use its mouse event args argument.
+        await OnClickAsync(safeTab, null);
 
         foreach (var viewModelKey in localViewModelKeyList)
         {
-			var shouldClose = safeTextEditorTab.ViewModelKey != viewModelKey;
+            var shouldClose = safeTextEditorTab.ViewModelKey != viewModelKey;
 
-			if (shouldClose)
-				Close(viewModelKey);
+            if (shouldClose)
+                Close(viewModelKey);
         }
     }
     
     private void Close(Key<TextEditorViewModel> viewModelKey)
     {
-    	TextEditorService.Group_RemoveViewModel(GroupKey, viewModelKey);
+        TextEditorService.Group_RemoveViewModel(GroupKey, viewModelKey);
     }
 }

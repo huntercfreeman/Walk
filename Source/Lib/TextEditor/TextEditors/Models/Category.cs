@@ -14,12 +14,12 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Models;
 /// </param>
 public record struct Category
 {
-	public static readonly Category Empty = new(string.Empty);
+    public static readonly Category Empty = new(string.Empty);
 
-	public Category(string value)
-	{
-		Value = value;
-	}
+    public Category(string value)
+    {
+        Value = value;
+    }
 
-	public string Value { get; }
+    public string Value { get; }
 }

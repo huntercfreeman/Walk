@@ -9,37 +9,37 @@ namespace Walk.Extensions.DotNet.CSharpProjects.Models;
 
 public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectDependencies>
 {
-	public TreeViewCSharpProjectDependencies(
-			CSharpProjectDependencies cSharpProjectDependencies,
-			CommonService commonService,
-			bool isExpandable,
-			bool isExpanded)
-		: base(cSharpProjectDependencies, isExpandable, isExpanded)
-	{
-		CommonService = commonService;
-	}
+    public TreeViewCSharpProjectDependencies(
+            CSharpProjectDependencies cSharpProjectDependencies,
+            CommonService commonService,
+            bool isExpandable,
+            bool isExpanded)
+        : base(cSharpProjectDependencies, isExpandable, isExpanded)
+    {
+        CommonService = commonService;
+    }
 
-	public CommonService CommonService { get; }
+    public CommonService CommonService { get; }
 
-	public override bool Equals(object? obj)
-	{
-		if (obj is not TreeViewCSharpProjectDependencies otherTreeView)
-			return false;
+    public override bool Equals(object? obj)
+    {
+        if (obj is not TreeViewCSharpProjectDependencies otherTreeView)
+            return false;
 
-		return otherTreeView.GetHashCode() == GetHashCode();
-	}
+        return otherTreeView.GetHashCode() == GetHashCode();
+    }
 
-	public override int GetHashCode() => Item.CSharpProjectNamespacePath.AbsolutePath.Value.GetHashCode();
+    public override int GetHashCode() => Item.CSharpProjectNamespacePath.AbsolutePath.Value.GetHashCode();
 
-	public override string GetDisplayText() => "Dependencies";
-	
-	public override Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => IconProjectDependenciesFragment.Render;
+    public override string GetDisplayText() => "Dependencies";
+    
+    public override Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => IconProjectDependenciesFragment.Render;
 
     /*public override TreeViewRenderer GetTreeViewRenderer()
-	{
-	
-	
-	    using Microsoft.AspNetCore.Components;
+    {
+    
+    
+        using Microsoft.AspNetCore.Components;
         using Walk.Common.RazorLib.Options.Models;
         
         namespace Walk.Extensions.DotNet.CSharpProjects.Displays;
@@ -49,66 +49,66 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
             [Inject]
             private IAppOptionsService AppOptionsService { get; set; } = null!;
         }
-	    
-	
-	
+        
+    
+    
         <div>
 
-        	@{
-        		var appOptionsState = AppOptionsService.GetAppOptionsState();
-        	
-        		var iconDriver = new IconDriver(
-        			appOptionsState.Options.IconSizeInPixels,
-        			appOptionsState.Options.IconSizeInPixels);
-        	}
+            @{
+                var appOptionsState = AppOptionsService.GetAppOptionsState();
+            
+                var iconDriver = new IconDriver(
+                    appOptionsState.Options.IconSizeInPixels,
+                    appOptionsState.Options.IconSizeInPixels);
+            }
         
             @IconProjectDependenciesFragment.Render(iconDriver)
             Dependencies
         </div>
-	
-	
-		return new TreeViewRenderer(
-			DotNetComponentRenderers.CompilerServicesTreeViews.TreeViewCSharpProjectDependenciesRendererType,
-			null);
-	}*/
+    
+    
+        return new TreeViewRenderer(
+            DotNetComponentRenderers.CompilerServicesTreeViews.TreeViewCSharpProjectDependenciesRendererType,
+            null);
+    }*/
 
-	public override Task LoadChildListAsync()
-	{
-		var previousChildren = new List<TreeViewNoType>(ChildList);
+    public override Task LoadChildListAsync()
+    {
+        var previousChildren = new List<TreeViewNoType>(ChildList);
 
-		var treeViewCSharpProjectNugetPackageReferences = new TreeViewCSharpProjectNugetPackageReferences(
-			new CSharpProjectNugetPackageReferences(Item.CSharpProjectNamespacePath),
-			CommonService,
-			true,
-			false)
-		{
-			TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
-		};
+        var treeViewCSharpProjectNugetPackageReferences = new TreeViewCSharpProjectNugetPackageReferences(
+            new CSharpProjectNugetPackageReferences(Item.CSharpProjectNamespacePath),
+            CommonService,
+            true,
+            false)
+        {
+            TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
+        };
 
-		var treeViewCSharpProjectToProjectReferences = new TreeViewCSharpProjectToProjectReferences(
-			new CSharpProjectToProjectReferences(Item.CSharpProjectNamespacePath),
-			CommonService,
-			true,
-			false)
-		{
-			TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
-		};
+        var treeViewCSharpProjectToProjectReferences = new TreeViewCSharpProjectToProjectReferences(
+            new CSharpProjectToProjectReferences(Item.CSharpProjectNamespacePath),
+            CommonService,
+            true,
+            false)
+        {
+            TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
+        };
 
-		var newChildList = new List<TreeViewNoType>
-		{
-			treeViewCSharpProjectNugetPackageReferences,
-			treeViewCSharpProjectToProjectReferences
-		};
+        var newChildList = new List<TreeViewNoType>
+        {
+            treeViewCSharpProjectNugetPackageReferences,
+            treeViewCSharpProjectToProjectReferences
+        };
 
-		ChildList = newChildList;
-		LinkChildren(previousChildren, ChildList);
+        ChildList = newChildList;
+        LinkChildren(previousChildren, ChildList);
 
-		TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
-		return Task.CompletedTask;
-	}
+        TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
+        return Task.CompletedTask;
+    }
 
-	public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
-	{
-		return;
-	}
+    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
+    {
+        return;
+    }
 }

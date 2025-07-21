@@ -70,12 +70,12 @@ public static class LineEndKindExtensions
     public static List<LineEndKind> GetLineEndKindsUserAllowedToUse(this LineEndKind rowEndingKind)
     {
         return _rowEndingsUserAllowedToUse;
-	}
+    }
 
     private static readonly List<LineEndKind> _rowEndingsUserAllowedToUse = new()
     {
-		LineEndKind.CarriageReturn,
-		LineEndKind.LineFeed,
-		LineEndKind.CarriageReturnLineFeed,
-	};
+        LineEndKind.CarriageReturn,
+        LineEndKind.LineFeed,
+        LineEndKind.CarriageReturnLineFeed,
+    };
 }

@@ -9,71 +9,71 @@ namespace Walk.TextEditor.RazorLib.CompilerServices;
 
 public class CompilerServiceDoNothing : ICompilerService
 {
-	public event Action? ResourceRegistered;
-	public event Action? ResourceParsed;
-	public event Action? ResourceDisposed;
+    public event Action? ResourceRegistered;
+    public event Action? ResourceParsed;
+    public event Action? ResourceDisposed;
 
-	public IReadOnlyList<ICompilerServiceResource> CompilerServiceResources { get; }
+    public IReadOnlyList<ICompilerServiceResource> CompilerServiceResources { get; }
 
-	public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified)
-	{
-	}
+    public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified)
+    {
+    }
 
-	public void DisposeResource(ResourceUri resourceUri)
-	{
-	}
+    public void DisposeResource(ResourceUri resourceUri)
+    {
+    }
 
-	public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
-	{
-	}
+    public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
+    {
+    }
 
-	public ICompilerServiceResource? GetResource(ResourceUri resourceUri)
-	{
-		return null;
-	}
+    public ICompilerServiceResource? GetResource(ResourceUri resourceUri)
+    {
+        return null;
+    }
 
-	public MenuRecord GetContextMenu(TextEditorVirtualizationResult virtualizationResult, ContextMenu contextMenu)
-	{
-		return contextMenu.GetDefaultMenuRecord();
-	}
+    public MenuRecord GetContextMenu(TextEditorVirtualizationResult virtualizationResult, ContextMenu contextMenu)
+    {
+        return contextMenu.GetDefaultMenuRecord();
+    }
 
-	public MenuRecord GetAutocompleteMenu(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu)
-	{
-		return autocompleteMenu.GetDefaultMenuRecord();
-	}
+    public MenuRecord GetAutocompleteMenu(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu)
+    {
+        return autocompleteMenu.GetDefaultMenuRecord();
+    }
 
-	public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
-		TextEditorEditContext editContext,
-		TextEditorModel modelModifier,
-		TextEditorViewModel viewModel)
-	{
-		return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
-	}
-	
-	public ValueTask OnInspect(
-		TextEditorEditContext editContext,
-		TextEditorModel modelModifier,
-		TextEditorViewModel viewModel,
-		double clientX,
-		double clientY,
-		bool shiftKey,
+    public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
+        TextEditorEditContext editContext,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModel)
+    {
+        return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
+    }
+    
+    public ValueTask OnInspect(
+        TextEditorEditContext editContext,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModel,
+        double clientX,
+        double clientY,
+        bool shiftKey,
         bool ctrlKey,
         bool altKey,
-		TextEditorComponentData componentData,
+        TextEditorComponentData componentData,
         ResourceUri resourceUri)
     {
-    	return ValueTask.CompletedTask;
+        return ValueTask.CompletedTask;
     }
     
     public ValueTask ShowCallingSignature(
-		TextEditorEditContext editContext,
-		TextEditorModel modelModifier,
-		TextEditorViewModel viewModelModifier,
-		int positionIndex,
-		TextEditorComponentData componentData,
+        TextEditorEditContext editContext,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModelModifier,
+        int positionIndex,
+        TextEditorComponentData componentData,
         ResourceUri resourceUri)
     {
-    	return ValueTask.CompletedTask;
+        return ValueTask.CompletedTask;
     }
     
     public ValueTask GoToDefinition(
@@ -83,21 +83,21 @@ public class CompilerServiceDoNothing : ICompilerService
         Category category,
         int positionIndex)
     {
-    	return ValueTask.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 
-	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
-	{
-		return ValueTask.CompletedTask;
-	}
-	
-	public ValueTask FastParseAsync(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
-	{
-		return ValueTask.CompletedTask;
-	}
-	
-	public void FastParse(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
-	{
-		return;
-	}
+    public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
+    {
+        return ValueTask.CompletedTask;
+    }
+    
+    public ValueTask FastParseAsync(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
+    {
+        return ValueTask.CompletedTask;
+    }
+    
+    public void FastParse(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
+    {
+        return;
+    }
 }

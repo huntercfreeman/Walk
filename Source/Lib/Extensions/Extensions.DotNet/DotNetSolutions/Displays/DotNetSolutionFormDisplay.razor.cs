@@ -15,165 +15,165 @@ namespace Walk.Extensions.DotNet.DotNetSolutions.Displays;
 
 public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 {
-	[Inject]
-	private DotNetService DotNetService { get; set; } = null!;
+    [Inject]
+    private DotNetService DotNetService { get; set; } = null!;
 
-	[CascadingParameter]
-	public IDialog DialogRecord { get; set; } = null!;
+    [CascadingParameter]
+    public IDialog DialogRecord { get; set; } = null!;
 
-	private string _solutionName = string.Empty;
-	private string _parentDirectoryName = string.Empty;
+    private string _solutionName = string.Empty;
+    private string _parentDirectoryName = string.Empty;
 
-	public Key<TerminalCommandRequest> NewDotNetSolutionTerminalCommandRequestKey { get; } = Key<TerminalCommandRequest>.NewKey();
-	public CancellationTokenSource NewDotNetSolutionCancellationTokenSource { get; set; } = new();
+    public Key<TerminalCommandRequest> NewDotNetSolutionTerminalCommandRequestKey { get; } = Key<TerminalCommandRequest>.NewKey();
+    public CancellationTokenSource NewDotNetSolutionCancellationTokenSource { get; set; } = new();
 
-	private string DisplaySolutionName => string.IsNullOrWhiteSpace(_solutionName)
-		? "{enter solution name}"
-		: _solutionName;
+    private string DisplaySolutionName => string.IsNullOrWhiteSpace(_solutionName)
+        ? "{enter solution name}"
+        : _solutionName;
 
-	private string DisplayParentDirectoryName => string.IsNullOrWhiteSpace(_parentDirectoryName)
-		? "{enter parent directory name}"
-		: _parentDirectoryName;
+    private string DisplayParentDirectoryName => string.IsNullOrWhiteSpace(_parentDirectoryName)
+        ? "{enter parent directory name}"
+        : _parentDirectoryName;
 
-	private FormattedCommand FormattedCommand => DotNetCliCommandFormatter.FormatDotnetNewSln(_solutionName);
-	
-	protected override void OnInitialized()
-	{
-		DotNetService.IdeService.TerminalStateChanged += OnTerminalStateChanged;
-	}
+    private FormattedCommand FormattedCommand => DotNetCliCommandFormatter.FormatDotnetNewSln(_solutionName);
+    
+    protected override void OnInitialized()
+    {
+        DotNetService.IdeService.TerminalStateChanged += OnTerminalStateChanged;
+    }
 
-	private void RequestInputFileForParentDirectory()
-	{
-		DotNetService.IdeService.Enqueue(new IdeWorkArgs
-		{
-			WorkKind = IdeWorkKind.RequestInputFileStateForm,
-			StringValue = "Directory for new .NET Solution",
-			OnAfterSubmitFunc = async absolutePath =>
-			{
-				if (absolutePath.ExactInput is null)
-					return;
+    private void RequestInputFileForParentDirectory()
+    {
+        DotNetService.IdeService.Enqueue(new IdeWorkArgs
+        {
+            WorkKind = IdeWorkKind.RequestInputFileStateForm,
+            StringValue = "Directory for new .NET Solution",
+            OnAfterSubmitFunc = async absolutePath =>
+            {
+                if (absolutePath.ExactInput is null)
+                    return;
 
-				_parentDirectoryName = absolutePath.Value;
-				await InvokeAsync(StateHasChanged);
-			},
-			SelectionIsValidFunc = absolutePath =>
-			{
-				if (absolutePath.ExactInput is null || !absolutePath.IsDirectory)
-					return Task.FromResult(false);
+                _parentDirectoryName = absolutePath.Value;
+                await InvokeAsync(StateHasChanged);
+            },
+            SelectionIsValidFunc = absolutePath =>
+            {
+                if (absolutePath.ExactInput is null || !absolutePath.IsDirectory)
+                    return Task.FromResult(false);
 
-				return Task.FromResult(true);
-			},
-			InputFilePatterns = new()
-			{
-				new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
-			}
-		});
-	}
+                return Task.FromResult(true);
+            },
+            InputFilePatterns = new()
+            {
+                new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
+            }
+        });
+    }
 
-	private async Task StartNewDotNetSolutionCommandOnClick()
-	{
-		var localFormattedCommand = FormattedCommand;
-		var localSolutionName = _solutionName;
-		var localParentDirectoryName = _parentDirectoryName;
+    private async Task StartNewDotNetSolutionCommandOnClick()
+    {
+        var localFormattedCommand = FormattedCommand;
+        var localSolutionName = _solutionName;
+        var localParentDirectoryName = _parentDirectoryName;
 
-		if (string.IsNullOrWhiteSpace(localSolutionName) ||
-			string.IsNullOrWhiteSpace(localParentDirectoryName))
-		{
-			return;
-		}
+        if (string.IsNullOrWhiteSpace(localSolutionName) ||
+            string.IsNullOrWhiteSpace(localParentDirectoryName))
+        {
+            return;
+        }
 
-		if (DotNetService.IdeService.CommonService.WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
-		{
-			await HackForWebsite_StartNewDotNetSolutionCommandOnClick(
-					localSolutionName,
-					localParentDirectoryName)
-				.ConfigureAwait(false);
-		}
-		else
-		{
-			var terminalCommandRequest = new TerminalCommandRequest(
-	        	localFormattedCommand.Value,
-	        	_parentDirectoryName,
-	        	new Key<TerminalCommandRequest>(NewDotNetSolutionTerminalCommandRequestKey.Guid))
-	        {
-	        	ContinueWithFunc = parsedCommand =>
-	        	{
-	        		// Close Dialog
-					DotNetService.IdeService.CommonService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+        if (DotNetService.IdeService.CommonService.WalkHostingInformation.WalkHostingKind != WalkHostingKind.Photino)
+        {
+            await HackForWebsite_StartNewDotNetSolutionCommandOnClick(
+                    localSolutionName,
+                    localParentDirectoryName)
+                .ConfigureAwait(false);
+        }
+        else
+        {
+            var terminalCommandRequest = new TerminalCommandRequest(
+                localFormattedCommand.Value,
+                _parentDirectoryName,
+                new Key<TerminalCommandRequest>(NewDotNetSolutionTerminalCommandRequestKey.Guid))
+            {
+                ContinueWithFunc = parsedCommand =>
+                {
+                    // Close Dialog
+                    DotNetService.IdeService.CommonService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
-					// Open the created .NET Solution
-					var parentDirectoryAbsolutePath = DotNetService.IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
-						localParentDirectoryName,
-						true);
+                    // Open the created .NET Solution
+                    var parentDirectoryAbsolutePath = DotNetService.IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
+                        localParentDirectoryName,
+                        true);
 
-					var solutionAbsolutePathString =
-						parentDirectoryAbsolutePath.Value +
-						localSolutionName +
-						DotNetService.IdeService.CommonService.EnvironmentProvider.DirectorySeparatorChar +
-						localSolutionName +
-						'.' +
-						ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
+                    var solutionAbsolutePathString =
+                        parentDirectoryAbsolutePath.Value +
+                        localSolutionName +
+                        DotNetService.IdeService.CommonService.EnvironmentProvider.DirectorySeparatorChar +
+                        localSolutionName +
+                        '.' +
+                        ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-					var solutionAbsolutePath = DotNetService.IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
-						solutionAbsolutePathString,
-						false);
+                    var solutionAbsolutePath = DotNetService.IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
+                        solutionAbsolutePathString,
+                        false);
 
-					DotNetService.Enqueue(new DotNetWorkArgs
-					{
-						WorkKind = DotNetWorkKind.SetDotNetSolution,
-						DotNetSolutionAbsolutePath = solutionAbsolutePath,
-					});
-					return Task.CompletedTask;
-	        	}
-	        };
-	        	
-	        DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-		}
-	}
+                    DotNetService.Enqueue(new DotNetWorkArgs
+                    {
+                        WorkKind = DotNetWorkKind.SetDotNetSolution,
+                        DotNetSolutionAbsolutePath = solutionAbsolutePath,
+                    });
+                    return Task.CompletedTask;
+                }
+            };
+                
+            DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+        }
+    }
 
-	private async Task HackForWebsite_StartNewDotNetSolutionCommandOnClick(
-		string localSolutionName,
-		string localParentDirectoryName)
-	{
-		var directoryContainingSolution =
-			DotNetService.IdeService.CommonService.EnvironmentProvider.JoinPaths(localParentDirectoryName, localSolutionName) +
-			DotNetService.IdeService.CommonService.EnvironmentProvider.DirectorySeparatorChar;
+    private async Task HackForWebsite_StartNewDotNetSolutionCommandOnClick(
+        string localSolutionName,
+        string localParentDirectoryName)
+    {
+        var directoryContainingSolution =
+            DotNetService.IdeService.CommonService.EnvironmentProvider.JoinPaths(localParentDirectoryName, localSolutionName) +
+            DotNetService.IdeService.CommonService.EnvironmentProvider.DirectorySeparatorChar;
 
-		await DotNetService.IdeService.CommonService.FileSystemProvider.Directory
-			.CreateDirectoryAsync(directoryContainingSolution)
-			.ConfigureAwait(false);
+        await DotNetService.IdeService.CommonService.FileSystemProvider.Directory
+            .CreateDirectoryAsync(directoryContainingSolution)
+            .ConfigureAwait(false);
 
-		var localSolutionFilenameWithExtension =
-			localSolutionName +
-			'.' +
-			ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
+        var localSolutionFilenameWithExtension =
+            localSolutionName +
+            '.' +
+            ExtensionNoPeriodFacts.DOT_NET_SOLUTION;
 
-		var solutionAbsolutePathString = DotNetService.IdeService.CommonService.EnvironmentProvider.JoinPaths(
-			directoryContainingSolution,
-			localSolutionFilenameWithExtension);
+        var solutionAbsolutePathString = DotNetService.IdeService.CommonService.EnvironmentProvider.JoinPaths(
+            directoryContainingSolution,
+            localSolutionFilenameWithExtension);
 
-		await DotNetService.IdeService.CommonService.FileSystemProvider.File.WriteAllTextAsync(
-				solutionAbsolutePathString,
-				HackForWebsite_NEW_SOLUTION_TEMPLATE)
-			.ConfigureAwait(false);
+        await DotNetService.IdeService.CommonService.FileSystemProvider.File.WriteAllTextAsync(
+                solutionAbsolutePathString,
+                HackForWebsite_NEW_SOLUTION_TEMPLATE)
+            .ConfigureAwait(false);
 
-		// Close Dialog
-		DotNetService.IdeService.CommonService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+        // Close Dialog
+        DotNetService.IdeService.CommonService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
 
-		NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", DotNetService.IdeService.CommonService, TimeSpan.FromSeconds(7));
+        NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", DotNetService.IdeService.CommonService, TimeSpan.FromSeconds(7));
 
-		var solutionAbsolutePath = DotNetService.IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
-			solutionAbsolutePathString,
-			false);
+        var solutionAbsolutePath = DotNetService.IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
+            solutionAbsolutePathString,
+            false);
 
-		DotNetService.Enqueue(new DotNetWorkArgs
-		{
-			WorkKind = DotNetWorkKind.SetDotNetSolution,
-			DotNetSolutionAbsolutePath = solutionAbsolutePath,
-		});
-	}
+        DotNetService.Enqueue(new DotNetWorkArgs
+        {
+            WorkKind = DotNetWorkKind.SetDotNetSolution,
+            DotNetSolutionAbsolutePath = solutionAbsolutePath,
+        });
+    }
 
-	public const string HackForWebsite_NEW_SOLUTION_TEMPLATE = @"
+    public const string HackForWebsite_NEW_SOLUTION_TEMPLATE = @"
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34018.315
@@ -198,13 +198,13 @@ Global
 EndGlobal
 ";
 
-	public async void OnTerminalStateChanged()
-	{
-		await InvokeAsync(StateHasChanged);
-	}
+    public async void OnTerminalStateChanged()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 
-	public void Dispose()
-	{
-		DotNetService.IdeService.TerminalStateChanged -= OnTerminalStateChanged;
-	}
+    public void Dispose()
+    {
+        DotNetService.IdeService.TerminalStateChanged -= OnTerminalStateChanged;
+    }
 }

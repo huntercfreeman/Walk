@@ -9,64 +9,64 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNode, IGenericParameterNode
 {
-	public FunctionDefinitionNode(
-		AccessModifierKind accessModifierKind,
-		TypeReference returnTypeReference,
-		SyntaxToken functionIdentifierToken,
-		GenericParameterListing genericParameterListing,
-		FunctionArgumentListing functionArgumentListing,
-		CodeBlock codeBlock,
-		ResourceUri resourceUri)
-	{
-		#if DEBUG
-		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.FunctionDefinitionNode++;
-		#endif
-	
-		AccessModifierKind = accessModifierKind;
-		ReturnTypeReference = returnTypeReference;
-		FunctionIdentifierToken = functionIdentifierToken;
-		GenericParameterListing = genericParameterListing;
-		FunctionArgumentListing = functionArgumentListing;
-		ResourceUri = resourceUri;
-	}
+    public FunctionDefinitionNode(
+        AccessModifierKind accessModifierKind,
+        TypeReference returnTypeReference,
+        SyntaxToken functionIdentifierToken,
+        GenericParameterListing genericParameterListing,
+        FunctionArgumentListing functionArgumentListing,
+        CodeBlock codeBlock,
+        ResourceUri resourceUri)
+    {
+        #if DEBUG
+        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.FunctionDefinitionNode++;
+        #endif
+    
+        AccessModifierKind = accessModifierKind;
+        ReturnTypeReference = returnTypeReference;
+        FunctionIdentifierToken = functionIdentifierToken;
+        GenericParameterListing = genericParameterListing;
+        FunctionArgumentListing = functionArgumentListing;
+        ResourceUri = resourceUri;
+    }
 
-	public AccessModifierKind AccessModifierKind { get; }
-	public TypeReference ReturnTypeReference { get; }
-	public SyntaxToken FunctionIdentifierToken { get; }
-	public GenericParameterListing GenericParameterListing { get; set; }
-	public FunctionArgumentListing FunctionArgumentListing { get; set; }
-	public ResourceUri ResourceUri { get; set; }
-	public int IndexMethodOverloadDefinition { get; set; } = -1;
+    public AccessModifierKind AccessModifierKind { get; }
+    public TypeReference ReturnTypeReference { get; }
+    public SyntaxToken FunctionIdentifierToken { get; }
+    public GenericParameterListing GenericParameterListing { get; set; }
+    public FunctionArgumentListing FunctionArgumentListing { get; set; }
+    public ResourceUri ResourceUri { get; set; }
+    public int IndexMethodOverloadDefinition { get; set; } = -1;
 
-	// ICodeBlockOwner properties.
-	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
-	public int Scope_StartInclusiveIndex { get; set; } = -1;
-	public int Scope_EndExclusiveIndex { get; set; } = -1;
-	public int CodeBlock_StartInclusiveIndex { get; set; } = -1;
-	public int CodeBlock_EndExclusiveIndex { get; set; } = -1;
-	public int Unsafe_ParentIndexKey { get; set; } = -1;
-	public int Unsafe_SelfIndexKey { get; set; } = -1;
-	public bool PermitCodeBlockParsing { get; set; } = true;
-	public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
+    // ICodeBlockOwner properties.
+    public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
+    public int Scope_StartInclusiveIndex { get; set; } = -1;
+    public int Scope_EndExclusiveIndex { get; set; } = -1;
+    public int CodeBlock_StartInclusiveIndex { get; set; } = -1;
+    public int CodeBlock_EndExclusiveIndex { get; set; } = -1;
+    public int Unsafe_ParentIndexKey { get; set; } = -1;
+    public int Unsafe_SelfIndexKey { get; set; } = -1;
+    public bool PermitCodeBlockParsing { get; set; } = true;
+    public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
 
-	public bool IsFabricated { get; init; }
-	public SyntaxKind SyntaxKind => SyntaxKind.FunctionDefinitionNode;
-	
-	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
-	
-	public bool IsParsingGenericParameters { get; set; }
-	
-	#region ICodeBlockOwner_Methods
-	public TypeReference GetReturnTypeReference()
-	{
-		return ReturnTypeReference;
-	}
-	#endregion
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.FunctionDefinitionNode;
+    
+    TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
+    
+    public bool IsParsingGenericParameters { get; set; }
+    
+    #region ICodeBlockOwner_Methods
+    public TypeReference GetReturnTypeReference()
+    {
+        return ReturnTypeReference;
+    }
+    #endregion
 
-	#if DEBUG	
-	~FunctionDefinitionNode()
-	{
-		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.FunctionDefinitionNode--;
-	}
-	#endif
+    #if DEBUG    
+    ~FunctionDefinitionNode()
+    {
+        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.FunctionDefinitionNode--;
+    }
+    #endif
 }

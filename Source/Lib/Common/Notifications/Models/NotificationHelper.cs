@@ -63,9 +63,9 @@ public static class NotificationHelper
             new Dictionary<string, object?>
             {
                 {
-					nameof(CommonProgressNotificationDisplay.ProgressBarModel),
-					progressBarModel
-				},
+                    nameof(CommonProgressNotificationDisplay.ProgressBarModel),
+                    progressBarModel
+                },
             },
             notificationOverlayLifespan,
             true,
@@ -76,15 +76,15 @@ public static class NotificationHelper
 
     /// <summary>
     /// TODO: Finish the netcoredbg implementation. For now I'm going to do...
-	/// ...a good ol' "Console.WriteLine()" style of debugging with this method...
-	/// ...Then, when the debugger is implemented, I can find all references of this...
-	/// ...method and remove it from existence.
-	/// <br/>
-	/// This method takes in a 'Func<string>' as opposed to a 'string' in order to
-	/// ensure I encapsulate all of my debug message logic in the invocation of
-	/// this method itself, since this method is only to exist short term.
+    /// ...a good ol' "Console.WriteLine()" style of debugging with this method...
+    /// ...Then, when the debugger is implemented, I can find all references of this...
+    /// ...method and remove it from existence.
+    /// <br/>
+    /// This method takes in a 'Func<string>' as opposed to a 'string' in order to
+    /// ensure I encapsulate all of my debug message logic in the invocation of
+    /// this method itself, since this method is only to exist short term.
     /// </summary>
-	public static void DispatchDebugMessage(
+    public static void DispatchDebugMessage(
         string title,
         Func<string> messageFunc,
         CommonService commonService,

@@ -19,12 +19,12 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Models;
 /// </summary>
 public struct TextEditorVirtualizationSpan
 {
-	public TextEditorVirtualizationSpan(string cssClass, string text)
-	{
-		CssClass = cssClass;
-		MarkupStringText = new MarkupString(text);
-	}
-	
-	public string CssClass { get; }
-	public MarkupString MarkupStringText { get; }
+    public TextEditorVirtualizationSpan(string cssClass, string text)
+    {
+        CssClass = cssClass;
+        MarkupStringText = new MarkupString(text);
+    }
+    
+    public string CssClass { get; }
+    public MarkupString MarkupStringText { get; }
 }

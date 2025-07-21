@@ -16,14 +16,14 @@ public struct UniqueTextEditorWork
 
     public async ValueTask HandleEvent()
     {
-    	var editContext = new TextEditorEditContext(TextEditorService);
+        var editContext = new TextEditorEditContext(TextEditorService);
     
-		await _textEditorFunc
+        await _textEditorFunc
             .Invoke(editContext)
             .ConfigureAwait(false);
             
         await editContext.TextEditorService
-        	.FinalizePost(editContext)
-        	.ConfigureAwait(false);
+            .FinalizePost(editContext)
+            .ConfigureAwait(false);
     }
 }

@@ -2,7 +2,7 @@ namespace Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 public enum IdeWorkKind
 {
-	None,
+    None,
     WalkIdeInitializerOnInit,
     IdeHeaderOnInit,
     FileContentsWereModifiedOnDisk,

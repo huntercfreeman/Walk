@@ -5,12 +5,12 @@ namespace Walk.Common.RazorLib.CustomEvents.Models;
 /// <summary>
 /// https://learn.microsoft.com/en-us/aspnet/core/blazor/performance?view=aspnetcore-8.0
 /// ====================================================================================
-/// 	"In addition to preventing rerenders after event handlers fire in a component in a global fashion,
-/// 	it's possible to prevent rerenders after a single event handler by employing the following utility method.
+///     "In addition to preventing rerenders after event handlers fire in a component in a global fashion,
+///     it's possible to prevent rerenders after a single event handler by employing the following utility method.
 ///
-/// 	Add the following EventUtil class to a Blazor app. The static actions and functions at the top of the
-/// 	EventUtil class provide handlers that cover several combinations of arguments and return types that
-/// 	Blazor uses when handling events."
+///     Add the following EventUtil class to a Blazor app. The static actions and functions at the top of the
+///     EventUtil class provide handlers that cover several combinations of arguments and return types that
+///     Blazor uses when handling events."
 /// </summary>
 public static class EventUtil
 {

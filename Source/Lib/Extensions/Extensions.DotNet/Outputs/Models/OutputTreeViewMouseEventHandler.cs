@@ -6,28 +6,28 @@ namespace Walk.Extensions.DotNet.Outputs.Models;
 
 public class OutputTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
-	private readonly TextEditorService _textEditorService;
-	private readonly IServiceProvider _serviceProvider;
+    private readonly TextEditorService _textEditorService;
+    private readonly IServiceProvider _serviceProvider;
 
-	public OutputTreeViewMouseEventHandler(
-			TextEditorService textEditorService,
-			IServiceProvider serviceProvider)
-		: base(textEditorService.CommonService)
-	{
-		_textEditorService = textEditorService;
-		_serviceProvider = serviceProvider;
-	}
+    public OutputTreeViewMouseEventHandler(
+            TextEditorService textEditorService,
+            IServiceProvider serviceProvider)
+        : base(textEditorService.CommonService)
+    {
+        _textEditorService = textEditorService;
+        _serviceProvider = serviceProvider;
+    }
 
-	public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
-	{
-		base.OnDoubleClickAsync(commandArgs);
+    public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
+    {
+        base.OnDoubleClickAsync(commandArgs);
 
-		if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewDiagnosticLine treeViewDiagnosticLine)
-			return Task.CompletedTask;
-			
-		return OutputTextSpanHelper.OpenInEditorOnClick(
-			treeViewDiagnosticLine,
-			true,
-			_textEditorService);
-	}
+        if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewDiagnosticLine treeViewDiagnosticLine)
+            return Task.CompletedTask;
+            
+        return OutputTextSpanHelper.OpenInEditorOnClick(
+            treeViewDiagnosticLine,
+            true,
+            _textEditorService);
+    }
 }

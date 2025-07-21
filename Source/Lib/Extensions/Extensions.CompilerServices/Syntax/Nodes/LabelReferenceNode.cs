@@ -4,29 +4,29 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 
 public sealed class LabelReferenceNode : IExpressionNode
 {
-	public LabelReferenceNode(SyntaxToken identifierToken)
-	{
-		#if DEBUG
-		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.LabelReferenceNode++;
-		#endif
-	
-		IdentifierToken = identifierToken;
-	}
+    public LabelReferenceNode(SyntaxToken identifierToken)
+    {
+        #if DEBUG
+        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.LabelReferenceNode++;
+        #endif
+    
+        IdentifierToken = identifierToken;
+    }
 
-	public SyntaxToken IdentifierToken { get; }
+    public SyntaxToken IdentifierToken { get; }
 
-	TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
+    TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
-	public int Unsafe_ParentIndexKey { get; set; }
-	public bool IsFabricated { get; init; }
-	public SyntaxKind SyntaxKind => SyntaxKind.LabelReferenceNode;
+    public int Unsafe_ParentIndexKey { get; set; }
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.LabelReferenceNode;
 
 #if DEBUG
-	~LabelReferenceNode()
-	{
-		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.LabelReferenceNode--;
-	}
-	#endif
+    ~LabelReferenceNode()
+    {
+        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.LabelReferenceNode--;
+    }
+    #endif
 }
 
 

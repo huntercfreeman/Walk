@@ -25,46 +25,46 @@ namespace Walk.TextEditor.RazorLib.CompilerServices;
 /// </summary>
 public interface ICompilerService
 {
-	public event Action? ResourceRegistered;
-	public event Action? ResourceParsed;
-	public event Action? ResourceDisposed;
+    public event Action? ResourceRegistered;
+    public event Action? ResourceParsed;
+    public event Action? ResourceDisposed;
 
-	public IReadOnlyList<ICompilerServiceResource> CompilerServiceResources { get; }
+    public IReadOnlyList<ICompilerServiceResource> CompilerServiceResources { get; }
 
-	public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified);
-	public void DisposeResource(ResourceUri resourceUri);
+    public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified);
+    public void DisposeResource(ResourceUri resourceUri);
 
-	public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList);
+    public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList);
 
-	public ICompilerServiceResource? GetResource(ResourceUri resourceUri);
+    public ICompilerServiceResource? GetResource(ResourceUri resourceUri);
 
-	public MenuRecord GetContextMenu(TextEditorVirtualizationResult virtualizationResult, ContextMenu contextMenu);
+    public MenuRecord GetContextMenu(TextEditorVirtualizationResult virtualizationResult, ContextMenu contextMenu);
 
-	public MenuRecord GetAutocompleteMenu(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu);
+    public MenuRecord GetAutocompleteMenu(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu);
 
-	public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
-		TextEditorEditContext editContext,
-		TextEditorModel modelModifier,
-		TextEditorViewModel viewModelModifier);
-		
-	public ValueTask OnInspect(
-		TextEditorEditContext editContext,
-		TextEditorModel modelModifier,
-		TextEditorViewModel viewModelModifier,
-		double clientX,
-		double clientY,
-		bool shiftKey,
+    public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
+        TextEditorEditContext editContext,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModelModifier);
+        
+    public ValueTask OnInspect(
+        TextEditorEditContext editContext,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModelModifier,
+        double clientX,
+        double clientY,
+        bool shiftKey,
         bool ctrlKey,
         bool altKey,
-		TextEditorComponentData componentData,
+        TextEditorComponentData componentData,
         ResourceUri resourceUri);
     
     public ValueTask ShowCallingSignature(
-		TextEditorEditContext editContext,
-		TextEditorModel modelModifier,
-		TextEditorViewModel viewModelModifier,
-		int positionIndex,
-		TextEditorComponentData componentData,
+        TextEditorEditContext editContext,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModelModifier,
+        int positionIndex,
+        TextEditorComponentData componentData,
         ResourceUri resourceUri);
         
     public ValueTask GoToDefinition(
@@ -74,17 +74,17 @@ public interface ICompilerService
         Category category,
         int positionIndex);
 
-	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting);
-	
-	public ValueTask FastParseAsync(
-		TextEditorEditContext editContext,
-		ResourceUri resourceUri,
-		IFileSystemProvider fileSystemProvider,
-		CompilationUnitKind compilationUnitKind);
+    public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting);
+    
+    public ValueTask FastParseAsync(
+        TextEditorEditContext editContext,
+        ResourceUri resourceUri,
+        IFileSystemProvider fileSystemProvider,
+        CompilationUnitKind compilationUnitKind);
 
     public void FastParse(
-		TextEditorEditContext editContext,
-		ResourceUri resourceUri,
-		IFileSystemProvider fileSystemProvider,
-		CompilationUnitKind compilationUnitKind);
+        TextEditorEditContext editContext,
+        ResourceUri resourceUri,
+        IFileSystemProvider fileSystemProvider,
+        CompilationUnitKind compilationUnitKind);
 }

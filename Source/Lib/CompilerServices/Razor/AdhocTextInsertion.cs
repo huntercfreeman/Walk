@@ -31,10 +31,10 @@ public class AdhocTextInsertion
         StringWalker stringWalker)
     {
         var adhocTextInsertion = new AdhocTextInsertion(
-			content,
-			sourceText_StartInclusiveIndex,
-			stringBuilder.Length,
-			stringWalker);
+            content,
+            sourceText_StartInclusiveIndex,
+            stringBuilder.Length,
+            stringWalker);
 
         stringBuilder.Append(content);
 

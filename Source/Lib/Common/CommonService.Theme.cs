@@ -5,11 +5,11 @@ namespace Walk.Common.RazorLib;
 
 public partial class CommonService
 {
-	private ThemeState _themeState = new();
-	
-	public event Action? ThemeStateChanged;
-	
-	public ThemeState GetThemeState() => _themeState;
+    private ThemeState _themeState = new();
+    
+    public event Action? ThemeStateChanged;
+    
+    public ThemeState GetThemeState() => _themeState;
 
     public void Theme_RegisterAction(ThemeRecord theme)
     {

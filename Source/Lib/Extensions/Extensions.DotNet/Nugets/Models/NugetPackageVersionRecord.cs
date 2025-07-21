@@ -6,9 +6,9 @@ namespace Walk.Extensions.DotNet.Nugets.Models;
 /// When reading response Nuget returns <see cref="AtId"/> as a member named "@id"
 /// </summary>
 public record NugetPackageVersionRecord(
-	string Version,
-	long Downloads)
+    string Version,
+    long Downloads)
 {
-	[JsonPropertyName("@id")]
-	public string AtId { get; init; } = string.Empty;
+    [JsonPropertyName("@id")]
+    public string AtId { get; init; } = string.Empty;
 }

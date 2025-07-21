@@ -70,8 +70,8 @@ public partial class InputFileDisplay : ComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
-    	IdeService.InputFileStateChanged += OnInputFileStateChanged;
-    	
+        IdeService.InputFileStateChanged += OnInputFileStateChanged;
+        
         _inputFileTreeViewMouseEventHandler = new InputFileTreeViewMouseEventHandler(
             IdeService,
             SetInputFileContentTreeViewRootFunc);
@@ -105,28 +105,28 @@ public partial class InputFileDisplay : ComponentBase, IDisposable
 
     private void InitializeElementDimensions()
     {
-    	var appOptionsState = IdeService.CommonService.GetAppOptionsState();
+        var appOptionsState = IdeService.CommonService.GetAppOptionsState();
     
         _sidebarElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(
-            	40,
-            	DimensionUnitKind.Percentage),
+                40,
+                DimensionUnitKind.Percentage),
             new DimensionUnit(
-            	appOptionsState.Options.ResizeHandleWidthInPixels / 2,
-            	DimensionUnitKind.Pixels,
-            	DimensionOperatorKind.Subtract)
+                appOptionsState.Options.ResizeHandleWidthInPixels / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract)
         });
 
         _contentElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(
-            	60,
-            	DimensionUnitKind.Percentage),
+                60,
+                DimensionUnitKind.Percentage),
             new DimensionUnit(
-            	appOptionsState.Options.ResizeHandleWidthInPixels / 2,
-            	DimensionUnitKind.Pixels,
-            	DimensionOperatorKind.Subtract)
+                appOptionsState.Options.ResizeHandleWidthInPixels / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract)
         });
     }
 
@@ -165,11 +165,11 @@ public partial class InputFileDisplay : ComponentBase, IDisposable
         {
             IdeService.CommonService.TreeView_WithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
             
-			IdeService.CommonService.TreeView_SetActiveNodeAction(
-				InputFileContent.TreeViewContainerKey,
-				activeNode,
-				true,
-				false);
+            IdeService.CommonService.TreeView_SetActiveNodeAction(
+                InputFileContent.TreeViewContainerKey,
+                activeNode,
+                true,
+                false);
         }
 
         await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
@@ -181,11 +181,11 @@ public partial class InputFileDisplay : ComponentBase, IDisposable
     
     public async void OnInputFileStateChanged()
     {
-    	await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
     
     public void Dispose()
     {
-    	IdeService.InputFileStateChanged -= OnInputFileStateChanged;
+        IdeService.InputFileStateChanged -= OnInputFileStateChanged;
     }
 }

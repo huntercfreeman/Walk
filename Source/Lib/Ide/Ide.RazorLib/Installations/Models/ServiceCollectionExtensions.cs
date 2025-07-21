@@ -32,11 +32,11 @@ public static class ServiceCollectionExtensions
                 AbsolutePathStandardizeFunc = ServiceCollectionExtensions.AbsolutePathStandardizeFunc,
                 FastParseFunc = async (fastParseArgs) =>
                 {    
-                	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
-                		fastParseArgs.ResourceUri.Value,
-                		fastParseArgs.CommonService);
-                		
-                	var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
+                    var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
+                        fastParseArgs.ResourceUri.Value,
+                        fastParseArgs.CommonService);
+                        
+                    var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
                 
                     fastParseArgs = new FastParseArgs(
                         standardizedResourceUri,
@@ -44,40 +44,40 @@ public static class ServiceCollectionExtensions
                         fastParseArgs.CommonService,
                         fastParseArgs.IdeBackgroundTaskApi)
                     {
-                    	ShouldBlockUntilBackgroundTaskIsCompleted = fastParseArgs.ShouldBlockUntilBackgroundTaskIsCompleted
+                        ShouldBlockUntilBackgroundTaskIsCompleted = fastParseArgs.ShouldBlockUntilBackgroundTaskIsCompleted
                     };
 
                     await ((IdeService)fastParseArgs.IdeBackgroundTaskApi).Editor_FastParseFunc(fastParseArgs);
                 },
                 RegisterModelFunc = async (registerModelArgs) =>
                 {
-                	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
-                		registerModelArgs.ResourceUri.Value,
-                		registerModelArgs.CommonService);
-                		
-                	var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
+                    var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
+                        registerModelArgs.ResourceUri.Value,
+                        registerModelArgs.CommonService);
+                        
+                    var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
                 
                     registerModelArgs = new RegisterModelArgs(
-                    	registerModelArgs.EditContext,
+                        registerModelArgs.EditContext,
                         standardizedResourceUri,
                         registerModelArgs.CommonService,
                         registerModelArgs.IdeBackgroundTaskApi)
                     {
-                    	ShouldBlockUntilBackgroundTaskIsCompleted = registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted
+                        ShouldBlockUntilBackgroundTaskIsCompleted = registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted
                     };
 
                     await ((IdeService)registerModelArgs.IdeBackgroundTaskApi).Editor_RegisterModelFunc(registerModelArgs);
                 },
                 TryRegisterViewModelFunc = async (tryRegisterViewModelArgs) =>
                 {
-                	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
-                		tryRegisterViewModelArgs.ResourceUri.Value,
-                		tryRegisterViewModelArgs.CommonService);
-                		
-                	var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
-                	
+                    var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
+                        tryRegisterViewModelArgs.ResourceUri.Value,
+                        tryRegisterViewModelArgs.CommonService);
+                        
+                    var standardizedResourceUri = new ResourceUri((string)standardizedAbsolutePathString);
+                    
                     tryRegisterViewModelArgs = new TryRegisterViewModelArgs(
-                    	tryRegisterViewModelArgs.EditContext,
+                        tryRegisterViewModelArgs.EditContext,
                         tryRegisterViewModelArgs.ViewModelKey,
                         standardizedResourceUri,
                         tryRegisterViewModelArgs.Category,
@@ -95,9 +95,9 @@ public static class ServiceCollectionExtensions
         }
         
         if (hostingInformation.WalkHostingKind == WalkHostingKind.Photino)
-        	services.AddScoped<IAppDataService, NativeAppDataService>();
+            services.AddScoped<IAppDataService, NativeAppDataService>();
         else
-        	services.AddScoped<IAppDataService, DoNothingAppDataService>();
+            services.AddScoped<IAppDataService, DoNothingAppDataService>();
 
         services
             .AddScoped<IdeService>(sp =>

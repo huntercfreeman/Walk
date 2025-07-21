@@ -16,11 +16,11 @@ namespace Walk.Ide.RazorLib.Terminals.Models;
 /// </summary>
 public interface ITerminalOutputFormatter : IDisposable
 {
-	/// <summary>
-	/// This is used to find the respective formatter within a list
-	/// that contains the available formatters.
-	/// </summary>
-	public string Name { get; }
-	
-	public ITerminalOutputFormatted Format();
+    /// <summary>
+    /// This is used to find the respective formatter within a list
+    /// that contains the available formatters.
+    /// </summary>
+    public string Name { get; }
+    
+    public ITerminalOutputFormatted Format();
 }

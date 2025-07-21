@@ -13,14 +13,14 @@ to go through and lean these out.
 */
 public struct CommonWorkArgs
 {
-	public string WriteToLocalStorage_Key { get; set; }
-	public object WriteToLocalStorage_Value { get; set; }
+    public string WriteToLocalStorage_Key { get; set; }
+    public object WriteToLocalStorage_Value { get; set; }
     public Func<TabContextMenuEventArgs, Task> HandleTabButtonOnContextMenu { get; set; }
     public Func<MouseEventArgs?, Key<TreeViewContainer>, TreeViewNoType?, Task> HandleTreeViewOnContextMenu { get; set; }
     public Func<TreeViewCommandArgs, Task>? OnContextMenuFunc { get; set; }
     public MouseEventArgs MouseEventArgs { get; set; }
     public TabContextMenuEventArgs TabContextMenuEventArgs { get; set; }
-	public TreeViewCommandArgs TreeViewContextMenuCommandArgs { get; set; }
+    public TreeViewCommandArgs TreeViewContextMenuCommandArgs { get; set; }
     public Key<TreeViewContainer> ContainerKey { get; set; }
     public TreeViewContainer? TreeViewContainer { get; set; }
     public TreeViewNoType? TreeViewNoType { get; set; }

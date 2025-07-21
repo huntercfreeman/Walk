@@ -4,30 +4,30 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 
 public sealed class SwitchExpressionNode : IExpressionNode
 {
-	public SwitchExpressionNode()
-	{
-		#if DEBUG
-		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.SwitchExpressionNode++;
-		#endif
-	}
+    public SwitchExpressionNode()
+    {
+        #if DEBUG
+        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.SwitchExpressionNode++;
+        #endif
+    }
 
-	public int Unsafe_ParentIndexKey { get; set; }
-	public bool IsFabricated { get; init; }
-	public SyntaxKind SyntaxKind => SyntaxKind.SwitchExpressionNode;
-	
-	public TypeReference ResultTypeReference { get; }
+    public int Unsafe_ParentIndexKey { get; set; }
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.SwitchExpressionNode;
+    
+    public TypeReference ResultTypeReference { get; }
 
-	#region ICodeBlockOwner_Methods
-	public TypeReference GetReturnTypeReference()
-	{
-		return TypeFacts.Empty.ToTypeReference();
-	}
-	#endregion
+    #region ICodeBlockOwner_Methods
+    public TypeReference GetReturnTypeReference()
+    {
+        return TypeFacts.Empty.ToTypeReference();
+    }
+    #endregion
 
-	#if DEBUG	
-	~SwitchExpressionNode()
-	{
-		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.SwitchExpressionNode--;
-	}
-	#endif
+    #if DEBUG    
+    ~SwitchExpressionNode()
+    {
+        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.SwitchExpressionNode--;
+    }
+    #endif
 }

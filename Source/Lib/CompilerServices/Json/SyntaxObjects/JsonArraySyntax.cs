@@ -7,7 +7,7 @@ public class JsonArraySyntax : IJsonSyntax
 {
     public JsonArraySyntax(
         TextEditorTextSpan textEditorTextSpan,
-		IReadOnlyList<JsonObjectSyntax> childJsonObjectSyntaxes)
+        IReadOnlyList<JsonObjectSyntax> childJsonObjectSyntaxes)
     {
         TextEditorTextSpan = textEditorTextSpan;
         ChildJsonObjectSyntaxes = childJsonObjectSyntaxes;

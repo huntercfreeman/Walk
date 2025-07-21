@@ -27,33 +27,33 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 
     private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
-		var dropdownRecord = new DropdownRecord(
-			FolderExplorerContextMenu.ContextMenuEventDropdownKey,
-			treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
-			treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
-			typeof(FolderExplorerContextMenu),
-			new Dictionary<string, object?>
-			{
-				{
-					nameof(FolderExplorerContextMenu.TreeViewCommandArgs),
-					treeViewCommandArgs
-				}
-			},
-			restoreFocusOnClose: null);
+        var dropdownRecord = new DropdownRecord(
+            FolderExplorerContextMenu.ContextMenuEventDropdownKey,
+            treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
+            treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
+            typeof(FolderExplorerContextMenu),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(FolderExplorerContextMenu.TreeViewCommandArgs),
+                    treeViewCommandArgs
+                }
+            },
+            restoreFocusOnClose: null);
 
         IdeService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
-		return Task.CompletedTask;
-	}
-	
-	private async void OnFolderExplorerStateChanged() 
-	{
-		await InvokeAsync(StateHasChanged);
-	}
-	
-	private async void OnAppOptionsStateChanged()
-	{
-		await InvokeAsync(StateHasChanged);
-	}
+        return Task.CompletedTask;
+    }
+    
+    private async void OnFolderExplorerStateChanged() 
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+    
+    private async void OnAppOptionsStateChanged()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 
     public void Dispose()
     {

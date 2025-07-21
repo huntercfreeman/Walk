@@ -14,7 +14,7 @@ namespace Walk.Common.RazorLib;
 public static class CommonFacts
 {
     /* Start ThemeFacts */
-	public static readonly ThemeRecord VisualStudioLightThemeClone = new ThemeRecord(
+    public static readonly ThemeRecord VisualStudioLightThemeClone = new ThemeRecord(
         Key: 0,
         "Visual Studio Light Clone",
         "di_visual-studio-light-theme-clone",
@@ -38,7 +38,7 @@ public static class CommonFacts
 
     public static readonly ContextRecord ActiveContextsContext = new(1);
 
-	public static readonly ContextRecord FindAllReferencesContext = new(2);
+    public static readonly ContextRecord FindAllReferencesContext = new(2);
 
     public static readonly ContextRecord FolderExplorerContext = new(3);
 
@@ -48,7 +48,7 @@ public static class CommonFacts
     
     public static readonly ContextRecord CompilerServiceEditorContext = new(6);
 
-	public static readonly ContextRecord TestExplorerContext = new(7);
+    public static readonly ContextRecord TestExplorerContext = new(7);
     
     public static readonly ContextRecord CSharpReplContext = new(8);
 
@@ -97,7 +97,7 @@ public static class CommonFacts
         MainLayoutFooterContext,
         EditorContext,
         TextEditorContext,
-		ErrorListContext,
+        ErrorListContext,
         OutputContext,
         NuGetPackageManagerContext,
         GitContext,
@@ -137,8 +137,8 @@ public static class CommonFacts
     
     /* Start DimensionUnitFacts */
     public const string PURPOSE_OFFSET = "OFFSET";
-	public const string PURPOSE_RESIZABLE_HANDLE_ROW = "RESIZABLE_HANDLE_ROW";
-	public const string PURPOSE_RESIZABLE_HANDLE_COLUMN = "RESIZABLE_HANDLE_COLUMN";
+    public const string PURPOSE_RESIZABLE_HANDLE_ROW = "RESIZABLE_HANDLE_ROW";
+    public const string PURPOSE_RESIZABLE_HANDLE_COLUMN = "RESIZABLE_HANDLE_COLUMN";
     /* End DimensionUnitFacts */
     
     /* Start SizeFacts */
@@ -147,7 +147,7 @@ public static class CommonFacts
     
     /* Start BackgroundTaskFacts */
     public static int ContinuousQueueKey { get; } = 0;
-	public static int IndefiniteQueueKey { get; } = 1;
+    public static int IndefiniteQueueKey { get; } = 1;
     /* End BackgroundTaskFacts */
     
     /* Start KeyboardKeyFacts */
@@ -293,7 +293,7 @@ public static class CommonFacts
         string key, string code, bool shiftWasPressed, bool altWasPressed)
     {
         var wasShiftF10 = (key == "F10" || key == "f10") &&
-        				  shiftWasPressed;
+                          shiftWasPressed;
 
         return wasShiftF10;
     }

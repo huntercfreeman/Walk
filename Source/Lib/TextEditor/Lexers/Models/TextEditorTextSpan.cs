@@ -12,18 +12,18 @@ public record struct TextEditorTextSpan(
     {
         if (StartInclusiveIndex < sourceText.Length && EndExclusiveIndex <= sourceText.Length && EndExclusiveIndex >= StartInclusiveIndex)
         {
-    		if (textEditorService is null)
-    		{
-    		    Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
-				return sourceText.Substring(StartInclusiveIndex, Length);
-    		}
-    		else
-    		{
-    			return textEditorService.EditContext_GetText(
-    	        	sourceText.AsSpan(StartInclusiveIndex, Length));
-    		}
-		}
-		
-		return null;
+            if (textEditorService is null)
+            {
+                Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.StringAllocation++;
+                return sourceText.Substring(StartInclusiveIndex, Length);
+            }
+            else
+            {
+                return textEditorService.EditContext_GetText(
+                    sourceText.AsSpan(StartInclusiveIndex, Length));
+            }
+        }
+        
+        return null;
     }
 }

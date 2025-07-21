@@ -9,32 +9,32 @@ namespace Walk.Extensions.DotNet.DotNetSolutions.Models;
 
 public class SolutionExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
-	private readonly IdeService _ideService;
+    private readonly IdeService _ideService;
 
-	public SolutionExplorerTreeViewMouseEventHandler(
-			IdeService ideService)
-		: base(ideService.CommonService)
-	{
-		_ideService = ideService;
-	}
+    public SolutionExplorerTreeViewMouseEventHandler(
+            IdeService ideService)
+        : base(ideService.CommonService)
+    {
+        _ideService = ideService;
+    }
 
-	public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
-	{
-		base.OnDoubleClickAsync(commandArgs);
+    public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
+    {
+        base.OnDoubleClickAsync(commandArgs);
 
-		if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewNamespacePath treeViewNamespacePath)
-			return Task.CompletedTask;
-		
-		_ideService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
-		{
-			await _ideService.TextEditorService.OpenInEditorAsync(
-				editContext,
-				treeViewNamespacePath.Item.AbsolutePath.Value,
-				true,
-				null,
-				new Category("main"),
-				Key<TextEditorViewModel>.NewKey());
-		});
-		return Task.CompletedTask;
-	}
+        if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewNamespacePath treeViewNamespacePath)
+            return Task.CompletedTask;
+        
+        _ideService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+        {
+            await _ideService.TextEditorService.OpenInEditorAsync(
+                editContext,
+                treeViewNamespacePath.Item.AbsolutePath.Value,
+                true,
+                null,
+                new Category("main"),
+                Key<TextEditorViewModel>.NewKey());
+        });
+        return Task.CompletedTask;
+    }
 }

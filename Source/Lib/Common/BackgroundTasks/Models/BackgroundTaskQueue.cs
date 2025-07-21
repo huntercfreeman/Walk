@@ -7,13 +7,13 @@ public sealed class BackgroundTaskQueue
 {
     private readonly ConcurrentQueue<IBackgroundTaskGroup> _queue = new();
 
-	public BackgroundTaskQueue(int key, string displayName)
+    public BackgroundTaskQueue(int key, string displayName)
     {
         Key = key;
         DisplayName = displayName;
     }
     
-	public int Key { get; }
+    public int Key { get; }
     public string DisplayName { get; }
 
     /// <summary>
@@ -23,17 +23,17 @@ public sealed class BackgroundTaskQueue
 
     public SemaphoreSlim __DequeueSemaphoreSlim { get; } = new(0);
 
-	public List<IBackgroundTaskGroup> GetBackgroundTaskList() => _queue.ToList();
+    public List<IBackgroundTaskGroup> GetBackgroundTaskList() => _queue.ToList();
 
     public void Enqueue(IBackgroundTaskGroup downstreamEvent)
     {
-		_queue.Enqueue(downstreamEvent);
-		__DequeueSemaphoreSlim.Release();
+        _queue.Enqueue(downstreamEvent);
+        __DequeueSemaphoreSlim.Release();
     }
     
     public IBackgroundTaskGroup __DequeueOrDefault()
     {
-		_queue.TryDequeue(out var backgroundTask);
-		return backgroundTask;
+        _queue.TryDequeue(out var backgroundTask);
+        return backgroundTask;
     }
 }

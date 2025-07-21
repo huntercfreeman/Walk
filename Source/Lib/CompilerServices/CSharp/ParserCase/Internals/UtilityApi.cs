@@ -10,141 +10,141 @@ public static class UtilityApi
     public static bool IsContextualKeywordSyntaxKind(SyntaxKind syntaxKind)
     {
         switch (syntaxKind)
-		{
-			case SyntaxKind.AddTokenContextualKeyword:
-			case SyntaxKind.AndTokenContextualKeyword:
-			case SyntaxKind.AliasTokenContextualKeyword:
-			case SyntaxKind.AscendingTokenContextualKeyword:
-			case SyntaxKind.ArgsTokenContextualKeyword:
-			case SyntaxKind.AsyncTokenContextualKeyword:
-			case SyntaxKind.AwaitTokenContextualKeyword:
-			case SyntaxKind.ByTokenContextualKeyword:
-			case SyntaxKind.DescendingTokenContextualKeyword:
-			case SyntaxKind.DynamicTokenContextualKeyword:
-			case SyntaxKind.EqualsTokenContextualKeyword:
-			case SyntaxKind.FileTokenContextualKeyword:
-			case SyntaxKind.FromTokenContextualKeyword:
-			case SyntaxKind.GetTokenContextualKeyword:
-			case SyntaxKind.GlobalTokenContextualKeyword:
-			case SyntaxKind.GroupTokenContextualKeyword:
-			case SyntaxKind.InitTokenContextualKeyword:
-			case SyntaxKind.IntoTokenContextualKeyword:
-			case SyntaxKind.JoinTokenContextualKeyword:
-			case SyntaxKind.LetTokenContextualKeyword:
-			case SyntaxKind.ManagedTokenContextualKeyword:
-			case SyntaxKind.NameofTokenContextualKeyword:
-			case SyntaxKind.NintTokenContextualKeyword:
-			case SyntaxKind.NotTokenContextualKeyword:
-			case SyntaxKind.NotnullTokenContextualKeyword:
-			case SyntaxKind.NuintTokenContextualKeyword:
-			case SyntaxKind.OnTokenContextualKeyword:
-			case SyntaxKind.OrTokenContextualKeyword:
-			case SyntaxKind.OrderbyTokenContextualKeyword:
-			case SyntaxKind.PartialTokenContextualKeyword:
-			case SyntaxKind.RecordTokenContextualKeyword:
-			case SyntaxKind.RemoveTokenContextualKeyword:
-			case SyntaxKind.RequiredTokenContextualKeyword:
-			case SyntaxKind.ScopedTokenContextualKeyword:
-			case SyntaxKind.SelectTokenContextualKeyword:
-			case SyntaxKind.SetTokenContextualKeyword:
-			case SyntaxKind.UnmanagedTokenContextualKeyword:
-			case SyntaxKind.ValueTokenContextualKeyword:
-			case SyntaxKind.VarTokenContextualKeyword:
-			case SyntaxKind.WhenTokenContextualKeyword:
-			case SyntaxKind.WhereTokenContextualKeyword:
-			case SyntaxKind.WithTokenContextualKeyword:
-			case SyntaxKind.YieldTokenContextualKeyword:
-				return true;
-			default:
-				return false;
-		}
+        {
+            case SyntaxKind.AddTokenContextualKeyword:
+            case SyntaxKind.AndTokenContextualKeyword:
+            case SyntaxKind.AliasTokenContextualKeyword:
+            case SyntaxKind.AscendingTokenContextualKeyword:
+            case SyntaxKind.ArgsTokenContextualKeyword:
+            case SyntaxKind.AsyncTokenContextualKeyword:
+            case SyntaxKind.AwaitTokenContextualKeyword:
+            case SyntaxKind.ByTokenContextualKeyword:
+            case SyntaxKind.DescendingTokenContextualKeyword:
+            case SyntaxKind.DynamicTokenContextualKeyword:
+            case SyntaxKind.EqualsTokenContextualKeyword:
+            case SyntaxKind.FileTokenContextualKeyword:
+            case SyntaxKind.FromTokenContextualKeyword:
+            case SyntaxKind.GetTokenContextualKeyword:
+            case SyntaxKind.GlobalTokenContextualKeyword:
+            case SyntaxKind.GroupTokenContextualKeyword:
+            case SyntaxKind.InitTokenContextualKeyword:
+            case SyntaxKind.IntoTokenContextualKeyword:
+            case SyntaxKind.JoinTokenContextualKeyword:
+            case SyntaxKind.LetTokenContextualKeyword:
+            case SyntaxKind.ManagedTokenContextualKeyword:
+            case SyntaxKind.NameofTokenContextualKeyword:
+            case SyntaxKind.NintTokenContextualKeyword:
+            case SyntaxKind.NotTokenContextualKeyword:
+            case SyntaxKind.NotnullTokenContextualKeyword:
+            case SyntaxKind.NuintTokenContextualKeyword:
+            case SyntaxKind.OnTokenContextualKeyword:
+            case SyntaxKind.OrTokenContextualKeyword:
+            case SyntaxKind.OrderbyTokenContextualKeyword:
+            case SyntaxKind.PartialTokenContextualKeyword:
+            case SyntaxKind.RecordTokenContextualKeyword:
+            case SyntaxKind.RemoveTokenContextualKeyword:
+            case SyntaxKind.RequiredTokenContextualKeyword:
+            case SyntaxKind.ScopedTokenContextualKeyword:
+            case SyntaxKind.SelectTokenContextualKeyword:
+            case SyntaxKind.SetTokenContextualKeyword:
+            case SyntaxKind.UnmanagedTokenContextualKeyword:
+            case SyntaxKind.ValueTokenContextualKeyword:
+            case SyntaxKind.VarTokenContextualKeyword:
+            case SyntaxKind.WhenTokenContextualKeyword:
+            case SyntaxKind.WhereTokenContextualKeyword:
+            case SyntaxKind.WithTokenContextualKeyword:
+            case SyntaxKind.YieldTokenContextualKeyword:
+                return true;
+            default:
+                return false;
+        }
     }
 
     public static bool IsKeywordSyntaxKind(SyntaxKind syntaxKind)
     {
         switch (syntaxKind)
-		{
-			case SyntaxKind.AbstractTokenKeyword:
-			case SyntaxKind.AsTokenKeyword:
-			case SyntaxKind.BaseTokenKeyword:
-			case SyntaxKind.BoolTokenKeyword:
-			case SyntaxKind.BreakTokenKeyword:
-			case SyntaxKind.ByteTokenKeyword:
-			case SyntaxKind.CaseTokenKeyword:
-			case SyntaxKind.CatchTokenKeyword:
-			case SyntaxKind.CharTokenKeyword:
-			case SyntaxKind.CheckedTokenKeyword:
-			case SyntaxKind.ClassTokenKeyword:
-			case SyntaxKind.ConstTokenKeyword:
-			case SyntaxKind.ContinueTokenKeyword:
-			case SyntaxKind.DecimalTokenKeyword:
-			case SyntaxKind.DefaultTokenKeyword:
-			case SyntaxKind.DelegateTokenKeyword:
-			case SyntaxKind.DoTokenKeyword:
-			case SyntaxKind.DoubleTokenKeyword:
-			case SyntaxKind.ElseTokenKeyword:
-			case SyntaxKind.EnumTokenKeyword:
-			case SyntaxKind.EventTokenKeyword:
-			case SyntaxKind.ExplicitTokenKeyword:
-			case SyntaxKind.ExternTokenKeyword:
-			case SyntaxKind.FalseTokenKeyword:
-			case SyntaxKind.FinallyTokenKeyword:
-			case SyntaxKind.FixedTokenKeyword:
-			case SyntaxKind.FloatTokenKeyword:
-			case SyntaxKind.ForTokenKeyword:
-			case SyntaxKind.ForeachTokenKeyword:
-			case SyntaxKind.GotoTokenKeyword:
-			case SyntaxKind.IfTokenKeyword:
-			case SyntaxKind.ImplicitTokenKeyword:
-			case SyntaxKind.InTokenKeyword:
-			case SyntaxKind.IntTokenKeyword:
-			case SyntaxKind.InterfaceTokenKeyword:
-			case SyntaxKind.InternalTokenKeyword:
-			case SyntaxKind.IsTokenKeyword:
-			case SyntaxKind.LockTokenKeyword:
-			case SyntaxKind.LongTokenKeyword:
-			case SyntaxKind.NamespaceTokenKeyword:
-			case SyntaxKind.NewTokenKeyword:
-			case SyntaxKind.NullTokenKeyword:
-			case SyntaxKind.ObjectTokenKeyword:
-			case SyntaxKind.OperatorTokenKeyword:
-			case SyntaxKind.OutTokenKeyword:
-			case SyntaxKind.OverrideTokenKeyword:
-			case SyntaxKind.ParamsTokenKeyword:
-			case SyntaxKind.PrivateTokenKeyword:
-			case SyntaxKind.ProtectedTokenKeyword:
-			case SyntaxKind.PublicTokenKeyword:
-			case SyntaxKind.ReadonlyTokenKeyword:
-			case SyntaxKind.RefTokenKeyword:
-			case SyntaxKind.ReturnTokenKeyword:
-			case SyntaxKind.SbyteTokenKeyword:
-			case SyntaxKind.SealedTokenKeyword:
-			case SyntaxKind.ShortTokenKeyword:
-			case SyntaxKind.SizeofTokenKeyword:
-			case SyntaxKind.StackallocTokenKeyword:
-			case SyntaxKind.StaticTokenKeyword:
-			case SyntaxKind.StringTokenKeyword:
-			case SyntaxKind.StructTokenKeyword:
-			case SyntaxKind.SwitchTokenKeyword:
-			case SyntaxKind.ThisTokenKeyword:
-			case SyntaxKind.ThrowTokenKeyword:
-			case SyntaxKind.TrueTokenKeyword:
-			case SyntaxKind.TryTokenKeyword:
-			case SyntaxKind.TypeofTokenKeyword:
-			case SyntaxKind.UintTokenKeyword:
-			case SyntaxKind.UlongTokenKeyword:
-			case SyntaxKind.UncheckedTokenKeyword:
-			case SyntaxKind.UnsafeTokenKeyword:
-			case SyntaxKind.UshortTokenKeyword:
-			case SyntaxKind.UsingTokenKeyword:
-			case SyntaxKind.VirtualTokenKeyword:
-			case SyntaxKind.VoidTokenKeyword:
-			case SyntaxKind.VolatileTokenKeyword:
-			case SyntaxKind.WhileTokenKeyword:
-				return true;
-			default:
-				return false;
-		}
+        {
+            case SyntaxKind.AbstractTokenKeyword:
+            case SyntaxKind.AsTokenKeyword:
+            case SyntaxKind.BaseTokenKeyword:
+            case SyntaxKind.BoolTokenKeyword:
+            case SyntaxKind.BreakTokenKeyword:
+            case SyntaxKind.ByteTokenKeyword:
+            case SyntaxKind.CaseTokenKeyword:
+            case SyntaxKind.CatchTokenKeyword:
+            case SyntaxKind.CharTokenKeyword:
+            case SyntaxKind.CheckedTokenKeyword:
+            case SyntaxKind.ClassTokenKeyword:
+            case SyntaxKind.ConstTokenKeyword:
+            case SyntaxKind.ContinueTokenKeyword:
+            case SyntaxKind.DecimalTokenKeyword:
+            case SyntaxKind.DefaultTokenKeyword:
+            case SyntaxKind.DelegateTokenKeyword:
+            case SyntaxKind.DoTokenKeyword:
+            case SyntaxKind.DoubleTokenKeyword:
+            case SyntaxKind.ElseTokenKeyword:
+            case SyntaxKind.EnumTokenKeyword:
+            case SyntaxKind.EventTokenKeyword:
+            case SyntaxKind.ExplicitTokenKeyword:
+            case SyntaxKind.ExternTokenKeyword:
+            case SyntaxKind.FalseTokenKeyword:
+            case SyntaxKind.FinallyTokenKeyword:
+            case SyntaxKind.FixedTokenKeyword:
+            case SyntaxKind.FloatTokenKeyword:
+            case SyntaxKind.ForTokenKeyword:
+            case SyntaxKind.ForeachTokenKeyword:
+            case SyntaxKind.GotoTokenKeyword:
+            case SyntaxKind.IfTokenKeyword:
+            case SyntaxKind.ImplicitTokenKeyword:
+            case SyntaxKind.InTokenKeyword:
+            case SyntaxKind.IntTokenKeyword:
+            case SyntaxKind.InterfaceTokenKeyword:
+            case SyntaxKind.InternalTokenKeyword:
+            case SyntaxKind.IsTokenKeyword:
+            case SyntaxKind.LockTokenKeyword:
+            case SyntaxKind.LongTokenKeyword:
+            case SyntaxKind.NamespaceTokenKeyword:
+            case SyntaxKind.NewTokenKeyword:
+            case SyntaxKind.NullTokenKeyword:
+            case SyntaxKind.ObjectTokenKeyword:
+            case SyntaxKind.OperatorTokenKeyword:
+            case SyntaxKind.OutTokenKeyword:
+            case SyntaxKind.OverrideTokenKeyword:
+            case SyntaxKind.ParamsTokenKeyword:
+            case SyntaxKind.PrivateTokenKeyword:
+            case SyntaxKind.ProtectedTokenKeyword:
+            case SyntaxKind.PublicTokenKeyword:
+            case SyntaxKind.ReadonlyTokenKeyword:
+            case SyntaxKind.RefTokenKeyword:
+            case SyntaxKind.ReturnTokenKeyword:
+            case SyntaxKind.SbyteTokenKeyword:
+            case SyntaxKind.SealedTokenKeyword:
+            case SyntaxKind.ShortTokenKeyword:
+            case SyntaxKind.SizeofTokenKeyword:
+            case SyntaxKind.StackallocTokenKeyword:
+            case SyntaxKind.StaticTokenKeyword:
+            case SyntaxKind.StringTokenKeyword:
+            case SyntaxKind.StructTokenKeyword:
+            case SyntaxKind.SwitchTokenKeyword:
+            case SyntaxKind.ThisTokenKeyword:
+            case SyntaxKind.ThrowTokenKeyword:
+            case SyntaxKind.TrueTokenKeyword:
+            case SyntaxKind.TryTokenKeyword:
+            case SyntaxKind.TypeofTokenKeyword:
+            case SyntaxKind.UintTokenKeyword:
+            case SyntaxKind.UlongTokenKeyword:
+            case SyntaxKind.UncheckedTokenKeyword:
+            case SyntaxKind.UnsafeTokenKeyword:
+            case SyntaxKind.UshortTokenKeyword:
+            case SyntaxKind.UsingTokenKeyword:
+            case SyntaxKind.VirtualTokenKeyword:
+            case SyntaxKind.VoidTokenKeyword:
+            case SyntaxKind.VolatileTokenKeyword:
+            case SyntaxKind.WhileTokenKeyword:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /// <summary>
@@ -313,89 +313,89 @@ public static class UtilityApi
     
     public static bool IsConvertibleToTypeClauseNode(SyntaxKind syntaxKind)
     {
-    	if (syntaxKind == SyntaxKind.TypeClauseNode ||
-    		syntaxKind == SyntaxKind.IdentifierToken ||
-    		IsTypeIdentifierKeywordSyntaxKind(syntaxKind))
-    	{
-    		return true;
-    	}
-    	
-    	// TODO: Perhaps for 'async' and 'await' keywords, a check for a variable declaration with the name...
-    	// ...'async' or 'await' is necessary.
-    	if (IsContextualKeywordSyntaxKind(syntaxKind) &&
-    		syntaxKind != SyntaxKind.AsyncTokenContextualKeyword &&
-    		syntaxKind != SyntaxKind.AwaitTokenContextualKeyword)
-    	{
-    		return true;
-    	}
-    	
-    	return false;
+        if (syntaxKind == SyntaxKind.TypeClauseNode ||
+            syntaxKind == SyntaxKind.IdentifierToken ||
+            IsTypeIdentifierKeywordSyntaxKind(syntaxKind))
+        {
+            return true;
+        }
+        
+        // TODO: Perhaps for 'async' and 'await' keywords, a check for a variable declaration with the name...
+        // ...'async' or 'await' is necessary.
+        if (IsContextualKeywordSyntaxKind(syntaxKind) &&
+            syntaxKind != SyntaxKind.AsyncTokenContextualKeyword &&
+            syntaxKind != SyntaxKind.AwaitTokenContextualKeyword)
+        {
+            return true;
+        }
+        
+        return false;
     }
     
     public static TypeClauseNode ConvertTokenToTypeClauseNode(ref SyntaxToken token, ref CSharpParserModel parserModel)
     {
-    	if (token.SyntaxKind == SyntaxKind.IdentifierToken)
-    	{
-    		return parserModel.ConstructOrRecycleTypeClauseNode(
-	    		token,
-		        valueType: null,
-		        genericParameterListing: default,
-		        isKeywordType: false);
-    	}
-	    else if (IsTypeIdentifierKeywordSyntaxKind(token.SyntaxKind))
-	    {
-	    	return parserModel.ConstructOrRecycleTypeClauseNode(
-	    		token,
-		        valueType: null,
-		        genericParameterListing: default,
-		        isKeywordType: true);
-	    }
-	    else if (IsContextualKeywordSyntaxKind(token.SyntaxKind))
-	    {
-	    	return parserModel.ConstructOrRecycleTypeClauseNode(
-	    		token,
-		        valueType: null,
-		        genericParameterListing: default,
-		        isKeywordType: true);
-	    }
-	    else
-	    {
-	    	// 'parserModel.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
-	    	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
-	    	//
-	    	/*compilationUnit.DiagnosticBag.ReportTodoException(
-	    		parserModel.TokenWalker.Current.TextSpan,
-	    		$"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(TypeClauseNode)}. Invoke {nameof(IsConvertibleToTypeClauseNode)} and check the result, before invoking {nameof(ConvertToTypeClauseNode)}.");*/
-	    	
-	    	// TODO: Returning null when it can't be converted is a bad idea (the method return isn't documented as nullable).
-	    	return null;
-	    }
+        if (token.SyntaxKind == SyntaxKind.IdentifierToken)
+        {
+            return parserModel.ConstructOrRecycleTypeClauseNode(
+                token,
+                valueType: null,
+                genericParameterListing: default,
+                isKeywordType: false);
+        }
+        else if (IsTypeIdentifierKeywordSyntaxKind(token.SyntaxKind))
+        {
+            return parserModel.ConstructOrRecycleTypeClauseNode(
+                token,
+                valueType: null,
+                genericParameterListing: default,
+                isKeywordType: true);
+        }
+        else if (IsContextualKeywordSyntaxKind(token.SyntaxKind))
+        {
+            return parserModel.ConstructOrRecycleTypeClauseNode(
+                token,
+                valueType: null,
+                genericParameterListing: default,
+                isKeywordType: true);
+        }
+        else
+        {
+            // 'parserModel.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
+            // TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
+            //
+            /*compilationUnit.DiagnosticBag.ReportTodoException(
+                parserModel.TokenWalker.Current.TextSpan,
+                $"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(TypeClauseNode)}. Invoke {nameof(IsConvertibleToTypeClauseNode)} and check the result, before invoking {nameof(ConvertToTypeClauseNode)}.");*/
+            
+            // TODO: Returning null when it can't be converted is a bad idea (the method return isn't documented as nullable).
+            return null;
+        }
     }
     
     public static TypeClauseNode ConvertNodeToTypeClauseNode(ISyntaxNode node, ref CSharpParserModel parserModel)
     {
-    	if (node.SyntaxKind == SyntaxKind.TypeClauseNode)
-    	{
-    		return (TypeClauseNode)node;
-    	}
-	    else
-	    {
-	    	// 'parserModel.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
-	    	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
-	    	//
-	    	/*compilationUnit.DiagnosticBag.ReportTodoException(
-	    		parserModel.TokenWalker.Current.TextSpan,
-	    		$"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(TypeClauseNode)}. Invoke {nameof(IsConvertibleToTypeClauseNode)} and check the result, before invoking {nameof(ConvertToTypeClauseNode)}.");*/
-	    	
-	    	// TODO: Returning null when it can't be converted is a bad idea (the method return isn't documented as nullable).
-	    	return null;
-	    }
+        if (node.SyntaxKind == SyntaxKind.TypeClauseNode)
+        {
+            return (TypeClauseNode)node;
+        }
+        else
+        {
+            // 'parserModel.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
+            // TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
+            //
+            /*compilationUnit.DiagnosticBag.ReportTodoException(
+                parserModel.TokenWalker.Current.TextSpan,
+                $"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(TypeClauseNode)}. Invoke {nameof(IsConvertibleToTypeClauseNode)} and check the result, before invoking {nameof(ConvertToTypeClauseNode)}.");*/
+            
+            // TODO: Returning null when it can't be converted is a bad idea (the method return isn't documented as nullable).
+            return null;
+        }
     }
     
     public static bool IsConvertibleToIdentifierToken(SyntaxKind syntaxKind)
     {
-    	return syntaxKind == SyntaxKind.IdentifierToken ||
-    		   IsContextualKeywordSyntaxKind(syntaxKind);
+        return syntaxKind == SyntaxKind.IdentifierToken ||
+               IsContextualKeywordSyntaxKind(syntaxKind);
     }
     
     /// <summary>
@@ -407,26 +407,26 @@ public static class UtilityApi
     /// </summary>
     public static SyntaxToken ConvertToIdentifierToken(ref SyntaxToken token, ref CSharpParserModel parserModel)
     {
-    	if (token.SyntaxKind == SyntaxKind.IdentifierToken)
-    	{
-    		return (SyntaxToken)token;
-    	}
-	    else if (IsContextualKeywordSyntaxKind(token.SyntaxKind))
-	    {
-	    	var keywordContextualToken = (SyntaxToken)token;
-	    	return new SyntaxToken(SyntaxKind.IdentifierToken, keywordContextualToken.TextSpan);
-	    }
-	    else
-	    {
-	    	// 'parserModel.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
-	    	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
-	    	//
-	    	/*compilationUnit.DiagnosticBag.ReportTodoException(
-	    		parserModel.TokenWalker.Current.TextSpan,
-	    		$"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(SyntaxKind.IdentifierToken)}. Invoke {nameof(IsConvertibleToIdentifierToken)} and check the result, before invoking {nameof(ConvertToIdentifierToken)}.");*/
-	    		
-	    	// TODO: Returning default when it can't be converted might be a fine idea? It isn't as bad as returning null.
-	    	return default;
-	    }
+        if (token.SyntaxKind == SyntaxKind.IdentifierToken)
+        {
+            return (SyntaxToken)token;
+        }
+        else if (IsContextualKeywordSyntaxKind(token.SyntaxKind))
+        {
+            var keywordContextualToken = (SyntaxToken)token;
+            return new SyntaxToken(SyntaxKind.IdentifierToken, keywordContextualToken.TextSpan);
+        }
+        else
+        {
+            // 'parserModel.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
+            // TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
+            //
+            /*compilationUnit.DiagnosticBag.ReportTodoException(
+                parserModel.TokenWalker.Current.TextSpan,
+                $"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(SyntaxKind.IdentifierToken)}. Invoke {nameof(IsConvertibleToIdentifierToken)} and check the result, before invoking {nameof(ConvertToIdentifierToken)}.");*/
+                
+            // TODO: Returning default when it can't be converted might be a fine idea? It isn't as bad as returning null.
+            return default;
+        }
     }
 }

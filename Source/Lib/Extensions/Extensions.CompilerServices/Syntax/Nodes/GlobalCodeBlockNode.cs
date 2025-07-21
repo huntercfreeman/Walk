@@ -21,48 +21,48 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class GlobalCodeBlockNode : ICodeBlockOwner
 {
-	public GlobalCodeBlockNode()
-	{
-		#if DEBUG
-		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.GlobalCodeBlockNode++;
-		#endif
-	}
+    public GlobalCodeBlockNode()
+    {
+        #if DEBUG
+        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.GlobalCodeBlockNode++;
+        #endif
+    }
 
-	// ICodeBlockOwner properties.
-	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
-	/// <summary>
-	/// GlobalCodeBlockNode should have 'Scope_StartInclusiveIndex' be initialized to 0.
-	/// This is contrary to the pattern in every other ICodeBlockOwner.
-	/// For that reason initialization syntax is used here even though 0 is the default value.
-	/// </summary>
-	public int Scope_StartInclusiveIndex { get; set; } = 0;
-	public int Scope_EndExclusiveIndex { get; set; } = -1;
-	public int CodeBlock_StartInclusiveIndex { get; set; } = -1;
-	public int CodeBlock_EndExclusiveIndex { get; set; } = -1;
-	public int Unsafe_ParentIndexKey { get; set; } = -1;
-	/// <summary>
-	/// GlobalCodeBlockNode should have 'Unsafe_SelfIndexKey' be initialized to 0.
-	/// This is contrary to the pattern in every other ICodeBlockOwner.
-	/// For that reason initialization syntax is used here even though 0 is the default value.
-	/// </summary>
-	public int Unsafe_SelfIndexKey { get; set; } = 0;
-	public bool PermitCodeBlockParsing { get; set; } = true;
-	public bool IsImplicitOpenCodeBlockTextSpan { get; set; } = true;
+    // ICodeBlockOwner properties.
+    public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
+    /// <summary>
+    /// GlobalCodeBlockNode should have 'Scope_StartInclusiveIndex' be initialized to 0.
+    /// This is contrary to the pattern in every other ICodeBlockOwner.
+    /// For that reason initialization syntax is used here even though 0 is the default value.
+    /// </summary>
+    public int Scope_StartInclusiveIndex { get; set; } = 0;
+    public int Scope_EndExclusiveIndex { get; set; } = -1;
+    public int CodeBlock_StartInclusiveIndex { get; set; } = -1;
+    public int CodeBlock_EndExclusiveIndex { get; set; } = -1;
+    public int Unsafe_ParentIndexKey { get; set; } = -1;
+    /// <summary>
+    /// GlobalCodeBlockNode should have 'Unsafe_SelfIndexKey' be initialized to 0.
+    /// This is contrary to the pattern in every other ICodeBlockOwner.
+    /// For that reason initialization syntax is used here even though 0 is the default value.
+    /// </summary>
+    public int Unsafe_SelfIndexKey { get; set; } = 0;
+    public bool PermitCodeBlockParsing { get; set; } = true;
+    public bool IsImplicitOpenCodeBlockTextSpan { get; set; } = true;
 
-	public bool IsFabricated { get; init; }
-	public SyntaxKind SyntaxKind => SyntaxKind.GlobalCodeBlockNode;
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.GlobalCodeBlockNode;
 
-	#region ICodeBlockOwner_Methods
-	public TypeReference GetReturnTypeReference()
-	{
-		return TypeFacts.Empty.ToTypeReference();
-	}
-	#endregion
+    #region ICodeBlockOwner_Methods
+    public TypeReference GetReturnTypeReference()
+    {
+        return TypeFacts.Empty.ToTypeReference();
+    }
+    #endregion
 
-	#if DEBUG	
-	~GlobalCodeBlockNode()
-	{
-		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.GlobalCodeBlockNode--;
-	}
-	#endif
+    #if DEBUG    
+    ~GlobalCodeBlockNode()
+    {
+        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.GlobalCodeBlockNode--;
+    }
+    #endif
 }

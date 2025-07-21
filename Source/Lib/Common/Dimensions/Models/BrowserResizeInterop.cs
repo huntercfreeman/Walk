@@ -12,24 +12,24 @@ namespace Walk.Common.RazorLib.Dimensions.Models;
 /// </summary>
 public class BrowserResizeInterop
 {
-	private readonly object _dotNetObjectReferenceLock = new();
-	private readonly CommonService _commonService;
+    private readonly object _dotNetObjectReferenceLock = new();
+    private readonly CommonService _commonService;
 
-	public BrowserResizeInterop(CommonService commonService)
-	{
-		_commonService = commonService;
-	}
-	
-	private DotNetObjectReference<BrowserResizeInterop>? _browserResizeInteropDotNetObjectReference;
-	
-	/// <summary>
-	/// A static method isn't used here because it needs to be scoped to the individual user session
-	/// in order to access the <see cref="IDispatcher"/>.
-	/// </summary>
-	[JSInvokable]
+    public BrowserResizeInterop(CommonService commonService)
+    {
+        _commonService = commonService;
+    }
+    
+    private DotNetObjectReference<BrowserResizeInterop>? _browserResizeInteropDotNetObjectReference;
+    
+    /// <summary>
+    /// A static method isn't used here because it needs to be scoped to the individual user session
+    /// in order to access the <see cref="IDispatcher"/>.
+    /// </summary>
+    [JSInvokable]
     public void OnBrowserResize()
     {
-		_commonService.AppDimension_NotifyUserAgentResize();
+        _commonService.AppDimension_NotifyUserAgentResize();
     }
     
     /// <summary>
@@ -41,21 +41,21 @@ public class BrowserResizeInterop
     /// </summary>
     public void SubscribeWindowSizeChanged(WalkCommonJavaScriptInteropApi walkCommonJavaScriptInteropApi)
     {
-    	if (_browserResizeInteropDotNetObjectReference is null)
-    	{
-			lock (_dotNetObjectReferenceLock)
-			{
-				if (_browserResizeInteropDotNetObjectReference is null)
-					_browserResizeInteropDotNetObjectReference = DotNetObjectReference.Create(this);
-			}
-    	}
-    	
-    	walkCommonJavaScriptInteropApi.SubscribeWindowSizeChanged(
-    		_browserResizeInteropDotNetObjectReference);
+        if (_browserResizeInteropDotNetObjectReference is null)
+        {
+            lock (_dotNetObjectReferenceLock)
+            {
+                if (_browserResizeInteropDotNetObjectReference is null)
+                    _browserResizeInteropDotNetObjectReference = DotNetObjectReference.Create(this);
+            }
+        }
+        
+        walkCommonJavaScriptInteropApi.SubscribeWindowSizeChanged(
+            _browserResizeInteropDotNetObjectReference);
     }
     
     public void DisposeWindowSizeChanged(WalkCommonJavaScriptInteropApi walkCommonJavaScriptInteropApi)
     {
-    	walkCommonJavaScriptInteropApi.DisposeWindowSizeChanged();
+        walkCommonJavaScriptInteropApi.DisposeWindowSizeChanged();
     }
 }

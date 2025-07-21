@@ -36,7 +36,7 @@ namespace Walk.Common.RazorLib.Reactives.Models;
 public class ThrottleOptimized<TArgs>
 {
     private readonly object _lockWorkItemArgs = new();
-	private readonly Func<TArgs, CancellationToken, Task> _workItem;
+    private readonly Func<TArgs, CancellationToken, Task> _workItem;
 
     public ThrottleOptimized(TimeSpan throttleTimeSpan, Func<TArgs, CancellationToken, Task> workItem)
     {
@@ -67,21 +67,21 @@ public class ThrottleOptimized<TArgs>
     /// </summary>
     private bool _intentToRun;
 
-	public Task _workItemTask = Task.CompletedTask;
+    public Task _workItemTask = Task.CompletedTask;
 
     public TimeSpan ThrottleTimeSpan { get; }
-	
-	public void Run(TArgs args)
+    
+    public void Run(TArgs args)
     {
-		lock (_lockWorkItemArgs)
-		{
-			_args = args;
+        lock (_lockWorkItemArgs)
+        {
+            _args = args;
             if (_intentToRun)
                 return;
                 
             _intentToRun = true;
-		}
-		
+        }
+        
         var previousTask = _workItemTask;
 
         _workItemTask = Task.Run(async () =>
@@ -96,10 +96,10 @@ public class ThrottleOptimized<TArgs>
                 _intentToRun = false;
             }
 
-			await Task.WhenAll(
-					_workItem.Invoke(argsCapture, CancellationToken.None),
-					Task.Delay(ThrottleTimeSpan))
-				.ConfigureAwait(false);
+            await Task.WhenAll(
+                    _workItem.Invoke(argsCapture, CancellationToken.None),
+                    Task.Delay(ThrottleTimeSpan))
+                .ConfigureAwait(false);
         });
     }
 }

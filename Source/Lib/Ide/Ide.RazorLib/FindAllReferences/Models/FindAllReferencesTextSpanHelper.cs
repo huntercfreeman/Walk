@@ -12,22 +12,22 @@ namespace Walk.Ide.RazorLib.FindAllReferences.Models;
 /// </summary>
 public static class FindAllReferencesTextSpanHelper
 {
-	public static Task OpenInEditorOnClick(
-		TreeViewFindAllReferences treeViewFindAllReferences,
-		bool shouldSetFocusToEditor,
-		ITextEditorService textEditorService)
-	{
-		textEditorService.WorkerArbitrary.PostUnique(nameof(FindAllReferencesTextSpanHelper), async editContext =>
-		{
-			await textEditorService.OpenInEditorAsync(
-				editContext,
-				treeViewFindAllReferences.Item.Value,
-				shouldSetFocusToEditor,
-				cursorPositionIndex: null,
-				new Category("main"),
-				Key<TextEditorViewModel>.NewKey());
-		});
-		return Task.CompletedTask;
-	}
+    public static Task OpenInEditorOnClick(
+        TreeViewFindAllReferences treeViewFindAllReferences,
+        bool shouldSetFocusToEditor,
+        ITextEditorService textEditorService)
+    {
+        textEditorService.WorkerArbitrary.PostUnique(nameof(FindAllReferencesTextSpanHelper), async editContext =>
+        {
+            await textEditorService.OpenInEditorAsync(
+                editContext,
+                treeViewFindAllReferences.Item.Value,
+                shouldSetFocusToEditor,
+                cursorPositionIndex: null,
+                new Category("main"),
+                Key<TextEditorViewModel>.NewKey());
+        });
+        return Task.CompletedTask;
+    }
 }
 */

@@ -40,16 +40,16 @@ public static class ServiceCollectionExtensions
                     "Blocking"));
             
                 commonService.SetContinuousWorker(new ContinuousBackgroundTaskWorker(
-				    commonService.ContinuousQueue,
-					commonService,
-				    sp.GetRequiredService<ILoggerFactory>(),
-				    hostingInformation.WalkHostingKind));
+                    commonService.ContinuousQueue,
+                    commonService,
+                    sp.GetRequiredService<ILoggerFactory>(),
+                    hostingInformation.WalkHostingKind));
 
-				commonService.SetIndefiniteWorker(new IndefiniteBackgroundTaskWorker(
-				    commonService.IndefiniteQueue,
-					commonService,
-				    sp.GetRequiredService<ILoggerFactory>(),
-				    hostingInformation.WalkHostingKind));
+                commonService.SetIndefiniteWorker(new IndefiniteBackgroundTaskWorker(
+                    commonService.IndefiniteQueue,
+                    commonService,
+                    sp.GetRequiredService<ILoggerFactory>(),
+                    hostingInformation.WalkHostingKind));
             
                 return commonService;
             });

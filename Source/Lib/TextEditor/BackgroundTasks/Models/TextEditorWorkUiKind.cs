@@ -2,12 +2,12 @@ namespace Walk.TextEditor.RazorLib.BackgroundTasks.Models;
 
 public enum TextEditorWorkUiKind
 {
-	None,
-	OnDoubleClick,
+    None,
+    OnDoubleClick,
     OnKeyDown,
-	OnMouseDown,
+    OnMouseDown,
     OnMouseMove,
     OnScrollHorizontal,
-	OnScrollVertical,
-	OnWheel,
+    OnScrollVertical,
+    OnWheel,
 }

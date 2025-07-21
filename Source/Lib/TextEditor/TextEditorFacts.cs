@@ -12,7 +12,7 @@ namespace Walk.TextEditor.RazorLib;
 public static class TextEditorFacts
 {
     /* Start TextEditorKeymapDefaultFacts */
-	public static readonly KeymapLayer KeymapDefault_DefaultLayer = new KeymapLayer(Key: 0);
+    public static readonly KeymapLayer KeymapDefault_DefaultLayer = new KeymapLayer(Key: 0);
 
     public static readonly KeymapLayer KeymapDefault_HasSelectionLayer = new KeymapLayer(Key: 1);
     /* End TextEditorKeymapDefaultFacts */
@@ -24,19 +24,19 @@ public static class TextEditorFacts
         new()
         {
             Keymap_DefaultKeymap,
-		};
+        };
     /* End TextEditorKeymapFacts */
     
     /* Start CompilerServiceDiagnosticPresentationFacts */
     public const string CompilerServiceDiagnosticPresentation_CssClassString = "di_te_compiler-service-diagnostic-presentation";
 
-	public static readonly Key<TextEditorPresentationModel> CompilerServiceDiagnosticPresentation_PresentationKey = Key<TextEditorPresentationModel>.NewKey();
+    public static readonly Key<TextEditorPresentationModel> CompilerServiceDiagnosticPresentation_PresentationKey = Key<TextEditorPresentationModel>.NewKey();
 
-	public static readonly TextEditorPresentationModel CompilerServiceDiagnosticPresentation_EmptyPresentationModel = new(
-		CompilerServiceDiagnosticPresentation_PresentationKey,
-		0,
-		CompilerServiceDiagnosticPresentation_CssClassString,
-		new CompilerServiceDiagnosticDecorationMapper());
+    public static readonly TextEditorPresentationModel CompilerServiceDiagnosticPresentation_EmptyPresentationModel = new(
+        CompilerServiceDiagnosticPresentation_PresentationKey,
+        0,
+        CompilerServiceDiagnosticPresentation_CssClassString,
+        new CompilerServiceDiagnosticDecorationMapper());
     /* End CompilerServiceDiagnosticPresentationFacts */
     
     /* Start FindOverlayPresentationFacts */

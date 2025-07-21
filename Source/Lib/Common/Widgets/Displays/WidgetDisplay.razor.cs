@@ -9,8 +9,8 @@ public partial class WidgetDisplay : ComponentBase
     [Inject]
     private CommonService CommonService { get; set; } = null!;
     
-	[Parameter, EditorRequired]
-	public WidgetModel Widget { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public WidgetModel Widget { get; set; } = null!;
     
     private const string WIDGET_HTML_ELEMENT_ID = "di_widget-id";
     
@@ -24,7 +24,7 @@ public partial class WidgetDisplay : ComponentBase
         }
     }
 
-	private async Task HandleOnMouseDown()
+    private async Task HandleOnMouseDown()
     {
         await CommonService.JsRuntimeCommonApi
             .FocusHtmlElementById(WIDGET_HTML_ELEMENT_ID)
@@ -32,8 +32,8 @@ public partial class WidgetDisplay : ComponentBase
     }
     
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
-	{
-		if (keyboardEventArgs.Key == "Escape")
-			CommonService.SetWidget(null);
-	}
+    {
+        if (keyboardEventArgs.Key == "Escape")
+            CommonService.SetWidget(null);
+    }
 }

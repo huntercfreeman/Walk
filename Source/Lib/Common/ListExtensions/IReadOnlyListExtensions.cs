@@ -6,16 +6,16 @@ namespace Walk.Common.RazorLib.ListExtensions;
 /// </summary>
 public static class IReadOnlyListExtensions
 {
-	public static int FindIndex<T>(this IReadOnlyList<T> source, Func<T, bool> predicate)
-	{
-	   int i = 0;
-	   foreach (var item in source)
-	   {
-	      if (predicate.Invoke(item))
-	         return i;
-	      i++;
-	   }
-	   return -1;
-	}
+    public static int FindIndex<T>(this IReadOnlyList<T> source, Func<T, bool> predicate)
+    {
+       int i = 0;
+       foreach (var item in source)
+       {
+          if (predicate.Invoke(item))
+             return i;
+          i++;
+       }
+       return -1;
+    }
 }
 

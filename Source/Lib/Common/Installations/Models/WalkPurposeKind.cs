@@ -13,7 +13,7 @@ namespace Walk.Common.RazorLib.Installations.Models;
 /// </summary>
 public enum WalkPurposeKind
 {
-	Common,
-	TextEditor,
-	Ide,
+    Common,
+    TextEditor,
+    Ide,
 }

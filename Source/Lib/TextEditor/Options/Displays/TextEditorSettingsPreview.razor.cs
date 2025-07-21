@@ -33,24 +33,24 @@ public partial class TextEditorSettingsPreview : ComponentBase
     {
         if (firstRender)
         {
-        	TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
-        	{
-        		TextEditorService.Model_RegisterTemplated(
-        			editContext,
-	                ExtensionNoPeriodFacts.TXT,
-	                ResourceUriFacts.SettingsPreviewTextEditorResourceUri,
-	                DateTime.UtcNow,
-	                "Preview settings here",
-	                "Settings Preview");
-	
-	            TextEditorService.ViewModel_Register(
-	            	editContext,
-	                SettingsPreviewTextEditorViewModelKey,
-	                ResourceUriFacts.SettingsPreviewTextEditorResourceUri,
-	                new Category(nameof(TextEditorSettingsPreview)));
-	                
-	            await InvokeAsync(StateHasChanged);
-        	});
+            TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+            {
+                TextEditorService.Model_RegisterTemplated(
+                    editContext,
+                    ExtensionNoPeriodFacts.TXT,
+                    ResourceUriFacts.SettingsPreviewTextEditorResourceUri,
+                    DateTime.UtcNow,
+                    "Preview settings here",
+                    "Settings Preview");
+    
+                TextEditorService.ViewModel_Register(
+                    editContext,
+                    SettingsPreviewTextEditorViewModelKey,
+                    ResourceUriFacts.SettingsPreviewTextEditorResourceUri,
+                    new Category(nameof(TextEditorSettingsPreview)));
+                    
+                await InvokeAsync(StateHasChanged);
+            });
         }
     }
 }

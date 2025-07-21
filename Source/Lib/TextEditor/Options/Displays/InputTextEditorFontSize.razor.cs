@@ -29,11 +29,11 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
                 
             _fontSizeInPixels = value;
 
-			_throttle.Run(_ =>
-			{
-				TextEditorService.Options_SetFontSize(_fontSizeInPixels);
-				return Task.CompletedTask;
-			});
+            _throttle.Run(_ =>
+            {
+                TextEditorService.Options_SetFontSize(_fontSizeInPixels);
+                return Task.CompletedTask;
+            });
         }
     }
 
@@ -45,39 +45,39 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
     
     private void ReadActualFontSizeInPixels()
     {
-    	var temporaryFontSizeInPixels = TextEditorService.Options_GetTextEditorOptionsState().Options.CommonOptions?.FontSizeInPixels;
-    	
-    	if (temporaryFontSizeInPixels is null)
-    	{
-    		temporaryFontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
+        var temporaryFontSizeInPixels = TextEditorService.Options_GetTextEditorOptionsState().Options.CommonOptions?.FontSizeInPixels;
+        
+        if (temporaryFontSizeInPixels is null)
+        {
+            temporaryFontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
 
-    		_throttle.Run(_ =>
-			{
-				TextEditorService.Options_SetFontSize(temporaryFontSizeInPixels.Value);
-				return Task.CompletedTask;
-			});
-    	}
-    	
-    	_fontSizeInPixels = temporaryFontSizeInPixels.Value;
+            _throttle.Run(_ =>
+            {
+                TextEditorService.Options_SetFontSize(temporaryFontSizeInPixels.Value);
+                return Task.CompletedTask;
+            });
+        }
+        
+        _fontSizeInPixels = temporaryFontSizeInPixels.Value;
     }
 
     private async void OptionsWrapOnStateChanged()
     {
-    	if (!_hasFocus)
-    	{
-    		ReadActualFontSizeInPixels();
-    		await InvokeAsync(StateHasChanged);
-    	}
+        if (!_hasFocus)
+        {
+            ReadActualFontSizeInPixels();
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     private void HandleOnFocus()
     {
-    	_hasFocus = true;
+        _hasFocus = true;
     }
     
     private void HandleOnBlur()
     {
-    	_hasFocus = false;
+        _hasFocus = false;
     }
 
     public void Dispose()

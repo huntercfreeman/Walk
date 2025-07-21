@@ -4,26 +4,26 @@ namespace Walk.Common.RazorLib.Dialogs.Models;
 
 public static class DialogHelper
 {
-	public static ElementDimensions ConstructDefaultElementDimensions()
-	{
-		var elementDimensions = new ElementDimensions
+    public static ElementDimensions ConstructDefaultElementDimensions()
+    {
+        var elementDimensions = new ElementDimensions
         {
             ElementPositionKind = ElementPositionKind.Fixed
         };
 
         elementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(
-        	new DimensionUnit(60, DimensionUnitKind.ViewportWidth));
+            new DimensionUnit(60, DimensionUnitKind.ViewportWidth));
 
         elementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(
-        	new DimensionUnit(60, DimensionUnitKind.ViewportHeight));
+            new DimensionUnit(60, DimensionUnitKind.ViewportHeight));
 
         elementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(
-        	new DimensionUnit(20, DimensionUnitKind.ViewportWidth));
+            new DimensionUnit(20, DimensionUnitKind.ViewportWidth));
 
         elementDimensions.TopDimensionAttribute.DimensionUnitList.Add(
-        	new DimensionUnit(20, DimensionUnitKind.ViewportHeight));
+            new DimensionUnit(20, DimensionUnitKind.ViewportHeight));
 
         return elementDimensions;
-	}
+    }
 }
 

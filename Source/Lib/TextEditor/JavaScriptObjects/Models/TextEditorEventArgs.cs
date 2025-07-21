@@ -14,9 +14,9 @@ public struct TextEditorEventArgs
     public string Key { get; set; }
     public string Code { get; set; }
     public double X { get; set; }
-	public double Y { get; set; }
-	public long Buttons { get; set; }
-	public bool ShiftKey { get; set; }
+    public double Y { get; set; }
+    public long Buttons { get; set; }
+    public bool ShiftKey { get; set; }
     public bool CtrlKey { get; set; }
     public bool AltKey { get; set; }
     public bool MetaKey { get; set; }

@@ -5,8 +5,8 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 /// </summary>
 public enum ParameterModifierKind
 {
-	None,
-	Out,
+    None,
+    Out,
     In,
     Ref,
     Params,

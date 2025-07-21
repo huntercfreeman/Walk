@@ -38,9 +38,9 @@ namespace Walk.Ide.RazorLib;
 
 public partial class IdeService : IBackgroundTaskGroup
 {
-	public static readonly Key<TextEditorGroup> EditorTextEditorGroupKey = Key<TextEditorGroup>.NewKey();
+    public static readonly Key<TextEditorGroup> EditorTextEditorGroupKey = Key<TextEditorGroup>.NewKey();
 
-	private readonly IServiceProvider _serviceProvider;
+    private readonly IServiceProvider _serviceProvider;
 
     public IdeService(
         WalkIdeConfig ideConfig,
@@ -82,17 +82,17 @@ public partial class IdeService : IBackgroundTaskGroup
             case IdeWorkKind.WalkIdeInitializerOnInit:
                 return Do_WalkIdeInitializerOnInit();
             case IdeWorkKind.IdeHeaderOnInit:
-            	return Do_IdeHeaderOnInit(workArgs.IdeMainLayout);
+                return Do_IdeHeaderOnInit(workArgs.IdeMainLayout);
             case IdeWorkKind.FileContentsWereModifiedOnDisk:
-	            return Editor_Do_FileContentsWereModifiedOnDisk(
-	                workArgs.StringValue, workArgs.TextEditorModel, workArgs.FileLastWriteTime, workArgs.NotificationInformativeKey);
-			case IdeWorkKind.SaveFile:
+                return Editor_Do_FileContentsWereModifiedOnDisk(
+                    workArgs.StringValue, workArgs.TextEditorModel, workArgs.FileLastWriteTime, workArgs.NotificationInformativeKey);
+            case IdeWorkKind.SaveFile:
                 return Do_SaveFile(workArgs.AbsolutePath, workArgs.StringValue, workArgs.OnAfterSaveCompletedWrittenDateTimeFunc, workArgs.CancellationToken);
             case IdeWorkKind.SetFolderExplorerState:
                 return Do_SetFolderExplorerState(workArgs.AbsolutePath);
             case IdeWorkKind.SetFolderExplorerTreeView:
                 return Do_SetFolderExplorerTreeView(workArgs.AbsolutePath);
-			case IdeWorkKind.RequestInputFileStateForm:
+            case IdeWorkKind.RequestInputFileStateForm:
                 return Do_RequestInputFileStateForm(
                     workArgs.StringValue, workArgs.OnAfterSubmitFunc, workArgs.SelectionIsValidFunc, workArgs.InputFilePatterns);
             case IdeWorkKind.OpenParentDirectoryAction:
@@ -134,7 +134,7 @@ public partial class IdeService : IBackgroundTaskGroup
                     workArgs.OnAfterCompletion);
             default:
                 Console.WriteLine($"{nameof(IdeService)} {nameof(HandleEvent)} default case");
-				return ValueTask.CompletedTask;
+                return ValueTask.CompletedTask;
         }
     }
 
@@ -456,20 +456,20 @@ public partial class IdeService : IBackgroundTaskGroup
         //
         //{
         //    var menuOptionSolutionVisualization = new MenuOptionRecord(
-        //		"Solution Visualization",
+        //        "Solution Visualization",
         //        MenuOptionKind.Delete,
         //        () => 
         //        {
-        //			var dialogRecord = new DialogViewModel(
-        //	            _solutionVisualizationDialogKey,
-        //	            "Solution Visualization",
-        //	            typeof(SolutionVisualizationDisplay),
-        //	            null,
-        //	            null,
-        //				true);
-        //	
-        //	        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
-        //	        return Task.CompletedTask;
+        //            var dialogRecord = new DialogViewModel(
+        //                _solutionVisualizationDialogKey,
+        //                "Solution Visualization",
+        //                typeof(SolutionVisualizationDisplay),
+        //                null,
+        //                null,
+        //                true);
+        //    
+        //            Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+        //            return Task.CompletedTask;
         //        });
         //
         //    menuOptionsList.Add(menuOptionSolutionVisualization);
@@ -555,24 +555,24 @@ public partial class IdeService : IBackgroundTaskGroup
     {
         Enqueue(new IdeWorkArgs
         {
-        	WorkKind = IdeWorkKind.RequestInputFileStateForm,
+            WorkKind = IdeWorkKind.RequestInputFileStateForm,
             StringValue = "TextEditor",
             OnAfterSubmitFunc = absolutePath =>
             {
-            	// TODO: Why does 'isDirectory: false' not work?
-				CommonService.EnvironmentProvider.DeletionPermittedRegister(new(absolutePath.Value, isDirectory: true));
+                // TODO: Why does 'isDirectory: false' not work?
+                CommonService.EnvironmentProvider.DeletionPermittedRegister(new(absolutePath.Value, isDirectory: true));
             
-            	TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
-				{
-					await TextEditorService.OpenInEditorAsync(
-						editContext,
-						absolutePath.Value,
-						true,
-						null,
-						new Category("main"),
-						Key<TextEditorViewModel>.NewKey());
-				});
-				return Task.CompletedTask;
+                TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+                {
+                    await TextEditorService.OpenInEditorAsync(
+                        editContext,
+                        absolutePath.Value,
+                        true,
+                        null,
+                        new Category("main"),
+                        Key<TextEditorViewModel>.NewKey());
+                });
+                return Task.CompletedTask;
             },
             SelectionIsValidFunc = absolutePath =>
             {
@@ -583,7 +583,7 @@ public partial class IdeService : IBackgroundTaskGroup
             },
             InputFilePatterns = new()
             {
-            	new InputFilePattern("File", absolutePath => !absolutePath.IsDirectory)
+                new InputFilePattern("File", absolutePath => !absolutePath.IsDirectory)
             }
         });
     }
@@ -594,14 +594,14 @@ public partial class IdeService : IBackgroundTaskGroup
 
         var compilerService = _compilerServiceRegistry.GetCompilerService(fastParseArgs.ExtensionNoPeriod);
 
-		compilerService.RegisterResource(
-			fastParseArgs.ResourceUri,
-			shouldTriggerResourceWasModified: false);
-			
-		var uniqueTextEditorWork = new UniqueTextEditorWork(TextEditorService, editContext =>
-			compilerService.FastParseAsync(editContext, fastParseArgs.ResourceUri, _fileSystemProvider));
-		
-		TextEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);*/
+        compilerService.RegisterResource(
+            fastParseArgs.ResourceUri,
+            shouldTriggerResourceWasModified: false);
+            
+        var uniqueTextEditorWork = new UniqueTextEditorWork(TextEditorService, editContext =>
+            compilerService.FastParseAsync(editContext, fastParseArgs.ResourceUri, _fileSystemProvider));
+        
+        TextEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(uniqueTextEditorWork);*/
     }
     
     public async Task Editor_RegisterModelFunc(RegisterModelArgs registerModelArgs)
@@ -610,14 +610,14 @@ public partial class IdeService : IBackgroundTaskGroup
         
         if (model is not null)
         {
-        	await Editor_CheckIfContentsWereModifiedAsync(
-	                registerModelArgs.ResourceUri.Value,
-	                model)
-	            .ConfigureAwait(false);
-	        return;
+            await Editor_CheckIfContentsWereModifiedAsync(
+                    registerModelArgs.ResourceUri.Value,
+                    model)
+                .ConfigureAwait(false);
+            return;
         }
-			
-    	var resourceUri = registerModelArgs.ResourceUri;
+            
+        var resourceUri = registerModelArgs.ResourceUri;
 
         var fileLastWriteTime = await CommonService.FileSystemProvider.File
             .GetLastWriteTimeAsync(resourceUri.Value)
@@ -648,27 +648,27 @@ public partial class IdeService : IBackgroundTaskGroup
 
         TextEditorService.Model_RegisterCustom(registerModelArgs.EditContext, model);
         
-		model.PersistentState.CompilerService.RegisterResource(
-			model.PersistentState.ResourceUri,
-			shouldTriggerResourceWasModified: false);
-    	
-		modelModifier = registerModelArgs.EditContext.GetModelModifier(resourceUri);
+        model.PersistentState.CompilerService.RegisterResource(
+            model.PersistentState.ResourceUri,
+            shouldTriggerResourceWasModified: false);
+        
+        modelModifier = registerModelArgs.EditContext.GetModelModifier(resourceUri);
 
-		if (modelModifier is null)
-			return;
+        if (modelModifier is null)
+            return;
 
-		await compilerService.ParseAsync(registerModelArgs.EditContext, modelModifier, shouldApplySyntaxHighlighting: false);
+        await compilerService.ParseAsync(registerModelArgs.EditContext, modelModifier, shouldApplySyntaxHighlighting: false);
     }
 
     public async Task<Key<TextEditorViewModel>> Editor_TryRegisterViewModelFunc(TryRegisterViewModelArgs registerViewModelArgs)
     {
-    	var viewModelKey = Key<TextEditorViewModel>.NewKey();
-    	
-		var model = TextEditorService.Model_GetOrDefault(registerViewModelArgs.ResourceUri);
+        var viewModelKey = Key<TextEditorViewModel>.NewKey();
+        
+        var model = TextEditorService.Model_GetOrDefault(registerViewModelArgs.ResourceUri);
 
         if (model is null)
         {
-        	NotificationHelper.DispatchDebugMessage(nameof(Editor_TryRegisterViewModelFunc), () => "model is null: " + registerViewModelArgs.ResourceUri.Value, CommonService, TimeSpan.FromSeconds(4));
+            NotificationHelper.DispatchDebugMessage(nameof(Editor_TryRegisterViewModelFunc), () => "model is null: " + registerViewModelArgs.ResourceUri.Value, CommonService, TimeSpan.FromSeconds(4));
             return Key<TextEditorViewModel>.Empty;
         }
 
@@ -676,19 +676,19 @@ public partial class IdeService : IBackgroundTaskGroup
             .FirstOrDefault(x => x.PersistentState.Category == registerViewModelArgs.Category);
 
         if (viewModel is not null)
-		    return viewModel.PersistentState.ViewModelKey;
+            return viewModel.PersistentState.ViewModelKey;
 
         viewModel = new TextEditorViewModel(
             viewModelKey,
             registerViewModelArgs.ResourceUri,
             TextEditorService,
             TextEditorVirtualizationResult.ConstructEmpty(),
-			new TextEditorDimensions(0, 0, 0, 0),
-			scrollLeft: 0,
-	    	scrollTop: 0,
-		    scrollWidth: 0,
-		    scrollHeight: 0,
-		    marginScrollHeight: 0,
+            new TextEditorDimensions(0, 0, 0, 0),
+            scrollLeft: 0,
+            scrollTop: 0,
+            scrollWidth: 0,
+            scrollHeight: 0,
+            marginScrollHeight: 0,
             registerViewModelArgs.Category);
 
         var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
@@ -719,7 +719,7 @@ public partial class IdeService : IBackgroundTaskGroup
 
         Enqueue(new IdeWorkArgs
         {
-        	WorkKind = IdeWorkKind.SaveFile,
+            WorkKind = IdeWorkKind.SaveFile,
             AbsolutePath = absolutePath,
             StringValue = innerContent,
             OnAfterSaveCompletedWrittenDateTimeFunc = writtenDateTime =>
@@ -728,12 +728,12 @@ public partial class IdeService : IBackgroundTaskGroup
                 {
                     TextEditorService.WorkerArbitrary.PostUnique(editContext =>
                     {
-                    	var modelModifier = editContext.GetModelModifier(innerTextEditor.PersistentState.ResourceUri);
-                    	if (modelModifier is null)
-                    		return ValueTask.CompletedTask;
+                        var modelModifier = editContext.GetModelModifier(innerTextEditor.PersistentState.ResourceUri);
+                        if (modelModifier is null)
+                            return ValueTask.CompletedTask;
                     
-                    	TextEditorService.Model_SetResourceData(
-                    		editContext,
+                        TextEditorService.Model_SetResourceData(
+                            editContext,
                             modelModifier,
                             writtenDateTime.Value);
                         return ValueTask.CompletedTask;
@@ -782,11 +782,11 @@ public partial class IdeService : IBackgroundTaskGroup
             
         if (showViewModelArgs.ShouldSetFocusToEditor)
         {
-        	TextEditorService.WorkerArbitrary.PostUnique(editContext =>
-	        {
-	        	var viewModelModifier = editContext.GetViewModelModifier(showViewModelArgs.ViewModelKey);
-	        	return viewModel.FocusAsync();
-	        });
+            TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+            {
+                var viewModelModifier = editContext.GetViewModelModifier(showViewModelArgs.ViewModelKey);
+                return viewModel.FocusAsync();
+            });
         }
 
         return true;
@@ -822,17 +822,17 @@ public partial class IdeService : IBackgroundTaskGroup
                             nameof(Walk.Ide.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay.OnAfterAcceptFunc),
                             new Func<Task>(() =>
                             {
-                            	Enqueue(new IdeWorkArgs
-                            	{
-                            		WorkKind = IdeWorkKind.FileContentsWereModifiedOnDisk,
-                            		StringValue = inputFileAbsolutePathString,
-                            		TextEditorModel = textEditorModel,
-                            		FileLastWriteTime = fileLastWriteTime,
-                            		NotificationInformativeKey = notificationInformativeKey,
-                            	});
+                                Enqueue(new IdeWorkArgs
+                                {
+                                    WorkKind = IdeWorkKind.FileContentsWereModifiedOnDisk,
+                                    StringValue = inputFileAbsolutePathString,
+                                    TextEditorModel = textEditorModel,
+                                    FileLastWriteTime = fileLastWriteTime,
+                                    NotificationInformativeKey = notificationInformativeKey,
+                                });
 
-								return Task.CompletedTask;
-							})
+                                return Task.CompletedTask;
+                            })
                         },
                         {
                             nameof(Walk.Ide.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay.OnAfterDeclineFunc),
@@ -871,8 +871,8 @@ public partial class IdeService : IBackgroundTaskGroup
                 content,
                 fileLastWriteTime);
 
-			if (modelModifier.PersistentState.CompilerService is not null)	
-				modelModifier.PersistentState.CompilerService.ResourceWasModified(modelModifier.PersistentState.ResourceUri, Array.Empty<TextEditorTextSpan>());
+            if (modelModifier.PersistentState.CompilerService is not null)    
+                modelModifier.PersistentState.CompilerService.ResourceWasModified(modelModifier.PersistentState.ResourceUri, Array.Empty<TextEditorTextSpan>());
             return ValueTask.CompletedTask;
         });
     }
@@ -931,7 +931,7 @@ public partial class IdeService : IBackgroundTaskGroup
             IsLoadingFolderExplorer = true
         });
         
-		CommonService.EnvironmentProvider.DeletionPermittedRegister(new(folderAbsolutePath.Value, true));
+        CommonService.EnvironmentProvider.DeletionPermittedRegister(new(folderAbsolutePath.Value, true));
 
         var rootNode = new TreeViewAbsolutePath(
             folderAbsolutePath,
@@ -971,7 +971,7 @@ public partial class IdeService : IBackgroundTaskGroup
     {
         Enqueue(new IdeWorkArgs
         {
-        	WorkKind = IdeWorkKind.RequestInputFileStateForm,
+            WorkKind = IdeWorkKind.RequestInputFileStateForm,
             StringValue = "Folder Explorer",
             OnAfterSubmitFunc = async absolutePath =>
             {

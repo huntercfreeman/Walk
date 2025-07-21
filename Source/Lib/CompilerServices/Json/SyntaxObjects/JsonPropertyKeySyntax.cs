@@ -7,7 +7,7 @@ public class JsonPropertyKeySyntax : IJsonSyntax
 {
     public JsonPropertyKeySyntax(
         TextEditorTextSpan textEditorTextSpan,
-		IReadOnlyList<IJsonSyntax> childJsonSyntaxes)
+        IReadOnlyList<IJsonSyntax> childJsonSyntaxes)
     {
         ChildJsonSyntaxes = childJsonSyntaxes;
         TextEditorTextSpan = textEditorTextSpan;

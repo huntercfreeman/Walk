@@ -129,7 +129,7 @@ public struct RelativePath
     public string? ParentDirectory => AncestorDirectoryList.LastOrDefault().Path;
     public string NameWithExtension => _nameWithExtension ??= PathHelper.CalculateNameWithExtension(NameNoExtension, ExtensionNoPeriod, IsDirectory);
 
-	public List<(string NameWithExtension, string Path)> GetAncestorDirectoryList() => AncestorDirectoryList;
+    public List<(string NameWithExtension, string Path)> GetAncestorDirectoryList() => AncestorDirectoryList;
 
     private void ConsumeTokenAsDirectory(IEnvironmentProvider environmentProvider)
     {

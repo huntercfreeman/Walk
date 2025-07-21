@@ -5,24 +5,24 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 /// </summary>
 public struct GenericParameterListing
 {
-	public GenericParameterListing(
-		SyntaxToken openAngleBracketToken,
-		List<GenericParameterEntry> genericParameterEntryList,
-		SyntaxToken closeAngleBracketToken)
-	{
-		OpenAngleBracketToken = openAngleBracketToken;
-		GenericParameterEntryList = genericParameterEntryList;
-		CloseAngleBracketToken = closeAngleBracketToken;
-	}
+    public GenericParameterListing(
+        SyntaxToken openAngleBracketToken,
+        List<GenericParameterEntry> genericParameterEntryList,
+        SyntaxToken closeAngleBracketToken)
+    {
+        OpenAngleBracketToken = openAngleBracketToken;
+        GenericParameterEntryList = genericParameterEntryList;
+        CloseAngleBracketToken = closeAngleBracketToken;
+    }
 
-	public SyntaxToken OpenAngleBracketToken { get; }
-	public List<GenericParameterEntry> GenericParameterEntryList { get; }
-	public SyntaxToken CloseAngleBracketToken { get; private set; }
-	
-	public bool ConstructorWasInvoked => OpenAngleBracketToken.ConstructorWasInvoked;
+    public SyntaxToken OpenAngleBracketToken { get; }
+    public List<GenericParameterEntry> GenericParameterEntryList { get; }
+    public SyntaxToken CloseAngleBracketToken { get; private set; }
+    
+    public bool ConstructorWasInvoked => OpenAngleBracketToken.ConstructorWasInvoked;
 
-	public void SetCloseAngleBracketToken(SyntaxToken closeAngleBracketToken)
-	{
-		CloseAngleBracketToken = closeAngleBracketToken;
-	}
+    public void SetCloseAngleBracketToken(SyntaxToken closeAngleBracketToken)
+    {
+        CloseAngleBracketToken = closeAngleBracketToken;
+    }
 }

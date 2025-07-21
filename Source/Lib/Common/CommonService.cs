@@ -10,10 +10,10 @@ namespace Walk.Common.RazorLib;
 public partial class CommonService : IBackgroundTaskGroup
 {
     private readonly object _stateModificationLock = new();
-	
-	public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
-	
-	public WalkHostingInformation WalkHostingInformation { get; }
+    
+    public WalkCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
+    
+    public WalkHostingInformation WalkHostingInformation { get; }
 
     public CommonService(
         WalkHostingInformation hostingInformation,
@@ -39,17 +39,17 @@ public partial class CommonService : IBackgroundTaskGroup
         JsRuntimeCommonApi = jsRuntime.GetWalkCommonApi();
     
         _debounceExtraEvent = new(
-	    	TimeSpan.FromMilliseconds(250),
-	    	CancellationToken.None,
-	    	(_, _) =>
-	    	{
-	    	    AppDimension_NotifyIntraAppResize(useExtraEvent: false);
-	    	    return Task.CompletedTask;
-		    });
+            TimeSpan.FromMilliseconds(250),
+            CancellationToken.None,
+            (_, _) =>
+            {
+                AppDimension_NotifyIntraAppResize(useExtraEvent: false);
+                return Task.CompletedTask;
+            });
     }
     
     public IEnvironmentProvider EnvironmentProvider { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     
-	public event Action<CommonUiEventKind>? CommonUiStateChanged;
+    public event Action<CommonUiEventKind>? CommonUiStateChanged;
 }

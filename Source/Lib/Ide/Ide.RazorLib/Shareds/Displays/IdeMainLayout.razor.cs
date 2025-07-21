@@ -55,8 +55,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         typeof(SettingsDisplay),
         null,
         null,
-		true,
-		null);
+        true,
+        null);
 
     protected override void OnInitialized()
     {
@@ -66,24 +66,24 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         {
             new DimensionUnit(78, DimensionUnitKind.Percentage),
             new DimensionUnit(
-            	IdeService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
-            	DimensionUnitKind.Pixels,
-            	DimensionOperatorKind.Subtract),
+                IdeService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract),
             new DimensionUnit(
-            	CommonFacts.Ide_Header_Height.Value / 2,
-            	CommonFacts.Ide_Header_Height.DimensionUnitKind,
-            	DimensionOperatorKind.Subtract)
+                CommonFacts.Ide_Header_Height.Value / 2,
+                CommonFacts.Ide_Header_Height.DimensionUnitKind,
+                DimensionOperatorKind.Subtract)
         });
         
         _editorElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(
-            	33.3333,
-            	DimensionUnitKind.Percentage),
+                33.3333,
+                DimensionUnitKind.Percentage),
             new DimensionUnit(
-            	IdeService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
-            	DimensionUnitKind.Pixels,
-            	DimensionOperatorKind.Subtract)
+                IdeService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract)
         });
     
         IdeService.CommonService.DragStateChanged += DragStateWrapOnStateChanged;
@@ -91,15 +91,15 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         IdeService.Ide_IdeStateChanged += OnIdeMainLayoutStateChanged;
         IdeService.TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrap_StateChanged;
 
-    	IdeService.Enqueue(new IdeWorkArgs
-    	{
-    		WorkKind = IdeWorkKind.IdeHeaderOnInit,
-    		IdeMainLayout = this,
-    	});
-    	
-    	IdeService.Enqueue(new IdeWorkArgs
+        IdeService.Enqueue(new IdeWorkArgs
         {
-        	WorkKind = IdeWorkKind.WalkIdeInitializerOnInit,
+            WorkKind = IdeWorkKind.IdeHeaderOnInit,
+            IdeMainLayout = this,
+        });
+        
+        IdeService.Enqueue(new IdeWorkArgs
+        {
+            WorkKind = IdeWorkKind.WalkIdeInitializerOnInit,
         });
     }
 
@@ -115,11 +115,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 .ConfigureAwait(false);
                 
             if (IdeService.CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
-			{
-				await JsRuntime.GetWalkIdeApi()
-					.PreventDefaultBrowserKeybindings()
-					.ConfigureAwait(false);
-			}
+            {
+                await JsRuntime.GetWalkIdeApi()
+                    .PreventDefaultBrowserKeybindings()
+                    .ConfigureAwait(false);
+            }
         }
     }
 
@@ -147,7 +147,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     private async void OnIdeMainLayoutStateChanged()
     {
-    	await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private async void TextEditorOptionsStateWrap_StateChanged()
@@ -187,7 +187,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             uiStringBuilder.Append(IdeService.CommonService.Options_ColorSchemeCssStyleString);
             _styleCssString = uiStringBuilder.ToString();
             
-        	uiStringBuilder.Clear();
+            uiStringBuilder.Clear();
             uiStringBuilder.Append("display: flex; justify-content: space-between; border-bottom: ");
             uiStringBuilder.Append(IdeService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels);
             uiStringBuilder.Append("px solid var(--di_primary-border-color);");

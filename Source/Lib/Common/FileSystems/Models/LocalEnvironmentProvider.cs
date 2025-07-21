@@ -2,20 +2,20 @@ namespace Walk.Common.RazorLib.FileSystems.Models;
 
 public class LocalEnvironmentProvider : IEnvironmentProvider
 {
-	#if DEBUG
+    #if DEBUG
     public const string SafeRelativeDirectory = "Walk/Debug/";
-	#else
+    #else
     public const string SafeRelativeDirectory = "Walk/Release/";
-	#endif
-	
+    #endif
+    
     private readonly object _pathLock = new();
 
     public LocalEnvironmentProvider()
     {
         RootDirectoryAbsolutePath = new AbsolutePath(
-        	"/",
-        	true,
-        	this);
+            "/",
+            true,
+            this);
 
         HomeDirectoryAbsolutePath = new AbsolutePath(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
@@ -43,27 +43,27 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
             this);
 
         ProtectedPathList.Add(new(
-        	RootDirectoryAbsolutePath.Value,
+            RootDirectoryAbsolutePath.Value,
             RootDirectoryAbsolutePath.IsDirectory));
 
-		ProtectedPathList.Add(new(
-        	HomeDirectoryAbsolutePath.Value,
+        ProtectedPathList.Add(new(
+            HomeDirectoryAbsolutePath.Value,
             HomeDirectoryAbsolutePath.IsDirectory));
         
         ProtectedPathList.Add(new(
-        	ActualRoamingApplicationDataDirectoryAbsolutePath.Value,
+            ActualRoamingApplicationDataDirectoryAbsolutePath.Value,
             ActualRoamingApplicationDataDirectoryAbsolutePath.IsDirectory));
             
         ProtectedPathList.Add(new(
-        	ActualLocalApplicationDataDirectoryAbsolutePath.Value,
+            ActualLocalApplicationDataDirectoryAbsolutePath.Value,
             ActualLocalApplicationDataDirectoryAbsolutePath.IsDirectory));
             
         ProtectedPathList.Add(new(
-        	SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
+            SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
             SafeRoamingApplicationDataDirectoryAbsolutePath.IsDirectory));
             
         ProtectedPathList.Add(new(
-        	SafeLocalApplicationDataDirectoryAbsolutePath.Value,
+            SafeLocalApplicationDataDirectoryAbsolutePath.Value,
             SafeLocalApplicationDataDirectoryAbsolutePath.IsDirectory));
 
         // Redundantly hardcode some obvious cases for protection.
@@ -112,10 +112,10 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
 
     public AbsolutePath RootDirectoryAbsolutePath { get; }
     public AbsolutePath HomeDirectoryAbsolutePath { get; }
-	public AbsolutePath SafeRoamingApplicationDataDirectoryAbsolutePath { get; }
-	public AbsolutePath SafeLocalApplicationDataDirectoryAbsolutePath { get; }
-	public AbsolutePath ActualRoamingApplicationDataDirectoryAbsolutePath { get; }
-	public AbsolutePath ActualLocalApplicationDataDirectoryAbsolutePath { get; }
+    public AbsolutePath SafeRoamingApplicationDataDirectoryAbsolutePath { get; }
+    public AbsolutePath SafeLocalApplicationDataDirectoryAbsolutePath { get; }
+    public AbsolutePath ActualRoamingApplicationDataDirectoryAbsolutePath { get; }
+    public AbsolutePath ActualLocalApplicationDataDirectoryAbsolutePath { get; }
 
     public string DriveExecutingFromNoDirectorySeparator { get; }
 

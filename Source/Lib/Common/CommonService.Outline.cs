@@ -5,24 +5,24 @@ namespace Walk.Common.RazorLib;
 
 public partial class CommonService
 {
-	private OutlineState _outlineState = new();
-	
-	public OutlineState GetOutlineState() => _outlineState;
+    private OutlineState _outlineState = new();
+    
+    public OutlineState GetOutlineState() => _outlineState;
 
-	public void SetOutline(
-		string? elementId,
-		MeasuredHtmlElementDimensions? measuredHtmlElementDimensions,
-		bool needsMeasured)
-	{
-		lock (_stateModificationLock)
-		{
-			_outlineState = _outlineState with
-			{
-				ElementId = elementId,
-				MeasuredHtmlElementDimensions = measuredHtmlElementDimensions,
-				NeedsMeasured = needsMeasured,
-			};
-		}
+    public void SetOutline(
+        string? elementId,
+        MeasuredHtmlElementDimensions? measuredHtmlElementDimensions,
+        bool needsMeasured)
+    {
+        lock (_stateModificationLock)
+        {
+            _outlineState = _outlineState with
+            {
+                ElementId = elementId,
+                MeasuredHtmlElementDimensions = measuredHtmlElementDimensions,
+                NeedsMeasured = needsMeasured,
+            };
+        }
 
         if (needsMeasured && elementId is not null)
         {
@@ -47,21 +47,21 @@ public partial class CommonService
         finalize:
         CommonUiStateChanged?.Invoke(CommonUiEventKind.OutlineStateChanged);
     }
-	
-	public void Outline_SetMeasurements(
-		string? elementId,
-		MeasuredHtmlElementDimensions? measuredHtmlElementDimensions)
-	{
-		lock (_stateModificationLock)
-		{
-			if (_outlineState.ElementId == elementId)
-			{
-    			_outlineState = _outlineState with
-    			{
-    				MeasuredHtmlElementDimensions = measuredHtmlElementDimensions,
-    				NeedsMeasured = false,
-    			};
-    		}
+    
+    public void Outline_SetMeasurements(
+        string? elementId,
+        MeasuredHtmlElementDimensions? measuredHtmlElementDimensions)
+    {
+        lock (_stateModificationLock)
+        {
+            if (_outlineState.ElementId == elementId)
+            {
+                _outlineState = _outlineState with
+                {
+                    MeasuredHtmlElementDimensions = measuredHtmlElementDimensions,
+                    NeedsMeasured = false,
+                };
+            }
         }
 
         CommonUiStateChanged?.Invoke(CommonUiEventKind.OutlineStateChanged);

@@ -7,81 +7,81 @@ namespace Walk.Common.RazorLib.Dimensions.Models;
 /// </summary>
 public struct DimensionUnit
 {
-	public DimensionUnit(
-		Func<double> valueFunc,
-		DimensionUnitKind dimensionUnitKind,
-		DimensionOperatorKind dimensionOperatorKind,
-		string purpose)
-	{
-		ValueFunc = valueFunc;
+    public DimensionUnit(
+        Func<double> valueFunc,
+        DimensionUnitKind dimensionUnitKind,
+        DimensionOperatorKind dimensionOperatorKind,
+        string purpose)
+    {
+        ValueFunc = valueFunc;
     
-	    DimensionUnitKind = dimensionUnitKind;
-	    DimensionOperatorKind = dimensionOperatorKind; // DimensionOperatorKind.Add;
-	    Purpose = purpose; // string.Empty;
-	}
-	
-	public DimensionUnit(
-		double value,
-		DimensionUnitKind dimensionUnitKind)
-	{
-		ValueFunc = null;
+        DimensionUnitKind = dimensionUnitKind;
+        DimensionOperatorKind = dimensionOperatorKind; // DimensionOperatorKind.Add;
+        Purpose = purpose; // string.Empty;
+    }
     
-    	Value = value;
-	    DimensionUnitKind = dimensionUnitKind;
-	    DimensionOperatorKind = DimensionOperatorKind.Add;
-	    Purpose = string.Empty;
-	}
-	
-	public DimensionUnit(
-		double value,
-		DimensionUnitKind dimensionUnitKind,
-		DimensionOperatorKind dimensionOperatorKind,
-		string purpose)
-	{
-		ValueFunc = null;
+    public DimensionUnit(
+        double value,
+        DimensionUnitKind dimensionUnitKind)
+    {
+        ValueFunc = null;
     
-	    Value = value;
-	    DimensionUnitKind = dimensionUnitKind;
-	    DimensionOperatorKind = dimensionOperatorKind;
-	    Purpose = purpose;
-	}
-	
-	public DimensionUnit(
-		double value,
-		DimensionUnitKind dimensionUnitKind,
-		DimensionOperatorKind dimensionOperatorKind)
-	{
-		ValueFunc = null;
+        Value = value;
+        DimensionUnitKind = dimensionUnitKind;
+        DimensionOperatorKind = DimensionOperatorKind.Add;
+        Purpose = string.Empty;
+    }
     
-	    Value = value;
-	    DimensionUnitKind = dimensionUnitKind;
-	    DimensionOperatorKind = dimensionOperatorKind;
-	    Purpose = string.Empty;
-	}
+    public DimensionUnit(
+        double value,
+        DimensionUnitKind dimensionUnitKind,
+        DimensionOperatorKind dimensionOperatorKind,
+        string purpose)
+    {
+        ValueFunc = null;
+    
+        Value = value;
+        DimensionUnitKind = dimensionUnitKind;
+        DimensionOperatorKind = dimensionOperatorKind;
+        Purpose = purpose;
+    }
+    
+    public DimensionUnit(
+        double value,
+        DimensionUnitKind dimensionUnitKind,
+        DimensionOperatorKind dimensionOperatorKind)
+    {
+        ValueFunc = null;
+    
+        Value = value;
+        DimensionUnitKind = dimensionUnitKind;
+        DimensionOperatorKind = dimensionOperatorKind;
+        Purpose = string.Empty;
+    }
 
-	private double _value;
+    private double _value;
 
     public double Value
     {
-    	get
-    	{
-    		var localValueFunc = ValueFunc;
-    		
-    		if (localValueFunc is null)
-    			return _value;
-    		else
-    			return localValueFunc.Invoke();
-    	}
-    	init
-    	{
-    		var localValueFunc = ValueFunc;
-    		
-    		if (localValueFunc is null)
-    			_value = value;
-    		else
-    			throw new WalkCommonException(
-    				$"{nameof(DimensionUnit)} should use the setter for either the property '{nameof(Value)}' or '{nameof(ValueFunc)}', but not both. TODO: change this implementation as it is a bit hacky.");
-    	}
+        get
+        {
+            var localValueFunc = ValueFunc;
+            
+            if (localValueFunc is null)
+                return _value;
+            else
+                return localValueFunc.Invoke();
+        }
+        init
+        {
+            var localValueFunc = ValueFunc;
+            
+            if (localValueFunc is null)
+                _value = value;
+            else
+                throw new WalkCommonException(
+                    $"{nameof(DimensionUnit)} should use the setter for either the property '{nameof(Value)}' or '{nameof(ValueFunc)}', but not both. TODO: change this implementation as it is a bit hacky.");
+        }
     }
     
     /// <summary>

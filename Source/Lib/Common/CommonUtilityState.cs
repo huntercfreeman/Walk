@@ -49,9 +49,9 @@ namespace Walk.Common.RazorLib;
 /// </param>
 public record struct AppDimensionState(int Width, int Height, int Left, int Top)
 {
-	public AppDimensionState() : this(0, 0, 0, 0)
-	{
-	}
+    public AppDimensionState() : this(0, 0, 0, 0)
+    {
+    }
 }
 /* End IAppDimensionService */
 
@@ -133,13 +133,13 @@ public record struct ThemeState(IReadOnlyList<ThemeRecord> ThemeList)
 
 /* Start IOutlineService */
 public record struct OutlineState(
-	string? ElementId,
-	MeasuredHtmlElementDimensions? MeasuredHtmlElementDimensions,
-	bool NeedsMeasured)
+    string? ElementId,
+    MeasuredHtmlElementDimensions? MeasuredHtmlElementDimensions,
+    bool NeedsMeasured)
 {
-	public OutlineState() : this(null, null, false)
-	{
-	}
+    public OutlineState() : this(null, null, false)
+    {
+    }
 }
 /* End IOutlineService */
 
@@ -157,9 +157,9 @@ public record struct OutlineState(
 /// TODO: SphagettiCode - The resizing and hiding/showing is a bit scuffed. (2023-09-19)
 /// </summary>
 public record struct PanelState(
-	IReadOnlyList<PanelGroup> PanelGroupList,
-	IReadOnlyList<Panel> PanelList,
-	(IPanelTab PanelTab, PanelGroup PanelGroup)? DragEventArgs)
+    IReadOnlyList<PanelGroup> PanelGroupList,
+    IReadOnlyList<Panel> PanelList,
+    (IPanelTab PanelTab, PanelGroup PanelGroup)? DragEventArgs)
 {
     public PanelState() : this(Array.Empty<PanelGroup>(), Array.Empty<Panel>(), null)
     {
@@ -241,7 +241,7 @@ public record struct PanelState(
 /// </summary>
 public record struct WidgetState(WidgetModel? Widget)
 {
-	public WidgetState() : this((WidgetModel?)null)
+    public WidgetState() : this((WidgetModel?)null)
     {
         
     }
@@ -255,9 +255,9 @@ public record struct WidgetState(WidgetModel? Widget)
 /// </summary>
 public record struct DialogState
 {
-	public DialogState()
-	{
-	}
+    public DialogState()
+    {
+    }
 
     public IReadOnlyList<IDialog> DialogList { get; init; } = Array.Empty<IDialog>();
     /// <summary>
@@ -312,7 +312,7 @@ public record struct DropdownState(IReadOnlyList<DropdownRecord> DropdownList)
 {
     public DropdownState() : this(Array.Empty<DropdownRecord>())
     {
-		
+        
     }
 }
 /* End IDropdownService */
@@ -325,7 +325,7 @@ public record struct TooltipState
         TooltipModel = tooltipModel;
     }
 
-	public ITooltipModel TooltipModel { get; }
+    public ITooltipModel TooltipModel { get; }
 }
 /* End ITooltipService */
 
@@ -352,8 +352,8 @@ public record struct ContextState(
 public record struct DragState(
     bool ShouldDisplay,
     MouseEventArgs? MouseEventArgs,
-	IDrag? Drag,
-	ElementDimensions DragElementDimensions)
+    IDrag? Drag,
+    ElementDimensions DragElementDimensions)
 {
     public DragState() : this (false, null, null, DialogHelper.ConstructDefaultElementDimensions())
     {

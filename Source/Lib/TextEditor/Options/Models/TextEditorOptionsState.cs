@@ -27,7 +27,7 @@ public record struct TextEditorOptionsState
             true,
             CharAndLineMeasurements: new(0, 0))
         {
-        	Keymap = TextEditorFacts.Keymap_DefaultKeymap,
+            Keymap = TextEditorFacts.Keymap_DefaultKeymap,
         };
     }
 

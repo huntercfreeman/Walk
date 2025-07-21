@@ -22,9 +22,9 @@ public partial class WalkWebsiteInitializer : ComponentBase
     {
         if (firstRender)
         {
-        	DotNetService.TextEditorService.CommonService.Continuous_EnqueueGroup(new BackgroundTask(
-        		Key<IBackgroundTaskGroup>.Empty,
-        		Do_WalkWebsiteInitializerOnAfterRenderAsync));
+            DotNetService.TextEditorService.CommonService.Continuous_EnqueueGroup(new BackgroundTask(
+                Key<IBackgroundTaskGroup>.Empty,
+                Do_WalkWebsiteInitializerOnAfterRenderAsync));
         }
         
         return Task.CompletedTask;
@@ -101,9 +101,9 @@ public partial class WalkWebsiteInitializer : ComponentBase
 
         DotNetService.Enqueue(new DotNetWorkArgs
         {
-        	WorkKind = DotNetWorkKind.SetDotNetSolution,
-        	DotNetSolutionAbsolutePath = solutionAbsolutePath,
-    	});
+            WorkKind = DotNetWorkKind.SetDotNetSolution,
+            DotNetSolutionAbsolutePath = solutionAbsolutePath,
+        });
     }
 
     private async Task ParseSolutionAsync()
@@ -150,8 +150,8 @@ public partial class WalkWebsiteInitializer : ComponentBase
 
             DotNetService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
             {
-            	DotNetService.TextEditorService.Model_RegisterCustom(editContext, textEditorModel);
-            	
+                DotNetService.TextEditorService.Model_RegisterCustom(editContext, textEditorModel);
+                
                 var modelModifier = editContext.GetModelModifier(textEditorModel.PersistentState.ResourceUri);
 
                 if (modelModifier is null)
@@ -174,20 +174,20 @@ public partial class WalkWebsiteInitializer : ComponentBase
             });
         }
         
-		DotNetService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
-		{
-			// Display a file from the get-go so the user is less confused on what the website is.
-	        var absolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
-	            "/BlazorCrudApp/ConsoleApp/Program.cs",
-	            false);
-		
-			await DotNetService.TextEditorService.OpenInEditorAsync(
-				editContext,
-	            absolutePath.Value,
-	            false,
-	            null,
-	            new Category("main"),
-	        	Key<TextEditorViewModel>.NewKey());
-		});
+        DotNetService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+        {
+            // Display a file from the get-go so the user is less confused on what the website is.
+            var absolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
+                "/BlazorCrudApp/ConsoleApp/Program.cs",
+                false);
+        
+            await DotNetService.TextEditorService.OpenInEditorAsync(
+                editContext,
+                absolutePath.Value,
+                false,
+                null,
+                new Category("main"),
+                Key<TextEditorViewModel>.NewKey());
+        });
     }
 }

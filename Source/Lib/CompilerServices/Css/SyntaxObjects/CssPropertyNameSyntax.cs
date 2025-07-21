@@ -7,7 +7,7 @@ public class CssPropertyNameSyntax : ICssSyntax
 {
     public CssPropertyNameSyntax(
         TextEditorTextSpan textEditorTextSpan,
-		IReadOnlyList<ICssSyntax> childCssSyntaxes)
+        IReadOnlyList<ICssSyntax> childCssSyntaxes)
     {
         ChildCssSyntaxes = childCssSyntaxes;
         TextEditorTextSpan = textEditorTextSpan;

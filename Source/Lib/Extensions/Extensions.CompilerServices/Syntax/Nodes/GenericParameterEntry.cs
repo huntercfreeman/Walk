@@ -5,12 +5,12 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 /// </summary>
 public struct GenericParameterEntry
 {
-	public GenericParameterEntry(TypeReference typeReference)
-	{
-		TypeReference = typeReference;
-	}
+    public GenericParameterEntry(TypeReference typeReference)
+    {
+        TypeReference = typeReference;
+    }
 
-	public TypeReference TypeReference { get; }
-	
-	public bool ConstructorWasInvoked => TypeReference != default;
+    public TypeReference TypeReference { get; }
+    
+    public bool ConstructorWasInvoked => TypeReference != default;
 }

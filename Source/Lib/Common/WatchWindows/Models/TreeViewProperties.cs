@@ -49,13 +49,13 @@ public class TreeViewProperties : TreeViewWithType<WatchWindowObject>
         
         <div title="@TreeViewProperties.Key.Guid">
             <span>
-            	@{
-            		var appOptionsState = AppOptionsService.GetAppOptionsState();
-            	
-            		var iconDriver = new IconDriver(
-        				appOptionsState.Options.IconSizeInPixels,
-        				appOptionsState.Options.IconSizeInPixels);
-            	}
+                @{
+                    var appOptionsState = AppOptionsService.GetAppOptionsState();
+                
+                    var iconDriver = new IconDriver(
+                        appOptionsState.Options.IconSizeInPixels,
+                        appOptionsState.Options.IconSizeInPixels);
+                }
                 @IconSymbolPropertyFragment.Render(iconDriver)
                 Properties
             </span>

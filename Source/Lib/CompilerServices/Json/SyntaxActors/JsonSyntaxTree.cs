@@ -9,7 +9,7 @@ namespace Walk.CompilerServices.Json.SyntaxActors;
 public class JsonSyntaxTree
 {
     public static JsonSyntaxUnit ParseText(
-    	StringWalker stringWalker,
+        StringWalker stringWalker,
         ResourceUri resourceUri,
         string content)
     {
@@ -219,7 +219,7 @@ public class JsonSyntaxTree
                 startingPositionIndex,
                 stringWalker.PositionIndex,
                 (byte)JsonDecorationKind.PropertyKey),
-			Array.Empty<IJsonSyntax>());
+            Array.Empty<IJsonSyntax>());
 
         return jsonPropertyKey;
     }

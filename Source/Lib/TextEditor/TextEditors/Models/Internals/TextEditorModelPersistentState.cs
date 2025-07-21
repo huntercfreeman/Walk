@@ -13,44 +13,44 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 /// </summary>
 public class TextEditorModelPersistentState
 {
-	public TextEditorModelPersistentState(
-		TextEditorService textEditorService,
-		List<Key<TextEditorViewModel>> viewModelKeyList,
-		string fileExtension,
-	    IDecorationMapper decorationMapper,
-	    ICompilerService compilerService,
-	    int partitionSize,
-	    ResourceUri resourceUri,
-	    int editBlockIndex,
-    	List<TextEditorEdit> editBlockList)
-	{
-		__LocalLineEndList = textEditorService.__LocalLineEndList;
+    public TextEditorModelPersistentState(
+        TextEditorService textEditorService,
+        List<Key<TextEditorViewModel>> viewModelKeyList,
+        string fileExtension,
+        IDecorationMapper decorationMapper,
+        ICompilerService compilerService,
+        int partitionSize,
+        ResourceUri resourceUri,
+        int editBlockIndex,
+        List<TextEditorEdit> editBlockList)
+    {
+        __LocalLineEndList = textEditorService.__LocalLineEndList;
         __LocalTabPositionList = textEditorService.__LocalTabPositionList;
         __TextEditorViewModelLiason = textEditorService.__TextEditorViewModelLiason;
         
         ViewModelKeyList = viewModelKeyList;
         
         FileExtension = fileExtension;
-	    DecorationMapper = decorationMapper;
-	    CompilerService = compilerService;
-	    PartitionSize = partitionSize;
-	    ResourceUri = resourceUri;
-	    
-	    EditBlockIndex = editBlockIndex;
-    	EditBlockList = editBlockList;
-	}
+        DecorationMapper = decorationMapper;
+        CompilerService = compilerService;
+        PartitionSize = partitionSize;
+        ResourceUri = resourceUri;
+        
+        EditBlockIndex = editBlockIndex;
+        EditBlockList = editBlockList;
+    }
 
-	/// <summary>
-	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
-	/// </summary>
+    /// <summary>
+    /// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
+    /// </summary>
     public List<LineEnd> __LocalLineEndList { get; }
     /// <summary>
-	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
-	/// </summary>
+    /// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
+    /// </summary>
     public List<int> __LocalTabPositionList { get; }
     /// <summary>
-	/// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
-	/// </summary>
+    /// Do not touch this property, it is used for the 'TextEditorModel.InsertMetadata(...)' method.
+    /// </summary>
     public TextEditorViewModelLiason __TextEditorViewModelLiason { get; }
     public List<Key<TextEditorViewModel>> ViewModelKeyList { get; set; }
     

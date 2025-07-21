@@ -9,17 +9,17 @@ namespace Walk.Extensions.CompilerServices.GenericLexer;
 /// </summary>
 public class DeliminationExtendedSyntaxDefinition
 {
-	public DeliminationExtendedSyntaxDefinition(
-		string syntaxStart,
-		string syntaxEnd,
-		GenericDecorationKind genericDecorationKind)
-	{
-		SyntaxStart = syntaxStart;
-		SyntaxEnd = syntaxEnd;
-		GenericDecorationKind = genericDecorationKind;
-	}
+    public DeliminationExtendedSyntaxDefinition(
+        string syntaxStart,
+        string syntaxEnd,
+        GenericDecorationKind genericDecorationKind)
+    {
+        SyntaxStart = syntaxStart;
+        SyntaxEnd = syntaxEnd;
+        GenericDecorationKind = genericDecorationKind;
+    }
 
-	public string SyntaxStart { get; }
-	public string SyntaxEnd { get; }
-	public GenericDecorationKind GenericDecorationKind { get; }
+    public string SyntaxStart { get; }
+    public string SyntaxEnd { get; }
+    public GenericDecorationKind GenericDecorationKind { get; }
 }

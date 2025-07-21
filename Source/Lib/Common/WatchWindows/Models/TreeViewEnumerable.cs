@@ -49,13 +49,13 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObject>
     
         <div title="@TreeViewEnumerable.Key.Guid">
 
-    	@{
-    		var appOptionsState = AppOptionsService.GetAppOptionsState();
-    	
-    		var iconDriver = new IconDriver(
-    			appOptionsState.Options.IconSizeInPixels,
-    			appOptionsState.Options.IconSizeInPixels);
-    	}
+        @{
+            var appOptionsState = AppOptionsService.GetAppOptionsState();
+        
+            var iconDriver = new IconDriver(
+                appOptionsState.Options.IconSizeInPixels,
+                appOptionsState.Options.IconSizeInPixels);
+        }
     
         @IconListUnorderedFragment.Render(iconDriver)
         Enumerable

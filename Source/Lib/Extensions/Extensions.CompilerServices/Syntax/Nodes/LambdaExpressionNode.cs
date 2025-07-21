@@ -20,55 +20,55 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
 {
-	public LambdaExpressionNode(TypeReference resultTypeReference)
-	{
-		#if DEBUG
-		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.LambdaExpressionNode++;
-		#endif
-	
-		ResultTypeReference = resultTypeReference;
-	}
+    public LambdaExpressionNode(TypeReference resultTypeReference)
+    {
+        #if DEBUG
+        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.LambdaExpressionNode++;
+        #endif
+    
+        ResultTypeReference = resultTypeReference;
+    }
 
-	public TypeReference ResultTypeReference { get; }
+    public TypeReference ResultTypeReference { get; }
 
-	/// <summary>
-	/// () => "Abc";
-	///     Then this property is true;
-	///
-	/// () => { return "Abc" };
-	///     Then this property is false;
-	/// </summary>
-	public bool CodeBlockNodeIsExpression { get; set; } = true;
-	public bool HasReadParameters { get; set; }
-	public List<VariableDeclarationNode> VariableDeclarationNodeList { get; } = new();
+    /// <summary>
+    /// () => "Abc";
+    ///     Then this property is true;
+    ///
+    /// () => { return "Abc" };
+    ///     Then this property is false;
+    /// </summary>
+    public bool CodeBlockNodeIsExpression { get; set; } = true;
+    public bool HasReadParameters { get; set; }
+    public List<VariableDeclarationNode> VariableDeclarationNodeList { get; } = new();
 
-	public bool IsFabricated { get; init; }
-	public SyntaxKind SyntaxKind => SyntaxKind.LambdaExpressionNode;
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.LambdaExpressionNode;
 
-	public TypeReference ReturnTypeReference { get; }
+    public TypeReference ReturnTypeReference { get; }
 
-	// ICodeBlockOwner properties.
-	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
-	public int Scope_StartInclusiveIndex { get; set; } = -1;
-	public int Scope_EndExclusiveIndex { get; set; } = -1;
-	public int CodeBlock_StartInclusiveIndex { get; set; } = -1;
-	public int CodeBlock_EndExclusiveIndex { get; set; } = -1;
-	public int Unsafe_ParentIndexKey { get; set; } = -1;
-	public int Unsafe_SelfIndexKey { get; set; } = -1;
-	public bool PermitCodeBlockParsing { get; set; } = true;
-	public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
+    // ICodeBlockOwner properties.
+    public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
+    public int Scope_StartInclusiveIndex { get; set; } = -1;
+    public int Scope_EndExclusiveIndex { get; set; } = -1;
+    public int CodeBlock_StartInclusiveIndex { get; set; } = -1;
+    public int CodeBlock_EndExclusiveIndex { get; set; } = -1;
+    public int Unsafe_ParentIndexKey { get; set; } = -1;
+    public int Unsafe_SelfIndexKey { get; set; } = -1;
+    public bool PermitCodeBlockParsing { get; set; } = true;
+    public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
 
-	#region ICodeBlockOwner_Methods
-	public TypeReference GetReturnTypeReference()
-	{
-		return ReturnTypeReference;
-	}
-	#endregion
+    #region ICodeBlockOwner_Methods
+    public TypeReference GetReturnTypeReference()
+    {
+        return ReturnTypeReference;
+    }
+    #endregion
 
-	#if DEBUG	
-	~LambdaExpressionNode()
-	{
-		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.LambdaExpressionNode--;
-	}
-	#endif
+    #if DEBUG    
+    ~LambdaExpressionNode()
+    {
+        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.LambdaExpressionNode--;
+    }
+    #endif
 }

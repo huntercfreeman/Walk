@@ -15,16 +15,16 @@ public class TerminalResource : ICompilerServiceResource
     public readonly object UnsafeStateLock = new();
 
     public TerminalResource(
-    	ResourceUri resourceUri,
-    	TerminalCompilerService terminalCompilerService)
+        ResourceUri resourceUri,
+        TerminalCompilerService terminalCompilerService)
     {
-    	ResourceUri = resourceUri;
-    	CompilerService = terminalCompilerService;
+        ResourceUri = resourceUri;
+        CompilerService = terminalCompilerService;
     }
 
-	public ResourceUri ResourceUri { get; }
-	public ICompilerService CompilerService { get; }
-	public TerminalCompilationUnit CompilationUnit { get; } = new();
-	
-	ICompilationUnit ICompilerServiceResource.CompilationUnit { get => CompilationUnit; set => _ = value; }
+    public ResourceUri ResourceUri { get; }
+    public ICompilerService CompilerService { get; }
+    public TerminalCompilationUnit CompilationUnit { get; } = new();
+    
+    ICompilationUnit ICompilerServiceResource.CompilationUnit { get => CompilationUnit; set => _ = value; }
 }

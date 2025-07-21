@@ -11,33 +11,33 @@ namespace Walk.Extensions.DotNet;
 public partial class DotNetService : IBackgroundTaskGroup, IDisposable
 {
     private readonly HttpClient _httpClient;
-	
-	public DotNetService(
-	    IdeService ideService,
-	    HttpClient httpClient,
-	    IAppDataService appDataService,
+    
+    public DotNetService(
+        IdeService ideService,
+        HttpClient httpClient,
+        IAppDataService appDataService,
         IServiceProvider serviceProvider)
-	{
-	    IdeService = ideService;
-	    AppDataService = appDataService;
-		_httpClient = httpClient;
+    {
+        IdeService = ideService;
+        AppDataService = appDataService;
+        _httpClient = httpClient;
         
         DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
-	}
-	
-	public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
+    }
+    
+    public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
 
     public bool __TaskCompletionSourceWasCreated { get; set; }
     public IdeService IdeService { get; }
     public TextEditorService TextEditorService => IdeService.TextEditorService;
     public CommonService CommonService => IdeService.TextEditorService.CommonService;
-	public IAppDataService AppDataService { get; }
+    public IAppDataService AppDataService { get; }
 
     private readonly ConcurrentQueue<DotNetWorkArgs> _workQueue = new();
     
     public void Enqueue(DotNetWorkArgs workArgs)
     {
-		_workQueue.Enqueue(workArgs);
+        _workQueue.Enqueue(workArgs);
         IdeService.TextEditorService.CommonService.Continuous_EnqueueGroup(this);
     }
     
@@ -59,39 +59,39 @@ public partial class DotNetService : IBackgroundTaskGroup, IDisposable
             case DotNetWorkKind.RunTestByFullyQualifiedName:
                 return Do_RunTestByFullyQualifiedName(workArgs.TreeViewStringFragment, workArgs.FullyQualifiedName, workArgs.TreeViewProjectTestModel);
             case DotNetWorkKind.SetDotNetSolution:
-	            return Do_SetDotNetSolution(workArgs.DotNetSolutionAbsolutePath);
-			case DotNetWorkKind.SetDotNetSolutionTreeView:
-	            return Do_SetDotNetSolutionTreeView(workArgs.DotNetSolutionModelKey);
-			case DotNetWorkKind.Website_AddExistingProjectToSolution:
-	            return Do_Website_AddExistingProjectToSolution(
-	                workArgs.DotNetSolutionModelKey,
-					workArgs.ProjectTemplateShortName,
-					workArgs.CSharpProjectName,
-	                workArgs.CSharpProjectAbsolutePath);
+                return Do_SetDotNetSolution(workArgs.DotNetSolutionAbsolutePath);
+            case DotNetWorkKind.SetDotNetSolutionTreeView:
+                return Do_SetDotNetSolutionTreeView(workArgs.DotNetSolutionModelKey);
+            case DotNetWorkKind.Website_AddExistingProjectToSolution:
+                return Do_Website_AddExistingProjectToSolution(
+                    workArgs.DotNetSolutionModelKey,
+                    workArgs.ProjectTemplateShortName,
+                    workArgs.CSharpProjectName,
+                    workArgs.CSharpProjectAbsolutePath);
             case DotNetWorkKind.PerformRemoveCSharpProjectReferenceFromSolution:
             {
                 return Do_PerformRemoveCSharpProjectReferenceFromSolution(
-					workArgs.TreeViewSolution, workArgs.ProjectNode, workArgs.Terminal, CommonService, workArgs.OnAfterCompletion);
+                    workArgs.TreeViewSolution, workArgs.ProjectNode, workArgs.Terminal, CommonService, workArgs.OnAfterCompletion);
             }
-			case DotNetWorkKind.PerformRemoveProjectToProjectReference:
+            case DotNetWorkKind.PerformRemoveProjectToProjectReference:
             {
                 return Do_PerformRemoveProjectToProjectReference(
                     workArgs.TreeViewCSharpProjectToProjectReference,
-					workArgs.Terminal,
-					CommonService,
+                    workArgs.Terminal,
+                    CommonService,
                     workArgs.OnAfterCompletion);
             }
-			case DotNetWorkKind.PerformMoveProjectToSolutionFolder:
+            case DotNetWorkKind.PerformMoveProjectToSolutionFolder:
             {
                 return Do_PerformMoveProjectToSolutionFolder(
                     workArgs.TreeViewSolution,
                     workArgs.TreeViewProjectToMove,
-					workArgs.SolutionFolderPath,
-					workArgs.Terminal,
-					CommonService,
+                    workArgs.SolutionFolderPath,
+                    workArgs.Terminal,
+                    CommonService,
                     workArgs.OnAfterCompletion);
             }
-			case DotNetWorkKind.PerformRemoveNuGetPackageReferenceFromProject:
+            case DotNetWorkKind.PerformRemoveNuGetPackageReferenceFromProject:
             {
                 return Do_PerformRemoveNuGetPackageReferenceFromProject(
                     workArgs.ModifyProjectNamespacePath,
@@ -113,9 +113,9 @@ public partial class DotNetService : IBackgroundTaskGroup, IDisposable
                 return ValueTask.CompletedTask;
         }
     }
-	
-	public void Dispose()
-	{
-		DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
-	}
+    
+    public void Dispose()
+    {
+        DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
+    }
 }

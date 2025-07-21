@@ -5,7 +5,7 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Models;
 /// </summary>
 public enum InlineUiKind
 {
-	None,
+    None,
     Tab,
     ThreeDotsExpandInlineUiThing,
 }

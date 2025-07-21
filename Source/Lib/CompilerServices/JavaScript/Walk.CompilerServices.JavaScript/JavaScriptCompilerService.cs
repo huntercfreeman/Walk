@@ -13,14 +13,14 @@ namespace Walk.CompilerServices.JavaScript;
 
 public class JavaScriptCompilerService : ICompilerService
 {
-	private readonly TextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     
     private readonly Dictionary<ResourceUri, JavaScriptResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
 
     public JavaScriptCompilerService(TextEditorService textEditorService)
     {
-    	_textEditorService = textEditorService;
+        _textEditorService = textEditorService;
     }
     
     public event Action? ResourceRegistered;
@@ -33,7 +33,7 @@ public class JavaScriptCompilerService : ICompilerService
 
     public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified)
     {
-    	lock (_resourceMapLock)
+        lock (_resourceMapLock)
         {
             if (_resourceMap.ContainsKey(resourceUri))
                 return;
@@ -41,15 +41,15 @@ public class JavaScriptCompilerService : ICompilerService
             _resourceMap.Add(resourceUri, new JavaScriptResource(resourceUri, this));
         }
 
-		if (shouldTriggerResourceWasModified)
-	        ResourceWasModified(resourceUri, Array.Empty<TextEditorTextSpan>());
-	        
+        if (shouldTriggerResourceWasModified)
+            ResourceWasModified(resourceUri, Array.Empty<TextEditorTextSpan>());
+            
         ResourceRegistered?.Invoke();
     }
     
     public void DisposeResource(ResourceUri resourceUri)
     {
-    	lock (_resourceMapLock)
+        lock (_resourceMapLock)
         {
             _resourceMap.Remove(resourceUri);
         }
@@ -59,20 +59,20 @@ public class JavaScriptCompilerService : ICompilerService
 
     public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
     {
-    	_textEditorService.WorkerArbitrary.PostUnique(editContext =>
+        _textEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-			var modelModifier = editContext.GetModelModifier(resourceUri);
+            var modelModifier = editContext.GetModelModifier(resourceUri);
 
-			if (modelModifier is null)
-				return ValueTask.CompletedTask;
+            if (modelModifier is null)
+                return ValueTask.CompletedTask;
 
-			return ParseAsync(editContext, modelModifier, shouldApplySyntaxHighlighting: true);
+            return ParseAsync(editContext, modelModifier, shouldApplySyntaxHighlighting: true);
         });
     }
 
     public ICompilerServiceResource? GetResource(ResourceUri resourceUri)
     {
-    	var model = _textEditorService.Model_GetOrDefault(resourceUri);
+        var model = _textEditorService.Model_GetOrDefault(resourceUri);
 
         if (model is null)
             return null;
@@ -87,47 +87,47 @@ public class JavaScriptCompilerService : ICompilerService
     }
     
     public MenuRecord GetContextMenu(TextEditorVirtualizationResult virtualizationResult, ContextMenu contextMenu)
-	{
-		return contextMenu.GetDefaultMenuRecord();
-	}
+    {
+        return contextMenu.GetDefaultMenuRecord();
+    }
 
-	public MenuRecord GetAutocompleteMenu(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu)
-	{
-		return autocompleteMenu.GetDefaultMenuRecord();
-	}
+    public MenuRecord GetAutocompleteMenu(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu)
+    {
+        return autocompleteMenu.GetDefaultMenuRecord();
+    }
     
     public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModelModifier)
     {
-    	return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
+        return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
     }
     
     public ValueTask OnInspect(
-		TextEditorEditContext editContext,
-		TextEditorModel modelModifier,
-		TextEditorViewModel viewModelModifier,
-		double clientX,
-		double clientY,
-		bool shiftKey,
+        TextEditorEditContext editContext,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModelModifier,
+        double clientX,
+        double clientY,
+        bool shiftKey,
         bool ctrlKey,
         bool altKey,
-		TextEditorComponentData componentData,
+        TextEditorComponentData componentData,
         ResourceUri resourceUri)
     {
-    	return ValueTask.CompletedTask;
+        return ValueTask.CompletedTask;
     }
     
     public ValueTask ShowCallingSignature(
-		TextEditorEditContext editContext,
-		TextEditorModel modelModifier,
-		TextEditorViewModel viewModelModifier,
-		int positionIndex,
-		TextEditorComponentData componentData,
+        TextEditorEditContext editContext,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModelModifier,
+        int positionIndex,
+        TextEditorComponentData componentData,
         ResourceUri resourceUri)
     {
-    	return ValueTask.CompletedTask;
+        return ValueTask.CompletedTask;
     }
     
     public ValueTask GoToDefinition(
@@ -137,47 +137,47 @@ public class JavaScriptCompilerService : ICompilerService
         Category category,
         int positionIndex)
     {
-    	return ValueTask.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 
-	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
+    public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
     {
-    	var lexer = new JavaScriptLexer(
-		    modelModifier.PersistentState.ResourceUri,
-		    modelModifier.GetAllText());
-		    
-		lexer.Lex();
+        var lexer = new JavaScriptLexer(
+            modelModifier.PersistentState.ResourceUri,
+            modelModifier.GetAllText());
+            
+        lexer.Lex();
     
-    	lock (_resourceMapLock)
-		{
-			if (_resourceMap.ContainsKey(modelModifier.PersistentState.ResourceUri))
-			{
-				var resource = _resourceMap[modelModifier.PersistentState.ResourceUri];
-				
-				resource.CompilationUnit = new ExtendedCompilationUnit
-				{
-					TokenList = lexer.SyntaxTokenList,
-				};
-			}
-		}
-		
-		editContext.TextEditorService.Model_ApplySyntaxHighlighting(
-			editContext,
-			modelModifier,
-			lexer.SyntaxTokenList.Select(x => x.TextSpan));
+        lock (_resourceMapLock)
+        {
+            if (_resourceMap.ContainsKey(modelModifier.PersistentState.ResourceUri))
+            {
+                var resource = _resourceMap[modelModifier.PersistentState.ResourceUri];
+                
+                resource.CompilationUnit = new ExtendedCompilationUnit
+                {
+                    TokenList = lexer.SyntaxTokenList,
+                };
+            }
+        }
+        
+        editContext.TextEditorService.Model_ApplySyntaxHighlighting(
+            editContext,
+            modelModifier,
+            lexer.SyntaxTokenList.Select(x => x.TextSpan));
 
-		ResourceParsed?.Invoke();
-		
-		return ValueTask.CompletedTask;
+        ResourceParsed?.Invoke();
+        
+        return ValueTask.CompletedTask;
     }
-	
-	public ValueTask FastParseAsync(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
-	{
-		return ValueTask.CompletedTask;
-	}
-	
-	public void FastParse(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
-	{
-		return;
-	}
+    
+    public ValueTask FastParseAsync(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
+    {
+        return ValueTask.CompletedTask;
+    }
+    
+    public void FastParse(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
+    {
+        return;
+    }
 }

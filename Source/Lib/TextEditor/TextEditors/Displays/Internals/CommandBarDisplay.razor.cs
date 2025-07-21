@@ -40,10 +40,10 @@ public partial class CommandBarDisplay : ComponentBase
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-    	var renderBatchLocal = RenderBatch;
-    	if (!renderBatchLocal.ConstructorWasInvoked)
-    		return;
-    		
+        var renderBatchLocal = RenderBatch;
+        if (!renderBatchLocal.ConstructorWasInvoked)
+            return;
+            
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
             // await RestoreFocusToTextEditor.Invoke().ConfigureAwait(false);
@@ -52,13 +52,13 @@ public partial class CommandBarDisplay : ComponentBase
                 nameof(HandleOnKeyDown),
                 editContext =>
                 {
-                	var modelModifier = editContext.GetModelModifier(renderBatchLocal.ViewModel.ResourceUri);
-		            var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
-		            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-		            var primaryCursorModifier = cursorModifierBag.CursorModifier;
-		
-		            if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
-		                return ValueTask.CompletedTask;
+                    var modelModifier = editContext.GetModelModifier(renderBatchLocal.ViewModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
+                    var primaryCursorModifier = cursorModifierBag.CursorModifier;
+        
+                    if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+                        return ValueTask.CompletedTask;
 
                     viewModelModifier.CommandBarValue = string.Empty;
                     viewModelModifier.ShowCommandBar = false;
@@ -68,17 +68,17 @@ public partial class CommandBarDisplay : ComponentBase
         }
         else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
         {
-        	TextEditorService.WorkerArbitrary.PostUnique(
+            TextEditorService.WorkerArbitrary.PostUnique(
                 nameof(HandleOnKeyDown),
                 editContext =>
                 {
-                	var modelModifier = editContext.GetModelModifier(renderBatchLocal.ViewModel.ResourceUri);
-		            var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
-		            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
-		            var primaryCursorModifier = cursorModifierBag.CursorModifier;
-		
-		            if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
-		                return ValueTask.CompletedTask;
+                    var modelModifier = editContext.GetModelModifier(renderBatchLocal.ViewModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier);
+                    var primaryCursorModifier = cursorModifierBag.CursorModifier;
+        
+                    if (modelModifier is null || viewModelModifier is null || !cursorModifierBag.ConstructorWasInvoked || primaryCursorModifier is null)
+                        return ValueTask.CompletedTask;
 
                     viewModelModifier.CommandBarValue = string.Empty;
                     viewModelModifier.ShowCommandBar = false;

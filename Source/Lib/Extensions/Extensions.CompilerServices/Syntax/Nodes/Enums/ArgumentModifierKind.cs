@@ -3,7 +3,7 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 public enum ArgumentModifierKind
 {
     None,
-	Out,
+    Out,
     In,
     Ref,
     Params,

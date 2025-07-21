@@ -19,10 +19,10 @@ public sealed class TerminalCompilerService : ICompilerService
     private readonly Dictionary<ResourceUri, TerminalResource> _resourceMap = new();
     private readonly object _resourceMapLock = new();
 
-	public TerminalCompilerService(IdeService ideService)
-	{
-		_ideService = ideService;
-	}
+    public TerminalCompilerService(IdeService ideService)
+    {
+        _ideService = ideService;
+    }
 
     public event Action? ResourceRegistered;
     public event Action? ResourceParsed;
@@ -34,7 +34,7 @@ public sealed class TerminalCompilerService : ICompilerService
 
     public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified)
     {
-    	lock (_resourceMapLock)
+        lock (_resourceMapLock)
         {
             if (_resourceMap.ContainsKey(resourceUri))
                 return;
@@ -42,15 +42,15 @@ public sealed class TerminalCompilerService : ICompilerService
             _resourceMap.Add(resourceUri, new TerminalResource(resourceUri, this));
         }
 
-		if (shouldTriggerResourceWasModified)
-	        ResourceWasModified(resourceUri, Array.Empty<TextEditorTextSpan>());
-	        
+        if (shouldTriggerResourceWasModified)
+            ResourceWasModified(resourceUri, Array.Empty<TextEditorTextSpan>());
+            
         ResourceRegistered?.Invoke();
     }
     
     public void DisposeResource(ResourceUri resourceUri)
     {
-    	lock (_resourceMapLock)
+        lock (_resourceMapLock)
         {
             _resourceMap.Remove(resourceUri);
         }
@@ -60,20 +60,20 @@ public sealed class TerminalCompilerService : ICompilerService
 
     public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
     {
-    	_ideService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        _ideService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-			var modelModifier = editContext.GetModelModifier(resourceUri);
+            var modelModifier = editContext.GetModelModifier(resourceUri);
 
-			if (modelModifier is null)
-				return ValueTask.CompletedTask;
+            if (modelModifier is null)
+                return ValueTask.CompletedTask;
 
-			return ParseAsync(editContext, modelModifier, shouldApplySyntaxHighlighting: true);
+            return ParseAsync(editContext, modelModifier, shouldApplySyntaxHighlighting: true);
         });
     }
 
     public ICompilerServiceResource? GetResource(ResourceUri resourceUri)
     {
-    	var model = _ideService.TextEditorService.Model_GetOrDefault(resourceUri);
+        var model = _ideService.TextEditorService.Model_GetOrDefault(resourceUri);
 
         if (model is null)
             return null;
@@ -88,47 +88,47 @@ public sealed class TerminalCompilerService : ICompilerService
     }
     
     public MenuRecord GetContextMenu(TextEditorVirtualizationResult virtualizationResult, ContextMenu contextMenu)
-	{
-		return contextMenu.GetDefaultMenuRecord();
-	}
+    {
+        return contextMenu.GetDefaultMenuRecord();
+    }
 
-	public MenuRecord GetAutocompleteMenu(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu)
-	{
-		return autocompleteMenu.GetDefaultMenuRecord();
-	}
+    public MenuRecord GetAutocompleteMenu(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu)
+    {
+        return autocompleteMenu.GetDefaultMenuRecord();
+    }
     
     public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModelModifier)
     {
-    	return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
+        return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
     }
-	
-	public ValueTask OnInspect(
-		TextEditorEditContext editContext,
-		TextEditorModel modelModifier,
-		TextEditorViewModel viewModelModifier,
-		double clientX,
-		double clientY,
-		bool shiftKey,
+    
+    public ValueTask OnInspect(
+        TextEditorEditContext editContext,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModelModifier,
+        double clientX,
+        double clientY,
+        bool shiftKey,
         bool ctrlKey,
         bool altKey,
-		TextEditorComponentData componentData,
+        TextEditorComponentData componentData,
         ResourceUri resourceUri)
     {
-    	return ValueTask.CompletedTask;
+        return ValueTask.CompletedTask;
     }
     
     public ValueTask ShowCallingSignature(
-		TextEditorEditContext editContext,
-		TextEditorModel modelModifier,
-		TextEditorViewModel viewModelModifier,
-		int positionIndex,
-		TextEditorComponentData componentData,
+        TextEditorEditContext editContext,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModelModifier,
+        int positionIndex,
+        TextEditorComponentData componentData,
         ResourceUri resourceUri)
     {
-    	return ValueTask.CompletedTask;
+        return ValueTask.CompletedTask;
     }
     
     public ValueTask GoToDefinition(
@@ -138,23 +138,23 @@ public sealed class TerminalCompilerService : ICompilerService
         Category category,
         int positionIndex)
     {
-    	return ValueTask.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 
-	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
+    public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
     {
-    	return ValueTask.CompletedTask;
+        return ValueTask.CompletedTask;
     }
     
     public ValueTask FastParseAsync(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
-	{
-		return ValueTask.CompletedTask;
-	}
-	
-	public void FastParse(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
-	{
-		return;
-	}
+    {
+        return ValueTask.CompletedTask;
+    }
+    
+    public void FastParse(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
+    {
+        return;
+    }
     
     /// <summary>
     /// Looks up the <see cref="IScope"/> that encompasses the provided positionIndex.
@@ -172,15 +172,15 @@ public sealed class TerminalCompilerService : ICompilerService
     /// </summary>
     public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource)
     {
-    	return null;
+        return null;
     }
 
-	public ICodeBlockOwner GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
+    public ICodeBlockOwner GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
     {
-    	return default;
+        return default;
     }
-	
-	/// <summary>
+    
+    /// <summary>
     /// Returns the <see cref="ISyntaxNode"/> that represents the definition in the <see cref="CompilationUnit"/>.
     ///
     /// The option argument 'symbol' can be provided if available. It might provide additional information to the method's implementation
@@ -188,6 +188,6 @@ public sealed class TerminalCompilerService : ICompilerService
     /// </summary>
     public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null)
     {
-    	return null;
+        return null;
     }
 }

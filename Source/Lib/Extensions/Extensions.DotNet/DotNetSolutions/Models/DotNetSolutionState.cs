@@ -28,23 +28,23 @@ public record DotNetSolutionState(
         x.Key == DotNetSolutionModelKey);
 
     public static void ShowInputFile(
-    	IdeService ideService,
-    	DotNetService dotNetService)
+        IdeService ideService,
+        DotNetService dotNetService)
     {
         ideService.Enqueue(new IdeWorkArgs
-		{
-			WorkKind = IdeWorkKind.RequestInputFileStateForm,
-			StringValue = "Solution Explorer",
+        {
+            WorkKind = IdeWorkKind.RequestInputFileStateForm,
+            StringValue = "Solution Explorer",
             OnAfterSubmitFunc = absolutePath =>
             {
                 if (absolutePath.ExactInput is not null)
                     dotNetService.Enqueue(new DotNetWorkArgs
                     {
-                    	WorkKind = DotNetWorkKind.SetDotNetSolution,
-                    	DotNetSolutionAbsolutePath = absolutePath,
+                        WorkKind = DotNetWorkKind.SetDotNetSolution,
+                        DotNetSolutionAbsolutePath = absolutePath,
                     });
 
-				return Task.CompletedTask;
+                return Task.CompletedTask;
             },
             SelectionIsValidFunc = absolutePath =>
             {
@@ -53,14 +53,14 @@ public record DotNetSolutionState(
 
                 return Task.FromResult(
                     absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION ||
-    				absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X);
+                    absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X);
             },
             InputFilePatterns = new()
             {
                 new InputFilePattern(
                     ".NET Solution",
                     absolutePath => absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION ||
-                    				absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X)
+                                    absolutePath.ExtensionNoPeriod == ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X)
             }
         });
     }

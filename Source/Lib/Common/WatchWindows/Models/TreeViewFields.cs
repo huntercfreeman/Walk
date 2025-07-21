@@ -48,13 +48,13 @@ public class TreeViewFields : TreeViewWithType<WatchWindowObject>
         
         <div title="@TreeViewFields.Key.Guid">
             <span>
-            	@{
-            		var appOptionsState = AppOptionsService.GetAppOptionsState();
-            	
-            		var iconDriver = new IconDriver(
-        				appOptionsState.Options.IconSizeInPixels,
-        				appOptionsState.Options.IconSizeInPixels);
-            	}
+                @{
+                    var appOptionsState = AppOptionsService.GetAppOptionsState();
+                
+                    var iconDriver = new IconDriver(
+                        appOptionsState.Options.IconSizeInPixels,
+                        appOptionsState.Options.IconSizeInPixels);
+                }
             
                 @IconSymbolFieldFragment.Render(iconDriver)
                 Fields

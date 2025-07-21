@@ -24,15 +24,15 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
         if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-		_ideService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
-		{
-			await _ideService.TextEditorService.OpenInEditorAsync(
-				editContext,
-				treeViewAbsolutePath.Item.Value,
-				true,
-				cursorPositionIndex: null,
-				new Category("main"),
-				Key<TextEditorViewModel>.NewKey());
-		});
+        _ideService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+        {
+            await _ideService.TextEditorService.OpenInEditorAsync(
+                editContext,
+                treeViewAbsolutePath.Item.Value,
+                true,
+                cursorPositionIndex: null,
+                new Category("main"),
+                Key<TextEditorViewModel>.NewKey());
+        });
     }
 }

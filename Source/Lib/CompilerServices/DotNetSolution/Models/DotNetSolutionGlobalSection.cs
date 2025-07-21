@@ -33,11 +33,11 @@ public record DotNetSolutionGlobalSection
     public SyntaxToken? GlobalSectionOrder { get; init; }
     /// <summary>
     /// Given: GlobalSection(ProjectConfigurationPlatforms) = postSolution<br/>
-	/// &#x9;{623099D9-D9DE-47E8-8CCD-BC301C82F70F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU<br/>
-	/// &#x9;{623099D9-D9DE-47E8-8CCD-BC301C82F70F}.Debug|Any CPU.Build.0 = Debug|Any CPU<br/>
-	/// &#x9;{623099D9-D9DE-47E8-8CCD-BC301C82F70F}.Release|Any CPU.ActiveCfg = Release|Any CPU<br/>
-	/// &#x9;{623099D9-D9DE-47E8-8CCD-BC301C82F70F}.Release|Any CPU.Build.0 = Release|Any CPU<br/>
-	/// EndGlobalSection<br/>
+    /// &#x9;{623099D9-D9DE-47E8-8CCD-BC301C82F70F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU<br/>
+    /// &#x9;{623099D9-D9DE-47E8-8CCD-BC301C82F70F}.Debug|Any CPU.Build.0 = Debug|Any CPU<br/>
+    /// &#x9;{623099D9-D9DE-47E8-8CCD-BC301C82F70F}.Release|Any CPU.ActiveCfg = Release|Any CPU<br/>
+    /// &#x9;{623099D9-D9DE-47E8-8CCD-BC301C82F70F}.Release|Any CPU.Build.0 = Release|Any CPU<br/>
+    /// EndGlobalSection<br/>
     /// <br/>
     /// Then: new [<br/>
     ///     {623099D9-D9DE-47E8-8CCD-BC301C82F70F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU,<br/>

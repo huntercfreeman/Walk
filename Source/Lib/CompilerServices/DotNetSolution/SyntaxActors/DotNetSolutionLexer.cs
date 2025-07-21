@@ -9,20 +9,20 @@ namespace Walk.CompilerServices.DotNetSolution.SyntaxActors;
 
 public class DotNetSolutionLexer
 {
-	public static LexerKeywords LexerKeywords = LexerKeywords.Empty;
-	
-	private StringWalker _stringWalker;
-	
-	private readonly List<SyntaxToken> _syntaxTokenList = new();
-	public List<SyntaxToken> SyntaxTokenList => _syntaxTokenList;
+    public static LexerKeywords LexerKeywords = LexerKeywords.Empty;
+    
+    private StringWalker _stringWalker;
+    
+    private readonly List<SyntaxToken> _syntaxTokenList = new();
+    public List<SyntaxToken> SyntaxTokenList => _syntaxTokenList;
 
     public DotNetSolutionLexer(StringWalker stringWalker, ResourceUri resourceUri, string sourceText)
     {
-    	ResourceUri = resourceUri;
-    	SourceText = sourceText;
-    	
-    	_stringWalker = stringWalker;
-    	_stringWalker.Initialize(ResourceUri, SourceText);
+        ResourceUri = resourceUri;
+        SourceText = sourceText;
+        
+        _stringWalker = stringWalker;
+        _stringWalker.Initialize(ResourceUri, SourceText);
     }
     
     public ResourceUri ResourceUri { get; set; }

@@ -105,7 +105,7 @@ public class DotNetSolutionParser
 
         /*return new CompilationUnit
         {
-        	TokenList = Lexer.SyntaxTokenList
+            TokenList = Lexer.SyntaxTokenList
         };*/
         return null;
     }
@@ -170,11 +170,11 @@ public class DotNetSolutionParser
 
         var associatedEntryPair = new AssociatedEntryPair(
             new SyntaxToken(
-            	SyntaxKind.AssociatedNameToken,
-            	new TextEditorTextSpan(
-		            0,
-		            string.Empty.Length,
-		            0)),
+                SyntaxKind.AssociatedNameToken,
+                new TextEditorTextSpan(
+                    0,
+                    string.Empty.Length,
+                    0)),
             associatedValueToken);
 
         _associatedEntryGroupBuilderStack.Peek().AssociatedEntryList.Add(associatedEntryPair);

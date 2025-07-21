@@ -55,26 +55,26 @@ public partial class WatchWindowDisplay : ComponentBase
 
     private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
-		var dropdownRecord = new DropdownRecord(
-			WatchWindowContextMenuDropdownKey,
-			treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
-			treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
-			typeof(WatchWindowContextMenuDisplay),
-			new Dictionary<string, object?>
-			{
-				{
-					nameof(WatchWindowContextMenuDisplay.TreeViewCommandArgs),
-					treeViewCommandArgs
-				}
-			},
-			treeViewCommandArgs.RestoreFocusToTreeView);
+        var dropdownRecord = new DropdownRecord(
+            WatchWindowContextMenuDropdownKey,
+            treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
+            treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
+            typeof(WatchWindowContextMenuDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(WatchWindowContextMenuDisplay.TreeViewCommandArgs),
+                    treeViewCommandArgs
+                }
+            },
+            treeViewCommandArgs.RestoreFocusToTreeView);
 
         CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
         return Task.CompletedTask;
     }
     
     public void Dispose()
-	{
-		CommonService.TreeView_DisposeContainerAction(TreeViewContainerKey);
-	}
+    {
+        CommonService.TreeView_DisposeContainerAction(TreeViewContainerKey);
+    }
 }

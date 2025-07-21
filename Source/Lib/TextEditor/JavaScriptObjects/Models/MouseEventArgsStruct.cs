@@ -19,7 +19,7 @@ public struct MouseEventArgsStruct
         Buttons = buttons;
     }
 
-	public double ClientX { get; set; }
-	public double ClientY { get; set; }
-	public long Buttons { get; set; }
+    public double ClientX { get; set; }
+    public double ClientY { get; set; }
+    public long Buttons { get; set; }
 }

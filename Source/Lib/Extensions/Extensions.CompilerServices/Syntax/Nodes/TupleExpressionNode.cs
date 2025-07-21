@@ -4,25 +4,25 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 
 public sealed class TupleExpressionNode : IExpressionNode
 {
-	public TupleExpressionNode()
-	{
-		#if DEBUG
-		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TupleExpressionNode++;
-		#endif
-	}
+    public TupleExpressionNode()
+    {
+        #if DEBUG
+        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TupleExpressionNode++;
+        #endif
+    }
 
-	public TypeReference ResultTypeReference { get; } = TypeFacts.Empty.ToTypeReference();
+    public TypeReference ResultTypeReference { get; } = TypeFacts.Empty.ToTypeReference();
 
-	// public List<IExpressionNode> InnerExpressionList { get; } = new();
+    // public List<IExpressionNode> InnerExpressionList { get; } = new();
 
-	public int Unsafe_ParentIndexKey { get; set; }
-	public bool IsFabricated { get; init; }
-	public SyntaxKind SyntaxKind => SyntaxKind.TupleExpressionNode;
+    public int Unsafe_ParentIndexKey { get; set; }
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.TupleExpressionNode;
 
 #if DEBUG
-	~TupleExpressionNode()
-	{
-		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TupleExpressionNode--;
-	}
-	#endif
+    ~TupleExpressionNode()
+    {
+        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.TupleExpressionNode--;
+    }
+    #endif
 }

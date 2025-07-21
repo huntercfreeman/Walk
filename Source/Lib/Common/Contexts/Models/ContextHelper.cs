@@ -5,10 +5,10 @@ namespace Walk.Common.RazorLib.Contexts.Models;
 
 public static class ContextHelper
 {
-	/// <summary>
-	/// TODO: BAD: Code duplication from 'Walk.Ide.RazorLib.Commands.CommandFactory'
-	/// </summary>
-	public static CommandNoType ConstructFocusContextElementCommand(
+    /// <summary>
+    /// TODO: BAD: Code duplication from 'Walk.Ide.RazorLib.Commands.CommandFactory'
+    /// </summary>
+    public static CommandNoType ConstructFocusContextElementCommand(
         ContextRecord contextRecord,
         string displayName,
         string internalIdentifier,

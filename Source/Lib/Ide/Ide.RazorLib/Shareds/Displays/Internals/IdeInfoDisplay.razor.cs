@@ -7,48 +7,48 @@ namespace Walk.Ide.RazorLib.Shareds.Displays.Internals;
 
 public partial class IdeInfoDisplay : ComponentBase
 {
-	[Inject]
-	private CommonService CommonService { get; set; } = null!;
+    [Inject]
+    private CommonService CommonService { get; set; } = null!;
 
 #region
-	[Conditional("DEBUG")]
-	private void IsDebugCheck(ref bool isDebug)
-	{
-	    isDebug = true;
-	}
-	 
-	public bool MethodConditionalAttributeIsDebug()
-	{ 
-	    bool isDebug = false;
-	    IsDebugCheck(ref isDebug);
-	
-	    return isDebug;
-	}
+    [Conditional("DEBUG")]
+    private void IsDebugCheck(ref bool isDebug)
+    {
+        isDebug = true;
+    }
+     
+    public bool MethodConditionalAttributeIsDebug()
+    { 
+        bool isDebug = false;
+        IsDebugCheck(ref isDebug);
+    
+        return isDebug;
+    }
 #endregion
 
 #region
-	static bool AssemblyCustomAttributeIsDebug(Assembly assembly)
-	{
-	    var debugAttr = assembly.GetCustomAttribute<DebuggableAttribute>();
-	
-	    if (debugAttr is null)
-	    {
-	        return false;
-	    }
-	
-	    return (debugAttr.DebuggingFlags & DebuggableAttribute.DebuggingModes.Default) != 0;
-	}
+    static bool AssemblyCustomAttributeIsDebug(Assembly assembly)
+    {
+        var debugAttr = assembly.GetCustomAttribute<DebuggableAttribute>();
+    
+        if (debugAttr is null)
+        {
+            return false;
+        }
+    
+        return (debugAttr.DebuggingFlags & DebuggableAttribute.DebuggingModes.Default) != 0;
+    }
 #endregion
 
 #region
-	public static bool PreprocessorIsDebug()
-	{
+    public static bool PreprocessorIsDebug()
+    {
 #if DEBUG
-		return true;
+        return true;
 #else
-		return false;
+        return false;
 #endif
-	}
+    }
 #endregion
 }
 

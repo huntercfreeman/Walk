@@ -9,22 +9,22 @@ public partial class CommonService
 {
     public TooltipState _tooltipState = new(tooltipModel: null);
 
-	public static readonly Guid Tooltip_htmlElementIdSalt = Guid.NewGuid();
+    public static readonly Guid Tooltip_htmlElementIdSalt = Guid.NewGuid();
     
-	public string Tooltip_HtmlElementId { get; } = $"di_dropdown_{Tooltip_htmlElementIdSalt}";
-	public MeasuredHtmlElementDimensions Tooltip_HtmlElementDimensions { get; set; }
-	public MeasuredHtmlElementDimensions Tooltip_GlobalHtmlElementDimensions { get; set; }
-	public bool Tooltip_IsOffScreenHorizontally { get; }
-	public bool Tooltip_IsOffScreenVertically { get; }
-	public int Tooltip_RenderCount { get; } = 1;
-	
-	public StringBuilder Tooltip_StyleBuilder { get; } = new();
-	
-	public TooltipState GetTooltipState() => _tooltipState;
-	
-	public void SetTooltipModel(ITooltipModel tooltipModel)
-	{
-	    _tooltipState = new TooltipState(tooltipModel);
-	    CommonUiStateChanged?.Invoke(CommonUiEventKind.TooltipStateChanged);
-	}
+    public string Tooltip_HtmlElementId { get; } = $"di_dropdown_{Tooltip_htmlElementIdSalt}";
+    public MeasuredHtmlElementDimensions Tooltip_HtmlElementDimensions { get; set; }
+    public MeasuredHtmlElementDimensions Tooltip_GlobalHtmlElementDimensions { get; set; }
+    public bool Tooltip_IsOffScreenHorizontally { get; }
+    public bool Tooltip_IsOffScreenVertically { get; }
+    public int Tooltip_RenderCount { get; } = 1;
+    
+    public StringBuilder Tooltip_StyleBuilder { get; } = new();
+    
+    public TooltipState GetTooltipState() => _tooltipState;
+    
+    public void SetTooltipModel(ITooltipModel tooltipModel)
+    {
+        _tooltipState = new TooltipState(tooltipModel);
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.TooltipStateChanged);
+    }
 }

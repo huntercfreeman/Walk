@@ -25,7 +25,7 @@ namespace Walk.TextEditor.RazorLib.Edits.Models;
 /// </remarks>
 public enum CursorDisplacementKind
 {
-	Left,
-	None,
-	Right,
+    Left,
+    None,
+    Right,
 }

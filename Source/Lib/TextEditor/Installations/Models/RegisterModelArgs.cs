@@ -20,7 +20,7 @@ namespace Walk.TextEditor.RazorLib.Installations.Models;
 public struct RegisterModelArgs
 {
     public RegisterModelArgs(
-    	TextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         ResourceUri resourceUri,
         CommonService commonService,
         object ideBackgroundTaskApi)
@@ -31,7 +31,7 @@ public struct RegisterModelArgs
         IdeBackgroundTaskApi = ideBackgroundTaskApi;
     }
 
-	public TextEditorEditContext EditContext { get; }
+    public TextEditorEditContext EditContext { get; }
 
     /// <summary>
     /// The unique identifier for the <see cref="TextEditorModel"/> which is

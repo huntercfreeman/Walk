@@ -8,48 +8,48 @@ namespace Walk.Ide.RazorLib.FindAllReferences.Models;
 
 public class TreeViewFindAllReferences : TreeViewWithType<ResourceUri>
 {
-	public TreeViewFindAllReferences(
-			ResourceUri resourceUri,
-			bool isExpandable,
-			bool isExpanded)
-		: base(resourceUri, isExpandable, isExpanded)
-	{
-	}
+    public TreeViewFindAllReferences(
+            ResourceUri resourceUri,
+            bool isExpandable,
+            bool isExpanded)
+        : base(resourceUri, isExpandable, isExpanded)
+    {
+    }
 
-	public override bool Equals(object? obj)
-	{
-		if (obj is not TreeViewFindAllReferences otherTreeView)
-			return false;
+    public override bool Equals(object? obj)
+    {
+        if (obj is not TreeViewFindAllReferences otherTreeView)
+            return false;
 
-		return otherTreeView.Item == Item;
-	}
+        return otherTreeView.Item == Item;
+    }
 
-	public override int GetHashCode() => Item.GetHashCode();
+    public override int GetHashCode() => Item.GetHashCode();
 
-	public override string GetDisplayText() => aaa;
+    public override string GetDisplayText() => aaa;
 
     public override TreeViewRenderer GetTreeViewRenderer()
-	{
-		return new TreeViewRenderer(
-			typeof(TreeViewFindAllReferencesDisplay),
-			new Dictionary<string, object?>
-			{
-				{
-					nameof(TreeViewFindAllReferencesDisplay.TreeViewFindAllReferences),
-					this
-				},
-			});
-	}
+    {
+        return new TreeViewRenderer(
+            typeof(TreeViewFindAllReferencesDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(TreeViewFindAllReferencesDisplay.TreeViewFindAllReferences),
+                    this
+                },
+            });
+    }
 
-	public override Task LoadChildListAsync()
-	{
-		return Task.CompletedTask;
-	}
+    public override Task LoadChildListAsync()
+    {
+        return Task.CompletedTask;
+    }
 
-	public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
-	{
-		return;
-	}
+    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
+    {
+        return;
+    }
 }
 
 */

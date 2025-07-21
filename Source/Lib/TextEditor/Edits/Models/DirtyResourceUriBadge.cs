@@ -20,37 +20,37 @@ public class DirtyResourceUriBadge : IBadgeModel
     private Func<Task>? _updateUiFunc;
 
     public Key<IBadgeModel> Key => DirtyResourceUriBadgeKey;
-	public BadgeKind BadgeKind => BadgeKind.DirtyResourceUri;
-	public int Count => _textEditorService.GetDirtyResourceUriState().DirtyResourceUriList.Count;
-	
-	public void OnClick()
-	{
-	    _textEditorService.CommonService.Dialog_ReduceRegisterAction(new DialogViewModel(
+    public BadgeKind BadgeKind => BadgeKind.DirtyResourceUri;
+    public int Count => _textEditorService.GetDirtyResourceUriState().DirtyResourceUriList.Count;
+    
+    public void OnClick()
+    {
+        _textEditorService.CommonService.Dialog_ReduceRegisterAction(new DialogViewModel(
             DialogRecordKey,
             "Unsaved Files",
             typeof(Walk.TextEditor.RazorLib.Edits.Displays.DirtyResourceUriViewDisplay),
             null,
             null,
-    		true,
-    		setFocusOnCloseElementId: null));
-	}
-	
-	public void AddSubscription(Func<Task> updateUiFunc)
-	{
-	    _updateUiFunc = updateUiFunc;
-	    _textEditorService.DirtyResourceUriStateChanged += DoSubscription;
-	}
-	
-	public async void DoSubscription()
-	{
-	    var localUpdateUiFunc = _updateUiFunc;
-	    if (_updateUiFunc is not null)
-	        await _updateUiFunc.Invoke();
-	}
-	
-	public void DisposeSubscription()
-	{
-	    _textEditorService.DirtyResourceUriStateChanged -= DoSubscription;
-	    _updateUiFunc = null;
-	}
+            true,
+            setFocusOnCloseElementId: null));
+    }
+    
+    public void AddSubscription(Func<Task> updateUiFunc)
+    {
+        _updateUiFunc = updateUiFunc;
+        _textEditorService.DirtyResourceUriStateChanged += DoSubscription;
+    }
+    
+    public async void DoSubscription()
+    {
+        var localUpdateUiFunc = _updateUiFunc;
+        if (_updateUiFunc is not null)
+            await _updateUiFunc.Invoke();
+    }
+    
+    public void DisposeSubscription()
+    {
+        _textEditorService.DirtyResourceUriStateChanged -= DoSubscription;
+        _updateUiFunc = null;
+    }
 }

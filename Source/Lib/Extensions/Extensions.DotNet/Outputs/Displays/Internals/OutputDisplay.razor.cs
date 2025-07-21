@@ -13,75 +13,75 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     [Inject]
     private DotNetService DotNetService { get; set; } = null!;
     [Inject]
-	private IServiceProvider ServiceProvider { get; set; } = null!;
+    private IServiceProvider ServiceProvider { get; set; } = null!;
     
     private readonly Throttle _eventThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
     
     private OutputTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
-	private OutputTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
+    private OutputTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
 
-	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-		DotNetService.TextEditorService.CommonService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+    private int OffsetPerDepthInPixels => (int)Math.Ceiling(
+        DotNetService.TextEditorService.CommonService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
     
     protected override void OnInitialized()
     {
-    	_treeViewKeyboardEventHandler = new OutputTreeViewKeyboardEventHandler(
-			DotNetService.TextEditorService,
-			ServiceProvider);
+        _treeViewKeyboardEventHandler = new OutputTreeViewKeyboardEventHandler(
+            DotNetService.TextEditorService,
+            ServiceProvider);
 
-		_treeViewMouseEventHandler = new OutputTreeViewMouseEventHandler(
-			DotNetService.TextEditorService,
-			ServiceProvider);
+        _treeViewMouseEventHandler = new OutputTreeViewMouseEventHandler(
+            DotNetService.TextEditorService,
+            ServiceProvider);
     
-    	DotNetService.StateChanged += DotNetCliOutputParser_StateChanged;
-    	DotNetService.OutputStateChanged += OnOutputStateChanged;
-    	
-    	if (DotNetService.GetOutputState().DotNetRunParseResultId != DotNetService.GetDotNetRunParseResult().Id)
-    		DotNetCliOutputParser_StateChanged();
+        DotNetService.StateChanged += DotNetCliOutputParser_StateChanged;
+        DotNetService.OutputStateChanged += OnOutputStateChanged;
+        
+        if (DotNetService.GetOutputState().DotNetRunParseResultId != DotNetService.GetDotNetRunParseResult().Id)
+            DotNetCliOutputParser_StateChanged();
     }
     
     public void DotNetCliOutputParser_StateChanged()
     {
-		_eventThrottle.Run((Func<CancellationToken, Task>)(_ =>
-    	{
-    		if (DotNetService.GetOutputState().DotNetRunParseResultId == DotNetService.GetDotNetRunParseResult().Id)
-    			return Task.CompletedTask;
+        _eventThrottle.Run((Func<CancellationToken, Task>)(_ =>
+        {
+            if (DotNetService.GetOutputState().DotNetRunParseResultId == DotNetService.GetDotNetRunParseResult().Id)
+                return Task.CompletedTask;
 
-			DotNetService.TextEditorService.CommonService.Continuous_EnqueueGroup((IBackgroundTaskGroup)new BackgroundTask(
-				Key<IBackgroundTaskGroup>.Empty,
-				DotNetService.OutputService_Do_ConstructTreeView));
-    		return Task.CompletedTask;
-    	}));
+            DotNetService.TextEditorService.CommonService.Continuous_EnqueueGroup((IBackgroundTaskGroup)new BackgroundTask(
+                Key<IBackgroundTaskGroup>.Empty,
+                DotNetService.OutputService_Do_ConstructTreeView));
+            return Task.CompletedTask;
+        }));
     }
     
     public async void OnOutputStateChanged()
     {
-    	await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
     
     private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
-	{
-		var dropdownRecord = new DropdownRecord(
-			OutputContextMenu.ContextMenuEventDropdownKey,
-			treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
-			treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
-			typeof(OutputContextMenu),
-			new Dictionary<string, object?>
-			{
-				{
-					nameof(OutputContextMenu.TreeViewCommandArgs),
-					treeViewCommandArgs
-				}
-			},
-			restoreFocusOnClose: null);
+    {
+        var dropdownRecord = new DropdownRecord(
+            OutputContextMenu.ContextMenuEventDropdownKey,
+            treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
+            treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
+            typeof(OutputContextMenu),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(OutputContextMenu.TreeViewCommandArgs),
+                    treeViewCommandArgs
+                }
+            },
+            restoreFocusOnClose: null);
 
-		DotNetService.TextEditorService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
-		return Task.CompletedTask;
-	}
+        DotNetService.TextEditorService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        return Task.CompletedTask;
+    }
     
     public void Dispose()
     {
-    	DotNetService.StateChanged -= DotNetCliOutputParser_StateChanged;
-    	DotNetService.OutputStateChanged -= OnOutputStateChanged;
+        DotNetService.StateChanged -= DotNetCliOutputParser_StateChanged;
+        DotNetService.OutputStateChanged -= OnOutputStateChanged;
     }
 }

@@ -12,7 +12,7 @@ namespace Walk.Ide.RazorLib.Editors.Displays;
 
 public partial class EditorDisplay : ComponentBase, IDisposable
 {
-	[Inject]
+    [Inject]
     private IdeService IdeService { get; set; } = null!;
 
     [Parameter, EditorRequired]
@@ -25,18 +25,18 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 
     private ViewModelDisplayOptions _viewModelDisplayOptions = null!;
 
-	private TabListDisplay? _tabListDisplay;
+    private TabListDisplay? _tabListDisplay;
 
-	private string? _htmlId = null;
-	private string HtmlId => _htmlId ??= $"di_te_group_{IdeService.EditorTextEditorGroupKey.Guid}";
-	
-	private Key<TextEditorViewModel> _previousActiveViewModelKey = Key<TextEditorViewModel>.Empty;
-	
-	private Key<TextEditorComponentData> _componentDataKey;
+    private string? _htmlId = null;
+    private string HtmlId => _htmlId ??= $"di_te_group_{IdeService.EditorTextEditorGroupKey.Guid}";
+    
+    private Key<TextEditorViewModel> _previousActiveViewModelKey = Key<TextEditorViewModel>.Empty;
+    
+    private Key<TextEditorComponentData> _componentDataKey;
 
     protected override void OnInitialized()
     {
-    	_viewModelDisplayOptions = new()
+        _viewModelDisplayOptions = new()
         {
             TabIndex = 0,
             HeaderButtonKinds = TextEditorHeaderButtonKindsList,
@@ -52,46 +52,46 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 
     private async void TextEditorGroupWrapOnStateChanged()
     {
-    	var textEditorGroup = IdeService.TextEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
-	        x => x.GroupKey == IdeService.EditorTextEditorGroupKey);
-	        
-	    if (_previousActiveViewModelKey != textEditorGroup.ActiveViewModelKey)
-	    {
-	    	_previousActiveViewModelKey = textEditorGroup.ActiveViewModelKey;
-	    	IdeService.TextEditorService.ViewModel_StopCursorBlinking();
-	    }
+        var textEditorGroup = IdeService.TextEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
+            x => x.GroupKey == IdeService.EditorTextEditorGroupKey);
+            
+        if (_previousActiveViewModelKey != textEditorGroup.ActiveViewModelKey)
+        {
+            _previousActiveViewModelKey = textEditorGroup.ActiveViewModelKey;
+            IdeService.TextEditorService.ViewModel_StopCursorBlinking();
+        }
     
         await InvokeAsync(StateHasChanged);
     }
     
     private async void DirtyResourceUriServiceOnStateChanged()
     {
-		var localTabListDisplay = _tabListDisplay;
-		
-		if (localTabListDisplay is not null)
-		{
-			await localTabListDisplay.NotifyStateChangedAsync();
-		}
+        var localTabListDisplay = _tabListDisplay;
+        
+        if (localTabListDisplay is not null)
+        {
+            await localTabListDisplay.NotifyStateChangedAsync();
+        }
     }
 
-	private List<ITab> GetTabList(TextEditorGroup textEditorGroup)
-	{
+    private List<ITab> GetTabList(TextEditorGroup textEditorGroup)
+    {
         var textEditorState = IdeService.TextEditorService.TextEditorState;
-		var tabList = new List<ITab>();
+        var tabList = new List<ITab>();
 
-		foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
-		{
+        foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
+        {
             var viewModel = textEditorState.ViewModelGetOrDefault(viewModelKey);
             
             if (viewModel is not null)
             {
                 viewModel.PersistentState.TabGroup = textEditorGroup;
-				tabList.Add(viewModel.PersistentState);
+                tabList.Add(viewModel.PersistentState);
             }
-		}
+        }
 
-		return tabList;
-	}
+        return tabList;
+    }
 
     public void Dispose()
     {

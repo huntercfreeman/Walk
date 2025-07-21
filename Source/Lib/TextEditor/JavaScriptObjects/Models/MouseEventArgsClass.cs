@@ -18,8 +18,8 @@ public class MouseEventArgsClass
         ShiftKey = shiftKey;
     }
 
-	public double ClientX { get; set; }
-	public double ClientY { get; set; }
-	public long Buttons { get; set; }
-	public bool ShiftKey { get; set; }
+    public double ClientX { get; set; }
+    public double ClientY { get; set; }
+    public long Buttons { get; set; }
+    public bool ShiftKey { get; set; }
 }

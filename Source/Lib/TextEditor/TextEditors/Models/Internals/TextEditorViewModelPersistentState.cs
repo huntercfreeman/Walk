@@ -24,50 +24,50 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, IDialog, IDrag
 {
     public TextEditorViewModelPersistentState(
-	    Key<TextEditorViewModel> viewModelKey,
-	    ResourceUri resourceUri,
-	    TextEditorService textEditorService,
-	    Category category,
-	    Action<TextEditorModel>? onSaveRequested,
-	    Func<TextEditorModel, string>? getTabDisplayNameFunc,
-	    List<Key<TextEditorPresentationModel>> firstPresentationLayerKeysList,
-	    List<Key<TextEditorPresentationModel>> lastPresentationLayerKeysList,
-	    bool showFindOverlay,
-	    string replaceValueInFindOverlay,
-	    bool showReplaceButtonInFindOverlay,
-	    string findOverlayValue,
-	    bool findOverlayValueExternallyChangedMarker,
-	    MenuKind menuKind,
-	    ITooltipModel tooltipModel,
-	    bool shouldRevealCursor,
-		VirtualAssociativityKind virtualAssociativityKind,
+        Key<TextEditorViewModel> viewModelKey,
+        ResourceUri resourceUri,
+        TextEditorService textEditorService,
+        Category category,
+        Action<TextEditorModel>? onSaveRequested,
+        Func<TextEditorModel, string>? getTabDisplayNameFunc,
+        List<Key<TextEditorPresentationModel>> firstPresentationLayerKeysList,
+        List<Key<TextEditorPresentationModel>> lastPresentationLayerKeysList,
+        bool showFindOverlay,
+        string replaceValueInFindOverlay,
+        bool showReplaceButtonInFindOverlay,
+        string findOverlayValue,
+        bool findOverlayValueExternallyChangedMarker,
+        MenuKind menuKind,
+        ITooltipModel tooltipModel,
+        bool shouldRevealCursor,
+        VirtualAssociativityKind virtualAssociativityKind,
         TextEditorDimensions textEditorDimensions,
-		int scrollLeft,
-	    int scrollTop,
-	    int scrollWidth,
-	    int scrollHeight,
-	    int marginScrollHeight,
+        int scrollLeft,
+        int scrollTop,
+        int scrollWidth,
+        int scrollHeight,
+        int marginScrollHeight,
         CharAndLineMeasurements charAndLineMeasurements)
-	{
-	    ViewModelKey = viewModelKey;
-	    ResourceUri = resourceUri;
-	    TextEditorService = textEditorService;
-	    Category = category;
-	    OnSaveRequested = onSaveRequested;
-	    GetTabDisplayNameFunc = getTabDisplayNameFunc;
-	    FirstPresentationLayerKeysList = firstPresentationLayerKeysList;
-	    LastPresentationLayerKeysList = lastPresentationLayerKeysList;
-	    
-	    ShowFindOverlay = showFindOverlay;
-	    ReplaceValueInFindOverlay = replaceValueInFindOverlay;
-	    ShowReplaceButtonInFindOverlay = showReplaceButtonInFindOverlay;
-	    FindOverlayValue = findOverlayValue;
-	    FindOverlayValueExternallyChangedMarker = findOverlayValueExternallyChangedMarker;
-	    
-	    MenuKind = menuKind;
-	    TooltipModel = tooltipModel;
+    {
+        ViewModelKey = viewModelKey;
+        ResourceUri = resourceUri;
+        TextEditorService = textEditorService;
+        Category = category;
+        OnSaveRequested = onSaveRequested;
+        GetTabDisplayNameFunc = getTabDisplayNameFunc;
+        FirstPresentationLayerKeysList = firstPresentationLayerKeysList;
+        LastPresentationLayerKeysList = lastPresentationLayerKeysList;
+        
+        ShowFindOverlay = showFindOverlay;
+        ReplaceValueInFindOverlay = replaceValueInFindOverlay;
+        ShowReplaceButtonInFindOverlay = showReplaceButtonInFindOverlay;
+        FindOverlayValue = findOverlayValue;
+        FindOverlayValueExternallyChangedMarker = findOverlayValueExternallyChangedMarker;
+        
+        MenuKind = menuKind;
+        TooltipModel = tooltipModel;
 
-	    ShouldRevealCursor = shouldRevealCursor;
+        ShouldRevealCursor = shouldRevealCursor;
         
         ComponentType = typeof(TextEditorViewModelDisplay);
         ComponentParameterMap = new()
@@ -78,56 +78,56 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         _dragTabComponentType = typeof(TabDisplay);
 
         DialogFocusPointHtmlElementId = $"di_dialog-focus-point_{DynamicViewModelKey.Guid}";
-	
-		TextEditorDimensions = textEditorDimensions;
-		ScrollLeft = scrollLeft;
-	    ScrollTop = scrollTop;
-	    ScrollWidth = scrollWidth;
-	    ScrollHeight = scrollHeight;
-	    MarginScrollHeight = marginScrollHeight;
+    
+        TextEditorDimensions = textEditorDimensions;
+        ScrollLeft = scrollLeft;
+        ScrollTop = scrollTop;
+        ScrollWidth = scrollWidth;
+        ScrollHeight = scrollHeight;
+        MarginScrollHeight = marginScrollHeight;
         CharAndLineMeasurements = charAndLineMeasurements;
-	}
+    }
 
-	/// <summary>
-	/// The main unique identifier for a <see cref="TextEditorViewModel"/>, used in many API.
-	/// </summary>
-	public Key<TextEditorViewModel> ViewModelKey { get; set; }
-	/// <summary>
-	/// The unique identifier for a <see cref="TextEditorModel"/>. The model is to say a representation of the file on a filesystem.
-	/// The contents and such. Whereas the viewmodel is to track state regarding a rendered editor for that file, for example the cursor position.
-	/// </summary>
-	public ResourceUri ResourceUri { get; set; }
-	/// <summary>
-	/// Most API invocation (if not all) occurs through the <see cref="ITextEditorService"/>
-	/// </summary>
-	public TextEditorService TextEditorService { get; set; }
-	/// <summary>
-	/// <inheritdoc cref="Models.Category"/>
-	/// </summary>
-	public Category Category { get; set; }
-	/// <summary>
-	/// If one hits the keymap { Ctrl + s } when browser focus is within a text editor.
-	/// </summary>
-	public Action<TextEditorModel>? OnSaveRequested { get; set; }
-	/// <summary>
-	/// When a view model is rendered within a <see cref="TextEditorGroup"/>, this Func can be used to render a more friendly tab name, than the resource uri path.
-	/// </summary>
-	public Func<TextEditorModel, string>? GetTabDisplayNameFunc { get; set; }
-	/// <summary>
-	/// <see cref="FirstPresentationLayerKeysList"/> is painted prior to any internal workings of the text editor.<br/><br/>
-	/// Therefore the selected text background is rendered after anything in the <see cref="FirstPresentationLayerKeysList"/>.<br/><br/>
-	/// When using the <see cref="FirstPresentationLayerKeysList"/> one might find their css overriden by for example, text being selected.
-	/// </summary>
-	public List<Key<TextEditorPresentationModel>> FirstPresentationLayerKeysList { get; set; }
-	/// <summary>
-	/// <see cref="LastPresentationLayerKeysList"/> is painted after any internal workings of the text editor.<br/><br/>
-	/// Therefore the selected text background is rendered before anything in the <see cref="LastPresentationLayerKeysList"/>.<br/><br/>
-	/// When using the <see cref="LastPresentationLayerKeysList"/> one might find the selected text background
-	/// not being rendered with the text selection css if it were overriden by something in the <see cref="LastPresentationLayerKeysList"/>.
-	/// </summary>
-	public List<Key<TextEditorPresentationModel>> LastPresentationLayerKeysList { get; set; }
-	
-	/// <summary>
+    /// <summary>
+    /// The main unique identifier for a <see cref="TextEditorViewModel"/>, used in many API.
+    /// </summary>
+    public Key<TextEditorViewModel> ViewModelKey { get; set; }
+    /// <summary>
+    /// The unique identifier for a <see cref="TextEditorModel"/>. The model is to say a representation of the file on a filesystem.
+    /// The contents and such. Whereas the viewmodel is to track state regarding a rendered editor for that file, for example the cursor position.
+    /// </summary>
+    public ResourceUri ResourceUri { get; set; }
+    /// <summary>
+    /// Most API invocation (if not all) occurs through the <see cref="ITextEditorService"/>
+    /// </summary>
+    public TextEditorService TextEditorService { get; set; }
+    /// <summary>
+    /// <inheritdoc cref="Models.Category"/>
+    /// </summary>
+    public Category Category { get; set; }
+    /// <summary>
+    /// If one hits the keymap { Ctrl + s } when browser focus is within a text editor.
+    /// </summary>
+    public Action<TextEditorModel>? OnSaveRequested { get; set; }
+    /// <summary>
+    /// When a view model is rendered within a <see cref="TextEditorGroup"/>, this Func can be used to render a more friendly tab name, than the resource uri path.
+    /// </summary>
+    public Func<TextEditorModel, string>? GetTabDisplayNameFunc { get; set; }
+    /// <summary>
+    /// <see cref="FirstPresentationLayerKeysList"/> is painted prior to any internal workings of the text editor.<br/><br/>
+    /// Therefore the selected text background is rendered after anything in the <see cref="FirstPresentationLayerKeysList"/>.<br/><br/>
+    /// When using the <see cref="FirstPresentationLayerKeysList"/> one might find their css overriden by for example, text being selected.
+    /// </summary>
+    public List<Key<TextEditorPresentationModel>> FirstPresentationLayerKeysList { get; set; }
+    /// <summary>
+    /// <see cref="LastPresentationLayerKeysList"/> is painted after any internal workings of the text editor.<br/><br/>
+    /// Therefore the selected text background is rendered before anything in the <see cref="LastPresentationLayerKeysList"/>.<br/><br/>
+    /// When using the <see cref="LastPresentationLayerKeysList"/> one might find the selected text background
+    /// not being rendered with the text selection css if it were overriden by something in the <see cref="LastPresentationLayerKeysList"/>.
+    /// </summary>
+    public List<Key<TextEditorPresentationModel>> LastPresentationLayerKeysList { get; set; }
+    
+    /// <summary>
     /// The find overlay refers to hitting the keymap { Ctrl + f } when browser focus is within a text editor.
     /// </summary>
     public bool ShowFindOverlay { get; set; }
@@ -158,66 +158,66 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     public string ReplaceValueInFindOverlay { get; set; }
     
     /// <summary>
-	/// This property determines the menu that is shown in the text editor.
-	///
-	/// For example, when this property is <see cref="MenuKind.AutoCompleteMenu"/>,
-	/// then the autocomplete menu is displayed in the text editor.
-	/// </summary>
+    /// This property determines the menu that is shown in the text editor.
+    ///
+    /// For example, when this property is <see cref="MenuKind.AutoCompleteMenu"/>,
+    /// then the autocomplete menu is displayed in the text editor.
+    /// </summary>
     public MenuKind MenuKind { get; set; }
-	/// <summary>
-	/// This property determines the tooltip that is shown in the text editor.
-	/// </summary>
+    /// <summary>
+    /// This property determines the tooltip that is shown in the text editor.
+    /// </summary>
     public ITooltipModel? TooltipModel { get; set; }
     
     public bool ShouldRevealCursor { get; set; }
-	
-	private int _seenGutterWidth = -2;
-	private string _gutterWidthCssValue;
-	
-	/// <summary>
-	/// This method is not intuitive, because it doesn't make use of 'Changed_GutterWidth'.
-	///
-	/// It tracks the int value for the '_gutterWidth' when it does the '.ToString()',
-	/// then it checks if the int value had changed.
-	///
-	/// This is because if the method were to use 'Changed_GutterWidth',
-	/// then it'd presumably want to say 'Changed_GutterWidth = false'
-	/// when doing the '.ToString()' so that it re-uses the value.
-	///
-	/// But, this would then clobber the functionality of 'TextEditorVirtualizationResult'.
-	/// </summary>
-	public string GetGutterWidthCssValue()
-	{
-	    if (_seenGutterWidth != _gutterWidth)
-	    {
-	        _seenGutterWidth = _gutterWidth;
-	        _gutterWidthCssValue = GutterWidth.ToString();
-	    }
+    
+    private int _seenGutterWidth = -2;
+    private string _gutterWidthCssValue;
+    
+    /// <summary>
+    /// This method is not intuitive, because it doesn't make use of 'Changed_GutterWidth'.
+    ///
+    /// It tracks the int value for the '_gutterWidth' when it does the '.ToString()',
+    /// then it checks if the int value had changed.
+    ///
+    /// This is because if the method were to use 'Changed_GutterWidth',
+    /// then it'd presumably want to say 'Changed_GutterWidth = false'
+    /// when doing the '.ToString()' so that it re-uses the value.
+    ///
+    /// But, this would then clobber the functionality of 'TextEditorVirtualizationResult'.
+    /// </summary>
+    public string GetGutterWidthCssValue()
+    {
+        if (_seenGutterWidth != _gutterWidth)
+        {
+            _seenGutterWidth = _gutterWidth;
+            _gutterWidthCssValue = GutterWidth.ToString();
+        }
         return _gutterWidthCssValue;
-	}
-	
-	private int _seenTextEditorHeight;
-	private int _seenLineHeight;
-	private string _gutterColumnHeightCssValue;
-	
-	public string GetGutterColumnHeightCssValue()
-	{
-	    if (_seenTextEditorHeight != TextEditorDimensions.Height ||
-	        _seenLineHeight != CharAndLineMeasurements.LineHeight)
-	    {
-	        _seenTextEditorHeight = TextEditorDimensions.Height;
-	        _seenLineHeight = CharAndLineMeasurements.LineHeight;
-	        _gutterColumnHeightCssValue = (_seenTextEditorHeight + _seenLineHeight).ToString();
-	    }
+    }
+    
+    private int _seenTextEditorHeight;
+    private int _seenLineHeight;
+    private string _gutterColumnHeightCssValue;
+    
+    public string GetGutterColumnHeightCssValue()
+    {
+        if (_seenTextEditorHeight != TextEditorDimensions.Height ||
+            _seenLineHeight != CharAndLineMeasurements.LineHeight)
+        {
+            _seenTextEditorHeight = TextEditorDimensions.Height;
+            _seenLineHeight = CharAndLineMeasurements.LineHeight;
+            _gutterColumnHeightCssValue = (_seenTextEditorHeight + _seenLineHeight).ToString();
+        }
         return _gutterColumnHeightCssValue;
-	}
-	
-	/// <summary>
+    }
+    
+    /// <summary>
     /// Pixels (px)
     ///
     /// The initial value cannot be 0 else any text editor without a gutter cannot detect change on the initial render.
     /// </summary>
-	private int _gutterWidth = -2;
+    private int _gutterWidth = -2;
     public int GutterWidth
     {
         get => _gutterWidth;
@@ -229,18 +229,18 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         }
     }
     
-	private TextEditorDimensions _textEditorDimensions;
-	public TextEditorDimensions TextEditorDimensions
-	{
-	    get => _textEditorDimensions;
-	    set
-	    {
-	        if (_textEditorDimensions.Width != value.Width)
-	            Changed_TextEditorWidth = true;
+    private TextEditorDimensions _textEditorDimensions;
+    public TextEditorDimensions TextEditorDimensions
+    {
+        get => _textEditorDimensions;
+        set
+        {
+            if (_textEditorDimensions.Width != value.Width)
+                Changed_TextEditorWidth = true;
             if (_textEditorDimensions.Height != value.Height)
-	            Changed_TextEditorHeight = true;
+                Changed_TextEditorHeight = true;
             _textEditorDimensions = value;
-	    }
+        }
     }
     
     private int _scrollTop;
@@ -354,14 +354,14 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     public bool Changed_MarginScrollHeight { get; set; }
     
     #region DisplayTracker
-	/// <summary>
-	/// One must track whether the ViewModel is currently being rendered.<br/><br/>
-	/// 
-	/// The reason for this is that the UI logic is lazily invoked.
-	/// That is to say, if a ViewModel has its underlying Model change, BUT the ViewModel is not currently being rendered.
-	/// Then that ViewModel does not react to the Model having changed.
-	/// </summary>
-	
+    /// <summary>
+    /// One must track whether the ViewModel is currently being rendered.<br/><br/>
+    /// 
+    /// The reason for this is that the UI logic is lazily invoked.
+    /// That is to say, if a ViewModel has its underlying Model change, BUT the ViewModel is not currently being rendered.
+    /// Then that ViewModel does not react to the Model having changed.
+    /// </summary>
+    
     
     /// <summary>
     /// The initial solution wide parse will no longer apply syntax highlighting.
@@ -393,115 +393,115 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 
     public void RegisterComponentData(TextEditorEditContext editContext, TextEditorComponentData componentData)
     {
-    	if (ComponentData is not null)
-    	{
-    		if (componentData.TextEditorHtmlElementId == ComponentData.TextEditorHtmlElementId)
-	    	{
-	    		Console.WriteLine($"TODO: {nameof(TextEditorViewModelPersistentState)} {nameof(RegisterComponentData)} - ComponentData is not null (same component tried registering twice)");
-	    		return;
-	    	}
-	    	
-    		Console.WriteLine($"TODO: {nameof(TextEditorViewModelPersistentState)} {nameof(RegisterComponentData)} - ComponentData is not null");
-    		return;
-    	}
+        if (ComponentData is not null)
+        {
+            if (componentData.TextEditorHtmlElementId == ComponentData.TextEditorHtmlElementId)
+            {
+                Console.WriteLine($"TODO: {nameof(TextEditorViewModelPersistentState)} {nameof(RegisterComponentData)} - ComponentData is not null (same component tried registering twice)");
+                return;
+            }
+            
+            Console.WriteLine($"TODO: {nameof(TextEditorViewModelPersistentState)} {nameof(RegisterComponentData)} - ComponentData is not null");
+            return;
+        }
     
         ComponentData = componentData;
-		TextEditorService.CommonService.AppDimensionStateChanged += AppDimensionStateWrap_StateChanged;
+        TextEditorService.CommonService.AppDimensionStateChanged += AppDimensionStateWrap_StateChanged;
 
-		// Tell the view model what the (already known) font-size measurements and text-editor measurements are.
-		PostScrollAndRemeasure(useExtraEvent: false);
-		
-		if (!_hasBeenDisplayedAtLeastOnceBefore)
-		{
-			_hasBeenDisplayedAtLeastOnceBefore = true;
-			
-			var modelModifier = editContext.GetModelModifier(ResourceUri);
-			if (modelModifier is not null)
-			{
-				if (modelModifier.PersistentState.CompilerService is not null)	
-					modelModifier.PersistentState.CompilerService.ResourceWasModified(ResourceUri, Array.Empty<TextEditorTextSpan>());
-			}
-		}
+        // Tell the view model what the (already known) font-size measurements and text-editor measurements are.
+        PostScrollAndRemeasure(useExtraEvent: false);
+        
+        if (!_hasBeenDisplayedAtLeastOnceBefore)
+        {
+            _hasBeenDisplayedAtLeastOnceBefore = true;
+            
+            var modelModifier = editContext.GetModelModifier(ResourceUri);
+            if (modelModifier is not null)
+            {
+                if (modelModifier.PersistentState.CompilerService is not null)    
+                    modelModifier.PersistentState.CompilerService.ResourceWasModified(ResourceUri, Array.Empty<TextEditorTextSpan>());
+            }
+        }
     }
 
     public void DisposeComponentData(TextEditorEditContext editContext, TextEditorComponentData componentData)
     {
-    	if (componentData is null || ComponentData is null)
-    	{
-    		Console.WriteLine($"TODO: {nameof(TextEditorViewModelPersistentState)} {nameof(DisposeComponentData)} - componentData is null || ComponentData is null.");
-			return;
-    	}
-    	else if (componentData.TextEditorHtmlElementId != ComponentData.TextEditorHtmlElementId)
-    	{
-    		Console.WriteLine($"TODO: {nameof(TextEditorViewModelPersistentState)} {nameof(DisposeComponentData)} - ComponentData.TextEditorHtmlElementId does not match.");
-			return;
-    	}
+        if (componentData is null || ComponentData is null)
+        {
+            Console.WriteLine($"TODO: {nameof(TextEditorViewModelPersistentState)} {nameof(DisposeComponentData)} - componentData is null || ComponentData is null.");
+            return;
+        }
+        else if (componentData.TextEditorHtmlElementId != ComponentData.TextEditorHtmlElementId)
+        {
+            Console.WriteLine($"TODO: {nameof(TextEditorViewModelPersistentState)} {nameof(DisposeComponentData)} - ComponentData.TextEditorHtmlElementId does not match.");
+            return;
+        }
     
         ComponentData = null;
-		TextEditorService.CommonService.AppDimensionStateChanged -= AppDimensionStateWrap_StateChanged;
+        TextEditorService.CommonService.AppDimensionStateChanged -= AppDimensionStateWrap_StateChanged;
     }
 
     private void AppDimensionStateWrap_StateChanged()
     {
-    	// The UI was resized, and therefore the text-editor measurements need to be re-measured.
-    	//
-    	// The font-size is theoretically un-changed,
-    	// but will be measured anyway just because its part of the same method that does the text-editor measurements.
-		PostScrollAndRemeasure(useExtraEvent: false);
+        // The UI was resized, and therefore the text-editor measurements need to be re-measured.
+        //
+        // The font-size is theoretically un-changed,
+        // but will be measured anyway just because its part of the same method that does the text-editor measurements.
+        PostScrollAndRemeasure(useExtraEvent: false);
     }
 
-	public void PostScrollAndRemeasure(bool useExtraEvent = true)
-	{
-		var model = TextEditorService.Model_GetOrDefault(ResourceUri);
+    public void PostScrollAndRemeasure(bool useExtraEvent = true)
+    {
+        var model = TextEditorService.Model_GetOrDefault(ResourceUri);
         var viewModel = TextEditorService.ViewModel_GetOrDefault(ViewModelKey);
 
         if (model is null || viewModel is null)
         {
-        	Console.WriteLine("FAIL:PostScrollAndRemeasure()");
+            Console.WriteLine("FAIL:PostScrollAndRemeasure()");
             return;
         }
 
-		TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
-		{
-			var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
-			var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
+        TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+        {
+            var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
             if (modelModifier is null || viewModelModifier is null)
             {
-            	Console.WriteLine("FAIL:PostScrollAndRemeasure()");
+                Console.WriteLine("FAIL:PostScrollAndRemeasure()");
                 return;
             }
             
             var componentData = viewModel.PersistentState.ComponentData;
             if (componentData is null)
-            	return;
-			
-			var textEditorDimensions = await TextEditorService.ViewModel_GetTextEditorMeasurementsAsync(componentData.RowSectionElementId)
-				.ConfigureAwait(false);
-	
-			viewModelModifier.PersistentState.TextEditorDimensions = textEditorDimensions;
-			viewModelModifier.PersistentState.CharAndLineMeasurements = TextEditorService.Options_GetOptions().CharAndLineMeasurements;
-			viewModelModifier.Virtualization.ShouldCalculateVirtualizationResult = true;
-			
-			// TODO: Where does the method: 'ValidateMaximumScrollLeftAndScrollTop(...)' belong?
-			TextEditorService.ValidateMaximumScrollLeftAndScrollTop(editContext, modelModifier, viewModelModifier, textEditorDimensionsChanged: true);
-			
-			componentData.LineIndexCache.IsInvalid = true;
-			
-			if (useExtraEvent)
-			{
-			    // TODO: Opening a file for the first time is hitting this twice...
-			    // ...this is a very minor issue but I am noting it here.
-			    
-			    TextEditorService.PostScrollAndRemeasure_DebounceExtraEvent.Run(default);
-		    }
-		});
-	}
+                return;
+            
+            var textEditorDimensions = await TextEditorService.ViewModel_GetTextEditorMeasurementsAsync(componentData.RowSectionElementId)
+                .ConfigureAwait(false);
+    
+            viewModelModifier.PersistentState.TextEditorDimensions = textEditorDimensions;
+            viewModelModifier.PersistentState.CharAndLineMeasurements = TextEditorService.Options_GetOptions().CharAndLineMeasurements;
+            viewModelModifier.Virtualization.ShouldCalculateVirtualizationResult = true;
+            
+            // TODO: Where does the method: 'ValidateMaximumScrollLeftAndScrollTop(...)' belong?
+            TextEditorService.ValidateMaximumScrollLeftAndScrollTop(editContext, modelModifier, viewModelModifier, textEditorDimensionsChanged: true);
+            
+            componentData.LineIndexCache.IsInvalid = true;
+            
+            if (useExtraEvent)
+            {
+                // TODO: Opening a file for the first time is hitting this twice...
+                // ...this is a very minor issue but I am noting it here.
+                
+                TextEditorService.PostScrollAndRemeasure_DebounceExtraEvent.Run(default);
+            }
+        });
+    }
     #endregion
     
     #region DynamicViewModelAdapterTextEditor
     /// <summary>
-	/// This type contains all data, and logic, necessary to render a text editor from within a dialog, a panel tab, or a text editor group tab.
-	/// </summary>
+    /// This type contains all data, and logic, necessary to render a text editor from within a dialog, a panel tab, or a text editor group tab.
+    /// </summary>
     private readonly Type _dragTabComponentType;
 
     private readonly Type? _dragDialogComponentType = null;
@@ -512,15 +512,15 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     public Key<Panel> Key { get; }
     public int ContextRecordKey { get; }
     public Key<IDynamicViewModel> DynamicViewModelKey { get; } = Key<IDynamicViewModel>.NewKey();
-	public string? SetFocusOnCloseElementId { get; set; }
+    public string? SetFocusOnCloseElementId { get; set; }
 
     public ITabGroup? TabGroup { get; set; }
 
     public string Title => GetTitle();
 
-	public string TitleVerbose =>
-		TextEditorService.ViewModel_GetModelOrDefault(ViewModelKey)?.PersistentState.ResourceUri.Value
-			?? Title;
+    public string TitleVerbose =>
+        TextEditorService.ViewModel_GetModelOrDefault(ViewModelKey)?.PersistentState.ResourceUri.Value
+            ?? Title;
 
     public Type ComponentType { get; }
 
@@ -548,11 +548,11 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     public string? DragCssClass { get; set; }
     public string? DragCssStyle { get; set; }
 
-	public IDialog SetDialogIsMaximized(bool isMaximized)
-	{
-		DialogIsMaximized = isMaximized;
-		return this;
-	}
+    public IDialog SetDialogIsMaximized(bool isMaximized)
+    {
+        DialogIsMaximized = isMaximized;
+        return this;
+    }
 
     private string GetTitle()
     {
@@ -622,32 +622,32 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         {
             elementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
             elementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	measuredHtmlElementDimensions.WidthInPixels,
-            	DimensionUnitKind.Pixels));
+                measuredHtmlElementDimensions.WidthInPixels,
+                DimensionUnitKind.Pixels));
         }
 
         // Height
         {
             elementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
             elementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	measuredHtmlElementDimensions.HeightInPixels,
-            	DimensionUnitKind.Pixels));
+                measuredHtmlElementDimensions.HeightInPixels,
+                DimensionUnitKind.Pixels));
         }
 
         // Left
         {
             elementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
             elementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	measuredHtmlElementDimensions.LeftInPixels,
-            	DimensionUnitKind.Pixels));
+                measuredHtmlElementDimensions.LeftInPixels,
+                DimensionUnitKind.Pixels));
         }
 
         // Top
         {
             elementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
             elementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	measuredHtmlElementDimensions.TopInPixels,
-            	DimensionUnitKind.Pixels));
+                measuredHtmlElementDimensions.TopInPixels,
+                DimensionUnitKind.Pixels));
         }
 
         dropzoneList.Add(new TextEditorGroupDropzone(
@@ -794,32 +794,32 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         {
             fallbackElementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
             fallbackElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	100,
-            	DimensionUnitKind.ViewportWidth));
+                100,
+                DimensionUnitKind.ViewportWidth));
         }
 
         // Height
         {
             fallbackElementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
             fallbackElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	100,
-            	DimensionUnitKind.ViewportHeight));
+                100,
+                DimensionUnitKind.ViewportHeight));
         }
 
         // Left
         {
             fallbackElementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
             fallbackElementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	0,
-            	DimensionUnitKind.Pixels));
+                0,
+                DimensionUnitKind.Pixels));
         }
 
         // Top
         {
             fallbackElementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
             fallbackElementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	0,
-            	DimensionUnitKind.Pixels));
+                0,
+                DimensionUnitKind.Pixels));
         }
 
         dropzoneList.Add(new TextEditorGroupDropzone(
@@ -859,32 +859,32 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
             {
                 elementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
                 elementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                	measuredHtmlElementDimensions.WidthInPixels,
-                	DimensionUnitKind.Pixels));
+                    measuredHtmlElementDimensions.WidthInPixels,
+                    DimensionUnitKind.Pixels));
             }
 
             // Height
             {
                 elementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
                 elementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                	measuredHtmlElementDimensions.HeightInPixels,
-                	DimensionUnitKind.Pixels));
+                    measuredHtmlElementDimensions.HeightInPixels,
+                    DimensionUnitKind.Pixels));
             }
 
             // Left
             {
                 elementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
                 elementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                	measuredHtmlElementDimensions.LeftInPixels,
-                	DimensionUnitKind.Pixels));
+                    measuredHtmlElementDimensions.LeftInPixels,
+                    DimensionUnitKind.Pixels));
             }
 
             // Top
             {
                 elementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
                 elementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                	measuredHtmlElementDimensions.TopInPixels,
-                	DimensionUnitKind.Pixels));
+                    measuredHtmlElementDimensions.TopInPixels,
+                    DimensionUnitKind.Pixels));
             }
 
             dropzoneList.Add(new PanelGroupDropzone(
@@ -900,9 +900,9 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
     
     public void Dispose()
     {
-    	TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
-    	{
-    		DisposeComponentData(editContext, ComponentData);
-    	});
+        TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+        {
+            DisposeComponentData(editContext, ComponentData);
+        });
     }
 }

@@ -11,9 +11,9 @@ public record DotNetSolutionModel : IDotNetSolution
         AbsolutePath absolutePath,
         DotNetSolutionHeader dotNetSolutionHeader,
         List<IDotNetProject> dotNetProjectList,
-		List<SolutionFolder> solutionFolderList,
-		List<GuidNestedProjectEntry>? guidNestedProjectEntryList,
-		List<StringNestedProjectEntry>? stringNestedProjectEntryList,
+        List<SolutionFolder> solutionFolderList,
+        List<GuidNestedProjectEntry>? guidNestedProjectEntryList,
+        List<StringNestedProjectEntry>? stringNestedProjectEntryList,
         DotNetSolutionGlobal dotNetSolutionGlobal,
         string solutionFileContents)
     {

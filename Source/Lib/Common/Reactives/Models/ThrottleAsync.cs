@@ -19,8 +19,8 @@ namespace Walk.Common.RazorLib.Reactives.Models;
 /// </summary>
 public class ThrottleAsync
 {
-	private readonly object _lockWorkItems = new();
-	
+    private readonly object _lockWorkItems = new();
+    
     public ThrottleAsync(TimeSpan throttleTimeSpan)
     {
         ThrottleTimeSpan = throttleTimeSpan;
@@ -33,12 +33,12 @@ public class ThrottleAsync
 
     public Task RunAsync(Func<CancellationToken, Task> workItem)
     {
-    	lock (_lockWorkItems)
-		{
-			WorkItemStack.Push(workItem);
+        lock (_lockWorkItems)
+        {
+            WorkItemStack.Push(workItem);
             if (WorkItemStack.Count > 1)
                 return Task.CompletedTask;
-		}
+        }
     
         var previousTask = WorkItemTask;
         WorkItemTask = ExecuteAsync(previousTask);
@@ -47,10 +47,10 @@ public class ThrottleAsync
     
     private async Task ExecuteAsync(Task previousTask)
     {
-    	// Await the previous work item task.
+        // Await the previous work item task.
         await previousTask.ConfigureAwait(false);
 
-		Func<CancellationToken, Task> popWorkItem;
+        Func<CancellationToken, Task> popWorkItem;
         lock (_lockWorkItems)
         {
             if (WorkItemStack.Count == 0)
@@ -60,10 +60,10 @@ public class ThrottleAsync
             WorkItemStack.Clear();
         }
 
-		await Task.WhenAll(
-				popWorkItem.Invoke(CancellationToken.None),
-				Task.Delay(ThrottleTimeSpan, CancellationToken.None))
-			.ConfigureAwait(false);
+        await Task.WhenAll(
+                popWorkItem.Invoke(CancellationToken.None),
+                Task.Delay(ThrottleTimeSpan, CancellationToken.None))
+            .ConfigureAwait(false);
     }
 
     /// <summary>

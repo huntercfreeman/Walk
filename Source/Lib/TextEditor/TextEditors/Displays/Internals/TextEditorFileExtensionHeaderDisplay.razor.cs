@@ -7,41 +7,41 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase, IDisposable
 {
-	[Inject]
-	private TextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private TextEditorService TextEditorService { get; set; } = null!;
 
-	[Parameter, EditorRequired]
-	public Key<TextEditorViewModel> TextEditorViewModelKey { get; set; }
-	[Parameter, EditorRequired]
-	public Key<TextEditorComponentData> ComponentDataKey { get; set; }
-	
-	private Dictionary<string, object?> _componentInnerParameters = null!;
-	
-	private string _fileExtensionCurrent = string.Empty;
-	
-	private TextEditorViewModelSlimDisplay _previousTextEditorViewModelSlimDisplay;
-	
-	private string DictionaryKey => nameof(ITextEditorDependentComponent.ComponentDataKey);
-	
-	protected override void OnInitialized()
-	{
-		_componentInnerParameters = new()
-		{
-			{
-				DictionaryKey,
-				ComponentDataKey
-			}
-		};
+    [Parameter, EditorRequired]
+    public Key<TextEditorViewModel> TextEditorViewModelKey { get; set; }
+    [Parameter, EditorRequired]
+    public Key<TextEditorComponentData> ComponentDataKey { get; set; }
+    
+    private Dictionary<string, object?> _componentInnerParameters = null!;
+    
+    private string _fileExtensionCurrent = string.Empty;
+    
+    private TextEditorViewModelSlimDisplay _previousTextEditorViewModelSlimDisplay;
+    
+    private string DictionaryKey => nameof(ITextEditorDependentComponent.ComponentDataKey);
+    
+    protected override void OnInitialized()
+    {
+        _componentInnerParameters = new()
+        {
+            {
+                DictionaryKey,
+                ComponentDataKey
+            }
+        };
 
         // ShouldRender does not invoke on the initial render.
         _ = ShouldRender();
         
         TextEditorService.Options_TextEditorWrapperCssStateChanged += OnTextEditorWrapperCssStateChanged;
-	}
-	
-	protected override bool ShouldRender()
-	{
-		TextEditorViewModel? viewModel;
+    }
+    
+    protected override bool ShouldRender()
+    {
+        TextEditorViewModel? viewModel;
         TextEditorModel? model;
         
         if (TextEditorService.TextEditorState._viewModelMap.TryGetValue(
@@ -56,24 +56,24 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase, IDisp
         {
             model = null;
         }
-    	
-    	var fileExtensionLocal = model is null
-    		? string.Empty
-    		: model.PersistentState.FileExtension;
-    		
-    	if (_fileExtensionCurrent != fileExtensionLocal)
-    		_fileExtensionCurrent = fileExtensionLocal;
-    		
-		return true;
-	}
-	
-	private async void OnTextEditorWrapperCssStateChanged()
-	{
-	    await InvokeAsync(StateHasChanged);
-	}
-	
-	public void Dispose()
-	{
-	    TextEditorService.Options_TextEditorWrapperCssStateChanged -= OnTextEditorWrapperCssStateChanged;
-	}
+        
+        var fileExtensionLocal = model is null
+            ? string.Empty
+            : model.PersistentState.FileExtension;
+            
+        if (_fileExtensionCurrent != fileExtensionLocal)
+            _fileExtensionCurrent = fileExtensionLocal;
+            
+        return true;
+    }
+    
+    private async void OnTextEditorWrapperCssStateChanged()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+        TextEditorService.Options_TextEditorWrapperCssStateChanged -= OnTextEditorWrapperCssStateChanged;
+    }
 }

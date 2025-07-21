@@ -21,32 +21,32 @@ public struct TextEditorPartition
         int relativePositionIndex,
         RichCharacter richCharacter)
     {
-    	var copy = new List<RichCharacter>(RichCharacterList);
-    	copy.Insert(relativePositionIndex, richCharacter);
-    	return new(copy);
+        var copy = new List<RichCharacter>(RichCharacterList);
+        copy.Insert(relativePositionIndex, richCharacter);
+        return new(copy);
     }
 
     public TextEditorPartition InsertRange(
         int relativePositionIndex,
         IEnumerable<RichCharacter> richCharacterList)
     {
-    	var copy = new List<RichCharacter>(RichCharacterList);
-    	copy.InsertRange(relativePositionIndex, richCharacterList);
-    	return new(copy);
+        var copy = new List<RichCharacter>(RichCharacterList);
+        copy.InsertRange(relativePositionIndex, richCharacterList);
+        return new(copy);
     }
 
     public TextEditorPartition RemoveAt(int relativePositionIndex)
     {
-    	var copy = new List<RichCharacter>(RichCharacterList);
-    	copy.RemoveAt(relativePositionIndex);
-    	return new(copy);
+        var copy = new List<RichCharacter>(RichCharacterList);
+        copy.RemoveAt(relativePositionIndex);
+        return new(copy);
     }
 
     public TextEditorPartition RemoveRange(int relativePositionIndex, int count)
     {
-    	var copy = new List<RichCharacter>(RichCharacterList);
-    	copy.RemoveRange(relativePositionIndex, count);
-    	return new(copy);
+        var copy = new List<RichCharacter>(RichCharacterList);
+        copy.RemoveRange(relativePositionIndex, count);
+        return new(copy);
     }
 
     public TextEditorPartition AddRange(IEnumerable<RichCharacter> richCharacterList)
@@ -65,8 +65,8 @@ public struct TextEditorPartition
         int relativePositionIndex,
         RichCharacter richCharacter)
     {
-	    var copy = new List<RichCharacter>(RichCharacterList);
-    	copy[relativePositionIndex] = richCharacter;
-    	return new(copy);
+        var copy = new List<RichCharacter>(RichCharacterList);
+        copy[relativePositionIndex] = richCharacter;
+        return new(copy);
     }
 }

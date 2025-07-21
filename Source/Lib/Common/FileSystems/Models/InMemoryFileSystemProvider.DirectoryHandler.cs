@@ -85,7 +85,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                         sourceAbsoluteFileString,
                         destinationAbsolutePathString,
                         cancellationToken)
-					.ConfigureAwait(false);
+                    .ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -111,7 +111,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                         sourceAbsolutePathString,
                         destinationAbsolutePathString,
                         cancellationToken)
-					.ConfigureAwait(false);
+                    .ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -145,7 +145,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             return await UnsafeEnumerateFileSystemEntriesAsync(
                     absolutePathString,
                     cancellationToken)
-				.ConfigureAwait(false);
+                .ConfigureAwait(false);
         }
         
         public Task<bool> UnsafeExistsAsync(
@@ -212,14 +212,14 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                             child.AbsolutePath.Value,
                             false,
                             cancellationToken)
-						.ConfigureAwait(false);
+                        .ConfigureAwait(false);
                 }
                 else
                 {
                     await _inMemoryFileSystemProvider._file.UnsafeDeleteAsync(
                             child.AbsolutePath.Value,
                             cancellationToken)
-						.ConfigureAwait(false);
+                        .ConfigureAwait(false);
                 }
             }
 
@@ -287,7 +287,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                             child.Value,
                             innerDestinationPath,
                             cancellationToken)
-						.ConfigureAwait(false);
+                        .ConfigureAwait(false);
                 }
                 else
                 {
@@ -295,7 +295,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                             child.Value,
                             destinationChild,
                             cancellationToken)
-						.ConfigureAwait(false);
+                        .ConfigureAwait(false);
                 }
             }
         }
@@ -395,7 +395,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             var directoryList = await UnsafeGetDirectoriesAsync(
                     absolutePathString,
                     cancellationToken)
-				.ConfigureAwait(false);
+                .ConfigureAwait(false);
 
             var fileList = await UnsafeGetFilesAsync(absolutePathString, cancellationToken).ConfigureAwait(false);
 

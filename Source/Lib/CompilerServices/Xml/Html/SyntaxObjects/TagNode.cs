@@ -9,8 +9,8 @@ public class TagNode : IHtmlSyntaxNode
     public TagNode(
         TagNameNode? openTagNameNode,
         TagNameNode? closeTagNameNode,
-		IReadOnlyList<AttributeNode> attributeNodes,
-		IReadOnlyList<IHtmlSyntax> childHtmlSyntaxes,
+        IReadOnlyList<AttributeNode> attributeNodes,
+        IReadOnlyList<IHtmlSyntax> childHtmlSyntaxes,
         HtmlSyntaxKind htmlSyntaxKind,
         bool hasSpecialHtmlCharacter = false)
     {

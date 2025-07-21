@@ -13,7 +13,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public IDialog Dialog { get; set; } = null!;
 
-	private const int COUNT_OF_CONTROL_BUTTONS = 2;
+    private const int COUNT_OF_CONTROL_BUTTONS = 2;
 
     private ResizableDisplay? _resizableDisplay;
 
@@ -79,9 +79,9 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         CommonService.Dialog_ReduceDisposeAction(Dialog.DynamicViewModelKey);
         
         await CommonService.JsRuntimeCommonApi
-	        .FocusHtmlElementById(Dialog.SetFocusOnCloseElementId
-	        	 ?? IDynamicViewModel.DefaultSetFocusOnCloseElementId)
-	        .ConfigureAwait(false);
+            .FocusHtmlElementById(Dialog.SetFocusOnCloseElementId
+                 ?? IDynamicViewModel.DefaultSetFocusOnCloseElementId)
+            .ConfigureAwait(false);
     }
 
     private string GetCssClassForDialogStateIsActiveSelection(bool isActive)
@@ -97,9 +97,9 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         return Task.CompletedTask;
     }
     
-	private Task HandleOnFocusOut()
+    private Task HandleOnFocusOut()
     {
-    	return Task.CompletedTask;
+        return Task.CompletedTask;
     }
 
     private void HandleOnMouseDown()

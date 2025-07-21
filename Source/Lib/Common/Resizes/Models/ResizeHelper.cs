@@ -14,18 +14,18 @@ public class ResizeHelper
 
         // Height
         {
-        	elementDimensions.HeightDimensionAttribute.Decrement(
-        		deltaY,
-        		DimensionUnitKind.Pixels,
-        		new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
+            elementDimensions.HeightDimensionAttribute.Decrement(
+                deltaY,
+                DimensionUnitKind.Pixels,
+                new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
         }
 
         // Top
         {
             elementDimensions.TopDimensionAttribute.Increment(
-        		deltaY,
-        		DimensionUnitKind.Pixels,
-        		new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
+                deltaY,
+                DimensionUnitKind.Pixels,
+                new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
         }
     }
 
@@ -39,9 +39,9 @@ public class ResizeHelper
         // Width
         {
             elementDimensions.WidthDimensionAttribute.Increment(
-        		deltaX,
-        		DimensionUnitKind.Pixels,
-        		new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
+                deltaX,
+                DimensionUnitKind.Pixels,
+                new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
         }
     }
 
@@ -55,9 +55,9 @@ public class ResizeHelper
         // Height
         {
             elementDimensions.HeightDimensionAttribute.Increment(
-        		deltaY,
-        		DimensionUnitKind.Pixels,
-        		new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
+                deltaY,
+                DimensionUnitKind.Pixels,
+                new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
         }
     }
 
@@ -71,17 +71,17 @@ public class ResizeHelper
         // Width
         {
             elementDimensions.WidthDimensionAttribute.Decrement(
-        		deltaX,
-        		DimensionUnitKind.Pixels,
-        		new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
+                deltaX,
+                DimensionUnitKind.Pixels,
+                new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
         }
 
         // Left
         {
             elementDimensions.LeftDimensionAttribute.Increment(
-        		deltaX,
-        		DimensionUnitKind.Pixels,
-        		new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
+                deltaX,
+                DimensionUnitKind.Pixels,
+                new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
         }
     }
 
@@ -132,17 +132,17 @@ public class ResizeHelper
         // Top
         {
             elementDimensions.TopDimensionAttribute.Increment(
-        		deltaY,
-        		DimensionUnitKind.Pixels,
-        		new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
+                deltaY,
+                DimensionUnitKind.Pixels,
+                new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
         }
 
         // Left
         {
             elementDimensions.LeftDimensionAttribute.Increment(
-        		deltaX,
-        		DimensionUnitKind.Pixels,
-        		new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
+                deltaX,
+                DimensionUnitKind.Pixels,
+                new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
         }
     }
 }

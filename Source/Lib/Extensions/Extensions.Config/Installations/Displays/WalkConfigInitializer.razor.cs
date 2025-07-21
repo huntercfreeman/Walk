@@ -34,22 +34,22 @@ public partial class WalkConfigInitializer : ComponentBase
 {
     [Inject]
     private DotNetService DotNetService { get; set; } = null!;
-	
+    
     private static Key<IDynamicViewModel> _notificationRecordKey = Key<IDynamicViewModel>.NewKey();
 
-	protected override void OnInitialized()
-	{
-	    HandleCompilerServicesAndDecorationMappers();
-	
+    protected override void OnInitialized()
+    {
+        HandleCompilerServicesAndDecorationMappers();
+    
         DotNetService.TextEditorService.CommonService.Continuous_EnqueueGroup(new BackgroundTask(
-        	Key<IBackgroundTaskGroup>.Empty,
-        	Do_InitializeFooterBadges));
-	
-	    DotNetService.Enqueue(new DotNetWorkArgs
-		{
-			WorkKind = DotNetWorkKind.WalkExtensionsDotNetInitializerOnInit,
-		});
-	}
+            Key<IBackgroundTaskGroup>.Empty,
+            Do_InitializeFooterBadges));
+    
+        DotNetService.Enqueue(new DotNetWorkArgs
+        {
+            WorkKind = DotNetWorkKind.WalkExtensionsDotNetInitializerOnInit,
+        });
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -57,15 +57,15 @@ public partial class WalkConfigInitializer : ComponentBase
         {
             DotNetService.Enqueue(new DotNetWorkArgs
             {
-            	WorkKind = DotNetWorkKind.WalkExtensionsDotNetInitializerOnAfterRender
+                WorkKind = DotNetWorkKind.WalkExtensionsDotNetInitializerOnAfterRender
             });
         
-        	var dotNetAppData = await DotNetService.AppDataService
-        		.ReadAppDataAsync<DotNetAppData>(
-        			DotNetAppData.AssemblyName, DotNetAppData.TypeName, uniqueIdentifier: null, forceRefreshCache: false)
-        		.ConfigureAwait(false);
-        		
-        	await SetSolution(dotNetAppData).ConfigureAwait(false);
+            var dotNetAppData = await DotNetService.AppDataService
+                .ReadAppDataAsync<DotNetAppData>(
+                    DotNetAppData.AssemblyName, DotNetAppData.TypeName, uniqueIdentifier: null, forceRefreshCache: false)
+                .ConfigureAwait(false);
+                
+            await SetSolution(dotNetAppData).ConfigureAwait(false);
         }
     }
     
@@ -82,20 +82,20 @@ public partial class WalkConfigInitializer : ComponentBase
     
     private async Task SetSolution(DotNetAppData dotNetAppData)
     {
-    	var solutionMostRecent = dotNetAppData?.SolutionMostRecent;
+        var solutionMostRecent = dotNetAppData?.SolutionMostRecent;
     
-    	if (solutionMostRecent is null)
-    		return;
+        if (solutionMostRecent is null)
+            return;
     
-    	var slnAbsolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
+        var slnAbsolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
             solutionMostRecent,
             false);
 
         DotNetService.Enqueue(new DotNetWorkArgs
         {
-        	WorkKind = DotNetWorkKind.SetDotNetSolution,
-        	DotNetSolutionAbsolutePath = slnAbsolutePath,
-    	});
+            WorkKind = DotNetWorkKind.SetDotNetSolution,
+            DotNetSolutionAbsolutePath = slnAbsolutePath,
+        });
 
         var parentDirectory = slnAbsolutePath.ParentDirectory;
         if (parentDirectory is not null)
@@ -147,7 +147,7 @@ public partial class WalkConfigInitializer : ComponentBase
                 DotNetService.TextEditorService.CommonService);
         }
 
-		/*
+        /*
         if (!string.IsNullOrWhiteSpace(projectPersonalPath) &&
             await FileSystemProvider.File.ExistsAsync(projectPersonalPath).ConfigureAwait(false))
         {
@@ -155,13 +155,13 @@ public partial class WalkConfigInitializer : ComponentBase
                 projectPersonalPath,
                 false);
 
-			var startupControl = StartupControlStateWrap.Value.StartupControlList.FirstOrDefault(
-				x => x.StartupProjectAbsolutePath.Value == projectAbsolutePath.Value);
-				
-			if (startupControl is null)
-				return;
-			
-			Dispatcher.Dispatch(new StartupControlState.SetActiveStartupControlKeyAction(startupControl.Key));	
+            var startupControl = StartupControlStateWrap.Value.StartupControlList.FirstOrDefault(
+                x => x.StartupProjectAbsolutePath.Value == projectAbsolutePath.Value);
+                
+            if (startupControl is null)
+                return;
+            
+            Dispatcher.Dispatch(new StartupControlState.SetActiveStartupControlKeyAction(startupControl.Key));    
         }
         */
     }

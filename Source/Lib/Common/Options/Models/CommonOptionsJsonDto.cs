@@ -17,12 +17,12 @@ public record CommonOptionsJsonDto(
 {
     public CommonOptionsJsonDto()
         : this(
-        	FontSizeInPixels: null,
-        	IconSizeInPixels: null,
-        	ResizeHandleWidthInPixels: null,
-        	ResizeHandleHeightInPixels: null,
-        	ThemeKey: null,
-        	FontFamily: null)
+            FontSizeInPixels: null,
+            IconSizeInPixels: null,
+            ResizeHandleWidthInPixels: null,
+            ResizeHandleHeightInPixels: null,
+            ThemeKey: null,
+            FontFamily: null)
     {
     }
 

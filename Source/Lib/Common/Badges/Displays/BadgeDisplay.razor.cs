@@ -13,32 +13,32 @@ public partial class BadgeDisplay : ComponentBase, IDisposable
     [Inject]
     private CommonService CommonService { get; set; } = null!;
 
-	[Parameter, EditorRequired]
-	public IBadgeModel BadgeModel { get; set; } = null!;
-	
-	private int _seenCount;
-	private string _countCssValue;
-	
-	protected override void OnInitialized()
-	{
-	    BadgeModel.AddSubscription(() => InvokeAsync(StateHasChanged));
-	}
-	
-	private string GetCountCssValue()
-	{
-	    var localCount = BadgeModel.Count;
-	    
-	    if (_seenCount != localCount)
-	    {
-	        _seenCount = localCount;
-	        _countCssValue = localCount.ToString();
-	    }
-	    
-	    return _countCssValue;
-	}
-	
-	public void Dispose()
-	{
-	    BadgeModel.DisposeSubscription();
-	}
+    [Parameter, EditorRequired]
+    public IBadgeModel BadgeModel { get; set; } = null!;
+    
+    private int _seenCount;
+    private string _countCssValue;
+    
+    protected override void OnInitialized()
+    {
+        BadgeModel.AddSubscription(() => InvokeAsync(StateHasChanged));
+    }
+    
+    private string GetCountCssValue()
+    {
+        var localCount = BadgeModel.Count;
+        
+        if (_seenCount != localCount)
+        {
+            _seenCount = localCount;
+            _countCssValue = localCount.ToString();
+        }
+        
+        return _countCssValue;
+    }
+    
+    public void Dispose()
+    {
+        BadgeModel.DisposeSubscription();
+    }
 }

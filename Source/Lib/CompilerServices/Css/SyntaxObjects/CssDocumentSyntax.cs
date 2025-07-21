@@ -7,7 +7,7 @@ public class CssDocumentSyntax : ICssSyntax
 {
     public CssDocumentSyntax(
         TextEditorTextSpan textEditorTextSpan,
-		IReadOnlyList<ICssSyntax> childCssSyntaxes)
+        IReadOnlyList<ICssSyntax> childCssSyntaxes)
     {
         ChildCssSyntaxes = childCssSyntaxes;
         TextEditorTextSpan = textEditorTextSpan;

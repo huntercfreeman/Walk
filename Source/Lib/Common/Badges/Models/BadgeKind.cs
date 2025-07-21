@@ -6,6 +6,6 @@ namespace Walk.Common.RazorLib.Badges.Models;
 /// </summary>
 public enum BadgeKind
 {
-	DirtyResourceUri,
-	Notification,
+    DirtyResourceUri,
+    Notification,
 }

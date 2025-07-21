@@ -2,8 +2,8 @@ namespace Walk.Common.RazorLib.BackgroundTasks.Models;
 
 public enum CommonWorkKind
 {
-	None,
-	WalkCommonInitializerWork,
+    None,
+    WalkCommonInitializerWork,
     WriteToLocalStorage,
     Tab_ManuallyPropagateOnContextMenu,
     TreeView_HandleTreeViewOnContextMenu,

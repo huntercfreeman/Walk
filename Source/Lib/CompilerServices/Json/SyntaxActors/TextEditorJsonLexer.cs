@@ -9,31 +9,31 @@ namespace Walk.CompilerServices.Json.SyntaxActors;
 
 public class TextEditorJsonLexer
 {
-	public static LexerKeywords LexerKeyWords = LexerKeywords.Empty;
-	
-	private readonly TextEditorService _textEditorService;
+    public static LexerKeywords LexerKeyWords = LexerKeywords.Empty;
+    
+    private readonly TextEditorService _textEditorService;
 
     public TextEditorJsonLexer(
-    	TextEditorService textEditorService,
-    	ResourceUri resourceUri,
-    	string sourceText)
+        TextEditorService textEditorService,
+        ResourceUri resourceUri,
+        string sourceText)
     {
-    	_textEditorService = textEditorService;
-    	
-    	ResourceUri = resourceUri;
-    	SourceText = sourceText;
+        _textEditorService = textEditorService;
+        
+        ResourceUri = resourceUri;
+        SourceText = sourceText;
     }
 
     public Key<RenderState> ModelRenderStateKey { get; private set; } = Key<RenderState>.Empty;
 
-	public ResourceUri ResourceUri { get; }
-	public string SourceText { get; }
-	public List<SyntaxToken> SyntaxTokenList { get; } = new();
+    public ResourceUri ResourceUri { get; }
+    public string SourceText { get; }
+    public List<SyntaxToken> SyntaxTokenList { get; } = new();
 
     public void Lex()
     {
         var jsonSyntaxUnit = JsonSyntaxTree.ParseText(
-        	_textEditorService.__StringWalker,
+            _textEditorService.__StringWalker,
             ResourceUri,
             SourceText);
         

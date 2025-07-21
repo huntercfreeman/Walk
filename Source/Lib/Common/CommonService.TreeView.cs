@@ -15,7 +15,7 @@ public partial class CommonService
     public TreeViewState GetTreeViewState() => _treeViewState;
     
     public TreeViewContainer GetTreeViewContainer(Key<TreeViewContainer> containerKey) =>
-    	_treeViewState.ContainerList.FirstOrDefault(x => x.Key == containerKey);
+        _treeViewState.ContainerList.FirstOrDefault(x => x.Key == containerKey);
 
     public bool TryGetTreeViewContainer(Key<TreeViewContainer> containerKey, out TreeViewContainer? container)
     {
@@ -26,21 +26,21 @@ public partial class CommonService
     }
 
     public void TreeView_MoveRight(
-		Key<TreeViewContainer> containerKey,
-		bool addSelectedNodes,
-		bool selectNodesBetweenCurrentAndNextActiveNode)
+        Key<TreeViewContainer> containerKey,
+        bool addSelectedNodes,
+        bool selectNodesBetweenCurrentAndNextActiveNode)
     {
         TreeView_MoveRightAction(
             containerKey,
-			addSelectedNodes,
-			selectNodesBetweenCurrentAndNextActiveNode,
+            addSelectedNodes,
+            selectNodesBetweenCurrentAndNextActiveNode,
             treeViewNoType =>
             {
                 Enqueue(new CommonWorkArgs
                 {
-    				WorkKind = CommonWorkKind.TreeViewService_LoadChildList,
-                	ContainerKey = containerKey,
-                	TreeViewNoType = treeViewNoType,
+                    WorkKind = CommonWorkKind.TreeViewService_LoadChildList,
+                    ContainerKey = containerKey,
+                    TreeViewNoType = treeViewNoType,
                 });
             });
     }
@@ -57,10 +57,10 @@ public partial class CommonService
         
         return string.Empty;
     }
-		
+        
     public void TreeView_RegisterContainerAction(TreeViewContainer container)
     {
-    	var inState = GetTreeViewState();
+        var inState = GetTreeViewState();
     
         var inContainer = inState.ContainerList.FirstOrDefault(
             x => x.Key == container.Key);
@@ -81,7 +81,7 @@ public partial class CommonService
 
     public void TreeView_DisposeContainerAction(Key<TreeViewContainer> containerKey)
     {
-    	var inState = GetTreeViewState();
+        var inState = GetTreeViewState();
     
         var indexContainer = inState.ContainerList.FindIndex(
             x => x.Key == containerKey);
@@ -89,7 +89,7 @@ public partial class CommonService
         if (indexContainer == -1)
         {
             TreeViewStateChanged?.Invoke();
-        	return;
+            return;
         }
         
         var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
@@ -102,7 +102,7 @@ public partial class CommonService
 
     public void TreeView_WithRootNodeAction(Key<TreeViewContainer> containerKey, TreeViewNoType node)
     {
-    	var inState = GetTreeViewState();
+        var inState = GetTreeViewState();
     
         var indexContainer = inState.ContainerList.FindIndex(
             x => x.Key == containerKey);
@@ -110,8 +110,8 @@ public partial class CommonService
         if (indexContainer == -1)
         {
             TreeViewStateChanged?.Invoke();
-        	return;
-		}
+            return;
+        }
         
         var inContainer = inState.ContainerList[indexContainer];
         
@@ -131,7 +131,7 @@ public partial class CommonService
 
     public void TreeView_AddChildNodeAction(Key<TreeViewContainer> containerKey, TreeViewNoType parentNode, TreeViewNoType childNode)
     {
-    	var inState = GetTreeViewState();
+        var inState = GetTreeViewState();
     
         var inContainer = inState.ContainerList.FirstOrDefault(
             x => x.Key == containerKey);
@@ -139,7 +139,7 @@ public partial class CommonService
         if (inContainer is null)
         {
             TreeViewStateChanged?.Invoke();
-        	return;
+            return;
         }
 
         var parent = parentNode;
@@ -157,7 +157,7 @@ public partial class CommonService
 
     public void TreeView_ReRenderNodeAction(Key<TreeViewContainer> containerKey, TreeViewNoType node)
     {
-    	var inState = GetTreeViewState();
+        var inState = GetTreeViewState();
     
         var indexContainer = inState.ContainerList.FindIndex(
             x => x.Key == containerKey);
@@ -165,7 +165,7 @@ public partial class CommonService
         if (indexContainer == -1)
         {
             TreeViewStateChanged?.Invoke();
-        	return;
+            return;
         }
 
         var inContainer = inState.ContainerList[indexContainer];
@@ -181,12 +181,12 @@ public partial class CommonService
     }
 
     public void TreeView_SetActiveNodeAction(
-    	Key<TreeViewContainer> containerKey,
-		TreeViewNoType? nextActiveNode,
-		bool addSelectedNodes,
-		bool selectNodesBetweenCurrentAndNextActiveNode)
+        Key<TreeViewContainer> containerKey,
+        TreeViewNoType? nextActiveNode,
+        bool addSelectedNodes,
+        bool selectNodesBetweenCurrentAndNextActiveNode)
     {
-    	var inState = GetTreeViewState();
+        var inState = GetTreeViewState();
     
         var indexContainer = inState.ContainerList.FindIndex(
             x => x.Key == containerKey);
@@ -194,16 +194,16 @@ public partial class CommonService
         if (indexContainer == -1)
         {
             TreeViewStateChanged?.Invoke();
-       	 return;
+            return;
         }
 
-		var inContainer = inState.ContainerList[indexContainer];
-		
-		var outContainer = PerformSetActiveNode(
-			inContainer, containerKey, nextActiveNode, addSelectedNodes, selectNodesBetweenCurrentAndNextActiveNode);
+        var inContainer = inState.ContainerList[indexContainer];
+        
+        var outContainer = PerformSetActiveNode(
+            inContainer, containerKey, nextActiveNode, addSelectedNodes, selectNodesBetweenCurrentAndNextActiveNode);
 
-		var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
-		outContainerList[indexContainer] = outContainer;
+        var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
+        outContainerList[indexContainer] = outContainer;
 
         _treeViewState = inState with { ContainerList = outContainerList };
         TreeViewStateChanged?.Invoke();
@@ -211,10 +211,10 @@ public partial class CommonService
     }
 
     public void TreeView_RemoveSelectedNodeAction(
-    	Key<TreeViewContainer> containerKey,
+        Key<TreeViewContainer> containerKey,
         Key<TreeViewNoType> keyOfNodeToRemove)
     {
-    	var inState = GetTreeViewState();
+        var inState = GetTreeViewState();
     
         var indexContainer = inState.ContainerList.FindIndex(
             x => x.Key == containerKey);
@@ -222,16 +222,16 @@ public partial class CommonService
         if (indexContainer == -1)
         {
             TreeViewStateChanged?.Invoke();
-        	return;
+            return;
         }
 
-		var inContainer = inState.ContainerList[indexContainer];
-		
-		var outContainer = PerformRemoveSelectedNode(inContainer, containerKey, keyOfNodeToRemove);
+        var inContainer = inState.ContainerList[indexContainer];
+        
+        var outContainer = PerformRemoveSelectedNode(inContainer, containerKey, keyOfNodeToRemove);
 
-		var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
-			
-		outContainerList[indexContainer] = outContainer;
+        var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
+            
+        outContainerList[indexContainer] = outContainer;
 
         _treeViewState = inState with { ContainerList = outContainerList };
         TreeViewStateChanged?.Invoke();
@@ -239,26 +239,26 @@ public partial class CommonService
     }
 
     public void TreeView_MoveLeftAction(
-    	Key<TreeViewContainer> containerKey,
-		bool addSelectedNodes,
-		bool selectNodesBetweenCurrentAndNextActiveNode)
+        Key<TreeViewContainer> containerKey,
+        bool addSelectedNodes,
+        bool selectNodesBetweenCurrentAndNextActiveNode)
     {
-    	var inState = GetTreeViewState();
+        var inState = GetTreeViewState();
     
         var indexContainer = inState.ContainerList.FindIndex(
             x => x.Key == containerKey);
 
-		if (indexContainer == -1)
-		{
-			TreeViewStateChanged?.Invoke();
-        	return;
-		}
-			
-		var inContainer = inState.ContainerList[indexContainer];
+        if (indexContainer == -1)
+        {
+            TreeViewStateChanged?.Invoke();
+            return;
+        }
+            
+        var inContainer = inState.ContainerList[indexContainer];
         if (inContainer?.ActiveNode is null)
         {
             TreeViewStateChanged?.Invoke();
-        	return;
+            return;
         }
 
         var outContainer = PerformMoveLeft(inContainer, containerKey, addSelectedNodes, selectNodesBetweenCurrentAndNextActiveNode);
@@ -272,26 +272,26 @@ public partial class CommonService
     }
 
     public void TreeView_MoveDownAction(
-    	Key<TreeViewContainer> containerKey,
-		bool addSelectedNodes,
-		bool selectNodesBetweenCurrentAndNextActiveNode)
+        Key<TreeViewContainer> containerKey,
+        bool addSelectedNodes,
+        bool selectNodesBetweenCurrentAndNextActiveNode)
     {
-    	var inState = GetTreeViewState();
+        var inState = GetTreeViewState();
     
         var indexContainer = inState.ContainerList.FindIndex(
             x => x.Key == containerKey);
 
         if (indexContainer == -1)
         {
-        	TreeViewStateChanged?.Invoke();
-        	return;
+            TreeViewStateChanged?.Invoke();
+            return;
         }
         
         var inContainer = inState.ContainerList[indexContainer];
         if (inContainer?.ActiveNode is null)
         {
             TreeViewStateChanged?.Invoke();
-        	return;
+            return;
         }
 
         var outContainer = PerformMoveDown(inContainer, containerKey, addSelectedNodes, selectNodesBetweenCurrentAndNextActiveNode);
@@ -305,19 +305,19 @@ public partial class CommonService
     }
 
     public void TreeView_MoveUpAction(
-    	Key<TreeViewContainer> containerKey,
-		bool addSelectedNodes,
-		bool selectNodesBetweenCurrentAndNextActiveNode)
+        Key<TreeViewContainer> containerKey,
+        bool addSelectedNodes,
+        bool selectNodesBetweenCurrentAndNextActiveNode)
     {
-    	var inState = GetTreeViewState();
+        var inState = GetTreeViewState();
     
         var indexContainer = inState.ContainerList.FindIndex(
             x => x.Key == containerKey);
 
-		if (indexContainer == -1)
-		{
+        if (indexContainer == -1)
+        {
             TreeViewStateChanged?.Invoke();
-        	return;
+            return;
         }
 
         var inContainer = inState.ContainerList[indexContainer];
@@ -334,32 +334,32 @@ public partial class CommonService
 
     public void TreeView_MoveRightAction(
         Key<TreeViewContainer> containerKey,
-		bool addSelectedNodes,
-		bool selectNodesBetweenCurrentAndNextActiveNode,
-		Action<TreeViewNoType> loadChildListAction)
+        bool addSelectedNodes,
+        bool selectNodesBetweenCurrentAndNextActiveNode,
+        Action<TreeViewNoType> loadChildListAction)
     {
-    	var inState = GetTreeViewState();
+        var inState = GetTreeViewState();
     
-    	var indexContainer = inState.ContainerList.FindIndex(
+        var indexContainer = inState.ContainerList.FindIndex(
             x => x.Key == containerKey);
-		
-		if (indexContainer == -1)
-		{
+        
+        if (indexContainer == -1)
+        {
             TreeViewStateChanged?.Invoke();
-        	return;
+            return;
         }
-		
+        
         var inContainer = inState.ContainerList[indexContainer];
             
         if (inContainer?.ActiveNode is null)
         {
             TreeViewStateChanged?.Invoke();
-        	return;
+            return;
         }
 
         var outContainer = PerformMoveRight(inContainer, containerKey, addSelectedNodes, selectNodesBetweenCurrentAndNextActiveNode, loadChildListAction);
 
-		var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
+        var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
         outContainerList[indexContainer] = outContainer;
         
         _treeViewState = inState with { ContainerList = outContainerList };
@@ -368,31 +368,31 @@ public partial class CommonService
     }
 
     public void TreeView_MoveHomeAction(
-		Key<TreeViewContainer> containerKey,
-		bool addSelectedNodes,
-		bool selectNodesBetweenCurrentAndNextActiveNode)
+        Key<TreeViewContainer> containerKey,
+        bool addSelectedNodes,
+        bool selectNodesBetweenCurrentAndNextActiveNode)
     {
-    	var inState = GetTreeViewState();
+        var inState = GetTreeViewState();
     
-    	var indexContainer = inState.ContainerList.FindIndex(
+        var indexContainer = inState.ContainerList.FindIndex(
             x => x.Key == containerKey);
             
-		if (indexContainer == -1)
-		{
+        if (indexContainer == -1)
+        {
             TreeViewStateChanged?.Invoke();
-        	return;
+            return;
         }
             
         var inContainer = inState.ContainerList[indexContainer];
         if (inContainer?.ActiveNode is null)
         {
             TreeViewStateChanged?.Invoke();
-        	return;
+            return;
         }
 
         var outContainer = PerformMoveHome(inContainer, containerKey, addSelectedNodes, selectNodesBetweenCurrentAndNextActiveNode);
 
-		var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
+        var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
         outContainerList[indexContainer] = outContainer;
         
         _treeViewState = inState with { ContainerList = outContainerList };
@@ -401,31 +401,31 @@ public partial class CommonService
     }
 
     public void TreeView_MoveEndAction(
-		Key<TreeViewContainer> containerKey,
-		bool addSelectedNodes,
-		bool selectNodesBetweenCurrentAndNextActiveNode)
+        Key<TreeViewContainer> containerKey,
+        bool addSelectedNodes,
+        bool selectNodesBetweenCurrentAndNextActiveNode)
     {
-    	var inState = GetTreeViewState();
+        var inState = GetTreeViewState();
     
-    	var indexContainer = inState.ContainerList.FindIndex(
+        var indexContainer = inState.ContainerList.FindIndex(
             x => x.Key == containerKey);
-		
-		if (indexContainer == -1)
-		{
+        
+        if (indexContainer == -1)
+        {
             TreeViewStateChanged?.Invoke();
-        	return;
+            return;
         }
         
         var inContainer = inState.ContainerList[indexContainer];
         if (inContainer?.ActiveNode is null)
         {
             TreeViewStateChanged?.Invoke();
-        	return;
+            return;
         }
 
         var outContainer = PerformMoveEnd(inContainer, containerKey, addSelectedNodes, selectNodesBetweenCurrentAndNextActiveNode);
 
-		var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
+        var outContainerList = new List<TreeViewContainer>(inState.ContainerList);
         outContainerList[indexContainer] = outContainer;
         
         _treeViewState = inState with { ContainerList = outContainerList };
@@ -433,7 +433,7 @@ public partial class CommonService
         return;
     }
 
-	private void PerformMarkForRerender(TreeViewNoType node)
+    private void PerformMarkForRerender(TreeViewNoType node)
     {
         var markForRerenderTarget = node;
 
@@ -444,213 +444,213 @@ public partial class CommonService
         }
     }
 
-	private TreeViewContainer PerformReRenderNode(
-		TreeViewContainer inContainer,
-		Key<TreeViewContainer> containerKey,
-		TreeViewNoType node)
-	{
-		PerformMarkForRerender(node);
+    private TreeViewContainer PerformReRenderNode(
+        TreeViewContainer inContainer,
+        Key<TreeViewContainer> containerKey,
+        TreeViewNoType node)
+    {
+        PerformMarkForRerender(node);
         return inContainer with { StateId = Guid.NewGuid() };
-	}
+    }
 
-	private TreeViewContainer PerformSetActiveNode(
-		TreeViewContainer inContainer,
-		Key<TreeViewContainer> containerKey,
-		TreeViewNoType? nextActiveNode,
-		bool addSelectedNodes,
-		bool selectNodesBetweenCurrentAndNextActiveNode)
-	{
-		if (inContainer.ActiveNode is not null)
+    private TreeViewContainer PerformSetActiveNode(
+        TreeViewContainer inContainer,
+        Key<TreeViewContainer> containerKey,
+        TreeViewNoType? nextActiveNode,
+        bool addSelectedNodes,
+        bool selectNodesBetweenCurrentAndNextActiveNode)
+    {
+        if (inContainer.ActiveNode is not null)
             PerformMarkForRerender(inContainer.ActiveNode);
 
         if (nextActiveNode is not null)
             PerformMarkForRerender(nextActiveNode);
 
-		var inSelectedNodeList = inContainer.SelectedNodeList;
-		var selectedNodeListWasCleared = false;
+        var inSelectedNodeList = inContainer.SelectedNodeList;
+        var selectedNodeListWasCleared = false;
 
-		TreeViewContainer outContainer;
+        TreeViewContainer outContainer;
 
-		// TODO: I'm adding multi-select. I'd like to single out the...
-		// ...SelectNodesBetweenCurrentAndNextActiveNode case for now...
-		// ...and DRY the code after. (2024-01-13) 
-		if (selectNodesBetweenCurrentAndNextActiveNode)
-		{
-			outContainer = inContainer;
-			int direction;
+        // TODO: I'm adding multi-select. I'd like to single out the...
+        // ...SelectNodesBetweenCurrentAndNextActiveNode case for now...
+        // ...and DRY the code after. (2024-01-13) 
+        if (selectNodesBetweenCurrentAndNextActiveNode)
+        {
+            outContainer = inContainer;
+            int direction;
 
-			// Step 1: Determine the selection's direction.
-			//
-			// That is to say, on the UI, which node appears
-			// vertically closer to the root node.
-			//
-			// Process: -Discover the closest common ancestor node.
-			//          -Then backtrack one node depth.
-			//          -One now has the two nodes at which
-			//              they differ.
-			//	      -Compare the 'TreeViewNoType.IndexAmongSiblings'
-			//          -Next.IndexAmongSiblings - Current.IndexAmongSiblings
-			//          	if (difference > 0)
-			//              	then: direction is towards end
-			//          	if (difference < 0)
-			//              	then: direction is towards home (AKA root)
-			{
-				var currentTarget = inContainer.ActiveNode;
-				var nextTarget = nextActiveNode;
+            // Step 1: Determine the selection's direction.
+            //
+            // That is to say, on the UI, which node appears
+            // vertically closer to the root node.
+            //
+            // Process: -Discover the closest common ancestor node.
+            //          -Then backtrack one node depth.
+            //          -One now has the two nodes at which
+            //              they differ.
+            //          -Compare the 'TreeViewNoType.IndexAmongSiblings'
+            //          -Next.IndexAmongSiblings - Current.IndexAmongSiblings
+            //              if (difference > 0)
+            //                  then: direction is towards end
+            //              if (difference < 0)
+            //                  then: direction is towards home (AKA root)
+            {
+                var currentTarget = inContainer.ActiveNode;
+                var nextTarget = nextActiveNode;
 
-				while (currentTarget.Parent != nextTarget.Parent)
-				{
-					if (currentTarget.Parent is null || nextTarget.Parent is null)
-						break;
+                while (currentTarget.Parent != nextTarget.Parent)
+                {
+                    if (currentTarget.Parent is null || nextTarget.Parent is null)
+                        break;
 
-					currentTarget = currentTarget.Parent;
-					nextTarget = nextTarget.Parent;
-				}
-				
-				direction = nextTarget.IndexAmongSiblings - currentTarget.IndexAmongSiblings;
-			}
+                    currentTarget = currentTarget.Parent;
+                    nextTarget = nextTarget.Parent;
+                }
+                
+                direction = nextTarget.IndexAmongSiblings - currentTarget.IndexAmongSiblings;
+            }
 
-			if (direction > 0)
-			{
-				// Move down
+            if (direction > 0)
+            {
+                // Move down
 
-				var previousNode = outContainer.ActiveNode;
+                var previousNode = outContainer.ActiveNode;
 
-				while (true)
-				{
-					outContainer = PerformMoveDown(
-						outContainer,
-						containerKey,
-						true,
-						false);
+                while (true)
+                {
+                    outContainer = PerformMoveDown(
+                        outContainer,
+                        containerKey,
+                        true,
+                        false);
 
-					if (previousNode.Key == outContainer.ActiveNode.Key)
-					{
-						// No change occurred, avoid an infinite loop and break
-						break;
-					}
-					else
-					{
-						previousNode = outContainer.ActiveNode;
-					}
+                    if (previousNode.Key == outContainer.ActiveNode.Key)
+                    {
+                        // No change occurred, avoid an infinite loop and break
+                        break;
+                    }
+                    else
+                    {
+                        previousNode = outContainer.ActiveNode;
+                    }
 
-					if (nextActiveNode.Key == outContainer.ActiveNode.Key)
-					{
-						// Target acquired
-						break;
-					}
-				}
-			}
-			else if (direction < 0)
-			{
-				// Move up
+                    if (nextActiveNode.Key == outContainer.ActiveNode.Key)
+                    {
+                        // Target acquired
+                        break;
+                    }
+                }
+            }
+            else if (direction < 0)
+            {
+                // Move up
 
-				var previousNode = outContainer.ActiveNode;
+                var previousNode = outContainer.ActiveNode;
 
-				while (true)
-				{
-					outContainer = PerformMoveUp(
-						outContainer,
-						containerKey,
-						true,
-						false);
+                while (true)
+                {
+                    outContainer = PerformMoveUp(
+                        outContainer,
+                        containerKey,
+                        true,
+                        false);
 
-					if (previousNode.Key == outContainer.ActiveNode.Key)
-					{
-						// No change occurred, avoid an infinite loop and break
-						break;
-					}
-					else
-					{
-						previousNode = outContainer.ActiveNode;
-					}
+                    if (previousNode.Key == outContainer.ActiveNode.Key)
+                    {
+                        // No change occurred, avoid an infinite loop and break
+                        break;
+                    }
+                    else
+                    {
+                        previousNode = outContainer.ActiveNode;
+                    }
 
-					if (nextActiveNode.Key == outContainer.ActiveNode.Key)
-					{
-						// Target acquired
-						break;
-					}
-				}
-			}
-			else
-			{
-				// The next target is the same as the current target.
-				return outContainer;
-			}
-		}
-		else
-		{
-			if (nextActiveNode is null)
-			{
-				selectedNodeListWasCleared = true;
+                    if (nextActiveNode.Key == outContainer.ActiveNode.Key)
+                    {
+                        // Target acquired
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // The next target is the same as the current target.
+                return outContainer;
+            }
+        }
+        else
+        {
+            if (nextActiveNode is null)
+            {
+                selectedNodeListWasCleared = true;
 
-				outContainer = inContainer with
-	            {
-	                SelectedNodeList = Array.Empty<TreeViewNoType>()
-	            };
-			}
-			else if (!addSelectedNodes)
-			{
-				selectedNodeListWasCleared = true;
+                outContainer = inContainer with
+                {
+                    SelectedNodeList = Array.Empty<TreeViewNoType>()
+                };
+            }
+            else if (!addSelectedNodes)
+            {
+                selectedNodeListWasCleared = true;
 
-				outContainer = inContainer with
-	            {
-	                SelectedNodeList = new List<TreeViewNoType>()
-					{
-						nextActiveNode
-					}
-	            };
-			}
-			else
-			{
-				var alreadyExistingIndex = inContainer.SelectedNodeList.FindIndex(
-					x => nextActiveNode.Equals(x));
-				
-				if (alreadyExistingIndex != -1)
-				{
-					var outSelectedNodeList = new List<TreeViewNoType>(inContainer.SelectedNodeList);
-					outSelectedNodeList.RemoveAt(alreadyExistingIndex);
-				
-					inContainer = inContainer with
-		            {
-		                SelectedNodeList = outSelectedNodeList
-		            };
-				}
+                outContainer = inContainer with
+                {
+                    SelectedNodeList = new List<TreeViewNoType>()
+                    {
+                        nextActiveNode
+                    }
+                };
+            }
+            else
+            {
+                var alreadyExistingIndex = inContainer.SelectedNodeList.FindIndex(
+                    x => nextActiveNode.Equals(x));
+                
+                if (alreadyExistingIndex != -1)
+                {
+                    var outSelectedNodeList = new List<TreeViewNoType>(inContainer.SelectedNodeList);
+                    outSelectedNodeList.RemoveAt(alreadyExistingIndex);
+                
+                    inContainer = inContainer with
+                    {
+                        SelectedNodeList = outSelectedNodeList
+                    };
+                }
 
-				// Variable name collision on 'outSelectedNodeLists'.
-				{
-					var outSelectedNodeList = new List<TreeViewNoType>(inContainer.SelectedNodeList);
-					outSelectedNodeList.Insert(0, nextActiveNode);
-					
-					outContainer = inContainer with
-		            {
-		                SelectedNodeList = outSelectedNodeList
-		            };
-		        }
-			}
-		}
-		
-		if (selectedNodeListWasCleared)
-		{
-			foreach (var node in inSelectedNodeList)
-			{
-				PerformMarkForRerender(node);
-			}
-		}
+                // Variable name collision on 'outSelectedNodeLists'.
+                {
+                    var outSelectedNodeList = new List<TreeViewNoType>(inContainer.SelectedNodeList);
+                    outSelectedNodeList.Insert(0, nextActiveNode);
+                    
+                    outContainer = inContainer with
+                    {
+                        SelectedNodeList = outSelectedNodeList
+                    };
+                }
+            }
+        }
+        
+        if (selectedNodeListWasCleared)
+        {
+            foreach (var node in inSelectedNodeList)
+            {
+                PerformMarkForRerender(node);
+            }
+        }
 
         return outContainer;
-	}
+    }
     
     private TreeViewContainer PerformRemoveSelectedNode(
-		TreeViewContainer inContainer,
+        TreeViewContainer inContainer,
         Key<TreeViewContainer> containerKey,
         Key<TreeViewNoType> keyOfNodeToRemove)
     {
         var indexOfNodeToRemove = inContainer.SelectedNodeList.FindIndex(
             x => x.Key == keyOfNodeToRemove);
 
-		var outSelectedNodeList = new List<TreeViewNoType>(inContainer.SelectedNodeList);
-		outSelectedNodeList.RemoveAt(indexOfNodeToRemove);
+        var outSelectedNodeList = new List<TreeViewNoType>(inContainer.SelectedNodeList);
+        outSelectedNodeList.RemoveAt(indexOfNodeToRemove);
 
         return inContainer with
         {
@@ -659,14 +659,14 @@ public partial class CommonService
     }
     
     private TreeViewContainer PerformMoveLeft(
-		TreeViewContainer inContainer,
-		Key<TreeViewContainer> containerKey,
-		bool addSelectedNodes,
-		bool selectNodesBetweenCurrentAndNextActiveNode)
-	{
-		var outContainer = inContainer;
+        TreeViewContainer inContainer,
+        Key<TreeViewContainer> containerKey,
+        bool addSelectedNodes,
+        bool selectNodesBetweenCurrentAndNextActiveNode)
+    {
+        var outContainer = inContainer;
 
-		if (addSelectedNodes)
+        if (addSelectedNodes)
             return outContainer;
 
         if (outContainer.ActiveNode is null)
@@ -686,19 +686,19 @@ public partial class CommonService
                 outContainer.Key,
                 outContainer.ActiveNode.Parent,
                 false,
-				false);
+                false);
         }
 
-		return outContainer;
-	}
+        return outContainer;
+    }
 
-	private TreeViewContainer PerformMoveDown(
-		TreeViewContainer inContainer,
-		Key<TreeViewContainer> containerKey,
-		bool addSelectedNodes,
-		bool selectNodesBetweenCurrentAndNextActiveNode)
-	{
-		var outContainer = inContainer;
+    private TreeViewContainer PerformMoveDown(
+        TreeViewContainer inContainer,
+        Key<TreeViewContainer> containerKey,
+        bool addSelectedNodes,
+        bool selectNodesBetweenCurrentAndNextActiveNode)
+    {
+        var outContainer = inContainer;
 
         if (outContainer.ActiveNode.IsExpanded &&
             outContainer.ActiveNode.ChildList.Any())
@@ -709,8 +709,8 @@ public partial class CommonService
                 outContainer,
                 outContainer.Key,
                 nextActiveNode,
-				addSelectedNodes,
-				selectNodesBetweenCurrentAndNextActiveNode);
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
         }
         else
         {
@@ -736,22 +736,22 @@ public partial class CommonService
                 outContainer,
                 outContainer.Key,
                 nextActiveNode,
-				addSelectedNodes,
-				selectNodesBetweenCurrentAndNextActiveNode);
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
         }
 
-		return outContainer;
-	}
+        return outContainer;
+    }
 
-	private TreeViewContainer PerformMoveUp(
-		TreeViewContainer inContainer,
-		Key<TreeViewContainer> containerKey,
-		bool addSelectedNodes,
-		bool selectNodesBetweenCurrentAndNextActiveNode)
-	{
-		var outContainer = inContainer;
+    private TreeViewContainer PerformMoveUp(
+        TreeViewContainer inContainer,
+        Key<TreeViewContainer> containerKey,
+        bool addSelectedNodes,
+        bool selectNodesBetweenCurrentAndNextActiveNode)
+    {
+        var outContainer = inContainer;
 
-		if (outContainer?.ActiveNode?.Parent is null)
+        if (outContainer?.ActiveNode?.Parent is null)
             return outContainer;
 
         if (outContainer.ActiveNode.IndexAmongSiblings == 0)
@@ -760,8 +760,8 @@ public partial class CommonService
                 outContainer,
                 outContainer.Key,
                 outContainer.ActiveNode!.Parent,
-				addSelectedNodes,
-				selectNodesBetweenCurrentAndNextActiveNode);
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
         }
         else
         {
@@ -785,23 +785,23 @@ public partial class CommonService
                 outContainer,
                 outContainer.Key,
                 target,
-				addSelectedNodes,
-				selectNodesBetweenCurrentAndNextActiveNode);
+                addSelectedNodes,
+                selectNodesBetweenCurrentAndNextActiveNode);
         }
 
-		return outContainer;
-	}
+        return outContainer;
+    }
 
-	private TreeViewContainer PerformMoveRight(
-		TreeViewContainer inContainer,
-		Key<TreeViewContainer> containerKey,
-		bool addSelectedNodes,
-		bool selectNodesBetweenCurrentAndNextActiveNode,
-		Action<TreeViewNoType> loadChildListAction)
-	{
-		var outContainer = inContainer;
+    private TreeViewContainer PerformMoveRight(
+        TreeViewContainer inContainer,
+        Key<TreeViewContainer> containerKey,
+        bool addSelectedNodes,
+        bool selectNodesBetweenCurrentAndNextActiveNode,
+        Action<TreeViewNoType> loadChildListAction)
+    {
+        var outContainer = inContainer;
 
-		if (outContainer is null || outContainer.ActiveNode is null)
+        if (outContainer is null || outContainer.ActiveNode is null)
             return outContainer;
 
         if (addSelectedNodes)
@@ -818,8 +818,8 @@ public partial class CommonService
                     outContainer,
                     outContainer.Key,
                     outContainer.ActiveNode.ChildList[0],
-					addSelectedNodes,
-					selectNodesBetweenCurrentAndNextActiveNode);
+                    addSelectedNodes,
+                    selectNodesBetweenCurrentAndNextActiveNode);
             }
         }
         else if (outContainer.ActiveNode.IsExpandable)
@@ -829,16 +829,16 @@ public partial class CommonService
             loadChildListAction.Invoke(outContainer.ActiveNode);
         }
 
-		return outContainer;
-	}
+        return outContainer;
+    }
 
-	private TreeViewContainer PerformMoveHome(
-		TreeViewContainer inContainer,
-		Key<TreeViewContainer> containerKey,
-		bool addSelectedNodes,
-		bool selectNodesBetweenCurrentAndNextActiveNode)
-	{
-		var outContainer = inContainer;
+    private TreeViewContainer PerformMoveHome(
+        TreeViewContainer inContainer,
+        Key<TreeViewContainer> containerKey,
+        bool addSelectedNodes,
+        bool selectNodesBetweenCurrentAndNextActiveNode)
+    {
+        var outContainer = inContainer;
 
         TreeViewNoType target;
 
@@ -858,17 +858,17 @@ public partial class CommonService
             outContainer,
             outContainer.Key,
             target,
-			addSelectedNodes,
-			selectNodesBetweenCurrentAndNextActiveNode);
-	}
+            addSelectedNodes,
+            selectNodesBetweenCurrentAndNextActiveNode);
+    }
 
-	private TreeViewContainer PerformMoveEnd(
-		TreeViewContainer inContainer,
-		Key<TreeViewContainer> containerKey,
-		bool addSelectedNodes,
-		bool selectNodesBetweenCurrentAndNextActiveNode)
-	{
-		var outContainer = inContainer;
+    private TreeViewContainer PerformMoveEnd(
+        TreeViewContainer inContainer,
+        Key<TreeViewContainer> containerKey,
+        bool addSelectedNodes,
+        bool selectNodesBetweenCurrentAndNextActiveNode)
+    {
+        var outContainer = inContainer;
 
         var target = outContainer.RootNode;
 
@@ -881,17 +881,17 @@ public partial class CommonService
             outContainer,
             outContainer.Key,
             target,
-			addSelectedNodes,
-			selectNodesBetweenCurrentAndNextActiveNode);
-	}
-	
-	private Dictionary<int, string> _intToCssValueCache = new();
-	
-	/// <summary>This method should only be invoked by the "UI thread"</summary>
-	public string TreeView_GetNodeElementStyle(int offsetInPixels)
-	{
-	    if (!_intToCssValueCache.ContainsKey(offsetInPixels))
-	        _intToCssValueCache.Add(offsetInPixels, offsetInPixels.ToCssValue());
+            addSelectedNodes,
+            selectNodesBetweenCurrentAndNextActiveNode);
+    }
+    
+    private Dictionary<int, string> _intToCssValueCache = new();
+    
+    /// <summary>This method should only be invoked by the "UI thread"</summary>
+    public string TreeView_GetNodeElementStyle(int offsetInPixels)
+    {
+        if (!_intToCssValueCache.ContainsKey(offsetInPixels))
+            _intToCssValueCache.Add(offsetInPixels, offsetInPixels.ToCssValue());
         
         UiStringBuilder.Clear();
         UiStringBuilder.Append("padding-left: ");
@@ -899,35 +899,35 @@ public partial class CommonService
         UiStringBuilder.Append("px;");
         
         return UiStringBuilder.ToString();
-	}
-	
-	/// <summary>This method should only be invoked by the "UI thread"</summary>
-	public string TreeView_GetNodeTextStyle(int walkTreeViewIconWidth)
-	{
-	    if (!_intToCssValueCache.ContainsKey(walkTreeViewIconWidth))
-	        _intToCssValueCache.Add(walkTreeViewIconWidth, walkTreeViewIconWidth.ToCssValue());
-	    
-	    UiStringBuilder.Clear();
-	    UiStringBuilder.Append("width: calc(100% - ");
-	    UiStringBuilder.Append(_intToCssValueCache[walkTreeViewIconWidth]);
-	    UiStringBuilder.Append("px); height:  100%;");
-	    
-	    return UiStringBuilder.ToString();
-	}
-	
-	/// <summary>This method should only be invoked by the "UI thread"</summary>
-	public string TreeView_GetNodeBorderStyle(int offsetInPixels, int walkTreeViewIconWidth)
-	{
-	    var result = offsetInPixels + walkTreeViewIconWidth / 2;
-	    
-	    if (!_intToCssValueCache.ContainsKey(result))
-	        _intToCssValueCache.Add(result, result.ToCssValue());
-	
-	    UiStringBuilder.Clear();
-	    UiStringBuilder.Append("margin-left: ");
-	    UiStringBuilder.Append(result);
-	    UiStringBuilder.Append("px;");
-	    
-	    return UiStringBuilder.ToString();
-	}
+    }
+    
+    /// <summary>This method should only be invoked by the "UI thread"</summary>
+    public string TreeView_GetNodeTextStyle(int walkTreeViewIconWidth)
+    {
+        if (!_intToCssValueCache.ContainsKey(walkTreeViewIconWidth))
+            _intToCssValueCache.Add(walkTreeViewIconWidth, walkTreeViewIconWidth.ToCssValue());
+        
+        UiStringBuilder.Clear();
+        UiStringBuilder.Append("width: calc(100% - ");
+        UiStringBuilder.Append(_intToCssValueCache[walkTreeViewIconWidth]);
+        UiStringBuilder.Append("px); height:  100%;");
+        
+        return UiStringBuilder.ToString();
+    }
+    
+    /// <summary>This method should only be invoked by the "UI thread"</summary>
+    public string TreeView_GetNodeBorderStyle(int offsetInPixels, int walkTreeViewIconWidth)
+    {
+        var result = offsetInPixels + walkTreeViewIconWidth / 2;
+        
+        if (!_intToCssValueCache.ContainsKey(result))
+            _intToCssValueCache.Add(result, result.ToCssValue());
+    
+        UiStringBuilder.Clear();
+        UiStringBuilder.Append("margin-left: ");
+        UiStringBuilder.Append(result);
+        UiStringBuilder.Append("px;");
+        
+        return UiStringBuilder.ToString();
+    }
 }

@@ -8,28 +8,28 @@ namespace Walk.CompilerServices.Xml.Html.SyntaxActors;
 
 public class TextEditorXmlLexer
 {
-	public static readonly LexerKeywords LexerKeywords = LexerKeywords.Empty;
-	
-	private readonly TextEditorService _textEditorService;
-	
+    public static readonly LexerKeywords LexerKeywords = LexerKeywords.Empty;
+    
+    private readonly TextEditorService _textEditorService;
+    
     public TextEditorXmlLexer(TextEditorService textEditorService, ResourceUri resourceUri, string sourceText)
     {
-    	_textEditorService = textEditorService;
+        _textEditorService = textEditorService;
     
-    	ResourceUri = resourceUri;
-    	SourceText = sourceText;
+        ResourceUri = resourceUri;
+        SourceText = sourceText;
     }
 
-	public ResourceUri ResourceUri { get; }
-	public string SourceText { get; }
+    public ResourceUri ResourceUri { get; }
+    public string SourceText { get; }
 
-	public List<SyntaxToken> SyntaxTokenList { get; } = new();
+    public List<SyntaxToken> SyntaxTokenList { get; } = new();
 
     public void Lex()
     {
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
-        	_textEditorService,
-        	_textEditorService.__StringWalker,
+            _textEditorService,
+            _textEditorService.__StringWalker,
             ResourceUri,
             SourceText);
 
@@ -58,11 +58,11 @@ public class TextEditorXmlLexer
         SyntaxTokenList.AddRange(
             htmlSyntaxWalker.CommentNodes.Select(x => new SyntaxToken(SyntaxKind.BadToken, x.TextEditorTextSpan)));
             
-		var endOfFileTextSpan = new TextEditorTextSpan(
+        var endOfFileTextSpan = new TextEditorTextSpan(
             SourceText.Length,
-		    SourceText.Length,
-		    (byte)GenericDecorationKind.None);
-		
+            SourceText.Length,
+            (byte)GenericDecorationKind.None);
+        
         SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EndOfFileToken, endOfFileTextSpan));
     }
 }

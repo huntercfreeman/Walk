@@ -11,5 +11,5 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Models;
 public record struct TextEditorDimensions(
     int Width,
     int Height,
-	double BoundingClientRectLeft,
-	double BoundingClientRectTop);
+    double BoundingClientRectLeft,
+    double BoundingClientRectTop);

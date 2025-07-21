@@ -7,19 +7,19 @@ namespace Walk.Extensions.CompilerServices.Displays.Internals;
 
 public partial class FunctionSyntaxDisplay : ComponentBase
 {
-	[Inject]
-	private TextEditorService TextEditorService { get; set; } = null!;
-	
-	[Parameter, EditorRequired]
-	public SyntaxViewModel SyntaxViewModel { get; set; } = default!;
-	
-	private string GetIdentifierText(ISyntaxNode node)
-	{
-	    return SyntaxViewModel.GetIdentifierText(node);
-	}
-	
-	private string GetTextFromTextSpan(TextEditorTextSpan textSpan)
-	{
-	    return SyntaxViewModel.GetTextFromTextSpan(textSpan);
-	}
+    [Inject]
+    private TextEditorService TextEditorService { get; set; } = null!;
+    
+    [Parameter, EditorRequired]
+    public SyntaxViewModel SyntaxViewModel { get; set; } = default!;
+    
+    private string GetIdentifierText(ISyntaxNode node)
+    {
+        return SyntaxViewModel.GetIdentifierText(node);
+    }
+    
+    private string GetTextFromTextSpan(TextEditorTextSpan textSpan)
+    {
+        return SyntaxViewModel.GetTextFromTextSpan(textSpan);
+    }
 }

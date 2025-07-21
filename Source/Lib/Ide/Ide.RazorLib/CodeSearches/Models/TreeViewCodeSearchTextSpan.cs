@@ -6,39 +6,39 @@ namespace Walk.Ide.RazorLib.CodeSearches.Models;
 
 public class TreeViewCodeSearchTextSpan : TreeViewWithType<TextEditorTextSpan>
 {
-	public TreeViewCodeSearchTextSpan(
-			TextEditorTextSpan textSpan,
-			AbsolutePath absolutePath,
-			IEnvironmentProvider environmentProvider,
-			IFileSystemProvider fileSystemProvider,
-			bool isExpandable,
-			bool isExpanded)
-		: base(textSpan, isExpandable, isExpanded)
-	{
-		EnvironmentProvider = environmentProvider;
-		FileSystemProvider = fileSystemProvider;
-		AbsolutePath = absolutePath;
-	}
-	
-	public IEnvironmentProvider EnvironmentProvider { get; }
-	public IFileSystemProvider FileSystemProvider { get; }
-	public AbsolutePath AbsolutePath { get; }
-	
-	public override bool Equals(object? obj)
-	{
-		if (obj is not TreeViewCodeSearchTextSpan otherTreeView)
-			return false;
+    public TreeViewCodeSearchTextSpan(
+            TextEditorTextSpan textSpan,
+            AbsolutePath absolutePath,
+            IEnvironmentProvider environmentProvider,
+            IFileSystemProvider fileSystemProvider,
+            bool isExpandable,
+            bool isExpanded)
+        : base(textSpan, isExpandable, isExpanded)
+    {
+        EnvironmentProvider = environmentProvider;
+        FileSystemProvider = fileSystemProvider;
+        AbsolutePath = absolutePath;
+    }
+    
+    public IEnvironmentProvider EnvironmentProvider { get; }
+    public IFileSystemProvider FileSystemProvider { get; }
+    public AbsolutePath AbsolutePath { get; }
+    
+    public override bool Equals(object? obj)
+    {
+        if (obj is not TreeViewCodeSearchTextSpan otherTreeView)
+            return false;
 
-		return otherTreeView.GetHashCode() == GetHashCode();
-	}
+        return otherTreeView.GetHashCode() == GetHashCode();
+    }
 
-	public override int GetHashCode() => AbsolutePath.Value.GetHashCode();
-	
-	public override string GetDisplayText() => AbsolutePath.NameWithExtension;
+    public override int GetHashCode() => AbsolutePath.Value.GetHashCode();
+    
+    public override string GetDisplayText() => AbsolutePath.NameWithExtension;
 
     /*public override TreeViewRenderer GetTreeViewRenderer()
-	{
-	
+    {
+    
         using Microsoft.AspNetCore.Components;
         using Walk.Ide.RazorLib.CodeSearches.Models;
         
@@ -46,35 +46,35 @@ public class TreeViewCodeSearchTextSpan : TreeViewWithType<TextEditorTextSpan>
         
         public partial class TreeViewCodeSearchTextSpanDisplay : ComponentBase
         {
-        	[Parameter, EditorRequired]
-        	public TreeViewCodeSearchTextSpan TreeViewCodeSearchTextSpan { get; set; } = null!;
+            [Parameter, EditorRequired]
+            public TreeViewCodeSearchTextSpan TreeViewCodeSearchTextSpan { get; set; } = null!;
         }
-	
-	
-	
-	    <div title="@TreeViewCodeSearchTextSpan.AbsolutePath.Value">
-        	@(TreeViewCodeSearchTextSpan.AbsolutePath.NameWithExtension)
+    
+    
+    
+        <div title="@TreeViewCodeSearchTextSpan.AbsolutePath.Value">
+            @(TreeViewCodeSearchTextSpan.AbsolutePath.NameWithExtension)
         </div>
 
-	
-	
-	
-	
-	
-		return new TreeViewRenderer(
-			typeof(TreeViewCodeSearchTextSpanDisplay),
-			new Dictionary<string, object?>
-			{
-				{
-					nameof(TreeViewCodeSearchTextSpanDisplay.TreeViewCodeSearchTextSpan),
-					this
-				}
-			});
-	}*/
-	
-	public override Task LoadChildListAsync()
-	{
-		return Task.CompletedTask;
-	}
+    
+    
+    
+    
+    
+        return new TreeViewRenderer(
+            typeof(TreeViewCodeSearchTextSpanDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(TreeViewCodeSearchTextSpanDisplay.TreeViewCodeSearchTextSpan),
+                    this
+                }
+            });
+    }*/
+    
+    public override Task LoadChildListAsync()
+    {
+        return Task.CompletedTask;
+    }
 }
 

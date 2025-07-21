@@ -12,4 +12,4 @@ public record PanelGroupDropzone(
         Key<IDropzone> DropzoneKey,
         string? CssClass,
         string? CssStyle)
-	: IDropzone;
+    : IDropzone;

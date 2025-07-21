@@ -5,11 +5,11 @@ namespace Walk.CompilerServices.CSharp.LexerCase;
 
 public ref struct CSharpLexerOutput
 {
-	public CSharpLexerOutput(string sourceText)
+    public CSharpLexerOutput(string sourceText)
     {
-    	SyntaxTokenList = new();
-    	MiscTextSpanList = new();
-    	Text = sourceText.AsSpan();
+        SyntaxTokenList = new();
+        MiscTextSpanList = new();
+        Text = sourceText.AsSpan();
     }
     
     public List<SyntaxToken> SyntaxTokenList { get; }
