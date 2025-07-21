@@ -18,36 +18,36 @@ namespace Walk.CompilerServices.CSharp.CompilerServiceCase;
 /// </summary>
 public sealed class CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerServiceResource
 {
-	public CSharpCompilationUnit(ResourceUri resourceUri, string sourceText, CompilationUnitKind compilationUnitKind)
-	{
-		ResourceUri = resourceUri;
-		SourceText = sourceText;
-		CompilationUnitKind = compilationUnitKind;
-		
-		if (CompilationUnitKind == CompilationUnitKind.IndividualFile_AllData)
-		{
-		    SymbolIdToExternalTextSpanMap = new();
-		    FunctionInvocationParameterMetadataList = new();
-		}
-	}
-	
+    public CSharpCompilationUnit(ResourceUri resourceUri, string sourceText, CompilationUnitKind compilationUnitKind)
+    {
+        ResourceUri = resourceUri;
+        SourceText = sourceText;
+        CompilationUnitKind = compilationUnitKind;
+        
+        if (CompilationUnitKind == CompilationUnitKind.IndividualFile_AllData)
+        {
+            SymbolIdToExternalTextSpanMap = new();
+            FunctionInvocationParameterMetadataList = new();
+        }
+    }
+    
     public IEnumerable<TextEditorTextSpan> GetDiagnosticTextSpans()
     {
-    	return DiagnosticList.Select(x => x.TextSpan);
+        return DiagnosticList.Select(x => x.TextSpan);
     }
     
     ICompilationUnit ICompilerServiceResource.CompilationUnit { get => this; set => _ = value; }
     
     public CompilationUnitKind CompilationUnitKind { get; }
 
-	public ResourceUri ResourceUri { get; set; }
-	public string SourceText { get; set; }
+    public ResourceUri ResourceUri { get; set; }
+    public string SourceText { get; set; }
     
-	public List<TextEditorDiagnostic> __DiagnosticList { get; } = new();
-	public List<Symbol> __SymbolList { get; set; } = new();
-	
-	public List<FunctionInvocationParameterMetadata> FunctionInvocationParameterMetadataList { get; }
-	
+    public List<TextEditorDiagnostic> __DiagnosticList { get; } = new();
+    public List<Symbol> __SymbolList { get; set; } = new();
+    
+    public List<FunctionInvocationParameterMetadata> FunctionInvocationParameterMetadataList { get; }
+    
     public List<ICodeBlockOwner> CodeBlockOwnerList { get; } = new();
     public List<ISyntaxNode> NodeList { get; } = new();
     
@@ -62,8 +62,8 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerS
     ///
     /// Store only the required information (most importantly don't store the source text)
     /// (the source text is on the TextEditorTextSpan so it is stored as a result.).
-	/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	///
+    /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ///
     /// If a symbol references a defintion that exists within a different ResourceUri,
     /// and is not "indexed" information, then this disambiguates the definition.
     ///

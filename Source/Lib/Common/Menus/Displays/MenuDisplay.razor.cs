@@ -11,7 +11,7 @@ public partial class MenuDisplay : ComponentBase
 
     [CascadingParameter(Name="ReturnFocusToParentFuncAsync")]
     public Func<Task>? ReturnFocusToParentFuncAsync { get; set; }
-	[CascadingParameter]
+    [CascadingParameter]
     public DropdownRecord? Dropdown { get; set; }
 
     [Parameter, EditorRequired]
@@ -77,7 +77,7 @@ public partial class MenuDisplay : ComponentBase
         {
             try
             {
-				var localMenuDisplayElementReference = _menuDisplayElementReference;
+                var localMenuDisplayElementReference = _menuDisplayElementReference;
                 if (localMenuDisplayElementReference is not null)
                 {
                     await localMenuDisplayElementReference.Value
@@ -87,9 +87,9 @@ public partial class MenuDisplay : ComponentBase
             }
             catch (Exception)
             {
-				// TODO: Capture specifically the exception that is fired when the JsRuntime...
-				//       ...tries to set focus to an HTML element, but that HTML element
-				//       was not found.
+                // TODO: Capture specifically the exception that is fired when the JsRuntime...
+                //       ...tries to set focus to an HTML element, but that HTML element
+                //       was not found.
             }
 
             await InvokeAsync(StateHasChanged);
@@ -108,8 +108,8 @@ public partial class MenuDisplay : ComponentBase
         {
             case CommonFacts.ARROW_LEFT_KEY:
             case CommonFacts.ARROW_LEFT_ALTKEY:
-            	if (Dropdown is not null)
-	                CommonService.Dropdown_ReduceDisposeAction(Dropdown.Key);
+                if (Dropdown is not null)
+                    CommonService.Dropdown_ReduceDisposeAction(Dropdown.Key);
 
                 if (ReturnFocusToParentFuncAsync is not null)
                     await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);
@@ -135,8 +135,8 @@ public partial class MenuDisplay : ComponentBase
                 _activeMenuOptionRecordIndex = MenuRecord.MenuOptionList.Count - 1;
                 break;
             case CommonFacts.ESCAPE:
-            	if (Dropdown is not null)
-	                CommonService.Dropdown_ReduceDisposeAction(Dropdown.Key);
+                if (Dropdown is not null)
+                    CommonService.Dropdown_ReduceDisposeAction(Dropdown.Key);
 
                 if (ReturnFocusToParentFuncAsync is not null)
                     await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);

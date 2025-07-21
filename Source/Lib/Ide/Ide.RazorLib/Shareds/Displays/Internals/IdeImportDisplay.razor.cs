@@ -171,9 +171,9 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
 
     private void PromptUserOpenSolution(string absolutePathString)
     {
-    	/*
-		//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
-		// =======================================================================
+        /*
+        //// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+        // =======================================================================
         var absolutePath = EnvironmentProvider.AbsolutePathFactory(
             absolutePathString,
             false);
@@ -194,7 +194,7 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
             null);
 
         Dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
-		*/
+        */
     }
 
     public void Dispose()

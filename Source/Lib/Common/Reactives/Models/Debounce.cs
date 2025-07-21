@@ -14,16 +14,16 @@ namespace Walk.Common.RazorLib.Reactives.Models;
 public class Debounce<TArgs>
 {
     private readonly object _lockWorkItemArgs = new();
-	private readonly Func<TArgs, CancellationToken, Task> _workItem;
+    private readonly Func<TArgs, CancellationToken, Task> _workItem;
 
-	/// <summary>
-	/// The workItem is invoked with the cancellationToken that is given to this constructor.
-	/// As well, the cancellationToken is used to stop the debounce checking that is done in a while loop.
-	/// </summary>
+    /// <summary>
+    /// The workItem is invoked with the cancellationToken that is given to this constructor.
+    /// As well, the cancellationToken is used to stop the debounce checking that is done in a while loop.
+    /// </summary>
     public Debounce(
-    	TimeSpan debounceTimeSpan,
-    	CancellationToken cancellationToken,
-    	Func<TArgs, CancellationToken, Task> workItem)
+        TimeSpan debounceTimeSpan,
+        CancellationToken cancellationToken,
+        Func<TArgs, CancellationToken, Task> workItem)
     {
         DebounceTimeSpan = debounceTimeSpan;
         CancellationToken = cancellationToken;
@@ -54,53 +54,53 @@ public class Debounce<TArgs>
     /// </summary>
     private bool _intentToRun;
 
-	public Task _workItemTask = Task.CompletedTask;
+    public Task _workItemTask = Task.CompletedTask;
 
     public TimeSpan DebounceTimeSpan { get; }
     public CancellationToken CancellationToken { get; }
-	
-	public void Run(TArgs args)
+    
+    public void Run(TArgs args)
     {
-		lock (_lockWorkItemArgs)
-		{
-			_args = args;
-			_runDateTime = DateTime.UtcNow;
+        lock (_lockWorkItemArgs)
+        {
+            _args = args;
+            _runDateTime = DateTime.UtcNow;
             if (_intentToRun)
                 return;
                 
             _intentToRun = true;
-		}
-		
+        }
+        
         var previousTask = _workItemTask;
 
         _workItemTask = Task.Run(async () =>
         {
-        	// Await the previous work item task.
+            // Await the previous work item task.
             await previousTask.ConfigureAwait(false);
         
-        	TArgs argsCapture = default;
-        	DateTime runDateTimeCapture;
-        	
-        	while (!CancellationToken.IsCancellationRequested)
-        	{
-        		await Task.Delay(DebounceTimeSpan).ConfigureAwait(false);
-        		
-        		lock (_lockWorkItemArgs)
-        		{
-        			argsCapture = _args;
-					runDateTimeCapture = _runDateTime;
-		            _intentToRun = false;
-        		}
-        		
-        		if (DateTime.UtcNow - runDateTimeCapture > DebounceTimeSpan)
-        			break;
-        	}
-        	
-        	if (CancellationToken.IsCancellationRequested)
-        		return;
+            TArgs argsCapture = default;
+            DateTime runDateTimeCapture;
+            
+            while (!CancellationToken.IsCancellationRequested)
+            {
+                await Task.Delay(DebounceTimeSpan).ConfigureAwait(false);
+                
+                lock (_lockWorkItemArgs)
+                {
+                    argsCapture = _args;
+                    runDateTimeCapture = _runDateTime;
+                    _intentToRun = false;
+                }
+                
+                if (DateTime.UtcNow - runDateTimeCapture > DebounceTimeSpan)
+                    break;
+            }
+            
+            if (CancellationToken.IsCancellationRequested)
+                return;
 
-			await _workItem.Invoke(argsCapture, CancellationToken)
-				.ConfigureAwait(false);
+            await _workItem.Invoke(argsCapture, CancellationToken)
+                .ConfigureAwait(false);
         });
     }
 }

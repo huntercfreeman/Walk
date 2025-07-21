@@ -13,14 +13,14 @@ public static class ParseVariables
         VariableKind variableKind,
         ref CSharpParserModel parserModel)
     {
-    	VariableDeclarationNode variableDeclarationNode;
+        VariableDeclarationNode variableDeclarationNode;
 
-		variableDeclarationNode = new VariableDeclarationNode(
-	        new TypeReference(consumedTypeClauseNode),
-	        consumedIdentifierToken,
-	        variableKind,
-	        false,
-	        parserModel.Compilation.ResourceUri);
+        variableDeclarationNode = new VariableDeclarationNode(
+            new TypeReference(consumedTypeClauseNode),
+            consumedIdentifierToken,
+            variableKind,
+            false,
+            parserModel.Compilation.ResourceUri);
 
         parserModel.BindVariableDeclarationNode(variableDeclarationNode);
         return variableDeclarationNode;

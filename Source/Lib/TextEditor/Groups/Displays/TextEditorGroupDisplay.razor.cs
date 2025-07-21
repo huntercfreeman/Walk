@@ -34,10 +34,10 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     [Parameter]
     public bool UseTextEditorViewModelSlimDisplay { get; set; }
 
-	private TabListDisplay? _tabListDisplay;
+    private TabListDisplay? _tabListDisplay;
 
-	private string? _htmlId = null;
-	private string HtmlId => _htmlId ??= $"di_te_group_{TextEditorGroupKey.Guid}";
+    private string? _htmlId = null;
+    private string HtmlId => _htmlId ??= $"di_te_group_{TextEditorGroupKey.Guid}";
 
     protected override void OnInitialized()
     {
@@ -48,39 +48,39 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     private async void TextEditorGroupWrapOnStateChanged() =>
         await InvokeAsync(StateHasChanged);
 
-	private async void TextEditorViewModelStateWrapOnStateChanged()
-	{
-		var localTabListDisplay = _tabListDisplay;
+    private async void TextEditorViewModelStateWrapOnStateChanged()
+    {
+        var localTabListDisplay = _tabListDisplay;
 
-		if (localTabListDisplay is not null)
+        if (localTabListDisplay is not null)
         {
-			await InvokeAsync(async () => await localTabListDisplay.NotifyStateChangedAsync())
+            await InvokeAsync(async () => await localTabListDisplay.NotifyStateChangedAsync())
                 .ConfigureAwait(false);
         }
-	}
+    }
 
-	private List<ITab> GetTabList(TextEditorGroup textEditorGroup)
-	{
+    private List<ITab> GetTabList(TextEditorGroup textEditorGroup)
+    {
         var textEditorState = TextEditorService.TextEditorState;
-		var tabList = new List<ITab>();
+        var tabList = new List<ITab>();
 
-		foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
-		{
+        foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
+        {
             var viewModel = textEditorState.ViewModelGetOrDefault(viewModelKey);
             
             if (viewModel is not null)
             {
                 viewModel.PersistentState.TabGroup = textEditorGroup;
-				tabList.Add(viewModel.PersistentState);
+                tabList.Add(viewModel.PersistentState);
             }
-		}
+        }
 
-		return tabList;
-	}
+        return tabList;
+    }
 
     public void Dispose()
     {
         TextEditorService.Group_TextEditorGroupStateChanged -= TextEditorGroupWrapOnStateChanged;
-		TextEditorService.TextEditorStateChanged -= TextEditorViewModelStateWrapOnStateChanged;
+        TextEditorService.TextEditorStateChanged -= TextEditorViewModelStateWrapOnStateChanged;
     }
 }

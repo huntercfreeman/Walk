@@ -15,7 +15,7 @@ namespace Walk.CompilerServices.Razor.CompilerServiceCase;
 
 public sealed class RazorCompilerService : ICompilerService
 {
-	private readonly TextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
     private readonly CSharpCompilerService _cSharpCompilerService;
     
     private readonly Dictionary<ResourceUri, RazorResource> _resourceMap = new();
@@ -30,7 +30,7 @@ public sealed class RazorCompilerService : ICompilerService
         TextEditorService textEditorService,
         CSharpCompilerService cSharpCompilerService)
     {
-    	_textEditorService = textEditorService;
+        _textEditorService = textEditorService;
         _cSharpCompilerService = cSharpCompilerService;
     }
     
@@ -44,7 +44,7 @@ public sealed class RazorCompilerService : ICompilerService
 
     public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified)
     {
-    	lock (_resourceMapLock)
+        lock (_resourceMapLock)
         {
             if (_resourceMap.ContainsKey(resourceUri))
                 return;
@@ -52,15 +52,15 @@ public sealed class RazorCompilerService : ICompilerService
             _resourceMap.Add(resourceUri, new RazorResource(resourceUri, this, _textEditorService));
         }
 
-		if (shouldTriggerResourceWasModified)
-	        ResourceWasModified(resourceUri, Array.Empty<TextEditorTextSpan>());
-	        
+        if (shouldTriggerResourceWasModified)
+            ResourceWasModified(resourceUri, Array.Empty<TextEditorTextSpan>());
+            
         ResourceRegistered?.Invoke();
     }
     
     public void DisposeResource(ResourceUri resourceUri)
     {
-    	lock (_resourceMapLock)
+        lock (_resourceMapLock)
         {
             _resourceMap.Remove(resourceUri);
         }
@@ -70,20 +70,20 @@ public sealed class RazorCompilerService : ICompilerService
 
     public void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
     {
-    	_textEditorService.WorkerArbitrary.PostUnique(editContext =>
+        _textEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-			var modelModifier = editContext.GetModelModifier(resourceUri);
+            var modelModifier = editContext.GetModelModifier(resourceUri);
 
-			if (modelModifier is null)
-				return ValueTask.CompletedTask;
+            if (modelModifier is null)
+                return ValueTask.CompletedTask;
 
-			return ParseAsync(editContext, modelModifier, shouldApplySyntaxHighlighting: true);
+            return ParseAsync(editContext, modelModifier, shouldApplySyntaxHighlighting: true);
         });
     }
 
     public ICompilerServiceResource? GetResource(ResourceUri resourceUri)
     {
-    	var model = _textEditorService.Model_GetOrDefault(resourceUri);
+        var model = _textEditorService.Model_GetOrDefault(resourceUri);
 
         if (model is null)
             return null;
@@ -98,47 +98,47 @@ public sealed class RazorCompilerService : ICompilerService
     }
     
     public MenuRecord GetContextMenu(TextEditorVirtualizationResult virtualizationResult, ContextMenu contextMenu)
-	{
-		return contextMenu.GetDefaultMenuRecord();
-	}
+    {
+        return contextMenu.GetDefaultMenuRecord();
+    }
 
-	public MenuRecord GetAutocompleteMenu(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu)
-	{
-		return autocompleteMenu.GetDefaultMenuRecord();
-	}
+    public MenuRecord GetAutocompleteMenu(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu)
+    {
+        return autocompleteMenu.GetDefaultMenuRecord();
+    }
     
     public ValueTask<MenuRecord> GetQuickActionsSlashRefactorMenu(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModelModifier)
     {
-    	return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
+        return ValueTask.FromResult(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
     }
     
     public ValueTask OnInspect(
-		TextEditorEditContext editContext,
-		TextEditorModel modelModifier,
-		TextEditorViewModel viewModelModifier,
-		double clientX,
-		double clientY,
-		bool shiftKey,
+        TextEditorEditContext editContext,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModelModifier,
+        double clientX,
+        double clientY,
+        bool shiftKey,
         bool ctrlKey,
         bool altKey,
-		TextEditorComponentData componentData,
+        TextEditorComponentData componentData,
         ResourceUri resourceUri)
     {
-    	return ValueTask.CompletedTask;
+        return ValueTask.CompletedTask;
     }
     
     public ValueTask ShowCallingSignature(
-		TextEditorEditContext editContext,
-		TextEditorModel modelModifier,
-		TextEditorViewModel viewModelModifier,
-		int positionIndex,
-		TextEditorComponentData componentData,
+        TextEditorEditContext editContext,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModelModifier,
+        int positionIndex,
+        TextEditorComponentData componentData,
         ResourceUri resourceUri)
     {
-    	return ValueTask.CompletedTask;
+        return ValueTask.CompletedTask;
     }
     
     public ValueTask GoToDefinition(
@@ -148,74 +148,74 @@ public sealed class RazorCompilerService : ICompilerService
         Category category,
         int positionIndex)
     {
-    	return ValueTask.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 
-	public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
+    public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
     {
-    	lock (_resourceMapLock)
-		{
-			if (_resourceMap.ContainsKey(modelModifier.PersistentState.ResourceUri))
-			{
-				var resource = _resourceMap[modelModifier.PersistentState.ResourceUri];
-				resource.HtmlSymbols.Clear();
-			}
-		}
+        lock (_resourceMapLock)
+        {
+            if (_resourceMap.ContainsKey(modelModifier.PersistentState.ResourceUri))
+            {
+                var resource = _resourceMap[modelModifier.PersistentState.ResourceUri];
+                resource.HtmlSymbols.Clear();
+            }
+        }
     
-    	var lexer = new RazorLexer(
-    		_textEditorService,
-    		_htmlStringWalker,
-    		modelModifier.PersistentState.ResourceUri,
-    		modelModifier.GetAllText(),
+        var lexer = new RazorLexer(
+            _textEditorService,
+            _htmlStringWalker,
+            modelModifier.PersistentState.ResourceUri,
+            modelModifier.GetAllText(),
             this,
             _cSharpCompilerService,
             _textEditorService.CommonService.EnvironmentProvider);
             
-    	lexer.Lex();
+        lexer.Lex();
     
-    	IEnumerable<TextEditorTextSpan>? textTextSpanList = null;
-    	
-    	lock (_resourceMapLock)
-		{
-			if (_resourceMap.ContainsKey(modelModifier.PersistentState.ResourceUri))
-			{
-				var resource = _resourceMap[modelModifier.PersistentState.ResourceUri];
-				
-	            resource.RazorSyntaxTree = lexer.RazorSyntaxTree;
-				
-				resource.CompilationUnit = new RazorCompilationUnit
-        		{
-        			TokenList = lexer.SyntaxTokenList,
-        			RazorResource = resource,
-        		};
-        		
-        		textTextSpanList = lexer.SyntaxTokenList.Select(x => x.TextSpan)
-			        .Concat(resource.GetSymbols().Select(x => x.TextSpan));
-			}
-		}
-		
-		if (textTextSpanList is not null)
-		{
-    		editContext.TextEditorService.Model_ApplySyntaxHighlighting(
-    			editContext,
-    			modelModifier,
-    			textTextSpanList);
+        IEnumerable<TextEditorTextSpan>? textTextSpanList = null;
+        
+        lock (_resourceMapLock)
+        {
+            if (_resourceMap.ContainsKey(modelModifier.PersistentState.ResourceUri))
+            {
+                var resource = _resourceMap[modelModifier.PersistentState.ResourceUri];
+                
+                resource.RazorSyntaxTree = lexer.RazorSyntaxTree;
+                
+                resource.CompilationUnit = new RazorCompilationUnit
+                {
+                    TokenList = lexer.SyntaxTokenList,
+                    RazorResource = resource,
+                };
+                
+                textTextSpanList = lexer.SyntaxTokenList.Select(x => x.TextSpan)
+                    .Concat(resource.GetSymbols().Select(x => x.TextSpan));
+            }
         }
-		
-		ResourceParsed?.Invoke();
-		
-		return ValueTask.CompletedTask;
+        
+        if (textTextSpanList is not null)
+        {
+            editContext.TextEditorService.Model_ApplySyntaxHighlighting(
+                editContext,
+                modelModifier,
+                textTextSpanList);
+        }
+        
+        ResourceParsed?.Invoke();
+        
+        return ValueTask.CompletedTask;
     }
-	
-	public ValueTask FastParseAsync(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
-	{
-		return ValueTask.CompletedTask;
-	}
-	
-	public void FastParse(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
-	{
-		return;
-	}
+    
+    public ValueTask FastParseAsync(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
+    {
+        return ValueTask.CompletedTask;
+    }
+    
+    public void FastParse(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
+    {
+        return;
+    }
     
     /// <summary>
     /// Looks up the <see cref="IScope"/> that encompasses the provided positionIndex.
@@ -233,15 +233,15 @@ public sealed class RazorCompilerService : ICompilerService
     /// </summary>
     public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource)
     {
-    	return null;
+        return null;
     }
 
-	public ICodeBlockOwner? GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
+    public ICodeBlockOwner? GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex)
     {
-    	return default;
+        return default;
     }
-	
-	/// <summary>
+    
+    /// <summary>
     /// Returns the <see cref="ISyntaxNode"/> that represents the definition in the <see cref="CompilationUnit"/>.
     ///
     /// The option argument 'symbol' can be provided if available. It might provide additional information to the method's implementation
@@ -249,6 +249,6 @@ public sealed class RazorCompilerService : ICompilerService
     /// </summary>
     public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, Symbol? symbol = null)
     {
-    	return null;
+        return null;
     }
 }

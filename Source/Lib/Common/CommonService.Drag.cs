@@ -15,11 +15,11 @@ public partial class CommonService
         bool shouldDisplay,
         MouseEventArgs? mouseEventArgs)
     {
-    	var inState = GetDragState();
+        var inState = GetDragState();
     
         _dragState = inState with
         {
-        	ShouldDisplay = shouldDisplay,
+            ShouldDisplay = shouldDisplay,
             MouseEventArgs = mouseEventArgs,
         };
         
@@ -29,14 +29,14 @@ public partial class CommonService
     
     public void Drag_ShouldDisplayAndMouseEventArgsAndDragSetAction(
         bool shouldDisplay,
-		MouseEventArgs? mouseEventArgs,
-		IDrag? drag)
+        MouseEventArgs? mouseEventArgs,
+        IDrag? drag)
     {
-    	var inState = GetDragState();
-    	
+        var inState = GetDragState();
+        
         _dragState = inState with
         {
-        	ShouldDisplay = shouldDisplay,
+            ShouldDisplay = shouldDisplay,
             MouseEventArgs = mouseEventArgs,
             Drag = drag,
         };

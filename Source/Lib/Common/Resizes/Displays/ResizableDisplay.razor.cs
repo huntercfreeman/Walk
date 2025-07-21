@@ -16,7 +16,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public Func<Task> ReRenderFuncAsync { get; set; } = null!;
 
-	[Parameter]
+    [Parameter]
     public IDrag? Drag { get; set; } = null!;
 
     public const double RESIZE_HANDLE_SQUARE_PIXELS = 10;
@@ -42,13 +42,13 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
     {
         if (!CommonService.GetDragState().ShouldDisplay)
         {
-			var wasTargetOfDragging = _dragEventHandler is not null;
+            var wasTargetOfDragging = _dragEventHandler is not null;
 
             _dragEventHandler = null;
             _previousDragMouseEventArgs = null;
 
-			if (wasTargetOfDragging)
-				CommonService.AppDimension_NotifyIntraAppResize();
+            if (wasTargetOfDragging)
+                CommonService.AppDimension_NotifyIntraAppResize();
         }
         else
         {
@@ -77,7 +77,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
         if (Drag is not null)
             await Drag.OnDragStartAsync().ConfigureAwait(false);
 
-		CommonService.Drag_ShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, Drag);
+        CommonService.Drag_ShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, Drag);
     }
 
     public Task SubscribeToDragEventWithMoveHandle()
@@ -101,9 +101,9 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
 
             // width: calc(60vw - 42px);
             _northResizeHandleDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS,
-            	DimensionUnitKind.Pixels,
-            	DimensionOperatorKind.Subtract));
+                RESIZE_HANDLE_SQUARE_PIXELS,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract));
         }
 
         // Height
@@ -111,8 +111,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _northResizeHandleDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
 
             _northResizeHandleDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS,
-            	DimensionUnitKind.Pixels));
+                RESIZE_HANDLE_SQUARE_PIXELS,
+                DimensionUnitKind.Pixels));
         }
 
         // Left
@@ -120,8 +120,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _northResizeHandleDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
 
             _northResizeHandleDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS / 2,
-            	DimensionUnitKind.Pixels));
+                RESIZE_HANDLE_SQUARE_PIXELS / 2,
+                DimensionUnitKind.Pixels));
         }
 
         // Top
@@ -129,8 +129,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _northResizeHandleDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
 
             _northResizeHandleDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	-1 * RESIZE_HANDLE_SQUARE_PIXELS / 2,
-            	DimensionUnitKind.Pixels));
+                -1 * RESIZE_HANDLE_SQUARE_PIXELS / 2,
+                DimensionUnitKind.Pixels));
         }
 
         return _northResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonService.UiStringBuilder);
@@ -149,8 +149,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _eastResizeHandleDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
 
             _eastResizeHandleDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS,
-            	DimensionUnitKind.Pixels));
+                RESIZE_HANDLE_SQUARE_PIXELS,
+                DimensionUnitKind.Pixels));
         }
 
         // Height
@@ -160,9 +160,9 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _eastResizeHandleDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(parentElementHeight.DimensionUnitList);
 
             _eastResizeHandleDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS,
-            	DimensionUnitKind.Pixels,
-            	DimensionOperatorKind.Subtract));
+                RESIZE_HANDLE_SQUARE_PIXELS,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract));
         }
 
         // Left
@@ -172,9 +172,9 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _eastResizeHandleDimensions.LeftDimensionAttribute.DimensionUnitList.AddRange(parentElementWidth.DimensionUnitList);
 
             _eastResizeHandleDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS / 2,
-            	DimensionUnitKind.Pixels,
-            	DimensionOperatorKind.Subtract));
+                RESIZE_HANDLE_SQUARE_PIXELS / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract));
         }
 
         // Top
@@ -182,8 +182,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _eastResizeHandleDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
 
             _eastResizeHandleDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS / 2,
-            	DimensionUnitKind.Pixels));
+                RESIZE_HANDLE_SQUARE_PIXELS / 2,
+                DimensionUnitKind.Pixels));
         }
 
         return _eastResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonService.UiStringBuilder);
@@ -203,9 +203,9 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _southResizeHandleDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(parentElementWidth.DimensionUnitList);
 
             _southResizeHandleDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS,
-            	DimensionUnitKind.Pixels,
-            	DimensionOperatorKind.Subtract));
+                RESIZE_HANDLE_SQUARE_PIXELS,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract));
         }
 
         // Height
@@ -213,8 +213,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _southResizeHandleDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
 
             _southResizeHandleDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS,
-            	DimensionUnitKind.Pixels));
+                RESIZE_HANDLE_SQUARE_PIXELS,
+                DimensionUnitKind.Pixels));
         }
 
         // Left
@@ -222,8 +222,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _southResizeHandleDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
 
             _southResizeHandleDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS / 2,
-            	DimensionUnitKind.Pixels));
+                RESIZE_HANDLE_SQUARE_PIXELS / 2,
+                DimensionUnitKind.Pixels));
         }
 
         // Top
@@ -233,9 +233,9 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _southResizeHandleDimensions.TopDimensionAttribute.DimensionUnitList.AddRange(parentElementHeight.DimensionUnitList);
 
             _southResizeHandleDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS / 2,
-            	DimensionUnitKind.Pixels,
-            	DimensionOperatorKind.Subtract));
+                RESIZE_HANDLE_SQUARE_PIXELS / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract));
         }
 
         return _southResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonService.UiStringBuilder);
@@ -252,8 +252,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _westResizeHandleDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
 
             _westResizeHandleDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS,
-            	DimensionUnitKind.Pixels));
+                RESIZE_HANDLE_SQUARE_PIXELS,
+                DimensionUnitKind.Pixels));
         }
 
         // Height
@@ -263,9 +263,9 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _westResizeHandleDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(parentElementHeight.DimensionUnitList);
 
             _westResizeHandleDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS,
-            	DimensionUnitKind.Pixels,
-            	DimensionOperatorKind.Subtract));
+                RESIZE_HANDLE_SQUARE_PIXELS,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract));
         }
 
         // Left
@@ -273,8 +273,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _westResizeHandleDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
 
             _westResizeHandleDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	-1 * RESIZE_HANDLE_SQUARE_PIXELS / 2,
-            	DimensionUnitKind.Pixels));
+                -1 * RESIZE_HANDLE_SQUARE_PIXELS / 2,
+                DimensionUnitKind.Pixels));
         }
 
         // Top
@@ -282,8 +282,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _westResizeHandleDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
 
             _westResizeHandleDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS / 2,
-            	DimensionUnitKind.Pixels));
+                RESIZE_HANDLE_SQUARE_PIXELS / 2,
+                DimensionUnitKind.Pixels));
         }
 
         return _westResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonService.UiStringBuilder);
@@ -300,8 +300,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _northEastResizeHandleDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
 
             _northEastResizeHandleDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS,
-            	DimensionUnitKind.Pixels));
+                RESIZE_HANDLE_SQUARE_PIXELS,
+                DimensionUnitKind.Pixels));
         }
 
         // Height
@@ -309,8 +309,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _northEastResizeHandleDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
 
             _northEastResizeHandleDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS,
-            	DimensionUnitKind.Pixels));
+                RESIZE_HANDLE_SQUARE_PIXELS,
+                DimensionUnitKind.Pixels));
         }
 
         // Left
@@ -320,9 +320,9 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _northEastResizeHandleDimensions.LeftDimensionAttribute.DimensionUnitList.AddRange(parentElementWidth.DimensionUnitList);
 
             _northEastResizeHandleDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS / 2,
-            	DimensionUnitKind.Pixels,
-            	DimensionOperatorKind.Subtract));
+                RESIZE_HANDLE_SQUARE_PIXELS / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract));
         }
 
         // Top
@@ -330,8 +330,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _northEastResizeHandleDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
 
             _northEastResizeHandleDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	-1 * RESIZE_HANDLE_SQUARE_PIXELS / 2,
-            	DimensionUnitKind.Pixels));
+                -1 * RESIZE_HANDLE_SQUARE_PIXELS / 2,
+                DimensionUnitKind.Pixels));
         }
 
         return _northEastResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonService.UiStringBuilder);
@@ -349,8 +349,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _southEastResizeHandleDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
 
             _southEastResizeHandleDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS,
-            	DimensionUnitKind.Pixels));
+                RESIZE_HANDLE_SQUARE_PIXELS,
+                DimensionUnitKind.Pixels));
         }
 
         // Height
@@ -358,8 +358,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _southEastResizeHandleDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
 
             _southEastResizeHandleDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS,
-            	DimensionUnitKind.Pixels));
+                RESIZE_HANDLE_SQUARE_PIXELS,
+                DimensionUnitKind.Pixels));
         }
 
         // Left
@@ -369,9 +369,9 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _southEastResizeHandleDimensions.LeftDimensionAttribute.DimensionUnitList.AddRange(parentElementWidth.DimensionUnitList);
 
             _southEastResizeHandleDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS / 2,
-            	DimensionUnitKind.Pixels,
-            	DimensionOperatorKind.Subtract));
+                RESIZE_HANDLE_SQUARE_PIXELS / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract));
         }
 
         // Top
@@ -381,9 +381,9 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _southEastResizeHandleDimensions.TopDimensionAttribute.DimensionUnitList.AddRange(parentElementHeight.DimensionUnitList);
 
             _southEastResizeHandleDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS / 2,
-            	DimensionUnitKind.Pixels,
-            	DimensionOperatorKind.Subtract));
+                RESIZE_HANDLE_SQUARE_PIXELS / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract));
         }
 
         return _southEastResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonService.UiStringBuilder);
@@ -400,8 +400,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _southWestResizeHandleDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
 
             _southWestResizeHandleDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS,
-            	DimensionUnitKind.Pixels));
+                RESIZE_HANDLE_SQUARE_PIXELS,
+                DimensionUnitKind.Pixels));
         }
 
         // Height
@@ -409,8 +409,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _southWestResizeHandleDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
 
             _southWestResizeHandleDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS,
-            	DimensionUnitKind.Pixels));
+                RESIZE_HANDLE_SQUARE_PIXELS,
+                DimensionUnitKind.Pixels));
         }
 
         // Left
@@ -418,8 +418,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _southWestResizeHandleDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
 
             _southWestResizeHandleDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	-1 * RESIZE_HANDLE_SQUARE_PIXELS / 2,
-            	DimensionUnitKind.Pixels));
+                -1 * RESIZE_HANDLE_SQUARE_PIXELS / 2,
+                DimensionUnitKind.Pixels));
         }
 
         // Top
@@ -429,9 +429,9 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _southWestResizeHandleDimensions.TopDimensionAttribute.DimensionUnitList.AddRange(parentElementHeight.DimensionUnitList);
 
             _southWestResizeHandleDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS / 2,
-            	DimensionUnitKind.Pixels,
-            	DimensionOperatorKind.Subtract));
+                RESIZE_HANDLE_SQUARE_PIXELS / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract));
         }
 
         return _southWestResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonService.UiStringBuilder);
@@ -446,8 +446,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _northWestResizeHandleDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
 
             _northWestResizeHandleDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS,
-            	DimensionUnitKind.Pixels));
+                RESIZE_HANDLE_SQUARE_PIXELS,
+                DimensionUnitKind.Pixels));
         }
 
         // Height
@@ -455,8 +455,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _northWestResizeHandleDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
 
             _northWestResizeHandleDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	RESIZE_HANDLE_SQUARE_PIXELS,
-            	DimensionUnitKind.Pixels));
+                RESIZE_HANDLE_SQUARE_PIXELS,
+                DimensionUnitKind.Pixels));
         }
 
         // Left
@@ -464,8 +464,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _northWestResizeHandleDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
 
             _northWestResizeHandleDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	-1 * RESIZE_HANDLE_SQUARE_PIXELS / 2,
-            	DimensionUnitKind.Pixels));
+                -1 * RESIZE_HANDLE_SQUARE_PIXELS / 2,
+                DimensionUnitKind.Pixels));
         }
 
         // Top
@@ -473,8 +473,8 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
             _northWestResizeHandleDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
 
             _northWestResizeHandleDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-            	-1 * RESIZE_HANDLE_SQUARE_PIXELS / 2,
-            	DimensionUnitKind.Pixels));
+                -1 * RESIZE_HANDLE_SQUARE_PIXELS / 2,
+                DimensionUnitKind.Pixels));
         }
 
         return _northWestResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonService.UiStringBuilder);

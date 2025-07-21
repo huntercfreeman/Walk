@@ -8,7 +8,7 @@ namespace Walk.TextEditor.RazorLib.Installations.Models;
 public struct TryRegisterViewModelArgs
 {
     public TryRegisterViewModelArgs(
-    	TextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         Key<TextEditorViewModel> viewModelKey,
         ResourceUri resourceUri,
         Category category,
@@ -25,7 +25,7 @@ public struct TryRegisterViewModelArgs
         IdeBackgroundTaskApi = ideBackgroundTaskApi;
     }
 
-	public TextEditorEditContext EditContext { get; }
+    public TextEditorEditContext EditContext { get; }
 
     /// <summary>
     /// One can use <see cref="Key{T}.NewKey()"/> if they have no preference for the key value.

@@ -66,7 +66,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                         sourceAbsolutePathString,
                         destinationAbsolutePathString,
                         cancellationToken)
-					.ConfigureAwait(false);
+                    .ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -92,7 +92,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                         sourceAbsolutePathString,
                         destinationAbsolutePathString,
                         cancellationToken)
-					.ConfigureAwait(false);
+                    .ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -137,7 +137,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                         absolutePathString,
                         contents,
                         cancellationToken)
-					.ConfigureAwait(false);
+                    .ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -216,13 +216,13 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             var contents = await UnsafeReadAllTextAsync(
                     sourceAbsolutePathString,
                     cancellationToken)
-				.ConfigureAwait(false);
+                .ConfigureAwait(false);
 
             await UnsafeWriteAllTextAsync(
                     destinationAbsolutePathString,
                     contents,
                     cancellationToken)
-				.ConfigureAwait(false);
+                .ConfigureAwait(false);
         }
 
         public async Task UnsafeMoveAsync(
@@ -267,7 +267,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 !f.IsDirectory);
 
             if (existingFile.Data is null)
-            	throw new WalkCommonException($"File with path: '{absolutePathString}' was not found.");
+                throw new WalkCommonException($"File with path: '{absolutePathString}' was not found.");
 
             return Task.FromResult(existingFile.Data);
         }
@@ -279,7 +279,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 !f.IsDirectory);
 
             if (existingFile.Data is null)
-            	throw new WalkCommonException($"File with path: '{absolutePathString}' was not found.");
+                throw new WalkCommonException($"File with path: '{absolutePathString}' was not found.");
 
             return existingFile.Data;
         }

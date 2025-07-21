@@ -28,7 +28,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static async ValueTask CopyAsync(
-	    TextEditorEditContext editContext,
+        TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
@@ -44,7 +44,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
-    	if (!TextEditorSelectionHelper.HasSelectedText(viewModel))
+        if (!TextEditorSelectionHelper.HasSelectedText(viewModel))
         {
             var positionIndex = modelModifier.GetPositionIndex(viewModel);
             var lineInformation = modelModifier.GetLineInformationFromPositionIndex(positionIndex);
@@ -68,7 +68,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
-    	var clipboard = await editContext.TextEditorService.CommonService.ReadClipboard().ConfigureAwait(false);
+        var clipboard = await editContext.TextEditorService.CommonService.ReadClipboard().ConfigureAwait(false);
         modelModifier.Insert(clipboard, viewModel);
     }
 
@@ -78,19 +78,19 @@ public class TextEditorCommandDefaultFunctions
         TextEditorViewModel viewModel,
         CommonService commonService)
     {
-    	if (viewModel.PersistentState.OnSaveRequested is null)
-    	{
-    		NotificationHelper.DispatchError(
-		        nameof(TriggerSave),
-		        $"{nameof(TriggerSave)} was null",
-				commonService,
-		        TimeSpan.FromSeconds(7));
-    	}
-    	else
-    	{
-    		viewModel.PersistentState.OnSaveRequested.Invoke(modelModifier);
-        	modelModifier.SetIsDirtyFalse();
-    	}
+        if (viewModel.PersistentState.OnSaveRequested is null)
+        {
+            NotificationHelper.DispatchError(
+                nameof(TriggerSave),
+                $"{nameof(TriggerSave)} was null",
+                commonService,
+                TimeSpan.FromSeconds(7));
+        }
+        else
+        {
+            viewModel.PersistentState.OnSaveRequested.Invoke(modelModifier);
+            modelModifier.SetIsDirtyFalse();
+        }
     }
 
     public static void SelectAll(
@@ -98,7 +98,7 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
-    	viewModel.SelectionAnchorPositionIndex = 0;
+        viewModel.SelectionAnchorPositionIndex = 0;
         viewModel.SelectionEndingPositionIndex = modelModifier.CharCount;
     }
 
@@ -115,14 +115,14 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
-		modelModifier.RedoEditWithCursor(viewModel);
+        modelModifier.RedoEditWithCursor(viewModel);
     }
 
     public static void TriggerRemeasure(
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel)
     {
-    	editContext.TextEditorService.CommonService.AppDimension_NotifyIntraAppResize();
+        editContext.TextEditorService.CommonService.AppDimension_NotifyIntraAppResize();
     }
 
     public static void ScrollLineDown(
@@ -131,9 +131,9 @@ public class TextEditorCommandDefaultFunctions
         TextEditorViewModel viewModel)
     {
         editContext.TextEditorService.ViewModel_MutateScrollVerticalPosition(
-    		editContext,
-	        viewModel,
-	        viewModel.PersistentState.CharAndLineMeasurements.LineHeight);
+            editContext,
+            viewModel,
+            viewModel.PersistentState.CharAndLineMeasurements.LineHeight);
     }
 
     public static void ScrollLineUp(
@@ -143,8 +143,8 @@ public class TextEditorCommandDefaultFunctions
     {
         editContext.TextEditorService.ViewModel_MutateScrollVerticalPosition(
             editContext,
-	        viewModel,
-	        -1 * viewModel.PersistentState.CharAndLineMeasurements.LineHeight);
+            viewModel,
+            -1 * viewModel.PersistentState.CharAndLineMeasurements.LineHeight);
     }
 
     public static void ScrollPageDown(
@@ -154,8 +154,8 @@ public class TextEditorCommandDefaultFunctions
     {
         editContext.TextEditorService.ViewModel_MutateScrollVerticalPosition(
             editContext,
-	        viewModel,
-	        viewModel.PersistentState.TextEditorDimensions.Height);
+            viewModel,
+            viewModel.PersistentState.TextEditorDimensions.Height);
     }
 
     public static void ScrollPageUp(
@@ -165,8 +165,8 @@ public class TextEditorCommandDefaultFunctions
     {
         editContext.TextEditorService.ViewModel_MutateScrollVerticalPosition(
             editContext,
-	        viewModel,
-	        -1 * viewModel.PersistentState.TextEditorDimensions.Height);
+            viewModel,
+            -1 * viewModel.PersistentState.TextEditorDimensions.Height);
     }
 
     public static void CursorMovePageBottom(
@@ -191,7 +191,7 @@ public class TextEditorCommandDefaultFunctions
     {
         if (viewModel.Virtualization.Count > 0)
         {
-        	var firstEntry = viewModel.Virtualization.EntryList[0];
+            var firstEntry = viewModel.Virtualization.EntryList[0];
             viewModel.LineIndex = firstEntry.LineIndex;
             viewModel.ColumnIndex = 0;
         }
@@ -205,30 +205,30 @@ public class TextEditorCommandDefaultFunctions
         var selectedText = TextEditorSelectionHelper.GetSelectedText(viewModel, modelModifier);
         
         var before_LineIndex = viewModel.LineIndex;
-		var before_ColumnIndex = viewModel.ColumnIndex;
-		var before_PreferredColumnIndex = viewModel.PreferredColumnIndex;
-		var before_SelectionAnchorPositionIndex = viewModel.SelectionAnchorPositionIndex;
-		var before_SelectionEndingPositionIndex = viewModel.SelectionEndingPositionIndex;
-		
-		viewModel.SelectionAnchorPositionIndex = -1;
-		viewModel.SelectionEndingPositionIndex = 0;
+        var before_ColumnIndex = viewModel.ColumnIndex;
+        var before_PreferredColumnIndex = viewModel.PreferredColumnIndex;
+        var before_SelectionAnchorPositionIndex = viewModel.SelectionAnchorPositionIndex;
+        var before_SelectionEndingPositionIndex = viewModel.SelectionEndingPositionIndex;
+        
+        viewModel.SelectionAnchorPositionIndex = -1;
+        viewModel.SelectionEndingPositionIndex = 0;
 
         if (selectedText is null)
         {
             // Select line
             selectedText = modelModifier.GetLineTextRange(viewModel.LineIndex, 1);
-			viewModel.SetColumnIndexAndPreferred(0);
+            viewModel.SetColumnIndexAndPreferred(0);
         }
 
         modelModifier.Insert(
             selectedText,
             viewModel);
     
-    	viewModel.SelectionAnchorPositionIndex = before_SelectionAnchorPositionIndex;
-		viewModel.SelectionEndingPositionIndex = before_SelectionEndingPositionIndex;
-		
-		viewModel.ColumnIndex = before_ColumnIndex;
-		viewModel.PreferredColumnIndex = before_PreferredColumnIndex;
+        viewModel.SelectionAnchorPositionIndex = before_SelectionAnchorPositionIndex;
+        viewModel.SelectionEndingPositionIndex = before_SelectionEndingPositionIndex;
+        
+        viewModel.ColumnIndex = before_ColumnIndex;
+        viewModel.PreferredColumnIndex = before_PreferredColumnIndex;
     }
 
     public static void IndentMore(
@@ -246,72 +246,72 @@ public class TextEditorCommandDefaultFunctions
             selectionBoundsInPositionIndexUnits);
             
         var before_LineIndex = viewModel.LineIndex;
-		var before_ColumnIndex = viewModel.ColumnIndex;
-		var before_PreferredColumnIndex = viewModel.PreferredColumnIndex;
-		var before_SelectionAnchorPositionIndex = viewModel.SelectionAnchorPositionIndex;
-		var before_SelectionEndingPositionIndex = viewModel.SelectionEndingPositionIndex;
-		
-		viewModel.SelectionAnchorPositionIndex = -1;
-		viewModel.SelectionEndingPositionIndex = 0;
+        var before_ColumnIndex = viewModel.ColumnIndex;
+        var before_PreferredColumnIndex = viewModel.PreferredColumnIndex;
+        var before_SelectionAnchorPositionIndex = viewModel.SelectionAnchorPositionIndex;
+        var before_SelectionEndingPositionIndex = viewModel.SelectionEndingPositionIndex;
+        
+        viewModel.SelectionAnchorPositionIndex = -1;
+        viewModel.SelectionEndingPositionIndex = 0;
 
         for (var i = selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex;
              i < selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex;
              i++)
         {
-        	viewModel.LineIndex = i;
-        	viewModel.SetColumnIndexAndPreferred(0);
+            viewModel.LineIndex = i;
+            viewModel.SetColumnIndexAndPreferred(0);
 
             editContext.TextEditorService.InsertTab(editContext, modelModifier,  viewModel);
         }
 
         viewModel.LineIndex = before_LineIndex;
-		viewModel.ColumnIndex = before_ColumnIndex;
-		viewModel.PreferredColumnIndex = before_PreferredColumnIndex;
-		viewModel.SelectionAnchorPositionIndex = before_SelectionAnchorPositionIndex;
-		viewModel.SelectionEndingPositionIndex = before_SelectionEndingPositionIndex;
+        viewModel.ColumnIndex = before_ColumnIndex;
+        viewModel.PreferredColumnIndex = before_PreferredColumnIndex;
+        viewModel.SelectionAnchorPositionIndex = before_SelectionAnchorPositionIndex;
+        viewModel.SelectionEndingPositionIndex = before_SelectionEndingPositionIndex;
         
         int lowerBoundPositionIndexChange;
         if (editContext.TextEditorService.Options_GetOptions().TabKeyBehavior)
         {
-		    lowerBoundPositionIndexChange = 1;
-		    
-		    var upperBoundPositionIndexChange = selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex -
-	            selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex;
-	
-	        if (viewModel.SelectionAnchorPositionIndex < viewModel.SelectionEndingPositionIndex)
-	        {
-	            viewModel.SelectionAnchorPositionIndex += lowerBoundPositionIndexChange;
-	            viewModel.SelectionEndingPositionIndex += upperBoundPositionIndexChange;
-	        }
-	        else
-	        {
-	            viewModel.SelectionAnchorPositionIndex += upperBoundPositionIndexChange;
-	            viewModel.SelectionEndingPositionIndex += lowerBoundPositionIndexChange;
-	        }
-	
-	        viewModel.SetColumnIndexAndPreferred(1 + viewModel.ColumnIndex);
-		}
+            lowerBoundPositionIndexChange = 1;
+            
+            var upperBoundPositionIndexChange = selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex -
+                selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex;
+    
+            if (viewModel.SelectionAnchorPositionIndex < viewModel.SelectionEndingPositionIndex)
+            {
+                viewModel.SelectionAnchorPositionIndex += lowerBoundPositionIndexChange;
+                viewModel.SelectionEndingPositionIndex += upperBoundPositionIndexChange;
+            }
+            else
+            {
+                viewModel.SelectionAnchorPositionIndex += upperBoundPositionIndexChange;
+                viewModel.SelectionEndingPositionIndex += lowerBoundPositionIndexChange;
+            }
+    
+            viewModel.SetColumnIndexAndPreferred(1 + viewModel.ColumnIndex);
+        }
         else
         {
             lowerBoundPositionIndexChange = editContext.TextEditorService.TabKeyBehavior_TabSpaces.Length;
             
             var upperBoundPositionIndexChange = selectionBoundsInLineIndexUnits.Line_UpperExclusiveIndex -
-	            selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex;
-	            
-	        upperBoundPositionIndexChange *= editContext.TextEditorService.TabKeyBehavior_TabSpaces.Length;
-	
-	        if (viewModel.SelectionAnchorPositionIndex < viewModel.SelectionEndingPositionIndex)
-	        {
-	            viewModel.SelectionAnchorPositionIndex += lowerBoundPositionIndexChange;
-	            viewModel.SelectionEndingPositionIndex += upperBoundPositionIndexChange;
-	        }
-	        else
-	        {
-	            viewModel.SelectionAnchorPositionIndex += upperBoundPositionIndexChange;
-	            viewModel.SelectionEndingPositionIndex += lowerBoundPositionIndexChange;
-	        }
-	
-	        viewModel.SetColumnIndexAndPreferred(editContext.TextEditorService.TabKeyBehavior_TabSpaces.Length + viewModel.ColumnIndex);
+                selectionBoundsInLineIndexUnits.Line_LowerInclusiveIndex;
+                
+            upperBoundPositionIndexChange *= editContext.TextEditorService.TabKeyBehavior_TabSpaces.Length;
+    
+            if (viewModel.SelectionAnchorPositionIndex < viewModel.SelectionEndingPositionIndex)
+            {
+                viewModel.SelectionAnchorPositionIndex += lowerBoundPositionIndexChange;
+                viewModel.SelectionEndingPositionIndex += upperBoundPositionIndexChange;
+            }
+            else
+            {
+                viewModel.SelectionAnchorPositionIndex += upperBoundPositionIndexChange;
+                viewModel.SelectionEndingPositionIndex += lowerBoundPositionIndexChange;
+            }
+    
+            viewModel.SetColumnIndexAndPreferred(editContext.TextEditorService.TabKeyBehavior_TabSpaces.Length + viewModel.ColumnIndex);
         }
     }
 
@@ -320,29 +320,29 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
-    	(int Line_LowerIndexInclusive, int Line_UpperIndexExclusive) selectionBoundsInLineIndexUnits;
+        (int Line_LowerIndexInclusive, int Line_UpperIndexExclusive) selectionBoundsInLineIndexUnits;
     
-    	if (viewModel.SelectionAnchorPositionIndex == -1)
-    	{
-    		selectionBoundsInLineIndexUnits = (viewModel.LineIndex, viewModel.LineIndex + 1);
-    	}
-    	else
-    	{
-	        var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(viewModel);
-	
-	        selectionBoundsInLineIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToLineIndexUnits(
-	            modelModifier,
-	            selectionBoundsInPositionIndexUnits);
+        if (viewModel.SelectionAnchorPositionIndex == -1)
+        {
+            selectionBoundsInLineIndexUnits = (viewModel.LineIndex, viewModel.LineIndex + 1);
+        }
+        else
+        {
+            var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(viewModel);
+    
+            selectionBoundsInLineIndexUnits = TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToLineIndexUnits(
+                modelModifier,
+                selectionBoundsInPositionIndexUnits);
         }
         
         var before_LineIndex = viewModel.LineIndex;
-		var before_ColumnIndex = viewModel.ColumnIndex;
-		var before_PreferredColumnIndex = viewModel.PreferredColumnIndex;
-		var before_SelectionAnchorPositionIndex = viewModel.SelectionAnchorPositionIndex;
-		var before_SelectionEndingPositionIndex = viewModel.SelectionEndingPositionIndex;
-		
-		viewModel.SelectionAnchorPositionIndex = -1;
-		viewModel.SelectionEndingPositionIndex = 0;
+        var before_ColumnIndex = viewModel.ColumnIndex;
+        var before_PreferredColumnIndex = viewModel.PreferredColumnIndex;
+        var before_SelectionAnchorPositionIndex = viewModel.SelectionAnchorPositionIndex;
+        var before_SelectionEndingPositionIndex = viewModel.SelectionEndingPositionIndex;
+        
+        viewModel.SelectionAnchorPositionIndex = -1;
+        viewModel.SelectionEndingPositionIndex = 0;
 
         bool isFirstLoop = true;
         var tabWidth = editContext.TextEditorService.Options_GetOptions().TabWidth;
@@ -364,8 +364,8 @@ public class TextEditorCommandDefaultFunctions
             {
                 removeCharacterCount = 1;
 
-				viewModel.LineIndex = i;
-				viewModel.SetColumnIndexAndPreferred(0);
+                viewModel.LineIndex = i;
+                viewModel.SetColumnIndexAndPreferred(0);
 
                 modelModifier.DeleteByRange(
                     removeCharacterCount, // Delete a single "Tab" character
@@ -373,9 +373,9 @@ public class TextEditorCommandDefaultFunctions
             }
             else if (readResult.StartsWith(CommonFacts.SPACE))
             {
-            	viewModel.LineIndex = i;
-				viewModel.SetColumnIndexAndPreferred(0);
-				
+                viewModel.LineIndex = i;
+                viewModel.SetColumnIndexAndPreferred(0);
+                
                 var contiguousSpaceCount = 0;
 
                 foreach (var character in readResult)
@@ -419,10 +419,10 @@ public class TextEditorCommandDefaultFunctions
         }
         
         viewModel.LineIndex = before_LineIndex;
-		viewModel.ColumnIndex = before_ColumnIndex;
-		viewModel.PreferredColumnIndex = before_PreferredColumnIndex;
-		viewModel.SelectionAnchorPositionIndex = before_SelectionAnchorPositionIndex;
-		viewModel.SelectionEndingPositionIndex = before_SelectionEndingPositionIndex;
+        viewModel.ColumnIndex = before_ColumnIndex;
+        viewModel.PreferredColumnIndex = before_PreferredColumnIndex;
+        viewModel.SelectionAnchorPositionIndex = before_SelectionAnchorPositionIndex;
+        viewModel.SelectionEndingPositionIndex = before_SelectionEndingPositionIndex;
     }
 
     public static void ClearTextSelection(
@@ -451,24 +451,24 @@ public class TextEditorCommandDefaultFunctions
         
         // GOAL: Match indentation on newline keystroke (2024-07-07)
         {
-			var line = modelModifier.GetLineInformation(viewModel.LineIndex);
+            var line = modelModifier.GetLineInformation(viewModel.LineIndex);
 
-			var cursorPositionIndex = line.Position_StartInclusiveIndex + viewModel.ColumnIndex;
-			var indentationPositionIndex = line.Position_StartInclusiveIndex;
+            var cursorPositionIndex = line.Position_StartInclusiveIndex + viewModel.ColumnIndex;
+            var indentationPositionIndex = line.Position_StartInclusiveIndex;
 
-			var indentationBuilder = new StringBuilder();
+            var indentationBuilder = new StringBuilder();
 
-			while (indentationPositionIndex < cursorPositionIndex)
-			{
-				var possibleIndentationChar = modelModifier.RichCharacterList[indentationPositionIndex++].Value;
+            while (indentationPositionIndex < cursorPositionIndex)
+            {
+                var possibleIndentationChar = modelModifier.RichCharacterList[indentationPositionIndex++].Value;
 
-				if (possibleIndentationChar == '\t' || possibleIndentationChar == ' ')
-					indentationBuilder.Append(possibleIndentationChar);
-				else
-					break;
-			}
+                if (possibleIndentationChar == '\t' || possibleIndentationChar == ' ')
+                    indentationBuilder.Append(possibleIndentationChar);
+                else
+                    break;
+            }
 
-			valueToInsert += indentationBuilder.ToString();
+            valueToInsert += indentationBuilder.ToString();
         }
 
         modelModifier.Insert(valueToInsert, viewModel);
@@ -494,25 +494,25 @@ public class TextEditorCommandDefaultFunctions
         
         // GOAL: Match indentation on newline keystroke (2024-07-07)
         {
-			var line = modelModifier.GetLineInformation(viewModel.LineIndex);
+            var line = modelModifier.GetLineInformation(viewModel.LineIndex);
 
-			var cursorPositionIndex = line.Position_StartInclusiveIndex + originalColumnIndex;
-			var indentationPositionIndex = line.Position_StartInclusiveIndex;
+            var cursorPositionIndex = line.Position_StartInclusiveIndex + originalColumnIndex;
+            var indentationPositionIndex = line.Position_StartInclusiveIndex;
 
-			var indentationBuilder = new StringBuilder();
+            var indentationBuilder = new StringBuilder();
 
-			while (indentationPositionIndex < cursorPositionIndex)
-			{
-				var possibleIndentationChar = modelModifier.RichCharacterList[indentationPositionIndex++].Value;
+            while (indentationPositionIndex < cursorPositionIndex)
+            {
+                var possibleIndentationChar = modelModifier.RichCharacterList[indentationPositionIndex++].Value;
 
-				if (possibleIndentationChar == '\t' || possibleIndentationChar == ' ')
-					indentationBuilder.Append(possibleIndentationChar);
-				else
-					break;
-			}
+                if (possibleIndentationChar == '\t' || possibleIndentationChar == ' ')
+                    indentationBuilder.Append(possibleIndentationChar);
+                else
+                    break;
+            }
 
-			valueToInsert = indentationBuilder.ToString() + valueToInsert;
-			indentationLength = indentationBuilder.Length;
+            valueToInsert = indentationBuilder.ToString() + valueToInsert;
+            indentationLength = indentationBuilder.Length;
         }
 
         modelModifier.Insert(valueToInsert, viewModel);
@@ -532,39 +532,39 @@ public class TextEditorCommandDefaultFunctions
         var lineIndexOriginal = viewModel.LineIndex;
         var columnIndexOriginal = viewModel.ColumnIndex;
 
-		var nextLineIndex = lineIndexOriginal + 1;
-		var nextLineInformation = modelModifier.GetLineInformation(nextLineIndex);
+        var nextLineIndex = lineIndexOriginal + 1;
+        var nextLineInformation = modelModifier.GetLineInformation(nextLineIndex);
 
-		// Insert
-		{
-			var currentLineContent = modelModifier.GetLineTextRange(lineIndexOriginal, 1);
-		
-			viewModel.LineIndex = nextLineIndex + 1;
-			viewModel.ColumnIndex = 0;
-			
-			modelModifier.Insert(
-				value: currentLineContent,
-				viewModel);
-		}
+        // Insert
+        {
+            var currentLineContent = modelModifier.GetLineTextRange(lineIndexOriginal, 1);
+        
+            viewModel.LineIndex = nextLineIndex + 1;
+            viewModel.ColumnIndex = 0;
+            
+            modelModifier.Insert(
+                value: currentLineContent,
+                viewModel);
+        }
 
-		// Delete
-		{
-			viewModel.LineIndex = lineIndexOriginal;
-			viewModel.ColumnIndex = 0;
-			
-			var currentLineInformation = modelModifier.GetLineInformation(viewModel.LineIndex);
-			var columnCount = currentLineInformation.Position_EndExclusiveIndex -
-				currentLineInformation.Position_StartInclusiveIndex;
+        // Delete
+        {
+            viewModel.LineIndex = lineIndexOriginal;
+            viewModel.ColumnIndex = 0;
+            
+            var currentLineInformation = modelModifier.GetLineInformation(viewModel.LineIndex);
+            var columnCount = currentLineInformation.Position_EndExclusiveIndex -
+                currentLineInformation.Position_StartInclusiveIndex;
 
-			modelModifier.Delete(
-		        viewModel,
-		        columnCount,
-		        false,
-		        TextEditorModel.DeleteKind.Delete);
-		}
-		
-		viewModel.LineIndex = lineIndexOriginal + 1;
-		viewModel.ColumnIndex = 0;
+            modelModifier.Delete(
+                viewModel,
+                columnCount,
+                false,
+                TextEditorModel.DeleteKind.Delete);
+        }
+        
+        viewModel.LineIndex = lineIndexOriginal + 1;
+        viewModel.ColumnIndex = 0;
     }
     
     public static void MoveLineUp(
@@ -573,42 +573,42 @@ public class TextEditorCommandDefaultFunctions
         TextEditorViewModel viewModel)
     {
         var lineIndexOriginal = viewModel.LineIndex;
-		var columnIndexOriginal = viewModel.ColumnIndex;
-			
-		var previousLineIndex = lineIndexOriginal - 1;
-		var previousLineInformation = modelModifier.GetLineInformation(previousLineIndex);
+        var columnIndexOriginal = viewModel.ColumnIndex;
+            
+        var previousLineIndex = lineIndexOriginal - 1;
+        var previousLineInformation = modelModifier.GetLineInformation(previousLineIndex);
 
-		// Insert
-		{
-			var currentLineContent = modelModifier.GetLineTextRange(lineIndexOriginal, 1);
-		
-			viewModel.LineIndex = previousLineIndex;
-			viewModel.ColumnIndex = 0;
+        // Insert
+        {
+            var currentLineContent = modelModifier.GetLineTextRange(lineIndexOriginal, 1);
+        
+            viewModel.LineIndex = previousLineIndex;
+            viewModel.ColumnIndex = 0;
 
-			modelModifier.Insert(
-				value: currentLineContent,
-				viewModel);
-		}
+            modelModifier.Insert(
+                value: currentLineContent,
+                viewModel);
+        }
 
-		// Delete
-		{
-			// Add 1 because a line was inserted
-			viewModel.LineIndex = lineIndexOriginal + 1;
-			viewModel.ColumnIndex = 0;
-			
-			var currentLineInformation = modelModifier.GetLineInformation(viewModel.LineIndex);
-			var columnCount = currentLineInformation.Position_EndExclusiveIndex -
-				currentLineInformation.Position_StartInclusiveIndex;
+        // Delete
+        {
+            // Add 1 because a line was inserted
+            viewModel.LineIndex = lineIndexOriginal + 1;
+            viewModel.ColumnIndex = 0;
+            
+            var currentLineInformation = modelModifier.GetLineInformation(viewModel.LineIndex);
+            var columnCount = currentLineInformation.Position_EndExclusiveIndex -
+                currentLineInformation.Position_StartInclusiveIndex;
 
-			modelModifier.Delete(
-		        viewModel,
-		        columnCount,
-		        false,
-		        TextEditorModel.DeleteKind.Delete);
-		}
-		
-		viewModel.LineIndex = lineIndexOriginal - 1;
-		viewModel.ColumnIndex = 0;
+            modelModifier.Delete(
+                viewModel,
+                columnCount,
+                false,
+                TextEditorModel.DeleteKind.Delete);
+        }
+        
+        viewModel.LineIndex = lineIndexOriginal - 1;
+        viewModel.ColumnIndex = 0;
     }
 
     public static void GoToMatchingCharacter(
@@ -693,14 +693,14 @@ public class TextEditorCommandDefaultFunctions
             }
 
             editContext.TextEditorService.ViewModel_MoveCursorUnsafe(
-        		keymapArgs.Key,
+                keymapArgs.Key,
                 keymapArgs.Code,
                 keymapArgs.CtrlKey,
                 keymapArgs.ShiftKey,
                 keymapArgs.AltKey,
-		        editContext,
-		        modelModifier,
-		        viewModel);
+                editContext,
+                modelModifier,
+                viewModel);
 
             var positionIndex = modelModifier.GetPositionIndex(viewModel);
             var characterAt = modelModifier.GetCharacter(positionIndex);
@@ -731,111 +731,111 @@ public class TextEditorCommandDefaultFunctions
         TextEditorService textEditorService,
         CommonService commonService)
     {
-    	var componentData = viewModel.PersistentState.ComponentData;
-    	if (componentData is null)
-    		return;
+        var componentData = viewModel.PersistentState.ComponentData;
+        if (componentData is null)
+            return;
     
-		var cursorDimensions = await jsRuntimeCommonApi
-			.MeasureElementById(componentData.PrimaryCursorContentId)
-			.ConfigureAwait(false);
+        var cursorDimensions = await jsRuntimeCommonApi
+            .MeasureElementById(componentData.PrimaryCursorContentId)
+            .ConfigureAwait(false);
 
-		var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelModifier.PersistentState.ResourceUri.Value, false);
-		var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
-	
-		var siblingFileStringList = Array.Empty<string>();
-		
-		try
-		{
-			siblingFileStringList = await fileSystemProvider.Directory
-				.GetFilesAsync(parentDirectoryAbsolutePath.Value)
-				.ConfigureAwait(false);
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e);
-		}
-		
-		var menuOptionList = new List<MenuOptionRecord>();
-		
-		siblingFileStringList = siblingFileStringList.OrderBy(x => x).ToArray();
-		
-		var initialActiveMenuOptionRecordIndex = -1;
-		
-		for (int i = 0; i < siblingFileStringList.Length; i++)
-		{
-			var file = siblingFileStringList[i];
-			
-			var siblingAbsolutePath = environmentProvider.AbsolutePathFactory(file, false);
-			
-			menuOptionList.Add(new MenuOptionRecord(
-				siblingAbsolutePath.NameWithExtension,
-				MenuOptionKind.Other,
-				onClickFunc: async () => 
-				{
-					textEditorService.WorkerArbitrary.PostUnique(async editContext =>
-			    	{
-			    		await textEditorService.OpenInEditorAsync(
-			    			editContext,
-			                file,
-							true,
-							null,
-							new Category("main"),
-							Key<TextEditorViewModel>.NewKey());
-			    	});
-				}));
-					
-			if (siblingAbsolutePath.NameWithExtension == resourceAbsolutePath.NameWithExtension)
-				initialActiveMenuOptionRecordIndex = i;
-		}
-		
-		MenuRecord menu;
-		
-		if (menuOptionList.Count == 0)
-			menu = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
-		else
-			menu = new MenuRecord(menuOptionList);
-		
-		var dropdownRecord = new DropdownRecord(
-			Key<DropdownRecord>.NewKey(),
-			cursorDimensions.LeftInPixels,
-			cursorDimensions.TopInPixels + cursorDimensions.HeightInPixels,
-			typeof(MenuDisplay),
-			new Dictionary<string, object?>
-			{
-				{
-					nameof(MenuDisplay.MenuRecord),
-					menu
-				},
-				{
-					nameof(MenuDisplay.InitialActiveMenuOptionRecordIndex),
-					initialActiveMenuOptionRecordIndex
-				}
-			},
-			// TODO: this callback when the dropdown closes is suspect.
-			//       The editContext is supposed to live the lifespan of the
-			//       Post. But what if the Post finishes before the dropdown is closed?
-			async () => 
-			{
-				// TODO: Even if this '.single or default' to get the main group works it is bad and I am ashamed...
-				//       ...I'm too tired at the moment, need to make this sensible.
-				//	   The key is in the IDE project yet its circular reference if I do so, gotta
-				//       make groups more sensible I'm not sure what to say here I'm super tired and brain checked out.
-				//       |
-				//       I ran this and it didn't work. Its for the best that it doesn't.
-				//	   maybe when I wake up tomorrow I'll realize what im doing here.
-				var mainEditorGroup = textEditorService.Group_GetTextEditorGroupState().GroupList.SingleOrDefault();
-				
-				if (mainEditorGroup is not null &&
-					mainEditorGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty)
-				{
-					var activeViewModel = textEditorService.ViewModel_GetOrDefault(mainEditorGroup.ActiveViewModelKey);
+        var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelModifier.PersistentState.ResourceUri.Value, false);
+        var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
+    
+        var siblingFileStringList = Array.Empty<string>();
+        
+        try
+        {
+            siblingFileStringList = await fileSystemProvider.Directory
+                .GetFilesAsync(parentDirectoryAbsolutePath.Value)
+                .ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+        
+        var menuOptionList = new List<MenuOptionRecord>();
+        
+        siblingFileStringList = siblingFileStringList.OrderBy(x => x).ToArray();
+        
+        var initialActiveMenuOptionRecordIndex = -1;
+        
+        for (int i = 0; i < siblingFileStringList.Length; i++)
+        {
+            var file = siblingFileStringList[i];
+            
+            var siblingAbsolutePath = environmentProvider.AbsolutePathFactory(file, false);
+            
+            menuOptionList.Add(new MenuOptionRecord(
+                siblingAbsolutePath.NameWithExtension,
+                MenuOptionKind.Other,
+                onClickFunc: async () => 
+                {
+                    textEditorService.WorkerArbitrary.PostUnique(async editContext =>
+                    {
+                        await textEditorService.OpenInEditorAsync(
+                            editContext,
+                            file,
+                            true,
+                            null,
+                            new Category("main"),
+                            Key<TextEditorViewModel>.NewKey());
+                    });
+                }));
+                    
+            if (siblingAbsolutePath.NameWithExtension == resourceAbsolutePath.NameWithExtension)
+                initialActiveMenuOptionRecordIndex = i;
+        }
+        
+        MenuRecord menu;
+        
+        if (menuOptionList.Count == 0)
+            menu = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+        else
+            menu = new MenuRecord(menuOptionList);
+        
+        var dropdownRecord = new DropdownRecord(
+            Key<DropdownRecord>.NewKey(),
+            cursorDimensions.LeftInPixels,
+            cursorDimensions.TopInPixels + cursorDimensions.HeightInPixels,
+            typeof(MenuDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(MenuDisplay.MenuRecord),
+                    menu
+                },
+                {
+                    nameof(MenuDisplay.InitialActiveMenuOptionRecordIndex),
+                    initialActiveMenuOptionRecordIndex
+                }
+            },
+            // TODO: this callback when the dropdown closes is suspect.
+            //       The editContext is supposed to live the lifespan of the
+            //       Post. But what if the Post finishes before the dropdown is closed?
+            async () => 
+            {
+                // TODO: Even if this '.single or default' to get the main group works it is bad and I am ashamed...
+                //       ...I'm too tired at the moment, need to make this sensible.
+                //       The key is in the IDE project yet its circular reference if I do so, gotta
+                //       make groups more sensible I'm not sure what to say here I'm super tired and brain checked out.
+                //       |
+                //       I ran this and it didn't work. Its for the best that it doesn't.
+                //       maybe when I wake up tomorrow I'll realize what im doing here.
+                var mainEditorGroup = textEditorService.Group_GetTextEditorGroupState().GroupList.SingleOrDefault();
+                
+                if (mainEditorGroup is not null &&
+                    mainEditorGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty)
+                {
+                    var activeViewModel = textEditorService.ViewModel_GetOrDefault(mainEditorGroup.ActiveViewModelKey);
 
-					if (activeViewModel is not null)
-						await activeViewModel.FocusAsync();
-				}
-				
-				await viewModel.FocusAsync();
-			});
+                    if (activeViewModel is not null)
+                        await activeViewModel.FocusAsync();
+                }
+                
+                await viewModel.FocusAsync();
+            });
 
         commonService.Dropdown_ReduceRegisterAction(dropdownRecord);
     }
@@ -848,58 +848,58 @@ public class TextEditorCommandDefaultFunctions
         TextEditorService textEditorService,
         CommonService commonService)
     {
-    	var componentData = viewModel.PersistentState.ComponentData;
-    	if (componentData is null)
-    		return;
+        var componentData = viewModel.PersistentState.ComponentData;
+        if (componentData is null)
+            return;
     
-		var cursorDimensions = await jsRuntimeCommonApi
-			.MeasureElementById(componentData.PrimaryCursorContentId)
-			.ConfigureAwait(false);
+        var cursorDimensions = await jsRuntimeCommonApi
+            .MeasureElementById(componentData.PrimaryCursorContentId)
+            .ConfigureAwait(false);
 
-		var compilerService = modelModifier.PersistentState.CompilerService;
+        var compilerService = modelModifier.PersistentState.CompilerService;
 
-		var menu = await compilerService.GetQuickActionsSlashRefactorMenu(
-			editContext,
-	        modelModifier,
-	        viewModel);
+        var menu = await compilerService.GetQuickActionsSlashRefactorMenu(
+            editContext,
+            modelModifier,
+            viewModel);
 
-		var dropdownRecord = new DropdownRecord(
-			Key<DropdownRecord>.NewKey(),
-			cursorDimensions.LeftInPixels,
-			cursorDimensions.TopInPixels + cursorDimensions.HeightInPixels,
-			typeof(MenuDisplay),
-			new Dictionary<string, object?>
-			{
-				{
-					nameof(MenuDisplay.MenuRecord),
-					menu
-				}
-			},
-			// TODO: this callback when the dropdown closes is suspect.
-			//       The editContext is supposed to live the lifespan of the
-			//       Post. But what if the Post finishes before the dropdown is closed?
-			async () => 
-			{
-				// TODO: Even if this '.single or default' to get the main group works it is bad and I am ashamed...
-				//       ...I'm too tired at the moment, need to make this sensible.
-				//	   The key is in the IDE project yet its circular reference if I do so, gotta
-				//       make groups more sensible I'm not sure what to say here I'm super tired and brain checked out.
-				//       |
-				//       I ran this and it didn't work. Its for the best that it doesn't.
-				//	   maybe when I wake up tomorrow I'll realize what im doing here.
-				var mainEditorGroup = textEditorService.Group_GetTextEditorGroupState().GroupList.SingleOrDefault();
-				
-				if (mainEditorGroup is not null &&
-					mainEditorGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty)
-				{
-					var activeViewModel = textEditorService.ViewModel_GetOrDefault(mainEditorGroup.ActiveViewModelKey);
+        var dropdownRecord = new DropdownRecord(
+            Key<DropdownRecord>.NewKey(),
+            cursorDimensions.LeftInPixels,
+            cursorDimensions.TopInPixels + cursorDimensions.HeightInPixels,
+            typeof(MenuDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(MenuDisplay.MenuRecord),
+                    menu
+                }
+            },
+            // TODO: this callback when the dropdown closes is suspect.
+            //       The editContext is supposed to live the lifespan of the
+            //       Post. But what if the Post finishes before the dropdown is closed?
+            async () => 
+            {
+                // TODO: Even if this '.single or default' to get the main group works it is bad and I am ashamed...
+                //       ...I'm too tired at the moment, need to make this sensible.
+                //       The key is in the IDE project yet its circular reference if I do so, gotta
+                //       make groups more sensible I'm not sure what to say here I'm super tired and brain checked out.
+                //       |
+                //       I ran this and it didn't work. Its for the best that it doesn't.
+                //       maybe when I wake up tomorrow I'll realize what im doing here.
+                var mainEditorGroup = textEditorService.Group_GetTextEditorGroupState().GroupList.SingleOrDefault();
+                
+                if (mainEditorGroup is not null &&
+                    mainEditorGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty)
+                {
+                    var activeViewModel = textEditorService.ViewModel_GetOrDefault(mainEditorGroup.ActiveViewModelKey);
 
-					if (activeViewModel is not null)
-						await activeViewModel.FocusAsync();
-				}
-				
-				await viewModel.FocusAsync();
-			});
+                    if (activeViewModel is not null)
+                        await activeViewModel.FocusAsync();
+                }
+                
+                await viewModel.FocusAsync();
+            });
 
         commonService.Dropdown_ReduceRegisterAction(dropdownRecord);
     }
@@ -911,11 +911,11 @@ public class TextEditorCommandDefaultFunctions
         Category category,
         int positionIndex)
     {
-    	modelModifier.PersistentState.CompilerService.GoToDefinition(
-			editContext,
-	        modelModifier,
-	        viewModel,
-	        category,
+        modelModifier.PersistentState.CompilerService.GoToDefinition(
+            editContext,
+            modelModifier,
+            viewModel,
+            category,
             positionIndex);
     }
 
@@ -935,10 +935,10 @@ public class TextEditorCommandDefaultFunctions
         TextEditorService textEditorService,
         TextEditorComponentData componentData)
     {
-    	componentData = viewModel.PersistentState.ComponentData;
-    	if (componentData is null)
-    		return;
-    		
+        componentData = viewModel.PersistentState.ComponentData;
+        if (componentData is null)
+            return;
+            
         var elementPositionInPixels = await textEditorService.JsRuntimeTextEditorApi
             .GetBoundingClientRect(componentData.PrimaryCursorContentId)
             .ConfigureAwait(false);
@@ -950,35 +950,35 @@ public class TextEditorCommandDefaultFunctions
         };
 
         await HandleMouseStoppedMovingEventAsync(
-        		editContext,
-        		modelModifier,
-        		viewModel,
-        		elementPositionInPixels.Left,
-        		elementPositionInPixels.Top,
-        		shiftKey: false,
-        		ctrlKey: false,
-        		altKey: false,
-				componentData,
-				modelModifier.PersistentState.ResourceUri)
-			.ConfigureAwait(false);
+                editContext,
+                modelModifier,
+                viewModel,
+                elementPositionInPixels.Left,
+                elementPositionInPixels.Top,
+                shiftKey: false,
+                ctrlKey: false,
+                altKey: false,
+                componentData,
+                modelModifier.PersistentState.ResourceUri)
+            .ConfigureAwait(false);
     }
     
-	/// <summary>The default <see cref="AfterOnKeyDownAsync"/> will provide syntax highlighting, and autocomplete.<br/><br/>The syntax highlighting occurs on ';', whitespace, paste, undo, redo<br/><br/>The autocomplete occurs on LetterOrDigit typed or { Ctrl + Space }. Furthermore, the autocomplete is done via <see cref="IAutocompleteService"/> and the one can provide their own implementation when registering the Walk.TextEditor services using <see cref="WalkTextEditorConfig.AutocompleteServiceFactory"/></summary>
-	public static async ValueTask HandleAfterOnKeyDownAsync(
-		TextEditorEditContext editContext,
+    /// <summary>The default <see cref="AfterOnKeyDownAsync"/> will provide syntax highlighting, and autocomplete.<br/><br/>The syntax highlighting occurs on ';', whitespace, paste, undo, redo<br/><br/>The autocomplete occurs on LetterOrDigit typed or { Ctrl + Space }. Furthermore, the autocomplete is done via <see cref="IAutocompleteService"/> and the one can provide their own implementation when registering the Walk.TextEditor services using <see cref="WalkTextEditorConfig.AutocompleteServiceFactory"/></summary>
+    public static async ValueTask HandleAfterOnKeyDownAsync(
+        TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
         KeymapArgs keymapArgs,
-		TextEditorComponentData componentData)
+        TextEditorComponentData componentData)
     {
         if (EventUtils.IsAutocompleteMenuInvoker(keymapArgs))
         {
-        	ShowAutocompleteMenu(
-        		editContext,
-		        modelModifier,
-		        viewModel,
-		        componentData.TextEditorViewModelSlimDisplay.TextEditorService.CommonService,
-		        componentData);
+            ShowAutocompleteMenu(
+                editContext,
+                modelModifier,
+                viewModel,
+                componentData.TextEditorViewModelSlimDisplay.TextEditorService.CommonService,
+                componentData);
         }
         else if (EventUtils.IsSyntaxHighlightingInvoker(keymapArgs))
         {
@@ -986,40 +986,40 @@ public class TextEditorCommandDefaultFunctions
         }
     }
 
-	/// <summary>
-	/// This method was being used in the 'OnKeyDownBatch.cs' class, which no longer exists.
-	/// The replacement for 'OnKeyDownBatch.cs' is 'OnKeyDownLateBatching.cs'.
-	///
-	/// But, during the replacement process, this method was overlooked.
-	///
-	/// One would likely want to use this method when appropriate because
-	/// it permits every batched keyboard event to individually be given a chance
-	/// to trigger 'HandleAfterOnKeyDownAsyncFactory(...)'
-	///
-	/// Example: a 'space' keyboard event, batched with the letter 'a' keyboard event.
-	/// Depending on what 'OnKeyDownLateBatching.cs' does, perhaps it takes the last keyboard event
-	/// and uses that to fire 'HandleAfterOnKeyDownAsyncFactory(...)'.
-	///
-	/// Well, a 'space' keyboard event would have trigger syntax highlighting to be refreshed.
-	/// Whereas, the letter 'a' keyboard event won't do anything beyond inserting the letter.
-	/// Therefore, the syntax highlighting was erroneously not refreshed due to batching.
-	/// This method is intended to solve this problem, but it was forgotten at some point.
-	/// </summary>
-	public static async ValueTask HandleAfterOnKeyDownRangeAsync(
-		TextEditorEditContext editContext,
+    /// <summary>
+    /// This method was being used in the 'OnKeyDownBatch.cs' class, which no longer exists.
+    /// The replacement for 'OnKeyDownBatch.cs' is 'OnKeyDownLateBatching.cs'.
+    ///
+    /// But, during the replacement process, this method was overlooked.
+    ///
+    /// One would likely want to use this method when appropriate because
+    /// it permits every batched keyboard event to individually be given a chance
+    /// to trigger 'HandleAfterOnKeyDownAsyncFactory(...)'
+    ///
+    /// Example: a 'space' keyboard event, batched with the letter 'a' keyboard event.
+    /// Depending on what 'OnKeyDownLateBatching.cs' does, perhaps it takes the last keyboard event
+    /// and uses that to fire 'HandleAfterOnKeyDownAsyncFactory(...)'.
+    ///
+    /// Well, a 'space' keyboard event would have trigger syntax highlighting to be refreshed.
+    /// Whereas, the letter 'a' keyboard event won't do anything beyond inserting the letter.
+    /// Therefore, the syntax highlighting was erroneously not refreshed due to batching.
+    /// This method is intended to solve this problem, but it was forgotten at some point.
+    /// </summary>
+    public static async ValueTask HandleAfterOnKeyDownRangeAsync(
+        TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
         KeymapArgs[] batchKeymapArgsList,
         int batchKeymapArgsListLength,
-		TextEditorComponentData componentData,
-		ViewModelDisplayOptions viewModelDisplayOptions)
+        TextEditorComponentData componentData,
+        ViewModelDisplayOptions viewModelDisplayOptions)
     {
         if (viewModelDisplayOptions.AfterOnKeyDownRangeAsync is not null)
         {
             await viewModelDisplayOptions.AfterOnKeyDownRangeAsync.Invoke(
                 editContext,
-		        modelModifier,
-		        viewModel,
+                modelModifier,
+                viewModel,
                 batchKeymapArgsList,
                 batchKeymapArgsListLength,
                 componentData);
@@ -1045,12 +1045,12 @@ public class TextEditorCommandDefaultFunctions
 
         if (seenIsAutocompleteMenuInvoker)
         {
-        	ShowAutocompleteMenu(
-        		editContext,
-		        modelModifier,
-		        viewModel,
-		        componentData.TextEditorViewModelSlimDisplay.TextEditorService.CommonService,
-		        componentData);
+            ShowAutocompleteMenu(
+                editContext,
+                modelModifier,
+                viewModel,
+                componentData.TextEditorViewModelSlimDisplay.TextEditorService.CommonService,
+                componentData);
         }
 
         if (seenIsSyntaxHighlightingInvoker)
@@ -1059,29 +1059,29 @@ public class TextEditorCommandDefaultFunctions
         }
     }
 
-	public static ValueTask HandleMouseStoppedMovingEventAsync(
-		TextEditorEditContext editContext,
-		TextEditorModel modelModifier,
-		TextEditorViewModel viewModel,
-		double clientX,
-		double clientY,
-		bool shiftKey,
+    public static ValueTask HandleMouseStoppedMovingEventAsync(
+        TextEditorEditContext editContext,
+        TextEditorModel modelModifier,
+        TextEditorViewModel viewModel,
+        double clientX,
+        double clientY,
+        bool shiftKey,
         bool ctrlKey,
         bool altKey,
-		TextEditorComponentData componentData,
+        TextEditorComponentData componentData,
         ResourceUri resourceUri)
     {
-    	return modelModifier.PersistentState.CompilerService.OnInspect(
-			editContext,
-			modelModifier,
-			viewModel,
-			clientX,
-    		clientY,
-    		shiftKey,
+        return modelModifier.PersistentState.CompilerService.OnInspect(
+            editContext,
+            modelModifier,
+            viewModel,
+            clientX,
+            clientY,
+            shiftKey,
             ctrlKey,
             altKey,
-			componentData,
-	        resourceUri);
+            componentData,
+            resourceUri);
     }
     
     /// <summary>
@@ -1108,8 +1108,8 @@ public class TextEditorCommandDefaultFunctions
             leftOffset = viewModel.PersistentState.GutterWidth +
                          viewModel.ColumnIndex *
                          viewModel.PersistentState.CharAndLineMeasurements.CharacterWidth;
-	        
-	        // Tab key column offset
+            
+            // Tab key column offset
             var tabsOnSameLineBeforeCursor = modelModifier.GetTabCountOnSameLineBeforeCursor(
                 viewModel.LineIndex,
                 viewModel.ColumnIndex);
@@ -1126,110 +1126,110 @@ public class TextEditorCommandDefaultFunctions
         
         if (topOffset is null)
         {
-        	topOffset ??= ((viewModel.LineIndex) + 1) *
-	        	viewModel.PersistentState.CharAndLineMeasurements.LineHeight -
-	        	viewModel.PersistentState.ScrollTop;
+            topOffset ??= ((viewModel.LineIndex) + 1) *
+                viewModel.PersistentState.CharAndLineMeasurements.LineHeight -
+                viewModel.PersistentState.ScrollTop;
         }
-		
-		var dropdownRecord = new DropdownRecord(
-			dropdownKey,
-			viewModel.PersistentState.TextEditorDimensions.BoundingClientRectLeft + leftOffset.Value,
-			viewModel.PersistentState.TextEditorDimensions.BoundingClientRectTop + topOffset.Value,
-			componentType,
-			componentParameters,
-			async () => await viewModel.FocusAsync())
-		{
-			ShouldShowOutOfBoundsClickDisplay = false
-		};
+        
+        var dropdownRecord = new DropdownRecord(
+            dropdownKey,
+            viewModel.PersistentState.TextEditorDimensions.BoundingClientRectLeft + leftOffset.Value,
+            viewModel.PersistentState.TextEditorDimensions.BoundingClientRectTop + topOffset.Value,
+            componentType,
+            componentParameters,
+            async () => await viewModel.FocusAsync())
+        {
+            ShouldShowOutOfBoundsClickDisplay = false
+        };
 
         commonService.Dropdown_ReduceRegisterAction(dropdownRecord);
-	}
-	
-	public static void RemoveDropdown(
+    }
+    
+    public static void RemoveDropdown(
         TextEditorEditContext editContext,
         TextEditorViewModel viewModel,
         CommonService commonService)
     {
-    	viewModel.PersistentState.MenuKind = MenuKind.None;
+        viewModel.PersistentState.MenuKind = MenuKind.None;
     
-		var dropdownKey = new Key<DropdownRecord>(viewModel.PersistentState.ViewModelKey.Guid);
-		commonService.Dropdown_ReduceDisposeAction(dropdownKey);
-	}
-	
-	public static void ShowContextMenu(
+        var dropdownKey = new Key<DropdownRecord>(viewModel.PersistentState.ViewModelKey.Guid);
+        commonService.Dropdown_ReduceDisposeAction(dropdownKey);
+    }
+    
+    public static void ShowContextMenu(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
         CommonService commonService,
         TextEditorComponentData componentData)
     {
-    	viewModel.PersistentState.MenuKind = MenuKind.ContextMenu;
+        viewModel.PersistentState.MenuKind = MenuKind.ContextMenu;
     
-    	ShowDropdown(
-    		editContext,
-	        modelModifier,
-	        viewModel,
-	        commonService,
-	        leftOffset: null,
-	        topOffset: null,
-	        typeof(Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.ContextMenu),
-	        new Dictionary<string, object?>
-			{
-				{
-					nameof(Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.ContextMenu.ComponentDataKey),
-					componentData.ComponentDataKey
-				},
-			});
-	}
-	
-	public static void ShowAutocompleteMenu(
+        ShowDropdown(
+            editContext,
+            modelModifier,
+            viewModel,
+            commonService,
+            leftOffset: null,
+            topOffset: null,
+            typeof(Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.ContextMenu),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.ContextMenu.ComponentDataKey),
+                    componentData.ComponentDataKey
+                },
+            });
+    }
+    
+    public static void ShowAutocompleteMenu(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
         CommonService commonService,
         TextEditorComponentData componentData)
     {
-    	viewModel.PersistentState.MenuKind = MenuKind.AutoCompleteMenu;
+        viewModel.PersistentState.MenuKind = MenuKind.AutoCompleteMenu;
     
-    	ShowDropdown(
-    		editContext,
-	        modelModifier,
-	        viewModel,
-	        commonService,
-	        leftOffset: null,
-	        topOffset: null,
-	        typeof(Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu),
-	        new Dictionary<string, object?>
-			{
-				{
-					nameof(Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.ComponentDataKey),
-					componentData.ComponentDataKey
-				},
-			});
-	}
-	
-	public static async ValueTask ShowFindOverlay(
+        ShowDropdown(
+            editContext,
+            modelModifier,
+            viewModel,
+            commonService,
+            leftOffset: null,
+            topOffset: null,
+            typeof(Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.ComponentDataKey),
+                    componentData.ComponentDataKey
+                },
+            });
+    }
+    
+    public static async ValueTask ShowFindOverlay(
         TextEditorEditContext editContext,
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel,
         WalkCommonJavaScriptInteropApi commonJavaScriptInteropApi)
     {
-		// If the user has an active text selection,
-		// then populate the find overlay with their selection.
-		
+        // If the user has an active text selection,
+        // then populate the find overlay with their selection.
+        
         var selectedText = TextEditorSelectionHelper.GetSelectedText(viewModel, modelModifier);
-		if (selectedText is not null)
-		{
-			viewModel.PersistentState.FindOverlayValue = selectedText;
+        if (selectedText is not null)
+        {
+            viewModel.PersistentState.FindOverlayValue = selectedText;
             viewModel.PersistentState.FindOverlayValueExternallyChangedMarker = !viewModel.PersistentState.FindOverlayValueExternallyChangedMarker;
-		}
+        }
 
         if (viewModel.PersistentState.ShowFindOverlay)
         {
-        	var componentData = viewModel.PersistentState.ComponentData;
-	    	if (componentData is null)
-	    		return;
-    		
+            var componentData = viewModel.PersistentState.ComponentData;
+            if (componentData is null)
+                return;
+            
             await commonJavaScriptInteropApi
                 .FocusHtmlElementById(componentData.FindOverlayId)
                 .ConfigureAwait(false);
@@ -1245,17 +1245,17 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModel modelModifier,
         TextEditorViewModel viewModel)
     {
-		// If the user has an active text selection,
-		// then populate the find overlay with their selection.
-		
+        // If the user has an active text selection,
+        // then populate the find overlay with their selection.
+        
         if (modelModifier is null || viewModel is null)
             return;
 
         var selectedText = TextEditorSelectionHelper.GetSelectedText(viewModel, modelModifier);
-		if (selectedText is null)
-			return;
-			
-		editContext.TextEditorService.SetSearchQuery(selectedText);
+        if (selectedText is null)
+            return;
+            
+        editContext.TextEditorService.SetSearchQuery(selectedText);
     }
     
     public static Task OnWheel(Walk.Common.RazorLib.Tooltips.Models.ITooltipModel tooltipModel, WheelEventArgs wheelEventArgs)
@@ -1274,15 +1274,15 @@ public class TextEditorCommandDefaultFunctions
                 return ValueTask.CompletedTask;
                 
             tuple.Item1.WorkerUi.Enqueue(
-    	        new TextEditorEventArgs
-    	        {
-    	            X = wheelEventArgs.DeltaX,
+                new TextEditorEventArgs
+                {
+                    X = wheelEventArgs.DeltaX,
                     Y = wheelEventArgs.DeltaY,
                     ShiftKey = wheelEventArgs.ShiftKey,
-    	        },
-            	componentData,
-            	viewModel.PersistentState.ViewModelKey,
-    	        Walk.TextEditor.RazorLib.BackgroundTasks.Models.TextEditorWorkUiKind.OnWheel);
+                },
+                componentData,
+                viewModel.PersistentState.ViewModelKey,
+                Walk.TextEditor.RazorLib.BackgroundTasks.Models.TextEditorWorkUiKind.OnWheel);
         
             return ValueTask.CompletedTask;
         });

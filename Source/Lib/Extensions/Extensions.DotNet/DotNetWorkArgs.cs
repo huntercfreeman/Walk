@@ -16,28 +16,28 @@ public class DotNetWorkArgs
 {
     public DotNetWorkKind WorkKind { get; set; }
     
-	/* Start DotNetBackgroundTaskApiWorkArgs */
-	public TreeViewCommandArgs TreeViewCommandArgs { get; set; }
-	public TreeViewStringFragment TreeViewStringFragment { get; set; }
-	public TreeViewProjectTestModel TreeViewProjectTestModel { get; set; }
-	public string FullyQualifiedName { get; set; }
-	public INugetPackageManagerQuery NugetPackageManagerQuery { get; set; }
-	public Key<DotNetSolutionModel> DotNetSolutionModelKey { get; set; }
-	public string ProjectTemplateShortName { get; set; }
-	public string CSharpProjectName { get; set; }
-	public AbsolutePath CSharpProjectAbsolutePath { get; set; }
+    /* Start DotNetBackgroundTaskApiWorkArgs */
+    public TreeViewCommandArgs TreeViewCommandArgs { get; set; }
+    public TreeViewStringFragment TreeViewStringFragment { get; set; }
+    public TreeViewProjectTestModel TreeViewProjectTestModel { get; set; }
+    public string FullyQualifiedName { get; set; }
+    public INugetPackageManagerQuery NugetPackageManagerQuery { get; set; }
+    public Key<DotNetSolutionModel> DotNetSolutionModelKey { get; set; }
+    public string ProjectTemplateShortName { get; set; }
+    public string CSharpProjectName { get; set; }
+    public AbsolutePath CSharpProjectAbsolutePath { get; set; }
     public AbsolutePath DotNetSolutionAbsolutePath { get; set; }
     /* End DotNetBackgroundTaskApiWorkArgs */
 
     /* Start Menu */
-	public TreeViewSolution TreeViewSolution { get; set; }
-	public TreeViewNamespacePath ProjectNode { get; set; }
-	public ITerminal Terminal { get; set; }
-	public Func<Task> OnAfterCompletion { get; set; }
-	public TreeViewCSharpProjectToProjectReference TreeViewCSharpProjectToProjectReference { get; set; }
-	public TreeViewNamespacePath TreeViewProjectToMove { get; set; }
-	public string SolutionFolderPath { get; set; }
-	public NamespacePath ModifyProjectNamespacePath { get; set; }
-	public TreeViewCSharpProjectNugetPackageReference TreeViewCSharpProjectNugetPackageReference { get; set; }
-	/* End Menu */
+    public TreeViewSolution TreeViewSolution { get; set; }
+    public TreeViewNamespacePath ProjectNode { get; set; }
+    public ITerminal Terminal { get; set; }
+    public Func<Task> OnAfterCompletion { get; set; }
+    public TreeViewCSharpProjectToProjectReference TreeViewCSharpProjectToProjectReference { get; set; }
+    public TreeViewNamespacePath TreeViewProjectToMove { get; set; }
+    public string SolutionFolderPath { get; set; }
+    public NamespacePath ModifyProjectNamespacePath { get; set; }
+    public TreeViewCSharpProjectNugetPackageReference TreeViewCSharpProjectNugetPackageReference { get; set; }
+    /* End Menu */
 }

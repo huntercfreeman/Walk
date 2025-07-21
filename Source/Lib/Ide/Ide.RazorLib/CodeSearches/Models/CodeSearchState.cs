@@ -16,7 +16,7 @@ public record struct CodeSearchState(
 {
     public static readonly Key<TreeViewContainer> TreeViewCodeSearchContainerKey = Key<TreeViewContainer>.NewKey();
     
-	public CodeSearchState() : this(
+    public CodeSearchState() : this(
         string.Empty,
         null,
         CodeSearchFilterKind.None,
@@ -24,37 +24,37 @@ public record struct CodeSearchState(
         string.Empty,
         Key<TextEditorViewModel>.Empty)
     {
-		// topContentHeight
+        // topContentHeight
         {
-			TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
-			{
-				new DimensionUnit(
-					40,
-					DimensionUnitKind.Percentage),
-				new DimensionUnit(
-					0,
-					DimensionUnitKind.Pixels,
-					DimensionOperatorKind.Subtract,
-					CommonFacts.PURPOSE_OFFSET),
-			});
+            TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
+            {
+                new DimensionUnit(
+                    40,
+                    DimensionUnitKind.Percentage),
+                new DimensionUnit(
+                    0,
+                    DimensionUnitKind.Pixels,
+                    DimensionOperatorKind.Subtract,
+                    CommonFacts.PURPOSE_OFFSET),
+            });
         }
 
         // bottomContentHeight
         {
             BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
-			{
-				new DimensionUnit(
-					60,
-					DimensionUnitKind.Percentage),
-				new DimensionUnit(
-					0,
-					DimensionUnitKind.Pixels,
-					DimensionOperatorKind.Subtract,
-					CommonFacts.PURPOSE_OFFSET),
-			});
+            {
+                new DimensionUnit(
+                    60,
+                    DimensionUnitKind.Percentage),
+                new DimensionUnit(
+                    0,
+                    DimensionUnitKind.Pixels,
+                    DimensionOperatorKind.Subtract,
+                    CommonFacts.PURPOSE_OFFSET),
+            });
         }
     }
 
-	public ElementDimensions TopContentElementDimensions = new();
-	public ElementDimensions BottomContentElementDimensions = new();
+    public ElementDimensions TopContentElementDimensions = new();
+    public ElementDimensions BottomContentElementDimensions = new();
 }

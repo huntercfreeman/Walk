@@ -6,31 +6,31 @@ namespace Walk.CompilerServices.JavaScript;
 
 public class JavaScriptLexer
 {
-	private readonly ResourceUri _resourceUri;
-	private readonly string _text;
-	private readonly List<SyntaxToken> _syntaxTokenList = new();
+    private readonly ResourceUri _resourceUri;
+    private readonly string _text;
+    private readonly List<SyntaxToken> _syntaxTokenList = new();
 
-	public JavaScriptLexer(
-		ResourceUri resourceUri,
-	    string text)
-	{
-		_resourceUri = resourceUri;
-		_text = text;
-	}
-	
-	private int _position;
-	
-	public IReadOnlyList<SyntaxToken> SyntaxTokenList => _syntaxTokenList;
-	
-	public void Lex()
-	{
-		while (_position < _text.Length)
-		{
-		    var character = _text[_position];
-		
-		    switch (character)
-		    {
-		    	/* Lowercase Letters */
+    public JavaScriptLexer(
+        ResourceUri resourceUri,
+        string text)
+    {
+        _resourceUri = resourceUri;
+        _text = text;
+    }
+    
+    private int _position;
+    
+    public IReadOnlyList<SyntaxToken> SyntaxTokenList => _syntaxTokenList;
+    
+    public void Lex()
+    {
+        while (_position < _text.Length)
+        {
+            var character = _text[_position];
+        
+            switch (character)
+            {
+                /* Lowercase Letters */
                 case 'a':
                 case 'b':
                 case 'c':
@@ -87,7 +87,7 @@ public class JavaScriptLexer
                 /* Underscore */
                 case '_':
                     KeywordOrIdentifierLex();
-		            break;
+                    break;
                 case '0':
                 case '1':
                 case '2':
@@ -98,49 +98,49 @@ public class JavaScriptLexer
                 case '7':
                 case '8':
                 case '9':
-                	NumericLiteralLex();
-		            break;
-		        default:
-		        	_ = _text[_position++];
-		            break;
-		    }
-		}
-	}
-	
-	private void KeywordOrIdentifierLex()
-	{
-	    var positionStart = _position;
+                    NumericLiteralLex();
+                    break;
+                default:
+                    _ = _text[_position++];
+                    break;
+            }
+        }
+    }
     
-	    while (_position < _text.Length)
-	    {
-	        if (char.IsLetterOrDigit(_text[_position]))
-	            _position++;
-	        else
-	            break;
-	    }
-	
-	    var positionEnd = _position;
-	    
-	    var textSpan = new TextEditorTextSpan(
-	        StartInclusiveIndex: positionStart,
-	        EndExclusiveIndex: positionEnd,
-	        DecorationByte: (byte)GenericDecorationKind.None);
-	    
-	    if (JavaScriptKeywords.ALL_KEYWORDS.Contains(textSpan.GetText(_text, textEditorService: null)))
-	    {
-	    	textSpan = textSpan with
-	    	{
-	    		DecorationByte = (byte)GenericDecorationKind.Keyword
-	    	};
-	    }
-	
-	    _syntaxTokenList.Add(new SyntaxToken(
-	    	SyntaxKind.IdentifierToken,
-	    	textSpan));
-	}
-	
-	private void NumericLiteralLex()
-	{
-	    // ...
-	}
+    private void KeywordOrIdentifierLex()
+    {
+        var positionStart = _position;
+    
+        while (_position < _text.Length)
+        {
+            if (char.IsLetterOrDigit(_text[_position]))
+                _position++;
+            else
+                break;
+        }
+    
+        var positionEnd = _position;
+        
+        var textSpan = new TextEditorTextSpan(
+            StartInclusiveIndex: positionStart,
+            EndExclusiveIndex: positionEnd,
+            DecorationByte: (byte)GenericDecorationKind.None);
+        
+        if (JavaScriptKeywords.ALL_KEYWORDS.Contains(textSpan.GetText(_text, textEditorService: null)))
+        {
+            textSpan = textSpan with
+            {
+                DecorationByte = (byte)GenericDecorationKind.Keyword
+            };
+        }
+    
+        _syntaxTokenList.Add(new SyntaxToken(
+            SyntaxKind.IdentifierToken,
+            textSpan));
+    }
+    
+    private void NumericLiteralLex()
+    {
+        // ...
+    }
 }

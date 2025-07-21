@@ -13,13 +13,13 @@ public record struct TerminalGroupState(Key<ITerminal> ActiveTerminalKey)
             BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
             {
                 new DimensionUnit(
-                	80,
-                	DimensionUnitKind.Percentage),
+                    80,
+                    DimensionUnitKind.Percentage),
                 new DimensionUnit(
-                	0,
-                	DimensionUnitKind.Pixels,
-                	DimensionOperatorKind.Subtract,
-                	CommonFacts.PURPOSE_OFFSET),
+                    0,
+                    DimensionUnitKind.Pixels,
+                    DimensionOperatorKind.Subtract,
+                    CommonFacts.PURPOSE_OFFSET),
             });
         }
 
@@ -28,17 +28,17 @@ public record struct TerminalGroupState(Key<ITerminal> ActiveTerminalKey)
             TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
             {
                 new DimensionUnit(
-                	20,
-                	DimensionUnitKind.Percentage),
+                    20,
+                    DimensionUnitKind.Percentage),
                 new DimensionUnit(
-                	0,
-                	DimensionUnitKind.Pixels,
-                	DimensionOperatorKind.Subtract,
-                	CommonFacts.PURPOSE_OFFSET),
+                    0,
+                    DimensionUnitKind.Pixels,
+                    DimensionOperatorKind.Subtract,
+                    CommonFacts.PURPOSE_OFFSET),
             });
         }
     }
 
     public ElementDimensions BodyElementDimensions { get; } = new();
-	public ElementDimensions TabsElementDimensions { get; } = new();
+    public ElementDimensions TabsElementDimensions { get; } = new();
 }

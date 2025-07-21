@@ -10,7 +10,7 @@ public class JsonBlockCommentSyntax : IJsonSyntax
 {
     public JsonBlockCommentSyntax(
         TextEditorTextSpan textEditorTextSpan,
-		IReadOnlyList<IJsonSyntax> childJsonSyntaxes)
+        IReadOnlyList<IJsonSyntax> childJsonSyntaxes)
     {
         ChildJsonSyntaxes = childJsonSyntaxes;
         TextEditorTextSpan = textEditorTextSpan;

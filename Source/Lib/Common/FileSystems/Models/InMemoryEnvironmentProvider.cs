@@ -14,37 +14,37 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
         ActualLocalApplicationDataDirectoryAbsolutePath = new AbsolutePath("/AppData/Local/", true, this);
         
         SafeRoamingApplicationDataDirectoryAbsolutePath = new AbsolutePath(
-        	JoinPaths(ActualRoamingApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
-        	true,
-        	this);
-        	
+            JoinPaths(ActualRoamingApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
+            true,
+            this);
+            
         SafeLocalApplicationDataDirectoryAbsolutePath = new AbsolutePath(
-        	JoinPaths(ActualLocalApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
-        	true,
-        	this);
+            JoinPaths(ActualLocalApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
+            true,
+            this);
         
         ProtectedPathList.Add(new(
-        	RootDirectoryAbsolutePath.Value,
+            RootDirectoryAbsolutePath.Value,
             RootDirectoryAbsolutePath.IsDirectory));
 
         ProtectedPathList.Add(new(
-        	HomeDirectoryAbsolutePath.Value,
+            HomeDirectoryAbsolutePath.Value,
             HomeDirectoryAbsolutePath.IsDirectory));
         
         ProtectedPathList.Add(new(
-        	ActualRoamingApplicationDataDirectoryAbsolutePath.Value,
+            ActualRoamingApplicationDataDirectoryAbsolutePath.Value,
             ActualRoamingApplicationDataDirectoryAbsolutePath.IsDirectory));
             
         ProtectedPathList.Add(new(
-        	ActualLocalApplicationDataDirectoryAbsolutePath.Value,
+            ActualLocalApplicationDataDirectoryAbsolutePath.Value,
             ActualLocalApplicationDataDirectoryAbsolutePath.IsDirectory));
             
         ProtectedPathList.Add(new(
-        	SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
+            SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
             SafeRoamingApplicationDataDirectoryAbsolutePath.IsDirectory));
             
         ProtectedPathList.Add(new(
-        	SafeLocalApplicationDataDirectoryAbsolutePath.Value,
+            SafeLocalApplicationDataDirectoryAbsolutePath.Value,
             SafeLocalApplicationDataDirectoryAbsolutePath.IsDirectory));
 
         // Redundantly hardcode some obvious cases for protection.

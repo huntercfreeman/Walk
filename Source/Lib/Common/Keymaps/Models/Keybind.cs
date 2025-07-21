@@ -1,4 +1,4 @@
-﻿using Walk.Common.RazorLib.Commands.Models;
+using Walk.Common.RazorLib.Commands.Models;
 
 namespace Walk.Common.RazorLib.Keymaps.Models;
 

@@ -11,7 +11,7 @@ namespace Walk.CompilerServices.Css.SyntaxActors;
 public class CssSyntaxTree
 {
     public static CssSyntaxUnit ParseText(
-    	StringWalker stringWalker,
+        StringWalker stringWalker,
         ResourceUri resourceUri,
         string sourceText)
     {
@@ -83,7 +83,7 @@ public class CssSyntaxTree
 
                 var commentToken = new CssCommentSyntax(
                     commentTextSpan,
-					Array.Empty<ICssSyntax>());
+                    Array.Empty<ICssSyntax>());
 
                 cssDocumentChildren.Add(commentToken);
 

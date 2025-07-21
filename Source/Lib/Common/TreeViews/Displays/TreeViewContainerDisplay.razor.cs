@@ -180,11 +180,11 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             null);
 
         if (OnContextMenuFunc is not null)
-		{
+        {
             CommonService.Enqueue(new CommonWorkArgs
             {
-    			WorkKind = CommonWorkKind.TreeView_HandleTreeViewOnContextMenu,
-            	OnContextMenuFunc = OnContextMenuFunc,
+                WorkKind = CommonWorkKind.TreeView_HandleTreeViewOnContextMenu,
+                OnContextMenuFunc = OnContextMenuFunc,
                 TreeViewContextMenuCommandArgs = _treeViewContextMenuCommandArgs,
             });
         }
@@ -219,7 +219,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     
     public async void OnTreeViewStateChanged()
     {
-    	await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
     
     /// <summary>
@@ -238,6 +238,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	CommonService.TreeViewStateChanged -= OnTreeViewStateChanged;
+        CommonService.TreeViewStateChanged -= OnTreeViewStateChanged;
     }
 }

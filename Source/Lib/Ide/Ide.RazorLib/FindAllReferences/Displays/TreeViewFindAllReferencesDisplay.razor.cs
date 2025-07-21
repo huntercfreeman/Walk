@@ -7,7 +7,7 @@ namespace Walk.Ide.RazorLib.FindAllReferences.Displays;
 
 public partial class TreeViewFindAllReferencesDisplay : ComponentBase
 {
-	[Parameter, EditorRequired]
-	public TreeViewFindAllReferences TreeViewFindAllReferences { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public TreeViewFindAllReferences TreeViewFindAllReferences { get; set; } = null!;
 }
 */

@@ -18,7 +18,7 @@ public partial class CommonService
     public string Options_StorageKey => "walk-common_theme-storage-key";
 #endif
 
-	public string Options_ThemeCssClassString { get; set; } = CommonFacts.VisualStudioDarkThemeClone.CssClassString;
+    public string Options_ThemeCssClassString { get; set; } = CommonFacts.VisualStudioDarkThemeClone.CssClassString;
 
     public string? Options_FontFamilyCssStyleString { get; set; }
 
@@ -33,19 +33,19 @@ public partial class CommonService
     public bool Options_ShowPanelTitles => GetAppOptionsState().Options.ShowPanelTitles;
     
     public string Options_ShowPanelTitlesCssClass => GetAppOptionsState().Options.ShowPanelTitles
-    	? string.Empty
-    	: "di_ide_section-no-title";
+        ? string.Empty
+        : "di_ide_section-no-title";
 
     public string Options_ColorSchemeCssStyleString { get; set; }
 
-	public event Action? AppOptionsStateChanged;
-	
-	public AppOptionsState GetAppOptionsState() => _appOptionsState;
+    public event Action? AppOptionsStateChanged;
+    
+    public AppOptionsState GetAppOptionsState() => _appOptionsState;
 
     public void Options_SetActiveThemeRecordKey(int themeKey, bool updateStorage = true)
     {
-    	var inState = GetAppOptionsState();
-    	
+        var inState = GetAppOptionsState();
+        
         _appOptionsState = inState with
         {
             Options = inState.Options with
@@ -65,7 +65,7 @@ public partial class CommonService
     public void Options_SetTheme(ThemeRecord theme, bool updateStorage = true)
     {
         var inState = GetAppOptionsState();
-    	
+        
         _appOptionsState = inState with
         {
             Options = inState.Options with
@@ -85,7 +85,7 @@ public partial class CommonService
     public void Options_SetFontFamily(string? fontFamily, bool updateStorage = true)
     {
         var inState = GetAppOptionsState();
-    	
+        
         _appOptionsState = inState with
         {
             Options = inState.Options with
@@ -101,9 +101,9 @@ public partial class CommonService
         // I don't want to touch that right now -- incase there are unexpected consequences.
         var usingFontFamily = GetAppOptionsState().Options.FontFamily;
         if (usingFontFamily is null)
-        	Options_FontFamilyCssStyleString = null;
+            Options_FontFamilyCssStyleString = null;
         else
-        	Options_FontFamilyCssStyleString = $"font-family: {usingFontFamily};";
+            Options_FontFamilyCssStyleString = $"font-family: {usingFontFamily};";
 
         AppOptionsStateChanged?.Invoke();
 
@@ -114,7 +114,7 @@ public partial class CommonService
     public void Options_SetFontSize(int fontSizeInPixels, bool updateStorage = true)
     {
         var inState = GetAppOptionsState();
-    	
+        
         _appOptionsState = inState with
         {
             Options = inState.Options with
@@ -128,9 +128,9 @@ public partial class CommonService
         //
         // Can probably use 'fontSizeInPixels' variable here but
         // I don't want to touch that right now -- incase there are unexpected consequences.
-    	var usingFontSizeInPixels = GetAppOptionsState().Options.FontSizeInPixels;
+        var usingFontSizeInPixels = GetAppOptionsState().Options.FontSizeInPixels;
         var usingFontSizeInPixelsCssValue = usingFontSizeInPixels.ToCssValue();
-    	Options_FontSizeCssStyleString = $"font-size: {usingFontSizeInPixelsCssValue}px;";
+        Options_FontSizeCssStyleString = $"font-size: {usingFontSizeInPixelsCssValue}px;";
         
         AppOptionsStateChanged?.Invoke();
 
@@ -141,7 +141,7 @@ public partial class CommonService
     public void Options_SetResizeHandleWidth(int resizeHandleWidthInPixels, bool updateStorage = true)
     {
         var inState = GetAppOptionsState();
-    	
+        
         _appOptionsState = inState with
         {
             Options = inState.Options with
@@ -161,7 +161,7 @@ public partial class CommonService
     public void Options_SetResizeHandleHeight(int resizeHandleHeightInPixels, bool updateStorage = true)
     {
         var inState = GetAppOptionsState();
-    	
+        
         _appOptionsState = inState with
         {
             Options = inState.Options with
@@ -181,7 +181,7 @@ public partial class CommonService
     public void Options_SetIconSize(int iconSizeInPixels, bool updateStorage = true)
     {
         var inState = GetAppOptionsState();
-    	
+        
         _appOptionsState = inState with
         {
             Options = inState.Options with
@@ -207,7 +207,7 @@ public partial class CommonService
         
         try
         {
-    		optionsJson = JsonSerializer.Deserialize<CommonOptionsJsonDto>(optionsJsonString);
+            optionsJson = JsonSerializer.Deserialize<CommonOptionsJsonDto>(optionsJsonString);
         }
         catch (System.Text.Json.JsonException)
         {
@@ -245,29 +245,29 @@ public partial class CommonService
     public void Options_WriteToStorage()
     {
         Enqueue(new CommonWorkArgs
-    	{
-    		WorkKind = CommonWorkKind.WriteToLocalStorage,
-    		WriteToLocalStorage_Key = Options_StorageKey,
-    		WriteToLocalStorage_Value = new CommonOptionsJsonDto(GetAppOptionsState().Options)
-    	});
+        {
+            WorkKind = CommonWorkKind.WriteToLocalStorage,
+            WriteToLocalStorage_Key = Options_StorageKey,
+            WriteToLocalStorage_Value = new CommonOptionsJsonDto(GetAppOptionsState().Options)
+        });
     }
     
     private void HandleThemeChange()
     {
         var usingTheme = GetThemeState().ThemeList
-        	.FirstOrDefault(x => x.Key == GetAppOptionsState().Options.ThemeKey)
-        	?? CommonFacts.VisualStudioDarkThemeClone;
+            .FirstOrDefault(x => x.Key == GetAppOptionsState().Options.ThemeKey)
+            ?? CommonFacts.VisualStudioDarkThemeClone;
         
         Options_ThemeCssClassString = usingTheme.CssClassString;
-	    
-	    var cssStyleStringBuilder = new StringBuilder("color-scheme: ");
-	    if (usingTheme.ThemeColorKind == ThemeColorKind.Dark)
-	    	cssStyleStringBuilder.Append("dark");
-		else if (usingTheme.ThemeColorKind == ThemeColorKind.Light)
-	    	cssStyleStringBuilder.Append("light");
-		else
-	    	cssStyleStringBuilder.Append("dark");
-	    cssStyleStringBuilder.Append(';');
+        
+        var cssStyleStringBuilder = new StringBuilder("color-scheme: ");
+        if (usingTheme.ThemeColorKind == ThemeColorKind.Dark)
+            cssStyleStringBuilder.Append("dark");
+        else if (usingTheme.ThemeColorKind == ThemeColorKind.Light)
+            cssStyleStringBuilder.Append("light");
+        else
+            cssStyleStringBuilder.Append("dark");
+        cssStyleStringBuilder.Append(';');
         Options_ColorSchemeCssStyleString = cssStyleStringBuilder.ToString();
     }
 }

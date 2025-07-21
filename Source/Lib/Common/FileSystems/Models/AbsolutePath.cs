@@ -10,13 +10,13 @@ public struct AbsolutePath
     private string? _nameWithExtension;
     private List<string>? _ancestorDirectoryList;
     
-	public AbsolutePath(
+    public AbsolutePath(
         string absolutePathString,
         bool isDirectory,
         IEnvironmentProvider environmentProvider,
         List<string>? ancestorDirectoryList = null)
     {
-    	ExactInput = absolutePathString;
+        ExactInput = absolutePathString;
         IsDirectory = isDirectory;
         _ancestorDirectoryList = ancestorDirectoryList;
 
@@ -44,22 +44,22 @@ public struct AbsolutePath
             if (environmentProvider.IsDirectorySeparator(currentCharacter))
             {
                 // ConsumeTokenAsDirectory
-	            formattedBuilder
-	            	.Append(tokenBuilder.ToString())
-	            	.Append(environmentProvider.DirectorySeparatorChar);
-	            
-	            tokenBuilder.Clear();
-	            
-	            parentDirectoryEndExclusiveIndex = formattedBuilder.Length;
-	            
-	            if (ancestorDirectoryList is not null)
-	            	ancestorDirectoryList.Add(formattedBuilder.ToString());
+                formattedBuilder
+                    .Append(tokenBuilder.ToString())
+                    .Append(environmentProvider.DirectorySeparatorChar);
+                
+                tokenBuilder.Clear();
+                
+                parentDirectoryEndExclusiveIndex = formattedBuilder.Length;
+                
+                if (ancestorDirectoryList is not null)
+                    ancestorDirectoryList.Add(formattedBuilder.ToString());
             }
             else if (currentCharacter == ':' && RootDrive.DriveNameAsIdentifier is null && ParentDirectory is null)
             {
-            	// ConsumeTokenAsRootDrive
-            	RootDrive = new FileSystemDrive(tokenBuilder.ToString());
-        		tokenBuilder.Clear();
+                // ConsumeTokenAsRootDrive
+                RootDrive = new FileSystemDrive(tokenBuilder.ToString());
+                tokenBuilder.Clear();
             }
             else
             {
@@ -106,9 +106,9 @@ public struct AbsolutePath
         
         if (IsDirectory)
         {
-        	formattedBuilder
-        		.Append(NameNoExtension)
-        		.Append(ExtensionNoPeriod);
+            formattedBuilder
+                .Append(NameNoExtension)
+                .Append(ExtensionNoPeriod);
         }
         else
         {
@@ -119,9 +119,9 @@ public struct AbsolutePath
             else
             {
                 formattedBuilder
-                	.Append(NameNoExtension)
-                	.Append('.')
-                	.Append(ExtensionNoPeriod);
+                    .Append(NameNoExtension)
+                    .Append('.')
+                    .Append(ExtensionNoPeriod);
             }
         }
 
@@ -129,17 +129,17 @@ public struct AbsolutePath
 
         if (formattedString.Length == 2)
         {
-        	// If two directory separators chars are one after another and that is the only text in the string.
-        	if ((formattedString[0] == environmentProvider.DirectorySeparatorChar && formattedString[1] == environmentProvider.DirectorySeparatorChar) ||
-        	    (formattedString[0] == environmentProvider.AltDirectorySeparatorChar && formattedString[1] == environmentProvider.AltDirectorySeparatorChar))
-        	{
-        		Value = environmentProvider.DirectorySeparatorChar.ToString();
-        		return;
-        	}
+            // If two directory separators chars are one after another and that is the only text in the string.
+            if ((formattedString[0] == environmentProvider.DirectorySeparatorChar && formattedString[1] == environmentProvider.DirectorySeparatorChar) ||
+                (formattedString[0] == environmentProvider.AltDirectorySeparatorChar && formattedString[1] == environmentProvider.AltDirectorySeparatorChar))
+            {
+                Value = environmentProvider.DirectorySeparatorChar.ToString();
+                return;
+            }
         }
 
-		if (parentDirectoryEndExclusiveIndex != -1)
-			ParentDirectory = formattedString[..parentDirectoryEndExclusiveIndex];
+        if (parentDirectoryEndExclusiveIndex != -1)
+            ParentDirectory = formattedString[..parentDirectoryEndExclusiveIndex];
         
         Value = formattedString;
     }
@@ -164,11 +164,11 @@ public struct AbsolutePath
     
     public List<string> GetAncestorDirectoryList(IEnvironmentProvider environmentProvider)
     {
-    	return _ancestorDirectoryList ??= new AbsolutePath(
-        		Value,
-	            IsDirectory,
-	            environmentProvider,
-	            ancestorDirectoryList: new())
+        return _ancestorDirectoryList ??= new AbsolutePath(
+                Value,
+                IsDirectory,
+                environmentProvider,
+                ancestorDirectoryList: new())
             ._ancestorDirectoryList;
     }
 }

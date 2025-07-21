@@ -14,21 +14,21 @@ namespace Walk.Common.RazorLib.Keymaps.Models;
 ///     event.code == CapsLock
 public struct KeymapArgs : ICommandArgs
 {
-	public KeymapArgs()
-	{
-	}
+    public KeymapArgs()
+    {
+    }
 
-	public KeymapArgs(KeyboardEventArgs keyboardEventArgs)
+    public KeymapArgs(KeyboardEventArgs keyboardEventArgs)
     {
         Key = keyboardEventArgs.Key;
-	    Code = keyboardEventArgs.Code;
-	    Location = keyboardEventArgs.Location;
-	    Repeat = keyboardEventArgs.Repeat;
-	    CtrlKey = keyboardEventArgs.CtrlKey;
-	    ShiftKey = keyboardEventArgs.ShiftKey;
-	    AltKey = keyboardEventArgs.AltKey;
-	    MetaKey = keyboardEventArgs.MetaKey;
-	    Type = keyboardEventArgs.Type;
+        Code = keyboardEventArgs.Code;
+        Location = keyboardEventArgs.Location;
+        Repeat = keyboardEventArgs.Repeat;
+        CtrlKey = keyboardEventArgs.CtrlKey;
+        ShiftKey = keyboardEventArgs.ShiftKey;
+        AltKey = keyboardEventArgs.AltKey;
+        MetaKey = keyboardEventArgs.MetaKey;
+        Type = keyboardEventArgs.Type;
     }
     
     public int LayerKey { get; set; }
@@ -48,8 +48,8 @@ public struct KeymapArgs : ICommandArgs
         if (obj is not KeymapArgs keymapArgs)
             return false;
 
-		// NOTE: One cannot use the 'Equals' method to check if both the Key and Code are equal,
-		//       as this method only ensures one of the two were equal.
+        // NOTE: One cannot use the 'Equals' method to check if both the Key and Code are equal,
+        //       as this method only ensures one of the two were equal.
         return
             (LayerKey == keymapArgs.LayerKey) &&
             ((Key is not null && Key == keymapArgs.Key) || (Code is not null && Code == keymapArgs.Code)) &&

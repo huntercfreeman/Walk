@@ -6,7 +6,7 @@ namespace Walk.CompilerServices.Xml.Html.SyntaxObjects;
 public class InjectedLanguageFragmentNode : IHtmlSyntaxNode
 {
     public InjectedLanguageFragmentNode(
-		IReadOnlyList<IHtmlSyntax> childHtmlSyntaxes,
+        IReadOnlyList<IHtmlSyntax> childHtmlSyntaxes,
         TextEditorTextSpan textEditorTextSpan)
     {
         TextEditorTextSpan = textEditorTextSpan;

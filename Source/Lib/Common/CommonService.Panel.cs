@@ -9,15 +9,15 @@ namespace Walk.Common.RazorLib;
 
 public partial class CommonService
 {
-	private PanelState _panelState = new();
-	
-	public PanelState GetPanelState() => _panelState;
+    private PanelState _panelState = new();
+    
+    public PanelState GetPanelState() => _panelState;
 
     public void RegisterPanel(Panel panel)
     {
         lock (_stateModificationLock)
         {
-    	    var inState = GetPanelState();
+            var inState = GetPanelState();
     
             if (!inState.PanelList.Any(x => x.Key == panel.Key))
             {
@@ -49,7 +49,7 @@ public partial class CommonService
 
         CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
     }
-	
+    
     public void RegisterPanelGroup(PanelGroup panelGroup)
     {
         lock (_stateModificationLock)
@@ -88,9 +88,9 @@ public partial class CommonService
     }
 
     public void RegisterPanelTab(
-    	Key<PanelGroup> panelGroupKey,
-    	IPanelTab panelTab,
-    	bool insertAtIndexZero)
+        Key<PanelGroup> panelGroupKey,
+        IPanelTab panelTab,
+        bool insertAtIndexZero)
     {
         lock (_stateModificationLock)
         {

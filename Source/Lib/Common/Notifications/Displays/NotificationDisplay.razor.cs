@@ -17,8 +17,8 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public int Index { get; set; }
 
-	//private const int WIDTH_IN_PIXELS = 350;
-	private const int WIDTH_IN_FONT_WIDTH = 40;
+    //private const int WIDTH_IN_PIXELS = 350;
+    private const int WIDTH_IN_FONT_WIDTH = 40;
     // private const int HEIGHT_IN_PIXELS = 125;
     private const int HEIGHT_IN_FONT_HEIGHT = 8;
     private const int RIGHT_OFFSET_IN_PIXELS = 15;
@@ -134,11 +134,11 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
             
         if (wasCausedByUiEvent)
         {
-        	await CommonService.JsRuntimeCommonApi
-		        .FocusHtmlElementById(Notification.SetFocusOnCloseElementId
-		        	 ?? IDynamicViewModel.DefaultSetFocusOnCloseElementId)
-		        .ConfigureAwait(false);
-		}
+            await CommonService.JsRuntimeCommonApi
+                .FocusHtmlElementById(Notification.SetFocusOnCloseElementId
+                     ?? IDynamicViewModel.DefaultSetFocusOnCloseElementId)
+                .ConfigureAwait(false);
+        }
     }
 
     private void DeleteNotification()
@@ -154,13 +154,13 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     private Task ChangeNotificationToDialog()
     {
         var dialogRecord = new DialogViewModel(
-			Notification.DynamicViewModelKey,
+            Notification.DynamicViewModelKey,
             Notification.Title,
             Notification.ComponentType,
             Notification.ComponentParameterMap,
             Notification.NotificationCssClass,
-			true,
-			null);
+            true,
+            null);
 
         CommonService.Dialog_ReduceRegisterAction(dialogRecord);
 

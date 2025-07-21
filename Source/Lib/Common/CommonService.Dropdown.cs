@@ -7,25 +7,25 @@ namespace Walk.Common.RazorLib;
 
 public partial class CommonService
 {
-	private DropdownState _dropdownState = new();
-	
-	public DropdownState GetDropdownState() => _dropdownState;
-	
+    private DropdownState _dropdownState = new();
+    
+    public DropdownState GetDropdownState() => _dropdownState;
+    
     public void Dropdown_ReduceRegisterAction(DropdownRecord dropdown)
     {
-    	var inState = GetDropdownState();
+        var inState = GetDropdownState();
     
-		var indexExistingDropdown = inState.DropdownList.FindIndex(
-			x => x.Key == dropdown.Key);
+        var indexExistingDropdown = inState.DropdownList.FindIndex(
+            x => x.Key == dropdown.Key);
 
-		if (indexExistingDropdown != -1)
-		{
-			CommonUiStateChanged?.Invoke(CommonUiEventKind.DropdownStateChanged);
-			return;
-		}
+        if (indexExistingDropdown != -1)
+        {
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.DropdownStateChanged);
+            return;
+        }
 
-		var outDropdownList = new List<DropdownRecord>(inState.DropdownList);
-		outDropdownList.Add(dropdown);
+        var outDropdownList = new List<DropdownRecord>(inState.DropdownList);
+        outDropdownList.Add(dropdown);
 
         _dropdownState = inState with
         {
@@ -33,24 +33,24 @@ public partial class CommonService
         };
         
         CommonUiStateChanged?.Invoke(CommonUiEventKind.DropdownStateChanged);
-		return;
+        return;
     }
 
     public void Dropdown_ReduceDisposeAction(Key<DropdownRecord> key)
     {
-    	var inState = GetDropdownState();
+        var inState = GetDropdownState();
     
-		var indexExistingDropdown = inState.DropdownList.FindIndex(
-			x => x.Key == key);
+        var indexExistingDropdown = inState.DropdownList.FindIndex(
+            x => x.Key == key);
 
-		if (indexExistingDropdown == -1)
-		{
-			CommonUiStateChanged?.Invoke(CommonUiEventKind.DropdownStateChanged);
-			return;
-		}
-			
-		var outDropdownList = new List<DropdownRecord>(inState.DropdownList);
-		outDropdownList.RemoveAt(indexExistingDropdown);
+        if (indexExistingDropdown == -1)
+        {
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.DropdownStateChanged);
+            return;
+        }
+            
+        var outDropdownList = new List<DropdownRecord>(inState.DropdownList);
+        outDropdownList.RemoveAt(indexExistingDropdown);
 
         _dropdownState = inState with
         {
@@ -58,14 +58,14 @@ public partial class CommonService
         };
         
         CommonUiStateChanged?.Invoke(CommonUiEventKind.DropdownStateChanged);
-		return;
+        return;
     }
 
     public void Dropdown_ReduceClearAction()
     {
-    	var inState = GetDropdownState();
+        var inState = GetDropdownState();
     
-    	var outDropdownList = new List<DropdownRecord>();
+        var outDropdownList = new List<DropdownRecord>();
     
         _dropdownState = inState with
         {
@@ -73,34 +73,34 @@ public partial class CommonService
         };
         
         CommonUiStateChanged?.Invoke(CommonUiEventKind.DropdownStateChanged);
-		return;
+        return;
     }
 
     public void Dropdown_ReduceFitOnScreenAction(DropdownRecord dropdown)
     {
-    	var inState = GetDropdownState();
+        var inState = GetDropdownState();
     
-		var indexExistingDropdown = inState.DropdownList.FindIndex(
-			x => x.Key == dropdown.Key);
+        var indexExistingDropdown = inState.DropdownList.FindIndex(
+            x => x.Key == dropdown.Key);
 
-		if (indexExistingDropdown == -1)
-		{
-			CommonUiStateChanged?.Invoke(CommonUiEventKind.DropdownStateChanged);
-			return;
-		}
-		
-		var inDropdown = inState.DropdownList[indexExistingDropdown];
+        if (indexExistingDropdown == -1)
+        {
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.DropdownStateChanged);
+            return;
+        }
+        
+        var inDropdown = inState.DropdownList[indexExistingDropdown];
 
-		var outDropdown = inDropdown with
-		{
-			Width = dropdown.Width,
-			Height = dropdown.Height,
-			Left = dropdown.Left,
-			Top = dropdown.Top
-		};
-		
-		var outDropdownList = new List<DropdownRecord>(inState.DropdownList);
-		outDropdownList[indexExistingDropdown] = outDropdown;
+        var outDropdown = inDropdown with
+        {
+            Width = dropdown.Width,
+            Height = dropdown.Height,
+            Left = dropdown.Left,
+            Top = dropdown.Top
+        };
+        
+        var outDropdownList = new List<DropdownRecord>(inState.DropdownList);
+        outDropdownList[indexExistingDropdown] = outDropdown;
 
         _dropdownState = inState with
         {
@@ -108,6 +108,6 @@ public partial class CommonService
         };
         
         CommonUiStateChanged?.Invoke(CommonUiEventKind.DropdownStateChanged);
-		return;
+        return;
     }
 }

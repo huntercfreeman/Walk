@@ -7,10 +7,10 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 /// </summary>
 public struct FunctionParameterEntry
 {
-	public FunctionParameterEntry(ParameterModifierKind parameterModifierKind)
-	{
-		ParameterModifierKind = parameterModifierKind;
-	}
+    public FunctionParameterEntry(ParameterModifierKind parameterModifierKind)
+    {
+        ParameterModifierKind = parameterModifierKind;
+    }
 
-	public ParameterModifierKind ParameterModifierKind { get; }
+    public ParameterModifierKind ParameterModifierKind { get; }
 }

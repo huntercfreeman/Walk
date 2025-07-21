@@ -39,13 +39,13 @@ public class RazorSyntaxTree
     private readonly IEnvironmentProvider _environmentProvider;
 
     public RazorSyntaxTree(
-    	TextEditorService textEditorService,
+        TextEditorService textEditorService,
         ResourceUri resourceUri,
         RazorCompilerService razorCompilerService,
         CSharpCompilerService cSharpCompilerService,
         IEnvironmentProvider environmentProvider)
     {
-    	_textEditorService = textEditorService;
+        _textEditorService = textEditorService;
         MarkupResourceUri = resourceUri;
         _razorCompilerService = razorCompilerService;
         _cSharpCompilerService = cSharpCompilerService;
@@ -105,12 +105,12 @@ public class RazorSyntaxTree
         var classContents = _codebehindClassBuilder.ToString();
 
         var compilationUnit = new CSharpCompilationUnit(_codebehindResourceUri, classContents, CompilationUnitKind.IndividualFile_AllData);
-			
-		var lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, _codebehindResourceUri, classContents, shouldUseSharedStringWalker: true);
-		
-		_cSharpCompilerService.__CSharpBinder.StartCompilationUnit(_codebehindResourceUri);
-		
-		CSharpParser.Parse(compilationUnit, _cSharpCompilerService.__CSharpBinder, ref lexerOutput);
+            
+        var lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, _codebehindResourceUri, classContents, shouldUseSharedStringWalker: true);
+        
+        _cSharpCompilerService.__CSharpBinder.StartCompilationUnit(_codebehindResourceUri);
+        
+        CSharpParser.Parse(compilationUnit, _cSharpCompilerService.__CSharpBinder, ref lexerOutput);
         
         SemanticResultRazor = new SemanticResultRazor(
             compilationUnit,
@@ -232,8 +232,8 @@ public class RazorSyntaxTree
 
         foreach (var kvp in matchingKvps)
         {
-        	var typeDefinitionNode = kvp.Value;
-        	
+            var typeDefinitionNode = kvp.Value;
+            
             if (typeDefinitionNode is not null && typeDefinitionNode.InheritedTypeReference != TypeFacts.NotApplicable.ToTypeReference())
             {
                 var inheritanceIdentifierText = typeDefinitionNode
@@ -250,9 +250,9 @@ public class RazorSyntaxTree
                 var razorResource = (RazorResource)compilerServiceResource;
 
                 razorResource.HtmlSymbols.Add(new Symbol(
-                	SyntaxKind.InjectedLanguageComponentSymbol,
-            		symbolId: 0,
-                	textSpan));
+                    SyntaxKind.InjectedLanguageComponentSymbol,
+                    symbolId: 0,
+                    textSpan));
             }
         }
     }
@@ -334,7 +334,7 @@ public class RazorSyntaxTree
                     var positionIndexPriorToHtmlTag = stringWalker.PositionIndex;
 
                     var tagSyntax = HtmlSyntaxTree.HtmlSyntaxTreeStateMachine.ParseTag(
-                    	_textEditorService,
+                        _textEditorService,
                         stringWalker,
                         diagnosticList,
                         injectedLanguageDefinition);

@@ -1,4 +1,4 @@
-﻿namespace Walk.TextEditor.RazorLib.Decorations.Models;
+namespace Walk.TextEditor.RazorLib.Decorations.Models;
 
 public class TextEditorDecorationMapperDefault : IDecorationMapper
 {

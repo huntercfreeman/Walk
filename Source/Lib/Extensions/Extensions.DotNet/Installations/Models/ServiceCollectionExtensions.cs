@@ -19,43 +19,43 @@ namespace Walk.Extensions.DotNet.Installations.Models;
 /// public partial class WalkExtensionsDotNetInitializer : ComponentBase
 /// {
 ///     [Inject]
-/// 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
+///     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 /// 
 ///     protected override void OnInitialized()
-/// 	{
-/// 		DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
-/// 		{
-/// 			WorkKind = DotNetBackgroundTaskApiWorkKind.WalkExtensionsDotNetInitializerOnInit,
-/// 		});
-/// 	}
-/// 	
-/// 	protected override void OnAfterRender(bool firstRender)
-/// 	{
-/// 		if (firstRender)
-/// 		{
+///     {
+///         DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
+///         {
+///             WorkKind = DotNetBackgroundTaskApiWorkKind.WalkExtensionsDotNetInitializerOnInit,
+///         });
+///     }
+///     
+///     protected override void OnAfterRender(bool firstRender)
+///     {
+///         if (firstRender)
+///         {
 ///             DotNetBackgroundTaskApi.Enqueue(new DotNetBackgroundTaskApiWorkArgs
 ///             {
-///             	WorkKind = DotNetBackgroundTaskApiWorkKind.WalkExtensionsDotNetInitializerOnAfterRender
+///                 WorkKind = DotNetBackgroundTaskApiWorkKind.WalkExtensionsDotNetInitializerOnAfterRender
 ///             });
-/// 		}
-/// 	}
+///         }
+///     }
 /// }
 /// </summary>
 public static class ServiceCollectionExtensions
 {
-	public static IServiceCollection AddWalkExtensionsDotNetServices(
-		this IServiceCollection services,
-		WalkHostingInformation hostingInformation,
-		Func<WalkIdeConfig, WalkIdeConfig>? configure = null)
-	{
-		return services
-		    .AddScoped<DotNetService>(sp =>
-		    {
-		        return new DotNetService(
-		            sp.GetRequiredService<IdeService>(),
-            	    sp.GetRequiredService<HttpClient>(),
-            	    sp.GetRequiredService<IAppDataService>(),
+    public static IServiceCollection AddWalkExtensionsDotNetServices(
+        this IServiceCollection services,
+        WalkHostingInformation hostingInformation,
+        Func<WalkIdeConfig, WalkIdeConfig>? configure = null)
+    {
+        return services
+            .AddScoped<DotNetService>(sp =>
+            {
+                return new DotNetService(
+                    sp.GetRequiredService<IdeService>(),
+                    sp.GetRequiredService<HttpClient>(),
+                    sp.GetRequiredService<IAppDataService>(),
                     sp);
-		    });
-	}
+            });
+    }
 }

@@ -11,25 +11,25 @@ public partial class CommonService
     /// TODO: Thread safety.
     /// </summary>
     private DialogState _dialogState = new();
-	
-	public DialogState GetDialogState() => _dialogState;
+    
+    public DialogState GetDialogState() => _dialogState;
     
     public void Dialog_ReduceRegisterAction(IDialog dialog)
     {
-    	var inState = GetDialogState();
-    	
+        var inState = GetDialogState();
+        
         if (inState.DialogList.Any(x => x.DynamicViewModelKey == dialog.DynamicViewModelKey))
         {
-        	_ = Task.Run(async () =>
-        		await JsRuntimeCommonApi
-	                .FocusHtmlElementById(dialog.DialogFocusPointHtmlElementId)
-	                .ConfigureAwait(false));
-        	
-        	CommonUiStateChanged?.Invoke(CommonUiEventKind.DialogStateChanged);
-        	return;
+            _ = Task.Run(async () =>
+                await JsRuntimeCommonApi
+                    .FocusHtmlElementById(dialog.DialogFocusPointHtmlElementId)
+                    .ConfigureAwait(false));
+            
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.DialogStateChanged);
+            return;
         }
 
-		var outDialogList = new List<IDialog>(inState.DialogList);
+        var outDialogList = new List<IDialog>(inState.DialogList);
         outDialogList.Add(dialog);
 
         _dialogState = inState with 
@@ -46,15 +46,15 @@ public partial class CommonService
         Key<IDynamicViewModel> dynamicViewModelKey,
         bool isMaximized)
     {
-    	var inState = GetDialogState();
-    	
+        var inState = GetDialogState();
+        
         var indexDialog = inState.DialogList.FindIndex(
             x => x.DynamicViewModelKey == dynamicViewModelKey);
 
         if (indexDialog == -1)
         {
             CommonUiStateChanged?.Invoke(CommonUiEventKind.DialogStateChanged);
-        	return;
+            return;
         }
             
         var inDialog = inState.DialogList[indexDialog];
@@ -71,8 +71,8 @@ public partial class CommonService
     
     public void Dialog_ReduceSetActiveDialogKeyAction(Key<IDynamicViewModel> dynamicViewModelKey)
     {
-    	var inState = GetDialogState();
-    	
+        var inState = GetDialogState();
+        
         _dialogState = inState with { ActiveDialogKey = dynamicViewModelKey };
         
         CommonUiStateChanged?.Invoke(CommonUiEventKind.ActiveDialogKeyChanged);
@@ -81,18 +81,18 @@ public partial class CommonService
 
     public void Dialog_ReduceDisposeAction(Key<IDynamicViewModel> dynamicViewModelKey)
     {
-    	var inState = GetDialogState();
+        var inState = GetDialogState();
     
         var indexDialog = inState.DialogList.FindIndex(
             x => x.DynamicViewModelKey == dynamicViewModelKey);
 
         if (indexDialog == -1)
         {
-        	CommonUiStateChanged?.Invoke(CommonUiEventKind.DialogStateChanged);
-        	return;
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.DialogStateChanged);
+            return;
         }
 
-		var inDialog = inState.DialogList[indexDialog];
+        var inDialog = inState.DialogList[indexDialog];
 
         var outDialogList = new List<IDialog>(inState.DialogList);
         outDialogList.RemoveAt(indexDialog);

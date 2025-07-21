@@ -6,11 +6,11 @@ namespace Walk.Website.RazorLib.Websites;
 
 public class WebsiteDotNetCliHelper
 {
-	public static async Task StartNewCSharpProjectCommand(
-		CSharpProjectFormViewModelImmutable immutableView,
-		DotNetService dotNetService,
-		IDialog dialogRecord)
-	{
-		return;
-	}
+    public static async Task StartNewCSharpProjectCommand(
+        CSharpProjectFormViewModelImmutable immutableView,
+        DotNetService dotNetService,
+        IDialog dialogRecord)
+    {
+        return;
+    }
 }

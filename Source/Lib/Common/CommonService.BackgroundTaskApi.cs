@@ -28,7 +28,7 @@ public partial class CommonService
 
     public void Enqueue(CommonWorkArgs commonWorkArgs)
     {
-		_workQueue.Enqueue(commonWorkArgs);
+        _workQueue.Enqueue(commonWorkArgs);
         Continuous_EnqueueGroup(this);
     }
 
@@ -180,29 +180,29 @@ public partial class CommonService
     }
     
     public ValueTask HandleEvent()
-	{
-		if (!_workQueue.TryDequeue(out CommonWorkArgs workArgs))
-			return ValueTask.CompletedTask;
-			
-		switch (workArgs.WorkKind)
-		{
-			case CommonWorkKind.WalkCommonInitializerWork:
-				return Do_WalkCommonInitializer(WalkCommonInitializer.ContextSwitchGroupKey);
-			case CommonWorkKind.WriteToLocalStorage:
-				return Do_WriteToLocalStorage(workArgs.WriteToLocalStorage_Key, workArgs.WriteToLocalStorage_Value);
-			case CommonWorkKind.Tab_ManuallyPropagateOnContextMenu:
-				return Do_Tab_ManuallyPropagateOnContextMenu(workArgs.HandleTabButtonOnContextMenu, workArgs.TabContextMenuEventArgs);
-			case CommonWorkKind.TreeView_HandleTreeViewOnContextMenu:
-				return Do_TreeView_HandleTreeViewOnContextMenu(workArgs.OnContextMenuFunc, workArgs.TreeViewContextMenuCommandArgs);
+    {
+        if (!_workQueue.TryDequeue(out CommonWorkArgs workArgs))
+            return ValueTask.CompletedTask;
+            
+        switch (workArgs.WorkKind)
+        {
+            case CommonWorkKind.WalkCommonInitializerWork:
+                return Do_WalkCommonInitializer(WalkCommonInitializer.ContextSwitchGroupKey);
+            case CommonWorkKind.WriteToLocalStorage:
+                return Do_WriteToLocalStorage(workArgs.WriteToLocalStorage_Key, workArgs.WriteToLocalStorage_Value);
+            case CommonWorkKind.Tab_ManuallyPropagateOnContextMenu:
+                return Do_Tab_ManuallyPropagateOnContextMenu(workArgs.HandleTabButtonOnContextMenu, workArgs.TabContextMenuEventArgs);
+            case CommonWorkKind.TreeView_HandleTreeViewOnContextMenu:
+                return Do_TreeView_HandleTreeViewOnContextMenu(workArgs.OnContextMenuFunc, workArgs.TreeViewContextMenuCommandArgs);
             case CommonWorkKind.TreeView_HandleExpansionChevronOnMouseDown:
-				return Do_TreeView_HandleExpansionChevronOnMouseDown(workArgs.TreeViewNoType, workArgs.TreeViewContainer);
+                return Do_TreeView_HandleExpansionChevronOnMouseDown(workArgs.TreeViewNoType, workArgs.TreeViewContainer);
             case CommonWorkKind.TreeView_ManuallyPropagateOnContextMenu:
-				return Do_TreeView_ManuallyPropagateOnContextMenu(workArgs.HandleTreeViewOnContextMenu, workArgs.MouseEventArgs, workArgs.ContainerKey, workArgs.TreeViewNoType);
+                return Do_TreeView_ManuallyPropagateOnContextMenu(workArgs.HandleTreeViewOnContextMenu, workArgs.MouseEventArgs, workArgs.ContainerKey, workArgs.TreeViewNoType);
             case CommonWorkKind.TreeViewService_LoadChildList:
-				return Do_TreeViewService_LoadChildList(workArgs.ContainerKey, workArgs.TreeViewNoType);
-			default:
-				Console.WriteLine($"{nameof(CommonService)} {nameof(HandleEvent)} default case");
-				return ValueTask.CompletedTask;
-		}
-	}
+                return Do_TreeViewService_LoadChildList(workArgs.ContainerKey, workArgs.TreeViewNoType);
+            default:
+                Console.WriteLine($"{nameof(CommonService)} {nameof(HandleEvent)} default case");
+                return ValueTask.CompletedTask;
+        }
+    }
 }

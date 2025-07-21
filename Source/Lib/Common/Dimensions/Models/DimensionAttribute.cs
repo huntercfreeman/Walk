@@ -7,31 +7,31 @@ namespace Walk.Common.RazorLib.Dimensions.Models;
 /// </summary>
 public struct DimensionAttribute
 {
-	public DimensionAttribute(DimensionAttributeKind dimensionAttributeKind)
-	{
+    public DimensionAttribute(DimensionAttributeKind dimensionAttributeKind)
+    {
         DimensionAttributeKind = dimensionAttributeKind;
-	    DimensionUnitList = new();
-	}
+        DimensionUnitList = new();
+    }
 
     public List<DimensionUnit> DimensionUnitList { get; }
     public DimensionAttributeKind DimensionAttributeKind { get; }
     
     public void Increment(double amount, DimensionUnitKind dimensionUnitKind, DimensionUnit defaultIfNotExists)
     {    
-    	var index = DimensionUnitList.FindIndex(
+        var index = DimensionUnitList.FindIndex(
             du => du.DimensionUnitKind == dimensionUnitKind);
 
         if (index == -1)
         {
-        	// TODO: This is extremely thread unsafe.
-        	index = DimensionUnitList.Count;
-        	DimensionUnitList.Add(defaultIfNotExists);
+            // TODO: This is extremely thread unsafe.
+            index = DimensionUnitList.Count;
+            DimensionUnitList.Add(defaultIfNotExists);
         }
         
         var dimensionUnit = DimensionUnitList[index];
         DimensionUnitList[index] = dimensionUnit with
         {
-        	Value = dimensionUnit.Value + amount
+            Value = dimensionUnit.Value + amount
         };
     }
     
@@ -42,15 +42,15 @@ public struct DimensionAttribute
 
         if (index == -1)
         {
-        	// TODO: This is extremely thread unsafe.
-        	index = DimensionUnitList.Count;
-        	DimensionUnitList.Add(defaultIfNotExists);
+            // TODO: This is extremely thread unsafe.
+            index = DimensionUnitList.Count;
+            DimensionUnitList.Add(defaultIfNotExists);
         }
         
         var dimensionUnit = DimensionUnitList[index];
         DimensionUnitList[index] = dimensionUnit with
         {
-        	Value = dimensionUnit.Value - amount
+            Value = dimensionUnit.Value - amount
         };
     }
     
@@ -60,12 +60,12 @@ public struct DimensionAttribute
             du => du.DimensionUnitKind == dimensionUnitKind);
 
         if (index == -1)
-        	return;
+            return;
         
         var dimensionUnit = DimensionUnitList[index];
         DimensionUnitList[index] = dimensionUnit with
         {
-        	Value = amount
+            Value = amount
         };
     }
 

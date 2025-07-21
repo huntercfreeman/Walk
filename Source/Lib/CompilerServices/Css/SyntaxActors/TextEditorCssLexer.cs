@@ -9,15 +9,15 @@ namespace Walk.CompilerServices.Css.SyntaxActors;
 
 public class TextEditorCssLexer
 {
-	private static readonly LexerKeywords LexerKeywords = LexerKeywords.Empty;
+    private static readonly LexerKeywords LexerKeywords = LexerKeywords.Empty;
 
-	private readonly TextEditorService _textEditorService;
+    private readonly TextEditorService _textEditorService;
 
     public TextEditorCssLexer(TextEditorService textEditorService, ResourceUri resourceUri, string sourceText)
     {
-    	_textEditorService = textEditorService;
-    	ResourceUri = resourceUri;
-    	SourceText = sourceText;
+        _textEditorService = textEditorService;
+        ResourceUri = resourceUri;
+        SourceText = sourceText;
     }
     
     public List<SyntaxToken> SyntaxTokenList { get; } = new();

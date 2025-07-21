@@ -4,7 +4,7 @@ namespace Walk.Common.RazorLib.Dimensions.Models;
 
 public static class DimensionExtensions
 {
-	public static string GetStyleString(this DimensionUnitKind dimensionUnitKind)
+    public static string GetStyleString(this DimensionUnitKind dimensionUnitKind)
     {
         return dimensionUnitKind switch
         {

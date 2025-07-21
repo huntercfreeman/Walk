@@ -12,8 +12,8 @@ namespace Walk.TextEditor.RazorLib.Installations.Displays;
 /// This class is an exception to the naming convention, "don't use the word 'Walk' in class names".
 /// 
 /// Reason for this exception: when one first starts interacting with this project,
-/// 	this type might be one of the first types they interact with. So, the redundancy of namespace
-/// 	and type containing 'Walk' feels reasonable here.
+///     this type might be one of the first types they interact with. So, the redundancy of namespace
+///     and type containing 'Walk' feels reasonable here.
 /// </remarks>
 public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
 {
@@ -33,20 +33,20 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
-    	_countOfTestCharacters = TEST_STRING_REPEAT_COUNT * TEST_STRING_FOR_MEASUREMENT.Length;
-    	
-    	TextEditorService.Options_NeedsMeasured += OnNeedsMeasured;
+        _countOfTestCharacters = TEST_STRING_REPEAT_COUNT * TEST_STRING_FOR_MEASUREMENT.Length;
+        
+        TextEditorService.Options_NeedsMeasured += OnNeedsMeasured;
 
         TextEditorService.Enqueue_TextEditorInitializationBackgroundTaskGroupWorkKind();
     }
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-    	if (firstRender)
-    	{
-    		await InvokeAsync(Ready);
-    		QueueRemeasureBackgroundTask();
-    	}
+        if (firstRender)
+        {
+            await InvokeAsync(Ready);
+            QueueRemeasureBackgroundTask();
+        }
     }
     
     /// <summary>
@@ -57,62 +57,62 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
         TextEditorService.CommonService.UiStringBuilder.Clear();
         TextEditorService.CommonService.UiStringBuilder.Append("di_te_text-editor-css-wrapper ");
         TextEditorService.CommonService.UiStringBuilder.Append(TextEditorService.ThemeCssClassString);
-    	_wrapperCssClass = TextEditorService.CommonService.UiStringBuilder.ToString();
-    	
-    	var options = TextEditorService.Options_GetTextEditorOptionsState().Options;
-    	
-    	var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
-    	if (options.CommonOptions?.FontSizeInPixels is not null)
+        _wrapperCssClass = TextEditorService.CommonService.UiStringBuilder.ToString();
+        
+        var options = TextEditorService.Options_GetTextEditorOptionsState().Options;
+        
+        var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
+        if (options.CommonOptions?.FontSizeInPixels is not null)
             fontSizeInPixels = options!.CommonOptions.FontSizeInPixels;
         TextEditorService.CommonService.UiStringBuilder.Clear();
         TextEditorService.CommonService.UiStringBuilder.Append("font-size: ");
         TextEditorService.CommonService.UiStringBuilder.Append(fontSizeInPixels.ToCssValue());
         TextEditorService.CommonService.UiStringBuilder.Append("px;");
-    	var fontSizeCssStyle = TextEditorService.CommonService.UiStringBuilder.ToString();
-    	
-    	var fontFamily = TextEditorVirtualizationResult.DEFAULT_FONT_FAMILY;
-    	if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
-        	fontFamily = options!.CommonOptions!.FontFamily;
-    	TextEditorService.CommonService.UiStringBuilder.Clear();
-    	TextEditorService.CommonService.UiStringBuilder.Append("font-family: ");
-    	TextEditorService.CommonService.UiStringBuilder.Append(fontFamily);
-    	TextEditorService.CommonService.UiStringBuilder.Append(";");
-    	var fontFamilyCssStyle = TextEditorService.CommonService.UiStringBuilder.ToString();
-    	
-    	TextEditorService.CommonService.UiStringBuilder.Clear();
-    	TextEditorService.CommonService.UiStringBuilder.Append(fontSizeCssStyle);
-    	TextEditorService.CommonService.UiStringBuilder.Append(" ");
-    	TextEditorService.CommonService.UiStringBuilder.Append(fontFamilyCssStyle);
-    	TextEditorService.CommonService.UiStringBuilder.Append(" position:absolute;");
-    	_wrapperCssStyle = TextEditorService.CommonService.UiStringBuilder.ToString();
-    	
-    	// I said "Only invoke this method from the UI thread due to the usage of the shared UiStringBuilder."
-    	// But I'm still going to keep this InvokeAsync for the StateHasChanged due to superstituous anxiety.
-    	await InvokeAsync(StateHasChanged);
+        var fontSizeCssStyle = TextEditorService.CommonService.UiStringBuilder.ToString();
+        
+        var fontFamily = TextEditorVirtualizationResult.DEFAULT_FONT_FAMILY;
+        if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
+            fontFamily = options!.CommonOptions!.FontFamily;
+        TextEditorService.CommonService.UiStringBuilder.Clear();
+        TextEditorService.CommonService.UiStringBuilder.Append("font-family: ");
+        TextEditorService.CommonService.UiStringBuilder.Append(fontFamily);
+        TextEditorService.CommonService.UiStringBuilder.Append(";");
+        var fontFamilyCssStyle = TextEditorService.CommonService.UiStringBuilder.ToString();
+        
+        TextEditorService.CommonService.UiStringBuilder.Clear();
+        TextEditorService.CommonService.UiStringBuilder.Append(fontSizeCssStyle);
+        TextEditorService.CommonService.UiStringBuilder.Append(" ");
+        TextEditorService.CommonService.UiStringBuilder.Append(fontFamilyCssStyle);
+        TextEditorService.CommonService.UiStringBuilder.Append(" position:absolute;");
+        _wrapperCssStyle = TextEditorService.CommonService.UiStringBuilder.ToString();
+        
+        // I said "Only invoke this method from the UI thread due to the usage of the shared UiStringBuilder."
+        // But I'm still going to keep this InvokeAsync for the StateHasChanged due to superstituous anxiety.
+        await InvokeAsync(StateHasChanged);
     }
     
-	private async void OnNeedsMeasured()
-	{
-		await InvokeAsync(Ready);
-		QueueRemeasureBackgroundTask();
-	}
-	
+    private async void OnNeedsMeasured()
+    {
+        await InvokeAsync(Ready);
+        QueueRemeasureBackgroundTask();
+    }
+    
     private void QueueRemeasureBackgroundTask()
     {
         TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
         {
-        	var charAndLineMeasurements = await TextEditorService.JsRuntimeTextEditorApi
-	            .GetCharAndLineMeasurementsInPixelsById(
-	                _measureCharacterWidthAndLineHeightElementId,
-	                _countOfTestCharacters)
-	            .ConfigureAwait(false);
-	            
-	        TextEditorService.Options_SetCharAndLineMeasurements(editContext, charAndLineMeasurements);
+            var charAndLineMeasurements = await TextEditorService.JsRuntimeTextEditorApi
+                .GetCharAndLineMeasurementsInPixelsById(
+                    _measureCharacterWidthAndLineHeightElementId,
+                    _countOfTestCharacters)
+                .ConfigureAwait(false);
+                
+            TextEditorService.Options_SetCharAndLineMeasurements(editContext, charAndLineMeasurements);
         });
     }
     
     public void Dispose()
     {
-    	TextEditorService.Options_NeedsMeasured -= OnNeedsMeasured;
+        TextEditorService.Options_NeedsMeasured -= OnNeedsMeasured;
     }
 }

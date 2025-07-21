@@ -10,32 +10,32 @@ public partial class DirtyResourceUriViewDisplay : ComponentBase, IDisposable
     private TextEditorService TextEditorService { get; set; } = null!;
     
     protected override void OnInitialized()
-	{
-		TextEditorService.DirtyResourceUriStateChanged += OnDirtyResourceUriStateChanged;
-	}
+    {
+        TextEditorService.DirtyResourceUriStateChanged += OnDirtyResourceUriStateChanged;
+    }
 
     private Task OpenInEditorOnClick(string filePath)
     {
-    	TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
-    	{
-    		await TextEditorService.OpenInEditorAsync(
-    			editContext,
+        TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+        {
+            await TextEditorService.OpenInEditorAsync(
+                editContext,
                 filePath,
-				true,
-				null,
-				new Category("main"),
-				Key<TextEditorViewModel>.NewKey());
-    	});
-    	return Task.CompletedTask;
+                true,
+                null,
+                new Category("main"),
+                Key<TextEditorViewModel>.NewKey());
+        });
+        return Task.CompletedTask;
     }
     
     public async void OnDirtyResourceUriStateChanged()
     {
-    	await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
     
     public void Dispose()
     {
-    	TextEditorService.DirtyResourceUriStateChanged -= OnDirtyResourceUriStateChanged;
+        TextEditorService.DirtyResourceUriStateChanged -= OnDirtyResourceUriStateChanged;
     }
 }

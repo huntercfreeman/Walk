@@ -14,43 +14,43 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class BadExpressionNode : IExpressionNode
 {
-	public BadExpressionNode(TypeReference resultTypeReference, ISyntax syntaxPrimary, ISyntax syntaxSecondary)
-	{
-		#if DEBUG
-		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.BadExpressionNode++;
-		#endif
-	
-		ResultTypeReference = resultTypeReference;
-		SyntaxPrimary = syntaxPrimary;
-		SyntaxSecondary = syntaxSecondary;
-	}
-	
-	public ISyntax SyntaxPrimary { get; }
-	public ISyntax SyntaxSecondary { get; }
+    public BadExpressionNode(TypeReference resultTypeReference, ISyntax syntaxPrimary, ISyntax syntaxSecondary)
+    {
+        #if DEBUG
+        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.BadExpressionNode++;
+        #endif
+    
+        ResultTypeReference = resultTypeReference;
+        SyntaxPrimary = syntaxPrimary;
+        SyntaxSecondary = syntaxSecondary;
+    }
+    
+    public ISyntax SyntaxPrimary { get; }
+    public ISyntax SyntaxSecondary { get; }
 
-	/// <summary>
-	/// This type tracks the cause of the BadExpressionNode in the form of 'SyntaxPrimary', and 'SyntaxSecondary'.
-	///
-	/// But, once a 'BadExpressionNode' is made, it might go on to clobber the expression loop
-	/// until the end of file is reached.
-	///
-	/// So, this ClobberCount is the amount of times this 'BadExpressionNode' was merged with some other syntax,
-	/// and in the process resulted in this 'BadExpressionNode' being the primaryExpression.
-	///
-	/// (this doesn't count the initial failure to merge 'SyntaxPrimary', and 'SyntaxSecondary').
-	/// </summary>
-	public int ClobberCount { get; set; }
+    /// <summary>
+    /// This type tracks the cause of the BadExpressionNode in the form of 'SyntaxPrimary', and 'SyntaxSecondary'.
+    ///
+    /// But, once a 'BadExpressionNode' is made, it might go on to clobber the expression loop
+    /// until the end of file is reached.
+    ///
+    /// So, this ClobberCount is the amount of times this 'BadExpressionNode' was merged with some other syntax,
+    /// and in the process resulted in this 'BadExpressionNode' being the primaryExpression.
+    ///
+    /// (this doesn't count the initial failure to merge 'SyntaxPrimary', and 'SyntaxSecondary').
+    /// </summary>
+    public int ClobberCount { get; set; }
 
-	public TypeReference ResultTypeReference { get; }
+    public TypeReference ResultTypeReference { get; }
 
-	public int Unsafe_ParentIndexKey { get; set; }
-	public bool IsFabricated { get; init; }
-	public SyntaxKind SyntaxKind => SyntaxKind.BadExpressionNode;
+    public int Unsafe_ParentIndexKey { get; set; }
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.BadExpressionNode;
 
 #if DEBUG
-	~BadExpressionNode()
-	{
-		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.BadExpressionNode--;
-	}
-	#endif
+    ~BadExpressionNode()
+    {
+        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.BadExpressionNode--;
+    }
+    #endif
 }

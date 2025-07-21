@@ -15,5 +15,5 @@ namespace Walk.Common.RazorLib.Reactives.Models;
 /// </summary>
 public interface IStateScheduler
 {
-	
+    
 }

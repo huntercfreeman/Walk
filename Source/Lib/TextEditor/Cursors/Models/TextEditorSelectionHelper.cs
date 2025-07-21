@@ -68,7 +68,7 @@ public static class TextEditorSelectionHelper
 
     public static (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) GetSelectionBounds(TextEditorViewModel viewModel)
     {
-    	return GetSelectionBounds(viewModel.SelectionAnchorPositionIndex, viewModel.SelectionEndingPositionIndex);
+        return GetSelectionBounds(viewModel.SelectionAnchorPositionIndex, viewModel.SelectionEndingPositionIndex);
     }
     
     public static (int Position_LowerInclusiveIndex, int Position_UpperExclusiveIndex) GetSelectionBounds(

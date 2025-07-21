@@ -12,36 +12,36 @@ namespace Walk.Extensions.DotNet.CSharpProjects.Models;
 
 public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpProjectToProjectReferences>
 {
-	public TreeViewCSharpProjectToProjectReferences(
-			CSharpProjectToProjectReferences cSharpProjectToProjectReferences,
-			CommonService commonService,
-			bool isExpandable,
-			bool isExpanded)
-		: base(cSharpProjectToProjectReferences, isExpandable, isExpanded)
-	{
-		CommonService = commonService;
-	}
+    public TreeViewCSharpProjectToProjectReferences(
+            CSharpProjectToProjectReferences cSharpProjectToProjectReferences,
+            CommonService commonService,
+            bool isExpandable,
+            bool isExpanded)
+        : base(cSharpProjectToProjectReferences, isExpandable, isExpanded)
+    {
+        CommonService = commonService;
+    }
 
-	public CommonService CommonService { get; }
+    public CommonService CommonService { get; }
 
-	public override bool Equals(object? obj)
-	{
-		if (obj is not TreeViewCSharpProjectToProjectReferences otherTreeView)
-			return false;
+    public override bool Equals(object? obj)
+    {
+        if (obj is not TreeViewCSharpProjectToProjectReferences otherTreeView)
+            return false;
 
-		return otherTreeView.GetHashCode() == GetHashCode();
-	}
+        return otherTreeView.GetHashCode() == GetHashCode();
+    }
 
-	public override int GetHashCode() => Item.CSharpProjectNamespacePath.AbsolutePath.Value.GetHashCode();
+    public override int GetHashCode() => Item.CSharpProjectNamespacePath.AbsolutePath.Value.GetHashCode();
 
-	public override string GetDisplayText() => "Project References";
-	
-	public override Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => IconReferencesFragment.Render;
+    public override string GetDisplayText() => "Project References";
+    
+    public override Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => IconReferencesFragment.Render;
 
     /*public override TreeViewRenderer GetTreeViewRenderer()
-	{
-	
-	    using Microsoft.AspNetCore.Components;
+    {
+    
+        using Microsoft.AspNetCore.Components;
         using Walk.Common.RazorLib.Options.Models;
         
         namespace Walk.Extensions.DotNet.CSharpProjects.Displays;
@@ -51,106 +51,106 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
             [Inject]
             private IAppOptionsService AppOptionsService { get; set; } = null!;
         }
-	
-		
-		<div>
-        	
-        	@{
-        		var appOptionsState = AppOptionsService.GetAppOptionsState();
-        	
-        		var iconDriver = new IconDriver(
-        			appOptionsState.Options.IconSizeInPixels,
-        			appOptionsState.Options.IconSizeInPixels);
-        	}
+    
+        
+        <div>
+            
+            @{
+                var appOptionsState = AppOptionsService.GetAppOptionsState();
+            
+                var iconDriver = new IconDriver(
+                    appOptionsState.Options.IconSizeInPixels,
+                    appOptionsState.Options.IconSizeInPixels);
+            }
         
             @IconReferencesFragment.Render(iconDriver)
             Project References
         </div>
-		
-		
-		
-		return new TreeViewRenderer(
-			DotNetComponentRenderers.CompilerServicesTreeViews.TreeViewCSharpProjectToProjectReferencesRendererType,
-			null);
-	}*/
+        
+        
+        
+        return new TreeViewRenderer(
+            DotNetComponentRenderers.CompilerServicesTreeViews.TreeViewCSharpProjectToProjectReferencesRendererType,
+            null);
+    }*/
 
-	public override async Task LoadChildListAsync()
-	{
-		var previousChildren = new List<TreeViewNoType>(ChildList);
+    public override async Task LoadChildListAsync()
+    {
+        var previousChildren = new List<TreeViewNoType>(ChildList);
 
-		var content = await CommonService.FileSystemProvider.File.ReadAllTextAsync(
-				Item.CSharpProjectNamespacePath.AbsolutePath.Value)
-			.ConfigureAwait(false);
+        var content = await CommonService.FileSystemProvider.File.ReadAllTextAsync(
+                Item.CSharpProjectNamespacePath.AbsolutePath.Value)
+            .ConfigureAwait(false);
 
-		var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
-			textEditorService: null,
-			new StringWalker(),
-			new(Item.CSharpProjectNamespacePath.AbsolutePath.Value),
-			content);
+        var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
+            textEditorService: null,
+            new StringWalker(),
+            new(Item.CSharpProjectNamespacePath.AbsolutePath.Value),
+            content);
 
-		var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
+        var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
 
-		var cSharpProjectSyntaxWalker = new CSharpProjectSyntaxWalker();
+        var cSharpProjectSyntaxWalker = new CSharpProjectSyntaxWalker();
 
-		cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
+        cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
 
-		var projectReferences = cSharpProjectSyntaxWalker.TagNodes
-			.Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText(content, textEditorService: null) ?? string.Empty) == "ProjectReference")
-			.ToList();
+        var projectReferences = cSharpProjectSyntaxWalker.TagNodes
+            .Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText(content, textEditorService: null) ?? string.Empty) == "ProjectReference")
+            .ToList();
 
-		List<CSharpProjectToProjectReference> cSharpProjectToProjectReferences = new();
+        List<CSharpProjectToProjectReference> cSharpProjectToProjectReferences = new();
 
-		foreach (var projectReference in projectReferences)
-		{
-			var attributeNameValueTuples = projectReference
-				.AttributeNodes
-				.Select(x => (
-					x.AttributeNameSyntax.TextEditorTextSpan
-						.GetText(content, textEditorService: null)
-						.Trim(),
-					x.AttributeValueSyntax.TextEditorTextSpan
-						.GetText(content, textEditorService: null)
-						.Replace("\"", string.Empty)
-						.Replace("=", string.Empty)
-						.Trim()))
-				.ToArray();
+        foreach (var projectReference in projectReferences)
+        {
+            var attributeNameValueTuples = projectReference
+                .AttributeNodes
+                .Select(x => (
+                    x.AttributeNameSyntax.TextEditorTextSpan
+                        .GetText(content, textEditorService: null)
+                        .Trim(),
+                    x.AttributeValueSyntax.TextEditorTextSpan
+                        .GetText(content, textEditorService: null)
+                        .Replace("\"", string.Empty)
+                        .Replace("=", string.Empty)
+                        .Trim()))
+                .ToArray();
 
-			var includeAttribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Include");
+            var includeAttribute = attributeNameValueTuples.FirstOrDefault(x => x.Item1 == "Include");
 
-			var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
-				Item.CSharpProjectNamespacePath.AbsolutePath,
-				includeAttribute.Item2,
-				(IEnvironmentProvider)CommonService.EnvironmentProvider);
+            var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
+                Item.CSharpProjectNamespacePath.AbsolutePath,
+                includeAttribute.Item2,
+                (IEnvironmentProvider)CommonService.EnvironmentProvider);
 
-			var referenceProjectAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
-				referenceProjectAbsolutePathString,
-				false);
+            var referenceProjectAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
+                referenceProjectAbsolutePathString,
+                false);
 
-			var cSharpProjectToProjectReference = new CSharpProjectToProjectReference(
-				Item.CSharpProjectNamespacePath,
-				referenceProjectAbsolutePath);
+            var cSharpProjectToProjectReference = new CSharpProjectToProjectReference(
+                Item.CSharpProjectNamespacePath,
+                referenceProjectAbsolutePath);
 
-			cSharpProjectToProjectReferences.Add(cSharpProjectToProjectReference);
-		}
+            cSharpProjectToProjectReferences.Add(cSharpProjectToProjectReference);
+        }
 
-		var newChildList = cSharpProjectToProjectReferences
-			.Select(x => (TreeViewNoType)new TreeViewCSharpProjectToProjectReference(
-				x,
-				CommonService,
-				false,
-				false)
-			{
-				TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
-			})
-			.ToList();
+        var newChildList = cSharpProjectToProjectReferences
+            .Select(x => (TreeViewNoType)new TreeViewCSharpProjectToProjectReference(
+                x,
+                CommonService,
+                false,
+                false)
+            {
+                TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
+            })
+            .ToList();
 
-		ChildList = newChildList;
-		LinkChildren(previousChildren, ChildList);
-		TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
-	}
+        ChildList = newChildList;
+        LinkChildren(previousChildren, ChildList);
+        TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
+    }
 
-	public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
-	{
-		return;
-	}
+    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
+    {
+        return;
+    }
 }

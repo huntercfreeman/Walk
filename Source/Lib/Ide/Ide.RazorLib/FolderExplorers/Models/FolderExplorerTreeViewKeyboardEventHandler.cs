@@ -190,17 +190,17 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return Task.CompletedTask;
 
-		_ideService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
-		{
-			await _ideService.TextEditorService.OpenInEditorAsync(
-				editContext,
-				treeViewAbsolutePath.Item.Value,
-				shouldSetFocusToEditor,
-				cursorPositionIndex: null,
-				new Category("main"),
-				Key<TextEditorViewModel>.NewKey());
-		});
-		return Task.CompletedTask;
+        _ideService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+        {
+            await _ideService.TextEditorService.OpenInEditorAsync(
+                editContext,
+                treeViewAbsolutePath.Item.Value,
+                shouldSetFocusToEditor,
+                cursorPositionIndex: null,
+                new Category("main"),
+                Key<TextEditorViewModel>.NewKey());
+        });
+        return Task.CompletedTask;
     }
 
     private async Task ReloadTreeViewModel(TreeViewNoType? treeViewModel)
@@ -217,6 +217,6 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         _ideService.CommonService.TreeView_MoveUpAction(
             FolderExplorerState.TreeViewContentStateKey,
             false,
-			false);
+            false);
     }
 }

@@ -1,11 +1,11 @@
-﻿namespace Walk.TextEditor.RazorLib.CompilerServices;
+namespace Walk.TextEditor.RazorLib.CompilerServices;
 
 public enum CompilerServiceDiagnosticDecorationKind
 {
-	None,
-	DiagnosticError,
-	DiagnosticHint,
-	DiagnosticSuggestion,
-	DiagnosticWarning,
-	DiagnosticOther,
+    None,
+    DiagnosticError,
+    DiagnosticHint,
+    DiagnosticSuggestion,
+    DiagnosticWarning,
+    DiagnosticOther,
 }

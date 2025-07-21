@@ -2,7 +2,7 @@ namespace Walk.TextEditor.RazorLib.Commands.Models.Defaults;
 
 public static class TextEditorCommandDefaultFacts
 {
-	/*
+    /*
     public static readonly TextEditorCommand RefreshSyntaxHighlighting = new(
         "Refresh Syntax Highlighting", "defaults_refresh_syntax_highlighting", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
@@ -18,9 +18,9 @@ public static class TextEditorCommandDefaultFacts
                 return ValueTask.CompletedTask;
                 
             modelModifier.CompilerService.ResourceWasModified(
-				modelModifier.ResourceUri,
-				Array.Empty<TextEditorTextSpan>());
-		    return ValueTask.CompletedTask;
+                modelModifier.ResourceUri,
+                Array.Empty<TextEditorTextSpan>());
+            return ValueTask.CompletedTask;
         });
     */
 }

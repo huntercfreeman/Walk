@@ -7,7 +7,7 @@ public class JsonKeywordSyntax : IJsonSyntax
 {
     public JsonKeywordSyntax(
         TextEditorTextSpan textEditorTextSpan,
-		IReadOnlyList<IJsonSyntax> childJsonSyntaxes)
+        IReadOnlyList<IJsonSyntax> childJsonSyntaxes)
     {
         ChildJsonSyntaxes = childJsonSyntaxes;
         TextEditorTextSpan = textEditorTextSpan;

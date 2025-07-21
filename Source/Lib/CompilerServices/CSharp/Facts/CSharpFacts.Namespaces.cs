@@ -26,7 +26,7 @@ public partial class CSharpFacts
                                 new(SyntaxKind.UnrecognizedTokenKeyword, new(0, 0, 0)),
                                 new(SyntaxKind.IdentifierToken, new(0, SystemNamespaceIdentifier.Length, 0)),
                                 new CodeBlock(Array.Empty<ISyntax>()),
-		                        ResourceUri.Empty)
+                                ResourceUri.Empty)
                         })
                 }
             };
@@ -38,7 +38,7 @@ public partial class CSharpFacts
                 new(SyntaxKind.UnrecognizedTokenKeyword, new(0, 0, 0)),
                 new(SyntaxKind.IdentifierToken, new(0, TopLevelNamespaceIdentifier.Length, 0)),
                 new CodeBlock(Array.Empty<ISyntax>()),
-	            ResourceUri.Empty);
+                ResourceUri.Empty);
         }
     }
 }

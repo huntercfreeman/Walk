@@ -17,8 +17,8 @@ public partial class IdeImportExportButtons : ComponentBase
         typeof(IdeImportDisplay),
         null,
         null,
-		true,
-		null);
+        true,
+        null);
 
     private IDialog _exportDialogRecord = new DialogViewModel(
         Key<IDynamicViewModel>.NewKey(),
@@ -26,8 +26,8 @@ public partial class IdeImportExportButtons : ComponentBase
         typeof(IdeExportDisplay),
         null,
         null,
-		true,
-		null);
+        true,
+        null);
 
     private void ImportOnClick()
     {

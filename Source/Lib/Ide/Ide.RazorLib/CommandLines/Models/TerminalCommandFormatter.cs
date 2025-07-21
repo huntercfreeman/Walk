@@ -1,4 +1,4 @@
-﻿namespace Walk.Ide.RazorLib.CommandLines.Models;
+namespace Walk.Ide.RazorLib.CommandLines.Models;
 
 public class TerminalCommandFormatter
 {

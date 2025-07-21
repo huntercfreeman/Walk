@@ -13,9 +13,9 @@ public partial class NotificationsViewDisplay : ComponentBase, IDisposable
 
     private NotificationsViewKind _chosenNotificationsViewKind = NotificationsViewKind.Notifications;
 
-	protected override void OnInitialized()
+    protected override void OnInitialized()
     {
-    	CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
+        CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
     }
 
     private string GetIsActiveCssClass(
@@ -50,11 +50,11 @@ public partial class NotificationsViewDisplay : ComponentBase, IDisposable
     public async void OnCommonUiStateChanged(CommonUiEventKind commonUiEventKind)
     {
         if (commonUiEventKind == CommonUiEventKind.NotificationStateChanged)
-    	    await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
     }
-	
-	public void Dispose()
-	{
-		CommonService.CommonUiStateChanged -= OnCommonUiStateChanged;
-	}
+    
+    public void Dispose()
+    {
+        CommonService.CommonUiStateChanged -= OnCommonUiStateChanged;
+    }
 }

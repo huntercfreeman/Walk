@@ -6,7 +6,7 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 /// </summary>
 public enum ScopeDirectionKind
 {
-	Up,
-	Down,
-	Both,
+    Up,
+    Down,
+    Both,
 }

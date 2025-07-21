@@ -33,13 +33,13 @@ public class TreeViewInterfaceImplementation : TreeViewReflection
     
         <div title="@TreeViewInterfaceImplementation.Key.Guid">
     
-        	@{
-        		var appOptionsService = AppOptionsService.GetAppOptionsState();
-        	
-        		var iconDriver = new IconDriver(
-        			appOptionsService.Options.IconSizeInPixels,
-        			appOptionsService.Options.IconSizeInPixels);
-        	}
+            @{
+                var appOptionsService = AppOptionsService.GetAppOptionsState();
+            
+                var iconDriver = new IconDriver(
+                    appOptionsService.Options.IconSizeInPixels,
+                    appOptionsService.Options.IconSizeInPixels);
+            }
         
             @IconSymbolInterfaceFragment.Render(iconDriver)
             ConcreteType:

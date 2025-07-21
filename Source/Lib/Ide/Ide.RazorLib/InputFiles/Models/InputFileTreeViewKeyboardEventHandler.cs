@@ -15,10 +15,10 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     private readonly Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> _getSearchMatchTuplesFunc;
 
     public InputFileTreeViewKeyboardEventHandler(
-	        IdeService ideService,
-	        Func<AbsolutePath, Task> setInputFileContentTreeViewRootFunc,
-	        Func<Task> focusSearchInputElementFunc,
-	        Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc)
+            IdeService ideService,
+            Func<AbsolutePath, Task> setInputFileContentTreeViewRootFunc,
+            Func<Task> focusSearchInputElementFunc,
+            Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc)
         : base(ideService.CommonService)
     {
         _ideService = ideService;

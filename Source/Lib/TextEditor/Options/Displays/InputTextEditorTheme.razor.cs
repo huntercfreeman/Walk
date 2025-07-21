@@ -15,10 +15,10 @@ public partial class InputTextEditorTheme : ComponentBase, IDisposable
 
     [Parameter]
     public InputViewModel InputViewModel { get; set; } = InputViewModel.Empty;
-	
-	protected override void OnInitialized()
+    
+    protected override void OnInitialized()
     {
-    	TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
+        TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
     }
     
     private void SelectedThemeChanged(ChangeEventArgs changeEventArgs)
@@ -47,6 +47,6 @@ public partial class InputTextEditorTheme : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TextEditorService.Options_StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
+        TextEditorService.Options_StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
     }
 }

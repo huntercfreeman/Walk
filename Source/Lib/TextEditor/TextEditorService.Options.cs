@@ -14,202 +14,202 @@ namespace Walk.TextEditor.RazorLib;
 
 public partial class TextEditorService
 {
-	public const int Options_TAB_WIDTH_MIN = 2;
-	public const int Options_TAB_WIDTH_MAX = 4;
+    public const int Options_TAB_WIDTH_MIN = 2;
+    public const int Options_TAB_WIDTH_MAX = 4;
 
-	private readonly TextEditorService Options_textEditorService;
-	private readonly CommonService Options_commonUtilityService;
+    private readonly TextEditorService Options_textEditorService;
+    private readonly CommonService Options_commonUtilityService;
 
-	private TextEditorOptionsState Options_textEditorOptionsState = new();
+    private TextEditorOptionsState Options_textEditorOptionsState = new();
 
-	private IDialog? Options_findAllDialog;
+    private IDialog? Options_findAllDialog;
 
-	public TextEditorOptionsState Options_GetTextEditorOptionsState() => Options_textEditorOptionsState;
+    public TextEditorOptionsState Options_GetTextEditorOptionsState() => Options_textEditorOptionsState;
 
-	public TextEditorOptions Options_GetOptions()
-	{
-		return Options_GetTextEditorOptionsState().Options;
-	}
+    public TextEditorOptions Options_GetOptions()
+    {
+        return Options_GetTextEditorOptionsState().Options;
+    }
 
-	public void Options_InvokeTextEditorWrapperCssStateChanged()
-	{
-		Options_TextEditorWrapperCssStateChanged?.Invoke();
-	}
+    public void Options_InvokeTextEditorWrapperCssStateChanged()
+    {
+        Options_TextEditorWrapperCssStateChanged?.Invoke();
+    }
 
-	public void Options_ShowSettingsDialog(bool? isResizableOverride = null, string? cssClassString = null)
-	{
-		// TODO: determine the actively focused element at time of invocation,
-		//       then restore focus to that element when this dialog is closed.
-		var settingsDialog = new DialogViewModel(
-			Key<IDynamicViewModel>.NewKey(),
-			"Text Editor Settings",
-			TextEditorConfig.SettingsDialogConfig.ComponentRendererType,
-			null,
-			cssClassString,
-			isResizableOverride ?? TextEditorConfig.SettingsDialogConfig.ComponentIsResizable,
-			null);
+    public void Options_ShowSettingsDialog(bool? isResizableOverride = null, string? cssClassString = null)
+    {
+        // TODO: determine the actively focused element at time of invocation,
+        //       then restore focus to that element when this dialog is closed.
+        var settingsDialog = new DialogViewModel(
+            Key<IDynamicViewModel>.NewKey(),
+            "Text Editor Settings",
+            TextEditorConfig.SettingsDialogConfig.ComponentRendererType,
+            null,
+            cssClassString,
+            isResizableOverride ?? TextEditorConfig.SettingsDialogConfig.ComponentIsResizable,
+            null);
 
-		CommonService.Dialog_ReduceRegisterAction(settingsDialog);
-	}
+        CommonService.Dialog_ReduceRegisterAction(settingsDialog);
+    }
 
-	public void Options_ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null)
-	{
-		// TODO: determine the actively focused element at time of invocation,
-		//       then restore focus to that element when this dialog is closed.
-		Options_findAllDialog ??= new DialogViewModel(
-			Key<IDynamicViewModel>.NewKey(),
-			"Find All",
-			TextEditorConfig.FindAllDialogConfig.ComponentRendererType,
-			null,
-			cssClassString,
-			isResizableOverride ?? TextEditorConfig.FindAllDialogConfig.ComponentIsResizable,
-			null);
+    public void Options_ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null)
+    {
+        // TODO: determine the actively focused element at time of invocation,
+        //       then restore focus to that element when this dialog is closed.
+        Options_findAllDialog ??= new DialogViewModel(
+            Key<IDynamicViewModel>.NewKey(),
+            "Find All",
+            TextEditorConfig.FindAllDialogConfig.ComponentRendererType,
+            null,
+            cssClassString,
+            isResizableOverride ?? TextEditorConfig.FindAllDialogConfig.ComponentIsResizable,
+            null);
 
-		CommonService.Dialog_ReduceRegisterAction(Options_findAllDialog);
-	}
+        CommonService.Dialog_ReduceRegisterAction(Options_findAllDialog);
+    }
 
-	public void Options_SetTheme(ThemeRecord theme, bool updateStorage = true)
-	{
-		var inState = Options_GetTextEditorOptionsState();
+    public void Options_SetTheme(ThemeRecord theme, bool updateStorage = true)
+    {
+        var inState = Options_GetTextEditorOptionsState();
 
-		Options_textEditorOptionsState = new TextEditorOptionsState
-		{
-			Options = inState.Options with
-			{
-				CommonOptions = inState.Options.CommonOptions with
-				{
-					ThemeKey = theme.Key
-				},
-				RenderStateKey = Key<RenderState>.NewKey(),
-			},
-		};
+        Options_textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                CommonOptions = inState.Options.CommonOptions with
+                {
+                    ThemeKey = theme.Key
+                },
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
 
-		// I'm optimizing all the expression bound properties that construct
-		// a string, and specifically the ones that are rendered in the UI many times.
-		//
-		// Can probably use 'theme' variable here but
-		// I don't want to touch that right now -- incase there are unexpected consequences.
-		var usingThemeCssClassString = CommonService.GetThemeState().ThemeList
-			.FirstOrDefault(x => x.Key == Options_GetTextEditorOptionsState().Options.CommonOptions.ThemeKey)
-			?.CssClassString
-			?? CommonFacts.VisualStudioDarkThemeClone.CssClassString;
-		ThemeCssClassString = usingThemeCssClassString;
+        // I'm optimizing all the expression bound properties that construct
+        // a string, and specifically the ones that are rendered in the UI many times.
+        //
+        // Can probably use 'theme' variable here but
+        // I don't want to touch that right now -- incase there are unexpected consequences.
+        var usingThemeCssClassString = CommonService.GetThemeState().ThemeList
+            .FirstOrDefault(x => x.Key == Options_GetTextEditorOptionsState().Options.CommonOptions.ThemeKey)
+            ?.CssClassString
+            ?? CommonFacts.VisualStudioDarkThemeClone.CssClassString;
+        ThemeCssClassString = usingThemeCssClassString;
 
-		Options_StaticStateChanged?.Invoke();
+        Options_StaticStateChanged?.Invoke();
 
-		if (updateStorage)
-			Options_WriteToStorage();
-	}
+        if (updateStorage)
+            Options_WriteToStorage();
+    }
 
-	public void Options_SetShowWhitespace(bool showWhitespace, bool updateStorage = true)
-	{
-		var inState = Options_GetTextEditorOptionsState();
+    public void Options_SetShowWhitespace(bool showWhitespace, bool updateStorage = true)
+    {
+        var inState = Options_GetTextEditorOptionsState();
 
-		Options_textEditorOptionsState = new TextEditorOptionsState
-		{
-			Options = inState.Options with
-			{
-				ShowWhitespace = showWhitespace,
-				RenderStateKey = Key<RenderState>.NewKey(),
-			},
-		};
-		// ShowWhitespace needs virtualization result to be re-calculated.
-		Options_MeasuredStateChanged?.Invoke();
+        Options_textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                ShowWhitespace = showWhitespace,
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        // ShowWhitespace needs virtualization result to be re-calculated.
+        Options_MeasuredStateChanged?.Invoke();
 
-		if (updateStorage)
-			Options_WriteToStorage();
-	}
+        if (updateStorage)
+            Options_WriteToStorage();
+    }
 
-	public void Options_SetUseMonospaceOptimizations(bool useMonospaceOptimizations, bool updateStorage = true)
-	{
-		var inState = Options_GetTextEditorOptionsState();
+    public void Options_SetUseMonospaceOptimizations(bool useMonospaceOptimizations, bool updateStorage = true)
+    {
+        var inState = Options_GetTextEditorOptionsState();
 
-		Options_textEditorOptionsState = new TextEditorOptionsState
-		{
-			Options = inState.Options with
-			{
-				UseMonospaceOptimizations = useMonospaceOptimizations,
-				RenderStateKey = Key<RenderState>.NewKey(),
-			},
-		};
-		Options_StaticStateChanged?.Invoke();
+        Options_textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                UseMonospaceOptimizations = useMonospaceOptimizations,
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        Options_StaticStateChanged?.Invoke();
 
-		if (updateStorage)
-			Options_WriteToStorage();
-	}
+        if (updateStorage)
+            Options_WriteToStorage();
+    }
 
-	public void Options_SetShowNewlines(bool showNewlines, bool updateStorage = true)
-	{
-		var inState = Options_GetTextEditorOptionsState();
+    public void Options_SetShowNewlines(bool showNewlines, bool updateStorage = true)
+    {
+        var inState = Options_GetTextEditorOptionsState();
 
-		Options_textEditorOptionsState = new TextEditorOptionsState
-		{
-			Options = inState.Options with
-			{
-				ShowNewlines = showNewlines,
-				RenderStateKey = Key<RenderState>.NewKey(),
-			},
-		};
-		Options_StaticStateChanged?.Invoke();
+        Options_textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                ShowNewlines = showNewlines,
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        Options_StaticStateChanged?.Invoke();
 
-		if (updateStorage)
-			Options_WriteToStorage();
-	}
+        if (updateStorage)
+            Options_WriteToStorage();
+    }
 
-	public void Options_SetTabKeyBehavior(bool tabKeyBehavior, bool updateStorage = true)
-	{
-		var inState = Options_GetTextEditorOptionsState();
+    public void Options_SetTabKeyBehavior(bool tabKeyBehavior, bool updateStorage = true)
+    {
+        var inState = Options_GetTextEditorOptionsState();
 
-		Options_textEditorOptionsState = new TextEditorOptionsState
-		{
-			Options = inState.Options with
-			{
-				TabKeyBehavior = tabKeyBehavior,
-				RenderStateKey = Key<RenderState>.NewKey(),
-			},
-		};
-		Options_StaticStateChanged?.Invoke();
+        Options_textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                TabKeyBehavior = tabKeyBehavior,
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        Options_StaticStateChanged?.Invoke();
 
-		if (updateStorage)
-			Options_WriteToStorage();
-	}
+        if (updateStorage)
+            Options_WriteToStorage();
+    }
 
-	public void Options_SetTabWidth(int tabWidth, bool updateStorage = true)
-	{
-		if (tabWidth < Options_TAB_WIDTH_MIN || tabWidth > Options_TAB_WIDTH_MAX)
-			return;
+    public void Options_SetTabWidth(int tabWidth, bool updateStorage = true)
+    {
+        if (tabWidth < Options_TAB_WIDTH_MIN || tabWidth > Options_TAB_WIDTH_MAX)
+            return;
 
-		var inState = Options_GetTextEditorOptionsState();
+        var inState = Options_GetTextEditorOptionsState();
 
-		Options_textEditorOptionsState = new TextEditorOptionsState
-		{
-			Options = inState.Options with
-			{
-				TabWidth = tabWidth,
-				RenderStateKey = Key<RenderState>.NewKey(),
-			},
-		};
-		Options_MeasuredStateChanged?.Invoke();
+        Options_textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                TabWidth = tabWidth,
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        Options_MeasuredStateChanged?.Invoke();
 
-		if (updateStorage)
-			Options_WriteToStorage();
-	}
+        if (updateStorage)
+            Options_WriteToStorage();
+    }
 
-	public void Options_SetKeymap(ITextEditorKeymap keymap, bool updateStorage = true)
-	{
-		var inState = Options_GetTextEditorOptionsState();
+    public void Options_SetKeymap(ITextEditorKeymap keymap, bool updateStorage = true)
+    {
+        var inState = Options_GetTextEditorOptionsState();
 
-		Options_textEditorOptionsState = new TextEditorOptionsState
-		{
-			Options = inState.Options with
-			{
-				Keymap = keymap,
-				RenderStateKey = Key<RenderState>.NewKey(),
-			},
-		};
-		Options_StaticStateChanged?.Invoke();
+        Options_textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                Keymap = keymap,
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        Options_StaticStateChanged?.Invoke();
 
-		/*var activeKeymap = _textEditorService.Options_GetTextEditorOptionsState().Options.Keymap;
+        /*var activeKeymap = _textEditorService.Options_GetTextEditorOptionsState().Options.Keymap;
 
         if (activeKeymap is not null)
         {
@@ -220,138 +220,138 @@ public partial class TextEditorService
 
         if (updateStorage)
             WriteToStorage();*/
-	}
+    }
 
-	public void Options_SetHeight(int? heightInPixels, bool updateStorage = true)
-	{
-		var inState = Options_GetTextEditorOptionsState();
+    public void Options_SetHeight(int? heightInPixels, bool updateStorage = true)
+    {
+        var inState = Options_GetTextEditorOptionsState();
 
-		Options_textEditorOptionsState = new TextEditorOptionsState
-		{
-			Options = inState.Options with
-			{
-				TextEditorHeightInPixels = heightInPixels,
-				RenderStateKey = Key<RenderState>.NewKey(),
-			},
-		};
-		Options_StaticStateChanged?.Invoke();
+        Options_textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                TextEditorHeightInPixels = heightInPixels,
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        Options_StaticStateChanged?.Invoke();
 
-		if (updateStorage)
-			Options_WriteToStorage();
-	}
+        if (updateStorage)
+            Options_WriteToStorage();
+    }
 
-	public void Options_SetFontSize(int fontSizeInPixels, bool updateStorage = true)
-	{
-		var inState = Options_GetTextEditorOptionsState();
+    public void Options_SetFontSize(int fontSizeInPixels, bool updateStorage = true)
+    {
+        var inState = Options_GetTextEditorOptionsState();
 
-		Options_textEditorOptionsState = new TextEditorOptionsState
-		{
-			Options = inState.Options with
-			{
-				CommonOptions = inState.Options.CommonOptions with
-				{
-					FontSizeInPixels = fontSizeInPixels
-				},
-				RenderStateKey = Key<RenderState>.NewKey(),
-			},
-		};
-		Options_NeedsMeasured?.Invoke();
+        Options_textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                CommonOptions = inState.Options.CommonOptions with
+                {
+                    FontSizeInPixels = fontSizeInPixels
+                },
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        Options_NeedsMeasured?.Invoke();
 
-		if (updateStorage)
-			Options_WriteToStorage();
-	}
+        if (updateStorage)
+            Options_WriteToStorage();
+    }
 
-	public void Options_SetFontFamily(string? fontFamily, bool updateStorage = true)
-	{
-		var inState = Options_GetTextEditorOptionsState();
+    public void Options_SetFontFamily(string? fontFamily, bool updateStorage = true)
+    {
+        var inState = Options_GetTextEditorOptionsState();
 
-		Options_textEditorOptionsState = new TextEditorOptionsState
-		{
-			Options = inState.Options with
-			{
-				CommonOptions = inState.Options.CommonOptions with
-				{
-					FontFamily = fontFamily
-				},
-				RenderStateKey = Key<RenderState>.NewKey(),
-			},
-		};
-		Options_NeedsMeasured?.Invoke();
+        Options_textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                CommonOptions = inState.Options.CommonOptions with
+                {
+                    FontFamily = fontFamily
+                },
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        Options_NeedsMeasured?.Invoke();
 
-		if (updateStorage)
-			Options_WriteToStorage();
-	}
+        if (updateStorage)
+            Options_WriteToStorage();
+    }
 
-	public void Options_SetCursorWidth(double cursorWidthInPixels, bool updateStorage = true)
-	{
-		var inState = Options_GetTextEditorOptionsState();
+    public void Options_SetCursorWidth(double cursorWidthInPixels, bool updateStorage = true)
+    {
+        var inState = Options_GetTextEditorOptionsState();
 
-		Options_textEditorOptionsState = new TextEditorOptionsState
-		{
-			Options = inState.Options with
-			{
-				CursorWidthInPixels = cursorWidthInPixels,
-				RenderStateKey = Key<RenderState>.NewKey(),
-			},
-		};
-		Options_StaticStateChanged?.Invoke();
+        Options_textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                CursorWidthInPixels = cursorWidthInPixels,
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
+        Options_StaticStateChanged?.Invoke();
 
-		if (updateStorage)
-			Options_WriteToStorage();
-	}
+        if (updateStorage)
+            Options_WriteToStorage();
+    }
 
-	public void Options_SetRenderStateKey(Key<RenderState> renderStateKey)
-	{
-		var inState = Options_GetTextEditorOptionsState();
+    public void Options_SetRenderStateKey(Key<RenderState> renderStateKey)
+    {
+        var inState = Options_GetTextEditorOptionsState();
 
-		Options_textEditorOptionsState = new TextEditorOptionsState
-		{
-			Options = inState.Options with
-			{
-				RenderStateKey = renderStateKey
-			},
-		};
-		Options_StaticStateChanged?.Invoke();
-	}
+        Options_textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                RenderStateKey = renderStateKey
+            },
+        };
+        Options_StaticStateChanged?.Invoke();
+    }
 
-	public void Options_SetCharAndLineMeasurements(TextEditorEditContext editContext, CharAndLineMeasurements charAndLineMeasurements)
-	{
-		var inState = Options_GetTextEditorOptionsState();
+    public void Options_SetCharAndLineMeasurements(TextEditorEditContext editContext, CharAndLineMeasurements charAndLineMeasurements)
+    {
+        var inState = Options_GetTextEditorOptionsState();
 
-		Options_textEditorOptionsState = new TextEditorOptionsState
-		{
-			Options = inState.Options with
-			{
-				CharAndLineMeasurements = charAndLineMeasurements,
-				RenderStateKey = Key<RenderState>.NewKey(),
-			},
-		};
+        Options_textEditorOptionsState = new TextEditorOptionsState
+        {
+            Options = inState.Options with
+            {
+                CharAndLineMeasurements = charAndLineMeasurements,
+                RenderStateKey = Key<RenderState>.NewKey(),
+            },
+        };
 
-		Options_MeasuredStateChanged?.Invoke();
-	}
+        Options_MeasuredStateChanged?.Invoke();
+    }
 
-	public void Options_WriteToStorage()
-	{
-		CommonService.Enqueue(new CommonWorkArgs
-		{
-			WorkKind = CommonWorkKind.WriteToLocalStorage,
-			WriteToLocalStorage_Key = StorageKey,
-			WriteToLocalStorage_Value = new TextEditorOptionsJsonDto(Options_GetTextEditorOptionsState().Options),
-		});
-	}
+    public void Options_WriteToStorage()
+    {
+        CommonService.Enqueue(new CommonWorkArgs
+        {
+            WorkKind = CommonWorkKind.WriteToLocalStorage,
+            WriteToLocalStorage_Key = StorageKey,
+            WriteToLocalStorage_Value = new TextEditorOptionsJsonDto(Options_GetTextEditorOptionsState().Options),
+        });
+    }
 
-	public async Task Options_SetFromLocalStorageAsync()
-	{
-		var optionsJsonString = await CommonService.Storage_GetValue(StorageKey).ConfigureAwait(false) as string;
+    public async Task Options_SetFromLocalStorageAsync()
+    {
+        var optionsJsonString = await CommonService.Storage_GetValue(StorageKey).ConfigureAwait(false) as string;
 
-		if (string.IsNullOrWhiteSpace(optionsJsonString))
-			return;
+        if (string.IsNullOrWhiteSpace(optionsJsonString))
+            return;
 
         TextEditorOptionsJsonDto? optionsJson = null;
         
         try
         {
-    		optionsJson = JsonSerializer.Deserialize<TextEditorOptionsJsonDto>(optionsJsonString);
+            optionsJson = JsonSerializer.Deserialize<TextEditorOptionsJsonDto>(optionsJsonString);
         }
         catch (System.Text.Json.JsonException)
         {
@@ -360,17 +360,17 @@ public partial class TextEditorService
         }
         
         if (optionsJson is null)
-    		return;
+            return;
         
-		if (optionsJson.CommonOptionsJsonDto?.ThemeKey is not null)
-		{
-			var matchedTheme = CommonService.GetThemeState().ThemeList.FirstOrDefault(
-				x => x.Key == optionsJson.CommonOptionsJsonDto.ThemeKey);
+        if (optionsJson.CommonOptionsJsonDto?.ThemeKey is not null)
+        {
+            var matchedTheme = CommonService.GetThemeState().ThemeList.FirstOrDefault(
+                x => x.Key == optionsJson.CommonOptionsJsonDto.ThemeKey);
 
-			Options_SetTheme(matchedTheme ?? CommonFacts.VisualStudioDarkThemeClone, false);
-		}
+            Options_SetTheme(matchedTheme ?? CommonFacts.VisualStudioDarkThemeClone, false);
+        }
 
-		/*if (optionsJson.Keymap is not null)
+        /*if (optionsJson.Keymap is not null)
         {
             var matchedKeymap = TextEditorKeymapFacts.AllKeymapsList.FirstOrDefault(
                 x => x.Key == optionsJson.Keymap.Key);
@@ -387,32 +387,32 @@ public partial class TextEditorService
             }
         }*/
 
-		if (optionsJson.CommonOptionsJsonDto?.FontSizeInPixels is not null)
-			Options_SetFontSize(optionsJson.CommonOptionsJsonDto.FontSizeInPixels.Value, false);
+        if (optionsJson.CommonOptionsJsonDto?.FontSizeInPixels is not null)
+            Options_SetFontSize(optionsJson.CommonOptionsJsonDto.FontSizeInPixels.Value, false);
 
-		if (optionsJson.CursorWidthInPixels is not null)
-			Options_SetCursorWidth(optionsJson.CursorWidthInPixels.Value, false);
+        if (optionsJson.CursorWidthInPixels is not null)
+            Options_SetCursorWidth(optionsJson.CursorWidthInPixels.Value, false);
 
-		if (optionsJson.TextEditorHeightInPixels is not null)
-			Options_SetHeight(optionsJson.TextEditorHeightInPixels.Value, false);
+        if (optionsJson.TextEditorHeightInPixels is not null)
+            Options_SetHeight(optionsJson.TextEditorHeightInPixels.Value, false);
 
-		if (optionsJson.ShowNewlines is not null)
-			Options_SetShowNewlines(optionsJson.ShowNewlines.Value, false);
+        if (optionsJson.ShowNewlines is not null)
+            Options_SetShowNewlines(optionsJson.ShowNewlines.Value, false);
 
-		if (optionsJson.TabKeyBehavior is not null)
-			Options_SetTabKeyBehavior(optionsJson.TabKeyBehavior.Value, false);
+        if (optionsJson.TabKeyBehavior is not null)
+            Options_SetTabKeyBehavior(optionsJson.TabKeyBehavior.Value, false);
 
-		if (optionsJson.TabWidth is not null)
-			Options_SetTabWidth(optionsJson.TabWidth.Value, false);
+        if (optionsJson.TabWidth is not null)
+            Options_SetTabWidth(optionsJson.TabWidth.Value, false);
 
-		// TODO: OptionsSetUseMonospaceOptimizations will always get set to false (default for bool)
-		// for a first time user. This leads to a bad user experience since the proportional
-		// font logic is still being optimized. Therefore don't read in UseMonospaceOptimizations
-		// from local storage.
-		//
-		// OptionsSetUseMonospaceOptimizations(options.UseMonospaceOptimizations);
+        // TODO: OptionsSetUseMonospaceOptimizations will always get set to false (default for bool)
+        // for a first time user. This leads to a bad user experience since the proportional
+        // font logic is still being optimized. Therefore don't read in UseMonospaceOptimizations
+        // from local storage.
+        //
+        // OptionsSetUseMonospaceOptimizations(options.UseMonospaceOptimizations);
 
-		if (optionsJson.ShowWhitespace is not null)
-			Options_SetShowWhitespace(optionsJson.ShowWhitespace.Value, false);
-	}
+        if (optionsJson.ShowWhitespace is not null)
+            Options_SetShowWhitespace(optionsJson.ShowWhitespace.Value, false);
+    }
 }

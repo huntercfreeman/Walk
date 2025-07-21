@@ -1,4 +1,4 @@
-﻿namespace Walk.Common.RazorLib.TreeViews.Models;
+namespace Walk.Common.RazorLib.TreeViews.Models;
 
 public record TreeViewRenderer(
     Type DynamicComponentType,

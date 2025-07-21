@@ -1,4 +1,4 @@
-﻿namespace Walk.Common.RazorLib.JavaScriptObjects.Models;
+namespace Walk.Common.RazorLib.JavaScriptObjects.Models;
 
 public record ElementPositionInPixels(
     double Left,

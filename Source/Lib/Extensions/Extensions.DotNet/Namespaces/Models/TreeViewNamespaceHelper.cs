@@ -1,4 +1,4 @@
-﻿namespace Walk.Ide.RazorLib.Namespaces.Models;
+namespace Walk.Ide.RazorLib.Namespaces.Models;
 
 public static class TreeViewNamespaceHelper
 {

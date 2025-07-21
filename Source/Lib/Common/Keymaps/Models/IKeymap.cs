@@ -5,9 +5,9 @@ namespace Walk.Common.RazorLib.Keymaps.Models;
 
 public interface IKeymap
 {
-	/// <summary>Unique identifier for the keymap</summary>
-	public Key<Keymap> Key { get; }
-	/// <summary>User facing name for the keymap</summary>
+    /// <summary>Unique identifier for the keymap</summary>
+    public Key<Keymap> Key { get; }
+    /// <summary>User facing name for the keymap</summary>
     public string DisplayName { get; }
 
     public bool TryRegister(KeymapArgs args, CommandNoType command);

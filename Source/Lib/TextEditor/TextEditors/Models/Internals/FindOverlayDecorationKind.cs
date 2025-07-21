@@ -1,4 +1,4 @@
-﻿namespace Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
+namespace Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 /// <summary>
 /// TODO: I copy and pasted <see cref="Diffs.Models.TextEditorDiffDecorationKind"/>...

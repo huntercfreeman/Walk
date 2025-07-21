@@ -36,19 +36,19 @@ public class TreeViewSpinner : TreeViewWithType<Guid>
             [Inject]
             private IAppOptionsService AppOptionsService { get; set; } = null!;
             
-        	[Parameter, EditorRequired]
-        	public TreeViewSpinner TreeViewSpinner { get; set; } = null!;
+            [Parameter, EditorRequired]
+            public TreeViewSpinner TreeViewSpinner { get; set; } = null!;
         }
     
     
     
         
         @{
-        	var appOptionsState = AppOptionsService.GetAppOptionsState();
+            var appOptionsState = AppOptionsService.GetAppOptionsState();
         
-        	var iconDriver = new IconDriver(
-        		appOptionsState.Options.IconSizeInPixels,
-        		appOptionsState.Options.IconSizeInPixels);
+            var iconDriver = new IconDriver(
+                appOptionsState.Options.IconSizeInPixels,
+                appOptionsState.Options.IconSizeInPixels);
         }
         
         @IconLoadingFragment.Render(iconDriver)

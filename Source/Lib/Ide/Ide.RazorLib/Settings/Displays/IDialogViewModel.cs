@@ -1,4 +1,4 @@
-﻿namespace Walk.Ide.RazorLib.Settings.Displays;
+namespace Walk.Ide.RazorLib.Settings.Displays;
 
 internal interface IDialogViewModel
 {

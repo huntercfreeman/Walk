@@ -20,12 +20,12 @@ public partial class TabContextMenu : ComponentBase
     /// </summary>
     public static TreeViewNoType? ParentOfCutFile;
 
-	private (TabContextMenuEventArgs tabContextMenuEventArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
+    private (TabContextMenuEventArgs tabContextMenuEventArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
 
     private MenuRecord GetMenuRecord(TabContextMenuEventArgs tabContextMenuEventArgs)
     {
-		if (_previousGetMenuRecordInvocation.tabContextMenuEventArgs == tabContextMenuEventArgs)
-			return _previousGetMenuRecordInvocation.menuRecord;
+        if (_previousGetMenuRecordInvocation.tabContextMenuEventArgs == tabContextMenuEventArgs)
+            return _previousGetMenuRecordInvocation.menuRecord;
 
         var menuOptionList = new List<MenuOptionRecord>();
 
@@ -34,23 +34,23 @@ public partial class TabContextMenu : ComponentBase
             MenuOptionKind.Delete,
             () => tabContextMenuEventArgs.Tab.TabGroup.CloseAllAsync()));
 
-		menuOptionList.Add(new MenuOptionRecord(
+        menuOptionList.Add(new MenuOptionRecord(
             "Close Others",
             MenuOptionKind.Delete,
             () => tabContextMenuEventArgs.Tab.TabGroup.CloseOthersAsync(tabContextMenuEventArgs.Tab)));
 
-		if (!menuOptionList.Any())
-		{
-			var menuRecord = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
-			_previousGetMenuRecordInvocation = (tabContextMenuEventArgs, menuRecord);
-			return menuRecord;
-		}
+        if (!menuOptionList.Any())
+        {
+            var menuRecord = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+            _previousGetMenuRecordInvocation = (tabContextMenuEventArgs, menuRecord);
+            return menuRecord;
+        }
 
-		// Default case
-		{
-			var menuRecord = new MenuRecord(menuOptionList);
-			_previousGetMenuRecordInvocation = (tabContextMenuEventArgs, menuRecord);
-			return menuRecord;
-		}
+        // Default case
+        {
+            var menuRecord = new MenuRecord(menuOptionList);
+            _previousGetMenuRecordInvocation = (tabContextMenuEventArgs, menuRecord);
+            return menuRecord;
+        }
     }
 }

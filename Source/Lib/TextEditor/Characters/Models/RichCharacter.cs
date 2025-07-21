@@ -2,11 +2,11 @@ namespace Walk.TextEditor.RazorLib.Characters.Models;
 
 public struct RichCharacter
 {
-	public RichCharacter(char value, byte decorationByte)
-	{
-		Value = value;
-		DecorationByte = decorationByte;
-	}
+    public RichCharacter(char value, byte decorationByte)
+    {
+        Value = value;
+        DecorationByte = decorationByte;
+    }
 
     public char Value { get; }
     

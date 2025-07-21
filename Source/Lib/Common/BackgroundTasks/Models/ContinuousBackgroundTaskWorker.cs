@@ -30,25 +30,25 @@ public sealed class ContinuousBackgroundTaskWorker
     {
         _logger.LogInformation($"{nameof(ContinuousBackgroundTaskWorker)} is starting.");
 
-		while (!cancellationToken.IsCancellationRequested)
-		{
-			try
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            try
             {
-		        while (!cancellationToken.IsCancellationRequested)
-		        {
-		        	await Queue.__DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
-	                await Queue.__DequeueOrDefault().HandleEvent().ConfigureAwait(false);
-	                await Task.Yield();
-		        }
-	        }
-	        catch (Exception ex)
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    await Queue.__DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+                    await Queue.__DequeueOrDefault().HandleEvent().ConfigureAwait(false);
+                    await Task.Yield();
+                }
+            }
+            catch (Exception ex)
             {
                 var message = ex is OperationCanceledException
                     ? "Task was cancelled {0}." // {0} => WorkItemName
                     : "Error occurred executing {0}."; // {0} => WorkItemName
 
                 _logger.LogError(ex, message, "(backgroundTask.Name was here)");
-				Console.WriteLine($"ERROR on (backgroundTask.Name was here): {ex.ToString()}");
+                Console.WriteLine($"ERROR on (backgroundTask.Name was here): {ex.ToString()}");
             }
         }
 

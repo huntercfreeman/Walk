@@ -11,7 +11,7 @@ namespace Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 public sealed class IdeWorkArgs
 {
-	public IdeWorkKind WorkKind { get; set; }
+    public IdeWorkKind WorkKind { get; set; }
     public IdeMainLayout IdeMainLayout { get; set; }
     public string StringValue { get; set; }
     public TextEditorModel TextEditorModel { get; set; }

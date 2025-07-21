@@ -4,7 +4,7 @@ namespace Walk.Common.RazorLib.Tooltips.Models;
 
 public interface ITooltipModel
 {
-	public Type RendererType { get; set; }
+    public Type RendererType { get; set; }
     public Dictionary<string, object?>? ParameterMap { get; set; }
     public double X { get; set; }
     public double Y { get; set; }

@@ -9,58 +9,58 @@ namespace Walk.Extensions.DotNet.CSharpProjects.Models;
 
 public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpProjectToProjectReference>
 {
-	public TreeViewCSharpProjectToProjectReference(
-			CSharpProjectToProjectReference cSharpProjectToProjectReference,
-			CommonService commonService,
-			bool isExpandable,
-			bool isExpanded)
-		: base(cSharpProjectToProjectReference, isExpandable, isExpanded)
-	{
-		CommonService = commonService;
-	}
+    public TreeViewCSharpProjectToProjectReference(
+            CSharpProjectToProjectReference cSharpProjectToProjectReference,
+            CommonService commonService,
+            bool isExpandable,
+            bool isExpanded)
+        : base(cSharpProjectToProjectReference, isExpandable, isExpanded)
+    {
+        CommonService = commonService;
+    }
 
-	public CommonService CommonService { get; }
+    public CommonService CommonService { get; }
 
-	public override bool Equals(object? obj)
-	{
-		if (obj is not TreeViewCSharpProjectToProjectReference otherTreeView)
-			return false;
+    public override bool Equals(object? obj)
+    {
+        if (obj is not TreeViewCSharpProjectToProjectReference otherTreeView)
+            return false;
 
-		return otherTreeView.GetHashCode() == GetHashCode();
-	}
+        return otherTreeView.GetHashCode() == GetHashCode();
+    }
 
-	public override int GetHashCode()
-	{
-		var modifyProjectAbsolutePathString = Item.ModifyProjectNamespacePath.AbsolutePath.Value;
-		var referenceProjectAbsolutePathString = Item.ReferenceProjectAbsolutePath.Value;
+    public override int GetHashCode()
+    {
+        var modifyProjectAbsolutePathString = Item.ModifyProjectNamespacePath.AbsolutePath.Value;
+        var referenceProjectAbsolutePathString = Item.ReferenceProjectAbsolutePath.Value;
 
-		var uniqueAbsolutePathString = modifyProjectAbsolutePathString + referenceProjectAbsolutePathString;
-		return uniqueAbsolutePathString.GetHashCode();
-	}
+        var uniqueAbsolutePathString = modifyProjectAbsolutePathString + referenceProjectAbsolutePathString;
+        return uniqueAbsolutePathString.GetHashCode();
+    }
 
-	public override string GetDisplayText() => Item.ReferenceProjectAbsolutePath.NameWithExtension;
-	
-	public override Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => IconGoToFileFragment.Render;
+    public override string GetDisplayText() => Item.ReferenceProjectAbsolutePath.NameWithExtension;
+    
+    public override Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => IconGoToFileFragment.Render;
 
     /*public override TreeViewRenderer GetTreeViewRenderer()
-	{
-		
-		
-		<div>
+    {
+        
+        
+        <div>
 
-        	@{
-        		var appOptionsState = AppOptionsService.GetAppOptionsState();
-        	
-        		var iconDriver = new IconDriver(
-        			appOptionsState.Options.IconSizeInPixels,
-        			appOptionsState.Options.IconSizeInPixels);
-        	}
+            @{
+                var appOptionsState = AppOptionsService.GetAppOptionsState();
+            
+                var iconDriver = new IconDriver(
+                    appOptionsState.Options.IconSizeInPixels,
+                    appOptionsState.Options.IconSizeInPixels);
+            }
         
             @IconGoToFileFragment.Render(iconDriver)
             @CSharpProjectToProjectReference.ReferenceProjectAbsolutePath.NameWithExtension
         </div>
-		
-		using Microsoft.AspNetCore.Components;
+        
+        using Microsoft.AspNetCore.Components;
         using Walk.Common.RazorLib.Options.Models;
         using Walk.CompilerServices.DotNetSolution.Models.Project;
         using Walk.Extensions.DotNet.ComponentRenderers.Models;
@@ -72,30 +72,30 @@ public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpPr
             [Inject]
             private IAppOptionsService AppOptionsService { get; set; } = null!;
             
-        	[Parameter, EditorRequired]
-        	public CSharpProjectToProjectReference CSharpProjectToProjectReference { get; set; } = null!;
+            [Parameter, EditorRequired]
+            public CSharpProjectToProjectReference CSharpProjectToProjectReference { get; set; } = null!;
         }
-		
-		
-		return new TreeViewRenderer(
-			DotNetComponentRenderers.CompilerServicesTreeViews.TreeViewCSharpProjectToProjectReferenceRendererType,
-			new Dictionary<string, object?>
-			{
-				{
-					nameof(ITreeViewCSharpProjectToProjectReferenceRendererType.CSharpProjectToProjectReference),
-					Item
-				},
-			});
-	}*/
+        
+        
+        return new TreeViewRenderer(
+            DotNetComponentRenderers.CompilerServicesTreeViews.TreeViewCSharpProjectToProjectReferenceRendererType,
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(ITreeViewCSharpProjectToProjectReferenceRendererType.CSharpProjectToProjectReference),
+                    Item
+                },
+            });
+    }*/
 
-	public override Task LoadChildListAsync()
-	{
-		TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
-		return Task.CompletedTask;
-	}
+    public override Task LoadChildListAsync()
+    {
+        TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
+        return Task.CompletedTask;
+    }
 
-	public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
-	{
-		return;
-	}
+    public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
+    {
+        return;
+    }
 }

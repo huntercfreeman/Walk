@@ -5,7 +5,7 @@ namespace Walk.Extensions.DotNet.TestExplorers.Models;
 
 public interface ITestExplorerRenderBatch
 {
-	public TestExplorerState TestExplorerState { get; }
-	public AppOptionsState AppOptionsState { get; }
-	public TreeViewContainer? TreeViewContainer { get; }
+    public TestExplorerState TestExplorerState { get; }
+    public AppOptionsState AppOptionsState { get; }
+    public TreeViewContainer? TreeViewContainer { get; }
 }

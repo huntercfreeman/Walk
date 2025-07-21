@@ -14,127 +14,127 @@ namespace Walk.Extensions.DotNet.TestExplorers.Displays;
 
 public partial class TestExplorerDisplay : ComponentBase, IDisposable
 {
-	[Inject]
-	private DotNetService DotNetService { get; set; } = null!;
+    [Inject]
+    private DotNetService DotNetService { get; set; } = null!;
 
-	protected override void OnInitialized()
-	{
-		var model = DotNetService.IdeService.TextEditorService.Model_GetOrDefault(
-			ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
+    protected override void OnInitialized()
+    {
+        var model = DotNetService.IdeService.TextEditorService.Model_GetOrDefault(
+            ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
 
-		if (model is null)
-		{
-			DotNetService.IdeService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
-			{
-				var terminalDecorationMapper = DotNetService.IdeService.TextEditorService.GetDecorationMapper(ExtensionNoPeriodFacts.TERMINAL);
-				var terminalCompilerService = DotNetService.IdeService.TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL);
+        if (model is null)
+        {
+            DotNetService.IdeService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+            {
+                var terminalDecorationMapper = DotNetService.IdeService.TextEditorService.GetDecorationMapper(ExtensionNoPeriodFacts.TERMINAL);
+                var terminalCompilerService = DotNetService.IdeService.TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL);
 
-				model = new TextEditorModel(
-					ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
-					DateTime.UtcNow,
-					ExtensionNoPeriodFacts.TERMINAL,
-					"initialContent:TestExplorerDetailsTextEditorResourceUri",
+                model = new TextEditorModel(
+                    ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
+                    DateTime.UtcNow,
+                    ExtensionNoPeriodFacts.TERMINAL,
+                    "initialContent:TestExplorerDetailsTextEditorResourceUri",
                     terminalDecorationMapper,
                     terminalCompilerService,
                     DotNetService.IdeService.TextEditorService);
 
-				DotNetService.IdeService.TextEditorService.Model_RegisterCustom(editContext, model);
+                DotNetService.IdeService.TextEditorService.Model_RegisterCustom(editContext, model);
 
-				DotNetService.IdeService.TextEditorService.ViewModel_Register(
-					editContext,
-					TestExplorerDetailsDisplay.DetailsTextEditorViewModelKey,
-					ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
-					new Category("terminal"));
+                DotNetService.IdeService.TextEditorService.ViewModel_Register(
+                    editContext,
+                    TestExplorerDetailsDisplay.DetailsTextEditorViewModelKey,
+                    ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
+                    new Category("terminal"));
 
-				var modelModifier = editContext.GetModelModifier(model.PersistentState.ResourceUri);
-		
-				DotNetService.IdeService.TextEditorService.Model_AddPresentationModel(
-					editContext,
-					modelModifier,
-					IdeFacts.Terminal_EmptyPresentationModel);
+                var modelModifier = editContext.GetModelModifier(model.PersistentState.ResourceUri);
+        
+                DotNetService.IdeService.TextEditorService.Model_AddPresentationModel(
+                    editContext,
+                    modelModifier,
+                    IdeFacts.Terminal_EmptyPresentationModel);
 
-				DotNetService.IdeService.TextEditorService.Model_AddPresentationModel(
-					editContext,
-					modelModifier,
-					TextEditorFacts.CompilerServiceDiagnosticPresentation_EmptyPresentationModel);
+                DotNetService.IdeService.TextEditorService.Model_AddPresentationModel(
+                    editContext,
+                    modelModifier,
+                    TextEditorFacts.CompilerServiceDiagnosticPresentation_EmptyPresentationModel);
 
-				DotNetService.IdeService.TextEditorService.Model_AddPresentationModel(
-					editContext,
-					modelModifier,
-					TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel);
+                DotNetService.IdeService.TextEditorService.Model_AddPresentationModel(
+                    editContext,
+                    modelModifier,
+                    TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel);
 
-				model.PersistentState.CompilerService.RegisterResource(
-					model.PersistentState.ResourceUri,
-					shouldTriggerResourceWasModified: true);
+                model.PersistentState.CompilerService.RegisterResource(
+                    model.PersistentState.ResourceUri,
+                    shouldTriggerResourceWasModified: true);
 
-				var viewModelModifier = editContext.GetViewModelModifier(TestExplorerDetailsDisplay.DetailsTextEditorViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(TestExplorerDetailsDisplay.DetailsTextEditorViewModelKey);
 
-				var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
-				{
-					IdeFacts.Terminal_PresentationKey,
-					TextEditorFacts.CompilerServiceDiagnosticPresentation_PresentationKey,
-					TextEditorFacts.FindOverlayPresentation_PresentationKey,
-				};
+                var firstPresentationLayerKeys = new List<Key<TextEditorPresentationModel>>
+                {
+                    IdeFacts.Terminal_PresentationKey,
+                    TextEditorFacts.CompilerServiceDiagnosticPresentation_PresentationKey,
+                    TextEditorFacts.FindOverlayPresentation_PresentationKey,
+                };
 
-				viewModelModifier.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
+                viewModelModifier.PersistentState.FirstPresentationLayerKeysList = firstPresentationLayerKeys;
 
-				// await InvokeAsync(StateHasChanged);
-			});
-		}
-	
-		DotNetService.TestExplorerStateChanged += OnTestExplorerStateChanged;
-		DotNetService.IdeService.TextEditorService.CommonService.TreeViewStateChanged += OnTreeViewStateChanged;
-		DotNetService.IdeService.TerminalStateChanged += OnTerminalStateChanged;
+                // await InvokeAsync(StateHasChanged);
+            });
+        }
+    
+        DotNetService.TestExplorerStateChanged += OnTestExplorerStateChanged;
+        DotNetService.IdeService.TextEditorService.CommonService.TreeViewStateChanged += OnTreeViewStateChanged;
+        DotNetService.IdeService.TerminalStateChanged += OnTerminalStateChanged;
 
-		_ = Task.Run(async () =>
-		{
-			await DotNetService.HandleUserInterfaceWasInitializedEffect()
-				.ConfigureAwait(false);
-		});
-	}
+        _ = Task.Run(async () =>
+        {
+            await DotNetService.HandleUserInterfaceWasInitializedEffect()
+                .ConfigureAwait(false);
+        });
+    }
 
-	private void DispatchShouldDiscoverTestsEffect()
-	{
-		_ = Task.Run(async () =>
-		{
-			await DotNetService.HandleShouldDiscoverTestsEffect()
-				.ConfigureAwait(false);
-		});
-	}
-	
-	private void KillExecutionProcessOnClick()
-	{
-		var terminalState = DotNetService.IdeService.GetTerminalState();
-		var executionTerminal = terminalState.TerminalMap[IdeFacts.EXECUTION_KEY];
-		executionTerminal.KillProcess();
-	}
-	
-	private bool GetIsKillProcessDisabled()
-	{
-		var terminalState = DotNetService.IdeService.GetTerminalState();
-		var executionTerminal = terminalState.TerminalMap[IdeFacts.EXECUTION_KEY];
-		return !executionTerminal.HasExecutingProcess;
-	}
-	
-	private async void OnTestExplorerStateChanged()
-	{
-		await InvokeAsync(StateHasChanged);
-	}
-	
-	private async void OnTreeViewStateChanged()
-	{
-		await InvokeAsync(StateHasChanged);
-	}
-	
-	private async void OnTerminalStateChanged()
-	{
-		await InvokeAsync(StateHasChanged);
-	}
-	
-	public void Dispose()
-	{
-		DotNetService.TestExplorerStateChanged -= OnTestExplorerStateChanged;
-		DotNetService.IdeService.TextEditorService.CommonService.TreeViewStateChanged -= OnTreeViewStateChanged;
-		DotNetService.IdeService.TerminalStateChanged -= OnTerminalStateChanged;
-	}
+    private void DispatchShouldDiscoverTestsEffect()
+    {
+        _ = Task.Run(async () =>
+        {
+            await DotNetService.HandleShouldDiscoverTestsEffect()
+                .ConfigureAwait(false);
+        });
+    }
+    
+    private void KillExecutionProcessOnClick()
+    {
+        var terminalState = DotNetService.IdeService.GetTerminalState();
+        var executionTerminal = terminalState.TerminalMap[IdeFacts.EXECUTION_KEY];
+        executionTerminal.KillProcess();
+    }
+    
+    private bool GetIsKillProcessDisabled()
+    {
+        var terminalState = DotNetService.IdeService.GetTerminalState();
+        var executionTerminal = terminalState.TerminalMap[IdeFacts.EXECUTION_KEY];
+        return !executionTerminal.HasExecutingProcess;
+    }
+    
+    private async void OnTestExplorerStateChanged()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+    
+    private async void OnTreeViewStateChanged()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+    
+    private async void OnTerminalStateChanged()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+        DotNetService.TestExplorerStateChanged -= OnTestExplorerStateChanged;
+        DotNetService.IdeService.TextEditorService.CommonService.TreeViewStateChanged -= OnTreeViewStateChanged;
+        DotNetService.IdeService.TerminalStateChanged -= OnTerminalStateChanged;
+    }
 }

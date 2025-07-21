@@ -9,6 +9,6 @@ namespace Walk.Common.RazorLib.Dropdowns.Models;
 /// </summary>
 public enum DropdownOrientation
 {
-	Bottom,
-	Right,
+    Bottom,
+    Right,
 }

@@ -5,18 +5,18 @@ namespace Walk.Extensions.DotNet.Shareds.Displays.Internals;
 
 public partial class IdePromptOpenSolutionDisplay : ComponentBase
 {
-	[Inject]
-	private DotNetService DotNetService { get; set; } = null!;
+    [Inject]
+    private DotNetService DotNetService { get; set; } = null!;
 
-	[Parameter, EditorRequired]
-	public AbsolutePath AbsolutePath { get; set; }
+    [Parameter, EditorRequired]
+    public AbsolutePath AbsolutePath { get; set; }
 
-	private void OpenSolutionOnClick()
-	{
+    private void OpenSolutionOnClick()
+    {
         DotNetService.Enqueue(new DotNetWorkArgs
         {
-        	WorkKind = DotNetWorkKind.SetDotNetSolution,
-        	DotNetSolutionAbsolutePath = AbsolutePath,
+            WorkKind = DotNetWorkKind.SetDotNetSolution,
+            DotNetSolutionAbsolutePath = AbsolutePath,
         });
-	}
+    }
 }

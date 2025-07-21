@@ -1,4 +1,4 @@
-﻿namespace Walk.Common.RazorLib.Menus.Models;
+namespace Walk.Common.RazorLib.Menus.Models;
 
 public class MenuOptionCallbacks
 {

@@ -28,20 +28,20 @@ public partial class ResizableRow : ComponentBase, IDisposable
     
     private async void OnAppOptionsStateChanged()
     {
-    	await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 
     private async void DragStateWrapOnStateChanged()
     {
         if (!CommonService.GetDragState().ShouldDisplay)
         {
-			bool wasTargetOfDragging = _dragEventHandler is not null;
+            bool wasTargetOfDragging = _dragEventHandler is not null;
 
             _dragEventHandler = null;
             _previousDragMouseEventArgs = null;
 
-			if (wasTargetOfDragging)
-				CommonService.AppDimension_NotifyIntraAppResize();
+            if (wasTargetOfDragging)
+                CommonService.AppDimension_NotifyIntraAppResize();
         }
         else
         {

@@ -55,10 +55,10 @@ public partial class InputAppTheme : IDisposable
         return themeKey == activeThemeKey;
     }
 
-	public async void OnAppOptionsStateChanged()
-	{
-		await InvokeAsync(StateHasChanged);
-	}
+    public async void OnAppOptionsStateChanged()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 
     public void Dispose()
     {

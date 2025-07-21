@@ -3,19 +3,19 @@ namespace Walk.Common.RazorLib.Menus.Models;
 public record MenuOptionRecord
 {
     public MenuOptionRecord(
-    	string displayName,
-	    MenuOptionKind menuOptionKind,
-	    Func<Task>? onClickFunc = null,
-	    MenuRecord? subMenu = null,
-	    Type? widgetRendererType = null,
-	    Dictionary<string, object?>? widgetParameterMap = null)
+        string displayName,
+        MenuOptionKind menuOptionKind,
+        Func<Task>? onClickFunc = null,
+        MenuRecord? subMenu = null,
+        Type? widgetRendererType = null,
+        Dictionary<string, object?>? widgetParameterMap = null)
     {
-    	DisplayName = displayName;
-	    MenuOptionKind = menuOptionKind;
-	    OnClickFunc = onClickFunc;
-	    SubMenu = subMenu;
-	    WidgetRendererType = widgetRendererType;
-	    WidgetParameterMap = widgetParameterMap;
+        DisplayName = displayName;
+        MenuOptionKind = menuOptionKind;
+        OnClickFunc = onClickFunc;
+        SubMenu = subMenu;
+        WidgetRendererType = widgetRendererType;
+        WidgetParameterMap = widgetParameterMap;
     }
     
     public string DisplayName { get; init; }

@@ -26,75 +26,75 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Models;
 /// </summary>
 public sealed class TextEditorViewModel : IDisposable
 {
-	public TextEditorViewModel(
+    public TextEditorViewModel(
         Key<TextEditorViewModel> viewModelKey,
         ResourceUri resourceUri,
         TextEditorService textEditorService,
         TextEditorVirtualizationResult virtualizationResult,
-		TextEditorDimensions textEditorDimensions,
-		int scrollLeft,
-	    int scrollTop,
-	    int scrollWidth,
-	    int scrollHeight,
-	    int marginScrollHeight,
-		Category category)
+        TextEditorDimensions textEditorDimensions,
+        int scrollLeft,
+        int scrollTop,
+        int scrollWidth,
+        int scrollHeight,
+        int marginScrollHeight,
+        Category category)
     {
-    	PersistentState = new TextEditorViewModelPersistentState(
-		    viewModelKey,
-		    resourceUri,
-		    textEditorService,
-		    category,
-		    onSaveRequested: null,
-		    getTabDisplayNameFunc: null,
-		    firstPresentationLayerKeysList: new(),
-		    lastPresentationLayerKeysList: new(),
-		    showFindOverlay: false,
-		    replaceValueInFindOverlay: string.Empty,
-		    showReplaceButtonInFindOverlay: false,
-		    findOverlayValue: string.Empty,
-		    findOverlayValueExternallyChangedMarker: false,
-		    menuKind: MenuKind.None,
-	    	tooltipModel: null,
-		    shouldRevealCursor: false,
-			virtualAssociativityKind: VirtualAssociativityKind.None,
+        PersistentState = new TextEditorViewModelPersistentState(
+            viewModelKey,
+            resourceUri,
+            textEditorService,
+            category,
+            onSaveRequested: null,
+            getTabDisplayNameFunc: null,
+            firstPresentationLayerKeysList: new(),
+            lastPresentationLayerKeysList: new(),
+            showFindOverlay: false,
+            replaceValueInFindOverlay: string.Empty,
+            showReplaceButtonInFindOverlay: false,
+            findOverlayValue: string.Empty,
+            findOverlayValueExternallyChangedMarker: false,
+            menuKind: MenuKind.None,
+            tooltipModel: null,
+            shouldRevealCursor: false,
+            virtualAssociativityKind: VirtualAssociativityKind.None,
             textEditorDimensions,
-    		scrollLeft,
-    	    scrollTop,
-    	    scrollWidth,
-    	    scrollHeight,
-    	    marginScrollHeight,
+            scrollLeft,
+            scrollTop,
+            scrollWidth,
+            scrollHeight,
+            marginScrollHeight,
             textEditorService.Options_GetOptions().CharAndLineMeasurements);
     
         Virtualization = virtualizationResult;
         
         LineIndex = 0;
-	    ColumnIndex = 0;
-	    PreferredColumnIndex = 0;
-	    SelectionAnchorPositionIndex = -1;
-	    SelectionEndingPositionIndex = 0;
-	}
-	
-	public TextEditorViewModel(TextEditorViewModel other)
-	{
-		PersistentState = other.PersistentState;
-		
-	    _lineIndex = other._lineIndex;
-	    _columnIndex = other._columnIndex;
-	    _preferredColumnIndex = other._preferredColumnIndex;
-	    _selectionAnchorPositionIndex = other._selectionAnchorPositionIndex;
-	    _selectionEndingPositionIndex = other._selectionEndingPositionIndex;
-	    
-	    // The new instance of `Virtualization` is only made when calculating a virtualization result.
-	    // Otherwise, just keep re-using the previous.
-	    Virtualization = other.Virtualization;
-		
-	    /*
-	    // Don't copy these properties
-	    ScrollWasModified { get; set; }
-	    */
-	}
-	
-	public TextEditorViewModelPersistentState PersistentState { get; set; }
+        ColumnIndex = 0;
+        PreferredColumnIndex = 0;
+        SelectionAnchorPositionIndex = -1;
+        SelectionEndingPositionIndex = 0;
+    }
+    
+    public TextEditorViewModel(TextEditorViewModel other)
+    {
+        PersistentState = other.PersistentState;
+        
+        _lineIndex = other._lineIndex;
+        _columnIndex = other._columnIndex;
+        _preferredColumnIndex = other._preferredColumnIndex;
+        _selectionAnchorPositionIndex = other._selectionAnchorPositionIndex;
+        _selectionEndingPositionIndex = other._selectionEndingPositionIndex;
+        
+        // The new instance of `Virtualization` is only made when calculating a virtualization result.
+        // Otherwise, just keep re-using the previous.
+        Virtualization = other.Virtualization;
+        
+        /*
+        // Don't copy these properties
+        ScrollWasModified { get; set; }
+        */
+    }
+    
+    public TextEditorViewModelPersistentState PersistentState { get; set; }
 
     private int _lineIndex;
     public int LineIndex
@@ -176,15 +176,15 @@ public sealed class TextEditorViewModel : IDisposable
     /// visible when rendered" is in this. There is some padding of offscreen content so that scrolling is smoother.
     /// </summary>
     public TextEditorVirtualizationResult Virtualization { get; set; }
-	
+    
     public bool ScrollWasModified { get; set; }
     
     public ValueTask FocusAsync()
     {
-    	var componentData = PersistentState.ComponentData;
-    	if (componentData is null)
-    		return ValueTask.CompletedTask;
-    	
+        var componentData = PersistentState.ComponentData;
+        if (componentData is null)
+            return ValueTask.CompletedTask;
+        
         return PersistentState.TextEditorService.ViewModel_FocusPrimaryCursorAsync(componentData.PrimaryCursorContentId);
     }
     
@@ -195,32 +195,32 @@ public sealed class TextEditorViewModel : IDisposable
     }
     
     public void MutateScrollLeft(int pixels, TextEditorDimensions textEditorDimensions) =>
-		SetScrollLeft(PersistentState.ScrollLeft + pixels, textEditorDimensions);
+        SetScrollLeft(PersistentState.ScrollLeft + pixels, textEditorDimensions);
 
-	public void SetScrollLeft(int pixels, TextEditorDimensions textEditorDimensions)
-	{
-		var resultScrollLeft = Math.Max(0, pixels);
-		var maxScrollLeft = (int)Math.Max(0, PersistentState.ScrollWidth - textEditorDimensions.Width);
+    public void SetScrollLeft(int pixels, TextEditorDimensions textEditorDimensions)
+    {
+        var resultScrollLeft = Math.Max(0, pixels);
+        var maxScrollLeft = (int)Math.Max(0, PersistentState.ScrollWidth - textEditorDimensions.Width);
 
-		if (resultScrollLeft > maxScrollLeft)
-			resultScrollLeft = maxScrollLeft;
+        if (resultScrollLeft > maxScrollLeft)
+            resultScrollLeft = maxScrollLeft;
 
-		PersistentState.ScrollLeft = resultScrollLeft;
-	}
+        PersistentState.ScrollLeft = resultScrollLeft;
+    }
 
-	public void MutateScrollTop(int pixels, TextEditorDimensions textEditorDimensions) =>
-		SetScrollTop(PersistentState.ScrollTop + pixels, textEditorDimensions);
+    public void MutateScrollTop(int pixels, TextEditorDimensions textEditorDimensions) =>
+        SetScrollTop(PersistentState.ScrollTop + pixels, textEditorDimensions);
 
-	public void SetScrollTop(int pixels, TextEditorDimensions textEditorDimensions)
-	{
-		var resultScrollTop = Math.Max(0, pixels);
-		var maxScrollTop = (int)Math.Max(0, PersistentState.ScrollHeight - textEditorDimensions.Height);
+    public void SetScrollTop(int pixels, TextEditorDimensions textEditorDimensions)
+    {
+        var resultScrollTop = Math.Max(0, pixels);
+        var maxScrollTop = (int)Math.Max(0, PersistentState.ScrollHeight - textEditorDimensions.Height);
 
-		if (resultScrollTop > maxScrollTop)
-			resultScrollTop = maxScrollTop;
+        if (resultScrollTop > maxScrollTop)
+            resultScrollTop = maxScrollTop;
 
-		PersistentState.ScrollTop = resultScrollTop;
-	}
+        PersistentState.ScrollTop = resultScrollTop;
+    }
 
     public void Dispose()
     {

@@ -67,13 +67,13 @@ public class LocalDirectoryHandler : IDirectoryHandler
         string destinationAbsolutePathString,
         CancellationToken cancellationToken = default)
     {
-		/*
-			Walk.Ide.RazorLib.Menus.Models.MenuOptionsFactory.cs
-			currently uses the method "CopyFilesRecursively" (which exists in the same file).
-			To copy and paste a directory.
+        /*
+            Walk.Ide.RazorLib.Menus.Models.MenuOptionsFactory.cs
+            currently uses the method "CopyFilesRecursively" (which exists in the same file).
+            To copy and paste a directory.
 
-			TODO: Implement this method.
-		*/
+            TODO: Implement this method.
+        */
         throw new NotImplementedException();
     }
 
@@ -84,7 +84,7 @@ public class LocalDirectoryHandler : IDirectoryHandler
     {
         try
         {
-			_commonService.EnvironmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
+            _commonService.EnvironmentProvider.AssertDeletionPermitted(sourceAbsolutePathString, IS_DIRECTORY_RESPONSE);
 
             if (await ExistsAsync(destinationAbsolutePathString).ConfigureAwait(false))
                 _commonService.EnvironmentProvider.AssertDeletionPermitted(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE);
@@ -137,7 +137,7 @@ public class LocalDirectoryHandler : IDirectoryHandler
         if (exception.Message.StartsWith(PermittanceChecker.ERROR_PREFIX))
             title = PermittanceChecker.ERROR_PREFIX;
 
-		NotificationHelper.DispatchError(
+        NotificationHelper.DispatchError(
             title,
             exception.ToString(),
             _commonService,

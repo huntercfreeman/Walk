@@ -1,4 +1,4 @@
-﻿namespace Walk.Ide.Wasm.Facts;
+namespace Walk.Ide.Wasm.Facts;
 
 public partial class InitialSolutionFacts
 {

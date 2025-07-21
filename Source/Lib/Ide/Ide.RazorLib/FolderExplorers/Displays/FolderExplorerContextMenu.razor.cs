@@ -26,19 +26,19 @@ public partial class FolderExplorerContextMenu : ComponentBase
     /// </summary>
     public static TreeViewNoType? ParentOfCutFile;
 
-	private (TreeViewCommandArgs treeViewCommandArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
+    private (TreeViewCommandArgs treeViewCommandArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
 
     private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandArgs)
     {
-		if (_previousGetMenuRecordInvocation.treeViewCommandArgs == treeViewCommandArgs)
-			return _previousGetMenuRecordInvocation.menuRecord;
+        if (_previousGetMenuRecordInvocation.treeViewCommandArgs == treeViewCommandArgs)
+            return _previousGetMenuRecordInvocation.menuRecord;
 
         if (treeViewCommandArgs.NodeThatReceivedMouseEvent is null)
         {
-			var menuRecord = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
-			_previousGetMenuRecordInvocation = (treeViewCommandArgs, menuRecord);
-			return menuRecord;
-		}
+            var menuRecord = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+            _previousGetMenuRecordInvocation = (treeViewCommandArgs, menuRecord);
+            return menuRecord;
+        }
 
         var menuRecordsList = new List<MenuOptionRecord>();
 
@@ -48,11 +48,11 @@ public partial class FolderExplorerContextMenu : ComponentBase
         var parentTreeViewAbsolutePath = parentTreeViewModel as TreeViewAbsolutePath;
 
         if (treeViewModel is not TreeViewAbsolutePath treeViewAbsolutePath)
-		{
-			var menuRecord = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
-			_previousGetMenuRecordInvocation = (treeViewCommandArgs, menuRecord);
-			return menuRecord;
-		}
+        {
+            var menuRecord = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+            _previousGetMenuRecordInvocation = (treeViewCommandArgs, menuRecord);
+            return menuRecord;
+        }
 
         if (treeViewAbsolutePath.Item.IsDirectory)
         {
@@ -66,12 +66,12 @@ public partial class FolderExplorerContextMenu : ComponentBase
                 .Union(GetDebugMenuOptions(treeViewAbsolutePath)));
         }
 
-		// Default case
-		{
-			var menuRecord = new MenuRecord(menuRecordsList);
-			_previousGetMenuRecordInvocation = (treeViewCommandArgs, menuRecord);
-			return menuRecord;
-		}
+        // Default case
+        {
+            var menuRecord = new MenuRecord(menuRecordsList);
+            _previousGetMenuRecordInvocation = (treeViewCommandArgs, menuRecord);
+            return menuRecord;
+        }
     }
 
     private MenuOptionRecord[] GetDirectoryMenuOptions(TreeViewAbsolutePath treeViewModel)
@@ -105,23 +105,23 @@ public partial class FolderExplorerContextMenu : ComponentBase
     {
         return new[]
         {
-			IdeService.CopyFile(
+            IdeService.CopyFile(
                 treeViewModel.Item,
                 (Func<Task>)(() => {
-					NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", IdeService.CommonService, TimeSpan.FromSeconds(7));
+                    NotificationHelper.DispatchInformative("Copy Action", $"Copied: {treeViewModel.Item.NameWithExtension}", IdeService.CommonService, TimeSpan.FromSeconds(7));
                     return Task.CompletedTask;
                 })),
-			IdeService.CutFile(
+            IdeService.CutFile(
                 treeViewModel.Item,
                 (Func<Task>)(() => {
-					NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", IdeService.CommonService, TimeSpan.FromSeconds(7));
-					ParentOfCutFile = parentTreeViewModel;
+                    NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewModel.Item.NameWithExtension}", IdeService.CommonService, TimeSpan.FromSeconds(7));
+                    ParentOfCutFile = parentTreeViewModel;
                     return Task.CompletedTask;
                 })),
-			IdeService.DeleteFile(
+            IdeService.DeleteFile(
                 treeViewModel.Item,
                 async () => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
-			IdeService.RenameFile(
+            IdeService.RenameFile(
                 treeViewModel.Item,
                 IdeService.CommonService,
                 async ()  => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false))
@@ -162,6 +162,6 @@ public partial class FolderExplorerContextMenu : ComponentBase
         IdeService.CommonService.TreeView_MoveUpAction(
             FolderExplorerState.TreeViewContentStateKey,
             false,
-			false);
+            false);
     }
 }

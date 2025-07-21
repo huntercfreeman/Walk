@@ -2,7 +2,7 @@ namespace Walk.Common.RazorLib.Icons.Displays;
 
 public struct IconDriver
 {
-	public IconDriver(int widthInPixels, int heightInPixels)
+    public IconDriver(int widthInPixels, int heightInPixels)
     {
         WidthInPixels = widthInPixels;
         HeightInPixels = heightInPixels;

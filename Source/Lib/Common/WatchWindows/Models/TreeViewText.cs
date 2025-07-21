@@ -49,13 +49,13 @@ public class TreeViewText : TreeViewWithType<string>
     
         <div title="@TreeViewText.Key.Guid">
         
-        	@{
-        		var appOptionsState = AppOptionsService.GetAppOptionsState();
-        	
-        		var iconDriver = new IconDriver(
-        			appOptionsState.Options.IconSizeInPixels,
-        			appOptionsState.Options.IconSizeInPixels);
-        	}
+            @{
+                var appOptionsState = AppOptionsService.GetAppOptionsState();
+            
+                var iconDriver = new IconDriver(
+                    appOptionsState.Options.IconSizeInPixels,
+                    appOptionsState.Options.IconSizeInPixels);
+            }
         
             @IconSymbolKeyFragment.Render(iconDriver)
             @TreeViewText.Item

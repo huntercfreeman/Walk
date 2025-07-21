@@ -15,6 +15,6 @@ public struct PartialTypeDefinitionEntry
     }
 
     public ResourceUri ResourceUri { get; set; }
-	public int IndexStartGroup { get; set; }
+    public int IndexStartGroup { get; set; }
     public int ScopeIndexKey { get; set; }
 }

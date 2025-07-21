@@ -12,12 +12,12 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
     [Parameter, EditorRequired]
     public TreeViewCommandArgs TreeViewCommandArgs { get; set; }
 
-	private (TreeViewCommandArgs treeViewCommandArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
+    private (TreeViewCommandArgs treeViewCommandArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
 
     private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandArgs)
     {
-		if (_previousGetMenuRecordInvocation.treeViewCommandArgs == treeViewCommandArgs)
-			return _previousGetMenuRecordInvocation.menuRecord;
+        if (_previousGetMenuRecordInvocation.treeViewCommandArgs == treeViewCommandArgs)
+            return _previousGetMenuRecordInvocation.menuRecord;
 
         var menuOptionRecordList = new List<MenuOptionRecord>();
 
@@ -40,15 +40,15 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
                                 .LoadChildListAsync()
                                 .ConfigureAwait(false);
 
-							CommonService.TreeView_ReRenderNodeAction(
-								WatchWindowDisplay.TreeViewContainerKey,
+                            CommonService.TreeView_ReRenderNodeAction(
+                                WatchWindowDisplay.TreeViewContainerKey,
                                 treeViewCommandArgs.NodeThatReceivedMouseEvent);
 
                             await InvokeAsync(StateHasChanged);
                         }
                         catch (Exception e)
                         {
-							Console.WriteLine(e);
+                            Console.WriteLine(e);
                             throw;
                         }
                    }), CancellationToken.None);
@@ -56,11 +56,11 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
                     return Task.CompletedTask;
                 }));
 
-		// Default case
-		{
-			var menuRecord = new MenuRecord(menuOptionRecordList);
-			_previousGetMenuRecordInvocation = (treeViewCommandArgs, menuRecord);
-			return menuRecord;
-		}
+        // Default case
+        {
+            var menuRecord = new MenuRecord(menuOptionRecordList);
+            _previousGetMenuRecordInvocation = (treeViewCommandArgs, menuRecord);
+            return menuRecord;
+        }
     }
 }

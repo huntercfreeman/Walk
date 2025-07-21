@@ -13,9 +13,9 @@ namespace Walk.TextEditor.RazorLib.Keymaps.Models;
 /// </summary>
 public interface ITextEditorKeymap
 {
-	public string DisplayName { get; }
+    public string DisplayName { get; }
 
-	public int GetLayer(bool hasSelection);
+    public int GetLayer(bool hasSelection);
 
     public string GetCursorCssClassString();
 
@@ -23,11 +23,11 @@ public interface ITextEditorKeymap
         TextEditorModel textEditorModel,
         TextEditorViewModel textEditorViewModel,
         TextEditorOptions textEditorOptions);
-	
-	public ValueTask HandleEvent(
-    	TextEditorComponentData componentData,
-	    Key<TextEditorViewModel> viewModelKey,
-	    string key,
+    
+    public ValueTask HandleEvent(
+        TextEditorComponentData componentData,
+        Key<TextEditorViewModel> viewModelKey,
+        string key,
         string code,
         bool ctrlKey,
         bool shiftKey,

@@ -9,10 +9,10 @@ namespace Walk.Common.RazorLib.Contexts.Displays;
 
 public partial class ContextSwitchDisplay : ComponentBase
 {
-	[Inject]
-	private CommonService CommonService { get; set; } = null!;
-	
-	[CascadingParameter]
+    [Inject]
+    private CommonService CommonService { get; set; } = null!;
+    
+    [CascadingParameter]
     public WidgetModel Widget { get; set; } = null!;
     
     private readonly List<ContextSwitchGroupMarker> _groupMenuTupleList = new();
@@ -27,99 +27,99 @@ public partial class ContextSwitchDisplay : ComponentBase
     /// </summary>
     private class ContextSwitchGroupMarker
     {
-		public ContextSwitchGroupMarker(
-			Key<ContextSwitchGroup> contextSwitchGroupKey,
-			string title,
-			MenuRecord menu,
-			int startInclusiveIndex,
-			int menuOptionListLength)
-		{
-			ContextSwitchGroupKey = contextSwitchGroupKey;
-			Title = title;
-			Menu = menu;
-			StartInclusiveIndex = startInclusiveIndex;
-			MenuOptionListLength = menuOptionListLength;
-		}
+        public ContextSwitchGroupMarker(
+            Key<ContextSwitchGroup> contextSwitchGroupKey,
+            string title,
+            MenuRecord menu,
+            int startInclusiveIndex,
+            int menuOptionListLength)
+        {
+            ContextSwitchGroupKey = contextSwitchGroupKey;
+            Title = title;
+            Menu = menu;
+            StartInclusiveIndex = startInclusiveIndex;
+            MenuOptionListLength = menuOptionListLength;
+        }
 
-    	public Key<ContextSwitchGroup> ContextSwitchGroupKey { get; }
-    	public string Title { get; }
-    	public MenuRecord Menu { get; }
-    	public int StartInclusiveIndex { get; }
-    	public int MenuOptionListLength { get; }
+        public Key<ContextSwitchGroup> ContextSwitchGroupKey { get; }
+        public string Title { get; }
+        public MenuRecord Menu { get; }
+        public int StartInclusiveIndex { get; }
+        public int MenuOptionListLength { get; }
     }
-	
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		if (firstRender)
-		{
-			var contextSwitchState = CommonService.GetContextSwitchState();
-			
-			foreach (var contextSwitchGroup in contextSwitchState.ContextSwitchGroupList)
-			{
-				var menu = await contextSwitchGroup.GetMenuFunc();
-				
-				_groupMenuTupleList.Add(new(
-					contextSwitchGroup.Key,
-					contextSwitchGroup.Title,
-					menu,
-					_flatMenuOptionList.Count,
-					menu.MenuOptionList.Count));
-					
-				_flatMenuOptionList.AddRange(menu.MenuOptionList);
-			}
-			
-			// Initialize _activeIndex in accordance with 'ContextSwitchState.FocusInitiallyContextSwitchGroupKey'
-			{
-				var initialGroup = _groupMenuTupleList.FirstOrDefault(x =>
-					x.ContextSwitchGroupKey == contextSwitchState.FocusInitiallyContextSwitchGroupKey);
-					
-				if (initialGroup is not null)
-					_activeIndex = initialGroup.StartInclusiveIndex;
-			}
-			
-			_hasCalculatedGroupMenuTupleList = true;
-			await InvokeAsync(StateHasChanged);
-			
-			try
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var contextSwitchState = CommonService.GetContextSwitchState();
+            
+            foreach (var contextSwitchGroup in contextSwitchState.ContextSwitchGroupList)
+            {
+                var menu = await contextSwitchGroup.GetMenuFunc();
+                
+                _groupMenuTupleList.Add(new(
+                    contextSwitchGroup.Key,
+                    contextSwitchGroup.Title,
+                    menu,
+                    _flatMenuOptionList.Count,
+                    menu.MenuOptionList.Count));
+                    
+                _flatMenuOptionList.AddRange(menu.MenuOptionList);
+            }
+            
+            // Initialize _activeIndex in accordance with 'ContextSwitchState.FocusInitiallyContextSwitchGroupKey'
+            {
+                var initialGroup = _groupMenuTupleList.FirstOrDefault(x =>
+                    x.ContextSwitchGroupKey == contextSwitchState.FocusInitiallyContextSwitchGroupKey);
+                    
+                if (initialGroup is not null)
+                    _activeIndex = initialGroup.StartInclusiveIndex;
+            }
+            
+            _hasCalculatedGroupMenuTupleList = true;
+            await InvokeAsync(StateHasChanged);
+            
+            try
             {
                 await _contextSwitchHtmlElement.Value
                     .FocusAsync()
-                    .ConfigureAwait(false);	
+                    .ConfigureAwait(false);    
             }
             catch (Exception)
             {
-				// Eat this exception
+                // Eat this exception
             }
-		}
-	}
-	
-	private int GetActiveGroupIndex()
-	{
-		var localActiveIndex = _activeIndex;
-	
-		if (localActiveIndex < 0 || !_hasCalculatedGroupMenuTupleList)
-			return -1;
-	
-		var activeGroupMarker = (ContextSwitchGroupMarker?)null;
-		
-		int index = 0;
-		for (; index < _groupMenuTupleList.Count; index++)
-		{
-			var groupMarker = _groupMenuTupleList[index];
-			if (groupMarker.StartInclusiveIndex + groupMarker.MenuOptionListLength > _activeIndex)
-			{
-				activeGroupMarker = groupMarker;
-				break;
-			}
-		}
-		
-		if (activeGroupMarker is null)
-			return -1;
-			
-		return index;
-	}
-	
-	private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
+        }
+    }
+    
+    private int GetActiveGroupIndex()
+    {
+        var localActiveIndex = _activeIndex;
+    
+        if (localActiveIndex < 0 || !_hasCalculatedGroupMenuTupleList)
+            return -1;
+    
+        var activeGroupMarker = (ContextSwitchGroupMarker?)null;
+        
+        int index = 0;
+        for (; index < _groupMenuTupleList.Count; index++)
+        {
+            var groupMarker = _groupMenuTupleList[index];
+            if (groupMarker.StartInclusiveIndex + groupMarker.MenuOptionListLength > _activeIndex)
+            {
+                activeGroupMarker = groupMarker;
+                break;
+            }
+        }
+        
+        if (activeGroupMarker is null)
+            return -1;
+            
+        return index;
+    }
+    
+    private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (_flatMenuOptionList.Count == 0)
         {
@@ -130,13 +130,13 @@ public partial class ContextSwitchDisplay : ComponentBase
         // TODO: Rewrite these hacky shenanigans that allow tab key event to move index
         if (keyboardEventArgs.Key == "Tab")
         {
-        	if (keyboardEventArgs.CtrlKey)
-        	{
-        		if (keyboardEventArgs.ShiftKey)
-        			keyboardEventArgs.Key = CommonFacts.ARROW_UP_KEY;
-        		else
-        			keyboardEventArgs.Key = CommonFacts.ARROW_DOWN_KEY;
-        	}
+            if (keyboardEventArgs.CtrlKey)
+            {
+                if (keyboardEventArgs.ShiftKey)
+                    keyboardEventArgs.Key = CommonFacts.ARROW_UP_KEY;
+                else
+                    keyboardEventArgs.Key = CommonFacts.ARROW_DOWN_KEY;
+            }
         }
         
         switch (keyboardEventArgs.Key)
@@ -144,27 +144,27 @@ public partial class ContextSwitchDisplay : ComponentBase
             case CommonFacts.ARROW_LEFT_KEY:
             case CommonFacts.ARROW_LEFT_ALTKEY:
             {
-            	var inGroupIndex = GetActiveGroupIndex();
-            	if (inGroupIndex < 0)
-            		return;
-            		
-            	var localActiveIndex = _activeIndex;
-            	
-            	// Move to left column
-            	var outGroupIndex = inGroupIndex - 1;
-            	if (outGroupIndex == -1)
-            		outGroupIndex = _groupMenuTupleList.Count - 1;
-            		
-            	var outGroup = _groupMenuTupleList[outGroupIndex];
-            	
-            	// Set offset within left column relative to the previously held offset
-            	var inGroup = _groupMenuTupleList[inGroupIndex];
-            	var inGroupOffset = localActiveIndex - inGroup.StartInclusiveIndex;
-            	
-            	// If matching inGroupOffset results in out of bounds, use last valid index for the outGroup
-            	_activeIndex = Math.Min(
-            		outGroup.StartInclusiveIndex + inGroupOffset,
-            		outGroup.StartInclusiveIndex + outGroup.MenuOptionListLength - 1);
+                var inGroupIndex = GetActiveGroupIndex();
+                if (inGroupIndex < 0)
+                    return;
+                    
+                var localActiveIndex = _activeIndex;
+                
+                // Move to left column
+                var outGroupIndex = inGroupIndex - 1;
+                if (outGroupIndex == -1)
+                    outGroupIndex = _groupMenuTupleList.Count - 1;
+                    
+                var outGroup = _groupMenuTupleList[outGroupIndex];
+                
+                // Set offset within left column relative to the previously held offset
+                var inGroup = _groupMenuTupleList[inGroupIndex];
+                var inGroupOffset = localActiveIndex - inGroup.StartInclusiveIndex;
+                
+                // If matching inGroupOffset results in out of bounds, use last valid index for the outGroup
+                _activeIndex = Math.Min(
+                    outGroup.StartInclusiveIndex + inGroupOffset,
+                    outGroup.StartInclusiveIndex + outGroup.MenuOptionListLength - 1);
                 break;
             }
             case CommonFacts.ARROW_DOWN_KEY:
@@ -184,27 +184,27 @@ public partial class ContextSwitchDisplay : ComponentBase
             case CommonFacts.ARROW_RIGHT_KEY:
             case CommonFacts.ARROW_RIGHT_ALTKEY:
             {
-            	var inGroupIndex = GetActiveGroupIndex();
-            	if (inGroupIndex < 0)
-            		return;
-            		
-            	var localActiveIndex = _activeIndex;
-            	
-            	// Move to right column
-            	var outGroupIndex = inGroupIndex + 1;
-            	if (outGroupIndex == _groupMenuTupleList.Count)
-            		outGroupIndex = 0;
-            		
-            	var outGroup = _groupMenuTupleList[outGroupIndex];
-            	
-            	// Set offset within right column relative to the previously held offset
-            	var inGroup = _groupMenuTupleList[inGroupIndex];
-            	var inGroupOffset = localActiveIndex - inGroup.StartInclusiveIndex;
-            	
-            	// If matching inGroupOffset results in out of bounds, use last valid index for the outGroup
-            	_activeIndex = Math.Min(
-            		outGroup.StartInclusiveIndex + inGroupOffset,
-            		outGroup.StartInclusiveIndex + outGroup.MenuOptionListLength - 1);
+                var inGroupIndex = GetActiveGroupIndex();
+                if (inGroupIndex < 0)
+                    return;
+                    
+                var localActiveIndex = _activeIndex;
+                
+                // Move to right column
+                var outGroupIndex = inGroupIndex + 1;
+                if (outGroupIndex == _groupMenuTupleList.Count)
+                    outGroupIndex = 0;
+                    
+                var outGroup = _groupMenuTupleList[outGroupIndex];
+                
+                // Set offset within right column relative to the previously held offset
+                var inGroup = _groupMenuTupleList[inGroupIndex];
+                var inGroupOffset = localActiveIndex - inGroup.StartInclusiveIndex;
+                
+                // If matching inGroupOffset results in out of bounds, use last valid index for the outGroup
+                _activeIndex = Math.Min(
+                    outGroup.StartInclusiveIndex + inGroupOffset,
+                    outGroup.StartInclusiveIndex + outGroup.MenuOptionListLength - 1);
                 break;
             }
             case CommonFacts.HOME_KEY:
@@ -214,7 +214,7 @@ public partial class ContextSwitchDisplay : ComponentBase
                 _activeIndex = _flatMenuOptionList.Count - 1;
                 break;
             case "Enter":
-				CommonService.SetWidget(null);
+                CommonService.SetWidget(null);
                 break;
         }
     }

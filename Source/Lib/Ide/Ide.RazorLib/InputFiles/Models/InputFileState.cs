@@ -6,7 +6,7 @@ namespace Walk.Ide.RazorLib.InputFiles.Models;
 
 public record struct InputFileState(
     int IndexInHistory,
-	IReadOnlyList<TreeViewAbsolutePath> OpenedTreeViewModelHistoryList,
+    IReadOnlyList<TreeViewAbsolutePath> OpenedTreeViewModelHistoryList,
     TreeViewAbsolutePath? SelectedTreeViewModel,
     Func<AbsolutePath, Task> OnAfterSubmitFunc,
     Func<AbsolutePath, Task<bool>> SelectionIsValidFunc,
@@ -17,11 +17,11 @@ public record struct InputFileState(
 {
     public InputFileState() : this(
         -1,
-		Array.Empty<TreeViewAbsolutePath>(),
+        Array.Empty<TreeViewAbsolutePath>(),
         null,
         _ => Task.CompletedTask,
         _ => Task.FromResult(false),
-		Array.Empty<InputFilePattern>(),
+        Array.Empty<InputFilePattern>(),
         null,
         string.Empty,
         string.Empty)
@@ -63,7 +63,7 @@ public record struct InputFileState(
             var startingIndexToRemove = inInputFileState.IndexInHistory + 1;
             var countToRemove = historyCount - startingIndexToRemove;
 
-			nextHistory.RemoveRange(
+            nextHistory.RemoveRange(
                 startingIndexToRemove,
                 countToRemove);
         }

@@ -7,108 +7,108 @@ namespace Walk.Extensions.DotNet.Nugets.Displays;
 
 public partial class NuGetPackageManager : ComponentBase, IDisposable
 {
-	[Inject]
-	private DotNetService DotNetService { get; set; } = null!;
+    [Inject]
+    private DotNetService DotNetService { get; set; } = null!;
 
-	private bool _performingNugetQuery;
-	private Exception? _exceptionFromNugetQuery;
+    private bool _performingNugetQuery;
+    private Exception? _exceptionFromNugetQuery;
 
-	public string NugetQuery
-	{
-		get => DotNetService.GetNuGetPackageManagerState().NugetQuery;
-		set => DotNetService.ReduceSetNugetQueryAction(value);
-	}
+    public string NugetQuery
+    {
+        get => DotNetService.GetNuGetPackageManagerState().NugetQuery;
+        set => DotNetService.ReduceSetNugetQueryAction(value);
+    }
 
-	public bool IncludePrerelease
-	{
-		get => DotNetService.GetNuGetPackageManagerState().IncludePrerelease;
-		set => DotNetService.ReduceSetIncludePrereleaseAction(value);
-	}
+    public bool IncludePrerelease
+    {
+        get => DotNetService.GetNuGetPackageManagerState().IncludePrerelease;
+        set => DotNetService.ReduceSetIncludePrereleaseAction(value);
+    }
 
-	protected override void OnInitialized()
-	{
-		DotNetService.NuGetPackageManagerStateChanged += OnNuGetPackageManagerStateChanged;
-		DotNetService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
-	}
+    protected override void OnInitialized()
+    {
+        DotNetService.NuGetPackageManagerStateChanged += OnNuGetPackageManagerStateChanged;
+        DotNetService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
+    }
 
-	private void SelectedProjectToModifyChanged(ChangeEventArgs changeEventArgs, DotNetSolutionState dotNetSolutionState)
-	{
-		if (changeEventArgs.Value is null || dotNetSolutionState.DotNetSolutionModel is null)
-			return;
+    private void SelectedProjectToModifyChanged(ChangeEventArgs changeEventArgs, DotNetSolutionState dotNetSolutionState)
+    {
+        if (changeEventArgs.Value is null || dotNetSolutionState.DotNetSolutionModel is null)
+            return;
 
-		var projectIdGuid = Guid.Parse((string)changeEventArgs.Value);
+        var projectIdGuid = Guid.Parse((string)changeEventArgs.Value);
 
-		IDotNetProject? selectedProject = null;
+        IDotNetProject? selectedProject = null;
 
-		if (projectIdGuid != Guid.Empty)
-		{
-			selectedProject = dotNetSolutionState.DotNetSolutionModel.DotNetProjectList
-				.SingleOrDefault(x => x.ProjectIdGuid == projectIdGuid);
-		}
+        if (projectIdGuid != Guid.Empty)
+        {
+            selectedProject = dotNetSolutionState.DotNetSolutionModel.DotNetProjectList
+                .SingleOrDefault(x => x.ProjectIdGuid == projectIdGuid);
+        }
 
-		DotNetService.ReduceSetSelectedProjectToModifyAction(selectedProject);
-	}
+        DotNetService.ReduceSetSelectedProjectToModifyAction(selectedProject);
+    }
 
-	private bool CheckIfProjectIsSelected(IDotNetProject dotNetProject, NuGetPackageManagerState nuGetPackageManagerState)
-	{
-		if (nuGetPackageManagerState.SelectedProjectToModify is null)
-			return false;
+    private bool CheckIfProjectIsSelected(IDotNetProject dotNetProject, NuGetPackageManagerState nuGetPackageManagerState)
+    {
+        if (nuGetPackageManagerState.SelectedProjectToModify is null)
+            return false;
 
-		return nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid == dotNetProject.ProjectIdGuid;
-	}
+        return nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid == dotNetProject.ProjectIdGuid;
+    }
 
-	private bool ValidateSolutionContainsSelectedProject(DotNetSolutionState dotNetSolutionState, NuGetPackageManagerState nuGetPackageManagerState)
-	{
-		if (dotNetSolutionState.DotNetSolutionModel is null || nuGetPackageManagerState.SelectedProjectToModify is null)
-			return false;
+    private bool ValidateSolutionContainsSelectedProject(DotNetSolutionState dotNetSolutionState, NuGetPackageManagerState nuGetPackageManagerState)
+    {
+        if (dotNetSolutionState.DotNetSolutionModel is null || nuGetPackageManagerState.SelectedProjectToModify is null)
+            return false;
 
-		return dotNetSolutionState.DotNetSolutionModel.DotNetProjectList.Any(
-			x => x.ProjectIdGuid == nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid);
-	}
+        return dotNetSolutionState.DotNetSolutionModel.DotNetProjectList.Any(
+            x => x.ProjectIdGuid == nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid);
+    }
 
-	private async Task SubmitNuGetQueryOnClick()
-	{
-		var query = DotNetService.BuildQuery(NugetQuery, IncludePrerelease);
+    private async Task SubmitNuGetQueryOnClick()
+    {
+        var query = DotNetService.BuildQuery(NugetQuery, IncludePrerelease);
 
-		try
-		{
-			// UI
-			{
-				_exceptionFromNugetQuery = null;
-				_performingNugetQuery = true;
-				await InvokeAsync(StateHasChanged);
-			}
+        try
+        {
+            // UI
+            {
+                _exceptionFromNugetQuery = null;
+                _performingNugetQuery = true;
+                await InvokeAsync(StateHasChanged);
+            }
 
-			DotNetService.Enqueue(new DotNetWorkArgs
-			{
-				WorkKind = DotNetWorkKind.SubmitNuGetQuery,
-				NugetPackageManagerQuery = query,
-			});
-		}
-		catch (Exception e)
-		{
-			_exceptionFromNugetQuery = e;
-		}
-		finally
-		{
-			_performingNugetQuery = false;
-			await InvokeAsync(StateHasChanged);
-		}
-	}
-	
-	private async void OnNuGetPackageManagerStateChanged()
-	{
-		await InvokeAsync(StateHasChanged);
-	}
-	
-	private async void OnDotNetSolutionStateChanged()
-	{
-		await InvokeAsync(StateHasChanged);
-	}
-	
-	public void Dispose()
-	{
-		DotNetService.NuGetPackageManagerStateChanged -= OnNuGetPackageManagerStateChanged;
-		DotNetService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
-	}
+            DotNetService.Enqueue(new DotNetWorkArgs
+            {
+                WorkKind = DotNetWorkKind.SubmitNuGetQuery,
+                NugetPackageManagerQuery = query,
+            });
+        }
+        catch (Exception e)
+        {
+            _exceptionFromNugetQuery = e;
+        }
+        finally
+        {
+            _performingNugetQuery = false;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+    
+    private async void OnNuGetPackageManagerStateChanged()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+    
+    private async void OnDotNetSolutionStateChanged()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+    
+    public void Dispose()
+    {
+        DotNetService.NuGetPackageManagerStateChanged -= OnNuGetPackageManagerStateChanged;
+        DotNetService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
+    }
 }

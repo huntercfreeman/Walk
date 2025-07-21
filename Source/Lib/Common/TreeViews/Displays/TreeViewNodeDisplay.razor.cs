@@ -90,9 +90,9 @@ public partial class TreeViewNodeDisplay : ComponentBase
         {
             RenderBatch.CommonService.Enqueue(new CommonWorkArgs
             {
-    			WorkKind = CommonWorkKind.TreeView_HandleExpansionChevronOnMouseDown,
-            	TreeViewNoType = localTreeViewNoType,
-            	TreeViewContainer = RenderBatch.TreeViewContainer
+                WorkKind = CommonWorkKind.TreeView_HandleExpansionChevronOnMouseDown,
+                TreeViewNoType = localTreeViewNoType,
+                TreeViewContainer = RenderBatch.TreeViewContainer
             });
         }
         else
@@ -121,8 +121,8 @@ public partial class TreeViewNodeDisplay : ComponentBase
 
         RenderBatch.CommonService.Enqueue(new CommonWorkArgs
         {
-    		WorkKind = CommonWorkKind.TreeView_ManuallyPropagateOnContextMenu,
-        	HandleTreeViewOnContextMenu = RenderBatch.HandleTreeViewOnContextMenu,
+            WorkKind = CommonWorkKind.TreeView_ManuallyPropagateOnContextMenu,
+            HandleTreeViewOnContextMenu = RenderBatch.HandleTreeViewOnContextMenu,
             MouseEventArgs = mouseEventArgs,
             ContainerKey = treeViewContainer.Key,
             TreeViewNoType = treeViewNoType,
@@ -179,23 +179,23 @@ public partial class TreeViewNodeDisplay : ComponentBase
 
     private Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-    	switch (keyboardEventArgs.Key)
-    	{
-    		case "ContextMenu":
-    		{
-    			var mouseEventArgs = new MouseEventArgs { Button = -1 };
-	            return ManuallyPropagateOnContextMenu(mouseEventArgs, RenderBatch.TreeViewContainer, TreeViewNoType);
-    		}
-    		case ".":
-    		{
-    			if (keyboardEventArgs.CtrlKey)
-    			{
-    				var mouseEventArgs = new MouseEventArgs { Button = -1 };
-	            	return ManuallyPropagateOnContextMenu(mouseEventArgs, RenderBatch.TreeViewContainer, TreeViewNoType);
-    			}
-    			break;
-    		}
-    	}
+        switch (keyboardEventArgs.Key)
+        {
+            case "ContextMenu":
+            {
+                var mouseEventArgs = new MouseEventArgs { Button = -1 };
+                return ManuallyPropagateOnContextMenu(mouseEventArgs, RenderBatch.TreeViewContainer, TreeViewNoType);
+            }
+            case ".":
+            {
+                if (keyboardEventArgs.CtrlKey)
+                {
+                    var mouseEventArgs = new MouseEventArgs { Button = -1 };
+                    return ManuallyPropagateOnContextMenu(mouseEventArgs, RenderBatch.TreeViewContainer, TreeViewNoType);
+                }
+                break;
+            }
+        }
     
         return Task.CompletedTask;
     }

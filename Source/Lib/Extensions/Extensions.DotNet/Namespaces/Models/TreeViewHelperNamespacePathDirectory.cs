@@ -50,10 +50,10 @@ public class TreeViewHelperNamespacePathDirectory
                     false);
             }).ToList();
 
-		var result = new List<TreeViewNoType>();
-		result.AddRange(childDirectoryTreeViewModels);
-		result.AddRange(childFileTreeViewModels);
-		
+        var result = new List<TreeViewNoType>();
+        result.AddRange(childDirectoryTreeViewModels);
+        result.AddRange(childFileTreeViewModels);
+        
         return result;
     }
 }

@@ -101,7 +101,7 @@ public class LocalFileHandler : IFileHandler
         return await File.ReadAllTextAsync(
                 absolutePathString,
                 cancellationToken)
-			.ConfigureAwait(false);
+            .ConfigureAwait(false);
     }
     
     public string ReadAllText(string absolutePathString)
@@ -123,7 +123,7 @@ public class LocalFileHandler : IFileHandler
                     absolutePathString,
                     contents,
                     cancellationToken)
-				.ConfigureAwait(false);
+                .ConfigureAwait(false);
 
             _commonService.EnvironmentProvider.DeletionPermittedRegister(
                 new SimplePath(absolutePathString, IS_DIRECTORY_RESPONSE));

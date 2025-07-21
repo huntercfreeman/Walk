@@ -9,7 +9,7 @@ namespace Walk.Common.RazorLib.Menus.Models;
 /// </summary>
 public record MenuRecord(IReadOnlyList<MenuOptionRecord> MenuOptionList)
 {
-	public static readonly IReadOnlyList<MenuOptionRecord> NoMenuOptionsExistList = new List<MenuOptionRecord>
+    public static readonly IReadOnlyList<MenuOptionRecord> NoMenuOptionsExistList = new List<MenuOptionRecord>
     {
         new("No menu options exist for this item.", MenuOptionKind.Other)
     };

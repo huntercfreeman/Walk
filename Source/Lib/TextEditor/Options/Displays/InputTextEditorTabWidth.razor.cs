@@ -19,7 +19,7 @@ public partial class InputTextEditorTabWidth : ComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
-    	TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
+        TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
     }
     
     private async void TextEditorOptionsStateWrapOnStateChanged()
@@ -29,6 +29,6 @@ public partial class InputTextEditorTabWidth : ComponentBase, IDisposable
     
     public void Dispose()
     {
-    	TextEditorService.Options_StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
+        TextEditorService.Options_StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
     }
 }

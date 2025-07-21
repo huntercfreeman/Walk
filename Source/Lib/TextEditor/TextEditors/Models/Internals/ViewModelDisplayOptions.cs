@@ -12,7 +12,7 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 /// </summary>
 public sealed class ViewModelDisplayOptions
 {
-	public Guid TextEditorHtmlElementId { get; set; } = Guid.Empty;
+    public Guid TextEditorHtmlElementId { get; set; } = Guid.Empty;
 
     public string TextEditorStyleCssString { get; set; } = string.Empty;
     public string TextEditorClassCssString { get; set; } = string.Empty;
@@ -28,11 +28,11 @@ public sealed class ViewModelDisplayOptions
     /// If left null, the default <see cref="HandleAfterOnKeyDownAsync"/> will be used.
     /// </summary>
     public Func<
-    	TextEditorEditContext,
+        TextEditorEditContext,
         TextEditorModel,
         TextEditorViewModel,
         KeymapArgs,
-		TextEditorComponentData,
+        TextEditorComponentData,
         Task>?
         AfterOnKeyDownAsync { get; set; }
 
@@ -45,7 +45,7 @@ public sealed class ViewModelDisplayOptions
     /// event fired.
     /// </summary>
     public Func<
-    	TextEditorEditContext,
+        TextEditorEditContext,
         TextEditorModel,
         TextEditorViewModel,
         KeymapArgs[], // batchKeymapArgsList
@@ -84,12 +84,12 @@ public sealed class ViewModelDisplayOptions
 
     public ContextRecord ContextRecord { get; set; } = CommonFacts.TextEditorContext;
 
-	/// <summary>
-	/// The integrated terminal logic needs a keymap, separate to that of the 'global' keymap used by other text editors.
-	/// Therefore, this property is used to provide the <see cref="Keymaps.Models.Terminals.TextEditorKeymapTerminal"/>
-	/// to the integrated terminal.<br/><br/>
-	/// 
-	/// This property is not intended for use in any other scenario.
-	/// </summary>
-	public Keymap? KeymapOverride { get; set; }
+    /// <summary>
+    /// The integrated terminal logic needs a keymap, separate to that of the 'global' keymap used by other text editors.
+    /// Therefore, this property is used to provide the <see cref="Keymaps.Models.Terminals.TextEditorKeymapTerminal"/>
+    /// to the integrated terminal.<br/><br/>
+    /// 
+    /// This property is not intended for use in any other scenario.
+    /// </summary>
+    public Keymap? KeymapOverride { get; set; }
 }

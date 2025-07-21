@@ -10,7 +10,7 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Models;
 /// <param name="ScrollHeight">The unit of measurement is Pixels (px)</param>
 /// <param name="MarginScrollHeight">The unit of measurement is Pixels (px)</param>
 public record struct ScrollbarDimensions(
-	int ScrollLeft,
+    int ScrollLeft,
     int ScrollTop,
     int ScrollWidth,
     int ScrollHeight,

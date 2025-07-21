@@ -17,13 +17,13 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
 
-	[Parameter, EditorRequired]
-	public Key<TextEditorComponentData> ComponentDataKey { get; set; }
-	
-	public const string HTML_ELEMENT_ID = "di_te_autocomplete-menu-id";
-	
-	private static readonly MenuRecord NoResultsMenuRecord = new(
-		new List<MenuOptionRecord>()
+    [Parameter, EditorRequired]
+    public Key<TextEditorComponentData> ComponentDataKey { get; set; }
+    
+    public const string HTML_ELEMENT_ID = "di_te_autocomplete-menu-id";
+    
+    private static readonly MenuRecord NoResultsMenuRecord = new(
+        new List<MenuOptionRecord>()
         {
             new("No results", MenuOptionKind.Other)
         });
@@ -42,81 +42,81 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-    	var componentData = GetComponentData();
-    	
-    	if (componentData?.MenuShouldTakeFocus ?? false)
-    	{
-    		componentData.MenuShouldTakeFocus = false;
-        		
-        	await _autocompleteMenuComponent.SetFocusToFirstOptionInMenuAsync();
-    	}
+        var componentData = GetComponentData();
+        
+        if (componentData?.MenuShouldTakeFocus ?? false)
+        {
+            componentData.MenuShouldTakeFocus = false;
+                
+            await _autocompleteMenuComponent.SetFocusToFirstOptionInMenuAsync();
+        }
     }
     
     private TextEditorVirtualizationResult GetVirtualizationResult()
     {
-    	return GetComponentData()?.Virtualization ?? TextEditorVirtualizationResult.Empty;
+        return GetComponentData()?.Virtualization ?? TextEditorVirtualizationResult.Empty;
     }
     
     private TextEditorComponentData? GetComponentData()
     {
-    	if (_componentDataKeyPrevious != ComponentDataKey)
-    	{
-    		if (!TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData) ||
-    		    componentData is null)
-    		{
-    			_componentData = null;
-    		}
-    		else
-    		{
-    			_componentData = componentData;
-				_componentDataKeyPrevious = ComponentDataKey;
-    		}
-    	}
-    	
-		return _componentData;
+        if (_componentDataKeyPrevious != ComponentDataKey)
+        {
+            if (!TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData) ||
+                componentData is null)
+            {
+                _componentData = null;
+            }
+            else
+            {
+                _componentData = componentData;
+                _componentDataKeyPrevious = ComponentDataKey;
+            }
+        }
+        
+        return _componentData;
     }
     
     private async void OnTextEditorStateChanged()
     {
-    	await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
     }
 
     private Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return Task.CompletedTask;
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return Task.CompletedTask;
     
         if (CommonFacts.ESCAPE == keyboardEventArgs.Key)
-			return ReturnFocusToThisAsync();
-			
-		return Task.CompletedTask;
+            return ReturnFocusToThisAsync();
+            
+        return Task.CompletedTask;
     }
 
     private async Task ReturnFocusToThisAsync()
     {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return;
-    		
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return;
+            
         try
         {
             TextEditorService.WorkerArbitrary.PostUnique(editContext =>
-			{
-				var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
+            {
+                var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
-				if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
-				{
-					TextEditorCommandDefaultFunctions.RemoveDropdown(
-				        editContext,
-				        viewModelModifier,
-				        TextEditorService.CommonService);
-				}
+                if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
+                {
+                    TextEditorCommandDefaultFunctions.RemoveDropdown(
+                        editContext,
+                        viewModelModifier,
+                        TextEditorService.CommonService);
+                }
 
-				return ValueTask.CompletedTask;
-			});
-				
-			await virtualizationResult.ViewModel.FocusAsync();
+                return ValueTask.CompletedTask;
+            });
+                
+            await virtualizationResult.ViewModel.FocusAsync();
         }
         catch (Exception e)
         {
@@ -127,9 +127,9 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
     private MenuRecord GetMenuRecord()
     {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return NoResultsMenuRecord;
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return NoResultsMenuRecord;
     
         try
         {
@@ -143,9 +143,9 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
     public MenuRecord GetDefaultMenuRecord(List<AutocompleteEntry>? otherAutocompleteEntryList = null)
     {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return NoResultsMenuRecord;
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return NoResultsMenuRecord;
     
         try
         {
@@ -168,7 +168,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
                     if (otherAutocompleteEntryList is not null && otherAutocompleteEntryList.Count != 0)   
                     {
                         otherAutocompleteEntryList.AddRange(autocompleteEntryList);
-						autocompleteEntryList = otherAutocompleteEntryList;
+                        autocompleteEntryList = otherAutocompleteEntryList;
                     }
 
                     menuOptionRecordsList = autocompleteEntryList.Select(entry => new MenuOptionRecord(
@@ -176,9 +176,9 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
                         MenuOptionKind.Other,
                         () => SelectMenuOption(() =>
                         {
-                        	if (entry.AutocompleteEntryKind != AutocompleteEntryKind.Snippet)
-                            	InsertAutocompleteMenuOption(word, entry, virtualizationResult.ViewModel);
-                            	
+                            if (entry.AutocompleteEntryKind != AutocompleteEntryKind.Snippet)
+                                InsertAutocompleteMenuOption(word, entry, virtualizationResult.ViewModel);
+                                
                             return entry.SideEffectFunc?.Invoke();
                         }),
                         widgetParameterMap: new Dictionary<string, object?>
@@ -199,7 +199,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
             return NoResultsMenuRecord;
         }
-		// Catching 'InvalidOperationException' is for the currently occurring case: "Collection was modified; enumeration operation may not execute."
+        // Catching 'InvalidOperationException' is for the currently occurring case: "Collection was modified; enumeration operation may not execute."
         catch (Exception e) when (e is WalkTextEditorException || e is InvalidOperationException)
         {
             return NoResultsMenuRecord;
@@ -208,47 +208,47 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
     public async Task SelectMenuOption(Func<Task> menuOptionAction)
     {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return;
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return;
     
         _ = Task.Run(async () =>
         {
             try
             {
-				TextEditorService.WorkerArbitrary.PostUnique(editContext =>
-				{
-					var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
+                TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+                {
+                    var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
-					if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
-					{
-						TextEditorCommandDefaultFunctions.RemoveDropdown(
-					        editContext,
-					        viewModelModifier,
-					        TextEditorService.CommonService);
-					}
+                    if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
+                    {
+                        TextEditorCommandDefaultFunctions.RemoveDropdown(
+                            editContext,
+                            viewModelModifier,
+                            TextEditorService.CommonService);
+                    }
 
-					return virtualizationResult.ViewModel.FocusAsync();
-				});
-				
-				// (2025-01-21)
-				// ====================================================================================
-				// System.NullReferenceException: Object reference not set to an instance of an object.
-				//    at Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.<>c__DisplayClass30_0.<<SelectMenuOption>b__0>d.MoveNext() in C:\Users\hunte\Repos\Walk.Ide_Fork\Source\Lib\TextEditor\TextEditors\Displays\Internals\AutocompleteMenu.razor.cs:line 235
-				// System.NullReferenceException: Object reference not set to an instance of an object.
-				//    at Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.<>c__DisplayClass30_0.<<SelectMenuOption>b__0>d.MoveNext() in C:\Users\hunte\Repos\Walk.Ide_Fork\Source\Lib\TextEditor\TextEditors\Displays\Internals\AutocompleteMenu.razor.cs:line 235
-				// System.NullReferenceException: Object reference not set to an instance of an object.
-				//    at Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.<>c__DisplayClass30_0.<<SelectMenuOption>b__0>d.MoveNext() in C:\Users\hunte\Repos\Walk.Ide_Fork\Source\Lib\TextEditor\TextEditors\Displays\Internals\AutocompleteMenu.razor.cs:line 235
-				// System.NullReferenceException: Object reference not set to an instance of an object.
-				//    at Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.<>c__DisplayClass30_0.<<SelectMenuOption>b__0>d.MoveNext() in C:\Users\hunte\Repos\Walk.Ide_Fork\Source\Lib\TextEditor\TextEditors\Displays\Internals\AutocompleteMenu.razor.cs:line 235
-				// PS C:\Users\hunte\Repos\Walk.Ide_Fork\Source\Lib\Ide\Host.Photino\bin\Release\net8.0\publish>
-				try
-				{
-					await menuOptionAction.Invoke().ConfigureAwait(false);
-				}
+                    return virtualizationResult.ViewModel.FocusAsync();
+                });
+                
+                // (2025-01-21)
+                // ====================================================================================
+                // System.NullReferenceException: Object reference not set to an instance of an object.
+                //    at Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.<>c__DisplayClass30_0.<<SelectMenuOption>b__0>d.MoveNext() in C:\Users\hunte\Repos\Walk.Ide_Fork\Source\Lib\TextEditor\TextEditors\Displays\Internals\AutocompleteMenu.razor.cs:line 235
+                // System.NullReferenceException: Object reference not set to an instance of an object.
+                //    at Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.<>c__DisplayClass30_0.<<SelectMenuOption>b__0>d.MoveNext() in C:\Users\hunte\Repos\Walk.Ide_Fork\Source\Lib\TextEditor\TextEditors\Displays\Internals\AutocompleteMenu.razor.cs:line 235
+                // System.NullReferenceException: Object reference not set to an instance of an object.
+                //    at Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.<>c__DisplayClass30_0.<<SelectMenuOption>b__0>d.MoveNext() in C:\Users\hunte\Repos\Walk.Ide_Fork\Source\Lib\TextEditor\TextEditors\Displays\Internals\AutocompleteMenu.razor.cs:line 235
+                // System.NullReferenceException: Object reference not set to an instance of an object.
+                //    at Walk.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.<>c__DisplayClass30_0.<<SelectMenuOption>b__0>d.MoveNext() in C:\Users\hunte\Repos\Walk.Ide_Fork\Source\Lib\TextEditor\TextEditors\Displays\Internals\AutocompleteMenu.razor.cs:line 235
+                // PS C:\Users\hunte\Repos\Walk.Ide_Fork\Source\Lib\Ide\Host.Photino\bin\Release\net8.0\publish>
+                try
+                {
+                    await menuOptionAction.Invoke().ConfigureAwait(false);
+                }
                 catch (Exception e)
                 {
-                	Console.WriteLine(e);
+                    Console.WriteLine(e);
                 }
             }
             catch (Exception e)
@@ -265,32 +265,32 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)
     {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return;
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return;
     
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-        	var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
+            var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
 
             if (modelModifier is null || viewModelModifier is null)
                 return ValueTask.CompletedTask;
         
-        	TextEditorService.Model_InsertText(
-        		editContext,
-		        modelModifier,
-		        viewModelModifier,
-		        autocompleteEntry.DisplayName.Substring(word.Length));
-		        
+            TextEditorService.Model_InsertText(
+                editContext,
+                modelModifier,
+                viewModelModifier,
+                autocompleteEntry.DisplayName.Substring(word.Length));
+                
             return virtualizationResult.ViewModel.FocusAsync();
         });
-		
-		await virtualizationResult.ViewModel.FocusAsync();
+        
+        await virtualizationResult.ViewModel.FocusAsync();
     }
     
     public void Dispose()
     {
-    	TextEditorService.TextEditorStateChanged -= OnTextEditorStateChanged;
+        TextEditorService.TextEditorStateChanged -= OnTextEditorStateChanged;
     }
 }

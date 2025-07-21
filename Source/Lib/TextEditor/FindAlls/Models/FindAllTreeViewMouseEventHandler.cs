@@ -8,36 +8,36 @@ namespace Walk.TextEditor.RazorLib.FindAlls.Models;
 
 public class FindAllTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
-	private readonly TextEditorService _textEditorService;
-	private readonly IServiceProvider _serviceProvider;
+    private readonly TextEditorService _textEditorService;
+    private readonly IServiceProvider _serviceProvider;
 
-	public FindAllTreeViewMouseEventHandler(
-			TextEditorService textEditorService,
-			IServiceProvider serviceProvider,
-			CommonService commonService)
-		: base(commonService)
-	{
-		_textEditorService = textEditorService;
-		_serviceProvider = serviceProvider;
-	}
+    public FindAllTreeViewMouseEventHandler(
+            TextEditorService textEditorService,
+            IServiceProvider serviceProvider,
+            CommonService commonService)
+        : base(commonService)
+    {
+        _textEditorService = textEditorService;
+        _serviceProvider = serviceProvider;
+    }
 
-	public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
-	{
-		base.OnDoubleClickAsync(commandArgs);
+    public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
+    {
+        base.OnDoubleClickAsync(commandArgs);
 
-		if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewFindAllTextSpan treeViewFindAllTextSpan)
-			return Task.CompletedTask;
+        if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewFindAllTextSpan treeViewFindAllTextSpan)
+            return Task.CompletedTask;
 
-		_textEditorService.WorkerArbitrary.PostUnique(async editContext =>
-    	{
-    		await _textEditorService.OpenInEditorAsync(
-    			editContext,
-    			treeViewFindAllTextSpan.AbsolutePath.Value,
-				true,
-				treeViewFindAllTextSpan.Item.TextSpan.StartInclusiveIndex,
-				new Category("main"),
-				Key<TextEditorViewModel>.NewKey());
-    	});
-    	return Task.CompletedTask;
-	}
+        _textEditorService.WorkerArbitrary.PostUnique(async editContext =>
+        {
+            await _textEditorService.OpenInEditorAsync(
+                editContext,
+                treeViewFindAllTextSpan.AbsolutePath.Value,
+                true,
+                treeViewFindAllTextSpan.Item.TextSpan.StartInclusiveIndex,
+                new Category("main"),
+                Key<TextEditorViewModel>.NewKey());
+        });
+        return Task.CompletedTask;
+    }
 }

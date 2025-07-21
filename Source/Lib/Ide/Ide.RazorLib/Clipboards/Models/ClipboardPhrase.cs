@@ -1,4 +1,4 @@
-﻿namespace Walk.Ide.RazorLib.Clipboards.Models;
+namespace Walk.Ide.RazorLib.Clipboards.Models;
 
 public class ClipboardPhrase
 {

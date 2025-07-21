@@ -6,17 +6,17 @@ public class NamespacePrefixNode
     public NamespacePrefixNode()
     {
         #if DEBUG
-		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.NamespacePrefixNode++;
-		#endif
+        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.NamespacePrefixNode++;
+        #endif
     }
 
     public int Links { get; set; }
     public Dictionary<string, NamespacePrefixNode> Children { get; } = new();
     
-    #if DEBUG	
-	~NamespacePrefixNode()
-	{
-		Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.NamespacePrefixNode--;
-	}
-	#endif
+    #if DEBUG    
+    ~NamespacePrefixNode()
+    {
+        Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.NamespacePrefixNode--;
+    }
+    #endif
 }

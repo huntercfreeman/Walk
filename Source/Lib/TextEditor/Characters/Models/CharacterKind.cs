@@ -1,4 +1,4 @@
-﻿namespace Walk.TextEditor.RazorLib.Characters.Models;
+namespace Walk.TextEditor.RazorLib.Characters.Models;
 
 public enum CharacterKind
 {

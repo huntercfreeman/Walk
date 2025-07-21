@@ -20,7 +20,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     private IServiceProvider ServiceProvider { get; set; } = null!;
 
     [Parameter, EditorRequired]
-	public Key<TextEditorComponentData> ComponentDataKey { get; set; }
+    public Key<TextEditorComponentData> ComponentDataKey { get; set; }
 
     private ElementReference? _textEditorContextMenuElementReference;
     
@@ -52,76 +52,76 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     
     private TextEditorVirtualizationResult GetVirtualizationResult()
     {
-    	return GetComponentData()?.Virtualization ?? TextEditorVirtualizationResult.Empty;
+        return GetComponentData()?.Virtualization ?? TextEditorVirtualizationResult.Empty;
     }
     
     private TextEditorComponentData? GetComponentData()
     {
-    	if (_componentDataKeyPrevious != ComponentDataKey)
-    	{
-    		if (!TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData) ||
-    		    componentData is null)
-    		{
-    			_componentData = null;
-    		}
-    		else
-    		{
-    			_componentData = componentData;
-				_componentDataKeyPrevious = ComponentDataKey;
-    		}
-    	}
-    	
-		return _componentData;
+        if (_componentDataKeyPrevious != ComponentDataKey)
+        {
+            if (!TextEditorService.TextEditorState._componentDataMap.TryGetValue(ComponentDataKey, out var componentData) ||
+                componentData is null)
+            {
+                _componentData = null;
+            }
+            else
+            {
+                _componentData = componentData;
+                _componentDataKeyPrevious = ComponentDataKey;
+            }
+        }
+        
+        return _componentData;
     }
 
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return;
-    	
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return;
+        
         if (CommonFacts.ESCAPE == keyboardEventArgs.Key)
         {
             TextEditorService.WorkerArbitrary.PostUnique(editContext =>
-			{
-				var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
+            {
+                var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
-				if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
-				{
-					TextEditorCommandDefaultFunctions.RemoveDropdown(
-				        editContext,
-				        viewModelModifier,
-				        TextEditorService.CommonService);
-				}
+                if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
+                {
+                    TextEditorCommandDefaultFunctions.RemoveDropdown(
+                        editContext,
+                        viewModelModifier,
+                        TextEditorService.CommonService);
+                }
 
-				return ValueTask.CompletedTask;
-			});
+                return ValueTask.CompletedTask;
+            });
         }
     }
 
     private Task ReturnFocusToThisAsync()
     {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return Task.CompletedTask;
-    		
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return Task.CompletedTask;
+            
         try
         {
             TextEditorService.WorkerArbitrary.PostUnique(editContext =>
-			{
-				var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
+            {
+                var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
-				if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
-				{
-					TextEditorCommandDefaultFunctions.RemoveDropdown(
-				        editContext,
-				        viewModelModifier,
-				        TextEditorService.CommonService);
-				}
+                if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
+                {
+                    TextEditorCommandDefaultFunctions.RemoveDropdown(
+                        editContext,
+                        viewModelModifier,
+                        TextEditorService.CommonService);
+                }
 
-				return ValueTask.CompletedTask;
-			});
-			return Task.CompletedTask;
+                return ValueTask.CompletedTask;
+            });
+            return Task.CompletedTask;
         }
         catch (Exception e)
         {
@@ -132,18 +132,18 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     private MenuRecord GetMenuRecord()
     {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return new MenuRecord(MenuRecord.NoMenuOptionsExistList);
-    		
-    	return virtualizationResult.Model.PersistentState.CompilerService.GetContextMenu(virtualizationResult, this);
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+            
+        return virtualizationResult.Model.PersistentState.CompilerService.GetContextMenu(virtualizationResult, this);
     }
     
     public MenuRecord GetDefaultMenuRecord()
     {
-    	List<MenuOptionRecord> menuOptionRecordsList = new();
-    	
-    	var cut = new MenuOptionRecord("Cut (Ctrl x)", MenuOptionKind.Other, () => SelectMenuOption(CutMenuOption));
+        List<MenuOptionRecord> menuOptionRecordsList = new();
+        
+        var cut = new MenuOptionRecord("Cut (Ctrl x)", MenuOptionKind.Other, () => SelectMenuOption(CutMenuOption));
         menuOptionRecordsList.Add(cut);
 
         var copy = new MenuOptionRecord("Copy (Ctrl c)", MenuOptionKind.Other, () => SelectMenuOption(CopyMenuOption));
@@ -181,28 +181,28 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     public Task SelectMenuOption(Func<Task> menuOptionAction)
     {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return Task.CompletedTask;
-    		
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return Task.CompletedTask;
+            
         _ = Task.Run(async () =>
         {
             try
             {
-				TextEditorService.WorkerArbitrary.PostUnique(editContext =>
-				{
-					var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
+                TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+                {
+                    var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
-					if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
-					{
-						TextEditorCommandDefaultFunctions.RemoveDropdown(
-					        editContext,
-					        viewModelModifier,
-					        TextEditorService.CommonService);
-					}
+                    if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
+                    {
+                        TextEditorCommandDefaultFunctions.RemoveDropdown(
+                            editContext,
+                            viewModelModifier,
+                            TextEditorService.CommonService);
+                    }
 
-					return ValueTask.CompletedTask;
-				});
+                    return ValueTask.CompletedTask;
+                });
 
                 await menuOptionAction.Invoke().ConfigureAwait(false);
                 TextEditorService.ViewModel_StopCursorBlinking();
@@ -219,203 +219,203 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
     
     public Task CutMenuOption()
     {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return Task.CompletedTask;
-    		
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return Task.CompletedTask;
+            
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
             var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
-		    var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
-			
+            var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
+            
             return TextEditorCommandDefaultFunctions.CutAsync(
-            	editContext,
-		        modelModifier,
-		        viewModelModifier);
+                editContext,
+                modelModifier,
+                viewModelModifier);
         });
         return Task.CompletedTask;
     }
 
     public Task CopyMenuOption()
     {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return Task.CompletedTask;
-    	
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return Task.CompletedTask;
+        
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-	        var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
-		    var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
-        	
+            var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
+            
             return TextEditorCommandDefaultFunctions.CopyAsync(
-        		editContext,
-		        modelModifier,
-		        viewModelModifier);
+                editContext,
+                modelModifier,
+                viewModelModifier);
         });
         return Task.CompletedTask;
     }
 
     public Task PasteMenuOption()
     {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return Task.CompletedTask;
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return Task.CompletedTask;
 
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-        	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+            var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
             return TextEditorCommandDefaultFunctions.PasteAsync(
-            	editContext,
-		        modelModifier,
-		        viewModelModifier);
+                editContext,
+                modelModifier,
+                viewModelModifier);
         });
         return Task.CompletedTask;
     }
 
     public Task GoToDefinitionOption()
     {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return Task.CompletedTask;
-    		
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return Task.CompletedTask;
+            
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
             var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
-    		if (viewModelModifier is null)
-    			return ValueTask.CompletedTask;
+            if (viewModelModifier is null)
+                return ValueTask.CompletedTask;
             
             viewModelModifier.PersistentState.ShouldRevealCursor = true;
             
             TextEditorCommandDefaultFunctions.GoToDefinition(
-            	editContext,
-            	modelModifier,
-            	viewModelModifier,
-            	new Category("main"),
-			    modelModifier.GetPositionIndex(viewModelModifier));
-        	return ValueTask.CompletedTask;
+                editContext,
+                modelModifier,
+                viewModelModifier,
+                new Category("main"),
+                modelModifier.GetPositionIndex(viewModelModifier));
+            return ValueTask.CompletedTask;
         });
         return Task.CompletedTask;
     }
     
     public Task PeekDefinitionOption()
     {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return Task.CompletedTask;
-    		
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return Task.CompletedTask;
+            
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
             var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
 
-    		if (viewModelModifier is null)
-    			return ValueTask.CompletedTask;
+            if (viewModelModifier is null)
+                return ValueTask.CompletedTask;
             
             viewModelModifier.PersistentState.ShouldRevealCursor = true;
             
             TextEditorCommandDefaultFunctions.GoToDefinition(
-            	editContext,
-            	modelModifier,
-            	viewModelModifier,
-            	new Category("CodeSearchService"),
-			    modelModifier.GetPositionIndex(viewModelModifier));
-        	return ValueTask.CompletedTask;
+                editContext,
+                modelModifier,
+                viewModelModifier,
+                new Category("CodeSearchService"),
+                modelModifier.GetPositionIndex(viewModelModifier));
+            return ValueTask.CompletedTask;
         });
         return Task.CompletedTask;
     }
     
     public Task QuickActionsSlashRefactors()
     {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return Task.CompletedTask;
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return Task.CompletedTask;
 
-		TextEditorService.WorkerArbitrary.PostUnique((Func<TextEditorEditContext, ValueTask>)(editContext =>
+        TextEditorService.WorkerArbitrary.PostUnique((Func<TextEditorEditContext, ValueTask>)(editContext =>
         {
-        	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
-        	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
+            var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
             return TextEditorCommandDefaultFunctions.QuickActionsSlashRefactor(
-            	editContext,
-            	modelModifier,
-            	viewModelModifier,
-            	TextEditorService.CommonService.JsRuntimeCommonApi,
-				TextEditorService,
-            	TextEditorService.CommonService);
+                editContext,
+                modelModifier,
+                viewModelModifier,
+                TextEditorService.CommonService.JsRuntimeCommonApi,
+                TextEditorService,
+                TextEditorService.CommonService);
         }));
         return Task.CompletedTask;
     }
     
     public Task FindInTextEditor()
     {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return Task.CompletedTask;
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return Task.CompletedTask;
 
-		TextEditorService.WorkerArbitrary.PostUnique((Func<TextEditorEditContext, ValueTask>)(editContext =>
+        TextEditorService.WorkerArbitrary.PostUnique((Func<TextEditorEditContext, ValueTask>)(editContext =>
         {
-        	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
-        	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
+            var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
             return TextEditorCommandDefaultFunctions.ShowFindOverlay(
-		        editContext,
-            	modelModifier,
-            	viewModelModifier,
-		        TextEditorService.CommonService.JsRuntimeCommonApi);
+                editContext,
+                modelModifier,
+                viewModelModifier,
+                TextEditorService.CommonService.JsRuntimeCommonApi);
         }));
         return Task.CompletedTask;
     }
     
     public Task FindAllReferences()
     {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return Task.CompletedTask;
-    	
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return Task.CompletedTask;
+        
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-        	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
-        	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
+            var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
             return ((TextEditorKeymapDefault)TextEditorFacts.Keymap_DefaultKeymap).ShiftF12Func.Invoke(
-            	editContext,
-    			modelModifier,
-    			viewModelModifier);
+                editContext,
+                modelModifier,
+                viewModelModifier);
         });
         return Task.CompletedTask;
     }
     
     public Task RelatedFilesQuickPick()
     {
-    	var virtualizationResult = GetVirtualizationResult();
-    	if (!virtualizationResult.IsValid)
-    		return Task.CompletedTask;
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return Task.CompletedTask;
 
-		TextEditorService.WorkerArbitrary.PostUnique((Func<TextEditorEditContext, ValueTask>)(editContext =>
+        TextEditorService.WorkerArbitrary.PostUnique((Func<TextEditorEditContext, ValueTask>)(editContext =>
         {
-        	var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
-        	var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
+            var modelModifier = editContext.GetModelModifier(virtualizationResult.Model.PersistentState.ResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
         
             return TextEditorCommandDefaultFunctions.RelatedFilesQuickPick(
-		        editContext,
-            	modelModifier,
-            	viewModelModifier,
-		        TextEditorService.CommonService.JsRuntimeCommonApi,
-		        TextEditorService.CommonService.EnvironmentProvider,
-		        TextEditorService.CommonService.FileSystemProvider,
-				TextEditorService,
-		        TextEditorService.CommonService);
+                editContext,
+                modelModifier,
+                viewModelModifier,
+                TextEditorService.CommonService.JsRuntimeCommonApi,
+                TextEditorService.CommonService.EnvironmentProvider,
+                TextEditorService.CommonService.FileSystemProvider,
+                TextEditorService,
+                TextEditorService.CommonService);
         }));
         return Task.CompletedTask;
     }
 
     public void Dispose()
     {
-    	// This component isn't subscribing to the text editor render batch changing event.
-    	return;
+        // This component isn't subscribing to the text editor render batch changing event.
+        return;
     }
 }

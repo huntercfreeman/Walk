@@ -68,21 +68,21 @@ public partial class InputFileSidebar : ComponentBase
 
     private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
-		var dropdownRecord = new DropdownRecord(
-			InputFileContextMenu.ContextMenuKey,
-			treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
-			treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
-			typeof(InputFileContextMenu),
-			new Dictionary<string, object?>
-			{
-				{
-					nameof(InputFileContextMenu.TreeViewCommandArgs),
-					treeViewCommandArgs
-				}
-			},
-			restoreFocusOnClose: null);
+        var dropdownRecord = new DropdownRecord(
+            InputFileContextMenu.ContextMenuKey,
+            treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
+            treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
+            typeof(InputFileContextMenu),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(InputFileContextMenu.TreeViewCommandArgs),
+                    treeViewCommandArgs
+                }
+            },
+            restoreFocusOnClose: null);
 
         IdeService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
-		return Task.CompletedTask;
-	}
+        return Task.CompletedTask;
+    }
 }

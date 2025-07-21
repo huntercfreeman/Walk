@@ -32,8 +32,8 @@ public sealed class IndefiniteBackgroundTaskWorker
 
         while (!cancellationToken.IsCancellationRequested)
         {
-        	await Queue.__DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
-        	var backgroundTask = Queue.__DequeueOrDefault();
+            await Queue.__DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+            var backgroundTask = Queue.__DequeueOrDefault();
 
             try
             {
@@ -47,13 +47,13 @@ public sealed class IndefiniteBackgroundTaskWorker
                     : "Error occurred executing {0}."; // {0} => WorkItemName
 
                 _logger.LogError(ex, message, "(backgroundTask.Name was here)");
-				Console.WriteLine($"ERROR on (backgroundTask.Name was here): {ex.ToString()}");
+                Console.WriteLine($"ERROR on (backgroundTask.Name was here): {ex.ToString()}");
             }
             finally
             {
-            	if (backgroundTask.__TaskCompletionSourceWasCreated)
-            		CommonService.CompleteTaskCompletionSource(backgroundTask.BackgroundTaskKey);
+                if (backgroundTask.__TaskCompletionSourceWasCreated)
+                    CommonService.CompleteTaskCompletionSource(backgroundTask.BackgroundTaskKey);
             }
-    	}
-	}   
+        }
+    }   
 }

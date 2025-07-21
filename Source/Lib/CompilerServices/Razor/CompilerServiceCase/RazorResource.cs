@@ -15,14 +15,14 @@ public class RazorResource : ICompilerServiceResource
         RazorCompilerService razorCompilerService,
         TextEditorService textEditorService)
     {
-    	ResourceUri = resourceUri;
-    	CompilerService = razorCompilerService;
+        ResourceUri = resourceUri;
+        CompilerService = razorCompilerService;
         _textEditorService = textEditorService;
     }
     
     public ResourceUri ResourceUri { get; }
-	public ICompilerService CompilerService { get; }
-	public ICompilationUnit CompilationUnit { get; set; }
+    public ICompilerService CompilerService { get; }
+    public ICompilationUnit CompilationUnit { get; set; }
 
     public RazorSyntaxTree? RazorSyntaxTree { get; internal set; }
     public List<Symbol> HtmlSymbols { get; } = new();

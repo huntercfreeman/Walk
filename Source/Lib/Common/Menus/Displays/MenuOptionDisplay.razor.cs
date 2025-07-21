@@ -11,8 +11,8 @@ public partial class MenuOptionDisplay : ComponentBase
     [Inject]
     private CommonService CommonService { get; set; } = null!;
 
-	[CascadingParameter]
-	public DropdownRecord? Dropdown { get; set; }
+    [CascadingParameter]
+    public DropdownRecord? Dropdown { get; set; }
 
     [Parameter, EditorRequired]
     public MenuOptionRecord MenuOptionRecord { get; set; } = null!;
@@ -24,7 +24,7 @@ public partial class MenuOptionDisplay : ComponentBase
     [Parameter]
     public RenderFragment<MenuOptionRecord>? IconRenderFragment { get; set; }
 
-	private string _menuOptionHtmlElementId => $"di_menu-option-display_{_htmlElementIdSalt}";
+    private string _menuOptionHtmlElementId => $"di_menu-option-display_{_htmlElementIdSalt}";
 
     private readonly Key<DropdownRecord> _subMenuDropdownKey = Key<DropdownRecord>.NewKey();
     private readonly Guid _htmlElementIdSalt = Guid.NewGuid();
@@ -78,14 +78,14 @@ public partial class MenuOptionDisplay : ComponentBase
     
     private Task RenderDropdownAsync(MenuRecord localSubMenu)
     {
-    	return DropdownHelper.RenderDropdownAsync(
-    		CommonService,
-    		(JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonService.JsRuntimeCommonApi,
-			_menuOptionHtmlElementId,
-			DropdownOrientation.Right,
-			_subMenuDropdownKey,
-			localSubMenu,
-			FocusElementReference);
+        return DropdownHelper.RenderDropdownAsync(
+            CommonService,
+            (JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonService.JsRuntimeCommonApi,
+            _menuOptionHtmlElementId,
+            DropdownOrientation.Right,
+            _subMenuDropdownKey,
+            localSubMenu,
+            FocusElementReference);
     }
 
     private async Task HandleOnClick()
@@ -95,20 +95,20 @@ public partial class MenuOptionDisplay : ComponentBase
             var localDropdown = Dropdown;
             
             CommonService.Dropdown_ReduceClearAction();
-			
-			if (localDropdown is not null)
-            	CommonService.Dropdown_ReduceDisposeAction(localDropdown.Key);
-            	
+            
+            if (localDropdown is not null)
+                CommonService.Dropdown_ReduceDisposeAction(localDropdown.Key);
+                
             await MenuOptionRecord.OnClickFunc.Invoke().ConfigureAwait(false);
         }
 
-		var localSubMenu = MenuOptionRecord.SubMenu;
+        var localSubMenu = MenuOptionRecord.SubMenu;
         if (localSubMenu is not null)
         {
             if (HasSubmenuActive)
                 CommonService.Dropdown_ReduceDisposeAction(_subMenuDropdownKey);
             else
-				await RenderDropdownAsync(localSubMenu);
+                await RenderDropdownAsync(localSubMenu);
         }
 
         if (MenuOptionRecord.WidgetRendererType is not null)
@@ -123,7 +123,7 @@ public partial class MenuOptionDisplay : ComponentBase
         {
             case CommonFacts.ARROW_RIGHT_KEY:
             case CommonFacts.ARROW_RIGHT_ALTKEY:
-				var localSubMenu = MenuOptionRecord.SubMenu;
+                var localSubMenu = MenuOptionRecord.SubMenu;
                 if (localSubMenu is not null)
                     return RenderDropdownAsync(localSubMenu);
                 break;
@@ -133,16 +133,16 @@ public partial class MenuOptionDisplay : ComponentBase
         {
             case CommonFacts.ENTER_CODE:
             case CommonFacts.SPACE_CODE:
-				return HandleOnClick();
+                return HandleOnClick();
         }
 
         return Task.CompletedTask;
     }
 
-	private async Task FocusElementReference()
-	{
-		var localTopmostElementReference = _topmostElementReference;
-	    try
+    private async Task FocusElementReference()
+    {
+        var localTopmostElementReference = _topmostElementReference;
+        try
         {
             if (localTopmostElementReference.HasValue)
             {
@@ -154,10 +154,10 @@ public partial class MenuOptionDisplay : ComponentBase
         catch (Exception)
         {
             // TODO: Capture specifically the exception that is fired when the JsRuntime...
-			//       ...tries to set focus to an HTML element, but that HTML element
-			//       was not found.
+            //       ...tries to set focus to an HTML element, but that HTML element
+            //       was not found.
         }
-	}
+    }
 
     private async Task HideWidgetAsync(Action? onAfterWidgetHidden)
     {
@@ -166,16 +166,16 @@ public partial class MenuOptionDisplay : ComponentBase
 
         if (onAfterWidgetHidden is null) // Only hide the widget
         {
-			await FocusElementReference();
+            await FocusElementReference();
         }
         else // Hide the widget AND dispose the menu
         {
             onAfterWidgetHidden.Invoke();
             CommonService.Dropdown_ReduceClearAction();
 
-			var localDropdown = Dropdown;
-			if (localDropdown is not null)
-            	CommonService.Dropdown_ReduceDisposeAction(localDropdown.Key);
+            var localDropdown = Dropdown;
+            if (localDropdown is not null)
+                CommonService.Dropdown_ReduceDisposeAction(localDropdown.Key);
         }
     }
 }

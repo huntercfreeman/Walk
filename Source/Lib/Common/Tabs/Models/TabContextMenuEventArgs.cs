@@ -1,4 +1,4 @@
-﻿using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace Walk.Common.RazorLib.Tabs.Models;
@@ -16,8 +16,8 @@ public class TabContextMenuEventArgs
     public ITab Tab { get; }
 
     /// <summary>
-	/// An async Func that will return focus to the tab button once the context menu is
+    /// An async Func that will return focus to the tab button once the context menu is
     /// eventually closed.
-	/// </summary>
+    /// </summary>
     public Func<Task> RestoreFocusFunc { get; }
 }

@@ -1,4 +1,4 @@
-﻿namespace Walk.TextEditor.RazorLib.TextEditors.Displays;
+namespace Walk.TextEditor.RazorLib.TextEditors.Displays;
 
 public enum KeymapArgsKind
 {

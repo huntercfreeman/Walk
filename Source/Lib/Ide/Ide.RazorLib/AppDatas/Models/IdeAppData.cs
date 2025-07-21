@@ -5,5 +5,5 @@ namespace Walk.Ide.RazorLib.AppDatas.Models;
 /// </summary>
 public class IdeAppData
 {
-	
+    
 }

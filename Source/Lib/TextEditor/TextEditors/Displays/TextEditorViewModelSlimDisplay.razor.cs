@@ -49,40 +49,40 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     private string ContentElementId => _componentData.RowSectionElementId;
     
-	/// <summary>
-	/// Unit of measurement is pixels (px).
-	/// </summary>
-	private const int DISTANCE_TO_RESET_SCROLL_POSITION = 300;
+    /// <summary>
+    /// Unit of measurement is pixels (px).
+    /// </summary>
+    private const int DISTANCE_TO_RESET_SCROLL_POSITION = 300;
 
-	private TextEditorEventArgs _mouseDownEventArgsStruct = new TextEditorEventArgs
+    private TextEditorEventArgs _mouseDownEventArgsStruct = new TextEditorEventArgs
     {
         Buttons = -1
     };
 
     private readonly Guid VERTICAL_scrollbarGuid = Guid.NewGuid();
-	private readonly Guid HORIZONTAL_scrollbarGuid = Guid.NewGuid();
+    private readonly Guid HORIZONTAL_scrollbarGuid = Guid.NewGuid();
 
     private bool VERTICAL_thinksLeftMouseButtonIsDown;
 
-	private double VERTICAL_clientXThresholdToResetScrollTopPosition;
-	private double VERTICAL_scrollTopOnMouseDown;
+    private double VERTICAL_clientXThresholdToResetScrollTopPosition;
+    private double VERTICAL_scrollTopOnMouseDown;
 
     private string VERTICAL_ScrollbarElementId;
     private string VERTICAL_ScrollbarSliderElementId;
 
     private bool HORIZONTAL_thinksLeftMouseButtonIsDown;
-	private double HORIZONTAL_clientYThresholdToResetScrollLeftPosition;
-	private double HORIZONTAL_scrollLeftOnMouseDown;
+    private double HORIZONTAL_clientYThresholdToResetScrollLeftPosition;
+    private double HORIZONTAL_scrollLeftOnMouseDown;
 
     private string HORIZONTAL_ScrollbarElementId;
     private string HORIZONTAL_ScrollbarSliderElementId;
     
     private string CONNECTOR_ScrollbarElementId;
-	
-	private Func<TextEditorEventArgs, MouseEventArgs, Task>? _dragEventHandler = null;
-	
-	public bool GlobalShowNewlines => TextEditorService.Options_GetTextEditorOptionsState().Options.ShowNewlines;
-	
+    
+    private Func<TextEditorEventArgs, MouseEventArgs, Task>? _dragEventHandler = null;
+    
+    public bool GlobalShowNewlines => TextEditorService.Options_GetTextEditorOptionsState().Options.ShowNewlines;
+    
     private readonly CancellationTokenSource _onMouseMoveCancellationTokenSource = new();
     private TextEditorEventArgs _onMouseMoveMouseEventArgsStruct = new TextEditorEventArgs
     {
@@ -90,33 +90,33 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     };
     private Task _onMouseMoveTask = Task.CompletedTask;
 
-	public TextEditorComponentData ComponentData => _componentData;
-	
-	private Key<TextEditorViewModel> _linkedViewModelKey = Key<TextEditorViewModel>.Empty;
-	
-	private bool _hasRenderedAtLeastOnce = false;
-	
-	private bool _focusIn;
-	
-	private string CaretRowCssClass => _focusIn
-	    ? "di_te_text-editor-caret-row di_te_focus"
-	    : "di_te_text-editor-caret-row";
-	
+    public TextEditorComponentData ComponentData => _componentData;
+    
+    private Key<TextEditorViewModel> _linkedViewModelKey = Key<TextEditorViewModel>.Empty;
+    
+    private bool _hasRenderedAtLeastOnce = false;
+    
+    private bool _focusIn;
+    
+    private string CaretRowCssClass => _focusIn
+        ? "di_te_text-editor-caret-row di_te_focus"
+        : "di_te_text-editor-caret-row";
+    
     protected override void OnInitialized()
     {
         // TODO: Does the object used here matter? Should it be a "smaller" object or is this just reference?
         _dotNetHelper = DotNetObjectReference.Create(this);
     
-    	if (ViewModelDisplayOptions.TextEditorHtmlElementId != Guid.Empty)
-    		_textEditorHtmlElementId = ViewModelDisplayOptions.TextEditorHtmlElementId;
-    	else
-    		_textEditorHtmlElementId = Guid.NewGuid();
+        if (ViewModelDisplayOptions.TextEditorHtmlElementId != Guid.Empty)
+            _textEditorHtmlElementId = ViewModelDisplayOptions.TextEditorHtmlElementId;
+        else
+            _textEditorHtmlElementId = Guid.NewGuid();
     
-    	SetComponentData();
-    	_ = TextEditorService.TextEditorState._componentDataMap.TryAdd(_componentData.ComponentDataKey, _componentData);
-    	
-    	CssOnInitialized();
-  	  
+        SetComponentData();
+        _ = TextEditorService.TextEditorState._componentDataMap.TryAdd(_componentData.ComponentDataKey, _componentData);
+        
+        CssOnInitialized();
+        
         TextEditorService.TextEditorStateChanged += GeneralOnStateChangedEventHandler;
         TextEditorService.Options_StaticStateChanged += OnOptionStaticStateChanged;
         TextEditorService.Options_MeasuredStateChanged += OnOptionMeasuredStateChanged;
@@ -126,18 +126,18 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     protected override void OnParametersSet()
     {
-    	if (_hasRenderedAtLeastOnce && _linkedViewModelKey != TextEditorViewModelKey)
+        if (_hasRenderedAtLeastOnce && _linkedViewModelKey != TextEditorViewModelKey)
             HandleTextEditorViewModelKeyChange();
             
-    	base.OnParametersSet();
+        base.OnParametersSet();
     }
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-        	_hasRenderedAtLeastOnce = true;
-        	HandleTextEditorViewModelKeyChange();
+            _hasRenderedAtLeastOnce = true;
+            HandleTextEditorViewModelKeyChange();
             
             // Do not ConfigureAwait(false) so that the UI doesn't change out from under you
             // before you finish setting up the events?
@@ -154,128 +154,128 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
         if (_componentData.Virtualization.ViewModel is not null)
         {
-        	// It is thought that you shouldn't '.ConfigureAwait(false)' for the scrolling JS Interop,
-			// because this could provide a "natural throttle for the scrolling"
-			// since more ITextEditorService edit contexts might have time to be calculated
-			// and thus not every single one of them need be scrolled to.
-			// This idea has not been proven yet.
-			//
-			// (the same is true for rendering the UI, it might avoid some renders
-			//  because the most recent should render took time to get executed).
-        	
-        	// WARNING: It is only thread safe to read, then assign `_componentData.ScrollLeftChanged` or `_componentData.ScrollTopChanged`...
-        	// ...if this method is running synchronously, i.e.: there hasn't been an await.
-        	// |
-        	// `if (firstRender)` is the only current scenario where an await comes prior to this read and assign.
-        	//
-        	// ScrollLeft is most likely to shortcircuit, thus it is being put first.
-        	
-    	    var scroll_LeftChanged = _seenScrollLeft != _componentData.Virtualization.ViewModel.PersistentState.ScrollLeft;
-    	    var scroll_TopChanged = _seenScrollTop != _componentData.Virtualization.ViewModel.PersistentState.ScrollTop;
-        	
-        	if (scroll_LeftChanged && scroll_TopChanged)
-        	{
-        		_seenScrollLeft = _componentData.Virtualization.ViewModel.PersistentState.ScrollLeft;
-        		_seenScrollTop = _componentData.Virtualization.ViewModel.PersistentState.ScrollTop;
-        		
-        		await TextEditorService.JsRuntimeTextEditorApi
-		            .SetScrollPositionBoth(
-		                _componentData.RowSectionElementId,
-		                _componentData.Virtualization.ViewModel.PersistentState.ScrollLeft,
-		                _componentData.Virtualization.ViewModel.PersistentState.ScrollTop)
-	                .ConfigureAwait(false);
-        	}
-        	else if (scroll_TopChanged) // ScrollTop is most likely to come next
-        	{
-        		_seenScrollTop = _componentData.Virtualization.ViewModel.PersistentState.ScrollTop;
-        		
-        		await TextEditorService.JsRuntimeTextEditorApi
-		            .SetScrollPositionTop(
-		                _componentData.RowSectionElementId,
-		                _componentData.Virtualization.ViewModel.PersistentState.ScrollTop)
-	                .ConfigureAwait(false);
-        	}
-        	else if (scroll_LeftChanged)
-        	{
-        		_seenScrollLeft = _componentData.Virtualization.ViewModel.PersistentState.ScrollLeft;
-        		
-        		await TextEditorService.JsRuntimeTextEditorApi
-		            .SetScrollPositionLeft(
-		                _componentData.RowSectionElementId,
-		                _componentData.Virtualization.ViewModel.PersistentState.ScrollLeft)
-	                .ConfigureAwait(false);
-        	}
+            // It is thought that you shouldn't '.ConfigureAwait(false)' for the scrolling JS Interop,
+            // because this could provide a "natural throttle for the scrolling"
+            // since more ITextEditorService edit contexts might have time to be calculated
+            // and thus not every single one of them need be scrolled to.
+            // This idea has not been proven yet.
+            //
+            // (the same is true for rendering the UI, it might avoid some renders
+            //  because the most recent should render took time to get executed).
+            
+            // WARNING: It is only thread safe to read, then assign `_componentData.ScrollLeftChanged` or `_componentData.ScrollTopChanged`...
+            // ...if this method is running synchronously, i.e.: there hasn't been an await.
+            // |
+            // `if (firstRender)` is the only current scenario where an await comes prior to this read and assign.
+            //
+            // ScrollLeft is most likely to shortcircuit, thus it is being put first.
+            
+            var scroll_LeftChanged = _seenScrollLeft != _componentData.Virtualization.ViewModel.PersistentState.ScrollLeft;
+            var scroll_TopChanged = _seenScrollTop != _componentData.Virtualization.ViewModel.PersistentState.ScrollTop;
+            
+            if (scroll_LeftChanged && scroll_TopChanged)
+            {
+                _seenScrollLeft = _componentData.Virtualization.ViewModel.PersistentState.ScrollLeft;
+                _seenScrollTop = _componentData.Virtualization.ViewModel.PersistentState.ScrollTop;
+                
+                await TextEditorService.JsRuntimeTextEditorApi
+                    .SetScrollPositionBoth(
+                        _componentData.RowSectionElementId,
+                        _componentData.Virtualization.ViewModel.PersistentState.ScrollLeft,
+                        _componentData.Virtualization.ViewModel.PersistentState.ScrollTop)
+                    .ConfigureAwait(false);
+            }
+            else if (scroll_TopChanged) // ScrollTop is most likely to come next
+            {
+                _seenScrollTop = _componentData.Virtualization.ViewModel.PersistentState.ScrollTop;
+                
+                await TextEditorService.JsRuntimeTextEditorApi
+                    .SetScrollPositionTop(
+                        _componentData.RowSectionElementId,
+                        _componentData.Virtualization.ViewModel.PersistentState.ScrollTop)
+                    .ConfigureAwait(false);
+            }
+            else if (scroll_LeftChanged)
+            {
+                _seenScrollLeft = _componentData.Virtualization.ViewModel.PersistentState.ScrollLeft;
+                
+                await TextEditorService.JsRuntimeTextEditorApi
+                    .SetScrollPositionLeft(
+                        _componentData.RowSectionElementId,
+                        _componentData.Virtualization.ViewModel.PersistentState.ScrollLeft)
+                    .ConfigureAwait(false);
+            }
         }
     }
     
     private void CssOnInitialized()
-	{
-		_componentData.SetWrapperCssAndStyle();
-    	
-    	// ContentElementId = $"di_te_text-editor-content_{_textEditorHtmlElementId}";
-	    
-	    VERTICAL_ScrollbarElementId = $"di_te_{VERTICAL_scrollbarGuid}";
-	    VERTICAL_ScrollbarSliderElementId = $"di_te_{VERTICAL_scrollbarGuid}-slider";
-	    
-	    HORIZONTAL_ScrollbarElementId = $"di_te_{HORIZONTAL_scrollbarGuid}";
-	    HORIZONTAL_ScrollbarSliderElementId = $"di_te_{HORIZONTAL_scrollbarGuid}-slider";
-	    
-	    CONNECTOR_ScrollbarElementId = $"di_te_{Guid.NewGuid()}";
-	    
-	    var paddingLeftInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS.ToCssValue();
-	    var paddingRightInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS.ToCssValue();
+    {
+        _componentData.SetWrapperCssAndStyle();
+        
+        // ContentElementId = $"di_te_text-editor-content_{_textEditorHtmlElementId}";
+        
+        VERTICAL_ScrollbarElementId = $"di_te_{VERTICAL_scrollbarGuid}";
+        VERTICAL_ScrollbarSliderElementId = $"di_te_{VERTICAL_scrollbarGuid}-slider";
+        
+        HORIZONTAL_ScrollbarElementId = $"di_te_{HORIZONTAL_scrollbarGuid}";
+        HORIZONTAL_ScrollbarSliderElementId = $"di_te_{HORIZONTAL_scrollbarGuid}-slider";
+        
+        CONNECTOR_ScrollbarElementId = $"di_te_{Guid.NewGuid()}";
+        
+        var paddingLeftInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS.ToCssValue();
+        var paddingRightInPixelsInvariantCulture = TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS.ToCssValue();
         _componentData.Gutter_PaddingCssStyle = $"padding-left: {paddingLeftInPixelsInvariantCulture}px; padding-right: {paddingRightInPixelsInvariantCulture}px;";
         
         _componentData.ScrollbarSizeCssValue = ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS.ToCssValue();
         
-		_componentData.CursorCssClassBlinkAnimationOn = $"di_te_text-editor-cursor di_te_blink {TextCursorKindFacts.BeamCssClassString}";
-	    _componentData.CursorCssClassBlinkAnimationOff = $"di_te_text-editor-cursor {TextCursorKindFacts.BeamCssClassString}";
-	}
-	
+        _componentData.CursorCssClassBlinkAnimationOn = $"di_te_text-editor-cursor di_te_blink {TextCursorKindFacts.BeamCssClassString}";
+        _componentData.CursorCssClassBlinkAnimationOff = $"di_te_text-editor-cursor {TextCursorKindFacts.BeamCssClassString}";
+    }
+    
     private void SetComponentData()
     {
-		_componentData = new(
-			_textEditorHtmlElementId,
-			ViewModelDisplayOptions,
-			TextEditorService.Options_GetTextEditorOptionsState().Options,
-			this);
-			
-		SetRenderBatchConstants();
+        _componentData = new(
+            _textEditorHtmlElementId,
+            ViewModelDisplayOptions,
+            TextEditorService.Options_GetTextEditorOptionsState().Options,
+            this);
+            
+        SetRenderBatchConstants();
     }
     
     public void SetRenderBatchConstants()
     {
-    	var textEditorOptions = TextEditorService.Options_GetTextEditorOptionsState().Options;
-			
-		string fontFamily;
-		if (!string.IsNullOrWhiteSpace(textEditorOptions.CommonOptions?.FontFamily))
-			fontFamily = textEditorOptions.CommonOptions!.FontFamily;
-		else
-			fontFamily = TextEditorVirtualizationResult.DEFAULT_FONT_FAMILY;
-			
-		int fontSizeInPixels;
-		if (textEditorOptions.CommonOptions?.FontSizeInPixels is not null)
+        var textEditorOptions = TextEditorService.Options_GetTextEditorOptionsState().Options;
+            
+        string fontFamily;
+        if (!string.IsNullOrWhiteSpace(textEditorOptions.CommonOptions?.FontFamily))
+            fontFamily = textEditorOptions.CommonOptions!.FontFamily;
+        else
+            fontFamily = TextEditorVirtualizationResult.DEFAULT_FONT_FAMILY;
+            
+        int fontSizeInPixels;
+        if (textEditorOptions.CommonOptions?.FontSizeInPixels is not null)
             fontSizeInPixels = textEditorOptions.CommonOptions.FontSizeInPixels;
         else
-        	fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
-		
-		_componentData.RenderBatchPersistentState = new TextEditorRenderBatchPersistentState(
-			textEditorOptions,
-			fontFamily,
-			fontSizeInPixels,
-			ViewModelDisplayOptions,
-			_componentData);
+            fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
+        
+        _componentData.RenderBatchPersistentState = new TextEditorRenderBatchPersistentState(
+            textEditorOptions,
+            fontFamily,
+            fontSizeInPixels,
+            ViewModelDisplayOptions,
+            _componentData);
     }
     
     public void HandleTextEditorViewModelKeyChange()
     {
-    	// Avoid infinite loop if the viewmodel does not exist.
-    	if (TextEditorService.TextEditorState.ViewModelGetOrDefault(TextEditorViewModelKey) is null)
-    		return;
-    	
-    	TextEditorService.WorkerArbitrary.PostUnique(editContext =>
-    	{
-    		var localTextEditorViewModelKey = TextEditorViewModelKey;
+        // Avoid infinite loop if the viewmodel does not exist.
+        if (TextEditorService.TextEditorState.ViewModelGetOrDefault(TextEditorViewModelKey) is null)
+            return;
+        
+        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+            var localTextEditorViewModelKey = TextEditorViewModelKey;
 
             var nextViewModel = TextEditorService.TextEditorState.ViewModelGetOrDefault(localTextEditorViewModelKey);
 
@@ -308,7 +308,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             }
             
             return ValueTask.CompletedTask;
-    	});
+        });
     }
 
     private async void GeneralOnStateChangedEventHandler() => await InvokeAsync(StateHasChanged);
@@ -317,21 +317,21 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     [JSInvokable]
     public async Task FocusTextEditorAsync()
-	{
-	  var nextViewModel = TextEditorService.TextEditorState.ViewModelGetOrDefault(TextEditorViewModelKey);
-	  
-	  if (nextViewModel is not null)
-	  	await nextViewModel.FocusAsync();
-	}
-	
-	/// <summary>
-	/// I checked when this fires.
-	/// For keyboard events it does NOT re-fire as you type.
-	/// Clicking and dragging does NOT re-fire as you move the cursor.
-	///
-	/// But, for an onclick it does re-fire back and forth between focusin and focusout about two times.
-	/// </summary>
-	[JSInvokable]
+    {
+      var nextViewModel = TextEditorService.TextEditorState.ViewModelGetOrDefault(TextEditorViewModelKey);
+      
+      if (nextViewModel is not null)
+          await nextViewModel.FocusAsync();
+    }
+    
+    /// <summary>
+    /// I checked when this fires.
+    /// For keyboard events it does NOT re-fire as you type.
+    /// Clicking and dragging does NOT re-fire as you move the cursor.
+    ///
+    /// But, for an onclick it does re-fire back and forth between focusin and focusout about two times.
+    /// </summary>
+    [JSInvokable]
     public Task HandleFocusIn()
     {
         _focusIn = true;
@@ -339,12 +339,12 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     }
     
     /// <summary>
-	/// I checked when this fires.
-	/// For keyboard events it does NOT re-fire as you type.
-	/// Clicking and dragging does NOT re-fire as you move the cursor.
-	///
-	/// But, for an onclick it does re-fire back and forth between focusin and focusout about two times.
-	/// </summary>
+    /// I checked when this fires.
+    /// For keyboard events it does NOT re-fire as you type.
+    /// Clicking and dragging does NOT re-fire as you move the cursor.
+    ///
+    /// But, for an onclick it does re-fire back and forth between focusin and focusout about two times.
+    /// </summary>
     [JSInvokable]
     public Task HandleFocusOut()
     {
@@ -355,45 +355,45 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     [JSInvokable]
     public void ReceiveOnKeyDown(TextEditorEventArgs eventArgs)
     {
-    	TextEditorService.WorkerUi.Enqueue(
-    	    eventArgs,
-    	    _componentData,
-        	TextEditorViewModelKey,
-	        TextEditorWorkUiKind.OnKeyDown);
-	}
+        TextEditorService.WorkerUi.Enqueue(
+            eventArgs,
+            _componentData,
+            TextEditorViewModelKey,
+            TextEditorWorkUiKind.OnKeyDown);
+    }
 
     [JSInvokable]
     public void ReceiveOnContextMenu()
     {
-		var localViewModelKey = TextEditorViewModelKey;
+        var localViewModelKey = TextEditorViewModelKey;
 
-		TextEditorService.WorkerArbitrary.PostUnique(editContext =>
-		{
-			var viewModelModifier = editContext.GetViewModelModifier(localViewModelKey);
-			var modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri);
+        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+            var viewModelModifier = editContext.GetViewModelModifier(localViewModelKey);
+            var modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri);
 
-			if (modelModifier is null || viewModelModifier is null)
-				return ValueTask.CompletedTask;
+            if (modelModifier is null || viewModelModifier is null)
+                return ValueTask.CompletedTask;
 
-			TextEditorCommandDefaultFunctions.ShowContextMenu(
-		        editContext,
-		        modelModifier,
-		        viewModelModifier,
-		        TextEditorService.CommonService,
-		        ComponentData);
-			
-			return ValueTask.CompletedTask;
-		});
+            TextEditorCommandDefaultFunctions.ShowContextMenu(
+                editContext,
+                modelModifier,
+                viewModelModifier,
+                TextEditorService.CommonService,
+                ComponentData);
+            
+            return ValueTask.CompletedTask;
+        });
     }
 
     [JSInvokable]
     public void ReceiveOnDoubleClick(TextEditorEventArgs eventArgs)
     {
         TextEditorService.WorkerUi.Enqueue(
-    	    eventArgs,
-        	_componentData,
-        	TextEditorViewModelKey,
-	        TextEditorWorkUiKind.OnDoubleClick);
+            eventArgs,
+            _componentData,
+            TextEditorViewModelKey,
+            TextEditorWorkUiKind.OnDoubleClick);
     }
 
     [JSInvokable]
@@ -407,97 +407,97 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
         TextEditorService.WorkerUi.Enqueue(
             eventArgs,
-        	_componentData,
-        	TextEditorViewModelKey,
-	        TextEditorWorkUiKind.OnMouseDown);
+            _componentData,
+            TextEditorViewModelKey,
+            TextEditorWorkUiKind.OnMouseDown);
     }
 
     [JSInvokable]
     public void ReceiveContentOnMouseMove(TextEditorEventArgs eventArgs)
-	{
-	    _userMouseIsInside = true;
-	
-	    // Buttons is a bit flag '& 1' gets if left mouse button is held
-	    if ((eventArgs.Buttons & 1) == 0)
-	        _componentData.ThinksLeftMouseButtonIsDown = false;
-	
-	    var localThinksLeftMouseButtonIsDown = _componentData.ThinksLeftMouseButtonIsDown;
-	
-	    // MouseStoppedMovingTask
-	    _onMouseMoveMouseEventArgsStruct = eventArgs;
+    {
+        _userMouseIsInside = true;
+    
+        // Buttons is a bit flag '& 1' gets if left mouse button is held
+        if ((eventArgs.Buttons & 1) == 0)
+            _componentData.ThinksLeftMouseButtonIsDown = false;
+    
+        var localThinksLeftMouseButtonIsDown = _componentData.ThinksLeftMouseButtonIsDown;
+    
+        // MouseStoppedMovingTask
+        _onMouseMoveMouseEventArgsStruct = eventArgs;
             
         if (_onMouseMoveTask.IsCompleted)
         {
             var cancellationToken = _onMouseMoveCancellationTokenSource.Token;
 
-			_onMouseMoveTask = Task.Run((Func<Task?>)(async () =>
+            _onMouseMoveTask = Task.Run((Func<Task?>)(async () =>
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                	var mouseMoveMouseEventArgs = _onMouseMoveMouseEventArgsStruct;
-                	
-                	if (!_userMouseIsInside || _componentData.ThinksLeftMouseButtonIsDown || mouseMoveMouseEventArgs.Buttons == -1)
-                	{
-						TextEditorService.WorkerArbitrary.PostUnique((Func<TextEditorEditContext, ValueTask>)(editContext =>
-						{
-							var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
+                    var mouseMoveMouseEventArgs = _onMouseMoveMouseEventArgsStruct;
+                    
+                    if (!_userMouseIsInside || _componentData.ThinksLeftMouseButtonIsDown || mouseMoveMouseEventArgs.Buttons == -1)
+                    {
+                        TextEditorService.WorkerArbitrary.PostUnique((Func<TextEditorEditContext, ValueTask>)(editContext =>
+                        {
+                            var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
 
                             if (viewModelModifier is null)
                                 return ValueTask.CompletedTask;
 
                             viewModelModifier.PersistentState.TooltipModel = null;
-							TextEditorService.CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
+                            TextEditorService.CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
 
-							return ValueTask.CompletedTask;
-						}));
-						break;
-                	}
-                	
+                            return ValueTask.CompletedTask;
+                        }));
+                        break;
+                    }
+                    
                     await Task.Delay(400).ConfigureAwait(false);
                     
                     if (mouseMoveMouseEventArgs.X == _onMouseMoveMouseEventArgsStruct.X && mouseMoveMouseEventArgs.Y == _onMouseMoveMouseEventArgsStruct.Y)
                     {
                         await _componentData.ContinueRenderingTooltipAsync().ConfigureAwait(false);
 
-						TextEditorService.WorkerArbitrary.PostUnique(editContext =>
-			            {
-			            	var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
-			                var modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri);
-			                
-			                if (modelModifier is null || viewModelModifier is null)
-			                    return ValueTask.CompletedTask;
-			    
-			                return TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsync(
-			                    editContext,
-			                    modelModifier,
-			                    viewModelModifier,
-			                    mouseMoveMouseEventArgs.X,
-                        		mouseMoveMouseEventArgs.Y,
-                        		mouseMoveMouseEventArgs.ShiftKey,
+                        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+                        {
+                            var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
+                            var modelModifier = editContext.GetModelModifier(viewModelModifier.PersistentState.ResourceUri);
+                            
+                            if (modelModifier is null || viewModelModifier is null)
+                                return ValueTask.CompletedTask;
+                
+                            return TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsync(
+                                editContext,
+                                modelModifier,
+                                viewModelModifier,
+                                mouseMoveMouseEventArgs.X,
+                                mouseMoveMouseEventArgs.Y,
+                                mouseMoveMouseEventArgs.ShiftKey,
                                 mouseMoveMouseEventArgs.CtrlKey,
                                 mouseMoveMouseEventArgs.AltKey,
-								_componentData,
-			                    viewModelModifier.PersistentState.ResourceUri);
-			            });
+                                _componentData,
+                                viewModelModifier.PersistentState.ResourceUri);
+                        });
 
                         break;
                     }
                 }
             }));
         }
-	
-	    if (!_componentData.ThinksLeftMouseButtonIsDown)
-	        return;
-	    
-	    if (localThinksLeftMouseButtonIsDown)
-	    {
-	    	TextEditorService.WorkerUi.Enqueue(
-	    	    eventArgs,
-	        	_componentData,
-	        	TextEditorViewModelKey,
-	        	TextEditorWorkUiKind.OnMouseMove);
-	    }
-	}
+    
+        if (!_componentData.ThinksLeftMouseButtonIsDown)
+            return;
+        
+        if (localThinksLeftMouseButtonIsDown)
+        {
+            TextEditorService.WorkerUi.Enqueue(
+                eventArgs,
+                _componentData,
+                TextEditorViewModelKey,
+                TextEditorWorkUiKind.OnMouseMove);
+        }
+    }
 
     [JSInvokable]
     public void ReceiveContentOnMouseOut(MouseEventArgsClass mouseEventArgsClass)
@@ -508,73 +508,73 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     [JSInvokable]
     public async Task HORIZONTAL_HandleOnMouseDownAsync(TextEditorEventArgs eventArgs)
     {
-    	var virtualizationResult = ComponentData.Virtualization;
-    	if (!virtualizationResult.IsValid)
-    		return;
-    		
-    	HORIZONTAL_thinksLeftMouseButtonIsDown = true;
-		HORIZONTAL_scrollLeftOnMouseDown = virtualizationResult.ViewModel.PersistentState.ScrollLeft;
+        var virtualizationResult = ComponentData.Virtualization;
+        if (!virtualizationResult.IsValid)
+            return;
+            
+        HORIZONTAL_thinksLeftMouseButtonIsDown = true;
+        HORIZONTAL_scrollLeftOnMouseDown = virtualizationResult.ViewModel.PersistentState.ScrollLeft;
 
-		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
-			.MeasureElementById(HORIZONTAL_ScrollbarElementId)
-			.ConfigureAwait(false);
+        var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
+            .MeasureElementById(HORIZONTAL_ScrollbarElementId)
+            .ConfigureAwait(false);
 
-		// Drag far up to reset scroll to original
-		var textEditorDimensions = virtualizationResult.ViewModel.PersistentState.TextEditorDimensions;
-		var distanceBetweenTopEditorAndTopScrollbar = scrollbarBoundingClientRect.TopInPixels - textEditorDimensions.BoundingClientRectTop;
-		HORIZONTAL_clientYThresholdToResetScrollLeftPosition = scrollbarBoundingClientRect.TopInPixels - DISTANCE_TO_RESET_SCROLL_POSITION;
+        // Drag far up to reset scroll to original
+        var textEditorDimensions = virtualizationResult.ViewModel.PersistentState.TextEditorDimensions;
+        var distanceBetweenTopEditorAndTopScrollbar = scrollbarBoundingClientRect.TopInPixels - textEditorDimensions.BoundingClientRectTop;
+        HORIZONTAL_clientYThresholdToResetScrollLeftPosition = scrollbarBoundingClientRect.TopInPixels - DISTANCE_TO_RESET_SCROLL_POSITION;
 
-		// Subscribe to the drag events
-		//
-		// NOTE: '_mouseDownEventArgs' Buttons != -1 is what indicates that the subscription is active.
-		//       So be wary if one intends to move its assignment elsewhere.
-		{
-			_mouseDownEventArgsStruct = eventArgs;
-			_dragEventHandler = HORIZONTAL_DragEventHandlerScrollAsync;
-	
-			TextEditorService.CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
-		}
+        // Subscribe to the drag events
+        //
+        // NOTE: '_mouseDownEventArgs' Buttons != -1 is what indicates that the subscription is active.
+        //       So be wary if one intends to move its assignment elsewhere.
+        {
+            _mouseDownEventArgsStruct = eventArgs;
+            _dragEventHandler = HORIZONTAL_DragEventHandlerScrollAsync;
+    
+            TextEditorService.CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
+        }
     }
     
     [JSInvokable]
     public async Task VERTICAL_HandleOnMouseDownAsync(TextEditorEventArgs eventArgs)
     {
-    	var virtualizationResult = _componentData.Virtualization;
-    	if (!virtualizationResult.IsValid)
-    		return;
+        var virtualizationResult = _componentData.Virtualization;
+        if (!virtualizationResult.IsValid)
+            return;
     
-    	VERTICAL_thinksLeftMouseButtonIsDown = true;
-		VERTICAL_scrollTopOnMouseDown = virtualizationResult.ViewModel.PersistentState.ScrollTop;
+        VERTICAL_thinksLeftMouseButtonIsDown = true;
+        VERTICAL_scrollTopOnMouseDown = virtualizationResult.ViewModel.PersistentState.ScrollTop;
 
-		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
-			.MeasureElementById(VERTICAL_ScrollbarElementId)
-			.ConfigureAwait(false);
+        var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
+            .MeasureElementById(VERTICAL_ScrollbarElementId)
+            .ConfigureAwait(false);
 
-		// Drag far left to reset scroll to original
-		var textEditorDimensions = virtualizationResult.ViewModel.PersistentState.TextEditorDimensions;
-		var distanceBetweenLeftEditorAndLeftScrollbar = scrollbarBoundingClientRect.LeftInPixels - textEditorDimensions.BoundingClientRectLeft;
-		VERTICAL_clientXThresholdToResetScrollTopPosition = scrollbarBoundingClientRect.LeftInPixels - DISTANCE_TO_RESET_SCROLL_POSITION;
+        // Drag far left to reset scroll to original
+        var textEditorDimensions = virtualizationResult.ViewModel.PersistentState.TextEditorDimensions;
+        var distanceBetweenLeftEditorAndLeftScrollbar = scrollbarBoundingClientRect.LeftInPixels - textEditorDimensions.BoundingClientRectLeft;
+        VERTICAL_clientXThresholdToResetScrollTopPosition = scrollbarBoundingClientRect.LeftInPixels - DISTANCE_TO_RESET_SCROLL_POSITION;
 
-		// Subscribe to the drag events
-		//
-		// NOTE: '_mouseDownEventArgs' being non-null is what indicates that the subscription is active.
-		//       So be wary if one intends to move its assignment elsewhere.
-		{
-			_mouseDownEventArgsStruct = eventArgs;
-			_dragEventHandler = VERTICAL_DragEventHandlerScrollAsync;
-	
-			TextEditorService.CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
-		}     
+        // Subscribe to the drag events
+        //
+        // NOTE: '_mouseDownEventArgs' being non-null is what indicates that the subscription is active.
+        //       So be wary if one intends to move its assignment elsewhere.
+        {
+            _mouseDownEventArgsStruct = eventArgs;
+            _dragEventHandler = VERTICAL_DragEventHandlerScrollAsync;
+    
+            TextEditorService.CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
+        }     
     }
     
     [JSInvokable]
     public void ReceiveOnWheel(TextEditorEventArgs eventArgs)
     {
-	    TextEditorService.WorkerUi.Enqueue(
-	        eventArgs,
-        	_componentData,
-        	TextEditorViewModelKey,
-	        TextEditorWorkUiKind.OnWheel);
+        TextEditorService.WorkerUi.Enqueue(
+            eventArgs,
+            _componentData,
+            TextEditorViewModelKey,
+            TextEditorWorkUiKind.OnWheel);
     }
 
     [JSInvokable]
@@ -605,24 +605,24 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         var diffY = previousTouchPoint.ClientY - currentTouchPoint.ClientY;
 
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
-		{
-			var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
-			
-			if (viewModelModifier is null)
-				return ValueTask.CompletedTask;
-			
+        {
+            var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
+            
+            if (viewModelModifier is null)
+                return ValueTask.CompletedTask;
+            
             TextEditorService.ViewModel_MutateScrollHorizontalPosition(
-            	editContext,
-		        viewModelModifier,
-            	diffX);
+                editContext,
+                viewModelModifier,
+                diffX);
 
             TextEditorService.ViewModel_MutateScrollVerticalPosition(
-            	editContext,
-		        viewModelModifier,
-            	diffY);
-            	
+                editContext,
+                viewModelModifier,
+                diffY);
+                
             return ValueTask.CompletedTask;
-		});
+        });
 
         _previousTouchEventArgs = touchEventArgs;
     }
@@ -657,7 +657,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         }
     }
 
-	private void QueueRemeasureBackgroundTask(
+    private void QueueRemeasureBackgroundTask(
         TextEditorVirtualizationResult virtualization,
         CancellationToken cancellationToken)
     {
@@ -667,16 +667,16 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-        	var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
 
-			if (viewModelModifier is null)
-				return ValueTask.CompletedTask;
+            if (viewModelModifier is null)
+                return ValueTask.CompletedTask;
 
-        	return TextEditorService.ViewModel_RemeasureAsync(
-        		editContext,
-		        viewModelModifier);
+            return TextEditorService.ViewModel_RemeasureAsync(
+                editContext,
+                viewModelModifier);
         });
-	}
+    }
 
     public void QueueCalculateVirtualizationResultBackgroundTask()
     {
@@ -688,36 +688,36 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
         TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-        	var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
-        	var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
+            var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModel.PersistentState.ViewModelKey);
 
-			if (modelModifier is null || viewModelModifier is null)
-				return ValueTask.CompletedTask;
-        	
-        	viewModelModifier.PersistentState.CharAndLineMeasurements = TextEditorService.Options_GetOptions().CharAndLineMeasurements;
-    	    viewModelModifier.Virtualization.ShouldCalculateVirtualizationResult = true;
-    	    _componentData.InlineUiWidthStyleCssStringIsOutdated = true;
-    	    
-    	    var componentData = viewModelModifier.PersistentState.ComponentData;
-    	    if (componentData is not null)
-    	    {
-    	        componentData.LineIndexCache.IsInvalid = true;
-    	        
-    	        if (!componentData.ViewModelDisplayOptions.IncludeGutterComponent)
-    	        {
-    	            // TODO: Consider using the font-size for an indication that various CSS needs to be re-calculated?...
-    	            // ...at the moment the gutter width in pixels is used. But if you choose not to render a gutter
-    	            // then there is no width difference to see.
-    	            //
-    	            // The initial value cannot be 0 else any text editor without a gutter cannot detect change on the initial render.
+            if (modelModifier is null || viewModelModifier is null)
+                return ValueTask.CompletedTask;
+            
+            viewModelModifier.PersistentState.CharAndLineMeasurements = TextEditorService.Options_GetOptions().CharAndLineMeasurements;
+            viewModelModifier.Virtualization.ShouldCalculateVirtualizationResult = true;
+            _componentData.InlineUiWidthStyleCssStringIsOutdated = true;
+            
+            var componentData = viewModelModifier.PersistentState.ComponentData;
+            if (componentData is not null)
+            {
+                componentData.LineIndexCache.IsInvalid = true;
+                
+                if (!componentData.ViewModelDisplayOptions.IncludeGutterComponent)
+                {
+                    // TODO: Consider using the font-size for an indication that various CSS needs to be re-calculated?...
+                    // ...at the moment the gutter width in pixels is used. But if you choose not to render a gutter
+                    // then there is no width difference to see.
+                    //
+                    // The initial value cannot be 0 else any text editor without a gutter cannot detect change on the initial render.
                     // Particularly, whatever the double subtraction -- absolute value precision -- check is, it has to be greater a difference than that.
-    	            componentData.Virtualization.ViewModel.PersistentState.GutterWidth = -2;
-    	        }
-    	    }
-        	
-        	TextEditorService.FinalizePost(editContext);
-		    return ValueTask.CompletedTask;
-		    // viewModelModifier.PersistentState.PostScrollAndRemeasure();
+                    componentData.Virtualization.ViewModel.PersistentState.GutterWidth = -2;
+                }
+            }
+            
+            TextEditorService.FinalizePost(editContext);
+            return ValueTask.CompletedTask;
+            // viewModelModifier.PersistentState.PostScrollAndRemeasure();
         });
     }
 
@@ -726,7 +726,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         if (!TextEditorService.CommonService.GetDragState().ShouldDisplay)
         {
             // NOTE: '_mouseDownEventArgs' being non-null is what indicates that the subscription is active.
-			//       So be wary if one intends to move its assignment elsewhere.
+            //       So be wary if one intends to move its assignment elsewhere.
             _mouseDownEventArgsStruct = new TextEditorEventArgs
             {
                 Buttons = -1
@@ -736,7 +736,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         {
             var localMouseDownEventArgs = _mouseDownEventArgsStruct;
             var dragEventArgs = TextEditorService.CommonService.GetDragState().MouseEventArgs;
-			var localDragEventHandler = _dragEventHandler;
+            var localDragEventHandler = _dragEventHandler;
 
             if (localMouseDownEventArgs.Buttons != -1 && dragEventArgs is not null)
                 await localDragEventHandler.Invoke(localMouseDownEventArgs, dragEventArgs).ConfigureAwait(false);
@@ -745,11 +745,11 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 
     private Task HORIZONTAL_DragEventHandlerScrollAsync(TextEditorEventArgs localMouseDownEventArgsStruct, MouseEventArgs onDragMouseEventArgs)
     {
-    	var virtualizationResult = _componentData.Virtualization;
-    	if (!virtualizationResult.IsValid)
-    		return Task.CompletedTask;
+        var virtualizationResult = _componentData.Virtualization;
+        if (!virtualizationResult.IsValid)
+            return Task.CompletedTask;
     
-    	var localThinksLeftMouseButtonIsDown = HORIZONTAL_thinksLeftMouseButtonIsDown;
+        var localThinksLeftMouseButtonIsDown = HORIZONTAL_thinksLeftMouseButtonIsDown;
 
         if (!localThinksLeftMouseButtonIsDown)
             return Task.CompletedTask;
@@ -757,41 +757,41 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (onDragMouseEventArgs.Buttons & 1) == 1)
         {
-			var textEditorDimensions = virtualizationResult.ViewModel.PersistentState.TextEditorDimensions;
-		
-			double scrollLeft;
+            var textEditorDimensions = virtualizationResult.ViewModel.PersistentState.TextEditorDimensions;
+        
+            double scrollLeft;
 
-			if (onDragMouseEventArgs.ClientY < HORIZONTAL_clientYThresholdToResetScrollLeftPosition)
-			{
-				// Drag far left to reset scroll to original
-				scrollLeft = HORIZONTAL_scrollLeftOnMouseDown;
-			}
-			else
-			{
-				var diffX = onDragMouseEventArgs.ClientX - localMouseDownEventArgsStruct.X;
-	
-	            var scrollbarWidthInPixels = textEditorDimensions.Width - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
-	
-	            scrollLeft = HORIZONTAL_scrollLeftOnMouseDown +
-					diffX *
-	                virtualizationResult.ViewModel.PersistentState.ScrollWidth /
-	                scrollbarWidthInPixels;
-	
-	            if (scrollLeft + textEditorDimensions.Width > virtualizationResult.ViewModel.PersistentState.ScrollWidth)
-	                scrollLeft = virtualizationResult.ViewModel.PersistentState.ScrollWidth - textEditorDimensions.Width;
+            if (onDragMouseEventArgs.ClientY < HORIZONTAL_clientYThresholdToResetScrollLeftPosition)
+            {
+                // Drag far left to reset scroll to original
+                scrollLeft = HORIZONTAL_scrollLeftOnMouseDown;
+            }
+            else
+            {
+                var diffX = onDragMouseEventArgs.ClientX - localMouseDownEventArgsStruct.X;
+    
+                var scrollbarWidthInPixels = textEditorDimensions.Width - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+    
+                scrollLeft = HORIZONTAL_scrollLeftOnMouseDown +
+                    diffX *
+                    virtualizationResult.ViewModel.PersistentState.ScrollWidth /
+                    scrollbarWidthInPixels;
+    
+                if (scrollLeft + textEditorDimensions.Width > virtualizationResult.ViewModel.PersistentState.ScrollWidth)
+                    scrollLeft = virtualizationResult.ViewModel.PersistentState.ScrollWidth - textEditorDimensions.Width;
 
-				if (scrollLeft < 0)
-					scrollLeft = 0;
-			}
+                if (scrollLeft < 0)
+                    scrollLeft = 0;
+            }
 
-			TextEditorService.WorkerUi.Enqueue(
-			    new TextEditorEventArgs
-			    {
-			        X = scrollLeft
-			    },
-	        	_componentData,
-	        	TextEditorViewModelKey,
-		        TextEditorWorkUiKind.OnScrollHorizontal);
+            TextEditorService.WorkerUi.Enqueue(
+                new TextEditorEventArgs
+                {
+                    X = scrollLeft
+                },
+                _componentData,
+                TextEditorViewModelKey,
+                TextEditorWorkUiKind.OnScrollHorizontal);
         }
         else
         {
@@ -803,11 +803,11 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     private Task VERTICAL_DragEventHandlerScrollAsync(TextEditorEventArgs localMouseDownEventArgsStruct, MouseEventArgs onDragMouseEventArgs)
     {
-    	var virtualizationResult = _componentData.Virtualization;
-    	if (!virtualizationResult.IsValid)
-    		return Task.CompletedTask;
+        var virtualizationResult = _componentData.Virtualization;
+        if (!virtualizationResult.IsValid)
+            return Task.CompletedTask;
     
-    	var localThinksLeftMouseButtonIsDown = VERTICAL_thinksLeftMouseButtonIsDown;
+        var localThinksLeftMouseButtonIsDown = VERTICAL_thinksLeftMouseButtonIsDown;
 
         if (!localThinksLeftMouseButtonIsDown)
             return Task.CompletedTask;
@@ -815,41 +815,41 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (onDragMouseEventArgs.Buttons & 1) == 1)
         {
-			var textEditorDimensions = virtualizationResult.ViewModel.PersistentState.TextEditorDimensions;
+            var textEditorDimensions = virtualizationResult.ViewModel.PersistentState.TextEditorDimensions;
 
-			double scrollTop;
+            double scrollTop;
 
-			if (onDragMouseEventArgs.ClientX < VERTICAL_clientXThresholdToResetScrollTopPosition)
-			{
-				// Drag far left to reset scroll to original
-				scrollTop = VERTICAL_scrollTopOnMouseDown;
-			}
-			else
-			{
-	    		var diffY = onDragMouseEventArgs.ClientY - localMouseDownEventArgsStruct.Y;
-	
-	            var scrollbarHeightInPixels = textEditorDimensions.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
-	
-	            scrollTop = VERTICAL_scrollTopOnMouseDown +
-					diffY *
-	                virtualizationResult.ViewModel.PersistentState.ScrollHeight /
-	                scrollbarHeightInPixels;
-	
-	            if (scrollTop + textEditorDimensions.Height > virtualizationResult.ViewModel.PersistentState.ScrollHeight)
-	                scrollTop = virtualizationResult.ViewModel.PersistentState.ScrollHeight - textEditorDimensions.Height;
+            if (onDragMouseEventArgs.ClientX < VERTICAL_clientXThresholdToResetScrollTopPosition)
+            {
+                // Drag far left to reset scroll to original
+                scrollTop = VERTICAL_scrollTopOnMouseDown;
+            }
+            else
+            {
+                var diffY = onDragMouseEventArgs.ClientY - localMouseDownEventArgsStruct.Y;
+    
+                var scrollbarHeightInPixels = textEditorDimensions.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+    
+                scrollTop = VERTICAL_scrollTopOnMouseDown +
+                    diffY *
+                    virtualizationResult.ViewModel.PersistentState.ScrollHeight /
+                    scrollbarHeightInPixels;
+    
+                if (scrollTop + textEditorDimensions.Height > virtualizationResult.ViewModel.PersistentState.ScrollHeight)
+                    scrollTop = virtualizationResult.ViewModel.PersistentState.ScrollHeight - textEditorDimensions.Height;
 
-				if (scrollTop < 0)
-					scrollTop = 0;
-			}
+                if (scrollTop < 0)
+                    scrollTop = 0;
+            }
 
-			TextEditorService.WorkerUi.Enqueue(
-			    new TextEditorEventArgs
-			    {
-			        Y = scrollTop
-			    },
-	        	_componentData,
-	        	TextEditorViewModelKey,
-		        TextEditorWorkUiKind.OnScrollVertical);
+            TextEditorService.WorkerUi.Enqueue(
+                new TextEditorEventArgs
+                {
+                    Y = scrollTop
+                },
+                _componentData,
+                TextEditorViewModelKey,
+                TextEditorWorkUiKind.OnScrollVertical);
         }
         else
         {
@@ -861,35 +861,35 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
     private async void OnOptionMeasuredStateChanged()
     {
-    	_componentData.SetWrapperCssAndStyle();
-    	QueueCalculateVirtualizationResultBackgroundTask();
+        _componentData.SetWrapperCssAndStyle();
+        QueueCalculateVirtualizationResultBackgroundTask();
     }
     
     private async void OnOptionStaticStateChanged()
     {
-    	_componentData.SetWrapperCssAndStyle();
-    	await InvokeAsync(StateHasChanged);
+        _componentData.SetWrapperCssAndStyle();
+        await InvokeAsync(StateHasChanged);
     }
     
     public void Dispose()
     {
-    	// ScrollbarSection.razor.cs
-    	TextEditorService.CommonService.DragStateChanged -= DragStateWrapOnStateChanged;
+        // ScrollbarSection.razor.cs
+        TextEditorService.CommonService.DragStateChanged -= DragStateWrapOnStateChanged;
     
-    	// TextEditorViewModelDisplay.razor.cs
+        // TextEditorViewModelDisplay.razor.cs
         TextEditorService.TextEditorStateChanged -= GeneralOnStateChangedEventHandler;
         TextEditorService.Options_StaticStateChanged -= OnOptionStaticStateChanged;
         TextEditorService.Options_MeasuredStateChanged -= OnOptionMeasuredStateChanged;
-		TextEditorService.ViewModel_CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
+        TextEditorService.ViewModel_CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
 
-		var linkedViewModel = _linkedViewModel;
+        var linkedViewModel = _linkedViewModel;
         if (linkedViewModel is not null)
         {
-        	TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
-	    	{
-	    		linkedViewModel.PersistentState.DisposeComponentData(editContext, ComponentData);
-	    		_linkedViewModel = null;
-	    	});
+            TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+            {
+                linkedViewModel.PersistentState.DisposeComponentData(editContext, ComponentData);
+                _linkedViewModel = null;
+            });
         }
         
         TextEditorService.TextEditorState._componentDataMap.Remove(_componentData.ComponentDataKey);
