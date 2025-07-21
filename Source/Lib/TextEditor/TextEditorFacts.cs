@@ -12,15 +12,9 @@ namespace Walk.TextEditor.RazorLib;
 public static class TextEditorFacts
 {
     /* Start TextEditorKeymapDefaultFacts */
-	public static readonly KeymapLayer KeymapDefault_DefaultLayer = new KeymapLayer(
-        Key: 0,
-        "Default Layer",
-        "default-layer");
+	public static readonly KeymapLayer KeymapDefault_DefaultLayer = new KeymapLayer(Key: 0);
 
-    public static readonly KeymapLayer KeymapDefault_HasSelectionLayer = new KeymapLayer(
-        Key: 1,
-        "If Has Selection",
-        "if-has-selection");
+    public static readonly KeymapLayer KeymapDefault_HasSelectionLayer = new KeymapLayer(Key: 1);
     /* End TextEditorKeymapDefaultFacts */
     
     /* Start TextEditorKeymapFacts */
