@@ -347,11 +347,21 @@ public partial class TextEditorService
 		if (string.IsNullOrWhiteSpace(optionsJsonString))
 			return;
 
-		var optionsJson = JsonSerializer.Deserialize<TextEditorOptionsJsonDto>(optionsJsonString);
-
-		if (optionsJson is null)
-			return;
-
+        TextEditorOptionsJsonDto? optionsJson = null;
+        
+        try
+        {
+    		optionsJson = JsonSerializer.Deserialize<TextEditorOptionsJsonDto>(optionsJsonString);
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            // TODO: Preserve the values that do parse.
+            await CommonService.Storage_SetValue(StorageKey, null).ConfigureAwait(false);
+        }
+        
+        if (optionsJson is null)
+    		return;
+        
 		if (optionsJson.CommonOptionsJsonDto?.ThemeKey is not null)
 		{
 			var matchedTheme = CommonService.GetThemeState().ThemeList.FirstOrDefault(

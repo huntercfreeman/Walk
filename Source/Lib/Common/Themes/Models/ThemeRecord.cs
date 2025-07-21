@@ -3,7 +3,7 @@ using Walk.Common.RazorLib.Keys.Models;
 namespace Walk.Common.RazorLib.Themes.Models;
 
 public record ThemeRecord(
-    Key<ThemeRecord> Key,
+    int Key,
     string DisplayName,
     string CssClassString,
     ThemeContrastKind ThemeContrastKind,

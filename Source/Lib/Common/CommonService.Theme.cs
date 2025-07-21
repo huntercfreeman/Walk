@@ -45,7 +45,7 @@ public partial class CommonService
         }
     }
 
-    public void Theme_DisposeAction(Key<ThemeRecord> themeKey)
+    public void Theme_DisposeAction(int themeKey)
     {
         var inTheme = _themeState.ThemeList.FirstOrDefault(
             x => x.Key == themeKey);

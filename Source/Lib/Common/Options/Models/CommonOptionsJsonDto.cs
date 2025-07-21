@@ -12,7 +12,7 @@ public record CommonOptionsJsonDto(
     int? IconSizeInPixels,
     int? ResizeHandleWidthInPixels,
     int? ResizeHandleHeightInPixels,
-    Key<ThemeRecord>? ThemeKey,
+    int? ThemeKey,
     string? FontFamily)
 {
     public CommonOptionsJsonDto()

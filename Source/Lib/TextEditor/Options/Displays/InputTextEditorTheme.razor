@@ -12,7 +12,7 @@
         
         foreach (var theme in themesList)
         {
-            <option value="@theme.Key.Guid.ToString()"
+            <option value="@theme.Key.ToString()"
                     selected="@(chosenThemeKey == theme.Key)">
                 @theme.DisplayName
             </option>

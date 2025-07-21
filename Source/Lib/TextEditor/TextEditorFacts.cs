@@ -71,7 +71,7 @@ public static class TextEditorFacts
     
     /* Start WalkTextEditorCustomThemeFacts */
     public static readonly ThemeRecord LightTheme = new ThemeRecord(
-        new Key<ThemeRecord>(Guid.Parse("8165209b-0cea-45b4-b6dd-e5661b319c73")),
+        Key: 2,
         "Walk IDE Light Theme",
         "di_light-theme",
         ThemeContrastKind.Default,
@@ -80,7 +80,7 @@ public static class TextEditorFacts
         IncludeScopeTextEditor: true);
 
     public static readonly ThemeRecord DarkTheme = new ThemeRecord(
-        new Key<ThemeRecord>(Guid.Parse("56d64327-03c2-48a3-b086-11b101826efb")),
+        Key: 3,
         "Walk IDE Dark Theme",
         "di_dark-theme",
         ThemeContrastKind.Default,

@@ -20,7 +20,7 @@ public record WalkTextEditorConfig
     /// The initial theme for the text editor is NOT the same as <see cref="WalkCommonConfig.InitialThemeKey"/>.
     /// The text editor and application theme are separate.
     /// </summary>
-    public Key<ThemeRecord>? InitialThemeKey { get; init; } = CommonFacts.VisualStudioDarkThemeClone.Key;
+    public int InitialThemeKey { get; init; } = CommonFacts.VisualStudioDarkThemeClone.Key;
     public ThemeRecord CustomThemeOne { get; init; } = TextEditorFacts.LightTheme;
     public ThemeRecord CustomThemeTwo { get; init; } = TextEditorFacts.DarkTheme;
     /// <summary>

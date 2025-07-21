@@ -42,7 +42,7 @@ public partial class CommonService
 	
 	public AppOptionsState GetAppOptionsState() => _appOptionsState;
 
-    public void Options_SetActiveThemeRecordKey(Key<ThemeRecord> themeKey, bool updateStorage = true)
+    public void Options_SetActiveThemeRecordKey(int themeKey, bool updateStorage = true)
     {
     	var inState = GetAppOptionsState();
     	
@@ -203,7 +203,17 @@ public partial class CommonService
         if (string.IsNullOrWhiteSpace(optionsJsonString))
             return;
 
-        var optionsJson = JsonSerializer.Deserialize<CommonOptionsJsonDto>(optionsJsonString);
+        CommonOptionsJsonDto? optionsJson = null;
+        
+        try
+        {
+    		optionsJson = JsonSerializer.Deserialize<CommonOptionsJsonDto>(optionsJsonString);
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            // TODO: Preserve the values that do parse.
+            await Storage_SetValue(Options_StorageKey, null).ConfigureAwait(false);
+        }
 
         if (optionsJson is null)
             return;
