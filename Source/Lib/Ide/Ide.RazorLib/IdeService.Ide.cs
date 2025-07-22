@@ -143,7 +143,7 @@ public partial class IdeService
             }
         }
 
-        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_IdeStateChanged);
+        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_StartupControlStateChanged);
     }
 
     public void Ide_DisposeStartupControl(Key<IStartupControlModel> startupControlKey)
@@ -170,7 +170,7 @@ public partial class IdeService
             }
         }
 
-        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_IdeStateChanged);
+        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_StartupControlStateChanged);
     }
 
     public void Ide_SetActiveStartupControlKey(Key<IStartupControlModel> startupControlKey)
@@ -197,11 +197,11 @@ public partial class IdeService
             }
         }
 
-        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_IdeStateChanged);
+        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_StartupControlStateChanged);
     }
 
     public void Ide_TriggerStartupControlStateChanged()
     {
-        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_IdeStateChanged);
+        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_StartupControlStateChanged);
     }
 }
