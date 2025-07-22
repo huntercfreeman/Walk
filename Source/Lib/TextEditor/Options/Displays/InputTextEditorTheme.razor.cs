@@ -31,7 +31,7 @@ public partial class InputTextEditorTheme : ComponentBase, IDisposable
         {
             var foundTheme = themeList.FirstOrDefault(x => x.Key == chosenThemeKeyInt);
 
-            if (foundTheme is not null)
+            if (foundTheme != default)
                 TextEditorService.Options_SetTheme(foundTheme);
         }
         else

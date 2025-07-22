@@ -228,7 +228,7 @@ public partial class CommonService
             return;
 
         var matchedTheme = GetThemeState().ThemeList.FirstOrDefault(x => x.Key == optionsJson.ThemeKey);
-        Options_SetTheme(matchedTheme ?? CommonFacts.VisualStudioDarkThemeClone, false);
+        Options_SetTheme(matchedTheme == default ? CommonFacts.VisualStudioDarkThemeClone : matchedTheme, false);
 
         if (optionsJson.FontFamily is not null)
             Options_SetFontFamily(optionsJson.FontFamily, false);
@@ -251,9 +251,8 @@ public partial class CommonService
     
     private void HandleThemeChange()
     {
-        var usingTheme = GetThemeState().ThemeList
-            .FirstOrDefault(x => x.Key == GetAppOptionsState().Options.ThemeKey)
-            ?? CommonFacts.VisualStudioDarkThemeClone;
+        var usingTheme = GetThemeState().ThemeList.FirstOrDefault(x => x.Key == GetAppOptionsState().Options.ThemeKey);
+        usingTheme = usingTheme == default ? CommonFacts.VisualStudioDarkThemeClone : usingTheme;
         
         Options_ThemeCssClassString = usingTheme.CssClassString;
         

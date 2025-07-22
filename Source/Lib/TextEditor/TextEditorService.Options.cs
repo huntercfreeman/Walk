@@ -90,10 +90,11 @@ public partial class TextEditorService
         //
         // Can probably use 'theme' variable here but
         // I don't want to touch that right now -- incase there are unexpected consequences.
-        var usingThemeCssClassString = CommonService.GetThemeState().ThemeList
-            .FirstOrDefault(x => x.Key == Options_GetTextEditorOptionsState().Options.CommonOptions.ThemeKey)
-            ?.CssClassString
-            ?? CommonFacts.VisualStudioDarkThemeClone.CssClassString;
+        var usingThemeCss = CommonService.GetThemeState().ThemeList
+            .FirstOrDefault(x => x.Key == Options_GetTextEditorOptionsState().Options.CommonOptions.ThemeKey);
+        var usingThemeCssClassString = usingThemeCss == default
+            ? CommonFacts.VisualStudioDarkThemeClone.CssClassString
+            : usingThemeCss.CssClassString;
         ThemeCssClassString = usingThemeCssClassString;
 
         SecondaryChanged?.Invoke(SecondaryChangedKind.StaticStateChanged);
@@ -343,7 +344,7 @@ public partial class TextEditorService
             var matchedTheme = CommonService.GetThemeState().ThemeList.FirstOrDefault(
                 x => x.Key == optionsJson.CommonOptionsJsonDto.ThemeKey);
 
-            Options_SetTheme(matchedTheme ?? CommonFacts.VisualStudioDarkThemeClone, false);
+            Options_SetTheme(matchedTheme == default ? CommonFacts.VisualStudioDarkThemeClone : matchedTheme, false);
         }
 
         /*if (optionsJson.Keymap is not null)

@@ -39,7 +39,7 @@ public partial class InputAppTheme : IDisposable
 
             var existingThemeRecord = themesInScopeList.FirstOrDefault(btr => btr.Key == intValue);
 
-            if (existingThemeRecord is not null)
+            if (existingThemeRecord != default)
                 CommonService.Options_SetActiveThemeRecordKey(existingThemeRecord.Key);
         }
     }
