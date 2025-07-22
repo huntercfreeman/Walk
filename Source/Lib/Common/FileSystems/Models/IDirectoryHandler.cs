@@ -25,10 +25,14 @@ public interface IDirectoryHandler
         string destinationAbsolutePathString,
         CancellationToken cancellationToken = default);
 
+    public string[] GetDirectories(string absolutePathString);
+        
     public Task<string[]> GetDirectoriesAsync(
         string absolutePathString,
         CancellationToken cancellationToken = default);
 
+    public string[] GetFiles(string absolutePathString);
+    
     public Task<string[]> GetFilesAsync(
         string absolutePathString,
         CancellationToken cancellationToken = default);

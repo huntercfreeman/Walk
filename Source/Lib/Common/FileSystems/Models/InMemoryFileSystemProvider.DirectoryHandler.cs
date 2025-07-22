@@ -124,6 +124,11 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             }
         }
 
+        public string[] GetDirectories(string absolutePathString)
+        {
+            return UnsafeGetDirectories(absolutePathString);
+        }
+        
         public Task<string[]> GetDirectoriesAsync(
             string absolutePathString,
             CancellationToken cancellationToken = default)
@@ -131,6 +136,11 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             return UnsafeGetDirectoriesAsync(absolutePathString, cancellationToken);
         }
 
+        public string[] GetFiles(string absolutePathString)
+        {
+            return UnsafeGetFiles(absolutePathString);
+        }
+        
         public Task<string[]> GetFilesAsync(
             string absolutePathString,
             CancellationToken cancellationToken = default)
@@ -324,16 +334,14 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             await UnsafeDeleteAsync(sourceAbsolutePathString, true, cancellationToken).ConfigureAwait(false);
         }
 
-        public Task<string[]> UnsafeGetDirectoriesAsync(
-            string absolutePathString,
-            CancellationToken cancellationToken = default)
+        public string[] UnsafeGetDirectories(string absolutePathString)
         {
             var existingFile = _inMemoryFileSystemProvider._files.FirstOrDefault(f =>
                 f.AbsolutePath.Value == absolutePathString &&
                 f.IsDirectory);
 
             if (existingFile.Data is null)
-                return Task.FromResult(Array.Empty<string>());
+                return Array.Empty<string>();
 
             var childrenFromAllGenerationsList = _inMemoryFileSystemProvider._files.Where(
                 f => f.AbsolutePath.Value.StartsWith(absolutePathString) &&
@@ -354,19 +362,24 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 .Select(f => f.AbsolutePath.Value)
                 .ToArray();
 
-            return Task.FromResult(directChildren);
+            return directChildren;
         }
-
-        public Task<string[]> UnsafeGetFilesAsync(
+        
+        public Task<string[]> UnsafeGetDirectoriesAsync(
             string absolutePathString,
             CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(UnsafeGetDirectories(absolutePathString));
+        }
+
+        public string[] UnsafeGetFiles(string absolutePathString)
         {
             var existingFile = _inMemoryFileSystemProvider._files.FirstOrDefault(f =>
                 f.AbsolutePath.Value == absolutePathString &&
                 f.IsDirectory);
 
             if (existingFile.Data is null)
-                return Task.FromResult(Array.Empty<string>());
+                return Array.Empty<string>();
 
             var childrenFromAllGenerationsList = _inMemoryFileSystemProvider._files.Where(
                 f => f.AbsolutePath.Value.StartsWith(absolutePathString) &&
@@ -385,7 +398,14 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 .Select(f => f.AbsolutePath.Value)
                 .ToArray();
 
-            return Task.FromResult(directChildrenList);
+            return directChildrenList;
+        }
+        
+        public Task<string[]> UnsafeGetFilesAsync(
+            string absolutePathString,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(UnsafeGetFiles(absolutePathString));
         }
 
         public async Task<IEnumerable<string>> UnsafeEnumerateFileSystemEntriesAsync(
