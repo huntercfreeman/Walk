@@ -1,5 +1,4 @@
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.RenderStates.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices;
@@ -24,8 +23,6 @@ public class TextEditorCssLexer
     
     public ResourceUri ResourceUri { get; set; }
     public string SourceText { get; set; }
-
-    public Key<RenderState> ModelRenderStateKey { get; private set; } = Key<RenderState>.Empty;
 
     public void Lex()
     {

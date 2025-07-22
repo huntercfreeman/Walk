@@ -103,6 +103,11 @@ public class LocalDirectoryHandler : IDirectoryHandler
         }
     }
 
+    public string[] GetDirectories(string absolutePathString)
+    {
+        return Directory.GetDirectories(absolutePathString);
+    }
+    
     public Task<string[]> GetDirectoriesAsync(
         string absolutePathString,
         CancellationToken cancellationToken = default)
@@ -112,6 +117,11 @@ public class LocalDirectoryHandler : IDirectoryHandler
                 absolutePathString));
     }
 
+    public string[] GetFiles(string absolutePathString)
+    {
+        return Directory.GetFiles(absolutePathString);
+    }
+    
     public Task<string[]> GetFilesAsync(
         string absolutePathString,
         CancellationToken cancellationToken = default)

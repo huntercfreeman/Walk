@@ -769,11 +769,13 @@ public partial class DotNetService
         }
 
         IdeService.TextEditorService.WorkerArbitrary.EnqueueUniqueTextEditorWork(
-            new UniqueTextEditorWork(IdeService.TextEditorService, async editContext =>
+            new UniqueTextEditorWork(IdeService.TextEditorService, editContext =>
             {
-                await ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_DefinitionsOnly);
-                await ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_MinimumLocalsData);
+                ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_DefinitionsOnly);
+                ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_MinimumLocalsData);
 
+                return ValueTask.CompletedTask;
+                
                 // IdeService.TextEditorService.EditContext_GetText_Clear();
             }));
 
@@ -1139,7 +1141,7 @@ public partial class DotNetService
         }
     }
 
-    private async ValueTask ParseSolution(
+    private void ParseSolution(
         TextEditorEditContext editContext,
         Key<DotNetSolutionModel> dotNetSolutionModelKey,
         CompilationUnitKind compilationUnitKind)
@@ -1179,7 +1181,7 @@ public partial class DotNetService
 
                 var resourceUri = new ResourceUri(project.AbsolutePath.Value);
 
-                if (!await IdeService.TextEditorService.CommonService.FileSystemProvider.File.ExistsAsync(resourceUri.Value))
+                if (!IdeService.TextEditorService.CommonService.FileSystemProvider.File.Exists(resourceUri.Value))
                     continue; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
             }
 
@@ -1217,7 +1219,7 @@ public partial class DotNetService
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                await DiscoverClassesInProject(editContext, project, progressBarModel, currentProgress, maximumProgressAvailableToProject, compilationUnitKind);
+                DiscoverClassesInProject(editContext, project, progressBarModel, currentProgress, maximumProgressAvailableToProject, compilationUnitKind);
                 projectsParsedCount++;
             }
 
@@ -1236,7 +1238,7 @@ public partial class DotNetService
         }
     }
 
-    private async Task DiscoverClassesInProject(
+    private void DiscoverClassesInProject(
         TextEditorEditContext editContext,
         IDotNetProject dotNetProject,
         ProgressBarModel progressBarModel,
@@ -1244,7 +1246,7 @@ public partial class DotNetService
         double maximumProgressAvailableToProject,
         CompilationUnitKind compilationUnitKind)
     {
-        if (!await IdeService.TextEditorService.CommonService.FileSystemProvider.File.ExistsAsync(dotNetProject.AbsolutePath.Value))
+        if (!IdeService.TextEditorService.CommonService.FileSystemProvider.File.Exists(dotNetProject.AbsolutePath.Value))
             return; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
 
         var parentDirectory = dotNetProject.AbsolutePath.ParentDirectory;
@@ -1254,7 +1256,7 @@ public partial class DotNetService
         var startingAbsolutePathForSearch = parentDirectory;
         var discoveredFileList = new List<string>();
 
-        await DiscoverFilesRecursively(startingAbsolutePathForSearch, discoveredFileList, true).ConfigureAwait(false);
+        DiscoverFilesRecursively(startingAbsolutePathForSearch, discoveredFileList, true);
 
         ParseClassesInProject(
             editContext,
@@ -1265,17 +1267,13 @@ public partial class DotNetService
             discoveredFileList,
             compilationUnitKind);
 
-        async Task DiscoverFilesRecursively(string directoryPathParent, List<string> discoveredFileList, bool isFirstInvocation)
+        void DiscoverFilesRecursively(string directoryPathParent, List<string> discoveredFileList, bool isFirstInvocation)
         {
-            var directoryPathChildList = await IdeService.TextEditorService.CommonService.FileSystemProvider.Directory.GetDirectoriesAsync(
-                    directoryPathParent,
-                    CancellationToken.None)
-                .ConfigureAwait(false);
+            var directoryPathChildList = IdeService.TextEditorService.CommonService.FileSystemProvider.Directory.GetDirectories(
+                    directoryPathParent);
 
-            var filePathChildList = await IdeService.TextEditorService.CommonService.FileSystemProvider.Directory.GetFilesAsync(
-                    directoryPathParent,
-                    CancellationToken.None)
-                .ConfigureAwait(false);
+            var filePathChildList = IdeService.TextEditorService.CommonService.FileSystemProvider.Directory.GetFiles(
+                    directoryPathParent);
 
             foreach (var filePathChild in filePathChildList)
             {
@@ -1288,7 +1286,7 @@ public partial class DotNetService
                 if (IFileSystemProvider.IsDirectoryIgnored(directoryPathChild))
                     continue;
 
-                await DiscoverFilesRecursively(directoryPathChild, discoveredFileList, isFirstInvocation: false).ConfigureAwait(false);
+                DiscoverFilesRecursively(directoryPathChild, discoveredFileList, isFirstInvocation: false);
             }
         }
     }

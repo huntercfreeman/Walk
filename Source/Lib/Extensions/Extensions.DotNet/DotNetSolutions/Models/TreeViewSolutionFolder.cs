@@ -1,7 +1,7 @@
 using Walk.Common.RazorLib;
-using Walk.Common.RazorLib.WatchWindows.Models;
 using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.TreeViews.Models.Utils;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Icons.Displays;
 using Walk.Common.RazorLib.Icons.Displays.Codicon;

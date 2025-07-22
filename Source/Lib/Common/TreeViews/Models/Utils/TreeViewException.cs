@@ -1,6 +1,4 @@
-using Walk.Common.RazorLib.TreeViews.Models;
-
-namespace Walk.Common.RazorLib.WatchWindows.Models;
+namespace Walk.Common.RazorLib.TreeViews.Models.Utils;
 
 public class TreeViewException : TreeViewWithType<Exception>
 {

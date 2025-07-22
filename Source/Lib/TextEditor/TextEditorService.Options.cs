@@ -4,7 +4,6 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.RenderStates.Models;
 using Walk.Common.RazorLib.Themes.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models;
@@ -81,7 +80,7 @@ public partial class TextEditorService
                 {
                     ThemeKey = theme.Key
                 },
-                RenderStateKey = Key<RenderState>.NewKey(),
+                RenderStateKey = Key<TextEditorOptions>.NewKey(),
             },
         };
 
@@ -112,7 +111,7 @@ public partial class TextEditorService
             Options = inState.Options with
             {
                 ShowWhitespace = showWhitespace,
-                RenderStateKey = Key<RenderState>.NewKey(),
+                RenderStateKey = Key<TextEditorOptions>.NewKey(),
             },
         };
         // ShowWhitespace needs virtualization result to be re-calculated.
@@ -131,7 +130,7 @@ public partial class TextEditorService
             Options = inState.Options with
             {
                 ShowNewlines = showNewlines,
-                RenderStateKey = Key<RenderState>.NewKey(),
+                RenderStateKey = Key<TextEditorOptions>.NewKey(),
             },
         };
         SecondaryChanged?.Invoke(SecondaryChangedKind.StaticStateChanged);
@@ -149,7 +148,7 @@ public partial class TextEditorService
             Options = inState.Options with
             {
                 TabKeyBehavior = tabKeyBehavior,
-                RenderStateKey = Key<RenderState>.NewKey(),
+                RenderStateKey = Key<TextEditorOptions>.NewKey(),
             },
         };
         SecondaryChanged?.Invoke(SecondaryChangedKind.StaticStateChanged);
@@ -170,7 +169,7 @@ public partial class TextEditorService
             Options = inState.Options with
             {
                 TabWidth = tabWidth,
-                RenderStateKey = Key<RenderState>.NewKey(),
+                RenderStateKey = Key<TextEditorOptions>.NewKey(),
             },
         };
         SecondaryChanged?.Invoke(SecondaryChangedKind.MeasuredStateChanged);
@@ -188,7 +187,7 @@ public partial class TextEditorService
             Options = inState.Options with
             {
                 Keymap = keymap,
-                RenderStateKey = Key<RenderState>.NewKey(),
+                RenderStateKey = Key<TextEditorOptions>.NewKey(),
             },
         };
         SecondaryChanged?.Invoke(SecondaryChangedKind.StaticStateChanged);
@@ -221,7 +220,7 @@ public partial class TextEditorService
                 {
                     FontSizeInPixels = fontSizeInPixels
                 },
-                RenderStateKey = Key<RenderState>.NewKey(),
+                RenderStateKey = Key<TextEditorOptions>.NewKey(),
             },
         };
         SecondaryChanged?.Invoke(SecondaryChangedKind.NeedsMeasured);
@@ -247,7 +246,7 @@ public partial class TextEditorService
                 {
                     FontFamily = fontFamily
                 },
-                RenderStateKey = Key<RenderState>.NewKey(),
+                RenderStateKey = Key<TextEditorOptions>.NewKey(),
             },
         };
         SecondaryChanged?.Invoke(SecondaryChangedKind.NeedsMeasured);
@@ -268,7 +267,7 @@ public partial class TextEditorService
             Options = inState.Options with
             {
                 CursorWidthInPixels = cursorWidthInPixels,
-                RenderStateKey = Key<RenderState>.NewKey(),
+                RenderStateKey = Key<TextEditorOptions>.NewKey(),
             },
         };
         SecondaryChanged?.Invoke(SecondaryChangedKind.StaticStateChanged);
@@ -277,7 +276,7 @@ public partial class TextEditorService
             Options_WriteToStorage();
     }
 
-    public void Options_SetRenderStateKey(Key<RenderState> renderStateKey)
+    public void Options_SetRenderStateKey(Key<TextEditorOptions> renderStateKey)
     {
         var inState = Options_GetTextEditorOptionsState();
 
@@ -300,7 +299,7 @@ public partial class TextEditorService
             Options = inState.Options with
             {
                 CharAndLineMeasurements = charAndLineMeasurements,
-                RenderStateKey = Key<RenderState>.NewKey(),
+                RenderStateKey = Key<TextEditorOptions>.NewKey(),
             },
         };
 
