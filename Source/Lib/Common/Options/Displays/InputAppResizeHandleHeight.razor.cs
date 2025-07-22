@@ -14,13 +14,7 @@ public partial class InputAppResizeHandleHeight : ComponentBase, IDisposable
     public int ResizeHandleHeightInPixels
     {
         get => CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels;
-        set
-        {
-            if (value < AppOptionsState.MINIMUM_RESIZE_HANDLE_HEIGHT_IN_PIXELS)
-                value = AppOptionsState.MINIMUM_RESIZE_HANDLE_HEIGHT_IN_PIXELS;
-
-            CommonService.Options_SetResizeHandleHeight(value);
-        }
+        set => CommonService.Options_SetResizeHandleHeight(value);
     }
 
     protected override void OnInitialized()

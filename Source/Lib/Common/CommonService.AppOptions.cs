@@ -76,6 +76,11 @@ public partial class CommonService
 
     public void Options_SetFontFamily(string? fontFamily, bool updateStorage = true)
     {
+        if (string.IsNullOrWhiteSpace(fontFamily))
+            fontFamily = null;
+        else
+            fontFamily = fontFamily.Trim();
+            
         var inState = GetAppOptionsState();
         
         _appOptionsState = inState with
@@ -105,6 +110,9 @@ public partial class CommonService
 
     public void Options_SetFontSize(int fontSizeInPixels, bool updateStorage = true)
     {
+        if (fontSizeInPixels < AppOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS)
+            fontSizeInPixels = AppOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS;
+    
         var inState = GetAppOptionsState();
         
         _appOptionsState = inState with
@@ -132,6 +140,9 @@ public partial class CommonService
 
     public void Options_SetResizeHandleWidth(int resizeHandleWidthInPixels, bool updateStorage = true)
     {
+        if (resizeHandleWidthInPixels < AppOptionsState.MINIMUM_RESIZE_HANDLE_WIDTH_IN_PIXELS)
+            resizeHandleWidthInPixels = AppOptionsState.MINIMUM_RESIZE_HANDLE_WIDTH_IN_PIXELS;
+    
         var inState = GetAppOptionsState();
         
         _appOptionsState = inState with
@@ -152,6 +163,9 @@ public partial class CommonService
 
     public void Options_SetResizeHandleHeight(int resizeHandleHeightInPixels, bool updateStorage = true)
     {
+        if (resizeHandleHeightInPixels < AppOptionsState.MINIMUM_RESIZE_HANDLE_HEIGHT_IN_PIXELS)
+            resizeHandleHeightInPixels = AppOptionsState.MINIMUM_RESIZE_HANDLE_HEIGHT_IN_PIXELS;
+    
         var inState = GetAppOptionsState();
         
         _appOptionsState = inState with
@@ -172,6 +186,9 @@ public partial class CommonService
 
     public void Options_SetIconSize(int iconSizeInPixels, bool updateStorage = true)
     {
+        if (iconSizeInPixels < AppOptionsState.MINIMUM_ICON_SIZE_IN_PIXELS)
+            iconSizeInPixels = AppOptionsState.MINIMUM_ICON_SIZE_IN_PIXELS;
+    
         var inState = GetAppOptionsState();
         
         _appOptionsState = inState with
@@ -210,28 +227,16 @@ public partial class CommonService
         if (optionsJson is null)
             return;
 
-        if (optionsJson.ThemeKey is not null)
-        {
-            var matchedTheme = GetThemeState().ThemeList.FirstOrDefault(
-                x => x.Key == optionsJson.ThemeKey);
-
-            Options_SetTheme(matchedTheme ?? CommonFacts.VisualStudioDarkThemeClone, false);
-        }
+        var matchedTheme = GetThemeState().ThemeList.FirstOrDefault(x => x.Key == optionsJson.ThemeKey);
+        Options_SetTheme(matchedTheme ?? CommonFacts.VisualStudioDarkThemeClone, false);
 
         if (optionsJson.FontFamily is not null)
             Options_SetFontFamily(optionsJson.FontFamily, false);
 
-        if (optionsJson.FontSizeInPixels is not null)
-            Options_SetFontSize(optionsJson.FontSizeInPixels.Value, false);
-            
-        if (optionsJson.ResizeHandleWidthInPixels is not null)
-            Options_SetResizeHandleWidth(optionsJson.ResizeHandleWidthInPixels.Value, false);
-            
-        if (optionsJson.ResizeHandleHeightInPixels is not null)
-            Options_SetResizeHandleHeight(optionsJson.ResizeHandleHeightInPixels.Value, false);
-
-        if (optionsJson.IconSizeInPixels is not null)
-            Options_SetIconSize(optionsJson.IconSizeInPixels.Value, false);
+        Options_SetFontSize(optionsJson.FontSizeInPixels, false);
+        Options_SetResizeHandleWidth(optionsJson.ResizeHandleWidthInPixels, false);
+        Options_SetResizeHandleHeight(optionsJson.ResizeHandleHeightInPixels, false);
+        Options_SetIconSize(optionsJson.IconSizeInPixels, false);
     }
 
     public void Options_WriteToStorage()

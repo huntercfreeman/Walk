@@ -16,10 +16,7 @@ public partial class InputTextEditorFontFamily : ComponentBase, IDisposable
         get => TextEditorService.Options_GetTextEditorOptionsState().Options.CommonOptions.FontFamily ?? "unset";
         set
         {
-            if (string.IsNullOrWhiteSpace(value))
-                TextEditorService.Options_SetFontFamily(null);
-
-            TextEditorService.Options_SetFontFamily(value.Trim());
+            TextEditorService.Options_SetFontFamily(value);
         }
     }
 

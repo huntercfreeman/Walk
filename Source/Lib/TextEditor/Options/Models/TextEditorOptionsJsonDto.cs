@@ -10,17 +10,20 @@ namespace Walk.TextEditor.RazorLib.Options.Models;
 /// </summary>
 public record TextEditorOptionsJsonDto(
     CommonOptionsJsonDto? CommonOptionsJsonDto,
-    bool? ShowWhitespace,
-    bool? ShowNewlines,
-    bool? TabKeyBehavior,
-    int? TabWidth,
-    int? TextEditorHeightInPixels,
-    double? CursorWidthInPixels,
-    //ITextEditorKeymap? Keymap,
-    bool? UseMonospaceOptimizations)
+    bool ShowWhitespace,
+    bool ShowNewlines,
+    bool TabKeyBehavior,
+    int TabWidth,
+    double CursorWidthInPixels)
 {
     public TextEditorOptionsJsonDto()
-        : this(null, null, null, null, null, null, null, null)
+        : this(
+            CommonOptionsJsonDto: null,
+            ShowWhitespace: false,
+            ShowNewlines: false,
+            TabKeyBehavior: true,
+            TabWidth: 4,
+            CursorWidthInPixels: 2.5)
     {
     }
     
@@ -31,10 +34,7 @@ public record TextEditorOptionsJsonDto(
               options.ShowNewlines,
               options.TabKeyBehavior,
               options.TabWidth,
-              options.TextEditorHeightInPixels,
-              options.CursorWidthInPixels,
-              //options.Keymap,
-              options.UseMonospaceOptimizations)
+              options.CursorWidthInPixels)
     {
         
     }

@@ -14,13 +14,7 @@ public partial class InputAppIconSize : ComponentBase, IDisposable
     private int IconSizeInPixels
     {
         get => CommonService.GetAppOptionsState().Options.IconSizeInPixels;
-        set
-        {
-            if (value < AppOptionsState.MINIMUM_ICON_SIZE_IN_PIXELS)
-                value = AppOptionsState.MINIMUM_ICON_SIZE_IN_PIXELS;
-
-            CommonService.Options_SetIconSize(value);
-        }
+        set => CommonService.Options_SetIconSize(value);
     }
 
     protected override Task OnInitializedAsync()

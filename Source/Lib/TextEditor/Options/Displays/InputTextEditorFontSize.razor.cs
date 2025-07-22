@@ -24,9 +24,10 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
         get => _fontSizeInPixels;
         set
         {
+            // This has to be done here as well as the Service API due to the throttling using it.
             if (value < TextEditorOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS)
                 value = TextEditorOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS;
-                
+        
             _fontSizeInPixels = value;
 
             _throttle.Run(_ =>

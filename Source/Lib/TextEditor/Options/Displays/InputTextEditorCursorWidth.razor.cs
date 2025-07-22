@@ -11,16 +11,11 @@ public partial class InputTextEditorCursorWidth : ComponentBase, IDisposable
     [Parameter]
     public InputViewModel InputViewModel { get; set; } = InputViewModel.Empty;
 
-    private const double MINIMUM_CURSOR_SIZE_IN_PIXELS = 1;
-
     private double TextEditorCursorWidth
     {
         get => TextEditorService.Options_GetTextEditorOptionsState().Options.CursorWidthInPixels;
         set
         {
-            if (value < MINIMUM_CURSOR_SIZE_IN_PIXELS)
-                value = MINIMUM_CURSOR_SIZE_IN_PIXELS;
-
             TextEditorService.Options_SetCursorWidth(value);
         }
     }

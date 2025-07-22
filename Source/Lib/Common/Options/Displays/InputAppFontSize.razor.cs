@@ -14,13 +14,7 @@ public partial class InputAppFontSize : ComponentBase, IDisposable
     public int FontSizeInPixels
     {
         get => CommonService.GetAppOptionsState().Options.FontSizeInPixels;
-        set
-        {
-            if (value < AppOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS)
-                value = AppOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS;
-
-            CommonService.Options_SetFontSize(value);
-        }
+        set => CommonService.Options_SetFontSize(value);
     }
 
     protected override void OnInitialized()

@@ -14,13 +14,7 @@ public partial class InputAppFontFamily : ComponentBase, IDisposable
     public string FontFamily
     {
         get => CommonService.GetAppOptionsState().Options.FontFamily ?? "unset";
-        set
-        {
-            if (string.IsNullOrWhiteSpace(value))
-                CommonService.Options_SetFontFamily(null);
-
-            CommonService.Options_SetFontFamily(value.Trim());
-        }
+        set => CommonService.Options_SetFontFamily(value);
     }
 
     protected override void OnInitialized()

@@ -8,20 +8,20 @@ namespace Walk.Common.RazorLib.Options.Models;
 /// already in local storage. Whereas throughout the app they should never be null.
 /// </summary>
 public record CommonOptionsJsonDto(
-    int? FontSizeInPixels,
-    int? IconSizeInPixels,
-    int? ResizeHandleWidthInPixels,
-    int? ResizeHandleHeightInPixels,
-    int? ThemeKey,
+    int FontSizeInPixels,
+    int IconSizeInPixels,
+    int ResizeHandleWidthInPixels,
+    int ResizeHandleHeightInPixels,
+    int ThemeKey,
     string? FontFamily)
 {
     public CommonOptionsJsonDto()
         : this(
-            FontSizeInPixels: null,
-            IconSizeInPixels: null,
-            ResizeHandleWidthInPixels: null,
-            ResizeHandleHeightInPixels: null,
-            ThemeKey: null,
+            FontSizeInPixels: 0,
+            IconSizeInPixels: 0,
+            ResizeHandleWidthInPixels: 0,
+            ResizeHandleHeightInPixels: 0,
+            ThemeKey: 0,
             FontFamily: null)
     {
     }

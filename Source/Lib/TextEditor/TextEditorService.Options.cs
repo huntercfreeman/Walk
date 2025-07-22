@@ -16,6 +16,7 @@ public partial class TextEditorService
 {
     public const int Options_TAB_WIDTH_MIN = 2;
     public const int Options_TAB_WIDTH_MAX = 4;
+    public const int MINIMUM_CURSOR_SIZE_IN_PIXELS = 1;
 
     private readonly TextEditorService Options_textEditorService;
     private readonly CommonService Options_commonUtilityService;
@@ -120,24 +121,6 @@ public partial class TextEditorService
             Options_WriteToStorage();
     }
 
-    public void Options_SetUseMonospaceOptimizations(bool useMonospaceOptimizations, bool updateStorage = true)
-    {
-        var inState = Options_GetTextEditorOptionsState();
-
-        Options_textEditorOptionsState = new TextEditorOptionsState
-        {
-            Options = inState.Options with
-            {
-                UseMonospaceOptimizations = useMonospaceOptimizations,
-                RenderStateKey = Key<RenderState>.NewKey(),
-            },
-        };
-        SecondaryChanged?.Invoke(SecondaryChangedKind.StaticStateChanged);
-
-        if (updateStorage)
-            Options_WriteToStorage();
-    }
-
     public void Options_SetShowNewlines(bool showNewlines, bool updateStorage = true)
     {
         var inState = Options_GetTextEditorOptionsState();
@@ -222,26 +205,11 @@ public partial class TextEditorService
             WriteToStorage();*/
     }
 
-    public void Options_SetHeight(int? heightInPixels, bool updateStorage = true)
-    {
-        var inState = Options_GetTextEditorOptionsState();
-
-        Options_textEditorOptionsState = new TextEditorOptionsState
-        {
-            Options = inState.Options with
-            {
-                TextEditorHeightInPixels = heightInPixels,
-                RenderStateKey = Key<RenderState>.NewKey(),
-            },
-        };
-        SecondaryChanged?.Invoke(SecondaryChangedKind.StaticStateChanged);
-
-        if (updateStorage)
-            Options_WriteToStorage();
-    }
-
     public void Options_SetFontSize(int fontSizeInPixels, bool updateStorage = true)
     {
+        if (fontSizeInPixels < TextEditorOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS)
+            fontSizeInPixels = TextEditorOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS;
+    
         var inState = Options_GetTextEditorOptionsState();
 
         Options_textEditorOptionsState = new TextEditorOptionsState
@@ -263,6 +231,11 @@ public partial class TextEditorService
 
     public void Options_SetFontFamily(string? fontFamily, bool updateStorage = true)
     {
+        if (string.IsNullOrWhiteSpace(fontFamily))
+            fontFamily = null;
+        else
+            fontFamily = fontFamily.Trim();
+    
         var inState = Options_GetTextEditorOptionsState();
 
         Options_textEditorOptionsState = new TextEditorOptionsState
@@ -284,6 +257,9 @@ public partial class TextEditorService
 
     public void Options_SetCursorWidth(double cursorWidthInPixels, bool updateStorage = true)
     {
+        if (cursorWidthInPixels < MINIMUM_CURSOR_SIZE_IN_PIXELS)
+            cursorWidthInPixels = MINIMUM_CURSOR_SIZE_IN_PIXELS;
+    
         var inState = Options_GetTextEditorOptionsState();
 
         Options_textEditorOptionsState = new TextEditorOptionsState
@@ -387,32 +363,11 @@ public partial class TextEditorService
             }
         }*/
 
-        if (optionsJson.CommonOptionsJsonDto?.FontSizeInPixels is not null)
-            Options_SetFontSize(optionsJson.CommonOptionsJsonDto.FontSizeInPixels.Value, false);
-
-        if (optionsJson.CursorWidthInPixels is not null)
-            Options_SetCursorWidth(optionsJson.CursorWidthInPixels.Value, false);
-
-        if (optionsJson.TextEditorHeightInPixels is not null)
-            Options_SetHeight(optionsJson.TextEditorHeightInPixels.Value, false);
-
-        if (optionsJson.ShowNewlines is not null)
-            Options_SetShowNewlines(optionsJson.ShowNewlines.Value, false);
-
-        if (optionsJson.TabKeyBehavior is not null)
-            Options_SetTabKeyBehavior(optionsJson.TabKeyBehavior.Value, false);
-
-        if (optionsJson.TabWidth is not null)
-            Options_SetTabWidth(optionsJson.TabWidth.Value, false);
-
-        // TODO: OptionsSetUseMonospaceOptimizations will always get set to false (default for bool)
-        // for a first time user. This leads to a bad user experience since the proportional
-        // font logic is still being optimized. Therefore don't read in UseMonospaceOptimizations
-        // from local storage.
-        //
-        // OptionsSetUseMonospaceOptimizations(options.UseMonospaceOptimizations);
-
-        if (optionsJson.ShowWhitespace is not null)
-            Options_SetShowWhitespace(optionsJson.ShowWhitespace.Value, false);
+        Options_SetFontSize(optionsJson.CommonOptionsJsonDto.FontSizeInPixels, false);
+        Options_SetCursorWidth(optionsJson.CursorWidthInPixels, false);
+        Options_SetShowWhitespace(optionsJson.ShowWhitespace, false);
+        Options_SetShowNewlines(optionsJson.ShowNewlines, false);
+        Options_SetTabKeyBehavior(optionsJson.TabKeyBehavior, false);
+        Options_SetTabWidth(optionsJson.TabWidth, false);
     }
 }
