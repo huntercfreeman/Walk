@@ -1,6 +1,5 @@
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Options.Models;
-using Walk.Common.RazorLib.RenderStates.Models;
 
 namespace Walk.TextEditor.RazorLib.Options.Models;
 
@@ -38,6 +37,4 @@ public record TextEditorOptionsJsonDto(
     {
         
     }
-
-    public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();
 }

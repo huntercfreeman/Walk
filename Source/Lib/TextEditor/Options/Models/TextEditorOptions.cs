@@ -1,6 +1,5 @@
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Options.Models;
-using Walk.Common.RazorLib.RenderStates.Models;
 using Walk.TextEditor.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 
@@ -16,7 +15,7 @@ public record TextEditorOptions(
     double CursorWidthInPixels,
     CharAndLineMeasurements CharAndLineMeasurements)
 {
-    public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();
+    public Key<TextEditorOptions> RenderStateKey { get; init; } = Key<TextEditorOptions>.NewKey();
     
     /// <summary>
     /// Hacky setter on this property in particular because it can be overridden.
