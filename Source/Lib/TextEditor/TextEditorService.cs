@@ -770,7 +770,7 @@ public sealed partial class TextEditorService
         var initialThemeRecord = CommonService.GetThemeState().ThemeList.FirstOrDefault(
             x => x.Key == TextEditorConfig.InitialThemeKey);
 
-        if (initialThemeRecord is not null)
+        if (initialThemeRecord != default)
             Options_SetTheme(initialThemeRecord, updateStorage: false);
 
         await Options_SetFromLocalStorageAsync().ConfigureAwait(false);

@@ -19,12 +19,6 @@ public static class TextEditorFacts
     
     /* Start TextEditorKeymapFacts */
     public static readonly ITextEditorKeymap Keymap_DefaultKeymap = new TextEditorKeymapDefault();
-
-    public static List<ITextEditorKeymap> Keymap_AllKeymapsList { get; } =
-        new()
-        {
-            Keymap_DefaultKeymap,
-        };
     /* End TextEditorKeymapFacts */
     
     /* Start CompilerServiceDiagnosticPresentationFacts */

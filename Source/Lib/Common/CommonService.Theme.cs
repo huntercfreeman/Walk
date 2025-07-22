@@ -14,7 +14,7 @@ public partial class CommonService
         var inTheme = _themeState.ThemeList.FirstOrDefault(
             x => x.Key == theme.Key);
 
-        if (inTheme is not null)
+        if (inTheme != default)
             return;
 
         var outThemeList = new List<ThemeRecord>(_themeState.ThemeList);
@@ -33,7 +33,7 @@ public partial class CommonService
             var inTheme = _themeState.ThemeList.FirstOrDefault(
                 x => x.Key == theme.Key);
     
-            if (inTheme is not null)
+            if (inTheme != default)
                 return;
     
             outThemeList.Add(theme);
@@ -48,7 +48,7 @@ public partial class CommonService
         var inTheme = _themeState.ThemeList.FirstOrDefault(
             x => x.Key == themeKey);
 
-        if (inTheme is null)
+        if (inTheme == default)
             return;
 
         var outThemeList = new List<ThemeRecord>(_themeState.ThemeList);
