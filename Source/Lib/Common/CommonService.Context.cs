@@ -10,9 +10,6 @@ public partial class CommonService
     private ContextState _contextState = new();
     private ContextSwitchState _contextSwitchState = new();
     
-    public event Action? ContextStateChanged;
-    public event Action? ContextSwitchStateChanged;
-    
     public ContextState GetContextState() => _contextState;
     
     public ContextRecord GetContextRecord(int contextKey) =>
@@ -30,7 +27,7 @@ public partial class CommonService
             };
         }
 
-        ContextStateChanged?.Invoke();
+        // ContextStateChanged?.Invoke();
     }
     
     public void SetContextKeymap(int contextKey, IKeymap keymap)
@@ -67,7 +64,8 @@ public partial class CommonService
         }
 
         finalize:
-        ContextStateChanged?.Invoke();
+        return;
+        // ContextStateChanged?.Invoke();
     }
     
     public void RegisterContextSwitchGroup(ContextSwitchGroup contextSwitchGroup)
@@ -94,6 +92,7 @@ public partial class CommonService
         }
 
         finalize:
-        ContextStateChanged?.Invoke();
+        return;
+        // ContextStateChanged?.Invoke();
     }
 }

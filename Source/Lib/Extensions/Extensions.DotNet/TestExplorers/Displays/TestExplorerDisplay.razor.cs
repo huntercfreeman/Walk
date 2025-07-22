@@ -7,6 +7,7 @@ using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Extensions.DotNet.TestExplorers.Displays.Internals;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 
@@ -82,9 +83,9 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
             });
         }
     
-        DotNetService.TestExplorerStateChanged += OnTestExplorerStateChanged;
-        DotNetService.IdeService.TextEditorService.CommonService.TreeViewStateChanged += OnTreeViewStateChanged;
-        DotNetService.IdeService.TerminalStateChanged += OnTerminalStateChanged;
+        DotNetService.DotNetStateChanged += OnTestExplorerStateChanged;
+        DotNetService.IdeService.TextEditorService.CommonService.CommonUiStateChanged += OnTreeViewStateChanged;
+        DotNetService.IdeService.IdeStateChanged += OnTerminalStateChanged;
 
         _ = Task.Run(async () =>
         {
@@ -116,25 +117,34 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
         return !executionTerminal.HasExecutingProcess;
     }
     
-    private async void OnTestExplorerStateChanged()
+    private async void OnTestExplorerStateChanged(DotNetStateChangedKind dotNetStateChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (dotNetStateChangedKind == DotNetStateChangedKind.TestExplorerStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
-    private async void OnTreeViewStateChanged()
+    private async void OnTreeViewStateChanged(CommonUiEventKind commonUiEventKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (commonUiEventKind == CommonUiEventKind.TreeViewStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
-    private async void OnTerminalStateChanged()
+    private async void OnTerminalStateChanged(IdeStateChangedKind ideStateChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (ideStateChangedKind == IdeStateChangedKind.TerminalStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     public void Dispose()
     {
-        DotNetService.TestExplorerStateChanged -= OnTestExplorerStateChanged;
-        DotNetService.IdeService.TextEditorService.CommonService.TreeViewStateChanged -= OnTreeViewStateChanged;
-        DotNetService.IdeService.TerminalStateChanged -= OnTerminalStateChanged;
+        DotNetService.DotNetStateChanged -= OnTestExplorerStateChanged;
+        DotNetService.IdeService.TextEditorService.CommonService.CommonUiStateChanged -= OnTreeViewStateChanged;
+        DotNetService.IdeService.IdeStateChanged -= OnTerminalStateChanged;
     }
 }

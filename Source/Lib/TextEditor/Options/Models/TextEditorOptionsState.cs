@@ -17,13 +17,11 @@ public record struct TextEditorOptionsState
                 AppOptionsState.DEFAULT_RESIZE_HANDLE_HEIGHT_IN_PIXELS,
                 CommonFacts.VisualStudioDarkThemeClone.Key,
                 FontFamily: null),
-            false,
-            false,
+            ShowWhitespace: false,
+            ShowNewlines: false,
             TabKeyBehavior: true,
             TabWidth: 4,
-            null,
             DEFAULT_CURSOR_WIDTH_IN_PIXELS,
-            true,
             CharAndLineMeasurements: new(0, 0))
         {
             Keymap = TextEditorFacts.Keymap_DefaultKeymap,

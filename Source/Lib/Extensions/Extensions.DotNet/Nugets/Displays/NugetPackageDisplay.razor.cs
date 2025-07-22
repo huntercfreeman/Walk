@@ -26,8 +26,7 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        DotNetService.NuGetPackageManagerStateChanged += OnNuGetPackageManagerStateChanged;
-        DotNetService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
+        DotNetService.DotNetStateChanged += OnNuGetPackageManagerStateChanged;
     }
     
     protected override void OnParametersSet()
@@ -103,19 +102,17 @@ public partial class NugetPackageDisplay : ComponentBase, IDisposable
         DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
     }
     
-    private async void OnNuGetPackageManagerStateChanged()
+    private async void OnNuGetPackageManagerStateChanged(DotNetStateChangedKind dotNetStateChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
-    }
-    
-    private async void OnDotNetSolutionStateChanged()
-    {
-        await InvokeAsync(StateHasChanged);
+        if (dotNetStateChangedKind == DotNetStateChangedKind.SolutionStateChanged ||
+            dotNetStateChangedKind == DotNetStateChangedKind.NuGetPackageManagerStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     public void Dispose()
     {
-        DotNetService.NuGetPackageManagerStateChanged -= OnNuGetPackageManagerStateChanged;
-        DotNetService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
+        DotNetService.DotNetStateChanged -= OnNuGetPackageManagerStateChanged;
     }
 }

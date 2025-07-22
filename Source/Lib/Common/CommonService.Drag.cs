@@ -7,8 +7,6 @@ public partial class CommonService
 {
     private DragState _dragState = new();
     
-    public event Action? DragStateChanged;
-    
     public DragState GetDragState() => _dragState;
     
     public void Drag_ShouldDisplayAndMouseEventArgsSetAction(
@@ -23,7 +21,7 @@ public partial class CommonService
             MouseEventArgs = mouseEventArgs,
         };
         
-        DragStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.DragStateChanged);
         return;
     }
     
@@ -41,7 +39,7 @@ public partial class CommonService
             Drag = drag,
         };
         
-        DragStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.DragStateChanged);
         return;
     }
 }

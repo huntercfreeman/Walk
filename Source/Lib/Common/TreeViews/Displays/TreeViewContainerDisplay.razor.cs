@@ -47,7 +47,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        CommonService.TreeViewStateChanged += OnTreeViewStateChanged;
+        CommonService.CommonUiStateChanged += OnTreeViewStateChanged;
     }
 
     private int GetRootDepth(TreeViewNoType rootNode)
@@ -217,9 +217,12 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         return $"{left} {top}";
     }
     
-    public async void OnTreeViewStateChanged()
+    public async void OnTreeViewStateChanged(CommonUiEventKind commonUiEventKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (commonUiEventKind == CommonUiEventKind.TreeViewStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     /// <summary>
@@ -238,6 +241,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-        CommonService.TreeViewStateChanged -= OnTreeViewStateChanged;
+        CommonService.CommonUiStateChanged -= OnTreeViewStateChanged;
     }
 }

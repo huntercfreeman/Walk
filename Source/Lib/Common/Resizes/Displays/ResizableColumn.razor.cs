@@ -22,17 +22,14 @@ public partial class ResizableColumn : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        CommonService.DragStateChanged += DragStateWrapOnStateChanged;
-        CommonService.AppOptionsStateChanged += OnAppOptionsStateChanged;
+        CommonService.CommonUiStateChanged += DragStateWrapOnStateChanged;
     }
     
-    private async void OnAppOptionsStateChanged()
+    private async void DragStateWrapOnStateChanged(CommonUiEventKind commonUiEventKind)
     {
-        await InvokeAsync(StateHasChanged);
-    }
-
-    private async void DragStateWrapOnStateChanged()
-    {
+        if (commonUiEventKind != CommonUiEventKind.DragStateChanged)
+            return;
+            
         if (!CommonService.GetDragState().ShouldDisplay)
         {
             bool wasTargetOfDragging = _dragEventHandler is not null;
@@ -87,7 +84,6 @@ public partial class ResizableColumn : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        CommonService.DragStateChanged -= DragStateWrapOnStateChanged;
-        CommonService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
+        CommonService.CommonUiStateChanged -= DragStateWrapOnStateChanged;
     }
 }

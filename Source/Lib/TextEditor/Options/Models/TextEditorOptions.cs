@@ -13,9 +13,7 @@ public record TextEditorOptions(
     bool ShowNewlines,
     bool TabKeyBehavior,
     int TabWidth,
-    int? TextEditorHeightInPixels,
     double CursorWidthInPixels,
-    bool UseMonospaceOptimizations,
     CharAndLineMeasurements CharAndLineMeasurements)
 {
     public Key<RenderState> RenderStateKey { get; init; } = Key<RenderState>.NewKey();

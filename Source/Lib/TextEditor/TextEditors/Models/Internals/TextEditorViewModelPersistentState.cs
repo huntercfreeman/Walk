@@ -406,7 +406,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         }
     
         ComponentData = componentData;
-        TextEditorService.CommonService.AppDimensionStateChanged += AppDimensionStateWrap_StateChanged;
+        TextEditorService.CommonService.CommonUiStateChanged += AppDimensionStateWrap_StateChanged;
 
         // Tell the view model what the (already known) font-size measurements and text-editor measurements are.
         PostScrollAndRemeasure(useExtraEvent: false);
@@ -438,11 +438,14 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         }
     
         ComponentData = null;
-        TextEditorService.CommonService.AppDimensionStateChanged -= AppDimensionStateWrap_StateChanged;
+        TextEditorService.CommonService.CommonUiStateChanged -= AppDimensionStateWrap_StateChanged;
     }
 
-    private void AppDimensionStateWrap_StateChanged()
+    private void AppDimensionStateWrap_StateChanged(CommonUiEventKind commonUiEventKind)
     {
+        if (commonUiEventKind != CommonUiEventKind.AppDimensionStateChanged)
+            return;
+        
         // The UI was resized, and therefore the text-editor measurements need to be re-measured.
         //
         // The font-size is theoretically un-changed,

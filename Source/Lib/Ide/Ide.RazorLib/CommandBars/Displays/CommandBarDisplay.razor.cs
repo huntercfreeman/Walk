@@ -12,7 +12,7 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
         
     protected override void OnInitialized()
     {
-        IdeService.CommandBarStateChanged += OnCommandBarStateChanged;
+        IdeService.IdeStateChanged += OnCommandBarStateChanged;
     }
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -31,13 +31,16 @@ public partial class CommandBarDisplay : ComponentBase, IDisposable
             IdeService.CommonService.SetWidget(null);
     }
     
-    private async void OnCommandBarStateChanged()
+    private async void OnCommandBarStateChanged(IdeStateChangedKind ideStateChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (ideStateChangedKind == IdeStateChangedKind.CommandBarStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     public void Dispose()
     {
-        IdeService.CommandBarStateChanged -= OnCommandBarStateChanged;
+        IdeService.IdeStateChanged -= OnCommandBarStateChanged;
     }
 }

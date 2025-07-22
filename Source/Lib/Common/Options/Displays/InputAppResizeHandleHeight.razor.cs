@@ -14,27 +14,24 @@ public partial class InputAppResizeHandleHeight : ComponentBase, IDisposable
     public int ResizeHandleHeightInPixels
     {
         get => CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels;
-        set
-        {
-            if (value < AppOptionsState.MINIMUM_RESIZE_HANDLE_HEIGHT_IN_PIXELS)
-                value = AppOptionsState.MINIMUM_RESIZE_HANDLE_HEIGHT_IN_PIXELS;
-
-            CommonService.Options_SetResizeHandleHeight(value);
-        }
+        set => CommonService.Options_SetResizeHandleHeight(value);
     }
 
     protected override void OnInitialized()
     {
-        CommonService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
+        CommonService.CommonUiStateChanged += AppOptionsStateWrapOnStateChanged;
     }
 
-    private async void AppOptionsStateWrapOnStateChanged()
+    private async void AppOptionsStateWrapOnStateChanged(CommonUiEventKind commonUiEventKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (commonUiEventKind == CommonUiEventKind.AppOptionsStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     public void Dispose()
     {
-        CommonService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
+        CommonService.CommonUiStateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }

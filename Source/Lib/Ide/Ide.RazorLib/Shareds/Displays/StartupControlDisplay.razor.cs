@@ -38,8 +38,7 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
         
     protected override void OnInitialized()
     {
-        IdeService.TerminalStateChanged += Shared_OnStateChanged;
-        IdeService.Ide_StartupControlStateChanged += Shared_OnStateChanged;
+        IdeService.IdeStateChanged += Shared_OnStateChanged;
     }
 
     private async Task StartProgramWithoutDebuggingOnClick(bool isExecuting)
@@ -130,11 +129,17 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
         return false;
     }
     
-    private async void Shared_OnStateChanged() => await InvokeAsync(StateHasChanged);
+    private async void Shared_OnStateChanged(IdeStateChangedKind ideStateChangedKind)
+    {
+        if (ideStateChangedKind == IdeStateChangedKind.TerminalStateChanged ||
+            ideStateChangedKind == IdeStateChangedKind.Ide_StartupControlStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
     
     public void Dispose()
     {
-        IdeService.TerminalStateChanged -= Shared_OnStateChanged;
-        IdeService.Ide_StartupControlStateChanged -= Shared_OnStateChanged;
+        IdeService.IdeStateChanged -= Shared_OnStateChanged;
     }
 }

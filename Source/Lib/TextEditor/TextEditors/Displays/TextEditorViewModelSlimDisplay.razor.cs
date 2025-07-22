@@ -118,9 +118,8 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         CssOnInitialized();
         
         TextEditorService.TextEditorStateChanged += GeneralOnStateChangedEventHandler;
-        TextEditorService.OptionsChanged += OnOptionsChanged;
-        TextEditorService.ViewModel_CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
-        TextEditorService.CommonService.DragStateChanged += DragStateWrapOnStateChanged;
+        TextEditorService.SecondaryChanged += OnOptionsChanged;
+        TextEditorService.CommonService.CommonUiStateChanged += DragStateWrapOnStateChanged;
     }
     
     protected override void OnParametersSet()
@@ -311,8 +310,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     }
 
     private async void GeneralOnStateChangedEventHandler() => await InvokeAsync(StateHasChanged);
-        
-    private async void ViewModel_CursorShouldBlinkChanged() => await InvokeAsync(StateHasChanged);
     
     [JSInvokable]
     public async Task FocusTextEditorAsync()
@@ -720,8 +717,11 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         });
     }
 
-    private async void DragStateWrapOnStateChanged()
+    private async void DragStateWrapOnStateChanged(CommonUiEventKind commonUiEventKind)
     {
+        if (commonUiEventKind != CommonUiEventKind.DragStateChanged)
+            return;
+    
         if (!TextEditorService.CommonService.GetDragState().ShouldDisplay)
         {
             // NOTE: '_mouseDownEventArgs' being non-null is what indicates that the subscription is active.
@@ -858,29 +858,32 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         return Task.CompletedTask;
     }
     
-    private async void OnOptionsChanged(OptionsChangedKind optionsChangedKind)
+    private async void OnOptionsChanged(SecondaryChangedKind secondaryChangedKind)
     {
-        if (optionsChangedKind == OptionsChangedKind.StaticStateChanged)
+        if (secondaryChangedKind == SecondaryChangedKind.StaticStateChanged)
         {
             _componentData.SetWrapperCssAndStyle();
             await InvokeAsync(StateHasChanged);
         }
-        else if (optionsChangedKind == OptionsChangedKind.MeasuredStateChanged)
+        else if (secondaryChangedKind == SecondaryChangedKind.MeasuredStateChanged)
         {
             _componentData.SetWrapperCssAndStyle();
             QueueCalculateVirtualizationResultBackgroundTask();
+        }
+        else if (secondaryChangedKind == SecondaryChangedKind.ViewModel_CursorShouldBlinkChanged)
+        {
+            await InvokeAsync(StateHasChanged);
         }
     }
     
     public void Dispose()
     {
         // ScrollbarSection.razor.cs
-        TextEditorService.CommonService.DragStateChanged -= DragStateWrapOnStateChanged;
+        TextEditorService.CommonService.CommonUiStateChanged -= DragStateWrapOnStateChanged;
     
         // TextEditorViewModelDisplay.razor.cs
         TextEditorService.TextEditorStateChanged -= GeneralOnStateChangedEventHandler;
-        TextEditorService.OptionsChanged -= OnOptionsChanged;
-        TextEditorService.ViewModel_CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
+        TextEditorService.SecondaryChanged -= OnOptionsChanged;
 
         var linkedViewModel = _linkedViewModel;
         if (linkedViewModel is not null)

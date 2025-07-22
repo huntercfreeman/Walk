@@ -32,8 +32,8 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
     {
         _viewModel = new(DotNetSolutionModel, DotNetService.IdeService.TextEditorService.CommonService.EnvironmentProvider);
         
-        DotNetService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
-        DotNetService.IdeService.TerminalStateChanged += OnTerminalStateChanged;
+        DotNetService.DotNetStateChanged += OnDotNetSolutionStateChanged;
+        DotNetService.IdeService.IdeStateChanged += OnTerminalStateChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -220,19 +220,25 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
         }
     }
     
-    public async void OnDotNetSolutionStateChanged()
+    public async void OnDotNetSolutionStateChanged(DotNetStateChangedKind dotNetStateChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (dotNetStateChangedKind == DotNetStateChangedKind.SolutionStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
-    public async void OnTerminalStateChanged()
+    public async void OnTerminalStateChanged(IdeStateChangedKind ideStateChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (ideStateChangedKind == IdeStateChangedKind.TerminalStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     public void Dispose()
     {
-        DotNetService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
-        DotNetService.IdeService.TerminalStateChanged -= OnTerminalStateChanged;
+        DotNetService.DotNetStateChanged -= OnDotNetSolutionStateChanged;
+        DotNetService.IdeService.IdeStateChanged -= OnTerminalStateChanged;
     }
 }

@@ -122,8 +122,7 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        TextEditorService.ViewModel_CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
-        OnCursorShouldBlinkChanged();
+        TextEditorService.SecondaryChanged += OnCursorShouldBlinkChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -543,13 +542,16 @@ public partial class FindOverlayDisplay : ComponentBase, IDisposable
         });
     }
     
-    private async void OnCursorShouldBlinkChanged()
+    private async void OnCursorShouldBlinkChanged(SecondaryChangedKind secondaryChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (secondaryChangedKind == SecondaryChangedKind.ViewModel_CursorShouldBlinkChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     public void Dispose()
     {
-        TextEditorService.ViewModel_CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
+        TextEditorService.SecondaryChanged -= OnCursorShouldBlinkChanged;
     }
 }

@@ -22,7 +22,7 @@ public partial class DotNetService : IBackgroundTaskGroup, IDisposable
         AppDataService = appDataService;
         _httpClient = httpClient;
         
-        DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
+        DotNetStateChanged += OnDotNetSolutionStateChanged;
     }
     
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
@@ -116,6 +116,6 @@ public partial class DotNetService : IBackgroundTaskGroup, IDisposable
     
     public void Dispose()
     {
-        DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
+        DotNetStateChanged -= OnDotNetSolutionStateChanged;
     }
 }

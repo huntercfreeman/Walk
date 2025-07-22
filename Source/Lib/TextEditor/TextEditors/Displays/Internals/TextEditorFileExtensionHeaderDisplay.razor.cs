@@ -36,7 +36,7 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase, IDisp
         // ShouldRender does not invoke on the initial render.
         _ = ShouldRender();
         
-        TextEditorService.OptionsChanged += OnTextEditorWrapperCssStateChanged;
+        TextEditorService.SecondaryChanged += OnTextEditorWrapperCssStateChanged;
     }
     
     protected override bool ShouldRender()
@@ -67,9 +67,9 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase, IDisp
         return true;
     }
     
-    private async void OnTextEditorWrapperCssStateChanged(OptionsChangedKind optionsChangedKind)
+    private async void OnTextEditorWrapperCssStateChanged(SecondaryChangedKind secondaryChangedKind)
     {
-        if (optionsChangedKind == OptionsChangedKind.TextEditorWrapperCssStateChanged)
+        if (secondaryChangedKind == SecondaryChangedKind.TextEditorWrapperCssStateChanged)
         {
             await InvokeAsync(StateHasChanged);
         }
@@ -77,6 +77,6 @@ public partial class TextEditorFileExtensionHeaderDisplay : ComponentBase, IDisp
     
     public void Dispose()
     {
-        TextEditorService.OptionsChanged -= OnTextEditorWrapperCssStateChanged;
+        TextEditorService.SecondaryChanged -= OnTextEditorWrapperCssStateChanged;
     }
 }

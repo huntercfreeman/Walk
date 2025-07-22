@@ -14,27 +14,24 @@ public partial class InputAppFontSize : ComponentBase, IDisposable
     public int FontSizeInPixels
     {
         get => CommonService.GetAppOptionsState().Options.FontSizeInPixels;
-        set
-        {
-            if (value < AppOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS)
-                value = AppOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS;
-
-            CommonService.Options_SetFontSize(value);
-        }
+        set => CommonService.Options_SetFontSize(value);
     }
 
     protected override void OnInitialized()
     {
-        CommonService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
+        CommonService.CommonUiStateChanged += AppOptionsStateWrapOnStateChanged;
     }
 
-    private async void AppOptionsStateWrapOnStateChanged()
+    private async void AppOptionsStateWrapOnStateChanged(CommonUiEventKind commonUiEventKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (commonUiEventKind == CommonUiEventKind.AppOptionsStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     public void Dispose()
     {
-        CommonService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
+        CommonService.CommonUiStateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }

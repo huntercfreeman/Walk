@@ -42,8 +42,6 @@ public partial class DotNetService
 
     private TestExplorerState _testExplorerState = new();
 
-    public event Action? TestExplorerStateChanged;
-
     public TestExplorerState GetTestExplorerState() => _testExplorerState;
 
     public void ReduceWithAction(Func<TestExplorerState, TestExplorerState> withFunc)
@@ -54,7 +52,7 @@ public partial class DotNetService
 
             _testExplorerState = withFunc.Invoke(inState);
 
-            TestExplorerStateChanged?.Invoke();
+            DotNetStateChanged?.Invoke(DotNetStateChangedKind.TestExplorerStateChanged);
             return;
         }
     }
@@ -67,7 +65,7 @@ public partial class DotNetService
 
             if (dimensionUnit.Purpose != CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN)
             {
-                TestExplorerStateChanged?.Invoke();
+                DotNetStateChanged?.Invoke(DotNetStateChangedKind.TestExplorerStateChanged);
                 return;
             }
 
@@ -75,7 +73,7 @@ public partial class DotNetService
             {
                 if (inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
                 {
-                    TestExplorerStateChanged?.Invoke();
+                    DotNetStateChanged?.Invoke(DotNetStateChangedKind.TestExplorerStateChanged);
                     return;
                 }
 
@@ -84,7 +82,7 @@ public partial class DotNetService
 
                 if (existingDimensionUnit.Purpose is not null)
                 {
-                    TestExplorerStateChanged?.Invoke();
+                    DotNetStateChanged?.Invoke(DotNetStateChangedKind.TestExplorerStateChanged);
                     return;
                 }
 
@@ -95,7 +93,7 @@ public partial class DotNetService
             {
                 if (inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
                 {
-                    TestExplorerStateChanged?.Invoke();
+                    DotNetStateChanged?.Invoke(DotNetStateChangedKind.TestExplorerStateChanged);
                     return;
                 }
 
@@ -104,14 +102,14 @@ public partial class DotNetService
 
                 if (existingDimensionUnit.Purpose is not null)
                 {
-                    TestExplorerStateChanged?.Invoke();
+                    DotNetStateChanged?.Invoke(DotNetStateChangedKind.TestExplorerStateChanged);
                     return;
                 }
 
                 inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
             }
 
-            TestExplorerStateChanged?.Invoke();
+            DotNetStateChanged?.Invoke(DotNetStateChangedKind.TestExplorerStateChanged);
             return;
         }
     }
@@ -175,8 +173,11 @@ public partial class DotNetService
         return Task.CompletedTask;
     }
 
-    private async void OnDotNetSolutionStateChanged()
+    private async void OnDotNetSolutionStateChanged(DotNetStateChangedKind dotNetStateChangedKind)
     {
+        if (dotNetStateChangedKind != DotNetStateChangedKind.SolutionStateChanged)
+            return;
+    
         var solutionFilePathWasNull = GetTestExplorerState().SolutionFilePath is null;
 
         ReduceWithAction(inState => inState with

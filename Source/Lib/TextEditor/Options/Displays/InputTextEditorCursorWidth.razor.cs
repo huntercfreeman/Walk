@@ -11,28 +11,23 @@ public partial class InputTextEditorCursorWidth : ComponentBase, IDisposable
     [Parameter]
     public InputViewModel InputViewModel { get; set; } = InputViewModel.Empty;
 
-    private const double MINIMUM_CURSOR_SIZE_IN_PIXELS = 1;
-
     private double TextEditorCursorWidth
     {
         get => TextEditorService.Options_GetTextEditorOptionsState().Options.CursorWidthInPixels;
         set
         {
-            if (value < MINIMUM_CURSOR_SIZE_IN_PIXELS)
-                value = MINIMUM_CURSOR_SIZE_IN_PIXELS;
-
             TextEditorService.Options_SetCursorWidth(value);
         }
     }
     
     protected override void OnInitialized()
     {
-        TextEditorService.OptionsChanged += OnOptionStaticStateChanged;
+        TextEditorService.SecondaryChanged += OnOptionStaticStateChanged;
     }
     
-    private async void OnOptionStaticStateChanged(OptionsChangedKind optionsChangedKind)
+    private async void OnOptionStaticStateChanged(SecondaryChangedKind secondaryChangedKind)
     {
-        if (optionsChangedKind == OptionsChangedKind.StaticStateChanged)
+        if (secondaryChangedKind == SecondaryChangedKind.StaticStateChanged)
         {
             await InvokeAsync(StateHasChanged);
         }
@@ -40,6 +35,6 @@ public partial class InputTextEditorCursorWidth : ComponentBase, IDisposable
     
     public void Dispose()
     {
-        TextEditorService.OptionsChanged -= OnOptionStaticStateChanged;
+        TextEditorService.SecondaryChanged -= OnOptionStaticStateChanged;
     }
 }

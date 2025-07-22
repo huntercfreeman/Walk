@@ -7,8 +7,6 @@ public partial class CommonService
 {
     private KeymapState _keymapState = new();
     
-    public event Action? KeymapStateChanged;
-    
     public KeymapState GetKeymapState() => _keymapState;
     
     public void RegisterKeymapLayer(KeymapLayer keymapLayer)
@@ -29,7 +27,7 @@ public partial class CommonService
             }
         }
 
-        KeymapStateChanged?.Invoke();
+        // KeymapStateChanged?.Invoke();
     }
     
     public void DisposeKeymapLayer(int keymapLayerKey)
@@ -52,6 +50,6 @@ public partial class CommonService
             }
         }
 
-        KeymapStateChanged?.Invoke();
+        // KeymapStateChanged?.Invoke();
     }
 }

@@ -24,9 +24,10 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
         get => _fontSizeInPixels;
         set
         {
+            // This has to be done here as well as the Service API due to the throttling using it.
             if (value < TextEditorOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS)
                 value = TextEditorOptionsState.MINIMUM_FONT_SIZE_IN_PIXELS;
-                
+        
             _fontSizeInPixels = value;
 
             _throttle.Run(_ =>
@@ -39,7 +40,7 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        TextEditorService.OptionsChanged += OptionsWrapOnStateChanged;
+        TextEditorService.SecondaryChanged += OptionsWrapOnStateChanged;
         ReadActualFontSizeInPixels();
     }
     
@@ -61,9 +62,9 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
         _fontSizeInPixels = temporaryFontSizeInPixels.Value;
     }
 
-    private async void OptionsWrapOnStateChanged(OptionsChangedKind optionsChangedKind)
+    private async void OptionsWrapOnStateChanged(SecondaryChangedKind secondaryChangedKind)
     {
-        if (optionsChangedKind == OptionsChangedKind.StaticStateChanged && !_hasFocus)
+        if (secondaryChangedKind == SecondaryChangedKind.StaticStateChanged && !_hasFocus)
         {
             ReadActualFontSizeInPixels();
             await InvokeAsync(StateHasChanged);
@@ -82,6 +83,6 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TextEditorService.OptionsChanged -= OptionsWrapOnStateChanged;
+        TextEditorService.SecondaryChanged -= OptionsWrapOnStateChanged;
     }
 }

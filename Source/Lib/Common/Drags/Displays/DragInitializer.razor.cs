@@ -77,12 +77,15 @@ public partial class DragInitializer : ComponentBase, IDisposable
             }
         });
     
-        CommonService.DragStateChanged += OnDragStateChanged;
+        CommonService.CommonUiStateChanged += OnDragStateChanged;
     }
     
-    private async void OnDragStateChanged()
+    private async void OnDragStateChanged(CommonUiEventKind commonUiEventKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (commonUiEventKind == CommonUiEventKind.DragStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     private void DRAG_DispatchClearDragStateAction()
@@ -116,6 +119,6 @@ public partial class DragInitializer : ComponentBase, IDisposable
     
     public void Dispose()
     {
-        CommonService.DragStateChanged -= OnDragStateChanged;
+        CommonService.CommonUiStateChanged -= OnDragStateChanged;
     }
 }

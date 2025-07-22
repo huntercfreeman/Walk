@@ -16,8 +16,6 @@ public partial class DotNetService
         warningList: new(),
         otherList: new());
 
-    public event Action? StateChanged;
-
     /// <summary>
     /// This immutable list is calculated everytime, so if necessary invoke once and then store the result.
     /// </summary>
@@ -287,7 +285,7 @@ public partial class DotNetService
                 otherList: allDiagnosticLineList.Where(x => x.DiagnosticLineKind == DiagnosticLineKind.Other).ToList());
         }
 
-        StateChanged?.Invoke();
+        DotNetStateChanged?.Invoke(DotNetStateChangedKind.CliOutputParserStateChanged);
     }
 
     /// <summary>

@@ -8,8 +8,6 @@ public partial class DotNetService
 {
     private DotNetSolutionState _dotNetSolutionState = new();
 
-    public event Action? DotNetSolutionStateChanged;
-
     public DotNetSolutionState GetDotNetSolutionState() => _dotNetSolutionState;
 
     public void ReduceRegisterAction(DotNetSolutionModel argumentDotNetSolutionModel)
@@ -20,7 +18,7 @@ public partial class DotNetService
 
         if (dotNetSolutionModel is not null)
         {
-            DotNetSolutionStateChanged?.Invoke();
+            DotNetStateChanged?.Invoke(DotNetStateChangedKind.SolutionStateChanged);
             return;
         }
 
@@ -32,7 +30,7 @@ public partial class DotNetService
             DotNetSolutionsList = nextList
         };
 
-        DotNetSolutionStateChanged?.Invoke();
+        DotNetStateChanged?.Invoke(DotNetStateChangedKind.SolutionStateChanged);
         return;
     }
 
@@ -44,7 +42,7 @@ public partial class DotNetService
 
         if (dotNetSolutionModel is null)
         {
-            DotNetSolutionStateChanged?.Invoke();
+            DotNetStateChanged?.Invoke(DotNetStateChangedKind.SolutionStateChanged);
             return;
         }
 
@@ -56,7 +54,7 @@ public partial class DotNetService
             DotNetSolutionsList = nextList
         };
 
-        DotNetSolutionStateChanged?.Invoke();
+        DotNetStateChanged?.Invoke(DotNetStateChangedKind.SolutionStateChanged);
         return;
     }
 
@@ -67,7 +65,7 @@ public partial class DotNetService
         var withAction = (WithAction)withActionInterface;
         _dotNetSolutionState = withAction.WithFunc.Invoke(inState);
 
-        DotNetSolutionStateChanged?.Invoke();
+        DotNetStateChanged?.Invoke(DotNetStateChangedKind.SolutionStateChanged);
         return;
     }
 

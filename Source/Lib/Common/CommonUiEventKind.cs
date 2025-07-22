@@ -1,4 +1,4 @@
-namespace Walk.Common.RazorLib.Dynamics.Models;
+namespace Walk.Common.RazorLib;
 
 public enum CommonUiEventKind
 {
@@ -10,4 +10,8 @@ public enum CommonUiEventKind
     DropdownStateChanged,
     OutlineStateChanged,
     TooltipStateChanged,
+    TreeViewStateChanged,
+    DragStateChanged,
+    AppDimensionStateChanged,
+    AppOptionsStateChanged,
 }

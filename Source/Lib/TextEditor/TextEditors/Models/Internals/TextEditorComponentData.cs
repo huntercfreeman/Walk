@@ -171,20 +171,6 @@ public sealed class TextEditorComponentData
         
         stringBuilder.Append(WrapperCssStyle);
         stringBuilder.Append(" ");
-        // string GetGlobalHeightInPixelsStyling()
-        {
-            var heightInPixels = TextEditorViewModelSlimDisplay.TextEditorService.Options_GetTextEditorOptionsState().Options.TextEditorHeightInPixels;
-    
-            if (heightInPixels is not null)
-            {
-                var heightInPixelsInvariantCulture = heightInPixels.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
-            
-                stringBuilder.Append("height: ");
-                stringBuilder.Append(heightInPixelsInvariantCulture);
-                stringBuilder.Append("px;");
-            }
-        }
-        stringBuilder.Append(" ");
         stringBuilder.Append(ViewModelDisplayOptions.TextEditorStyleCssString);
         stringBuilder.Append(" ");
         // string GetHeightCssStyle()

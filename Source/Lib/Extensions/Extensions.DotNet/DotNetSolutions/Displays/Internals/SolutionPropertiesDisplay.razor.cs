@@ -9,16 +9,19 @@ public partial class SolutionPropertiesDisplay : ComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
-        DotNetService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
+        DotNetService.DotNetStateChanged += OnDotNetSolutionStateChanged;
     }
     
-    private async void OnDotNetSolutionStateChanged()
+    private async void OnDotNetSolutionStateChanged(DotNetStateChangedKind dotNetStateChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (dotNetStateChangedKind == DotNetStateChangedKind.SolutionStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     public void Dispose()
     {
-        DotNetService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
+        DotNetService.DotNetStateChanged -= OnDotNetSolutionStateChanged;
     }
 }

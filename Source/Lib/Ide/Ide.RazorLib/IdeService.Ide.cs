@@ -11,9 +11,6 @@ public partial class IdeService
     private IdeState _ideState = new();
     private StartupControlState _startupControlState = new();
 
-    public event Action? Ide_IdeStateChanged;
-    public event Action? Ide_StartupControlStateChanged;
-
     public IdeState GetIdeState() => _ideState;
     public StartupControlState GetIdeStartupControlState() => _startupControlState;
 
@@ -36,7 +33,7 @@ public partial class IdeService
             }
         }
 
-        Ide_IdeStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_IdeStateChanged);
     }
 
     public void Ide_SetMenuFile(MenuRecord menu)
@@ -146,7 +143,7 @@ public partial class IdeService
             }
         }
 
-        Ide_StartupControlStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_StartupControlStateChanged);
     }
 
     public void Ide_DisposeStartupControl(Key<IStartupControlModel> startupControlKey)
@@ -173,7 +170,7 @@ public partial class IdeService
             }
         }
 
-        Ide_StartupControlStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_StartupControlStateChanged);
     }
 
     public void Ide_SetActiveStartupControlKey(Key<IStartupControlModel> startupControlKey)
@@ -200,11 +197,11 @@ public partial class IdeService
             }
         }
 
-        Ide_StartupControlStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_StartupControlStateChanged);
     }
 
     public void Ide_TriggerStartupControlStateChanged()
     {
-        Ide_StartupControlStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_StartupControlStateChanged);
     }
 }

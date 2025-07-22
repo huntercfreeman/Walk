@@ -9,8 +9,6 @@ public partial class IdeService
 {
     private TerminalGroupState _terminalGroupState = new();
 
-    public event Action? TerminalGroupStateChanged;
-
     public TerminalGroupState GetTerminalGroupState() => _terminalGroupState;
 
     public void TerminalGroup_SetActiveTerminal(Key<ITerminal> terminalKey)
@@ -23,7 +21,7 @@ public partial class IdeService
             };
         }
 
-        TerminalGroupStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.TerminalGroupStateChanged);
     }
 
     public void TerminalGroup_InitializeResizeHandleDimensionUnit(DimensionUnit dimensionUnit)
@@ -52,6 +50,6 @@ public partial class IdeService
             }
         }
 
-        TerminalGroupStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.TerminalGroupStateChanged);
     }
 }

@@ -22,7 +22,7 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        DotNetService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
+        DotNetService.DotNetStateChanged += OnDotNetSolutionStateChanged;
     
         _solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeyboardEventHandler(
             DotNetService.IdeService);
@@ -65,13 +65,16 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
         DotNetService.IdeService.TextEditorService.CommonService.Dialog_ReduceRegisterAction(dialogRecord);
     }
     
-    public async void OnDotNetSolutionStateChanged()
+    public async void OnDotNetSolutionStateChanged(DotNetStateChangedKind dotNetStateChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (dotNetStateChangedKind == DotNetStateChangedKind.SolutionStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     public void Dispose()
     {
-        DotNetService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
+        DotNetService.DotNetStateChanged -= OnDotNetSolutionStateChanged;
     }
 }

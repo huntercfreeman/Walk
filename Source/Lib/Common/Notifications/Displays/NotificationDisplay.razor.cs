@@ -39,16 +39,6 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
         $" ({COUNT_OF_CONTROL_BUTTONS} * ({IconSizeInPixelsCssValue}px)) -" +
         $" ({COUNT_OF_CONTROL_BUTTONS} * ({CommonFacts.HtmlFacts_Button_ButtonPaddingHorizontalTotalInPixelsCssValue})));";
 
-    protected override void OnInitialized()
-    {
-        CommonService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
-    }
-
-    private async void AppOptionsStateWrapOnStateChanged()
-    {
-        await InvokeAsync(StateHasChanged);
-    }
-
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -170,7 +160,5 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         _notificationOverlayCancellationTokenSource.Cancel();
-
-        CommonService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }
