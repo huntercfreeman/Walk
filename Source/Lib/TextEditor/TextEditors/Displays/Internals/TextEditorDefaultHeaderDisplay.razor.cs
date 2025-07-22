@@ -4,9 +4,7 @@ using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 // HeaderDriver.cs
 using Microsoft.AspNetCore.Components.Web;
-using Walk.Common.RazorLib.WatchWindows.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
-using Walk.Common.RazorLib.WatchWindows.Displays;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Menus.Models;
@@ -90,41 +88,6 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
             return ValueTask.CompletedTask;
         }));
         return Task.CompletedTask;
-    }
-
-    public void ShowWatchWindowDisplayDialogOnClick()
-    {
-        var virtualizationResult = GetVirtualizationResult();
-        if (!virtualizationResult.IsValid)
-            return;
-        
-        var model = virtualizationResult.Model;
-
-        if (model is null)
-            return;
-
-        var watchWindowObject = new WatchWindowObject(
-            virtualizationResult,
-            typeof(TextEditorVirtualizationResult),
-            nameof(TextEditorVirtualizationResult),
-            true);
-
-        var dialogRecord = new DialogViewModel(
-            Key<IDynamicViewModel>.NewKey(),
-            $"WatchWindow: {model.PersistentState.ResourceUri}",
-            typeof(WatchWindowDisplay),
-            new Dictionary<string, object?>
-            {
-                {
-                    nameof(WatchWindowDisplay.WatchWindowObject),
-                    watchWindowObject
-                }
-            },
-            null,
-            true,
-            null);
-
-        TextEditorService.CommonService.Dialog_ReduceRegisterAction(dialogRecord);
     }
 
     public Task DoCopyOnClick(MouseEventArgs arg)
