@@ -16,7 +16,6 @@ public partial class InputAppTheme : IDisposable
     protected override void OnInitialized()
     {
         CommonService.AppOptionsStateChanged += OnAppOptionsStateChanged;
-        CommonService.ThemeStateChanged += OnStateChanged;
     }
 
     private async void OnStateChanged()
@@ -63,6 +62,5 @@ public partial class InputAppTheme : IDisposable
     public void Dispose()
     {
         CommonService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
-        CommonService.ThemeStateChanged -= OnStateChanged;
     }
 }

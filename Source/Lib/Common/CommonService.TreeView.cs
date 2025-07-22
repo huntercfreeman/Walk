@@ -65,7 +65,7 @@ public partial class CommonService
 
         if (inContainer is not null)
         {
-            TreeViewStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
             return;
         }
 
@@ -73,7 +73,7 @@ public partial class CommonService
         outContainerList.Add(container);
         
         _treeViewState = inState with { ContainerList = outContainerList };
-        TreeViewStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
         return;
     }
 
@@ -86,7 +86,7 @@ public partial class CommonService
 
         if (indexContainer == -1)
         {
-            TreeViewStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
             return;
         }
         
@@ -94,7 +94,7 @@ public partial class CommonService
         outContainerList.RemoveAt(indexContainer);
         
         _treeViewState = inState with { ContainerList = outContainerList };
-        TreeViewStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
         return;
     }
 
@@ -107,7 +107,7 @@ public partial class CommonService
 
         if (indexContainer == -1)
         {
-            TreeViewStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
             return;
         }
         
@@ -123,7 +123,7 @@ public partial class CommonService
         outContainerList[indexContainer] = outContainer;
         
         _treeViewState = inState with { ContainerList = outContainerList };
-        TreeViewStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
         return;
     }
 
@@ -136,7 +136,7 @@ public partial class CommonService
 
         if (inContainer is null)
         {
-            TreeViewStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
             return;
         }
 
@@ -162,7 +162,7 @@ public partial class CommonService
 
         if (indexContainer == -1)
         {
-            TreeViewStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
             return;
         }
 
@@ -174,7 +174,7 @@ public partial class CommonService
         outContainerList[indexContainer] = outContainer;
         
         _treeViewState = inState with { ContainerList = outContainerList };
-        TreeViewStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
         return;
     }
 
@@ -191,7 +191,7 @@ public partial class CommonService
 
         if (indexContainer == -1)
         {
-            TreeViewStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
             return;
         }
 
@@ -204,7 +204,7 @@ public partial class CommonService
         outContainerList[indexContainer] = outContainer;
 
         _treeViewState = inState with { ContainerList = outContainerList };
-        TreeViewStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
         return;
     }
 
@@ -219,7 +219,7 @@ public partial class CommonService
 
         if (indexContainer == -1)
         {
-            TreeViewStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
             return;
         }
 
@@ -232,7 +232,7 @@ public partial class CommonService
         outContainerList[indexContainer] = outContainer;
 
         _treeViewState = inState with { ContainerList = outContainerList };
-        TreeViewStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
         return;
     }
 
@@ -248,14 +248,14 @@ public partial class CommonService
 
         if (indexContainer == -1)
         {
-            TreeViewStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
             return;
         }
             
         var inContainer = inState.ContainerList[indexContainer];
         if (inContainer?.ActiveNode is null)
         {
-            TreeViewStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
             return;
         }
 
@@ -265,7 +265,7 @@ public partial class CommonService
         outContainerList[indexContainer] = outContainer;
 
         _treeViewState = inState with { ContainerList = outContainerList };
-        TreeViewStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
         return;
     }
 
@@ -281,14 +281,14 @@ public partial class CommonService
 
         if (indexContainer == -1)
         {
-            TreeViewStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
             return;
         }
         
         var inContainer = inState.ContainerList[indexContainer];
         if (inContainer?.ActiveNode is null)
         {
-            TreeViewStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
             return;
         }
 
@@ -298,7 +298,7 @@ public partial class CommonService
         outContainerList[indexContainer] = outContainer;
         
         _treeViewState = inState with { ContainerList = outContainerList };
-        TreeViewStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
         return;
     }
 
@@ -314,7 +314,7 @@ public partial class CommonService
 
         if (indexContainer == -1)
         {
-            TreeViewStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
             return;
         }
 
@@ -326,7 +326,7 @@ public partial class CommonService
         outContainerList[indexContainer] = outContainer;
         
         _treeViewState = inState with { ContainerList = outContainerList };
-        TreeViewStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
         return;
     }
 
@@ -343,7 +343,7 @@ public partial class CommonService
         
         if (indexContainer == -1)
         {
-            TreeViewStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
             return;
         }
         
@@ -351,7 +351,7 @@ public partial class CommonService
             
         if (inContainer?.ActiveNode is null)
         {
-            TreeViewStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
             return;
         }
 
@@ -361,7 +361,7 @@ public partial class CommonService
         outContainerList[indexContainer] = outContainer;
         
         _treeViewState = inState with { ContainerList = outContainerList };
-        TreeViewStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
         return;
     }
 
@@ -377,14 +377,14 @@ public partial class CommonService
             
         if (indexContainer == -1)
         {
-            TreeViewStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
             return;
         }
             
         var inContainer = inState.ContainerList[indexContainer];
         if (inContainer?.ActiveNode is null)
         {
-            TreeViewStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
             return;
         }
 
@@ -394,7 +394,7 @@ public partial class CommonService
         outContainerList[indexContainer] = outContainer;
         
         _treeViewState = inState with { ContainerList = outContainerList };
-        TreeViewStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
         return;
     }
 
@@ -410,14 +410,14 @@ public partial class CommonService
         
         if (indexContainer == -1)
         {
-            TreeViewStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
             return;
         }
         
         var inContainer = inState.ContainerList[indexContainer];
         if (inContainer?.ActiveNode is null)
         {
-            TreeViewStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
             return;
         }
 
@@ -427,7 +427,7 @@ public partial class CommonService
         outContainerList[indexContainer] = outContainer;
         
         _treeViewState = inState with { ContainerList = outContainerList };
-        TreeViewStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
         return;
     }
 

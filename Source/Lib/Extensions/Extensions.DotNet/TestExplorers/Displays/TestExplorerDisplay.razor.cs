@@ -7,6 +7,7 @@ using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Extensions.DotNet.TestExplorers.Displays.Internals;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 
@@ -83,7 +84,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
         }
     
         DotNetService.TestExplorerStateChanged += OnTestExplorerStateChanged;
-        DotNetService.IdeService.TextEditorService.CommonService.TreeViewStateChanged += OnTreeViewStateChanged;
+        DotNetService.IdeService.TextEditorService.CommonService.CommonUiStateChanged += OnTreeViewStateChanged;
         DotNetService.IdeService.TerminalStateChanged += OnTerminalStateChanged;
 
         _ = Task.Run(async () =>
@@ -121,9 +122,12 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
         await InvokeAsync(StateHasChanged);
     }
     
-    private async void OnTreeViewStateChanged()
+    private async void OnTreeViewStateChanged(CommonUiEventKind commonUiEventKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (commonUiEventKind == CommonUiEventKind.TreeViewStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     private async void OnTerminalStateChanged()
@@ -134,7 +138,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         DotNetService.TestExplorerStateChanged -= OnTestExplorerStateChanged;
-        DotNetService.IdeService.TextEditorService.CommonService.TreeViewStateChanged -= OnTreeViewStateChanged;
+        DotNetService.IdeService.TextEditorService.CommonService.CommonUiStateChanged -= OnTreeViewStateChanged;
         DotNetService.IdeService.TerminalStateChanged -= OnTerminalStateChanged;
     }
 }

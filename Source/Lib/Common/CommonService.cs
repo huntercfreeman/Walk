@@ -50,6 +50,4 @@ public partial class CommonService : IBackgroundTaskGroup
     
     public IEnvironmentProvider EnvironmentProvider { get; }
     public IFileSystemProvider FileSystemProvider { get; }
-    
-    public event Action<CommonUiEventKind>? CommonUiStateChanged;
 }

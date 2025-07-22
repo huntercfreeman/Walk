@@ -27,7 +27,7 @@ public partial class CommonService
             };
         }
 
-        ContextStateChanged?.Invoke();
+        // ContextStateChanged?.Invoke();
     }
     
     public void SetContextKeymap(int contextKey, IKeymap keymap)
@@ -64,7 +64,8 @@ public partial class CommonService
         }
 
         finalize:
-        ContextStateChanged?.Invoke();
+        return;
+        // ContextStateChanged?.Invoke();
     }
     
     public void RegisterContextSwitchGroup(ContextSwitchGroup contextSwitchGroup)
@@ -91,6 +92,7 @@ public partial class CommonService
         }
 
         finalize:
-        ContextStateChanged?.Invoke();
+        return;
+        // ContextStateChanged?.Invoke();
     }
 }

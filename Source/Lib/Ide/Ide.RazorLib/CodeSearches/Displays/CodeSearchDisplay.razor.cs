@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -45,7 +46,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         IdeService.CodeSearchStateChanged += OnCodeSearchStateChanged;
-        IdeService.CommonService.TreeViewStateChanged += OnTreeViewStateChanged;
+        IdeService.CommonService.CommonUiStateChanged += OnTreeViewStateChanged;
     
         _treeViewKeymap = new CodeSearchTreeViewKeyboardEventHandler(
             IdeService.TextEditorService,
@@ -93,9 +94,12 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
         await InvokeAsync(StateHasChanged);
     }
     
-    public async void OnTreeViewStateChanged()
+    public async void OnTreeViewStateChanged(CommonUiEventKind commonUiEventKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (commonUiEventKind == CommonUiEventKind.TreeViewStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     public async void OnCodeSearchStateChanged()
@@ -106,6 +110,6 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         IdeService.CodeSearchStateChanged -= OnCodeSearchStateChanged;
-        IdeService.CommonService.TreeViewStateChanged -= OnTreeViewStateChanged;
+        IdeService.CommonService.CommonUiStateChanged -= OnTreeViewStateChanged;
     }
 }

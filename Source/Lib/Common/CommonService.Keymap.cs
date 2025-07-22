@@ -27,7 +27,7 @@ public partial class CommonService
             }
         }
 
-        KeymapStateChanged?.Invoke();
+        // KeymapStateChanged?.Invoke();
     }
     
     public void DisposeKeymapLayer(int keymapLayerKey)
@@ -50,6 +50,6 @@ public partial class CommonService
             }
         }
 
-        KeymapStateChanged?.Invoke();
+        // KeymapStateChanged?.Invoke();
     }
 }
