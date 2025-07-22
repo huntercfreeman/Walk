@@ -149,9 +149,6 @@
             <div>
                 @nameof(CommonService.WalkHostingInformation.WalkPurposeKind): @CommonService.WalkHostingInformation.WalkPurposeKind
             </div>
-            <div>
-                @nameof(CommonService.WalkHostingInformation.GetMainWindowScreenDpiFunc): @CommonService.WalkHostingInformation.GetMainWindowScreenDpiFunc.Invoke()
-            </div>
 		</div>
 	</div>
 	
@@ -163,6 +160,18 @@
 		    <div>
                 <div>v <em class="di_em">43.0.0 </em> (2025-07-22)</div>
                 <ul>
+                    <li>
+                        Inline background task queues
+                    </li>
+                    <li>
+                        Inline background task workers
+                    </li>
+                    <li>
+                        make common installation types structs where possible
+                    </li>
+                    <li>
+                        Remove CommonService.Tooltip.cs MeasuredHtmlElementDimensions properties
+                    </li>
                     <li>
                         Remove unused state from TextEditorVirtualizationResult
                     </li>

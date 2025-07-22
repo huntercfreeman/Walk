@@ -57,7 +57,7 @@ public class TerminalWebsite : ITerminal, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(TerminalWorkKind.Command);
             _queue_general_TerminalCommandRequest.Enqueue(terminalCommandRequest);
-            _commonService.Indefinite_EnqueueGroup(this);
+            _commonService.Indefinite_Enqueue(this);
         }
     }
 

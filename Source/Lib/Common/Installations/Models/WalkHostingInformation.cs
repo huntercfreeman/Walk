@@ -15,7 +15,7 @@ namespace Walk.Common.RazorLib.Installations.Models;
 ///     this type might be one of the first types they interact with. So, the redundancy of namespace
 ///     and type containing 'Walk' feels reasonable here.
 /// </remarks>
-public record WalkHostingInformation
+public record struct WalkHostingInformation
 {
     public WalkHostingInformation(
         WalkHostingKind walkHostingKind,
@@ -27,11 +27,4 @@ public record WalkHostingInformation
 
     public WalkHostingKind WalkHostingKind { get; init; }
     public WalkPurposeKind WalkPurposeKind { get; init; }
-    /// <summary>
-    /// If the main window hasn't been initialized yet, 0 is returned.
-    /// Whether 0 returns at other points is uncertain.
-    /// 
-    /// This also returns 0 if the host isn't Photino (i.e.: ServerSide Blazor or Wasm Blazor)
-    /// </summary>
-    public Func<uint> GetMainWindowScreenDpiFunc { get; set; } = () => 0;
 }

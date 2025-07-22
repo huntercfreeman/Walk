@@ -757,7 +757,7 @@ public sealed partial class TextEditorService
     
     public void Enqueue_TextEditorInitializationBackgroundTaskGroupWorkKind()
     {
-        CommonService.Continuous_EnqueueGroup(new BackgroundTask(
+        CommonService.Continuous_Enqueue(new BackgroundTask(
             Key<IBackgroundTaskGroup>.Empty,
             Do_WalkTextEditorInitializerOnInit));
     }

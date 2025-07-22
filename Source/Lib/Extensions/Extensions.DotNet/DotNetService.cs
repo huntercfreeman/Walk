@@ -38,7 +38,7 @@ public partial class DotNetService : IBackgroundTaskGroup, IDisposable
     public void Enqueue(DotNetWorkArgs workArgs)
     {
         _workQueue.Enqueue(workArgs);
-        IdeService.TextEditorService.CommonService.Continuous_EnqueueGroup(this);
+        IdeService.TextEditorService.CommonService.Continuous_Enqueue(this);
     }
     
     public ValueTask HandleEvent()
