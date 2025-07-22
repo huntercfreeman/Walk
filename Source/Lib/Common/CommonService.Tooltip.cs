@@ -12,8 +12,6 @@ public partial class CommonService
     public static readonly Guid Tooltip_htmlElementIdSalt = Guid.NewGuid();
     
     public string Tooltip_HtmlElementId { get; } = $"di_dropdown_{Tooltip_htmlElementIdSalt}";
-    public MeasuredHtmlElementDimensions Tooltip_HtmlElementDimensions { get; set; }
-    public MeasuredHtmlElementDimensions Tooltip_GlobalHtmlElementDimensions { get; set; }
     public bool Tooltip_IsOffScreenHorizontally { get; }
     public bool Tooltip_IsOffScreenVertically { get; }
     public int Tooltip_RenderCount { get; } = 1;

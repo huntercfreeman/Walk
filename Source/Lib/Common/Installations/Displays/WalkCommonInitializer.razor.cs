@@ -89,20 +89,20 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
         {
             _tooltipModelPrevious = tooltipModel;
             
-            CommonService.Tooltip_HtmlElementDimensions = await CommonService.JsRuntimeCommonApi.MeasureElementById(
+            var tooltip_HtmlElementDimensions = await CommonService.JsRuntimeCommonApi.MeasureElementById(
                 CommonService.Tooltip_HtmlElementId);
-            CommonService.Tooltip_GlobalHtmlElementDimensions = await CommonService.JsRuntimeCommonApi.MeasureElementById(
+            var tooltip_GlobalHtmlElementDimensions = await CommonService.JsRuntimeCommonApi.MeasureElementById(
                 CommonFacts.RootHtmlElementId);
         
             var xLarge = false;
             var yLarge = false;
             
-            if (tooltipModel.X + CommonService.Tooltip_HtmlElementDimensions.WidthInPixels > CommonService.Tooltip_GlobalHtmlElementDimensions.WidthInPixels)
+            if (tooltipModel.X + tooltip_HtmlElementDimensions.WidthInPixels > tooltip_GlobalHtmlElementDimensions.WidthInPixels)
             {
                 xLarge = true;
             }
             
-            if (tooltipModel.Y + CommonService.Tooltip_HtmlElementDimensions.HeightInPixels > CommonService.Tooltip_GlobalHtmlElementDimensions.HeightInPixels)
+            if (tooltipModel.Y + tooltip_HtmlElementDimensions.HeightInPixels > tooltip_GlobalHtmlElementDimensions.HeightInPixels)
             {
                 yLarge = true;
             }
@@ -111,14 +111,14 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
             
             if (xLarge)
             {
-                tooltipModel.X = CommonService.Tooltip_GlobalHtmlElementDimensions.WidthInPixels - CommonService.Tooltip_HtmlElementDimensions.WidthInPixels - 5;
+                tooltipModel.X = tooltip_GlobalHtmlElementDimensions.WidthInPixels - tooltip_HtmlElementDimensions.WidthInPixels - 5;
                 if (tooltipModel.X < 0)
                     tooltipModel.X = 0;
             }
              
             if (yLarge)
             {   
-                tooltipModel.Y = CommonService.Tooltip_GlobalHtmlElementDimensions.HeightInPixels - CommonService.Tooltip_HtmlElementDimensions.HeightInPixels - 5;
+                tooltipModel.Y = tooltip_GlobalHtmlElementDimensions.HeightInPixels - tooltip_HtmlElementDimensions.HeightInPixels - 5;
                 if (tooltipModel.Y < 0)
                     tooltipModel.Y = 0;
             }
