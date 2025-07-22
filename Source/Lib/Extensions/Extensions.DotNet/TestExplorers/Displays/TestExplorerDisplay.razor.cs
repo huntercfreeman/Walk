@@ -85,7 +85,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
     
         DotNetService.TestExplorerStateChanged += OnTestExplorerStateChanged;
         DotNetService.IdeService.TextEditorService.CommonService.CommonUiStateChanged += OnTreeViewStateChanged;
-        DotNetService.IdeService.TerminalStateChanged += OnTerminalStateChanged;
+        DotNetService.IdeService.IdeStateChanged += OnTerminalStateChanged;
 
         _ = Task.Run(async () =>
         {
@@ -130,15 +130,18 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
         }
     }
     
-    private async void OnTerminalStateChanged()
+    private async void OnTerminalStateChanged(IdeStateChangedKind ideStateChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (ideStateChangedKind == IdeStateChangedKind.TerminalStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     public void Dispose()
     {
         DotNetService.TestExplorerStateChanged -= OnTestExplorerStateChanged;
         DotNetService.IdeService.TextEditorService.CommonService.CommonUiStateChanged -= OnTreeViewStateChanged;
-        DotNetService.IdeService.TerminalStateChanged -= OnTerminalStateChanged;
+        DotNetService.IdeService.IdeStateChanged -= OnTerminalStateChanged;
     }
 }

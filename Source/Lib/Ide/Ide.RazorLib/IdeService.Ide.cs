@@ -33,7 +33,7 @@ public partial class IdeService
             }
         }
 
-        Ide_IdeStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_IdeStateChanged);
     }
 
     public void Ide_SetMenuFile(MenuRecord menu)
@@ -143,7 +143,7 @@ public partial class IdeService
             }
         }
 
-        Ide_StartupControlStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_IdeStateChanged);
     }
 
     public void Ide_DisposeStartupControl(Key<IStartupControlModel> startupControlKey)
@@ -170,7 +170,7 @@ public partial class IdeService
             }
         }
 
-        Ide_StartupControlStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_IdeStateChanged);
     }
 
     public void Ide_SetActiveStartupControlKey(Key<IStartupControlModel> startupControlKey)
@@ -197,11 +197,11 @@ public partial class IdeService
             }
         }
 
-        Ide_StartupControlStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_IdeStateChanged);
     }
 
     public void Ide_TriggerStartupControlStateChanged()
     {
-        Ide_StartupControlStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_IdeStateChanged);
     }
 }

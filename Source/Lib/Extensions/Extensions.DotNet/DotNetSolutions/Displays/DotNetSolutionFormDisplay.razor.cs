@@ -39,7 +39,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
-        DotNetService.IdeService.TerminalStateChanged += OnTerminalStateChanged;
+        DotNetService.IdeService.IdeStateChanged += OnTerminalStateChanged;
     }
 
     private void RequestInputFileForParentDirectory()
@@ -198,13 +198,16 @@ Global
 EndGlobal
 ";
 
-    public async void OnTerminalStateChanged()
+    public async void OnTerminalStateChanged(IdeStateChangedKind ideStateChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (ideStateChangedKind == IdeStateChangedKind.TerminalStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     public void Dispose()
     {
-        DotNetService.IdeService.TerminalStateChanged -= OnTerminalStateChanged;
+        DotNetService.IdeService.IdeStateChanged -= OnTerminalStateChanged;
     }
 }

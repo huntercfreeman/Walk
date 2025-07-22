@@ -45,7 +45,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
-        IdeService.CodeSearchStateChanged += OnCodeSearchStateChanged;
+        IdeService.IdeStateChanged += OnCodeSearchStateChanged;
         IdeService.CommonService.CommonUiStateChanged += OnTreeViewStateChanged;
     
         _treeViewKeymap = new CodeSearchTreeViewKeyboardEventHandler(
@@ -102,14 +102,17 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
         }
     }
     
-    public async void OnCodeSearchStateChanged()
+    public async void OnCodeSearchStateChanged(IdeStateChangedKind ideStateChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (ideStateChangedKind == IdeStateChangedKind.CodeSearchStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     public void Dispose()
     {
-        IdeService.CodeSearchStateChanged -= OnCodeSearchStateChanged;
+        IdeService.IdeStateChanged -= OnCodeSearchStateChanged;
         IdeService.CommonService.CommonUiStateChanged -= OnTreeViewStateChanged;
     }
 }

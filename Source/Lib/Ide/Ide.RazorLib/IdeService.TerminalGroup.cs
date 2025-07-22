@@ -21,7 +21,7 @@ public partial class IdeService
             };
         }
 
-        TerminalGroupStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.TerminalGroupStateChanged);
     }
 
     public void TerminalGroup_InitializeResizeHandleDimensionUnit(DimensionUnit dimensionUnit)
@@ -50,6 +50,6 @@ public partial class IdeService
             }
         }
 
-        TerminalGroupStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.TerminalGroupStateChanged);
     }
 }

@@ -30,7 +30,7 @@ public partial class IdeService
             };
         }
 
-        InputFileStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.InputFileStateChanged);
     }
 
     public void InputFile_SetSelectedTreeViewModel(TreeViewAbsolutePath? selectedTreeViewModel)
@@ -43,7 +43,7 @@ public partial class IdeService
             };
         }
 
-        InputFileStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.InputFileStateChanged);
     }
 
     public void InputFile_SetOpenedTreeViewModel(
@@ -65,7 +65,7 @@ public partial class IdeService
             }
         }
 
-        InputFileStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.InputFileStateChanged);
     }
 
     public void InputFile_SetSelectedInputFilePattern(InputFilePattern inputFilePattern)
@@ -78,7 +78,7 @@ public partial class IdeService
             };
         }
 
-        InputFileStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.InputFileStateChanged);
     }
 
     public void InputFile_MoveBackwardsInHistory()
@@ -95,7 +95,7 @@ public partial class IdeService
             }
         }
 
-        InputFileStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.InputFileStateChanged);
     }
 
     public void InputFile_MoveForwardsInHistory()
@@ -112,7 +112,7 @@ public partial class IdeService
             }
         }
 
-        InputFileStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.InputFileStateChanged);
     }
 
     public void InputFile_OpenParentDirectory(
@@ -157,7 +157,7 @@ public partial class IdeService
         }
 
         finalize:
-        InputFileStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.InputFileStateChanged);
     }
 
     public void InputFile_RefreshCurrentSelection(TreeViewAbsolutePath? currentSelection)
@@ -174,7 +174,7 @@ public partial class IdeService
         }
 
         finalize:
-        InputFileStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.InputFileStateChanged);
     }
 
     public void InputFile_SetSearchQuery(string searchQuery)
@@ -200,7 +200,7 @@ public partial class IdeService
         }
 
         finalize:
-        InputFileStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.InputFileStateChanged);
     }
 
     public void InputFile_Enqueue_OpenParentDirectoryAction(

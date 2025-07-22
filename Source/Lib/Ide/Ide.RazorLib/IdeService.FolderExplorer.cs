@@ -15,6 +15,6 @@ public partial class IdeService
             _folderExplorerState = withFunc.Invoke(_folderExplorerState);
         }
 
-        FolderExplorerStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.FolderExplorerStateChanged);
     }
 }

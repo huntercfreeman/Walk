@@ -70,7 +70,7 @@ public partial class InputFileDisplay : ComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
-        IdeService.InputFileStateChanged += OnInputFileStateChanged;
+        IdeService.IdeStateChanged += OnInputFileStateChanged;
         
         _inputFileTreeViewMouseEventHandler = new InputFileTreeViewMouseEventHandler(
             IdeService,
@@ -179,13 +179,16 @@ public partial class InputFileDisplay : ComponentBase, IDisposable
             IdeService.CommonService);
     }
     
-    public async void OnInputFileStateChanged()
+    public async void OnInputFileStateChanged(IdeStateChangedKind ideStateChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (ideStateChangedKind == IdeStateChangedKind.InputFileStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     public void Dispose()
     {
-        IdeService.InputFileStateChanged -= OnInputFileStateChanged;
+        IdeService.IdeStateChanged -= OnInputFileStateChanged;
     }
 }

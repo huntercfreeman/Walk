@@ -14,8 +14,7 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        IdeService.TerminalGroupStateChanged += OnTerminalGroupStateChanged;
-        IdeService.TerminalStateChanged += OnTerminalStateChanged;
+        IdeService.IdeStateChanged += OnTerminalGroupStateChanged;
     }
 
     private void DispatchSetActiveTerminalAction(Key<ITerminal> terminalKey)
@@ -28,19 +27,18 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
         IdeService.GetTerminalState().TerminalMap[terminalKey]?.ClearFireAndForget();
     }
     
-    private async void OnTerminalGroupStateChanged()
+    private async void OnTerminalGroupStateChanged(IdeStateChangedKind ideStateChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
-    }
     
-    private async void OnTerminalStateChanged()
-    {
-        await InvokeAsync(StateHasChanged);
+        if (ideStateChangedKind == IdeStateChangedKind.TerminalGroupStateChanged ||
+            ideStateChangedKind == IdeStateChangedKind.TerminalStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
-    
+
     public void Dispose()
     {
-        IdeService.TerminalGroupStateChanged -= OnTerminalGroupStateChanged;
-        IdeService.TerminalStateChanged -= OnTerminalStateChanged;
+        IdeService.IdeStateChanged -= OnTerminalGroupStateChanged;
     }
 }

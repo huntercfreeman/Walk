@@ -62,7 +62,7 @@ public partial class IdeService
             _codeSearchState = outState;
         }
 
-        CodeSearchStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.CodeSearchStateChanged);
     }
 
     public void CodeSearch_AddResult(string result)
@@ -78,7 +78,7 @@ public partial class IdeService
             };
         }
 
-        CodeSearchStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.CodeSearchStateChanged);
     }
 
     public void CodeSearch_ClearResultList()
@@ -91,7 +91,7 @@ public partial class IdeService
             };
         }
 
-        CodeSearchStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.CodeSearchStateChanged);
     }
 
     public void CodeSearch_InitializeResizeHandleDimensionUnit(DimensionUnit dimensionUnit)
@@ -120,7 +120,7 @@ public partial class IdeService
             }
         }
 
-        CodeSearchStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.CodeSearchStateChanged);
     }
 
     /// <summary>

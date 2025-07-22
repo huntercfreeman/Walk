@@ -24,12 +24,12 @@ public partial class IdeService
             }
         }
 
-        TerminalStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.TerminalStateChanged);
     }
 
     public void Terminal_StateHasChanged()
     {
-        TerminalStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.TerminalStateChanged);
     }
 
     public void Terminal_Dispose(Key<ITerminal> terminalKey)
@@ -42,6 +42,6 @@ public partial class IdeService
             _terminalState = _terminalState with { TerminalMap = nextMap };
         }
 
-        TerminalStateChanged?.Invoke();
+        IdeStateChanged?.Invoke(IdeStateChangedKind.TerminalStateChanged);
     }
 }

@@ -88,7 +88,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         });
     
         IdeService.CommonService.CommonUiStateChanged += DragStateWrapOnStateChanged;
-        IdeService.Ide_IdeStateChanged += OnIdeMainLayoutStateChanged;
+        IdeService.IdeStateChanged += OnIdeMainLayoutStateChanged;
         IdeService.TextEditorService.SecondaryChanged += TextEditorOptionsStateWrap_StateChanged;
 
         IdeService.Enqueue(new IdeWorkArgs
@@ -148,9 +148,12 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         }
     }
 
-    private async void OnIdeMainLayoutStateChanged()
+    private async void OnIdeMainLayoutStateChanged(IdeStateChangedKind ideStateChangedKind)
     {
-        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        if (ideStateChangedKind == IdeStateChangedKind.Ide_IdeStateChanged)
+        {
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        }
     }
 
     private async void TextEditorOptionsStateWrap_StateChanged(SecondaryChangedKind secondaryChangedKind)
@@ -353,7 +356,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public void Dispose()
     {
         IdeService.CommonService.CommonUiStateChanged -= DragStateWrapOnStateChanged;
-        IdeService.Ide_IdeStateChanged -= OnIdeMainLayoutStateChanged;
+        IdeService.IdeStateChanged -= OnIdeMainLayoutStateChanged;
         IdeService.TextEditorService.SecondaryChanged -= TextEditorOptionsStateWrap_StateChanged;
     }
 }
