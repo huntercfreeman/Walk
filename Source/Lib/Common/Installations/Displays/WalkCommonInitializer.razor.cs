@@ -63,10 +63,10 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
         {
             var token = _workerCancellationTokenSource.Token;
 
-            if (CommonService.ContinuousWorker.StartAsyncTask is null)
+            if (CommonService.Continuous_StartAsyncTask is null)
             {
-                CommonService.ContinuousWorker.StartAsyncTask = Task.Run(
-                    () => CommonService.ContinuousWorker.ExecuteAsync(token),
+                CommonService.Continuous_StartAsyncTask = Task.Run(
+                    () => CommonService.Continuous_ExecuteAsync(token),
                     token);
             }
 
@@ -304,7 +304,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
         _workerCancellationTokenSource.Cancel();
         _workerCancellationTokenSource.Dispose();
         
-        CommonService.ContinuousWorker.StartAsyncTask = null;
+        CommonService.Continuous_StartAsyncTask = null;
         CommonService.IndefiniteWorker.StartAsyncTask = null;
         
         CommonService.CommonUiStateChanged -= OnCommonUiStateChanged;

@@ -12,10 +12,6 @@ public partial class CommonService
     /// <summary>
     /// Generally speaking: Presume that the ContinuousTaskWorker is "always ready" to run the next task that gets enqueued.
     /// </summary>
-    public ContinuousBackgroundTaskWorker ContinuousWorker { get; private set; }
-    /// <summary>
-    /// Generally speaking: Presume that the ContinuousTaskWorker is "always ready" to run the next task that gets enqueued.
-    /// </summary>
     public BackgroundTaskQueue ContinuousQueue { get; private set; }
     
     /// <summary>
@@ -97,11 +93,6 @@ public partial class CommonService
         }
     }
 
-    public void SetContinuousWorker(ContinuousBackgroundTaskWorker worker)
-    {
-        ContinuousWorker = worker;
-    }
-    
     public void SetContinuousQueue(BackgroundTaskQueue queue)
     {
         ContinuousQueue = queue;

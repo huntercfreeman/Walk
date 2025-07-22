@@ -50,4 +50,31 @@ public partial class CommonService : IBackgroundTaskGroup
     
     public IEnvironmentProvider EnvironmentProvider { get; }
     public IFileSystemProvider FileSystemProvider { get; }
+    
+    public Task? Continuous_StartAsyncTask { get; internal set; }
+    public event Action? Continuous_ExecutingBackgroundTaskChanged;
+
+    public async Task Continuous_ExecuteAsync(CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            try
+            {
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    await ContinuousQueue.__DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+                    await ContinuousQueue.__DequeueOrDefault().HandleEvent().ConfigureAwait(false);
+                    await Task.Yield();
+                }
+            }
+            catch (Exception ex)
+            {
+                var message = ex is OperationCanceledException
+                    ? "Task was cancelled {0}." // {0} => WorkItemName
+                    : "Error occurred executing {0}."; // {0} => WorkItemName
+
+                Console.WriteLine($"ERROR on (backgroundTask.Name was here): {ex.ToString()}");
+            }
+        }
+    }
 }
