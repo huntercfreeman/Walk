@@ -9,26 +9,6 @@ public partial class CommonService
     private readonly Dictionary<Key<IBackgroundTaskGroup>, TaskCompletionSource> _taskCompletionSourceMap = new();
     private readonly object _taskCompletionSourceLock = new();
     
-    /// <summary>
-    /// Generally speaking: Presume that the ContinuousTaskWorker is "always ready" to run the next task that gets enqueued.
-    /// </summary>
-    public BackgroundTaskQueue ContinuousQueue { get; private set; }
-    
-    /// <summary>
-    /// Generally speaking: Presume that the IndefiniteTaskWorker is NOT ready to run the next task that gets enqueued.
-    /// </summary>
-    public BackgroundTaskQueue IndefiniteQueue { get; private set; }
-
-    public void Continuous_EnqueueGroup(IBackgroundTaskGroup backgroundTaskGroup)
-    {
-        ContinuousQueue.Enqueue(backgroundTaskGroup);
-    }
-    
-    public void Indefinite_EnqueueGroup(IBackgroundTaskGroup backgroundTaskGroup)
-    {
-        IndefiniteQueue.Enqueue(backgroundTaskGroup);
-    }
-
     public Task Indefinite_EnqueueAsync(IBackgroundTaskGroup backgroundTask)
     {
         backgroundTask.__TaskCompletionSourceWasCreated = true;
@@ -63,7 +43,7 @@ public partial class CommonService
             }
         }
 
-        IndefiniteQueue.Enqueue(backgroundTask);
+        Indefinite_Enqueue(backgroundTask);
             
         return taskCompletionSource.Task;
     }
@@ -87,15 +67,5 @@ public partial class CommonService
                 _taskCompletionSourceMap.Remove(backgroundTaskKey);
             }
         }
-    }
-
-    public void SetContinuousQueue(BackgroundTaskQueue queue)
-    {
-        ContinuousQueue = queue;
-    }
-    
-    public void SetIndefiniteQueue(BackgroundTaskQueue queue)
-    {
-        IndefiniteQueue = queue;
     }
 }

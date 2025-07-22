@@ -41,7 +41,7 @@ public partial class WalkConfigInitializer : ComponentBase
     {
         HandleCompilerServicesAndDecorationMappers();
     
-        DotNetService.TextEditorService.CommonService.Continuous_EnqueueGroup(new BackgroundTask(
+        DotNetService.TextEditorService.CommonService.Continuous_Enqueue(new BackgroundTask(
             Key<IBackgroundTaskGroup>.Empty,
             Do_InitializeFooterBadges));
     

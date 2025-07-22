@@ -69,7 +69,7 @@ public partial class IdeService : IBackgroundTaskGroup
     public void Enqueue(IdeWorkArgs workArgs)
     {
         _workQueue.Enqueue(workArgs);
-        TextEditorService.CommonService.Continuous_EnqueueGroup(this);
+        TextEditorService.CommonService.Continuous_Enqueue(this);
     }
     
     public ValueTask HandleEvent()

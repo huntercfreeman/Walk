@@ -52,7 +52,7 @@ public partial class OutputDisplay : ComponentBase, IDisposable
                 if (DotNetService.GetOutputState().DotNetRunParseResultId == DotNetService.GetDotNetRunParseResult().Id)
                     return Task.CompletedTask;
     
-                DotNetService.TextEditorService.CommonService.Continuous_EnqueueGroup((IBackgroundTaskGroup)new BackgroundTask(
+                DotNetService.TextEditorService.CommonService.Continuous_Enqueue((IBackgroundTaskGroup)new BackgroundTask(
                     Key<IBackgroundTaskGroup>.Empty,
                     DotNetService.OutputService_Do_ConstructTreeView));
                 return Task.CompletedTask;

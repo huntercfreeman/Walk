@@ -32,13 +32,6 @@ public static class ServiceCollectionExtensions
                     commonConfig,
                     sp.GetRequiredService<IJSRuntime>());
             
-                commonService.SetContinuousQueue(new BackgroundTaskQueue(
-                    CommonFacts.ContinuousQueueKey,
-                    "Continuous"));
-                commonService.SetIndefiniteQueue(new BackgroundTaskQueue(
-                    CommonFacts.IndefiniteQueueKey,
-                    "Blocking"));
-            
                 return commonService;
             });
         

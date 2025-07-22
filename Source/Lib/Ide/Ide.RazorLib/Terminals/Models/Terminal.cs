@@ -72,7 +72,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
         {
             _workKindQueue.Enqueue(TerminalWorkKind.Command);
             _queue_general_TerminalCommandRequest.Enqueue(terminalCommandRequest);
-            _ideService.CommonService.Indefinite_EnqueueGroup(this);
+            _ideService.CommonService.Indefinite_Enqueue(this);
         }
     }
 

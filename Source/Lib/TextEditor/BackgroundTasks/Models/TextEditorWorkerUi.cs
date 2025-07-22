@@ -42,7 +42,7 @@ public class TextEditorWorkerUi : IBackgroundTaskGroup
                 viewModelKey,
                 workUiKind
             ));
-        _textEditorService.CommonService.Continuous_EnqueueGroup(this);
+        _textEditorService.CommonService.Continuous_Enqueue(this);
     }
     
     public async ValueTask HandleEvent()

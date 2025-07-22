@@ -29,7 +29,7 @@ public partial class CommonService
     public void Enqueue(CommonWorkArgs commonWorkArgs)
     {
         _workQueue.Enqueue(commonWorkArgs);
-        Continuous_EnqueueGroup(this);
+        Continuous_Enqueue(this);
     }
 
     private async ValueTask Do_WalkCommonInitializer(Key<ContextSwitchGroup> contextSwitchGroupKey)
