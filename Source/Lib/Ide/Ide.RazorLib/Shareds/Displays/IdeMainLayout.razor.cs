@@ -9,7 +9,6 @@ using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Ide.RazorLib.Shareds.Displays.Internals;
@@ -265,62 +264,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             var menuOptionPanel = new MenuOptionRecord(
                 panel.Title,
                 MenuOptionKind.Delete,
-                async () =>
-                {
-                    var panelGroup = panel.TabGroup as PanelGroup;
-    
-                    if (panelGroup is not null)
-                    {
-                        IdeService.CommonService.SetActivePanelTab(panelGroup.Key, panel.Key);
-    
-                        var contextRecord = CommonFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
-    
-                        if (contextRecord != default)
-                        {
-                            var command = ContextHelper.ConstructFocusContextElementCommand(
-                                contextRecord,
-                                nameof(ContextHelper.ConstructFocusContextElementCommand),
-                                nameof(ContextHelper.ConstructFocusContextElementCommand),
-                                IdeService.CommonService.JsRuntimeCommonApi,
-                                IdeService.CommonService);
-    
-                            await command.CommandFunc.Invoke(null).ConfigureAwait(false);
-                        }
-                    }
-                    else
-                    {
-                        var existingDialog = dialogState.DialogList.FirstOrDefault(
-                            x => x.DynamicViewModelKey == panel.DynamicViewModelKey);
-    
-                        if (existingDialog is not null)
-                        {
-                            IdeService.CommonService.Dialog_ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
-    
-                            await IdeService.CommonService.JsRuntimeCommonApi
-                                .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)
-                                .ConfigureAwait(false);
-                        }
-                        else
-                        {
-                            IdeService.CommonService.RegisterPanelTab(CommonFacts.LeftPanelGroupKey, panel, true);
-                            IdeService.CommonService.SetActivePanelTab(CommonFacts.LeftPanelGroupKey, panel.Key);
-    
-                            var contextRecord = CommonFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
-    
-                            if (contextRecord != default)
-                            {
-                                var command = ContextHelper.ConstructFocusContextElementCommand(
-                                    contextRecord,
-                                    nameof(ContextHelper.ConstructFocusContextElementCommand),
-                                    nameof(ContextHelper.ConstructFocusContextElementCommand),
-                                    IdeService.CommonService.JsRuntimeCommonApi,
-                                    IdeService.CommonService);
-    
-                                await command.CommandFunc.Invoke(null).ConfigureAwait(false);
-                            }
-                        }
-                    }
-                });
+                () => IdeService.CommonService.ShowOrAddPanelTab(panel));
     
             menuOptionsList.Add(menuOptionPanel);
         }

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Installations.Models;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Installations.Displays;
 using Walk.Common.RazorLib.Menus.Models;
@@ -32,96 +31,12 @@ public partial class CommonService
         Continuous_Enqueue(this);
     }
 
-    private async ValueTask Do_WalkCommonInitializer(Key<ContextSwitchGroup> contextSwitchGroupKey)
+    private async ValueTask Do_WalkCommonInitializer()
     {
         Options_SetActiveThemeRecordKey(CommonConfig.InitialThemeKey, false);
 
         await Options_SetFromLocalStorageAsync()
             .ConfigureAwait(false);
-
-        GetContextSwitchState().FocusInitiallyContextSwitchGroupKey = contextSwitchGroupKey;
-        RegisterContextSwitchGroup(
-            new ContextSwitchGroup(
-                contextSwitchGroupKey,
-                "Contexts",
-                () =>
-                {
-                    var contextState = GetContextState();
-                    var panelState = GetPanelState();
-                    var dialogState = GetDialogState();
-                    var menuOptionList = new List<MenuOptionRecord>();
-
-                    foreach (var panel in panelState.PanelList)
-                    {
-                        var menuOptionPanel = new MenuOptionRecord(
-                            panel.Title,
-                            MenuOptionKind.Delete,
-                            async () =>
-                            {
-                                var panelGroup = panel.TabGroup as PanelGroup;
-
-                                if (panelGroup is not null)
-                                {
-                                    SetActivePanelTab(panelGroup.Key, panel.Key);
-
-                                    var contextRecord = CommonFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
-
-                                    if (contextRecord != default)
-                                    {
-                                        var command = ContextHelper.ConstructFocusContextElementCommand(
-                                            contextRecord,
-                                            nameof(ContextHelper.ConstructFocusContextElementCommand),
-                                            nameof(ContextHelper.ConstructFocusContextElementCommand),
-                                            JsRuntimeCommonApi,
-                                            this);
-
-                                        await command.CommandFunc.Invoke(null).ConfigureAwait(false);
-                                    }
-                                }
-                                else
-                                {
-                                    var existingDialog = dialogState.DialogList.FirstOrDefault(
-                                        x => x.DynamicViewModelKey == panel.DynamicViewModelKey);
-
-                                    if (existingDialog is not null)
-                                    {
-                                        Dialog_ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
-
-                                        await JsRuntimeCommonApi
-                                            .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)
-                                            .ConfigureAwait(false);
-                                    }
-                                    else
-                                    {
-                                        RegisterPanelTab(CommonFacts.LeftPanelGroupKey, panel, true);
-                                        SetActivePanelTab(CommonFacts.LeftPanelGroupKey, panel.Key);
-
-                                        var contextRecord = CommonFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
-
-                                        if (contextRecord != default)
-                                        {
-                                            var command = ContextHelper.ConstructFocusContextElementCommand(
-                                                contextRecord,
-                                                nameof(ContextHelper.ConstructFocusContextElementCommand),
-                                                nameof(ContextHelper.ConstructFocusContextElementCommand),
-                                                JsRuntimeCommonApi,
-                                                this);
-
-                                            await command.CommandFunc.Invoke(null).ConfigureAwait(false);
-                                        }
-                                    }
-                                }
-                            });
-
-                        menuOptionList.Add(menuOptionPanel);
-                    }
-
-                    var menu = menuOptionList.Count == 0
-                        ? new MenuRecord(MenuRecord.NoMenuOptionsExistList)
-                        : new MenuRecord(menuOptionList);
-
-                    return Task.FromResult(menu);
-                }));
     }
 
     public async ValueTask Do_WriteToLocalStorage(string key, object value)
@@ -187,7 +102,7 @@ public partial class CommonService
         switch (workArgs.WorkKind)
         {
             case CommonWorkKind.WalkCommonInitializerWork:
-                return Do_WalkCommonInitializer(WalkCommonInitializer.ContextSwitchGroupKey);
+                return Do_WalkCommonInitializer();
             case CommonWorkKind.WriteToLocalStorage:
                 return Do_WriteToLocalStorage(workArgs.WriteToLocalStorage_Key, workArgs.WriteToLocalStorage_Value);
             case CommonWorkKind.Tab_ManuallyPropagateOnContextMenu:

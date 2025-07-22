@@ -3,7 +3,6 @@ using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Menus.Models;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.Shareds.Models;
 
@@ -57,35 +56,24 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
             menuOptionList.Add(new MenuOptionRecord(
                 "View Output",
                 MenuOptionKind.Other,
-                onClickFunc: async () => 
+                onClickFunc: () => 
                 {
-                    var success = await TrySetFocus(CommonFacts.OutputContext).ConfigureAwait(false);
-    
-                    if (!success)
-                    {
-                        IdeService.CommonService.SetPanelTabAsActiveByContextRecordKey(
-                            CommonFacts.OutputContext.ContextKey);
-    
-                        _ = await TrySetFocus(CommonFacts.OutputContext).ConfigureAwait(false);
-                    }
+                    var panelState = IdeService.CommonService.GetPanelState();
+                    var outputPanel = panelState.PanelList.FirstOrDefault(x => x.Title == "Output");
+                    IdeService.CommonService.ShowOrAddPanelTab(outputPanel);
+                    return Task.CompletedTask;
                 }));
                 
             menuOptionList.Add(new MenuOptionRecord(
                 "View Terminal",
                 MenuOptionKind.Other,
-                onClickFunc: async () => 
+                onClickFunc: () => 
                 {
                     IdeService.TerminalGroup_SetActiveTerminal(IdeFacts.EXECUTION_KEY);
-                
-                    var success = await TrySetFocus(CommonFacts.TerminalContext).ConfigureAwait(false);
-    
-                    if (!success)
-                    {
-                        IdeService.CommonService.SetPanelTabAsActiveByContextRecordKey(
-                            CommonFacts.TerminalContext.ContextKey);
-    
-                        _ = await TrySetFocus(CommonFacts.TerminalContext).ConfigureAwait(false);
-                    }
+                    var panelState = IdeService.CommonService.GetPanelState();
+                    var outputPanel = panelState.PanelList.FirstOrDefault(x => x.Title == "Terminal");
+                    IdeService.CommonService.ShowOrAddPanelTab(outputPanel);
+                    return Task.CompletedTask;
                 }));
                 
             menuOptionList.Add(new MenuOptionRecord(
@@ -119,14 +107,6 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
                 .Invoke(activeStartupControl)
                 .ConfigureAwait(false);
         }
-    }
-    
-    private async Task<bool> TrySetFocus(ContextRecord contextRecord)
-    {
-        /*return await IdeService.CommonService.JsRuntimeCommonApi
-            .TryFocusHtmlElementById(contextRecord.ContextElementId)
-            .ConfigureAwait(false);*/
-        return false;
     }
     
     private async void Shared_OnStateChanged(IdeStateChangedKind ideStateChangedKind)

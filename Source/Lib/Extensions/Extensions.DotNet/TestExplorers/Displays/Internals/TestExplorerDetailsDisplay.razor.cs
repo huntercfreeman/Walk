@@ -5,7 +5,6 @@ using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Reactives.Models;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Lexers.Models;
@@ -38,7 +37,6 @@ public partial class TestExplorerDetailsDisplay : ComponentBase, IDisposable
         HeaderComponentType = null,
         FooterComponentType = null,
         IncludeGutterComponent = false,
-        ContextRecord = CommonFacts.TerminalContext,
     };
     
     protected override void OnInitialized()

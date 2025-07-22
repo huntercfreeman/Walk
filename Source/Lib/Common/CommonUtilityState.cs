@@ -10,7 +10,6 @@ using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Tooltips.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Options.Models;
 
@@ -327,25 +326,6 @@ public record struct TooltipState
     public ITooltipModel TooltipModel { get; }
 }
 /* End ITooltipService */
-
-/* Start IContextService */
-/// <summary>
-/// The list provided should not be modified after passing it as a parameter.
-/// Make a shallow copy, and pass the shallow copy, if further modification of your list will be necessary.
-/// </summary>
-public record struct ContextState(
-    IReadOnlyList<ContextRecord> AllContextsList,
-    int FocusedContextKey)
-{
-    public ContextState() : this(
-        Array.Empty<ContextRecord>(),
-        0)
-    {
-        AllContextsList = CommonFacts.AllContextsList;
-        FocusedContextKey = CommonFacts.GlobalContext.ContextKey;
-    }
-}
-/* End IContextService */
 
 /* Start IDragService */
 public record struct DragState(

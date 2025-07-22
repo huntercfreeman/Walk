@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Reactives.Models;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
@@ -37,7 +36,6 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
         HeaderComponentType = null,
         FooterComponentType = null,
         IncludeGutterComponent = false,
-        ContextRecord = CommonFacts.TerminalContext,
     };
     
     private string CommandUiInputBinding

@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.TextEditor.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
@@ -20,8 +19,6 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
 
-    public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
-    
     private const string TEST_STRING_FOR_MEASUREMENT = "abcdefghijklmnopqrstuvwxyz0123456789";
     private const int TEST_STRING_REPEAT_COUNT = 6;
     
