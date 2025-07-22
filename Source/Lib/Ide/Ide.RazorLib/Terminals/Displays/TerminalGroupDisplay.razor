@@ -15,14 +15,7 @@
                 out var activeTerminal);
     }
 
-	@if (IdeService.CommonService.Options_ShowPanelTitles)
-	{
-	    <div class="di_ide_section-title">
-	        Terminal
-	    </div>
-    }
-
-    <div class="di_ide_section-body @IdeService.CommonService.Options_ShowPanelTitlesCssClass">
+    <div class="di_ide_section-body di_ide_section-no-title">
 
         <div class="di_ide_terminal-body"
              style="@terminalGroupDisplayState.BodyElementDimensions.GetStyleString(IdeService.CommonService.UiStringBuilder)">

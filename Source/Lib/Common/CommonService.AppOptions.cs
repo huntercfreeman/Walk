@@ -30,12 +30,6 @@ public partial class CommonService
     public string Options_ResizeHandleCssHeight { get; set; } =
         $"height: {AppOptionsState.DEFAULT_RESIZE_HANDLE_HEIGHT_IN_PIXELS.ToCssValue()}px";
     
-    public bool Options_ShowPanelTitles => GetAppOptionsState().Options.ShowPanelTitles;
-    
-    public string Options_ShowPanelTitlesCssClass => GetAppOptionsState().Options.ShowPanelTitles
-        ? string.Empty
-        : "di_ide_section-no-title";
-
     public string Options_ColorSchemeCssStyleString { get; set; }
 
     public event Action? AppOptionsStateChanged;

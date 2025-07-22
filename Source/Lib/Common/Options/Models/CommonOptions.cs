@@ -9,5 +9,4 @@ public record CommonOptions(
     int ResizeHandleWidthInPixels,
     int ResizeHandleHeightInPixels,
     int ThemeKey,
-    string? FontFamily,
-    bool ShowPanelTitles);
+    string? FontFamily);

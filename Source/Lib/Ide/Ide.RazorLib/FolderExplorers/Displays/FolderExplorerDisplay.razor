@@ -12,14 +12,7 @@
 <div class="di_ide_folder-explorer-display" style="height: 100%">
 	@{ var appOptionsState = IdeService.CommonService.GetAppOptionsState(); }
     
-    @if (appOptionsState.Options.ShowPanelTitles)
-    {
-	    <div class="di_ide_section-title">
-	        Folder Explorer
-	    </div>
-    }
-    
-    <div class="di_ide_section-body @IdeService.CommonService.Options_ShowPanelTitlesCssClass">
+    <div class="di_ide_section-body di_ide_section-no-title">
 
         @{ var folderExplorerState = IdeService.GetFolderExplorerState(); }
 
