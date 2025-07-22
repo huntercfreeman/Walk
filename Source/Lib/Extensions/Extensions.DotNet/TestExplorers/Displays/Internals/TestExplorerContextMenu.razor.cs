@@ -336,5 +336,8 @@ public partial class TestExplorerContextMenu : ComponentBase
     {
         DotNetService.ParseOutputEntireDotNetRun(output, "Unit-Test_results");
         
+        var panelState = DotNetService.CommonService.GetPanelState();
+        var outputPanel = panelState.PanelList.FirstOrDefault(x => x.Title == "Output");
+        DotNetService.CommonService.ShowOrAddPanelTab(outputPanel);
     }
 }
