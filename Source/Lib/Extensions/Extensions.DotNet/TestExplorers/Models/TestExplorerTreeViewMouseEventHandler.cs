@@ -8,15 +8,11 @@ namespace Walk.Extensions.DotNet.TestExplorers.Models;
 public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
     private readonly TextEditorService _textEditorService;
-    private readonly IServiceProvider _serviceProvider;
 
-    public TestExplorerTreeViewMouseEventHandler(
-            TextEditorService textEditorService,
-            IServiceProvider serviceProvider)
+    public TestExplorerTreeViewMouseEventHandler(TextEditorService textEditorService)
         : base(textEditorService.CommonService)
     {
         _textEditorService = textEditorService;
-        _serviceProvider = serviceProvider;
     }
 
     public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
@@ -65,8 +61,7 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
             TestExplorerHelper.ShowTestInEditorFactory(
                 className,
                 methodName,
-                _textEditorService,
-                _serviceProvider));
+                _textEditorService));
 
         return Task.CompletedTask;
     }

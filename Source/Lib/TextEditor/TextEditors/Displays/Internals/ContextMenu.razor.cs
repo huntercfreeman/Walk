@@ -16,8 +16,6 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 {
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private IServiceProvider ServiceProvider { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<TextEditorComponentData> ComponentDataKey { get; set; }

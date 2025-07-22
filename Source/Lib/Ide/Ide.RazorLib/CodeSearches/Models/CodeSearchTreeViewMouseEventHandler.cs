@@ -9,15 +9,11 @@ namespace Walk.Ide.RazorLib.CodeSearches.Models;
 public class CodeSearchTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
     private readonly TextEditorService _textEditorService;
-    private readonly IServiceProvider _serviceProvider;
 
-    public CodeSearchTreeViewMouseEventHandler(
-            TextEditorService textEditorService,
-            IServiceProvider serviceProvider)
+    public CodeSearchTreeViewMouseEventHandler(TextEditorService textEditorService)
         : base(textEditorService.CommonService)
     {
         _textEditorService = textEditorService;
-        _serviceProvider = serviceProvider;
     }
 
     public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)

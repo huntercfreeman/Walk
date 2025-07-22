@@ -13,29 +13,29 @@ namespace Walk.Common.RazorLib.JsRuntimes.Models;
 /// </remarks>
 public class WalkCommonJavaScriptInteropApi
 {
-    private readonly IJSRuntime _jsRuntime;
+    public IJSRuntime JsRuntime { get; }
 
     public WalkCommonJavaScriptInteropApi(IJSRuntime jsRuntime)
     {
-        _jsRuntime = jsRuntime;
+        JsRuntime = jsRuntime;
     }
 
     public ValueTask SubscribeWindowSizeChanged(DotNetObjectReference<BrowserResizeInterop> browserResizeInteropDotNetObjectReference)
     {
-        return _jsRuntime.InvokeVoidAsync(
+        return JsRuntime.InvokeVoidAsync(
             "walkCommon.subscribeWindowSizeChanged",
             browserResizeInteropDotNetObjectReference);
     }
 
     public ValueTask DisposeWindowSizeChanged()
     {
-        return _jsRuntime.InvokeVoidAsync(
+        return JsRuntime.InvokeVoidAsync(
             "walkCommon.disposeWindowSizeChanged");
     }
     
     public ValueTask FocusHtmlElementById(string elementId, bool preventScroll = false)
     {
-        return _jsRuntime.InvokeVoidAsync(
+        return JsRuntime.InvokeVoidAsync(
             "walkCommon.focusHtmlElementById",
             elementId,
             preventScroll);
@@ -43,21 +43,21 @@ public class WalkCommonJavaScriptInteropApi
 
     public ValueTask<bool> TryFocusHtmlElementById(string elementId)
     {
-        return _jsRuntime.InvokeAsync<bool>(
+        return JsRuntime.InvokeAsync<bool>(
             "walkCommon.tryFocusHtmlElementById",
             elementId);
     }
     
     public ValueTask<MeasuredHtmlElementDimensions> MeasureElementById(string elementId)
     {
-        return _jsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
+        return JsRuntime.InvokeAsync<MeasuredHtmlElementDimensions>(
             "walkCommon.measureElementById",
             elementId);
     }
 
     public ValueTask LocalStorageSetItem(string key, object? value)
     {
-        return _jsRuntime.InvokeVoidAsync(
+        return JsRuntime.InvokeVoidAsync(
             "walkCommon.localStorageSetItem",
             key,
             value);
@@ -65,20 +65,20 @@ public class WalkCommonJavaScriptInteropApi
 
     public ValueTask<string?> LocalStorageGetItem(string key)
     {
-        return _jsRuntime.InvokeAsync<string?>(
+        return JsRuntime.InvokeAsync<string?>(
             "walkCommon.localStorageGetItem",
             key);
     }
 
     public ValueTask<string> ReadClipboard()
     {
-        return _jsRuntime.InvokeAsync<string>(
+        return JsRuntime.InvokeAsync<string>(
             "walkCommon.readClipboard");
     }
 
     public ValueTask SetClipboard(string value)
     {
-        return _jsRuntime.InvokeVoidAsync(
+        return JsRuntime.InvokeVoidAsync(
             "walkCommon.setClipboard",
             value);
     }
@@ -86,7 +86,7 @@ public class WalkCommonJavaScriptInteropApi
     public ValueTask<ContextMenuFixedPosition> GetTreeViewContextMenuFixedPosition(
         string nodeElementId)
     {
-        return _jsRuntime.InvokeAsync<ContextMenuFixedPosition>(
+        return JsRuntime.InvokeAsync<ContextMenuFixedPosition>(
             "walkCommon.getTreeViewContextMenuFixedPosition",
             nodeElementId);
     }

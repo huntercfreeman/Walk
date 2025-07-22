@@ -9,16 +9,11 @@ namespace Walk.TextEditor.RazorLib.FindAlls.Models;
 public class FindAllTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
     private readonly TextEditorService _textEditorService;
-    private readonly IServiceProvider _serviceProvider;
 
-    public FindAllTreeViewMouseEventHandler(
-            TextEditorService textEditorService,
-            IServiceProvider serviceProvider,
-            CommonService commonService)
-        : base(commonService)
+    public FindAllTreeViewMouseEventHandler(TextEditorService textEditorService)
+        : base(textEditorService.CommonService)
     {
         _textEditorService = textEditorService;
-        _serviceProvider = serviceProvider;
     }
 
     public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)

@@ -19,8 +19,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
 {
     [Inject]
     public TextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    public IJSRuntime JsRuntime { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<TextEditorViewModel> TextEditorViewModelKey { get; set; } = Key<TextEditorViewModel>.Empty;

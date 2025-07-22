@@ -10,15 +10,11 @@ namespace Walk.Ide.RazorLib.CodeSearches.Models;
 public class CodeSearchTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
     private readonly TextEditorService _textEditorService;
-    private readonly IServiceProvider _serviceProvider;
 
-    public CodeSearchTreeViewKeyboardEventHandler(
-            TextEditorService textEditorService,
-            IServiceProvider serviceProvider)
+    public CodeSearchTreeViewKeyboardEventHandler(TextEditorService textEditorService)
         : base(textEditorService.CommonService)
     {
         _textEditorService = textEditorService;
-        _serviceProvider = serviceProvider;
     }
 
     public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)

@@ -8,15 +8,11 @@ namespace Walk.Extensions.DotNet.Outputs.Models;
 public class OutputTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
     private readonly TextEditorService _textEditorService;
-    private readonly IServiceProvider _serviceProvider;
 
-    public OutputTreeViewKeyboardEventHandler(
-            TextEditorService textEditorService,
-            IServiceProvider serviceProvider)
+    public OutputTreeViewKeyboardEventHandler(TextEditorService textEditorService)
         : base(textEditorService.CommonService)
     {
         _textEditorService = textEditorService;
-        _serviceProvider = serviceProvider;
     }
 
     public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)

@@ -9,15 +9,11 @@ namespace Walk.Extensions.DotNet.TestExplorers.Models;
 public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
     private readonly TextEditorService _textEditorService;
-    private readonly IServiceProvider _serviceProvider;
 
-    public TestExplorerTreeViewKeyboardEventHandler(
-            TextEditorService textEditorService,
-            IServiceProvider serviceProvider)
+    public TestExplorerTreeViewKeyboardEventHandler(TextEditorService textEditorService)
         : base(textEditorService.CommonService)
     {
         _textEditorService = textEditorService;
-        _serviceProvider = serviceProvider;
     }
 
     public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)
@@ -84,8 +80,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
             TestExplorerHelper.ShowTestInEditorFactory(
                 className,
                 methodName,
-                _textEditorService,
-                _serviceProvider));
+                _textEditorService));
 
         return Task.CompletedTask;
     }
