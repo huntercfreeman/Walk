@@ -56,15 +56,24 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
             menuOptionList.Add(new MenuOptionRecord(
                 "View Output",
                 MenuOptionKind.Other,
-                onClickFunc: async () => 
+                onClickFunc: () => 
                 {
+                    var panelState = IdeService.CommonService.GetPanelState();
+                    var outputPanel = panelState.PanelList.FirstOrDefault(x => x.Title == "Output");
+                    IdeService.CommonService.ShowOrAddPanelTab(outputPanel);
+                    return Task.CompletedTask;
                 }));
                 
             menuOptionList.Add(new MenuOptionRecord(
                 "View Terminal",
                 MenuOptionKind.Other,
-                onClickFunc: async () => 
+                onClickFunc: () => 
                 {
+                    IdeService.TerminalGroup_SetActiveTerminal(IdeFacts.EXECUTION_KEY);
+                    var panelState = IdeService.CommonService.GetPanelState();
+                    var outputPanel = panelState.PanelList.FirstOrDefault(x => x.Title == "Terminal");
+                    IdeService.CommonService.ShowOrAddPanelTab(outputPanel);
+                    return Task.CompletedTask;
                 }));
                 
             menuOptionList.Add(new MenuOptionRecord(
