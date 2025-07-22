@@ -33,7 +33,7 @@ public partial class TextEditorService
 
     public void Options_InvokeTextEditorWrapperCssStateChanged()
     {
-        Options_TextEditorWrapperCssStateChanged?.Invoke();
+        OptionsChanged?.Invoke(OptionsChangedKind.TextEditorWrapperCssStateChanged);
     }
 
     public void Options_ShowSettingsDialog(bool? isResizableOverride = null, string? cssClassString = null)
@@ -95,7 +95,7 @@ public partial class TextEditorService
             ?? CommonFacts.VisualStudioDarkThemeClone.CssClassString;
         ThemeCssClassString = usingThemeCssClassString;
 
-        Options_StaticStateChanged?.Invoke();
+        OptionsChanged?.Invoke(OptionsChangedKind.StaticStateChanged);
 
         if (updateStorage)
             Options_WriteToStorage();
@@ -114,7 +114,7 @@ public partial class TextEditorService
             },
         };
         // ShowWhitespace needs virtualization result to be re-calculated.
-        Options_MeasuredStateChanged?.Invoke();
+        OptionsChanged?.Invoke(OptionsChangedKind.MeasuredStateChanged);
 
         if (updateStorage)
             Options_WriteToStorage();
@@ -132,7 +132,7 @@ public partial class TextEditorService
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        Options_StaticStateChanged?.Invoke();
+        OptionsChanged?.Invoke(OptionsChangedKind.StaticStateChanged);
 
         if (updateStorage)
             Options_WriteToStorage();
@@ -150,7 +150,7 @@ public partial class TextEditorService
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        Options_StaticStateChanged?.Invoke();
+        OptionsChanged?.Invoke(OptionsChangedKind.StaticStateChanged);
 
         if (updateStorage)
             Options_WriteToStorage();
@@ -168,7 +168,7 @@ public partial class TextEditorService
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        Options_StaticStateChanged?.Invoke();
+        OptionsChanged?.Invoke(OptionsChangedKind.StaticStateChanged);
 
         if (updateStorage)
             Options_WriteToStorage();
@@ -189,7 +189,7 @@ public partial class TextEditorService
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        Options_MeasuredStateChanged?.Invoke();
+        OptionsChanged?.Invoke(OptionsChangedKind.MeasuredStateChanged);
 
         if (updateStorage)
             Options_WriteToStorage();
@@ -207,7 +207,7 @@ public partial class TextEditorService
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        Options_StaticStateChanged?.Invoke();
+        OptionsChanged?.Invoke(OptionsChangedKind.StaticStateChanged);
 
         /*var activeKeymap = _textEditorService.Options_GetTextEditorOptionsState().Options.Keymap;
 
@@ -234,7 +234,7 @@ public partial class TextEditorService
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        Options_StaticStateChanged?.Invoke();
+        OptionsChanged?.Invoke(OptionsChangedKind.StaticStateChanged);
 
         if (updateStorage)
             Options_WriteToStorage();
@@ -255,7 +255,7 @@ public partial class TextEditorService
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        Options_NeedsMeasured?.Invoke();
+        OptionsChanged?.Invoke(OptionsChangedKind.NeedsMeasured);
 
         if (updateStorage)
             Options_WriteToStorage();
@@ -276,7 +276,7 @@ public partial class TextEditorService
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        Options_NeedsMeasured?.Invoke();
+        OptionsChanged?.Invoke(OptionsChangedKind.NeedsMeasured);
 
         if (updateStorage)
             Options_WriteToStorage();
@@ -294,7 +294,7 @@ public partial class TextEditorService
                 RenderStateKey = Key<RenderState>.NewKey(),
             },
         };
-        Options_StaticStateChanged?.Invoke();
+        OptionsChanged?.Invoke(OptionsChangedKind.StaticStateChanged);
 
         if (updateStorage)
             Options_WriteToStorage();
@@ -311,7 +311,7 @@ public partial class TextEditorService
                 RenderStateKey = renderStateKey
             },
         };
-        Options_StaticStateChanged?.Invoke();
+        OptionsChanged?.Invoke(OptionsChangedKind.StaticStateChanged);
     }
 
     public void Options_SetCharAndLineMeasurements(TextEditorEditContext editContext, CharAndLineMeasurements charAndLineMeasurements)
@@ -327,7 +327,7 @@ public partial class TextEditorService
             },
         };
 
-        Options_MeasuredStateChanged?.Invoke();
+        OptionsChanged?.Invoke(OptionsChangedKind.MeasuredStateChanged);
     }
 
     public void Options_WriteToStorage()

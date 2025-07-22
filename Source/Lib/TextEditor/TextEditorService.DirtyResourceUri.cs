@@ -29,7 +29,7 @@ public partial class TextEditorService
             }
         }
 
-        DirtyResourceUriStateChanged?.Invoke();
+        SecondaryChanged?.Invoke(SecondaryChangedKind.DirtyResourceUriStateChanged);
     }
 
     public void RemoveDirtyResourceUri(ResourceUri resourceUri)
@@ -45,7 +45,7 @@ public partial class TextEditorService
             };
         }
 
-        DirtyResourceUriStateChanged?.Invoke();
+        SecondaryChanged?.Invoke(SecondaryChangedKind.DirtyResourceUriStateChanged);
     }
 
     public record struct DirtyResourceUriState(List<ResourceUri> DirtyResourceUriList)

@@ -38,7 +38,7 @@ public partial class TextEditorService
             };
         }
 
-        FindAllStateChanged?.Invoke();
+        SecondaryChanged?.Invoke(SecondaryChangedKind.FindAllStateChanged);
     }
 
     public void SetStartingDirectoryPath(string startingDirectoryPath)
@@ -51,7 +51,7 @@ public partial class TextEditorService
             };
         }
 
-        FindAllStateChanged?.Invoke();
+        SecondaryChanged?.Invoke(SecondaryChangedKind.FindAllStateChanged);
     }
 
     public void CancelSearch()
@@ -64,7 +64,7 @@ public partial class TextEditorService
             _findAllState = _findAllState with { };
         }
 
-        FindAllStateChanged?.Invoke();
+        SecondaryChanged?.Invoke(SecondaryChangedKind.FindAllStateChanged);
     }
 
     public void SetProgressBarModel(ProgressBarModel progressBarModel)
@@ -77,7 +77,7 @@ public partial class TextEditorService
             };
         }
 
-        FindAllStateChanged?.Invoke();
+        SecondaryChanged?.Invoke(SecondaryChangedKind.FindAllStateChanged);
     }
 
     public void FlushSearchResults(List<(string SourceText, ResourceUri ResourceUri, TextEditorTextSpan TextSpan)> searchResultList)
@@ -100,7 +100,7 @@ public partial class TextEditorService
             };
         }
 
-        FindAllStateChanged?.Invoke();
+        SecondaryChanged?.Invoke(SecondaryChangedKind.FindAllStateChanged);
     }
 
     public void ClearSearch()
@@ -115,7 +115,7 @@ public partial class TextEditorService
             };
         }
 
-        FindAllStateChanged?.Invoke();
+        SecondaryChanged?.Invoke(SecondaryChangedKind.FindAllStateChanged);
     }
 
     public Task HandleStartSearchAction()

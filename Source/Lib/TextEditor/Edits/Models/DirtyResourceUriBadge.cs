@@ -38,19 +38,22 @@ public class DirtyResourceUriBadge : IBadgeModel
     public void AddSubscription(Func<Task> updateUiFunc)
     {
         _updateUiFunc = updateUiFunc;
-        _textEditorService.DirtyResourceUriStateChanged += DoSubscription;
+        _textEditorService.SecondaryChanged += DoSubscription;
     }
     
-    public async void DoSubscription()
+    public async void DoSubscription(SecondaryChangedKind secondaryChangedKind)
     {
-        var localUpdateUiFunc = _updateUiFunc;
-        if (_updateUiFunc is not null)
-            await _updateUiFunc.Invoke();
+        if (secondaryChangedKind == SecondaryChangedKind.DirtyResourceUriStateChanged)
+        {
+            var localUpdateUiFunc = _updateUiFunc;
+            if (_updateUiFunc is not null)
+                await _updateUiFunc.Invoke();
+        }
     }
     
     public void DisposeSubscription()
     {
-        _textEditorService.DirtyResourceUriStateChanged -= DoSubscription;
+        _textEditorService.SecondaryChanged -= DoSubscription;
         _updateUiFunc = null;
     }
 }

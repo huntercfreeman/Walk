@@ -25,16 +25,19 @@ public partial class InputTextEditorFontFamily : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        TextEditorService.Options_StaticStateChanged += OptionsWrapOnStateChanged;
+        TextEditorService.OptionsChanged += OptionsWrapOnStateChanged;
     }
 
-    private async void OptionsWrapOnStateChanged()
+    private async void OptionsWrapOnStateChanged(OptionsChangedKind optionsChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (optionsChangedKind == OptionsChangedKind.StaticStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     public void Dispose()
     {
-        TextEditorService.Options_StaticStateChanged -= OptionsWrapOnStateChanged;
+        TextEditorService.OptionsChanged -= OptionsWrapOnStateChanged;
     }
 }

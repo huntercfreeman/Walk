@@ -18,7 +18,7 @@ public partial class InputTextEditorTheme : ComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
-        TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
+        TextEditorService.OptionsChanged += TextEditorOptionsStateWrapOnStateChanged;
     }
     
     private void SelectedThemeChanged(ChangeEventArgs changeEventArgs)
@@ -40,13 +40,16 @@ public partial class InputTextEditorTheme : ComponentBase, IDisposable
         }
     }
     
-    private async void TextEditorOptionsStateWrapOnStateChanged()
+    private async void TextEditorOptionsStateWrapOnStateChanged(OptionsChangedKind optionsChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (optionsChangedKind == OptionsChangedKind.StaticStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     public void Dispose()
     {
-        TextEditorService.Options_StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
+        TextEditorService.OptionsChanged -= TextEditorOptionsStateWrapOnStateChanged;
     }
 }

@@ -41,12 +41,17 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        TextEditorService.Group_TextEditorGroupStateChanged += TextEditorGroupWrapOnStateChanged;
+        TextEditorService.SecondaryChanged += TextEditorGroupWrapOnStateChanged;
         TextEditorService.TextEditorStateChanged += TextEditorViewModelStateWrapOnStateChanged;
     }
 
-    private async void TextEditorGroupWrapOnStateChanged() =>
-        await InvokeAsync(StateHasChanged);
+    private async void TextEditorGroupWrapOnStateChanged(SecondaryChangedKind secondaryChangedKind)
+    {
+        if (secondaryChangedKind == SecondaryChangedKind.Group_TextEditorGroupStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
 
     private async void TextEditorViewModelStateWrapOnStateChanged()
     {
@@ -80,7 +85,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TextEditorService.Group_TextEditorGroupStateChanged -= TextEditorGroupWrapOnStateChanged;
+        TextEditorService.SecondaryChanged -= TextEditorGroupWrapOnStateChanged;
         TextEditorService.TextEditorStateChanged -= TextEditorViewModelStateWrapOnStateChanged;
     }
 }

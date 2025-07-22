@@ -25,14 +25,7 @@
 @* ContextRecord="ContextFacts.TestExplorerContext" *@
 
 <div class="di_ide_test-explorer" style="height: 100%; width: 100%;">
-	@if (appOptionsState.Options.ShowPanelTitles)
-	{
-	    <div class="di_ide_section-title">
-	        Test Explorer
-	    </div>
-    }
-
-    <div class="di_ide_section-body @DotNetService.IdeService.TextEditorService.CommonService.Options_ShowPanelTitlesCssClass">
+    <div class="di_ide_section-body di_ide_section-no-title">
 
 		@if (renderBatch.TreeViewContainer is null)
 		{

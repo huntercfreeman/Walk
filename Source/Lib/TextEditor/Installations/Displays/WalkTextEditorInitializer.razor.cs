@@ -35,7 +35,7 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
     {
         _countOfTestCharacters = TEST_STRING_REPEAT_COUNT * TEST_STRING_FOR_MEASUREMENT.Length;
         
-        TextEditorService.Options_NeedsMeasured += OnNeedsMeasured;
+        TextEditorService.OptionsChanged += OnNeedsMeasured;
 
         TextEditorService.Enqueue_TextEditorInitializationBackgroundTaskGroupWorkKind();
     }
@@ -91,10 +91,13 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
         await InvokeAsync(StateHasChanged);
     }
     
-    private async void OnNeedsMeasured()
+    private async void OnNeedsMeasured(OptionsChangedKind optionsChangedKind)
     {
-        await InvokeAsync(Ready);
-        QueueRemeasureBackgroundTask();
+        if (optionsChangedKind == OptionsChangedKind.NeedsMeasured)
+        {
+            await InvokeAsync(Ready);
+            QueueRemeasureBackgroundTask();
+        }
     }
     
     private void QueueRemeasureBackgroundTask()
@@ -113,6 +116,6 @@ public partial class WalkTextEditorInitializer : ComponentBase, IDisposable
     
     public void Dispose()
     {
-        TextEditorService.Options_NeedsMeasured -= OnNeedsMeasured;
+        TextEditorService.OptionsChanged -= OnNeedsMeasured;
     }
 }

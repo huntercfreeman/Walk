@@ -3,6 +3,7 @@ using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Tabs.Displays;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Groups.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -46,31 +47,32 @@ public partial class EditorDisplay : ComponentBase, IDisposable
     
         _componentDataKey = new Key<TextEditorComponentData>(_viewModelDisplayOptions.TextEditorHtmlElementId);
         
-        IdeService.TextEditorService.Group_TextEditorGroupStateChanged += TextEditorGroupWrapOnStateChanged;
-        IdeService.TextEditorService.DirtyResourceUriStateChanged += DirtyResourceUriServiceOnStateChanged;
+        IdeService.TextEditorService.SecondaryChanged += OnSecondaryChanged;
     }
 
-    private async void TextEditorGroupWrapOnStateChanged()
+    private async void OnSecondaryChanged(SecondaryChangedKind secondaryChangedKind)
     {
-        var textEditorGroup = IdeService.TextEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
-            x => x.GroupKey == IdeService.EditorTextEditorGroupKey);
+        if (secondaryChangedKind == SecondaryChangedKind.DirtyResourceUriStateChanged)
+        {
+            var localTabListDisplay = _tabListDisplay;
             
-        if (_previousActiveViewModelKey != textEditorGroup.ActiveViewModelKey)
-        {
-            _previousActiveViewModelKey = textEditorGroup.ActiveViewModelKey;
-            IdeService.TextEditorService.ViewModel_StopCursorBlinking();
+            if (localTabListDisplay is not null)
+            {
+                await localTabListDisplay.NotifyStateChangedAsync();
+            }
         }
-    
-        await InvokeAsync(StateHasChanged);
-    }
-    
-    private async void DirtyResourceUriServiceOnStateChanged()
-    {
-        var localTabListDisplay = _tabListDisplay;
-        
-        if (localTabListDisplay is not null)
+        else if (secondaryChangedKind == SecondaryChangedKind.Group_TextEditorGroupStateChanged)
         {
-            await localTabListDisplay.NotifyStateChangedAsync();
+            var textEditorGroup = IdeService.TextEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
+                x => x.GroupKey == IdeService.EditorTextEditorGroupKey);
+                
+            if (_previousActiveViewModelKey != textEditorGroup.ActiveViewModelKey)
+            {
+                _previousActiveViewModelKey = textEditorGroup.ActiveViewModelKey;
+                IdeService.TextEditorService.ViewModel_StopCursorBlinking();
+            }
+        
+            await InvokeAsync(StateHasChanged);
         }
     }
 
@@ -95,7 +97,6 @@ public partial class EditorDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        IdeService.TextEditorService.Group_TextEditorGroupStateChanged -= TextEditorGroupWrapOnStateChanged;
-        IdeService.TextEditorService.DirtyResourceUriStateChanged -= DirtyResourceUriServiceOnStateChanged;
+        IdeService.TextEditorService.SecondaryChanged -= OnSecondaryChanged;
     }
 }

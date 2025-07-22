@@ -39,7 +39,7 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        TextEditorService.Options_StaticStateChanged += OptionsWrapOnStateChanged;
+        TextEditorService.OptionsChanged += OptionsWrapOnStateChanged;
         ReadActualFontSizeInPixels();
     }
     
@@ -61,9 +61,9 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
         _fontSizeInPixels = temporaryFontSizeInPixels.Value;
     }
 
-    private async void OptionsWrapOnStateChanged()
+    private async void OptionsWrapOnStateChanged(OptionsChangedKind optionsChangedKind)
     {
-        if (!_hasFocus)
+        if (optionsChangedKind == OptionsChangedKind.StaticStateChanged && !_hasFocus)
         {
             ReadActualFontSizeInPixels();
             await InvokeAsync(StateHasChanged);
@@ -82,6 +82,6 @@ public partial class InputTextEditorFontSize : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TextEditorService.Options_StaticStateChanged -= OptionsWrapOnStateChanged;
+        TextEditorService.OptionsChanged -= OptionsWrapOnStateChanged;
     }
 }

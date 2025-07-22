@@ -84,7 +84,7 @@ public partial class TextEditorService
         }
 
         finalize:
-        Group_TextEditorGroupStateChanged?.Invoke();
+        SecondaryChanged?.Invoke(SecondaryChangedKind.Group_TextEditorGroupStateChanged);
     }
 
     public void Group_AddViewModelToGroup(
@@ -137,7 +137,7 @@ public partial class TextEditorService
         }
 
         finalize:
-        Group_TextEditorGroupStateChanged?.Invoke();
+        SecondaryChanged?.Invoke(SecondaryChangedKind.Group_TextEditorGroupStateChanged);
         Group_PostScroll(groupKey, viewModelKey);
     }
 
@@ -223,7 +223,7 @@ public partial class TextEditorService
         }
 
         finalize:
-        Group_TextEditorGroupStateChanged?.Invoke();
+        SecondaryChanged?.Invoke(SecondaryChangedKind.Group_TextEditorGroupStateChanged);
         Group_PostScroll(groupKey, Group_GetOrDefault(groupKey).ActiveViewModelKey);
     }
 
@@ -263,7 +263,7 @@ public partial class TextEditorService
 
         finalize:
         Group_PostScroll(groupKey, viewModelKey);
-        Group_TextEditorGroupStateChanged?.Invoke();
+        SecondaryChanged?.Invoke(SecondaryChangedKind.Group_TextEditorGroupStateChanged);
     }
 
     public void Group_Dispose(Key<TextEditorGroup> groupKey)
@@ -290,7 +290,7 @@ public partial class TextEditorService
         }
 
         finalize:
-        Group_TextEditorGroupStateChanged?.Invoke();
+        SecondaryChanged?.Invoke(SecondaryChangedKind.Group_TextEditorGroupStateChanged);
     }
 
     private void Group_PostScroll(

@@ -95,8 +95,7 @@ public record struct AppOptionsState(CommonOptions Options)
         ResizeHandleWidthInPixels: DEFAULT_RESIZE_HANDLE_WIDTH_IN_PIXELS,
         ResizeHandleHeightInPixels: DEFAULT_RESIZE_HANDLE_HEIGHT_IN_PIXELS,
         ThemeKey: CommonFacts.VisualStudioDarkThemeClone.Key,
-        FontFamily: null,
-        ShowPanelTitles: false);
+        FontFamily: null);
 
     public AppOptionsState() : this(DefaultCommonOptions)
     {

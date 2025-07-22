@@ -9,14 +9,7 @@
 @* ContextRecord="_viewModelDisplayOptions.ContextRecord" *@
 
 <div class="di_ide_editor-display" style="@EditorElementDimensions.GetStyleString(IdeService.CommonService.UiStringBuilder)">
-	@if (IdeService.CommonService.Options_ShowPanelTitles)
-	{
-	    <div class="di_ide_section-title">
-	        Editor
-	    </div>
-    }
-
-    <div class="di_ide_section-body di_te_text-editor-group @IdeService.CommonService.Options_ShowPanelTitlesCssClass"
+    <div class="di_ide_section-body di_te_text-editor-group di_ide_section-no-title"
          id="@HtmlId">
     
     	@{
