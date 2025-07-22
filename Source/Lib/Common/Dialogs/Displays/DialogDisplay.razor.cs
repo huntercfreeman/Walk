@@ -46,7 +46,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     private async void OnCommonUiStateChanged(CommonUiEventKind commonUiEventKind)
     {
-        if (commonUiEventKind == CommonUiEventKind.ActiveDialogKeyChanged || commonUiEventKind == CommonUiEventKind.AppOptionsStateChanged)
+        if (commonUiEventKind == CommonUiEventKind.ActiveDialogKeyChanged)
         {
             await InvokeAsync(StateHasChanged);
         }

@@ -27,11 +27,6 @@ public partial class ResizableColumn : ComponentBase, IDisposable
     
     private async void DragStateWrapOnStateChanged(CommonUiEventKind commonUiEventKind)
     {
-        if (commonUiEventKind == CommonUiEventKind.AppOptionsStateChanged)
-        {
-            await InvokeAsync(StateHasChanged);
-        }
-    
         if (commonUiEventKind != CommonUiEventKind.DragStateChanged)
             return;
             

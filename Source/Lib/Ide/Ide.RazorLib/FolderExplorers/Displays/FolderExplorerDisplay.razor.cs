@@ -20,7 +20,6 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         IdeService.IdeStateChanged += OnFolderExplorerStateChanged;
-        IdeService.CommonService.CommonUiStateChanged += OnAppOptionsStateChanged;
 
         _treeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(IdeService);
         _treeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(IdeService);
@@ -54,17 +53,8 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         }
     }
     
-    private async void OnAppOptionsStateChanged(CommonUiEventKind commonUiEventKind)
-    {
-        if (commonUiEventKind == CommonUiEventKind.AppOptionsStateChanged)
-        {
-            await InvokeAsync(StateHasChanged);
-        }
-    }
-
     public void Dispose()
     {
         IdeService.IdeStateChanged -= OnFolderExplorerStateChanged;
-        IdeService.CommonService.CommonUiStateChanged -= OnAppOptionsStateChanged;
     }
 }
