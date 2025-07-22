@@ -5,8 +5,6 @@ public partial class TextEditorService
     public event Action? TextEditorStateChanged;
 
     public event Action<SecondaryChangedKind>? SecondaryChanged;
-    
-    public event Action<OptionsChangedKind>? OptionsChanged;
 }
 
 public enum SecondaryChangedKind
@@ -14,10 +12,7 @@ public enum SecondaryChangedKind
     DirtyResourceUriStateChanged,
     FindAllStateChanged,
     Group_TextEditorGroupStateChanged,
-}
-
-public enum OptionsChangedKind
-{
+    
     /// <summary>
     /// Step 1: Notifies the TextEditorViewModelDisplay to recalculate `_componentData.SetWrapperCssAndStyle();`
     ///         and invoke `StateHasChanged()`.

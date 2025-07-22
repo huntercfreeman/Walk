@@ -89,7 +89,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
         IdeService.CommonService.CommonUiStateChanged += DragStateWrapOnStateChanged;
         IdeService.Ide_IdeStateChanged += OnIdeMainLayoutStateChanged;
-        IdeService.TextEditorService.OptionsChanged += TextEditorOptionsStateWrap_StateChanged;
+        IdeService.TextEditorService.SecondaryChanged += TextEditorOptionsStateWrap_StateChanged;
 
         IdeService.Enqueue(new IdeWorkArgs
         {
@@ -153,9 +153,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
-    private async void TextEditorOptionsStateWrap_StateChanged(OptionsChangedKind optionsChangedKind)
+    private async void TextEditorOptionsStateWrap_StateChanged(SecondaryChangedKind secondaryChangedKind)
     {
-        if (optionsChangedKind == OptionsChangedKind.StaticStateChanged)
+        if (secondaryChangedKind == SecondaryChangedKind.StaticStateChanged)
         {
             await InvokeAsync(() =>
             {
@@ -354,6 +354,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         IdeService.CommonService.CommonUiStateChanged -= DragStateWrapOnStateChanged;
         IdeService.Ide_IdeStateChanged -= OnIdeMainLayoutStateChanged;
-        IdeService.TextEditorService.OptionsChanged -= TextEditorOptionsStateWrap_StateChanged;
+        IdeService.TextEditorService.SecondaryChanged -= TextEditorOptionsStateWrap_StateChanged;
     }
 }
