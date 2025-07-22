@@ -62,11 +62,7 @@ public class TextEditorVirtualizationResult
         Model = model;
         ViewModel = viewModel;
         
-        InlineUiStyleList = new();
-        VirtualizedCollapsePointList = new();
         SelectionStyleList = new();
-        
-        SeenViewModelKey = Key<TextEditorViewModel>.Empty;
         
         BodyStyle = "width: 100%; left: 0;";
         BothVirtualizationBoundaryStyleCssString = "width: 0px; height: 0px;";
@@ -157,12 +153,6 @@ public class TextEditorVirtualizationResult
         LastPresentationLayerGroupStartInclusiveIndex = _previousState.LastPresentationLayerGroupStartInclusiveIndex;
         LastPresentationLayerGroupEndExclusiveIndex = _previousState.LastPresentationLayerGroupEndExclusiveIndex;
         
-        InlineUiStyleList = _previousState.InlineUiStyleList;
-        InlineUiWidthStyleCssString = _previousState.InlineUiWidthStyleCssString;
-        VirtualizedCollapsePointList = _previousState.VirtualizedCollapsePointList;
-        SeenViewModelKey = _previousState.SeenViewModelKey;
-        VirtualizedCollapsePointListVersion = _previousState.VirtualizedCollapsePointListVersion;
-        
         Gutter_HeightWidthPaddingCssStyle = _previousState.Gutter_HeightWidthPaddingCssStyle;
         Gutter_WidthCssStyle = _previousState.Gutter_WidthCssStyle;
         
@@ -222,12 +212,6 @@ public class TextEditorVirtualizationResult
     public int LastPresentationLayerGroupStartInclusiveIndex { get; set; }
     public int LastPresentationLayerGroupEndExclusiveIndex { get; set; }
     
-    public List<string> InlineUiStyleList { get; set; }
-    public string? InlineUiWidthStyleCssString { get; set; }
-    public List<CollapsePoint> VirtualizedCollapsePointList { get; set; }
-    public Key<TextEditorViewModel> SeenViewModelKey { get; set; }
-    public int VirtualizedCollapsePointListVersion { get; set; }
-
     public string? CursorCssStyle { get; set; }
     public string? CaretRowCssStyle { get; set; }
     public List<string> SelectionStyleList { get; set; }
@@ -285,11 +269,6 @@ public class TextEditorVirtualizationResult
         
         LastPresentationLayerGroupStartInclusiveIndex = _previousState.LastPresentationLayerGroupStartInclusiveIndex;
         LastPresentationLayerGroupEndExclusiveIndex = _previousState.LastPresentationLayerGroupEndExclusiveIndex;
-        
-        VirtualizedCollapsePointList = _previousState.VirtualizedCollapsePointList;
-        InlineUiStyleList = _previousState.InlineUiStyleList;
-        SeenViewModelKey = _previousState.SeenViewModelKey;
-        VirtualizedCollapsePointListVersion = _previousState.VirtualizedCollapsePointListVersion;
     }
     
     public void CreateUi()
