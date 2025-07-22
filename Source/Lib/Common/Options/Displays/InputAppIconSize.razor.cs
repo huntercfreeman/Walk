@@ -25,17 +25,20 @@ public partial class InputAppIconSize : ComponentBase, IDisposable
 
     protected override Task OnInitializedAsync()
     {
-        CommonService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
+        CommonService.CommonUiStateChanged += AppOptionsStateWrapOnStateChanged;
         return Task.CompletedTask;
     }
 
-    private async void AppOptionsStateWrapOnStateChanged()
+    private async void AppOptionsStateWrapOnStateChanged(CommonUiEventKind commonUiEventKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (commonUiEventKind == CommonUiEventKind.AppOptionsStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     public void Dispose()
     {
-        CommonService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
+        CommonService.CommonUiStateChanged -= AppOptionsStateWrapOnStateChanged;
     }
 }

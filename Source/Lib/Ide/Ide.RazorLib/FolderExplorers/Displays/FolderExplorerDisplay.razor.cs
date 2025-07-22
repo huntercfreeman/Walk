@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Ide.RazorLib.FolderExplorers.Models;
@@ -19,7 +20,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         IdeService.FolderExplorerStateChanged += OnFolderExplorerStateChanged;
-        IdeService.CommonService.AppOptionsStateChanged += OnAppOptionsStateChanged;
+        IdeService.CommonService.CommonUiStateChanged += OnAppOptionsStateChanged;
 
         _treeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(IdeService);
         _treeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(IdeService);
@@ -50,14 +51,17 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         await InvokeAsync(StateHasChanged);
     }
     
-    private async void OnAppOptionsStateChanged()
+    private async void OnAppOptionsStateChanged(CommonUiEventKind commonUiEventKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (commonUiEventKind == CommonUiEventKind.AppOptionsStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     public void Dispose()
     {
         IdeService.FolderExplorerStateChanged -= OnFolderExplorerStateChanged;
-        IdeService.CommonService.AppOptionsStateChanged -= OnAppOptionsStateChanged;
+        IdeService.CommonService.CommonUiStateChanged -= OnAppOptionsStateChanged;
     }
 }

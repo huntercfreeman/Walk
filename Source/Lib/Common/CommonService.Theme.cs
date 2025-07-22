@@ -21,7 +21,7 @@ public partial class CommonService
         outThemeList.Add(theme);
 
         _themeState = new ThemeState { ThemeList = outThemeList };
-        AppOptionsStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.AppOptionsStateChanged);
     }
     
     public void Theme_RegisterRangeAction(IEnumerable<ThemeRecord> themeList)
@@ -39,7 +39,7 @@ public partial class CommonService
             outThemeList.Add(theme);
     
             _themeState = new ThemeState { ThemeList = outThemeList };
-            AppOptionsStateChanged?.Invoke();
+            CommonUiStateChanged?.Invoke(CommonUiEventKind.AppOptionsStateChanged);
         }
     }
 
@@ -55,6 +55,6 @@ public partial class CommonService
         outThemeList.Remove(inTheme);
 
         _themeState = new ThemeState { ThemeList = outThemeList };
-        AppOptionsStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.AppOptionsStateChanged);
     }
 }

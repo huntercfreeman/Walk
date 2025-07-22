@@ -87,8 +87,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 DimensionOperatorKind.Subtract)
         });
     
-        IdeService.CommonService.DragStateChanged += DragStateWrapOnStateChanged;
-        IdeService.CommonService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
+        IdeService.CommonService.CommonUiStateChanged += DragStateWrapOnStateChanged;
         IdeService.Ide_IdeStateChanged += OnIdeMainLayoutStateChanged;
         IdeService.TextEditorService.OptionsChanged += TextEditorOptionsStateWrap_StateChanged;
 
@@ -124,17 +123,20 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         }
     }
 
-    private async void AppOptionsStateWrapOnStateChanged()
+    private async void DragStateWrapOnStateChanged(CommonUiEventKind commonUiEventKind)
     {
-        await InvokeAsync(() =>
+        if (commonUiEventKind == CommonUiEventKind.AppOptionsStateChanged)
         {
-            _shouldRecalculateCssStrings = true;
-            StateHasChanged();
-        }).ConfigureAwait(false);
-    }
-
-    private async void DragStateWrapOnStateChanged()
-    {
+            await InvokeAsync(() =>
+            {
+                _shouldRecalculateCssStrings = true;
+                StateHasChanged();
+            }).ConfigureAwait(false);
+        }
+    
+        if (commonUiEventKind != CommonUiEventKind.DragStateChanged)
+            return;
+            
         if (_previousDragStateWrapShouldDisplay != IdeService.CommonService.GetDragState().ShouldDisplay)
         {
             _previousDragStateWrapShouldDisplay = IdeService.CommonService.GetDragState().ShouldDisplay;
@@ -350,8 +352,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     public void Dispose()
     {
-        IdeService.CommonService.DragStateChanged -= DragStateWrapOnStateChanged;
-        IdeService.CommonService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
+        IdeService.CommonService.CommonUiStateChanged -= DragStateWrapOnStateChanged;
         IdeService.Ide_IdeStateChanged -= OnIdeMainLayoutStateChanged;
         IdeService.TextEditorService.OptionsChanged -= TextEditorOptionsStateWrap_StateChanged;
     }

@@ -11,4 +11,7 @@ public enum CommonUiEventKind
     OutlineStateChanged,
     TooltipStateChanged,
     TreeViewStateChanged,
+    DragStateChanged,
+    AppDimensionStateChanged,
+    AppOptionsStateChanged,
 }

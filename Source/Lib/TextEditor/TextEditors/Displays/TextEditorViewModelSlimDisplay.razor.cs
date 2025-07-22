@@ -120,7 +120,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         TextEditorService.TextEditorStateChanged += GeneralOnStateChangedEventHandler;
         TextEditorService.OptionsChanged += OnOptionsChanged;
         TextEditorService.ViewModel_CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
-        TextEditorService.CommonService.DragStateChanged += DragStateWrapOnStateChanged;
+        TextEditorService.CommonService.CommonUiStateChanged += DragStateWrapOnStateChanged;
     }
     
     protected override void OnParametersSet()
@@ -720,8 +720,11 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         });
     }
 
-    private async void DragStateWrapOnStateChanged()
+    private async void DragStateWrapOnStateChanged(CommonUiEventKind commonUiEventKind)
     {
+        if (commonUiEventKind != CommonUiEventKind.DragStateChanged)
+            return;
+    
         if (!TextEditorService.CommonService.GetDragState().ShouldDisplay)
         {
             // NOTE: '_mouseDownEventArgs' being non-null is what indicates that the subscription is active.
@@ -875,7 +878,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     public void Dispose()
     {
         // ScrollbarSection.razor.cs
-        TextEditorService.CommonService.DragStateChanged -= DragStateWrapOnStateChanged;
+        TextEditorService.CommonService.CommonUiStateChanged -= DragStateWrapOnStateChanged;
     
         // TextEditorViewModelDisplay.razor.cs
         TextEditorService.TextEditorStateChanged -= GeneralOnStateChangedEventHandler;

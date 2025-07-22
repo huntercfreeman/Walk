@@ -21,7 +21,7 @@ public partial class CommonService
             MouseEventArgs = mouseEventArgs,
         };
         
-        DragStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.DragStateChanged);
         return;
     }
     
@@ -39,7 +39,7 @@ public partial class CommonService
             Drag = drag,
         };
         
-        DragStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.DragStateChanged);
         return;
     }
 }

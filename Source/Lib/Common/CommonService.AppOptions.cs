@@ -48,7 +48,7 @@ public partial class CommonService
         
         HandleThemeChange();
         
-        AppOptionsStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.AppOptionsStateChanged);
 
         if (updateStorage)
             Options_WriteToStorage();
@@ -68,7 +68,7 @@ public partial class CommonService
         
         HandleThemeChange();
         
-        AppOptionsStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.AppOptionsStateChanged);
 
         if (updateStorage)
             Options_WriteToStorage();
@@ -97,7 +97,7 @@ public partial class CommonService
         else
             Options_FontFamilyCssStyleString = $"font-family: {usingFontFamily};";
 
-        AppOptionsStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.AppOptionsStateChanged);
 
         if (updateStorage)
             Options_WriteToStorage();
@@ -124,7 +124,7 @@ public partial class CommonService
         var usingFontSizeInPixelsCssValue = usingFontSizeInPixels.ToCssValue();
         Options_FontSizeCssStyleString = $"font-size: {usingFontSizeInPixelsCssValue}px;";
         
-        AppOptionsStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.AppOptionsStateChanged);
 
         if (updateStorage)
             Options_WriteToStorage();
@@ -144,7 +144,7 @@ public partial class CommonService
         
         Options_ResizeHandleCssWidth = $"width: {GetAppOptionsState().Options.ResizeHandleWidthInPixels.ToCssValue()}px";
         
-        AppOptionsStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.AppOptionsStateChanged);
 
         if (updateStorage)
             Options_WriteToStorage();
@@ -164,7 +164,7 @@ public partial class CommonService
         
         Options_ResizeHandleCssHeight = $"height: {GetAppOptionsState().Options.ResizeHandleHeightInPixels.ToCssValue()}px";
         
-        AppOptionsStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.AppOptionsStateChanged);
 
         if (updateStorage)
             Options_WriteToStorage();
@@ -182,7 +182,7 @@ public partial class CommonService
             }
         };
         
-        AppOptionsStateChanged?.Invoke();
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.AppOptionsStateChanged);
 
         if (updateStorage)
             Options_WriteToStorage();

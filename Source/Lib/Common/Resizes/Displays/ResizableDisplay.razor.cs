@@ -35,11 +35,14 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        CommonService.DragStateChanged += DragStateWrapOnStateChanged;
+        CommonService.CommonUiStateChanged += DragStateWrapOnStateChanged;
     }
 
-    private async void DragStateWrapOnStateChanged()
+    private async void DragStateWrapOnStateChanged(CommonUiEventKind commonUiEventKind)
     {
+        if (commonUiEventKind != CommonUiEventKind.DragStateChanged)
+            return;
+        
         if (!CommonService.GetDragState().ShouldDisplay)
         {
             var wasTargetOfDragging = _dragEventHandler is not null;
@@ -587,6 +590,6 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        CommonService.DragStateChanged -= DragStateWrapOnStateChanged;
+        CommonService.CommonUiStateChanged -= DragStateWrapOnStateChanged;
     }
 }
