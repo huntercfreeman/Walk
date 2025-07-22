@@ -40,7 +40,7 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
-        TextEditorService.FindAllStateChanged += OnFindAllStateChanged;
+        TextEditorService.SecondaryChanged += OnFindAllStateChanged;
     
         _treeViewKeymap = new FindAllTreeViewKeyboardEventHandler(
             TextEditorService,
@@ -83,13 +83,16 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
         TextEditorService.CancelSearch();
     }
     
-    public async void OnFindAllStateChanged()
+    public async void OnFindAllStateChanged(SecondaryChangedKind secondaryChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (secondaryChangedKind == SecondaryChangedKind.FindAllStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     public void Dispose()
     {
-        TextEditorService.FindAllStateChanged -= OnFindAllStateChanged;
+        TextEditorService.SecondaryChanged -= OnFindAllStateChanged;
     }
 }

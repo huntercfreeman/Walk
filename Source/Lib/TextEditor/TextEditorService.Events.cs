@@ -4,11 +4,16 @@ public partial class TextEditorService
 {
     public event Action? TextEditorStateChanged;
 
-    public event Action? DirtyResourceUriStateChanged;
-    public event Action? FindAllStateChanged;
-    public event Action? Group_TextEditorGroupStateChanged;
+    public event Action<SecondaryChangedKind>? SecondaryChanged;
     
     public event Action<OptionsChangedKind>? OptionsChanged;
+}
+
+public enum SecondaryChangedKind
+{
+    DirtyResourceUriStateChanged,
+    FindAllStateChanged,
+    Group_TextEditorGroupStateChanged,
 }
 
 public enum OptionsChangedKind
