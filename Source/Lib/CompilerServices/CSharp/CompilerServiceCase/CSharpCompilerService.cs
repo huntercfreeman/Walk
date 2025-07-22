@@ -1281,17 +1281,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         
         var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, content, shouldUseSharedStringWalker: true);
 
-        // Even if the parser throws an exception, be sure to
-        // make use of the Lexer to do whatever syntax highlighting is possible.
-        try
-        {
-            __CSharpBinder.StartCompilationUnit(resourceUri);
-            CSharpParser.Parse(cSharpCompilationUnit, __CSharpBinder, ref lexerOutput);
-        }
-        finally
-        {
-            ResourceParsed?.Invoke();
-        }
+        __CSharpBinder.StartCompilationUnit(resourceUri);
+        CSharpParser.Parse(cSharpCompilationUnit, __CSharpBinder, ref lexerOutput);
     }
     
     public void FastParse(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
@@ -1308,18 +1299,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         
         var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, content, shouldUseSharedStringWalker: true);
 
-        // Even if the parser throws an exception, be sure to
-        // make use of the Lexer to do whatever syntax highlighting is possible.
-        try
-        {
-            __CSharpBinder.StartCompilationUnit(resourceUri);
-            CSharpParser.Parse(cSharpCompilationUnit, __CSharpBinder, ref lexerOutput);
-        }
-        finally
-        {
-            // Do not invoke ResourceParsed for the fast parse
-            // TODO: Consider making this change to the async version too.
-        }
+        __CSharpBinder.StartCompilationUnit(resourceUri);
+        CSharpParser.Parse(cSharpCompilationUnit, __CSharpBinder, ref lexerOutput);
     }
     
     /// <summary>
