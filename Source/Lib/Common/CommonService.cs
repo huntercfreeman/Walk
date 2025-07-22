@@ -77,4 +77,35 @@ public partial class CommonService : IBackgroundTaskGroup
             }
         }
     }
+    
+    public Task? Indefinite_StartAsyncTask { get; internal set; }
+    public event Action? Indefinite_ExecutingBackgroundTaskChanged;
+
+    public async Task Indefinite_ExecuteAsync(CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            await IndefiniteQueue.__DequeueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+            var backgroundTask = IndefiniteQueue.__DequeueOrDefault();
+
+            try
+            {
+                await backgroundTask.HandleEvent().ConfigureAwait(false);
+                await Task.Yield();
+            }
+            catch (Exception ex)
+            {
+                var message = ex is OperationCanceledException
+                    ? "Task was cancelled {0}." // {0} => WorkItemName
+                    : "Error occurred executing {0}."; // {0} => WorkItemName
+
+                Console.WriteLine($"ERROR on (backgroundTask.Name was here): {ex.ToString()}");
+            }
+            finally
+            {
+                if (backgroundTask.__TaskCompletionSourceWasCreated)
+                    CompleteTaskCompletionSource(backgroundTask.BackgroundTaskKey);
+            }
+        }
+    }
 }

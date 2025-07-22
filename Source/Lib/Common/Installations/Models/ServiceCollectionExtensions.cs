@@ -39,12 +39,6 @@ public static class ServiceCollectionExtensions
                     CommonFacts.IndefiniteQueueKey,
                     "Blocking"));
             
-                commonService.SetIndefiniteWorker(new IndefiniteBackgroundTaskWorker(
-                    commonService.IndefiniteQueue,
-                    commonService,
-                    sp.GetRequiredService<ILoggerFactory>(),
-                    hostingInformation.WalkHostingKind));
-            
                 return commonService;
             });
         

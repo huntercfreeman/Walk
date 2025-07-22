@@ -17,10 +17,6 @@ public partial class CommonService
     /// <summary>
     /// Generally speaking: Presume that the IndefiniteTaskWorker is NOT ready to run the next task that gets enqueued.
     /// </summary>
-    public IndefiniteBackgroundTaskWorker IndefiniteWorker { get; private set; }
-    /// <summary>
-    /// Generally speaking: Presume that the IndefiniteTaskWorker is NOT ready to run the next task that gets enqueued.
-    /// </summary>
     public BackgroundTaskQueue IndefiniteQueue { get; private set; }
 
     public void Continuous_EnqueueGroup(IBackgroundTaskGroup backgroundTaskGroup)
@@ -96,11 +92,6 @@ public partial class CommonService
     public void SetContinuousQueue(BackgroundTaskQueue queue)
     {
         ContinuousQueue = queue;
-    }
-    
-    public void SetIndefiniteWorker(IndefiniteBackgroundTaskWorker worker)
-    {
-        IndefiniteWorker = worker;
     }
     
     public void SetIndefiniteQueue(BackgroundTaskQueue queue)

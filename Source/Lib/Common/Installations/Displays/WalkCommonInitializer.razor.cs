@@ -72,10 +72,10 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
 
             if (CommonService.WalkHostingInformation.WalkPurposeKind == WalkPurposeKind.Ide)
             {
-                if (CommonService.IndefiniteWorker.StartAsyncTask is null)
+                if (CommonService.Indefinite_StartAsyncTask is null)
                 {
-                    CommonService.IndefiniteWorker.StartAsyncTask = Task.Run(
-                        () => CommonService.IndefiniteWorker.ExecuteAsync(token),
+                    CommonService.Indefinite_StartAsyncTask = Task.Run(
+                        () => CommonService.Indefinite_ExecuteAsync(token),
                         token);
                 }
             }
@@ -305,7 +305,7 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
         _workerCancellationTokenSource.Dispose();
         
         CommonService.Continuous_StartAsyncTask = null;
-        CommonService.IndefiniteWorker.StartAsyncTask = null;
+        CommonService.Indefinite_StartAsyncTask = null;
         
         CommonService.CommonUiStateChanged -= OnCommonUiStateChanged;
         
