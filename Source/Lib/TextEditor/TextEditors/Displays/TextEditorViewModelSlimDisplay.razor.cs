@@ -118,8 +118,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         CssOnInitialized();
         
         TextEditorService.TextEditorStateChanged += GeneralOnStateChangedEventHandler;
-        TextEditorService.Options_StaticStateChanged += OnOptionStaticStateChanged;
-        TextEditorService.Options_MeasuredStateChanged += OnOptionMeasuredStateChanged;
+        TextEditorService.OptionsChanged += OnOptionsChanged;
         TextEditorService.ViewModel_CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
         TextEditorService.CommonService.DragStateChanged += DragStateWrapOnStateChanged;
     }
@@ -859,16 +858,18 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         return Task.CompletedTask;
     }
     
-    private async void OnOptionMeasuredStateChanged()
+    private async void OnOptionsChanged(OptionsChangedKind optionsChangedKind)
     {
-        _componentData.SetWrapperCssAndStyle();
-        QueueCalculateVirtualizationResultBackgroundTask();
-    }
-    
-    private async void OnOptionStaticStateChanged()
-    {
-        _componentData.SetWrapperCssAndStyle();
-        await InvokeAsync(StateHasChanged);
+        if (optionsChangedKind == OptionsChangedKind.StaticStateChanged)
+        {
+            _componentData.SetWrapperCssAndStyle();
+            await InvokeAsync(StateHasChanged);
+        }
+        else if (optionsChangedKind == OptionsChangedKind.MeasuredStateChanged)
+        {
+            _componentData.SetWrapperCssAndStyle();
+            QueueCalculateVirtualizationResultBackgroundTask();
+        }
     }
     
     public void Dispose()
@@ -878,8 +879,7 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     
         // TextEditorViewModelDisplay.razor.cs
         TextEditorService.TextEditorStateChanged -= GeneralOnStateChangedEventHandler;
-        TextEditorService.Options_StaticStateChanged -= OnOptionStaticStateChanged;
-        TextEditorService.Options_MeasuredStateChanged -= OnOptionMeasuredStateChanged;
+        TextEditorService.OptionsChanged -= OnOptionsChanged;
         TextEditorService.ViewModel_CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
 
         var linkedViewModel = _linkedViewModel;

@@ -10,6 +10,7 @@ using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Contexts.Models;
+using Walk.TextEditor.RazorLib;
 using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Ide.RazorLib.Shareds.Displays.Internals;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
@@ -89,7 +90,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         IdeService.CommonService.DragStateChanged += DragStateWrapOnStateChanged;
         IdeService.CommonService.AppOptionsStateChanged += AppOptionsStateWrapOnStateChanged;
         IdeService.Ide_IdeStateChanged += OnIdeMainLayoutStateChanged;
-        IdeService.TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrap_StateChanged;
+        IdeService.TextEditorService.OptionsChanged += TextEditorOptionsStateWrap_StateChanged;
 
         IdeService.Enqueue(new IdeWorkArgs
         {
@@ -150,13 +151,16 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
-    private async void TextEditorOptionsStateWrap_StateChanged()
+    private async void TextEditorOptionsStateWrap_StateChanged(OptionsChangedKind optionsChangedKind)
     {
-        await InvokeAsync(() =>
+        if (optionsChangedKind == OptionsChangedKind.StaticStateChanged)
         {
-            _shouldRecalculateCssStrings = true;
-            StateHasChanged();
-        }).ConfigureAwait(false);
+            await InvokeAsync(() =>
+            {
+                _shouldRecalculateCssStrings = true;
+                StateHasChanged();
+            }).ConfigureAwait(false);
+        }
     }
     
     /// <summary>
@@ -349,6 +353,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         IdeService.CommonService.DragStateChanged -= DragStateWrapOnStateChanged;
         IdeService.CommonService.AppOptionsStateChanged -= AppOptionsStateWrapOnStateChanged;
         IdeService.Ide_IdeStateChanged -= OnIdeMainLayoutStateChanged;
-        IdeService.TextEditorService.Options_StaticStateChanged -= TextEditorOptionsStateWrap_StateChanged;
+        IdeService.TextEditorService.OptionsChanged -= TextEditorOptionsStateWrap_StateChanged;
     }
 }

@@ -35,7 +35,7 @@ public partial class InputTextEditorHeight : ComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
-        TextEditorService.Options_StaticStateChanged += TextEditorOptionsStateWrapOnStateChanged;
+        TextEditorService.OptionsChanged += TextEditorOptionsStateWrapOnStateChanged;
     }
 
     public string GetIsDisabledCssClassString(bool globalHeightInPixelsValueIsNull)
@@ -53,13 +53,16 @@ public partial class InputTextEditorHeight : ComponentBase, IDisposable
             TextEditorService.Options_SetHeight(null);
     }
     
-    private async void TextEditorOptionsStateWrapOnStateChanged()
+    private async void TextEditorOptionsStateWrapOnStateChanged(OptionsChangedKind optionsChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (optionsChangedKind == OptionsChangedKind.StaticStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     public void Dispose()
     {
-        TextEditorService.Options_StaticStateChanged -= TextEditorOptionsStateWrapOnStateChanged;
+        TextEditorService.OptionsChanged -= TextEditorOptionsStateWrapOnStateChanged;
     }
 }
