@@ -3,7 +3,6 @@ using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Menus.Models;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.Shareds.Models;
 
@@ -59,15 +58,6 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
                 MenuOptionKind.Other,
                 onClickFunc: async () => 
                 {
-                    var success = await TrySetFocus(CommonFacts.OutputContext).ConfigureAwait(false);
-    
-                    if (!success)
-                    {
-                        IdeService.CommonService.SetPanelTabAsActiveByContextRecordKey(
-                            CommonFacts.OutputContext.ContextKey);
-    
-                        _ = await TrySetFocus(CommonFacts.OutputContext).ConfigureAwait(false);
-                    }
                 }));
                 
             menuOptionList.Add(new MenuOptionRecord(
@@ -75,17 +65,6 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
                 MenuOptionKind.Other,
                 onClickFunc: async () => 
                 {
-                    IdeService.TerminalGroup_SetActiveTerminal(IdeFacts.EXECUTION_KEY);
-                
-                    var success = await TrySetFocus(CommonFacts.TerminalContext).ConfigureAwait(false);
-    
-                    if (!success)
-                    {
-                        IdeService.CommonService.SetPanelTabAsActiveByContextRecordKey(
-                            CommonFacts.TerminalContext.ContextKey);
-    
-                        _ = await TrySetFocus(CommonFacts.TerminalContext).ConfigureAwait(false);
-                    }
                 }));
                 
             menuOptionList.Add(new MenuOptionRecord(
@@ -119,14 +98,6 @@ public partial class StartupControlDisplay : ComponentBase, IDisposable
                 .Invoke(activeStartupControl)
                 .ConfigureAwait(false);
         }
-    }
-    
-    private async Task<bool> TrySetFocus(ContextRecord contextRecord)
-    {
-        /*return await IdeService.CommonService.JsRuntimeCommonApi
-            .TryFocusHtmlElementById(contextRecord.ContextElementId)
-            .ConfigureAwait(false);*/
-        return false;
     }
     
     private async void Shared_OnStateChanged(IdeStateChangedKind ideStateChangedKind)

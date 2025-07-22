@@ -1,7 +1,6 @@
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.ListExtensions;
 using Walk.Common.RazorLib.Panels.Models;
 
@@ -141,6 +140,8 @@ public partial class CommonService
                 var indexPanelTab = inPanelGroup.TabList.FindIndex(x => x.Key == panelTabKey);
                 if (indexPanelTab != -1)
                 {
+                    inPanelGroup.TabList[indexPanelTab].TabGroup = null;
+                
                     var outTabList = new List<IPanelTab>(inPanelGroup.TabList);
                     outTabList.RemoveAt(indexPanelTab);
         
@@ -149,7 +150,7 @@ public partial class CommonService
                     {
                         TabList = outTabList
                     };
-        
+
                     _panelState = inState with { PanelGroupList = outPanelGroupList };
                 }
             }
@@ -186,33 +187,6 @@ public partial class CommonService
 
         if (sideEffect)
             AppDimension_NotifyIntraAppResize();
-    }
-
-    public void SetPanelTabAsActiveByContextRecordKey(int contextRecordKey)
-    {
-        lock (_stateModificationLock)
-        {
-            var inState = GetPanelState();
-
-            var inPanelGroup = inState.PanelGroupList.FirstOrDefault(x => x.TabList
-                .Any(y => y.ContextRecordKey == contextRecordKey));
-                
-            if (inPanelGroup is not null)
-            {
-                var inPanelTab = inPanelGroup.TabList.FirstOrDefault(
-                    x => x.ContextRecordKey == contextRecordKey);
-                    
-                if (inPanelTab is not null)
-                {
-                    // TODO: This should be thread safe yes?...
-                    // ...Only ever would the same thread access the inner lock from invoking this which is the current lock so no deadlock?
-                    SetActivePanelTab(inPanelGroup.Key, inPanelTab.Key);
-                    return; // Inner reduce will trigger finalize.
-                }
-            }
-        }
-
-        CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
     }
 
     public void Panel_SetDragEventArgs((IPanelTab PanelTab, PanelGroup PanelGroup)? dragEventArgs)
@@ -271,5 +245,39 @@ public partial class CommonService
         }
 
         CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
+    }
+    
+    /// <summary>
+    /// If the panel tab exists, then its group will have its active-tab set the tab.
+    /// Otherwise, add the panel as a tab to the left panel and set left panel's active tab to that tab.
+    /// </summary>
+    public async Task ShowOrAddPanelTab(Panel panel)
+    {
+        var panelGroup = panel.TabGroup as PanelGroup;
+                    
+        if (panelGroup is not null)
+        {
+            SetActivePanelTab(panelGroup.Key, panel.Key);
+        }
+        else
+        {
+            var dialogState = GetDialogState();
+            var existingDialog = dialogState.DialogList.FirstOrDefault(
+                x => x.DynamicViewModelKey == panel.DynamicViewModelKey);
+
+            if (existingDialog is not null)
+            {
+                Dialog_ReduceSetActiveDialogKeyAction(existingDialog.DynamicViewModelKey);
+
+                await JsRuntimeCommonApi
+                    .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)
+                    .ConfigureAwait(false);
+            }
+            else
+            {
+                RegisterPanelTab(CommonFacts.LeftPanelGroupKey, panel, true);
+                SetActivePanelTab(CommonFacts.LeftPanelGroupKey, panel.Key);
+            }
+        }
     }
 }

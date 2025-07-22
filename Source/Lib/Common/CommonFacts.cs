@@ -4,7 +4,6 @@ using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Themes.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
@@ -34,80 +33,6 @@ public static class CommonFacts
     /* End ThemeFacts */
     
     /* Start ContextFacts */
-    public static readonly ContextRecord GlobalContext = new(0);
-
-    public static readonly ContextRecord ActiveContextsContext = new(1);
-
-    public static readonly ContextRecord FindAllReferencesContext = new(2);
-
-    public static readonly ContextRecord FolderExplorerContext = new(3);
-
-    public static readonly ContextRecord SolutionExplorerContext = new(4);
-
-    public static readonly ContextRecord CompilerServiceExplorerContext = new(5);
-    
-    public static readonly ContextRecord CompilerServiceEditorContext = new(6);
-
-    public static readonly ContextRecord TestExplorerContext = new(7);
-    
-    public static readonly ContextRecord CSharpReplContext = new(8);
-
-    public static readonly ContextRecord BackgroundServicesContext = new(9);
-
-    public static readonly ContextRecord DialogDisplayContext = new(10);
-
-    public static readonly ContextRecord MainLayoutHeaderContext = new(11);
-
-    public static readonly ContextRecord MainLayoutFooterContext = new(12);
-
-    public static readonly ContextRecord EditorContext = new(13);
-
-    public static readonly ContextRecord TextEditorContext = new(14);
-
-    public static readonly ContextRecord ErrorListContext = new(15);
-
-    public static readonly ContextRecord OutputContext = new(16);
-
-    public static readonly ContextRecord NuGetPackageManagerContext = new(17);
-
-    public static readonly ContextRecord GitContext = new(18);
-    
-    public static readonly ContextRecord TerminalContext = new(19);
-        
-    public static readonly ContextRecord NotificationContext = new(20);
-    
-    public static readonly ContextRecord DialogContext = new(21);
-        
-    public static readonly ContextRecord WidgetContext = new(22);
-    
-    public static readonly ContextRecord DropdownContext = new(23);
-
-    public static readonly IReadOnlyList<ContextRecord> AllContextsList = new List<ContextRecord>()
-    {
-        GlobalContext,
-        ActiveContextsContext,
-        FolderExplorerContext,
-        SolutionExplorerContext,
-        CompilerServiceExplorerContext,
-        CompilerServiceEditorContext,
-        CSharpReplContext,
-        BackgroundServicesContext,
-        DialogDisplayContext,
-        MainLayoutHeaderContext,
-        MainLayoutFooterContext,
-        EditorContext,
-        TextEditorContext,
-        ErrorListContext,
-        OutputContext,
-        NuGetPackageManagerContext,
-        GitContext,
-        TerminalContext,
-        NotificationContext,
-        DialogContext,
-        WidgetContext,
-        DropdownContext,
-    };
-    
     /// <summary>
     /// Used when repositioning a dropdown so that it appears on screen.
     /// </summary>

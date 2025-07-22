@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Tooltips.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
@@ -26,8 +25,6 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     private BrowserResizeInterop BrowserResizeInterop { get; set; } = null!;
     [Inject]
     private CommonService CommonService { get; set; } = null!;
-    
-    public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     
     private CancellationTokenSource _workerCancellationTokenSource = new();
     

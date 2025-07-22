@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
@@ -767,7 +766,6 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
                     Title,
                     new Key<Panel>(ViewModelKey.Guid),
                     DynamicViewModelKey,
-                    0,
                     typeof(TextEditorViewModelDisplay),
                     new Dictionary<string, object?>
                     {

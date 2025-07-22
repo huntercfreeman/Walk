@@ -10,7 +10,6 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Installations.Models;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.FileSystems.Displays;
@@ -210,7 +209,6 @@ public partial class IdeService : IBackgroundTaskGroup
             "Folder Explorer",
             Key<Panel>.NewKey(),
             Key<IDynamicViewModel>.NewKey(),
-            CommonFacts.FolderExplorerContext.ContextKey,
             typeof(FolderExplorerDisplay),
             null,
             CommonService);
@@ -237,7 +235,6 @@ public partial class IdeService : IBackgroundTaskGroup
             "Terminal",
             Key<Panel>.NewKey(),
             Key<IDynamicViewModel>.NewKey(),
-            CommonFacts.TerminalContext.ContextKey,
             typeof(TerminalGroupDisplay),
             null,
             CommonService);

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components.Web;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
@@ -20,7 +19,6 @@ public record Panel : IPanelTab, IDialog, IDrag
         string title,
         Key<Panel> key,
         Key<IDynamicViewModel> dynamicViewModelKey,
-        int contextRecordKey,
         Type componentType,
         Dictionary<string, object?>? componentParameterMap,
         CommonService commonService)
@@ -28,7 +26,6 @@ public record Panel : IPanelTab, IDialog, IDrag
         Title = title;
         Key = key;
         DynamicViewModelKey = dynamicViewModelKey;
-        ContextRecordKey = contextRecordKey;
         ComponentType = componentType;
         ComponentParameterMap = componentParameterMap;
 
@@ -43,7 +40,6 @@ public record Panel : IPanelTab, IDialog, IDrag
     public string TitleVerbose => Title;
     public Key<Panel> Key { get; }
     public Key<IDynamicViewModel> DynamicViewModelKey { get; }
-    public int ContextRecordKey { get; }
     public CommonService CommonService { get;}
     public Type ComponentType { get; }
     public Dictionary<string, object?>? ComponentParameterMap { get; set; }

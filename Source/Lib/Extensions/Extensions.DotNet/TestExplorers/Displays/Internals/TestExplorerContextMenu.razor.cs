@@ -5,7 +5,6 @@ using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.TreeViews.Models.Utils;
 using Walk.Ide.RazorLib.Terminals.Models;
@@ -335,22 +334,7 @@ public partial class TestExplorerContextMenu : ComponentBase
     
     private async Task SendToOutputPanelAsync(string output)
     {
-        var contextRecord = CommonFacts.OutputContext;
-        
         DotNetService.ParseOutputEntireDotNetRun(output, "Unit-Test_results");
         
-        DotNetService.IdeService.CommonService.SetPanelTabAsActiveByContextRecordKey(contextRecord.ContextKey);
-    
-        if (contextRecord != default)
-        {
-            var command = ContextHelper.ConstructFocusContextElementCommand(
-                contextRecord,
-                nameof(ContextHelper.ConstructFocusContextElementCommand),
-                nameof(ContextHelper.ConstructFocusContextElementCommand),
-                DotNetService.IdeService.CommonService.JsRuntimeCommonApi,
-                DotNetService.IdeService.CommonService);
-                
-            await command.CommandFunc.Invoke(null).ConfigureAwait(false);
-        }
     }
 }

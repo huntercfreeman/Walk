@@ -2,7 +2,6 @@ using CliWrap.EventStream;
 using System.Runtime.InteropServices;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Commands.Models;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
@@ -114,7 +113,6 @@ public partial class DotNetService
             "Solution Explorer",
             Key<Panel>.NewKey(),
             Key<IDynamicViewModel>.NewKey(),
-            CommonFacts.SolutionExplorerContext.ContextKey,
             typeof(SolutionExplorerDisplay),
             null,
             IdeService.TextEditorService.CommonService);
@@ -173,7 +171,6 @@ public partial class DotNetService
             "Output",
             Key<Panel>.NewKey(),
             Key<IDynamicViewModel>.NewKey(),
-            CommonFacts.OutputContext.ContextKey,
             typeof(OutputPanelDisplay),
             null,
             IdeService.TextEditorService.CommonService);
@@ -185,7 +182,6 @@ public partial class DotNetService
             "Test Explorer",
             Key<Panel>.NewKey(),
             Key<IDynamicViewModel>.NewKey(),
-            CommonFacts.TestExplorerContext.ContextKey,
             typeof(TestExplorerDisplay),
             null,
             IdeService.TextEditorService.CommonService);
@@ -204,7 +200,6 @@ public partial class DotNetService
             "NuGet",
             Key<Panel>.NewKey(),
             Key<IDynamicViewModel>.NewKey(),
-            CommonFacts.NuGetPackageManagerContext.ContextKey,
             typeof(NuGetPackageManager),
             null,
             IdeService.TextEditorService.CommonService);

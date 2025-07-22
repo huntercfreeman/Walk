@@ -2,7 +2,6 @@ using System.Text;
 using Microsoft.JSInterop;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.Contexts.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.JsRuntimes.Models;
 using Walk.Common.RazorLib.Menus.Models;
@@ -774,61 +773,6 @@ public sealed partial class TextEditorService
             Options_SetTheme(initialThemeRecord, updateStorage: false);
 
         await Options_SetFromLocalStorageAsync().ConfigureAwait(false);
-
-        CommonService.RegisterContextSwitchGroup(
-            new ContextSwitchGroup(
-                Walk.TextEditor.RazorLib.Installations.Displays.WalkTextEditorInitializer.ContextSwitchGroupKey,
-                "Text Editor",
-                () =>
-                {
-                    var menuOptionList = new List<MenuOptionRecord>();
-
-                    var mainGroup = Group_GetGroups()
-                        .FirstOrDefault(x => x.Category.Value == "main");
-
-                    if (mainGroup is not null)
-                    {
-                        var viewModelList = new List<TextEditorViewModel>();
-
-                        foreach (var viewModelKey in mainGroup.ViewModelKeyList)
-                        {
-                            var viewModel = ViewModel_GetOrDefault(viewModelKey);
-
-                            if (viewModel is not null)
-                            {
-                                viewModelList.Add(viewModel);
-
-                                var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
-                                    viewModel.PersistentState.ResourceUri.Value,
-                                    false);
-
-                                menuOptionList.Add(new MenuOptionRecord(
-                                    absolutePath.NameWithExtension,
-                                    MenuOptionKind.Other,
-                                    onClickFunc: () =>
-                                    {
-                                        WorkerArbitrary.PostUnique(async editContext =>
-                                        {
-                                            await OpenInEditorAsync(
-                                                editContext,
-                                                absolutePath.Value,
-                                                true,
-                                                cursorPositionIndex: null,
-                                                new Category("main"),
-                                                viewModel.PersistentState.ViewModelKey);
-                                        });
-                                        return Task.CompletedTask;
-                                    }));
-                            }
-                        }
-                    }
-
-                    var menu = menuOptionList.Count == 0
-                        ? new MenuRecord(MenuRecord.NoMenuOptionsExistList)
-                        : new MenuRecord(menuOptionList);
-
-                    return Task.FromResult(menu);
-                }));
 
         CommonService.RegisterKeymapLayer(TextEditorFacts.KeymapDefault_HasSelectionLayer);
     }
