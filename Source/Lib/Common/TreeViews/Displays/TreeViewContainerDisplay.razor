@@ -27,11 +27,10 @@
         }
         else
         {
-            <CascadingValue Value="_treeViewCascadingValueBatch"
-                            IsFixed="true">
-                <TreeViewNodeDisplay TreeViewNoType="treeViewContainer.RootNode"
-                                     Depth="GetRootDepth(treeViewContainer.RootNode)"/>
-            </CascadingValue>
+            <TreeViewNodeDisplay TreeViewNodeParameter="new TreeViewNodeParameter(
+                treeViewContainer.RootNode,
+                GetRootDepth(treeViewContainer.RootNode),
+                _treeViewCascadingValueBatch)"/>
         }
     </div>
 }
