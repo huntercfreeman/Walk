@@ -27,8 +27,7 @@ public partial class NuGetPackageManager : ComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
-        DotNetService.NuGetPackageManagerStateChanged += OnNuGetPackageManagerStateChanged;
-        DotNetService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
+        DotNetService.DotNetStateChanged += OnNuGetPackageManagerStateChanged;
     }
 
     private void SelectedProjectToModifyChanged(ChangeEventArgs changeEventArgs, DotNetSolutionState dotNetSolutionState)
@@ -96,19 +95,17 @@ public partial class NuGetPackageManager : ComponentBase, IDisposable
         }
     }
     
-    private async void OnNuGetPackageManagerStateChanged()
+    private async void OnNuGetPackageManagerStateChanged(DotNetStateChangedKind dotNetStateChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
-    }
-    
-    private async void OnDotNetSolutionStateChanged()
-    {
-        await InvokeAsync(StateHasChanged);
+        if (dotNetStateChangedKind == DotNetStateChangedKind.SolutionStateChanged ||
+            dotNetStateChangedKind == DotNetStateChangedKind.NuGetPackageManagerStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     public void Dispose()
     {
-        DotNetService.NuGetPackageManagerStateChanged -= OnNuGetPackageManagerStateChanged;
-        DotNetService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
+        DotNetService.DotNetStateChanged -= OnNuGetPackageManagerStateChanged;
     }
 }

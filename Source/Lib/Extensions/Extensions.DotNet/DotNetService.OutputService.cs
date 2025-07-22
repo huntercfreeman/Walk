@@ -14,8 +14,6 @@ public partial class DotNetService
 
     private OutputState _outputState = new();
 
-    public event Action? OutputStateChanged;
-
     public OutputState GetOutputState() => _outputState;
 
     public void ReduceStateHasChangedAction(Guid dotNetRunParseResultId)
@@ -27,7 +25,7 @@ public partial class DotNetService
             DotNetRunParseResultId = dotNetRunParseResultId
         };
 
-        OutputStateChanged?.Invoke();
+        DotNetStateChanged?.Invoke(DotNetStateChangedKind.OutputStateChanged);
         return;
     }
 

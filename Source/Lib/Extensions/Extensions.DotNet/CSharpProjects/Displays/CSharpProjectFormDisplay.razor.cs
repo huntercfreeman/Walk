@@ -32,7 +32,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
     {
         _viewModel = new(DotNetSolutionModel, DotNetService.IdeService.TextEditorService.CommonService.EnvironmentProvider);
         
-        DotNetService.DotNetSolutionStateChanged += OnDotNetSolutionStateChanged;
+        DotNetService.DotNetStateChanged += OnDotNetSolutionStateChanged;
         DotNetService.IdeService.IdeStateChanged += OnTerminalStateChanged;
     }
 
@@ -220,9 +220,12 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
         }
     }
     
-    public async void OnDotNetSolutionStateChanged()
+    public async void OnDotNetSolutionStateChanged(DotNetStateChangedKind dotNetStateChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (dotNetStateChangedKind == DotNetStateChangedKind.SolutionStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     public async void OnTerminalStateChanged(IdeStateChangedKind ideStateChangedKind)
@@ -235,7 +238,7 @@ public partial class CSharpProjectFormDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-        DotNetService.DotNetSolutionStateChanged -= OnDotNetSolutionStateChanged;
+        DotNetService.DotNetStateChanged -= OnDotNetSolutionStateChanged;
         DotNetService.IdeService.IdeStateChanged -= OnTerminalStateChanged;
     }
 }

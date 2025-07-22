@@ -7,8 +7,6 @@ public partial class DotNetService
 {
     private NuGetPackageManagerState _nuGetPackageManagerState = new();
 
-    public event Action? NuGetPackageManagerStateChanged;
-
     public NuGetPackageManagerState GetNuGetPackageManagerState() => _nuGetPackageManagerState;
 
     public void ReduceSetSelectedProjectToModifyAction(IDotNetProject? selectedProjectToModify)
@@ -20,7 +18,7 @@ public partial class DotNetService
             SelectedProjectToModify = selectedProjectToModify
         };
 
-        NuGetPackageManagerStateChanged?.Invoke();
+        DotNetStateChanged?.Invoke(DotNetStateChangedKind.NuGetPackageManagerStateChanged);
         return;
     }
 
@@ -30,7 +28,7 @@ public partial class DotNetService
 
         _nuGetPackageManagerState = inState with { NugetQuery = nugetQuery };
 
-        NuGetPackageManagerStateChanged?.Invoke();
+        DotNetStateChanged?.Invoke(DotNetStateChangedKind.NuGetPackageManagerStateChanged);
         return;
     }
 
@@ -40,7 +38,7 @@ public partial class DotNetService
 
         _nuGetPackageManagerState = inState with { IncludePrerelease = includePrerelease };
 
-        NuGetPackageManagerStateChanged?.Invoke();
+        DotNetStateChanged?.Invoke(DotNetStateChangedKind.NuGetPackageManagerStateChanged);
         return;
     }
 
@@ -50,7 +48,7 @@ public partial class DotNetService
 
         _nuGetPackageManagerState = inState with { QueryResultList = queryResultList };
 
-        NuGetPackageManagerStateChanged?.Invoke();
+        DotNetStateChanged?.Invoke(DotNetStateChangedKind.NuGetPackageManagerStateChanged);
         return;
     }
 }

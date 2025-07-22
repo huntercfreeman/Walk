@@ -83,7 +83,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
             });
         }
     
-        DotNetService.TestExplorerStateChanged += OnTestExplorerStateChanged;
+        DotNetService.DotNetStateChanged += OnTestExplorerStateChanged;
         DotNetService.IdeService.TextEditorService.CommonService.CommonUiStateChanged += OnTreeViewStateChanged;
         DotNetService.IdeService.IdeStateChanged += OnTerminalStateChanged;
 
@@ -117,9 +117,12 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
         return !executionTerminal.HasExecutingProcess;
     }
     
-    private async void OnTestExplorerStateChanged()
+    private async void OnTestExplorerStateChanged(DotNetStateChangedKind dotNetStateChangedKind)
     {
-        await InvokeAsync(StateHasChanged);
+        if (dotNetStateChangedKind == DotNetStateChangedKind.TestExplorerStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     private async void OnTreeViewStateChanged(CommonUiEventKind commonUiEventKind)
@@ -140,7 +143,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
     
     public void Dispose()
     {
-        DotNetService.TestExplorerStateChanged -= OnTestExplorerStateChanged;
+        DotNetService.DotNetStateChanged -= OnTestExplorerStateChanged;
         DotNetService.IdeService.TextEditorService.CommonService.CommonUiStateChanged -= OnTreeViewStateChanged;
         DotNetService.IdeService.IdeStateChanged -= OnTerminalStateChanged;
     }
