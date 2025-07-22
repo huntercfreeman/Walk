@@ -10,7 +10,7 @@ namespace Walk.Common.RazorLib.Installations.Models;
 ///     this type might be one of the first types they interact with. So, the redundancy of namespace
 ///     and type containing 'Walk' feels reasonable here.
 /// </remarks>
-public record WalkCommonConfig
+public record struct WalkCommonConfig
 {
     public WalkCommonConfig()
     {
