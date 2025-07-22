@@ -119,7 +119,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         
         TextEditorService.TextEditorStateChanged += GeneralOnStateChangedEventHandler;
         TextEditorService.SecondaryChanged += OnOptionsChanged;
-        TextEditorService.ViewModel_CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
         TextEditorService.CommonService.CommonUiStateChanged += DragStateWrapOnStateChanged;
     }
     
@@ -311,8 +310,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
     }
 
     private async void GeneralOnStateChangedEventHandler() => await InvokeAsync(StateHasChanged);
-        
-    private async void ViewModel_CursorShouldBlinkChanged() => await InvokeAsync(StateHasChanged);
     
     [JSInvokable]
     public async Task FocusTextEditorAsync()
@@ -873,6 +870,10 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
             _componentData.SetWrapperCssAndStyle();
             QueueCalculateVirtualizationResultBackgroundTask();
         }
+        else if (secondaryChangedKind == SecondaryChangedKind.ViewModel_CursorShouldBlinkChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
     }
     
     public void Dispose()
@@ -883,7 +884,6 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
         // TextEditorViewModelDisplay.razor.cs
         TextEditorService.TextEditorStateChanged -= GeneralOnStateChangedEventHandler;
         TextEditorService.SecondaryChanged -= OnOptionsChanged;
-        TextEditorService.ViewModel_CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
 
         var linkedViewModel = _linkedViewModel;
         if (linkedViewModel is not null)

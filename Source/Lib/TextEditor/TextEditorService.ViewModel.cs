@@ -19,7 +19,6 @@ public partial class TextEditorService
     private TimeSpan ViewModel_blinkingCursorTaskDelay = TimeSpan.FromMilliseconds(1000);
 
     public bool ViewModel_CursorShouldBlink { get; private set; } = true;
-    public event Action? ViewModel_CursorShouldBlinkChanged;
 
     private bool ViewModel_intentStopCursorBlinking = false;
     private int ViewModel_stopCursorBlinkingId = 0;
@@ -38,7 +37,7 @@ public partial class TextEditorService
         if (ViewModel_CursorShouldBlink)
         {
             ViewModel_CursorShouldBlink = false;
-            ViewModel_CursorShouldBlinkChanged?.Invoke();
+            SecondaryChanged?.Invoke(SecondaryChangedKind.ViewModel_CursorShouldBlinkChanged);
         }
 
         var localId = ++ViewModel_stopCursorBlinkingId;
@@ -60,7 +59,7 @@ public partial class TextEditorService
                     if (id == ViewModel_stopCursorBlinkingId)
                     {
                         ViewModel_CursorShouldBlink = true;
-                        ViewModel_CursorShouldBlinkChanged?.Invoke();
+                        SecondaryChanged?.Invoke(SecondaryChangedKind.ViewModel_CursorShouldBlinkChanged);
                         break;
                     }
                 }

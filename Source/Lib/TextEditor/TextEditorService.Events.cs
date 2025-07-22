@@ -9,6 +9,8 @@ public partial class TextEditorService
 
 public enum SecondaryChangedKind
 {
+    ViewModel_CursorShouldBlinkChanged,
+
     DirtyResourceUriStateChanged,
     FindAllStateChanged,
     Group_TextEditorGroupStateChanged,

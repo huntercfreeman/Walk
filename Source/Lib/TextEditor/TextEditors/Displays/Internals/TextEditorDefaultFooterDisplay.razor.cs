@@ -66,7 +66,6 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
     
     protected override void OnInitialized()
     {
-        TextEditorService.ViewModel_CursorShouldBlinkChanged += OnCursorShouldBlinkChanged;
         TextEditorService.SecondaryChanged += OnTextEditorWrapperCssStateChanged;
         OnCursorShouldBlinkChanged();
     }
@@ -125,6 +124,10 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
         if (secondaryChangedKind == SecondaryChangedKind.TextEditorWrapperCssStateChanged)
         {
             await InvokeAsync(StateHasChanged);
+        }
+        else if (secondaryChangedKind == SecondaryChangedKind.ViewModel_CursorShouldBlinkChanged)
+        {
+            OnCursorShouldBlinkChanged();
         }
     }
     
@@ -214,7 +217,6 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase
 
     public void Dispose()
     {
-        TextEditorService.ViewModel_CursorShouldBlinkChanged -= OnCursorShouldBlinkChanged;
         TextEditorService.SecondaryChanged -= OnTextEditorWrapperCssStateChanged;
     }
 }
