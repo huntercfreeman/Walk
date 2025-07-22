@@ -22,7 +22,7 @@ public partial class WalkWebsiteInitializer : ComponentBase
     {
         if (firstRender)
         {
-            DotNetService.TextEditorService.CommonService.Continuous_EnqueueGroup(new BackgroundTask(
+            DotNetService.TextEditorService.CommonService.Continuous_Enqueue(new BackgroundTask(
                 Key<IBackgroundTaskGroup>.Empty,
                 Do_WalkWebsiteInitializerOnAfterRenderAsync));
         }
