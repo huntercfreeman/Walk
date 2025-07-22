@@ -7,15 +7,11 @@ namespace Walk.Extensions.DotNet.Outputs.Models;
 public class OutputTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
     private readonly TextEditorService _textEditorService;
-    private readonly IServiceProvider _serviceProvider;
 
-    public OutputTreeViewMouseEventHandler(
-            TextEditorService textEditorService,
-            IServiceProvider serviceProvider)
+    public OutputTreeViewMouseEventHandler(TextEditorService textEditorService)
         : base(textEditorService.CommonService)
     {
         _textEditorService = textEditorService;
-        _serviceProvider = serviceProvider;
     }
 
     public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)

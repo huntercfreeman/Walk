@@ -9,16 +9,11 @@ namespace Walk.TextEditor.RazorLib.FindAlls.Models;
 public class FindAllTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
     private readonly TextEditorService _textEditorService;
-    private readonly IServiceProvider _serviceProvider;
 
-    public FindAllTreeViewKeyboardEventHandler(
-            TextEditorService textEditorService,
-            IServiceProvider serviceProvider,
-            CommonService commonService)
-        : base(commonService)
+    public FindAllTreeViewKeyboardEventHandler(TextEditorService textEditorService)
+        : base(textEditorService.CommonService)
     {
         _textEditorService = textEditorService;
-        _serviceProvider = serviceProvider;
     }
 
     public override Task OnKeyDownAsync(TreeViewCommandArgs commandArgs)

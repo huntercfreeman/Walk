@@ -8,8 +8,6 @@ namespace Walk.TextEditor.RazorLib.FindAlls.Displays;
 public partial class FindAllDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IServiceProvider ServiceProvider { get; set; } = null!;
-    [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     
     private FindAllTreeViewKeyboardEventHandler _treeViewKeymap = null!;
@@ -42,15 +40,9 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
     {
         TextEditorService.SecondaryChanged += OnFindAllStateChanged;
     
-        _treeViewKeymap = new FindAllTreeViewKeyboardEventHandler(
-            TextEditorService,
-            ServiceProvider,
-            TextEditorService.CommonService);
+        _treeViewKeymap = new FindAllTreeViewKeyboardEventHandler(TextEditorService);
 
-        _treeViewMouseEventHandler = new FindAllTreeViewMouseEventHandler(
-            TextEditorService,
-            ServiceProvider,
-            TextEditorService.CommonService);
+        _treeViewMouseEventHandler = new FindAllTreeViewMouseEventHandler(TextEditorService);
     }
     
     private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)

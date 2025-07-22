@@ -11,8 +11,6 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 {
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
-    [Inject]
-    private IServiceProvider ServiceProvider { get; set; } = null!;
 
     [CascadingParameter]
     public TestExplorerRenderBatchValidated RenderBatch { get; set; } = null!;
@@ -28,13 +26,9 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 
     protected override void OnInitialized()
     {
-        _treeViewKeyboardEventHandler = new TestExplorerTreeViewKeyboardEventHandler(
-            TextEditorService,
-            ServiceProvider);
+        _treeViewKeyboardEventHandler = new TestExplorerTreeViewKeyboardEventHandler(TextEditorService);
 
-        _treeViewMouseEventHandler = new TestExplorerTreeViewMouseEventHandler(
-            TextEditorService,
-            ServiceProvider);
+        _treeViewMouseEventHandler = new TestExplorerTreeViewMouseEventHandler(TextEditorService);
     }
 
     private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)

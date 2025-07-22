@@ -11,8 +11,7 @@ public static class TestExplorerHelper
     public static Func<TextEditorEditContext, ValueTask> ShowTestInEditorFactory(
         string className,
         string methodName,
-        TextEditorService textEditorService,
-        IServiceProvider serviceProvider)
+        TextEditorService textEditorService)
     {
         return (editContext) =>
         {

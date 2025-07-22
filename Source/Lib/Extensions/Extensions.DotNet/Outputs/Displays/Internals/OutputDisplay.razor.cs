@@ -12,8 +12,6 @@ public partial class OutputDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private DotNetService DotNetService { get; set; } = null!;
-    [Inject]
-    private IServiceProvider ServiceProvider { get; set; } = null!;
     
     private readonly Throttle _eventThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
     
@@ -25,13 +23,9 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
-        _treeViewKeyboardEventHandler = new OutputTreeViewKeyboardEventHandler(
-            DotNetService.TextEditorService,
-            ServiceProvider);
+        _treeViewKeyboardEventHandler = new OutputTreeViewKeyboardEventHandler(DotNetService.TextEditorService);
 
-        _treeViewMouseEventHandler = new OutputTreeViewMouseEventHandler(
-            DotNetService.TextEditorService,
-            ServiceProvider);
+        _treeViewMouseEventHandler = new OutputTreeViewMouseEventHandler(DotNetService.TextEditorService);
     
         DotNetService.DotNetStateChanged += DotNetCliOutputParser_StateChanged;
         

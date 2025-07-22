@@ -13,7 +13,6 @@ using Walk.TextEditor.RazorLib;
 using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Ide.RazorLib.Shareds.Displays.Internals;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
-using Walk.Ide.RazorLib.JsRuntimes.Models;
 using Walk.Ide.RazorLib.Settings.Displays;
 
 namespace Walk.Ide.RazorLib.Shareds.Displays;
@@ -22,10 +21,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 {
     [Inject]
     private IdeService IdeService { get; set; } = null!;
-    [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
-    [Inject]
-    private IServiceProvider ServiceProvider { get; set; } = null!;
     
     private bool _previousDragStateWrapShouldDisplay;
     private ElementDimensions _bodyElementDimensions = new();
@@ -115,9 +110,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 
             if (IdeService.CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
             {
-                await JsRuntime.GetWalkIdeApi()
-                    .PreventDefaultBrowserKeybindings()
-                    .ConfigureAwait(false);
+                await IdeService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync("walkIde.preventDefaultBrowserKeybindings").ConfigureAwait(false);
             }
         }
     }

@@ -9,8 +9,6 @@ namespace Walk.TextEditor.RazorLib.Options.Displays;
 public partial class InputTextEditorTheme : ComponentBase, IDisposable
 {
     [Inject]
-    private CommonService CommonService { get; set; } = null!;
-    [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
 
     [Parameter]
@@ -23,7 +21,7 @@ public partial class InputTextEditorTheme : ComponentBase, IDisposable
     
     private void SelectedThemeChanged(ChangeEventArgs changeEventArgs)
     {
-        var themeList = CommonService.GetThemeState().ThemeList;
+        var themeList = TextEditorService.CommonService.GetThemeState().ThemeList;
 
         var chosenThemeKeyIntString = changeEventArgs.Value?.ToString() ?? string.Empty;
 
