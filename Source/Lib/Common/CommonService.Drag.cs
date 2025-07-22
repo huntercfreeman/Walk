@@ -7,8 +7,6 @@ public partial class CommonService
 {
     private DragState _dragState = new();
     
-    public event Action? DragStateChanged;
-    
     public DragState GetDragState() => _dragState;
     
     public void Drag_ShouldDisplayAndMouseEventArgsSetAction(

@@ -6,8 +6,6 @@ public partial class IdeService
 {
     private FolderExplorerState _folderExplorerState = new();
 
-    public event Action? FolderExplorerStateChanged;
-
     public FolderExplorerState GetFolderExplorerState() => _folderExplorerState;
 
     public void FolderExplorer_With(Func<FolderExplorerState, FolderExplorerState> withFunc)

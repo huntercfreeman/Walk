@@ -14,8 +14,6 @@ public partial class CommonService
     
     private AppDimensionState _appDimensionState;
     
-    public event Action? AppDimensionStateChanged;
-    
     public AppDimensionState GetAppDimensionState() => _appDimensionState;
     
     public void SetAppDimensions(Func<AppDimensionState, AppDimensionState> withFunc)

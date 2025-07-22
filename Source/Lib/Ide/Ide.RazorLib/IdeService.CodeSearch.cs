@@ -22,8 +22,6 @@ public partial class IdeService
 
     private CodeSearchState _codeSearchState = new();
 
-    public event Action? CodeSearchStateChanged;
-
     public CodeSearchState GetCodeSearchState() => _codeSearchState;
 
     public void CodeSearch_With(Func<CodeSearchState, CodeSearchState> withFunc)

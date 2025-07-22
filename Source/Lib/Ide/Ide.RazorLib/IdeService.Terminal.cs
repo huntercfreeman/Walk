@@ -9,8 +9,6 @@ public partial class IdeService
 
     private TerminalState _terminalState = new();
 
-    public event Action? TerminalStateChanged;
-
     public TerminalState GetTerminalState() => _terminalState;
 
     public void Terminal_Register(ITerminal terminal)

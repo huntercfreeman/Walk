@@ -7,8 +7,6 @@ public partial class CommonService
 {
     private KeymapState _keymapState = new();
     
-    public event Action? KeymapStateChanged;
-    
     public KeymapState GetKeymapState() => _keymapState;
     
     public void RegisterKeymapLayer(KeymapLayer keymapLayer)

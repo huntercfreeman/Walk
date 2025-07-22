@@ -10,9 +10,6 @@ public partial class CommonService
     private ContextState _contextState = new();
     private ContextSwitchState _contextSwitchState = new();
     
-    public event Action? ContextStateChanged;
-    public event Action? ContextSwitchStateChanged;
-    
     public ContextState GetContextState() => _contextState;
     
     public ContextRecord GetContextRecord(int contextKey) =>

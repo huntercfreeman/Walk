@@ -10,8 +10,6 @@ public partial class IdeService
 {
     private InputFileState _inputFileState = new();
 
-    public event Action? InputFileStateChanged;
-
     public InputFileState GetInputFileState() => _inputFileState;
 
     public void InputFile_StartInputFileStateForm(

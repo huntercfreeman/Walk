@@ -31,8 +31,6 @@ public partial class CommonService
         $"height: {AppOptionsState.DEFAULT_RESIZE_HANDLE_HEIGHT_IN_PIXELS.ToCssValue()}px";
     
     public string Options_ColorSchemeCssStyleString { get; set; }
-
-    public event Action? AppOptionsStateChanged;
     
     public AppOptionsState GetAppOptionsState() => _appOptionsState;
 

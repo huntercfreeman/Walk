@@ -11,9 +11,6 @@ public partial class IdeService
     private IdeState _ideState = new();
     private StartupControlState _startupControlState = new();
 
-    public event Action? Ide_IdeStateChanged;
-    public event Action? Ide_StartupControlStateChanged;
-
     public IdeState GetIdeState() => _ideState;
     public StartupControlState GetIdeStartupControlState() => _startupControlState;
 

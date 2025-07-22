@@ -10,8 +10,6 @@ public partial class CommonService
 {
     private TreeViewState _treeViewState = new();
     
-    public event Action? TreeViewStateChanged;
-    
     public TreeViewState GetTreeViewState() => _treeViewState;
     
     public TreeViewContainer GetTreeViewContainer(Key<TreeViewContainer> containerKey) =>
