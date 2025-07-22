@@ -32,7 +32,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     public readonly CSharpBinder __CSharpBinder;
     
     private readonly object _resourceMapLock = new();
-    private readonly HashSet<string> _collapsePointUsedIdentifierHashSet = new();
     private readonly StringBuilder _getAutocompleteMenuStringBuilder = new();
     
     // Service dependencies
@@ -1253,10 +1252,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     lexerOutput.SyntaxTokenList.Select(x => x.TextSpan)
                         .Concat(lexerOutput.MiscTextSpanList)
                         .Concat(cSharpCompilationUnit.SymbolList.Select(x => x.TextSpan)));
-                    
-                CreateCollapsePoints(
-                    editContext,
-                    modelModifier);
             }
 
             ResourceParsed?.Invoke();
@@ -1656,58 +1651,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         }));
             
         return Task.CompletedTask;
-    }
-    
-    private void CreateCollapsePoints(TextEditorEditContext editContext, TextEditorModel modelModifier)
-    {
-        _collapsePointUsedIdentifierHashSet.Clear();
-    
-        var resource = GetResource(modelModifier.PersistentState.ResourceUri);
-            
-        var collapsePointList = new List<CollapsePoint>();
-        
-        if (resource.CompilationUnit is IExtendedCompilationUnit extendedCompilationUnit)
-        {
-            if (extendedCompilationUnit.CodeBlockOwnerList is not null)
-            {
-                foreach (var entry in extendedCompilationUnit.CodeBlockOwnerList)
-                {
-                    TextEditorTextSpan identifierTextSpan;
-                    int closeCodeBlockTextSpanStartInclusiveIndex;
-                    if (entry.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-                    {
-                        identifierTextSpan = ((TypeDefinitionNode)entry).TypeIdentifierToken.TextSpan;
-                        closeCodeBlockTextSpanStartInclusiveIndex = ((TypeDefinitionNode)entry).CodeBlock_StartInclusiveIndex;
-                    }
-                    else if (entry.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
-                    {
-                        identifierTextSpan = ((FunctionDefinitionNode)entry).FunctionIdentifierToken.TextSpan;
-                        closeCodeBlockTextSpanStartInclusiveIndex = ((FunctionDefinitionNode)entry).CodeBlock_EndExclusiveIndex;
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                    
-                    if (!_collapsePointUsedIdentifierHashSet.Add(identifierTextSpan.GetText(modelModifier.GetAllText(), _textEditorService)))
-                        continue;
-                    
-                    collapsePointList.Add(new CollapsePoint(
-                        modelModifier.GetLineAndColumnIndicesFromPositionIndex(identifierTextSpan.StartInclusiveIndex).lineIndex,
-                        false,
-                        identifierTextSpan.GetText(modelModifier.GetAllText(), _textEditorService),
-                        modelModifier.GetLineAndColumnIndicesFromPositionIndex(closeCodeBlockTextSpanStartInclusiveIndex).lineIndex + 1));
-                }
-            }
-            
-            foreach (var viewModelKey in modelModifier.PersistentState.ViewModelKeyList)
-            {
-                if (modelModifier.PersistentState.ViewModelKeyList.Count > 1)
-                    collapsePointList = new(collapsePointList);
-                
-                var viewModel = editContext.GetViewModelModifier(viewModelKey);
-            }
-        }
     }
     
     public string GetIdentifierText(ISyntaxNode node, ResourceUri resourceUri)
