@@ -7,6 +7,13 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using Walk.Common.RazorLib.Commands.Models;
+using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.BackgroundTasks.Models;
+
 namespace Walk.Common.RazorLib.TreeViews.Displays;
 
 /// <summary>
@@ -48,6 +55,87 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         CommonService.CommonUiStateChanged += OnTreeViewStateChanged;
+    }
+    
+    /// <summary>
+    /// UI thread only.
+    /// </summary>
+    private readonly List<TreeViewNoType> _flatNodeList = new();
+    /// <summary>
+    /// Contains the "used to be" targetNode, and the index that it left off at.
+    /// </summary>
+    private readonly Stack<(TreeViewNoType Node, int Index)> _nodeRecursionStack = new();
+    
+    private List<TreeViewNoType> GetFlatNodes()
+    {
+        _flatNodeList.Clear();
+        _nodeRecursionStack.Clear();
+        
+        int depth;
+        
+        // I'm only going to include 'IsHidden' with the root node for now.
+        if (_treeViewCascadingValueBatch.TreeViewContainer.RootNode.IsHidden)
+        {
+            depth = 0;
+        }
+        else
+        {
+            _flatNodeList.Add(_treeViewCascadingValueBatch.TreeViewContainer.RootNode);
+            depth = 1;
+        }
+        
+        _treeViewCascadingValueBatch.TreeViewContainer.RootNode.IsExpanded = true;
+        
+        if (!_treeViewCascadingValueBatch.TreeViewContainer.RootNode.IsExpanded ||
+            _treeViewCascadingValueBatch.TreeViewContainer.RootNode.ChildList.Count == 0)
+        {
+            return _flatNodeList;
+        }
+        
+        var targetNode = _treeViewCascadingValueBatch.TreeViewContainer.RootNode;
+        
+        int index = 0;
+    
+        // TODO: Rewrite the comment below this.
+        // Loop iterates 1 layer above in order to avoid the break case every child if the child is not expanded or ChildList.Count is == 0
+        // Thus, the root case has to be handled entirely outside the loop.
+        while (true)
+        {
+            Console.WriteLine("aaa " + targetNode.GetDisplayText());
+            
+            if (index >= targetNode.ChildList.Count)
+            {
+                if (_nodeRecursionStack.Count > 0)
+                {
+                    Console.WriteLine("bbb " + targetNode.GetDisplayText());
+                    var recursionEntry = _nodeRecursionStack.Pop();
+                    targetNode = recursionEntry.Node;
+                    index = recursionEntry.Index;
+                    continue;
+                }
+                else
+                {
+                    Console.WriteLine("ccc " + targetNode.GetDisplayText());
+                    break;
+                }
+            }
+        
+            Console.WriteLine("ddd " + targetNode.GetDisplayText());
+            var childNode = targetNode.ChildList[index++];
+            childNode.IsExpanded = true;
+            childNode.LoadChildListAsync().Wait();
+            _flatNodeList.Add(childNode);
+        
+            if (childNode.IsExpanded && childNode.ChildList.Count > 0)
+            {
+                Console.WriteLine("eee " + targetNode.GetDisplayText());
+                _nodeRecursionStack.Push((targetNode, index));
+                targetNode = childNode;
+                index = 0;
+            }
+        }
+        
+        return _flatNodeList;
     }
 
     private int GetRootDepth(TreeViewNoType rootNode)
@@ -243,4 +331,218 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     {
         CommonService.CommonUiStateChanged -= OnTreeViewStateChanged;
     }
+    
+    /* Start TreeViewNodeDisplay */
+    private ElementReference? _treeViewTitleElementReference;
+    private Key<TreeViewChanged> _previousTreeViewChangedKey = Key<TreeViewChanged>.Empty;
+    private bool _previousIsActive;
+
+    // private int OffsetInPixels => TreeViewNodeParameter.RenderBatch.OffsetPerDepthInPixels * TreeViewNodeParameter.Depth;
+
+    
+    
+    
+
+    /*protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var localIsActive = IsActive;
+
+        if (_previousIsActive != localIsActive)
+        {
+            _previousIsActive = localIsActive;
+
+            if (localIsActive)
+                await FocusAsync().ConfigureAwait(false);
+        }
+    }*/
+
+    /*private async Task FocusAsync()
+    {
+        try
+        {
+            var localTreeViewTitleElementReference = _treeViewTitleElementReference;
+
+            if (localTreeViewTitleElementReference is not null)
+            {
+                await localTreeViewTitleElementReference.Value
+                    .FocusAsync()
+                    .ConfigureAwait(false);
+            }
+        }
+        catch (Exception)
+        {
+            // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
+            //             This bug is seemingly happening randomly. I have a suspicion
+            //             that there are race-condition exceptions occurring with "FocusAsync"
+            //             on an ElementReference.
+        }
+    }*/
+
+    /*private void HandleExpansionChevronOnMouseDown(TreeViewNoType localTreeViewNoType)
+    {
+        if (!localTreeViewNoType.IsExpandable)
+            return;
+
+        localTreeViewNoType.IsExpanded = !localTreeViewNoType.IsExpanded;
+
+        if (localTreeViewNoType.IsExpanded)
+        {
+            TreeViewNodeParameter.RenderBatch.CommonService.Enqueue(new CommonWorkArgs
+            {
+                WorkKind = CommonWorkKind.TreeView_HandleExpansionChevronOnMouseDown,
+                TreeViewNoType = localTreeViewNoType,
+                TreeViewContainer = TreeViewNodeParameter.RenderBatch.TreeViewContainer
+            });
+        }
+        else
+        {
+            TreeViewNodeParameter.RenderBatch.CommonService.TreeView_ReRenderNodeAction(TreeViewNodeParameter.RenderBatch.TreeViewContainer.Key, localTreeViewNoType);
+        }
+    }*/
+
+    /*private async Task ManuallyPropagateOnContextMenu(
+        MouseEventArgs mouseEventArgs,
+        TreeViewContainer treeViewContainer,
+        TreeViewNoType treeViewNoType)
+    {
+        var treeViewCommandArgs = new TreeViewCommandArgs(
+            TreeViewNodeParameter.RenderBatch.CommonService,
+            TreeViewNodeParameter.RenderBatch.TreeViewContainer,
+            TreeViewNodeParameter.TreeViewNoType,
+            FocusAsync,
+            null,
+            mouseEventArgs,
+            null);
+
+        await TreeViewNodeParameter.RenderBatch.TreeViewMouseEventHandler
+            .OnMouseDownAsync(treeViewCommandArgs)
+            .ConfigureAwait(false);
+
+        TreeViewNodeParameter.RenderBatch.CommonService.Enqueue(new CommonWorkArgs
+        {
+            WorkKind = CommonWorkKind.TreeView_ManuallyPropagateOnContextMenu,
+            HandleTreeViewOnContextMenu = TreeViewNodeParameter.RenderBatch.HandleTreeViewOnContextMenu,
+            MouseEventArgs = mouseEventArgs,
+            ContainerKey = treeViewContainer.Key,
+            TreeViewNoType = treeViewNoType,
+        });
+    }*/
+
+    /*private async Task HandleOnClick(MouseEventArgs? mouseEventArgs)
+    {
+        var treeViewCommandArgs = new TreeViewCommandArgs(
+            TreeViewNodeParameter.RenderBatch.CommonService,
+            TreeViewNodeParameter.RenderBatch.TreeViewContainer,
+            TreeViewNodeParameter.TreeViewNoType,
+            FocusAsync,
+            null,
+            mouseEventArgs,
+            null);
+
+        await TreeViewNodeParameter.RenderBatch.TreeViewMouseEventHandler
+            .OnClickAsync(treeViewCommandArgs)
+            .ConfigureAwait(false);
+    }*/
+
+    /*private async Task HandleOnDoubleClick(MouseEventArgs? mouseEventArgs)
+    {
+        var treeViewCommandArgs = new TreeViewCommandArgs(
+            TreeViewNodeParameter.RenderBatch.CommonService,
+            TreeViewNodeParameter.RenderBatch.TreeViewContainer,
+            TreeViewNodeParameter.TreeViewNoType,
+            FocusAsync,
+            null,
+            mouseEventArgs,
+            null);
+
+        await TreeViewNodeParameter.RenderBatch.TreeViewMouseEventHandler
+            .OnDoubleClickAsync(treeViewCommandArgs)
+            .ConfigureAwait(false);
+    }*/
+
+    /*private async Task HandleOnMouseDown(MouseEventArgs? mouseEventArgs)
+    {
+        var treeViewCommandArgs = new TreeViewCommandArgs(
+            TreeViewNodeParameter.RenderBatch.CommonService,
+            TreeViewNodeParameter.RenderBatch.TreeViewContainer,
+            TreeViewNodeParameter.TreeViewNoType,
+            FocusAsync,
+            null,
+            mouseEventArgs,
+            null);
+
+        await TreeViewNodeParameter.RenderBatch.TreeViewMouseEventHandler
+            .OnMouseDownAsync(treeViewCommandArgs)
+            .ConfigureAwait(false);
+    }*/
+
+    /*private Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    {
+        switch (keyboardEventArgs.Key)
+        {
+            case "ContextMenu":
+            {
+                var mouseEventArgs = new MouseEventArgs { Button = -1 };
+                return ManuallyPropagateOnContextMenu(mouseEventArgs, TreeViewNodeParameter.RenderBatch.TreeViewContainer, TreeViewNodeParameter.TreeViewNoType);
+            }
+            case ".":
+            {
+                if (keyboardEventArgs.CtrlKey)
+                {
+                    var mouseEventArgs = new MouseEventArgs { Button = -1 };
+                    return ManuallyPropagateOnContextMenu(mouseEventArgs, TreeViewNodeParameter.RenderBatch.TreeViewContainer, TreeViewNodeParameter.TreeViewNoType);
+                }
+                break;
+            }
+        }
+    
+        return Task.CompletedTask;
+    }*/
+
+    /*private string GetShowDefaultCursorCssClass(bool isExpandable)
+    {
+        return isExpandable
+            ? string.Empty
+            : "di_tree-view-use-default-cursor";
+    }*/
+
+    private bool GetIsSelected(TreeViewNoType node) => CommonService.GetTreeViewContainer(TreeViewContainerKey)?.SelectedNodeList.Any(x => x.Key == node.Key) ?? false;
+    private string GetIsSelectedCssClass(TreeViewNoType node) => GetIsSelected(node) ? "di_selected" : string.Empty;
+
+    private bool GetIsActive(TreeViewNoType node) => CommonService.GetTreeViewContainer(TreeViewContainerKey)?.ActiveNode is not null &&
+                             (CommonService.GetTreeViewContainer(TreeViewContainerKey)?.ActiveNode.Key ?? Key<TreeViewNoType>.Empty) == node.Key;
+                             
+    private string GetIsActiveId(TreeViewNoType node) => GetIsActive(node)
+        ? CommonService.GetTreeViewContainer(TreeViewContainerKey)?.ActiveNodeElementId ?? "string.Empty"
+        : string.Empty;
+
+    
+    private string GetIsActiveCssClass(TreeViewNoType node) => GetIsActive(node) ? "di_active" : string.Empty;
+    
+    /// <summary>
+    /// This method should only be invoked from the "UI thread" due to the usage of `CommonBackgroundTaskApi.UiStringBuilder`.
+    /// </summary>
+    private string GetNodeElementCssClass(TreeViewNoType node)
+    {
+        CommonService.UiStringBuilder.Clear();
+        CommonService.UiStringBuilder.Append("di_tree-view-title ");
+        CommonService.UiStringBuilder.Append(GetIsSelectedCssClass(node));
+        CommonService.UiStringBuilder.Append(" ");
+        CommonService.UiStringBuilder.Append(GetIsActiveCssClass(node));
+        
+        return CommonService.UiStringBuilder.ToString();
+    }
+    
+    /// <summary>
+    /// This method should only be invoked from the "UI thread" due to the usage of `CommonBackgroundTaskApi.UiStringBuilder`.
+    /// </summary>
+    /*private string GetNodeChevronCssClass()
+    {
+        TreeViewNodeParameter.RenderBatch.CommonService.UiStringBuilder.Clear();
+        TreeViewNodeParameter.RenderBatch.CommonService.UiStringBuilder.Append("di_tree-view-expansion-chevron ");
+        TreeViewNodeParameter.RenderBatch.CommonService.UiStringBuilder.Append(GetShowDefaultCursorCssClass(TreeViewNodeParameter.TreeViewNoType.IsExpandable));
+        
+        return TreeViewNodeParameter.RenderBatch.CommonService.UiStringBuilder.ToString();
+    }*/
+    /* End TreeViewNodeDisplay */
 }

@@ -1,5 +1,7 @@
 @using Walk.Common.RazorLib.Keys.Models;
 @using Walk.Common.RazorLib.TreeViews.Models;
+@using Walk.Common.RazorLib.Dimensions;
+@using Walk.Common.RazorLib.Dimensions.Models;
 
 @{
     var treeViewContainer = CommonService.GetTreeViewContainer(TreeViewContainerKey);
@@ -27,26 +29,39 @@
         }
         else
         {
-            <TreeViewNodeDisplay TreeViewNodeParameter="new TreeViewNodeParameter(
-                treeViewContainer.RootNode,
-                GetRootDepth(treeViewContainer.RootNode),
-                _treeViewCascadingValueBatch)"/>
+            var flatNodeList = GetFlatNodes();
+            foreach (var node in GetFlatNodes())
+            {
+                <div class="@GetNodeElementCssClass(node)">
+                    @{
+                    	var appOptionsState = CommonService.GetAppOptionsState();
+                    
+                    	var iconDriver = new IconDriver(
+    						appOptionsState.Options.IconSizeInPixels,
+    						appOptionsState.Options.IconSizeInPixels);
+                    }
+    
+                    @if (node.IsExpandable)
+                    {
+                        if (node.IsExpanded)
+                        {
+                            @IconChevronDownFragment.Render(iconDriver)
+                        }
+                        else
+                        {
+                            @IconChevronRightFragment.Render(iconDriver)
+                        }
+                    }
+                    else
+                    {
+                        @IconBlankFragment.Render(iconDriver)
+                    }
+                    
+                    @node.GetIcon(iconDriver)
+                    
+                    @node.GetDisplayText()
+                </div>
+            }
         }
-    </div>
-}
-
-@if (OnContextMenuRenderFragment is not null &&
-     _treeViewContextMenuCommandArgs.CommonService is not null)
-{
-    <div class="di_context-menu di_set-selectable"
-         style="@GetContextMenuCssStyleString()"
-         @oncontextmenu:stopPropagation="true"
-         @onmousedown:stopPropagation="true"
-         @onclick:stopPropagation="true"
-         @ondblclick:stopPropagation="true"
-         @onkeydown:stopPropagation="true"
-         @onkeydownwithpreventscroll:stopPropagation="true">
-
-        @OnContextMenuRenderFragment(_treeViewContextMenuCommandArgs)
     </div>
 }
