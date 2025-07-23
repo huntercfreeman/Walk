@@ -397,10 +397,20 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                             {
                                 foreach (var typeDefinitionNode in __CSharpBinder.GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup).Where(x => x.TypeIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService).Contains(filteringWord)).Take(5))
                                 {
+                                    var sourceText = compilationUnitLocal.SourceText;
+                                
+                                    if (typeDefinitionNode.ResourceUri != virtualizationResult.Model.PersistentState.ResourceUri)
+                                    {
+                                        if (__CSharpBinder.__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var innerCompilationUnit))
+                                        {
+                                            sourceText = innerCompilationUnit.SourceText;
+                                        }
+                                    }
+                                
                                     autocompleteEntryList.Add(new AutocompleteEntry(
-                                        typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService),
+                                        typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(sourceText, _textEditorService),
                                         AutocompleteEntryKind.Type,
-                                        () => MemberAutocomplete(typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService), filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+                                        () => MemberAutocomplete(typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(sourceText, _textEditorService), filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
                                 }
                             }
                             
