@@ -350,6 +350,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     {
                         foundMatch = true;
                         foundSymbol = symbol;
+                        break;
                     }
                 }
             }
@@ -470,6 +471,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                     typeReference.ExplicitDefinitionTextSpan.StartInclusiveIndex < symbol.TextSpan.EndExclusiveIndex)
                                 {
                                     innerFoundSymbol = symbol;
+                                    break;
                                 }
                             }
                         }
@@ -788,6 +790,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         Walk.TextEditor.RazorLib.Commands.Models.Defaults.TextEditorCommandDefaultFunctions.OnWheel,
                         (_textEditorService, viewModelModifier.PersistentState.ViewModelKey, cursorPositionIndex));
                     componentData.TextEditorViewModelSlimDisplay.TextEditorService.CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
+                    
+                    break;
                 }
             }
         }
@@ -951,6 +955,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             {
                 foundMatch = true;
                 foundSymbol = symbol;
+                break;
             }
         }
         
