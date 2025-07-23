@@ -3138,7 +3138,7 @@ public static class ParseExpressions
                 {
                     var innerCompilationUnit = parserModel.Compilation;
                 
-                    foreach (var typeDefinitionNode in parserModel.Binder.GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup))
+                    foreach (var typeDefinitionNode in parserModel.Binder.Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup))
                     {
                         if (innerCompilationUnit.ResourceUri != typeDefinitionNode.ResourceUri)
                         {

@@ -547,7 +547,7 @@ public ref struct CSharpParserModel
         if (Binder._namespaceGroupMap.TryGetValue(namespaceString, out var namespaceGroup) &&
             namespaceGroup.ConstructorWasInvoked)
         {
-            var typeDefinitionNodes = Binder.GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup);
+            var typeDefinitionNodes = Binder.Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup);
             
             // TODO: Cannot use ref, out, or in...
             var compilation = Compilation;

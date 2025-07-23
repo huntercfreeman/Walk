@@ -1203,4 +1203,45 @@ public class CSharpBinder
         return namespaceGroup.NamespaceStatementNodeList
             .SelectMany(x => GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(x));
     }
+    
+    private readonly List<TypeDefinitionNode> _getTopLevelTypeDefinitionNodes = new();
+    
+    /// <summary>Object-allocation-less version of the public version for internal use.</summary>
+    internal List<TypeDefinitionNode> Internal_GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(
+        NamespaceStatementNode namespaceStatementNode,
+        bool shouldClear)
+    {
+        if (shouldClear)
+        {
+            // This allows Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(...) to "select many".
+            _getTopLevelTypeDefinitionNodes.Clear();
+        }
+    
+        if (namespaceStatementNode.Unsafe_SelfIndexKey == -1 ||
+            !__CompilationUnitMap.TryGetValue(namespaceStatementNode.ResourceUri, out var compilationUnit))
+        {
+            return _getTopLevelTypeDefinitionNodes;
+        }
+
+        foreach (var codeBlockOwner in compilationUnit.CodeBlockOwnerList)
+        {
+            if (codeBlockOwner.Unsafe_ParentIndexKey == namespaceStatementNode.Unsafe_SelfIndexKey && codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+                _getTopLevelTypeDefinitionNodes.Add((TypeDefinitionNode)codeBlockOwner);
+        }
+        
+        return _getTopLevelTypeDefinitionNodes;
+    }
+    
+    /// <summary>Object-allocation-less version of the public version for internal use.</summary>
+    internal List<TypeDefinitionNode> Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(NamespaceGroup namespaceGroup)
+    {
+        _getTopLevelTypeDefinitionNodes.Clear();
+    
+        foreach (var namespaceStatementNode in namespaceGroup.NamespaceStatementNodeList)
+        {
+            _ = Internal_GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(namespaceStatementNode, shouldClear: false);
+        }
+        
+        return _getTopLevelTypeDefinitionNodes;
+    }
 }
