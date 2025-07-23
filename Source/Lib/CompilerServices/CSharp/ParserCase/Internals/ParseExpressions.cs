@@ -1,4 +1,3 @@
-using System.Reflection;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.CompilerServices.CSharp.Facts;
 using Walk.Extensions.CompilerServices;
@@ -11,7 +10,6 @@ using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.TextEditor.RazorLib.Exceptions;
 using Walk.TextEditor.RazorLib.Lexers.Models;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Walk.CompilerServices.CSharp.ParserCase.Internals;
 
@@ -2916,10 +2914,7 @@ public static class ParseExpressions
             {
                 if (parserModel.Binder.__CompilationUnitMap.TryGetValue(typeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
                 {
-                    maybeTypeDefinitionNode = parserModel.Binder.GetDefinitionNode(
-                        innerCompilationUnit,
-                        typeReference.ExplicitDefinitionTextSpan,
-                        SyntaxKind.TypeClauseNode);
+                    var scope = parserModel.Binder.GetScope(innerCompilationUnit, typeReference.TypeIdentifierToken.TextSpan);                    if (scope is not null)                    {                        if (parserModel.TryGetTypeDefinitionHierarchically(                                innerCompilationUnit,                                scope.Unsafe_SelfIndexKey,                                typeReference.ExplicitDefinitionTextSpan.GetText(innerCompilationUnit.SourceText, parserModel.Binder.TextEditorService) ?? string.Empty,                                out var innerTypeDefinitionNode) &&                            innerTypeDefinitionNode is not null)                        {                            maybeTypeDefinitionNode = innerTypeDefinitionNode;                                                        // This assignment does nothing but it is commented out here to follow the pattern.                            // innerCompilationUnit = innerCompilationUnit;                        }                        else                        {                            maybeTypeDefinitionNode = null;                            innerCompilationUnit = parserModel.Compilation;                        }                    }                    else                    {                        maybeTypeDefinitionNode = null;                        innerCompilationUnit = parserModel.Compilation;                    }
                 }
                 else
                 {
@@ -2929,10 +2924,7 @@ public static class ParseExpressions
             }
             else
             {
-                var scope = parserModel.Binder.GetScope(parserModel.Compilation, typeReference.TypeIdentifierToken.TextSpan);
-
-                if (scope is not null)
-                {
+                var scope = parserModel.Binder.GetScope(parserModel.Compilation, typeReference.TypeIdentifierToken.TextSpan);                if (scope is not null)                {
                     if (parserModel.TryGetTypeDefinitionHierarchically(
                             parserModel.Compilation,
                             scope.Unsafe_SelfIndexKey,
@@ -2942,18 +2934,7 @@ public static class ParseExpressions
                     {
                         maybeTypeDefinitionNode = innerTypeDefinitionNode;
                         innerCompilationUnit = parserModel.Compilation;
-                    }
-                    else
-                    {
-                        maybeTypeDefinitionNode = null;
-                        innerCompilationUnit = parserModel.Compilation;
-                    }
-                }
-                else
-                {
-                    maybeTypeDefinitionNode = null;
-                    innerCompilationUnit = parserModel.Compilation;
-                }
+                    }                    else                    {                        maybeTypeDefinitionNode = null;                        innerCompilationUnit = parserModel.Compilation;                    }                }                else                {                    maybeTypeDefinitionNode = null;                    innerCompilationUnit = parserModel.Compilation;                }
             }
             
             if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)

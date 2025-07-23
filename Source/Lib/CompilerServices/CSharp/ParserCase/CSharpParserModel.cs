@@ -1151,7 +1151,7 @@ public ref struct CSharpParserModel
             case SyntaxKind.TypeDefinitionNode:
             {
                 var typeDefinitionNode = (TypeDefinitionNode)node;
-                if (typeDefinitionNode.ResourceUri == compilationUnit.ResourceUri)
+                if (typeDefinitionNode.ResourceUri == compilationUnit.ResourceUri && compilationUnit.ResourceUri == Compilation.ResourceUri)
                 {
                     return Binder.TextEditorService.EditContext_GetText(Text.Slice(typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeDefinitionNode.TypeIdentifierToken.TextSpan.Length));
                 }
@@ -1166,7 +1166,7 @@ public ref struct CSharpParserModel
             case SyntaxKind.TypeClauseNode:
             {
                 var typeClauseNode = (TypeClauseNode)node;
-                if (typeClauseNode.ExplicitDefinitionResourceUri == compilationUnit.ResourceUri)
+                if (typeClauseNode.ExplicitDefinitionResourceUri == compilationUnit.ResourceUri && compilationUnit.ResourceUri == Compilation.ResourceUri)
                 {
                     return Binder.TextEditorService.EditContext_GetText(Text.Slice(typeClauseNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeClauseNode.TypeIdentifierToken.TextSpan.Length));
                 }
@@ -1181,7 +1181,7 @@ public ref struct CSharpParserModel
             case SyntaxKind.FunctionDefinitionNode:
             {
                 var functionDefinitionNode = (FunctionDefinitionNode)node;
-                if (functionDefinitionNode.ResourceUri == compilationUnit.ResourceUri)
+                if (functionDefinitionNode.ResourceUri == compilationUnit.ResourceUri && compilationUnit.ResourceUri == Compilation.ResourceUri)
                 {
                     return Binder.TextEditorService.EditContext_GetText(Text.Slice(functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex, functionDefinitionNode.FunctionIdentifierToken.TextSpan.Length));
                 }
@@ -1196,7 +1196,7 @@ public ref struct CSharpParserModel
             case SyntaxKind.FunctionInvocationNode:
             {
                 var functionInvocationNode = (FunctionInvocationNode)node;
-                if (functionInvocationNode.ResourceUri == compilationUnit.ResourceUri)
+                if (functionInvocationNode.ResourceUri == compilationUnit.ResourceUri && compilationUnit.ResourceUri == Compilation.ResourceUri)
                 {
                     return Binder.TextEditorService.EditContext_GetText(Text.Slice(functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Length));
                 }
@@ -1211,7 +1211,7 @@ public ref struct CSharpParserModel
             case SyntaxKind.VariableDeclarationNode:
             {
                 var variableDeclarationNode = (VariableDeclarationNode)node;
-                if (variableDeclarationNode.ResourceUri == compilationUnit.ResourceUri)
+                if (variableDeclarationNode.ResourceUri == compilationUnit.ResourceUri && compilationUnit.ResourceUri == Compilation.ResourceUri)
                 {
                     return Binder.TextEditorService.EditContext_GetText(Text.Slice(variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, variableDeclarationNode.IdentifierToken.TextSpan.Length));
                 }
