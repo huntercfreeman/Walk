@@ -147,9 +147,6 @@ public class CSharpBinder
         return GetScopeByPositionIndex(compilationUnit, textSpan.StartInclusiveIndex);
     }
     
-    /// <summary>
-    /// Thought: the text is parsed in order so isn't the first scope to return true for the predicate also the minimum?
-    /// </summary>
     public ICodeBlockOwner? GetScopeByPositionIndex(CSharpCompilationUnit compilationUnit, int positionIndex)
     {
         var min = int.MaxValue;
