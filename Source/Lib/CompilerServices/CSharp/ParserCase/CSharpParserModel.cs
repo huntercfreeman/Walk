@@ -84,6 +84,8 @@ public ref struct CSharpParserModel
         Binder.MethodOverload_ResourceUri_WasCleared = false;
         
         Text = lexerOutput.Text;
+        
+        Binder.CSharpParserModel_AddedNamespaceHashSet.Clear();
     }
     
     public ReadOnlySpan<char> Text { get; }
@@ -544,21 +546,17 @@ public ref struct CSharpParserModel
 
     public void AddNamespaceToCurrentScope(string namespaceString)
     {
+        if (!Binder.CSharpParserModel_AddedNamespaceHashSet.Add(namespaceString))
+            return;
+    
         if (Binder._namespaceGroupMap.TryGetValue(namespaceString, out var namespaceGroup) &&
             namespaceGroup.ConstructorWasInvoked)
         {
-            var typeDefinitionNodes = Binder.GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup);
+            var typeDefinitionNodeList = Binder.Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup);
             
-            // TODO: Cannot use ref, out, or in...
-            var compilation = Compilation;
-            var binder = Binder;
-            
-            foreach (var typeDefinitionNode in typeDefinitionNodes)
+            foreach (var typeDefinitionNode in typeDefinitionNodeList)
             {
-                var matchNode = ExternalTypeDefinitionList.FirstOrDefault(x => binder.GetIdentifierText(x, compilation) == binder.GetIdentifierText(typeDefinitionNode, compilation));
-                
-                if (matchNode is null)
-                    ExternalTypeDefinitionList.Add(typeDefinitionNode);
+                ExternalTypeDefinitionList.Add(typeDefinitionNode);
             }
         }
     }
@@ -1153,7 +1151,7 @@ public ref struct CSharpParserModel
             case SyntaxKind.TypeDefinitionNode:
             {
                 var typeDefinitionNode = (TypeDefinitionNode)node;
-                if (typeDefinitionNode.ResourceUri == compilationUnit.ResourceUri)
+                if (typeDefinitionNode.ResourceUri == compilationUnit.ResourceUri && compilationUnit.ResourceUri == Compilation.ResourceUri)
                 {
                     return Binder.TextEditorService.EditContext_GetText(Text.Slice(typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeDefinitionNode.TypeIdentifierToken.TextSpan.Length));
                 }
@@ -1168,7 +1166,7 @@ public ref struct CSharpParserModel
             case SyntaxKind.TypeClauseNode:
             {
                 var typeClauseNode = (TypeClauseNode)node;
-                if (typeClauseNode.ExplicitDefinitionResourceUri == compilationUnit.ResourceUri)
+                if (typeClauseNode.ExplicitDefinitionResourceUri == compilationUnit.ResourceUri && compilationUnit.ResourceUri == Compilation.ResourceUri)
                 {
                     return Binder.TextEditorService.EditContext_GetText(Text.Slice(typeClauseNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeClauseNode.TypeIdentifierToken.TextSpan.Length));
                 }
@@ -1183,7 +1181,7 @@ public ref struct CSharpParserModel
             case SyntaxKind.FunctionDefinitionNode:
             {
                 var functionDefinitionNode = (FunctionDefinitionNode)node;
-                if (functionDefinitionNode.ResourceUri == compilationUnit.ResourceUri)
+                if (functionDefinitionNode.ResourceUri == compilationUnit.ResourceUri && compilationUnit.ResourceUri == Compilation.ResourceUri)
                 {
                     return Binder.TextEditorService.EditContext_GetText(Text.Slice(functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex, functionDefinitionNode.FunctionIdentifierToken.TextSpan.Length));
                 }
@@ -1198,7 +1196,7 @@ public ref struct CSharpParserModel
             case SyntaxKind.FunctionInvocationNode:
             {
                 var functionInvocationNode = (FunctionInvocationNode)node;
-                if (functionInvocationNode.ResourceUri == compilationUnit.ResourceUri)
+                if (functionInvocationNode.ResourceUri == compilationUnit.ResourceUri && compilationUnit.ResourceUri == Compilation.ResourceUri)
                 {
                     return Binder.TextEditorService.EditContext_GetText(Text.Slice(functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Length));
                 }
@@ -1213,7 +1211,7 @@ public ref struct CSharpParserModel
             case SyntaxKind.VariableDeclarationNode:
             {
                 var variableDeclarationNode = (VariableDeclarationNode)node;
-                if (variableDeclarationNode.ResourceUri == compilationUnit.ResourceUri)
+                if (variableDeclarationNode.ResourceUri == compilationUnit.ResourceUri && compilationUnit.ResourceUri == Compilation.ResourceUri)
                 {
                     return Binder.TextEditorService.EditContext_GetText(Text.Slice(variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, variableDeclarationNode.IdentifierToken.TextSpan.Length));
                 }

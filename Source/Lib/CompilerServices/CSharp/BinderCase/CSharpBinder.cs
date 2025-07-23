@@ -52,6 +52,11 @@ public class CSharpBinder
     
     public TokenWalker CSharpParserModel_TokenWalker { get; } = new(Array.Empty<SyntaxToken>(), useDeferredParsing: true);
     
+    /// <summary>
+    /// This is cleared at the start of a new parse, inside the CSharpParserModel constructor.
+    /// </summary>
+    public HashSet<string> CSharpParserModel_AddedNamespaceHashSet { get; } = new();
+    
     public AmbiguousIdentifierExpressionNode CSharpParserModel_AmbiguousIdentifierExpressionNode { get; } = new AmbiguousIdentifierExpressionNode(
         default,
         genericParameterListing: default,
@@ -144,19 +149,25 @@ public class CSharpBinder
     
     public ICodeBlockOwner? GetScopeByPositionIndex(CSharpCompilationUnit compilationUnit, int positionIndex)
     {
-        var possibleScopes = compilationUnit.CodeBlockOwnerList.Where(x =>
+        var min = int.MaxValue;
+        ICodeBlockOwner? codeBlockOwner = null;
+        
+        foreach (var scope in compilationUnit.CodeBlockOwnerList)
         {
-            return x.Scope_StartInclusiveIndex <= positionIndex &&
-                   // Global Scope awkwardly has '-1' ending index exclusive (2023-10-15)
-                   (x.Scope_EndExclusiveIndex >= positionIndex || x.Scope_EndExclusiveIndex == -1);
-        });
-
-        // TODO: Does MinBy return default when previous Where result is empty?
-        var tuple = possibleScopes.MinBy(x => positionIndex - x.Scope_StartInclusiveIndex);
-        if (tuple is null)
-            return null;
-        else
-            return tuple;
+            if (scope.Scope_StartInclusiveIndex <= positionIndex &&
+                // Global Scope awkwardly has '-1' ending index exclusive (2023-10-15)
+                (scope.Scope_EndExclusiveIndex >= positionIndex || scope.Scope_EndExclusiveIndex == -1))
+            {
+                var distance = positionIndex - scope.Scope_StartInclusiveIndex;
+                if (distance < min)
+                {
+                    min = distance;
+                    codeBlockOwner = scope;
+                }
+            }
+        }
+    
+        return codeBlockOwner;
     }
 
     public ICodeBlockOwner? GetScopeByScopeIndexKey(CSharpCompilationUnit compilationUnit, int scopeIndexKey)
@@ -1174,6 +1185,125 @@ public class CSharpBinder
         return query;
     }
     
+    private readonly List<ISyntaxNode> _getMemberList = new();
+    
+    internal List<ISyntaxNode> Internal_GetMemberList_TypeDefinitionNode(TypeDefinitionNode typeDefinitionNode)
+    {
+        _getMemberList.Clear();
+    
+        if (typeDefinitionNode.Unsafe_SelfIndexKey == -1 ||
+            !__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var compilationUnit))
+        {
+            return _getMemberList;
+        }
+        
+        foreach (var codeBlockOwner in compilationUnit.CodeBlockOwnerList)
+        {
+            if (codeBlockOwner.Unsafe_ParentIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
+                (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
+                 codeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
+            {
+                _getMemberList.Add(codeBlockOwner);
+            }
+        }
+        
+        foreach (var node in compilationUnit.NodeList)
+        {
+            if (node.Unsafe_ParentIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
+                node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+            {
+                _getMemberList.Add(node);
+            }
+        }
+        
+        if (typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList is not null)
+        {
+            foreach (var entry in typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList)
+            {
+                _getMemberList.Add(entry.VariableDeclarationNode);
+            }
+        }
+        
+        if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
+        {
+            int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
+            while (positionExclusive < PartialTypeDefinitionList.Count)
+            {
+                if (PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
+                {
+                    CSharpCompilationUnit? innerCompilationUnit;
+                    
+                    if (PartialTypeDefinitionList[positionExclusive].ScopeIndexKey != -1)
+                    {
+                        if (PartialTypeDefinitionList[positionExclusive].ResourceUri != compilationUnit.ResourceUri)
+                        {
+                            if (__CompilationUnitMap.TryGetValue(PartialTypeDefinitionList[positionExclusive].ResourceUri, out var temporaryCompilationUnit))
+                                innerCompilationUnit = temporaryCompilationUnit;
+                            else
+                                innerCompilationUnit = null;
+                        }
+                        else
+                        {
+                            innerCompilationUnit = compilationUnit;
+                        }
+                        
+                        if (innerCompilationUnit != null)
+                        {
+                            var partialTypeDefinition = PartialTypeDefinitionList[positionExclusive];
+                            var innerScopeIndexKey = partialTypeDefinition.ScopeIndexKey;
+                            
+                            if (partialTypeDefinition.ScopeIndexKey < innerCompilationUnit.CodeBlockOwnerList.Count)
+                            {
+                                var innerCodeBlockOwner = innerCompilationUnit.CodeBlockOwnerList[partialTypeDefinition.ScopeIndexKey];
+                                
+                                if (innerCodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+                                {
+                                    var innerTypeDefinitionNode = (TypeDefinitionNode)innerCodeBlockOwner;
+                                
+                                    // TODO: Don't duplicate this.
+                                    foreach (var codeBlockOwner in innerCompilationUnit.CodeBlockOwnerList)
+                                    {
+                                        if (codeBlockOwner.Unsafe_ParentIndexKey == innerScopeIndexKey &&
+                                            (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
+                                             codeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
+                                        {
+                                            _getMemberList.Add(codeBlockOwner);
+                                        }
+                                    }
+                                    
+                                    foreach (var node in innerCompilationUnit.NodeList)
+                                    {
+                                        if (node.Unsafe_ParentIndexKey == innerScopeIndexKey &&
+                                            node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+                                        {
+                                            _getMemberList.Add(node);
+                                        }
+                                    }
+                                    
+                                    if (innerTypeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList is not null)
+                                    {
+                                        foreach (var entry in innerTypeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList)
+                                        {
+                                            _getMemberList.Add(entry.VariableDeclarationNode);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    positionExclusive++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+        
+        return _getMemberList;
+    }
+    
     /// <summary>
     /// <see cref="GetTopLevelTypeDefinitionNodes"/> provides a collection
     /// which contains all top level type definitions of the <see cref="NamespaceStatementNode"/>.
@@ -1202,5 +1332,46 @@ public class CSharpBinder
     {
         return namespaceGroup.NamespaceStatementNodeList
             .SelectMany(x => GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(x));
+    }
+    
+    private readonly List<TypeDefinitionNode> _getTopLevelTypeDefinitionNodes = new();
+    
+    /// <summary>Object-allocation-less version of the public version for internal use.</summary>
+    internal List<TypeDefinitionNode> Internal_GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(
+        NamespaceStatementNode namespaceStatementNode,
+        bool shouldClear)
+    {
+        if (shouldClear)
+        {
+            // This allows Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(...) to "select many".
+            _getTopLevelTypeDefinitionNodes.Clear();
+        }
+    
+        if (namespaceStatementNode.Unsafe_SelfIndexKey == -1 ||
+            !__CompilationUnitMap.TryGetValue(namespaceStatementNode.ResourceUri, out var compilationUnit))
+        {
+            return _getTopLevelTypeDefinitionNodes;
+        }
+
+        foreach (var codeBlockOwner in compilationUnit.CodeBlockOwnerList)
+        {
+            if (codeBlockOwner.Unsafe_ParentIndexKey == namespaceStatementNode.Unsafe_SelfIndexKey && codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+                _getTopLevelTypeDefinitionNodes.Add((TypeDefinitionNode)codeBlockOwner);
+        }
+        
+        return _getTopLevelTypeDefinitionNodes;
+    }
+    
+    /// <summary>Object-allocation-less version of the public version for internal use.</summary>
+    internal List<TypeDefinitionNode> Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(NamespaceGroup namespaceGroup)
+    {
+        _getTopLevelTypeDefinitionNodes.Clear();
+    
+        foreach (var namespaceStatementNode in namespaceGroup.NamespaceStatementNodeList)
+        {
+            _ = Internal_GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(namespaceStatementNode, shouldClear: false);
+        }
+        
+        return _getTopLevelTypeDefinitionNodes;
     }
 }
