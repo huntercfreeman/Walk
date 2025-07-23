@@ -149,19 +149,25 @@ public class CSharpBinder
     
     public ICodeBlockOwner? GetScopeByPositionIndex(CSharpCompilationUnit compilationUnit, int positionIndex)
     {
-        var possibleScopes = compilationUnit.CodeBlockOwnerList.Where(x =>
+        var min = int.MaxValue;
+        ICodeBlockOwner? codeBlockOwner = null;
+        
+        foreach (var scope in compilationUnit.CodeBlockOwnerList)
         {
-            return x.Scope_StartInclusiveIndex <= positionIndex &&
-                   // Global Scope awkwardly has '-1' ending index exclusive (2023-10-15)
-                   (x.Scope_EndExclusiveIndex >= positionIndex || x.Scope_EndExclusiveIndex == -1);
-        });
-
-        // TODO: Does MinBy return default when previous Where result is empty?
-        var tuple = possibleScopes.MinBy(x => positionIndex - x.Scope_StartInclusiveIndex);
-        if (tuple is null)
-            return null;
-        else
-            return tuple;
+            if (scope.Scope_StartInclusiveIndex <= positionIndex &&
+                // Global Scope awkwardly has '-1' ending index exclusive (2023-10-15)
+                (scope.Scope_EndExclusiveIndex >= positionIndex || scope.Scope_EndExclusiveIndex == -1))
+            {
+                var distance = positionIndex - scope.Scope_StartInclusiveIndex;
+                if (distance < min)
+                {
+                    min = distance;
+                    codeBlockOwner = scope;
+                }
+            }
+        }
+    
+        return codeBlockOwner;
     }
 
     public ICodeBlockOwner? GetScopeByScopeIndexKey(CSharpCompilationUnit compilationUnit, int scopeIndexKey)
