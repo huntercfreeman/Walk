@@ -1,14 +1,17 @@
-using Walk.TextEditor.RazorLib.Exceptions;
-using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.TextEditor.RazorLib.Decorations.Models;
-using Walk.TextEditor.RazorLib.CompilerServices;
+using System.Reflection;
+using Walk.CompilerServices.CSharp.CompilerServiceCase;
+using Walk.CompilerServices.CSharp.Facts;
 using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
-using Walk.CompilerServices.CSharp.Facts;
-using Walk.CompilerServices.CSharp.CompilerServiceCase;
+using Walk.TextEditor.RazorLib;
+using Walk.TextEditor.RazorLib.CompilerServices;
+using Walk.TextEditor.RazorLib.Decorations.Models;
+using Walk.TextEditor.RazorLib.Exceptions;
+using Walk.TextEditor.RazorLib.Lexers.Models;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Walk.CompilerServices.CSharp.ParserCase.Internals;
 
@@ -2926,11 +2929,31 @@ public static class ParseExpressions
             }
             else
             {
-                maybeTypeDefinitionNode = parserModel.Binder.GetDefinitionNode(
-                    parserModel.Compilation,
-                    typeReference.TypeIdentifierToken.TextSpan,
-                    SyntaxKind.TypeClauseNode);
-                innerCompilationUnit = parserModel.Compilation;
+                var scope = parserModel.Binder.GetScope(parserModel.Compilation, typeReference.TypeIdentifierToken.TextSpan);
+
+                if (scope is not null)
+                {
+                    if (parserModel.TryGetTypeDefinitionHierarchically(
+                            parserModel.Compilation,
+                            scope.Unsafe_SelfIndexKey,
+                            typeReference.TypeIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService) ?? string.Empty,
+                            out var innerTypeDefinitionNode) &&
+                        innerTypeDefinitionNode is not null)
+                    {
+                        maybeTypeDefinitionNode = innerTypeDefinitionNode;
+                        innerCompilationUnit = parserModel.Compilation;
+                    }
+                    else
+                    {
+                        maybeTypeDefinitionNode = null;
+                        innerCompilationUnit = parserModel.Compilation;
+                    }
+                }
+                else
+                {
+                    maybeTypeDefinitionNode = null;
+                    innerCompilationUnit = parserModel.Compilation;
+                }
             }
             
             if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
