@@ -84,6 +84,8 @@ public ref struct CSharpParserModel
         Binder.MethodOverload_ResourceUri_WasCleared = false;
         
         Text = lexerOutput.Text;
+        
+        Binder.CSharpParserModel_AddedNamespaceHashSet.Clear();
     }
     
     public ReadOnlySpan<char> Text { get; }
@@ -544,21 +546,17 @@ public ref struct CSharpParserModel
 
     public void AddNamespaceToCurrentScope(string namespaceString)
     {
+        if (!Binder.CSharpParserModel_AddedNamespaceHashSet.Add(namespaceString))
+            return;
+    
         if (Binder._namespaceGroupMap.TryGetValue(namespaceString, out var namespaceGroup) &&
             namespaceGroup.ConstructorWasInvoked)
         {
-            var typeDefinitionNodes = Binder.Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup);
+            var typeDefinitionNodeList = Binder.Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup);
             
-            // TODO: Cannot use ref, out, or in...
-            var compilation = Compilation;
-            var binder = Binder;
-            
-            foreach (var typeDefinitionNode in typeDefinitionNodes)
+            foreach (var typeDefinitionNode in typeDefinitionNodeList)
             {
-                var matchNode = ExternalTypeDefinitionList.FirstOrDefault(x => binder.GetIdentifierText(x, compilation) == binder.GetIdentifierText(typeDefinitionNode, compilation));
-                
-                if (matchNode is null)
-                    ExternalTypeDefinitionList.Add(typeDefinitionNode);
+                ExternalTypeDefinitionList.Add(typeDefinitionNode);
             }
         }
     }

@@ -52,6 +52,11 @@ public class CSharpBinder
     
     public TokenWalker CSharpParserModel_TokenWalker { get; } = new(Array.Empty<SyntaxToken>(), useDeferredParsing: true);
     
+    /// <summary>
+    /// This is cleared at the start of a new parse, inside the CSharpParserModel constructor.
+    /// </summary>
+    public HashSet<string> CSharpParserModel_AddedNamespaceHashSet { get; } = new();
+    
     public AmbiguousIdentifierExpressionNode CSharpParserModel_AmbiguousIdentifierExpressionNode { get; } = new AmbiguousIdentifierExpressionNode(
         default,
         genericParameterListing: default,
