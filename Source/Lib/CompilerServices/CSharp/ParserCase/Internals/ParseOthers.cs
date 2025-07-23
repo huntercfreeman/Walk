@@ -1,4 +1,5 @@
 using Walk.TextEditor.RazorLib.Lexers.Models;
+using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
 using Walk.Extensions.CompilerServices.Syntax.Nodes;
 
@@ -37,16 +38,28 @@ public static class ParseOthers
                 
                 // NamespaceStatements will add the final symbol themselves.
                 
-                if (isNamespaceStatement && (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken))
+                if (parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.StatementDelimiterToken)
                 {
-                    // !StatementDelimiterToken because presumably the final namespace is already being handled.
-                    //
-                    // (I don't think the above statement is true... the final namespace gets handled only after the codeblock is parsed.
-                    //  so you should probably bring the other contributors of the namespace into scope immediately).
-                    // 
-                    parserModel.AddNamespaceToCurrentScope(textSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService));
+                    if (parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.IndividualFile_AllData)
+                    {
+                        parserModel.Compilation.__SymbolList.Add(
+                            new Symbol(
+                                SyntaxKind.NamespaceSymbol,
+                                parserModel.GetNextSymbolId(),
+                                textSpan));
+                    }
+                
+                    if (isNamespaceStatement)
+                    {
+                        // !StatementDelimiterToken because presumably the final namespace is already being handled.
+                        //
+                        // (I don't think the above statement is true... the final namespace gets handled only after the codeblock is parsed.
+                        //  so you should probably bring the other contributors of the namespace into scope immediately).
+                        // 
+                        parserModel.AddNamespaceToCurrentScope(textSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService));
+                    }
                 }
-
+                
                 if (matchedToken.IsFabricated)
                     break;
             }
