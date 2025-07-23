@@ -389,7 +389,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                 autocompleteEntryList.Add(new AutocompleteEntry(
                                     kvp.Key,
                                     AutocompleteEntryKind.Namespace,
-                                    () => MemberAutocomplete(kvp.Key, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+                                    () => MemberAutocomplete(kvp.Key, filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
                             }
                             
                             if (__CSharpBinder.NamespaceGroupMap.TryGetValue(foundSymbol.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService), out var namespaceGroup))
@@ -399,7 +399,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                     autocompleteEntryList.Add(new AutocompleteEntry(
                                         typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService),
                                         AutocompleteEntryKind.Type,
-                                        () => MemberAutocomplete(typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+                                        () => MemberAutocomplete(typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService), filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
                                 }
                             }
                             
@@ -509,7 +509,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                             autocompleteEntryList.Add(new AutocompleteEntry(
                                                 variableDeclarationNode.IdentifierToken.TextSpan.GetText(sourceText, _textEditorService),
                                                 AutocompleteEntryKind.Variable,
-                                                () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.GetText(sourceText, _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+                                                () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.GetText(sourceText, _textEditorService), filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
                                             break;
                                         }
                                         case SyntaxKind.FunctionDefinitionNode:
@@ -532,7 +532,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                             autocompleteEntryList.Add(new AutocompleteEntry(
                                                 functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(sourceText, _textEditorService),
                                                 AutocompleteEntryKind.Function,
-                                                () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(sourceText, _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+                                                () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(sourceText, _textEditorService), filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
                                             break;
                                         }
                                         case SyntaxKind.TypeDefinitionNode:
@@ -541,7 +541,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                             autocompleteEntryList.Add(new AutocompleteEntry(
                                                 innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService),
                                                 AutocompleteEntryKind.Type,
-                                                () => MemberAutocomplete(innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService), virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+                                                () => MemberAutocomplete(innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService), filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
                                             break;
                                         }
                                     }
@@ -596,14 +596,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         return autocompleteMenu.GetDefaultMenuRecord(compilerServiceAutocompleteEntryList);
     }
     
-    private Task MemberAutocomplete(string text, ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)
+    private Task MemberAutocomplete(string text, string filteringWord, ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)
     {
         _textEditorService.WorkerArbitrary.PostUnique(async editContext =>
         {
             var model = editContext.GetModelModifier(resourceUri);
             var viewModel = editContext.GetViewModelModifier(viewModelKey);
             
-            model.Insert(text, viewModel);
+            model.Insert(new string(text.Skip(filteringWord.Length).ToArray()), viewModel);
             await viewModel.FocusAsync();
             
             await ParseAsync(editContext, model, shouldApplySyntaxHighlighting: true);
