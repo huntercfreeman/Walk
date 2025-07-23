@@ -1179,6 +1179,125 @@ public class CSharpBinder
         return query;
     }
     
+    private readonly List<ISyntaxNode> _getMemberList = new();
+    
+    internal List<ISyntaxNode> Internal_GetMemberList_TypeDefinitionNode(TypeDefinitionNode typeDefinitionNode)
+    {
+        _getMemberList.Clear();
+    
+        if (typeDefinitionNode.Unsafe_SelfIndexKey == -1 ||
+            !__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var compilationUnit))
+        {
+            return _getMemberList;
+        }
+        
+        foreach (var codeBlockOwner in compilationUnit.CodeBlockOwnerList)
+        {
+            if (codeBlockOwner.Unsafe_ParentIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
+                (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
+                 codeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
+            {
+                _getMemberList.Add(codeBlockOwner);
+            }
+        }
+        
+        foreach (var node in compilationUnit.NodeList)
+        {
+            if (node.Unsafe_ParentIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
+                node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+            {
+                _getMemberList.Add(node);
+            }
+        }
+        
+        if (typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList is not null)
+        {
+            foreach (var entry in typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList)
+            {
+                _getMemberList.Add(entry.VariableDeclarationNode);
+            }
+        }
+        
+        if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
+        {
+            int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
+            while (positionExclusive < PartialTypeDefinitionList.Count)
+            {
+                if (PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
+                {
+                    CSharpCompilationUnit? innerCompilationUnit;
+                    
+                    if (PartialTypeDefinitionList[positionExclusive].ScopeIndexKey != -1)
+                    {
+                        if (PartialTypeDefinitionList[positionExclusive].ResourceUri != compilationUnit.ResourceUri)
+                        {
+                            if (__CompilationUnitMap.TryGetValue(PartialTypeDefinitionList[positionExclusive].ResourceUri, out var temporaryCompilationUnit))
+                                innerCompilationUnit = temporaryCompilationUnit;
+                            else
+                                innerCompilationUnit = null;
+                        }
+                        else
+                        {
+                            innerCompilationUnit = compilationUnit;
+                        }
+                        
+                        if (innerCompilationUnit != null)
+                        {
+                            var partialTypeDefinition = PartialTypeDefinitionList[positionExclusive];
+                            var innerScopeIndexKey = partialTypeDefinition.ScopeIndexKey;
+                            
+                            if (partialTypeDefinition.ScopeIndexKey < innerCompilationUnit.CodeBlockOwnerList.Count)
+                            {
+                                var innerCodeBlockOwner = innerCompilationUnit.CodeBlockOwnerList[partialTypeDefinition.ScopeIndexKey];
+                                
+                                if (innerCodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+                                {
+                                    var innerTypeDefinitionNode = (TypeDefinitionNode)innerCodeBlockOwner;
+                                
+                                    // TODO: Don't duplicate this.
+                                    foreach (var codeBlockOwner in innerCompilationUnit.CodeBlockOwnerList)
+                                    {
+                                        if (codeBlockOwner.Unsafe_ParentIndexKey == innerScopeIndexKey &&
+                                            (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
+                                             codeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
+                                        {
+                                            _getMemberList.Add(codeBlockOwner);
+                                        }
+                                    }
+                                    
+                                    foreach (var node in innerCompilationUnit.NodeList)
+                                    {
+                                        if (node.Unsafe_ParentIndexKey == innerScopeIndexKey &&
+                                            node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+                                        {
+                                            _getMemberList.Add(node);
+                                        }
+                                    }
+                                    
+                                    if (innerTypeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList is not null)
+                                    {
+                                        foreach (var entry in innerTypeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList)
+                                        {
+                                            _getMemberList.Add(entry.VariableDeclarationNode);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    positionExclusive++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+        
+        return _getMemberList;
+    }
+    
     /// <summary>
     /// <see cref="GetTopLevelTypeDefinitionNodes"/> provides a collection
     /// which contains all top level type definitions of the <see cref="NamespaceStatementNode"/>.

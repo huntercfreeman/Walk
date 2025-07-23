@@ -2940,7 +2940,7 @@ public static class ParseExpressions
             }
 
             var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
-            var memberList = parserModel.Binder.GetMemberList_TypeDefinitionNode(typeDefinitionNode);
+            var memberList = parserModel.Binder.Internal_GetMemberList_TypeDefinitionNode(typeDefinitionNode);
             ISyntaxNode? foundDefinitionNode = null;
             
             foreach (var node in memberList)
