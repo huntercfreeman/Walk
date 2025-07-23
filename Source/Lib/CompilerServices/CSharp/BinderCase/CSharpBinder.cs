@@ -154,8 +154,10 @@ public class CSharpBinder
         
         foreach (var scope in compilationUnit.CodeBlockOwnerList)
         {
-            if (scope.Scope_StartInclusiveIndex <= positionIndex &&
-                // Global Scope awkwardly has '-1' ending index exclusive (2023-10-15)
+            if (scope.Scope_StartInclusiveIndex > positionIndex)
+                break;
+        
+            if (// Global Scope awkwardly has '-1' ending index exclusive (2023-10-15)
                 (scope.Scope_EndExclusiveIndex >= positionIndex || scope.Scope_EndExclusiveIndex == -1))
             {
                 var distance = positionIndex - scope.Scope_StartInclusiveIndex;
