@@ -126,6 +126,24 @@ window.walkCommon = {
                     BoundingClientRectTop: boundingClientRect.top,
                 });
             });
+            
+            element.addEventListener('click', (event) => {
+                let boundingClientRect = element.getBoundingClientRect();
+                dotNetHelper.invokeMethodAsync("ReceiveOnClick",
+                {
+                    Buttons: event.buttons,
+                    Button: event.button,
+                    X: event.clientX,
+                    Y: event.clientY,
+                    ShiftKey: event.shiftKey,
+                    ScrollLeft: element.scrollLeft,
+                    ScrollTop: element.scrollTop,
+                    ViewWidth: element.offsetWidth,
+                    ViewHeight: element.offsetHeight,
+                    BoundingClientRectLeft: boundingClientRect.left,
+                    BoundingClientRectTop: boundingClientRect.top,
+                });
+            });
         }
         
         return this.measureTreeView(elementId);
