@@ -45,7 +45,15 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     private Guid _guidId = Guid.NewGuid();
     private string _htmlId = null!;
     
-    private int Index { get; set; }
+    /// <summary>
+    /// UI thread only.
+    ///
+    /// This property is somewhat-awkwardly set from the '.razor'.
+    /// All usage of this is expected to be on UI thread for that reason.
+    /// If doing async work, be sure to NOT use '.ConfigureAwait(false)'
+    /// if you intend to use this property after the task finishes.
+    /// </summary>
+    private int IndexActiveNode { get; set; }
 
     private TreeViewCommandArgs _treeViewContextMenuCommandArgs;
     private TreeViewContainer _treeViewContainer;
@@ -57,6 +65,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     /// </summary>
     private readonly List<TreeViewNoType> _flatNodeList = new();
     /// <summary>
+    /// UI thread only.
     /// Contains the "used to be" targetNode, and the index that it left off at.
     /// </summary>
     private readonly Stack<(TreeViewNoType Node, int Index)> _nodeRecursionStack = new();
@@ -220,12 +229,12 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         
         if (eventArgsMouseDown.Button == -1)
         {
-            contextMenuTarget = _flatNodeList[Index];
+            contextMenuTarget = _flatNodeList[IndexActiveNode];
             
             contextMenuFixedPosition = new ContextMenuFixedPosition(
                 OccurredDueToMouseEvent: false,
                 LeftPositionInPixels: eventArgsMouseDown.BoundingClientRectLeft,
-                TopPositionInPixels: eventArgsMouseDown.BoundingClientRectTop + _lineHeight);
+                TopPositionInPixels: eventArgsMouseDown.BoundingClientRectTop + _lineHeight + (IndexActiveNode * _lineHeight) - eventArgsMouseDown.ScrollTop);
         }
         else if (eventArgsMouseDown.Button == 2)
         {
@@ -234,8 +243,8 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             
             var indexLocal = (int)(relativeY / _lineHeight);
             
-            Index = IndexBasicValidation(indexLocal);
-            contextMenuTarget = _flatNodeList[Index];
+            IndexActiveNode = IndexBasicValidation(indexLocal);
+            contextMenuTarget = _flatNodeList[IndexActiveNode];
             
             contextMenuFixedPosition = new ContextMenuFixedPosition(
                 OccurredDueToMouseEvent: true,
@@ -250,7 +259,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         _treeViewContextMenuCommandArgs = new TreeViewCommandArgs(
             CommonService,
             _treeViewContainer,
-            _flatNodeList[Index],
+            _flatNodeList[IndexActiveNode],
             async () =>
             {
                 _treeViewMeasurements = await JsRuntime.InvokeAsync<TreeViewMeasurements>(
@@ -288,7 +297,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         
         var indexLocal = (int)(relativeY / _lineHeight);
         
-        Index = IndexBasicValidation(indexLocal);
+        IndexActiveNode = IndexBasicValidation(indexLocal);
         
         var relativeX = eventArgsMouseDown.X - _treeViewMeasurements.BoundingClientRectLeft + eventArgsMouseDown.ScrollLeft;
         relativeX = Math.Max(0, relativeX);
@@ -299,17 +308,55 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         // and are the arbitrary subtractions different depending on display settings / font sizes / etc...".
         // Given my setup, these arbitrary subtractions make the hitbox "feel" pixel perfect.
         //
-        if (relativeX >= (_flatNodeList[Index].Depth * OffsetPerDepthInPixels - 1.1) &&
-            relativeX <= (_flatNodeList[Index].Depth * OffsetPerDepthInPixels + WalkTreeViewIconWidth - 1))
+        if (relativeX >= (_flatNodeList[IndexActiveNode].Depth * OffsetPerDepthInPixels - 1.1) &&
+            relativeX <= (_flatNodeList[IndexActiveNode].Depth * OffsetPerDepthInPixels + WalkTreeViewIconWidth - 1))
         {
             HandleChevronOnClick(eventArgsMouseDown);
         }
         
         CommonService.TreeView_SetActiveNodeAction(
             _treeViewContainer.Key,
-            _flatNodeList[Index],
+            _flatNodeList[IndexActiveNode],
             addSelectedNodes: false,
             selectNodesBetweenCurrentAndNextActiveNode: false);
+    }
+    
+    [JSInvokable]
+    public async Task ReceiveOnClick(TreeViewEventArgsMouseDown eventArgsMouseDown)
+    {
+        Console.WriteLine("ReceiveOnClick");
+    
+        _treeViewMeasurements = new TreeViewMeasurements(
+            eventArgsMouseDown.ViewWidth,
+            eventArgsMouseDown.ViewHeight,
+            eventArgsMouseDown.BoundingClientRectLeft,
+            eventArgsMouseDown.BoundingClientRectTop);
+    
+        var relativeY = eventArgsMouseDown.Y - _treeViewMeasurements.BoundingClientRectTop + eventArgsMouseDown.ScrollTop;
+        relativeY = Math.Max(0, relativeY);
+        
+        var indexLocal = (int)(relativeY / _lineHeight);
+        
+        IndexActiveNode = IndexBasicValidation(indexLocal);
+        
+        await TreeViewMouseEventHandler.OnClickAsync(new TreeViewCommandArgs(
+            CommonService,
+            _treeViewContainer,
+            _flatNodeList[IndexActiveNode],
+            async () =>
+            {
+                _treeViewMeasurements = await JsRuntime.InvokeAsync<TreeViewMeasurements>(
+                    "walkCommon.focusAndMeasureTreeView",
+                    _htmlId,
+                    /*preventScroll:*/ false);
+            },
+            contextMenuFixedPosition: null,
+            new MouseEventArgs
+            {
+                ClientX = eventArgsMouseDown.X,
+                ClientY = eventArgsMouseDown.Y,
+            },
+            keyboardEventArgs: null));
     }
     
     [JSInvokable]
@@ -326,12 +373,12 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         
         var indexLocal = (int)(relativeY / _lineHeight);
         
-        Index = IndexBasicValidation(indexLocal);
+        IndexActiveNode = IndexBasicValidation(indexLocal);
         
         await TreeViewMouseEventHandler.OnDoubleClickAsync(new TreeViewCommandArgs(
             CommonService,
             _treeViewContainer,
-            _flatNodeList[Index],
+            _flatNodeList[IndexActiveNode],
             async () =>
             {
                 _treeViewMeasurements = await JsRuntime.InvokeAsync<TreeViewMeasurements>(
@@ -427,7 +474,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     
     private void HandleChevronOnClick(TreeViewEventArgsMouseDown eventArgsMouseDown)
     {
-        var localTreeViewNoType = _flatNodeList[Index];
+        var localTreeViewNoType = _flatNodeList[IndexActiveNode];
         
         if (!localTreeViewNoType.IsExpandable)
             return;
@@ -455,23 +502,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             return string.Empty;
 
         return "di_active";
-    }
-
-    private string GetContextMenuCssStyleString()
-    {
-        if (_treeViewContextMenuCommandArgs.CommonService is null || _treeViewContextMenuCommandArgs.ContextMenuFixedPosition is null)
-        {
-            // This should never happen.
-            return "display: none;";
-        }
-
-        var left =
-            $"left: {_treeViewContextMenuCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
-
-        var top =
-            $"top: {_treeViewContextMenuCommandArgs.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
-
-        return $"{left} {top}";
     }
     
     public async void OnTreeViewStateChanged(CommonUiEventKind commonUiEventKind)

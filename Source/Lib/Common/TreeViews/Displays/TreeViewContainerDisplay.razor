@@ -3,6 +3,7 @@
 @using Walk.Common.RazorLib.Dimensions;
 @using Walk.Common.RazorLib.Dimensions.Models;
 
+@*@{ _treeViewContainer = null; }*@
 @{ _treeViewContainer = CommonService.GetTreeViewContainer(TreeViewContainerKey); }
 
 <div id="@_htmlId"
@@ -22,10 +23,22 @@
 			appOptionsState.Options.IconSizeInPixels,
 			appOptionsState.Options.IconSizeInPixels);
     
-        foreach (var node in GetFlatNodes())
+        var list = GetFlatNodes();
+        IndexActiveNode = 0;
+        for (int i = 0; i < list.Count; i++)
         {
-            var isActive = (_treeViewContainer.ActiveNode?.Key ?? Key<TreeViewNoType>.Empty) == node.Key;
-            var cssClass = isActive ? "di_tree-view-title di_active di_selected" : "di_tree-view-title";
+            var node = list[i];
+            string cssClass;
+        
+            if ((_treeViewContainer.ActiveNode?.Key ?? Key<TreeViewNoType>.Empty) == node.Key)
+            {
+                cssClass = "di_tree-view-title di_active di_selected";
+                IndexActiveNode = i;
+            }
+            else
+            {
+                cssClass = "di_tree-view-title";
+            }
         
             <div class="@cssClass"
                  style="@GetNodeElementCssStyle(node)">
