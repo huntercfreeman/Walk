@@ -21,7 +21,7 @@
         foreach (var node in GetFlatNodes())
         {
             <div class="@GetNodeElementCssClass(node)"
-                 style="padding-left: @(node.Depth * OffsetPerDepthInPixels)px; height: @_lineHeight;">
+                 style="padding-left: @(node.Depth * OffsetPerDepthInPixels)px; height: @(_lineHeight)px;">
                 @{
                 	var appOptionsState = CommonService.GetAppOptionsState();
                 
