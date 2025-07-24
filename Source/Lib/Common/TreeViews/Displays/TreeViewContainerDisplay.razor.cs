@@ -322,6 +322,44 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     }
     
     [JSInvokable]
+    public async Task ReceiveOnClick(TreeViewEventArgsMouseDown eventArgsMouseDown)
+    {
+        Console.WriteLine("ReceiveOnClick");
+    
+        _treeViewMeasurements = new TreeViewMeasurements(
+            eventArgsMouseDown.ViewWidth,
+            eventArgsMouseDown.ViewHeight,
+            eventArgsMouseDown.BoundingClientRectLeft,
+            eventArgsMouseDown.BoundingClientRectTop);
+    
+        var relativeY = eventArgsMouseDown.Y - _treeViewMeasurements.BoundingClientRectTop + eventArgsMouseDown.ScrollTop;
+        relativeY = Math.Max(0, relativeY);
+        
+        var indexLocal = (int)(relativeY / _lineHeight);
+        
+        IndexActiveNode = IndexBasicValidation(indexLocal);
+        
+        await TreeViewMouseEventHandler.OnClickAsync(new TreeViewCommandArgs(
+            CommonService,
+            _treeViewContainer,
+            _flatNodeList[IndexActiveNode],
+            async () =>
+            {
+                _treeViewMeasurements = await JsRuntime.InvokeAsync<TreeViewMeasurements>(
+                    "walkCommon.focusAndMeasureTreeView",
+                    _htmlId,
+                    /*preventScroll:*/ false);
+            },
+            contextMenuFixedPosition: null,
+            new MouseEventArgs
+            {
+                ClientX = eventArgsMouseDown.X,
+                ClientY = eventArgsMouseDown.Y,
+            },
+            keyboardEventArgs: null));
+    }
+    
+    [JSInvokable]
     public async Task ReceiveOnDoubleClick(TreeViewEventArgsMouseDown eventArgsMouseDown)
     {
         _treeViewMeasurements = new TreeViewMeasurements(
