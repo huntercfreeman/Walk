@@ -21,7 +21,7 @@
         foreach (var node in GetFlatNodes())
         {
             <div class="@GetNodeElementCssClass(node)"
-                 style="padding-left: @(node.Depth * OffsetPerDepthInPixels)px; height: @(_lineHeight)px;">
+                 style="display: flex; align-items: center; padding-left: @(node.Depth * OffsetPerDepthInPixels)px; height: @(_lineHeight)px;">
                 @{
                 	var appOptionsState = CommonService.GetAppOptionsState();
                 
@@ -48,7 +48,9 @@
                     }
                 </span>
                 
-                @node.GetIcon(iconDriver)
+                <span style="margin-right: 3px;">
+                    @node.GetIcon(iconDriver)
+                </span>
                 
                 @node.GetDisplayText()
             </div>
