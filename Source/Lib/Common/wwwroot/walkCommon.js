@@ -89,15 +89,22 @@ window.walkCommon = {
                 });
             });
             
-            /*element.addEventListener('dblclick', (event) => {
+            element.addEventListener('dblclick', (event) => {
+                let boundingClientRect = element.getBoundingClientRect();
                 dotNetHelper.invokeMethodAsync("ReceiveOnDoubleClick",
                 {
                     Buttons: event.buttons,
                     X: event.clientX,
                     Y: event.clientY,
                     ShiftKey: event.shiftKey,
+                    ScrollLeft: element.scrollLeft,
+                    ScrollTop: element.scrollTop,
+                    ViewWidth: element.offsetWidth,
+                    ViewHeight: element.offsetHeight,
+                    BoundingClientRectLeft: boundingClientRect.left,
+                    BoundingClientRectTop: boundingClientRect.top,
                 });
-            });*/
+            });
         }
         
         return this.measureTreeView(elementId);
