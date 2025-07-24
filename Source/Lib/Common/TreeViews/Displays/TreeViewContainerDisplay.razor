@@ -30,10 +30,10 @@
 						appOptionsState.Options.IconSizeInPixels);
                 }
 
-                <span style="cursor: pointer;">
-                    @if (node.IsExpandable)
-                    {
-                        if (node.IsExpanded)
+                @if (node.IsExpandable)
+                {
+                    <span style="cursor: pointer;">
+                        @if (node.IsExpanded)
                         {
                             @IconChevronDownFragment.Render(iconDriver)
                         }
@@ -41,12 +41,13 @@
                         {
                             @IconChevronRightFragment.Render(iconDriver)
                         }
-                    }
-                    else
-                    {
-                        @IconBlankFragment.Render(iconDriver)
-                    }
-                </span>
+                    </span>
+                    
+                }
+                else
+                {
+                    @IconBlankFragment.Render(iconDriver)
+                }
                 
                 <span style="margin-right: 3px;">
                     @node.GetIcon(iconDriver)

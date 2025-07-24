@@ -84,8 +84,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
                 "walkCommon.treeViewInitialize",
                 _dotNetHelper,
                 _htmlId);
-            
-            Console.WriteLine(_treeViewMeasurements);
         }
     }
     
@@ -184,7 +182,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     [JSInvokable]
     public void ReceiveOnContextMenu(TreeViewEventArgsMouseDown eventArgsMouseDown)
     {
-        Console.WriteLine("ReceiveOnContextMenu");
         _treeViewMeasurements = new TreeViewMeasurements(
             eventArgsMouseDown.ViewWidth,
             eventArgsMouseDown.ViewHeight,
@@ -337,6 +334,8 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     /// </summary>
     private readonly Stack<(TreeViewNoType Node, int Index)> _nodeRecursionStack = new();
     
+    private int _activeNodeIndex;
+    
     private List<TreeViewNoType> GetFlatNodes()
     {
         _flatNodeList.Clear();
@@ -421,8 +420,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     
     private void HandleChevronOnClick(TreeViewEventArgsMouseDown eventArgsMouseDown)
     {
-        Console.WriteLine("HandleChevronOnClick");
-        
         var localTreeViewNoType = _flatNodeList[Index];
         
         if (!localTreeViewNoType.IsExpandable)
@@ -809,9 +806,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             : "di_tree-view-use-default-cursor";
     }*/
 
-    private bool GetIsSelected(TreeViewNoType node) => CommonService.GetTreeViewContainer(TreeViewContainerKey)?.SelectedNodeList.Any(x => x.Key == node.Key) ?? false;
-    private string GetIsSelectedCssClass(TreeViewNoType node) => GetIsSelected(node) ? "di_selected" : string.Empty;
-
     private bool GetIsActive(TreeViewNoType node) => CommonService.GetTreeViewContainer(TreeViewContainerKey)?.ActiveNode is not null &&
                              (CommonService.GetTreeViewContainer(TreeViewContainerKey)?.ActiveNode.Key ?? Key<TreeViewNoType>.Empty) == node.Key;
                              
@@ -819,7 +813,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         ? CommonService.GetTreeViewContainer(TreeViewContainerKey)?.ActiveNodeElementId ?? "string.Empty"
         : string.Empty;
     
-    private string GetIsActiveCssClass(TreeViewNoType node) => GetIsActive(node) ? "di_active" : string.Empty;
+    private string GetIsActiveCssClass(TreeViewNoType node) => GetIsActive(node) ? "di_active di_selected" : string.Empty;
     
     /// <summary>
     /// This method should only be invoked from the "UI thread" due to the usage of `CommonBackgroundTaskApi.UiStringBuilder`.
@@ -828,8 +822,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     {
         CommonService.UiStringBuilder.Clear();
         CommonService.UiStringBuilder.Append("di_tree-view-title ");
-        CommonService.UiStringBuilder.Append(GetIsSelectedCssClass(node));
-        CommonService.UiStringBuilder.Append(" ");
         CommonService.UiStringBuilder.Append(GetIsActiveCssClass(node));
         
         return CommonService.UiStringBuilder.ToString();
