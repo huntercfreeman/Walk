@@ -2,6 +2,7 @@ namespace Walk.Common.RazorLib.TreeViews.Models;
 
 public record struct TreeViewEventArgsMouseDown(
     long Buttons,
+    long Button,
     double X,
     double Y,
     bool ShiftKey,

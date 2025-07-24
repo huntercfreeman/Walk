@@ -67,16 +67,31 @@ window.walkCommon = {
                 event.preventDefault();
             });
             
-            /*element.addEventListener('contextmenu', (event) => {
-                dotNetHelper.invokeMethodAsync("ReceiveOnContextMenu");
+            element.addEventListener('contextmenu', (event) => {
+                let boundingClientRect = element.getBoundingClientRect();
+                dotNetHelper.invokeMethodAsync("ReceiveOnContextMenu", 
+                {
+                    Buttons: event.buttons,
+                    Button: event.button,
+                    X: event.clientX,
+                    Y: event.clientY,
+                    ShiftKey: event.shiftKey,
+                    ScrollLeft: element.scrollLeft,
+                    ScrollTop: element.scrollTop,
+                    ViewWidth: element.offsetWidth,
+                    ViewHeight: element.offsetHeight,
+                    BoundingClientRectLeft: boundingClientRect.left,
+                    BoundingClientRectTop: boundingClientRect.top,
+                });
                 event.preventDefault();
-            });*/
+            });
             
             element.addEventListener('mousedown', (event) => {
                 let boundingClientRect = element.getBoundingClientRect();
                 dotNetHelper.invokeMethodAsync("ReceiveContentOnMouseDown", 
                 {
                     Buttons: event.buttons,
+                    Button: event.button,
                     X: event.clientX,
                     Y: event.clientY,
                     ShiftKey: event.shiftKey,
@@ -94,6 +109,7 @@ window.walkCommon = {
                 dotNetHelper.invokeMethodAsync("ReceiveOnDoubleClick",
                 {
                     Buttons: event.buttons,
+                    Button: event.button,
                     X: event.clientX,
                     Y: event.clientY,
                     ShiftKey: event.shiftKey,

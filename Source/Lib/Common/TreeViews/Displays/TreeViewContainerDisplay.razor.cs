@@ -96,6 +96,79 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     }
     
     [JSInvokable]
+    public void ReceiveOnContextMenu(TreeViewEventArgsMouseDown eventArgsMouseDown)
+    {
+        Console.WriteLine("ReceiveOnContextMenu");
+        _treeViewMeasurements = new TreeViewMeasurements(
+            eventArgsMouseDown.ViewWidth,
+            eventArgsMouseDown.ViewHeight,
+            eventArgsMouseDown.BoundingClientRectLeft,
+            eventArgsMouseDown.BoundingClientRectTop);
+        
+        if (OnContextMenuFunc is null)
+            return;
+        
+        ContextMenuFixedPosition contextMenuFixedPosition;
+        
+        TreeViewNoType? contextMenuTarget;
+        
+        if (eventArgsMouseDown.Button == -1)
+        {
+            contextMenuTarget = _flatNodeList[Index];
+            
+            contextMenuFixedPosition = new ContextMenuFixedPosition(
+                OccurredDueToMouseEvent: false,
+                LeftPositionInPixels: eventArgsMouseDown.BoundingClientRectLeft,
+                TopPositionInPixels: eventArgsMouseDown.BoundingClientRectTop + _lineHeight);
+        }
+        else if (eventArgsMouseDown.Button == 2)
+        {
+            var relativeY = eventArgsMouseDown.Y - _treeViewMeasurements.BoundingClientRectTop + eventArgsMouseDown.ScrollTop;
+            relativeY = Math.Max(0, relativeY);
+            
+            var indexLocal = (int)(relativeY / _lineHeight);
+            
+            Index = IndexBasicValidation(indexLocal);
+            contextMenuTarget = _flatNodeList[Index];
+            
+            contextMenuFixedPosition = new ContextMenuFixedPosition(
+                OccurredDueToMouseEvent: true,
+                LeftPositionInPixels: eventArgsMouseDown.X,
+                TopPositionInPixels: eventArgsMouseDown.Y);
+        }
+        else
+        {
+            return;
+        }
+        
+        _treeViewContextMenuCommandArgs = new TreeViewCommandArgs(
+            CommonService,
+            _treeViewContainer,
+            _flatNodeList[Index],
+            async () =>
+            {
+                _treeViewMeasurements = await JsRuntime.InvokeAsync<TreeViewMeasurements>(
+                    "walkCommon.focusAndMeasureTreeView",
+                    _htmlId,
+                    /*preventScroll:*/ false);
+            },
+            contextMenuFixedPosition,
+            new MouseEventArgs
+            {
+                ClientX = eventArgsMouseDown.X,
+                ClientY = eventArgsMouseDown.Y,
+            },
+            keyboardEventArgs: null);
+    
+        CommonService.Enqueue(new CommonWorkArgs
+        {
+            WorkKind = CommonWorkKind.TreeView_HandleTreeViewOnContextMenu,
+            OnContextMenuFunc = OnContextMenuFunc,
+            TreeViewContextMenuCommandArgs = _treeViewContextMenuCommandArgs,
+        });
+    }
+    
+    [JSInvokable]
     public void ReceiveContentOnMouseDown(TreeViewEventArgsMouseDown eventArgsMouseDown)
     {
         _treeViewMeasurements = new TreeViewMeasurements(
