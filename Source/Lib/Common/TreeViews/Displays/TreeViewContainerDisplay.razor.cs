@@ -225,7 +225,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             contextMenuFixedPosition = new ContextMenuFixedPosition(
                 OccurredDueToMouseEvent: false,
                 LeftPositionInPixels: eventArgsMouseDown.BoundingClientRectLeft,
-                TopPositionInPixels: eventArgsMouseDown.BoundingClientRectTop + _lineHeight);
+                TopPositionInPixels: eventArgsMouseDown.BoundingClientRectTop + _lineHeight + (Index * _lineHeight) - eventArgsMouseDown.ScrollTop);
         }
         else if (eventArgsMouseDown.Button == 2)
         {
