@@ -175,8 +175,35 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
                 Code = eventArgsKeyDown.Code,
             });
 
-        await TreeViewKeyboardEventHandler
-            .OnKeyDownAsync(treeViewCommandArgs);
+        // Do not ConfigureAwait(false) here, the _flatNodeList is made on the UI thread
+        // and after this await we need to read the _flatNodeList to scroll the newly active node into view.
+        await TreeViewKeyboardEventHandler.OnKeyDownAsync(treeViewCommandArgs);
+        
+        var treeViewContainerLocal = CommonService.GetTreeViewContainer(TreeViewContainerKey);
+        
+        if (treeViewContainerLocal is null)
+            return;
+    
+        for (int i = 0; i < _flatNodeList.Count; i++)
+        {
+            var node = _flatNodeList[i];
+            if (node == treeViewContainerLocal.ActiveNode)
+            {
+                var top = _lineHeight * i;
+                
+                Console.WriteLine($"if ({top} < {eventArgsKeyDown.ScrollTop}) else if ({top} > {eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight})");
+                
+                if (top < eventArgsKeyDown.ScrollTop)
+                {
+                    await JsRuntime.InvokeVoidAsync("walkCommon.treeViewScrollVertical", _htmlId, top - eventArgsKeyDown.ScrollTop);
+                }
+                else if (top + _lineHeight > eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight)
+                {
+                    await JsRuntime.InvokeVoidAsync("walkCommon.treeViewScrollVertical", _htmlId, top - (eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight) + _lineHeight);
+                }
+                break;
+            }
+        }
     }
     
     [JSInvokable]
@@ -334,8 +361,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     /// </summary>
     private readonly Stack<(TreeViewNoType Node, int Index)> _nodeRecursionStack = new();
     
-    private int _activeNodeIndex;
-    
     private List<TreeViewNoType> GetFlatNodes()
     {
         _flatNodeList.Clear();
@@ -440,143 +465,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         {
             CommonService.TreeView_ReRenderNodeAction(_treeViewContainer.Key, localTreeViewNoType);
         }
-    }
-
-    private async Task HandleTreeViewOnKeyDownWithPreventScroll(
-        KeyboardEventArgs keyboardEventArgs,
-        TreeViewContainer? treeViewContainer)
-    {
-        if (treeViewContainer is null)
-            return;
-
-        var treeViewCommandArgs = new TreeViewCommandArgs(
-            CommonService,
-            treeViewContainer,
-            null,
-            async () =>
-            {
-                _treeViewContextMenuCommandArgs = default;
-                await InvokeAsync(StateHasChanged);
-
-                var localTreeViewStateDisplayElementReference = _treeViewStateDisplayElementReference;
-
-                try
-                {
-                    if (localTreeViewStateDisplayElementReference.HasValue)
-                    {
-                        await localTreeViewStateDisplayElementReference.Value
-                            .FocusAsync()
-                            .ConfigureAwait(false);
-                    }
-                }
-                catch (Exception)
-                {
-                    // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
-                    //             This bug is seemingly happening randomly. I have a suspicion
-                    //             that there are race-condition exceptions occurring with "FocusAsync"
-                    //             on an ElementReference.
-                }
-            },
-            null,
-            null,
-            keyboardEventArgs);
-
-        await TreeViewKeyboardEventHandler
-            .OnKeyDownAsync(treeViewCommandArgs)
-            .ConfigureAwait(false);
-    }
-
-    private async Task HandleTreeViewOnContextMenu(
-        MouseEventArgs? mouseEventArgs,
-        Key<TreeViewContainer> treeViewContainerKey,
-        TreeViewNoType? treeViewMouseWasOver)
-    {
-        if (treeViewContainerKey == Key<TreeViewContainer>.Empty || mouseEventArgs is null)
-            return;
-
-        var treeViewContainer = CommonService.GetTreeViewContainer(TreeViewContainerKey);
-        // Validate that the treeViewContainer did not change out from under us
-        if (treeViewContainer is null || treeViewContainer.Key != treeViewContainerKey)
-            return;
-
-        ContextMenuFixedPosition contextMenuFixedPosition;
-        TreeViewNoType contextMenuTargetTreeViewNoType;
-
-        if (mouseEventArgs.Button == -1) // -1 here means ContextMenu event was from keyboard
-        {
-            if (treeViewContainer.ActiveNode is null)
-                return;
-
-            // If dedicated context menu button or shift + F10 was pressed as opposed to
-            // a mouse RightClick then use JavaScript to determine the ContextMenu position.
-            contextMenuFixedPosition = await CommonService.JsRuntimeCommonApi
-                .GetTreeViewContextMenuFixedPosition(treeViewContainer.ActiveNodeElementId)
-                .ConfigureAwait(false);
-
-            contextMenuTargetTreeViewNoType = treeViewContainer.ActiveNode;
-        }
-        else
-        {
-            // If a mouse RightClick caused the event then
-            // use the MouseEventArgs to determine the ContextMenu position
-            if (treeViewMouseWasOver is null)
-            {
-                // 'whitespace' of the TreeView was right clicked as opposed to
-                // a TreeView node and the event should be ignored.
-                return;
-            }
-
-            contextMenuFixedPosition = new ContextMenuFixedPosition(
-                true,
-                mouseEventArgs.ClientX,
-                mouseEventArgs.ClientY);
-
-            contextMenuTargetTreeViewNoType = treeViewMouseWasOver;
-        }
-
-        _treeViewContextMenuCommandArgs = new TreeViewCommandArgs(
-            CommonService,
-            treeViewContainer,
-            contextMenuTargetTreeViewNoType,
-            async () =>
-            {
-                _treeViewContextMenuCommandArgs = default;
-                await InvokeAsync(StateHasChanged);
-
-                var localTreeViewStateDisplayElementReference = _treeViewStateDisplayElementReference;
-
-                try
-                {
-                    if (localTreeViewStateDisplayElementReference.HasValue)
-                    {
-                        await localTreeViewStateDisplayElementReference.Value
-                            .FocusAsync()
-                            .ConfigureAwait(false);
-                    }
-                }
-                catch (Exception)
-                {
-                    // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
-                    //             This bug is seemingly happening randomly. I have a suspicion
-                    //             that there are race-condition exceptions occurring with "FocusAsync"
-                    //             on an ElementReference.
-                }
-            },
-            contextMenuFixedPosition,
-            mouseEventArgs,
-            null);
-
-        if (OnContextMenuFunc is not null)
-        {
-            CommonService.Enqueue(new CommonWorkArgs
-            {
-                WorkKind = CommonWorkKind.TreeView_HandleTreeViewOnContextMenu,
-                OnContextMenuFunc = OnContextMenuFunc,
-                TreeViewContextMenuCommandArgs = _treeViewContextMenuCommandArgs,
-            });
-        }
-
-        await InvokeAsync(StateHasChanged);
     }
 
     private string GetHasActiveNodeCssClass(TreeViewContainer? treeViewContainer)

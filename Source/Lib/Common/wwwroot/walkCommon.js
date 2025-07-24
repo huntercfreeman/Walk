@@ -172,6 +172,15 @@ window.walkCommon = {
             BoundingClientRectTop: boundingClientRect.top,
         };
     },
+    treeViewScrollVertical: function (elementId, changeInScrollTop) {
+        let element = document.getElementById(elementId);
+
+        if (!element) {
+            return;
+        }
+
+		element.scrollTop = element.scrollTop + changeInScrollTop;
+    },
     focusHtmlElementById: function (elementId, preventScroll) {
         let element = document.getElementById(elementId);
 

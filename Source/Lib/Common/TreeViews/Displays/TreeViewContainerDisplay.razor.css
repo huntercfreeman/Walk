@@ -1,6 +1,7 @@
 .di_tree-view-state {
     height: 200px;
     overflow: auto;
+    outline: none;
 }
 
 .di_tree-view-state:focus-within .di_tree-view-title.di_selected {
