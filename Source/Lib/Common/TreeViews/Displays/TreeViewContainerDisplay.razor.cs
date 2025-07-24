@@ -1,3 +1,4 @@
+using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
@@ -9,14 +10,12 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Common.RazorLib.TreeViews.Displays;
 
-/// <summary>
-/// TODO: SphagettiCode - The context menu logic feels scuffed. A field is used to track the
-/// "_mostRecentContextMenuEvent". This feels quite wrong and should be looked into. (2023-09-19)
-/// </summary>
 public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private CommonService CommonService { get; set; } = null!;
+    [Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<TreeViewContainer> TreeViewContainerKey { get; set; } = Key<TreeViewContainer>.Empty;
@@ -39,157 +38,415 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     public int OffsetPerDepthInPixels { get; set; } = 12;
     [Parameter]
     public int WalkTreeViewIconWidth { get; set; } = 16;
+    
+    /// <summary>Pixels</summary>
+    private int _lineHeight = 20;
+    
+    private Guid _guidId = Guid.NewGuid();
+    private string _htmlId = null!;
+    
+    private int Index { get; set; }
 
     private TreeViewCommandArgs _treeViewContextMenuCommandArgs;
-    private ElementReference? _treeViewStateDisplayElementReference;
+    private TreeViewContainer _treeViewContainer;
+    private TreeViewMeasurements _treeViewMeasurements;
+    private DotNetObjectReference<TreeViewContainerDisplay>? _dotNetHelper;
     
-    private readonly TreeViewCascadingValueBatch _treeViewCascadingValueBatch = new();
+    /// <summary>
+    /// UI thread only.
+    /// </summary>
+    private readonly List<TreeViewNoType> _flatNodeList = new();
+    /// <summary>
+    /// Contains the "used to be" targetNode, and the index that it left off at.
+    /// </summary>
+    private readonly Stack<(TreeViewNoType Node, int Index)> _nodeRecursionStack = new();
 
     protected override void OnInitialized()
     {
+        // TODO: Does the object used here matter? Should it be a "smaller" object or is this just reference?
+        _dotNetHelper = DotNetObjectReference.Create(this);
+    
+        _htmlId = $"luth_common_treeview-{_guidId}";
+        
         CommonService.CommonUiStateChanged += OnTreeViewStateChanged;
     }
-
-    private int GetRootDepth(TreeViewNoType rootNode)
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        return rootNode is TreeViewAdhoc ? -1 : 0;
+        if (firstRender)
+        {
+            // Do not ConfigureAwait(false) so that the UI doesn't change out from under you
+            // before you finish setting up the events?
+            // (is this a thing, I'm just presuming this would be true).
+            _treeViewMeasurements = await JsRuntime.InvokeAsync<TreeViewMeasurements>(
+                "walkCommon.treeViewInitialize",
+                _dotNetHelper,
+                _htmlId);
+        }
     }
-
-    private async Task HandleTreeViewOnKeyDownWithPreventScroll(
-        KeyboardEventArgs keyboardEventArgs,
-        TreeViewContainer? treeViewContainer)
+    
+    [JSInvokable]
+    public async Task ReceiveOnKeyDown(TreeViewEventArgsKeyDown eventArgsKeyDown)
     {
-        if (treeViewContainer is null)
+        if (_treeViewContainer is null)
             return;
 
+        switch (eventArgsKeyDown.Key)
+        {
+            case "ContextMenu":
+            {
+                var mouseEventArgs = new MouseEventArgs { Button = -1 };
+                
+                ReceiveOnContextMenu(
+                    new TreeViewEventArgsMouseDown(
+                        Buttons: 0,
+                        Button: -1,
+                        X: 0,
+                        Y: 0,
+                        ShiftKey: false,
+                        eventArgsKeyDown.ScrollLeft,
+                        eventArgsKeyDown.ScrollTop,
+                        eventArgsKeyDown.ViewWidth,
+                        eventArgsKeyDown.ViewHeight,
+                        eventArgsKeyDown.BoundingClientRectLeft,
+                        eventArgsKeyDown.BoundingClientRectTop));
+                return;
+            }
+            case ".":
+            {
+                if (eventArgsKeyDown.CtrlKey)
+                {
+                    ReceiveOnContextMenu(
+                        new TreeViewEventArgsMouseDown(
+                            Buttons: 0,
+                            Button: -1,
+                            X: 0,
+                            Y: 0,
+                            ShiftKey: false,
+                            eventArgsKeyDown.ScrollLeft,
+                            eventArgsKeyDown.ScrollTop,
+                            eventArgsKeyDown.ViewWidth,
+                            eventArgsKeyDown.ViewHeight,
+                            eventArgsKeyDown.BoundingClientRectLeft,
+                            eventArgsKeyDown.BoundingClientRectTop));
+                }
+                return;
+            }
+            case "F10":
+            {
+                if (eventArgsKeyDown.ShiftKey)
+                {
+                    ReceiveOnContextMenu(
+                        new TreeViewEventArgsMouseDown(
+                            Buttons: 0,
+                            Button: -1,
+                            X: 0,
+                            Y: 0,
+                            ShiftKey: false,
+                            eventArgsKeyDown.ScrollLeft,
+                            eventArgsKeyDown.ScrollTop,
+                            eventArgsKeyDown.ViewWidth,
+                            eventArgsKeyDown.ViewHeight,
+                            eventArgsKeyDown.BoundingClientRectLeft,
+                            eventArgsKeyDown.BoundingClientRectTop));
+                }
+                return;
+            }
+        }
+        
         var treeViewCommandArgs = new TreeViewCommandArgs(
             CommonService,
-            treeViewContainer,
+            _treeViewContainer,
             null,
             async () =>
             {
-                _treeViewContextMenuCommandArgs = default;
-                await InvokeAsync(StateHasChanged);
-
-                var localTreeViewStateDisplayElementReference = _treeViewStateDisplayElementReference;
-
-                try
-                {
-                    if (localTreeViewStateDisplayElementReference.HasValue)
-                    {
-                        await localTreeViewStateDisplayElementReference.Value
-                            .FocusAsync()
-                            .ConfigureAwait(false);
-                    }
-                }
-                catch (Exception)
-                {
-                    // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
-                    //             This bug is seemingly happening randomly. I have a suspicion
-                    //             that there are race-condition exceptions occurring with "FocusAsync"
-                    //             on an ElementReference.
-                }
+                _treeViewMeasurements = await JsRuntime.InvokeAsync<TreeViewMeasurements>(
+                    "walkCommon.focusAndMeasureTreeView",
+                    _htmlId,
+                    /*preventScroll:*/ false);
             },
             null,
             null,
-            keyboardEventArgs);
+            new KeyboardEventArgs
+            {
+                Key = eventArgsKeyDown.Key,
+                Code = eventArgsKeyDown.Code,
+            });
 
-        await TreeViewKeyboardEventHandler
-            .OnKeyDownAsync(treeViewCommandArgs)
-            .ConfigureAwait(false);
-    }
-
-    private async Task HandleTreeViewOnContextMenu(
-        MouseEventArgs? mouseEventArgs,
-        Key<TreeViewContainer> treeViewContainerKey,
-        TreeViewNoType? treeViewMouseWasOver)
-    {
-        if (treeViewContainerKey == Key<TreeViewContainer>.Empty || mouseEventArgs is null)
+        // Do not ConfigureAwait(false) here, the _flatNodeList is made on the UI thread
+        // and after this await we need to read the _flatNodeList to scroll the newly active node into view.
+        await TreeViewKeyboardEventHandler.OnKeyDownAsync(treeViewCommandArgs);
+        
+        var treeViewContainerLocal = CommonService.GetTreeViewContainer(TreeViewContainerKey);
+        
+        if (treeViewContainerLocal is null)
             return;
-
-        var treeViewContainer = CommonService.GetTreeViewContainer(TreeViewContainerKey);
-        // Validate that the treeViewContainer did not change out from under us
-        if (treeViewContainer is null || treeViewContainer.Key != treeViewContainerKey)
-            return;
-
-        ContextMenuFixedPosition contextMenuFixedPosition;
-        TreeViewNoType contextMenuTargetTreeViewNoType;
-
-        if (mouseEventArgs.Button == -1) // -1 here means ContextMenu event was from keyboard
+    
+        for (int i = 0; i < _flatNodeList.Count; i++)
         {
-            if (treeViewContainer.ActiveNode is null)
-                return;
-
-            // If dedicated context menu button or shift + F10 was pressed as opposed to
-            // a mouse RightClick then use JavaScript to determine the ContextMenu position.
-            contextMenuFixedPosition = await CommonService.JsRuntimeCommonApi
-                .GetTreeViewContextMenuFixedPosition(treeViewContainer.ActiveNodeElementId)
-                .ConfigureAwait(false);
-
-            contextMenuTargetTreeViewNoType = treeViewContainer.ActiveNode;
+            var node = _flatNodeList[i];
+            if (node == treeViewContainerLocal.ActiveNode)
+            {
+                var top = _lineHeight * i;
+                
+                if (top < eventArgsKeyDown.ScrollTop)
+                {
+                    await JsRuntime.InvokeVoidAsync("walkCommon.treeViewScrollVertical", _htmlId, top - eventArgsKeyDown.ScrollTop);
+                }
+                else if (top + _lineHeight > eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight)
+                {
+                    await JsRuntime.InvokeVoidAsync("walkCommon.treeViewScrollVertical", _htmlId, top - (eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight) + _lineHeight);
+                }
+                break;
+            }
+        }
+    }
+    
+    [JSInvokable]
+    public void ReceiveOnContextMenu(TreeViewEventArgsMouseDown eventArgsMouseDown)
+    {
+        _treeViewMeasurements = new TreeViewMeasurements(
+            eventArgsMouseDown.ViewWidth,
+            eventArgsMouseDown.ViewHeight,
+            eventArgsMouseDown.BoundingClientRectLeft,
+            eventArgsMouseDown.BoundingClientRectTop);
+        
+        if (OnContextMenuFunc is null)
+            return;
+        
+        ContextMenuFixedPosition contextMenuFixedPosition;
+        
+        TreeViewNoType? contextMenuTarget;
+        
+        if (eventArgsMouseDown.Button == -1)
+        {
+            contextMenuTarget = _flatNodeList[Index];
+            
+            contextMenuFixedPosition = new ContextMenuFixedPosition(
+                OccurredDueToMouseEvent: false,
+                LeftPositionInPixels: eventArgsMouseDown.BoundingClientRectLeft,
+                TopPositionInPixels: eventArgsMouseDown.BoundingClientRectTop + _lineHeight);
+        }
+        else if (eventArgsMouseDown.Button == 2)
+        {
+            var relativeY = eventArgsMouseDown.Y - _treeViewMeasurements.BoundingClientRectTop + eventArgsMouseDown.ScrollTop;
+            relativeY = Math.Max(0, relativeY);
+            
+            var indexLocal = (int)(relativeY / _lineHeight);
+            
+            Index = IndexBasicValidation(indexLocal);
+            contextMenuTarget = _flatNodeList[Index];
+            
+            contextMenuFixedPosition = new ContextMenuFixedPosition(
+                OccurredDueToMouseEvent: true,
+                LeftPositionInPixels: eventArgsMouseDown.X,
+                TopPositionInPixels: eventArgsMouseDown.Y);
         }
         else
         {
-            // If a mouse RightClick caused the event then
-            // use the MouseEventArgs to determine the ContextMenu position
-            if (treeViewMouseWasOver is null)
-            {
-                // 'whitespace' of the TreeView was right clicked as opposed to
-                // a TreeView node and the event should be ignored.
-                return;
-            }
-
-            contextMenuFixedPosition = new ContextMenuFixedPosition(
-                true,
-                mouseEventArgs.ClientX,
-                mouseEventArgs.ClientY);
-
-            contextMenuTargetTreeViewNoType = treeViewMouseWasOver;
+            return;
         }
-
+        
         _treeViewContextMenuCommandArgs = new TreeViewCommandArgs(
             CommonService,
-            treeViewContainer,
-            contextMenuTargetTreeViewNoType,
+            _treeViewContainer,
+            _flatNodeList[Index],
             async () =>
             {
-                _treeViewContextMenuCommandArgs = default;
-                await InvokeAsync(StateHasChanged);
-
-                var localTreeViewStateDisplayElementReference = _treeViewStateDisplayElementReference;
-
-                try
-                {
-                    if (localTreeViewStateDisplayElementReference.HasValue)
-                    {
-                        await localTreeViewStateDisplayElementReference.Value
-                            .FocusAsync()
-                            .ConfigureAwait(false);
-                    }
-                }
-                catch (Exception)
-                {
-                    // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
-                    //             This bug is seemingly happening randomly. I have a suspicion
-                    //             that there are race-condition exceptions occurring with "FocusAsync"
-                    //             on an ElementReference.
-                }
+                _treeViewMeasurements = await JsRuntime.InvokeAsync<TreeViewMeasurements>(
+                    "walkCommon.focusAndMeasureTreeView",
+                    _htmlId,
+                    /*preventScroll:*/ false);
             },
             contextMenuFixedPosition,
-            mouseEventArgs,
-            null);
+            new MouseEventArgs
+            {
+                ClientX = eventArgsMouseDown.X,
+                ClientY = eventArgsMouseDown.Y,
+            },
+            keyboardEventArgs: null);
+    
+        CommonService.Enqueue(new CommonWorkArgs
+        {
+            WorkKind = CommonWorkKind.TreeView_HandleTreeViewOnContextMenu,
+            OnContextMenuFunc = OnContextMenuFunc,
+            TreeViewContextMenuCommandArgs = _treeViewContextMenuCommandArgs,
+        });
+    }
+    
+    [JSInvokable]
+    public void ReceiveContentOnMouseDown(TreeViewEventArgsMouseDown eventArgsMouseDown)
+    {
+        _treeViewMeasurements = new TreeViewMeasurements(
+            eventArgsMouseDown.ViewWidth,
+            eventArgsMouseDown.ViewHeight,
+            eventArgsMouseDown.BoundingClientRectLeft,
+            eventArgsMouseDown.BoundingClientRectTop);
+    
+        var relativeY = eventArgsMouseDown.Y - _treeViewMeasurements.BoundingClientRectTop + eventArgsMouseDown.ScrollTop;
+        relativeY = Math.Max(0, relativeY);
+        
+        var indexLocal = (int)(relativeY / _lineHeight);
+        
+        Index = IndexBasicValidation(indexLocal);
+        
+        var relativeX = eventArgsMouseDown.X - _treeViewMeasurements.BoundingClientRectLeft + eventArgsMouseDown.ScrollLeft;
+        relativeX = Math.Max(0, relativeX);
+        
+        // TODO: Determine why my math is wrong...
+        // ...I need to subtract 1.1 for lower bound and subtract 1 for upper bound.
+        // So the question is, "Why do I need to add this arbitrary subtractions,
+        // and are the arbitrary subtractions different depending on display settings / font sizes / etc...".
+        // Given my setup, these arbitrary subtractions make the hitbox "feel" pixel perfect.
+        //
+        if (relativeX >= (_flatNodeList[Index].Depth * OffsetPerDepthInPixels - 1.1) &&
+            relativeX <= (_flatNodeList[Index].Depth * OffsetPerDepthInPixels + WalkTreeViewIconWidth - 1))
+        {
+            HandleChevronOnClick(eventArgsMouseDown);
+        }
+        
+        CommonService.TreeView_SetActiveNodeAction(
+            _treeViewContainer.Key,
+            _flatNodeList[Index],
+            addSelectedNodes: false,
+            selectNodesBetweenCurrentAndNextActiveNode: false);
+    }
+    
+    [JSInvokable]
+    public async Task ReceiveOnDoubleClick(TreeViewEventArgsMouseDown eventArgsMouseDown)
+    {
+        _treeViewMeasurements = new TreeViewMeasurements(
+            eventArgsMouseDown.ViewWidth,
+            eventArgsMouseDown.ViewHeight,
+            eventArgsMouseDown.BoundingClientRectLeft,
+            eventArgsMouseDown.BoundingClientRectTop);
+    
+        var relativeY = eventArgsMouseDown.Y - _treeViewMeasurements.BoundingClientRectTop + eventArgsMouseDown.ScrollTop;
+        relativeY = Math.Max(0, relativeY);
+        
+        var indexLocal = (int)(relativeY / _lineHeight);
+        
+        Index = IndexBasicValidation(indexLocal);
+        
+        await TreeViewMouseEventHandler.OnDoubleClickAsync(new TreeViewCommandArgs(
+            CommonService,
+            _treeViewContainer,
+            _flatNodeList[Index],
+            async () =>
+            {
+                _treeViewMeasurements = await JsRuntime.InvokeAsync<TreeViewMeasurements>(
+                    "walkCommon.focusAndMeasureTreeView",
+                    _htmlId,
+                    /*preventScroll:*/ false);
+            },
+            contextMenuFixedPosition: null,
+            new MouseEventArgs
+            {
+                ClientX = eventArgsMouseDown.X,
+                ClientY = eventArgsMouseDown.Y,
+            },
+            keyboardEventArgs: null));
+    }
+    
+    private List<TreeViewNoType> GetFlatNodes()
+    {
+        _flatNodeList.Clear();
+        _nodeRecursionStack.Clear();
+        
+        int depth;
+        
+        // I'm only going to include 'IsHidden' with the root node for now.
+        if (_treeViewContainer.RootNode.IsHidden)
+        {
+            depth = 0;
+        }
+        else
+        {
+            _flatNodeList.Add(_treeViewContainer.RootNode);
+            depth = 1;
+        }
+        
+        _treeViewContainer.RootNode.IsExpanded = true;
+        
+        if (!_treeViewContainer.RootNode.IsExpanded ||
+            _treeViewContainer.RootNode.ChildList.Count == 0)
+        {
+            return _flatNodeList;
+        }
+        
+        var targetNode = _treeViewContainer.RootNode;
+        
+        int index = 0;
+    
+        // TODO: Rewrite the comment below this.
+        // Loop iterates 1 layer above in order to avoid the break case every child if the child is not expanded or ChildList.Count is == 0
+        // Thus, the root case has to be handled entirely outside the loop.
+        while (true)
+        {
+            if (index >= targetNode.ChildList.Count)
+            {
+                if (_nodeRecursionStack.Count > 0)
+                {
+                    var recursionEntry = _nodeRecursionStack.Pop();
+                    depth--;
+                    targetNode = recursionEntry.Node;
+                    index = recursionEntry.Index;
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        
+            var childNode = targetNode.ChildList[index++];
+            childNode.Depth = depth;
+            _flatNodeList.Add(childNode);
+        
+            if (childNode.IsExpanded && childNode.ChildList.Count > 0)
+            {
+                _nodeRecursionStack.Push((targetNode, index));
+                depth++;
+                targetNode = childNode;
+                index = 0;
+            }
+        }
+        
+        return _flatNodeList;
+    }
+    
+    private int IndexBasicValidation(int indexLocal)
+    {
+        if (indexLocal < 0)
+            return 0;
+        else if (indexLocal >= _flatNodeList.Count)
+            return _flatNodeList.Count - 1;
+        
+        return indexLocal;
+    }
+    
+    private void HandleChevronOnClick(TreeViewEventArgsMouseDown eventArgsMouseDown)
+    {
+        var localTreeViewNoType = _flatNodeList[Index];
+        
+        if (!localTreeViewNoType.IsExpandable)
+            return;
 
-        if (OnContextMenuFunc is not null)
+        localTreeViewNoType.IsExpanded = !localTreeViewNoType.IsExpanded;
+
+        if (localTreeViewNoType.IsExpanded)
         {
             CommonService.Enqueue(new CommonWorkArgs
             {
-                WorkKind = CommonWorkKind.TreeView_HandleTreeViewOnContextMenu,
-                OnContextMenuFunc = OnContextMenuFunc,
-                TreeViewContextMenuCommandArgs = _treeViewContextMenuCommandArgs,
+                WorkKind = CommonWorkKind.TreeView_HandleExpansionChevronOnMouseDown,
+                TreeViewNoType = localTreeViewNoType,
+                TreeViewContainer = _treeViewContainer
             });
         }
-
-        await InvokeAsync(StateHasChanged);
+        else
+        {
+            CommonService.TreeView_ReRenderNodeAction(_treeViewContainer.Key, localTreeViewNoType);
+        }
     }
 
     private string GetHasActiveNodeCssClass(TreeViewContainer? treeViewContainer)
@@ -238,9 +495,26 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         
         return CommonService.UiStringBuilder.ToString();
     }
+                             
+    /// <summary>
+    /// This method should only be invoked from the "UI thread" due to the usage of `CommonBackgroundTaskApi.UiStringBuilder`.
+    /// </summary>
+    private string GetNodeElementCssStyle(TreeViewNoType node)
+    {
+        
+        CommonService.UiStringBuilder.Clear();
+        CommonService.UiStringBuilder.Append("display: flex; align-items: center; padding-left: ");
+        CommonService.UiStringBuilder.Append(node.Depth * OffsetPerDepthInPixels);
+        CommonService.UiStringBuilder.Append("px; height: ");
+        CommonService.UiStringBuilder.Append(_lineHeight);
+        CommonService.UiStringBuilder.Append("px;");
+        
+        return CommonService.UiStringBuilder.ToString();
+    }
     
     public void Dispose()
     {
         CommonService.CommonUiStateChanged -= OnTreeViewStateChanged;
+        _dotNetHelper?.Dispose();
     }
 }

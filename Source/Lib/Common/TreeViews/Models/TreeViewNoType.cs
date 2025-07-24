@@ -25,6 +25,12 @@ public abstract class TreeViewNoType
     public bool IsHidden { get; set; }
     public bool IsExpandable { get; set; }
     public bool IsExpanded { get; set; }
+    
+    /// <summary>
+    /// Used by the UI
+    /// </summary>
+    public int Depth { get; set; }
+    
     public Key<TreeViewChanged> TreeViewChangedKey { get; set; } = Key<TreeViewChanged>.NewKey();
     public Key<TreeViewNoType> Key { get; set; } = Key<TreeViewNoType>.NewKey();
 

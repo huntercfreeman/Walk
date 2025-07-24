@@ -36,6 +36,151 @@ window.walkCommon = {
     	walkCommon.browserResizeInteropDotNetObjectReference = null;
         window.removeEventListener("resize", walkCommonOnWindowSizeChanged);
     },
+    treeViewInitialize: function (dotNetHelper, elementId) {
+        let element = document.getElementById(elementId);
+        
+        if (!element)
+            return;
+        
+        if (element) {
+            element.addEventListener('keydown', (event) => {
+                switch(event.key) {
+                    case "Shift":
+                    case "Control":
+                    case "Alt":
+                    case "Meta":
+                        break;
+                    default:
+                        let boundingClientRect = element.getBoundingClientRect();
+                        dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown",
+                        {
+                            Key: event.key,
+                            Code: event.code,
+                            CtrlKey: event.ctrlKey,
+                            ShiftKey: event.shiftKey,
+                            AltKey: event.altKey,
+                            MetaKey: event.metaKey,
+                            ScrollLeft: element.scrollLeft,
+                            ScrollTop: element.scrollTop,
+                            ViewWidth: element.offsetWidth,
+                            ViewHeight: element.offsetHeight,
+                            BoundingClientRectLeft: boundingClientRect.left,
+                            BoundingClientRectTop: boundingClientRect.top,
+                        });
+                        break;
+                }
+                event.preventDefault();
+            });
+            
+            element.addEventListener('contextmenu', (event) => {
+                let boundingClientRect = element.getBoundingClientRect();
+                dotNetHelper.invokeMethodAsync("ReceiveOnContextMenu", 
+                {
+                    Buttons: event.buttons,
+                    Button: event.button,
+                    X: event.clientX,
+                    Y: event.clientY,
+                    ShiftKey: event.shiftKey,
+                    ScrollLeft: element.scrollLeft,
+                    ScrollTop: element.scrollTop,
+                    ViewWidth: element.offsetWidth,
+                    ViewHeight: element.offsetHeight,
+                    BoundingClientRectLeft: boundingClientRect.left,
+                    BoundingClientRectTop: boundingClientRect.top,
+                });
+                event.preventDefault();
+            });
+            
+            element.addEventListener('mousedown', (event) => {
+                let boundingClientRect = element.getBoundingClientRect();
+                dotNetHelper.invokeMethodAsync("ReceiveContentOnMouseDown", 
+                {
+                    Buttons: event.buttons,
+                    Button: event.button,
+                    X: event.clientX,
+                    Y: event.clientY,
+                    ShiftKey: event.shiftKey,
+                    ScrollLeft: element.scrollLeft,
+                    ScrollTop: element.scrollTop,
+                    ViewWidth: element.offsetWidth,
+                    ViewHeight: element.offsetHeight,
+                    BoundingClientRectLeft: boundingClientRect.left,
+                    BoundingClientRectTop: boundingClientRect.top,
+                });
+            });
+            
+            element.addEventListener('dblclick', (event) => {
+                let boundingClientRect = element.getBoundingClientRect();
+                dotNetHelper.invokeMethodAsync("ReceiveOnDoubleClick",
+                {
+                    Buttons: event.buttons,
+                    Button: event.button,
+                    X: event.clientX,
+                    Y: event.clientY,
+                    ShiftKey: event.shiftKey,
+                    ScrollLeft: element.scrollLeft,
+                    ScrollTop: element.scrollTop,
+                    ViewWidth: element.offsetWidth,
+                    ViewHeight: element.offsetHeight,
+                    BoundingClientRectLeft: boundingClientRect.left,
+                    BoundingClientRectTop: boundingClientRect.top,
+                });
+            });
+        }
+        
+        return this.measureTreeView(elementId);
+    },
+    focusAndMeasureTreeView: function (elementId, preventScroll) {
+        let element = document.getElementById(elementId);
+
+        if (!element) {
+            return {
+                ViewWidth: 0,
+                ViewHeight: 0,
+                BoundingClientRectLeft: 0,
+                BoundingClientRectTop: 0,
+            };
+        }
+
+		if (preventScroll) {
+			element.focus({preventScroll: true});
+		}
+		else {
+			element.focus();
+		}
+		
+		return this.measureTreeView(elementId);
+    },
+    measureTreeView: function (elementId) {
+        let element = document.getElementById(elementId);
+
+        if (!element) {
+            return {
+                ViewWidth: 0,
+                ViewHeight: 0,
+                BoundingClientRectLeft: 0,
+                BoundingClientRectTop: 0,
+            };
+        }
+
+		let boundingClientRect = element.getBoundingClientRect();
+		
+		return {
+            ViewWidth: element.offsetWidth,
+            ViewHeight: element.offsetHeight,
+            BoundingClientRectLeft: boundingClientRect.left,
+            BoundingClientRectTop: boundingClientRect.top,
+        };
+    },
+    treeViewScrollVertical: function (elementId, changeInScrollTop) {
+        let element = document.getElementById(elementId);
+
+        if (!element) {
+            return;
+        }
+
+		element.scrollTop = element.scrollTop + changeInScrollTop;
+    },
     focusHtmlElementById: function (elementId, preventScroll) {
         let element = document.getElementById(elementId);
 

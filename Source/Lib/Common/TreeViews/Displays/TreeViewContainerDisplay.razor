@@ -1,52 +1,62 @@
 @using Walk.Common.RazorLib.Keys.Models;
 @using Walk.Common.RazorLib.TreeViews.Models;
+@using Walk.Common.RazorLib.Dimensions;
+@using Walk.Common.RazorLib.Dimensions.Models;
 
-@{
-    var treeViewContainer = CommonService.GetTreeViewContainer(TreeViewContainerKey);
+@{ _treeViewContainer = CommonService.GetTreeViewContainer(TreeViewContainerKey); }
+
+<div id="@_htmlId"
+     class="@GetContainerElementCssClass(_treeViewContainer)"
+     style="@CssStyleString"
+     tabindex="0">
+
+    @if (_treeViewContainer is null)
+    {
+        <div>@nameof(_treeViewContainer) was null</div>
+    }
+    else
+    {
+    	var appOptionsState = CommonService.GetAppOptionsState();
     
-    _treeViewCascadingValueBatch.TreeViewContainer = treeViewContainer;
-    _treeViewCascadingValueBatch.HandleTreeViewOnContextMenu = HandleTreeViewOnContextMenu;
-    _treeViewCascadingValueBatch.TreeViewMouseEventHandler = TreeViewMouseEventHandler;
-    _treeViewCascadingValueBatch.TreeViewKeyboardEventHandler = TreeViewKeyboardEventHandler;
-    _treeViewCascadingValueBatch.CommonService = CommonService;
-    _treeViewCascadingValueBatch.OffsetPerDepthInPixels = OffsetPerDepthInPixels;
-    _treeViewCascadingValueBatch.WalkTreeViewIconWidth = WalkTreeViewIconWidth;
-
-    <div class="@GetContainerElementCssClass(treeViewContainer)"
-         style="@CssStyleString"
-         tabindex="0"
-         @ref="_treeViewStateDisplayElementReference"
-         @onkeydownwithpreventscroll="(e) => HandleTreeViewOnKeyDownWithPreventScroll(e, treeViewContainer)"
-         @oncontextmenu:preventDefault="true"
-         @oncontextmenu:stopPropagation="true"
-         @oncontextmenu="(e) => HandleTreeViewOnContextMenu(e, treeViewContainer?.Key ?? Key<TreeViewContainer>.Empty, null)">
-
-        @if (treeViewContainer is null)
+    	var iconDriver = new IconDriver(
+			appOptionsState.Options.IconSizeInPixels,
+			appOptionsState.Options.IconSizeInPixels);
+    
+        foreach (var node in GetFlatNodes())
         {
-            <div>@nameof(treeViewContainer) was null</div>
-        }
-        else
-        {
-            <TreeViewNodeDisplay TreeViewNodeParameter="new TreeViewNodeParameter(
-                treeViewContainer.RootNode,
-                GetRootDepth(treeViewContainer.RootNode),
-                _treeViewCascadingValueBatch)"/>
-        }
-    </div>
-}
+            var isActive = (_treeViewContainer.ActiveNode?.Key ?? Key<TreeViewNoType>.Empty) == node.Key;
+            var cssClass = isActive ? "di_tree-view-title di_active di_selected" : "di_tree-view-title";
+        
+            <div class="@cssClass"
+                 style="@GetNodeElementCssStyle(node)">
 
-@if (OnContextMenuRenderFragment is not null &&
-     _treeViewContextMenuCommandArgs.CommonService is not null)
-{
-    <div class="di_context-menu di_set-selectable"
-         style="@GetContextMenuCssStyleString()"
-         @oncontextmenu:stopPropagation="true"
-         @onmousedown:stopPropagation="true"
-         @onclick:stopPropagation="true"
-         @ondblclick:stopPropagation="true"
-         @onkeydown:stopPropagation="true"
-         @onkeydownwithpreventscroll:stopPropagation="true">
-
-        @OnContextMenuRenderFragment(_treeViewContextMenuCommandArgs)
-    </div>
-}
+                @if (node.IsExpandable)
+                {
+                    <span style="cursor: pointer;">
+                        @if (node.IsExpanded)
+                        {
+                            @IconChevronDownFragment.Render(iconDriver)
+                        }
+                        else
+                        {
+                            @IconChevronRightFragment.Render(iconDriver)
+                        }
+                    </span>
+                    
+                }
+                else
+                {
+                    <span>
+                        @IconBlankFragment.Render(iconDriver)
+                    </span>
+                }
+                
+                @node.GetIcon(iconDriver)
+                
+                <span style="margin-left: 3px;" class="@node.GetDisplayTextCssClass()" title="@node.GetHoverText()">
+                    @node.GetDisplayText()
+                </span>
+            </div>
+        }
+    }
+</div>
