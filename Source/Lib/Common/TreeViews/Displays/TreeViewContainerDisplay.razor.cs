@@ -90,9 +90,95 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     }
     
     [JSInvokable]
-    public void ReceiveOnKeyDown(TreeViewEventArgsKeyDown eventArgsKeyDown)
+    public async Task ReceiveOnKeyDown(TreeViewEventArgsKeyDown eventArgsKeyDown)
     {
-        Console.WriteLine(eventArgsKeyDown.Key);
+        if (_treeViewContainer is null)
+            return;
+
+        switch (eventArgsKeyDown.Key)
+        {
+            case "ContextMenu":
+            {
+                var mouseEventArgs = new MouseEventArgs { Button = -1 };
+                
+                ReceiveOnContextMenu(
+                    new TreeViewEventArgsMouseDown(
+                        Buttons: 0,
+                        Button: -1,
+                        X: 0,
+                        Y: 0,
+                        ShiftKey: false,
+                        eventArgsKeyDown.ScrollLeft,
+                        eventArgsKeyDown.ScrollTop,
+                        eventArgsKeyDown.ViewWidth,
+                        eventArgsKeyDown.ViewHeight,
+                        eventArgsKeyDown.BoundingClientRectLeft,
+                        eventArgsKeyDown.BoundingClientRectTop));
+                return;
+            }
+            case ".":
+            {
+                if (eventArgsKeyDown.CtrlKey)
+                {
+                    ReceiveOnContextMenu(
+                        new TreeViewEventArgsMouseDown(
+                            Buttons: 0,
+                            Button: -1,
+                            X: 0,
+                            Y: 0,
+                            ShiftKey: false,
+                            eventArgsKeyDown.ScrollLeft,
+                            eventArgsKeyDown.ScrollTop,
+                            eventArgsKeyDown.ViewWidth,
+                            eventArgsKeyDown.ViewHeight,
+                            eventArgsKeyDown.BoundingClientRectLeft,
+                            eventArgsKeyDown.BoundingClientRectTop));
+                }
+                return;
+            }
+            case "F10":
+            {
+                if (eventArgsKeyDown.ShiftKey)
+                {
+                    ReceiveOnContextMenu(
+                        new TreeViewEventArgsMouseDown(
+                            Buttons: 0,
+                            Button: -1,
+                            X: 0,
+                            Y: 0,
+                            ShiftKey: false,
+                            eventArgsKeyDown.ScrollLeft,
+                            eventArgsKeyDown.ScrollTop,
+                            eventArgsKeyDown.ViewWidth,
+                            eventArgsKeyDown.ViewHeight,
+                            eventArgsKeyDown.BoundingClientRectLeft,
+                            eventArgsKeyDown.BoundingClientRectTop));
+                }
+                return;
+            }
+        }
+        
+        var treeViewCommandArgs = new TreeViewCommandArgs(
+            CommonService,
+            _treeViewContainer,
+            null,
+            async () =>
+            {
+                _treeViewMeasurements = await JsRuntime.InvokeAsync<TreeViewMeasurements>(
+                    "walkCommon.focusAndMeasureTreeView",
+                    _htmlId,
+                    /*preventScroll:*/ false);
+            },
+            null,
+            null,
+            new KeyboardEventArgs
+            {
+                Key = eventArgsKeyDown.Key,
+                Code = eventArgsKeyDown.Code,
+            });
+
+        await TreeViewKeyboardEventHandler
+            .OnKeyDownAsync(treeViewCommandArgs);
     }
     
     [JSInvokable]
@@ -296,12 +382,12 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             }
         
             var childNode = targetNode.ChildList[index++];
+            childNode.Depth = depth;
             _flatNodeList.Add(childNode);
         
             if (childNode.IsExpanded && childNode.ChildList.Count > 0)
             {
                 _nodeRecursionStack.Push((targetNode, index));
-                childNode.Depth = depth;
                 depth++;
                 targetNode = childNode;
                 index = 0;

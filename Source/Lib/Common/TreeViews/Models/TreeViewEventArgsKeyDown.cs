@@ -8,4 +8,8 @@ public record struct TreeViewEventArgsKeyDown(
     bool AltKey,
     bool MetaKey,
     double ScrollLeft,
-    double ScrollTop);
+    double ScrollTop,
+    double ViewWidth,
+    double ViewHeight,
+    double BoundingClientRectLeft,
+    double BoundingClientRectTop);

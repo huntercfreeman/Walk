@@ -51,6 +51,7 @@ window.walkCommon = {
                     case "Meta":
                         break;
                     default:
+                        let boundingClientRect = element.getBoundingClientRect();
                         dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown",
                         {
                             Key: event.key,
@@ -60,7 +61,11 @@ window.walkCommon = {
                             AltKey: event.altKey,
                             MetaKey: event.metaKey,
                             ScrollLeft: element.scrollLeft,
-                            ScrollTop: element.scrollTop
+                            ScrollTop: element.scrollTop,
+                            ViewWidth: element.offsetWidth,
+                            ViewHeight: element.offsetHeight,
+                            BoundingClientRectLeft: boundingClientRect.left,
+                            BoundingClientRectTop: boundingClientRect.top,
                         });
                         break;
                 }
