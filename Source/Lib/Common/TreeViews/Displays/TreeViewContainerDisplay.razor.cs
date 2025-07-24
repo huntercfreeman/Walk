@@ -273,7 +273,14 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         var relativeX = eventArgsMouseDown.X - _treeViewMeasurements.BoundingClientRectLeft + eventArgsMouseDown.ScrollLeft;
         relativeX = Math.Max(0, relativeX);
         
-        if (Math.Abs(relativeX - _flatNodeList[Index].Depth * OffsetPerDepthInPixels) <= 5)
+        // TODO: Determine why my math is wrong...
+        // ...I need to subtract 1.1 for lower bound and subtract 1 for upper bound.
+        // So the question is, "Why do I need to add this arbitrary subtractions,
+        // and are the arbitrary subtractions different depending on display settings / font sizes / etc...".
+        // Given my setup, these arbitrary subtractions make the hitbox "feel" pixel perfect.
+        //
+        if (relativeX >= (_flatNodeList[Index].Depth * OffsetPerDepthInPixels - 1.1) &&
+            relativeX <= (_flatNodeList[Index].Depth * OffsetPerDepthInPixels + WalkTreeViewIconWidth - 1))
         {
             HandleChevronOnClick(eventArgsMouseDown);
         }
