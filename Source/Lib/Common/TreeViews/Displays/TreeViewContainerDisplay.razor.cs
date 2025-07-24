@@ -296,8 +296,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             }
         
             var childNode = targetNode.ChildList[index++];
-            childNode.IsExpanded = true;
-            childNode.LoadChildListAsync().Wait();
             _flatNodeList.Add(childNode);
         
             if (childNode.IsExpanded && childNode.ChildList.Count > 0)
@@ -331,24 +329,27 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     private void HandleChevronOnClick(TreeViewEventArgsMouseDown eventArgsMouseDown)
     {
         Console.WriteLine("HandleChevronOnClick");
-        /*if (!localTreeViewNoType.IsExpandable)
+        
+        var localTreeViewNoType = _flatNodeList[Index];
+        
+        if (!localTreeViewNoType.IsExpandable)
             return;
 
         localTreeViewNoType.IsExpanded = !localTreeViewNoType.IsExpanded;
 
         if (localTreeViewNoType.IsExpanded)
         {
-            TreeViewNodeParameter.RenderBatch.CommonService.Enqueue(new CommonWorkArgs
+            CommonService.Enqueue(new CommonWorkArgs
             {
                 WorkKind = CommonWorkKind.TreeView_HandleExpansionChevronOnMouseDown,
                 TreeViewNoType = localTreeViewNoType,
-                TreeViewContainer = TreeViewNodeParameter.RenderBatch.TreeViewContainer
+                TreeViewContainer = _treeViewContainer
             });
         }
         else
         {
-            TreeViewNodeParameter.RenderBatch.CommonService.TreeView_ReRenderNodeAction(TreeViewNodeParameter.RenderBatch.TreeViewContainer.Key, localTreeViewNoType);
-        }*/
+            CommonService.TreeView_ReRenderNodeAction(_treeViewContainer.Key, localTreeViewNoType);
+        }
     }
 
     private async Task HandleTreeViewOnKeyDownWithPreventScroll(
