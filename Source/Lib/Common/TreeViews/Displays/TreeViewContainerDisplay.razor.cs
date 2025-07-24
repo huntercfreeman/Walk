@@ -8,13 +8,6 @@ using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Walk.Common.RazorLib.Commands.Models;
-using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.TreeViews.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-
 namespace Walk.Common.RazorLib.TreeViews.Displays;
 
 public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
@@ -55,13 +48,18 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     private int Index { get; set; }
 
     private TreeViewCommandArgs _treeViewContextMenuCommandArgs;
-    private ElementReference? _treeViewStateDisplayElementReference;
-    
     private TreeViewContainer _treeViewContainer;
-    
     private TreeViewMeasurements _treeViewMeasurements;
-    
     private DotNetObjectReference<TreeViewContainerDisplay>? _dotNetHelper;
+    
+    /// <summary>
+    /// UI thread only.
+    /// </summary>
+    private readonly List<TreeViewNoType> _flatNodeList = new();
+    /// <summary>
+    /// Contains the "used to be" targetNode, and the index that it left off at.
+    /// </summary>
+    private readonly Stack<(TreeViewNoType Node, int Index)> _nodeRecursionStack = new();
 
     protected override void OnInitialized()
     {
@@ -190,8 +188,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             if (node == treeViewContainerLocal.ActiveNode)
             {
                 var top = _lineHeight * i;
-                
-                Console.WriteLine($"if ({top} < {eventArgsKeyDown.ScrollTop}) else if ({top} > {eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight})");
                 
                 if (top < eventArgsKeyDown.ScrollTop)
                 {
@@ -352,15 +348,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             keyboardEventArgs: null));
     }
     
-    /// <summary>
-    /// UI thread only.
-    /// </summary>
-    private readonly List<TreeViewNoType> _flatNodeList = new();
-    /// <summary>
-    /// Contains the "used to be" targetNode, and the index that it left off at.
-    /// </summary>
-    private readonly Stack<(TreeViewNoType Node, int Index)> _nodeRecursionStack = new();
-    
     private List<TreeViewNoType> GetFlatNodes()
     {
         _flatNodeList.Clear();
@@ -437,11 +424,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         
         return indexLocal;
     }
-
-    private int GetRootDepth(TreeViewNoType rootNode)
-    {
-        return rootNode is TreeViewAdhoc ? -1 : 0;
-    }
     
     private void HandleChevronOnClick(TreeViewEventArgsMouseDown eventArgsMouseDown)
     {
@@ -513,28 +495,19 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         
         return CommonService.UiStringBuilder.ToString();
     }
-    
-    private ElementReference? _treeViewTitleElementReference;
-    private Key<TreeViewChanged> _previousTreeViewChangedKey = Key<TreeViewChanged>.Empty;
-    private bool _previousIsActive;
-
-    private bool GetIsActive(TreeViewNoType node) => CommonService.GetTreeViewContainer(TreeViewContainerKey)?.ActiveNode is not null &&
-                             (CommonService.GetTreeViewContainer(TreeViewContainerKey)?.ActiveNode.Key ?? Key<TreeViewNoType>.Empty) == node.Key;
                              
-    private string GetIsActiveId(TreeViewNoType node) => GetIsActive(node)
-        ? CommonService.GetTreeViewContainer(TreeViewContainerKey)?.ActiveNodeElementId ?? "string.Empty"
-        : string.Empty;
-    
-    private string GetIsActiveCssClass(TreeViewNoType node) => GetIsActive(node) ? "di_active di_selected" : string.Empty;
-    
     /// <summary>
     /// This method should only be invoked from the "UI thread" due to the usage of `CommonBackgroundTaskApi.UiStringBuilder`.
     /// </summary>
-    private string GetNodeElementCssClass(TreeViewNoType node)
+    private string GetNodeElementCssStyle(TreeViewNoType node)
     {
+        
         CommonService.UiStringBuilder.Clear();
-        CommonService.UiStringBuilder.Append("di_tree-view-title ");
-        CommonService.UiStringBuilder.Append(GetIsActiveCssClass(node));
+        CommonService.UiStringBuilder.Append("display: flex; align-items: center; padding-left: ");
+        CommonService.UiStringBuilder.Append(node.Depth * OffsetPerDepthInPixels);
+        CommonService.UiStringBuilder.Append("px; height: ");
+        CommonService.UiStringBuilder.Append(_lineHeight);
+        CommonService.UiStringBuilder.Append("px;");
         
         return CommonService.UiStringBuilder.ToString();
     }

@@ -8,8 +8,7 @@
 <div id="@_htmlId"
      class="@GetContainerElementCssClass(_treeViewContainer)"
      style="@CssStyleString"
-     tabindex="0"
-     @ref="_treeViewStateDisplayElementReference">
+     tabindex="0">
 
     @if (_treeViewContainer is null)
     {
@@ -17,18 +16,19 @@
     }
     else
     {
-        var flatNodeList = GetFlatNodes();
+    	var appOptionsState = CommonService.GetAppOptionsState();
+    
+    	var iconDriver = new IconDriver(
+			appOptionsState.Options.IconSizeInPixels,
+			appOptionsState.Options.IconSizeInPixels);
+    
         foreach (var node in GetFlatNodes())
         {
-            <div class="@GetNodeElementCssClass(node)"
-                 style="display: flex; align-items: center; padding-left: @(node.Depth * OffsetPerDepthInPixels)px; height: @(_lineHeight)px;">
-                @{
-                	var appOptionsState = CommonService.GetAppOptionsState();
-                
-                	var iconDriver = new IconDriver(
-						appOptionsState.Options.IconSizeInPixels,
-						appOptionsState.Options.IconSizeInPixels);
-                }
+            var isActive = (_treeViewContainer.ActiveNode?.Key ?? Key<TreeViewNoType>.Empty) == node.Key;
+            var cssClass = isActive ? "di_tree-view-title di_active di_selected" : "di_tree-view-title";
+        
+            <div class="@cssClass"
+                 style="@GetNodeElementCssStyle(node)">
 
                 @if (node.IsExpandable)
                 {
@@ -49,11 +49,11 @@
                     @IconBlankFragment.Render(iconDriver)
                 }
                 
-                <span style="margin-right: 3px;">
-                    @node.GetIcon(iconDriver)
-                </span>
+                @node.GetIcon(iconDriver)
                 
-                @node.GetDisplayText()
+                <span style="margin-left: 3px;" class="@node.GetDisplayTextCssClass()" title="@node.GetHoverText()">
+                    @node.GetDisplayText()
+                </span>
             </div>
         }
     }
