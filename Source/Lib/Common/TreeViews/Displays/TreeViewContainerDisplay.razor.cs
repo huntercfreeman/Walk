@@ -1,3 +1,4 @@
+using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
@@ -16,14 +17,12 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Common.RazorLib.TreeViews.Displays;
 
-/// <summary>
-/// TODO: SphagettiCode - The context menu logic feels scuffed. A field is used to track the
-/// "_mostRecentContextMenuEvent". This feels quite wrong and should be looked into. (2023-09-19)
-/// </summary>
 public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private CommonService CommonService { get; set; } = null!;
+    [Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<TreeViewContainer> TreeViewContainerKey { get; set; } = Key<TreeViewContainer>.Empty;
@@ -46,15 +45,77 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     public int OffsetPerDepthInPixels { get; set; } = 12;
     [Parameter]
     public int WalkTreeViewIconWidth { get; set; } = 16;
+    
+    /// <summary>Pixels</summary>
+    private int _lineHeight = 20;
+    
+    private Guid _guidId = Guid.NewGuid();
+    private string _htmlId = null!;
+    
+    private int Index { get; set; }
 
     private TreeViewCommandArgs _treeViewContextMenuCommandArgs;
     private ElementReference? _treeViewStateDisplayElementReference;
     
-    private readonly TreeViewCascadingValueBatch _treeViewCascadingValueBatch = new();
+    private TreeViewContainer _treeViewContainer;
+    
+    private TreeViewMeasurements _treeViewMeasurements;
+    
+    private DotNetObjectReference<TreeViewContainerDisplay>? _dotNetHelper;
 
     protected override void OnInitialized()
     {
+        // TODO: Does the object used here matter? Should it be a "smaller" object or is this just reference?
+        _dotNetHelper = DotNetObjectReference.Create(this);
+    
+        _htmlId = $"luth_common_treeview-{_guidId}";
+        
         CommonService.CommonUiStateChanged += OnTreeViewStateChanged;
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Do not ConfigureAwait(false) so that the UI doesn't change out from under you
+            // before you finish setting up the events?
+            // (is this a thing, I'm just presuming this would be true).
+            _treeViewMeasurements = await JsRuntime.InvokeAsync<TreeViewMeasurements>(
+                "walkCommon.treeViewInitialize",
+                _dotNetHelper,
+                _htmlId);
+            
+            Console.WriteLine(_treeViewMeasurements);
+        }
+    }
+    
+    [JSInvokable]
+    public void ReceiveOnKeyDown(TreeViewEventArgsKeyDown eventArgsKeyDown)
+    {
+        Console.WriteLine(eventArgsKeyDown.Key);
+    }
+    
+    [JSInvokable]
+    public void ReceiveContentOnMouseDown(TreeViewEventArgsMouseDown eventArgsMouseDown)
+    {
+        _treeViewMeasurements = new TreeViewMeasurements(
+            eventArgsMouseDown.ViewWidth,
+            eventArgsMouseDown.ViewHeight,
+            eventArgsMouseDown.BoundingClientRectLeft,
+            eventArgsMouseDown.BoundingClientRectTop);
+    
+        var relativeY = eventArgsMouseDown.Y - _treeViewMeasurements.BoundingClientRectTop + eventArgsMouseDown.ScrollTop;
+        relativeY = Math.Max(0, relativeY);
+        
+        var indexLocal = (int)(relativeY / _lineHeight);
+        
+        Index = IndexBasicValidation(indexLocal);
+        
+        CommonService.TreeView_SetActiveNodeAction(
+            _treeViewContainer.Key,
+            _flatNodeList[Index],
+            addSelectedNodes: false,
+            selectNodesBetweenCurrentAndNextActiveNode: false);
     }
     
     /// <summary>
@@ -74,25 +135,25 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         int depth;
         
         // I'm only going to include 'IsHidden' with the root node for now.
-        if (_treeViewCascadingValueBatch.TreeViewContainer.RootNode.IsHidden)
+        if (_treeViewContainer.RootNode.IsHidden)
         {
             depth = 0;
         }
         else
         {
-            _flatNodeList.Add(_treeViewCascadingValueBatch.TreeViewContainer.RootNode);
+            _flatNodeList.Add(_treeViewContainer.RootNode);
             depth = 1;
         }
         
-        _treeViewCascadingValueBatch.TreeViewContainer.RootNode.IsExpanded = true;
+        _treeViewContainer.RootNode.IsExpanded = true;
         
-        if (!_treeViewCascadingValueBatch.TreeViewContainer.RootNode.IsExpanded ||
-            _treeViewCascadingValueBatch.TreeViewContainer.RootNode.ChildList.Count == 0)
+        if (!_treeViewContainer.RootNode.IsExpanded ||
+            _treeViewContainer.RootNode.ChildList.Count == 0)
         {
             return _flatNodeList;
         }
         
-        var targetNode = _treeViewCascadingValueBatch.TreeViewContainer.RootNode;
+        var targetNode = _treeViewContainer.RootNode;
         
         int index = 0;
     
@@ -101,26 +162,22 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         // Thus, the root case has to be handled entirely outside the loop.
         while (true)
         {
-            Console.WriteLine("aaa " + targetNode.GetDisplayText());
-            
             if (index >= targetNode.ChildList.Count)
             {
                 if (_nodeRecursionStack.Count > 0)
                 {
-                    Console.WriteLine("bbb " + targetNode.GetDisplayText());
                     var recursionEntry = _nodeRecursionStack.Pop();
+                    depth--;
                     targetNode = recursionEntry.Node;
                     index = recursionEntry.Index;
                     continue;
                 }
                 else
                 {
-                    Console.WriteLine("ccc " + targetNode.GetDisplayText());
                     break;
                 }
             }
         
-            Console.WriteLine("ddd " + targetNode.GetDisplayText());
             var childNode = targetNode.ChildList[index++];
             childNode.IsExpanded = true;
             childNode.LoadChildListAsync().Wait();
@@ -128,14 +185,25 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         
             if (childNode.IsExpanded && childNode.ChildList.Count > 0)
             {
-                Console.WriteLine("eee " + targetNode.GetDisplayText());
                 _nodeRecursionStack.Push((targetNode, index));
+                childNode.Depth = depth;
+                depth++;
                 targetNode = childNode;
                 index = 0;
             }
         }
         
         return _flatNodeList;
+    }
+    
+    private int IndexBasicValidation(int indexLocal)
+    {
+        if (indexLocal < 0)
+            return 0;
+        else if (indexLocal >= _flatNodeList.Count)
+            return _flatNodeList.Count - 1;
+        
+        return indexLocal;
     }
 
     private int GetRootDepth(TreeViewNoType rootNode)
@@ -330,6 +398,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         CommonService.CommonUiStateChanged -= OnTreeViewStateChanged;
+        _dotNetHelper?.Dispose();
     }
     
     /* Start TreeViewNodeDisplay */
@@ -515,7 +584,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     private string GetIsActiveId(TreeViewNoType node) => GetIsActive(node)
         ? CommonService.GetTreeViewContainer(TreeViewContainerKey)?.ActiveNodeElementId ?? "string.Empty"
         : string.Empty;
-
     
     private string GetIsActiveCssClass(TreeViewNoType node) => GetIsActive(node) ? "di_active" : string.Empty;
     

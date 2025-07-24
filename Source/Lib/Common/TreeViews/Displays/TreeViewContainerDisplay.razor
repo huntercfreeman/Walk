@@ -3,65 +3,53 @@
 @using Walk.Common.RazorLib.Dimensions;
 @using Walk.Common.RazorLib.Dimensions.Models;
 
-@{
-    var treeViewContainer = CommonService.GetTreeViewContainer(TreeViewContainerKey);
-    
-    _treeViewCascadingValueBatch.TreeViewContainer = treeViewContainer;
-    _treeViewCascadingValueBatch.HandleTreeViewOnContextMenu = HandleTreeViewOnContextMenu;
-    _treeViewCascadingValueBatch.TreeViewMouseEventHandler = TreeViewMouseEventHandler;
-    _treeViewCascadingValueBatch.TreeViewKeyboardEventHandler = TreeViewKeyboardEventHandler;
-    _treeViewCascadingValueBatch.CommonService = CommonService;
-    _treeViewCascadingValueBatch.OffsetPerDepthInPixels = OffsetPerDepthInPixels;
-    _treeViewCascadingValueBatch.WalkTreeViewIconWidth = WalkTreeViewIconWidth;
+@{ _treeViewContainer = CommonService.GetTreeViewContainer(TreeViewContainerKey); }
 
-    <div class="@GetContainerElementCssClass(treeViewContainer)"
-         style="@CssStyleString"
-         tabindex="0"
-         @ref="_treeViewStateDisplayElementReference"
-         @onkeydownwithpreventscroll="(e) => HandleTreeViewOnKeyDownWithPreventScroll(e, treeViewContainer)"
-         @oncontextmenu:preventDefault="true"
-         @oncontextmenu:stopPropagation="true"
-         @oncontextmenu="(e) => HandleTreeViewOnContextMenu(e, treeViewContainer?.Key ?? Key<TreeViewContainer>.Empty, null)">
+<div id="@_htmlId"
+     class="@GetContainerElementCssClass(_treeViewContainer)"
+     style="@CssStyleString"
+     tabindex="0"
+     @ref="_treeViewStateDisplayElementReference">
 
-        @if (treeViewContainer is null)
+    @if (_treeViewContainer is null)
+    {
+        <div>@nameof(_treeViewContainer) was null</div>
+    }
+    else
+    {
+        var flatNodeList = GetFlatNodes();
+        foreach (var node in GetFlatNodes())
         {
-            <div>@nameof(treeViewContainer) was null</div>
-        }
-        else
-        {
-            var flatNodeList = GetFlatNodes();
-            foreach (var node in GetFlatNodes())
-            {
-                <div class="@GetNodeElementCssClass(node)">
-                    @{
-                    	var appOptionsState = CommonService.GetAppOptionsState();
-                    
-                    	var iconDriver = new IconDriver(
-    						appOptionsState.Options.IconSizeInPixels,
-    						appOptionsState.Options.IconSizeInPixels);
-                    }
-    
-                    @if (node.IsExpandable)
+            <div class="@GetNodeElementCssClass(node)"
+                 style="padding-left: @(node.Depth * OffsetPerDepthInPixels)px; height: @_lineHeight;">
+                @{
+                	var appOptionsState = CommonService.GetAppOptionsState();
+                
+                	var iconDriver = new IconDriver(
+						appOptionsState.Options.IconSizeInPixels,
+						appOptionsState.Options.IconSizeInPixels);
+                }
+
+                @if (node.IsExpandable)
+                {
+                    if (node.IsExpanded)
                     {
-                        if (node.IsExpanded)
-                        {
-                            @IconChevronDownFragment.Render(iconDriver)
-                        }
-                        else
-                        {
-                            @IconChevronRightFragment.Render(iconDriver)
-                        }
+                        @IconChevronDownFragment.Render(iconDriver)
                     }
                     else
                     {
-                        @IconBlankFragment.Render(iconDriver)
+                        @IconChevronRightFragment.Render(iconDriver)
                     }
-                    
-                    @node.GetIcon(iconDriver)
-                    
-                    @node.GetDisplayText()
-                </div>
-            }
+                }
+                else
+                {
+                    @IconBlankFragment.Render(iconDriver)
+                }
+                
+                @node.GetIcon(iconDriver)
+                
+                @node.GetDisplayText()
+            </div>
         }
-    </div>
-}
+    }
+</div>
