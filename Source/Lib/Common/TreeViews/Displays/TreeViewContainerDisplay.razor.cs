@@ -184,6 +184,14 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         
         Index = IndexBasicValidation(indexLocal);
         
+        var relativeX = eventArgsMouseDown.X - _treeViewMeasurements.BoundingClientRectLeft + eventArgsMouseDown.ScrollLeft;
+        relativeX = Math.Max(0, relativeX);
+        
+        if (Math.Abs(relativeX - _flatNodeList[Index].Depth * OffsetPerDepthInPixels) <= 5)
+        {
+            HandleChevronOnClick(eventArgsMouseDown);
+        }
+        
         CommonService.TreeView_SetActiveNodeAction(
             _treeViewContainer.Key,
             _flatNodeList[Index],
@@ -318,6 +326,29 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     private int GetRootDepth(TreeViewNoType rootNode)
     {
         return rootNode is TreeViewAdhoc ? -1 : 0;
+    }
+    
+    private void HandleChevronOnClick(TreeViewEventArgsMouseDown eventArgsMouseDown)
+    {
+        Console.WriteLine("HandleChevronOnClick");
+        /*if (!localTreeViewNoType.IsExpandable)
+            return;
+
+        localTreeViewNoType.IsExpanded = !localTreeViewNoType.IsExpanded;
+
+        if (localTreeViewNoType.IsExpanded)
+        {
+            TreeViewNodeParameter.RenderBatch.CommonService.Enqueue(new CommonWorkArgs
+            {
+                WorkKind = CommonWorkKind.TreeView_HandleExpansionChevronOnMouseDown,
+                TreeViewNoType = localTreeViewNoType,
+                TreeViewContainer = TreeViewNodeParameter.RenderBatch.TreeViewContainer
+            });
+        }
+        else
+        {
+            TreeViewNodeParameter.RenderBatch.CommonService.TreeView_ReRenderNodeAction(TreeViewNodeParameter.RenderBatch.TreeViewContainer.Key, localTreeViewNoType);
+        }*/
     }
 
     private async Task HandleTreeViewOnKeyDownWithPreventScroll(

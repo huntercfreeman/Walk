@@ -30,21 +30,23 @@
 						appOptionsState.Options.IconSizeInPixels);
                 }
 
-                @if (node.IsExpandable)
-                {
-                    if (node.IsExpanded)
+                <span style="cursor: pointer;">
+                    @if (node.IsExpandable)
                     {
-                        @IconChevronDownFragment.Render(iconDriver)
+                        if (node.IsExpanded)
+                        {
+                            @IconChevronDownFragment.Render(iconDriver)
+                        }
+                        else
+                        {
+                            @IconChevronRightFragment.Render(iconDriver)
+                        }
                     }
                     else
                     {
-                        @IconChevronRightFragment.Render(iconDriver)
+                        @IconBlankFragment.Render(iconDriver)
                     }
-                }
-                else
-                {
-                    @IconBlankFragment.Render(iconDriver)
-                }
+                </span>
                 
                 @node.GetIcon(iconDriver)
                 
