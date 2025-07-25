@@ -30,7 +30,7 @@
             _horizontalRuleElementIndexHashSet.Add(i);
         }
         
-        <div class="@cssClass" style="height: @(_lineHeight)px;">
+        <div class="@cssClass" style="@_lineHeightCssStyle">
             
             @*@if (IconRenderFragment is not null)
             {
@@ -51,7 +51,7 @@
         {
             <CascadingValue Value="MenuOptionCallbacks">
                 <div class="di_menu-option-widget"
-                     style="height: @(WidgetHeight)px;"
+                     style="@_widgetHeightCssStyle"
                      @onclick:stopPropagation="true"
                      @ondblclick:stopPropagation="true"
                      @onmousedown:stopPropagation="true"
