@@ -805,7 +805,7 @@ public class TextEditorCommandDefaultFunctions
             new Dictionary<string, object?>
             {
                 {
-                    nameof(MenuDisplay.MenuRecord),
+                    nameof(MenuDisplay.Menu),
                     menu
                 }
             },
@@ -869,7 +869,7 @@ public class TextEditorCommandDefaultFunctions
             new Dictionary<string, object?>
             {
                 {
-                    nameof(MenuDisplay.MenuRecord),
+                    nameof(MenuDisplay.Menu),
                     menu
                 }
             },

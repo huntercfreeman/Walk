@@ -15,4 +15,5 @@ public record MenuRecord(IReadOnlyList<MenuOptionRecord> MenuOptionList)
     };
     
     public int InitialActiveMenuOptionRecordIndex { get; set; }
+    public bool ShouldImmediatelyTakeFocus { get; set; } = true;
 }

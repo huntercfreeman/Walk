@@ -279,7 +279,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
             new Dictionary<string, object?>
             {
                 {
-                    nameof(MenuDisplay.MenuRecord),
+                    nameof(MenuDisplay.Menu),
                     menu
                 }
             },

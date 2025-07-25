@@ -1178,7 +1178,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     new Dictionary<string, object?>
                     {
                         {
-                            nameof(MenuDisplay.MenuRecord),
+                            nameof(MenuDisplay.Menu),
                             menu
                         }
                     },

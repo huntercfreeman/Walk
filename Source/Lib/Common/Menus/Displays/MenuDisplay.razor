@@ -1,6 +1,6 @@
-<div class="di_menu-display" tabindex="0" @onkeydown="HandleOnKeyDown">
+<div id="@_htmlId" class="di_menu-display" tabindex="0">
     @{
-        var menuOptionsGroupedByKindList = MenuRecord.MenuOptionList
+        var menuOptionsGroupedByKindList = Menu.MenuOptionList
             .GroupBy(x => x.MenuOptionKind)
             .SelectMany(x => x);
     
@@ -13,9 +13,9 @@
 			appOptionsState.Options.IconSizeInPixels);
     }
     
-    @for (var i = 0; i < MenuRecord.MenuOptionList.Count; i++)
+    @for (var i = 0; i < Menu.MenuOptionList.Count; i++)
     {
-        var menuOption = MenuRecord.MenuOptionList[i];
+        var menuOption = Menu.MenuOptionList[i];
         
         var cssClass = _activeIndex == i
             ? "di_menu-option-display di_unselectable di_active"
