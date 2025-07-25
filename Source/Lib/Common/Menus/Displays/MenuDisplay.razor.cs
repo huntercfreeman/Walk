@@ -11,8 +11,6 @@ public partial class MenuDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private CommonService CommonService { get; set; } = null!;
-    [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public MenuRecord Menu { get; set; } = null!;
@@ -39,6 +37,31 @@ public partial class MenuDisplay : ComponentBase, IDisposable
     private int _indexMenuOptionShouldDisplayWidget = -1;
     private int WidgetHeight => 4 * _lineHeight;
     
+    /// <summary>This property is from the old code, I have to decide on how to rewrite this part</summary>
+    private MenuOptionCallbacks MenuOptionCallbacks => new(
+        () => HideWidgetAsync(null),
+        HideWidgetAsync);
+    
+    /// <summary>This method is from the old code, I have to decide on how to rewrite this part</summary>
+    private async Task HideWidgetAsync(Action? onAfterWidgetHidden)
+    {
+        _indexMenuOptionShouldDisplayWidget = -1;
+        await InvokeAsync(StateHasChanged);
+
+        if (onAfterWidgetHidden is null) // Only hide the widget
+        {
+            await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
+                "walkCommon.focusHtmlElementById",
+                _htmlId,
+                /*preventScroll:*/ true);
+        }
+        else // Hide the widget AND dispose the menu
+        {
+            onAfterWidgetHidden.Invoke();
+            CommonService.Dropdown_ReduceClearAction();
+        }
+    }
+    
     protected override void OnInitialized()
     {
         _dotNetHelper = DotNetObjectReference.Create(this);
@@ -52,14 +75,14 @@ public partial class MenuDisplay : ComponentBase, IDisposable
             // Do not ConfigureAwait(false) so that the UI doesn't change out from under you
             // before you finish setting up the events?
             // (is this a thing, I'm just presuming this would be true).
-            _menuMeasurements = await JsRuntime.InvokeAsync<MenuMeasurements>(
+            _menuMeasurements = await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeAsync<MenuMeasurements>(
                 "walkCommon.menuInitialize",
                 _dotNetHelper,
                 _htmlId);
             
             if (Menu.ShouldImmediatelyTakeFocus)
             {
-                await JsRuntime.InvokeVoidAsync(
+                await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
                     "walkCommon.focusHtmlElementById",
                     _htmlId,
                     /*preventScroll:*/ true);
@@ -104,6 +127,9 @@ public partial class MenuDisplay : ComponentBase, IDisposable
             case "End":
                 _activeIndex = Menu.MenuOptionList.Count - 1;
                 break;
+            case "Escape":
+                CommonService.Dropdown_ReduceClearAction();
+                break;
         }
         
         StateHasChanged();
@@ -133,7 +159,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
         var indexClicked = GetIndexClicked(eventArgsMouseDown);
         if (indexClicked == -1)
             return;
-    
+            
         StateHasChanged();
     }
     
@@ -159,13 +185,12 @@ public partial class MenuDisplay : ComponentBase, IDisposable
         else if (option.OnClickFunc is not null)
         {
             await option.OnClickFunc.Invoke();
+            CommonService.Dropdown_ReduceClearAction();
         }
         else if (option.WidgetRendererType is not null)
         {
             _indexMenuOptionShouldDisplayWidget = indexClicked;
         }
-        
-        StateHasChanged();
     }
     
     [JSInvokable]

@@ -49,7 +49,7 @@
         
         @if (i == _indexMenuOptionShouldDisplayWidget)
         {
-            @*<CascadingValue Value="MenuOptionCallbacks">
+            <CascadingValue Value="MenuOptionCallbacks">
                 <div class="di_menu-option-widget"
                      style="height: @(WidgetHeight)px;"
                      @onclick:stopPropagation="true"
@@ -62,7 +62,7 @@
                     <DynamicComponent Type="menuOption.WidgetRendererType"
                                       Parameters="menuOption.WidgetParameterMap"/>
                 </div>
-            </CascadingValue>*@
+            </CascadingValue>
         }
     }
 </div>

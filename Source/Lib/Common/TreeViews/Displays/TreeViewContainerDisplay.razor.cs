@@ -14,8 +14,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private CommonService CommonService { get; set; } = null!;
-    [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<TreeViewContainer> TreeViewContainerKey { get; set; } = Key<TreeViewContainer>.Empty;
@@ -87,7 +85,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             // Do not ConfigureAwait(false) so that the UI doesn't change out from under you
             // before you finish setting up the events?
             // (is this a thing, I'm just presuming this would be true).
-            _treeViewMeasurements = await JsRuntime.InvokeAsync<TreeViewMeasurements>(
+            _treeViewMeasurements = await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeAsync<TreeViewMeasurements>(
                 "walkCommon.treeViewInitialize",
                 _dotNetHelper,
                 _htmlId);
@@ -169,7 +167,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             null,
             async () =>
             {
-                _treeViewMeasurements = await JsRuntime.InvokeAsync<TreeViewMeasurements>(
+                _treeViewMeasurements = await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeAsync<TreeViewMeasurements>(
                     "walkCommon.focusAndMeasureTreeView",
                     _htmlId,
                     /*preventScroll:*/ false);
@@ -200,11 +198,11 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
                 
                 if (top < eventArgsKeyDown.ScrollTop)
                 {
-                    await JsRuntime.InvokeVoidAsync("walkCommon.treeViewScrollVertical", _htmlId, top - eventArgsKeyDown.ScrollTop);
+                    await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync("walkCommon.treeViewScrollVertical", _htmlId, top - eventArgsKeyDown.ScrollTop);
                 }
                 else if (top + _lineHeight > eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight)
                 {
-                    await JsRuntime.InvokeVoidAsync("walkCommon.treeViewScrollVertical", _htmlId, top - (eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight) + _lineHeight);
+                    await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync("walkCommon.treeViewScrollVertical", _htmlId, top - (eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight) + _lineHeight);
                 }
                 break;
             }
@@ -262,7 +260,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             _flatNodeList[IndexActiveNode],
             async () =>
             {
-                _treeViewMeasurements = await JsRuntime.InvokeAsync<TreeViewMeasurements>(
+                _treeViewMeasurements = await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeAsync<TreeViewMeasurements>(
                     "walkCommon.focusAndMeasureTreeView",
                     _htmlId,
                     /*preventScroll:*/ false);
@@ -345,7 +343,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             _flatNodeList[IndexActiveNode],
             async () =>
             {
-                _treeViewMeasurements = await JsRuntime.InvokeAsync<TreeViewMeasurements>(
+                _treeViewMeasurements = await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeAsync<TreeViewMeasurements>(
                     "walkCommon.focusAndMeasureTreeView",
                     _htmlId,
                     /*preventScroll:*/ false);
@@ -381,7 +379,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             _flatNodeList[IndexActiveNode],
             async () =>
             {
-                _treeViewMeasurements = await JsRuntime.InvokeAsync<TreeViewMeasurements>(
+                _treeViewMeasurements = await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeAsync<TreeViewMeasurements>(
                     "walkCommon.focusAndMeasureTreeView",
                     _htmlId,
                     /*preventScroll:*/ false);
