@@ -17,7 +17,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
 
     /// <summary>Pixels</summary>
     private int _lineHeight = 20;
-    private string _lineHeightCssStyle = $"height: {_lineHeight}px";
+    private string _lineHeightCssStyle;
     
     private Guid _guidId = Guid.NewGuid();
     private string _htmlId = null!;
@@ -37,7 +37,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
     
     private int _indexMenuOptionShouldDisplayWidget = -1;
     private int WidgetHeight => 4 * _lineHeight;
-    private string _widgetHeightCssStyle = $"height: {WidgetHeight}px";
+    private string _widgetHeightCssStyle;
     
     /// <summary>This property is from the old code, I have to decide on how to rewrite this part</summary>
     private MenuOptionCallbacks MenuOptionCallbacks => new(
@@ -68,6 +68,9 @@ public partial class MenuDisplay : ComponentBase, IDisposable
     {
         _dotNetHelper = DotNetObjectReference.Create(this);
         _htmlId = $"luth_common_treeview-{_guidId}";
+        
+        _lineHeightCssStyle = $"height: {_lineHeight}px";
+        _widgetHeightCssStyle = $"height: {WidgetHeight}px";
     }
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
