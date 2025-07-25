@@ -796,6 +796,7 @@ public class TextEditorCommandDefaultFunctions
             menu = new MenuRecord(menuOptionList);
         
         menu.InitialActiveMenuOptionRecordIndex = initialActiveMenuOptionRecordIndex;
+        menu.ElementIdToRestoreFocusToOnClose = componentData.PrimaryCursorContentId;
         
         var dropdownRecord = new DropdownRecord(
             Key<DropdownRecord>.NewKey(),
@@ -860,6 +861,8 @@ public class TextEditorCommandDefaultFunctions
             editContext,
             modelModifier,
             viewModel);
+            
+        menu.ElementIdToRestoreFocusToOnClose = componentData.PrimaryCursorContentId;
 
         var dropdownRecord = new DropdownRecord(
             Key<DropdownRecord>.NewKey(),
