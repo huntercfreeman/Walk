@@ -107,7 +107,7 @@ public static class DropdownHelper
             new Dictionary<string, object?>
             {
                 {
-                    nameof(MenuDisplay.MenuRecord),
+                    nameof(MenuDisplay.Menu),
                     menu
                 }
             },

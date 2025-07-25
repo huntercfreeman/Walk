@@ -1,4 +1,4 @@
-namespace Walk.TextEditor.RazorLib.Autocompletes.Models;
+namespace Walk.Common.RazorLib.Menus.Models;
 
 public enum AutocompleteEntryKind
 {

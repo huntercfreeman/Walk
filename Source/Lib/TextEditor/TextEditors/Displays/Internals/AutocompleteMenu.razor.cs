@@ -1,3 +1,4 @@
+using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib;
@@ -28,8 +29,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
             new("No results", MenuOptionKind.Other)
         });
 
-    private ElementReference? _autocompleteMenuElementReference;
-    private MenuDisplay? _autocompleteMenuComponent;
+    private MenuDisplay? _menuDisplay;
     
     private Key<TextEditorComponentData> _componentDataKeyPrevious = Key<TextEditorComponentData>.Empty;
     private TextEditorComponentData? _componentData;
@@ -47,8 +47,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         if (componentData?.MenuShouldTakeFocus ?? false)
         {
             componentData.MenuShouldTakeFocus = false;
-                
-            await _autocompleteMenuComponent.SetFocusToFirstOptionInMenuAsync();
+            await _menuDisplay.SetFocusAndSetFirstOptionActiveAsync();
         }
     }
     
@@ -131,13 +130,28 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         if (!virtualizationResult.IsValid)
             return NoResultsMenuRecord;
     
+        var componentData = virtualizationResult.ViewModel.PersistentState.ComponentData;
+        string elementIdToRestoreFocusToOnClose;
+        if (componentData is null)
+            elementIdToRestoreFocusToOnClose = CommonFacts.RootHtmlElementId;
+        else
+            elementIdToRestoreFocusToOnClose = componentData.PrimaryCursorContentId;
+        
         try
         {
-            return virtualizationResult.Model.PersistentState.CompilerService.GetAutocompleteMenu(virtualizationResult, this);
+            var menu = virtualizationResult.Model.PersistentState.CompilerService.GetAutocompleteMenu(virtualizationResult, this);
+            menu.ShouldImmediatelyTakeFocus = false;
+            menu.UseIcons = true;
+            menu.ElementIdToRestoreFocusToOnClose = elementIdToRestoreFocusToOnClose;
+            return menu;
         }
         catch (Exception e)
         {
-            return NoResultsMenuRecord;
+            var menu = NoResultsMenuRecord;
+            menu.ShouldImmediatelyTakeFocus = false;
+            menu.UseIcons = true;
+            menu.ElementIdToRestoreFocusToOnClose = elementIdToRestoreFocusToOnClose;
+            return menu;
         }
     }
     
@@ -171,23 +185,29 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
                         autocompleteEntryList = otherAutocompleteEntryList;
                     }
 
-                    menuOptionRecordsList = autocompleteEntryList.Select(entry => new MenuOptionRecord(
-                        entry.DisplayName,
-                        MenuOptionKind.Other,
-                        () => SelectMenuOption(() =>
-                        {
-                            if (entry.AutocompleteEntryKind != AutocompleteEntryKind.Snippet)
-                                InsertAutocompleteMenuOption(word, entry, virtualizationResult.ViewModel);
-                                
-                            return entry.SideEffectFunc?.Invoke();
-                        }),
-                        widgetParameterMap: new Dictionary<string, object?>
-                        {
+                    menuOptionRecordsList = autocompleteEntryList.Select(entry =>
+                    {
+                        var menuOptionRecord = new MenuOptionRecord(
+                            entry.DisplayName,
+                            MenuOptionKind.Other,
+                            () => SelectMenuOption(() =>
                             {
-                                nameof(AutocompleteEntry),
-                                entry
-                            }
-                        }))
+                                if (entry.AutocompleteEntryKind != AutocompleteEntryKind.Snippet)
+                                    InsertAutocompleteMenuOption(word, entry, virtualizationResult.ViewModel);
+                                    
+                                return entry.SideEffectFunc?.Invoke();
+                            }),
+                            widgetParameterMap: new Dictionary<string, object?>
+                            {
+                                {
+                                    nameof(AutocompleteEntry),
+                                    entry
+                                }
+                            });
+                        
+                        menuOptionRecord.IconKind = entry.AutocompleteEntryKind;
+                        return menuOptionRecord;
+                    })
                     .ToList();
                 }
 

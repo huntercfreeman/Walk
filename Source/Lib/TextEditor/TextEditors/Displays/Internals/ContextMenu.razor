@@ -9,10 +9,6 @@
 	     class="di_ide_text-editor-context-menu"
 	     @onkeydown="HandleOnKeyDown">
 	
-	    <CascadingValue Name="ReturnFocusToParentFuncAsync"
-	                    Value="ReturnFocusToThisAsync">
-	        
-	        <MenuDisplay MenuRecord="GetMenuRecord()"/>
-	    </CascadingValue>
+        <MenuDisplay Menu="GetMenuRecord()"/>
 	</div>
 }

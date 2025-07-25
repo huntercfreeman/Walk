@@ -795,6 +795,9 @@ public class TextEditorCommandDefaultFunctions
         else
             menu = new MenuRecord(menuOptionList);
         
+        menu.InitialActiveMenuOptionRecordIndex = initialActiveMenuOptionRecordIndex;
+        menu.ElementIdToRestoreFocusToOnClose = componentData.PrimaryCursorContentId;
+        
         var dropdownRecord = new DropdownRecord(
             Key<DropdownRecord>.NewKey(),
             cursorDimensions.LeftInPixels,
@@ -803,12 +806,8 @@ public class TextEditorCommandDefaultFunctions
             new Dictionary<string, object?>
             {
                 {
-                    nameof(MenuDisplay.MenuRecord),
+                    nameof(MenuDisplay.Menu),
                     menu
-                },
-                {
-                    nameof(MenuDisplay.InitialActiveMenuOptionRecordIndex),
-                    initialActiveMenuOptionRecordIndex
                 }
             },
             // TODO: this callback when the dropdown closes is suspect.
@@ -862,6 +861,8 @@ public class TextEditorCommandDefaultFunctions
             editContext,
             modelModifier,
             viewModel);
+            
+        menu.ElementIdToRestoreFocusToOnClose = componentData.PrimaryCursorContentId;
 
         var dropdownRecord = new DropdownRecord(
             Key<DropdownRecord>.NewKey(),
@@ -871,7 +872,7 @@ public class TextEditorCommandDefaultFunctions
             new Dictionary<string, object?>
             {
                 {
-                    nameof(MenuDisplay.MenuRecord),
+                    nameof(MenuDisplay.Menu),
                     menu
                 }
             },

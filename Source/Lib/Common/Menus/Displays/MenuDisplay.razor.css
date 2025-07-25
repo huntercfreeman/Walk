@@ -1,3 +1,33 @@
-﻿.di_menu-display:focus {
+.di_menu-display:focus {
     outline: solid var(--di_menu-display-focus-outline-size) var(--di_outline-with-focus-color);
+}
+
+.di_menu-option-widget {
+    padding: 0 2px;
+    margin: 0 2px;
+    width: 100%;
+}
+
+.di_menu-option-display {
+    position: relative;
+    white-space: nowrap;
+    cursor: default;
+    padding: 0 var(--di_menu-option-display-padding-width);
+}
+
+.di_menu-option-display.di_active {
+    background-color: var(--di_primary-hover-background-color);
+}
+
+.di_menu-option-display:hover {
+    background-color: var(--di_primary-hover-background-color);
+}
+
+.di_menu-option-display:focus {
+    outline: solid var(--di_menu-option-display-focus-outline-size) var(--di_outline-with-focus-color);
+}
+
+.di_menu-option-icon {
+    margin-right: var(--di_menu-option-display-padding-width);
+    display: inline;
 }

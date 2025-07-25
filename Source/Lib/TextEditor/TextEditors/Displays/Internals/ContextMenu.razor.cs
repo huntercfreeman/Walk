@@ -130,11 +130,23 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 
     private MenuRecord GetMenuRecord()
     {
+        MenuRecord menu;
+    
         var virtualizationResult = GetVirtualizationResult();
         if (!virtualizationResult.IsValid)
-            return new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+        {
+            menu = new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+        }
+        else
+        {
+            menu = virtualizationResult.Model.PersistentState.CompilerService.GetContextMenu(virtualizationResult, this);
             
-        return virtualizationResult.Model.PersistentState.CompilerService.GetContextMenu(virtualizationResult, this);
+            var componentData = virtualizationResult.ViewModel.PersistentState.ComponentData;
+            if (componentData is not null)
+                menu.ElementIdToRestoreFocusToOnClose = componentData.PrimaryCursorContentId;
+        }
+        
+        return menu;
     }
     
     public MenuRecord GetDefaultMenuRecord()

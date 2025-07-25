@@ -24,4 +24,5 @@ public record MenuOptionRecord
     public MenuRecord? SubMenu { get; set; }
     public Type? WidgetRendererType { get; init; }
     public Dictionary<string, object?>? WidgetParameterMap { get; init; }
+    public AutocompleteEntryKind IconKind { get; set; }
 }

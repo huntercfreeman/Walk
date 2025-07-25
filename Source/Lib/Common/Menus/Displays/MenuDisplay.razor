@@ -1,63 +1,90 @@
-<div class="di_menu-display"
-     tabindex="-1"
-     @ref="_menuDisplayElementReference"
-     @onclick:stopPropagation="true"
-     @ondblclick:stopPropagation="true"
-     @onkeydownwithpreventscroll:stopPropagation="true"
-     @onkeydown:stopPropagation="true"
-     @onkeydown:preventDefault="true"
-     @onkeydown="HandleOnKeyDownAsync"
-     @oncontextmenu:preventDefault="true"
-     @oncontextmenu:stopPropagation="true">
-     
-    <CascadingValue Value="RestoreFocusToThisMenuAsync" Name="ReturnFocusToParentFuncAsync">
-        @{
-            if (GroupByMenuOptionKind)
-            {
-                var menuOptionsGroupedByKindList = MenuRecord.MenuOptionList
-                    .GroupBy(x => x.MenuOptionKind)
-                    .ToList();
+@using Walk.Common.RazorLib.Menus.Models;
 
-                var cumulativeIndex = 0;
-                
-                for (int i = 0; i < menuOptionsGroupedByKindList.Count; i++)
-                {
-                    var groupIndex = i;
-                    
-                    var group = menuOptionsGroupedByKindList[groupIndex];
-                    
-                    var menuOptionList = group.ToList();
-                    
-                    for (var j = 0; j < menuOptionList.Count; j++)
-                    {
-                        var menuOptionIndex = j;
-                        var menuOption = menuOptionList[menuOptionIndex];
+<div id="@_htmlId" class="di_menu-display" tabindex="0">
+    @{
+        _horizontalRuleElementIndexHashSet.Clear();
+    
+        var menuOptionsGroupedByKindList = Menu.MenuOptionList
+            .GroupBy(x => x.MenuOptionKind)
+            .SelectMany(x => x);
+    
+        var previousKind = menuOptionsGroupedByKindList.FirstOrDefault()?.MenuOptionKind ?? Walk.Common.RazorLib.Menus.Models.MenuOptionKind.Create;
+        
+        var appOptionsState = CommonService.GetAppOptionsState();
+    
+    	var iconDriver = new IconDriver(
+			appOptionsState.Options.IconSizeInPixels,
+			appOptionsState.Options.IconSizeInPixels);
+    }
+    
+    @for (var i = 0; i < Menu.MenuOptionList.Count; i++)
+    {
+        var menuOption = Menu.MenuOptionList[i];
+        
+        var cssClass = _activeIndex == i
+            ? "di_menu-option-display di_unselectable di_active"
+            : "di_menu-option-display di_unselectable";
 
-                        <MenuOptionDisplay MenuOptionRecord="@menuOption"
-                                           ActiveMenuOptionRecordIndex="@_activeMenuOptionRecordIndex"
-                                           Index="cumulativeIndex++"
-                                           IconRenderFragment="IconRenderFragment"/>
-                    }
-
-                    if (groupIndex != menuOptionsGroupedByKindList.Count - 1)
-                    {
-                        <hr class="di_hr"/>
-                    }
-                }
-            }
-            else
-            {
-                for (var i = 0; i < MenuRecord.MenuOptionList.Count; i++)
-                {
-                    var index = i;
-                    var menuOption = MenuRecord.MenuOptionList[index];
-
-                    <MenuOptionDisplay MenuOptionRecord="@menuOption"
-                                       ActiveMenuOptionRecordIndex="@_activeMenuOptionRecordIndex"
-                                       Index="index"
-                                       IconRenderFragment="IconRenderFragment"/>
-                }
-            }
+        if (previousKind != menuOption.MenuOptionKind)
+        {
+            previousKind = menuOption.MenuOptionKind;
+            <hr class="di_hr"/>
+            _horizontalRuleElementIndexHashSet.Add(i);
         }
-    </CascadingValue>
+        
+        <div class="@cssClass" style="@_lineHeightCssStyle">
+            
+            @if (Menu.UseIcons)
+            {
+                <div class="di_menu-option-icon">
+                    @switch (menuOption.IconKind)
+                    {
+                        case AutocompleteEntryKind.Word:
+                            @IconSymbolKeyFragment.Render(iconDriver)
+                            break;
+                        case AutocompleteEntryKind.Snippet:
+                            @IconNoteFragment.Render(iconDriver)
+                            break;
+                        case AutocompleteEntryKind.Variable:
+                            @IconSymbolFieldFragment.Render(iconDriver)
+                            break;
+                        case AutocompleteEntryKind.Function:
+                            @IconSymbolMethodFragment.Render(iconDriver)
+                            break;
+                        case AutocompleteEntryKind.Type:
+                            @IconSymbolClassFragment.Render(iconDriver)
+                            break;
+                        case AutocompleteEntryKind.Namespace:
+                            @IconSymbolNamespaceFragment.Render(iconDriver)
+                            break;
+                    }
+                </div>
+            }
+            
+            @menuOption.DisplayName
+            
+            @if (menuOption.SubMenu is not null)
+            {
+                @IconChevronRightFragment.Render(iconDriver)
+            }
+        </div>
+        
+        @if (i == _indexMenuOptionShouldDisplayWidget)
+        {
+            <CascadingValue Value="MenuOptionCallbacks">
+                <div class="di_menu-option-widget"
+                     style="@_widgetHeightCssStyle"
+                     @onclick:stopPropagation="true"
+                     @ondblclick:stopPropagation="true"
+                     @onmousedown:stopPropagation="true"
+                     @onkeydown:stopPropagation="true"
+                     @onkeydownwithpreventscroll:stopPropagation="true"
+                     @oncontextmenu:stopPropagation="true">
+        
+                    <DynamicComponent Type="menuOption.WidgetRendererType"
+                                      Parameters="menuOption.WidgetParameterMap"/>
+                </div>
+            </CascadingValue>
+        }
+    }
 </div>

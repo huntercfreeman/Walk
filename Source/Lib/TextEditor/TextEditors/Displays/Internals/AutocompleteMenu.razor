@@ -5,57 +5,5 @@
 
 @if (renderBatch.IsValid)
 {
-	var appOptionsState = TextEditorService.CommonService.GetAppOptionsState();
-
-	var iconDriver = new IconDriver(
-		appOptionsState.Options.IconSizeInPixels,
-		appOptionsState.Options.IconSizeInPixels);
-
-	<div @ref="_autocompleteMenuElementReference"
-	     tab-index="-1"
-	     class="di_ide_text-editor-autocomplete-menu"
-	     id="@HTML_ELEMENT_ID"
-	     @onkeydown="HandleOnKeyDown">
-	    
-	    <CascadingValue Name="ReturnFocusToParentFuncAsync"
-	                    Value="ReturnFocusToThisAsync">
-	        
-	        <MenuDisplay @ref="_autocompleteMenuComponent" 
-	                     MenuRecord="GetMenuRecord()"
-	                     FocusOnAfterRenderAsync="false"
-	                     Context="menuOption">
-	
-	            <IconRenderFragment>
-	                @{
-	                    if ((menuOption.WidgetParameterMap?.TryGetValue(
-	                            nameof(AutocompleteEntry), out var value) ?? false) &&
-	                        value is AutocompleteEntry autocompleteEntry)
-	                    {
-	                        switch (autocompleteEntry.AutocompleteEntryKind)
-	                        {
-	                            case AutocompleteEntryKind.Word:
-	                                @IconSymbolKeyFragment.Render(iconDriver)
-	                                break;
-	                            case AutocompleteEntryKind.Snippet:
-	                                @IconNoteFragment.Render(iconDriver)
-	                                break;
-	                            case AutocompleteEntryKind.Variable:
-	                                @IconSymbolFieldFragment.Render(iconDriver)
-	                                break;
-	                            case AutocompleteEntryKind.Function:
-	                                @IconSymbolMethodFragment.Render(iconDriver)
-	                                break;
-	                            case AutocompleteEntryKind.Type:
-	                                @IconSymbolClassFragment.Render(iconDriver)
-	                                break;
-                                case AutocompleteEntryKind.Namespace:
-	                                @IconSymbolNamespaceFragment.Render(iconDriver)
-	                                break;
-	                        }
-	                    }
-	                }
-	            </IconRenderFragment>
-	        </MenuDisplay>
-	    </CascadingValue>
-	</div>
+    <MenuDisplay @ref="_menuDisplay" Menu="GetMenuRecord()"/>
 }

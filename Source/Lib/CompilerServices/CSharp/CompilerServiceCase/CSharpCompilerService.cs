@@ -415,7 +415,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                             }
                             
                             return new MenuRecord(
-                                autocompleteEntryList.Select(entry => new MenuOptionRecord(
+                                autocompleteEntryList.Select(entry =>
+                                {
+                                    var menuOptionRecord = new MenuOptionRecord(
                                         entry.DisplayName,
                                         MenuOptionKind.Other,
                                         () => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask,
@@ -425,8 +427,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                                 nameof(AutocompleteEntry),
                                                 entry
                                             }
-                                        }))
-                                    .ToList());
+                                        });
+                                    menuOptionRecord.IconKind = entry.AutocompleteEntryKind;
+                                    return menuOptionRecord;
+                                })
+                                .ToList());
                         }
                         
                         return null;
@@ -565,7 +570,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             }
         
             return new MenuRecord(
-                autocompleteEntryList.Select(entry => new MenuOptionRecord(
+                autocompleteEntryList.Select(entry =>
+                {
+                    var menuOptionRecord = new MenuOptionRecord(
                         entry.DisplayName,
                         MenuOptionKind.Other,
                         () => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask,
@@ -575,8 +582,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                 nameof(AutocompleteEntry),
                                 entry
                             }
-                        }))
-                    .ToList());
+                        });
+                    
+                    menuOptionRecord.IconKind = entry.AutocompleteEntryKind;
+                    return menuOptionRecord;
+                })
+                .ToList());
         }
         
         return null;
@@ -1168,6 +1179,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 else
                     menu = new MenuRecord(menuOptionList);
                 
+                menu.InitialActiveMenuOptionRecordIndex = initialActiveMenuOptionRecordIndex;
+                
                 var dropdownRecord = new DropdownRecord(
                     Key<DropdownRecord>.NewKey(),
                     cursorDimensions.LeftInPixels,
@@ -1176,12 +1189,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     new Dictionary<string, object?>
                     {
                         {
-                            nameof(MenuDisplay.MenuRecord),
+                            nameof(MenuDisplay.Menu),
                             menu
-                        },
-                        {
-                            nameof(MenuDisplay.InitialActiveMenuOptionRecordIndex),
-                            initialActiveMenuOptionRecordIndex
                         }
                     },
                     // TODO: this callback when the dropdown closes is suspect.

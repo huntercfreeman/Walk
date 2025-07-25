@@ -1,3 +1,5 @@
+using Walk.Common.RazorLib.Menus.Models;
+
 namespace Walk.TextEditor.RazorLib.Autocompletes.Models;
 
 public struct AutocompleteEntry
