@@ -135,12 +135,14 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         {
             var menu = virtualizationResult.Model.PersistentState.CompilerService.GetAutocompleteMenu(virtualizationResult, this);
             menu.ShouldImmediatelyTakeFocus = false;
+            menu.UseIcons = true;
             return menu;
         }
         catch (Exception e)
         {
             var menu = NoResultsMenuRecord;
             menu.ShouldImmediatelyTakeFocus = false;
+            menu.UseIcons = true;
             return menu;
         }
     }
@@ -175,23 +177,29 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
                         autocompleteEntryList = otherAutocompleteEntryList;
                     }
 
-                    menuOptionRecordsList = autocompleteEntryList.Select(entry => new MenuOptionRecord(
-                        entry.DisplayName,
-                        MenuOptionKind.Other,
-                        () => SelectMenuOption(() =>
-                        {
-                            if (entry.AutocompleteEntryKind != AutocompleteEntryKind.Snippet)
-                                InsertAutocompleteMenuOption(word, entry, virtualizationResult.ViewModel);
-                                
-                            return entry.SideEffectFunc?.Invoke();
-                        }),
-                        widgetParameterMap: new Dictionary<string, object?>
-                        {
+                    menuOptionRecordsList = autocompleteEntryList.Select(entry =>
+                    {
+                        var menuOptionRecord = new MenuOptionRecord(
+                            entry.DisplayName,
+                            MenuOptionKind.Other,
+                            () => SelectMenuOption(() =>
                             {
-                                nameof(AutocompleteEntry),
-                                entry
-                            }
-                        }))
+                                if (entry.AutocompleteEntryKind != AutocompleteEntryKind.Snippet)
+                                    InsertAutocompleteMenuOption(word, entry, virtualizationResult.ViewModel);
+                                    
+                                return entry.SideEffectFunc?.Invoke();
+                            }),
+                            widgetParameterMap: new Dictionary<string, object?>
+                            {
+                                {
+                                    nameof(AutocompleteEntry),
+                                    entry
+                                }
+                            });
+                        
+                        menuOptionRecord.IconKind = entry.AutocompleteEntryKind;
+                        return menuOptionRecord;
+                    })
                     .ToList();
                 }
 

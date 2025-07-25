@@ -16,4 +16,5 @@ public record MenuRecord(IReadOnlyList<MenuOptionRecord> MenuOptionList)
     
     public int InitialActiveMenuOptionRecordIndex { get; set; } = -1;
     public bool ShouldImmediatelyTakeFocus { get; set; } = true;
+    public bool UseIcons { get; set; }
 }

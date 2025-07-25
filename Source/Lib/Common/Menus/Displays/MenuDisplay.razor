@@ -1,3 +1,5 @@
+@using Walk.Common.RazorLib.Menus.Models;
+
 <div id="@_htmlId" class="di_menu-display" tabindex="0">
     @{
         _horizontalRuleElementIndexHashSet.Clear();
@@ -32,12 +34,32 @@
         
         <div class="@cssClass" style="@_lineHeightCssStyle">
             
-            @*@if (IconRenderFragment is not null)
+            @if (Menu.UseIcons)
             {
                 <div class="di_menu-option-icon">
-                    @IconRenderFragment(menuOption)
+                    @switch (menuOption.IconKind)
+                    {
+                        case AutocompleteEntryKind.Word:
+                            @IconSymbolKeyFragment.Render(iconDriver)
+                            break;
+                        case AutocompleteEntryKind.Snippet:
+                            @IconNoteFragment.Render(iconDriver)
+                            break;
+                        case AutocompleteEntryKind.Variable:
+                            @IconSymbolFieldFragment.Render(iconDriver)
+                            break;
+                        case AutocompleteEntryKind.Function:
+                            @IconSymbolMethodFragment.Render(iconDriver)
+                            break;
+                        case AutocompleteEntryKind.Type:
+                            @IconSymbolClassFragment.Render(iconDriver)
+                            break;
+                        case AutocompleteEntryKind.Namespace:
+                            @IconSymbolNamespaceFragment.Render(iconDriver)
+                            break;
+                    }
                 </div>
-            }*@
+            }
             
             @menuOption.DisplayName
             
