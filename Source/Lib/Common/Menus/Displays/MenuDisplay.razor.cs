@@ -25,8 +25,16 @@ public partial class MenuDisplay : ComponentBase, IDisposable
 
     private int _activeIndex;
     
+    private readonly HashSet<int> _horizontalRuleElementIndexHashSet = new();
+    
     private MenuMeasurements _menuMeasurements;
     private DotNetObjectReference<MenuDisplay>? _dotNetHelper;
+    
+    /// <summary>In pixels (px)</summary>
+    private int _horizontalRuleTotalVerticalMargin = 10;
+    /// <summary>In pixels (px)</summary>
+    private double _horizontalRuleHeight = 1.5;
+    private double HorizontalRuleVerticalOffset => _horizontalRuleTotalVerticalMargin + _horizontalRuleHeight;
     
     protected override void OnInitialized()
     {
@@ -76,6 +84,8 @@ public partial class MenuDisplay : ComponentBase, IDisposable
                 _activeIndex--;
                 break;
         }
+        
+        StateHasChanged();
     }
     
     [JSInvokable]
@@ -96,6 +106,14 @@ public partial class MenuDisplay : ComponentBase, IDisposable
             eventArgsMouseDown.ViewHeight,
             eventArgsMouseDown.BoundingClientRectLeft,
             eventArgsMouseDown.BoundingClientRectTop);
+        
+        var indexClicked = GetIndexClicked(eventArgsMouseDown);
+        Console.WriteLine(indexClicked);
+        
+        if (indexClicked == -1)
+        {
+            return;
+        }
     }
     
     [JSInvokable]
@@ -116,6 +134,51 @@ public partial class MenuDisplay : ComponentBase, IDisposable
             eventArgsMouseDown.ViewHeight,
             eventArgsMouseDown.BoundingClientRectLeft,
             eventArgsMouseDown.BoundingClientRectTop);
+    }
+    
+    /// <summary>
+    /// TODO: This seems to be slightly inaccurate...
+    /// ...I'm going to try checking if difference is less than 1.1px then return -1, don't do anything.
+    ///
+    /// Must be on the UI thread so the method safely can read '_horizontalRuleElementIndexHashSet'.
+    /// </summary>
+    private int GetIndexClicked(MenuEventArgsMouseDown eventArgsMouseDown)
+    {
+        
+        var relativeY = eventArgsMouseDown.Y - _menuMeasurements.BoundingClientRectTop + eventArgsMouseDown.ScrollTop;
+        relativeY = Math.Max(0, relativeY);
+        
+        Console.WriteLine(relativeY);
+        
+        double buildHeight = 0.0;
+        
+        int optionIndex = 0;
+        
+        for (; optionIndex < Menu.MenuOptionList.Count; optionIndex++)
+        {
+            if (_horizontalRuleElementIndexHashSet.Contains(optionIndex))
+                buildHeight += HorizontalRuleVerticalOffset;
+        
+            buildHeight += _lineHeight;
+            
+            if (buildHeight > relativeY)
+                break;
+        }
+        
+        if (Math.Abs(buildHeight - relativeY) < 1.1)
+            return -1;
+        
+        return IndexBasicValidation(optionIndex);
+    }
+    
+    private int IndexBasicValidation(int indexLocal)
+    {
+        if (indexLocal < 0)
+            return 0;
+        else if (indexLocal >= Menu.MenuOptionList.Count)
+            return Menu.MenuOptionList.Count - 1;
+        
+        return indexLocal;
     }
     
     public void Dispose()

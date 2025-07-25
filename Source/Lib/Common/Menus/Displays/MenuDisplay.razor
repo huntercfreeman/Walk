@@ -1,5 +1,7 @@
 <div id="@_htmlId" class="di_menu-display" tabindex="0">
     @{
+        _horizontalRuleElementIndexHashSet.Clear();
+    
         var menuOptionsGroupedByKindList = Menu.MenuOptionList
             .GroupBy(x => x.MenuOptionKind)
             .SelectMany(x => x);
@@ -25,10 +27,10 @@
         {
             previousKind = menuOption.MenuOptionKind;
             <hr class="di_hr"/>
+            _horizontalRuleElementIndexHashSet.Add(i);
         }
         
-        // anonymous lambdas as an event handler within a loop isn't a good idea, this is temporary
-        <div class="@cssClass">
+        <div class="@cssClass" style="height: @(_lineHeight)px;">
             
             @*@if (IconRenderFragment is not null)
             {
@@ -43,22 +45,24 @@
             {
                 @IconChevronRightFragment.Render(iconDriver)
             }
-        
-            @*@if (i == IndexMenuOptionShouldDisplayWidget)
-            {
-                <div class="di_menu-option-widget"
-                     @onclick:stopPropagation="true"
-                     @ondblclick:stopPropagation="true"
-                     @onkeydown:stopPropagation="true"
-                     @onkeydownwithpreventscroll:stopPropagation="true"
-                     @oncontextmenu:stopPropagation="true">
-        
-                    <CascadingValue Value="MenuOptionCallbacks">
-                        <DynamicComponent Type="MenuOptionRecord.WidgetRendererType"
-                                          Parameters="MenuOptionRecord.WidgetParameterMap"/>
-                    </CascadingValue>
-                </div>
-            }*@
         </div>
+        
+        /*@if (i == IndexMenuOptionShouldDisplayWidget)
+        {
+        @*
+            <div class="di_menu-option-widget"
+                 @onclick:stopPropagation="true"
+                 @ondblclick:stopPropagation="true"
+                 @onkeydown:stopPropagation="true"
+                 @onkeydownwithpreventscroll:stopPropagation="true"
+                 @oncontextmenu:stopPropagation="true">
+    
+                <CascadingValue Value="MenuOptionCallbacks">
+                    <DynamicComponent Type="MenuOptionRecord.WidgetRendererType"
+                                      Parameters="MenuOptionRecord.WidgetParameterMap"/>
+                </CascadingValue>
+            </div>
+        *@
+        }*/
     }
 </div>
