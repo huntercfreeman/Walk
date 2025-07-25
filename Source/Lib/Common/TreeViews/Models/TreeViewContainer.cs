@@ -35,4 +35,6 @@ public record TreeViewContainer
     public IReadOnlyList<TreeViewNoType> SelectedNodeList { get; init; }
     public Guid StateId { get; init; } = Guid.NewGuid();
     public string ActiveNodeElementId { get; }
+    /// <summary>Quite hacky</summary>
+    public string ElementIdOfComponentRenderingThis { get; set; }
 }

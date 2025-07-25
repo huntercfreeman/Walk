@@ -1,3 +1,12 @@
 @using Walk.Common.RazorLib.Menus.Displays
 
-<MenuDisplay Menu="GetMenuRecord(TreeViewCommandArgs)"/>
+@{
+    var menu = GetMenuRecord(TreeViewCommandArgs);
+    var elementIdOfComponentRenderingThis = TreeViewCommandArgs.TreeViewContainer?.ElementIdOfComponentRenderingThis;
+    if (!string.IsNullOrWhiteSpace(elementIdOfComponentRenderingThis))
+    {
+        menu.ElementIdToRestoreFocusToOnClose = elementIdOfComponentRenderingThis;
+    }
+}
+
+<MenuDisplay Menu="menu"/>
