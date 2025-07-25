@@ -145,6 +145,12 @@ public partial class MenuDisplay : ComponentBase, IDisposable
                     _activeIndex--;
                 }
                 break;
+            case "ArrowRight":
+                OpenSubmenu();
+                break;
+            case "ArrowLeft":
+                await Close();
+                break;
             case "Home":
                 _activeIndex = 0;
                 break;
@@ -159,7 +165,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
                 var option = Menu.MenuOptionList[_activeIndex];
                 if (option.SubMenu is not null)
                 {
-                    Console.WriteLine("option.SubMenu is not null");
+                    OpenSubmenu();
                 }
                 else if (option.OnClickFunc is not null)
                 {
@@ -217,11 +223,12 @@ public partial class MenuDisplay : ComponentBase, IDisposable
         if (indexClicked == -1)
             return;
 
+        _activeIndex = indexClicked;
         var option = Menu.MenuOptionList[indexClicked];
         
         if (option.SubMenu is not null)
         {
-            Console.WriteLine("option.SubMenu is not null");
+            OpenSubmenu();
         }
         else if (option.OnClickFunc is not null)
         {
@@ -285,6 +292,30 @@ public partial class MenuDisplay : ComponentBase, IDisposable
         return IndexBasicValidation(optionIndex);
     }
     
+    /// <summary>
+    /// TODO: Don't replicate this method, it is essentially the inverse of 'GetIndexClicked(...)'
+    ///
+    /// Must be on the UI thread so the method safely can read '_horizontalRuleElementIndexHashSet'.
+    /// </summary>
+    private double GetTopByIndex(int index)
+    {
+        double buildHeight = 0.0;
+        
+        int optionIndex = 0;
+        
+        for (; optionIndex < index; optionIndex++)
+        {
+            if (_horizontalRuleElementIndexHashSet.Contains(optionIndex))
+                buildHeight += HorizontalRuleVerticalOffset;
+            if (_indexMenuOptionShouldDisplayWidget == optionIndex)
+                buildHeight += WidgetHeight;
+        
+            buildHeight += _lineHeight;
+        }
+        
+        return buildHeight;
+    }
+    
     private int IndexBasicValidation(int indexLocal)
     {
         if (indexLocal < 0)
@@ -306,6 +337,29 @@ public partial class MenuDisplay : ComponentBase, IDisposable
                 Menu.ElementIdToRestoreFocusToOnClose,
                 /*preventScroll:*/ true);
         }
+    }
+    
+    private void OpenSubmenu()
+    {
+        var menuOption = Menu.MenuOptionList[_activeIndex];
+        menuOption.SubMenu.ElementIdToRestoreFocusToOnClose = _htmlId;
+        
+        var topByIndex = GetTopByIndex(_activeIndex);
+        
+        var submenuDropdown = new DropdownRecord(
+            Key<DropdownRecord>.NewKey(),
+            leftInitial: _menuMeasurements.BoundingClientRectLeft + _menuMeasurements.ViewWidth,
+            topInitial: _menuMeasurements.BoundingClientRectTop + topByIndex,
+            typeof(MenuDisplay),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(Menu),
+                    menuOption.SubMenu
+                }
+            },
+            restoreFocusOnClose: null);
+        CommonService.Dropdown_ReduceRegisterAction(submenuDropdown);
     }
     
     public void Dispose()
