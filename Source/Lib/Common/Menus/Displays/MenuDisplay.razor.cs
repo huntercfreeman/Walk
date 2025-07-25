@@ -22,7 +22,11 @@ public partial class MenuDisplay : ComponentBase, IDisposable
     private Guid _guidId = Guid.NewGuid();
     private string _htmlId = null!;
 
-    private int _activeIndex;
+    /// <summary>
+    /// Start at -1 so when menu opens user can choose to start at index '0' or 'count - 1' with ArrowDown or ArrowUp.
+    /// If MenuRecord.InitialActiveMenuOptionRecordIndex is not -1, then use the provided index as this initial value.
+    /// </summary>
+    private int _activeIndex = -1;
     
     private readonly HashSet<int> _horizontalRuleElementIndexHashSet = new();
     
@@ -66,6 +70,9 @@ public partial class MenuDisplay : ComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
+        if (Menu.InitialActiveMenuOptionRecordIndex != -1)
+            _activeIndex = Menu.InitialActiveMenuOptionRecordIndex;
+    
         _dotNetHelper = DotNetObjectReference.Create(this);
         _htmlId = $"luth_common_treeview-{_guidId}";
         
@@ -107,7 +114,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
         switch (eventArgsKeyDown.Key)
         {
             case "ArrowDown":
-                if (_activeIndex == Menu.MenuOptionList.Count - 1)
+                if (_activeIndex >= Menu.MenuOptionList.Count - 1)
                 {
                     _activeIndex = 0;
                 }
@@ -117,7 +124,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
                 }
                 break;
             case "ArrowUp":
-                if (_activeIndex == 0)
+                if (_activeIndex <= 0)
                 {
                     _activeIndex = Menu.MenuOptionList.Count - 1;
                 }

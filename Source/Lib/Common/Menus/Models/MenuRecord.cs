@@ -14,6 +14,6 @@ public record MenuRecord(IReadOnlyList<MenuOptionRecord> MenuOptionList)
         new("No menu options exist for this item.", MenuOptionKind.Other)
     };
     
-    public int InitialActiveMenuOptionRecordIndex { get; set; }
+    public int InitialActiveMenuOptionRecordIndex { get; set; } = -1;
     public bool ShouldImmediatelyTakeFocus { get; set; } = true;
 }

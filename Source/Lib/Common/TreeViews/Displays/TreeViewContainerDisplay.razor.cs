@@ -322,8 +322,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     [JSInvokable]
     public async Task ReceiveOnClick(TreeViewEventArgsMouseDown eventArgsMouseDown)
     {
-        Console.WriteLine("ReceiveOnClick");
-    
         _treeViewMeasurements = new TreeViewMeasurements(
             eventArgsMouseDown.ViewWidth,
             eventArgsMouseDown.ViewHeight,
