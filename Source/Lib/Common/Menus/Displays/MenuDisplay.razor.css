@@ -3,7 +3,9 @@
 }
 
 .di_menu-option-widget {
-    padding-bottom: 10px;
+    padding: 0 2px;
+    margin: 0 2px;
+    width: 100%;
 }
 
 .di_menu-option-display {

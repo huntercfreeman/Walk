@@ -17,41 +17,6 @@
 	     id="@HTML_ELEMENT_ID"
 	     @onkeydown="HandleOnKeyDown">
 	    
-        <MenuDisplay @ref="_autocompleteMenuComponent" 
-                     Menu="GetMenuRecord()"
-                     FocusOnAfterRenderAsync="false"
-                     Context="menuOption">
-
-            @*<IconRenderFragment>
-                @{
-                    if ((menuOption.WidgetParameterMap?.TryGetValue(
-                            nameof(AutocompleteEntry), out var value) ?? false) &&
-                        value is AutocompleteEntry autocompleteEntry)
-                    {
-                        switch (autocompleteEntry.AutocompleteEntryKind)
-                        {
-                            case AutocompleteEntryKind.Word:
-                                @IconSymbolKeyFragment.Render(iconDriver)
-                                break;
-                            case AutocompleteEntryKind.Snippet:
-                                @IconNoteFragment.Render(iconDriver)
-                                break;
-                            case AutocompleteEntryKind.Variable:
-                                @IconSymbolFieldFragment.Render(iconDriver)
-                                break;
-                            case AutocompleteEntryKind.Function:
-                                @IconSymbolMethodFragment.Render(iconDriver)
-                                break;
-                            case AutocompleteEntryKind.Type:
-                                @IconSymbolClassFragment.Render(iconDriver)
-                                break;
-                            case AutocompleteEntryKind.Namespace:
-                                @IconSymbolNamespaceFragment.Render(iconDriver)
-                                break;
-                        }
-                    }
-                }
-            </IconRenderFragment>*@
-        </MenuDisplay>
+        <MenuDisplay Menu="GetMenuRecord()"/>
 	</div>
 }

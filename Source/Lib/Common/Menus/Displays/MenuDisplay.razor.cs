@@ -36,16 +36,17 @@ public partial class MenuDisplay : ComponentBase, IDisposable
     private double _horizontalRuleHeight = 1.5;
     private double HorizontalRuleVerticalOffset => _horizontalRuleTotalVerticalMargin + _horizontalRuleHeight;
     
+    private int _indexMenuOptionShouldDisplayWidget = -1;
+    private int WidgetHeight => 4 * _lineHeight;
+    
     protected override void OnInitialized()
     {
-        Console.WriteLine("OnInitialized()");
         _dotNetHelper = DotNetObjectReference.Create(this);
         _htmlId = $"luth_common_treeview-{_guidId}";
     }
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Console.WriteLine("OnAfterRenderAsync()");
         if (firstRender)
         {
             // Do not ConfigureAwait(false) so that the UI doesn't change out from under you
@@ -96,6 +97,8 @@ public partial class MenuDisplay : ComponentBase, IDisposable
             eventArgsMouseDown.ViewHeight,
             eventArgsMouseDown.BoundingClientRectLeft,
             eventArgsMouseDown.BoundingClientRectTop);
+    
+        StateHasChanged();
     }
     
     [JSInvokable]
@@ -108,12 +111,10 @@ public partial class MenuDisplay : ComponentBase, IDisposable
             eventArgsMouseDown.BoundingClientRectTop);
         
         var indexClicked = GetIndexClicked(eventArgsMouseDown);
-        Console.WriteLine(indexClicked);
-        
         if (indexClicked == -1)
-        {
             return;
-        }
+    
+        StateHasChanged();
     }
     
     [JSInvokable]
@@ -124,6 +125,27 @@ public partial class MenuDisplay : ComponentBase, IDisposable
             eventArgsMouseDown.ViewHeight,
             eventArgsMouseDown.BoundingClientRectLeft,
             eventArgsMouseDown.BoundingClientRectTop);
+    
+        var indexClicked = GetIndexClicked(eventArgsMouseDown);
+        if (indexClicked == -1)
+            return;
+
+        var option = Menu.MenuOptionList[indexClicked];
+        
+        if (option.SubMenu is not null)
+        {
+            Console.WriteLine("option.SubMenu is not null");
+        }
+        else if (option.OnClickFunc is not null)
+        {
+            await option.OnClickFunc.Invoke();
+        }
+        else if (option.WidgetRendererType is not null)
+        {
+            _indexMenuOptionShouldDisplayWidget = indexClicked;
+        }
+        
+        StateHasChanged();
     }
     
     [JSInvokable]
@@ -134,21 +156,25 @@ public partial class MenuDisplay : ComponentBase, IDisposable
             eventArgsMouseDown.ViewHeight,
             eventArgsMouseDown.BoundingClientRectLeft,
             eventArgsMouseDown.BoundingClientRectTop);
+        
+        var indexClicked = GetIndexClicked(eventArgsMouseDown);
+        if (indexClicked == -1)
+            return;
+    
+        StateHasChanged();
     }
     
     /// <summary>
     /// TODO: This seems to be slightly inaccurate...
     /// ...I'm going to try checking if difference is less than 1.1px then return -1, don't do anything.
+    /// The -1 trick seems to result in accuracy but having that tiny deadzone is probably going to be annoying.
     ///
     /// Must be on the UI thread so the method safely can read '_horizontalRuleElementIndexHashSet'.
     /// </summary>
     private int GetIndexClicked(MenuEventArgsMouseDown eventArgsMouseDown)
     {
-        
         var relativeY = eventArgsMouseDown.Y - _menuMeasurements.BoundingClientRectTop + eventArgsMouseDown.ScrollTop;
         relativeY = Math.Max(0, relativeY);
-        
-        Console.WriteLine(relativeY);
         
         double buildHeight = 0.0;
         
@@ -158,6 +184,8 @@ public partial class MenuDisplay : ComponentBase, IDisposable
         {
             if (_horizontalRuleElementIndexHashSet.Contains(optionIndex))
                 buildHeight += HorizontalRuleVerticalOffset;
+            if (_indexMenuOptionShouldDisplayWidget == optionIndex)
+                buildHeight += WidgetHeight;
         
             buildHeight += _lineHeight;
             

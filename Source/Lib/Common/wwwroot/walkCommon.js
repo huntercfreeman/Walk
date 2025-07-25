@@ -207,6 +207,8 @@ window.walkCommon = {
         
         if (element) {
             element.addEventListener('keydown', (event) => {
+                if (event.target != element && event.target.parentElement != element)
+                    return;
                 switch(event.key) {
                     case "Shift":
                     case "Control":
@@ -236,6 +238,8 @@ window.walkCommon = {
             });
             
             element.addEventListener('contextmenu', (event) => {
+                if (event.target != element && event.target.parentElement != element)
+                    return;
                 let boundingClientRect = element.getBoundingClientRect();
                 dotNetHelper.invokeMethodAsync("ReceiveOnContextMenu", 
                 {
@@ -255,6 +259,8 @@ window.walkCommon = {
             });
             
             element.addEventListener('mousedown', (event) => {
+                if (event.target != element && event.target.parentElement != element)
+                    return;
                 let boundingClientRect = element.getBoundingClientRect();
                 dotNetHelper.invokeMethodAsync("ReceiveContentOnMouseDown", 
                 {
@@ -273,6 +279,8 @@ window.walkCommon = {
             });
             
             element.addEventListener('dblclick', (event) => {
+                if (event.target != element && event.target.parentElement != element)
+                    return;
                 let boundingClientRect = element.getBoundingClientRect();
                 dotNetHelper.invokeMethodAsync("ReceiveOnDoubleClick",
                 {
@@ -291,6 +299,8 @@ window.walkCommon = {
             });
             
             element.addEventListener('click', (event) => {
+                if (event.target != element && event.target.parentElement != element)
+                    return;
                 let boundingClientRect = element.getBoundingClientRect();
                 dotNetHelper.invokeMethodAsync("ReceiveOnClick",
                 {
