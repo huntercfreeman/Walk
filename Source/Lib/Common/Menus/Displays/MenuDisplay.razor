@@ -1,38 +1,60 @@
-<div class="di_menu-display"
-     tabindex="-1"
-     @ref="_menuDisplayElementReference"
-     @onclick:stopPropagation="true"
-     @ondblclick:stopPropagation="true"
-     @onkeydownwithpreventscroll:stopPropagation="true"
-     @onkeydown:stopPropagation="true"
-     @onkeydown:preventDefault="true"
-     @onkeydown="HandleOnKeyDownAsync"
-     @oncontextmenu:preventDefault="true"
-     @oncontextmenu:stopPropagation="true">
-     
-    <CascadingValue Value="RestoreFocusToThisMenuAsync" Name="ReturnFocusToParentFuncAsync">
-        @{
-            var menuOptionsGroupedByKindList = MenuRecord.MenuOptionList
-                .GroupBy(x => x.MenuOptionKind)
-                .SelectMany(x => x);
+<div class="di_menu-display" tabindex="0">
+    @{
+        var menuOptionsGroupedByKindList = MenuRecord.MenuOptionList
+            .GroupBy(x => x.MenuOptionKind)
+            .SelectMany(x => x);
+    
+        var previousKind = menuOptionsGroupedByKindList.FirstOrDefault()?.MenuOptionKind ?? Walk.Common.RazorLib.Menus.Models.MenuOptionKind.Create;
         
-            var previousKind = menuOptionsGroupedByKindList.FirstOrDefault()?.MenuOptionKind ?? Walk.Common.RazorLib.Menus.Models.MenuOptionKind.Create;
+        var appOptionsState = CommonService.GetAppOptionsState();
+    
+    	var iconDriver = new IconDriver(
+			appOptionsState.Options.IconSizeInPixels,
+			appOptionsState.Options.IconSizeInPixels);
+    }
+    
+    @for (var i = 0; i < MenuRecord.MenuOptionList.Count; i++)
+    {
+        var menuOption = MenuRecord.MenuOptionList[i];
+
+        if (previousKind != menuOption.MenuOptionKind)
+        {
+            previousKind = menuOption.MenuOptionKind;
+            <hr class="di_hr"/>
         }
         
-        @for (var i = 0; i < MenuRecord.MenuOptionList.Count; i++)
-        {
-            var menuOption = MenuRecord.MenuOptionList[i];
-
-            if (previousKind != menuOption.MenuOptionKind)
+        <div class="di_menu-option-display di_unselectable">
+            
+            @if (IconRenderFragment is not null)
             {
-                previousKind = menuOption.MenuOptionKind;
-                <hr class="di_hr"/>
+                <div class="di_menu-option-icon">
+                    @*@IconRenderFragment(MenuOptionRecord)*@
+                </div>
+                
             }
             
-            <MenuOptionDisplay MenuOptionRecord="@menuOption"
-                               ActiveMenuOptionRecordIndex="@_activeMenuOptionRecordIndex"
-                               Index="i"
-                               IconRenderFragment="IconRenderFragment"/>
-        }
-    </CascadingValue>
+            @menuOption.DisplayName
+            
+            @if (menuOption.SubMenu is not null)
+            {
+                @IconChevronRightFragment.Render(iconDriver)
+            }
+        
+            @*@if (i == IndexMenuOptionShouldDisplayWidget)
+            {
+                <div class="di_menu-option-widget"
+                     @onclick:stopPropagation="true"
+                     @ondblclick:stopPropagation="true"
+                     @onkeydown:stopPropagation="true"
+                     @onkeydownwithpreventscroll:stopPropagation="true"
+                     @oncontextmenu:stopPropagation="true">
+        
+                    <CascadingValue Value="MenuOptionCallbacks">
+                        <DynamicComponent Type="MenuOptionRecord.WidgetRendererType"
+                                          Parameters="MenuOptionRecord.WidgetParameterMap"/>
+                    </CascadingValue>
+                </div>
+            }*@
+        </div>
+    }
 </div>

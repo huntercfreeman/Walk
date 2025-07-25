@@ -48,7 +48,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         {
             componentData.MenuShouldTakeFocus = false;
                 
-            await _autocompleteMenuComponent.SetFocusToFirstOptionInMenuAsync();
+            // await _autocompleteMenuComponent.SetFocusToFirstOptionInMenuAsync();
         }
     }
     
