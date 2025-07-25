@@ -79,10 +79,30 @@ public partial class MenuDisplay : ComponentBase, IDisposable
         switch (eventArgsKeyDown.Key)
         {
             case "ArrowDown":
-                _activeIndex++;
+                if (_activeIndex == Menu.MenuOptionList.Count - 1)
+                {
+                    _activeIndex = 0;
+                }
+                else
+                {
+                    _activeIndex++;
+                }
                 break;
             case "ArrowUp":
-                _activeIndex--;
+                if (_activeIndex == 0)
+                {
+                    _activeIndex = Menu.MenuOptionList.Count - 1;
+                }
+                else
+                {
+                    _activeIndex--;
+                }
+                break;
+            case "Home":
+                _activeIndex = 0;
+                break;
+            case "End":
+                _activeIndex = Menu.MenuOptionList.Count - 1;
                 break;
         }
         
