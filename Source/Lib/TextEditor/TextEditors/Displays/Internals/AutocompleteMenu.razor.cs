@@ -47,11 +47,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         if (componentData?.MenuShouldTakeFocus ?? false)
         {
             componentData.MenuShouldTakeFocus = false;
-            
-            await TextEditorService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
-                "walkCommon.focusHtmlElementById",
-                _menuDisplay.HtmlId,
-                /*preventScroll:*/ true);
+            await _menuDisplay.SetFocusAndSetFirstOptionActiveAsync();
         }
     }
     

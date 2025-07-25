@@ -104,6 +104,16 @@ public partial class MenuDisplay : ComponentBase, IDisposable
         }
     }
     
+    public async Task SetFocusAndSetFirstOptionActiveAsync()
+    {
+        _activeIndex = 0;
+        await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
+            "walkCommon.focusHtmlElementById",
+            _htmlId,
+            /*preventScroll:*/ true);
+        await InvokeAsync(StateHasChanged);
+    }
+    
     [JSInvokable]
     public async Task ReceiveOnKeyDown(MenuEventArgsKeyDown eventArgsKeyDown)
     {
