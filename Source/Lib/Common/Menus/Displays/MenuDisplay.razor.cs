@@ -43,6 +43,8 @@ public partial class MenuDisplay : ComponentBase, IDisposable
     private int WidgetHeight => 4 * _lineHeight;
     private string _widgetHeightCssStyle;
     
+    public string HtmlId => _htmlId;
+    
     /// <summary>This property is from the old code, I have to decide on how to rewrite this part</summary>
     private MenuOptionCallbacks MenuOptionCallbacks => new(
         () => HideWidgetAsync(null),

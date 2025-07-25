@@ -1,3 +1,4 @@
+using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib;
@@ -28,8 +29,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
             new("No results", MenuOptionKind.Other)
         });
 
-    private ElementReference? _autocompleteMenuElementReference;
-    private MenuDisplay? _autocompleteMenuComponent;
+    private MenuDisplay? _menuDisplay;
     
     private Key<TextEditorComponentData> _componentDataKeyPrevious = Key<TextEditorComponentData>.Empty;
     private TextEditorComponentData? _componentData;
@@ -47,8 +47,11 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         if (componentData?.MenuShouldTakeFocus ?? false)
         {
             componentData.MenuShouldTakeFocus = false;
-                
-            // await _autocompleteMenuComponent.SetFocusToFirstOptionInMenuAsync();
+            
+            await TextEditorService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
+                "walkCommon.focusHtmlElementById",
+                _menuDisplay.HtmlId,
+                /*preventScroll:*/ true);
         }
     }
     
