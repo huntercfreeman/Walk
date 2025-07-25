@@ -130,11 +130,19 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         if (!virtualizationResult.IsValid)
             return NoResultsMenuRecord;
     
+        var componentData = virtualizationResult.ViewModel.PersistentState.ComponentData;
+        string elementIdToRestoreFocusToOnClose;
+        if (componentData is null)
+            elementIdToRestoreFocusToOnClose = CommonFacts.RootHtmlElementId;
+        else
+            elementIdToRestoreFocusToOnClose = componentData.PrimaryCursorContentId;
+        
         try
         {
             var menu = virtualizationResult.Model.PersistentState.CompilerService.GetAutocompleteMenu(virtualizationResult, this);
             menu.ShouldImmediatelyTakeFocus = false;
             menu.UseIcons = true;
+            menu.ElementIdToRestoreFocusToOnClose = elementIdToRestoreFocusToOnClose;
             return menu;
         }
         catch (Exception e)
@@ -142,6 +150,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
             var menu = NoResultsMenuRecord;
             menu.ShouldImmediatelyTakeFocus = false;
             menu.UseIcons = true;
+            menu.ElementIdToRestoreFocusToOnClose = elementIdToRestoreFocusToOnClose;
             return menu;
         }
     }

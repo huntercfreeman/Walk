@@ -152,7 +152,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
                 _activeIndex = Menu.MenuOptionList.Count - 1;
                 break;
             case "Escape":
-                CommonService.Dropdown_ReduceClearAction();
+                await Close();
                 break;
             case "Enter":
             case " ":
@@ -164,7 +164,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
                 else if (option.OnClickFunc is not null)
                 {
                     await option.OnClickFunc.Invoke();
-                    CommonService.Dropdown_ReduceClearAction();
+                    await Close();
                 }
                 else if (option.WidgetRendererType is not null)
                 {
@@ -226,7 +226,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
         else if (option.OnClickFunc is not null)
         {
             await option.OnClickFunc.Invoke();
-            CommonService.Dropdown_ReduceClearAction();
+            await Close();
         }
         else if (option.WidgetRendererType is not null)
         {
@@ -293,6 +293,19 @@ public partial class MenuDisplay : ComponentBase, IDisposable
             return Menu.MenuOptionList.Count - 1;
         
         return indexLocal;
+    }
+    
+    private async Task Close()
+    {
+        CommonService.Dropdown_ReduceClearAction();
+        
+        if (!string.IsNullOrWhiteSpace(Menu.ElementIdToRestoreFocusToOnClose))
+        {
+            await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
+                "walkCommon.focusHtmlElementById",
+                Menu.ElementIdToRestoreFocusToOnClose,
+                /*preventScroll:*/ true);
+        }
     }
     
     public void Dispose()
