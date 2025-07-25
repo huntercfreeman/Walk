@@ -12,52 +12,27 @@
      
     <CascadingValue Value="RestoreFocusToThisMenuAsync" Name="ReturnFocusToParentFuncAsync">
         @{
-            if (GroupByMenuOptionKind)
+            var menuOptionsGroupedByKindList = MenuRecord.MenuOptionList
+                .GroupBy(x => x.MenuOptionKind)
+                .SelectMany(x => x);
+        
+            var previousKind = menuOptionsGroupedByKindList.FirstOrDefault()?.MenuOptionKind ?? Walk.Common.RazorLib.Menus.Models.MenuOptionKind.Create;
+        }
+        
+        @for (var i = 0; i < MenuRecord.MenuOptionList.Count; i++)
+        {
+            var menuOption = MenuRecord.MenuOptionList[i];
+
+            if (previousKind != menuOption.MenuOptionKind)
             {
-                var menuOptionsGroupedByKindList = MenuRecord.MenuOptionList
-                    .GroupBy(x => x.MenuOptionKind)
-                    .ToList();
-
-                var cumulativeIndex = 0;
-                
-                for (int i = 0; i < menuOptionsGroupedByKindList.Count; i++)
-                {
-                    var groupIndex = i;
-                    
-                    var group = menuOptionsGroupedByKindList[groupIndex];
-                    
-                    var menuOptionList = group.ToList();
-                    
-                    for (var j = 0; j < menuOptionList.Count; j++)
-                    {
-                        var menuOptionIndex = j;
-                        var menuOption = menuOptionList[menuOptionIndex];
-
-                        <MenuOptionDisplay MenuOptionRecord="@menuOption"
-                                           ActiveMenuOptionRecordIndex="@_activeMenuOptionRecordIndex"
-                                           Index="cumulativeIndex++"
-                                           IconRenderFragment="IconRenderFragment"/>
-                    }
-
-                    if (groupIndex != menuOptionsGroupedByKindList.Count - 1)
-                    {
-                        <hr class="di_hr"/>
-                    }
-                }
+                previousKind = menuOption.MenuOptionKind;
+                <hr class="di_hr"/>
             }
-            else
-            {
-                for (var i = 0; i < MenuRecord.MenuOptionList.Count; i++)
-                {
-                    var index = i;
-                    var menuOption = MenuRecord.MenuOptionList[index];
-
-                    <MenuOptionDisplay MenuOptionRecord="@menuOption"
-                                       ActiveMenuOptionRecordIndex="@_activeMenuOptionRecordIndex"
-                                       Index="index"
-                                       IconRenderFragment="IconRenderFragment"/>
-                }
-            }
+            
+            <MenuOptionDisplay MenuOptionRecord="@menuOption"
+                               ActiveMenuOptionRecordIndex="@_activeMenuOptionRecordIndex"
+                               Index="i"
+                               IconRenderFragment="IconRenderFragment"/>
         }
     </CascadingValue>
 </div>
