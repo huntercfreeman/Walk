@@ -415,7 +415,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                             }
                             
                             return new MenuRecord(
-                                autocompleteEntryList.Select(entry => new MenuOptionRecord(
+                                autocompleteEntryList.Select(entry =>
+                                {
+                                    var menuOptionRecord = new MenuOptionRecord(
                                         entry.DisplayName,
                                         MenuOptionKind.Other,
                                         () => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask,
@@ -425,8 +427,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                                 nameof(AutocompleteEntry),
                                                 entry
                                             }
-                                        }))
-                                    .ToList());
+                                        });
+                                    menuOptionRecord.IconKind = entry.AutocompleteEntryKind;
+                                    return menuOptionRecord;
+                                })
+                                .ToList());
                         }
                         
                         return null;
