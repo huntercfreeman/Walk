@@ -142,6 +142,23 @@ public partial class MenuDisplay : ComponentBase, IDisposable
             case "Escape":
                 CommonService.Dropdown_ReduceClearAction();
                 break;
+            case "Enter":
+            case " ":
+                var option = Menu.MenuOptionList[_activeIndex];
+                if (option.SubMenu is not null)
+                {
+                    Console.WriteLine("option.SubMenu is not null");
+                }
+                else if (option.OnClickFunc is not null)
+                {
+                    await option.OnClickFunc.Invoke();
+                    CommonService.Dropdown_ReduceClearAction();
+                }
+                else if (option.WidgetRendererType is not null)
+                {
+                    _indexMenuOptionShouldDisplayWidget = _activeIndex;
+                }
+                break;
         }
         
         StateHasChanged();
