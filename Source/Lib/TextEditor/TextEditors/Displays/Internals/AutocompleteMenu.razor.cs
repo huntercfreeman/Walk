@@ -133,11 +133,15 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     
         try
         {
-            return virtualizationResult.Model.PersistentState.CompilerService.GetAutocompleteMenu(virtualizationResult, this);
+            var menu = virtualizationResult.Model.PersistentState.CompilerService.GetAutocompleteMenu(virtualizationResult, this);
+            menu.ShouldImmediatelyTakeFocus = false;
+            return menu;
         }
         catch (Exception e)
         {
-            return NoResultsMenuRecord;
+            var menu = NoResultsMenuRecord;
+            menu.ShouldImmediatelyTakeFocus = false;
+            return menu;
         }
     }
     

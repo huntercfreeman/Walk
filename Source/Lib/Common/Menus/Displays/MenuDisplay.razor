@@ -49,18 +49,20 @@
         
         @if (i == _indexMenuOptionShouldDisplayWidget)
         {
-            <div class="di_menu-option-widget"
-                 style="height: @(WidgetHeight)px;"
-                 @onclick:stopPropagation="true"
-                 @ondblclick:stopPropagation="true"
-                 @onmousedown:stopPropagation="true"
-                 @onkeydown:stopPropagation="true"
-                 @onkeydownwithpreventscroll:stopPropagation="true"
-                 @oncontextmenu:stopPropagation="true">
-    
-                <DynamicComponent Type="menuOption.WidgetRendererType"
-                                  Parameters="menuOption.WidgetParameterMap"/>
-            </div>
+            @*<CascadingValue Value="MenuOptionCallbacks">
+                <div class="di_menu-option-widget"
+                     style="height: @(WidgetHeight)px;"
+                     @onclick:stopPropagation="true"
+                     @ondblclick:stopPropagation="true"
+                     @onmousedown:stopPropagation="true"
+                     @onkeydown:stopPropagation="true"
+                     @onkeydownwithpreventscroll:stopPropagation="true"
+                     @oncontextmenu:stopPropagation="true">
+        
+                    <DynamicComponent Type="menuOption.WidgetRendererType"
+                                      Parameters="menuOption.WidgetParameterMap"/>
+                </div>
+            </CascadingValue>*@
         }
     }
 </div>
