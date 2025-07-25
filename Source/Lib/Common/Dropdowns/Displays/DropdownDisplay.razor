@@ -29,11 +29,7 @@
 			> (localGlobalHtmlElementDimensions?.HeightInPixels ?? 0);
 	}
 	
-	<CascadingValue Value="localDropdown">
-		<CascadingValue Name="ReturnFocusToParentFuncAsync" Value="localDropdown.RestoreFocusOnClose">
-	        <DynamicComponent @key="localDropdown.Key"
-	                          Type="localDropdown.ComponentType"
-	                          Parameters="localDropdown.ComponentParameterMap" />
-	    </CascadingValue>
-    </CascadingValue>
+    <DynamicComponent @key="localDropdown.Key"
+                      Type="localDropdown.ComponentType"
+                      Parameters="localDropdown.ComponentParameterMap" />
 </div>

@@ -1,4 +1,4 @@
-<div class="di_menu-display" tabindex="0">
+<div class="di_menu-display" tabindex="0" @onkeydown="HandleOnKeyDown">
     @{
         var menuOptionsGroupedByKindList = MenuRecord.MenuOptionList
             .GroupBy(x => x.MenuOptionKind)
@@ -16,6 +16,10 @@
     @for (var i = 0; i < MenuRecord.MenuOptionList.Count; i++)
     {
         var menuOption = MenuRecord.MenuOptionList[i];
+        
+        var cssClass = _activeIndex == i
+            ? "di_menu-option-display di_unselectable di_active"
+            : "di_menu-option-display di_unselectable";
 
         if (previousKind != menuOption.MenuOptionKind)
         {
@@ -23,15 +27,15 @@
             <hr class="di_hr"/>
         }
         
-        <div class="di_menu-option-display di_unselectable">
+        // anonymous lambdas as an event handler within a loop isn't a good idea, this is temporary
+        <div class="@cssClass">
             
-            @if (IconRenderFragment is not null)
+            @*@if (IconRenderFragment is not null)
             {
                 <div class="di_menu-option-icon">
-                    @*@IconRenderFragment(MenuOptionRecord)*@
+                    @IconRenderFragment(menuOption)
                 </div>
-                
-            }
+            }*@
             
             @menuOption.DisplayName
             

@@ -795,6 +795,8 @@ public class TextEditorCommandDefaultFunctions
         else
             menu = new MenuRecord(menuOptionList);
         
+        menu.InitialActiveMenuOptionRecordIndex = initialActiveMenuOptionRecordIndex;
+        
         var dropdownRecord = new DropdownRecord(
             Key<DropdownRecord>.NewKey(),
             cursorDimensions.LeftInPixels,
@@ -805,10 +807,6 @@ public class TextEditorCommandDefaultFunctions
                 {
                     nameof(MenuDisplay.MenuRecord),
                     menu
-                },
-                {
-                    nameof(MenuDisplay.InitialActiveMenuOptionRecordIndex),
-                    initialActiveMenuOptionRecordIndex
                 }
             },
             // TODO: this callback when the dropdown closes is suspect.
