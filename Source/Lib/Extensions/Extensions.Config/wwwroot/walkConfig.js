@@ -2,6 +2,7 @@
 // https://learn.microsoft.com/en-us/aspnet/core/blazor/javascript-interoperability/
 
 window.walkConfig = {
+    altIsDown: false,
 	appWideKeyboardEventsInitialize: function (dotNetHelper) {
         document.body.addEventListener('keydown', (event) => {
             switch(event.key) {
@@ -9,7 +10,13 @@ window.walkConfig = {
                 case "Meta":
                     break;
                 case "Control":
+                    dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown", event.key);
+                    event.preventDefault();
+                    break;
                 case "Alt":
+                    if (altIsDown)
+                        break;
+                    altIsDown = true;
                     dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown", event.key);
                     event.preventDefault();
                     break;
@@ -29,7 +36,11 @@ window.walkConfig = {
                 case "Tab":
                     break;
                 case "Control":
+                    dotNetHelper.invokeMethodAsync("ReceiveOnKeyUp", event.key);
+                    event.preventDefault();
+                    break;
                 case "Alt":
+                    altIsDown = false;
                     dotNetHelper.invokeMethodAsync("ReceiveOnKeyUp", event.key);
                     event.preventDefault();
                     break;
