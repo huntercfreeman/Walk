@@ -13,6 +13,7 @@ using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.InputFiles.Displays;
 using Walk.Ide.RazorLib.Terminals.Models;
+using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Extensions.DotNet;
 using Walk.Extensions.DotNet.AppDatas.Models;
 
@@ -194,6 +195,35 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
             return ValueTask.CompletedTask;
         });
         
+    }
+    
+    [JSInvokable]
+    public async Task AltKeybind(string key)
+    {
+        if (key == "f")
+        {
+            await SetFocus(IdeState.ButtonFileId);
+        }
+        else if (key == "t")
+        {
+            await SetFocus(IdeState.ButtonToolsId);
+        }
+        else if (key == "v")
+        {
+            await SetFocus(IdeState.ButtonViewId);
+        }
+        else if (key == "r")
+        {
+            await SetFocus(IdeState.ButtonRunId);
+        }
+    }
+    
+    public async Task SetFocus(string elementId)
+    {
+        await DotNetService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
+            "walkCommon.focusHtmlElementById",
+            elementId,
+            /*preventScroll:*/ true);
     }
     
     public ValueTask Do_InitializeFooterBadges()

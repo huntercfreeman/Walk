@@ -49,6 +49,26 @@ window.walkConfig = {
                         break;
                     dotNetHelper.invokeMethodAsync("CodeSearchOnKeyDown");
                     break;
+                case "f":
+                    if (!event.altKey)
+                        break;
+                    dotNetHelper.invokeMethodAsync("AltKeybind", "f");
+                    break;
+                case "t":
+                    if (!event.altKey)
+                        break;
+                    dotNetHelper.invokeMethodAsync("AltKeybind", "t");
+                    break;
+                case "v":
+                    if (!event.altKey)
+                        break;
+                    dotNetHelper.invokeMethodAsync("AltKeybind", "v");
+                    break;
+                case "r":
+                    if (!event.altKey)
+                        break;
+                    dotNetHelper.invokeMethodAsync("AltKeybind", "r");
+                    break;
                 case "Escape":
                     dotNetHelper.invokeMethodAsync("EscapeOnKeyDown");
                     break;

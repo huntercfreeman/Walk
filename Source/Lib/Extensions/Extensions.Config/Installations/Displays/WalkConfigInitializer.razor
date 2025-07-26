@@ -1,23 +1,45 @@
+@using Walk.Ide.RazorLib.Shareds.Models
+
 @if (_altIsDown)
 {
-    <div style="position: fixed; left: 20vw; top: 20vh; width: 60vw; height: 60vh; background-color: aqua;">
+    <div style="z-index: 99; position: fixed; left: 20vw; top: 20vh; width: 60vw; height: 60vh; color: var(--di_secondary-foreground-color); background-color: var(--di_secondary-background-color);">
         <div>AltKeybindFocusPointHashSet</div>
         
         <div>
-            @foreach (var aaa in DotNetService.CommonService.AltKeybindFocusPointHashSet)
-            {
-                <div>@aaa</div>
-            }
+            <button @onclick="() => SetFocus(IdeState.ButtonFileId)"
+                    class="di_button"
+                    style="margin-left: 15px;">
+                    
+                <u>F</u>ile
+            </button>
+    
+    		<button @onclick="() => SetFocus(IdeState.ButtonToolsId)"
+                    class="di_button"
+                    style="margin-left: 15px;">
+                <u>T</u>ools
+            </button>
+    
+    		<button @onclick="() => SetFocus(IdeState.ButtonViewId)"
+                    class="di_button"
+                    style="margin-left: 15px;">
+    			<u>V</u>iew
+             </button>
+    
+    		<button @onclick="() => SetFocus(IdeState.ButtonRunId)"
+    				class="di_button"
+                    style="margin-left: 15px;">
+                <u>R</u>un
+            </button>
         </div>
     </div>
 }
 else if (_ctrlIsDown)
 {
-    <div style="position: fixed; left: 20vw; top: 20vh; width: 60vw; height: 60vh; background-color: aqua;">
+    <div style="z-index: 99; position: fixed; left: 20vw; top: 20vh; width: 60vw; height: 60vh; color: var(--di_secondary-foreground-color); background-color: var(--di_secondary-background-color);">
         <div>CtrlKeybindFocusPointHashSet</div>
         
         <div>
-            @foreach (var aaa in DotNetService.CommonService.AltKeybindFocusPointHashSet)
+            @foreach (var aaa in DotNetService.CommonService.FocusPointHashSet)
             {
                 <div>@aaa</div>
             }
