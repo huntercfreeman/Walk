@@ -98,7 +98,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 TimeSpan.FromSeconds(3));
             
             _altIsDown = true;
-            InvokeAsync(StateHasChanged);
+            StateHasChanged();
         }
         else if (key == "Control")
         {
@@ -109,7 +109,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 TimeSpan.FromSeconds(3));
         
             _ctrlIsDown = true;
-            InvokeAsync(StateHasChanged);
+            StateHasChanged();
         }
         else if (key == "Tab")
         {
@@ -133,7 +133,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 TimeSpan.FromSeconds(3));
         
             _altIsDown = false;
-            InvokeAsync(StateHasChanged);
+            StateHasChanged();
         }
         else if (key == "Control")
         {
@@ -143,9 +143,17 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 DotNetService.CommonService,
                 TimeSpan.FromSeconds(3));
             
-            _ctrlIsDown = true;
-            InvokeAsync(StateHasChanged);
+            _ctrlIsDown = false;
+            StateHasChanged();
         }
+    }
+    
+    [JSInvokable]
+    public async Task OnWindowBlur()
+    {
+        _altIsDown = false;
+        _ctrlIsDown = false;
+        StateHasChanged();
     }
     
     public ValueTask Do_InitializeFooterBadges()

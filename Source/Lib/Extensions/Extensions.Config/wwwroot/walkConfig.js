@@ -58,10 +58,11 @@ window.walkConfig = {
         });
         
         window.addEventListener('blur', function() {
-          if (!altIsDown)
+          if (!altIsDown && !ctrlIsDown)
               return;
           altIsDown = false;
-          dotNetHelper.invokeMethodAsync("ReceiveOnKeyUp", "Alt");
+          ctrlIsDown = false;
+          dotNetHelper.invokeMethodAsync("OnWindowBlur");
         });
     }
 }
