@@ -138,11 +138,11 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
     [JSInvokable]
     public async Task ReceiveWidgetOnKeyDown()
     {
-        DotNetService.CommonService.SetWidget(new Walk.Common.RazorLib.Widgets.Models.WidgetModel(
+        /*DotNetService.CommonService.SetWidget(new Walk.Common.RazorLib.Widgets.Models.WidgetModel(
             typeof(Walk.Ide.RazorLib.CommandBars.Displays.CommandBarDisplay),
             componentParameterMap: null,
             cssClass: null,
-            cssStyle: "width: 80vw; height: 5em; left: 10vw; top: 0;"));
+            cssStyle: "width: 80vw; height: 5em; left: 10vw; top: 0;"));*/
     }
     
     /// <summary>
@@ -152,65 +152,13 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
     [JSInvokable]
     public async Task SaveFileOnKeyDown()
     {
-        var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
-        var viewModelKey = textEditorGroup.ActiveViewModelKey;
-        
-        DotNetService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
-        {
-            var dirtyResourceUriState = DotNetService.TextEditorService.GetDirtyResourceUriState();
-            var viewModel = editContext.GetViewModelModifier(viewModelKey);
-            
-            if (dirtyResourceUriState.DirtyResourceUriList.Contains(viewModel.PersistentState.ResourceUri))
-            {
-                var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
-                
-                TextEditorCommandDefaultFunctions.TriggerSave(
-                    editContext,
-                    modelModifier,
-                    viewModel,
-                    DotNetService.CommonService);
-                
-                NotificationHelper.DispatchInformative(
-                    title: "Save",
-                    message: string.Empty,
-                    DotNetService.CommonService,
-                    TimeSpan.FromSeconds(3));
-            }
-        
-            return ValueTask.CompletedTask;
-        });
+        TextEditorCommandDefaultFunctions.TriggerSave_NoTextEditorFocus(DotNetService.TextEditorService, Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
     }
     
     [JSInvokable]
     public async Task SaveAllFileOnKeyDown()
     {
-        DotNetService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
-        {
-            var dirtyResourceUriState = DotNetService.TextEditorService.GetDirtyResourceUriState();
-            
-            foreach (var dirtyResourceUri in dirtyResourceUriState.DirtyResourceUriList)
-            {
-                var modelModifier = editContext.GetModelModifier(dirtyResourceUri);
-                if (modelModifier.PersistentState.ViewModelKeyList.Count > 0)
-                {
-                    var viewModel = editContext.GetViewModelModifier(modelModifier.PersistentState.ViewModelKeyList[0]);
-                    
-                    TextEditorCommandDefaultFunctions.TriggerSave(
-                        editContext,
-                        modelModifier,
-                        viewModel,
-                        DotNetService.CommonService);
-                    
-                    NotificationHelper.DispatchInformative(
-                        title: "SaveAll",
-                        message: string.Empty,
-                        DotNetService.CommonService,
-                        TimeSpan.FromSeconds(3));
-                }
-            }
-        
-            return ValueTask.CompletedTask;
-        });
+        TextEditorCommandDefaultFunctions.TriggerSaveAll(DotNetService.TextEditorService, Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
     }
     
     [JSInvokable]
