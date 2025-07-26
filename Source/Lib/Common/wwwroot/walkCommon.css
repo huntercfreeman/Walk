@@ -267,6 +267,14 @@ ul.di_indent-child-content {
     cursor: nw-resize;
 }
 
+.di_measure-line-height-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    visibility: hidden;
+    overflow: hidden;
+}
+
 :root {
     /* Sizes Common */
     --di_tabs-bar-height: 2.6rem;

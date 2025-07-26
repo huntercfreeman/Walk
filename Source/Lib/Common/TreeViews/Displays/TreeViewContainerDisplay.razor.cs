@@ -38,7 +38,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     public int WalkTreeViewIconWidth { get; set; } = 16;
     
     /// <summary>Pixels</summary>
-    private int _lineHeight = 20;
+    private int LineHeight => CommonService.Options_LineHeight;
     
     private Guid _guidId = Guid.NewGuid();
     private string _htmlId = null!;
@@ -194,15 +194,15 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             var node = _flatNodeList[i];
             if (node == treeViewContainerLocal.ActiveNode)
             {
-                var top = _lineHeight * i;
+                var top = LineHeight * i;
                 
                 if (top < eventArgsKeyDown.ScrollTop)
                 {
                     await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync("walkCommon.treeViewScrollVertical", _htmlId, top - eventArgsKeyDown.ScrollTop);
                 }
-                else if (top + _lineHeight > eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight)
+                else if (top + LineHeight > eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight)
                 {
-                    await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync("walkCommon.treeViewScrollVertical", _htmlId, top - (eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight) + _lineHeight);
+                    await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync("walkCommon.treeViewScrollVertical", _htmlId, top - (eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight) + LineHeight);
                 }
                 break;
             }
@@ -232,14 +232,14 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             contextMenuFixedPosition = new ContextMenuFixedPosition(
                 OccurredDueToMouseEvent: false,
                 LeftPositionInPixels: eventArgsMouseDown.BoundingClientRectLeft,
-                TopPositionInPixels: eventArgsMouseDown.BoundingClientRectTop + _lineHeight + (IndexActiveNode * _lineHeight) - eventArgsMouseDown.ScrollTop);
+                TopPositionInPixels: eventArgsMouseDown.BoundingClientRectTop + LineHeight + (IndexActiveNode * LineHeight) - eventArgsMouseDown.ScrollTop);
         }
         else if (eventArgsMouseDown.Button == 2)
         {
             var relativeY = eventArgsMouseDown.Y - _treeViewMeasurements.BoundingClientRectTop + eventArgsMouseDown.ScrollTop;
             relativeY = Math.Max(0, relativeY);
             
-            var indexLocal = (int)(relativeY / _lineHeight);
+            var indexLocal = (int)(relativeY / LineHeight);
             
             IndexActiveNode = IndexBasicValidation(indexLocal);
             contextMenuTarget = _flatNodeList[IndexActiveNode];
@@ -293,7 +293,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         var relativeY = eventArgsMouseDown.Y - _treeViewMeasurements.BoundingClientRectTop + eventArgsMouseDown.ScrollTop;
         relativeY = Math.Max(0, relativeY);
         
-        var indexLocal = (int)(relativeY / _lineHeight);
+        var indexLocal = (int)(relativeY / LineHeight);
         
         IndexActiveNode = IndexBasicValidation(indexLocal);
         
@@ -331,7 +331,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         var relativeY = eventArgsMouseDown.Y - _treeViewMeasurements.BoundingClientRectTop + eventArgsMouseDown.ScrollTop;
         relativeY = Math.Max(0, relativeY);
         
-        var indexLocal = (int)(relativeY / _lineHeight);
+        var indexLocal = (int)(relativeY / LineHeight);
         
         IndexActiveNode = IndexBasicValidation(indexLocal);
         
@@ -367,7 +367,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         var relativeY = eventArgsMouseDown.Y - _treeViewMeasurements.BoundingClientRectTop + eventArgsMouseDown.ScrollTop;
         relativeY = Math.Max(0, relativeY);
         
-        var indexLocal = (int)(relativeY / _lineHeight);
+        var indexLocal = (int)(relativeY / LineHeight);
         
         IndexActiveNode = IndexBasicValidation(indexLocal);
         
@@ -532,7 +532,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         CommonService.UiStringBuilder.Append("display: flex; align-items: center; padding-left: ");
         CommonService.UiStringBuilder.Append(node.Depth * OffsetPerDepthInPixels);
         CommonService.UiStringBuilder.Append("px; height: ");
-        CommonService.UiStringBuilder.Append(_lineHeight);
+        CommonService.UiStringBuilder.Append(LineHeight);
         CommonService.UiStringBuilder.Append("px;");
         
         return CommonService.UiStringBuilder.ToString();

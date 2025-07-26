@@ -32,6 +32,8 @@ public partial class CommonService
     
     public string Options_ColorSchemeCssStyleString { get; set; }
     
+    public int Options_LineHeight { get; set; } = 20;
+    
     public AppOptionsState GetAppOptionsState() => _appOptionsState;
 
     public void Options_SetActiveThemeRecordKey(int themeKey, bool updateStorage = true)
@@ -102,7 +104,14 @@ public partial class CommonService
         else
             Options_FontFamilyCssStyleString = $"font-family: {usingFontFamily};";
 
+        // The order of these events is important because the mainlayout will
+        // update the CSS of all the descendent elements.
+        //
+        // The WalkCommonInitializer doesn't actually apply the CSS itself.
+        // It is reliant on the IdeMainLayout having re-rendered first.
+        //
         CommonUiStateChanged?.Invoke(CommonUiEventKind.AppOptionsStateChanged);
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.LineHeightNeedsMeasured);
 
         if (updateStorage)
             Options_WriteToStorage();
@@ -132,10 +141,22 @@ public partial class CommonService
         var usingFontSizeInPixelsCssValue = usingFontSizeInPixels.ToCssValue();
         Options_FontSizeCssStyleString = $"font-size: {usingFontSizeInPixelsCssValue}px;";
         
+        // The order of these events is important because the mainlayout will
+        // update the CSS of all the descendent elements.
+        //
+        // The WalkCommonInitializer doesn't actually apply the CSS itself.
+        // It is reliant on the IdeMainLayout having re-rendered first.
+        //
         CommonUiStateChanged?.Invoke(CommonUiEventKind.AppOptionsStateChanged);
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.LineHeightNeedsMeasured);
 
         if (updateStorage)
             Options_WriteToStorage();
+    }
+    
+    public void Options_SetLineHeight(int lineHeightInPixels)
+    {
+        Options_LineHeight = lineHeightInPixels;
     }
 
     public void Options_SetResizeHandleWidth(int resizeHandleWidthInPixels, bool updateStorage = true)

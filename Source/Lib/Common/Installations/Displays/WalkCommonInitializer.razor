@@ -4,6 +4,11 @@
 @using Walk.Common.RazorLib.OutOfBoundsClicks.Displays
 @using Walk.Common.RazorLib.Dropdowns.Displays
 
+<div id="@_measureLineHeightElementId"
+     class="di_measure-line-height-wrapper">
+    0
+</div>
+
 @{ var dialogList = CommonService.GetDialogState().DialogList; }
 @foreach (var dialog in dialogList)
 {

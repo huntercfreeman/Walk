@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Installations.Models;
@@ -32,6 +33,8 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     /// Only use this from the "UI thread".
     /// </summary>
     private readonly StringBuilder _styleBuilder = new();
+    
+    private readonly string _measureLineHeightElementId = "di_measure-line-height";
     
     /// <summary>The unit of measurement is Pixels (px)</summary>
     public const double OUTLINE_THICKNESS = 4;
@@ -78,6 +81,8 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
             }
 
             BrowserResizeInterop.SubscribeWindowSizeChanged((JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonService.JsRuntimeCommonApi);
+        
+            await MeasureLineHeight();
         }
         
         var tooltipModel = CommonService.GetTooltipState().TooltipModel;
@@ -136,7 +141,19 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
             case CommonUiEventKind.TooltipStateChanged:
                 await InvokeAsync(StateHasChanged);
                 break;
+            case CommonUiEventKind.LineHeightNeedsMeasured:
+                await MeasureLineHeight();
+                break;
         }
+    }
+    
+    private async Task MeasureLineHeight()
+    {
+        var lineHeight = await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeAsync<int>(
+            "walkCommon.getLineHeightInPixelsById",
+            _measureLineHeightElementId);
+        Console.WriteLine(lineHeight);
+        CommonService.Options_SetLineHeight(lineHeight);
     }
     
     private Task WIDGET_RemoveWidget()
