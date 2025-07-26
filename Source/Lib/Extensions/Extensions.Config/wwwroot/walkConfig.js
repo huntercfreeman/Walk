@@ -29,6 +29,26 @@ window.walkConfig = {
                         break;
                     dotNetHelper.invokeMethodAsync("ReceiveWidgetOnKeyDown");
                     break;
+                case "s":
+                    if (!event.ctrlKey)
+                        break;
+                    dotNetHelper.invokeMethodAsync("SaveFileOnKeyDown");
+                    break;
+                case "S":
+                    if (!event.ctrlKey)
+                        break;
+                    dotNetHelper.invokeMethodAsync("SaveAllFileOnKeyDown");
+                    break;
+                case "F":
+                    if (!event.ctrlKey)
+                        break;
+                    dotNetHelper.invokeMethodAsync("FindAllOnKeyDown");
+                    break;
+                case ",":
+                    if (!event.ctrlKey)
+                        break;
+                    dotNetHelper.invokeMethodAsync("CodeSearchOnKeyDown");
+                    break;
                 default:
                     break;
             }

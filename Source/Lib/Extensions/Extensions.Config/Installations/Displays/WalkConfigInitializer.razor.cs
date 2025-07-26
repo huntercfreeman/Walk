@@ -173,6 +173,46 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
             cssStyle: "width: 80vw; height: 5em; left: 10vw; top: 0;"));
     }
     
+    [JSInvokable]
+    public async Task SaveFileOnKeyDown()
+    {
+        NotificationHelper.DispatchInformative(
+            title: "Save",
+            message: string.Empty,
+            DotNetService.CommonService,
+            TimeSpan.FromSeconds(3));
+    }
+    
+    [JSInvokable]
+    public async Task SaveAllFileOnKeyDown()
+    {
+        NotificationHelper.DispatchInformative(
+            title: "SaveAll",
+            message: string.Empty,
+            DotNetService.CommonService,
+            TimeSpan.FromSeconds(3));
+    }
+    
+    [JSInvokable]
+    public async Task FindAllOnKeyDown()
+    {
+        NotificationHelper.DispatchInformative(
+            title: "FindAll",
+            message: string.Empty,
+            DotNetService.CommonService,
+            TimeSpan.FromSeconds(3));
+    }
+    
+    [JSInvokable]
+    public async Task CodeSearchOnKeyDown()
+    {
+        NotificationHelper.DispatchInformative(
+            title: "CodeSearch",
+            message: string.Empty,
+            DotNetService.CommonService,
+            TimeSpan.FromSeconds(3));
+    }
+    
     public ValueTask Do_InitializeFooterBadges()
     {
         DotNetService.IdeService.Ide_RegisterFooterBadge(
