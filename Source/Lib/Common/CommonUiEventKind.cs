@@ -14,4 +14,5 @@ public enum CommonUiEventKind
     DragStateChanged,
     AppDimensionStateChanged,
     AppOptionsStateChanged,
+    LineHeightNeedsMeasured,
 }

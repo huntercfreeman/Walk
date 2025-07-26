@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Installations.Models;
@@ -33,8 +34,12 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     /// </summary>
     private readonly StringBuilder _styleBuilder = new();
     
+    private readonly string _measureLineHeightElementId = "di_measure-line-height";
+    
     /// <summary>The unit of measurement is Pixels (px)</summary>
     public const double OUTLINE_THICKNESS = 4;
+    
+    private string _lineHeightCssStyle;
     
     public double ValueTooltipRelativeX { get; set; }
     public double ValueTooltipRelativeY { get; set; }
@@ -46,6 +51,8 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
+        MeasureLineHeight_UiRenderStep();
+    
         CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
     
         CommonService.Enqueue(new CommonWorkArgs
@@ -78,6 +85,8 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
             }
 
             BrowserResizeInterop.SubscribeWindowSizeChanged((JsRuntimes.Models.WalkCommonJavaScriptInteropApi)CommonService.JsRuntimeCommonApi);
+        
+            await MeasureLineHeight_BackgroundTaskStep();
         }
         
         var tooltipModel = CommonService.GetTooltipState().TooltipModel;
@@ -136,7 +145,30 @@ public partial class WalkCommonInitializer : ComponentBase, IDisposable
             case CommonUiEventKind.TooltipStateChanged:
                 await InvokeAsync(StateHasChanged);
                 break;
+            case CommonUiEventKind.LineHeightNeedsMeasured:
+                await InvokeAsync(MeasureLineHeight_UiRenderStep);
+                MeasureLineHeight_BackgroundTaskStep();
+                break;
         }
+    }
+    
+    private void MeasureLineHeight_UiRenderStep()
+    {
+        _lineHeightCssStyle = $"{CommonService.Options_FontFamilyCssStyleString} {CommonService.Options_FontSizeCssStyleString}";
+        StateHasChanged();
+    }
+    
+    private async Task MeasureLineHeight_BackgroundTaskStep()
+    {
+        CommonService.Continuous_Enqueue(new BackgroundTask(
+            Key<IBackgroundTaskGroup>.Empty,
+            async () =>
+            {
+                var lineHeight = await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeAsync<int>(
+                    "walkCommon.getLineHeightInPixelsById",
+                    _measureLineHeightElementId);
+                CommonService.Options_SetLineHeight(lineHeight);
+            }));
     }
     
     private Task WIDGET_RemoveWidget()

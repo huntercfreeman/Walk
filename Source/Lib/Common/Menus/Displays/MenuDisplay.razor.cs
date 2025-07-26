@@ -16,7 +16,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
     public MenuRecord Menu { get; set; } = null!;
 
     /// <summary>Pixels</summary>
-    private int _lineHeight = 20;
+    private int LineHeight => CommonService.Options_LineHeight;
     private string _lineHeightCssStyle;
     
     private Guid _guidId = Guid.NewGuid();
@@ -39,8 +39,11 @@ public partial class MenuDisplay : ComponentBase, IDisposable
     private double _horizontalRuleHeight = 1.5;
     private double HorizontalRuleVerticalOffset => _horizontalRuleTotalVerticalMargin + _horizontalRuleHeight;
     
+    private int _seenLineHeight = -1;
+    private int _seenWidgetHeight = -1;
+    
     private int _indexMenuOptionShouldDisplayWidget = -1;
-    private int WidgetHeight => 4 * _lineHeight;
+    private int WidgetHeight => 4 * LineHeight;
     private string _widgetHeightCssStyle;
     
     public string HtmlId => _htmlId;
@@ -77,9 +80,6 @@ public partial class MenuDisplay : ComponentBase, IDisposable
     
         _dotNetHelper = DotNetObjectReference.Create(this);
         _htmlId = $"luth_common_treeview-{_guidId}";
-        
-        _lineHeightCssStyle = $"height: {_lineHeight}px";
-        _widgetHeightCssStyle = $"height: {WidgetHeight}px";
     }
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -280,7 +280,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
             if (_indexMenuOptionShouldDisplayWidget == optionIndex)
                 buildHeight += WidgetHeight;
         
-            buildHeight += _lineHeight;
+            buildHeight += LineHeight;
             
             if (buildHeight > relativeY)
                 break;
@@ -310,7 +310,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
             if (_indexMenuOptionShouldDisplayWidget == optionIndex)
                 buildHeight += WidgetHeight;
         
-            buildHeight += _lineHeight;
+            buildHeight += LineHeight;
         }
         
         return buildHeight;
