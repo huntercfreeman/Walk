@@ -12,16 +12,16 @@ window.walkConfig = {
                 case "Control":
                     break;
                 case "Alt":
-                    if (altIsDown)
+                    if (this.altIsDown)
                         break;
-                    altIsDown = true;
+                    this.altIsDown = true;
                     dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown", event.key);
                     event.preventDefault();
                     break;
                 case "Tab":
                     if (!event.ctrlKey)
                         break;
-                    controlTabChordIsInProgress = true;
+                    this.controlTabChordIsInProgress = true;
                     dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown", event.key);
                     break;
                 case "p":
@@ -65,14 +65,14 @@ window.walkConfig = {
                 case "Tab":
                     break;
                 case "Control":
-                    if (!controlTabChordIsInProgress)
+                    if (!this.controlTabChordIsInProgress)
                         break;
-                    controlTabChordIsInProgress = false;
+                    this.controlTabChordIsInProgress = false;
                     dotNetHelper.invokeMethodAsync("ReceiveOnKeyUp", event.key);
                     event.preventDefault();
                     break;
                 case "Alt":
-                    altIsDown = false;
+                    this.altIsDown = false;
                     dotNetHelper.invokeMethodAsync("ReceiveOnKeyUp", event.key);
                     event.preventDefault();
                     break;
@@ -83,10 +83,10 @@ window.walkConfig = {
         });
         
         window.addEventListener('blur', function() {
-          if (!altIsDown && !controlTabChordIsInProgress)
+          if (!this.altIsDown && !this.controlTabChordIsInProgress)
               return;
-          altIsDown = false;
-          controlTabChordIsInProgress = false;
+          this.altIsDown = false;
+          this.controlTabChordIsInProgress = false;
           dotNetHelper.invokeMethodAsync("OnWindowBlur");
         });
     }
