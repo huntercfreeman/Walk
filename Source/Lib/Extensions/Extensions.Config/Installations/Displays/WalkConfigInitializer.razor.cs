@@ -1,6 +1,7 @@
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib;
+using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
@@ -77,12 +78,15 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 
             await SetSolution(dotNetAppData).ConfigureAwait(false);
             
-            // Do not ConfigureAwait(false) so that the UI doesn't change out from under you
-            // before you finish setting up the events?
-            // (is this a thing, I'm just presuming this would be true).
-            await DotNetService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
-                "walkConfig.appWideKeyboardEventsInitialize",
-                _dotNetHelper);
+            if (DotNetService.CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
+            {
+                // Do not ConfigureAwait(false) so that the UI doesn't change out from under you
+                // before you finish setting up the events?
+                // (is this a thing, I'm just presuming this would be true).
+                await DotNetService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
+                    "walkConfig.appWideKeyboardEventsInitialize",
+                    _dotNetHelper);
+            }
         }
     }
     
@@ -118,6 +122,9 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 message: string.Empty,
                 DotNetService.CommonService,
                 TimeSpan.FromSeconds(3));
+        
+            _ctrlIsDown = true;
+            StateHasChanged();
         }
     }
     

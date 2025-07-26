@@ -3,19 +3,13 @@
 
 window.walkConfig = {
     altIsDown: false,
-    controlIsDown: false,
+    controlTabChordIsInProgress: false,
 	appWideKeyboardEventsInitialize: function (dotNetHelper) {
         document.body.addEventListener('keydown', (event) => {
             switch(event.key) {
                 case "Shift":
                 case "Meta":
-                    break;
                 case "Control":
-                    if (controlIsDown)
-                        break;
-                    controlIsDown = true;
-                    dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown", event.key);
-                    event.preventDefault();
                     break;
                 case "Alt":
                     if (altIsDown)
@@ -27,6 +21,7 @@ window.walkConfig = {
                 case "Tab":
                     if (!event.ctrlKey)
                         break;
+                    controlTabChordIsInProgress = true;
                     dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown", event.key);
                     break;
                 default:
@@ -42,7 +37,9 @@ window.walkConfig = {
                 case "Tab":
                     break;
                 case "Control":
-                    controlIsDown = false;
+                    if (!controlTabChordIsInProgress)
+                        break;
+                    controlTabChordIsInProgress = false;
                     dotNetHelper.invokeMethodAsync("ReceiveOnKeyUp", event.key);
                     event.preventDefault();
                     break;
@@ -58,10 +55,10 @@ window.walkConfig = {
         });
         
         window.addEventListener('blur', function() {
-          if (!altIsDown && !ctrlIsDown)
+          if (!altIsDown && !controlTabChordIsInProgress)
               return;
           altIsDown = false;
-          ctrlIsDown = false;
+          controlTabChordIsInProgress = false;
           dotNetHelper.invokeMethodAsync("OnWindowBlur");
         });
     }
