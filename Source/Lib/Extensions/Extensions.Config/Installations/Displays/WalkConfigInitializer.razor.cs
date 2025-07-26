@@ -96,6 +96,14 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 DotNetService.CommonService,
                 TimeSpan.FromSeconds(3));
         }
+        else if (key == "Control")
+        {
+            NotificationHelper.DispatchInformative(
+                title: "Down Control",
+                message: string.Empty,
+                DotNetService.CommonService,
+                TimeSpan.FromSeconds(3));
+        }
     }
     
     [JSInvokable]
@@ -107,6 +115,14 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
         {
             NotificationHelper.DispatchInformative(
                 title: "Up Alt",
+                message: string.Empty,
+                DotNetService.CommonService,
+                TimeSpan.FromSeconds(3));
+        }
+        else if (key == "Control")
+        {
+            NotificationHelper.DispatchInformative(
+                title: "Up Control",
                 message: string.Empty,
                 DotNetService.CommonService,
                 TimeSpan.FromSeconds(3));
