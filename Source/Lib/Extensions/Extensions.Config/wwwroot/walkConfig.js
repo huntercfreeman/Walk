@@ -12,16 +12,16 @@ window.walkConfig = {
                 case "Control":
                     break;
                 case "Alt":
-                    if (this.altIsDown)
+                    if (window.walkConfig.altIsDown)
                         break;
-                    this.altIsDown = true;
+                    window.walkConfig.altIsDown = true;
                     dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown", event.key);
                     event.preventDefault();
                     break;
                 case "Tab":
                     if (!event.ctrlKey)
                         break;
-                    this.controlTabChordIsInProgress = true;
+                    window.walkConfig.controlTabChordIsInProgress = true;
                     dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown", event.key);
                     break;
                 case "p":
@@ -65,14 +65,14 @@ window.walkConfig = {
                 case "Tab":
                     break;
                 case "Control":
-                    if (!this.controlTabChordIsInProgress)
+                    if (!window.walkConfig.controlTabChordIsInProgress)
                         break;
-                    this.controlTabChordIsInProgress = false;
+                    window.walkConfig.controlTabChordIsInProgress = false;
                     dotNetHelper.invokeMethodAsync("ReceiveOnKeyUp", event.key);
                     event.preventDefault();
                     break;
                 case "Alt":
-                    this.altIsDown = false;
+                    window.walkConfig.altIsDown = false;
                     dotNetHelper.invokeMethodAsync("ReceiveOnKeyUp", event.key);
                     event.preventDefault();
                     break;
@@ -83,10 +83,10 @@ window.walkConfig = {
         });
         
         window.addEventListener('blur', function() {
-          if (!this.altIsDown && !this.controlTabChordIsInProgress)
+          if (!window.walkConfig.altIsDown && !window.walkConfig.controlTabChordIsInProgress)
               return;
-          this.altIsDown = false;
-          this.controlTabChordIsInProgress = false;
+          window.walkConfig.altIsDown = false;
+          window.walkConfig.controlTabChordIsInProgress = false;
           dotNetHelper.invokeMethodAsync("OnWindowBlur");
         });
     }
