@@ -56,5 +56,12 @@ window.walkConfig = {
             }
             // event.preventDefault();
         });
+        
+        window.addEventListener('blur', function() {
+          if (!altIsDown)
+              return;
+          altIsDown = false;
+          dotNetHelper.invokeMethodAsync("ReceiveOnKeyUp", "Alt");
+        });
     }
 }

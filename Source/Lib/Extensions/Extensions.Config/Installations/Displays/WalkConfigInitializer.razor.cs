@@ -40,6 +40,9 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
     private static Key<IDynamicViewModel> _notificationRecordKey = Key<IDynamicViewModel>.NewKey();
     
     private DotNetObjectReference<WalkConfigInitializer>? _dotNetHelper;
+    
+    private bool _altIsDown;
+    private bool _ctrlIsDown;
 
     protected override void OnInitialized()
     {
@@ -93,6 +96,9 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 message: string.Empty,
                 DotNetService.CommonService,
                 TimeSpan.FromSeconds(3));
+            
+            _altIsDown = true;
+            InvokeAsync(StateHasChanged);
         }
         else if (key == "Control")
         {
@@ -101,6 +107,9 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 message: string.Empty,
                 DotNetService.CommonService,
                 TimeSpan.FromSeconds(3));
+        
+            _ctrlIsDown = true;
+            InvokeAsync(StateHasChanged);
         }
         else if (key == "Tab")
         {
@@ -122,6 +131,9 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 message: string.Empty,
                 DotNetService.CommonService,
                 TimeSpan.FromSeconds(3));
+        
+            _altIsDown = false;
+            InvokeAsync(StateHasChanged);
         }
         else if (key == "Control")
         {
@@ -130,6 +142,9 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 message: string.Empty,
                 DotNetService.CommonService,
                 TimeSpan.FromSeconds(3));
+            
+            _ctrlIsDown = true;
+            InvokeAsync(StateHasChanged);
         }
     }
     

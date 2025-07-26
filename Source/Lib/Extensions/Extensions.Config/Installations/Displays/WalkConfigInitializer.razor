@@ -1,0 +1,26 @@
+@if (_altIsDown)
+{
+    <div style="position: fixed; left: 20vw; top: 20vh; width: 60vw; height: 60vh; background-color: aqua;">
+        <div>AltKeybindFocusPointHashSet</div>
+        
+        <div>
+            @foreach (var aaa in DotNetService.CommonService.AltKeybindFocusPointHashSet)
+            {
+                <div>@aaa</div>
+            }
+        </div>
+    </div>
+}
+else if (_ctrlIsDown)
+{
+    <div style="position: fixed; left: 20vw; top: 20vh; width: 60vw; height: 60vh; background-color: aqua;">
+        <div>CtrlKeybindFocusPointHashSet</div>
+        
+        <div>
+            @foreach (var aaa in DotNetService.CommonService.AltKeybindFocusPointHashSet)
+            {
+                <div>@aaa</div>
+            }
+        </div>
+    </div>
+}
