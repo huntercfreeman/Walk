@@ -86,8 +86,6 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
     [JSInvokable]
     public async Task ReceiveOnKeyDown(string key)
     {
-        Console.WriteLine(key);
-        
         if (key == "Alt")
         {
             NotificationHelper.DispatchInformative(
@@ -104,13 +102,19 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 DotNetService.CommonService,
                 TimeSpan.FromSeconds(3));
         }
+        else if (key == "Tab")
+        {
+            NotificationHelper.DispatchInformative(
+                title: "Ctrl+Tab",
+                message: string.Empty,
+                DotNetService.CommonService,
+                TimeSpan.FromSeconds(3));
+        }
     }
     
     [JSInvokable]
     public async Task ReceiveOnKeyUp(string key)
     {
-        Console.WriteLine(key);
-        
         if (key == "Alt")
         {
             NotificationHelper.DispatchInformative(
