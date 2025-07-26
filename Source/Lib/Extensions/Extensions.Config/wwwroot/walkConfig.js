@@ -24,6 +24,11 @@ window.walkConfig = {
                     controlTabChordIsInProgress = true;
                     dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown", event.key);
                     break;
+                case "p":
+                    if (!event.ctrlKey)
+                        break;
+                    dotNetHelper.invokeMethodAsync("ReceiveWidgetOnKeyDown");
+                    break;
                 default:
                     break;
             }

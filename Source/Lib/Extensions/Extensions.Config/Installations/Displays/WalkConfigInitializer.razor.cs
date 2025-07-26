@@ -163,6 +163,16 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
         StateHasChanged();
     }
     
+    [JSInvokable]
+    public async Task ReceiveWidgetOnKeyDown()
+    {
+        DotNetService.CommonService.SetWidget(new Walk.Common.RazorLib.Widgets.Models.WidgetModel(
+            typeof(Walk.Ide.RazorLib.CommandBars.Displays.CommandBarDisplay),
+            componentParameterMap: null,
+            cssClass: null,
+            cssStyle: "width: 80vw; height: 5em; left: 10vw; top: 0;"));
+    }
+    
     public ValueTask Do_InitializeFooterBadges()
     {
         DotNetService.IdeService.Ide_RegisterFooterBadge(
