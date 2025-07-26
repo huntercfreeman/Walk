@@ -95,35 +95,17 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
     public async Task ReceiveOnKeyDown(string key)
     {
         if (key == "Alt")
-        {
-            NotificationHelper.DispatchInformative(
-                title: "Down Alt",
-                message: string.Empty,
-                DotNetService.CommonService,
-                TimeSpan.FromSeconds(3));
-            
+        {   
             _altIsDown = true;
             StateHasChanged();
         }
         else if (key == "Control")
         {
-            NotificationHelper.DispatchInformative(
-                title: "Down Control",
-                message: string.Empty,
-                DotNetService.CommonService,
-                TimeSpan.FromSeconds(3));
-        
             _ctrlIsDown = true;
             StateHasChanged();
         }
         else if (key == "Tab")
         {
-            NotificationHelper.DispatchInformative(
-                title: "Ctrl+Tab",
-                message: string.Empty,
-                DotNetService.CommonService,
-                TimeSpan.FromSeconds(3));
-        
             _ctrlIsDown = true;
             StateHasChanged();
         }
@@ -134,23 +116,11 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
     {
         if (key == "Alt")
         {
-            NotificationHelper.DispatchInformative(
-                title: "Up Alt",
-                message: string.Empty,
-                DotNetService.CommonService,
-                TimeSpan.FromSeconds(3));
-        
             _altIsDown = false;
             StateHasChanged();
         }
         else if (key == "Control")
         {
-            NotificationHelper.DispatchInformative(
-                title: "Up Control",
-                message: string.Empty,
-                DotNetService.CommonService,
-                TimeSpan.FromSeconds(3));
-            
             _ctrlIsDown = false;
             StateHasChanged();
         }
