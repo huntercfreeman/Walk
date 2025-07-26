@@ -1,4 +1,6 @@
+using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
@@ -30,15 +32,20 @@ using Walk.CompilerServices.Xml.Html.Decoration;
 
 namespace Walk.Extensions.Config.Installations.Displays;
 
-public partial class WalkConfigInitializer : ComponentBase
+public partial class WalkConfigInitializer : ComponentBase, IDisposable
 {
     [Inject]
     private DotNetService DotNetService { get; set; } = null!;
     
     private static Key<IDynamicViewModel> _notificationRecordKey = Key<IDynamicViewModel>.NewKey();
+    
+    private DotNetObjectReference<WalkConfigInitializer>? _dotNetHelper;
 
     protected override void OnInitialized()
     {
+        // TODO: Does the object used here matter? Should it be a "smaller" object or is this just reference?
+        _dotNetHelper = DotNetObjectReference.Create(this);
+    
         HandleCompilerServicesAndDecorationMappers();
     
         DotNetService.TextEditorService.CommonService.Continuous_Enqueue(new BackgroundTask(
@@ -66,6 +73,43 @@ public partial class WalkConfigInitializer : ComponentBase
                 .ConfigureAwait(false);
                 
             await SetSolution(dotNetAppData).ConfigureAwait(false);
+            
+            // Do not ConfigureAwait(false) so that the UI doesn't change out from under you
+            // before you finish setting up the events?
+            // (is this a thing, I'm just presuming this would be true).
+            await DotNetService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
+                "walkConfig.appWideKeyboardEventsInitialize",
+                _dotNetHelper);
+        }
+    }
+    
+    [JSInvokable]
+    public async Task ReceiveOnKeyDown(string key)
+    {
+        Console.WriteLine(key);
+        
+        if (key == "Alt")
+        {
+            NotificationHelper.DispatchInformative(
+                title: "Down Alt",
+                message: string.Empty,
+                DotNetService.CommonService,
+                TimeSpan.FromSeconds(3));
+        }
+    }
+    
+    [JSInvokable]
+    public async Task ReceiveOnKeyUp(string key)
+    {
+        Console.WriteLine(key);
+        
+        if (key == "Alt")
+        {
+            NotificationHelper.DispatchInformative(
+                title: "Up Alt",
+                message: string.Empty,
+                DotNetService.CommonService,
+                TimeSpan.FromSeconds(3));
         }
     }
     
@@ -224,5 +268,10 @@ public partial class WalkConfigInitializer : ComponentBase
         DotNetService.TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.DOT_NET_SOLUTION, htmlDecorationMapper);
         DotNetService.TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X, htmlDecorationMapper);
         DotNetService.TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.TERMINAL, terminalDecorationMapper);
+    }
+    
+    public void Dispose()
+    {
+        _dotNetHelper?.Dispose();
     }
 }
