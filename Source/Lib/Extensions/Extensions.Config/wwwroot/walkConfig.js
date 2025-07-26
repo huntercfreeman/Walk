@@ -49,6 +49,9 @@ window.walkConfig = {
                         break;
                     dotNetHelper.invokeMethodAsync("CodeSearchOnKeyDown");
                     break;
+                case "Escape":
+                    dotNetHelper.invokeMethodAsync("EscapeOnKeyDown");
+                    break;
                 default:
                     break;
             }

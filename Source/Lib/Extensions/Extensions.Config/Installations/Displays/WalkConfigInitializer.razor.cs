@@ -9,6 +9,7 @@ using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.TextEditor.RazorLib.Edits.Models;
+using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.InputFiles.Displays;
 using Walk.Ide.RazorLib.Terminals.Models;
@@ -144,24 +145,72 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
             cssStyle: "width: 80vw; height: 5em; left: 10vw; top: 0;"));
     }
     
+    /// <summary>
+    /// TODO: This triggers when you save with 'Ctrl + s' in the text editor itself...
+    /// ...the redundant save doesn't go through though since this app wide save will check the DirtyResourceUriState.
+    /// </summary>
     [JSInvokable]
     public async Task SaveFileOnKeyDown()
     {
-        NotificationHelper.DispatchInformative(
-            title: "Save",
-            message: string.Empty,
-            DotNetService.CommonService,
-            TimeSpan.FromSeconds(3));
+        var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+        var viewModelKey = textEditorGroup.ActiveViewModelKey;
+        
+        DotNetService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+            var dirtyResourceUriState = DotNetService.TextEditorService.GetDirtyResourceUriState();
+            var viewModel = editContext.GetViewModelModifier(viewModelKey);
+            
+            if (dirtyResourceUriState.DirtyResourceUriList.Contains(viewModel.PersistentState.ResourceUri))
+            {
+                var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
+                
+                TextEditorCommandDefaultFunctions.TriggerSave(
+                    editContext,
+                    modelModifier,
+                    viewModel,
+                    DotNetService.CommonService);
+                
+                NotificationHelper.DispatchInformative(
+                    title: "Save",
+                    message: string.Empty,
+                    DotNetService.CommonService,
+                    TimeSpan.FromSeconds(3));
+            }
+        
+            return ValueTask.CompletedTask;
+        });
     }
     
     [JSInvokable]
     public async Task SaveAllFileOnKeyDown()
     {
-        NotificationHelper.DispatchInformative(
-            title: "SaveAll",
-            message: string.Empty,
-            DotNetService.CommonService,
-            TimeSpan.FromSeconds(3));
+        DotNetService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+            var dirtyResourceUriState = DotNetService.TextEditorService.GetDirtyResourceUriState();
+            
+            foreach (var dirtyResourceUri in dirtyResourceUriState.DirtyResourceUriList)
+            {
+                var modelModifier = editContext.GetModelModifier(dirtyResourceUri);
+                if (modelModifier.PersistentState.ViewModelKeyList.Count > 0)
+                {
+                    var viewModel = editContext.GetViewModelModifier(modelModifier.PersistentState.ViewModelKeyList[0]);
+                    
+                    TextEditorCommandDefaultFunctions.TriggerSave(
+                        editContext,
+                        modelModifier,
+                        viewModel,
+                        DotNetService.CommonService);
+                    
+                    NotificationHelper.DispatchInformative(
+                        title: "SaveAll",
+                        message: string.Empty,
+                        DotNetService.CommonService,
+                        TimeSpan.FromSeconds(3));
+                }
+            }
+        
+            return ValueTask.CompletedTask;
+        });
     }
     
     [JSInvokable]
@@ -181,6 +230,22 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
             null,
             true,
             null));
+    }
+    
+    [JSInvokable]
+    public async Task EscapeOnKeyDown()
+    {
+        var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+        var viewModelKey = textEditorGroup.ActiveViewModelKey;
+        
+        DotNetService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+            var viewModel = editContext.GetViewModelModifier(viewModelKey);
+            var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
+            viewModel.FocusAsync();
+            return ValueTask.CompletedTask;
+        });
+        
     }
     
     public ValueTask Do_InitializeFooterBadges()
