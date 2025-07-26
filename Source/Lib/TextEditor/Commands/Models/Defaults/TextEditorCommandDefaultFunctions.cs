@@ -9,6 +9,7 @@ using Walk.Common.RazorLib.Menus.Displays;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
+using Walk.TextEditor.RazorLib.Groups.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.Cursors.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
@@ -91,6 +92,99 @@ public class TextEditorCommandDefaultFunctions
             viewModel.PersistentState.OnSaveRequested.Invoke(modelModifier);
             modelModifier.SetIsDirtyFalse();
         }
+    }
+    
+    /// <summary>
+    /// When focus is NOT on the text editor, but you want to save a file,
+    /// provide the "main" group key, and whatever the active viewmodel is, will be saved,
+    /// ONLY IF it is dirty.
+    /// </summary>
+    public static void TriggerSave_NoTextEditorFocus(
+        TextEditorService textEditorService,
+        Key<TextEditorGroup> groupKey)
+    {
+        textEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+            var textEditorGroup = textEditorService.Group_GetOrDefault(groupKey);
+            var viewModelKey = textEditorGroup.ActiveViewModelKey;
+        
+            var dirtyResourceUriState = textEditorService.GetDirtyResourceUriState();
+            var viewModel = editContext.GetViewModelModifier(viewModelKey);
+            
+            if (dirtyResourceUriState.DirtyResourceUriList.Contains(viewModel.PersistentState.ResourceUri))
+            {
+                var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
+                
+                TextEditorCommandDefaultFunctions.TriggerSave(
+                    editContext,
+                    modelModifier,
+                    viewModel,
+                    textEditorService.CommonService);
+                
+                var componentData = viewModel.PersistentState.ComponentData;
+                if (componentData is not null)
+                    componentData.ThrottleApplySyntaxHighlighting(modelModifier);
+                
+                NotificationHelper.DispatchInformative(
+                    title: "Save_NoTextEditorFocus",
+                    message: viewModel.PersistentState.ResourceUri.Value,
+                    textEditorService.CommonService,
+                    TimeSpan.FromSeconds(3));
+            }
+        
+            return ValueTask.CompletedTask;
+        });
+    }
+    
+    /// <summary>
+    /// When you want to save all models that are dirty, and ONLY IF they are dirty.
+    /// If a groupKey is provided, then its ActiveViewModelKey will be read.
+    /// If that ActiveViewModelKey's model is dirty, then the syntax highlighting
+    /// for that single viewmodel will be re-(calculated/drawn).
+    /// </summary>
+    public static void TriggerSaveAll(
+        TextEditorService textEditorService,
+        Key<TextEditorGroup> groupKey)
+    {
+        textEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+            var textEditorGroup = textEditorService.Group_GetOrDefault(groupKey);
+            var viewModelKey = textEditorGroup.ActiveViewModelKey;
+        
+            var dirtyResourceUriState = textEditorService.GetDirtyResourceUriState();
+            var viewModel = editContext.GetViewModelModifier(viewModelKey);
+            
+            if (dirtyResourceUriState.DirtyResourceUriList.Contains(viewModel.PersistentState.ResourceUri))
+            {
+                var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
+                var componentData = viewModel.PersistentState.ComponentData;
+                if (componentData is not null)
+                    componentData.ThrottleApplySyntaxHighlighting(modelModifier);
+            }
+            
+            foreach (var dirtyResourceUri in dirtyResourceUriState.DirtyResourceUriList)
+            {
+                var modelModifier = editContext.GetModelModifier(dirtyResourceUri);
+                if (modelModifier.PersistentState.ViewModelKeyList.Count > 0)
+                {
+                    viewModel = editContext.GetViewModelModifier(modelModifier.PersistentState.ViewModelKeyList[0]);
+                    
+                    TextEditorCommandDefaultFunctions.TriggerSave(
+                        editContext,
+                        modelModifier,
+                        viewModel,
+                        textEditorService.CommonService);
+                    
+                    NotificationHelper.DispatchInformative(
+                        title: "SaveAll",
+                        message: viewModel.PersistentState.ResourceUri.Value,
+                        textEditorService.CommonService,
+                        TimeSpan.FromSeconds(3));
+                }
+            }
+        
+            return ValueTask.CompletedTask;
+        });
     }
 
     public static void SelectAll(

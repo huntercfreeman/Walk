@@ -50,6 +50,8 @@ public partial class CommonService : IBackgroundTaskGroup
             });
     }
     
+    public HashSet<string> FocusPointHashSet { get; } = new();
+    
     public IEnvironmentProvider EnvironmentProvider { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     
