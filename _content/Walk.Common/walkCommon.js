@@ -342,6 +342,15 @@ window.walkCommon = {
             BoundingClientRectTop: boundingClientRect.top,
         };
     },
+    getLineHeightInPixelsById: function (elementId) {
+        let element = document.getElementById(elementId);
+
+        if (!element) {
+            return 20;
+        }
+        
+        return element.offsetHeight;
+    },
     focusHtmlElementById: function (elementId, preventScroll) {
         let element = document.getElementById(elementId);
 
