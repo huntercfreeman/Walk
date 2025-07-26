@@ -1,6 +1,7 @@
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib;
+using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
@@ -196,21 +197,20 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
     [JSInvokable]
     public async Task FindAllOnKeyDown()
     {
-        NotificationHelper.DispatchInformative(
-            title: "FindAll",
-            message: string.Empty,
-            DotNetService.CommonService,
-            TimeSpan.FromSeconds(3));
+        DotNetService.TextEditorService.Options_ShowFindAllDialog();
     }
     
     [JSInvokable]
     public async Task CodeSearchOnKeyDown()
     {
-        NotificationHelper.DispatchInformative(
-            title: "CodeSearch",
-            message: string.Empty,
-            DotNetService.CommonService,
-            TimeSpan.FromSeconds(3));
+        DotNetService.CommonService.Dialog_ReduceRegisterAction(DotNetService.IdeService.CodeSearchDialog ??= new DialogViewModel(
+            Key<IDynamicViewModel>.NewKey(),
+            "Code Search",
+            typeof(Walk.Ide.RazorLib.CodeSearches.Displays.CodeSearchDisplay),
+            null,
+            null,
+            true,
+            null));
     }
     
     public ValueTask Do_InitializeFooterBadges()
