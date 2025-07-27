@@ -1,0 +1,3 @@
+.di_config_ctrl-tab-entry.di_active {
+    background-color: var(--di_active-with-focus-background-color);
+}

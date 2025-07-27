@@ -15,6 +15,7 @@ using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.FileSystems.Displays;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.TextEditor.RazorLib;
+using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
 using Walk.TextEditor.RazorLib.Groups.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.Decorations.Models;
@@ -373,7 +374,27 @@ public partial class IdeService : IBackgroundTaskGroup
             }));
 
         menuOptionsList.Add(menuOptionOpen);
-
+        
+        var menuOptionSave = new MenuOptionRecord(
+            "Save (Ctrl s)",
+            MenuOptionKind.Other,
+            () =>
+            {
+                TextEditorCommandDefaultFunctions.TriggerSave_NoTextEditorFocus(TextEditorService, Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+                return Task.CompletedTask;
+            });
+        menuOptionsList.Add(menuOptionSave);
+            
+        var menuOptionSaveAll = new MenuOptionRecord(
+            "Save All (Ctrl Shift s)",
+            MenuOptionKind.Other,
+            () =>
+            {
+                TextEditorCommandDefaultFunctions.TriggerSaveAll(TextEditorService, Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+                return Task.CompletedTask;
+            });
+        menuOptionsList.Add(menuOptionSaveAll);
+        
         // Menu Option Permissions
         var menuOptionPermissions = new MenuOptionRecord(
             "Permissions",
