@@ -23,14 +23,14 @@ window.walkConfig = {
                     if (window.walkConfig.altIsDown)
                         break;
                     window.walkConfig.altIsDown = true;
-                    dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown", event.key);
+                    dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown", event.key, event.shiftKey);
                     event.preventDefault();
                     break;
                 case "Tab":
                     if (!event.ctrlKey)
                         break;
                     window.walkConfig.controlTabChordIsInProgress = true;
-                    dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown", event.key);
+                    dotNetHelper.invokeMethodAsync("ReceiveOnKeyDown", event.key, event.shiftKey);
                     break;
                 case "p":
                     if (!event.ctrlKey)
