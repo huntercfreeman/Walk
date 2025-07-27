@@ -930,11 +930,68 @@ public ref struct CSharpParserModel
         return false;
     }
     
+    public bool TryGetVariableDeclarationByPartialType(
+        CSharpCompilationUnit compilationUnit,
+        int scopeIndexKey,
+        string variableIdentifierText,
+        TypeDefinitionNode typeDefinitionNode,
+        out VariableDeclarationNode variableDeclarationNode)
+    {
+        int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
+        while (positionExclusive < Binder.PartialTypeDefinitionList.Count)
+        {
+            if (Binder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
+            {
+                CSharpCompilationUnit? innerCompilationUnit;
+                
+                if (Binder.PartialTypeDefinitionList[positionExclusive].ScopeIndexKey != -1)
+                {
+                    if (Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri != compilationUnit.ResourceUri)
+                    {
+                        if (Binder.__CompilationUnitMap.TryGetValue(Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri, out var temporaryCompilationUnit))
+                            innerCompilationUnit = temporaryCompilationUnit;
+                        else
+                            innerCompilationUnit = null;
+                    }
+                    else
+                    {
+                        innerCompilationUnit = compilationUnit;
+                    }
+                    
+                    if (innerCompilationUnit != null)
+                    {
+                        var innerScopeIndexKey = Binder.PartialTypeDefinitionList[positionExclusive].ScopeIndexKey;
+                    
+                        if (TryGetVariableDeclarationNodeByScope(
+                                innerCompilationUnit,
+                                innerScopeIndexKey,
+                                variableIdentifierText,
+                                out variableDeclarationNode,
+                                isRecursive: true))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                
+                positionExclusive++;
+            }
+            else
+            {
+                break;
+            }
+        }
+        
+        variableDeclarationNode = null;
+        return false;
+    }
+    
     public bool TryGetVariableDeclarationNodeByScope(
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey,
         string variableIdentifierText,
-        out VariableDeclarationNode? variableDeclarationNode)
+        out VariableDeclarationNode? variableDeclarationNode,
+        bool isRecursive = false)
     {
         variableDeclarationNode = null;
         foreach (var x in compilationUnit.NodeList)
@@ -949,9 +1006,31 @@ public ref struct CSharpParserModel
         }
         
         if (variableDeclarationNode is null)
+        {
+            var codeBlockOwner = compilationUnit.CodeBlockOwnerList[scopeIndexKey];
+            if (!isRecursive && codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+            {
+                var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
+                if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
+                {
+                    if (TryGetVariableDeclarationByPartialType(
+                        compilationUnit,
+                        scopeIndexKey,
+                        variableIdentifierText,
+                        typeDefinitionNode,
+                        out variableDeclarationNode))
+                    {
+                        return true;
+                    }
+                }
+            }
+        
             return false;
+        }
         else
+        {
             return true;
+        }
     }
     
     public bool TryAddVariableDeclarationNodeByScope(
