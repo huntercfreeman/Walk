@@ -990,17 +990,6 @@ public ref struct CSharpParserModel
         return false;
     }
     
-    public bool TryGetVariableDeclarationByInheritedType(
-        CSharpCompilationUnit compilationUnit,
-        int scopeIndexKey,
-        string variableIdentifierText,
-        TypeDefinitionNode typeDefinitionNode,
-        out VariableDeclarationNode variableDeclarationNode)
-    {
-        variableDeclarationNode = null;
-        return false;
-    }
-    
     public bool TryGetVariableDeclarationNodeByScope(
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey,

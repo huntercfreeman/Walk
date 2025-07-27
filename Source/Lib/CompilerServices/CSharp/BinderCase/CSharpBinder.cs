@@ -400,7 +400,7 @@ public class CSharpBinder
                                     innerCompilationUnit = compilationUnit;
                                 }
                                 
-                                if (innerCompilationUnit != null)
+                                if (innerCompilationUnit is not null)
                                 {
                                     var innerScopeIndexKey = PartialTypeDefinitionList[positionExclusive].ScopeIndexKey;
                                     query = query.Concat(GetVariableDeclarationNodesByScope(
@@ -415,6 +415,57 @@ public class CSharpBinder
                         else
                         {
                             break;
+                        }
+                    }
+                }
+                
+                if (typeDefinitionNode.InheritedTypeReference != default)
+                {
+                    string? identifierText;
+                    CSharpCompilationUnit innerCompilationUnit;
+                    
+                    if (typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri == compilationUnit.ResourceUri)
+                    {
+                        innerCompilationUnit = compilationUnit;
+                        identifierText = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, TextEditorService);
+                    }
+                    else
+                    {
+                        if (__CompilationUnitMap.TryGetValue(typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
+                        {
+                            identifierText = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, TextEditorService);
+                        }
+                        else
+                        {
+                            identifierText = null;
+                        }
+                    }
+                
+                    if (identifierText is not null)
+                    {
+                        var innerScopeIndexKey = scopeIndexKey;
+                        if (typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri != compilationUnit.ResourceUri &&
+                            typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionTextSpan != default)
+                        {
+                            var scope = GetScopeByPositionIndex(innerCompilationUnit, typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionTextSpan.StartInclusiveIndex);
+                            if (scope is not null)
+                            {
+                                innerScopeIndexKey = scope.Unsafe_SelfIndexKey;
+                            }
+                        }
+                        
+                    
+                        if (TryGetTypeDefinitionHierarchically(
+                                innerCompilationUnit,
+                                innerScopeIndexKey,
+                                identifierText,
+                                out var inheritedTypeDefinitionNode))
+                        {
+                            innerScopeIndexKey = inheritedTypeDefinitionNode.Unsafe_SelfIndexKey;
+                            query = query.Concat(GetVariableDeclarationNodesByScope(
+                                innerCompilationUnit,
+                                innerScopeIndexKey,
+                                isRecursive: true));
                         }
                     }
                 }
