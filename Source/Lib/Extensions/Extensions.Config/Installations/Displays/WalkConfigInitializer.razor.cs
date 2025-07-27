@@ -45,6 +45,16 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
     
     private DotNetObjectReference<WalkConfigInitializer>? _dotNetHelper;
     
+    private enum CtrlTabKind
+    {
+        Dialogs,
+        TextEditors,
+    }
+    
+    private CtrlTabKind _ctrlTabKind = CtrlTabKind.Dialogs;
+    
+    private int _index;
+    
     private bool _altIsDown;
     private bool _ctrlIsDown;
 
@@ -108,7 +118,54 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
         }
         else if (key == "Tab")
         {
-            _ctrlIsDown = true;
+            if (!_ctrlIsDown)
+            {
+                _ctrlIsDown = true;
+            }
+            else
+            {
+                if (_ctrlTabKind == CtrlTabKind.Dialogs)
+                {
+                    if (_index >= DotNetService.CommonService.GetDialogState().DialogList.Count - 1)
+                    {
+                        var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+                        if (textEditorGroup.ViewModelKeyList.Count > 0)
+                        {
+                            _ctrlTabKind = CtrlTabKind.TextEditors;
+                            _index = 0;
+                        }
+                        else
+                        {
+                            _index = 0;
+                        }
+                    }
+                    else
+                    {
+                        _index++;
+                    }
+                }
+                else if (_ctrlTabKind == CtrlTabKind.TextEditors)
+                {
+                    var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+                    if (_index >= textEditorGroup.ViewModelKeyList.Count - 1)
+                    {
+                        if (DotNetService.CommonService.GetDialogState().DialogList.Count > 0)
+                        {
+                            _ctrlTabKind = CtrlTabKind.Dialogs;
+                            _index = 0;
+                        }
+                        else
+                        {
+                            _index = 0;
+                        }
+                    }
+                    else
+                    {
+                        _index++;
+                    }
+                }
+            }
+            
             StateHasChanged();
         }
     }

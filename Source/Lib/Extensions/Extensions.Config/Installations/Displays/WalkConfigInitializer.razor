@@ -2,13 +2,61 @@
 
 @if (_ctrlIsDown)
 {
-    <div style="z-index: 99; position: fixed; left: 20vw; top: 20vh; width: 60vw; height: 60vh; color: var(--di_secondary-foreground-color); background-color: var(--di_secondary-background-color);">
-        <div>CtrlKeybindFocusPointHashSet</div>
+    var dialogState = DotNetService.CommonService.GetDialogState();
+    
+    var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+
+    <div style="display: flex; z-index: 99; position: fixed; left: 20vw; top: 20vh; width: 60vw; height: 60vh; color: var(--di_secondary-foreground-color); background-color: var(--di_secondary-background-color);">
+        
+        @_ctrlTabKind
+        @_index
         
         <div>
-            @foreach (var aaa in DotNetService.CommonService.FocusPointHashSet)
+            <h2>Dialogs</h2>
+            @for (int i = 0; i < dialogState.DialogList.Count; i++)
             {
-                <div>@aaa</div>
+                var dialog = dialogState.DialogList[i];
+                
+                string cssClass;
+                
+                if (_ctrlTabKind == CtrlTabKind.Dialogs && _index == i)
+                {
+                    cssClass = "di_config_ctrl-tab-entry di_active";
+                }
+                else
+                {
+                    cssClass = "di_config_ctrl-tab-entry";
+                }
+                
+                <div class="@cssClass">@dialog.Title</div>
+            }
+        </div>
+        
+        <div style="margin-left: 10px; border-left: 1px solid var(--di_primary-border-color);">
+            <h2>TextEditors</h2>
+            @if (textEditorGroup is not null)
+            {
+                for (int i = 0; i < textEditorGroup.ViewModelKeyList.Count; i++)
+                {
+                    var viewModelKey = textEditorGroup.ViewModelKeyList[i];
+                    var viewModel = DotNetService.TextEditorService.ViewModel_GetOrDefault(viewModelKey);
+                    
+                    if (viewModel is not null)
+                    {
+                        string cssClass;
+                        
+                        if (_ctrlTabKind == CtrlTabKind.TextEditors && _index == i)
+                        {
+                            cssClass = "di_config_ctrl-tab-entry di_active";
+                        }
+                        else
+                        {
+                            cssClass = "di_config_ctrl-tab-entry";
+                        }
+                    
+                        <div class="@cssClass">@viewModel.PersistentState.Title</div>
+                    }
+                }
             }
         </div>
     </div>
