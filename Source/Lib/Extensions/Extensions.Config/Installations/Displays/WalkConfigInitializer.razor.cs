@@ -126,7 +126,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                     if (_index >= DotNetService.CommonService.GetDialogState().DialogList.Count - 1)
                     {
                         var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
-                        if (textEditorGroup.ViewModelKeyList.Count > 0)
+                        if ((textEditorGroup?.ViewModelKeyList.Count ?? 0) > 0)
                         {
                             _ctrlTabKind = CtrlTabKind.TextEditors;
                             _index = 0;
