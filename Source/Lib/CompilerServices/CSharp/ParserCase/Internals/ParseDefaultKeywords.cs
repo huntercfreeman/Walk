@@ -294,8 +294,7 @@ public class ParseDefaultKeywords
         
         if (enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList is not null &&
             variableDeclarationNode is not null &&
-            variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService) ==
-                "var")
+            parserModel.GetTextSpanText(variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan) == "var")
         {
             if (enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList.Count == 1)
                 variableDeclarationNode.SetImplicitTypeReference(enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList[0].TypeReference);
@@ -807,7 +806,7 @@ public class ParseDefaultKeywords
             genericParameterListing,
             primaryConstructorFunctionArgumentListing: default,
             inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
-            namespaceName: parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
+            namespaceName: parserModel.GetTextSpanText(parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan),
             parserModel.Compilation.ResourceUri);
         
         if (typeDefinitionNode.HasPartialModifier)
@@ -815,7 +814,7 @@ public class ParseDefaultKeywords
             if (parserModel.TryGetTypeDefinitionHierarchically(
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    identifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
+                    parserModel.GetTextSpanText(identifierToken.TextSpan),
                     out TypeDefinitionNode innerTypeDefinitionNode))
             {
                 typeDefinitionNode.IndexPartialTypeDefinition = innerTypeDefinitionNode.IndexPartialTypeDefinition;
@@ -872,7 +871,7 @@ public class ParseDefaultKeywords
                 }
             }
             
-            if (parserModel.ClearedPartialDefinitionHashSet.Add(identifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService)) &&
+            if (parserModel.ClearedPartialDefinitionHashSet.Add(parserModel.GetTextSpanText(identifierToken.TextSpan)) &&
                 typeDefinitionNode.IndexPartialTypeDefinition != -1)
             {
                 // Partial definitions of the same type from the same ResourceUri are made contiguous.

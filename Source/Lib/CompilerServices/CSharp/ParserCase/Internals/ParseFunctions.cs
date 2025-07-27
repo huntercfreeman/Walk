@@ -29,7 +29,7 @@ public class ParseFunctions
         if (parserModel.TryGetFunctionDefinitionNodeByScope(
             parserModel.Compilation,
             parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-            consumedIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
+            parserModel.GetTextSpanText(consumedIdentifierToken.TextSpan),
             out var existingFunctionDefinitionNode))
         {
             isFunctionOverloadCase = true;

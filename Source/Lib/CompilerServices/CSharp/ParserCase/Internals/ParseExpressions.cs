@@ -888,7 +888,7 @@ public static class ParseExpressions
         _ = parserModel.TryGetTypeDefinitionHierarchically(
                 parserModel.Compilation,
                 parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                token.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
+                parserModel.GetTextSpanText(token.TextSpan),
                 out var typeDefinitionNode);
         
         var typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, ref parserModel);
@@ -947,6 +947,8 @@ public static class ParseExpressions
                 parserModel.ParserContextKind = CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode;
             }
         }
+        
+        var ambiguousIdentifierTokenText = parserModel.GetTextSpanText(ambiguousIdentifierExpressionNode.Token.TextSpan);
     
         if (parserModel.ParserContextKind != CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode &&
             UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
@@ -954,7 +956,7 @@ public static class ParseExpressions
             if (parserModel.TryGetVariableDeclarationHierarchically(
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
+                    ambiguousIdentifierTokenText,
                     out var existingVariableDeclarationNode))
             {
                 var token = ambiguousIdentifierExpressionNode.Token;
@@ -981,7 +983,7 @@ public static class ParseExpressions
             if (parserModel.TryGetTypeDefinitionHierarchically(
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
+                    ambiguousIdentifierTokenText,
                     out var typeDefinitionNode))
             {
                 var token = ambiguousIdentifierExpressionNode.Token;
@@ -1026,12 +1028,12 @@ public static class ParseExpressions
         
         if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken &&
             ambiguousIdentifierExpressionNode.Token.TextSpan.Length == 1 &&
-            ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService) == "_")
+            ambiguousIdentifierTokenText == "_")
         {
             if (!parserModel.TryGetVariableDeclarationHierarchically(
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
+                    ambiguousIdentifierTokenText,
                     out _))
             {
                 parserModel.BindDiscard(ambiguousIdentifierExpressionNode.Token);
@@ -1047,7 +1049,7 @@ public static class ParseExpressions
             if (parserModel.TryGetFunctionHierarchically(
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
+                    ambiguousIdentifierTokenText,
                     out var functionDefinitionNode))
             {
                 var token = ambiguousIdentifierExpressionNode.Token;
@@ -1057,17 +1059,16 @@ public static class ParseExpressions
                     ambiguousIdentifierExpressionNode.Token,
                     genericParameterListing: default,
                     functionParameterListing: default,
-                    CSharpFacts.Types.Void.ToTypeReference());
-                
+                    functionDefinitionNode?.ReturnTypeReference ?? CSharpFacts.Types.Void.ToTypeReference());
+
                 // TODO: Method groups
-                parserModel.BindFunctionInvocationNode(functionInvocationNode);
-                
+
                 result = functionInvocationNode;
                 goto finalize;
             }
             
             if (parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
-                ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
+                ambiguousIdentifierTokenText,
                 out var namespacePrefixNode))
             {
                 result = new NamespaceClauseNode(ambiguousIdentifierExpressionNode.Token);
@@ -1081,7 +1082,7 @@ public static class ParseExpressions
             if (parserModel.TryGetLabelDeclarationHierarchically(
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
+                    ambiguousIdentifierTokenText,
                     out var labelDefinitionNode))
             {
                 var token = ambiguousIdentifierExpressionNode.Token;
@@ -1362,8 +1363,6 @@ public static class ParseExpressions
                 else
                     goto default;
                     
-                var tokenTypeReferenceText = tokenTypeReference.TypeIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService);
-                
                 IExpressionNode rightExpressionNode;
                     
                 if (token.SyntaxKind == SyntaxKind.StringInterpolatedStartToken)
@@ -2996,6 +2995,8 @@ public static class ParseExpressions
             var memberList = parserModel.Binder.Internal_GetMemberList_TypeDefinitionNode(typeDefinitionNode);
             ISyntaxNode? foundDefinitionNode = null;
             
+            var memberIdentifierText = parserModel.GetTextSpanText(memberIdentifierToken.TextSpan);
+            
             foreach (var node in memberList)
             {
                 if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
@@ -3018,7 +3019,7 @@ public static class ParseExpressions
                         sourceText = innerCompilationUnit.SourceText;
                     }
                     
-                    if (variableDeclarationNode.IdentifierToken.TextSpan.GetText(sourceText, parserModel.Binder.TextEditorService) == memberIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService))
+                    if (variableDeclarationNode.IdentifierToken.TextSpan.GetText(sourceText, parserModel.Binder.TextEditorService) == memberIdentifierText)
                     {
                         foundDefinitionNode = variableDeclarationNode;
                         break;
@@ -3045,7 +3046,7 @@ public static class ParseExpressions
                         sourceText = innerCompilationUnit.SourceText;
                     }
                     
-                    if (functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(sourceText, parserModel.Binder.TextEditorService) == memberIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService))
+                    if (functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(sourceText, parserModel.Binder.TextEditorService) == memberIdentifierText)
                     {
                         foundDefinitionNode = functionDefinitionNode;
                         break;
@@ -3164,10 +3165,12 @@ public static class ParseExpressions
                     }
                 }
                 
+                var memberIdentifierText = memberIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService);
+                
                 if (firstNamespacePrefixNode is not null)
                 {
                     if (firstNamespacePrefixNode.Children.TryGetValue(
-                            memberIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
+                            memberIdentifierText,
                             out var secondNamespacePrefixNode))
                     {
                         memberIdentifierToken.TextSpan = memberIdentifierToken.TextSpan with
@@ -3199,7 +3202,7 @@ public static class ParseExpressions
                                 continue;
                         }
                     
-                        if (typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, parserModel.Binder.TextEditorService) == memberIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService))
+                        if (typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, parserModel.Binder.TextEditorService) == memberIdentifierText)
                         {
                             var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
                                 memberIdentifierToken,

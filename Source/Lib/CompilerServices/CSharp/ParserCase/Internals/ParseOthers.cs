@@ -56,7 +56,7 @@ public static class ParseOthers
                         // (I don't think the above statement is true... the final namespace gets handled only after the codeblock is parsed.
                         //  so you should probably bring the other contributors of the namespace into scope immediately).
                         // 
-                        parserModel.AddNamespaceToCurrentScope(textSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService));
+                        parserModel.AddNamespaceToCurrentScope(parserModel.GetTextSpanText(textSpan));
                     }
                 }
                 
