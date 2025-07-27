@@ -194,28 +194,6 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
             viewModel.FocusAsync();
             return ValueTask.CompletedTask;
         });
-        
-    }
-    
-    [JSInvokable]
-    public async Task AltKeybind(string key)
-    {
-        if (key == "f")
-        {
-            await SetFocus(IdeState.ButtonFileId);
-        }
-        else if (key == "t")
-        {
-            await SetFocus(IdeState.ButtonToolsId);
-        }
-        else if (key == "v")
-        {
-            await SetFocus(IdeState.ButtonViewId);
-        }
-        else if (key == "r")
-        {
-            await SetFocus(IdeState.ButtonRunId);
-        }
     }
     
     public async Task SetFocus(string elementId)

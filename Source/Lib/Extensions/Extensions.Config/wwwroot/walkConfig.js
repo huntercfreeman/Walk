@@ -4,6 +4,14 @@
 window.walkConfig = {
     altIsDown: false,
     controlTabChordIsInProgress: false,
+	clickById: function (elementId) {
+	    let element = document.getElementById(elementId);
+        
+        if (!element)
+            return;
+            
+        element.click();
+	},
 	appWideKeyboardEventsInitialize: function (dotNetHelper) {
         document.body.addEventListener('keydown', (event) => {
             switch(event.key) {
@@ -52,22 +60,22 @@ window.walkConfig = {
                 case "f":
                     if (!event.altKey)
                         break;
-                    dotNetHelper.invokeMethodAsync("AltKeybind", "f");
+                    window.walkConfig.clickById("di_ide_header-button-file");
                     break;
                 case "t":
                     if (!event.altKey)
                         break;
-                    dotNetHelper.invokeMethodAsync("AltKeybind", "t");
+                    window.walkConfig.clickById("di_ide_header-button-tools");
                     break;
                 case "v":
                     if (!event.altKey)
                         break;
-                    dotNetHelper.invokeMethodAsync("AltKeybind", "v");
+                    window.walkConfig.clickById("di_ide_header-button-view");
                     break;
                 case "r":
                     if (!event.altKey)
                         break;
-                    dotNetHelper.invokeMethodAsync("AltKeybind", "r");
+                    window.walkConfig.clickById("di_ide_header-button-run");
                     break;
                 case "Escape":
                     dotNetHelper.invokeMethodAsync("EscapeOnKeyDown");
