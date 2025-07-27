@@ -1480,7 +1480,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             {
                 autocompleteEntryList.AddRange(
                     __CSharpBinder.GetVariableDeclarationNodesByScope(compilationUnit, targetScope.Unsafe_SelfIndexKey)
-                    .Select(x => x.IdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService))
+                    .Select(x => __CSharpBinder.GetIdentifierText(x, compilationUnit))
                     .ToArray()
                     .Where(x => x.Contains(word, StringComparison.InvariantCulture))
                     .Distinct()
