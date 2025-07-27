@@ -1061,6 +1061,16 @@ public static class ParseExpressions
                     functionParameterListing: default,
                     functionDefinitionNode?.ReturnTypeReference ?? CSharpFacts.Types.Void.ToTypeReference());
 
+                var functionSymbol = new Symbol(
+                    SyntaxKind.FunctionSymbol,
+                    parserModel.GetNextSymbolId(),
+                    functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
+                    {
+                        DecorationByte = (byte)GenericDecorationKind.Function
+                    });
+        
+                parserModel.Compilation.__SymbolList.Add(functionSymbol);
+                
                 // TODO: Method groups
 
                 result = functionInvocationNode;
