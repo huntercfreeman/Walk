@@ -118,96 +118,90 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
         }
         else if (key == "Tab")
         {
-            if (!_ctrlIsDown)
+            _ctrlIsDown = true;
+            if (!shiftKey)
             {
-                _ctrlIsDown = true;
+                if (_ctrlTabKind == CtrlTabKind.Dialogs)
+                {
+                    if (_index >= DotNetService.CommonService.GetDialogState().DialogList.Count - 1)
+                    {
+                        var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+                        if (textEditorGroup.ViewModelKeyList.Count > 0)
+                        {
+                            _ctrlTabKind = CtrlTabKind.TextEditors;
+                            _index = 0;
+                        }
+                        else
+                        {
+                            _index = 0;
+                        }
+                    }
+                    else
+                    {
+                        _index++;
+                    }
+                }
+                else if (_ctrlTabKind == CtrlTabKind.TextEditors)
+                {
+                    var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+                    if (_index >= textEditorGroup.ViewModelKeyList.Count - 1)
+                    {
+                        if (DotNetService.CommonService.GetDialogState().DialogList.Count > 0)
+                        {
+                            _ctrlTabKind = CtrlTabKind.Dialogs;
+                            _index = 0;
+                        }
+                        else
+                        {
+                            _index = 0;
+                        }
+                    }
+                    else
+                    {
+                        _index++;
+                    }
+                }
             }
             else
             {
-                if (!shiftKey)
+                if (_ctrlTabKind == CtrlTabKind.Dialogs)
                 {
-                    if (_ctrlTabKind == CtrlTabKind.Dialogs)
-                    {
-                        if (_index >= DotNetService.CommonService.GetDialogState().DialogList.Count - 1)
-                        {
-                            var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
-                            if (textEditorGroup.ViewModelKeyList.Count > 0)
-                            {
-                                _ctrlTabKind = CtrlTabKind.TextEditors;
-                                _index = 0;
-                            }
-                            else
-                            {
-                                _index = 0;
-                            }
-                        }
-                        else
-                        {
-                            _index++;
-                        }
-                    }
-                    else if (_ctrlTabKind == CtrlTabKind.TextEditors)
+                    if (_index <= 0)
                     {
                         var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
-                        if (_index >= textEditorGroup.ViewModelKeyList.Count - 1)
+                        if (textEditorGroup.ViewModelKeyList.Count >= 0)
                         {
-                            if (DotNetService.CommonService.GetDialogState().DialogList.Count > 0)
-                            {
-                                _ctrlTabKind = CtrlTabKind.Dialogs;
-                                _index = 0;
-                            }
-                            else
-                            {
-                                _index = 0;
-                            }
+                            _ctrlTabKind = CtrlTabKind.TextEditors;
+                            _index = textEditorGroup.ViewModelKeyList.Count - 1;
                         }
                         else
                         {
-                            _index++;
+                            _index = 0;
                         }
+                    }
+                    else
+                    {
+                        _index--;
                     }
                 }
-                else
+                else if (_ctrlTabKind == CtrlTabKind.TextEditors)
                 {
-                    if (_ctrlTabKind == CtrlTabKind.Dialogs)
+                    var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+                    if (_index <= 0)
                     {
-                        if (_index <= 0)
+                        if (DotNetService.CommonService.GetDialogState().DialogList.Count > 0)
                         {
-                            var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
-                            if (textEditorGroup.ViewModelKeyList.Count >= 0)
-                            {
-                                _ctrlTabKind = CtrlTabKind.TextEditors;
-                                _index = textEditorGroup.ViewModelKeyList.Count - 1;
-                            }
-                            else
-                            {
-                                _index = 0;
-                            }
+                            _ctrlTabKind = CtrlTabKind.Dialogs;
+                            _index = DotNetService.CommonService.GetDialogState().DialogList.Count - 1;
                         }
                         else
                         {
-                            _index--;
+                            _index = 0;
                         }
                     }
-                    else if (_ctrlTabKind == CtrlTabKind.TextEditors)
+                    else
                     {
-                        var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
-                        if (_index <= 0)
-                        {
-                            if (DotNetService.CommonService.GetDialogState().DialogList.Count > 0)
-                            {
-                                _ctrlTabKind = CtrlTabKind.Dialogs;
-                                _index = DotNetService.CommonService.GetDialogState().DialogList.Count - 1;
-                            }
-                            else
-                            {
-                                _index = 0;
-                            }
-                        }
-                        else
-                        {
-                            _index--;
-                        }
+                        _index--;
                     }
                 }
             }
@@ -227,6 +221,36 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
         else if (key == "Control")
         {
             _ctrlIsDown = false;
+            
+            if (_ctrlTabKind == CtrlTabKind.Dialogs)
+            {
+                var dialogState = DotNetService.CommonService.GetDialogState();
+                if (_index < dialogState.DialogList.Count)
+                {
+                    var dialog = dialogState.DialogList[_index];
+                    await DotNetService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
+                        "walkCommon.focusHtmlElementById",
+                        dialog.DialogFocusPointHtmlElementId,
+                        /*preventScroll:*/ true);
+                }
+            }
+            else if (_ctrlTabKind == CtrlTabKind.TextEditors)
+            {
+                var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+                if (_index < textEditorGroup.ViewModelKeyList.Count)
+                {
+                    var viewModelKey = textEditorGroup.ViewModelKeyList[_index];
+                    DotNetService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+                    {
+                        var activeViewModel = editContext.GetViewModelModifier(textEditorGroup.ActiveViewModelKey);
+                        await activeViewModel.FocusAsync();
+                        DotNetService.TextEditorService.Group_SetActiveViewModel(
+                            Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey,
+                            viewModelKey);
+                    });
+                }
+            }
+            
             StateHasChanged();
         }
     }
