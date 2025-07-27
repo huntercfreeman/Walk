@@ -360,7 +360,9 @@ public ref struct CSharpParserModel
         }
     }
 
-    public VariableReferenceNode ConstructAndBindVariableReferenceNode(SyntaxToken variableIdentifierToken)
+    public VariableReferenceNode ConstructAndBindVariableReferenceNode(
+        SyntaxToken variableIdentifierToken,
+        bool shouldCreateSymbol = true)
     {
         var text = Binder.TextEditorService.EditContext_GetText(Text.Slice(variableIdentifierToken.TextSpan.StartInclusiveIndex, variableIdentifierToken.TextSpan.Length));
         VariableReferenceNode? variableReferenceNode;
@@ -393,7 +395,9 @@ public ref struct CSharpParserModel
                 variableDeclarationNode);
         }
 
-        CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind);
+        if (shouldCreateSymbol)
+            CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind);
+            
         return variableReferenceNode;
     }
     
@@ -1021,6 +1025,51 @@ public ref struct CSharpParserModel
                         out variableDeclarationNode))
                     {
                         return true;
+                    }
+                }
+                
+                if (typeDefinitionNode.InheritedTypeReference != default)
+                {
+                    string? identifierText;
+                    CSharpCompilationUnit innerCompilationUnit;
+                    
+                    if (typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri == Compilation.ResourceUri)
+                    {
+                        innerCompilationUnit = Compilation;
+                        identifierText = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, Binder.TextEditorService);
+                    }
+                    else
+                    {
+                        if (Binder.__CompilationUnitMap.TryGetValue(typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
+                        {
+                            identifierText = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, Binder.TextEditorService);
+                        }
+                        else
+                        {
+                            identifierText = null;
+                        }
+                    }
+                
+                    if (identifierText is not null)
+                    {
+                        if (TryGetTypeDefinitionHierarchically(
+                                compilationUnit,
+                                scopeIndexKey,
+                                identifierText,
+                                out var inheritedTypeDefinitionNode))
+                        {
+                            var innerScopeIndexKey = inheritedTypeDefinitionNode.Unsafe_SelfIndexKey;
+                    
+                            if (TryGetVariableDeclarationNodeByScope(
+                                    innerCompilationUnit,
+                                    innerScopeIndexKey,
+                                    variableIdentifierText,
+                                    out variableDeclarationNode,
+                                    isRecursive: true))
+                            {
+                                return true;
+                            }
+                        }
                     }
                 }
             }
