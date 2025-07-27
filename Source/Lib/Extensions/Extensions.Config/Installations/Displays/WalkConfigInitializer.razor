@@ -7,10 +7,6 @@
     var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
 
     <div style="display: flex; z-index: 99; position: fixed; left: 20vw; top: 20vh; width: 60vw; height: 60vh; color: var(--di_secondary-foreground-color); background-color: var(--di_secondary-background-color);">
-        
-        @_ctrlTabKind
-        @_index
-        
         <div>
             <h2>Dialogs</h2>
             @for (int i = 0; i < dialogState.DialogList.Count; i++)
