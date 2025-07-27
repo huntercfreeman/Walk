@@ -453,7 +453,6 @@ public class CSharpBinder
                                 innerScopeIndexKey = scope.Unsafe_SelfIndexKey;
                             }
                         }
-                        
                     
                         if (TryGetTypeDefinitionHierarchically(
                                 innerCompilationUnit,
