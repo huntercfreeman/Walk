@@ -11,12 +11,12 @@ public static class ParseTokens
     public static void ParseIdentifierToken(ref CSharpParserModel parserModel)
     {
         if (parserModel.TokenWalker.Current.TextSpan.Length == 1 &&
-            parserModel.TokenWalker.Current.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService) == "_")
+            parserModel.GetTextSpanText(parserModel.TokenWalker.Current.TextSpan) == "_")
         {
             if (!parserModel.TryGetVariableDeclarationHierarchically(
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-                    parserModel.TokenWalker.Current.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService),
+                    parserModel.GetTextSpanText(parserModel.TokenWalker.Current.TextSpan),
                     out _))
             {
                 parserModel.BindDiscard(parserModel.TokenWalker.Current);
@@ -154,7 +154,6 @@ public static class ParseTokens
             if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
             {
                 parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = variableDeclarationNode.TypeReference;
-                // Console.WriteLine(variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, parserModel.Binder.TextEditorService));
             
                 IExpressionNode expression;
             
@@ -190,7 +189,7 @@ public static class ParseTokens
         else if (parserModel.CurrentCodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
                  UtilityApi.IsConvertibleToIdentifierToken(typeClauseNode.TypeIdentifierToken.SyntaxKind) &&
                  parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken &&
-                 typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService) == typeClauseNode.TypeIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService))
+                 parserModel.GetTextSpanText(typeDefinitionNode.TypeIdentifierToken.TextSpan) == parserModel.GetTextSpanText(typeClauseNode.TypeIdentifierToken.TextSpan))
         {
             // ConstructorDefinitionNode
             
@@ -524,7 +523,7 @@ public static class ParseTokens
             namespaceStatementNode.CodeBlock_EndExclusiveIndex = statementDelimiterToken.TextSpan.EndExclusiveIndex;
 
             parserModel.AddNamespaceToCurrentScope(
-                namespaceStatementNode.IdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService));
+                parserModel.GetTextSpanText(namespaceStatementNode.IdentifierToken.TextSpan));
         }
         else 
         {
