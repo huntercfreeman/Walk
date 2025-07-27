@@ -1078,10 +1078,8 @@ public ref struct CSharpParserModel
                                     out variableDeclarationNode,
                                     isRecursive: true))
                             {
-                                Console.WriteLine("it worked?");
                                 return true;
                             }
-                            Console.WriteLine("typeDefinitionNode.InheritedTypeReference != default");
                         }
                     }
                 }
