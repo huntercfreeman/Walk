@@ -406,11 +406,71 @@ public class CSharpBinder
         return false;
     }
     
+    public bool TryGetVariableDeclarationByPartialType(
+        CSharpCompilationUnit compilationUnit,
+        int scopeIndexKey,
+        string variableIdentifierText,
+        TypeDefinitionNode typeDefinitionNode,
+        out VariableDeclarationNode variableDeclarationNode)
+    {
+        if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
+        {
+            int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
+            while (positionExclusive < PartialTypeDefinitionList.Count)
+            {
+                if (PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
+                {
+                    CSharpCompilationUnit? innerCompilationUnit;
+                    
+                    if (PartialTypeDefinitionList[positionExclusive].ScopeIndexKey != -1)
+                    {
+                        if (PartialTypeDefinitionList[positionExclusive].ResourceUri != compilationUnit.ResourceUri)
+                        {
+                            if (__CompilationUnitMap.TryGetValue(PartialTypeDefinitionList[positionExclusive].ResourceUri, out var temporaryCompilationUnit))
+                                innerCompilationUnit = temporaryCompilationUnit;
+                            else
+                                innerCompilationUnit = null;
+                        }
+                        else
+                        {
+                            innerCompilationUnit = compilationUnit;
+                        }
+                        
+                        if (innerCompilationUnit != null)
+                        {
+                            var innerScopeIndexKey = PartialTypeDefinitionList[positionExclusive].ScopeIndexKey;
+                        
+                            if (TryGetVariableDeclarationNodeByScope(
+                                    innerCompilationUnit,
+                                    innerScopeIndexKey,
+                                    variableIdentifierText,
+                                    out variableDeclarationNode,
+                                    isRecursive: true))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    
+                    positionExclusive++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+        
+        variableDeclarationNode = null;
+        return false;
+    }
+    
     public bool TryGetVariableDeclarationNodeByScope(
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey,
         string variableIdentifierText,
-        out VariableDeclarationNode variableDeclarationNode)
+        out VariableDeclarationNode variableDeclarationNode,
+        bool isRecursive = false)
     {
         var matchNode = compilationUnit.NodeList.FirstOrDefault(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
                                                                      x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
@@ -418,6 +478,24 @@ public class CSharpBinder
         
         if (matchNode is null)
         {
+            var codeBlockOwner = compilationUnit.CodeBlockOwnerList[scopeIndexKey];
+            if (!isRecursive && codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+            {
+                var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
+                if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
+                {
+                    if (TryGetVariableDeclarationByPartialType(
+                        compilationUnit,
+                        scopeIndexKey,
+                        variableIdentifierText,
+                        typeDefinitionNode,
+                        out variableDeclarationNode))
+                    {
+                        return true;
+                    }
+                }
+            }
+        
             variableDeclarationNode = null;
             return false;
         }
