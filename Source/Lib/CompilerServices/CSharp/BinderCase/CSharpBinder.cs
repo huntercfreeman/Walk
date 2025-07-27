@@ -362,14 +362,66 @@ public class CSharpBinder
         }
     }
     
-    public VariableDeclarationNode[] GetVariableDeclarationNodesByScope(
+    public IEnumerable<VariableDeclarationNode> GetVariableDeclarationNodesByScope(
         CSharpCompilationUnit compilationUnit,
-        int scopeIndexKey)
+        int scopeIndexKey,
+        bool isRecursive = false)
     {
-        return compilationUnit.NodeList
+        var query = compilationUnit.NodeList
             .Where(kvp => kvp.Unsafe_ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-            .Select(kvp => (VariableDeclarationNode)kvp)
-            .ToArray();
+            .Select(kvp => (VariableDeclarationNode)kvp);
+    
+        if (!isRecursive && scopeIndexKey < compilationUnit.CodeBlockOwnerList.Count)
+        {
+            var codeBlockOwner = compilationUnit.CodeBlockOwnerList[scopeIndexKey];
+            if (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+            {
+                var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
+                if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
+                {
+                    int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
+                    while (positionExclusive < PartialTypeDefinitionList.Count)
+                    {
+                        if (PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
+                        {
+                            CSharpCompilationUnit? innerCompilationUnit;
+                            
+                            if (PartialTypeDefinitionList[positionExclusive].ScopeIndexKey != -1)
+                            {
+                                if (PartialTypeDefinitionList[positionExclusive].ResourceUri != compilationUnit.ResourceUri)
+                                {
+                                    if (__CompilationUnitMap.TryGetValue(PartialTypeDefinitionList[positionExclusive].ResourceUri, out var temporaryCompilationUnit))
+                                        innerCompilationUnit = temporaryCompilationUnit;
+                                    else
+                                        innerCompilationUnit = null;
+                                }
+                                else
+                                {
+                                    innerCompilationUnit = compilationUnit;
+                                }
+                                
+                                if (innerCompilationUnit != null)
+                                {
+                                    var innerScopeIndexKey = PartialTypeDefinitionList[positionExclusive].ScopeIndexKey;
+                                    query = query.Concat(GetVariableDeclarationNodesByScope(
+                                        innerCompilationUnit,
+                                        innerScopeIndexKey,
+                                        isRecursive: true));
+                                }
+                            }
+                            
+                            positionExclusive++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return query;
     }
     
     /// <summary>
