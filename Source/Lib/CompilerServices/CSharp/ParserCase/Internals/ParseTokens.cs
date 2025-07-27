@@ -158,17 +158,11 @@ public static class ParseTokens
             
                 IExpressionNode expression;
             
-                try
-                {
-                    parserModel.ForceParseExpressionInitialPrimaryExpression = variableDeclarationNode;
-                    expression = ParseExpressions.ParseExpression(ref parserModel);
-                }
-                finally
-                {
-                    parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
-                }
+                parserModel.ForceParseExpressionInitialPrimaryExpression = variableDeclarationNode;
+                expression = ParseExpressions.ParseExpression(ref parserModel);
+                parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
                 
-                if (variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText(parserModel.Compilation.SourceText, parserModel.Binder.TextEditorService) ==
+                if (parserModel.GetTextSpanText(variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan) ==
                         "var")
                 {
                     if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode)

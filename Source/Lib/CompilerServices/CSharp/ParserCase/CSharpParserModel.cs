@@ -1369,4 +1369,9 @@ public ref struct CSharpParserModel
             }
         }
     }
+    
+    public string GetTextSpanText(TextEditorTextSpan textSpan)
+    {
+        return Binder.TextEditorService.EditContext_GetText(Text.Slice(textSpan.StartInclusiveIndex, textSpan.Length));
+    }
 }
