@@ -610,7 +610,8 @@ public static class ParseExpressions
                     expressionSecondary = new AmbiguousIdentifierExpressionNode(
                         ambiguousIdentifierExpressionNode.Token,
                         ambiguousIdentifierExpressionNode.OpenAngleBracketToken,
-                        ambiguousIdentifierExpressionNode.GenericParameterEntryList,
+                        ambiguousIdentifierExpressionNode.IndexGenericParameterEntryList,
+                        ambiguousIdentifierExpressionNode.CountGenericParameterEntryList,
                         ambiguousIdentifierExpressionNode.CloseAngleBracketToken,
                         ambiguousIdentifierExpressionNode.ResultTypeReference)
                     {
@@ -662,7 +663,8 @@ public static class ParseExpressions
                     var functionInvocationNode = new FunctionInvocationNode(
                         ambiguousIdentifierExpressionNode.Token,
                         ambiguousIdentifierExpressionNode.OpenAngleBracketToken,
-                        ambiguousIdentifierExpressionNode.GenericParameterEntryList,
+                        ambiguousIdentifierExpressionNode.IndexGenericParameterEntryList,
+                        ambiguousIdentifierExpressionNode.CountGenericParameterEntryList,
                         ambiguousIdentifierExpressionNode.CloseAngleBracketToken,
                         new FunctionParameterListing(
                             parserModel.TokenWalker.Current,
@@ -1067,7 +1069,8 @@ public static class ParseExpressions
                 var functionInvocationNode = new FunctionInvocationNode(
                     ambiguousIdentifierExpressionNode.Token,
                     openAngleBracketToken: default,
-            		genericParameterEntryList: null,
+            		indexGenericParameterEntryList: -1,
+                    countGenericParameterEntryList: 0,
             		closeAngleBracketToken: default,
                     functionParameterListing: default,
                     functionDefinitionNode?.ReturnTypeReference ?? CSharpFacts.Types.Void.ToTypeReference());
@@ -1228,13 +1231,13 @@ public static class ParseExpressions
             }
             case SyntaxKind.CloseSquareBracketToken:
             {
-                if (variableReferenceNode.ResultTypeReference.GenericParameterEntryList is not null &&
-                    variableReferenceNode.ResultTypeReference.GenericParameterEntryList.Count == 1)
+                if (variableReferenceNode.ResultTypeReference.IndexGenericParameterEntryList != -1 &&
+                    variableReferenceNode.ResultTypeReference.CountGenericParameterEntryList == 1)
                 {
                     return new VariableReferenceNode(
                         token,
                         new VariableDeclarationNode(
-                            variableReferenceNode.ResultTypeReference.GenericParameterEntryList[0].TypeReference,
+                            parserModel.Binder.GenericParameterEntryList[variableReferenceNode.ResultTypeReference.IndexGenericParameterEntryList].TypeReference,
                             token,
                             VariableKind.Local,
                             isInitialized: true,
@@ -1786,7 +1789,8 @@ public static class ParseExpressions
             parserModel.AmbiguousIdentifierExpressionNode.SetSharedInstance(
                 token,
                 openAngleBracketToken: default,
-        		genericParameterEntryList: null,
+        		indexGenericParameterEntryList: -1,
+                countGenericParameterEntryList: 0,
         		closeAngleBracketToken: default,
                 CSharpFacts.Types.Void.ToTypeReference(),
                 emptyExpressionNode.FollowsMemberAccessToken);
@@ -1982,7 +1986,8 @@ public static class ParseExpressions
                     new AmbiguousIdentifierExpressionNode(
                         token,
                         openAngleBracketToken: default,
-                		genericParameterEntryList: null,
+                		indexGenericParameterEntryList: -1,
+                        countGenericParameterEntryList: 0,
                 		closeAngleBracketToken: default,
                         resultTypeReference: default),
                         ref parserModel);
@@ -2327,7 +2332,8 @@ public static class ParseExpressions
                  var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
                      variableReferenceNode.VariableIdentifierToken,
                      openAngleBracketToken: default,
-            		 genericParameterEntryList: null,
+            		 indexGenericParameterEntryList: -1,
+                    countGenericParameterEntryList: 0,
             		 closeAngleBracketToken: default,
                      isKeywordType: false);
                 
@@ -2424,7 +2430,8 @@ public static class ParseExpressions
                     var functionInvocationNode = new FunctionInvocationNode(
                         UtilityApi.ConvertToIdentifierToken(ref typeClauseToken, ref parserModel),
                         typeClauseNode.OpenAngleBracketToken,
-                        typeClauseNode.GenericParameterEntryList,
+                        typeClauseNode.IndexGenericParameterEntryList,
+                        typeClauseNode.CountGenericParameterEntryList,
                         typeClauseNode.CloseAngleBracketToken,
                         new FunctionParameterListing(
                             parserModel.TokenWalker.Current,
@@ -3119,7 +3126,8 @@ public static class ParseExpressions
                     // TODO: Type -> "<...>" -> "(" -> FunctionInvocationNode, but will FunctionInvocationNode -> "<...>"?
                     // TODO: Bind the named arguments to their declaration within the definition.
                     openAngleBracketToken: default,
-            		genericParameterEntryList: null,
+            		indexGenericParameterEntryList: -1,
+                    countGenericParameterEntryList: 0,
             		closeAngleBracketToken: default,
                     functionParameterListing: default,
                     functionDefinitionNode.ReturnTypeReference);
@@ -3166,7 +3174,8 @@ public static class ParseExpressions
             var functionInvocationNode = new FunctionInvocationNode(
                 memberIdentifierToken,
                 openAngleBracketToken: default,
-        		genericParameterEntryList: null,
+        		indexGenericParameterEntryList: -1,
+                countGenericParameterEntryList: 0,
         		closeAngleBracketToken: default,
                 functionParameterListing: default,
                 TypeFacts.Empty.ToTypeReference());
@@ -3240,7 +3249,8 @@ public static class ParseExpressions
                             var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
                                 memberIdentifierToken,
                                 openAngleBracketToken: default,
-                        		genericParameterEntryList: null,
+                        		indexGenericParameterEntryList: -1,
+                                countGenericParameterEntryList: 0,
                         		closeAngleBracketToken: default,
                                 isKeywordType: false);
                             
@@ -3378,7 +3388,8 @@ public static class ParseExpressions
                     token.TextSpan.EndExclusiveIndex,
                     default(byte))),
             openAngleBracketToken: default,
-    		genericParameterEntryList: null,
+    		indexGenericParameterEntryList: -1,
+            countGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
             isKeywordType: false);
         
@@ -3782,8 +3793,10 @@ public static class ParseExpressions
             // ...only do this at the end?
             parserModel.BindTypeClauseNode(typeClauseNode);
             
-            genericParameterNode.GenericParameterEntryList.Add(
+            parserModel.Binder.GenericParameterEntryList.Insert(
+                genericParameterNode.IndexGenericParameterEntryList + genericParameterNode.CountGenericParameterEntryList,
                 new GenericParameterEntry(new TypeReference(typeClauseNode)));
+            genericParameterNode.CountGenericParameterEntryList++;
             
             return genericParameterNode;
         }
@@ -3791,8 +3804,10 @@ public static class ParseExpressions
         {
             var typeClauseNode = (TypeClauseNode)expressionSecondary;
         
-            genericParameterNode.GenericParameterEntryList.Add(
+            parserModel.Binder.GenericParameterEntryList.Insert(
+                genericParameterNode.IndexGenericParameterEntryList + genericParameterNode.CountGenericParameterEntryList,
                 new GenericParameterEntry(new TypeReference(typeClauseNode)));
+            genericParameterNode.CountGenericParameterEntryList++;
             
             return genericParameterNode;
         }
@@ -3809,7 +3824,8 @@ public static class ParseExpressions
         {
             // Idea: 1 listing for the entire file and store the indices at which your parameters lie?
             genericParameterNode.OpenAngleBracketToken = openAngleBracketToken;
-            genericParameterNode.GenericParameterEntryList = new List<GenericParameterEntry>();
+            genericParameterNode.IndexGenericParameterEntryList = parserModel.Binder.GenericParameterEntryList.Count;
+            genericParameterNode.CountGenericParameterEntryList = 0;
             genericParameterNode.CloseAngleBracketToken = default;
             genericParameterNode.IsParsingGenericParameters = true;
         }

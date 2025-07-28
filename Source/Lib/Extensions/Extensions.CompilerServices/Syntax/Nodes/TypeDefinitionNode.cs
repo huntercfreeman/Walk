@@ -14,9 +14,9 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
         bool hasPartialModifier,
         StorageModifierKind storageModifierKind,
         SyntaxToken typeIdentifier,
-        
         SyntaxToken openAngleBracketToken,
-        List<GenericParameterEntry> genericParameterEntryList,
+        int indexGenericParameterEntryList,
+        int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
         
         FunctionArgumentListing primaryConstructorFunctionArgumentListing,
@@ -34,7 +34,8 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
         TypeIdentifierToken = typeIdentifier;
         
         OpenAngleBracketToken = openAngleBracketToken;
-        GenericParameterEntryList = genericParameterEntryList;
+        IndexGenericParameterEntryList = indexGenericParameterEntryList;
+        CountGenericParameterEntryList = countGenericParameterEntryList;
         CloseAngleBracketToken = closeAngleBracketToken;
         
         FunctionArgumentListing = primaryConstructorFunctionArgumentListing;
@@ -65,7 +66,10 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     /// And: '&lt;T&gt;' is the <see cref="GenericArgumentsListingNode"/>
     /// </summary>
     public SyntaxToken OpenAngleBracketToken { get; set; }
-    public List<GenericParameterEntry> GenericParameterEntryList { get; set; }
+    
+    public int IndexGenericParameterEntryList { get; set; }
+    public int CountGenericParameterEntryList { get; set; }
+    
     public SyntaxToken CloseAngleBracketToken { get; set; }
     
     
@@ -149,7 +153,8 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
             TypeIdentifierToken,
             
             openAngleBracketToken: default,
-    		genericParameterEntryList: null,
+    		indexGenericParameterEntryList: -1,
+            countGenericParameterEntryList: 0,
     		closeAngleBracketToken: default, 
             
             isKeywordType: IsKeywordType)

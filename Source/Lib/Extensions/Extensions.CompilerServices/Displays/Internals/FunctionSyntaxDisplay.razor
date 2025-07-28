@@ -146,7 +146,7 @@
 	@if (returnTypeClauseNode != default(TypeReference))
 	{
 		var syntaxViewModel = new SyntaxViewModel(
-		    SyntaxViewModel.CompilerService,
+		    SyntaxViewModel.ExtendedCompilerService,
 		    SyntaxViewModel.TextEditorService,
 		    SyntaxViewModel.ResourceUri,
 			targetSymbol: null,
@@ -179,7 +179,7 @@
 	@if (hasGenericParameterListing)
 	{
 		var syntaxViewModel = new SyntaxViewModel(
-		    SyntaxViewModel.CompilerService,
+		    SyntaxViewModel.ExtendedCompilerService,
 		    SyntaxViewModel.TextEditorService,
 		    SyntaxViewModel.ResourceUri,
 			targetSymbol: null,
@@ -251,7 +251,7 @@
 			}
 			
 			var syntaxViewModel = new SyntaxViewModel(
-    		    SyntaxViewModel.CompilerService,
+    		    SyntaxViewModel.ExtendedCompilerService,
 				SyntaxViewModel.TextEditorService,
 				SyntaxViewModel.ResourceUri,
 				targetSymbol: null,

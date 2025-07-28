@@ -135,7 +135,7 @@
 		if (TypeReference != default)
 		{
 			var syntaxViewModel = new SyntaxViewModel(
-    		    SyntaxViewModel.CompilerService,
+    		    SyntaxViewModel.ExtendedCompilerService,
 			    SyntaxViewModel.TextEditorService,
 			    SyntaxViewModel.ResourceUri,
 				targetSymbol: null,
@@ -147,7 +147,7 @@
 		else
 		{
 			var syntaxViewModel = new SyntaxViewModel(
-    		    SyntaxViewModel.CompilerService,
+    		    SyntaxViewModel.ExtendedCompilerService,
 			    SyntaxViewModel.TextEditorService,
 			    SyntaxViewModel.ResourceUri,
 				targetSymbol: null,

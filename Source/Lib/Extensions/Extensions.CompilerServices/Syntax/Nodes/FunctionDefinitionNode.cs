@@ -15,7 +15,8 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
         SyntaxToken functionIdentifierToken,
         
         SyntaxToken openAngleBracketToken,
-        List<GenericParameterEntry> genericParameterEntryList,
+        int indexGenericParameterEntryList,
+        int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
         
         FunctionArgumentListing functionArgumentListing,
@@ -31,7 +32,8 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
         FunctionIdentifierToken = functionIdentifierToken;
         
         OpenAngleBracketToken = openAngleBracketToken;
-        GenericParameterEntryList = genericParameterEntryList;
+        IndexGenericParameterEntryList = indexGenericParameterEntryList;
+        CountGenericParameterEntryList = countGenericParameterEntryList;
         CloseAngleBracketToken = closeAngleBracketToken;
         
         FunctionArgumentListing = functionArgumentListing;
@@ -43,7 +45,8 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
     public SyntaxToken FunctionIdentifierToken { get; }
     
     public SyntaxToken OpenAngleBracketToken { get; set; }
-    public List<GenericParameterEntry> GenericParameterEntryList { get; set; }
+    public int IndexGenericParameterEntryList { get; set; }
+    public int CountGenericParameterEntryList { get; set; }
     public SyntaxToken CloseAngleBracketToken { get; set; }
     
     public FunctionArgumentListing FunctionArgumentListing { get; set; }

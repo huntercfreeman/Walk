@@ -8,7 +8,8 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
         SyntaxToken token,
         
         SyntaxToken openAngleBracketToken,
-        List<GenericParameterEntry> genericParameterEntryList,
+        int indexGenericParameterEntryList,
+        int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
         
         TypeReference resultTypeReference)
@@ -20,7 +21,8 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
         Token = token;
         
         OpenAngleBracketToken = openAngleBracketToken;
-        GenericParameterEntryList = genericParameterEntryList;
+        IndexGenericParameterEntryList = indexGenericParameterEntryList;
+        CountGenericParameterEntryList = countGenericParameterEntryList;
         CloseAngleBracketToken = closeAngleBracketToken;
         
         ResultTypeReference = resultTypeReference;
@@ -29,7 +31,8 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
     public SyntaxToken Token { get; set; }
     
     public SyntaxToken OpenAngleBracketToken { get; set; }
-    public List<GenericParameterEntry> GenericParameterEntryList { get; set; }
+    public int IndexGenericParameterEntryList { get; set; }
+    public int CountGenericParameterEntryList { get; set; }
     public SyntaxToken CloseAngleBracketToken { get; set; }
     
     public TypeReference ResultTypeReference { get; set; }
@@ -44,7 +47,8 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
         SyntaxToken token,
         
         SyntaxToken openAngleBracketToken,
-        List<GenericParameterEntry> genericParameterEntryList,
+        int indexGenericParameterEntryList,
+        int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
         
         TypeReference resultTypeReference,
@@ -53,7 +57,8 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
         Token = token;
         
         OpenAngleBracketToken = openAngleBracketToken;
-        GenericParameterEntryList = genericParameterEntryList;
+        IndexGenericParameterEntryList = indexGenericParameterEntryList;
+        CountGenericParameterEntryList = countGenericParameterEntryList;
         CloseAngleBracketToken = closeAngleBracketToken;
         
         ResultTypeReference = resultTypeReference;

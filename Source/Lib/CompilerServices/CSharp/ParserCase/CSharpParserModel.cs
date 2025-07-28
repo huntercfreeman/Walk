@@ -60,7 +60,8 @@ public ref struct CSharpParserModel
         AmbiguousIdentifierExpressionNode.SetSharedInstance(
             default,
             openAngleBracketToken: default,
-    		genericParameterEntryList: null,
+    		indexGenericParameterEntryList: -1,
+            countGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
             CSharpFacts.Types.Void.ToTypeReference(),
             followsMemberAccessToken: false);
@@ -69,7 +70,8 @@ public ref struct CSharpParserModel
         TypeClauseNode.SetSharedInstance(
             typeIdentifier: default,
             openAngleBracketToken: default,
-    		genericParameterEntryList: null,
+    		indexGenericParameterEntryList: -1,
+            countGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
             isKeywordType: false);
         TypeClauseNode.IsBeingUsed = false;
@@ -170,7 +172,8 @@ public ref struct CSharpParserModel
         SyntaxToken typeIdentifier,
         
         SyntaxToken openAngleBracketToken,
-        List<GenericParameterEntry> genericParameterEntryList,
+        int indexGenericParameterEntryList,
+        int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
         
         bool isKeywordType)
@@ -181,7 +184,8 @@ public ref struct CSharpParserModel
                 typeIdentifier,
                 
                 openAngleBracketToken,
-                genericParameterEntryList,
+                indexGenericParameterEntryList,
+                countGenericParameterEntryList,
                 closeAngleBracketToken,
                 
                 isKeywordType);
@@ -191,7 +195,8 @@ public ref struct CSharpParserModel
             typeIdentifier,
             
             openAngleBracketToken,
-            genericParameterEntryList,
+            indexGenericParameterEntryList,
+            countGenericParameterEntryList,
             closeAngleBracketToken,
             
             isKeywordType);
@@ -697,10 +702,14 @@ public ref struct CSharpParserModel
             
                 var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
                 
-                if (typeDefinitionNode.OpenAngleBracketToken.ConstructorWasInvoked)
+                if (typeDefinitionNode.IndexGenericParameterEntryList != -1)
                 {
-                    foreach (var entry in typeDefinitionNode.GenericParameterEntryList)
+                    for (int i = typeDefinitionNode.IndexGenericParameterEntryList;
+                         i < typeDefinitionNode.IndexGenericParameterEntryList + typeDefinitionNode.CountGenericParameterEntryList;
+                         i++)
                     {
+                        var entry = Binder.GenericParameterEntryList[i];
+                        
                         BindTypeDefinitionNode(
                             new TypeDefinitionNode(
                                 AccessModifierKind.Public,
@@ -708,7 +717,8 @@ public ref struct CSharpParserModel
                                 StorageModifierKind.Class,
                                 entry.TypeReference.TypeIdentifierToken,
                                 entry.TypeReference.OpenAngleBracketToken,
-                                entry.TypeReference.GenericParameterEntryList,
+                                entry.TypeReference.IndexGenericParameterEntryList,
+                                entry.TypeReference.CountGenericParameterEntryList,
                                 entry.TypeReference.CloseAngleBracketToken,
                                 primaryConstructorFunctionArgumentListing: default,
                                 inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),

@@ -18,7 +18,8 @@ public class ParseFunctions
             consumedTypeReference,
             consumedIdentifierToken,
             openAngleBracketToken: default,
-    		genericParameterEntryList: null,
+    		indexGenericParameterEntryList: -1,
+                countGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
             functionArgumentListing: default,
             default,
@@ -221,7 +222,8 @@ public class ParseFunctions
         var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
             typeDefinitionNodeCodeBlockOwner.TypeIdentifierToken,
             openAngleBracketToken: default,
-    		genericParameterEntryList: null,
+    		indexGenericParameterEntryList: -1,
+            countGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
             isKeywordType: false);
 
@@ -229,7 +231,8 @@ public class ParseFunctions
             new TypeReference(typeClauseNode),
             consumedIdentifierToken,
             openAngleBracketToken: default,
-    		genericParameterEntryList: null,
+    		indexGenericParameterEntryList: -1,
+            countGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
             functionArgumentListing: default,
             default,
@@ -286,7 +289,8 @@ public class ParseFunctions
                 var functionInvocationNode = new FunctionInvocationNode(
                     consumedIdentifierToken,
                     openAngleBracketToken: default,
-            		genericParameterEntryList: null,
+            		indexGenericParameterEntryList: -1,
+                    countGenericParameterEntryList: 0,
             		closeAngleBracketToken: default,
                     new FunctionParameterListing(
                         openParenthesisToken,

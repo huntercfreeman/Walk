@@ -9,7 +9,8 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
         SyntaxToken functionInvocationIdentifierToken,
         
         SyntaxToken openAngleBracketToken,
-        List<GenericParameterEntry> genericParameterEntryList,
+        int indexGenericParameterEntryList,
+        int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
         
         FunctionParameterListing functionParameterListing,
@@ -22,7 +23,8 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
         FunctionInvocationIdentifierToken = functionInvocationIdentifierToken;
         
         OpenAngleBracketToken = openAngleBracketToken;
-        GenericParameterEntryList = genericParameterEntryList;
+        IndexGenericParameterEntryList = indexGenericParameterEntryList;
+        CountGenericParameterEntryList = countGenericParameterEntryList;
         CloseAngleBracketToken = closeAngleBracketToken;
         
         FunctionParameterListing = functionParameterListing;
@@ -32,7 +34,8 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
     public SyntaxToken FunctionInvocationIdentifierToken { get; }
     
     public SyntaxToken OpenAngleBracketToken { get; set; }
-    public List<GenericParameterEntry> GenericParameterEntryList { get; set; }
+    public int IndexGenericParameterEntryList { get; set; }
+    public int CountGenericParameterEntryList { get; set; }
     public SyntaxToken CloseAngleBracketToken { get; set; }
     
     public FunctionParameterListing FunctionParameterListing { get; set; }

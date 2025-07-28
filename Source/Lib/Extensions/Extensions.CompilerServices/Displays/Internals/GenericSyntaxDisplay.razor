@@ -5,34 +5,36 @@
 
 @{
 	var syntaxViewModelLocal = SyntaxViewModel;
-	List<GenericParameterEntry>? genericParameterEntryList = null;
+	int indexGenericParameterEntryList = -1;
+	int countGenericParameterEntryList = 0;
 
 	if (syntaxViewModelLocal.TargetNode is IGenericParameterNode genericParameterNode &&
-        genericParameterNode.GenericParameterEntryList is not null)
+        genericParameterNode.IndexGenericParameterEntryList != -1)
     {
-    	genericParameterEntryList = genericParameterNode.GenericParameterEntryList;
+    	indexGenericParameterEntryList = genericParameterNode.IndexGenericParameterEntryList;
+    	countGenericParameterEntryList = genericParameterNode.CountGenericParameterEntryList;
     }
     else
     {
     	if (TypeReference != default &&
     		TypeReference.OpenAngleBracketToken.ConstructorWasInvoked)
     	{
-    		genericParameterEntryList = TypeReference.GenericParameterEntryList;
+    		indexGenericParameterEntryList = TypeReference.IndexGenericParameterEntryList;
+    	    countGenericParameterEntryList = TypeReference.CountGenericParameterEntryList;
     	}
     }
 }
 
-@if (genericParameterEntryList is not null)
+@if (indexGenericParameterEntryList != -1 && SyntaxViewModel.ExtendedCompilerService is not null)
 {
 	<text>&lt;</text>
 		
-	@for (int badIndex = 0; badIndex < genericParameterEntryList.Count; badIndex++)
+	@for (int index = indexGenericParameterEntryList; index < indexGenericParameterEntryList + countGenericParameterEntryList; index++)
 	{
-		var index = badIndex;
-		var genericParameter = genericParameterEntryList[index];
+		var genericParameter = SyntaxViewModel.ExtendedCompilerService.GenericParameterEntryList[index];
 		
     	var syntaxViewModel = new SyntaxViewModel(
-    	    SyntaxViewModel.CompilerService,
+    	    SyntaxViewModel.ExtendedCompilerService,
     	    SyntaxViewModel.TextEditorService,
     	    SyntaxViewModel.ResourceUri,
     		targetSymbol: null,
@@ -41,7 +43,7 @@
 			depth: syntaxViewModelLocal.Depth + 1);
         <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="genericParameter.TypeReference"/>
 		
-		if (index < genericParameterEntryList.Count - 1)
+		if (index < indexGenericParameterEntryList + countGenericParameterEntryList - 1)
 		{
 			<text>,</text>
 		}

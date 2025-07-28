@@ -10,7 +10,8 @@ public record struct TypeReference
         SyntaxToken typeIdentifier,
         
         SyntaxToken openAngleBracketToken,
-        List<GenericParameterEntry> genericParameterEntryList,
+        int indexGenericParameterEntryList,
+        int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
         
         bool isKeywordType,
@@ -23,7 +24,8 @@ public record struct TypeReference
         TypeIdentifierToken = typeIdentifier;
         
         OpenAngleBracketToken = openAngleBracketToken;
-        GenericParameterEntryList = genericParameterEntryList;
+        IndexGenericParameterEntryList = indexGenericParameterEntryList;
+        CountGenericParameterEntryList = countGenericParameterEntryList;
         CloseAngleBracketToken = closeAngleBracketToken;
         
         TypeKind = typeKind;
@@ -40,7 +42,8 @@ public record struct TypeReference
         TypeIdentifierToken = typeClauseNode.TypeIdentifierToken;
         
         OpenAngleBracketToken = typeClauseNode.OpenAngleBracketToken;
-        GenericParameterEntryList = typeClauseNode.GenericParameterEntryList;
+        IndexGenericParameterEntryList = typeClauseNode.IndexGenericParameterEntryList;
+        CountGenericParameterEntryList = typeClauseNode.CountGenericParameterEntryList;
         CloseAngleBracketToken = typeClauseNode.CloseAngleBracketToken;
         
         TypeKind = typeClauseNode.TypeKind;
@@ -54,7 +57,8 @@ public record struct TypeReference
     public SyntaxToken TypeIdentifierToken { get; }
     
     public SyntaxToken OpenAngleBracketToken { get; }
-    public List<GenericParameterEntry> GenericParameterEntryList { get; }
+    public int IndexGenericParameterEntryList { get; set; }
+    public int CountGenericParameterEntryList { get; set; }
     public SyntaxToken CloseAngleBracketToken { get; private set; }
     
     public bool IsKeywordType { get; }

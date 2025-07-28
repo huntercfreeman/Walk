@@ -292,12 +292,13 @@ public class ParseDefaultKeywords
         parserModel.ParserContextKind = CSharpParserContextKind.None;
         var enumerable = ParseExpressions.ParseExpression(ref parserModel);
         
-        if (enumerable.ResultTypeReference.GenericParameterEntryList is not null &&
+        if (enumerable.ResultTypeReference.IndexGenericParameterEntryList != -1 &&
             variableDeclarationNode is not null &&
             parserModel.GetTextSpanText(variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan) == "var")
         {
-            if (enumerable.ResultTypeReference.GenericParameterEntryList.Count == 1)
-                variableDeclarationNode.SetImplicitTypeReference(enumerable.ResultTypeReference.GenericParameterEntryList[0].TypeReference);
+            if (enumerable.ResultTypeReference.CountGenericParameterEntryList == 1)
+                variableDeclarationNode.SetImplicitTypeReference(
+                    parserModel.Binder.GenericParameterEntryList[enumerable.ResultTypeReference.IndexGenericParameterEntryList].TypeReference);
         }
         
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
@@ -794,7 +795,7 @@ public class ParseDefaultKeywords
 
         // Given: public class MyClass<T> { }
         // Then: <T>
-        (SyntaxToken OpenAngleBracketToken, List<GenericParameterEntry> GenericParameterEntryList, SyntaxToken CloseAngleBracketToken) genericParameterListing = default;
+        (SyntaxToken OpenAngleBracketToken, int IndexGenericParameterEntryList, int CountGenericParameterEntryList, SyntaxToken CloseAngleBracketToken) genericParameterListing = default;
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
             genericParameterListing = ParseTypes.HandleGenericParameters(ref parserModel);
 
@@ -804,7 +805,8 @@ public class ParseDefaultKeywords
             storageModifierKind,
             identifierToken,
             genericParameterListing.OpenAngleBracketToken,
-            genericParameterListing.GenericParameterEntryList,
+            genericParameterListing.IndexGenericParameterEntryList,
+            genericParameterListing.CountGenericParameterEntryList,
             genericParameterListing.CloseAngleBracketToken,
             primaryConstructorFunctionArgumentListing: default,
             inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),

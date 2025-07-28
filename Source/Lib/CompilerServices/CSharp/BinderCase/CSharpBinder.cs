@@ -58,17 +58,21 @@ public class CSharpBinder
     /// </summary>
     public HashSet<string> CSharpParserModel_AddedNamespaceHashSet { get; } = new();
     
+    public List<GenericParameterEntry> GenericParameterEntryList { get; } = new();
+    
     public AmbiguousIdentifierExpressionNode CSharpParserModel_AmbiguousIdentifierExpressionNode { get; } = new AmbiguousIdentifierExpressionNode(
         default,
         openAngleBracketToken: default,
-		genericParameterEntryList: null,
+		indexGenericParameterEntryList: -1,
+        countGenericParameterEntryList: 0,
 		closeAngleBracketToken: default,
         CSharpFacts.Types.Void.ToTypeReference());
         
     public TypeClauseNode CSharpParserModel_TypeClauseNode { get; } = new TypeClauseNode(
         typeIdentifier: default,
         openAngleBracketToken: default,
-		genericParameterEntryList: null,
+		indexGenericParameterEntryList: -1,
+        countGenericParameterEntryList: 0,
 		closeAngleBracketToken: default,
         isKeywordType: false);
         
@@ -982,8 +986,12 @@ public class CSharpBinder
                     }
                     else if (variableDeclarationNode.TypeReference.OpenAngleBracketToken.ConstructorWasInvoked)
                     {
-                        foreach (var entry in variableDeclarationNode.TypeReference.GenericParameterEntryList)
+                        for (int i = variableDeclarationNode.TypeReference.IndexGenericParameterEntryList;
+                             i < variableDeclarationNode.TypeReference.IndexGenericParameterEntryList + variableDeclarationNode.TypeReference.CountGenericParameterEntryList;
+                             i++)
                         {
+                            var entry = GenericParameterEntryList[i];
+                            
                             if (entry.TypeReference.TypeIdentifierToken.TextSpan.StartInclusiveIndex <= positionIndex &&
                                 entry.TypeReference.TypeIdentifierToken.TextSpan.EndExclusiveIndex >= positionIndex)
                             {

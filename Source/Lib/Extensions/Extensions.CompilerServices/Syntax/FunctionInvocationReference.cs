@@ -10,7 +10,8 @@ public record struct FunctionInvocationReference
         SyntaxToken functionInvocationIdentifierToken,
         
         SyntaxToken openAngleBracketToken,
-        List<GenericParameterEntry> genericParameterEntryList,
+        int indexGenericParameterEntryList,
+        int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
         
         FunctionParameterListing functionParameterListing,
@@ -20,7 +21,8 @@ public record struct FunctionInvocationReference
         FunctionInvocationIdentifierToken = functionInvocationIdentifierToken;
         
         OpenAngleBracketToken = openAngleBracketToken;
-        GenericParameterEntryList = genericParameterEntryList;
+        IndexGenericParameterEntryList = indexGenericParameterEntryList;
+        CountGenericParameterEntryList = countGenericParameterEntryList;
         CloseAngleBracketToken = closeAngleBracketToken;
         
         FunctionParameterListing = functionParameterListing;
@@ -35,7 +37,8 @@ public record struct FunctionInvocationReference
         FunctionInvocationIdentifierToken = functionInvocationNode.FunctionInvocationIdentifierToken;
         
         OpenAngleBracketToken = functionInvocationNode.OpenAngleBracketToken;
-        GenericParameterEntryList = functionInvocationNode.GenericParameterEntryList;
+        IndexGenericParameterEntryList = functionInvocationNode.IndexGenericParameterEntryList;
+        CountGenericParameterEntryList = functionInvocationNode.CountGenericParameterEntryList;
         CloseAngleBracketToken = functionInvocationNode.CloseAngleBracketToken;
         
         FunctionParameterListing = functionInvocationNode.FunctionParameterListing;
@@ -45,7 +48,8 @@ public record struct FunctionInvocationReference
 
     public SyntaxToken FunctionInvocationIdentifierToken { get; set; }
     public SyntaxToken OpenAngleBracketToken { get; }
-    public List<GenericParameterEntry> GenericParameterEntryList { get; }
+    public int IndexGenericParameterEntryList { get; set; }
+    public int CountGenericParameterEntryList { get; set; }
     public SyntaxToken CloseAngleBracketToken { get; private set; }
     public FunctionParameterListing FunctionParameterListing { get; set; }
     public TypeReference ResultTypeReference { get; set; }

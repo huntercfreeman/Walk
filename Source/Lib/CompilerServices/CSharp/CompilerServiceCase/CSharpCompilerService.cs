@@ -58,6 +58,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     public IReadOnlyList<ICompilerServiceResource> CompilerServiceResources { get; }
     
     public IReadOnlyDictionary<string, TypeDefinitionNode> AllTypeDefinitions { get; }
+    
+    public IReadOnlyList<GenericParameterEntry> GenericParameterEntryList => __CSharpBinder.GenericParameterEntryList;
 
     public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified)
     {
