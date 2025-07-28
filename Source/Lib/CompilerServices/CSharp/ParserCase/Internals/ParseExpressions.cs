@@ -2315,7 +2315,7 @@ public static class ParseExpressions
              if (variableReferenceNode.IsFabricated)
              {
                  var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
-                     variableReferenceNode.VariableIdentifierToken, valueType: null, genericParameterListing: default, isKeywordType: false);
+                     variableReferenceNode.VariableIdentifierToken, genericParameterListing: default, isKeywordType: false);
                 
                 parserModel.BindTypeClauseNode(typeClauseNode);
                     
@@ -3219,7 +3219,6 @@ public static class ParseExpressions
                         {
                             var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
                                 memberIdentifierToken,
-                                valueType: null,
                                 genericParameterListing: default,
                                 isKeywordType: false);
                             
@@ -3348,17 +3347,14 @@ public static class ParseExpressions
     
     private static IExpressionNode AmbiguousParenthesizedExpressionTransformTo_TypeClauseNode(
         AmbiguousParenthesizedExpressionNode ambiguousParenthesizedExpressionNode, ref SyntaxToken token, ref CSharpParserModel parserModel)
-    {
-        var identifierToken = new SyntaxToken(
-            SyntaxKind.IdentifierToken,
-            new TextEditorTextSpan(
-                ambiguousParenthesizedExpressionNode.OpenParenthesisToken.TextSpan.StartInclusiveIndex,
-                token.TextSpan.EndExclusiveIndex,
-                default(byte)));
-        
+    {        
         var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
-            identifierToken,
-            valueType: null,
+            new SyntaxToken(
+                SyntaxKind.IdentifierToken,
+                new TextEditorTextSpan(
+                    ambiguousParenthesizedExpressionNode.OpenParenthesisToken.TextSpan.StartInclusiveIndex,
+                    token.TextSpan.EndExclusiveIndex,
+                    default(byte))),
             genericParameterListing: default,
             isKeywordType: false);
         
@@ -3366,7 +3362,7 @@ public static class ParseExpressions
             typeClauseNode.ExplicitDefinitionTextSpan == default)
         {
             typeClauseNode.ExplicitDefinitionResourceUri = parserModel.Compilation.ResourceUri;
-            typeClauseNode.ExplicitDefinitionTextSpan = identifierToken.TextSpan;
+            typeClauseNode.ExplicitDefinitionTextSpan = typeClauseNode.TypeIdentifierToken.TextSpan;
         }
         
         return typeClauseNode;
