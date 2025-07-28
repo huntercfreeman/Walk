@@ -898,6 +898,11 @@ public static class ParseExpressions
             typeClauseNode.ExplicitDefinitionTextSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
             typeClauseNode.ExplicitDefinitionResourceUri = typeDefinitionNode.ResourceUri;
         }
+        else
+        {
+            typeClauseNode.ExplicitDefinitionTextSpan = token.TextSpan;
+            typeClauseNode.ExplicitDefinitionResourceUri = parserModel.Compilation.ResourceUri;
+        }
         
         if (!typeClauseNode.IsKeywordType)
         {
@@ -1115,12 +1120,10 @@ public static class ParseExpressions
             {
                 var token = ambiguousIdentifierExpressionNode.Token;
                 
-                TypeClauseNode typeClauseNode;
+                TypeClauseNode typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, ref parserModel);
                 
-                if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-                    typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, ref parserModel);
-                else
-                    typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, ref parserModel);
+                typeClauseNode.ExplicitDefinitionTextSpan = ambiguousIdentifierExpressionNode.Token.TextSpan;
+                typeClauseNode.ExplicitDefinitionResourceUri = parserModel.Compilation.ResourceUri;
                 
                 typeClauseNode.HasQuestionMark = ambiguousIdentifierExpressionNode.HasQuestionMark;
                 parserModel.BindTypeClauseNode(typeClauseNode);
