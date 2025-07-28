@@ -14,7 +14,8 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
         SyntaxToken closeAngleBracketToken,
         
         SyntaxToken openParenthesisToken,
-        List<FunctionParameterEntry> functionParameterEntryList,
+        int indexFunctionParameterEntryList,
+        int countFunctionParameterEntryList,
         SyntaxToken closeParenthesisToken,
         
         
@@ -32,7 +33,8 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
         CloseAngleBracketToken = closeAngleBracketToken;
         
         OpenParenthesisToken = openParenthesisToken;
-        FunctionParameterEntryList = functionParameterEntryList;
+        IndexFunctionParameterEntryList = indexFunctionParameterEntryList;
+        CountFunctionParameterEntryList = countFunctionParameterEntryList;
         CloseParenthesisToken = closeParenthesisToken;
         
         
@@ -47,7 +49,8 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
     public SyntaxToken CloseAngleBracketToken { get; set; }
     
     public SyntaxToken OpenParenthesisToken { get; set; }
-    public List<FunctionParameterEntry> FunctionParameterEntryList { get; set; }
+    public int IndexFunctionParameterEntryList { get; set; }
+    public int CountFunctionParameterEntryList { get; set; }
     public SyntaxToken CloseParenthesisToken { get; set; }
     
     public TypeReference ResultTypeReference { get; set; }

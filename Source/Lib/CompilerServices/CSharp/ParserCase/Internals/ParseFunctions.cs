@@ -293,7 +293,8 @@ public class ParseFunctions
                     countGenericParameterEntryList: 0,
             		closeAngleBracketToken: default,
                     openParenthesisToken,
-                    new List<FunctionParameterEntry>(),
+                    indexFunctionParameterEntryList: parserModel.Binder.FunctionParameterEntryList.Count,
+                    countFunctionParameterEntryList: 0,
                     closeParenthesisToken: default,
                     CSharpFacts.Types.Void.ToTypeReference());
                     

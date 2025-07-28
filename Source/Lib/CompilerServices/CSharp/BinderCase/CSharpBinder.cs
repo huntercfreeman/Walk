@@ -59,6 +59,7 @@ public class CSharpBinder
     public HashSet<string> CSharpParserModel_AddedNamespaceHashSet { get; } = new();
     
     public List<GenericParameterEntry> GenericParameterEntryList { get; } = new();
+    public List<FunctionParameterEntry> FunctionParameterEntryList { get; } = new();
     
     public AmbiguousIdentifierExpressionNode CSharpParserModel_AmbiguousIdentifierExpressionNode { get; } = new AmbiguousIdentifierExpressionNode(
         default,

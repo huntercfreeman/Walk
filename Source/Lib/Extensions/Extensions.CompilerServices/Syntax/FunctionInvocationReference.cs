@@ -15,7 +15,8 @@ public record struct FunctionInvocationReference
         SyntaxToken closeAngleBracketToken,
         
         SyntaxToken openParenthesisToken,
-        List<FunctionParameterEntry> functionParameterEntryList,
+        int indexFunctionParameterEntryList,
+        int countFunctionParameterEntryList,
         SyntaxToken closeParenthesisToken,
         
         
@@ -30,7 +31,8 @@ public record struct FunctionInvocationReference
         CloseAngleBracketToken = closeAngleBracketToken;
         
         OpenParenthesisToken = openParenthesisToken;
-        FunctionParameterEntryList = functionParameterEntryList;
+        IndexFunctionParameterEntryList = indexFunctionParameterEntryList;
+        CountFunctionParameterEntryList = countFunctionParameterEntryList;
         CloseParenthesisToken = closeParenthesisToken;
         
         ResultTypeReference = resultTypeReference;
@@ -49,7 +51,8 @@ public record struct FunctionInvocationReference
         CloseAngleBracketToken = functionInvocationNode.CloseAngleBracketToken;
         
         OpenParenthesisToken = functionInvocationNode.OpenParenthesisToken;
-        FunctionParameterEntryList = functionInvocationNode.FunctionParameterEntryList;
+        IndexFunctionParameterEntryList = functionInvocationNode.IndexFunctionParameterEntryList;
+        CountFunctionParameterEntryList = functionInvocationNode.CountFunctionParameterEntryList;
         CloseParenthesisToken = functionInvocationNode.CloseParenthesisToken;
         
         ResultTypeReference = functionInvocationNode.ResultTypeReference;
@@ -63,7 +66,8 @@ public record struct FunctionInvocationReference
     public SyntaxToken CloseAngleBracketToken { get; private set; }
     
     public SyntaxToken OpenParenthesisToken { get; set; }
-    public List<FunctionParameterEntry> FunctionParameterEntryList { get; set; }
+    public int IndexFunctionParameterEntryList { get; set; }
+    public int CountFunctionParameterEntryList { get; set; }
     public SyntaxToken CloseParenthesisToken { get; set; }
     
     public TypeReference ResultTypeReference { get; set; }

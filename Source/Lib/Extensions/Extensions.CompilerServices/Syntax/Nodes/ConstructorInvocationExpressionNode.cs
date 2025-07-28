@@ -14,7 +14,8 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
         TypeReference typeReference,
         
         SyntaxToken openParenthesisToken,
-        List<FunctionParameterEntry> functionParameterEntryList,
+        int indexFunctionParameterEntryList,
+        int countFunctionParameterEntryList,
         SyntaxToken closeParenthesisToken
         
         )
@@ -27,7 +28,8 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
         ResultTypeReference = typeReference;
         
         OpenParenthesisToken = openParenthesisToken;
-        FunctionParameterEntryList = functionParameterEntryList;
+        IndexFunctionParameterEntryList = indexFunctionParameterEntryList;
+        CountFunctionParameterEntryList = countFunctionParameterEntryList;
         CloseParenthesisToken = closeParenthesisToken;
         
     }
@@ -36,7 +38,8 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
     public TypeReference ResultTypeReference { get; set; }
     
     public SyntaxToken OpenParenthesisToken { get; set; }
-    public List<FunctionParameterEntry> FunctionParameterEntryList { get; set; }
+    public int IndexFunctionParameterEntryList { get; set; }
+    public int CountFunctionParameterEntryList { get; set; }
     public SyntaxToken CloseParenthesisToken { get; set; }
     
     public int IdentifierStartInclusiveIndex => NewKeywordToken.TextSpan.StartInclusiveIndex;
