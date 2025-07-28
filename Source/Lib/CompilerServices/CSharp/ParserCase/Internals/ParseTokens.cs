@@ -96,7 +96,7 @@ public static class ParseTokens
                 if ((parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.MemberAccessToken || isQuestionMarkMemberAccessToken || isBangMemberAccessToken) &&
                     originalTokenIndex == parserModel.TokenWalker.Index - 1)
                 {
-                    _ = parserModel.TokenWalker.Backtrack();
+                    parserModel.TokenWalker.BacktrackNoReturnValue();
                     expressionNode = ParseExpressions.ParseExpression(ref parserModel);
                     parserModel.StatementBuilder.ChildList.Add(expressionNode);
                     return;
@@ -306,7 +306,7 @@ public static class ParseTokens
     
     public static void ParsePropertyDefinition_ExpressionBound(ref CSharpParserModel parserModel)
     {
-        _ = parserModel.TokenWalker.Backtrack();
+        parserModel.TokenWalker.BacktrackNoReturnValue();
         ParseGetterOrSetter(variableDeclarationNode: null, ref parserModel);
     }
 

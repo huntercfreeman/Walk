@@ -208,7 +208,7 @@ public static class ParseExpressions
                     
                     for (int i = 0; i < distance; i++)
                     {
-                        _ = parserModel.TokenWalker.Backtrack();
+                        parserModel.TokenWalker.BacktrackNoReturnValue();
                     }
                     
                     parserModel.ExpressionPrimary = expressionPrimaryPreviousRoot;
@@ -3831,7 +3831,7 @@ public static class ParseExpressions
                     
                 for (int i = 0; i < distance; i++)
                 {
-                    _ = parserModel.TokenWalker.Backtrack();
+                    parserModel.TokenWalker.BacktrackNoReturnValue();
                 }
             }
         

@@ -101,6 +101,15 @@ public class TokenWalker
 
         return Peek(_index);
     }
+    
+    public void BacktrackNoReturnValue()
+    {
+        if (_index > 0)
+        {
+            _index--;
+            ConsumeCounter--;
+        }
+    }
 
     /// <summary>If the syntaxKind passed in does not match the current token, then a syntax token with that syntax kind will be fabricated and then returned instead.</summary>
     public SyntaxToken Match(SyntaxKind expectedSyntaxKind)
