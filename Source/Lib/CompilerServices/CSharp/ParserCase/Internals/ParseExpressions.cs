@@ -666,10 +666,9 @@ public static class ParseExpressions
                         ambiguousIdentifierExpressionNode.IndexGenericParameterEntryList,
                         ambiguousIdentifierExpressionNode.CountGenericParameterEntryList,
                         ambiguousIdentifierExpressionNode.CloseAngleBracketToken,
-                        new FunctionParameterListing(
-                            parserModel.TokenWalker.Current,
-                            new List<FunctionParameterEntry>(),
-                            closeParenthesisToken: default),
+                        parserModel.TokenWalker.Current,
+                        new List<FunctionParameterEntry>(),
+                        closeParenthesisToken: default,
                         CSharpFacts.Types.Void.ToTypeReference());
                     
                     parserModel.BindFunctionInvocationNode(functionInvocationNode);
@@ -1072,7 +1071,11 @@ public static class ParseExpressions
             		indexGenericParameterEntryList: -1,
                     countGenericParameterEntryList: 0,
             		closeAngleBracketToken: default,
-                    functionParameterListing: default,
+                    
+                    openParenthesisToken: default,
+            		functionParameterEntryList: null,
+            		closeParenthesisToken: default,
+                    
                     functionDefinitionNode?.ReturnTypeReference ?? CSharpFacts.Types.Void.ToTypeReference());
 
                 var functionSymbol = new Symbol(
@@ -1518,18 +1521,16 @@ public static class ParseExpressions
             case SyntaxKind.IdentifierToken:
                 goto default;
             case SyntaxKind.OpenParenthesisToken:
-                constructorInvocationExpressionNode.FunctionParameterListing = new FunctionParameterListing(
-                    parserModel.TokenWalker.Current,
-                    new List<FunctionParameterEntry>(),
-                    closeParenthesisToken: default);
-                
+                constructorInvocationExpressionNode.OpenParenthesisToken = parserModel.TokenWalker.Current;
+                constructorInvocationExpressionNode.FunctionParameterEntryList = new List<FunctionParameterEntry>();
+                constructorInvocationExpressionNode.CloseParenthesisToken = default;
                 constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.FunctionParameters;
                 
                 return ParseFunctionParameterListing_Start(constructorInvocationExpressionNode, ref parserModel);
             case SyntaxKind.CloseParenthesisToken:
-                if (constructorInvocationExpressionNode.FunctionParameterListing.ConstructorWasInvoked)
+                if (constructorInvocationExpressionNode.OpenParenthesisToken.ConstructorWasInvoked)
                 {
-                    constructorInvocationExpressionNode.FunctionParameterListing.SetCloseParenthesisToken(parserModel.TokenWalker.Current);
+                    constructorInvocationExpressionNode.CloseParenthesisToken = parserModel.TokenWalker.Current;
                     return constructorInvocationExpressionNode;
                 }
                 else
@@ -1600,7 +1601,7 @@ public static class ParseExpressions
             }
             case ConstructorInvocationStageKind.FunctionParameters:
             {
-                if (constructorInvocationExpressionNode.FunctionParameterListing.ConstructorWasInvoked)
+                if (constructorInvocationExpressionNode.OpenParenthesisToken.ConstructorWasInvoked)
                     return constructorInvocationExpressionNode;
                 goto default;
             }
@@ -1853,7 +1854,9 @@ public static class ParseExpressions
                 return new ConstructorInvocationExpressionNode(
                     token,
                     typeReference: default,
-                    functionParameterListing: default);
+                    openParenthesisToken: default,
+            		functionParameterEntryList: null,
+            		closeParenthesisToken: default);
             case SyntaxKind.AwaitTokenContextualKeyword:
                 return emptyExpressionNode;
             case SyntaxKind.AsyncTokenContextualKeyword:
@@ -2433,10 +2436,9 @@ public static class ParseExpressions
                         typeClauseNode.IndexGenericParameterEntryList,
                         typeClauseNode.CountGenericParameterEntryList,
                         typeClauseNode.CloseAngleBracketToken,
-                        new FunctionParameterListing(
-                            parserModel.TokenWalker.Current,
-                            new List<FunctionParameterEntry>(),
-                            closeParenthesisToken: default),
+                        openParenthesisToken: parserModel.TokenWalker.Current,
+                        new List<FunctionParameterEntry>(),
+                        closeParenthesisToken: default,
                         CSharpFacts.Types.Void.ToTypeReference());
                         
                     parserModel.BindFunctionInvocationNode(functionInvocationNode);
@@ -2604,7 +2606,7 @@ public static class ParseExpressions
         switch (parserModel.TokenWalker.Current.SyntaxKind)
         {
             case SyntaxKind.OpenAngleBracketToken:
-                if (!functionInvocationNode.FunctionParameterListing.ConstructorWasInvoked)
+                if (!functionInvocationNode.OpenParenthesisToken.ConstructorWasInvoked)
                 {
                     // Note: non member access function invocation takes the path:
                     //       AmbiguousIdentifierExpressionNode -> FunctionInvocationNode
@@ -2630,7 +2632,7 @@ public static class ParseExpressions
             case SyntaxKind.CloseAngleBracketToken:
                 return functionInvocationNode;
             case SyntaxKind.OpenParenthesisToken:
-                if (!functionInvocationNode.FunctionParameterListing.ConstructorWasInvoked)
+                if (!functionInvocationNode.OpenParenthesisToken.ConstructorWasInvoked)
                 {
                     // Note: non member access function invocation takes the path:
                     //       AmbiguousIdentifierExpressionNode -> FunctionInvocationNode
@@ -2645,10 +2647,9 @@ public static class ParseExpressions
                     // Until then these 'if (functionInvocationNode.FunctionParametersListingNode is null)'
                     // statements will be here.
                     
-                    functionInvocationNode.FunctionParameterListing = new FunctionParameterListing(
-                        parserModel.TokenWalker.Current,
-                        new List<FunctionParameterEntry>(),
-                        closeParenthesisToken: default);
+                    functionInvocationNode.OpenParenthesisToken = parserModel.TokenWalker.Current;
+                    functionInvocationNode.FunctionParameterEntryList = new List<FunctionParameterEntry>();
+                    functionInvocationNode.CloseParenthesisToken = default;
                     
                     return ParseFunctionParameterListing_Start(
                         functionInvocationNode, ref parserModel);
@@ -2656,7 +2657,7 @@ public static class ParseExpressions
 
                 goto default;
             case SyntaxKind.CloseParenthesisToken:
-                functionInvocationNode.FunctionParameterListing.SetCloseParenthesisToken(parserModel.TokenWalker.Current);
+                functionInvocationNode.CloseParenthesisToken = parserModel.TokenWalker.Current;
                 return functionInvocationNode;
             default:
                 return parserModel.Binder.Shared_BadExpressionNode;
@@ -3129,7 +3130,9 @@ public static class ParseExpressions
             		indexGenericParameterEntryList: -1,
                     countGenericParameterEntryList: 0,
             		closeAngleBracketToken: default,
-                    functionParameterListing: default,
+                    openParenthesisToken: default,
+            		functionParameterEntryList: null,
+            		closeParenthesisToken: default,
                     functionDefinitionNode.ReturnTypeReference);
                 
                 var functionSymbol = new Symbol(
@@ -3177,7 +3180,9 @@ public static class ParseExpressions
         		indexGenericParameterEntryList: -1,
                 countGenericParameterEntryList: 0,
         		closeAngleBracketToken: default,
-                functionParameterListing: default,
+                openParenthesisToken: default,
+        		functionParameterEntryList: null,
+        		closeParenthesisToken: default,
                 TypeFacts.Empty.ToTypeReference());
             var functionSymbol = new Symbol(
                 SyntaxKind.FunctionSymbol,
@@ -3588,10 +3593,10 @@ public static class ParseExpressions
                     {
                         var functionDefinitionNode = (FunctionDefinitionNode)maybeFunctionDefinitionNode;
                     
-                        if (functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList.Count > invocationNode.FunctionParameterListing.FunctionParameterEntryList.Count)
+                        if (functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList.Count > invocationNode.FunctionParameterEntryList.Count)
                         {
                             var matchingArgument = functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList[
-                                invocationNode.FunctionParameterListing.FunctionParameterEntryList.Count];
+                                invocationNode.FunctionParameterEntryList.Count];
                             
                             variableDeclarationNode.SetImplicitTypeReference(matchingArgument.VariableDeclarationNode.TypeReference);
                         }
@@ -3600,7 +3605,7 @@ public static class ParseExpressions
             }
         }
         
-        invocationNode.FunctionParameterListing.FunctionParameterEntryList.Add(
+        invocationNode.FunctionParameterEntryList.Add(
             new FunctionParameterEntry(parserModel.ParameterModifierKind));
         
         if (parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.IndividualFile_AllData)

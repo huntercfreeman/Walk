@@ -14,7 +14,11 @@ public record struct FunctionInvocationReference
         int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
         
-        FunctionParameterListing functionParameterListing,
+        SyntaxToken openParenthesisToken,
+        List<FunctionParameterEntry> functionParameterEntryList,
+        SyntaxToken closeParenthesisToken,
+        
+        
         TypeReference resultTypeReference,
         bool isFabricated)
     {
@@ -25,7 +29,10 @@ public record struct FunctionInvocationReference
         CountGenericParameterEntryList = countGenericParameterEntryList;
         CloseAngleBracketToken = closeAngleBracketToken;
         
-        FunctionParameterListing = functionParameterListing;
+        OpenParenthesisToken = openParenthesisToken;
+        FunctionParameterEntryList = functionParameterEntryList;
+        CloseParenthesisToken = closeParenthesisToken;
+        
         ResultTypeReference = resultTypeReference;
         IsFabricated = isFabricated;
     }
@@ -41,7 +48,10 @@ public record struct FunctionInvocationReference
         CountGenericParameterEntryList = functionInvocationNode.CountGenericParameterEntryList;
         CloseAngleBracketToken = functionInvocationNode.CloseAngleBracketToken;
         
-        FunctionParameterListing = functionInvocationNode.FunctionParameterListing;
+        OpenParenthesisToken = functionInvocationNode.OpenParenthesisToken;
+        FunctionParameterEntryList = functionInvocationNode.FunctionParameterEntryList;
+        CloseParenthesisToken = functionInvocationNode.CloseParenthesisToken;
+        
         ResultTypeReference = functionInvocationNode.ResultTypeReference;
         IsFabricated = functionInvocationNode.IsFabricated;
     }
@@ -51,7 +61,11 @@ public record struct FunctionInvocationReference
     public int IndexGenericParameterEntryList { get; set; }
     public int CountGenericParameterEntryList { get; set; }
     public SyntaxToken CloseAngleBracketToken { get; private set; }
-    public FunctionParameterListing FunctionParameterListing { get; set; }
+    
+    public SyntaxToken OpenParenthesisToken { get; set; }
+    public List<FunctionParameterEntry> FunctionParameterEntryList { get; set; }
+    public SyntaxToken CloseParenthesisToken { get; set; }
+    
     public TypeReference ResultTypeReference { get; set; }
     public bool IsFabricated { get; set; }
 }

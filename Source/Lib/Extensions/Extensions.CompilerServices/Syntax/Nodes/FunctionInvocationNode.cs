@@ -13,7 +13,11 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
         int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
         
-        FunctionParameterListing functionParameterListing,
+        SyntaxToken openParenthesisToken,
+        List<FunctionParameterEntry> functionParameterEntryList,
+        SyntaxToken closeParenthesisToken,
+        
+        
         TypeReference resultTypeReference)
     {
         #if DEBUG
@@ -27,7 +31,11 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
         CountGenericParameterEntryList = countGenericParameterEntryList;
         CloseAngleBracketToken = closeAngleBracketToken;
         
-        FunctionParameterListing = functionParameterListing;
+        OpenParenthesisToken = openParenthesisToken;
+        FunctionParameterEntryList = functionParameterEntryList;
+        CloseParenthesisToken = closeParenthesisToken;
+        
+        
         ResultTypeReference = resultTypeReference;
     }
 
@@ -38,7 +46,10 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
     public int CountGenericParameterEntryList { get; set; }
     public SyntaxToken CloseAngleBracketToken { get; set; }
     
-    public FunctionParameterListing FunctionParameterListing { get; set; }
+    public SyntaxToken OpenParenthesisToken { get; set; }
+    public List<FunctionParameterEntry> FunctionParameterEntryList { get; set; }
+    public SyntaxToken CloseParenthesisToken { get; set; }
+    
     public TypeReference ResultTypeReference { get; set; }
     public ResourceUri ResourceUri { get; set; }
     public int IdentifierStartInclusiveIndex => FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex;

@@ -12,7 +12,12 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
     public ConstructorInvocationExpressionNode(
         SyntaxToken newKeywordToken,
         TypeReference typeReference,
-        FunctionParameterListing functionParameterListing)
+        
+        SyntaxToken openParenthesisToken,
+        List<FunctionParameterEntry> functionParameterEntryList,
+        SyntaxToken closeParenthesisToken
+        
+        )
     {
         #if DEBUG
         Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ConstructorInvocationExpressionNode++;
@@ -20,12 +25,20 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
     
         NewKeywordToken = newKeywordToken;
         ResultTypeReference = typeReference;
-        FunctionParameterListing = functionParameterListing;
+        
+        OpenParenthesisToken = openParenthesisToken;
+        FunctionParameterEntryList = functionParameterEntryList;
+        CloseParenthesisToken = closeParenthesisToken;
+        
     }
 
     public SyntaxToken NewKeywordToken { get; }
     public TypeReference ResultTypeReference { get; set; }
-    public FunctionParameterListing FunctionParameterListing { get; set; }
+    
+    public SyntaxToken OpenParenthesisToken { get; set; }
+    public List<FunctionParameterEntry> FunctionParameterEntryList { get; set; }
+    public SyntaxToken CloseParenthesisToken { get; set; }
+    
     public int IdentifierStartInclusiveIndex => NewKeywordToken.TextSpan.StartInclusiveIndex;
 
     public ConstructorInvocationStageKind ConstructorInvocationStageKind { get; set; } = ConstructorInvocationStageKind.Unset;

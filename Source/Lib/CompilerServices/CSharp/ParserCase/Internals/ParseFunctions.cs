@@ -292,10 +292,9 @@ public class ParseFunctions
             		indexGenericParameterEntryList: -1,
                     countGenericParameterEntryList: 0,
             		closeAngleBracketToken: default,
-                    new FunctionParameterListing(
-                        openParenthesisToken,
-                        new List<FunctionParameterEntry>(),
-                        closeParenthesisToken: default),
+                    openParenthesisToken,
+                    new List<FunctionParameterEntry>(),
+                    closeParenthesisToken: default,
                     CSharpFacts.Types.Void.ToTypeReference());
                     
                 functionInvocationNode.IsParsingFunctionParameters = true;
