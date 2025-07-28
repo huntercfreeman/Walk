@@ -86,11 +86,9 @@ public class TokenWalker
                 return closeChildScopeToken;
             }
         }
-
-        var consumedToken = TokenList[_index++];
+        
         ConsumeCounter++;
-
-        return consumedToken;
+        return TokenList[_index++];
     }
 
     public SyntaxToken Backtrack()
