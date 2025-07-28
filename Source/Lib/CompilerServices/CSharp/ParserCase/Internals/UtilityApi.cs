@@ -338,21 +338,27 @@ public static class UtilityApi
         {
             return parserModel.ConstructOrRecycleTypeClauseNode(
                 token,
-                genericParameterListing: default,
+                openAngleBracketToken: default,
+        		genericParameterEntryList: null,
+        		closeAngleBracketToken: default,
                 isKeywordType: false);
         }
         else if (IsTypeIdentifierKeywordSyntaxKind(token.SyntaxKind))
         {
             return parserModel.ConstructOrRecycleTypeClauseNode(
                 token,
-                genericParameterListing: default,
+                openAngleBracketToken: default,
+        		genericParameterEntryList: null,
+        		closeAngleBracketToken: default,
                 isKeywordType: true);
         }
         else if (IsContextualKeywordSyntaxKind(token.SyntaxKind))
         {
             return parserModel.ConstructOrRecycleTypeClauseNode(
                 token,
-                genericParameterListing: default,
+                openAngleBracketToken: default,
+        		genericParameterEntryList: null,
+        		closeAngleBracketToken: default,
                 isKeywordType: true);
         }
         else

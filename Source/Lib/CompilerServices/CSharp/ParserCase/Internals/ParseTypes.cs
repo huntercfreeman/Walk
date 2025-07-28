@@ -10,16 +10,13 @@ public static class ParseTypes
     /// TODO: TypeDefinitionNode(s) should use the expression loop to parse the...
     /// ...generic parameters. They currently use 'ParseTypes.HandleGenericParameters(...);'
     /// </summary>
-    public static GenericParameterListing HandleGenericParameters(ref CSharpParserModel parserModel)
+    public static (SyntaxToken OpenAngleBracketToken, List<GenericParameterEntry> GenericParameterEntryList, SyntaxToken CloseAngleBracketToken) HandleGenericParameters(ref CSharpParserModel parserModel)
     {
         var openAngleBracketToken = parserModel.TokenWalker.Consume();
     
         if (SyntaxKind.CloseAngleBracketToken == parserModel.TokenWalker.Current.SyntaxKind)
         {
-            return new GenericParameterListing(
-                openAngleBracketToken,
-                new(),
-                parserModel.TokenWalker.Consume());
+            return (openAngleBracketToken, new(), parserModel.TokenWalker.Consume());
         }
 
         var genericParameterList = new List<GenericParameterEntry>();
@@ -51,10 +48,7 @@ public static class ParseTypes
 
         var closeAngleBracketToken = parserModel.TokenWalker.Match(SyntaxKind.CloseAngleBracketToken);
 
-        return new GenericParameterListing(
-            openAngleBracketToken,
-            genericParameterList,
-            closeAngleBracketToken);
+        return (openAngleBracketToken, genericParameterList, closeAngleBracketToken);
     }
 
     public static TypeClauseNode MatchTypeClause(ref CSharpParserModel parserModel)
@@ -70,7 +64,9 @@ public static class ParseTypes
             
             return parserModel.ConstructOrRecycleTypeClauseNode(
                 syntaxToken,
-                genericParameterListing: default,
+                openAngleBracketToken: default,
+        		genericParameterEntryList: null,
+        		closeAngleBracketToken: default,
                 isKeywordType: false);
         }
         

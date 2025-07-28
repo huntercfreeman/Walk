@@ -59,14 +59,18 @@ public ref struct CSharpParserModel
         AmbiguousIdentifierExpressionNode = Binder.CSharpParserModel_AmbiguousIdentifierExpressionNode;
         AmbiguousIdentifierExpressionNode.SetSharedInstance(
             default,
-            genericParameterListing: default,
+            openAngleBracketToken: default,
+    		genericParameterEntryList: null,
+    		closeAngleBracketToken: default,
             CSharpFacts.Types.Void.ToTypeReference(),
             followsMemberAccessToken: false);
             
         TypeClauseNode = Binder.CSharpParserModel_TypeClauseNode;
         TypeClauseNode.SetSharedInstance(
             typeIdentifier: default,
-            genericParameterListing: default,
+            openAngleBracketToken: default,
+    		genericParameterEntryList: null,
+    		closeAngleBracketToken: default,
             isKeywordType: false);
         TypeClauseNode.IsBeingUsed = false;
             
@@ -164,20 +168,32 @@ public ref struct CSharpParserModel
     
     public TypeClauseNode ConstructOrRecycleTypeClauseNode(
         SyntaxToken typeIdentifier,
-        GenericParameterListing genericParameterListing,
+        
+        SyntaxToken openAngleBracketToken,
+        List<GenericParameterEntry> genericParameterEntryList,
+        SyntaxToken closeAngleBracketToken,
+        
         bool isKeywordType)
     {
         if (TypeClauseNode.IsBeingUsed)
         {
             return new TypeClauseNode(
                 typeIdentifier,
-                genericParameterListing,
+                
+                openAngleBracketToken,
+                genericParameterEntryList,
+                closeAngleBracketToken,
+                
                 isKeywordType);
         }    
         
         TypeClauseNode.SetSharedInstance(
             typeIdentifier,
-            genericParameterListing,
+            
+            openAngleBracketToken,
+            genericParameterEntryList,
+            closeAngleBracketToken,
+            
             isKeywordType);
             
         return TypeClauseNode;
@@ -681,9 +697,9 @@ public ref struct CSharpParserModel
             
                 var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
                 
-                if (typeDefinitionNode.GenericParameterListing.ConstructorWasInvoked)
+                if (typeDefinitionNode.OpenAngleBracketToken.ConstructorWasInvoked)
                 {
-                    foreach (var entry in typeDefinitionNode.GenericParameterListing.GenericParameterEntryList)
+                    foreach (var entry in typeDefinitionNode.GenericParameterEntryList)
                     {
                         BindTypeDefinitionNode(
                             new TypeDefinitionNode(
@@ -691,7 +707,9 @@ public ref struct CSharpParserModel
                                 hasPartialModifier: false,
                                 StorageModifierKind.Class,
                                 entry.TypeReference.TypeIdentifierToken,
-                                entry.TypeReference.GenericParameterListing,
+                                entry.TypeReference.OpenAngleBracketToken,
+                                entry.TypeReference.GenericParameterEntryList,
+                                entry.TypeReference.CloseAngleBracketToken,
                                 primaryConstructorFunctionArgumentListing: default,
                                 inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
                                 string.Empty,

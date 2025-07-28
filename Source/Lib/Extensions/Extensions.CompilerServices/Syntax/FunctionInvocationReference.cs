@@ -8,13 +8,21 @@ public record struct FunctionInvocationReference
 
     public FunctionInvocationReference(
         SyntaxToken functionInvocationIdentifierToken,
-        GenericParameterListing genericParameterListing,
+        
+        SyntaxToken openAngleBracketToken,
+        List<GenericParameterEntry> genericParameterEntryList,
+        SyntaxToken closeAngleBracketToken,
+        
         FunctionParameterListing functionParameterListing,
         TypeReference resultTypeReference,
         bool isFabricated)
     {
         FunctionInvocationIdentifierToken = functionInvocationIdentifierToken;
-        GenericParameterListing = genericParameterListing;
+        
+        OpenAngleBracketToken = openAngleBracketToken;
+        GenericParameterEntryList = genericParameterEntryList;
+        CloseAngleBracketToken = closeAngleBracketToken;
+        
         FunctionParameterListing = functionParameterListing;
         ResultTypeReference = resultTypeReference;
         IsFabricated = isFabricated;
@@ -25,14 +33,20 @@ public record struct FunctionInvocationReference
         // functionInvocationNode.IsBeingUsed = false;
     
         FunctionInvocationIdentifierToken = functionInvocationNode.FunctionInvocationIdentifierToken;
-        GenericParameterListing = functionInvocationNode.GenericParameterListing;
+        
+        OpenAngleBracketToken = functionInvocationNode.OpenAngleBracketToken;
+        GenericParameterEntryList = functionInvocationNode.GenericParameterEntryList;
+        CloseAngleBracketToken = functionInvocationNode.CloseAngleBracketToken;
+        
         FunctionParameterListing = functionInvocationNode.FunctionParameterListing;
         ResultTypeReference = functionInvocationNode.ResultTypeReference;
         IsFabricated = functionInvocationNode.IsFabricated;
     }
 
     public SyntaxToken FunctionInvocationIdentifierToken { get; set; }
-    public GenericParameterListing GenericParameterListing { get; set; }
+    public SyntaxToken OpenAngleBracketToken { get; }
+    public List<GenericParameterEntry> GenericParameterEntryList { get; }
+    public SyntaxToken CloseAngleBracketToken { get; private set; }
     public FunctionParameterListing FunctionParameterListing { get; set; }
     public TypeReference ResultTypeReference { get; set; }
     public bool IsFabricated { get; set; }

@@ -13,7 +13,7 @@
 	string? returnTypeClauseNodeText;
 	
 	string? methodName;
-	GenericParameterListing? genericParameterListing;
+	bool hasGenericParameterListing;
 	FunctionArgumentListing? functionArgumentListing;
 	bool isConstructorInvocation = false;
 	
@@ -23,7 +23,7 @@
 		returnTypeClauseNode = default;
 		returnTypeClauseNodeText = null;
 		methodName = null;
-		genericParameterListing = null;
+		hasGenericParameterListing = false;
 		functionArgumentListing = null;
 	}
 	else if (syntaxViewModelLocal.DefinitionNode is not null &&
@@ -38,7 +38,7 @@
 			returnTypeClauseNode = functionDefinitionNode.ReturnTypeReference;
 			returnTypeClauseNodeText = null;
 			methodName = syntaxViewModelLocal.GetIdentifierText(functionDefinitionNode);
-			genericParameterListing = functionDefinitionNode.GenericParameterListing;
+			hasGenericParameterListing = functionDefinitionNode.OpenAngleBracketToken.ConstructorWasInvoked;
 			functionArgumentListing = functionDefinitionNode.FunctionArgumentListing;
 		}
 		else if (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
@@ -47,7 +47,7 @@
 			returnTypeClauseNode = constructorDefinitionNode.ReturnTypeReference;
 			returnTypeClauseNodeText = null;
 			methodName = null;
-			genericParameterListing = null;
+			hasGenericParameterListing = false;
 			functionArgumentListing = constructorDefinitionNode.FunctionArgumentListing;
 		}
 		else
@@ -55,7 +55,7 @@
 			returnTypeClauseNode = default;
 			returnTypeClauseNodeText = null;
 			methodName = "unknown syntax";
-			genericParameterListing = null;
+			hasGenericParameterListing = false;
 			functionArgumentListing = null;
 		}
 	}
@@ -71,7 +71,7 @@
 			returnTypeClauseNode = functionInvocationNode.ResultTypeReference;
 			returnTypeClauseNodeText = null;
 			methodName = syntaxViewModelLocal.GetIdentifierText(functionInvocationNode);
-			genericParameterListing = functionInvocationNode.GenericParameterListing;
+			hasGenericParameterListing = functionInvocationNode.OpenAngleBracketToken.ConstructorWasInvoked;
 			functionArgumentListing = null;
 		}
 		else if (syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
@@ -80,7 +80,7 @@
 			returnTypeClauseNode = constructorInvocationNode.ResultTypeReference;
 			returnTypeClauseNodeText = null;
 			methodName = null;
-			genericParameterListing = null;
+			hasGenericParameterListing = false;
 			functionArgumentListing = null;
 		}
 		else
@@ -88,7 +88,7 @@
 			returnTypeClauseNode = default;
 			returnTypeClauseNodeText = null;
 			methodName = "unknown syntax";
-			genericParameterListing = null;
+			hasGenericParameterListing = false;
 			functionArgumentListing = null;
 		}
 	}
@@ -103,7 +103,7 @@
 			returnTypeClauseNode = default;
 			returnTypeClauseNodeText = null;
 			methodName = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
-			genericParameterListing = null;
+			hasGenericParameterListing = false;
 			functionArgumentListing = null;
 		}
 		else if (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.ConstructorSymbol)
@@ -111,7 +111,7 @@
 			returnTypeClauseNode = default;
 			returnTypeClauseNodeText = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
 			methodName = null;
-			genericParameterListing = null;
+			hasGenericParameterListing = false;
 			functionArgumentListing = null;
 		}
 		else
@@ -119,7 +119,7 @@
 			returnTypeClauseNode = default;
 			returnTypeClauseNodeText = null;
 			methodName = null;
-			genericParameterListing = null;
+			hasGenericParameterListing = false;
 			functionArgumentListing = null;
 		}
 	}
@@ -129,7 +129,7 @@
 		returnTypeClauseNode = default;
 		returnTypeClauseNodeText = null;
 		methodName = null;
-		genericParameterListing = null;
+		hasGenericParameterListing = false;
 		functionArgumentListing = null;
 	}
 }
@@ -176,7 +176,7 @@
 		</span>
 	}
 	
-	@if (genericParameterListing is not null)
+	@if (hasGenericParameterListing)
 	{
 		var syntaxViewModel = new SyntaxViewModel(
 		    SyntaxViewModel.CompilerService,

@@ -8,16 +8,16 @@
 	List<GenericParameterEntry>? genericParameterEntryList = null;
 
 	if (syntaxViewModelLocal.TargetNode is IGenericParameterNode genericParameterNode &&
-        genericParameterNode.GenericParameterListing.GenericParameterEntryList is not null)
+        genericParameterNode.GenericParameterEntryList is not null)
     {
-    	genericParameterEntryList = genericParameterNode.GenericParameterListing.GenericParameterEntryList;
+    	genericParameterEntryList = genericParameterNode.GenericParameterEntryList;
     }
     else
     {
     	if (TypeReference != default &&
-    		TypeReference.GenericParameterListing.ConstructorWasInvoked)
+    		TypeReference.OpenAngleBracketToken.ConstructorWasInvoked)
     	{
-    		genericParameterEntryList = TypeReference.GenericParameterListing.GenericParameterEntryList;
+    		genericParameterEntryList = TypeReference.GenericParameterEntryList;
     	}
     }
 }

@@ -17,7 +17,9 @@ public class ParseFunctions
             AccessModifierKind.Public,
             consumedTypeReference,
             consumedIdentifierToken,
-            genericParameterListing: default,
+            openAngleBracketToken: default,
+    		genericParameterEntryList: null,
+    		closeAngleBracketToken: default,
             functionArgumentListing: default,
             default,
             parserModel.Compilation.ResourceUri);
@@ -218,13 +220,17 @@ public class ParseFunctions
     {
         var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
             typeDefinitionNodeCodeBlockOwner.TypeIdentifierToken,
-            genericParameterListing: default,
+            openAngleBracketToken: default,
+    		genericParameterEntryList: null,
+    		closeAngleBracketToken: default,
             isKeywordType: false);
 
         var constructorDefinitionNode = new ConstructorDefinitionNode(
             new TypeReference(typeClauseNode),
             consumedIdentifierToken,
-            default,
+            openAngleBracketToken: default,
+    		genericParameterEntryList: null,
+    		closeAngleBracketToken: default,
             functionArgumentListing: default,
             default,
             parserModel.Compilation.ResourceUri);
@@ -279,7 +285,9 @@ public class ParseFunctions
             
                 var functionInvocationNode = new FunctionInvocationNode(
                     consumedIdentifierToken,
-                    genericParameterListing: default,
+                    openAngleBracketToken: default,
+            		genericParameterEntryList: null,
+            		closeAngleBracketToken: default,
                     new FunctionParameterListing(
                         openParenthesisToken,
                         new List<FunctionParameterEntry>(),

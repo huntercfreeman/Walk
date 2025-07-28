@@ -7,7 +7,11 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 {
     public FunctionInvocationNode(
         SyntaxToken functionInvocationIdentifierToken,
-        GenericParameterListing genericParameterListing,
+        
+        SyntaxToken openAngleBracketToken,
+        List<GenericParameterEntry> genericParameterEntryList,
+        SyntaxToken closeAngleBracketToken,
+        
         FunctionParameterListing functionParameterListing,
         TypeReference resultTypeReference)
     {
@@ -16,13 +20,21 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
         #endif
     
         FunctionInvocationIdentifierToken = functionInvocationIdentifierToken;
-        GenericParameterListing = genericParameterListing;
+        
+        OpenAngleBracketToken = openAngleBracketToken;
+        GenericParameterEntryList = genericParameterEntryList;
+        CloseAngleBracketToken = closeAngleBracketToken;
+        
         FunctionParameterListing = functionParameterListing;
         ResultTypeReference = resultTypeReference;
     }
 
     public SyntaxToken FunctionInvocationIdentifierToken { get; }
-    public GenericParameterListing GenericParameterListing { get; set; }
+    
+    public SyntaxToken OpenAngleBracketToken { get; set; }
+    public List<GenericParameterEntry> GenericParameterEntryList { get; set; }
+    public SyntaxToken CloseAngleBracketToken { get; set; }
+    
     public FunctionParameterListing FunctionParameterListing { get; set; }
     public TypeReference ResultTypeReference { get; set; }
     public ResourceUri ResourceUri { get; set; }

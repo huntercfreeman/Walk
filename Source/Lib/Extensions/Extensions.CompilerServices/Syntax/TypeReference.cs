@@ -8,7 +8,11 @@ public record struct TypeReference
 {
     public TypeReference(
         SyntaxToken typeIdentifier,
-        GenericParameterListing genericParameterListing,
+        
+        SyntaxToken openAngleBracketToken,
+        List<GenericParameterEntry> genericParameterEntryList,
+        SyntaxToken closeAngleBracketToken,
+        
         bool isKeywordType,
         TypeKind typeKind,
         bool hasQuestionMark,
@@ -17,7 +21,11 @@ public record struct TypeReference
     {
         IsKeywordType = isKeywordType;
         TypeIdentifierToken = typeIdentifier;
-        GenericParameterListing = genericParameterListing;
+        
+        OpenAngleBracketToken = openAngleBracketToken;
+        GenericParameterEntryList = genericParameterEntryList;
+        CloseAngleBracketToken = closeAngleBracketToken;
+        
         TypeKind = typeKind;
         HasQuestionMark = hasQuestionMark;
         ArrayRank = arrayRank;
@@ -30,7 +38,11 @@ public record struct TypeReference
     
         IsKeywordType = typeClauseNode.IsKeywordType;
         TypeIdentifierToken = typeClauseNode.TypeIdentifierToken;
-        GenericParameterListing = typeClauseNode.GenericParameterListing;
+        
+        OpenAngleBracketToken = typeClauseNode.OpenAngleBracketToken;
+        GenericParameterEntryList = typeClauseNode.GenericParameterEntryList;
+        CloseAngleBracketToken = typeClauseNode.CloseAngleBracketToken;
+        
         TypeKind = typeClauseNode.TypeKind;
         HasQuestionMark = typeClauseNode.HasQuestionMark;
         ArrayRank = typeClauseNode.ArrayRank;
@@ -40,7 +52,11 @@ public record struct TypeReference
     }
 
     public SyntaxToken TypeIdentifierToken { get; }
-    public GenericParameterListing GenericParameterListing { get; }
+    
+    public SyntaxToken OpenAngleBracketToken { get; }
+    public List<GenericParameterEntry> GenericParameterEntryList { get; }
+    public SyntaxToken CloseAngleBracketToken { get; private set; }
+    
     public bool IsKeywordType { get; }
     public TypeKind TypeKind { get; }
     public bool HasQuestionMark { get; }

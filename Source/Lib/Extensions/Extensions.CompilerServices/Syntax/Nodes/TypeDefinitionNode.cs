@@ -14,7 +14,11 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
         bool hasPartialModifier,
         StorageModifierKind storageModifierKind,
         SyntaxToken typeIdentifier,
-        GenericParameterListing genericParameterListing,
+        
+        SyntaxToken openAngleBracketToken,
+        List<GenericParameterEntry> genericParameterEntryList,
+        SyntaxToken closeAngleBracketToken,
+        
         FunctionArgumentListing primaryConstructorFunctionArgumentListing,
         TypeReference inheritedTypeReference,
         string namespaceName,
@@ -28,7 +32,11 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
         HasPartialModifier = hasPartialModifier;
         StorageModifierKind = storageModifierKind;
         TypeIdentifierToken = typeIdentifier;
-        GenericParameterListing = genericParameterListing;
+        
+        OpenAngleBracketToken = openAngleBracketToken;
+        GenericParameterEntryList = genericParameterEntryList;
+        CloseAngleBracketToken = closeAngleBracketToken;
+        
         FunctionArgumentListing = primaryConstructorFunctionArgumentListing;
         InheritedTypeReference = inheritedTypeReference;
         NamespaceName = namespaceName;
@@ -56,7 +64,11 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     /// Then: 'Array&lt;T&gt;' is the <see cref="TypeIdentifierToken"/><br/>
     /// And: '&lt;T&gt;' is the <see cref="GenericArgumentsListingNode"/>
     /// </summary>
-    public GenericParameterListing GenericParameterListing { get; set; }
+    public SyntaxToken OpenAngleBracketToken { get; set; }
+    public List<GenericParameterEntry> GenericParameterEntryList { get; set; }
+    public SyntaxToken CloseAngleBracketToken { get; set; }
+    
+    
     public FunctionArgumentListing FunctionArgumentListing { get; set; }
     public FunctionArgumentListing PrimaryConstructorFunctionArgumentListing => FunctionArgumentListing;
     /// <summary>
@@ -135,7 +147,11 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     {
         return _toTypeClauseResult ??= new TypeClauseNode(
             TypeIdentifierToken,
-            genericParameterListing: default,
+            
+            openAngleBracketToken: default,
+    		genericParameterEntryList: null,
+    		closeAngleBracketToken: default, 
+            
             isKeywordType: IsKeywordType)
         {
             ExplicitDefinitionTextSpan = TypeIdentifierToken.TextSpan,

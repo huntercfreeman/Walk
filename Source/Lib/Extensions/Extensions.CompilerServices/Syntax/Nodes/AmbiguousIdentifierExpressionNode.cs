@@ -6,7 +6,11 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
 {
     public AmbiguousIdentifierExpressionNode(
         SyntaxToken token,
-        GenericParameterListing genericParameterListing,
+        
+        SyntaxToken openAngleBracketToken,
+        List<GenericParameterEntry> genericParameterEntryList,
+        SyntaxToken closeAngleBracketToken,
+        
         TypeReference resultTypeReference)
     {
         #if DEBUG
@@ -14,12 +18,20 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
         #endif
     
         Token = token;
-        GenericParameterListing = genericParameterListing;
+        
+        OpenAngleBracketToken = openAngleBracketToken;
+        GenericParameterEntryList = genericParameterEntryList;
+        CloseAngleBracketToken = closeAngleBracketToken;
+        
         ResultTypeReference = resultTypeReference;
     }
     
     public SyntaxToken Token { get; set; }
-    public GenericParameterListing GenericParameterListing { get; set; }
+    
+    public SyntaxToken OpenAngleBracketToken { get; set; }
+    public List<GenericParameterEntry> GenericParameterEntryList { get; set; }
+    public SyntaxToken CloseAngleBracketToken { get; set; }
+    
     public TypeReference ResultTypeReference { get; set; }
     public bool FollowsMemberAccessToken { get; set; }
     public bool HasQuestionMark { get; set; }
@@ -30,12 +42,20 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
     
     public void SetSharedInstance(
         SyntaxToken token,
-        GenericParameterListing genericParameterListing,
+        
+        SyntaxToken openAngleBracketToken,
+        List<GenericParameterEntry> genericParameterEntryList,
+        SyntaxToken closeAngleBracketToken,
+        
         TypeReference resultTypeReference,
         bool followsMemberAccessToken)
     {
         Token = token;
-        GenericParameterListing = genericParameterListing;
+        
+        OpenAngleBracketToken = openAngleBracketToken;
+        GenericParameterEntryList = genericParameterEntryList;
+        CloseAngleBracketToken = closeAngleBracketToken;
+        
         ResultTypeReference = resultTypeReference;
         FollowsMemberAccessToken = followsMemberAccessToken;
         HasQuestionMark = false;

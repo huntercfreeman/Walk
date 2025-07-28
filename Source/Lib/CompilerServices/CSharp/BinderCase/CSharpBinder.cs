@@ -60,12 +60,16 @@ public class CSharpBinder
     
     public AmbiguousIdentifierExpressionNode CSharpParserModel_AmbiguousIdentifierExpressionNode { get; } = new AmbiguousIdentifierExpressionNode(
         default,
-        genericParameterListing: default,
+        openAngleBracketToken: default,
+		genericParameterEntryList: null,
+		closeAngleBracketToken: default,
         CSharpFacts.Types.Void.ToTypeReference());
         
     public TypeClauseNode CSharpParserModel_TypeClauseNode { get; } = new TypeClauseNode(
         typeIdentifier: default,
-        genericParameterListing: default,
+        openAngleBracketToken: default,
+		genericParameterEntryList: null,
+		closeAngleBracketToken: default,
         isKeywordType: false);
         
     public VariableReferenceNode CSharpParserModel_VariableReferenceNode { get; } = new VariableReferenceNode(
@@ -976,9 +980,9 @@ public class CSharpBinder
                     {
                         return new TypeClauseNode(variableDeclarationNode.TypeReference);
                     }
-                    else if (variableDeclarationNode.TypeReference.GenericParameterListing.ConstructorWasInvoked)
+                    else if (variableDeclarationNode.TypeReference.OpenAngleBracketToken.ConstructorWasInvoked)
                     {
-                        foreach (var entry in variableDeclarationNode.TypeReference.GenericParameterListing.GenericParameterEntryList)
+                        foreach (var entry in variableDeclarationNode.TypeReference.GenericParameterEntryList)
                         {
                             if (entry.TypeReference.TypeIdentifierToken.TextSpan.StartInclusiveIndex <= positionIndex &&
                                 entry.TypeReference.TypeIdentifierToken.TextSpan.EndExclusiveIndex >= positionIndex)

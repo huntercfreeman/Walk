@@ -11,7 +11,11 @@ public sealed class TypeClauseNode : IGenericParameterNode
 {
     public TypeClauseNode(
         SyntaxToken typeIdentifier,
-        GenericParameterListing genericParameterListing,
+        
+        SyntaxToken openAngleBracketToken,
+        List<GenericParameterEntry> genericParameterEntryList,
+        SyntaxToken closeAngleBracketToken,
+        
         bool isKeywordType)
     {
         #if DEBUG
@@ -20,7 +24,10 @@ public sealed class TypeClauseNode : IGenericParameterNode
     
         IsKeywordType = isKeywordType;
         TypeIdentifierToken = typeIdentifier;
-        GenericParameterListing = genericParameterListing;
+        
+        OpenAngleBracketToken = openAngleBracketToken;
+        GenericParameterEntryList = genericParameterEntryList;
+        CloseAngleBracketToken = closeAngleBracketToken;
     }
     
     /// <summary>
@@ -43,7 +50,11 @@ public sealed class TypeClauseNode : IGenericParameterNode
     
         IsKeywordType = typeReference.IsKeywordType;
         TypeIdentifierToken = typeReference.TypeIdentifierToken;
-        GenericParameterListing = typeReference.GenericParameterListing;
+        
+        OpenAngleBracketToken = typeReference.OpenAngleBracketToken;
+        GenericParameterEntryList = typeReference.GenericParameterEntryList;
+        CloseAngleBracketToken = typeReference.CloseAngleBracketToken;
+        
         ExplicitDefinitionTextSpan = typeReference.ExplicitDefinitionTextSpan;
         ExplicitDefinitionResourceUri = typeReference.ExplicitDefinitionResourceUri;
     }
@@ -61,7 +72,9 @@ public sealed class TypeClauseNode : IGenericParameterNode
     /// Then: 'Array&lt;T&gt;' is the <see cref="TypeIdentifierToken"/><br/>
     /// And: '&lt;int&gt;' is the <see cref="GenericParametersListingNode"/>
     /// </summary>
-    public GenericParameterListing GenericParameterListing { get; set; }
+    public SyntaxToken OpenAngleBracketToken { get; set; }
+    public List<GenericParameterEntry> GenericParameterEntryList { get; set; }
+    public SyntaxToken CloseAngleBracketToken { get; set; }
 
     public bool IsKeywordType { get; set; }
 
@@ -96,13 +109,21 @@ public sealed class TypeClauseNode : IGenericParameterNode
 
     public void SetSharedInstance(
         SyntaxToken typeIdentifier,
-        GenericParameterListing genericParameterListing,
+        
+        SyntaxToken openAngleBracketToken,
+        List<GenericParameterEntry> genericParameterEntryList,
+        SyntaxToken closeAngleBracketToken,
+        
         bool isKeywordType)
     {
         IsBeingUsed = true;
     
         TypeIdentifierToken = typeIdentifier;
-        GenericParameterListing = genericParameterListing;
+        
+        OpenAngleBracketToken = openAngleBracketToken;
+        GenericParameterEntryList = genericParameterEntryList;
+        CloseAngleBracketToken = closeAngleBracketToken;
+        
         IsKeywordType = isKeywordType;
         TypeKind = TypeKind.None;
         HasQuestionMark = false;

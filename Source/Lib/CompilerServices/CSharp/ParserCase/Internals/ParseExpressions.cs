@@ -609,7 +609,9 @@ public static class ParseExpressions
                     var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionSecondary;
                     expressionSecondary = new AmbiguousIdentifierExpressionNode(
                         ambiguousIdentifierExpressionNode.Token,
-                        ambiguousIdentifierExpressionNode.GenericParameterListing,
+                        ambiguousIdentifierExpressionNode.OpenAngleBracketToken,
+                        ambiguousIdentifierExpressionNode.GenericParameterEntryList,
+                        ambiguousIdentifierExpressionNode.CloseAngleBracketToken,
                         ambiguousIdentifierExpressionNode.ResultTypeReference)
                     {
                         FollowsMemberAccessToken = ambiguousIdentifierExpressionNode.FollowsMemberAccessToken
@@ -659,7 +661,9 @@ public static class ParseExpressions
                     // TODO: ContextualKeywords as the function identifier?
                     var functionInvocationNode = new FunctionInvocationNode(
                         ambiguousIdentifierExpressionNode.Token,
-                        ambiguousIdentifierExpressionNode.GenericParameterListing,
+                        ambiguousIdentifierExpressionNode.OpenAngleBracketToken,
+                        ambiguousIdentifierExpressionNode.GenericParameterEntryList,
+                        ambiguousIdentifierExpressionNode.CloseAngleBracketToken,
                         new FunctionParameterListing(
                             parserModel.TokenWalker.Current,
                             new List<FunctionParameterEntry>(),
@@ -681,9 +685,9 @@ public static class ParseExpressions
             }
             case SyntaxKind.CloseAngleBracketToken:
             {
-                if (ambiguousIdentifierExpressionNode.GenericParameterListing.ConstructorWasInvoked)
+                if (ambiguousIdentifierExpressionNode.OpenAngleBracketToken.ConstructorWasInvoked)
                 {
-                    ambiguousIdentifierExpressionNode.GenericParameterListing.SetCloseAngleBracketToken(parserModel.TokenWalker.Current);
+                    ambiguousIdentifierExpressionNode.CloseAngleBracketToken = parserModel.TokenWalker.Current;
                     return ambiguousIdentifierExpressionNode;
                 }
             
@@ -861,8 +865,8 @@ public static class ParseExpressions
                 ambiguousIdentifierExpressionNode, expressionSecondary, ref parserModel);
         }
     
-        if (ambiguousIdentifierExpressionNode.GenericParameterListing.ConstructorWasInvoked &&
-            !ambiguousIdentifierExpressionNode.GenericParameterListing.CloseAngleBracketToken.ConstructorWasInvoked)
+        if (ambiguousIdentifierExpressionNode.OpenAngleBracketToken.ConstructorWasInvoked &&
+            !ambiguousIdentifierExpressionNode.CloseAngleBracketToken.ConstructorWasInvoked)
         {
             return ambiguousIdentifierExpressionNode;
         }
@@ -1062,7 +1066,9 @@ public static class ParseExpressions
                 
                 var functionInvocationNode = new FunctionInvocationNode(
                     ambiguousIdentifierExpressionNode.Token,
-                    genericParameterListing: default,
+                    openAngleBracketToken: default,
+            		genericParameterEntryList: null,
+            		closeAngleBracketToken: default,
                     functionParameterListing: default,
                     functionDefinitionNode?.ReturnTypeReference ?? CSharpFacts.Types.Void.ToTypeReference());
 
@@ -1222,13 +1228,13 @@ public static class ParseExpressions
             }
             case SyntaxKind.CloseSquareBracketToken:
             {
-                if (variableReferenceNode.ResultTypeReference.GenericParameterListing.GenericParameterEntryList is not null &&
-                    variableReferenceNode.ResultTypeReference.GenericParameterListing.GenericParameterEntryList.Count == 1)
+                if (variableReferenceNode.ResultTypeReference.GenericParameterEntryList is not null &&
+                    variableReferenceNode.ResultTypeReference.GenericParameterEntryList.Count == 1)
                 {
                     return new VariableReferenceNode(
                         token,
                         new VariableDeclarationNode(
-                            variableReferenceNode.ResultTypeReference.GenericParameterListing.GenericParameterEntryList[0].TypeReference,
+                            variableReferenceNode.ResultTypeReference.GenericParameterEntryList[0].TypeReference,
                             token,
                             VariableKind.Local,
                             isInitialized: true,
@@ -1582,7 +1588,7 @@ public static class ParseExpressions
                 if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseAngleBracketToken &&
                     expressionSecondary is TypeClauseNode typeClauseNode)
                 {
-                    typeClauseNode.GenericParameterListing.SetCloseAngleBracketToken(parserModel.TokenWalker.Current);
+                    typeClauseNode.CloseAngleBracketToken = parserModel.TokenWalker.Current;
                     constructorInvocationExpressionNode.ResultTypeReference = new TypeReference(typeClauseNode);
                     return constructorInvocationExpressionNode;
                 }
@@ -1779,7 +1785,9 @@ public static class ParseExpressions
         {
             parserModel.AmbiguousIdentifierExpressionNode.SetSharedInstance(
                 token,
-                genericParameterListing: default,
+                openAngleBracketToken: default,
+        		genericParameterEntryList: null,
+        		closeAngleBracketToken: default,
                 CSharpFacts.Types.Void.ToTypeReference(),
                 emptyExpressionNode.FollowsMemberAccessToken);
             var ambiguousExpressionNode = parserModel.AmbiguousIdentifierExpressionNode;
@@ -1973,7 +1981,9 @@ public static class ParseExpressions
                     EmptyExpressionNode.Empty,
                     new AmbiguousIdentifierExpressionNode(
                         token,
-                        genericParameterListing: default,
+                        openAngleBracketToken: default,
+                		genericParameterEntryList: null,
+                		closeAngleBracketToken: default,
                         resultTypeReference: default),
                         ref parserModel);
             
@@ -2315,7 +2325,11 @@ public static class ParseExpressions
              if (variableReferenceNode.IsFabricated)
              {
                  var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
-                     variableReferenceNode.VariableIdentifierToken, genericParameterListing: default, isKeywordType: false);
+                     variableReferenceNode.VariableIdentifierToken,
+                     openAngleBracketToken: default,
+            		 genericParameterEntryList: null,
+            		 closeAngleBracketToken: default,
+                     isKeywordType: false);
                 
                 parserModel.BindTypeClauseNode(typeClauseNode);
                     
@@ -2387,9 +2401,9 @@ public static class ParseExpressions
                 token = parserModel.TokenWalker.Current;
                 return ParseGenericParameterNode_Start(typeClauseNode, ref token, ref parserModel);
             case SyntaxKind.CloseAngleBracketToken:
-                if (typeClauseNode.GenericParameterListing.ConstructorWasInvoked)
+                if (typeClauseNode.OpenAngleBracketToken.ConstructorWasInvoked)
                 {
-                    typeClauseNode.GenericParameterListing.SetCloseAngleBracketToken(parserModel.TokenWalker.Current);
+                    typeClauseNode.CloseAngleBracketToken = parserModel.TokenWalker.Current;
                     return typeClauseNode;
                 }
                 
@@ -2409,7 +2423,9 @@ public static class ParseExpressions
                     var typeClauseToken = typeClauseNode.TypeIdentifierToken;
                     var functionInvocationNode = new FunctionInvocationNode(
                         UtilityApi.ConvertToIdentifierToken(ref typeClauseToken, ref parserModel),
-                        typeClauseNode.GenericParameterListing,
+                        typeClauseNode.OpenAngleBracketToken,
+                        typeClauseNode.GenericParameterEntryList,
+                        typeClauseNode.CloseAngleBracketToken,
                         new FunctionParameterListing(
                             parserModel.TokenWalker.Current,
                             new List<FunctionParameterEntry>(),
@@ -2543,8 +2559,8 @@ public static class ParseExpressions
         switch (expressionSecondary.SyntaxKind)
         {
             case SyntaxKind.GenericParametersListingNode:
-                if (typeClauseNode.GenericParameterListing.ConstructorWasInvoked &&
-                    !typeClauseNode.GenericParameterListing.CloseAngleBracketToken.ConstructorWasInvoked)
+                if (typeClauseNode.OpenAngleBracketToken.ConstructorWasInvoked &&
+                    !typeClauseNode.CloseAngleBracketToken.ConstructorWasInvoked)
                 {
                     return typeClauseNode;
                 }
@@ -2596,7 +2612,7 @@ public static class ParseExpressions
                     // Until then these 'if (functionInvocationNode.FunctionParametersListingNode is null)'
                     // statements will be here.
                     
-                    if (functionInvocationNode.GenericParameterListing.ConstructorWasInvoked)
+                    if (functionInvocationNode.OpenAngleBracketToken.ConstructorWasInvoked)
                         goto default;
                     
                     token = parserModel.TokenWalker.Current;
@@ -3102,7 +3118,9 @@ public static class ParseExpressions
                     // TODO: Don't store a reference to definitons.
                     // TODO: Type -> "<...>" -> "(" -> FunctionInvocationNode, but will FunctionInvocationNode -> "<...>"?
                     // TODO: Bind the named arguments to their declaration within the definition.
-                    genericParameterListing: default,
+                    openAngleBracketToken: default,
+            		genericParameterEntryList: null,
+            		closeAngleBracketToken: default,
                     functionParameterListing: default,
                     functionDefinitionNode.ReturnTypeReference);
                 
@@ -3147,7 +3165,9 @@ public static class ParseExpressions
         {
             var functionInvocationNode = new FunctionInvocationNode(
                 memberIdentifierToken,
-                genericParameterListing: default,
+                openAngleBracketToken: default,
+        		genericParameterEntryList: null,
+        		closeAngleBracketToken: default,
                 functionParameterListing: default,
                 TypeFacts.Empty.ToTypeReference());
             var functionSymbol = new Symbol(
@@ -3219,7 +3239,9 @@ public static class ParseExpressions
                         {
                             var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
                                 memberIdentifierToken,
-                                genericParameterListing: default,
+                                openAngleBracketToken: default,
+                        		genericParameterEntryList: null,
+                        		closeAngleBracketToken: default,
                                 isKeywordType: false);
                             
                             var typeSymbol = new Symbol(
@@ -3355,7 +3377,9 @@ public static class ParseExpressions
                     ambiguousParenthesizedExpressionNode.OpenParenthesisToken.TextSpan.StartInclusiveIndex,
                     token.TextSpan.EndExclusiveIndex,
                     default(byte))),
-            genericParameterListing: default,
+            openAngleBracketToken: default,
+    		genericParameterEntryList: null,
+    		closeAngleBracketToken: default,
             isKeywordType: false);
         
         if (typeClauseNode.ExplicitDefinitionResourceUri.Value is null &&
@@ -3758,7 +3782,7 @@ public static class ParseExpressions
             // ...only do this at the end?
             parserModel.BindTypeClauseNode(typeClauseNode);
             
-            genericParameterNode.GenericParameterListing.GenericParameterEntryList.Add(
+            genericParameterNode.GenericParameterEntryList.Add(
                 new GenericParameterEntry(new TypeReference(typeClauseNode)));
             
             return genericParameterNode;
@@ -3767,7 +3791,7 @@ public static class ParseExpressions
         {
             var typeClauseNode = (TypeClauseNode)expressionSecondary;
         
-            genericParameterNode.GenericParameterListing.GenericParameterEntryList.Add(
+            genericParameterNode.GenericParameterEntryList.Add(
                 new GenericParameterEntry(new TypeReference(typeClauseNode)));
             
             return genericParameterNode;
@@ -3781,15 +3805,12 @@ public static class ParseExpressions
     {
         nodeToRestoreAtCloseAngleBracketToken ??= genericParameterNode;
     
-        if (!genericParameterNode.GenericParameterListing.ConstructorWasInvoked)
+        if (!genericParameterNode.OpenAngleBracketToken.ConstructorWasInvoked)
         {
-            genericParameterNode.GenericParameterListing =
-                new GenericParameterListing(
-                    openAngleBracketToken,
-                    // Idea: 1 listing for the entire file and store the indices at which your parameters lie?
-                    new List<GenericParameterEntry>(),
-                    closeAngleBracketToken: default);
-
+            // Idea: 1 listing for the entire file and store the indices at which your parameters lie?
+            genericParameterNode.OpenAngleBracketToken = openAngleBracketToken;
+            genericParameterNode.GenericParameterEntryList = new List<GenericParameterEntry>();
+            genericParameterNode.CloseAngleBracketToken = default;
             genericParameterNode.IsParsingGenericParameters = true;
         }
         

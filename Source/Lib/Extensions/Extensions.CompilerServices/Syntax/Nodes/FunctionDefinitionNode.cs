@@ -13,7 +13,11 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
         AccessModifierKind accessModifierKind,
         TypeReference returnTypeReference,
         SyntaxToken functionIdentifierToken,
-        GenericParameterListing genericParameterListing,
+        
+        SyntaxToken openAngleBracketToken,
+        List<GenericParameterEntry> genericParameterEntryList,
+        SyntaxToken closeAngleBracketToken,
+        
         FunctionArgumentListing functionArgumentListing,
         CodeBlock codeBlock,
         ResourceUri resourceUri)
@@ -25,7 +29,11 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
         AccessModifierKind = accessModifierKind;
         ReturnTypeReference = returnTypeReference;
         FunctionIdentifierToken = functionIdentifierToken;
-        GenericParameterListing = genericParameterListing;
+        
+        OpenAngleBracketToken = openAngleBracketToken;
+        GenericParameterEntryList = genericParameterEntryList;
+        CloseAngleBracketToken = closeAngleBracketToken;
+        
         FunctionArgumentListing = functionArgumentListing;
         ResourceUri = resourceUri;
     }
@@ -33,7 +41,11 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
     public AccessModifierKind AccessModifierKind { get; }
     public TypeReference ReturnTypeReference { get; }
     public SyntaxToken FunctionIdentifierToken { get; }
-    public GenericParameterListing GenericParameterListing { get; set; }
+    
+    public SyntaxToken OpenAngleBracketToken { get; set; }
+    public List<GenericParameterEntry> GenericParameterEntryList { get; set; }
+    public SyntaxToken CloseAngleBracketToken { get; set; }
+    
     public FunctionArgumentListing FunctionArgumentListing { get; set; }
     public ResourceUri ResourceUri { get; set; }
     public int IndexMethodOverloadDefinition { get; set; } = -1;

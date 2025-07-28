@@ -9,7 +9,11 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
     public ConstructorDefinitionNode(
         TypeReference returnTypeReference,
         SyntaxToken functionIdentifier,
-        GenericParameterListing genericParameterListing,
+        
+        SyntaxToken openAngleBracketToken,
+        List<GenericParameterEntry> genericParameterEntryList,
+        SyntaxToken closeAngleBracketToken,
+        
         FunctionArgumentListing functionArgumentListing,
         CodeBlock codeBlock,
         ResourceUri resourceUri)
@@ -20,14 +24,22 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
     
         ReturnTypeReference = returnTypeReference;
         FunctionIdentifier = functionIdentifier;
-        GenericParameterListing = genericParameterListing;
+        
+        OpenAngleBracketToken = openAngleBracketToken;
+        GenericParameterEntryList = genericParameterEntryList;
+        CloseAngleBracketToken = closeAngleBracketToken;
+        
         FunctionArgumentListing = functionArgumentListing;
         ResourceUri = resourceUri;
     }
 
     public TypeReference ReturnTypeReference { get; }
     public SyntaxToken FunctionIdentifier { get; }
-    public GenericParameterListing GenericParameterListing { get; }
+    
+    public SyntaxToken OpenAngleBracketToken { get; }
+    public List<GenericParameterEntry> GenericParameterEntryList { get; }
+    public SyntaxToken CloseAngleBracketToken { get; private set; }
+    
     public FunctionArgumentListing FunctionArgumentListing { get; set; }
     public ResourceUri ResourceUri { get; set; }
 
