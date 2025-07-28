@@ -3356,11 +3356,20 @@ public static class ParseExpressions
                 token.TextSpan.EndExclusiveIndex,
                 default(byte)));
         
-        return parserModel.ConstructOrRecycleTypeClauseNode(
+        var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
             identifierToken,
             valueType: null,
             genericParameterListing: default,
             isKeywordType: false);
+        
+        if (typeClauseNode.ExplicitDefinitionResourceUri.Value is null &&
+            typeClauseNode.ExplicitDefinitionTextSpan == default)
+        {
+            typeClauseNode.ExplicitDefinitionResourceUri = parserModel.Compilation.ResourceUri;
+            typeClauseNode.ExplicitDefinitionTextSpan = identifierToken.TextSpan;
+        }
+        
+        return typeClauseNode;
     }
     
     private static IExpressionNode AmbiguousParenthesizedExpressionTransformTo_LambdaExpressionNode(
