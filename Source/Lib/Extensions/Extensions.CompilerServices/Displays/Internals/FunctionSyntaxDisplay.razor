@@ -14,7 +14,8 @@
 	
 	string? methodName;
 	bool hasGenericParameterListing;
-	List<FunctionArgumentEntry>? functionArgumentEntryList;
+	int indexFunctionArgumentEntryList;
+    int countFunctionArgumentEntryList;
 	bool isConstructorInvocation = false;
 	
 	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null)
@@ -24,7 +25,8 @@
 		returnTypeClauseNodeText = null;
 		methodName = null;
 		hasGenericParameterListing = false;
-		functionArgumentEntryList = null;
+		indexFunctionArgumentEntryList = -1;
+		countFunctionArgumentEntryList = 0;
 	}
 	else if (syntaxViewModelLocal.DefinitionNode is not null &&
 			 (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
@@ -39,7 +41,8 @@
 			returnTypeClauseNodeText = null;
 			methodName = syntaxViewModelLocal.GetIdentifierText(functionDefinitionNode);
 			hasGenericParameterListing = functionDefinitionNode.OpenAngleBracketToken.ConstructorWasInvoked;
-			functionArgumentEntryList = functionDefinitionNode.FunctionArgumentEntryList;
+			indexFunctionArgumentEntryList = functionDefinitionNode.IndexFunctionArgumentEntryList;
+			countFunctionArgumentEntryList = functionDefinitionNode.CountFunctionArgumentEntryList;
 		}
 		else if (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
 		{
@@ -48,7 +51,8 @@
 			returnTypeClauseNodeText = null;
 			methodName = null;
 			hasGenericParameterListing = false;
-			functionArgumentEntryList = constructorDefinitionNode.FunctionArgumentEntryList;
+			indexFunctionArgumentEntryList = constructorDefinitionNode.IndexFunctionArgumentEntryList;
+			countFunctionArgumentEntryList = constructorDefinitionNode.CountFunctionArgumentEntryList;
 		}
 		else
 		{
@@ -56,7 +60,8 @@
 			returnTypeClauseNodeText = null;
 			methodName = "unknown syntax";
 			hasGenericParameterListing = false;
-			functionArgumentEntryList = null;
+			indexFunctionArgumentEntryList = -1;
+    		countFunctionArgumentEntryList = 0;
 		}
 	}
 	else if (syntaxViewModelLocal.TargetNode is not null &&
@@ -72,7 +77,8 @@
 			returnTypeClauseNodeText = null;
 			methodName = syntaxViewModelLocal.GetIdentifierText(functionInvocationNode);
 			hasGenericParameterListing = functionInvocationNode.OpenAngleBracketToken.ConstructorWasInvoked;
-			functionArgumentEntryList = null;
+			indexFunctionArgumentEntryList = -1;
+    		countFunctionArgumentEntryList = 0;
 		}
 		else if (syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
 		{
@@ -81,7 +87,8 @@
 			returnTypeClauseNodeText = null;
 			methodName = null;
 			hasGenericParameterListing = false;
-			functionArgumentEntryList = null;
+			indexFunctionArgumentEntryList = -1;
+    		countFunctionArgumentEntryList = 0;
 		}
 		else
 		{
@@ -89,7 +96,8 @@
 			returnTypeClauseNodeText = null;
 			methodName = "unknown syntax";
 			hasGenericParameterListing = false;
-			functionArgumentEntryList = null;
+			indexFunctionArgumentEntryList = -1;
+    		countFunctionArgumentEntryList = 0;
 		}
 	}
 	else if (syntaxViewModelLocal.TargetSymbol is not null &&
@@ -104,7 +112,8 @@
 			returnTypeClauseNodeText = null;
 			methodName = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
 			hasGenericParameterListing = false;
-			functionArgumentEntryList = null;
+			indexFunctionArgumentEntryList = -1;
+    		countFunctionArgumentEntryList = 0;
 		}
 		else if (syntaxViewModelLocal.TargetSymbol.Value.SyntaxKind == SyntaxKind.ConstructorSymbol)
 		{
@@ -112,7 +121,8 @@
 			returnTypeClauseNodeText = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
 			methodName = null;
 			hasGenericParameterListing = false;
-			functionArgumentEntryList = null;
+			indexFunctionArgumentEntryList = -1;
+    		countFunctionArgumentEntryList = 0;
 		}
 		else
 		{
@@ -120,7 +130,8 @@
 			returnTypeClauseNodeText = null;
 			methodName = null;
 			hasGenericParameterListing = false;
-			functionArgumentEntryList = null;
+			indexFunctionArgumentEntryList = -1;
+    		countFunctionArgumentEntryList = 0;
 		}
 	}
 	else
@@ -130,7 +141,8 @@
 		returnTypeClauseNodeText = null;
 		methodName = null;
 		hasGenericParameterListing = false;
-		functionArgumentEntryList = null;
+		indexFunctionArgumentEntryList = -1;
+		countFunctionArgumentEntryList = 0;
 	}
 }
 
@@ -189,16 +201,16 @@
 		<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" />
 	}
 	
-	@if (functionArgumentEntryList is null)
+	@if (countFunctionArgumentEntryList == 0)
 	{
 		<text>()</text>
 	}
 	else
 	{
 		<text>(</text>
-		@for (int index = 0; index < functionArgumentEntryList.Count; index++)
+		@for (int index = indexFunctionArgumentEntryList; index < indexFunctionArgumentEntryList + countFunctionArgumentEntryList; index++)
 		{
-			var argumentEntry = functionArgumentEntryList[index];
+			var argumentEntry = SyntaxViewModel.ExtendedCompilerService.FunctionArgumentEntryList[index];
 			
 			if (argumentEntry.OptionalCompileTimeConstantToken.SyntaxKind != SyntaxKind.NotApplicable)
 			{
@@ -292,7 +304,7 @@
 			    <text>]</text>
 			}
 			
-			if (index < functionArgumentEntryList.Count - 1)
+			if (index < indexFunctionArgumentEntryList + countFunctionArgumentEntryList - 1)
 			{
 				<text>, </text>
 			}

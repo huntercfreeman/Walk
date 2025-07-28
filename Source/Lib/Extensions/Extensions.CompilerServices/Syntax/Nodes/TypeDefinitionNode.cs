@@ -20,7 +20,8 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
         SyntaxToken closeAngleBracketToken,
         
         SyntaxToken openParenthesisToken,
-        List<FunctionArgumentEntry> functionArgumentEntryList,
+        int indexFunctionArgumentEntryList,
+        int countFunctionArgumentEntryList,
         SyntaxToken closeParenthesisToken,
         TypeReference inheritedTypeReference,
         string namespaceName,
@@ -41,7 +42,8 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
         CloseAngleBracketToken = closeAngleBracketToken;
         
         OpenParenthesisToken = openParenthesisToken;
-        FunctionArgumentEntryList = functionArgumentEntryList;
+        IndexFunctionArgumentEntryList = indexFunctionArgumentEntryList;
+        CountFunctionArgumentEntryList = countFunctionArgumentEntryList;
         CloseParenthesisToken = closeParenthesisToken;
         InheritedTypeReference = inheritedTypeReference;
         NamespaceName = namespaceName;
@@ -78,7 +80,8 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     
     
     public SyntaxToken OpenParenthesisToken { get; set; }
-    public List<FunctionArgumentEntry> FunctionArgumentEntryList { get; set; }
+    public int IndexFunctionArgumentEntryList { get; set; }
+    public int CountFunctionArgumentEntryList { get; set; }
     public SyntaxToken CloseParenthesisToken { get; set; }
     /// <summary>
     /// Given:<br/>

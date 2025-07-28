@@ -22,7 +22,8 @@ public class ParseFunctions
             countGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
             openParenthesisToken: default,
-            functionArgumentEntryList: null,
+            indexFunctionArgumentEntryList: -1,
+            countFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             default,
             parserModel.Compilation.ResourceUri);
@@ -237,7 +238,8 @@ public class ParseFunctions
             countGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
             openParenthesisToken: default,
-            functionArgumentEntryList: null,
+            indexFunctionArgumentEntryList: -1,
+            countFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             default,
             parserModel.Compilation.ResourceUri);
@@ -343,7 +345,8 @@ public class ParseFunctions
         VariableKind variableKind = VariableKind.Local)
     {
         var openParenthesisToken = parserModel.TokenWalker.Consume();
-        var functionArgumentEntryList = new List<FunctionArgumentEntry>();
+        var indexFunctionArgumentEntryList = parserModel.Binder.FunctionArgumentEntryList.Count;
+        var countFunctionArgumentEntryList = 0;
         var openParenthesisCount = 1;
         var corruptState = false;
         
@@ -459,11 +462,13 @@ public class ParseFunctions
                         optionalCompileTimeConstantToken = new SyntaxToken(SyntaxKind.NotApplicable, textSpan: default);
                     }
                     
-                    functionArgumentEntryList.Add(
+                    parserModel.Binder.FunctionArgumentEntryList.Insert(
+                        indexFunctionArgumentEntryList + countFunctionArgumentEntryList,
                         new FunctionArgumentEntry(
                             variableDeclarationNode,
                             optionalCompileTimeConstantToken,
                             parserModel.ArgumentModifierKind));
+                    countFunctionArgumentEntryList++;
                     
                     if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
                         _ = parserModel.TokenWalker.Consume();
@@ -487,7 +492,8 @@ public class ParseFunctions
             closeParenthesisToken = parserModel.TokenWalker.Consume();
         
         functionDefinitionNode.OpenParenthesisToken = openParenthesisToken;
-        functionDefinitionNode.FunctionArgumentEntryList = functionArgumentEntryList;
+        functionDefinitionNode.IndexFunctionArgumentEntryList = indexFunctionArgumentEntryList;
+        functionDefinitionNode.CountFunctionArgumentEntryList = countFunctionArgumentEntryList;
         functionDefinitionNode.CloseParenthesisToken = closeParenthesisToken;
     }
 }

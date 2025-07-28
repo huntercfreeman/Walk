@@ -60,6 +60,7 @@ public class CSharpBinder
     
     public List<GenericParameterEntry> GenericParameterEntryList { get; } = new();
     public List<FunctionParameterEntry> FunctionParameterEntryList { get; } = new();
+    public List<FunctionArgumentEntry> FunctionArgumentEntryList { get; } = new();
     
     public AmbiguousIdentifierExpressionNode CSharpParserModel_AmbiguousIdentifierExpressionNode { get; } = new AmbiguousIdentifierExpressionNode(
         default,
@@ -829,11 +830,11 @@ public class CSharpBinder
                             {
                                 var innerFunctionDefinitionNode = (FunctionDefinitionNode)innerCompilationUnit.CodeBlockOwnerList[entry.ScopeIndexKey];
                                 
-                                if (innerFunctionDefinitionNode.FunctionArgumentEntryList.Count == functionParameterList.Count)
+                                if (innerFunctionDefinitionNode.CountFunctionArgumentEntryList == functionParameterList.Count)
                                 {
-                                    for (int parameterIndex = 0; parameterIndex < innerFunctionDefinitionNode.FunctionArgumentEntryList.Count; parameterIndex++)
+                                    for (int parameterIndex = innerFunctionDefinitionNode.IndexFunctionArgumentEntryList; parameterIndex < innerFunctionDefinitionNode.IndexFunctionArgumentEntryList + innerFunctionDefinitionNode.CountFunctionArgumentEntryList; parameterIndex++)
                                     {
-                                        var argument = innerFunctionDefinitionNode.FunctionArgumentEntryList[parameterIndex];
+                                        var argument = FunctionArgumentEntryList[parameterIndex];
                                         var parameter = functionParameterList[parameterIndex];
                                         
                                         string parameterTypeText;
@@ -1322,10 +1323,13 @@ public class CSharpBinder
             .Concat(compilationUnit.NodeList.Where(x => x.Unsafe_ParentIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
                         x.SyntaxKind == SyntaxKind.VariableDeclarationNode));
         
-        if (typeDefinitionNode.FunctionArgumentEntryList is not null)
+        if (typeDefinitionNode.IndexFunctionArgumentEntryList != -1)
         {
-            query = query.Concat(typeDefinitionNode.FunctionArgumentEntryList.Select(
-                x => x.VariableDeclarationNode));
+            query = query.Concat(
+                FunctionArgumentEntryList
+                    .Skip(typeDefinitionNode.IndexFunctionArgumentEntryList)
+                    .Take(typeDefinitionNode.CountFunctionArgumentEntryList)
+                    .Select(x => x.VariableDeclarationNode));
         }
         
         if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
@@ -1410,10 +1414,11 @@ public class CSharpBinder
             }
         }
         
-        if (typeDefinitionNode.FunctionArgumentEntryList is not null)
+        if (typeDefinitionNode.IndexFunctionArgumentEntryList != -1)
         {
-            foreach (var entry in typeDefinitionNode.FunctionArgumentEntryList)
+            for (int i = typeDefinitionNode.IndexFunctionArgumentEntryList; i < typeDefinitionNode.IndexFunctionArgumentEntryList + typeDefinitionNode.CountFunctionArgumentEntryList; i++)
             {
+                var entry = FunctionArgumentEntryList[i];
                 _getMemberList.Add(entry.VariableDeclarationNode);
             }
         }
@@ -1474,10 +1479,11 @@ public class CSharpBinder
                                         }
                                     }
                                     
-                                    if (innerTypeDefinitionNode.FunctionArgumentEntryList is not null)
+                                    if (innerTypeDefinitionNode.IndexFunctionArgumentEntryList != -1)
                                     {
-                                        foreach (var entry in innerTypeDefinitionNode.FunctionArgumentEntryList)
+                                        for (int i = innerTypeDefinitionNode.IndexFunctionArgumentEntryList; i < innerTypeDefinitionNode.IndexFunctionArgumentEntryList + innerTypeDefinitionNode.CountFunctionArgumentEntryList; i++)
                                         {
+                                            var entry = FunctionArgumentEntryList[i];
                                             _getMemberList.Add(entry.VariableDeclarationNode);
                                         }
                                     }

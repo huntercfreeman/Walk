@@ -16,7 +16,8 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
         SyntaxToken closeAngleBracketToken,
         
         SyntaxToken openParenthesisToken,
-        List<FunctionArgumentEntry> functionArgumentEntryList,
+        int indexFunctionArgumentEntryList,
+        int countFunctionArgumentEntryList,
         SyntaxToken closeParenthesisToken,
         CodeBlock codeBlock,
         ResourceUri resourceUri)
@@ -34,7 +35,8 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
         CloseAngleBracketToken = closeAngleBracketToken;
         
         OpenParenthesisToken = openParenthesisToken;
-        FunctionArgumentEntryList = functionArgumentEntryList;
+        IndexFunctionArgumentEntryList = indexFunctionArgumentEntryList;
+        CountFunctionArgumentEntryList = countFunctionArgumentEntryList;
         CloseParenthesisToken = closeParenthesisToken;
         ResourceUri = resourceUri;
     }
@@ -48,7 +50,8 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
     public SyntaxToken CloseAngleBracketToken { get; private set; }
     
     public SyntaxToken OpenParenthesisToken { get; set; }
-    public List<FunctionArgumentEntry> FunctionArgumentEntryList { get; set; }
+    public int IndexFunctionArgumentEntryList { get; set; }
+    public int CountFunctionArgumentEntryList { get; set; }
     public SyntaxToken CloseParenthesisToken { get; set; }
     public ResourceUri ResourceUri { get; set; }
 
