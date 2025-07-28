@@ -166,7 +166,6 @@ public ref struct CSharpParserModel
     
     public TypeClauseNode ConstructOrRecycleTypeClauseNode(
         SyntaxToken typeIdentifier,
-        Type? valueType,
         GenericParameterListing genericParameterListing,
         bool isKeywordType)
     {

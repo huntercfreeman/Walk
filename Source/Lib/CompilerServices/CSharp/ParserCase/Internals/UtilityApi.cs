@@ -338,7 +338,6 @@ public static class UtilityApi
         {
             return parserModel.ConstructOrRecycleTypeClauseNode(
                 token,
-                valueType: null,
                 genericParameterListing: default,
                 isKeywordType: false);
         }
@@ -346,7 +345,6 @@ public static class UtilityApi
         {
             return parserModel.ConstructOrRecycleTypeClauseNode(
                 token,
-                valueType: null,
                 genericParameterListing: default,
                 isKeywordType: true);
         }
@@ -354,7 +352,6 @@ public static class UtilityApi
         {
             return parserModel.ConstructOrRecycleTypeClauseNode(
                 token,
-                valueType: null,
                 genericParameterListing: default,
                 isKeywordType: true);
         }

@@ -218,7 +218,6 @@ public class ParseFunctions
     {
         var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
             typeDefinitionNodeCodeBlockOwner.TypeIdentifierToken,
-            valueType: null,
             genericParameterListing: default,
             isKeywordType: false);
 
