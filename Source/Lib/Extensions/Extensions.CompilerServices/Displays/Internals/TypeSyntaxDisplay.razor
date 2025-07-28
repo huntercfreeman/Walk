@@ -11,7 +11,7 @@
 	string? prefixTextCssClass;
 	string? text;
 	string? syntaxHighlightingClassCssString;
-	GenericParameterListing? genericParameterListing;
+	bool hasGenericParameterListing;
 	bool? hasQuestionMark;
 	int arrayRank;
 	TypeKind typeKind = TypeKind.ArrayJagged;
@@ -22,7 +22,7 @@
 		prefixTextCssClass = null;
 		text = null;
 		syntaxHighlightingClassCssString = null;
-		genericParameterListing = null;
+		hasGenericParameterListing = false;
 		hasQuestionMark = null;
 		arrayRank = 0;
 	}
@@ -39,7 +39,7 @@
 		prefixTextCssClass = "di_te_keyword";
 		text = syntaxViewModelLocal.GetIdentifierText(typeDefinitionNode);
 		syntaxHighlightingClassCssString = "di_te_type";
-		genericParameterListing = typeDefinitionNode.GenericParameterListing;
+		hasGenericParameterListing = typeDefinitionNode.OpenAngleBracketToken.ConstructorWasInvoked;
 		hasQuestionMark = null;
 		arrayRank = 0;
 	}
@@ -56,7 +56,7 @@
 		else
 			syntaxHighlightingClassCssString = "di_te_type";
 		
-		genericParameterListing = typeClauseNode.GenericParameterListing;
+		hasGenericParameterListing = typeClauseNode.OpenAngleBracketToken.ConstructorWasInvoked;
 		hasQuestionMark = typeClauseNode.HasQuestionMark;
 		arrayRank = typeClauseNode.ArrayRank;
 		typeKind = typeClauseNode.TypeKind;
@@ -67,7 +67,7 @@
 		prefixTextCssClass = null;
 		text = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
 		syntaxHighlightingClassCssString = "di_te_type";
-		genericParameterListing = null;
+		hasGenericParameterListing = false;
 		hasQuestionMark = null;
 		arrayRank = 0;
 	}
@@ -92,7 +92,7 @@
 		else
 			syntaxHighlightingClassCssString = "di_te_type";
 		
-		genericParameterListing = TypeReference.GenericParameterListing;
+		hasGenericParameterListing = TypeReference.OpenAngleBracketToken.ConstructorWasInvoked;
 		hasQuestionMark = TypeReference.HasQuestionMark;
 		arrayRank = TypeReference.ArrayRank;
 		typeKind = TypeReference.TypeKind;
@@ -103,7 +103,7 @@
 		prefixTextCssClass = null;
 		text = null;
 		syntaxHighlightingClassCssString = null;
-		genericParameterListing = null;
+		hasGenericParameterListing = false;
 		hasQuestionMark = null;
 		arrayRank = 0;
 	}
@@ -130,12 +130,12 @@
 		</span>
 	}
 	
-	@if (genericParameterListing is not null)
+	@if (hasGenericParameterListing)
 	{
 		if (TypeReference != default)
 		{
 			var syntaxViewModel = new SyntaxViewModel(
-    		    SyntaxViewModel.CompilerService,
+    		    SyntaxViewModel.ExtendedCompilerService,
 			    SyntaxViewModel.TextEditorService,
 			    SyntaxViewModel.ResourceUri,
 				targetSymbol: null,
@@ -147,7 +147,7 @@
 		else
 		{
 			var syntaxViewModel = new SyntaxViewModel(
-    		    SyntaxViewModel.CompilerService,
+    		    SyntaxViewModel.ExtendedCompilerService,
 			    SyntaxViewModel.TextEditorService,
 			    SyntaxViewModel.ResourceUri,
 				targetSymbol: null,

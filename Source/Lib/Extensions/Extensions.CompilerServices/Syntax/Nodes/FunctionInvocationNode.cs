@@ -7,8 +7,18 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
 {
     public FunctionInvocationNode(
         SyntaxToken functionInvocationIdentifierToken,
-        GenericParameterListing genericParameterListing,
-        FunctionParameterListing functionParameterListing,
+        
+        SyntaxToken openAngleBracketToken,
+        int indexGenericParameterEntryList,
+        int countGenericParameterEntryList,
+        SyntaxToken closeAngleBracketToken,
+        
+        SyntaxToken openParenthesisToken,
+        int indexFunctionParameterEntryList,
+        int countFunctionParameterEntryList,
+        SyntaxToken closeParenthesisToken,
+        
+        
         TypeReference resultTypeReference)
     {
         #if DEBUG
@@ -16,14 +26,33 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
         #endif
     
         FunctionInvocationIdentifierToken = functionInvocationIdentifierToken;
-        GenericParameterListing = genericParameterListing;
-        FunctionParameterListing = functionParameterListing;
+        
+        OpenAngleBracketToken = openAngleBracketToken;
+        IndexGenericParameterEntryList = indexGenericParameterEntryList;
+        CountGenericParameterEntryList = countGenericParameterEntryList;
+        CloseAngleBracketToken = closeAngleBracketToken;
+        
+        OpenParenthesisToken = openParenthesisToken;
+        IndexFunctionParameterEntryList = indexFunctionParameterEntryList;
+        CountFunctionParameterEntryList = countFunctionParameterEntryList;
+        CloseParenthesisToken = closeParenthesisToken;
+        
+        
         ResultTypeReference = resultTypeReference;
     }
 
     public SyntaxToken FunctionInvocationIdentifierToken { get; }
-    public GenericParameterListing GenericParameterListing { get; set; }
-    public FunctionParameterListing FunctionParameterListing { get; set; }
+    
+    public SyntaxToken OpenAngleBracketToken { get; set; }
+    public int IndexGenericParameterEntryList { get; set; }
+    public int CountGenericParameterEntryList { get; set; }
+    public SyntaxToken CloseAngleBracketToken { get; set; }
+    
+    public SyntaxToken OpenParenthesisToken { get; set; }
+    public int IndexFunctionParameterEntryList { get; set; }
+    public int CountFunctionParameterEntryList { get; set; }
+    public SyntaxToken CloseParenthesisToken { get; set; }
+    
     public TypeReference ResultTypeReference { get; set; }
     public ResourceUri ResourceUri { get; set; }
     public int IdentifierStartInclusiveIndex => FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex;

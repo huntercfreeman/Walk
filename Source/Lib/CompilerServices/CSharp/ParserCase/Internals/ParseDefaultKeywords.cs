@@ -292,12 +292,13 @@ public class ParseDefaultKeywords
         parserModel.ParserContextKind = CSharpParserContextKind.None;
         var enumerable = ParseExpressions.ParseExpression(ref parserModel);
         
-        if (enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList is not null &&
+        if (enumerable.ResultTypeReference.IndexGenericParameterEntryList != -1 &&
             variableDeclarationNode is not null &&
             parserModel.GetTextSpanText(variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan) == "var")
         {
-            if (enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList.Count == 1)
-                variableDeclarationNode.SetImplicitTypeReference(enumerable.ResultTypeReference.GenericParameterListing.GenericParameterEntryList[0].TypeReference);
+            if (enumerable.ResultTypeReference.CountGenericParameterEntryList == 1)
+                variableDeclarationNode.SetImplicitTypeReference(
+                    parserModel.Binder.GenericParameterEntryList[enumerable.ResultTypeReference.IndexGenericParameterEntryList].TypeReference);
         }
         
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
@@ -794,7 +795,7 @@ public class ParseDefaultKeywords
 
         // Given: public class MyClass<T> { }
         // Then: <T>
-        GenericParameterListing genericParameterListing = default;
+        (SyntaxToken OpenAngleBracketToken, int IndexGenericParameterEntryList, int CountGenericParameterEntryList, SyntaxToken CloseAngleBracketToken) genericParameterListing = default;
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
             genericParameterListing = ParseTypes.HandleGenericParameters(ref parserModel);
 
@@ -803,8 +804,14 @@ public class ParseDefaultKeywords
             hasPartialModifier,
             storageModifierKind,
             identifierToken,
-            genericParameterListing,
-            primaryConstructorFunctionArgumentListing: default,
+            genericParameterListing.OpenAngleBracketToken,
+            genericParameterListing.IndexGenericParameterEntryList,
+            genericParameterListing.CountGenericParameterEntryList,
+            genericParameterListing.CloseAngleBracketToken,
+            openParenthesisToken: default,
+            indexFunctionArgumentEntryList: -1,
+            countFunctionArgumentEntryList: 0,
+            closeParenthesisToken: default,
             inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
             namespaceName: parserModel.GetTextSpanText(parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan),
             parserModel.Compilation.ResourceUri);

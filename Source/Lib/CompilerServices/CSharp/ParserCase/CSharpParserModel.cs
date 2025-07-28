@@ -30,14 +30,12 @@ public ref struct CSharpParserModel
     public CSharpParserModel(
         CSharpBinder binder,
         CSharpCompilationUnit compilationUnit,
-        ref CSharpLexerOutput lexerOutput,
-        ICodeBlockOwner currentCodeBlockOwner,
-        NamespaceStatementNode topLevelNamespaceStatementNode)
+        ref CSharpLexerOutput lexerOutput)
     {
         Binder = binder;
         Compilation = compilationUnit;
-        CurrentCodeBlockOwner = currentCodeBlockOwner;
-        CurrentNamespaceStatementNode = topLevelNamespaceStatementNode;
+        CurrentCodeBlockOwner = binder.GlobalCodeBlockNode;
+        CurrentNamespaceStatementNode = binder.TopLevelNamespaceStatementNode;
     
         TokenWalker = Binder.CSharpParserModel_TokenWalker;
         TokenWalker.Reinitialize(lexerOutput.SyntaxTokenList);
@@ -61,14 +59,20 @@ public ref struct CSharpParserModel
         AmbiguousIdentifierExpressionNode = Binder.CSharpParserModel_AmbiguousIdentifierExpressionNode;
         AmbiguousIdentifierExpressionNode.SetSharedInstance(
             default,
-            genericParameterListing: default,
+            openAngleBracketToken: default,
+    		indexGenericParameterEntryList: -1,
+            countGenericParameterEntryList: 0,
+    		closeAngleBracketToken: default,
             CSharpFacts.Types.Void.ToTypeReference(),
             followsMemberAccessToken: false);
             
         TypeClauseNode = Binder.CSharpParserModel_TypeClauseNode;
         TypeClauseNode.SetSharedInstance(
             typeIdentifier: default,
-            genericParameterListing: default,
+            openAngleBracketToken: default,
+    		indexGenericParameterEntryList: -1,
+            countGenericParameterEntryList: 0,
+    		closeAngleBracketToken: default,
             isKeywordType: false);
         TypeClauseNode.IsBeingUsed = false;
             
@@ -166,20 +170,35 @@ public ref struct CSharpParserModel
     
     public TypeClauseNode ConstructOrRecycleTypeClauseNode(
         SyntaxToken typeIdentifier,
-        GenericParameterListing genericParameterListing,
+        
+        SyntaxToken openAngleBracketToken,
+        int indexGenericParameterEntryList,
+        int countGenericParameterEntryList,
+        SyntaxToken closeAngleBracketToken,
+        
         bool isKeywordType)
     {
         if (TypeClauseNode.IsBeingUsed)
         {
             return new TypeClauseNode(
                 typeIdentifier,
-                genericParameterListing,
+                
+                openAngleBracketToken,
+                indexGenericParameterEntryList,
+                countGenericParameterEntryList,
+                closeAngleBracketToken,
+                
                 isKeywordType);
         }    
         
         TypeClauseNode.SetSharedInstance(
             typeIdentifier,
-            genericParameterListing,
+            
+            openAngleBracketToken,
+            indexGenericParameterEntryList,
+            countGenericParameterEntryList,
+            closeAngleBracketToken,
+            
             isKeywordType);
             
         return TypeClauseNode;
@@ -683,18 +702,28 @@ public ref struct CSharpParserModel
             
                 var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
                 
-                if (typeDefinitionNode.GenericParameterListing.ConstructorWasInvoked)
+                if (typeDefinitionNode.IndexGenericParameterEntryList != -1)
                 {
-                    foreach (var entry in typeDefinitionNode.GenericParameterListing.GenericParameterEntryList)
+                    for (int i = typeDefinitionNode.IndexGenericParameterEntryList;
+                         i < typeDefinitionNode.IndexGenericParameterEntryList + typeDefinitionNode.CountGenericParameterEntryList;
+                         i++)
                     {
+                        var entry = Binder.GenericParameterEntryList[i];
+                        
                         BindTypeDefinitionNode(
                             new TypeDefinitionNode(
                                 AccessModifierKind.Public,
                                 hasPartialModifier: false,
                                 StorageModifierKind.Class,
                                 entry.TypeReference.TypeIdentifierToken,
-                                entry.TypeReference.GenericParameterListing,
-                                primaryConstructorFunctionArgumentListing: default,
+                                entry.TypeReference.OpenAngleBracketToken,
+                                entry.TypeReference.IndexGenericParameterEntryList,
+                                entry.TypeReference.CountGenericParameterEntryList,
+                                entry.TypeReference.CloseAngleBracketToken,
+                                openParenthesisToken: default,
+                                indexFunctionArgumentEntryList: -1,
+                                countFunctionArgumentEntryList: 0,
+                                closeParenthesisToken: default,
                                 inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
                                 string.Empty,
                                 compilationUnit.ResourceUri));

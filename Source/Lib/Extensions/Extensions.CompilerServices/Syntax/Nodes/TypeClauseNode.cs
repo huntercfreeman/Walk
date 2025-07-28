@@ -11,7 +11,12 @@ public sealed class TypeClauseNode : IGenericParameterNode
 {
     public TypeClauseNode(
         SyntaxToken typeIdentifier,
-        GenericParameterListing genericParameterListing,
+        
+        SyntaxToken openAngleBracketToken,
+        int indexGenericParameterEntryList,
+        int countGenericParameterEntryList,
+        SyntaxToken closeAngleBracketToken,
+        
         bool isKeywordType)
     {
         #if DEBUG
@@ -20,7 +25,11 @@ public sealed class TypeClauseNode : IGenericParameterNode
     
         IsKeywordType = isKeywordType;
         TypeIdentifierToken = typeIdentifier;
-        GenericParameterListing = genericParameterListing;
+        
+        OpenAngleBracketToken = openAngleBracketToken;
+        IndexGenericParameterEntryList = indexGenericParameterEntryList;
+        CountGenericParameterEntryList = countGenericParameterEntryList;
+        CloseAngleBracketToken = closeAngleBracketToken;
     }
     
     /// <summary>
@@ -43,7 +52,12 @@ public sealed class TypeClauseNode : IGenericParameterNode
     
         IsKeywordType = typeReference.IsKeywordType;
         TypeIdentifierToken = typeReference.TypeIdentifierToken;
-        GenericParameterListing = typeReference.GenericParameterListing;
+        
+        OpenAngleBracketToken = typeReference.OpenAngleBracketToken;
+        IndexGenericParameterEntryList = typeReference.IndexGenericParameterEntryList;
+        CountGenericParameterEntryList = typeReference.CountGenericParameterEntryList;
+        CloseAngleBracketToken = typeReference.CloseAngleBracketToken;
+        
         ExplicitDefinitionTextSpan = typeReference.ExplicitDefinitionTextSpan;
         ExplicitDefinitionResourceUri = typeReference.ExplicitDefinitionResourceUri;
     }
@@ -61,7 +75,10 @@ public sealed class TypeClauseNode : IGenericParameterNode
     /// Then: 'Array&lt;T&gt;' is the <see cref="TypeIdentifierToken"/><br/>
     /// And: '&lt;int&gt;' is the <see cref="GenericParametersListingNode"/>
     /// </summary>
-    public GenericParameterListing GenericParameterListing { get; set; }
+    public SyntaxToken OpenAngleBracketToken { get; set; }
+    public int IndexGenericParameterEntryList { get; set; }
+    public int CountGenericParameterEntryList { get; set; }
+    public SyntaxToken CloseAngleBracketToken { get; set; }
 
     public bool IsKeywordType { get; set; }
 
@@ -96,13 +113,23 @@ public sealed class TypeClauseNode : IGenericParameterNode
 
     public void SetSharedInstance(
         SyntaxToken typeIdentifier,
-        GenericParameterListing genericParameterListing,
+        
+        SyntaxToken openAngleBracketToken,
+        int indexGenericParameterEntryList,
+        int countGenericParameterEntryList,
+        SyntaxToken closeAngleBracketToken,
+        
         bool isKeywordType)
     {
         IsBeingUsed = true;
     
         TypeIdentifierToken = typeIdentifier;
-        GenericParameterListing = genericParameterListing;
+        
+        OpenAngleBracketToken = openAngleBracketToken;
+        IndexGenericParameterEntryList = indexGenericParameterEntryList;
+        CountGenericParameterEntryList = countGenericParameterEntryList;
+        CloseAngleBracketToken = closeAngleBracketToken;
+        
         IsKeywordType = isKeywordType;
         TypeKind = TypeKind.None;
         HasQuestionMark = false;

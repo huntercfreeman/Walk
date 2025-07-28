@@ -9,8 +9,16 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
     public ConstructorDefinitionNode(
         TypeReference returnTypeReference,
         SyntaxToken functionIdentifier,
-        GenericParameterListing genericParameterListing,
-        FunctionArgumentListing functionArgumentListing,
+        
+        SyntaxToken openAngleBracketToken,
+        int indexGenericParameterEntryList,
+        int countGenericParameterEntryList,
+        SyntaxToken closeAngleBracketToken,
+        
+        SyntaxToken openParenthesisToken,
+        int indexFunctionArgumentEntryList,
+        int countFunctionArgumentEntryList,
+        SyntaxToken closeParenthesisToken,
         CodeBlock codeBlock,
         ResourceUri resourceUri)
     {
@@ -20,15 +28,31 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner, IFunctionDefini
     
         ReturnTypeReference = returnTypeReference;
         FunctionIdentifier = functionIdentifier;
-        GenericParameterListing = genericParameterListing;
-        FunctionArgumentListing = functionArgumentListing;
+        
+        OpenAngleBracketToken = openAngleBracketToken;
+        IndexGenericParameterEntryList = indexGenericParameterEntryList;
+        CountGenericParameterEntryList = countGenericParameterEntryList;
+        CloseAngleBracketToken = closeAngleBracketToken;
+        
+        OpenParenthesisToken = openParenthesisToken;
+        IndexFunctionArgumentEntryList = indexFunctionArgumentEntryList;
+        CountFunctionArgumentEntryList = countFunctionArgumentEntryList;
+        CloseParenthesisToken = closeParenthesisToken;
         ResourceUri = resourceUri;
     }
 
     public TypeReference ReturnTypeReference { get; }
     public SyntaxToken FunctionIdentifier { get; }
-    public GenericParameterListing GenericParameterListing { get; }
-    public FunctionArgumentListing FunctionArgumentListing { get; set; }
+    
+    public SyntaxToken OpenAngleBracketToken { get; }
+    public int IndexGenericParameterEntryList { get; set; }
+    public int CountGenericParameterEntryList { get; set; }
+    public SyntaxToken CloseAngleBracketToken { get; private set; }
+    
+    public SyntaxToken OpenParenthesisToken { get; set; }
+    public int IndexFunctionArgumentEntryList { get; set; }
+    public int CountFunctionArgumentEntryList { get; set; }
+    public SyntaxToken CloseParenthesisToken { get; set; }
     public ResourceUri ResourceUri { get; set; }
 
     // ICodeBlockOwner properties.

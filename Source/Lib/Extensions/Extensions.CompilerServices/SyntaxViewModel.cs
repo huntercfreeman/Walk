@@ -30,7 +30,7 @@ namespace Walk.Extensions.CompilerServices;
 public struct SyntaxViewModel
 {
     public SyntaxViewModel(
-        ICompilerService compilerService,
+        IExtendedCompilerService extendedCompilerService,
         TextEditorService textEditorService,
         ResourceUri resourceUri,
         Symbol? targetSymbol,
@@ -38,7 +38,7 @@ public struct SyntaxViewModel
         ISyntaxNode? definitionNode,
         int depth)
     {
-        CompilerService = compilerService;
+        ExtendedCompilerService = extendedCompilerService;
         TextEditorService = textEditorService;
         ResourceUri = resourceUri;
         TargetSymbol = targetSymbol;
@@ -47,7 +47,7 @@ public struct SyntaxViewModel
         Depth = depth;
     }
     
-    public ICompilerService CompilerService { get; }
+    public IExtendedCompilerService ExtendedCompilerService { get; }
     
     public TextEditorService TextEditorService { get; }
     
@@ -102,7 +102,7 @@ public struct SyntaxViewModel
             return Task.CompletedTask;
         
         var resourceUri = ResourceUri;
-        var compilerService = CompilerService;
+        var compilerService = ExtendedCompilerService;
         
         var tooltipState = textEditorService.CommonService.GetTooltipState();
         
@@ -127,9 +127,9 @@ public struct SyntaxViewModel
     
     public string GetIdentifierText(ISyntaxNode node)
     {
-        if (CompilerService is IExtendedCompilerService extendedCompilerService)
+        if (ExtendedCompilerService is IExtendedCompilerService extendedCompilerService)
         {
-            var compilationUnit = CompilerService.GetResource(ResourceUri);
+            var compilationUnit = ExtendedCompilerService.GetResource(ResourceUri);
             return extendedCompilerService.GetIdentifierText(node, ResourceUri);
         }
         
@@ -138,9 +138,9 @@ public struct SyntaxViewModel
     
     public string GetTextFromTextSpan(TextEditorTextSpan textSpan)
     {
-        if (CompilerService is IExtendedCompilerService extendedCompilerService)
+        if (ExtendedCompilerService is IExtendedCompilerService extendedCompilerService)
         {
-            var compilationUnit = CompilerService.GetResource(ResourceUri)?.CompilationUnit;
+            var compilationUnit = ExtendedCompilerService.GetResource(ResourceUri)?.CompilationUnit;
             
             if (compilationUnit is IExtendedCompilationUnit extendedCompilationUnit)
                 return textSpan.GetText(extendedCompilationUnit.SourceText, TextEditorService);

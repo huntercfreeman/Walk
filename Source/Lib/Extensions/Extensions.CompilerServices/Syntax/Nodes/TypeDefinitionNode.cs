@@ -14,8 +14,15 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
         bool hasPartialModifier,
         StorageModifierKind storageModifierKind,
         SyntaxToken typeIdentifier,
-        GenericParameterListing genericParameterListing,
-        FunctionArgumentListing primaryConstructorFunctionArgumentListing,
+        SyntaxToken openAngleBracketToken,
+        int indexGenericParameterEntryList,
+        int countGenericParameterEntryList,
+        SyntaxToken closeAngleBracketToken,
+        
+        SyntaxToken openParenthesisToken,
+        int indexFunctionArgumentEntryList,
+        int countFunctionArgumentEntryList,
+        SyntaxToken closeParenthesisToken,
         TypeReference inheritedTypeReference,
         string namespaceName,
         ResourceUri resourceUri)
@@ -28,8 +35,16 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
         HasPartialModifier = hasPartialModifier;
         StorageModifierKind = storageModifierKind;
         TypeIdentifierToken = typeIdentifier;
-        GenericParameterListing = genericParameterListing;
-        FunctionArgumentListing = primaryConstructorFunctionArgumentListing;
+        
+        OpenAngleBracketToken = openAngleBracketToken;
+        IndexGenericParameterEntryList = indexGenericParameterEntryList;
+        CountGenericParameterEntryList = countGenericParameterEntryList;
+        CloseAngleBracketToken = closeAngleBracketToken;
+        
+        OpenParenthesisToken = openParenthesisToken;
+        IndexFunctionArgumentEntryList = indexFunctionArgumentEntryList;
+        CountFunctionArgumentEntryList = countFunctionArgumentEntryList;
+        CloseParenthesisToken = closeParenthesisToken;
         InheritedTypeReference = inheritedTypeReference;
         NamespaceName = namespaceName;
         ResourceUri = resourceUri;
@@ -56,9 +71,18 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     /// Then: 'Array&lt;T&gt;' is the <see cref="TypeIdentifierToken"/><br/>
     /// And: '&lt;T&gt;' is the <see cref="GenericArgumentsListingNode"/>
     /// </summary>
-    public GenericParameterListing GenericParameterListing { get; set; }
-    public FunctionArgumentListing FunctionArgumentListing { get; set; }
-    public FunctionArgumentListing PrimaryConstructorFunctionArgumentListing => FunctionArgumentListing;
+    public SyntaxToken OpenAngleBracketToken { get; set; }
+    
+    public int IndexGenericParameterEntryList { get; set; }
+    public int CountGenericParameterEntryList { get; set; }
+    
+    public SyntaxToken CloseAngleBracketToken { get; set; }
+    
+    
+    public SyntaxToken OpenParenthesisToken { get; set; }
+    public int IndexFunctionArgumentEntryList { get; set; }
+    public int CountFunctionArgumentEntryList { get; set; }
+    public SyntaxToken CloseParenthesisToken { get; set; }
     /// <summary>
     /// Given:<br/>
     /// public class Person : IPerson { ... }<br/><br/>
@@ -126,16 +150,16 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     /// </summary>
     public bool IsParsingGenericParameters { get; set; }
 
-    public void SetFunctionArgumentListing(FunctionArgumentListing functionArgumentListing)
-    {
-        FunctionArgumentListing = functionArgumentListing;
-    }
-
     public TypeClauseNode ToTypeClause()
     {
         return _toTypeClauseResult ??= new TypeClauseNode(
             TypeIdentifierToken,
-            genericParameterListing: default,
+            
+            openAngleBracketToken: default,
+    		indexGenericParameterEntryList: -1,
+            countGenericParameterEntryList: 0,
+    		closeAngleBracketToken: default, 
+            
             isKeywordType: IsKeywordType)
         {
             ExplicitDefinitionTextSpan = TypeIdentifierToken.TextSpan,
