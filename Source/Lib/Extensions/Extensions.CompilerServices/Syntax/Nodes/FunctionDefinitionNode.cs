@@ -19,7 +19,9 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
         int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
         
-        FunctionArgumentListing functionArgumentListing,
+        SyntaxToken openParenthesisToken,
+        List<FunctionArgumentEntry> functionArgumentEntryList,
+        SyntaxToken closeParenthesisToken,
         CodeBlock codeBlock,
         ResourceUri resourceUri)
     {
@@ -36,7 +38,9 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
         CountGenericParameterEntryList = countGenericParameterEntryList;
         CloseAngleBracketToken = closeAngleBracketToken;
         
-        FunctionArgumentListing = functionArgumentListing;
+        OpenParenthesisToken = openParenthesisToken;
+        FunctionArgumentEntryList = functionArgumentEntryList;
+        CloseParenthesisToken = closeParenthesisToken;
         ResourceUri = resourceUri;
     }
 
@@ -49,7 +53,9 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
     public int CountGenericParameterEntryList { get; set; }
     public SyntaxToken CloseAngleBracketToken { get; set; }
     
-    public FunctionArgumentListing FunctionArgumentListing { get; set; }
+    public SyntaxToken OpenParenthesisToken { get; set; }
+    public List<FunctionArgumentEntry> FunctionArgumentEntryList { get; set; }
+    public SyntaxToken CloseParenthesisToken { get; set; }
     public ResourceUri ResourceUri { get; set; }
     public int IndexMethodOverloadDefinition { get; set; } = -1;
 

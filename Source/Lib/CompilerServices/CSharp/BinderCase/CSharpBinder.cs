@@ -829,11 +829,11 @@ public class CSharpBinder
                             {
                                 var innerFunctionDefinitionNode = (FunctionDefinitionNode)innerCompilationUnit.CodeBlockOwnerList[entry.ScopeIndexKey];
                                 
-                                if (innerFunctionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList.Count == functionParameterList.Count)
+                                if (innerFunctionDefinitionNode.FunctionArgumentEntryList.Count == functionParameterList.Count)
                                 {
-                                    for (int parameterIndex = 0; parameterIndex < innerFunctionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList.Count; parameterIndex++)
+                                    for (int parameterIndex = 0; parameterIndex < innerFunctionDefinitionNode.FunctionArgumentEntryList.Count; parameterIndex++)
                                     {
-                                        var argument = innerFunctionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList[parameterIndex];
+                                        var argument = innerFunctionDefinitionNode.FunctionArgumentEntryList[parameterIndex];
                                         var parameter = functionParameterList[parameterIndex];
                                         
                                         string parameterTypeText;
@@ -1322,9 +1322,9 @@ public class CSharpBinder
             .Concat(compilationUnit.NodeList.Where(x => x.Unsafe_ParentIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
                         x.SyntaxKind == SyntaxKind.VariableDeclarationNode));
         
-        if (typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList is not null)
+        if (typeDefinitionNode.FunctionArgumentEntryList is not null)
         {
-            query = query.Concat(typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList.Select(
+            query = query.Concat(typeDefinitionNode.FunctionArgumentEntryList.Select(
                 x => x.VariableDeclarationNode));
         }
         
@@ -1410,9 +1410,9 @@ public class CSharpBinder
             }
         }
         
-        if (typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList is not null)
+        if (typeDefinitionNode.FunctionArgumentEntryList is not null)
         {
-            foreach (var entry in typeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList)
+            foreach (var entry in typeDefinitionNode.FunctionArgumentEntryList)
             {
                 _getMemberList.Add(entry.VariableDeclarationNode);
             }
@@ -1474,9 +1474,9 @@ public class CSharpBinder
                                         }
                                     }
                                     
-                                    if (innerTypeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList is not null)
+                                    if (innerTypeDefinitionNode.FunctionArgumentEntryList is not null)
                                     {
-                                        foreach (var entry in innerTypeDefinitionNode.PrimaryConstructorFunctionArgumentListing.FunctionArgumentEntryList)
+                                        foreach (var entry in innerTypeDefinitionNode.FunctionArgumentEntryList)
                                         {
                                             _getMemberList.Add(entry.VariableDeclarationNode);
                                         }

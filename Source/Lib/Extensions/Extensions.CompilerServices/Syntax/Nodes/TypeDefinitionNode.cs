@@ -19,7 +19,9 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
         int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
         
-        FunctionArgumentListing primaryConstructorFunctionArgumentListing,
+        SyntaxToken openParenthesisToken,
+        List<FunctionArgumentEntry> functionArgumentEntryList,
+        SyntaxToken closeParenthesisToken,
         TypeReference inheritedTypeReference,
         string namespaceName,
         ResourceUri resourceUri)
@@ -38,7 +40,9 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
         CountGenericParameterEntryList = countGenericParameterEntryList;
         CloseAngleBracketToken = closeAngleBracketToken;
         
-        FunctionArgumentListing = primaryConstructorFunctionArgumentListing;
+        OpenParenthesisToken = openParenthesisToken;
+        FunctionArgumentEntryList = functionArgumentEntryList;
+        CloseParenthesisToken = closeParenthesisToken;
         InheritedTypeReference = inheritedTypeReference;
         NamespaceName = namespaceName;
         ResourceUri = resourceUri;
@@ -73,8 +77,9 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     public SyntaxToken CloseAngleBracketToken { get; set; }
     
     
-    public FunctionArgumentListing FunctionArgumentListing { get; set; }
-    public FunctionArgumentListing PrimaryConstructorFunctionArgumentListing => FunctionArgumentListing;
+    public SyntaxToken OpenParenthesisToken { get; set; }
+    public List<FunctionArgumentEntry> FunctionArgumentEntryList { get; set; }
+    public SyntaxToken CloseParenthesisToken { get; set; }
     /// <summary>
     /// Given:<br/>
     /// public class Person : IPerson { ... }<br/><br/>
@@ -141,11 +146,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     /// ...generic parameters. They currently use 'ParseTypes.HandleGenericArguments(...);'
     /// </summary>
     public bool IsParsingGenericParameters { get; set; }
-
-    public void SetFunctionArgumentListing(FunctionArgumentListing functionArgumentListing)
-    {
-        FunctionArgumentListing = functionArgumentListing;
-    }
 
     public TypeClauseNode ToTypeClause()
     {

@@ -5,5 +5,7 @@ public interface IFunctionDefinitionNode : IExpressionNode
     /// <summary>
     /// TODO: does this having a setter bug TypeDefinitionNode '_memberList'.
     /// </summary>
-    public FunctionArgumentListing FunctionArgumentListing { get; set; }
+    public SyntaxToken OpenParenthesisToken { get; set; }
+    public List<FunctionArgumentEntry> FunctionArgumentEntryList { get; set; }
+    public SyntaxToken CloseParenthesisToken { get; set; }
 }

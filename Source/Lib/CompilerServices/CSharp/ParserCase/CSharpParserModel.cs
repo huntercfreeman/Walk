@@ -720,7 +720,9 @@ public ref struct CSharpParserModel
                                 entry.TypeReference.IndexGenericParameterEntryList,
                                 entry.TypeReference.CountGenericParameterEntryList,
                                 entry.TypeReference.CloseAngleBracketToken,
-                                primaryConstructorFunctionArgumentListing: default,
+                                openParenthesisToken: default,
+                                functionArgumentEntryList: null,
+                                closeParenthesisToken: default,
                                 inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
                                 string.Empty,
                                 compilationUnit.ResourceUri));

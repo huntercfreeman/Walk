@@ -808,7 +808,9 @@ public class ParseDefaultKeywords
             genericParameterListing.IndexGenericParameterEntryList,
             genericParameterListing.CountGenericParameterEntryList,
             genericParameterListing.CloseAngleBracketToken,
-            primaryConstructorFunctionArgumentListing: default,
+            openParenthesisToken: default,
+            functionArgumentEntryList: null,
+            closeParenthesisToken: default,
             inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
             namespaceName: parserModel.GetTextSpanText(parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan),
             parserModel.Compilation.ResourceUri);

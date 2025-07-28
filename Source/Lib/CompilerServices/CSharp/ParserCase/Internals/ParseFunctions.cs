@@ -19,9 +19,11 @@ public class ParseFunctions
             consumedIdentifierToken,
             openAngleBracketToken: default,
     		indexGenericParameterEntryList: -1,
-                countGenericParameterEntryList: 0,
+            countGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
-            functionArgumentListing: default,
+            openParenthesisToken: default,
+            functionArgumentEntryList: null,
+            closeParenthesisToken: default,
             default,
             parserModel.Compilation.ResourceUri);
             
@@ -234,7 +236,9 @@ public class ParseFunctions
     		indexGenericParameterEntryList: -1,
             countGenericParameterEntryList: 0,
     		closeAngleBracketToken: default,
-            functionArgumentListing: default,
+            openParenthesisToken: default,
+            functionArgumentEntryList: null,
+            closeParenthesisToken: default,
             default,
             parserModel.Compilation.ResourceUri);
     
@@ -482,10 +486,8 @@ public class ParseFunctions
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
             closeParenthesisToken = parserModel.TokenWalker.Consume();
         
-        functionDefinitionNode.FunctionArgumentListing =
-            new FunctionArgumentListing(
-                openParenthesisToken,
-                functionArgumentEntryList,
-                closeParenthesisToken);
+        functionDefinitionNode.OpenParenthesisToken = openParenthesisToken;
+        functionDefinitionNode.FunctionArgumentEntryList = functionArgumentEntryList;
+        functionDefinitionNode.CloseParenthesisToken = closeParenthesisToken;
     }
 }

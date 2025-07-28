@@ -58,7 +58,9 @@ public static class TypeFacts
 		indexGenericParameterEntryList: -1,
         countGenericParameterEntryList: 0,
 		closeAngleBracketToken: default,
-        primaryConstructorFunctionArgumentListing: default,
+        openParenthesisToken: default,
+        functionArgumentEntryList: null,
+        closeParenthesisToken: default,
         inheritedTypeReference: _notApplicableTypeReference,
         string.Empty,
         ResourceUri.Empty
@@ -81,7 +83,9 @@ public static class TypeFacts
 		indexGenericParameterEntryList: -1,
         countGenericParameterEntryList: 0,
 		closeAngleBracketToken: default,
-        primaryConstructorFunctionArgumentListing: default,
+        openParenthesisToken: default,
+        functionArgumentEntryList: null,
+        closeParenthesisToken: default,
         inheritedTypeReference: _notApplicableTypeReference,
         string.Empty,
         ResourceUri.Empty
@@ -121,7 +125,9 @@ public static class TypeFacts
 		indexGenericParameterEntryList: -1,
         countGenericParameterEntryList: 0,
 		closeAngleBracketToken: default,
-        primaryConstructorFunctionArgumentListing: default,
+        openParenthesisToken: default,
+        functionArgumentEntryList: null,
+        closeParenthesisToken: default,
         inheritedTypeReference: _notApplicableTypeReference,
         string.Empty,
         ResourceUri.Empty

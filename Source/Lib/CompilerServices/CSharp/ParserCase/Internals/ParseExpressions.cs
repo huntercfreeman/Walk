@@ -3601,9 +3601,9 @@ public static class ParseExpressions
                     {
                         var functionDefinitionNode = (FunctionDefinitionNode)maybeFunctionDefinitionNode;
                     
-                        if (functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList.Count > invocationNode.CountFunctionParameterEntryList)
+                        if (functionDefinitionNode.FunctionArgumentEntryList.Count > invocationNode.CountFunctionParameterEntryList)
                         {
-                            var matchingArgument = functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList[
+                            var matchingArgument = functionDefinitionNode.FunctionArgumentEntryList[
                                 invocationNode.CountFunctionParameterEntryList];
                             
                             variableDeclarationNode.SetImplicitTypeReference(matchingArgument.VariableDeclarationNode.TypeReference);
@@ -3733,7 +3733,7 @@ public static class ParseExpressions
         }
         
         // TODO: Where is this containing-method invoked from?
-        functionDefinitionNode.FunctionArgumentListing.FunctionArgumentEntryList.Add(
+        functionDefinitionNode.FunctionArgumentEntryList.Add(
             new FunctionArgumentEntry(
                 variableDeclarationNode: null,
                 optionalCompileTimeConstantToken: new SyntaxToken(SyntaxKind.NotApplicable, textSpan: default),
