@@ -86,11 +86,9 @@ public class TokenWalker
                 return closeChildScopeToken;
             }
         }
-
-        var consumedToken = TokenList[_index++];
+        
         ConsumeCounter++;
-
-        return consumedToken;
+        return TokenList[_index++];
     }
 
     public SyntaxToken Backtrack()
@@ -102,6 +100,15 @@ public class TokenWalker
         }
 
         return Peek(_index);
+    }
+    
+    public void BacktrackNoReturnValue()
+    {
+        if (_index > 0)
+        {
+            _index--;
+            ConsumeCounter--;
+        }
     }
 
     /// <summary>If the syntaxKind passed in does not match the current token, then a syntax token with that syntax kind will be fabricated and then returned instead.</summary>

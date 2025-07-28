@@ -70,7 +70,6 @@ public static class ParseTypes
             
             return parserModel.ConstructOrRecycleTypeClauseNode(
                 syntaxToken,
-                valueType: null,
                 genericParameterListing: default,
                 isKeywordType: false);
         }

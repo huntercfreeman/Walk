@@ -423,7 +423,7 @@ public static class CSharpLexer
                         // From the LexString(...) method:
                         //     "awkwardly even if there are many of these it is expected
                         //      that the last one will not have been consumed."
-                        _ = stringWalker.BacktrackCharacter();
+                        stringWalker.BacktrackCharacterNoReturnValue();
                         
                         if (stringWalker.NextCharacter == '"')
                             LexString(binder, ref lexerOutput, stringWalker, ref previousEscapeCharacterTextSpan, countDollarSign: countDollarSign, useVerbatim: false);
@@ -626,7 +626,7 @@ public static class CSharpLexer
                                     startInclusiveOpenDelimiter: interpolationTemporaryPositionIndex,
                                     countDollarSign: countDollarSign,
                                     useRaw);
-                                stringWalker.BacktrackCharacter();
+                                stringWalker.BacktrackCharacterNoReturnValue();
                             }
                         }
                     }

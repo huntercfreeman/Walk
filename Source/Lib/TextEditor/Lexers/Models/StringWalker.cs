@@ -80,6 +80,14 @@ public class StringWalker
 
         return PeekCharacter(0);
     }
+    
+    public void BacktrackCharacterNoReturnValue()
+    {
+        if (PositionIndex == 0)
+            return;
+
+        PositionIndex--;
+    }
 
     /// <summary>Iterates a counter from 0 until the counter is equal to <see cref="length" />.<br /><br />Each iteration <see cref="ReadCharacter" /> will be invoked.<br /><br />If an iteration's invocation of <see cref="ReadCharacter" /> returned <see cref="ParserFacts.END_OF_FILE" /> then the method will short circuit and return regardless of whether it finished iterating to <see cref="length" /> or not.</summary>
     public void SkipRange(int length)
