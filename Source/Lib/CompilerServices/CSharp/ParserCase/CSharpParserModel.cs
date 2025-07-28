@@ -30,14 +30,12 @@ public ref struct CSharpParserModel
     public CSharpParserModel(
         CSharpBinder binder,
         CSharpCompilationUnit compilationUnit,
-        ref CSharpLexerOutput lexerOutput,
-        ICodeBlockOwner currentCodeBlockOwner,
-        NamespaceStatementNode topLevelNamespaceStatementNode)
+        ref CSharpLexerOutput lexerOutput)
     {
         Binder = binder;
         Compilation = compilationUnit;
-        CurrentCodeBlockOwner = currentCodeBlockOwner;
-        CurrentNamespaceStatementNode = topLevelNamespaceStatementNode;
+        CurrentCodeBlockOwner = binder.GlobalCodeBlockNode;
+        CurrentNamespaceStatementNode = binder.TopLevelNamespaceStatementNode;
     
         TokenWalker = Binder.CSharpParserModel_TokenWalker;
         TokenWalker.Reinitialize(lexerOutput.SyntaxTokenList);

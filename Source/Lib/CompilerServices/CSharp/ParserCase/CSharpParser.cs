@@ -16,9 +16,7 @@ public static class CSharpParser
         var parserModel = new CSharpParserModel(
             binder,
             compilationUnit,
-            ref lexerOutput,
-            currentCodeBlockOwner: binder.GlobalCodeBlockNode,
-            binder.TopLevelNamespaceStatementNode);
+            ref lexerOutput);
         
         while (true)
         {
