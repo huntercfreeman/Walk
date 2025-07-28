@@ -86,6 +86,9 @@ public ref struct CSharpParserModel
         Text = lexerOutput.Text;
         
         Binder.CSharpParserModel_AddedNamespaceHashSet.Clear();
+        
+        ExternalTypeDefinitionList = Binder.CSharpParserModel_ExternalTypeDefinitionList;
+        ExternalTypeDefinitionList.Clear();
     }
     
     public ReadOnlySpan<char> Text { get; }
@@ -109,7 +112,7 @@ public ref struct CSharpParserModel
     /// </summary>
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; }
     
-    public List<TypeDefinitionNode> ExternalTypeDefinitionList { get; } = new();
+    public List<TypeDefinitionNode> ExternalTypeDefinitionList { get; }
     
     public IExpressionNode? NoLongerRelevantExpressionNode { get; set; }
     public List<SyntaxKind> TryParseExpressionSyntaxKindList { get; }
