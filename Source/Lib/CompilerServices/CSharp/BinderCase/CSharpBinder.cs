@@ -1497,18 +1497,23 @@ public class CSharpBinder
     /// </summary>
     public IEnumerable<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
     {
-        return Enumerable.Empty<TypeDefinitionNode>();
-        /*
         if (namespaceStatementNode.Unsafe_SelfIndexKey == -1 ||
             !__CompilationUnitMap.TryGetValue(namespaceStatementNode.ResourceUri, out var compilationUnit))
         {
             return Array.Empty<TypeDefinitionNode>();
         }
 
-        return compilationUnit.CodeBlockOwnerList
-            .Where(x => x.Unsafe_ParentIndexKey == namespaceStatementNode.Unsafe_SelfIndexKey && x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-            .Select(x => (TypeDefinitionNode)x);
-        */
+        var typeDefinitionNodeList = new List<TypeDefinitionNode>();
+        
+        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
+        {
+            var x = CodeBlockOwnerList[i];
+            
+            if (x.Unsafe_ParentIndexKey == namespaceStatementNode.Unsafe_SelfIndexKey && x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+                typeDefinitionNodeList.Add((TypeDefinitionNode)x);
+        }
+
+        return typeDefinitionNodeList;
     }
     
     /// <summary>
@@ -1531,8 +1536,6 @@ public class CSharpBinder
         NamespaceStatementNode namespaceStatementNode,
         bool shouldClear)
     {
-        return _getTopLevelTypeDefinitionNodes;
-        /*
         if (shouldClear)
         {
             // This allows Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(...) to "select many".
@@ -1545,14 +1548,15 @@ public class CSharpBinder
             return _getTopLevelTypeDefinitionNodes;
         }
 
-        foreach (var codeBlockOwner in compilationUnit.CodeBlockOwnerList)
+        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
         {
+            var codeBlockOwner = CodeBlockOwnerList[i];
+        
             if (codeBlockOwner.Unsafe_ParentIndexKey == namespaceStatementNode.Unsafe_SelfIndexKey && codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
                 _getTopLevelTypeDefinitionNodes.Add((TypeDefinitionNode)codeBlockOwner);
         }
         
         return _getTopLevelTypeDefinitionNodes;
-        */
     }
     
     /// <summary>Object-allocation-less version of the public version for internal use.</summary>
