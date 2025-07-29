@@ -715,7 +715,6 @@ public class CSharpBinder
     /// </summary>
     public ISyntaxNode? GetDefinitionNode(CSharpCompilationUnit compilationUnit, TextEditorTextSpan textSpan, SyntaxKind syntaxKind, Symbol? symbol = null, string? getTextResult = null)
     {
-        /*
         var scope = GetScope(compilationUnit, textSpan);
 
         if (scope is null)
@@ -779,7 +778,7 @@ public class CSharpBinder
                             
                             if (__CompilationUnitMap.TryGetValue(entry.ResourceUri, out var innerCompilationUnit))
                             {
-                                var innerFunctionDefinitionNode = (FunctionDefinitionNode)innerCompilationUnit.CodeBlockOwnerList[entry.ScopeIndexKey];
+                                var innerFunctionDefinitionNode = (FunctionDefinitionNode)CodeBlockOwnerList[innerCompilationUnit.IndexCodeBlockOwnerList + entry.ScopeIndexKey];
                                 
                                 if (innerFunctionDefinitionNode.CountFunctionArgumentEntryList == functionParameterList.Count)
                                 {
@@ -899,9 +898,6 @@ public class CSharpBinder
             }
         }
 
-        return null;
-        */
-        
         return null;
     }
     
@@ -1263,29 +1259,43 @@ public class CSharpBinder
     
     public IEnumerable<ISyntaxNode> GetMemberList_TypeDefinitionNode(TypeDefinitionNode typeDefinitionNode)
     {
-        return Enumerable.Empty<ISyntaxNode>();
-        /*
         if (typeDefinitionNode.Unsafe_SelfIndexKey == -1 ||
             !__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var compilationUnit))
         {
             return Array.Empty<ISyntaxNode>();
         }
         
-        var query = compilationUnit.CodeBlockOwnerList
-            .Where(x => x.Unsafe_ParentIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
-                            (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
-                             x.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
-            .Select(x => (ISyntaxNode)x)
-            .Concat(compilationUnit.NodeList.Where(x => x.Unsafe_ParentIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
-                        x.SyntaxKind == SyntaxKind.VariableDeclarationNode));
+        var syntaxNodeList = new List<ISyntaxNode>();
+        
+        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
+        {
+            var x = CodeBlockOwnerList[i];
+        
+            if (x.Unsafe_ParentIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
+                (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
+                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
+            {
+                syntaxNodeList.Add(x);
+            }
+        }
+        
+        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        {
+            var x = NodeList[i];
+            
+            if (x.Unsafe_ParentIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
+                x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+            {
+                syntaxNodeList.Add(x);
+            }
+        }
         
         if (typeDefinitionNode.IndexFunctionArgumentEntryList != -1)
         {
-            query = query.Concat(
-                FunctionArgumentEntryList
-                    .Skip(typeDefinitionNode.IndexFunctionArgumentEntryList)
-                    .Take(typeDefinitionNode.CountFunctionArgumentEntryList)
-                    .Select(x => x.VariableDeclarationNode));
+            for (int i = typeDefinitionNode.IndexFunctionArgumentEntryList; i < typeDefinitionNode.IndexFunctionArgumentEntryList + typeDefinitionNode.CountFunctionArgumentEntryList; i++)
+            {
+                syntaxNodeList.Add(FunctionArgumentEntryList[i].VariableDeclarationNode);
+            }
         }
         
         if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
@@ -1314,16 +1324,29 @@ public class CSharpBinder
                         if (innerCompilationUnit != null)
                         {
                             var innerScopeIndexKey = PartialTypeDefinitionList[positionExclusive].ScopeIndexKey;
-                            query = query.Concat(innerCompilationUnit.CodeBlockOwnerList
-                                .Where(x =>
+                            
+                            for (int i = innerCompilationUnit.IndexCodeBlockOwnerList; i < innerCompilationUnit.IndexCodeBlockOwnerList + innerCompilationUnit.CountCodeBlockOwnerList; i++)
+                            {
+                                var x = CodeBlockOwnerList[i];
+                                
+                                if (x.Unsafe_ParentIndexKey == innerScopeIndexKey &&
+                                    (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
+                                     x.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
                                 {
-                                    return x.Unsafe_ParentIndexKey == innerScopeIndexKey &&
-                                        (x.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
-                                         x.SyntaxKind == SyntaxKind.FunctionDefinitionNode);
-                                })
-                                .Select(x => (ISyntaxNode)x))
-                                .Concat(innerCompilationUnit.NodeList.Where(x => x.Unsafe_ParentIndexKey == innerScopeIndexKey &&
-                                            x.SyntaxKind == SyntaxKind.VariableDeclarationNode));
+                                    syntaxNodeList.Add(x);
+                                }
+                            }
+                            
+                            for (int i = innerCompilationUnit.IndexNodeList; i < innerCompilationUnit.IndexNodeList + innerCompilationUnit.CountNodeList; i++)
+                            {
+                                var x = NodeList[i];
+                                
+                                if (x.Unsafe_ParentIndexKey == innerScopeIndexKey &&
+                                    x.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+                                {
+                                    syntaxNodeList.Add(x);
+                                }
+                            }
                         }
                     }
                     
@@ -1336,8 +1359,7 @@ public class CSharpBinder
             }
         }
         
-        return query;
-        */
+        return syntaxNodeList;
     }
     
     private readonly List<ISyntaxNode> _getMemberList = new();
