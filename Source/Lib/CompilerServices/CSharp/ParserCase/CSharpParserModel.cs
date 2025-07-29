@@ -843,11 +843,10 @@ public ref struct CSharpParserModel
         out TypeDefinitionNode? typeDefinitionNode)
     {
         typeDefinitionNode = null;
-        return false;
-        /*
-        typeDefinitionNode = null;
-        foreach (var x in compilationUnit.CodeBlockOwnerList)
+        
+        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
         {
+            var x = Binder.CodeBlockOwnerList[i];
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
                 GetIdentifierText(x, compilationUnit) == typeIdentifierText)
@@ -881,7 +880,6 @@ public ref struct CSharpParserModel
         {
             return true;
         }
-        */
     }
     
     public bool TryAddTypeDefinitionNodeByScope(
@@ -890,11 +888,11 @@ public ref struct CSharpParserModel
         string typeIdentifierText,
         TypeDefinitionNode typeDefinitionNode)
     {
-        return false;
-        /*
         TypeDefinitionNode? matchNode = null;
-        foreach (var x in compilationUnit.CodeBlockOwnerList)
+        
+        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
         {
+            var x = Binder.CodeBlockOwnerList[i];
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
                 GetIdentifierText(x, compilationUnit) == typeIdentifierText)
@@ -906,25 +904,33 @@ public ref struct CSharpParserModel
         
         if (matchNode is null)
         {
-            compilationUnit.CodeBlockOwnerList.Add(typeDefinitionNode);
+            Binder.CodeBlockOwnerList.Insert(
+                compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList,
+                typeDefinitionNode);
+            ++compilationUnit.CountCodeBlockOwnerList;
             return true;
         }
         else
         {
             return false;
         }
-        */
     }
     
     public FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey)
     {
-        return Array.Empty<FunctionDefinitionNode>();
-        /*return compilationUnit.CodeBlockOwnerList
-            .Where(kvp => kvp.Unsafe_ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
-            .Select(kvp => (FunctionDefinitionNode)kvp)
-            .ToArray();*/
+        List<FunctionDefinitionNode> functionDefinitionNodeList = new();
+    
+        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
+        {
+            var kvp = Binder.CodeBlockOwnerList[i];
+            
+            if (kvp.Unsafe_ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+                functionDefinitionNodeList.Add((FunctionDefinitionNode)kvp);
+        }
+        
+        return functionDefinitionNodeList.ToArray();
     }
     
     /// <summary>
@@ -967,10 +973,12 @@ public ref struct CSharpParserModel
         string functionIdentifierText,
         out FunctionDefinitionNode functionDefinitionNode)
     {
-        /*
         functionDefinitionNode = null;
-        foreach (var x in compilationUnit.CodeBlockOwnerList)
+        
+        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
         {
+            var x = Binder.CodeBlockOwnerList[i];
+            
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
                 GetIdentifierText(x, compilationUnit) == functionIdentifierText)
@@ -984,21 +992,23 @@ public ref struct CSharpParserModel
             return false;
         else
             return true;
-        */
-        
-        functionDefinitionNode = null;
-        return false;
     }
     
     public VariableDeclarationNode[] GetVariableDeclarationNodesByScope(
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey)
     {
-        return Array.Empty<VariableDeclarationNode>();
-        /*return compilationUnit.NodeList
-            .Where(kvp => kvp.Unsafe_ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-            .Select(kvp => (VariableDeclarationNode)kvp)
-            .ToArray();*/
+        var variableDeclarationNodeList = new List<VariableDeclarationNode>();
+        
+        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        {
+            var kvp = Binder.NodeList[i];
+            
+            if (kvp.Unsafe_ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+                variableDeclarationNodeList.Add((VariableDeclarationNode)kvp);
+        }
+        
+        return variableDeclarationNodeList.ToArray();
     }
     
     /// <summary>
@@ -1012,7 +1022,6 @@ public ref struct CSharpParserModel
         string identifierText,
         out VariableDeclarationNode? variableDeclarationStatementNode)
     {
-        /*
         var localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
 
         while (localScope is not null)
@@ -1031,8 +1040,7 @@ public ref struct CSharpParserModel
             else
                 localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
         }
-        */
-
+        
         variableDeclarationStatementNode = null;
         return false;
     }
@@ -1044,7 +1052,6 @@ public ref struct CSharpParserModel
         TypeDefinitionNode typeDefinitionNode,
         out VariableDeclarationNode variableDeclarationNode)
     {
-        /*
         int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
         while (positionExclusive < Binder.PartialTypeDefinitionList.Count)
         {
@@ -1089,7 +1096,6 @@ public ref struct CSharpParserModel
                 break;
             }
         }
-        */
         
         variableDeclarationNode = null;
         return false;
@@ -1103,12 +1109,10 @@ public ref struct CSharpParserModel
         bool isRecursive = false)
     {
         variableDeclarationNode = null;
-        return false;
-    
-        /*
-        variableDeclarationNode = null;
-        foreach (var x in compilationUnit.NodeList)
+        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
         {
+            var x = Binder.NodeList[i];
+            
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
                 GetIdentifierText(x, compilationUnit) == variableIdentifierText)
@@ -1120,7 +1124,8 @@ public ref struct CSharpParserModel
         
         if (variableDeclarationNode is null)
         {
-            var codeBlockOwner = compilationUnit.CodeBlockOwnerList[scopeIndexKey];
+            var codeBlockOwner = Binder.CodeBlockOwnerList[compilationUnit.IndexNodeList + scopeIndexKey];
+            
             if (!isRecursive && codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
                 var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwner;
@@ -1189,7 +1194,6 @@ public ref struct CSharpParserModel
         {
             return true;
         }
-        */
     }
     
     public bool TryAddVariableDeclarationNodeByScope(
@@ -1198,10 +1202,10 @@ public ref struct CSharpParserModel
         string variableIdentifierText,
         VariableDeclarationNode variableDeclarationNode)
     {
-        /*
         VariableDeclarationNode? matchNode = null;
-        foreach (var x in compilationUnit.NodeList)
+        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
         {
+            var x = Binder.NodeList[i];
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
                 GetIdentifierText(x, compilationUnit) == variableIdentifierText)
@@ -1214,16 +1218,18 @@ public ref struct CSharpParserModel
         if (matchNode is null)
         {
             variableDeclarationNode.Unsafe_ParentIndexKey = scopeIndexKey;
-            compilationUnit.NodeList.Add(variableDeclarationNode);
+            
+            Binder.NodeList.Insert(
+                compilationUnit.IndexNodeList + compilationUnit.CountNodeList,
+                variableDeclarationNode);
+            ++compilationUnit.CountNodeList;
+            
             return true;
         }
         else
         {
             return false;
         }
-        */
-        
-        return false;
     }
     
     public void SetVariableDeclarationNodeByScope(
@@ -1232,12 +1238,11 @@ public ref struct CSharpParserModel
         string variableIdentifierText,
         VariableDeclarationNode variableDeclarationNode)
     {
-        /*
         VariableDeclarationNode? matchNode = null;
-        int index = 0;
-        for (; index < compilationUnit.NodeList.Count; index++)
+        int index = compilationUnit.IndexNodeList;
+        for (; index < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; index++)
         {
-            var x = compilationUnit.NodeList[index];
+            var x = Binder.NodeList[index];
             
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
@@ -1251,9 +1256,8 @@ public ref struct CSharpParserModel
         if (index != -1)
         {
             variableDeclarationNode.Unsafe_ParentIndexKey = scopeIndexKey;
-            compilationUnit.NodeList[index] = variableDeclarationNode;
+            Binder.NodeList[index] = variableDeclarationNode;
         }
-        */
     }
     
     public bool TryGetLabelDeclarationHierarchically(
@@ -1262,7 +1266,6 @@ public ref struct CSharpParserModel
         string identifierText,
         out LabelDeclarationNode? labelDeclarationNode)
     {
-        /*
         var localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
 
         while (localScope is not null)
@@ -1281,8 +1284,7 @@ public ref struct CSharpParserModel
             else
                 localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
         }
-        */
-
+        
         labelDeclarationNode = null;
         return false;
     }
@@ -1294,12 +1296,10 @@ public ref struct CSharpParserModel
         out LabelDeclarationNode labelDeclarationNode)
     {
         labelDeclarationNode = null;
-        return false;
-        
-        /*
-        labelDeclarationNode = null;
-        foreach (var x in compilationUnit.NodeList)
+        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
         {
+            var x = Binder.NodeList[i];
+            
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
                 GetIdentifierText(x, compilationUnit) == labelIdentifierText)
@@ -1313,7 +1313,6 @@ public ref struct CSharpParserModel
             return false;
         else
             return true;
-        */
     }
     
     public bool TryAddLabelDeclarationNodeByScope(
@@ -1322,10 +1321,11 @@ public ref struct CSharpParserModel
         string labelIdentifierText,
         LabelDeclarationNode labelDeclarationNode)
     {
-        /*
         LabelDeclarationNode? matchNode = null;
-        foreach (var x in compilationUnit.NodeList)
+        for (var i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
         {
+            var x = Binder.NodeList[i];
+            
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
                 GetIdentifierText(x, compilationUnit) == labelIdentifierText)
@@ -1338,16 +1338,18 @@ public ref struct CSharpParserModel
         if (matchNode is null)
         {
             labelDeclarationNode.Unsafe_ParentIndexKey = scopeIndexKey;
-            compilationUnit.NodeList.Add(labelDeclarationNode);
+            
+            Binder.NodeList.Insert(
+                compilationUnit.IndexNodeList + compilationUnit.CountNodeList,
+                labelDeclarationNode);
+            ++compilationUnit.CountNodeList;
+            
             return true;
         }
         else
         {
             return false;
         }
-        */
-        
-        return false;
     }
     
     public void SetLabelDeclarationNodeByScope(
@@ -1356,12 +1358,11 @@ public ref struct CSharpParserModel
         string labelIdentifierText,
         LabelDeclarationNode labelDeclarationNode)
     {
-        /*
         LabelDeclarationNode? matchNode = null;
-        int index = 0;
-        for (; index < compilationUnit.NodeList.Count; index++)
+        int index = compilationUnit.IndexNodeList;
+        for (; index < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; index++)
         {
-            var x = compilationUnit.NodeList[index];
+            var x = Binder.NodeList[index];
             
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
@@ -1375,9 +1376,8 @@ public ref struct CSharpParserModel
         if (index != -1)
         {
             labelDeclarationNode.Unsafe_ParentIndexKey = scopeIndexKey;
-            compilationUnit.NodeList[index] = labelDeclarationNode;
+            Binder.NodeList[index] = labelDeclarationNode;
         }
-        */
     }
     
     
