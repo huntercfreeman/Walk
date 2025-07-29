@@ -14,6 +14,12 @@ namespace Walk.CompilerServices.CSharp.LexerCase;
 
 public static class CSharpLexer
 {
+    // I hovered this locally and got an infinite loop.
+	// My memory spiked, I was able to stop the application with task manager.
+	// But I'm adding this to the demo so I can hover it before every PR I accept
+	// to make sure it never happens again.
+    public Dictionary<string, Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)>> SymbolIdToExternalTextSpanMap { get; }
+
     /// <summary>
     /// Initialize the CSharpLexerOutput here, then start the while loop with 'Lex_Frame(...)'.
     /// </summary>
