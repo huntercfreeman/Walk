@@ -1124,7 +1124,7 @@ public ref struct CSharpParserModel
         
         if (variableDeclarationNode is null)
         {
-            var codeBlockOwner = Binder.CodeBlockOwnerList[compilationUnit.IndexNodeList + scopeIndexKey];
+            var codeBlockOwner = Binder.CodeBlockOwnerList[compilationUnit.IndexCodeBlockOwnerList + scopeIndexKey];
             
             if (!isRecursive && codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
