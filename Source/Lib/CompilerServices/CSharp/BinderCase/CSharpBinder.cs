@@ -196,7 +196,7 @@ public class CSharpBinder
         if (scopeIndexKey < 0)
             return null;
 
-        if (scopeIndexKey < compilationUnit.CountCodeBlockOwnerList - compilationUnit.IndexCodeBlockOwnerList)
+        if (scopeIndexKey < compilationUnit.CountCodeBlockOwnerList)
         {
             var isValid = true;
 
