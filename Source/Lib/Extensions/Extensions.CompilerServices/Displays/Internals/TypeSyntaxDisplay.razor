@@ -4,7 +4,15 @@
 @using Walk.Extensions.CompilerServices.Syntax.Nodes
 @using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums
 
-@{
+@*
+    I'm making changes to the C# Compiler Service storage.
+    I encountered an infinite loop in the UI when I hovered a certain generic variable.
+    The TypeSyntaxDisplay was rendering GenericSyntaxDisplay which then rendered TypeSyntaxDisplay, repeat...
+    This spiked my memory, I was able to stop the app with Task Manager, but I want to avoid this happening again at all costs until I am 100% certain
+    the new storage won't have an infinite loop in the UI.
+*@
+@if (SyntaxViewModel.Depth < 6)
+{
 	var syntaxViewModelLocal = SyntaxViewModel;
 	
 	string? prefixText;
@@ -107,79 +115,79 @@
 		hasQuestionMark = null;
 		arrayRank = 0;
 	}
+    
+    <span style="display: inline-flex;">
+    	
+    	@if (syntaxViewModelLocal.Depth == 0 && !string.IsNullOrWhiteSpace(prefixText))
+    	{
+    		<span class="@prefixTextCssClass">
+    			@prefixText&nbsp;
+    		</span>
+    	}
+    	
+    	@if (!string.IsNullOrWhiteSpace(text))
+    	{
+    		var classCssString = syntaxViewModelLocal.DefinitionNode is null
+    			? string.Empty
+    			: "di_te_syntax-onclick";
+    	
+    		<span class="@classCssString @syntaxHighlightingClassCssString"
+    			  @onclick="() => syntaxViewModelLocal.HandleOnClick(TextEditorService, SyntaxKind.TypeDefinitionNode)">
+    			@text
+    		</span>
+    	}
+    	
+    	@if (hasGenericParameterListing)
+    	{
+    		if (TypeReference != default)
+    		{
+    			var syntaxViewModel = new SyntaxViewModel(
+        		    SyntaxViewModel.ExtendedCompilerService,
+    			    SyntaxViewModel.TextEditorService,
+    			    SyntaxViewModel.ResourceUri,
+    				targetSymbol: null,
+    				targetNode: null,
+    				definitionNode: null,
+    				depth: syntaxViewModelLocal.Depth + 1);
+    			<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="TypeReference" />
+    		}
+    		else
+    		{
+    			var syntaxViewModel = new SyntaxViewModel(
+        		    SyntaxViewModel.ExtendedCompilerService,
+    			    SyntaxViewModel.TextEditorService,
+    			    SyntaxViewModel.ResourceUri,
+    				targetSymbol: null,
+    				targetNode: syntaxViewModelLocal.TargetNode,
+    				definitionNode: syntaxViewModelLocal.DefinitionNode,
+    				depth: syntaxViewModelLocal.Depth + 1);
+    			<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" />
+    		}
+    	}
+    	
+    	@if (hasQuestionMark is not null && hasQuestionMark.Value)
+    	{
+    		<text>?</text>
+    	}
+    	
+    	@if (arrayRank > 0)
+    	{
+    	    if (typeKind == TypeKind.ArrayMultiDimensional)
+    	    {
+    	        <text>[</text>
+    	        for (int badIndex = 0; badIndex < arrayRank - 1; badIndex++)
+        		{
+        			<text>,</text>
+        		}
+        		<text>]</text>
+    	    }
+    	    else
+    	    {
+        		for (int badIndex = 0; badIndex < arrayRank; badIndex++)
+        		{
+        			<text>[]</text>
+        		}
+    		}
+    	}
+    </span>
 }
-
-<span style="display: inline-flex;">
-	
-	@if (syntaxViewModelLocal.Depth == 0 && !string.IsNullOrWhiteSpace(prefixText))
-	{
-		<span class="@prefixTextCssClass">
-			@prefixText&nbsp;
-		</span>
-	}
-	
-	@if (!string.IsNullOrWhiteSpace(text))
-	{
-		var classCssString = syntaxViewModelLocal.DefinitionNode is null
-			? string.Empty
-			: "di_te_syntax-onclick";
-	
-		<span class="@classCssString @syntaxHighlightingClassCssString"
-			  @onclick="() => syntaxViewModelLocal.HandleOnClick(TextEditorService, SyntaxKind.TypeDefinitionNode)">
-			@text
-		</span>
-	}
-	
-	@if (hasGenericParameterListing)
-	{
-		if (TypeReference != default)
-		{
-			var syntaxViewModel = new SyntaxViewModel(
-    		    SyntaxViewModel.ExtendedCompilerService,
-			    SyntaxViewModel.TextEditorService,
-			    SyntaxViewModel.ResourceUri,
-				targetSymbol: null,
-				targetNode: null,
-				definitionNode: null,
-				depth: syntaxViewModelLocal.Depth + 1);
-			<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="TypeReference" />
-		}
-		else
-		{
-			var syntaxViewModel = new SyntaxViewModel(
-    		    SyntaxViewModel.ExtendedCompilerService,
-			    SyntaxViewModel.TextEditorService,
-			    SyntaxViewModel.ResourceUri,
-				targetSymbol: null,
-				targetNode: syntaxViewModelLocal.TargetNode,
-				definitionNode: syntaxViewModelLocal.DefinitionNode,
-				depth: syntaxViewModelLocal.Depth + 1);
-			<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" />
-		}
-	}
-	
-	@if (hasQuestionMark is not null && hasQuestionMark.Value)
-	{
-		<text>?</text>
-	}
-	
-	@if (arrayRank > 0)
-	{
-	    if (typeKind == TypeKind.ArrayMultiDimensional)
-	    {
-	        <text>[</text>
-	        for (int badIndex = 0; badIndex < arrayRank - 1; badIndex++)
-    		{
-    			<text>,</text>
-    		}
-    		<text>]</text>
-	    }
-	    else
-	    {
-    		for (int badIndex = 0; badIndex < arrayRank; badIndex++)
-    		{
-    			<text>[]</text>
-    		}
-		}
-	}
-</span>
