@@ -1281,7 +1281,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     modelModifier,
                     lexerOutput.SyntaxTokenList.Select(x => x.TextSpan)
                         .Concat(lexerOutput.MiscTextSpanList)
-                        /*.Concat(cSharpCompilationUnit.SymbolList.Select(x => x.TextSpan))*/);
+                        .Concat(__CSharpBinder.SymbolList.Skip(cSharpCompilationUnit.IndexSymbolList).Take(cSharpCompilationUnit.CountSymbolList).Select(x => x.TextSpan)));
             }
 
             ResourceParsed?.Invoke();
