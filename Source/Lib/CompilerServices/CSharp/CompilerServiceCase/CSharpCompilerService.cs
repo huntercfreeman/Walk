@@ -749,7 +749,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var resource = GetResource(modelModifier.PersistentState.ResourceUri);
         var compilationUnitLocal = (CSharpCompilationUnit)resource.CompilationUnit;
         
-        // var symbols = compilationUnitLocal.SymbolList;
         // var diagnostics = compilationUnitLocal.DiagnosticList;
 
         /*if (diagnostics.Count != 0)
@@ -784,10 +783,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             }
         }*/
 
-        /*if (!foundMatch && symbols.Count != 0)
+        if (!foundMatch)
         {
-            foreach (var symbol in symbols)
+            for (int i = compilationUnitLocal.IndexSymbolList; i < compilationUnitLocal.IndexSymbolList + compilationUnitLocal.CountSymbolList; i++)
             {
+                var symbol = __CSharpBinder.SymbolList[i];
+                
                 if (cursorPositionIndex >= symbol.TextSpan.StartInclusiveIndex &&
                     cursorPositionIndex < symbol.TextSpan.EndExclusiveIndex)
                 {
@@ -825,7 +826,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         {
             viewModelModifier.PersistentState.TooltipModel = null;
             componentData.TextEditorViewModelSlimDisplay.TextEditorService.CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
-        }*/
+        }
 
         // TODO: Measure the tooltip, and reposition if it would go offscreen.
     }
