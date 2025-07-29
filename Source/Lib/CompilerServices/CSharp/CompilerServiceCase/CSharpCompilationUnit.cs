@@ -54,4 +54,5 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerS
     public IReadOnlyList<Symbol> SymbolList => __SymbolList;
 
     public Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)> SymbolIdToExternalTextSpanMap { get; }
+    // public Dictionary<string, Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)>> SymbolIdToExternalTextSpanMap { get; }
 }
