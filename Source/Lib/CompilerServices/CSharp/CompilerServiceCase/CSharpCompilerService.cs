@@ -964,7 +964,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         Category category,
         int positionIndex)
     {
-        /*
         var cursorPositionIndex = positionIndex;
 
         var foundMatch = false;
@@ -972,7 +971,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var resource = GetResource(modelModifier.PersistentState.ResourceUri);
         var compilationUnitLocal = (CSharpCompilationUnit)resource.CompilationUnit;
         
-        var symbolList = compilationUnitLocal.SymbolList;
+        var symbolList = __CSharpBinder.SymbolList.Skip(compilationUnitLocal.IndexSymbolList).Take(compilationUnitLocal.CountSymbolList).ToList();
         var foundSymbol = default(Symbol);
         
         foreach (var symbol in symbolList)
@@ -1132,15 +1131,23 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         
                         if (__CSharpBinder.__CompilationUnitMap.TryGetValue(new ResourceUri(file), out var innerCompilationUnit))
                         {
-                            var node = innerCompilationUnit.CodeBlockOwnerList.FirstOrDefault(x =>
-                            {
-                                return x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                                       ((TypeDefinitionNode)x).Unsafe_SelfIndexKey == tuple.ScopeIndexKey;
-                            });
+                            ISyntaxNode? otherTypeDefinitionNode = null;
                             
-                            if (node is not null)
+                            for (int i = innerCompilationUnit.IndexCodeBlockOwnerList; i < innerCompilationUnit.IndexCodeBlockOwnerList + innerCompilationUnit.CountCodeBlockOwnerList; i++)
                             {
-                                var typeDefinitionNode = (TypeDefinitionNode)node;
+                                var x = __CSharpBinder.CodeBlockOwnerList[i];
+                                
+                                if (x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                                    ((TypeDefinitionNode)x).Unsafe_SelfIndexKey == tuple.ScopeIndexKey)
+                                {
+                                    otherTypeDefinitionNode = x;
+                                    break;
+                                }
+                            }
+                            
+                            if (otherTypeDefinitionNode is not null)
+                            {
+                                var typeDefinitionNode = (TypeDefinitionNode)otherTypeDefinitionNode;
                                 positionIndex = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex;
                             }
                         }
@@ -1228,7 +1235,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 _textEditorService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
             }
         }
-        */
     }
     
     /// <summary>
