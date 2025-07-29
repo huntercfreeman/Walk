@@ -545,29 +545,41 @@ public static class ParseExpressions
                 return parenthesizedExpressionNode;
             }
             else if (ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes.Value &&
-                     ambiguousParenthesizedExpressionNode.NodeList.Count >= 1)
+                     ambiguousParenthesizedExpressionNode.CountAmbiguousParenthesizedExpressionNodeChildList >= 1)
             {
                 return AmbiguousParenthesizedExpressionTransformTo_TypeClauseNode(ambiguousParenthesizedExpressionNode, ref token, ref parserModel);
             }
             else if (!ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes.Value)
             {
-                if (ambiguousParenthesizedExpressionNode.NodeList.Count > 1)
+                if (ambiguousParenthesizedExpressionNode.CountAmbiguousParenthesizedExpressionNodeChildList > 1)
                 {
-                    if (ambiguousParenthesizedExpressionNode.IsParserContextKindForceStatementExpression ||
-                        ambiguousParenthesizedExpressionNode.NodeList.All(node => node.SyntaxKind == SyntaxKind.TypeClauseNode))
+                    if (ambiguousParenthesizedExpressionNode.IsParserContextKindForceStatementExpression)
                     {
-                        return AmbiguousParenthesizedExpressionTransformTo_TypeClauseNode(ambiguousParenthesizedExpressionNode, ref token, ref parserModel);
+                        var allChildrenAreTypeClauseNode = true;
+                        
+                        for (int i = ambiguousParenthesizedExpressionNode.IndexAmbiguousParenthesizedExpressionNodeChildList; i < ambiguousParenthesizedExpressionNode.IndexAmbiguousParenthesizedExpressionNodeChildList + ambiguousParenthesizedExpressionNode.CountAmbiguousParenthesizedExpressionNodeChildList; i++)
+                        {
+                            var node = parserModel.Binder.AmbiguousParenthesizedExpressionNodeChildList[i];
+                            if (node.SyntaxKind != SyntaxKind.TypeClauseNode)
+                            {
+                                allChildrenAreTypeClauseNode = false;
+                                break;
+                            }
+                        }
+                        
+                        if (allChildrenAreTypeClauseNode)
+                            return AmbiguousParenthesizedExpressionTransformTo_TypeClauseNode(ambiguousParenthesizedExpressionNode, ref token, ref parserModel);
                     }
                     
                     return AmbiguousParenthesizedExpressionTransformTo_TupleExpressionNode(ambiguousParenthesizedExpressionNode, expressionSecondary: null, ref parserModel);
                 }
-                else if (ambiguousParenthesizedExpressionNode.NodeList.Count == 1 &&
-                         UtilityApi.IsConvertibleToTypeClauseNode(ambiguousParenthesizedExpressionNode.NodeList[0].SyntaxKind) ||
-                         ambiguousParenthesizedExpressionNode.NodeList[0].SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode ||
-                         ambiguousParenthesizedExpressionNode.NodeList[0].SyntaxKind == SyntaxKind.VariableReferenceNode)
+                else if (ambiguousParenthesizedExpressionNode.CountAmbiguousParenthesizedExpressionNodeChildList == 1 &&
+                         UtilityApi.IsConvertibleToTypeClauseNode(parserModel.Binder.AmbiguousParenthesizedExpressionNodeChildList[ambiguousParenthesizedExpressionNode.IndexAmbiguousParenthesizedExpressionNodeChildList].SyntaxKind) ||
+                         parserModel.Binder.AmbiguousParenthesizedExpressionNodeChildList[ambiguousParenthesizedExpressionNode.IndexAmbiguousParenthesizedExpressionNodeChildList].SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode ||
+                         parserModel.Binder.AmbiguousParenthesizedExpressionNodeChildList[ambiguousParenthesizedExpressionNode.IndexAmbiguousParenthesizedExpressionNodeChildList].SyntaxKind == SyntaxKind.VariableReferenceNode)
                 {
                     return AmbiguousParenthesizedExpressionTransformTo_ExplicitCastNode(
-                        ambiguousParenthesizedExpressionNode, (IExpressionNode)ambiguousParenthesizedExpressionNode.NodeList[0], ref token, ref parserModel);
+                        ambiguousParenthesizedExpressionNode, (IExpressionNode)parserModel.Binder.AmbiguousParenthesizedExpressionNodeChildList[ambiguousParenthesizedExpressionNode.IndexAmbiguousParenthesizedExpressionNodeChildList], ref token, ref parserModel);
                 }
             }
         }
@@ -591,7 +603,10 @@ public static class ParseExpressions
                 if (ambiguousParenthesizedExpressionNode.IsParserContextKindForceStatementExpression)
                     parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
                 
-                ambiguousParenthesizedExpressionNode.NodeList.Add(expressionSecondary);
+                parserModel.Binder.AmbiguousParenthesizedExpressionNodeChildList.Insert(
+                    ambiguousParenthesizedExpressionNode.IndexAmbiguousParenthesizedExpressionNodeChildList + ambiguousParenthesizedExpressionNode.CountAmbiguousParenthesizedExpressionNodeChildList,
+                    expressionSecondary);
+                ++ambiguousParenthesizedExpressionNode.CountAmbiguousParenthesizedExpressionNodeChildList;
                 return ambiguousParenthesizedExpressionNode;
             case SyntaxKind.AmbiguousIdentifierExpressionNode:
             case SyntaxKind.TypeClauseNode:
@@ -619,7 +634,10 @@ public static class ParseExpressions
                     };
                 }
                 
-                ambiguousParenthesizedExpressionNode.NodeList.Add(expressionSecondary);
+                parserModel.Binder.AmbiguousParenthesizedExpressionNodeChildList.Insert(
+                    ambiguousParenthesizedExpressionNode.IndexAmbiguousParenthesizedExpressionNodeChildList + ambiguousParenthesizedExpressionNode.CountAmbiguousParenthesizedExpressionNodeChildList,
+                    expressionSecondary);
+                ++ambiguousParenthesizedExpressionNode.CountAmbiguousParenthesizedExpressionNodeChildList;
                 return ambiguousParenthesizedExpressionNode;
             case SyntaxKind.AmbiguousParenthesizedExpressionNode:
                 // The 'AmbiguousParenthesizedExpressionNode' merging with 'SyntaxToken' method will
@@ -631,7 +649,7 @@ public static class ParseExpressions
         
         // 'ambiguousParenthesizedExpressionNode.NodeList.Count > 0' because the current was never added,
         // so if there already is 1, then there'd be many expressions.
-        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken || ambiguousParenthesizedExpressionNode.NodeList.Count > 0)
+        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken || ambiguousParenthesizedExpressionNode.CountAmbiguousParenthesizedExpressionNodeChildList > 0)
         {
             return AmbiguousParenthesizedExpressionTransformTo_TupleExpressionNode(ambiguousParenthesizedExpressionNode, expressionSecondary, ref parserModel);
         }
@@ -3324,8 +3342,9 @@ public static class ParseExpressions
     {
         var tupleExpressionNode = new TupleExpressionNode();
             
-        foreach (var node in ambiguousParenthesizedExpressionNode.NodeList)
+        for (int i = ambiguousParenthesizedExpressionNode.IndexAmbiguousParenthesizedExpressionNodeChildList; i < ambiguousParenthesizedExpressionNode.IndexAmbiguousParenthesizedExpressionNodeChildList + ambiguousParenthesizedExpressionNode.CountAmbiguousParenthesizedExpressionNodeChildList; i++)
         {
+            var node = parserModel.Binder.AmbiguousParenthesizedExpressionNodeChildList[i];
             if (node is IExpressionNode expressionNode)
             {
                 // (x, y) => 3; # Lambda expression node
@@ -3421,49 +3440,47 @@ public static class ParseExpressions
     {
         var lambdaExpressionNode = new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeReference());
                     
-        if (ambiguousParenthesizedExpressionNode.NodeList is not null)
+        if (ambiguousParenthesizedExpressionNode.CountAmbiguousParenthesizedExpressionNodeChildList >= 1)
         {
-            if (ambiguousParenthesizedExpressionNode.NodeList.Count >= 1)
+            for (int i = ambiguousParenthesizedExpressionNode.IndexAmbiguousParenthesizedExpressionNodeChildList; i < ambiguousParenthesizedExpressionNode.IndexAmbiguousParenthesizedExpressionNodeChildList + ambiguousParenthesizedExpressionNode.CountAmbiguousParenthesizedExpressionNodeChildList; i++)
             {
-                foreach (var node in ambiguousParenthesizedExpressionNode.NodeList)
+                var node = parserModel.Binder.AmbiguousParenthesizedExpressionNodeChildList[i];
+                if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
                 {
-                    if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+                    lambdaExpressionNode.VariableDeclarationNodeList.Add((VariableDeclarationNode)node);
+                }
+                else
+                {
+                    SyntaxToken identifierToken;
+                
+                    if (node.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
                     {
-                        lambdaExpressionNode.VariableDeclarationNodeList.Add((VariableDeclarationNode)node);
+                        var token = ((AmbiguousIdentifierExpressionNode)node).Token;
+                        identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, ref parserModel);
+                    }
+                    else if (node.SyntaxKind == SyntaxKind.TypeClauseNode)
+                    {
+                        var token = ((TypeClauseNode)node).TypeIdentifierToken;
+                        identifierToken = identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, ref parserModel);
+                    }
+                    else if (node.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                    {
+                        var token = ((VariableReferenceNode)node).VariableIdentifierToken;
+                        identifierToken = identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, ref parserModel);
                     }
                     else
                     {
-                        SyntaxToken identifierToken;
-                    
-                        if (node.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-                        {
-                            var token = ((AmbiguousIdentifierExpressionNode)node).Token;
-                            identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, ref parserModel);
-                        }
-                        else if (node.SyntaxKind == SyntaxKind.TypeClauseNode)
-                        {
-                            var token = ((TypeClauseNode)node).TypeIdentifierToken;
-                            identifierToken = identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, ref parserModel);
-                        }
-                        else if (node.SyntaxKind == SyntaxKind.VariableReferenceNode)
-                        {
-                            var token = ((VariableReferenceNode)node).VariableIdentifierToken;
-                            identifierToken = identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, ref parserModel);
-                        }
-                        else
-                        {
-                            return parserModel.Binder.Shared_BadExpressionNode;
-                        }
-                    
-                        var variableDeclarationNode = new VariableDeclarationNode(
-                            TypeFacts.Empty.ToTypeReference(),
-                            identifierToken,
-                            VariableKind.Local,
-                            false,
-                            parserModel.Compilation.ResourceUri);
-                            
-                        lambdaExpressionNode.VariableDeclarationNodeList.Add(variableDeclarationNode);
+                        return parserModel.Binder.Shared_BadExpressionNode;
                     }
+                
+                    var variableDeclarationNode = new VariableDeclarationNode(
+                        TypeFacts.Empty.ToTypeReference(),
+                        identifierToken,
+                        VariableKind.Local,
+                        false,
+                        parserModel.Compilation.ResourceUri);
+                        
+                    lambdaExpressionNode.VariableDeclarationNodeList.Add(variableDeclarationNode);
                 }
             }
         }

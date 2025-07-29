@@ -93,6 +93,8 @@ public ref struct CSharpParserModel
         
         ExternalTypeDefinitionList = Binder.CSharpParserModel_ExternalTypeDefinitionList;
         ExternalTypeDefinitionList.Clear();
+        
+        Binder.AmbiguousParenthesizedExpressionNodeChildList.Clear();
     }
     
     public ReadOnlySpan<char> Text { get; }
