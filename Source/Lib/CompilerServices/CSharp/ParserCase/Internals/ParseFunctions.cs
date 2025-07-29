@@ -95,7 +95,6 @@ public class ParseFunctions
         FunctionDefinitionNode existingNode,
         ref CSharpParserModel parserModel)
     {
-        /*
         if (!parserModel.Binder.MethodOverload_ResourceUri_WasCleared)
         {
             parserModel.Binder.MethodOverload_ResourceUri_WasCleared = true;
@@ -123,9 +122,9 @@ public class ParseFunctions
             {
                 existingWasFound = false;
                 
-                if (existingNode.Unsafe_ParentIndexKey < previousCompilationUnit.CodeBlockOwnerList.Count)
+                if (existingNode.Unsafe_ParentIndexKey < previousCompilationUnit.CountCodeBlockOwnerList)
                 {
-                    var previousParent = previousCompilationUnit.CodeBlockOwnerList[existingNode.Unsafe_ParentIndexKey];
+                    var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.IndexCodeBlockOwnerList + existingNode.Unsafe_ParentIndexKey];
                     var currentParent = parserModel.GetParent(newNode, parserModel.Compilation);
                     
                     if (currentParent.SyntaxKind == previousParent.SyntaxKind &&
@@ -141,10 +140,22 @@ public class ParseFunctions
                         // TODO: Cannot use ref, out, or in...
                         var compilation = parserModel.Compilation;
                         
-                        var previousNode = previousCompilationUnit.CodeBlockOwnerList.FirstOrDefault(x =>
-                            x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
-                            x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
-                            binder.GetIdentifierText(x, previousCompilationUnit) == binder.GetIdentifierText(existingNode, compilation));
+                        ISyntaxNode? previousNode = null;
+                        
+                        for (int indexPreviousNode = previousCompilationUnit.IndexCodeBlockOwnerList;
+                             indexPreviousNode < previousCompilationUnit.IndexCodeBlockOwnerList + previousCompilationUnit.CountCodeBlockOwnerList;
+                             indexPreviousNode++)
+                        {
+                            var x = parserModel.Binder.CodeBlockOwnerList[indexPreviousNode];
+                            
+                            if (x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
+                                x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
+                                binder.GetIdentifierText(x, previousCompilationUnit) == binder.GetIdentifierText(existingNode, compilation))
+                            {
+                                previousNode = x;
+                                break;
+                            }
+                        }
                     
                         if (previousNode is not null)
                         {
