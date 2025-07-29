@@ -25,11 +25,6 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerS
         CompilationUnitKind = compilationUnitKind;
     }
     
-    public IEnumerable<TextEditorTextSpan> GetDiagnosticTextSpans()
-    {
-        return DiagnosticList.Select(x => x.TextSpan);
-    }
-    
     ICompilationUnit ICompilerServiceResource.CompilationUnit { get => this; set => _ = value; }
     
     public CompilationUnitKind CompilationUnitKind { get; }
@@ -37,8 +32,13 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerS
     public ResourceUri ResourceUri { get; set; }
     public string SourceText { get; set; }
     
-    public List<TextEditorDiagnostic> __DiagnosticList { get; } = new();
-    public List<Symbol> __SymbolList { get; set; } = new();
+    /// <summary>Set this index in the CSharpParserModel constructor</summary>
+    public int IndexDiagnosticList { get; set; }
+    public int CountDiagnosticList { get; set; }
+    
+    /// <summary>Set this index in the CSharpParserModel constructor</summary>
+    public int IndexSymbolList { get; set; }
+    public int CountSymbolList { get; set; }
     
     /// <summary>This needs to initialize to -1 to signify there are no entries in the pooled list.</summary>
     public int IndexFunctionInvocationParameterMetadataList { get; set; } = -1;
@@ -46,7 +46,4 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerS
     
     public List<ICodeBlockOwner> CodeBlockOwnerList { get; } = new();
     public List<ISyntaxNode> NodeList { get; } = new();
-    
-    public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => __DiagnosticList;
-    public IReadOnlyList<Symbol> SymbolList => __SymbolList;
 }

@@ -42,11 +42,13 @@ public static class ParseOthers
                 {
                     if (parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.IndividualFile_AllData)
                     {
-                        parserModel.Compilation.__SymbolList.Add(
+                        parserModel.Binder.SymbolList.Insert(
+                            parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
                             new Symbol(
                                 SyntaxKind.NamespaceSymbol,
                                 parserModel.GetNextSymbolId(),
                                 textSpan));
+                        ++parserModel.Compilation.CountSymbolList;
                     }
                 
                     if (isNamespaceStatement)
@@ -80,11 +82,13 @@ public static class ParseOthers
         if (count == 0)
             return default;
             
-        parserModel.Compilation.__SymbolList.Add(
+        parserModel.Binder.SymbolList.Insert(
+            parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
             new Symbol(
                 SyntaxKind.NamespaceSymbol,
                 parserModel.GetNextSymbolId(),
                 textSpan));
+        ++parserModel.Compilation.CountSymbolList;
 
         return new SyntaxToken(SyntaxKind.IdentifierToken, textSpan);
     }

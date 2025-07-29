@@ -106,7 +106,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         return contextMenu.GetDefaultMenuRecord();
     }
     
-    private MenuRecord? GetAutocompleteMenuPart(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu, int positionIndex)
+    /*private MenuRecord? GetAutocompleteMenuPart(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu, int positionIndex)
     {
         var character = '\0';
         
@@ -140,7 +140,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             
             switch (character)
             {
-                /* Lowercase Letters */
+                /* Lowercase Letters *//*
                 case 'a':
                 case 'b':
                 case 'c':
@@ -167,7 +167,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 case 'x':
                 case 'y':
                 case 'z':
-                /* Uppercase Letters */
+                /* Uppercase Letters *//*
                 case 'A':
                 case 'B':
                 case 'C':
@@ -194,7 +194,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 case 'X':
                 case 'Y':
                 case 'Z':
-                /* Underscore */
+                /* Underscore *//*
                 case '_':
                     if (foundMemberAccessToken)
                     {
@@ -341,7 +341,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             var compilationUnitLocal = (CSharpCompilationUnit)resource.CompilationUnit;
             
             var symbols = compilationUnitLocal.SymbolList;
-            var diagnostics = compilationUnitLocal.DiagnosticList;
+            // var diagnostics = compilationUnitLocal.DiagnosticList;
             
             Symbol foundSymbol = default;
     
@@ -595,15 +595,15 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         }
         
         return null;
-    }
+    }*/
 
     public MenuRecord GetAutocompleteMenu(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu)
     {
         var positionIndex = virtualizationResult.Model.GetPositionIndex(virtualizationResult.ViewModel);
         
-        var autocompleteMenuPart = GetAutocompleteMenuPart(virtualizationResult, autocompleteMenu, positionIndex);
+        /*var autocompleteMenuPart = GetAutocompleteMenuPart(virtualizationResult, autocompleteMenu, positionIndex);
         if (autocompleteMenuPart is not null)
-            return autocompleteMenuPart;
+            return autocompleteMenuPart;*/
         
         var word = virtualizationResult.Model.ReadPreviousWordOrDefault(
             virtualizationResult.ViewModel.LineIndex,
@@ -749,10 +749,10 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var resource = GetResource(modelModifier.PersistentState.ResourceUri);
         var compilationUnitLocal = (CSharpCompilationUnit)resource.CompilationUnit;
         
-        var symbols = compilationUnitLocal.SymbolList;
-        var diagnostics = compilationUnitLocal.DiagnosticList;
+        // var symbols = compilationUnitLocal.SymbolList;
+        // var diagnostics = compilationUnitLocal.DiagnosticList;
 
-        if (diagnostics.Count != 0)
+        /*if (diagnostics.Count != 0)
         {
             foreach (var diagnostic in diagnostics)
             {
@@ -782,9 +782,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     componentData.TextEditorViewModelSlimDisplay.TextEditorService.CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
                 }
             }
-        }
+        }*/
 
-        if (!foundMatch && symbols.Count != 0)
+        /*if (!foundMatch && symbols.Count != 0)
         {
             foreach (var symbol in symbols)
             {
@@ -825,7 +825,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         {
             viewModelModifier.PersistentState.TooltipModel = null;
             componentData.TextEditorViewModelSlimDisplay.TextEditorService.CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
-        }
+        }*/
 
         // TODO: Measure the tooltip, and reposition if it would go offscreen.
     }
@@ -963,6 +963,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         Category category,
         int positionIndex)
     {
+        /*
         var cursorPositionIndex = positionIndex;
 
         var foundMatch = false;
@@ -1226,6 +1227,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 _textEditorService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
             }
         }
+        */
     }
     
     /// <summary>
@@ -1263,14 +1265,14 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         }
         finally
         {
-            var diagnosticTextSpans = cSharpCompilationUnit.DiagnosticList
-                .Select(x => x.TextSpan)
-                .ToList();
+            //var diagnosticTextSpans = cSharpCompilationUnit.DiagnosticList
+            //    .Select(x => x.TextSpan)
+            //    .ToList();
 
             modelModifier.CompletePendingCalculatePresentationModel(
                 TextEditorFacts.CompilerServiceDiagnosticPresentation_PresentationKey,
                 TextEditorFacts.CompilerServiceDiagnosticPresentation_EmptyPresentationModel,
-                diagnosticTextSpans);
+                _emptyDiagnosticTextSpans);
             
             if (shouldApplySyntaxHighlighting)
             {
@@ -1279,7 +1281,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     modelModifier,
                     lexerOutput.SyntaxTokenList.Select(x => x.TextSpan)
                         .Concat(lexerOutput.MiscTextSpanList)
-                        .Concat(cSharpCompilationUnit.SymbolList.Select(x => x.TextSpan)));
+                        /*.Concat(cSharpCompilationUnit.SymbolList.Select(x => x.TextSpan))*/);
             }
 
             ResourceParsed?.Invoke();
@@ -1287,6 +1289,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         
         return ValueTask.CompletedTask;
     }
+    
+    private readonly List<TextEditorTextSpan> _emptyDiagnosticTextSpans = new();
     
     public async ValueTask FastParseAsync(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
     {

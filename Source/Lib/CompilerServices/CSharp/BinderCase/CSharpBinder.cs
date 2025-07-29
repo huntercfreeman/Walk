@@ -65,6 +65,8 @@ public class CSharpBinder
     public List<VariableDeclarationNode> LambdaExpressionNodeChildList { get; } = new();
     public List<FunctionInvocationParameterMetadata> FunctionInvocationParameterMetadataList { get; } = new();
     public Dictionary<string, Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)>> SymbolIdToExternalTextSpanMap { get; } = new();
+    public List<Walk.TextEditor.RazorLib.CompilerServices.TextEditorDiagnostic> DiagnosticList { get; } = new();
+    public List<Symbol> SymbolList { get; } = new();
     
     public AmbiguousIdentifierExpressionNode CSharpParserModel_AmbiguousIdentifierExpressionNode { get; } = new AmbiguousIdentifierExpressionNode(
         default,
@@ -1027,7 +1029,7 @@ public class CSharpBinder
     ///       ...This should likely be changed, because function argument goto definition won't work if done from the argument listing, rather than the code block of the function.
     ///       This method will act as a temporary work around.
     /// </summary>
-    public ISyntaxNode? GetFallbackNode(CSharpCompilationUnit compilationUnit, int positionIndex, ICodeBlockOwner codeBlockOwner)
+    /*public ISyntaxNode? GetFallbackNode(CSharpCompilationUnit compilationUnit, int positionIndex, ICodeBlockOwner codeBlockOwner)
     {
         if (compilationUnit is null)
             return null;
@@ -1074,7 +1076,7 @@ public class CSharpBinder
         }
 
         return null;
-    }
+    }*/
     
     /// <summary>
     /// If the provided syntaxNode's SyntaxKind is not recognized, then (-1, -1) is returned.

@@ -7,7 +7,6 @@ namespace Walk.Extensions.CompilerServices;
 
 public interface IExtendedCompilationUnit : ICompilationUnit
 {
-    public IReadOnlyList<Symbol> SymbolList { get; }
     /// <summary>
     /// This contains all "relevant" ISyntaxNode that were parsed for the file.
     ///

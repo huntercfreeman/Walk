@@ -108,6 +108,10 @@ public ref struct CSharpParserModel
         {
             Binder.SymbolIdToExternalTextSpanMap.Remove(Compilation.ResourceUri.Value);
         }
+        
+        Compilation.IndexDiagnosticList = Binder.DiagnosticList.Count;
+        
+        Compilation.IndexSymbolList = Binder.SymbolList.Count;
     }
     
     public ReadOnlySpan<char> Text { get; }
@@ -260,7 +264,8 @@ public ref struct CSharpParserModel
     
     public void BindDiscard(SyntaxToken identifierToken)
     {
-        Compilation.__SymbolList.Add(
+        Binder.SymbolList.Insert(
+            Compilation.IndexSymbolList + Compilation.CountSymbolList,
             new Symbol(
                 SyntaxKind.DiscardSymbol,
                 GetNextSymbolId(),
@@ -268,19 +273,21 @@ public ref struct CSharpParserModel
                 {
                     DecorationByte = (byte)GenericDecorationKind.None,
                 }));
+        ++Compilation.CountSymbolList;
     }
     
     public void BindFunctionDefinitionNode(FunctionDefinitionNode functionDefinitionNode)
     {
-        var functionSymbol = new Symbol(
+        Binder.SymbolList.Insert(
+            Compilation.IndexSymbolList + Compilation.CountSymbolList,
+            new Symbol(
             SyntaxKind.FunctionSymbol,
             GetNextSymbolId(),
             functionDefinitionNode.FunctionIdentifierToken.TextSpan with
             {
                 DecorationByte = (byte)GenericDecorationKind.Function
-            });
-
-        Compilation.__SymbolList.Add(functionSymbol);
+            }));
+        ++Compilation.CountSymbolList;
     }
     
     public void BindNamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
@@ -334,10 +341,15 @@ public ref struct CSharpParserModel
                     variableDeclarationNode);
             }
 
+            /*Binder.DiagnosticList.Insert(
+                Compilation.IndexDiagnosticList + Compilation.CountDiagnosticList,
+                ...);
+            Compilation.CountDiagnosticList++;
+            
             DiagnosticHelper.ReportAlreadyDefinedVariable(
                 Compilation.__DiagnosticList,
                 variableDeclarationNode.IdentifierToken.TextSpan,
-                text);
+                text);*/
         }
         else
         {
@@ -351,7 +363,9 @@ public ref struct CSharpParserModel
     
     public void BindLabelDeclarationNode(LabelDeclarationNode labelDeclarationNode)
     {
-        Compilation.__SymbolList.Add(
+    
+        Binder.SymbolList.Insert(
+            Compilation.IndexSymbolList + Compilation.CountSymbolList,
             new Symbol(
                 SyntaxKind.LabelSymbol,
                 GetNextSymbolId(),
@@ -359,7 +373,8 @@ public ref struct CSharpParserModel
                 {
                     DecorationByte = (byte)GenericDecorationKind.None
                 }));
-            
+        ++Compilation.CountSymbolList;
+    
         var text = Binder.TextEditorService.EditContext_GetText(Text.Slice(labelDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, labelDeclarationNode.IdentifierToken.TextSpan.Length));
         
         if (TryGetLabelDeclarationNodeByScope(
@@ -381,10 +396,15 @@ public ref struct CSharpParserModel
                     labelDeclarationNode);
             }
 
+            /*Binder.DiagnosticList.Insert(
+                Compilation.IndexDiagnosticList + Compilation.CountDiagnosticList,
+                ...);
+            Compilation.CountDiagnosticList++;
+
             DiagnosticHelper.ReportAlreadyDefinedLabel(
                 Compilation.__DiagnosticList,
                 labelDeclarationNode.IdentifierToken.TextSpan,
-                text);
+                text);*/
         }
         else
         {
@@ -439,7 +459,9 @@ public ref struct CSharpParserModel
     
     public void BindLabelReferenceNode(LabelReferenceNode labelReferenceNode)
     {
-        Compilation.__SymbolList.Add(
+    
+        Binder.SymbolList.Insert(
+            Compilation.IndexSymbolList + Compilation.CountSymbolList,
             new Symbol(
                 SyntaxKind.LabelSymbol,
                 GetNextSymbolId(),
@@ -447,34 +469,37 @@ public ref struct CSharpParserModel
                 {
                     DecorationByte = (byte)GenericDecorationKind.None
                 }));
+        ++Compilation.CountSymbolList;
     }
 
     public void BindConstructorDefinitionIdentifierToken(SyntaxToken identifierToken)
     {
-        var constructorSymbol = new Symbol(
+        Binder.SymbolList.Insert(
+            Compilation.IndexSymbolList + Compilation.CountSymbolList,
+            new Symbol(
             SyntaxKind.ConstructorSymbol,
             GetNextSymbolId(),
             identifierToken.TextSpan with
             {
                 DecorationByte = (byte)GenericDecorationKind.Type
-            });
-
-        Compilation.__SymbolList.Add(constructorSymbol);
+            }));
+        ++Compilation.CountSymbolList;
     }
 
     public void BindFunctionInvocationNode(FunctionInvocationNode functionInvocationNode)
     {
         var functionInvocationIdentifierText = Binder.TextEditorService.EditContext_GetText(Text.Slice(functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Length));
 
-        var functionSymbol = new Symbol(
+        Binder.SymbolList.Insert(
+            Compilation.IndexSymbolList + Compilation.CountSymbolList,
+            new Symbol(
             SyntaxKind.FunctionSymbol,
             GetNextSymbolId(),
             functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
             {
                 DecorationByte = (byte)GenericDecorationKind.Function
-            });
-
-        Compilation.__SymbolList.Add(functionSymbol);
+            }));
+        ++Compilation.CountSymbolList;
 
         if (TryGetFunctionHierarchically(
                 Compilation,
@@ -489,30 +514,32 @@ public ref struct CSharpParserModel
 
     public void BindNamespaceReference(SyntaxToken namespaceIdentifierToken)
     {
-        var namespaceSymbol = new Symbol(
+        Binder.SymbolList.Insert(
+            Compilation.IndexSymbolList + Compilation.CountSymbolList,
+            new Symbol(
             SyntaxKind.NamespaceSymbol,
             GetNextSymbolId(),
             namespaceIdentifierToken.TextSpan with
             {
                 DecorationByte = (byte)GenericDecorationKind.None
-            });
-
-        Compilation.__SymbolList.Add(namespaceSymbol);
+            }));
+        ++Compilation.CountSymbolList;
     }
 
     public void BindTypeClauseNode(TypeClauseNode typeClauseNode)
     {
         if (!typeClauseNode.IsKeywordType)
         {
-            var typeSymbol = new Symbol(
+            Binder.SymbolList.Insert(
+                Compilation.IndexSymbolList + Compilation.CountSymbolList,
+                new Symbol(
                 SyntaxKind.TypeSymbol,
                 GetNextSymbolId(),
                 typeClauseNode.TypeIdentifierToken.TextSpan with
                 {
                     DecorationByte = (byte)GenericDecorationKind.Type
-                });
-
-            Compilation.__SymbolList.Add(typeSymbol);
+                }));
+            ++Compilation.CountSymbolList;
         }
     }
     
@@ -520,15 +547,16 @@ public ref struct CSharpParserModel
     {
         if (identifierToken.SyntaxKind == SyntaxKind.IdentifierToken)
         {
-            var typeSymbol = new Symbol(
+            Binder.SymbolList.Insert(
+                Compilation.IndexSymbolList + Compilation.CountSymbolList,
+                new Symbol(
                 SyntaxKind.TypeSymbol,
                 GetNextSymbolId(),
                 identifierToken.TextSpan with
                 {
                     DecorationByte = (byte)GenericDecorationKind.Type
-                });
-
-            Compilation.__SymbolList.Add(typeSymbol);
+                }));
+            ++Compilation.CountSymbolList;
         }
     }
 
@@ -633,7 +661,8 @@ public ref struct CSharpParserModel
         switch (variableKind)
         {
             case VariableKind.Field:
-                Compilation.__SymbolList.Add(
+                Binder.SymbolList.Insert(
+                    Compilation.IndexSymbolList + Compilation.CountSymbolList,
                     new Symbol(
                         SyntaxKind.FieldSymbol,
                         symbolId,
@@ -641,9 +670,11 @@ public ref struct CSharpParserModel
                         {
                             DecorationByte = (byte)GenericDecorationKind.Field
                         }));
+                ++Compilation.CountSymbolList;
                 break;
             case VariableKind.Property:
-                Compilation.__SymbolList.Add(
+                Binder.SymbolList.Insert(
+                    Compilation.IndexSymbolList + Compilation.CountSymbolList,
                     new Symbol(
                         SyntaxKind.PropertySymbol,
                         symbolId,
@@ -651,9 +682,11 @@ public ref struct CSharpParserModel
                         {
                             DecorationByte = (byte)GenericDecorationKind.Property
                         }));
+                ++Compilation.CountSymbolList;
                 break;
             case VariableKind.EnumMember:
-                Compilation.__SymbolList.Add(
+                Binder.SymbolList.Insert(
+                    Compilation.IndexSymbolList + Compilation.CountSymbolList,
                     new Symbol(
                         SyntaxKind.EnumMemberSymbol,
                         symbolId,
@@ -661,13 +694,15 @@ public ref struct CSharpParserModel
                         {
                             DecorationByte = (byte)GenericDecorationKind.Property
                         }));
+                ++Compilation.CountSymbolList;
                 break;
             case VariableKind.Local:
                 goto default;
             case VariableKind.Closure:
                 goto default;
             default:
-                Compilation.__SymbolList.Add(
+                Binder.SymbolList.Insert(
+                    Compilation.IndexSymbolList + Compilation.CountSymbolList,
                     new Symbol(
                         SyntaxKind.VariableSymbol,
                         symbolId,
@@ -675,6 +710,7 @@ public ref struct CSharpParserModel
                         {
                             DecorationByte = (byte)GenericDecorationKind.Variable
                         }));
+                ++Compilation.CountSymbolList;
                 break;
         }
         

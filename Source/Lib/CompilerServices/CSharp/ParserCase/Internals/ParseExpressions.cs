@@ -936,22 +936,25 @@ public static class ParseExpressions
         
         if (!typeClauseNode.IsKeywordType)
         {
-            var typeSymbol = new Symbol(
-                SyntaxKind.TypeSymbol,
-                parserModel.GetNextSymbolId(),
-                typeClauseNode.TypeIdentifierToken.TextSpan with
-                {
-                    DecorationByte = (byte)GenericDecorationKind.Type
-                });
-
-            parserModel.Compilation.__SymbolList.Add(typeSymbol);
+            var symbolId = parserModel.GetNextSymbolId();
+            
+            parserModel.Binder.SymbolList.Insert(
+                parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
+                new Symbol(
+                    SyntaxKind.TypeSymbol,
+                    symbolId,
+                    typeClauseNode.TypeIdentifierToken.TextSpan with
+                    {
+                        DecorationByte = (byte)GenericDecorationKind.Type
+                    }));
+            ++parserModel.Compilation.CountSymbolList;
             
             if (parserModel.Binder.SymbolIdToExternalTextSpanMap.TryGetValue(parserModel.Compilation.ResourceUri.Value, out var symbolIdToExternalTextSpanMap) &&
                 typeDefinitionNode is not null &&
                 typeClauseNode.ExplicitDefinitionResourceUri != parserModel.Compilation.ResourceUri)
             {
                 symbolIdToExternalTextSpanMap.TryAdd(
-                    typeSymbol.SymbolId,
+                    symbolId,
                     (typeDefinitionNode.ResourceUri, typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex));
             }
         }
@@ -1037,21 +1040,24 @@ public static class ParseExpressions
                 
                 if (!typeClauseNode.IsKeywordType)
                 {
-                    var typeSymbol = new Symbol(
-                        SyntaxKind.TypeSymbol,
-                        parserModel.GetNextSymbolId(),
-                        typeClauseNode.TypeIdentifierToken.TextSpan with
-                        {
-                            DecorationByte = (byte)GenericDecorationKind.Type
-                        });
-        
-                    parserModel.Compilation.__SymbolList.Add(typeSymbol);
+                    var symbolId = parserModel.GetNextSymbolId();
+                
+                    parserModel.Binder.SymbolList.Insert(
+                        parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
+                        new Symbol(
+                            SyntaxKind.TypeSymbol,
+                            symbolId,
+                            typeClauseNode.TypeIdentifierToken.TextSpan with
+                            {
+                                DecorationByte = (byte)GenericDecorationKind.Type
+                            }));
+                    ++parserModel.Compilation.CountSymbolList;
                     
                     if (parserModel.Binder.SymbolIdToExternalTextSpanMap.TryGetValue(parserModel.Compilation.ResourceUri.Value, out var symbolIdToExternalTextSpanMap) &&
                         typeClauseNode.ExplicitDefinitionResourceUri != parserModel.Compilation.ResourceUri)
                     {
                         symbolIdToExternalTextSpanMap.TryAdd(
-                            typeSymbol.SymbolId,
+                            symbolId,
                             (typeDefinitionNode.ResourceUri, typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex));
                     }
                 }
@@ -1104,15 +1110,16 @@ public static class ParseExpressions
                     
                     functionDefinitionNode?.ReturnTypeReference ?? CSharpFacts.Types.Void.ToTypeReference());
 
-                var functionSymbol = new Symbol(
-                    SyntaxKind.FunctionSymbol,
-                    parserModel.GetNextSymbolId(),
-                    functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
-                    {
-                        DecorationByte = (byte)GenericDecorationKind.Function
-                    });
-        
-                parserModel.Compilation.__SymbolList.Add(functionSymbol);
+                parserModel.Binder.SymbolList.Insert(
+                    parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
+                    new Symbol(
+                        SyntaxKind.FunctionSymbol,
+                        parserModel.GetNextSymbolId(),
+                        functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
+                        {
+                            DecorationByte = (byte)GenericDecorationKind.Function
+                        }));
+                ++parserModel.Compilation.CountSymbolList;
                 
                 // TODO: Method groups
 
@@ -1125,10 +1132,15 @@ public static class ParseExpressions
                 out var namespacePrefixNode))
             {
                 result = new NamespaceClauseNode(ambiguousIdentifierExpressionNode.Token);
-                parserModel.Compilation.__SymbolList.Add(new Symbol(
-                    SyntaxKind.NamespaceSymbol,
-                    parserModel.GetNextSymbolId(),
-                    ambiguousIdentifierExpressionNode.Token.TextSpan));
+                
+                parserModel.Binder.SymbolList.Insert(
+                    parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
+                    new Symbol(
+                        SyntaxKind.NamespaceSymbol,
+                        parserModel.GetNextSymbolId(),
+                        ambiguousIdentifierExpressionNode.Token.TextSpan));
+                ++parserModel.Compilation.CountSymbolList;
+                    
                 goto finalize;
             }
             
@@ -2127,7 +2139,10 @@ public static class ParseExpressions
                 token.TextSpan.EndExclusiveIndex,
                 (byte)GenericDecorationKind.None);
         
-            parserModel.Compilation.__SymbolList.Add(new Symbol(SyntaxKind.LambdaSymbol, parserModel.GetNextSymbolId(), textSpan));
+            parserModel.Binder.SymbolList.Insert(
+                parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
+                new Symbol(SyntaxKind.LambdaSymbol, parserModel.GetNextSymbolId(), textSpan));
+            ++parserModel.Compilation.CountSymbolList;
         
             if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
             {
@@ -3169,15 +3184,18 @@ public static class ParseExpressions
             		closeParenthesisToken: default,
                     functionDefinitionNode.ReturnTypeReference);
                 
-                var functionSymbol = new Symbol(
-                    SyntaxKind.FunctionSymbol,
-                    parserModel.GetNextSymbolId(),
-                    functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
-                    {
-                        DecorationByte = (byte)GenericDecorationKind.Function
-                    });
-                parserModel.Compilation.__SymbolList.Add(functionSymbol);
-                var symbolId = functionSymbol.SymbolId;
+                var symbolId = parserModel.GetNextSymbolId();
+                
+                parserModel.Binder.SymbolList.Insert(
+                    parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
+                    new Symbol(
+                        SyntaxKind.FunctionSymbol,
+                        symbolId,
+                        functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
+                        {
+                            DecorationByte = (byte)GenericDecorationKind.Function
+                        }));
+                ++parserModel.Compilation.CountSymbolList;
                 
                 if (parserModel.Binder.SymbolIdToExternalTextSpanMap.TryGetValue(parserModel.Compilation.ResourceUri.Value, out var symbolIdToExternalTextSpanMap))
                 {
@@ -3219,14 +3237,17 @@ public static class ParseExpressions
                 countFunctionParameterEntryList: 0,
         		closeParenthesisToken: default,
                 TypeFacts.Empty.ToTypeReference());
-            var functionSymbol = new Symbol(
-                SyntaxKind.FunctionSymbol,
-                parserModel.GetNextSymbolId(),
-                functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
-                {
-                    DecorationByte = (byte)GenericDecorationKind.Function
-                });
-            parserModel.Compilation.__SymbolList.Add(functionSymbol);
+                
+            parserModel.Binder.SymbolList.Insert(
+                parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
+                new Symbol(
+                    SyntaxKind.FunctionSymbol,
+                    parserModel.GetNextSymbolId(),
+                    functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
+                    {
+                        DecorationByte = (byte)GenericDecorationKind.Function
+                    }));
+            ++parserModel.Compilation.CountSymbolList;
             return functionInvocationNode;
         }
         else
@@ -3260,11 +3281,14 @@ public static class ParseExpressions
                             StartInclusiveIndex = firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex
                         };
                         
-                        parserModel.Compilation.__SymbolList.Add(new Symbol(
-                            SyntaxKind.NamespaceSymbol,
-                            parserModel.GetNextSymbolId(),
-                            memberIdentifierToken.TextSpan));
-
+                        parserModel.Binder.SymbolList.Insert(
+                            parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
+                            new Symbol(
+                                SyntaxKind.NamespaceSymbol,
+                                parserModel.GetNextSymbolId(),
+                                memberIdentifierToken.TextSpan));
+                        ++parserModel.Compilation.CountSymbolList;
+                        
                         return new NamespaceClauseNode(
                             memberIdentifierToken,
                             secondNamespacePrefixNode,
@@ -3294,19 +3318,23 @@ public static class ParseExpressions
                         		closeAngleBracketToken: default,
                                 isKeywordType: false);
                             
-                            var typeSymbol = new Symbol(
-                                SyntaxKind.TypeSymbol,
-                                parserModel.GetNextSymbolId(),
-                                typeClauseNode.TypeIdentifierToken.TextSpan with
-                                {
-                                    DecorationByte = (byte)GenericDecorationKind.Type
-                                });
-                            parserModel.Compilation.__SymbolList.Add(typeSymbol);
+                            var symbolId = parserModel.GetNextSymbolId();
+                            
+                            parserModel.Binder.SymbolList.Insert(
+                                parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
+                                new Symbol(
+                                    SyntaxKind.TypeSymbol,
+                                    symbolId,
+                                    typeClauseNode.TypeIdentifierToken.TextSpan with
+                                    {
+                                        DecorationByte = (byte)GenericDecorationKind.Type
+                                    }));
+                            ++parserModel.Compilation.CountSymbolList;
                             
                             if (parserModel.Binder.SymbolIdToExternalTextSpanMap.TryGetValue(parserModel.Compilation.ResourceUri.Value, out var symbolIdToExternalTextSpanMap))
                             {
                                 symbolIdToExternalTextSpanMap.TryAdd(
-                                    typeSymbol.SymbolId,
+                                    symbolId,
                                     (typeDefinitionNode.ResourceUri, typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex));
                             }
                             

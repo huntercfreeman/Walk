@@ -34,7 +34,8 @@ public class RazorResource : ICompilerServiceResource
         if (localRazorSyntaxTree?.SemanticResultRazor is null)
             return Array.Empty<Symbol>();
 
-        var symbols = localRazorSyntaxTree.SemanticResultRazor.CompilationUnit.SymbolList;
+        // var symbols = localRazorSyntaxTree.SemanticResultRazor.CompilationUnit.SymbolList;
+        var symbols = new List<Symbol>();
 
         var originalText = _textEditorService.Model_GetAllText(ResourceUri);
 
