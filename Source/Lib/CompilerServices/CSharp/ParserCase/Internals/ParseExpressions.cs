@@ -534,7 +534,7 @@ public static class ParseExpressions
             {
                 return AmbiguousParenthesizedExpressionTransformTo_LambdaExpressionNode(ambiguousParenthesizedExpressionNode, ref parserModel);
             }
-            else if (ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes is null)
+            else if (!ambiguousParenthesizedExpressionNode.HasDecidedShouldMatch)
             {
                 var parenthesizedExpressionNode = new ParenthesizedExpressionNode(
                     ambiguousParenthesizedExpressionNode.OpenParenthesisToken,
@@ -544,12 +544,12 @@ public static class ParseExpressions
                     
                 return parenthesizedExpressionNode;
             }
-            else if (ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes.Value &&
+            else if (ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes &&
                      ambiguousParenthesizedExpressionNode.CountAmbiguousParenthesizedExpressionNodeChildList >= 1)
             {
                 return AmbiguousParenthesizedExpressionTransformTo_TypeClauseNode(ambiguousParenthesizedExpressionNode, ref token, ref parserModel);
             }
-            else if (!ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes.Value)
+            else if (!ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes)
             {
                 if (ambiguousParenthesizedExpressionNode.CountAmbiguousParenthesizedExpressionNodeChildList > 1)
                 {
@@ -595,9 +595,12 @@ public static class ParseExpressions
         switch (expressionSecondary.SyntaxKind)
         {
             case SyntaxKind.VariableDeclarationNode:
-                if (ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes is null)
+                if (!ambiguousParenthesizedExpressionNode.HasDecidedShouldMatch)
+                {
                     ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes = true;
-                if (!ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes.Value)
+                    ambiguousParenthesizedExpressionNode.HasDecidedShouldMatch = true;
+                }
+                if (!ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes)
                     break;
             
                 if (ambiguousParenthesizedExpressionNode.IsParserContextKindForceStatementExpression)
@@ -611,9 +614,12 @@ public static class ParseExpressions
             case SyntaxKind.AmbiguousIdentifierExpressionNode:
             case SyntaxKind.TypeClauseNode:
             case SyntaxKind.VariableReferenceNode:
-                if (ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes is null)
+                if (!ambiguousParenthesizedExpressionNode.HasDecidedShouldMatch)
+                {
                     ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes = false;
-                if (ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes.Value)
+                    ambiguousParenthesizedExpressionNode.HasDecidedShouldMatch = true;
+                }
+                if (ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes)
                     break;
             
                 if (ambiguousParenthesizedExpressionNode.IsParserContextKindForceStatementExpression)

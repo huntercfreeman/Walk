@@ -135,7 +135,8 @@ public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
     /// <summary>This doesn't start at -1, because it is presumed this node type will always have entries.</summary>
     public int IndexAmbiguousParenthesizedExpressionNodeChildList { get; set; }
     public int CountAmbiguousParenthesizedExpressionNodeChildList { get; set; }
-    public bool? ShouldMatchVariableDeclarationNodes = null;
+    public bool ShouldMatchVariableDeclarationNodes { get; set; }
+    public bool HasDecidedShouldMatch { get; set; }
 
     public int Unsafe_ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }
