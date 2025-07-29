@@ -839,15 +839,15 @@ public class ParseDefaultKeywords
             
         parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = false;
         
-        /*if (typeDefinitionNode.HasPartialModifier)
+        if (typeDefinitionNode.HasPartialModifier)
         {
             if (typeDefinitionNode.IndexPartialTypeDefinition == -1)
             {
                 if (parserModel.Binder.__CompilationUnitMap.TryGetValue(parserModel.Compilation.ResourceUri, out var previousCompilationUnit))
                 {
-                    if (typeDefinitionNode.Unsafe_ParentIndexKey < previousCompilationUnit.CodeBlockOwnerList.Count)
+                    if (typeDefinitionNode.Unsafe_ParentIndexKey < previousCompilationUnit.CountCodeBlockOwnerList)
                     {
-                        var previousParent = previousCompilationUnit.CodeBlockOwnerList[typeDefinitionNode.Unsafe_ParentIndexKey];
+                        var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.IndexCodeBlockOwnerList + typeDefinitionNode.Unsafe_ParentIndexKey];
                         var currentParent = parserModel.GetParent(typeDefinitionNode, parserModel.Compilation);
                         
                         if (currentParent.SyntaxKind == previousParent.SyntaxKind &&
@@ -863,11 +863,21 @@ public class ParseDefaultKeywords
                             // TODO: Cannot use ref, out, or in...
                             var compilation = parserModel.Compilation;
                             
-                            var previousNode = previousCompilationUnit.CodeBlockOwnerList.FirstOrDefault(x =>
-                                x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
-                                x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                                binder.GetIdentifierText(x, previousCompilationUnit) == binder.GetIdentifierText(typeDefinitionNode, compilation));
-                        
+                            ISyntaxNode? previousNode = null;
+                            
+                            for (int i = previousCompilationUnit.IndexCodeBlockOwnerList; i < previousCompilationUnit.IndexCodeBlockOwnerList + previousCompilationUnit.CountCodeBlockOwnerList; i++)
+                            {
+                                var x = parserModel.Binder.CodeBlockOwnerList[i];
+                                
+                                if (x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
+                                    x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                                    binder.GetIdentifierText(x, previousCompilationUnit) == binder.GetIdentifierText(typeDefinitionNode, compilation))
+                                {
+                                    previousNode = x;
+                                    break;
+                                }
+                            }
+                            
                             if (previousNode is not null)
                             {
                                 var previousTypeDefinitionNode = (TypeDefinitionNode)previousNode;
@@ -912,7 +922,7 @@ public class ParseDefaultKeywords
                     }
                 }
             }
-        }*/
+        }
         
         if (storageModifierKind == StorageModifierKind.Enum)
         {
