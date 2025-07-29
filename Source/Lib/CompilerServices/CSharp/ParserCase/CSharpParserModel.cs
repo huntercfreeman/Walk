@@ -251,9 +251,6 @@ public ref struct CSharpParserModel
         return Binder.CodeBlockOwnerList[Compilation.IndexCodeBlockOwnerList + codeBlockOwner.Unsafe_ParentIndexKey];
     }
     
-    /// <summary>TODO: Delete this code it is only being used temporarily for debugging.</summary>
-    // public HashSet<int> SeenTokenIndexHashSet { get; set; } = new();
-    
     public int GetNextIndexKey()
     {
         return ++_indexKey;
