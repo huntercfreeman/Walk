@@ -974,11 +974,11 @@ public class ParseDefaultKeywords
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
             parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
     
-        //if (typeDefinitionNode.HasPartialModifier)
-        //    HandlePartialTypeDefinition(typeDefinitionNode, ref parserModel);
+        if (typeDefinitionNode.HasPartialModifier)
+            HandlePartialTypeDefinition(typeDefinitionNode, ref parserModel);
     }
     
-    /*public static void HandlePartialTypeDefinition(TypeDefinitionNode typeDefinitionNode, ref CSharpParserModel parserModel)
+    public static void HandlePartialTypeDefinition(TypeDefinitionNode typeDefinitionNode, ref CSharpParserModel parserModel)
     {
         var wroteToExistingSlot = false;
     
@@ -1052,7 +1052,7 @@ public class ParseDefaultKeywords
                         
                         if (parserModel.Binder.__CompilationUnitMap.TryGetValue(partialTypeDefinitionEntry.ResourceUri, out var innerCompilationUnit))
                         {
-                            ((TypeDefinitionNode)innerCompilationUnit.CodeBlockOwnerList[partialTypeDefinitionEntry.ScopeIndexKey]).IndexPartialTypeDefinition = partialTypeDefinitionEntry.IndexStartGroup + 1;
+                            ((TypeDefinitionNode)parserModel.Binder.CodeBlockOwnerList[innerCompilationUnit.IndexCodeBlockOwnerList + partialTypeDefinitionEntry.ScopeIndexKey]).IndexPartialTypeDefinition = partialTypeDefinitionEntry.IndexStartGroup + 1;
                         }
                     }
                     
@@ -1063,7 +1063,7 @@ public class ParseDefaultKeywords
                 positionExclusive++;
             }
         }
-    }*/
+    }
 
     public static void HandleClassTokenKeyword(ref CSharpParserModel parserModel)
     {
