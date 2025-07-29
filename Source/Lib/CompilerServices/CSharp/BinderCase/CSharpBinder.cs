@@ -1366,8 +1366,6 @@ public class CSharpBinder
     
     internal List<ISyntaxNode> Internal_GetMemberList_TypeDefinitionNode(TypeDefinitionNode typeDefinitionNode)
     {
-        return _getMemberList;
-        /*
         _getMemberList.Clear();
     
         if (typeDefinitionNode.Unsafe_SelfIndexKey == -1 ||
@@ -1376,8 +1374,10 @@ public class CSharpBinder
             return _getMemberList;
         }
         
-        foreach (var codeBlockOwner in compilationUnit.CodeBlockOwnerList)
+        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
         {
+            var codeBlockOwner = CodeBlockOwnerList[i];
+            
             if (codeBlockOwner.Unsafe_ParentIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
                 (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
                  codeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
@@ -1385,15 +1385,17 @@ public class CSharpBinder
                 _getMemberList.Add(codeBlockOwner);
             }
         }
-        
-        /*foreach (var node in compilationUnit.NodeList)
+
+        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
         {
+            var node = NodeList[i];
+            
             if (node.Unsafe_ParentIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
                 node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
                 _getMemberList.Add(node);
             }
-        }*//*
+        }
         
         if (typeDefinitionNode.IndexFunctionArgumentEntryList != -1)
         {
@@ -1432,17 +1434,19 @@ public class CSharpBinder
                             var partialTypeDefinition = PartialTypeDefinitionList[positionExclusive];
                             var innerScopeIndexKey = partialTypeDefinition.ScopeIndexKey;
                             
-                            if (partialTypeDefinition.ScopeIndexKey < innerCompilationUnit.CodeBlockOwnerList.Count)
+                            if (partialTypeDefinition.ScopeIndexKey < innerCompilationUnit.CountCodeBlockOwnerList)
                             {
-                                var innerCodeBlockOwner = innerCompilationUnit.CodeBlockOwnerList[partialTypeDefinition.ScopeIndexKey];
+                                var innerCodeBlockOwner = CodeBlockOwnerList[innerCompilationUnit.IndexCodeBlockOwnerList + partialTypeDefinition.ScopeIndexKey];
                                 
                                 if (innerCodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
                                 {
                                     var innerTypeDefinitionNode = (TypeDefinitionNode)innerCodeBlockOwner;
                                 
                                     // TODO: Don't duplicate this.
-                                    foreach (var codeBlockOwner in innerCompilationUnit.CodeBlockOwnerList)
+                                    for (int i = innerCompilationUnit.IndexCodeBlockOwnerList; i < innerCompilationUnit.IndexCodeBlockOwnerList + innerCompilationUnit.CountCodeBlockOwnerList; i++)
                                     {
+                                        var codeBlockOwner = CodeBlockOwnerList[i];
+                                    
                                         if (codeBlockOwner.Unsafe_ParentIndexKey == innerScopeIndexKey &&
                                             (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode ||
                                              codeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode))
@@ -1451,14 +1455,16 @@ public class CSharpBinder
                                         }
                                     }
                                     
-                                    /*foreach (var node in innerCompilationUnit.NodeList)
+                                    for (int i = innerCompilationUnit.IndexNodeList; i < innerCompilationUnit.IndexNodeList + innerCompilationUnit.CountNodeList; i++)
                                     {
+                                        var node = NodeList[i];
+                                        
                                         if (node.Unsafe_ParentIndexKey == innerScopeIndexKey &&
                                             node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
                                         {
                                             _getMemberList.Add(node);
                                         }
-                                    }*//*
+                                    }
                                     
                                     if (innerTypeDefinitionNode.IndexFunctionArgumentEntryList != -1)
                                     {
@@ -1483,7 +1489,6 @@ public class CSharpBinder
         }
         
         return _getMemberList;
-        */
     }
     
     /// <summary>
