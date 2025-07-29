@@ -2743,7 +2743,10 @@ public static class ParseExpressions
                 isInitialized: false,
                 parserModel.Compilation.ResourceUri);
                 
-            lambdaExpressionNode.VariableDeclarationNodeList.Add(variableDeclarationNode);
+            parserModel.Binder.LambdaExpressionNodeChildList.Insert(
+                lambdaExpressionNode.IndexLambdaExpressionNodeChildList + lambdaExpressionNode.CountLambdaExpressionNodeChildList,
+                variableDeclarationNode);
+            ++lambdaExpressionNode.CountLambdaExpressionNodeChildList;
         }
         
         return lambdaExpressionNode;
@@ -3453,7 +3456,10 @@ public static class ParseExpressions
                 var node = parserModel.Binder.AmbiguousParenthesizedExpressionNodeChildList[i];
                 if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
                 {
-                    lambdaExpressionNode.VariableDeclarationNodeList.Add((VariableDeclarationNode)node);
+                    parserModel.Binder.LambdaExpressionNodeChildList.Insert(
+                        lambdaExpressionNode.IndexLambdaExpressionNodeChildList + lambdaExpressionNode.CountLambdaExpressionNodeChildList,
+                        (VariableDeclarationNode)node);
+                    ++lambdaExpressionNode.CountLambdaExpressionNodeChildList;
                 }
                 else
                 {
@@ -3486,7 +3492,10 @@ public static class ParseExpressions
                         false,
                         parserModel.Compilation.ResourceUri);
                         
-                    lambdaExpressionNode.VariableDeclarationNodeList.Add(variableDeclarationNode);
+                    parserModel.Binder.LambdaExpressionNodeChildList.Insert(
+                        lambdaExpressionNode.IndexLambdaExpressionNodeChildList + lambdaExpressionNode.CountLambdaExpressionNodeChildList,
+                        variableDeclarationNode);
+                    ++lambdaExpressionNode.CountLambdaExpressionNodeChildList;
                 }
             }
         }
