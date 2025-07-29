@@ -23,9 +23,6 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerS
         ResourceUri = resourceUri;
         SourceText = sourceText;
         CompilationUnitKind = compilationUnitKind;
-
-        if (CompilationUnitKind == CompilationUnitKind.IndividualFile_AllData)
-            SymbolIdToExternalTextSpanMap = new();
     }
     
     public IEnumerable<TextEditorTextSpan> GetDiagnosticTextSpans()
@@ -52,7 +49,4 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerS
     
     public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => __DiagnosticList;
     public IReadOnlyList<Symbol> SymbolList => __SymbolList;
-
-    public Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)> SymbolIdToExternalTextSpanMap { get; }
-    // public Dictionary<string, Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)>> SymbolIdToExternalTextSpanMap { get; }
 }

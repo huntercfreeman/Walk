@@ -64,6 +64,7 @@ public class CSharpBinder
     public List<ISyntaxNode> AmbiguousParenthesizedExpressionNodeChildList { get; } = new();
     public List<VariableDeclarationNode> LambdaExpressionNodeChildList { get; } = new();
     public List<FunctionInvocationParameterMetadata> FunctionInvocationParameterMetadataList { get; } = new();
+    public Dictionary<string, Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)>> SymbolIdToExternalTextSpanMap { get; } = new();
     
     public AmbiguousIdentifierExpressionNode CSharpParserModel_AmbiguousIdentifierExpressionNode { get; } = new AmbiguousIdentifierExpressionNode(
         default,
@@ -940,9 +941,9 @@ public class CSharpBinder
 
         if (symbol is not null)
         {
-            if (compilationUnit.SymbolIdToExternalTextSpanMap is not null)
+            if (SymbolIdToExternalTextSpanMap.TryGetValue(compilationUnit.ResourceUri.Value, out var symbolIdToExternalTextSpanMap))
             {
-                if (compilationUnit.SymbolIdToExternalTextSpanMap.TryGetValue(symbol.Value.SymbolId, out var definitionTuple))
+                if (symbolIdToExternalTextSpanMap.TryGetValue(symbol.Value.SymbolId, out var definitionTuple))
                 {
                     if (__CompilationUnitMap.TryGetValue(definitionTuple.ResourceUri, out var innerCompilationUnit))
                     {

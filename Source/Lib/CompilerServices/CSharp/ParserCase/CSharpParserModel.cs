@@ -96,6 +96,18 @@ public ref struct CSharpParserModel
         
         Binder.AmbiguousParenthesizedExpressionNodeChildList.Clear();
         Binder.LambdaExpressionNodeChildList.Clear();
+        
+        if (Compilation.CompilationUnitKind == CompilationUnitKind.IndividualFile_AllData)
+        {
+            if (Binder.SymbolIdToExternalTextSpanMap.TryGetValue(Compilation.ResourceUri.Value, out var symbolIdToExternalTextSpanMap))
+                symbolIdToExternalTextSpanMap.Clear();
+            else 
+                Binder.SymbolIdToExternalTextSpanMap.Add(Compilation.ResourceUri.Value, new());
+        }
+        else
+        {
+            Binder.SymbolIdToExternalTextSpanMap.Remove(Compilation.ResourceUri.Value);
+        }
     }
     
     public ReadOnlySpan<char> Text { get; }

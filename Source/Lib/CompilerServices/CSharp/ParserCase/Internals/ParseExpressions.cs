@@ -946,11 +946,11 @@ public static class ParseExpressions
 
             parserModel.Compilation.__SymbolList.Add(typeSymbol);
             
-            if (parserModel.Compilation.SymbolIdToExternalTextSpanMap is not null &&
+            if (parserModel.Binder.SymbolIdToExternalTextSpanMap.TryGetValue(parserModel.Compilation.ResourceUri.Value, out var symbolIdToExternalTextSpanMap) &&
                 typeDefinitionNode is not null &&
                 typeClauseNode.ExplicitDefinitionResourceUri != parserModel.Compilation.ResourceUri)
             {
-                parserModel.Compilation.SymbolIdToExternalTextSpanMap.TryAdd(
+                symbolIdToExternalTextSpanMap.TryAdd(
                     typeSymbol.SymbolId,
                     (typeDefinitionNode.ResourceUri, typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex));
             }
@@ -1000,10 +1000,10 @@ public static class ParseExpressions
                 var variableReferenceNode = parserModel.ConstructAndBindVariableReferenceNode(identifierToken, shouldCreateSymbol: false);
                 var symbolId = parserModel.CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, existingVariableDeclarationNode.VariableKind);
                 
-                if (parserModel.Compilation.SymbolIdToExternalTextSpanMap is not null &&
+                if (parserModel.Binder.SymbolIdToExternalTextSpanMap.TryGetValue(parserModel.Compilation.ResourceUri.Value, out var symbolIdToExternalTextSpanMap) &&
                     existingVariableDeclarationNode.ResourceUri != parserModel.Compilation.ResourceUri)
                 {
-                    parserModel.Compilation.SymbolIdToExternalTextSpanMap.TryAdd(
+                    symbolIdToExternalTextSpanMap.TryAdd(
                         symbolId,
                         (existingVariableDeclarationNode.ResourceUri, existingVariableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex));
                 }
@@ -1047,10 +1047,10 @@ public static class ParseExpressions
         
                     parserModel.Compilation.__SymbolList.Add(typeSymbol);
                     
-                    if (parserModel.Compilation.SymbolIdToExternalTextSpanMap is not null &&
+                    if (parserModel.Binder.SymbolIdToExternalTextSpanMap.TryGetValue(parserModel.Compilation.ResourceUri.Value, out var symbolIdToExternalTextSpanMap) &&
                         typeClauseNode.ExplicitDefinitionResourceUri != parserModel.Compilation.ResourceUri)
                     {
-                        parserModel.Compilation.SymbolIdToExternalTextSpanMap.TryAdd(
+                        symbolIdToExternalTextSpanMap.TryAdd(
                             typeSymbol.SymbolId,
                             (typeDefinitionNode.ResourceUri, typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex));
                     }
@@ -3140,9 +3140,9 @@ public static class ParseExpressions
                     variableDeclarationNode);
                 var symbolId = parserModel.CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind);
                 
-                if (parserModel.Compilation.SymbolIdToExternalTextSpanMap is not null)
+                if (parserModel.Binder.SymbolIdToExternalTextSpanMap.TryGetValue(parserModel.Compilation.ResourceUri.Value, out var symbolIdToExternalTextSpanMap))
                 {
-                    parserModel.Compilation.SymbolIdToExternalTextSpanMap.TryAdd(
+                    symbolIdToExternalTextSpanMap.TryAdd(
                         symbolId,
                         (variableDeclarationNode.ResourceUri, variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex));
                 }
@@ -3179,9 +3179,9 @@ public static class ParseExpressions
                 parserModel.Compilation.__SymbolList.Add(functionSymbol);
                 var symbolId = functionSymbol.SymbolId;
                 
-                if (parserModel.Compilation.SymbolIdToExternalTextSpanMap is not null)
+                if (parserModel.Binder.SymbolIdToExternalTextSpanMap.TryGetValue(parserModel.Compilation.ResourceUri.Value, out var symbolIdToExternalTextSpanMap))
                 {
-                    parserModel.Compilation.SymbolIdToExternalTextSpanMap.TryAdd(
+                    symbolIdToExternalTextSpanMap.TryAdd(
                         symbolId,
                         (functionDefinitionNode.ResourceUri, functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex));
                 }
@@ -3303,9 +3303,9 @@ public static class ParseExpressions
                                 });
                             parserModel.Compilation.__SymbolList.Add(typeSymbol);
                             
-                            if (parserModel.Compilation.SymbolIdToExternalTextSpanMap is not null)
+                            if (parserModel.Binder.SymbolIdToExternalTextSpanMap.TryGetValue(parserModel.Compilation.ResourceUri.Value, out var symbolIdToExternalTextSpanMap))
                             {
-                                parserModel.Compilation.SymbolIdToExternalTextSpanMap.TryAdd(
+                                symbolIdToExternalTextSpanMap.TryAdd(
                                     typeSymbol.SymbolId,
                                     (typeDefinitionNode.ResourceUri, typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex));
                             }
