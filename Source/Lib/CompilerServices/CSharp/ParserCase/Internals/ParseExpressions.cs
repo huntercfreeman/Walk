@@ -3651,10 +3651,16 @@ public static class ParseExpressions
         
         if (parserModel.Compilation.CompilationUnitKind == CompilationUnitKind.IndividualFile_AllData)
         {
-            parserModel.Compilation.FunctionInvocationParameterMetadataList.Add(new FunctionInvocationParameterMetadata(
-                invocationNode.IdentifierStartInclusiveIndex,
-                expressionSecondary.ResultTypeReference,
-                parserModel.ParameterModifierKind));
+            if (parserModel.Compilation.IndexFunctionInvocationParameterMetadataList == -1)
+                parserModel.Compilation.IndexFunctionInvocationParameterMetadataList = parserModel.Binder.FunctionInvocationParameterMetadataList.Count;
+            
+            parserModel.Binder.FunctionInvocationParameterMetadataList.Insert(
+                parserModel.Compilation.IndexFunctionInvocationParameterMetadataList + parserModel.Compilation.CountFunctionInvocationParameterMetadataList,
+                new FunctionInvocationParameterMetadata(
+                    invocationNode.IdentifierStartInclusiveIndex,
+                    expressionSecondary.ResultTypeReference,
+                    parserModel.ParameterModifierKind));
+            ++parserModel.Compilation.CountFunctionInvocationParameterMetadataList;
         }
         
         // Just needs to be set to anything other than out, in, ref.

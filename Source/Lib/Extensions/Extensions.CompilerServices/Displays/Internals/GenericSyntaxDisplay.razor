@@ -3,51 +3,52 @@
 @using Walk.Extensions.CompilerServices.Syntax.Nodes
 @using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces
 
-@{
-	var syntaxViewModelLocal = SyntaxViewModel;
-	int indexGenericParameterEntryList = -1;
-	int countGenericParameterEntryList = 0;
+@if (SyntaxViewModel.Depth < 6)
+{
+    var syntaxViewModelLocal = SyntaxViewModel;
+    int indexGenericParameterEntryList = -1;
+    int countGenericParameterEntryList = 0;
 
-	if (syntaxViewModelLocal.TargetNode is IGenericParameterNode genericParameterNode &&
+    if (syntaxViewModelLocal.TargetNode is IGenericParameterNode genericParameterNode &&
         genericParameterNode.IndexGenericParameterEntryList != -1)
     {
-    	indexGenericParameterEntryList = genericParameterNode.IndexGenericParameterEntryList;
-    	countGenericParameterEntryList = genericParameterNode.CountGenericParameterEntryList;
+        indexGenericParameterEntryList = genericParameterNode.IndexGenericParameterEntryList;
+        countGenericParameterEntryList = genericParameterNode.CountGenericParameterEntryList;
     }
     else
     {
-    	if (TypeReference != default &&
-    		TypeReference.OpenAngleBracketToken.ConstructorWasInvoked)
-    	{
-    		indexGenericParameterEntryList = TypeReference.IndexGenericParameterEntryList;
-    	    countGenericParameterEntryList = TypeReference.CountGenericParameterEntryList;
-    	}
+        if (TypeReference != default &&
+            TypeReference.OpenAngleBracketToken.ConstructorWasInvoked)
+        {
+            indexGenericParameterEntryList = TypeReference.IndexGenericParameterEntryList;
+            countGenericParameterEntryList = TypeReference.CountGenericParameterEntryList;
+        }
     }
-}
 
-@if (indexGenericParameterEntryList != -1 && SyntaxViewModel.ExtendedCompilerService is not null)
-{
-	<text>&lt;</text>
-		
-	@for (int index = indexGenericParameterEntryList; index < indexGenericParameterEntryList + countGenericParameterEntryList; index++)
-	{
-		var genericParameter = SyntaxViewModel.ExtendedCompilerService.GenericParameterEntryList[index];
-		
-    	var syntaxViewModel = new SyntaxViewModel(
-    	    SyntaxViewModel.ExtendedCompilerService,
-    	    SyntaxViewModel.TextEditorService,
-    	    SyntaxViewModel.ResourceUri,
-    		targetSymbol: null,
-    		targetNode: null,
-    		definitionNode: null,
-			depth: syntaxViewModelLocal.Depth + 1);
-        <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="genericParameter.TypeReference"/>
-		
-		if (index < indexGenericParameterEntryList + countGenericParameterEntryList - 1)
-		{
-			<text>,</text>
-		}
-	}
-	
-	<text>&gt;</text>
+    if (indexGenericParameterEntryList != -1 && SyntaxViewModel.ExtendedCompilerService is not null)
+    {
+        <text>&lt;</text>
+
+        for (int index = indexGenericParameterEntryList; index < indexGenericParameterEntryList + countGenericParameterEntryList; index++)
+        {
+            var genericParameter = SyntaxViewModel.ExtendedCompilerService.GenericParameterEntryList[index];
+
+            var syntaxViewModel = new SyntaxViewModel(
+                SyntaxViewModel.ExtendedCompilerService,
+                SyntaxViewModel.TextEditorService,
+                SyntaxViewModel.ResourceUri,
+                targetSymbol: null,
+                targetNode: null,
+                definitionNode: null,
+                depth: syntaxViewModelLocal.Depth + 1);
+            <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="genericParameter.TypeReference"/>
+
+            if (index < indexGenericParameterEntryList + countGenericParameterEntryList - 1)
+            {
+                <text>,</text>
+            }
+        }
+
+        <text>&gt;</text>
+    }
 }
