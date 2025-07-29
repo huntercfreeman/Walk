@@ -63,6 +63,7 @@ public class CSharpBinder
     public List<FunctionArgumentEntry> FunctionArgumentEntryList { get; } = new();
     public List<ISyntaxNode> AmbiguousParenthesizedExpressionNodeChildList { get; } = new();
     public List<VariableDeclarationNode> LambdaExpressionNodeChildList { get; } = new();
+    public List<FunctionInvocationParameterMetadata> FunctionInvocationParameterMetadataList { get; } = new();
     
     public AmbiguousIdentifierExpressionNode CSharpParserModel_AmbiguousIdentifierExpressionNode { get; } = new AmbiguousIdentifierExpressionNode(
         default,
@@ -817,13 +818,22 @@ public class CSharpBinder
                          && functionDefinitionNode is not null)
                 {
                     if (functionDefinitionNode.IndexMethodOverloadDefinition != -1 &&
-                        compilationUnit.FunctionInvocationParameterMetadataList is not null &&
+                        compilationUnit.CompilationUnitKind == Walk.TextEditor.RazorLib.CompilerServices.CompilationUnitKind.IndividualFile_AllData &&
+                        compilationUnit.IndexFunctionInvocationParameterMetadataList != -1 &&
+                        compilationUnit.CountFunctionInvocationParameterMetadataList != 0 &&
                         symbol is not null)
                     {
-                        var functionParameterList = compilationUnit.FunctionInvocationParameterMetadataList
-                            .Where(x => x.IdentifierStartInclusiveIndex == symbol.Value.TextSpan.StartInclusiveIndex)
-                            .ToList();
-                    
+                        var functionParameterList = new List<FunctionInvocationParameterMetadata>();
+                        
+                        for (int i = compilationUnit.IndexFunctionInvocationParameterMetadataList; i < compilationUnit.IndexFunctionInvocationParameterMetadataList + compilationUnit.CountFunctionInvocationParameterMetadataList; i++)
+                        {
+                            var entry = FunctionInvocationParameterMetadataList[i];
+                            if (entry.IdentifierStartInclusiveIndex == symbol.Value.TextSpan.StartInclusiveIndex)
+                            {
+                                functionParameterList.Add(entry);
+                            }
+                        }
+                        
                         for (int i = functionDefinitionNode.IndexMethodOverloadDefinition; i < MethodOverloadDefinitionList.Count; i++)
                         {
                             var entry = MethodOverloadDefinitionList[i];
