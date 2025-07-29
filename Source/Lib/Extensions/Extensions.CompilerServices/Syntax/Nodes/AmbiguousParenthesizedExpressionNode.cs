@@ -132,8 +132,11 @@ public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
     /// until it is ruled out that it cannot be a LambdaExpressionNode.
     /// </summary>
 
-    public List<ISyntaxNode> NodeList { get; set; } = new();
-    public bool? ShouldMatchVariableDeclarationNodes = null;
+    /// <summary>This doesn't start at -1, because it is presumed this node type will always have entries.</summary>
+    public int IndexAmbiguousParenthesizedExpressionNodeChildList { get; set; }
+    public int CountAmbiguousParenthesizedExpressionNodeChildList { get; set; }
+    public bool ShouldMatchVariableDeclarationNodes { get; set; }
+    public bool HasDecidedShouldMatch { get; set; }
 
     public int Unsafe_ParentIndexKey { get; set; }
     public bool IsFabricated { get; init; }

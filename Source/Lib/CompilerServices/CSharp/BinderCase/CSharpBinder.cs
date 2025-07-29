@@ -61,6 +61,8 @@ public class CSharpBinder
     public List<GenericParameterEntry> GenericParameterEntryList { get; } = new();
     public List<FunctionParameterEntry> FunctionParameterEntryList { get; } = new();
     public List<FunctionArgumentEntry> FunctionArgumentEntryList { get; } = new();
+    public List<ISyntaxNode> AmbiguousParenthesizedExpressionNodeChildList { get; } = new();
+    public List<VariableDeclarationNode> LambdaExpressionNodeChildList { get; } = new();
     
     public AmbiguousIdentifierExpressionNode CSharpParserModel_AmbiguousIdentifierExpressionNode { get; } = new AmbiguousIdentifierExpressionNode(
         default,

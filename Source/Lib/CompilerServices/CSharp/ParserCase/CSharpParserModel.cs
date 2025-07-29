@@ -93,6 +93,9 @@ public ref struct CSharpParserModel
         
         ExternalTypeDefinitionList = Binder.CSharpParserModel_ExternalTypeDefinitionList;
         ExternalTypeDefinitionList.Clear();
+        
+        Binder.AmbiguousParenthesizedExpressionNodeChildList.Clear();
+        Binder.LambdaExpressionNodeChildList.Clear();
     }
     
     public ReadOnlySpan<char> Text { get; }
@@ -684,9 +687,9 @@ public ref struct CSharpParserModel
                 return;
             case SyntaxKind.LambdaExpressionNode:
                 var lambdaExpressionNode = (LambdaExpressionNode)codeBlockOwner;
-                foreach (var variableDeclarationNode in lambdaExpressionNode.VariableDeclarationNodeList)
+                for (int i = lambdaExpressionNode.IndexLambdaExpressionNodeChildList; i < lambdaExpressionNode.IndexLambdaExpressionNodeChildList + lambdaExpressionNode.CountLambdaExpressionNodeChildList; i++)
                 {
-                    BindVariableDeclarationNode(variableDeclarationNode);
+                    BindVariableDeclarationNode(Binder.LambdaExpressionNodeChildList[i]);
                 }
                 return;
             case SyntaxKind.TryStatementCatchNode:
