@@ -248,7 +248,7 @@ public ref struct CSharpParserModel
         if (codeBlockOwner.Unsafe_ParentIndexKey == -1)
             return null;
             
-        return (ICodeBlockOwner)cSharpCompilationUnit.CodeBlockOwnerList[codeBlockOwner.Unsafe_ParentIndexKey];
+        return Binder.CodeBlockOwnerList[Compilation.IndexCodeBlockOwnerList + codeBlockOwner.Unsafe_ParentIndexKey];
     }
     
     /// <summary>TODO: Delete this code it is only being used temporarily for debugging.</summary>
@@ -600,8 +600,11 @@ public ref struct CSharpParserModel
         codeBlockOwner.Unsafe_ParentIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
         codeBlockOwner.Scope_StartInclusiveIndex = textSpan.StartInclusiveIndex;
 
-        codeBlockOwner.Unsafe_SelfIndexKey = Compilation.CodeBlockOwnerList.Count;
-        Compilation.CodeBlockOwnerList.Add(codeBlockOwner);
+        codeBlockOwner.Unsafe_SelfIndexKey = Compilation.CountCodeBlockOwnerList;
+        Binder.CodeBlockOwnerList.Insert(
+            Compilation.IndexCodeBlockOwnerList + Compilation.CountCodeBlockOwnerList,
+            codeBlockOwner);
+        ++Compilation.CountCodeBlockOwnerList;
 
         var parent = GetParent(codeBlockOwner, Compilation);
         
@@ -840,6 +843,9 @@ public ref struct CSharpParserModel
         out TypeDefinitionNode? typeDefinitionNode)
     {
         typeDefinitionNode = null;
+        return false;
+        /*
+        typeDefinitionNode = null;
         foreach (var x in compilationUnit.CodeBlockOwnerList)
         {
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
@@ -875,6 +881,7 @@ public ref struct CSharpParserModel
         {
             return true;
         }
+        */
     }
     
     public bool TryAddTypeDefinitionNodeByScope(
@@ -883,6 +890,8 @@ public ref struct CSharpParserModel
         string typeIdentifierText,
         TypeDefinitionNode typeDefinitionNode)
     {
+        return false;
+        /*
         TypeDefinitionNode? matchNode = null;
         foreach (var x in compilationUnit.CodeBlockOwnerList)
         {
@@ -904,16 +913,18 @@ public ref struct CSharpParserModel
         {
             return false;
         }
+        */
     }
     
     public FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey)
     {
-        return compilationUnit.CodeBlockOwnerList
+        return Array.Empty<FunctionDefinitionNode>();
+        /*return compilationUnit.CodeBlockOwnerList
             .Where(kvp => kvp.Unsafe_ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             .Select(kvp => (FunctionDefinitionNode)kvp)
-            .ToArray();
+            .ToArray();*/
     }
     
     /// <summary>
@@ -956,6 +967,7 @@ public ref struct CSharpParserModel
         string functionIdentifierText,
         out FunctionDefinitionNode functionDefinitionNode)
     {
+        /*
         functionDefinitionNode = null;
         foreach (var x in compilationUnit.CodeBlockOwnerList)
         {
@@ -972,6 +984,10 @@ public ref struct CSharpParserModel
             return false;
         else
             return true;
+        */
+        
+        functionDefinitionNode = null;
+        return false;
     }
     
     public VariableDeclarationNode[] GetVariableDeclarationNodesByScope(

@@ -68,6 +68,7 @@ public class CSharpBinder
     public List<Walk.TextEditor.RazorLib.CompilerServices.TextEditorDiagnostic> DiagnosticList { get; } = new();
     public List<Symbol> SymbolList { get; } = new();
     public List<ISyntaxNode> NodeList { get; } = new();
+    public List<ICodeBlockOwner> CodeBlockOwnerList { get; } = new();
     
     public AmbiguousIdentifierExpressionNode CSharpParserModel_AmbiguousIdentifierExpressionNode { get; } = new AmbiguousIdentifierExpressionNode(
         default,
@@ -170,8 +171,10 @@ public class CSharpBinder
         var min = int.MaxValue;
         ICodeBlockOwner? codeBlockOwner = null;
         
-        foreach (var scope in compilationUnit.CodeBlockOwnerList)
+        for (int i = compilationUnit.IndexCodeBlockOwnerList; i < compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList; i++)
         {
+            var scope = CodeBlockOwnerList[i];
+            
             if (scope.Scope_StartInclusiveIndex <= positionIndex &&
                 // Global Scope awkwardly has '-1' ending index exclusive (2023-10-15)
                 (scope.Scope_EndExclusiveIndex >= positionIndex || scope.Scope_EndExclusiveIndex == -1))
@@ -193,12 +196,12 @@ public class CSharpBinder
         if (scopeIndexKey < 0)
             return null;
 
-        if (scopeIndexKey < compilationUnit.CodeBlockOwnerList.Count)
+        if (scopeIndexKey < compilationUnit.CountCodeBlockOwnerList - compilationUnit.IndexCodeBlockOwnerList)
         {
             var isValid = true;
 
             if (isValid)
-                return compilationUnit.CodeBlockOwnerList[scopeIndexKey];
+                return CodeBlockOwnerList[compilationUnit.IndexCodeBlockOwnerList + scopeIndexKey];
         }
         
         return null;
@@ -208,14 +211,16 @@ public class CSharpBinder
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey)
     {
-        var query = compilationUnit.CodeBlockOwnerList
+        return Array.Empty<TypeDefinitionNode>();
+    
+        /*var query = compilationUnit.CodeBlockOwnerList
             .Where(kvp => kvp.Unsafe_ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             .Select(kvp => (TypeDefinitionNode)kvp);
             
         // if (scopeIndexKey == 0)
         //    query = query.Concat(parserModel.ExternalTypeDefinitionList);
         
-        return query.ToArray();
+        return query.ToArray();*/
     }
     
     /// <summary>
@@ -260,6 +265,9 @@ public class CSharpBinder
         string typeIdentifierText,
         out TypeDefinitionNode typeDefinitionNode)
     {
+        typeDefinitionNode = null;
+        return false;
+        /*
         var matchNode = compilationUnit.CodeBlockOwnerList.FirstOrDefault(x =>
         {
             if (x.Unsafe_ParentIndexKey != scopeIndexKey ||
@@ -281,7 +289,7 @@ public class CSharpBinder
                      typeDefinitionNode = (TypeDefinitionNode)externalMatchNode;
                      return true;
                  }
-            }*/
+            }*//*
         
             typeDefinitionNode = null;
             return false;
@@ -291,6 +299,7 @@ public class CSharpBinder
             typeDefinitionNode = (TypeDefinitionNode)matchNode;
             return true;
         }
+        */
     }
     
     public bool TryAddTypeDefinitionNodeByScope(
@@ -299,6 +308,9 @@ public class CSharpBinder
         string typeIdentifierText,
         TypeDefinitionNode typeDefinitionNode)
     {
+        return false;
+    
+        /*
         var matchNode = compilationUnit.CodeBlockOwnerList.FirstOrDefault(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
                                                                      x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
                                                                      GetIdentifierText(x, compilationUnit) == typeIdentifierText);
@@ -312,16 +324,21 @@ public class CSharpBinder
         {
             return false;
         }
+        */
     }
     
     public FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey)
     {
+        return Array.Empty<FunctionDefinitionNode>();
+    
+        /*
         return compilationUnit.CodeBlockOwnerList
             .Where(kvp => kvp.Unsafe_ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             .Select(kvp => (FunctionDefinitionNode)kvp)
             .ToArray();
+        */
     }
     
     /// <summary>
@@ -364,6 +381,10 @@ public class CSharpBinder
         string functionIdentifierText,
         out FunctionDefinitionNode functionDefinitionNode)
     {
+        functionDefinitionNode = null;
+        return false;
+    
+        /*
         var matchNode = compilationUnit.CodeBlockOwnerList.FirstOrDefault(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
                                                                      x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
                                                                      GetIdentifierText(x, compilationUnit) == functionIdentifierText);
@@ -378,6 +399,7 @@ public class CSharpBinder
             functionDefinitionNode = (FunctionDefinitionNode)matchNode;
             return true;
         }
+        */
     }
     
     public IEnumerable<VariableDeclarationNode> GetVariableDeclarationNodesByScope(
@@ -807,6 +829,7 @@ public class CSharpBinder
     /// </summary>
     public ISyntaxNode? GetDefinitionNode(CSharpCompilationUnit compilationUnit, TextEditorTextSpan textSpan, SyntaxKind syntaxKind, Symbol? symbol = null, string? getTextResult = null)
     {
+        /*
         var scope = GetScope(compilationUnit, textSpan);
 
         if (scope is null)
@@ -990,6 +1013,9 @@ public class CSharpBinder
             }
         }
 
+        return null;
+        */
+        
         return null;
     }
     
@@ -1432,6 +1458,8 @@ public class CSharpBinder
     
     internal List<ISyntaxNode> Internal_GetMemberList_TypeDefinitionNode(TypeDefinitionNode typeDefinitionNode)
     {
+        return _getMemberList;
+        /*
         _getMemberList.Clear();
     
         if (typeDefinitionNode.Unsafe_SelfIndexKey == -1 ||
@@ -1457,7 +1485,7 @@ public class CSharpBinder
             {
                 _getMemberList.Add(node);
             }
-        }*/
+        }*//*
         
         if (typeDefinitionNode.IndexFunctionArgumentEntryList != -1)
         {
@@ -1522,7 +1550,7 @@ public class CSharpBinder
                                         {
                                             _getMemberList.Add(node);
                                         }
-                                    }*/
+                                    }*//*
                                     
                                     if (innerTypeDefinitionNode.IndexFunctionArgumentEntryList != -1)
                                     {
@@ -1547,6 +1575,7 @@ public class CSharpBinder
         }
         
         return _getMemberList;
+        */
     }
     
     /// <summary>
@@ -1555,6 +1584,8 @@ public class CSharpBinder
     /// </summary>
     public IEnumerable<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes_NamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
     {
+        return Enumerable.Empty<TypeDefinitionNode>();
+        /*
         if (namespaceStatementNode.Unsafe_SelfIndexKey == -1 ||
             !__CompilationUnitMap.TryGetValue(namespaceStatementNode.ResourceUri, out var compilationUnit))
         {
@@ -1564,6 +1595,7 @@ public class CSharpBinder
         return compilationUnit.CodeBlockOwnerList
             .Where(x => x.Unsafe_ParentIndexKey == namespaceStatementNode.Unsafe_SelfIndexKey && x.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             .Select(x => (TypeDefinitionNode)x);
+        */
     }
     
     /// <summary>
@@ -1586,6 +1618,8 @@ public class CSharpBinder
         NamespaceStatementNode namespaceStatementNode,
         bool shouldClear)
     {
+        return _getTopLevelTypeDefinitionNodes;
+        /*
         if (shouldClear)
         {
             // This allows Internal_GetTopLevelTypeDefinitionNodes_NamespaceGroup(...) to "select many".
@@ -1605,6 +1639,7 @@ public class CSharpBinder
         }
         
         return _getTopLevelTypeDefinitionNodes;
+        */
     }
     
     /// <summary>Object-allocation-less version of the public version for internal use.</summary>

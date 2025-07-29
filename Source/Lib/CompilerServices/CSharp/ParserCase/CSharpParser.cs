@@ -11,8 +11,12 @@ public static class CSharpParser
 {
     public static void Parse(CSharpCompilationUnit compilationUnit, CSharpBinder binder, ref CSharpLexerOutput lexerOutput)
     {
-        compilationUnit.CodeBlockOwnerList.Add(binder.GlobalCodeBlockNode);
-
+        compilationUnit.IndexCodeBlockOwnerList = binder.CodeBlockOwnerList.Count;
+        binder.CodeBlockOwnerList.Insert(
+            compilationUnit.IndexCodeBlockOwnerList,
+            binder.GlobalCodeBlockNode);
+        ++compilationUnit.CountCodeBlockOwnerList;
+        
         var parserModel = new CSharpParserModel(
             binder,
             compilationUnit,

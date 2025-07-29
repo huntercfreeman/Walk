@@ -839,7 +839,7 @@ public class ParseDefaultKeywords
             
         parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = false;
         
-        if (typeDefinitionNode.HasPartialModifier)
+        /*if (typeDefinitionNode.HasPartialModifier)
         {
             if (typeDefinitionNode.IndexPartialTypeDefinition == -1)
             {
@@ -912,7 +912,7 @@ public class ParseDefaultKeywords
                     }
                 }
             }
-        }
+        }*/
         
         if (storageModifierKind == StorageModifierKind.Enum)
         {
@@ -964,11 +964,11 @@ public class ParseDefaultKeywords
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
             parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
     
-        if (typeDefinitionNode.HasPartialModifier)
-            HandlePartialTypeDefinition(typeDefinitionNode, ref parserModel);
+        //if (typeDefinitionNode.HasPartialModifier)
+        //    HandlePartialTypeDefinition(typeDefinitionNode, ref parserModel);
     }
     
-    public static void HandlePartialTypeDefinition(TypeDefinitionNode typeDefinitionNode, ref CSharpParserModel parserModel)
+    /*public static void HandlePartialTypeDefinition(TypeDefinitionNode typeDefinitionNode, ref CSharpParserModel parserModel)
     {
         var wroteToExistingSlot = false;
     
@@ -1053,7 +1053,7 @@ public class ParseDefaultKeywords
                 positionExclusive++;
             }
         }
-    }
+    }*/
 
     public static void HandleClassTokenKeyword(ref CSharpParserModel parserModel)
     {

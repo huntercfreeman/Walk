@@ -44,7 +44,9 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerS
     public int IndexFunctionInvocationParameterMetadataList { get; set; } = -1;
     public int CountFunctionInvocationParameterMetadataList { get; set; }
     
-    public List<ICodeBlockOwner> CodeBlockOwnerList { get; } = new();
+    /// <summary>Set this index in the CSharpParserModel constructor</summary>
+    public int IndexCodeBlockOwnerList { get; set; }
+    public int CountCodeBlockOwnerList { get; set; }
     
     /// <summary>Set this index in the CSharpParserModel constructor</summary>
     public int IndexNodeList { get; set; }

@@ -95,6 +95,7 @@ public class ParseFunctions
         FunctionDefinitionNode existingNode,
         ref CSharpParserModel parserModel)
     {
+        /*
         if (!parserModel.Binder.MethodOverload_ResourceUri_WasCleared)
         {
             parserModel.Binder.MethodOverload_ResourceUri_WasCleared = true;
@@ -214,7 +215,8 @@ public class ParseFunctions
         }
         
         Console.WriteLine("========");
-        Console.WriteLine();*/
+        Console.WriteLine();*//*
+        */
     }
 
     public static void HandleConstructorDefinition(
