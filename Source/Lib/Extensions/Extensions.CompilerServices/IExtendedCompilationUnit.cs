@@ -19,6 +19,9 @@ public interface IExtendedCompilationUnit : ICompilationUnit
     /// Did the user open a file? Then take more information.
     /// </summary>
     public List<ICodeBlockOwner> CodeBlockOwnerList { get; }
-    public List<ISyntaxNode> NodeList { get; }
+    
+    public int IndexNodeList { get; set; }
+    public int CountNodeList { get; set; }
+    
     public string SourceText { get; }
 }

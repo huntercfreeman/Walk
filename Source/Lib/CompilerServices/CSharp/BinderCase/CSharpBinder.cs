@@ -67,6 +67,7 @@ public class CSharpBinder
     public Dictionary<string, Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)>> SymbolIdToExternalTextSpanMap { get; } = new();
     public List<Walk.TextEditor.RazorLib.CompilerServices.TextEditorDiagnostic> DiagnosticList { get; } = new();
     public List<Symbol> SymbolList { get; } = new();
+    public List<ISyntaxNode> NodeList { get; } = new();
     
     public AmbiguousIdentifierExpressionNode CSharpParserModel_AmbiguousIdentifierExpressionNode { get; } = new AmbiguousIdentifierExpressionNode(
         default,
@@ -384,7 +385,8 @@ public class CSharpBinder
         int scopeIndexKey,
         bool isRecursive = false)
     {
-        var query = compilationUnit.NodeList
+        return Enumerable.Empty<VariableDeclarationNode>();
+        /*var query = compilationUnit.NodeList
             .Where(kvp => kvp.Unsafe_ParentIndexKey == scopeIndexKey && kvp.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             .Select(kvp => (VariableDeclarationNode)kvp);
     
@@ -488,7 +490,7 @@ public class CSharpBinder
             }
         }
         
-        return query;
+        return query;*/
     }
     
     /// <summary>
@@ -591,6 +593,9 @@ public class CSharpBinder
         out VariableDeclarationNode variableDeclarationNode,
         bool isRecursive = false)
     {
+        variableDeclarationNode = null;
+        return false;
+        /*
         var matchNode = compilationUnit.NodeList.FirstOrDefault(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
                                                                      x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
                                                                      GetIdentifierText(x, compilationUnit) == variableIdentifierText);
@@ -623,6 +628,7 @@ public class CSharpBinder
             variableDeclarationNode = (VariableDeclarationNode)matchNode;
             return true;
         }
+        */
     }
     
     public bool TryAddVariableDeclarationNodeByScope(
@@ -631,6 +637,8 @@ public class CSharpBinder
         string variableIdentifierText,
         VariableDeclarationNode variableDeclarationNode)
     {
+        return false;
+        /*
         var matchNode = compilationUnit.NodeList.FirstOrDefault(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
                                                                      x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
                                                                      GetIdentifierText(x, compilationUnit) == variableIdentifierText);
@@ -645,6 +653,7 @@ public class CSharpBinder
         {
             return false;
         }
+        */
     }
     
     public void SetVariableDeclarationNodeByScope(
@@ -653,6 +662,7 @@ public class CSharpBinder
         string variableIdentifierText,
         VariableDeclarationNode variableDeclarationNode)
     {
+        /*
         var index = compilationUnit.NodeList.FindIndex(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
                                                             x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
                                                             GetIdentifierText(x, compilationUnit) == variableIdentifierText);
@@ -662,6 +672,7 @@ public class CSharpBinder
             variableDeclarationNode.Unsafe_ParentIndexKey = scopeIndexKey;
             compilationUnit.NodeList[index] = variableDeclarationNode;
         }
+        */
     }
     
     public bool TryGetLabelDeclarationHierarchically(
@@ -670,6 +681,7 @@ public class CSharpBinder
         string identifierText,
         out LabelDeclarationNode? labelDeclarationNode)
     {
+        /*
         var localScope = GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
 
         while (localScope is not null)
@@ -691,6 +703,10 @@ public class CSharpBinder
 
         labelDeclarationNode = null;
         return false;
+        */
+        
+        labelDeclarationNode = null;
+        return false;
     }
     
     public bool TryGetLabelDeclarationNodeByScope(
@@ -699,6 +715,10 @@ public class CSharpBinder
         string labelIdentifierText,
         out LabelDeclarationNode labelDeclarationNode)
     {
+        labelDeclarationNode = null;
+        return false;
+    
+        /*
         var matchNode = compilationUnit.NodeList.FirstOrDefault(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
                                                                      x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
                                                                      GetIdentifierText(x, compilationUnit) == labelIdentifierText);
@@ -713,6 +733,7 @@ public class CSharpBinder
             labelDeclarationNode = (LabelDeclarationNode)matchNode;
             return true;
         }
+        */
     }
     
     public bool TryAddLabelDeclarationNodeByScope(
@@ -721,6 +742,7 @@ public class CSharpBinder
         string labelIdentifierText,
         LabelDeclarationNode labelDeclarationNode)
     {
+        /*
         var matchNode = compilationUnit.NodeList.FirstOrDefault(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
                                                                      x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
                                                                      GetIdentifierText(x, compilationUnit) == labelIdentifierText);
@@ -735,6 +757,9 @@ public class CSharpBinder
         {
             return false;
         }
+        */
+        
+        return false;
     }
     
     public void SetLabelDeclarationNodeByScope(
@@ -743,6 +768,7 @@ public class CSharpBinder
         string labelIdentifierText,
         LabelDeclarationNode labelDeclarationNode)
     {
+        /*
         var index = compilationUnit.NodeList.FindIndex(x => x.Unsafe_ParentIndexKey == scopeIndexKey &&
                                                             x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
                                                             GetIdentifierText(x, compilationUnit) == labelIdentifierText);
@@ -752,6 +778,7 @@ public class CSharpBinder
             labelDeclarationNode.Unsafe_ParentIndexKey = scopeIndexKey;
             compilationUnit.NodeList[index] = labelDeclarationNode;
         }
+        */
     }
     
     public Symbol? GetSymbol(CSharpCompilationUnit compilationUnit, TextEditorTextSpan textSpan, IReadOnlyList<Symbol> symbolList)
@@ -1324,6 +1351,8 @@ public class CSharpBinder
     
     public IEnumerable<ISyntaxNode> GetMemberList_TypeDefinitionNode(TypeDefinitionNode typeDefinitionNode)
     {
+        return Enumerable.Empty<ISyntaxNode>();
+        /*
         if (typeDefinitionNode.Unsafe_SelfIndexKey == -1 ||
             !__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var compilationUnit))
         {
@@ -1396,6 +1425,7 @@ public class CSharpBinder
         }
         
         return query;
+        */
     }
     
     private readonly List<ISyntaxNode> _getMemberList = new();
@@ -1420,14 +1450,14 @@ public class CSharpBinder
             }
         }
         
-        foreach (var node in compilationUnit.NodeList)
+        /*foreach (var node in compilationUnit.NodeList)
         {
             if (node.Unsafe_ParentIndexKey == typeDefinitionNode.Unsafe_SelfIndexKey &&
                 node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
             {
                 _getMemberList.Add(node);
             }
-        }
+        }*/
         
         if (typeDefinitionNode.IndexFunctionArgumentEntryList != -1)
         {
@@ -1485,14 +1515,14 @@ public class CSharpBinder
                                         }
                                     }
                                     
-                                    foreach (var node in innerCompilationUnit.NodeList)
+                                    /*foreach (var node in innerCompilationUnit.NodeList)
                                     {
                                         if (node.Unsafe_ParentIndexKey == innerScopeIndexKey &&
                                             node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
                                         {
                                             _getMemberList.Add(node);
                                         }
-                                    }
+                                    }*/
                                     
                                     if (innerTypeDefinitionNode.IndexFunctionArgumentEntryList != -1)
                                     {
