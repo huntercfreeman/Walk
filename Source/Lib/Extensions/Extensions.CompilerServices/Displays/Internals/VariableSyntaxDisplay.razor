@@ -3,7 +3,15 @@
 @using Walk.Extensions.CompilerServices.Syntax.Nodes
 @using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums
 
-@{
+@*
+    I'm making changes to the C# Compiler Service storage.
+    I encountered an infinite loop in the UI when I hovered a certain generic variable.
+    The TypeSyntaxDisplay was rendering GenericSyntaxDisplay which then rendered TypeSyntaxDisplay, repeat...
+    This spiked my memory, I was able to stop the app with Task Manager, but I want to avoid this happening again at all costs until I am 100% certain
+    the new storage won't have an infinite loop in the UI.
+*@
+@if (SyntaxViewModel.Depth < 6)
+{
 	var syntaxViewModelLocal = SyntaxViewModel;
 	
 	string? prefixText;
@@ -61,63 +69,63 @@
 		textCssClass = "di_te_variable";
 		variableDeclarationNode = null;
 	}
+    
+    <span>
+    	@if (syntaxViewModelLocal.Depth == 0 && !string.IsNullOrWhiteSpace(prefixText))
+    	{
+    		<span>
+    			@prefixText
+    			&nbsp;
+    		</span>
+    	}
+    	
+    	@if (variableDeclarationNode is not null)
+    	{
+    		var syntaxViewModel = new SyntaxViewModel(
+    		    SyntaxViewModel.ExtendedCompilerService,
+    		    SyntaxViewModel.TextEditorService,
+    		    SyntaxViewModel.ResourceUri,
+    			targetSymbol: null,
+    			targetNode: null,
+    			definitionNode: null,
+    			depth: syntaxViewModelLocal.Depth + 1);
+        	<TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="variableDeclarationNode.TypeReference"/>
+        	<text>&nbsp;</text>
+        }
+        else
+        {
+        	<span class="di_te_keyword">
+        		undefined
+        		&nbsp;
+        	</span>
+        }
+    	
+    	@if (!string.IsNullOrWhiteSpace(text))
+    	{
+    		var classCssString = syntaxViewModelLocal.DefinitionNode is null
+    			? string.Empty
+    			: "di_te_syntax-onclick";
+    	
+    		<span class="@classCssString @textCssClass"
+    			  @onclick="() => syntaxViewModelLocal.HandleOnClick(TextEditorService, SyntaxKind.VariableDeclarationNode)">
+    			@text
+    		</span>
+    	}
+    	
+    	@if (variableDeclarationNode is not null && variableDeclarationNode.VariableKind == VariableKind.Property)
+        {
+        	<span>
+            	{
+            	
+            	<text><span class="di_te_keyword"> get</span>;</text>
+            	
+            	@if (variableDeclarationNode.HasSetter)
+            	{
+            		<text><span class="di_te_keyword"> set</span>;</text>
+            	}
+            	
+            	}
+        	</span>
+        }
+    </span>
 }
-
-<span>
-	@if (syntaxViewModelLocal.Depth == 0 && !string.IsNullOrWhiteSpace(prefixText))
-	{
-		<span>
-			@prefixText
-			&nbsp;
-		</span>
-	}
-	
-	@if (variableDeclarationNode is not null)
-	{
-		var syntaxViewModel = new SyntaxViewModel(
-		    SyntaxViewModel.ExtendedCompilerService,
-		    SyntaxViewModel.TextEditorService,
-		    SyntaxViewModel.ResourceUri,
-			targetSymbol: null,
-			targetNode: null,
-			definitionNode: null,
-			depth: syntaxViewModelLocal.Depth + 1);
-    	<TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel" TypeReference="variableDeclarationNode.TypeReference"/>
-    	<text>&nbsp;</text>
-    }
-    else
-    {
-    	<span class="di_te_keyword">
-    		undefined
-    		&nbsp;
-    	</span>
-    }
-	
-	@if (!string.IsNullOrWhiteSpace(text))
-	{
-		var classCssString = syntaxViewModelLocal.DefinitionNode is null
-			? string.Empty
-			: "di_te_syntax-onclick";
-	
-		<span class="@classCssString @textCssClass"
-			  @onclick="() => syntaxViewModelLocal.HandleOnClick(TextEditorService, SyntaxKind.VariableDeclarationNode)">
-			@text
-		</span>
-	}
-	
-	@if (variableDeclarationNode is not null && variableDeclarationNode.VariableKind == VariableKind.Property)
-    {
-    	<span>
-        	{
-        	
-        	<text><span class="di_te_keyword"> get</span>;</text>
-        	
-        	@if (variableDeclarationNode.HasSetter)
-        	{
-        		<text><span class="di_te_keyword"> set</span>;</text>
-        	}
-        	
-        	}
-    	</span>
-    }
-</span>
