@@ -106,7 +106,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         return contextMenu.GetDefaultMenuRecord();
     }
     
-    /*private MenuRecord? GetAutocompleteMenuPart(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu, int positionIndex)
+    private MenuRecord? GetAutocompleteMenuPart(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu, int positionIndex)
     {
         var character = '\0';
         
@@ -140,7 +140,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             
             switch (character)
             {
-                /* Lowercase Letters *//*
+                /* Lowercase Letters */
                 case 'a':
                 case 'b':
                 case 'c':
@@ -167,7 +167,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 case 'x':
                 case 'y':
                 case 'z':
-                /* Uppercase Letters *//*
+                /* Uppercase Letters */
                 case 'A':
                 case 'B':
                 case 'C':
@@ -194,7 +194,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 case 'X':
                 case 'Y':
                 case 'Z':
-                /* Underscore *//*
+                /* Underscore */
                 case '_':
                     if (foundMemberAccessToken)
                     {
@@ -340,7 +340,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             var resource = GetResource(virtualizationResult.Model.PersistentState.ResourceUri);
             var compilationUnitLocal = (CSharpCompilationUnit)resource.CompilationUnit;
             
-            var symbols = compilationUnitLocal.SymbolList;
+            var symbols = __CSharpBinder.SymbolList.Skip(compilationUnitLocal.IndexSymbolList).Take(compilationUnitLocal.CountSymbolList).ToList();
             // var diagnostics = compilationUnitLocal.DiagnosticList;
             
             Symbol foundSymbol = default;
@@ -478,7 +478,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                             if (__CSharpBinder.__CompilationUnitMap.TryGetValue(typeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
                             {
                                 // innerCompilationUnit = compilationUnitLocal;
-                                symbols = innerCompilationUnit.SymbolList;
+                                symbols = __CSharpBinder.SymbolList.Skip(innerCompilationUnit.IndexSymbolList).Take(innerCompilationUnit.CountSymbolList).ToList();
                             }
                         }
                         
@@ -595,15 +595,15 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         }
         
         return null;
-    }*/
+    }
 
     public MenuRecord GetAutocompleteMenu(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu)
     {
         var positionIndex = virtualizationResult.Model.GetPositionIndex(virtualizationResult.ViewModel);
         
-        /*var autocompleteMenuPart = GetAutocompleteMenuPart(virtualizationResult, autocompleteMenu, positionIndex);
+        var autocompleteMenuPart = GetAutocompleteMenuPart(virtualizationResult, autocompleteMenu, positionIndex);
         if (autocompleteMenuPart is not null)
-            return autocompleteMenuPart;*/
+            return autocompleteMenuPart;
         
         var word = virtualizationResult.Model.ReadPreviousWordOrDefault(
             virtualizationResult.ViewModel.LineIndex,
