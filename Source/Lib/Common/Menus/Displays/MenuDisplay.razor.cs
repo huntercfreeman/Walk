@@ -17,7 +17,6 @@ public partial class MenuDisplay : ComponentBase, IDisposable
 
     /// <summary>Pixels</summary>
     private int LineHeight => CommonService.Options_LineHeight;
-    private string _lineHeightCssStyle;
     
     private Guid _guidId = Guid.NewGuid();
     private string _htmlId = null!;

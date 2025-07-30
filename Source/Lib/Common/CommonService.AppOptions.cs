@@ -33,6 +33,7 @@ public partial class CommonService
     public string Options_ColorSchemeCssStyleString { get; set; }
     
     public int Options_LineHeight { get; set; } = 20;
+    public string Options_LineHeight_CssStyle { get; set; } = "height: 20px;";
     
     public AppOptionsState GetAppOptionsState() => _appOptionsState;
 
@@ -143,6 +144,7 @@ public partial class CommonService
     public void Options_SetLineHeight(int lineHeightInPixels)
     {
         Options_LineHeight = lineHeightInPixels;
+        Options_LineHeight_CssStyle = $"height: {Options_LineHeight.ToString()}px;";
         CommonUiStateChanged?.Invoke(CommonUiEventKind.AppOptionsStateChanged);
     }
 
