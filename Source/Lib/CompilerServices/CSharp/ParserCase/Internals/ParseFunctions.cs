@@ -26,17 +26,18 @@ public class ParseFunctions
             countFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             default,
-            parserModel.Compilation.ResourceUri);
+            parserModel.ResourceUri);
             
         parserModel.BindFunctionDefinitionNode(functionDefinitionNode);
         
         bool isFunctionOverloadCase;
         
         if (parserModel.TryGetFunctionDefinitionNodeByScope(
-            parserModel.Compilation,
-            parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
-            parserModel.GetTextSpanText(consumedIdentifierToken.TextSpan),
-            out var existingFunctionDefinitionNode))
+                parserModel.ResourceUri,
+                parserModel.Compilation,
+                parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                parserModel.GetTextSpanText(consumedIdentifierToken.TextSpan),
+                out var existingFunctionDefinitionNode))
         {
             isFunctionOverloadCase = true;
         }
@@ -47,6 +48,7 @@ public class ParseFunctions
         
         parserModel.NewScopeAndBuilderFromOwner(
             functionDefinitionNode,
+            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
     
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
@@ -101,7 +103,7 @@ public class ParseFunctions
             for (int clearIndex = 0; clearIndex < parserModel.Binder.MethodOverloadDefinitionList.Count; clearIndex++)
             {
                 var entry = parserModel.Binder.MethodOverloadDefinitionList[clearIndex];
-                if (entry.ResourceUri == parserModel.Compilation.ResourceUri)
+                if (entry.ResourceUri == parserModel.ResourceUri)
                 {
                     entry.ScopeIndexKey = -1;
                     parserModel.Binder.MethodOverloadDefinitionList[clearIndex] = entry;
@@ -118,17 +120,17 @@ public class ParseFunctions
             
             var existingWasFound = false;
         
-            if (parserModel.Binder.__CompilationUnitMap.TryGetValue(parserModel.Compilation.ResourceUri, out var previousCompilationUnit))
+            if (parserModel.Binder.__CompilationUnitMap.TryGetValue(parserModel.ResourceUri, out var previousCompilationUnit))
             {
                 existingWasFound = false;
                 
-                if (existingNode.Unsafe_ParentIndexKey < previousCompilationUnit.CodeBlockOwnerList.Count)
+                if (existingNode.Unsafe_ParentIndexKey < previousCompilationUnit.CountCodeBlockOwnerList)
                 {
-                    var previousParent = previousCompilationUnit.CodeBlockOwnerList[existingNode.Unsafe_ParentIndexKey];
+                    var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.IndexCodeBlockOwnerList + existingNode.Unsafe_ParentIndexKey];
                     var currentParent = parserModel.GetParent(newNode, parserModel.Compilation);
                     
                     if (currentParent.SyntaxKind == previousParent.SyntaxKind &&
-                        parserModel.Binder.GetIdentifierText(currentParent, parserModel.Compilation) == parserModel.Binder.GetIdentifierText(previousParent, previousCompilationUnit))
+                        parserModel.Binder.GetIdentifierText(currentParent, parserModel.ResourceUri, parserModel.Compilation) == parserModel.Binder.GetIdentifierText(previousParent, parserModel.ResourceUri, previousCompilationUnit))
                     {
                         // All the existing entires will be "emptied"
                         // so don't both with checking whether the arguments are the same here.
@@ -140,10 +142,22 @@ public class ParseFunctions
                         // TODO: Cannot use ref, out, or in...
                         var compilation = parserModel.Compilation;
                         
-                        var previousNode = previousCompilationUnit.CodeBlockOwnerList.FirstOrDefault(x =>
-                            x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
-                            x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
-                            binder.GetIdentifierText(x, previousCompilationUnit) == binder.GetIdentifierText(existingNode, compilation));
+                        ISyntaxNode? previousNode = null;
+                        
+                        for (int indexPreviousNode = previousCompilationUnit.IndexCodeBlockOwnerList;
+                             indexPreviousNode < previousCompilationUnit.IndexCodeBlockOwnerList + previousCompilationUnit.CountCodeBlockOwnerList;
+                             indexPreviousNode++)
+                        {
+                            var x = parserModel.Binder.CodeBlockOwnerList[indexPreviousNode];
+                            
+                            if (x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
+                                x.SyntaxKind == SyntaxKind.FunctionDefinitionNode &&
+                                binder.GetIdentifierText(x, parserModel.ResourceUri, previousCompilationUnit) == binder.GetIdentifierText(existingNode, parserModel.ResourceUri, compilation))
+                            {
+                                previousNode = x;
+                                break;
+                            }
+                        }
                     
                         if (previousNode is not null)
                         {
@@ -167,7 +181,7 @@ public class ParseFunctions
             {
                 existingNode.IndexMethodOverloadDefinition = parserModel.Binder.MethodOverloadDefinitionList.Count;
                 parserModel.Binder.MethodOverloadDefinitionList.Add(new MethodOverloadDefinitionEntry(
-                    parserModel.Compilation.ResourceUri,
+                    parserModel.ResourceUri,
                     parserModel.Binder.MethodOverloadDefinitionList.Count,
                     existingNode.Unsafe_SelfIndexKey));
             }
@@ -183,7 +197,7 @@ public class ParseFunctions
             {
                 usedExistingSlot = true;
                 parserModel.Binder.MethodOverloadDefinitionList[i] = new MethodOverloadDefinitionEntry(
-                    parserModel.Compilation.ResourceUri,
+                    parserModel.ResourceUri,
                     existingNode.IndexMethodOverloadDefinition,
                     newNode.Unsafe_SelfIndexKey);
             }
@@ -194,7 +208,7 @@ public class ParseFunctions
             parserModel.Binder.MethodOverloadDefinitionList.Insert(
                 i,
                 new MethodOverloadDefinitionEntry(
-                    parserModel.Compilation.ResourceUri,
+                    parserModel.ResourceUri,
                     existingNode.IndexMethodOverloadDefinition,
                     newNode.Unsafe_SelfIndexKey));
         }
@@ -214,7 +228,8 @@ public class ParseFunctions
         }
         
         Console.WriteLine("========");
-        Console.WriteLine();*/
+        Console.WriteLine();*//*
+        */
     }
 
     public static void HandleConstructorDefinition(
@@ -242,12 +257,13 @@ public class ParseFunctions
             countFunctionArgumentEntryList: 0,
             closeParenthesisToken: default,
             default,
-            parserModel.Compilation.ResourceUri);
+            parserModel.ResourceUri);
     
         parserModel.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken);
         
         parserModel.NewScopeAndBuilderFromOwner(
             constructorDefinitionNode,
+            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
         
         HandleFunctionArguments(constructorDefinitionNode, ref parserModel);

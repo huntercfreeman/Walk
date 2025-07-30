@@ -14,6 +14,7 @@ public static class ParseTokens
             parserModel.GetTextSpanText(parserModel.TokenWalker.Current.TextSpan) == "_")
         {
             if (!parserModel.TryGetVariableDeclarationHierarchically(
+                    parserModel.ResourceUri,
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                     parserModel.GetTextSpanText(parserModel.TokenWalker.Current.TextSpan),
@@ -284,6 +285,7 @@ public static class ParseTokens
     
         parserModel.NewScopeAndBuilderFromOwner(
             getterOrSetterNode,
+            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
@@ -321,6 +323,7 @@ public static class ParseTokens
             
             parserModel.NewScopeAndBuilderFromOwner(
                 arbitraryCodeBlockNode,
+                parserModel.ResourceUri,
                 openBraceToken.TextSpan);
         }
         

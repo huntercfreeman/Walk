@@ -18,41 +18,35 @@ namespace Walk.CompilerServices.CSharp.CompilerServiceCase;
 /// </summary>
 public sealed class CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerServiceResource
 {
-    public CSharpCompilationUnit(ResourceUri resourceUri, string sourceText, CompilationUnitKind compilationUnitKind)
+    public CSharpCompilationUnit(string sourceText, CompilationUnitKind compilationUnitKind)
     {
-        ResourceUri = resourceUri;
         SourceText = sourceText;
         CompilationUnitKind = compilationUnitKind;
-
-        if (CompilationUnitKind == CompilationUnitKind.IndividualFile_AllData)
-            SymbolIdToExternalTextSpanMap = new();
-    }
-    
-    public IEnumerable<TextEditorTextSpan> GetDiagnosticTextSpans()
-    {
-        return DiagnosticList.Select(x => x.TextSpan);
     }
     
     ICompilationUnit ICompilerServiceResource.CompilationUnit { get => this; set => _ = value; }
     
     public CompilationUnitKind CompilationUnitKind { get; }
 
-    public ResourceUri ResourceUri { get; set; }
     public string SourceText { get; set; }
     
-    public List<TextEditorDiagnostic> __DiagnosticList { get; } = new();
-    public List<Symbol> __SymbolList { get; set; } = new();
+    /// <summary>Set this index in the CSharpParserModel constructor</summary>
+    public int IndexDiagnosticList { get; set; }
+    public int CountDiagnosticList { get; set; }
+    
+    /// <summary>Set this index in the CSharpParserModel constructor</summary>
+    public int IndexSymbolList { get; set; }
+    public int CountSymbolList { get; set; }
     
     /// <summary>This needs to initialize to -1 to signify there are no entries in the pooled list.</summary>
     public int IndexFunctionInvocationParameterMetadataList { get; set; } = -1;
     public int CountFunctionInvocationParameterMetadataList { get; set; }
     
-    public List<ICodeBlockOwner> CodeBlockOwnerList { get; } = new();
-    public List<ISyntaxNode> NodeList { get; } = new();
+    /// <summary>Set this index in the CSharpParserModel constructor</summary>
+    public int IndexCodeBlockOwnerList { get; set; }
+    public int CountCodeBlockOwnerList { get; set; }
     
-    public IReadOnlyList<TextEditorDiagnostic> DiagnosticList => __DiagnosticList;
-    public IReadOnlyList<Symbol> SymbolList => __SymbolList;
-
-    public Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)> SymbolIdToExternalTextSpanMap { get; }
-    // public Dictionary<string, Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)>> SymbolIdToExternalTextSpanMap { get; }
+    /// <summary>Set this index in the CSharpParserModel constructor</summary>
+    public int IndexNodeList { get; set; }
+    public int CountNodeList { get; set; }
 }

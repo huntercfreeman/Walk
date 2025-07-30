@@ -9,12 +9,19 @@ namespace Walk.CompilerServices.CSharp.ParserCase;
 
 public static class CSharpParser
 {
-    public static void Parse(CSharpCompilationUnit compilationUnit, CSharpBinder binder, ref CSharpLexerOutput lexerOutput)
+    public static void Parse(Walk.TextEditor.RazorLib.Lexers.Models.ResourceUri resourceUri, CSharpCompilationUnit compilationUnit, CSharpBinder binder, ref CSharpLexerOutput lexerOutput)
     {
-        compilationUnit.CodeBlockOwnerList.Add(binder.GlobalCodeBlockNode);
-
+        compilationUnit.IndexCodeBlockOwnerList = binder.CodeBlockOwnerList.Count;
+        compilationUnit.IndexNodeList = binder.NodeList.Count;
+        
+        binder.CodeBlockOwnerList.Insert(
+            compilationUnit.IndexCodeBlockOwnerList + compilationUnit.CountCodeBlockOwnerList,
+            binder.GlobalCodeBlockNode);
+        ++compilationUnit.CountCodeBlockOwnerList;
+        
         var parserModel = new CSharpParserModel(
             binder,
+            resourceUri,
             compilationUnit,
             ref lexerOutput);
         
@@ -180,6 +187,6 @@ public static class CSharpParser
         if (parserModel.GetParent(parserModel.CurrentCodeBlockOwner, compilationUnit) is not null)
             parserModel.CloseScope(parserModel.TokenWalker.Current.TextSpan); // The current token here would be the EOF token.
         
-        parserModel.Binder.FinalizeCompilationUnit(compilationUnit);
+        parserModel.Binder.FinalizeCompilationUnit(parserModel.ResourceUri, compilationUnit);
     }
 }
