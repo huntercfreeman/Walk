@@ -134,44 +134,1908 @@ public sealed partial class TextEditorService
     /// </summary>
     public Debounce<byte> PostScrollAndRemeasure_DebounceExtraEvent { get; }
     
+    private readonly StringPoolBucket _bucket_123 = new();
+    private readonly StringPoolBucket _bucket_456 = new();
+    private readonly StringPoolBucket _bucket_789 = new();
+    private readonly StringPoolBucket _bucket_101112 = new();
+    private readonly StringPoolBucket _bucket_131415 = new();
+    private readonly StringPoolBucket _bucket_default = new();
+    
+    public static int StringAllocations = 0;
+    
+    public class StringPoolBucket
+    {
+        private readonly List<string> _stringList = new();
+        
+        // Uppercase
+        private int A;
+        private int B;
+        private int C;
+        private int D;
+        private int E;
+        private int F;
+        private int G;
+        private int H;
+        private int I;
+        private int J;
+        private int K;
+        private int L;
+        private int M;
+        private int N;
+        private int O;
+        private int P;
+        private int Q;
+        private int R;
+        private int S;
+        private int T;
+        private int U;
+        private int V;
+        private int W;
+        private int X;
+        private int Y;
+        private int Z;
+        // Lowercase
+        private int a;
+        private int b;
+        private int c;
+        private int d;
+        private int e;
+        private int f;
+        private int g;
+        private int h;
+        private int i;
+        private int j;
+        private int k;
+        private int l;
+        private int m;
+        private int n;
+        private int o;
+        private int p;
+        private int q;
+        private int r;
+        private int s;
+        private int t;
+        private int u;
+        private int v;
+        private int w;
+        private int x;
+        private int y;
+        private int z;
+        // _
+        private int _;
+        // defaultGroup
+        private int defaultGroup;
+        
+        /// <summary>
+        /// span.Length of 0 doesn't get a bucket so span[0] is always safe.
+        /// </summary>
+        public string Get(ReadOnlySpan<char> span)
+        {
+            int startInclusiveIndex;
+            int endExclusiveIndex;
+        
+            switch (span[0])
+            {
+                case 'A':
+                    startInclusiveIndex = A;
+                    endExclusiveIndex = B;
+                    break;
+                case 'B':
+                    startInclusiveIndex = B;
+                    endExclusiveIndex = C;
+                    break;
+                case 'C':
+                    startInclusiveIndex = C;
+                    endExclusiveIndex = D;
+                    break;
+                case 'D':
+                    startInclusiveIndex = D;
+                    endExclusiveIndex = E;
+                    break;
+                case 'E':
+                    startInclusiveIndex = E;
+                    endExclusiveIndex = F;
+                    break;
+                case 'F':
+                    startInclusiveIndex = F;
+                    endExclusiveIndex = G;
+                    break;
+                case 'G':
+                    startInclusiveIndex = G;
+                    endExclusiveIndex = H;
+                    break;
+                case 'H':
+                    startInclusiveIndex = H;
+                    endExclusiveIndex = I;
+                    break;
+                case 'I':
+                    startInclusiveIndex = I;
+                    endExclusiveIndex = J;
+                    break;
+                case 'J':
+                    startInclusiveIndex = J;
+                    endExclusiveIndex = K;
+                    break;
+                case 'K':
+                    startInclusiveIndex = K;
+                    endExclusiveIndex = L;
+                    break;
+                case 'L':
+                    startInclusiveIndex = L;
+                    endExclusiveIndex = M;
+                    break;
+                case 'M':
+                    startInclusiveIndex = M;
+                    endExclusiveIndex = N;
+                    break;
+                case 'N':
+                    startInclusiveIndex = N;
+                    endExclusiveIndex = O;
+                    break;
+                case 'O':
+                    startInclusiveIndex = O;
+                    endExclusiveIndex = P;
+                    break;
+                case 'P':
+                    startInclusiveIndex = P;
+                    endExclusiveIndex = Q;
+                    break;
+                case 'Q':
+                    startInclusiveIndex = Q;
+                    endExclusiveIndex = R;
+                    break;
+                case 'R':
+                    startInclusiveIndex = R;
+                    endExclusiveIndex = S;
+                    break;
+                case 'S':
+                    startInclusiveIndex = S;
+                    endExclusiveIndex = T;
+                    break;
+                case 'T':
+                    startInclusiveIndex = T;
+                    endExclusiveIndex = U;
+                    break;
+                case 'U':
+                    startInclusiveIndex = U;
+                    endExclusiveIndex = V;
+                    break;
+                case 'V':
+                    startInclusiveIndex = V;
+                    endExclusiveIndex = W;
+                    break;
+                case 'W':
+                    startInclusiveIndex = W;
+                    endExclusiveIndex = X;
+                    break;
+                case 'X':
+                    startInclusiveIndex = X;
+                    endExclusiveIndex = Y;
+                    break;
+                case 'Y':
+                    startInclusiveIndex = Y;
+                    endExclusiveIndex = Z;
+                    break;
+                case 'Z':
+                    startInclusiveIndex = Z;
+                    endExclusiveIndex = a;
+                    break;
+                case 'a':
+                    startInclusiveIndex = a;
+                    endExclusiveIndex = b;
+                    break;
+                case 'b':
+                    startInclusiveIndex = b;
+                    endExclusiveIndex = c;
+                    break;
+                case 'c':
+                    startInclusiveIndex = c;
+                    endExclusiveIndex = d;
+                    break;
+                case 'd':
+                    startInclusiveIndex = d;
+                    endExclusiveIndex = e;
+                    break;
+                case 'e':
+                    startInclusiveIndex = e;
+                    endExclusiveIndex = f;
+                    break;
+                case 'f':
+                    startInclusiveIndex = f;
+                    endExclusiveIndex = g;
+                    break;
+                case 'g':
+                    startInclusiveIndex = g;
+                    endExclusiveIndex = h;
+                    break;
+                case 'h':
+                    startInclusiveIndex = h;
+                    endExclusiveIndex = i;
+                    break;
+                case 'i':
+                    startInclusiveIndex = i;
+                    endExclusiveIndex = j;
+                    break;
+                case 'j':
+                    startInclusiveIndex = j;
+                    endExclusiveIndex = k;
+                    break;
+                case 'k':
+                    startInclusiveIndex = k;
+                    endExclusiveIndex = l;
+                    break;
+                case 'l':
+                    startInclusiveIndex = l;
+                    endExclusiveIndex = m;
+                    break;
+                case 'm':
+                    startInclusiveIndex = m;
+                    endExclusiveIndex = n;
+                    break;
+                case 'n':
+                    startInclusiveIndex = n;
+                    endExclusiveIndex = o;
+                    break;
+                case 'o':
+                    startInclusiveIndex = o;
+                    endExclusiveIndex = p;
+                    break;
+                case 'p':
+                    startInclusiveIndex = p;
+                    endExclusiveIndex = q;
+                    break;
+                case 'q':
+                    startInclusiveIndex = q;
+                    endExclusiveIndex = r;
+                    break;
+                case 'r':
+                    startInclusiveIndex = r;
+                    endExclusiveIndex = s;
+                    break;
+                case 's':
+                    startInclusiveIndex = s;
+                    endExclusiveIndex = t;
+                    break;
+                case 't':
+                    startInclusiveIndex = t;
+                    endExclusiveIndex = u;
+                    break;
+                case 'u':
+                    startInclusiveIndex = u;
+                    endExclusiveIndex = v;
+                    break;
+                case 'v':
+                    startInclusiveIndex = v;
+                    endExclusiveIndex = w;
+                    break;
+                case 'w':
+                    startInclusiveIndex = w;
+                    endExclusiveIndex = x;
+                    break;
+                case 'x':
+                    startInclusiveIndex = x;
+                    endExclusiveIndex = y;
+                    break;
+                case 'y':
+                    startInclusiveIndex = y;
+                    endExclusiveIndex = z;
+                    break;
+                case 'z':
+                    startInclusiveIndex = z;
+                    endExclusiveIndex = _;
+                    break;
+                case '_':
+                    startInclusiveIndex = _;
+                    endExclusiveIndex = defaultGroup;
+                    break;
+                default:
+                    startInclusiveIndex = defaultGroup;
+                    endExclusiveIndex = _stringList.Count;
+                    break;
+            }
+            
+            for (int i = startInclusiveIndex; i < endExclusiveIndex; i++)
+            {
+                if (span.SequenceEqual(_stringList[i]))
+                    return _stringList[i];
+            }
+            
+            // Allocate the new string and update all the indices.
+            //
+            // Insert at the end of the first letter group
+            // presuming this on average results in more often used strings
+            // being at the front of the first letter group.
+
+            _stringList.Insert(endExclusiveIndex, span.ToString());
+            ++StringAllocations;            switch (span[0])
+            {
+                case 'A':
+                    B++;
+                    C++;
+                    D++;
+                    E++;
+                    F++;
+                    G++;
+                    H++;
+                    I++;
+                    J++;
+                    K++;
+                    L++;
+                    M++;
+                    N++;
+                    O++;
+                    P++;
+                    Q++;
+                    R++;
+                    S++;
+                    T++;
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'B':
+                    C++;
+                    E++;
+                    E++;
+                    F++;
+                    G++;
+                    H++;
+                    I++;
+                    J++;
+                    K++;
+                    L++;
+                    M++;
+                    N++;
+                    O++;
+                    P++;
+                    Q++;
+                    R++;
+                    S++;
+                    T++;
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'C':
+                    D++;
+                    E++;
+                    F++;
+                    G++;
+                    H++;
+                    I++;
+                    J++;
+                    K++;
+                    L++;
+                    M++;
+                    N++;
+                    O++;
+                    P++;
+                    Q++;
+                    R++;
+                    S++;
+                    T++;
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'D':
+                    E++;
+                    F++;
+                    G++;
+                    H++;
+                    I++;
+                    J++;
+                    K++;
+                    L++;
+                    M++;
+                    N++;
+                    O++;
+                    P++;
+                    Q++;
+                    R++;
+                    S++;
+                    T++;
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'E':
+                    F++;
+                    G++;
+                    H++;
+                    I++;
+                    J++;
+                    K++;
+                    L++;
+                    M++;
+                    N++;
+                    O++;
+                    P++;
+                    Q++;
+                    R++;
+                    S++;
+                    T++;
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'F':
+                    G++;
+                    H++;
+                    I++;
+                    J++;
+                    K++;
+                    L++;
+                    M++;
+                    N++;
+                    O++;
+                    P++;
+                    Q++;
+                    R++;
+                    S++;
+                    T++;
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'G':
+                    H++;
+                    I++;
+                    J++;
+                    K++;
+                    L++;
+                    M++;
+                    N++;
+                    O++;
+                    P++;
+                    Q++;
+                    R++;
+                    S++;
+                    T++;
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'H':
+                    I++;
+                    J++;
+                    K++;
+                    L++;
+                    M++;
+                    N++;
+                    O++;
+                    P++;
+                    Q++;
+                    R++;
+                    S++;
+                    T++;
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'I':
+                    J++;
+                    K++;
+                    L++;
+                    M++;
+                    N++;
+                    O++;
+                    P++;
+                    Q++;
+                    R++;
+                    S++;
+                    T++;
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'J':
+                    K++;
+                    L++;
+                    M++;
+                    N++;
+                    O++;
+                    P++;
+                    Q++;
+                    R++;
+                    S++;
+                    T++;
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'K':
+                    L++;
+                    M++;
+                    N++;
+                    O++;
+                    P++;
+                    Q++;
+                    R++;
+                    S++;
+                    T++;
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'L':
+                    M++;
+                    N++;
+                    O++;
+                    P++;
+                    Q++;
+                    R++;
+                    S++;
+                    T++;
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'M':
+                    N++;
+                    O++;
+                    P++;
+                    Q++;
+                    R++;
+                    S++;
+                    T++;
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'N':
+                    O++;
+                    P++;
+                    Q++;
+                    R++;
+                    S++;
+                    T++;
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'O':
+                    P++;
+                    Q++;
+                    R++;
+                    S++;
+                    T++;
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'P':
+                    Q++;
+                    R++;
+                    S++;
+                    T++;
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'Q':
+                    R++;
+                    S++;
+                    T++;
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'R':
+                    S++;
+                    T++;
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'S':
+                    T++;
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'T':
+                    U++;
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'U':
+                    V++;
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'V':
+                    W++;
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'W':
+                    X++;
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'X':
+                    Y++;
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'Y':
+                    Z++;
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'Z':
+                    a++;
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                // Lowercase
+                case 'a':
+                    b++;
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'b':
+                    c++;
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'c':
+                    d++;
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'd':
+                    e++;
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'e':
+                    f++;
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'f':
+                    g++;
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'g':
+                    h++;
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'h':
+                    i++;
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'i':
+                    j++;
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'j':
+                    k++;
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'k':
+                    l++;
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'l':
+                    m++;
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'm':
+                    n++;
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'n':
+                    o++;
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'o':
+                    p++;
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'p':
+                    q++;
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'q':
+                    r++;
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'r':
+                    s++;
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 's':
+                    t++;
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 't':
+                    u++;
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'u':
+                    v++;
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'v':
+                    w++;
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'w':
+                    x++;
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'x':
+                    y++;
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'y':
+                    z++;
+                    _++;
+                    defaultGroup++;
+                    break;
+                case 'z':
+                    _++;
+                    defaultGroup++;
+                    break;
+                case '_':
+                    defaultGroup++;
+                    break;
+                default:                    break;
+            }
+            
+            return _stringList[endExclusiveIndex];
+        }
+    }
+    
     /// <summary>
+    /// Provides string pooling for the ICompilerService implementations.
+    ///
     /// This is only safe to use if you're in a TextEditorEditContext.
     /// (i.e.: there is an instance of TextEditorEditContext in scope)
     /// </summary>
     public string EditContext_GetText(ReadOnlySpan<char> span)
     {
-        var key = 0;
-        
-        for (int i = 0; i < span.Length && i < 11; i++)
+        // Group by span length
+        //
+        // Each bucket is alphabetically sorted (only by the first letter)
+        //
+        // Track index of each first letter
+        // 
+        // Linear search within the first letter
+    
+        switch (span.Length)
         {
-            key += (int)span[i];
-        }
-        
-        if (_stringMap.TryGetValue(key, out var stringList))
-        {
-            foreach (var stringValue in stringList)
-            {
-                if (span.SequenceEqual(stringValue))
-                    return stringValue;
-            }
-            
-            var str = span.ToString();
-            // Console.Write("_stringAllocationCount_");
-            // Console.WriteLine(++_stringAllocationCount);
-            // Console.Write("_collisionCount_");
-            // Console.WriteLine(++_collisionCount);
-            stringList.Add(str);
-            return str;
-        }
-        else
-        {
-            var str = span.ToString();
-            // Console.Write("_stringAllocationCount_");
-            // Console.WriteLine(++_stringAllocationCount);
-            // Console.Write("_listCount_");
-            // Console.WriteLine(++_listCount);
-            _stringMap.Add(key, new List<string> { str });
-            return str;
+            case 0:
+                return string.Empty;
+            case 1:
+            case 2:
+            case 3:
+                return _bucket_123.Get(span);
+            case 4:
+            case 5:
+            case 6:
+                return _bucket_456.Get(span);
+            case 7:
+            case 8:
+            case 9:
+                return _bucket_789.Get(span);
+            case 10:
+            case 11:
+            case 12:
+                return _bucket_101112.Get(span);
+            case 13:
+            case 14:
+            case 15:
+                return _bucket_131415.Get(span);
+            default:
+                return _bucket_default.Get(span);
         }
     }
 
