@@ -95,7 +95,7 @@ public partial class SymbolDisplay : ComponentBase
     
             return extendedCompilerService.GetSyntaxNode(
                 symbolLocal.TextSpan.StartInclusiveIndex,
-                compilerServiceResource.ResourceUri,
+                textEditorModel.PersistentState.ResourceUri,
                 compilerServiceResource);
         }
         catch (Exception e)
@@ -131,7 +131,7 @@ public partial class SymbolDisplay : ComponentBase
             var extendedCompilerService = (IExtendedCompilerService)textEditorModel.PersistentState.CompilerService;
             var compilerServiceResource = extendedCompilerService.GetResource(textEditorModel.PersistentState.ResourceUri);
     
-            return extendedCompilerService.GetDefinitionNode(symbolLocal.TextSpan, compilerServiceResource, symbolLocal);
+            return extendedCompilerService.GetDefinitionNode(symbolLocal.TextSpan, textEditorModel.PersistentState.ResourceUri, compilerServiceResource, symbolLocal);
         }
         catch (Exception e)
         {

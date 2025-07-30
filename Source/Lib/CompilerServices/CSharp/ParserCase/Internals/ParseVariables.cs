@@ -20,7 +20,7 @@ public static class ParseVariables
             consumedIdentifierToken,
             variableKind,
             false,
-            parserModel.Compilation.ResourceUri);
+            parserModel.ResourceUri);
 
         parserModel.BindVariableDeclarationNode(variableDeclarationNode);
         return variableDeclarationNode;

@@ -55,6 +55,7 @@ public class ParseDefaultKeywords
         
         parserModel.NewScopeAndBuilderFromOwner(
             catchNode,
+            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
         
         parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
@@ -134,6 +135,7 @@ public class ParseDefaultKeywords
         
         parserModel.NewScopeAndBuilderFromOwner(
             doWhileStatementNode,
+            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
         
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
@@ -161,6 +163,7 @@ public class ParseDefaultKeywords
         
         parserModel.NewScopeAndBuilderFromOwner(
             ifStatementNode,
+            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
         
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
@@ -213,6 +216,7 @@ public class ParseDefaultKeywords
         
         parserModel.NewScopeAndBuilderFromOwner(
             finallyNode,
+            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
     
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
@@ -244,6 +248,7 @@ public class ParseDefaultKeywords
             
         parserModel.NewScopeAndBuilderFromOwner(
             forStatementNode,
+            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
         
         parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = false;
@@ -280,6 +285,7 @@ public class ParseDefaultKeywords
         
         parserModel.NewScopeAndBuilderFromOwner(
             foreachStatementNode,
+            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
             
         var successParse = ParseExpressions.TryParseVariableDeclarationNode(ref parserModel, out var variableDeclarationNode);
@@ -351,6 +357,7 @@ public class ParseDefaultKeywords
             
         parserModel.NewScopeAndBuilderFromOwner(
             lockStatementNode,
+            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
     
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
@@ -453,6 +460,7 @@ public class ParseDefaultKeywords
             
         parserModel.NewScopeAndBuilderFromOwner(
             switchStatementNode,
+            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
     }
 
@@ -492,6 +500,7 @@ public class ParseDefaultKeywords
         
         parserModel.NewScopeAndBuilderFromOwner(
             tryStatementTryNode,
+            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
     
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
@@ -568,6 +577,7 @@ public class ParseDefaultKeywords
             
         parserModel.NewScopeAndBuilderFromOwner(
             whileStatementNode,
+            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
     
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
@@ -669,6 +679,7 @@ public class ParseDefaultKeywords
         
         parserModel.NewScopeAndBuilderFromOwner(
             ifStatementNode,
+            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
         
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
@@ -814,11 +825,12 @@ public class ParseDefaultKeywords
             closeParenthesisToken: default,
             inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
             namespaceName: parserModel.GetTextSpanText(parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan),
-            parserModel.Compilation.ResourceUri);
+            parserModel.ResourceUri);
         
         if (typeDefinitionNode.HasPartialModifier)
         {
             if (parserModel.TryGetTypeDefinitionHierarchically(
+                    parserModel.ResourceUri,
                     parserModel.Compilation,
                     parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                     parserModel.GetTextSpanText(identifierToken.TextSpan),
@@ -835,6 +847,7 @@ public class ParseDefaultKeywords
         
         parserModel.NewScopeAndBuilderFromOwner(
             typeDefinitionNode,
+            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
             
         parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = false;
@@ -843,7 +856,7 @@ public class ParseDefaultKeywords
         {
             if (typeDefinitionNode.IndexPartialTypeDefinition == -1)
             {
-                if (parserModel.Binder.__CompilationUnitMap.TryGetValue(parserModel.Compilation.ResourceUri, out var previousCompilationUnit))
+                if (parserModel.Binder.__CompilationUnitMap.TryGetValue(parserModel.ResourceUri, out var previousCompilationUnit))
                 {
                     if (typeDefinitionNode.Unsafe_ParentIndexKey < previousCompilationUnit.CountCodeBlockOwnerList)
                     {
@@ -851,7 +864,7 @@ public class ParseDefaultKeywords
                         var currentParent = parserModel.GetParent(typeDefinitionNode, parserModel.Compilation);
                         
                         if (currentParent.SyntaxKind == previousParent.SyntaxKind &&
-                            parserModel.Binder.GetIdentifierText(currentParent, parserModel.Compilation) == parserModel.Binder.GetIdentifierText(previousParent, previousCompilationUnit))
+                            parserModel.Binder.GetIdentifierText(currentParent, parserModel.ResourceUri, parserModel.Compilation) == parserModel.Binder.GetIdentifierText(previousParent, parserModel.ResourceUri, previousCompilationUnit))
                         {
                             // All the existing entires will be "emptied"
                             // so don't both with checking whether the arguments are the same here.
@@ -871,7 +884,7 @@ public class ParseDefaultKeywords
                                 
                                 if (x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
                                     x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                                    binder.GetIdentifierText(x, previousCompilationUnit) == binder.GetIdentifierText(typeDefinitionNode, compilation))
+                                    binder.GetIdentifierText(x, parserModel.ResourceUri, previousCompilationUnit) == binder.GetIdentifierText(typeDefinitionNode, parserModel.ResourceUri, compilation))
                                 {
                                     previousNode = x;
                                     break;
@@ -899,7 +912,7 @@ public class ParseDefaultKeywords
                 {
                     if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
                     {
-                        if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri == parserModel.Compilation.ResourceUri)
+                        if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri == parserModel.ResourceUri)
                         {
                             seenResourceUri = true;
                         
@@ -998,7 +1011,7 @@ public class ParseDefaultKeywords
             {
                 if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
                 {
-                    if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri == parserModel.Compilation.ResourceUri)
+                    if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri == parserModel.ResourceUri)
                     {
                         if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ScopeIndexKey == -1)
                         {
@@ -1086,12 +1099,13 @@ public class ParseDefaultKeywords
             namespaceKeywordToken,
             (SyntaxToken)namespaceIdentifier,
             default,
-            parserModel.Compilation.ResourceUri);
+            parserModel.ResourceUri);
 
         parserModel.SetCurrentNamespaceStatementNode(namespaceStatementNode);
         
         parserModel.NewScopeAndBuilderFromOwner(
             namespaceStatementNode,
+            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
         
         // Do not set 'IsImplicitOpenCodeBlockTextSpan' for namespace file scoped.

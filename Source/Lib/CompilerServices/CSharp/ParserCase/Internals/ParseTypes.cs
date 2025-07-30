@@ -189,7 +189,7 @@ public static class ParseTypes
                         identifierToken,
                         VariableKind.EnumMember,
                         false,
-                        parserModel.Compilation.ResourceUri);
+                        parserModel.ResourceUri);
                         
                     parserModel.BindVariableDeclarationNode(variableDeclarationNode);
                     
