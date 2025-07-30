@@ -527,9 +527,12 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     /// </summary>
     private string GetNodeElementCssStyle(TreeViewNoType node)
     {
+        if (!CommonService.IntToCssValueCache.ContainsKey(node.Depth * OffsetPerDepthInPixels))
+            CommonService.IntToCssValueCache.Add(node.Depth * OffsetPerDepthInPixels, (node.Depth * OffsetPerDepthInPixels).ToCssValue());
+    
         CommonService.UiStringBuilder.Clear();
         CommonService.UiStringBuilder.Append("display: flex; align-items: center; padding-left: ");
-        CommonService.UiStringBuilder.Append(node.Depth * OffsetPerDepthInPixels);
+        CommonService.UiStringBuilder.Append(CommonService.IntToCssValueCache[node.Depth * OffsetPerDepthInPixels]);
         CommonService.UiStringBuilder.Append("px; ");
         CommonService.UiStringBuilder.Append(CommonService.Options_LineHeight_CssStyle);
         

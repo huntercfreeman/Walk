@@ -883,31 +883,17 @@ public partial class CommonService
             selectNodesBetweenCurrentAndNextActiveNode);
     }
     
-    private Dictionary<int, string> _intToCssValueCache = new();
-    
-    /// <summary>This method should only be invoked by the "UI thread"</summary>
-    public string TreeView_GetNodeElementStyle(int offsetInPixels)
-    {
-        if (!_intToCssValueCache.ContainsKey(offsetInPixels))
-            _intToCssValueCache.Add(offsetInPixels, offsetInPixels.ToCssValue());
-        
-        UiStringBuilder.Clear();
-        UiStringBuilder.Append("padding-left: ");
-        UiStringBuilder.Append(_intToCssValueCache[offsetInPixels]);
-        UiStringBuilder.Append("px;");
-        
-        return UiStringBuilder.ToString();
-    }
+    public Dictionary<int, string> IntToCssValueCache = new();
     
     /// <summary>This method should only be invoked by the "UI thread"</summary>
     public string TreeView_GetNodeTextStyle(int walkTreeViewIconWidth)
     {
-        if (!_intToCssValueCache.ContainsKey(walkTreeViewIconWidth))
-            _intToCssValueCache.Add(walkTreeViewIconWidth, walkTreeViewIconWidth.ToCssValue());
+        if (!IntToCssValueCache.ContainsKey(walkTreeViewIconWidth))
+            IntToCssValueCache.Add(walkTreeViewIconWidth, walkTreeViewIconWidth.ToCssValue());
         
         UiStringBuilder.Clear();
         UiStringBuilder.Append("width: calc(100% - ");
-        UiStringBuilder.Append(_intToCssValueCache[walkTreeViewIconWidth]);
+        UiStringBuilder.Append(IntToCssValueCache[walkTreeViewIconWidth]);
         UiStringBuilder.Append("px); height:  100%;");
         
         return UiStringBuilder.ToString();
@@ -918,8 +904,8 @@ public partial class CommonService
     {
         var result = offsetInPixels + walkTreeViewIconWidth / 2;
         
-        if (!_intToCssValueCache.ContainsKey(result))
-            _intToCssValueCache.Add(result, result.ToCssValue());
+        if (!IntToCssValueCache.ContainsKey(result))
+            IntToCssValueCache.Add(result, result.ToCssValue());
     
         UiStringBuilder.Clear();
         UiStringBuilder.Append("margin-left: ");
