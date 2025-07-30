@@ -2,11 +2,6 @@
 
 <div id="@_htmlId" class="di_menu-display" tabindex="0">
     @{
-        if (_seenLineHeight != LineHeight)
-        {
-            _seenLineHeight = LineHeight;
-            _lineHeightCssStyle = $"height: {_seenLineHeight}px";
-        }
         if (_seenWidgetHeight != WidgetHeight)
         {
             _seenWidgetHeight = WidgetHeight;
@@ -43,7 +38,7 @@
             _horizontalRuleElementIndexHashSet.Add(i);
         }
         
-        <div class="@cssClass" style="@_lineHeightCssStyle">
+        <div class="@cssClass" style="@CommonService.Options_LineHeight_CssStyle">
             
             @if (Menu.UseIcons)
             {

@@ -521,19 +521,20 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         
         return CommonService.UiStringBuilder.ToString();
     }
-                             
+
     /// <summary>
     /// This method should only be invoked from the "UI thread" due to the usage of `CommonBackgroundTaskApi.UiStringBuilder`.
     /// </summary>
     private string GetNodeElementCssStyle(TreeViewNoType node)
     {
-        
+        if (!CommonService.IntToCssValueCache.ContainsKey(node.Depth * OffsetPerDepthInPixels))
+            CommonService.IntToCssValueCache.Add(node.Depth * OffsetPerDepthInPixels, (node.Depth * OffsetPerDepthInPixels).ToCssValue());
+    
         CommonService.UiStringBuilder.Clear();
         CommonService.UiStringBuilder.Append("display: flex; align-items: center; padding-left: ");
-        CommonService.UiStringBuilder.Append(node.Depth * OffsetPerDepthInPixels);
-        CommonService.UiStringBuilder.Append("px; height: ");
-        CommonService.UiStringBuilder.Append(LineHeight);
-        CommonService.UiStringBuilder.Append("px;");
+        CommonService.UiStringBuilder.Append(CommonService.IntToCssValueCache[node.Depth * OffsetPerDepthInPixels]);
+        CommonService.UiStringBuilder.Append("px; ");
+        CommonService.UiStringBuilder.Append(CommonService.Options_LineHeight_CssStyle);
         
         return CommonService.UiStringBuilder.ToString();
     }
