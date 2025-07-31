@@ -65,10 +65,6 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
     
         HandleCompilerServicesAndDecorationMappers();
     
-        DotNetService.TextEditorService.CommonService.Continuous_Enqueue(new BackgroundTask(
-            Key<IBackgroundTaskGroup>.Empty,
-            Do_InitializeFooterBadges));
-    
         DotNetService.Enqueue(new DotNetWorkArgs
         {
             WorkKind = DotNetWorkKind.WalkExtensionsDotNetInitializerOnInit,
@@ -329,17 +325,6 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
             "walkCommon.focusHtmlElementById",
             elementId,
             /*preventScroll:*/ true);
-    }
-    
-    public ValueTask Do_InitializeFooterBadges()
-    {
-        DotNetService.IdeService.Ide_RegisterFooterBadge(
-            new DirtyResourceUriBadge(DotNetService.TextEditorService));
-
-        DotNetService.IdeService.Ide_RegisterFooterBadge(
-            new NotificationBadge(DotNetService.TextEditorService.CommonService));
-
-        return ValueTask.CompletedTask;
     }
     
     private async Task SetSolution(DotNetAppData dotNetAppData)

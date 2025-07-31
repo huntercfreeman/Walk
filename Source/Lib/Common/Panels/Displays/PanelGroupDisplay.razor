@@ -39,17 +39,18 @@
             </CascadingValue>
         }
 
-        <div class="di_ide_panel-tabs-justify-end"
-             style="display: flex;">
-            @if (PanelGroupParameter.BadgeList is not null)
-            {
-                foreach (var badgeModel in PanelGroupParameter.BadgeList)
+        @if (PanelGroupParameter.BadgeList is not null)
+        {
+            <div class="di_ide_panel-tabs-justify-end"
+                 style="display: flex;">
+                @foreach (var badgeModel in PanelGroupParameter.BadgeList)
             	{
-            	    <BadgeDisplay @key="badgeModel.Key"
-            	                  BadgeModel="badgeModel"/>
+                	    <BadgeDisplay @key="badgeModel.Key"
+                	                  BadgeModel="badgeModel"/>
             	}
-            }
-        </div>
+        	</div>
+        }
+        
 
         @if (panelState.DragEventArgs is not null)
         {
