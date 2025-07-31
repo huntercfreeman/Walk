@@ -31,13 +31,7 @@
         }
         else
         {
-            <TreeViewContainerDisplay TreeViewContainerKey="DotNetSolutionState.TreeViewSolutionExplorerStateKey"
-                                      CssStyleString="height: 100%;"
-                                      OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                                      TreeViewKeyboardEventHandler="_solutionExplorerTreeViewKeymap"
-                                      TreeViewMouseEventHandler="_solutionExplorerTreeViewMouseEventHandler"
-                                      WalkTreeViewIconWidth="appOptionsState.Options.IconSizeInPixels"
-                                      OffsetPerDepthInPixels="OffsetPerDepthInPixels"/>
+            <TreeViewContainerDisplay TreeViewContainerParameter="_treeViewContainerParameter"/>
         }
     </div>
 </div>

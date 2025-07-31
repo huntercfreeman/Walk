@@ -9,6 +9,7 @@ using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Resizes.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Ide.RazorLib.Shareds.Displays.Internals;
@@ -53,8 +54,59 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         true,
         null);
 
+    private PanelGroupParameter _leftPanelGroupParameter;
+    private PanelGroupParameter _rightPanelGroupParameter;
+    private PanelGroupParameter _bottomPanelGroupParameter;
+    
+    private ResizableColumnParameter _topLeftResizableColumnParameter;
+    private ResizableColumnParameter _topRightResizableColumnParameter;
+    
+    private ResizableRowParameter _resizableRowParameter;
+    
     protected override void OnInitialized()
     {
+        var panelState = IdeService.CommonService.GetPanelState();
+    
+        _topLeftResizableColumnParameter = new(
+            CommonFacts.GetTopLeftPanelGroup(panelState).ElementDimensions,
+            _editorElementDimensions,
+            () => InvokeAsync(StateHasChanged));
+            
+        _topRightResizableColumnParameter = new(
+            _editorElementDimensions,
+            CommonFacts.GetTopRightPanelGroup(panelState).ElementDimensions,
+            () => InvokeAsync(StateHasChanged));
+            
+        _resizableRowParameter = new(
+            _bodyElementDimensions,
+            CommonFacts.GetBottomPanelGroup(IdeService.CommonService.GetPanelState()).ElementDimensions,
+            () => InvokeAsync(StateHasChanged));
+        
+    
+        _leftPanelGroupParameter = new(
+            panelGroupKey: CommonFacts.LeftPanelGroupKey,
+            adjacentElementDimensions: _editorElementDimensions,
+            dimensionAttributeKind: DimensionAttributeKind.Width,
+            reRenderSelfAndAdjacentElementDimensionsFunc: () => InvokeAsync(StateHasChanged),
+            cssClassString: null,
+            badgeList: null);
+    
+        _rightPanelGroupParameter = new(
+            panelGroupKey: CommonFacts.RightPanelGroupKey,
+            adjacentElementDimensions: _editorElementDimensions,
+            dimensionAttributeKind: DimensionAttributeKind.Width,
+            reRenderSelfAndAdjacentElementDimensionsFunc: () => InvokeAsync(StateHasChanged),
+            cssClassString: null,
+            badgeList: null);
+        
+        _bottomPanelGroupParameter = new(
+            panelGroupKey: CommonFacts.BottomPanelGroupKey,
+            cssClassString: "di_ide_footer",
+            adjacentElementDimensions: _bodyElementDimensions,
+            dimensionAttributeKind: DimensionAttributeKind.Height,
+            reRenderSelfAndAdjacentElementDimensionsFunc: () => InvokeAsync(StateHasChanged),
+            badgeList: IdeService.GetIdeState().FooterBadgeList);
+    
         IdeService.TextEditorService.IdeBackgroundTaskApi = IdeService;
     
         _bodyElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]

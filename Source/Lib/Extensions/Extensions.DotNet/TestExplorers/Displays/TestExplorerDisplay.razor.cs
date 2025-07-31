@@ -9,6 +9,7 @@ using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Extensions.DotNet.TestExplorers.Displays.Internals;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Resizes.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 
 namespace Walk.Extensions.DotNet.TestExplorers.Displays;
@@ -18,8 +19,17 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private DotNetService DotNetService { get; set; } = null!;
 
+    private ResizableColumnParameter _resizableColumnParameter;
+
     protected override void OnInitialized()
     {
+        var testExplorerState = DotNetService.GetTestExplorerState();
+        
+        _resizableColumnParameter = new(
+            testExplorerState.TreeViewElementDimensions,
+            testExplorerState.DetailsElementDimensions,
+            () => InvokeAsync(StateHasChanged));
+    
         var model = DotNetService.IdeService.TextEditorService.Model_GetOrDefault(
             ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
 

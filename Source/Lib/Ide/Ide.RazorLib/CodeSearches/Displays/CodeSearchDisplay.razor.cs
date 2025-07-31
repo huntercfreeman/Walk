@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
+using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.Resizes.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Ide.RazorLib.CodeSearches.Models;
@@ -13,16 +15,14 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
     [Inject]
     private IdeService IdeService { get; set; } = null!;
     
-    private CodeSearchTreeViewKeyboardEventHandler _treeViewKeymap = null!;
-    private CodeSearchTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
-    
-    private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        IdeService.TextEditorService.CommonService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
-
     private readonly ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
     {
         HeaderComponentType = null,
     };
+    
+    private TreeViewContainerParameter _treeViewContainerParameter;
+    
+    private ResizableRowParameter _resizableRowParameter;
 
     private string InputValue
     {
@@ -43,12 +43,21 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
+        var codeSearchState = IdeService.GetCodeSearchState();
+        
+        _resizableRowParameter = new (
+            codeSearchState.TopContentElementDimensions,
+            codeSearchState.BottomContentElementDimensions,
+            HandleResizableRowReRenderAsync);
+    
         IdeService.IdeStateChanged += OnCodeSearchStateChanged;
         IdeService.CommonService.CommonUiStateChanged += OnTreeViewStateChanged;
-    
-        _treeViewKeymap = new CodeSearchTreeViewKeyboardEventHandler(IdeService.TextEditorService);
-
-        _treeViewMouseEventHandler = new CodeSearchTreeViewMouseEventHandler(IdeService.TextEditorService);
+        
+        _treeViewContainerParameter = new(
+            CodeSearchState.TreeViewCodeSearchContainerKey,
+            new CodeSearchTreeViewKeyboardEventHandler(IdeService.TextEditorService),
+            new CodeSearchTreeViewMouseEventHandler(IdeService.TextEditorService),
+            OnTreeViewContextMenuFunc);
     }
     
     protected override void OnAfterRender(bool firstRender)

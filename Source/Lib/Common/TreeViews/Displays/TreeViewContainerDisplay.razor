@@ -4,11 +4,10 @@
 @using Walk.Common.RazorLib.Dimensions.Models;
 
 @*@{ _treeViewContainer = null; }*@
-@{ _treeViewContainer = CommonService.GetTreeViewContainer(TreeViewContainerKey); }
+@{ _treeViewContainer = CommonService.GetTreeViewContainer(TreeViewContainerParameter.TreeViewContainerKey); }
 
 <div id="@_htmlId"
      class="@GetContainerElementCssClass(_treeViewContainer)"
-     style="@CssStyleString"
      tabindex="0">
 
     @if (_treeViewContainer is null)

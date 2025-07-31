@@ -3,6 +3,7 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Resizes.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 
@@ -67,9 +68,16 @@ public partial class InputFileDisplay : ComponentBase, IDisposable
     private List<(Key<TreeViewContainer> treeViewContainerKey, TreeViewAbsolutePath treeViewAbsolutePath)> _searchMatchTuples = new();
 
     public ElementReference? SearchElementReference => _inputFileTopNavBarComponent?.SearchElementReference;
-    
+
+    private ResizableColumnParameter _resizableColumnParameter;
+
     protected override void OnInitialized()
     {
+        _resizableColumnParameter = new(
+            _sidebarElementDimensions,
+            _contentElementDimensions,
+            () => InvokeAsync(StateHasChanged));
+    
         IdeService.IdeStateChanged += OnInputFileStateChanged;
         
         _inputFileTreeViewMouseEventHandler = new InputFileTreeViewMouseEventHandler(

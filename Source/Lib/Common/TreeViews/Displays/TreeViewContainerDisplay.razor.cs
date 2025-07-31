@@ -16,26 +16,12 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
     private CommonService CommonService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public Key<TreeViewContainer> TreeViewContainerKey { get; set; } = Key<TreeViewContainer>.Empty;
-    [Parameter, EditorRequired]
-    public TreeViewMouseEventHandler TreeViewMouseEventHandler { get; set; } = null!;
-    [Parameter, EditorRequired]
-    public TreeViewKeyboardEventHandler TreeViewKeyboardEventHandler { get; set; } = null!;
-
-    [Parameter]
-    public string CssClassString { get; set; } = string.Empty;
-    [Parameter]
-    public string CssStyleString { get; set; } = string.Empty;
-    /// <summary>If a consumer of the TreeView component does not have logic for their own DropdownComponent, then one can provide a RenderFragment and a dropdown will be rendered for the consumer and their RenderFragment is rendered within that dropdown.<br/><br/>If one has their own DropdownComponent, then it is recommended that they use <see cref="OnContextMenuFunc"/> instead.</summary>
-    [Parameter]
-    public RenderFragment<TreeViewCommandArgs>? OnContextMenuRenderFragment { get; set; }
-    /// <summary>If a consumer of the TreeView component does not have logic for their own DropdownComponent, then it is recommended to use <see cref="OnContextMenuRenderFragment"/><br/><br/> <see cref="OnContextMenuFunc"/> allows one to be notified of the ContextMenu event along with the necessary parameters by being given <see cref="TreeViewCommandArgs"/></summary>
-    [Parameter]
-    public Func<TreeViewCommandArgs, Task>? OnContextMenuFunc { get; set; }
-    [Parameter]
-    public int OffsetPerDepthInPixels { get; set; } = 12;
-    [Parameter]
-    public int WalkTreeViewIconWidth { get; set; } = 16;
+    public TreeViewContainerParameter TreeViewContainerParameter { get; set; }
+    
+    private int OffsetPerDepthInPixels => (int)Math.Ceiling(
+        CommonService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+    
+    private int WalkTreeViewIconWidth => CommonService.GetAppOptionsState().Options.IconSizeInPixels;
     
     /// <summary>Pixels</summary>
     private int LineHeight => CommonService.Options_LineHeight;
@@ -182,9 +168,9 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
 
         // Do not ConfigureAwait(false) here, the _flatNodeList is made on the UI thread
         // and after this await we need to read the _flatNodeList to scroll the newly active node into view.
-        await TreeViewKeyboardEventHandler.OnKeyDownAsync(treeViewCommandArgs);
+        await TreeViewContainerParameter.TreeViewKeyboardEventHandler.OnKeyDownAsync(treeViewCommandArgs);
         
-        var treeViewContainerLocal = CommonService.GetTreeViewContainer(TreeViewContainerKey);
+        var treeViewContainerLocal = CommonService.GetTreeViewContainer(TreeViewContainerParameter.TreeViewContainerKey);
         
         if (treeViewContainerLocal is null)
             return;
@@ -218,7 +204,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
             eventArgsMouseDown.BoundingClientRectLeft,
             eventArgsMouseDown.BoundingClientRectTop);
         
-        if (OnContextMenuFunc is null)
+        if (TreeViewContainerParameter.OnContextMenuFunc is null)
             return;
         
         ContextMenuFixedPosition contextMenuFixedPosition;
@@ -276,7 +262,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         CommonService.Enqueue(new CommonWorkArgs
         {
             WorkKind = CommonWorkKind.TreeView_HandleTreeViewOnContextMenu,
-            OnContextMenuFunc = OnContextMenuFunc,
+            OnContextMenuFunc = TreeViewContainerParameter.OnContextMenuFunc,
             TreeViewContextMenuCommandArgs = _treeViewContextMenuCommandArgs,
         });
     }
@@ -335,7 +321,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         
         IndexActiveNode = IndexBasicValidation(indexLocal);
         
-        await TreeViewMouseEventHandler.OnClickAsync(new TreeViewCommandArgs(
+        await TreeViewContainerParameter.TreeViewMouseEventHandler.OnClickAsync(new TreeViewCommandArgs(
             CommonService,
             _treeViewContainer,
             _flatNodeList[IndexActiveNode],
@@ -371,7 +357,7 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         
         IndexActiveNode = IndexBasicValidation(indexLocal);
         
-        await TreeViewMouseEventHandler.OnDoubleClickAsync(new TreeViewCommandArgs(
+        await TreeViewContainerParameter.TreeViewMouseEventHandler.OnDoubleClickAsync(new TreeViewCommandArgs(
             CommonService,
             _treeViewContainer,
             _flatNodeList[IndexActiveNode],
@@ -516,8 +502,6 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
         CommonService.UiStringBuilder.Clear();
         CommonService.UiStringBuilder.Append("di_tree-view-state di_unselectable ");
         CommonService.UiStringBuilder.Append(GetHasActiveNodeCssClass(treeViewContainer));
-        CommonService.UiStringBuilder.Append(" ");
-        CommonService.UiStringBuilder.Append(CssClassString);
         
         return CommonService.UiStringBuilder.ToString();
     }

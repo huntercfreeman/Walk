@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Commands.Models;
+using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Ide.RazorLib.FolderExplorers.Models;
 
 namespace Walk.Ide.RazorLib.FolderExplorers.Displays;
@@ -11,18 +12,17 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private IdeService IdeService { get; set; } = null!;
 
-    private FolderExplorerTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
-    private FolderExplorerTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
-
-    private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        IdeService.CommonService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+    private TreeViewContainerParameter _treeViewContainerParameter;
 
     protected override void OnInitialized()
     {
         IdeService.IdeStateChanged += OnFolderExplorerStateChanged;
-
-        _treeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(IdeService);
-        _treeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(IdeService);
+    
+        _treeViewContainerParameter = new(
+            FolderExplorerState.TreeViewContentStateKey,
+            new FolderExplorerTreeViewKeyboardEventHandler(IdeService),
+            new FolderExplorerTreeViewMouseEventHandler(IdeService),
+            OnTreeViewContextMenuFunc);
     }
 
     private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)

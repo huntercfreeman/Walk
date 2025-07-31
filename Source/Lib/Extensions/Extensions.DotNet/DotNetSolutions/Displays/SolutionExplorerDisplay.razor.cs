@@ -4,6 +4,7 @@ using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Displays.Internals;
 
@@ -14,21 +15,17 @@ public partial class SolutionExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private DotNetService DotNetService { get; set; } = null!;
 
-    private SolutionExplorerTreeViewKeyboardEventHandler _solutionExplorerTreeViewKeymap = null!;
-    private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
-
-    private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        DotNetService.IdeService.TextEditorService.CommonService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+    private TreeViewContainerParameter _treeViewContainerParameter;
 
     protected override void OnInitialized()
     {
         DotNetService.DotNetStateChanged += OnDotNetSolutionStateChanged;
     
-        _solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeyboardEventHandler(
-            DotNetService.IdeService);
-
-        _solutionExplorerTreeViewMouseEventHandler = new SolutionExplorerTreeViewMouseEventHandler(
-            DotNetService.IdeService);
+        _treeViewContainerParameter = new(
+            DotNetSolutionState.TreeViewSolutionExplorerStateKey,
+            new SolutionExplorerTreeViewKeyboardEventHandler(DotNetService.IdeService),
+            new SolutionExplorerTreeViewMouseEventHandler(DotNetService.IdeService),
+            OnTreeViewContextMenuFunc);
     }
 
     private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)

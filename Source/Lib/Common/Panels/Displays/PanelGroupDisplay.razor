@@ -5,7 +5,7 @@
 @{
     var panelState = CommonService.GetPanelState();
 
-    var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
+    var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupParameter.PanelGroupKey);
 
     IPanelTab? activePanelTab = null;
 
@@ -41,9 +41,9 @@
 
         <div class="di_ide_panel-tabs-justify-end"
              style="display: flex;">
-            @if (BadgeList is not null)
+            @if (PanelGroupParameter.BadgeList is not null)
             {
-                foreach (var badgeModel in BadgeList)
+                foreach (var badgeModel in PanelGroupParameter.BadgeList)
             	{
             	    <BadgeDisplay @key="badgeModel.Key"
             	                  BadgeModel="badgeModel"/>
