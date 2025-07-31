@@ -15,18 +15,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     private CommonService CommonService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public Key<PanelGroup> PanelGroupKey { get; set; } = Key<PanelGroup>.Empty;
-    [Parameter, EditorRequired]
-    public ElementDimensions AdjacentElementDimensions { get; set; }
-    [Parameter, EditorRequired]
-    public DimensionAttributeKind DimensionAttributeKind { get; set; }
-    [Parameter, EditorRequired]
-    public Func<Task> ReRenderSelfAndAdjacentElementDimensionsFunc { get; set; } = null!;
-
-    [Parameter]
-    public string CssClassString { get; set; } = null!;
-    [Parameter]
-    public IReadOnlyList<IBadgeModel>? BadgeList { get; set; } = null;
+    public PanelGroupParameter PanelGroupParameter { get; set; }
     
     private TabCascadingValueBatch _tabCascadingValueBatch = new();
 
@@ -39,18 +28,18 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     {
         var position = string.Empty;
 
-        if (CommonFacts.LeftPanelGroupKey == PanelGroupKey)
+        if (CommonFacts.LeftPanelGroupKey == PanelGroupParameter.PanelGroupKey)
             position = "left";
-        else if (CommonFacts.RightPanelGroupKey == PanelGroupKey)
+        else if (CommonFacts.RightPanelGroupKey == PanelGroupParameter.PanelGroupKey)
             position = "right";
-        else if (CommonFacts.BottomPanelGroupKey == PanelGroupKey)
+        else if (CommonFacts.BottomPanelGroupKey == PanelGroupParameter.PanelGroupKey)
             position = "bottom";
 
         _panelPositionCss = $"di_ide_panel_{position}";
         
         _htmlIdTabs = _panelPositionCss + "_tabs";
         
-        DimensionAttributeModificationPurpose = $"take_size_of_adjacent_hidden_panel_{PanelGroupKey}";
+        DimensionAttributeModificationPurpose = $"take_size_of_adjacent_hidden_panel_{PanelGroupParameter.PanelGroupKey}";
     
         CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
     }
@@ -81,7 +70,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     private async Task PassAlongSizeIfNoActiveTab()
     {
         var panelState = CommonService.GetPanelState();
-        var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
+        var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupParameter.PanelGroupKey);
 
         if (panelGroup is not null)
         {
@@ -91,30 +80,30 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
             DimensionAttribute adjacentElementSizeDimensionAttribute;
             DimensionAttribute panelGroupSizeDimensionsAttribute;
             
-            switch (DimensionAttributeKind)
+            switch (PanelGroupParameter.DimensionAttributeKind)
             {
                 case DimensionAttributeKind.Width:
-                    adjacentElementSizeDimensionAttribute = AdjacentElementDimensions.WidthDimensionAttribute;
+                    adjacentElementSizeDimensionAttribute = PanelGroupParameter.AdjacentElementDimensions.WidthDimensionAttribute;
                     panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.WidthDimensionAttribute;
                     break;
                 case DimensionAttributeKind.Height:
-                    adjacentElementSizeDimensionAttribute = AdjacentElementDimensions.HeightDimensionAttribute;
+                    adjacentElementSizeDimensionAttribute = PanelGroupParameter.AdjacentElementDimensions.HeightDimensionAttribute;
                     panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.HeightDimensionAttribute;
                     break;
                 case DimensionAttributeKind.Left:
-                    adjacentElementSizeDimensionAttribute = AdjacentElementDimensions.LeftDimensionAttribute;
+                    adjacentElementSizeDimensionAttribute = PanelGroupParameter.AdjacentElementDimensions.LeftDimensionAttribute;
                     panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.LeftDimensionAttribute;
                     break;
                 case DimensionAttributeKind.Right:
-                    adjacentElementSizeDimensionAttribute = AdjacentElementDimensions.RightDimensionAttribute;
+                    adjacentElementSizeDimensionAttribute = PanelGroupParameter.AdjacentElementDimensions.RightDimensionAttribute;
                     panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.RightDimensionAttribute;
                     break;
                 case DimensionAttributeKind.Top:
-                    adjacentElementSizeDimensionAttribute = AdjacentElementDimensions.TopDimensionAttribute;
+                    adjacentElementSizeDimensionAttribute = PanelGroupParameter.AdjacentElementDimensions.TopDimensionAttribute;
                     panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.TopDimensionAttribute;
                     break;
                 case DimensionAttributeKind.Bottom:
-                    adjacentElementSizeDimensionAttribute = AdjacentElementDimensions.BottomDimensionAttribute;
+                    adjacentElementSizeDimensionAttribute = PanelGroupParameter.AdjacentElementDimensions.BottomDimensionAttribute;
                     panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.BottomDimensionAttribute;
                     break;
                 default:
@@ -135,7 +124,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
                     DimensionOperatorKind.Add,
                     DimensionAttributeModificationPurpose));
 
-                await ReRenderSelfAndAdjacentElementDimensionsFunc
+                await PanelGroupParameter.ReRenderSelfAndAdjacentElementDimensionsFunc
                     .Invoke()
                     .ConfigureAwait(false);
             }
@@ -143,7 +132,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
             {
                 adjacentElementSizeDimensionAttribute.DimensionUnitList.RemoveAt(indexOfPreviousPassAlong);
 
-                await ReRenderSelfAndAdjacentElementDimensionsFunc
+                await PanelGroupParameter.ReRenderSelfAndAdjacentElementDimensionsFunc
                     .Invoke()
                     .ConfigureAwait(false);
             }
@@ -167,7 +156,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     {
         var panelState = CommonService.GetPanelState();
 
-        var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
+        var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupParameter.PanelGroupKey);
 
         if (panelGroup is null)
             return Task.CompletedTask;
@@ -197,7 +186,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     {
         var panelState = CommonService.GetPanelState();
 
-        var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
+        var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupParameter.PanelGroupKey);
 
         if (panelGroup is null)
             return Task.CompletedTask;
@@ -238,7 +227,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
         CommonService.UiStringBuilder.Append("di_ide_panel ");
         CommonService.UiStringBuilder.Append(_panelPositionCss);
         CommonService.UiStringBuilder.Append(" ");
-        CommonService.UiStringBuilder.Append(CssClassString);
+        CommonService.UiStringBuilder.Append(PanelGroupParameter.CssClassString);
     
         return CommonService.UiStringBuilder.ToString();
     }

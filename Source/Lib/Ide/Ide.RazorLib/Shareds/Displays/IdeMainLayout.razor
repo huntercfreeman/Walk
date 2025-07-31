@@ -97,10 +97,7 @@
     <div class="di_ide_body"
          style="@_bodyElementDimensions.GetStyleString(IdeService.CommonService.UiStringBuilder)">
     
-        <PanelGroupDisplay PanelGroupKey="CommonFacts.LeftPanelGroupKey"
-                           AdjacentElementDimensions="_editorElementDimensions"
-                           DimensionAttributeKind="DimensionAttributeKind.Width"
-                           ReRenderSelfAndAdjacentElementDimensionsFunc="() => InvokeAsync(StateHasChanged)" />
+        <PanelGroupDisplay PanelGroupParameter="_leftPanelGroupParameter"/>
     
         <ResizableColumn LeftElementDimensions="CommonFacts.GetTopLeftPanelGroup(panelState).ElementDimensions"
                          RightElementDimensions="_editorElementDimensions"
@@ -112,10 +109,7 @@
                          RightElementDimensions="CommonFacts.GetTopRightPanelGroup(panelState).ElementDimensions"
                          ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)" />
     
-        <PanelGroupDisplay PanelGroupKey="CommonFacts.RightPanelGroupKey"
-                           AdjacentElementDimensions="_editorElementDimensions"
-                           DimensionAttributeKind="DimensionAttributeKind.Width"
-                           ReRenderSelfAndAdjacentElementDimensionsFunc="() => InvokeAsync(StateHasChanged)" />
+        <PanelGroupDisplay PanelGroupParameter="_rightPanelGroupParameter"/>
     </div>
     @* End Body *@
 
@@ -123,10 +117,5 @@
                   BottomElementDimensions="CommonFacts.GetBottomPanelGroup(IdeService.CommonService.GetPanelState()).ElementDimensions"
                   ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)" />
 
-    <PanelGroupDisplay PanelGroupKey="CommonFacts.BottomPanelGroupKey"
-                       CssClassString="di_ide_footer"
-                       AdjacentElementDimensions="_bodyElementDimensions"
-                       DimensionAttributeKind="DimensionAttributeKind.Height"
-                       ReRenderSelfAndAdjacentElementDimensionsFunc="() => InvokeAsync(StateHasChanged)"
-                       BadgeList="IdeService.GetIdeState().FooterBadgeList"/>
+    <PanelGroupDisplay PanelGroupParameter="_bottomPanelGroupParameter"/>
 </div>

@@ -53,8 +53,36 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         true,
         null);
 
+    private PanelGroupParameter _leftPanelGroupParameter;
+    private PanelGroupParameter _rightPanelGroupParameter;
+    private PanelGroupParameter _bottomPanelGroupParameter;
+    
     protected override void OnInitialized()
     {
+        _leftPanelGroupParameter = new(
+            panelGroupKey: CommonFacts.LeftPanelGroupKey,
+            adjacentElementDimensions: _editorElementDimensions,
+            dimensionAttributeKind: DimensionAttributeKind.Width,
+            reRenderSelfAndAdjacentElementDimensionsFunc: () => InvokeAsync(StateHasChanged),
+            cssClassString: null,
+            badgeList: null);
+    
+        _rightPanelGroupParameter = new(
+            panelGroupKey: CommonFacts.RightPanelGroupKey,
+            adjacentElementDimensions: _editorElementDimensions,
+            dimensionAttributeKind: DimensionAttributeKind.Width,
+            reRenderSelfAndAdjacentElementDimensionsFunc: () => InvokeAsync(StateHasChanged),
+            cssClassString: null,
+            badgeList: null);
+        
+        _bottomPanelGroupParameter = new(
+            panelGroupKey: CommonFacts.BottomPanelGroupKey,
+            cssClassString: "di_ide_footer",
+            adjacentElementDimensions: _bodyElementDimensions,
+            dimensionAttributeKind: DimensionAttributeKind.Height,
+            reRenderSelfAndAdjacentElementDimensionsFunc: () => InvokeAsync(StateHasChanged),
+            badgeList: IdeService.GetIdeState().FooterBadgeList);
+    
         IdeService.TextEditorService.IdeBackgroundTaskApi = IdeService;
     
         _bodyElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
