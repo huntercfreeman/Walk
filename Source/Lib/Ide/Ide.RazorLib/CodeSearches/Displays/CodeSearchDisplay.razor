@@ -44,13 +44,7 @@
 
         <div>Results: @($"{codeSearchState.ResultList.Count:N0}")</div>
         
-        <TreeViewContainerDisplay TreeViewContainerKey="CodeSearchState.TreeViewCodeSearchContainerKey"
-                                  CssStyleString="height: 100%;"
-                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                                  TreeViewKeyboardEventHandler="_treeViewKeymap"
-                                  TreeViewMouseEventHandler="_treeViewMouseEventHandler"
-                                  WalkTreeViewIconWidth="appOptionsState.Options.IconSizeInPixels"
-                                  OffsetPerDepthInPixels="OffsetPerDepthInPixels"/>
+        <TreeViewContainerDisplay TreeViewContainerParameter="_treeViewContainerParameter"/>
     </div>
 
     <ResizableRow TopElementDimensions="codeSearchState.TopContentElementDimensions"

@@ -33,6 +33,17 @@ public partial class InputFileSidebar : ComponentBase
     public Action<AbsolutePath?> SetSelectedAbsolutePath { get; set; } = null!;
 
     public static readonly Key<TreeViewContainer> TreeViewContainerKey = Key<TreeViewContainer>.NewKey();
+    
+    private TreeViewContainerParameter _treeViewContainerParameter;
+
+    protected override void OnInitialized()
+    {
+        _treeViewContainerParameter = new(
+            TreeViewContainerKey,
+            InputFileTreeViewKeyboardEventHandler,
+            InputFileTreeViewMouseEventHandler,
+            OnTreeViewContextMenuFunc);
+    }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {

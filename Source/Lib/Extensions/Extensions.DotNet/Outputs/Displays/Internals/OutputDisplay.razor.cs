@@ -4,6 +4,7 @@ using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Extensions.DotNet.Outputs.Models;
 
 namespace Walk.Extensions.DotNet.Outputs.Displays.Internals;
@@ -15,17 +16,15 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     
     private readonly Throttle _eventThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
     
-    private OutputTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
-    private OutputTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
+    private TreeViewContainerParameter _treeViewContainerParameter;
 
-    private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        DotNetService.TextEditorService.CommonService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
-    
     protected override void OnInitialized()
     {
-        _treeViewKeyboardEventHandler = new OutputTreeViewKeyboardEventHandler(DotNetService.TextEditorService);
-
-        _treeViewMouseEventHandler = new OutputTreeViewMouseEventHandler(DotNetService.TextEditorService);
+        _treeViewContainerParameter = new(
+            OutputState.TreeViewContainerKey,
+            new OutputTreeViewKeyboardEventHandler(DotNetService.TextEditorService),
+            new OutputTreeViewMouseEventHandler(DotNetService.TextEditorService),
+            OnTreeViewContextMenuFunc);
     
         DotNetService.DotNetStateChanged += DotNetCliOutputParser_StateChanged;
         

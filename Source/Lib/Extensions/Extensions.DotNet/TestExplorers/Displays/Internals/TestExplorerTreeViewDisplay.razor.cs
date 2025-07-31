@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
+using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.Extensions.DotNet.TestExplorers.Models;
 
@@ -18,17 +19,15 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
     [Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;
 
-    private TestExplorerTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
-    private TestExplorerTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
-
-    private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        RenderBatch.AppOptionsState.Options.IconSizeInPixels * (2.0 / 3.0));
+    private TreeViewContainerParameter _treeViewContainerParameter;
 
     protected override void OnInitialized()
     {
-        _treeViewKeyboardEventHandler = new TestExplorerTreeViewKeyboardEventHandler(TextEditorService);
-
-        _treeViewMouseEventHandler = new TestExplorerTreeViewMouseEventHandler(TextEditorService);
+        _treeViewContainerParameter = new(
+            TestExplorerState.TreeViewTestExplorerKey,
+            new TestExplorerTreeViewKeyboardEventHandler(TextEditorService),
+            new TestExplorerTreeViewMouseEventHandler(TextEditorService),
+            OnTreeViewContextMenuFunc);
     }
 
     private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)

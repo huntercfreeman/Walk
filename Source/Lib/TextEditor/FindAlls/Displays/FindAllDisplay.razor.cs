@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
+using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.TextEditor.RazorLib.FindAlls.Models;
 
 namespace Walk.TextEditor.RazorLib.FindAlls.Displays;
@@ -10,11 +11,7 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
     [Inject]
     private TextEditorService TextEditorService { get; set; } = null!;
     
-    private FindAllTreeViewKeyboardEventHandler _treeViewKeymap = null!;
-    private FindAllTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
-    
-    private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-        TextEditorService.CommonService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
+    private TreeViewContainerParameter _treeViewContainerParameter;
 
     private string SearchQuery
     {
@@ -39,10 +36,12 @@ public partial class FindAllDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         TextEditorService.SecondaryChanged += OnFindAllStateChanged;
-    
-        _treeViewKeymap = new FindAllTreeViewKeyboardEventHandler(TextEditorService);
-
-        _treeViewMouseEventHandler = new FindAllTreeViewMouseEventHandler(TextEditorService);
+        
+        _treeViewContainerParameter = new(
+            TextEditorService.TextEditorFindAllState.TreeViewFindAllContainerKey,
+            new FindAllTreeViewKeyboardEventHandler(TextEditorService),
+            new FindAllTreeViewMouseEventHandler(TextEditorService),
+            OnTreeViewContextMenuFunc);
     }
     
     private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)

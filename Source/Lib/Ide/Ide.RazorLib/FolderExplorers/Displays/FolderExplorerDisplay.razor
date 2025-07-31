@@ -23,13 +23,7 @@
         }
         else
         {
-            <TreeViewContainerDisplay TreeViewContainerKey="FolderExplorerState.TreeViewContentStateKey"
-                                      CssStyleString="height: 100%;"
-                                      OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                                      TreeViewKeyboardEventHandler="_treeViewKeyboardEventHandler"
-                                      TreeViewMouseEventHandler="_treeViewMouseEventHandler"
-                                      WalkTreeViewIconWidth="appOptionsState.Options.IconSizeInPixels"
-                                      OffsetPerDepthInPixels="OffsetPerDepthInPixels"/>
+            <TreeViewContainerDisplay TreeViewContainerParameter="_treeViewContainerParameter"/>
         }
     </div>
 </div>

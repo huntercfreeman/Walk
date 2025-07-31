@@ -28,6 +28,17 @@ public partial class InputFileContent : ComponentBase
     public Action<AbsolutePath?> SetSelectedAbsolutePath { get; set; } = null!;
 
     public static readonly Key<TreeViewContainer> TreeViewContainerKey = Key<TreeViewContainer>.NewKey();
+    
+    private TreeViewContainerParameter _treeViewContainerParameter;
+
+    protected override void OnInitialized()
+    {
+        _treeViewContainerParameter = new(
+            TreeViewContainerKey,
+            InputFileTreeViewKeyboardEventHandler,
+            InputFileTreeViewMouseEventHandler,
+            onContextMenuFunc: null);
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

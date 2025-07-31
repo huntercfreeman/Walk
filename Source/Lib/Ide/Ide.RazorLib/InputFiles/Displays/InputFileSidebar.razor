@@ -6,10 +6,6 @@
      style="@ElementDimensions.GetStyleString(IdeService.CommonService.UiStringBuilder)">
 
     <CascadingValue Name="SearchQuery" Value="InputFileState.SearchQuery">
-        <TreeViewContainerDisplay TreeViewContainerKey="TreeViewContainerKey"
-                                  CssStyleString="height: 100%;"
-                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                                  TreeViewMouseEventHandler="InputFileTreeViewMouseEventHandler"
-                                  TreeViewKeyboardEventHandler="InputFileTreeViewKeyboardEventHandler"/>
+        <TreeViewContainerDisplay TreeViewContainerParameter="_treeViewContainerParameter"/>
     </CascadingValue>
 </div>

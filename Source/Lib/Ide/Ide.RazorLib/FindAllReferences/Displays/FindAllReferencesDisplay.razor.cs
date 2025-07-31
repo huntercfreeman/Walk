@@ -46,10 +46,6 @@ public partial class FindAllReferencesDisplay : ComponentBase, IDisposable
     private FindAllReferencesTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     */
 
-    // FindAllReferences
-    // private int OffsetPerDepthInPixels => (int)Math.Ceiling(
-    //     AppOptionsService.GetAppOptionsState().Options.IconSizeInPixels * (2.0 / 3.0));
-    
     /*
     // FindAllReferences
     protected override void OnInitialized()
