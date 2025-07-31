@@ -1,18 +1,19 @@
-using System.Text;
 using Microsoft.JSInterop;
+using System;
+using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.JsRuntimes.Models;
+using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Reactives.Models;
-using Walk.TextEditor.RazorLib.Lines.Models;
-using Walk.TextEditor.RazorLib.Groups.Models;
-using Walk.TextEditor.RazorLib.TextEditors.Models;
-using Walk.TextEditor.RazorLib.Installations.Models;
-using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.TextEditor.RazorLib.JsRuntimes.Models;
 using Walk.TextEditor.RazorLib.BackgroundTasks.Models;
+using Walk.TextEditor.RazorLib.Groups.Models;
+using Walk.TextEditor.RazorLib.Installations.Models;
+using Walk.TextEditor.RazorLib.JsRuntimes.Models;
+using Walk.TextEditor.RazorLib.Lexers.Models;
+using Walk.TextEditor.RazorLib.Lines.Models;
+using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Walk.TextEditor.RazorLib;
 
@@ -120,12 +121,6 @@ public sealed partial class TextEditorService
     public int TabKeyBehavior_SeenTabWidth { get; set; }
     public string TabKeyBehavior_TabSpaces { get; set; }
     
-    private readonly Dictionary<int, List<string>> _stringMap = new();
-    
-    // private int _listCount;
-    // private int _collisionCount;
-    // private int _stringAllocationCount;
-    
     /// <summary>
     /// To avoid unexpected HTML movements when responding to a PostScrollAndRemeasure(...)
     /// this debounce will add 1 extra event after everything has "settled".
@@ -141,13 +136,14 @@ public sealed partial class TextEditorService
     private readonly StringPoolBucket _bucket_131415 = new();
     private readonly StringPoolBucket _bucket_default = new();
     
-    public static int StringAllocations = 0;
-    
     public class StringPoolBucket
     {
         private readonly List<string> _stringList = new();
-        
+
+        public int Count => _stringList.Count;
+
         // Uppercase
+
         private int A;
         private int B;
         private int C;
@@ -446,8 +442,7 @@ public sealed partial class TextEditorService
             // presuming this on average results in more often used strings
             // being at the front of the first letter group.
 
-            _stringList.Insert(endExclusiveIndex, span.ToString());
-            ++StringAllocations;            switch (span[0])
+            _stringList.Insert(endExclusiveIndex, span.ToString());            switch (span[0])
             {
                 case 'A':
                     B++;
@@ -1992,6 +1987,67 @@ public sealed partial class TextEditorService
             
             return _stringList[endExclusiveIndex];
         }
+
+        public void Clear()        {            _stringList.Clear();
+            
+            // Uppercase
+            A = 0;
+            B = 0;
+            C = 0;
+            D = 0;
+            E = 0;
+            F = 0;
+            G = 0;
+            H = 0;
+            I = 0;
+            J = 0;
+            K = 0;
+            L = 0;
+            M = 0;
+            N = 0;
+            O = 0;
+            P = 0;
+            Q = 0;
+            R = 0;
+            S = 0;
+            T = 0;
+            U = 0;
+            V = 0;
+            W = 0;
+            X = 0;
+            Y = 0;
+            Z = 0;
+            // Lowercase
+            a = 0;
+            b = 0;
+            c = 0;
+            d = 0;
+            e = 0;
+            f = 0;
+            g = 0;
+            h = 0;
+            i = 0;
+            j = 0;
+            k = 0;
+            l = 0;
+            m = 0;
+            n = 0;
+            o = 0;
+            p = 0;
+            q = 0;
+            r = 0;
+            s = 0;
+            t = 0;
+            u = 0;
+            v = 0;
+            w = 0;
+            x = 0;
+            y = 0;
+            z = 0;
+            // _
+            _ = 0;
+            // defaultGroup
+            defaultGroup = 0;        }
     }
     
     /// <summary>
@@ -2040,8 +2096,11 @@ public sealed partial class TextEditorService
     }
 
     public void EditContext_GetText_Clear()
-    {
-        _stringMap.Clear();
+    {        _bucket_123.Clear();        _bucket_456.Clear();        _bucket_789.Clear();        _bucket_101112.Clear();        _bucket_131415.Clear();        _bucket_default.Clear();
+    }
+    
+    public int EditContext_GetText_Count()
+    {        return _bucket_123.Count +            _bucket_456.Count +            _bucket_789.Count +            _bucket_101112.Count +            _bucket_131415.Count +            _bucket_default.Count;
     }
 
     public void InsertTab(TextEditorEditContext editContext, TextEditorModel modelModifier, TextEditorViewModel viewModel)
