@@ -14,28 +14,6 @@ public partial class IdeService
     public IdeState GetIdeState() => _ideState;
     public StartupControlState GetIdeStartupControlState() => _startupControlState;
 
-    public void Ide_RegisterFooterBadge(IBadgeModel badgeModel)
-    {
-        lock (_stateModificationLock)
-        {
-            var existingComponent = _ideState.FooterBadgeList.FirstOrDefault(x =>
-                x.Key == badgeModel.Key);
-
-            if (existingComponent is null)
-            {
-                var outFooterBadgeList = new List<IBadgeModel>(_ideState.FooterBadgeList);
-                outFooterBadgeList.Add(badgeModel);
-
-                _ideState = _ideState with
-                {
-                    FooterBadgeList = outFooterBadgeList
-                };
-            }
-        }
-
-        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_IdeStateChanged);
-    }
-
     public void Ide_SetMenuFile(MenuRecord menu)
     {
         lock (_stateModificationLock)

@@ -14,6 +14,7 @@ using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.FileSystems.Displays;
 using Walk.Common.RazorLib.Keymaps.Models;
+using Walk.Common.RazorLib.Badges.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
 using Walk.TextEditor.RazorLib.Groups.Models;
@@ -50,6 +51,15 @@ public partial class IdeService : IBackgroundTaskGroup
         IdeConfig = ideConfig;
         TextEditorService = textEditorService;
         _serviceProvider = serviceProvider;
+        
+        _ideState = _ideState with
+        {
+            FooterBadgeList = new List<IBadgeModel>
+            {
+                new Walk.TextEditor.RazorLib.Edits.Models.DirtyResourceUriBadge(TextEditorService),
+                new NotificationBadge(TextEditorService.CommonService)
+            }
+        };
     }
     
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
