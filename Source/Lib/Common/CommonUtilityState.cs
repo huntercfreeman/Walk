@@ -114,6 +114,8 @@ public record struct ThemeState(IReadOnlyList<ThemeRecord> ThemeList)
             {
                 CommonFacts.VisualStudioDarkThemeClone,
                 CommonFacts.VisualStudioLightThemeClone,
+                CommonFacts.DarkTheme,
+                CommonFacts.LightTheme,
             })
     {
         
@@ -159,18 +161,15 @@ public record struct PanelState(
     IReadOnlyList<Panel> PanelList,
     (IPanelTab PanelTab, PanelGroup PanelGroup)? DragEventArgs)
 {
-    public PanelState() : this(Array.Empty<PanelGroup>(), Array.Empty<Panel>(), null)
+    public PanelState() : this(new List<PanelGroup>(), new List<Panel>(), null)
     {
         var topLeftGroup = ConstructTopLeftGroup();
         var topRightGroup = ConstructTopRightGroup();
         var bottomGroup = ConstructBottomGroup();
         
-        var outPanelGroupList = new List<PanelGroup>();
-        outPanelGroupList.Add(topLeftGroup);
-        outPanelGroupList.Add(topRightGroup);
-        outPanelGroupList.Add(bottomGroup);
-        
-        PanelGroupList = outPanelGroupList;
+        ((List<PanelGroup>)PanelGroupList).Add(topLeftGroup);
+        ((List<PanelGroup>)PanelGroupList).Add(topRightGroup);
+        ((List<PanelGroup>)PanelGroupList).Add(bottomGroup);
     }
 
     private static PanelGroup ConstructTopLeftGroup()
@@ -179,7 +178,7 @@ public record struct PanelState(
             CommonFacts.LeftPanelGroupKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
-            Array.Empty<IPanelTab>());
+            new List<IPanelTab>());
 
         leftPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
@@ -196,7 +195,7 @@ public record struct PanelState(
             CommonFacts.RightPanelGroupKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
-            Array.Empty<IPanelTab>());
+            new List<IPanelTab>());
 
         rightPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
@@ -213,7 +212,7 @@ public record struct PanelState(
             CommonFacts.BottomPanelGroupKey,
             Key<Panel>.Empty,
             new ElementDimensions(),
-            Array.Empty<IPanelTab>());
+            new List<IPanelTab>());
 
         bottomPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
         {

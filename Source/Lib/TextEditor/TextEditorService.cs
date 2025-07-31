@@ -2686,9 +2686,6 @@ public sealed partial class TextEditorService
 
     public async ValueTask Do_WalkTextEditorInitializerOnInit()
     {
-        CommonService.Theme_RegisterAction(TextEditorConfig.CustomThemeOne);
-        CommonService.Theme_RegisterAction(TextEditorConfig.CustomThemeTwo);
-
         var initialThemeRecord = CommonService.GetThemeState().ThemeList.FirstOrDefault(
             x => x.Key == TextEditorConfig.InitialThemeKey);
 
