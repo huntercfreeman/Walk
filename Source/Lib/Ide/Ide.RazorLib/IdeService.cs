@@ -60,6 +60,8 @@ public partial class IdeService : IBackgroundTaskGroup
                 new NotificationBadge(TextEditorService.CommonService)
             }
         };
+        
+        AddTerminals();
     }
     
     public Key<IBackgroundTaskGroup> BackgroundTaskKey { get; } = Key<IBackgroundTaskGroup>.NewKey();
@@ -150,9 +152,6 @@ public partial class IdeService : IBackgroundTaskGroup
 
     public ValueTask Do_WalkIdeInitializerOnInit()
     {
-        AddExecutionTerminal();
-        AddGeneralTerminal();
-
         CodeSearch_InitializeResizeHandleDimensionUnit(
             new DimensionUnit(
                 () => CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
@@ -261,84 +260,6 @@ public partial class IdeService : IBackgroundTaskGroup
 
         // SetActivePanelTabAction
         //_panelService.SetActivePanelTab(bottomPanel.Key, terminalGroupPanel.Key);
-    }
-
-    private void AddGeneralTerminal()
-    {
-        if (CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Wasm ||
-            CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.ServerSide)
-        {
-            Terminal_Register(
-                new TerminalWebsite(
-                    "General",
-                    terminal => new TerminalInteractive(terminal),
-                    terminal => new TerminalInputStringBuilder(terminal),
-                    terminal => new TerminalOutput(
-                        terminal,
-                        new TerminalOutputFormatterExpand(
-                            terminal,
-                            TextEditorService)),
-                    CommonService)
-                {
-                    Key = IdeFacts.GENERAL_KEY
-                });
-        }
-        else
-        {
-            Terminal_Register(
-                new Terminal(
-                    "General",
-                    terminal => new TerminalInteractive(terminal),
-                    terminal => new TerminalInputStringBuilder(terminal),
-                    terminal => new TerminalOutput(
-                        terminal,
-                        new TerminalOutputFormatterExpand(
-                            terminal,
-                            TextEditorService)),
-                    this)
-                {
-                    Key = IdeFacts.GENERAL_KEY
-                });
-        }
-    }
-
-    private void AddExecutionTerminal()
-    {
-        if (CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Wasm ||
-            CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.ServerSide)
-        {
-            Terminal_Register(
-                new TerminalWebsite(
-                    "Execution",
-                    terminal => new TerminalInteractive(terminal),
-                    terminal => new TerminalInputStringBuilder(terminal),
-                    terminal => new TerminalOutput(
-                        terminal,
-                        new TerminalOutputFormatterExpand(
-                            terminal,
-                            TextEditorService)),
-                    CommonService)
-                {
-                    Key = IdeFacts.EXECUTION_KEY
-                });
-        }
-        else
-        {
-            Terminal_Register(
-                new Terminal(
-                    "Execution",
-                    terminal => new TerminalInteractive(terminal),
-                    terminal => new TerminalInputStringBuilder(terminal),
-                    terminal => new TerminalOutput(
-                        terminal,
-                        new TerminalOutputFormatterExpand(
-                            terminal,
-                            TextEditorService)),
-                    this)
-                {
-                    Key = IdeFacts.EXECUTION_KEY
-                });
-        }
     }
 
     public ValueTask Do_IdeHeaderOnInit(IdeMainLayout ideMainLayout)
