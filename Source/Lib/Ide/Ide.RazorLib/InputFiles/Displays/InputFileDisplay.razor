@@ -20,9 +20,7 @@
                             <InputFileSidebar ElementDimensions="_sidebarElementDimensions"
                                               SetSelectedAbsolutePath="tvm => _selectedAbsolutePath = tvm"/>
                             
-                            <ResizableColumn LeftElementDimensions="_sidebarElementDimensions"
-                                             RightElementDimensions="_contentElementDimensions"
-                                             ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged).ConfigureAwait(false)" />
+                            <ResizableColumn ResizableColumnParameter="_resizableColumnParameter" />
                             
                             <InputFileContent ElementDimensions="_contentElementDimensions"
                                               SetSelectedAbsolutePath="tvm => _selectedAbsolutePath = tvm" />

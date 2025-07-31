@@ -70,9 +70,7 @@
 
 					<TestExplorerTreeViewDisplay ElementDimensions="renderBatchValidated.TestExplorerState.TreeViewElementDimensions"/>
 
-					<ResizableColumn LeftElementDimensions="renderBatchValidated.TestExplorerState.TreeViewElementDimensions"
-									 RightElementDimensions="renderBatchValidated.TestExplorerState.DetailsElementDimensions"
-									 ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged).ConfigureAwait(false)" />
+					<ResizableColumn ResizableColumnParameter="_resizableColumnParameter"/>
 
 					<TestExplorerDetailsDisplay ElementDimensions="renderBatchValidated.TestExplorerState.DetailsElementDimensions"/>
 				</div>

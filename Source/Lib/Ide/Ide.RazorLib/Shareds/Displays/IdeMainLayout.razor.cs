@@ -9,6 +9,7 @@ using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Resizes.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Ide.RazorLib.Shareds.Displays.Internals;
@@ -57,8 +58,23 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private PanelGroupParameter _rightPanelGroupParameter;
     private PanelGroupParameter _bottomPanelGroupParameter;
     
+    private ResizableColumnParameter _topLeftResizableColumnParameter;
+    private ResizableColumnParameter _topRightResizableColumnParameter;
+    
     protected override void OnInitialized()
     {
+        var panelState = IdeService.CommonService.GetPanelState();
+    
+        _topLeftResizableColumnParameter = new(
+            CommonFacts.GetTopLeftPanelGroup(panelState).ElementDimensions,
+            _editorElementDimensions,
+            () => InvokeAsync(StateHasChanged));
+            
+        _topRightResizableColumnParameter = new(
+            _editorElementDimensions,
+            CommonFacts.GetTopRightPanelGroup(panelState).ElementDimensions,
+            () => InvokeAsync(StateHasChanged));
+    
         _leftPanelGroupParameter = new(
             panelGroupKey: CommonFacts.LeftPanelGroupKey,
             adjacentElementDimensions: _editorElementDimensions,

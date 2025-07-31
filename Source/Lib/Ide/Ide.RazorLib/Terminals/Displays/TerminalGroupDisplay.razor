@@ -29,9 +29,7 @@
             }
         </div>
 
-        <Walk.Common.RazorLib.Resizes.Displays.ResizableColumn LeftElementDimensions="terminalGroupDisplayState.BodyElementDimensions"
-                                                                   RightElementDimensions="terminalGroupDisplayState.TabsElementDimensions"
-                                                                   ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged)" />
+        <Walk.Common.RazorLib.Resizes.Displays.ResizableColumn ResizableColumnParameter="_resizableColumnParameter" />
 
         <div class="di_ide_terminal-tabs"
              style="@terminalGroupDisplayState.TabsElementDimensions.GetStyleString(IdeService.CommonService.UiStringBuilder)">

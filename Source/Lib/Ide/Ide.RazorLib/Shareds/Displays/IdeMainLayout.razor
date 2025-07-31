@@ -99,15 +99,11 @@
     
         <PanelGroupDisplay PanelGroupParameter="_leftPanelGroupParameter"/>
     
-        <ResizableColumn LeftElementDimensions="CommonFacts.GetTopLeftPanelGroup(panelState).ElementDimensions"
-                         RightElementDimensions="_editorElementDimensions"
-                         ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)" />
+        <ResizableColumn ResizableColumnParameter="_topLeftResizableColumnParameter" />
     
         <EditorDisplay EditorElementDimensions="_editorElementDimensions" />
         
-        <ResizableColumn LeftElementDimensions="_editorElementDimensions"
-                         RightElementDimensions="CommonFacts.GetTopRightPanelGroup(panelState).ElementDimensions"
-                         ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)" />
+        <ResizableColumn ResizableColumnParameter="_topRightResizableColumnParameter" />
     
         <PanelGroupDisplay PanelGroupParameter="_rightPanelGroupParameter"/>
     </div>

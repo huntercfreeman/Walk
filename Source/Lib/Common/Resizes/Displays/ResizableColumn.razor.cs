@@ -11,11 +11,7 @@ public partial class ResizableColumn : ComponentBase, IDisposable
     private CommonService CommonService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public ElementDimensions LeftElementDimensions { get; set; }
-    [Parameter, EditorRequired]
-    public ElementDimensions RightElementDimensions { get; set; }
-    [Parameter, EditorRequired]
-    public Func<Task> ReRenderFuncAsync { get; set; } = null!;
+    public ResizableColumnParameter ResizableColumnParameter { get; set; }
 
     private Func<(MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;
     private MouseEventArgs? _previousDragMouseEventArgs;
@@ -54,7 +50,7 @@ public partial class ResizableColumn : ComponentBase, IDisposable
                 }
 
                 _previousDragMouseEventArgs = mouseEventArgs;
-                await ReRenderFuncAsync.Invoke().ConfigureAwait(false);
+                await ResizableColumnParameter.ReRenderFuncAsync.Invoke().ConfigureAwait(false);
             }
         }
     }
@@ -70,12 +66,12 @@ public partial class ResizableColumn : ComponentBase, IDisposable
         (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs) mouseEventArgsTuple)
     {
         ResizeHelper.ResizeWest(
-            LeftElementDimensions,
+            ResizableColumnParameter.LeftElementDimensions,
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
         ResizeHelper.ResizeEast(
-            RightElementDimensions,
+            ResizableColumnParameter.RightElementDimensions,
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
