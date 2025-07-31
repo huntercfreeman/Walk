@@ -773,10 +773,9 @@ public partial class DotNetService
             {
                 ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_DefinitionsOnly);
                 ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_MinimumLocalsData);
-
-                return ValueTask.CompletedTask;
                 
-                // IdeService.TextEditorService.EditContext_GetText_Clear();
+                IdeService.TextEditorService.EditContext_GetText_Clear();
+                return ValueTask.CompletedTask;
             }));
 
         await Do_SetDotNetSolutionTreeView(dotNetSolutionModel.Key).ConfigureAwait(false);
