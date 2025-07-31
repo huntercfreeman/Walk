@@ -57,63 +57,6 @@ public partial class DotNetService
         }
     }
 
-    public void ReduceInitializeResizeHandleDimensionUnitAction(DimensionUnit dimensionUnit)
-    {
-        lock (_stateModificationLock)
-        {
-            var inState = GetTestExplorerState();
-
-            if (dimensionUnit.Purpose != CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN)
-            {
-                DotNetStateChanged?.Invoke(DotNetStateChangedKind.TestExplorerStateChanged);
-                return;
-            }
-
-            // TreeViewElementDimensions
-            {
-                if (inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
-                {
-                    DotNetStateChanged?.Invoke(DotNetStateChangedKind.TestExplorerStateChanged);
-                    return;
-                }
-
-                var existingDimensionUnit = inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList
-                    .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-
-                if (existingDimensionUnit.Purpose is not null)
-                {
-                    DotNetStateChanged?.Invoke(DotNetStateChangedKind.TestExplorerStateChanged);
-                    return;
-                }
-
-                inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-            }
-
-            // DetailsElementDimensions
-            {
-                if (inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
-                {
-                    DotNetStateChanged?.Invoke(DotNetStateChangedKind.TestExplorerStateChanged);
-                    return;
-                }
-
-                var existingDimensionUnit = inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList
-                    .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-
-                if (existingDimensionUnit.Purpose is not null)
-                {
-                    DotNetStateChanged?.Invoke(DotNetStateChangedKind.TestExplorerStateChanged);
-                    return;
-                }
-
-                inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-            }
-
-            DotNetStateChanged?.Invoke(DotNetStateChangedKind.TestExplorerStateChanged);
-            return;
-        }
-    }
-
     /// <summary>
     /// When the user interface for the test explorer is rendered,
     /// then dispatch this in order to start a task that will discover unit tests.

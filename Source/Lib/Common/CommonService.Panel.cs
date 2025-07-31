@@ -11,6 +11,11 @@ public partial class CommonService
     private PanelState _panelState = new();
     
     public PanelState GetPanelState() => _panelState;
+    
+    public void SetPanelState(PanelState panelState)
+    {
+        _panelState = panelState;
+    }
 
     public void RegisterPanel(Panel panel)
     {
@@ -199,49 +204,6 @@ public partial class CommonService
             {
                 DragEventArgs = dragEventArgs
             };
-        }
-
-        CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
-    }
-    
-    public void Panel_InitializeResizeHandleDimensionUnit(Key<PanelGroup> panelGroupKey, DimensionUnit dimensionUnit)
-    {
-        lock (_stateModificationLock)
-        {
-            var inState = GetPanelState();
-
-            var inPanelGroup = inState.PanelGroupList.FirstOrDefault(
-                x => x.Key == panelGroupKey);
-
-            if (inPanelGroup is not null)
-            {
-                if (dimensionUnit.Purpose == CommonFacts.PURPOSE_RESIZABLE_HANDLE_ROW ||
-                    dimensionUnit.Purpose == CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN)
-                {
-                    if (dimensionUnit.Purpose == CommonFacts.PURPOSE_RESIZABLE_HANDLE_ROW)
-                    {
-                        if (inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList is not null)
-                        {
-                            var existingDimensionUnit = inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList
-                                .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-            
-                            if (existingDimensionUnit.Purpose is null)
-                                inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-                        }
-                    }
-                    else if (dimensionUnit.Purpose != CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN)
-                    {
-                        if (inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList is not null)
-                        {
-                            var existingDimensionUnit = inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList
-                                .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-            
-                            if (existingDimensionUnit.Purpose is null)
-                                inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-                        }
-                    }
-                }
-            }
         }
 
         CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);

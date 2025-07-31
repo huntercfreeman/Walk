@@ -1,6 +1,8 @@
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib;
+using Walk.Common.RazorLib.Dimensions.Models;
+using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
@@ -14,6 +16,7 @@ using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.InputFiles.Displays;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.Shareds.Models;
+using Walk.Ide.RazorLib.FolderExplorers.Displays;
 using Walk.Extensions.DotNet;
 using Walk.Extensions.DotNet.AppDatas.Models;
 
@@ -63,12 +66,8 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
         // TODO: Does the object used here matter? Should it be a "smaller" object or is this just reference?
         _dotNetHelper = DotNetObjectReference.Create(this);
     
+        InitializePanelTabs();
         HandleCompilerServicesAndDecorationMappers();
-    
-        DotNetService.Enqueue(new DotNetWorkArgs
-        {
-            WorkKind = DotNetWorkKind.WalkExtensionsDotNetInitializerOnInit,
-        });
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -473,6 +472,280 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
         DotNetService.TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.TERMINAL, terminalDecorationMapper);
     }
     
+    private void InitializePanelTabs()
+    {
+        var panelState = DotNetService.CommonService.GetPanelState();
+        var appOptionsState = DotNetService.IdeService.TextEditorService.CommonService.GetAppOptionsState();
+    
+        // InitializeLeftPanelTabs();
+        var leftPanel = CommonFacts.GetTopLeftPanelGroup(panelState);
+        leftPanel.CommonService = DotNetService.CommonService;
+    
+        // solutionExplorerPanel
+        var solutionExplorerPanel = new Panel(
+            "Solution Explorer",
+            Key<Panel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
+            typeof(Walk.Extensions.DotNet.DotNetSolutions.Displays.SolutionExplorerDisplay),
+            null,
+            DotNetService.IdeService.TextEditorService.CommonService);
+        ((List<Panel>)panelState.PanelList).Add(solutionExplorerPanel);
+        ((List<IPanelTab>)leftPanel.TabList).Add(solutionExplorerPanel);
+        
+        // folderExplorerPanel
+        var folderExplorerPanel = new Panel(
+            "Folder Explorer",
+            Key<Panel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
+            typeof(FolderExplorerDisplay),
+            null,
+            DotNetService.CommonService);
+        ((List<Panel>)panelState.PanelList).Add(folderExplorerPanel);
+        ((List<IPanelTab>)leftPanel.TabList).Add(folderExplorerPanel);
+        
+        // InitializeRightPanelTabs();
+        var rightPanel = CommonFacts.GetTopRightPanelGroup(panelState);
+        rightPanel.CommonService = DotNetService.CommonService;
+        Panel_InitializeResizeHandleDimensionUnit(
+            rightPanel.Key,
+            new DimensionUnit(
+                () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract,
+                CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN));
+        
+        // InitializeBottomPanelTabs();
+        var bottomPanel = CommonFacts.GetBottomPanelGroup(panelState);
+        bottomPanel.CommonService = DotNetService.CommonService;
+        Panel_InitializeResizeHandleDimensionUnit(
+            bottomPanel.Key,
+            new DimensionUnit(
+                () => appOptionsState.Options.ResizeHandleHeightInPixels / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract,
+                CommonFacts.PURPOSE_RESIZABLE_HANDLE_ROW));
+
+        // terminalGroupPanel
+        var terminalGroupPanel = new Panel(
+            "Terminal",
+            Key<Panel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
+            typeof(Walk.Ide.RazorLib.Terminals.Displays.TerminalGroupDisplay),
+            null,
+            DotNetService.CommonService);
+        ((List<Panel>)panelState.PanelList).Add(terminalGroupPanel);
+        ((List<IPanelTab>)bottomPanel.TabList).Add(terminalGroupPanel);
+
+        // SetActivePanelTabAction
+        //_panelService.SetActivePanelTab(bottomPanel.Key, terminalGroupPanel.Key);
+
+        // outputPanel
+        var outputPanel = new Panel(
+            "Output",
+            Key<Panel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
+            typeof(Walk.Extensions.DotNet.Outputs.Displays.OutputPanelDisplay),
+            null,
+            DotNetService.IdeService.TextEditorService.CommonService);
+        ((List<Panel>)panelState.PanelList).Add(outputPanel);
+        ((List<IPanelTab>)bottomPanel.TabList).Add(outputPanel);
+
+        // testExplorerPanel
+        var testExplorerPanel = new Panel(
+            "Test Explorer",
+            Key<Panel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
+            typeof(Walk.Extensions.DotNet.TestExplorers.Displays.TestExplorerDisplay),
+            null,
+            DotNetService.IdeService.TextEditorService.CommonService);
+        ((List<Panel>)panelState.PanelList).Add(testExplorerPanel);
+        ((List<IPanelTab>)bottomPanel.TabList).Add(testExplorerPanel);
+
+        // nuGetPanel
+        var nuGetPanel = new Panel(
+            "NuGet",
+            Key<Panel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
+            typeof(Walk.Extensions.DotNet.Nugets.Displays.NuGetPackageManager),
+            null,
+            DotNetService.IdeService.TextEditorService.CommonService);
+        ((List<Panel>)panelState.PanelList).Add(nuGetPanel);
+        ((List<IPanelTab>)bottomPanel.TabList).Add(nuGetPanel);
+        
+        CodeSearch_InitializeResizeHandleDimensionUnit(
+            new DimensionUnit(
+                () => appOptionsState.Options.ResizeHandleHeightInPixels / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract,
+                CommonFacts.PURPOSE_RESIZABLE_HANDLE_ROW));
+    
+        Panel_InitializeResizeHandleDimensionUnit(
+            leftPanel.Key,
+            new DimensionUnit(
+                () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract,
+                CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN));
+        
+        // terminalGroupPanel: This UI has resizable parts that need to be initialized.
+        TerminalGroup_InitializeResizeHandleDimensionUnit(
+            new DimensionUnit(
+                () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract,
+                CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN));
+        
+        // testExplorerPanel: This UI has resizable parts that need to be initialized.
+        ReduceInitializeResizeHandleDimensionUnitAction(
+            new DimensionUnit(
+                () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract,
+                CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN));
+    
+        // SetActivePanelTabAction
+        DotNetService.CommonService.SetActivePanelTab(leftPanel.Key, solutionExplorerPanel.Key);
+        
+        // SetActivePanelTabAction
+        DotNetService.IdeService.TextEditorService.CommonService.SetActivePanelTab(bottomPanel.Key, outputPanel.Key);
+    }
+
+    public void Panel_InitializeResizeHandleDimensionUnit(Key<PanelGroup> panelGroupKey, DimensionUnit dimensionUnit)
+    {
+        var inState = DotNetService.CommonService.GetPanelState();
+
+        var inPanelGroup = inState.PanelGroupList.FirstOrDefault(
+            x => x.Key == panelGroupKey);
+
+        if (inPanelGroup is not null)
+        {
+            if (dimensionUnit.Purpose == CommonFacts.PURPOSE_RESIZABLE_HANDLE_ROW ||
+                dimensionUnit.Purpose == CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN)
+            {
+                if (dimensionUnit.Purpose == CommonFacts.PURPOSE_RESIZABLE_HANDLE_ROW)
+                {
+                    if (inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList is not null)
+                    {
+                        var existingDimensionUnit = inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList
+                            .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
+        
+                        if (existingDimensionUnit.Purpose is null)
+                            inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+                    }
+                }
+                else if (dimensionUnit.Purpose != CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN)
+                {
+                    if (inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList is not null)
+                    {
+                        var existingDimensionUnit = inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList
+                            .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
+        
+                        if (existingDimensionUnit.Purpose is null)
+                            inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+                    }
+                }
+            }
+        }
+    }
+    
+    public void ReduceInitializeResizeHandleDimensionUnitAction(DimensionUnit dimensionUnit)
+    {
+        var inState = DotNetService.GetTestExplorerState();
+
+        if (dimensionUnit.Purpose != CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN)
+        {
+            return;
+        }
+
+        // TreeViewElementDimensions
+        {
+            if (inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
+            {
+                return;
+            }
+
+            var existingDimensionUnit = inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList
+                .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
+
+            if (existingDimensionUnit.Purpose is not null)
+            {
+                return;
+            }
+
+            inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+        }
+
+        // DetailsElementDimensions
+        {
+            if (inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
+            {
+                return;
+            }
+
+            var existingDimensionUnit = inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList
+                .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
+
+            if (existingDimensionUnit.Purpose is not null)
+            {
+                return;
+            }
+
+            inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+        }
+    }
+    
+    public void CodeSearch_InitializeResizeHandleDimensionUnit(DimensionUnit dimensionUnit)
+    {
+        var codeSearchState = DotNetService.IdeService.GetCodeSearchState();
+    
+        if (dimensionUnit.Purpose == CommonFacts.PURPOSE_RESIZABLE_HANDLE_ROW)
+        {
+            if (codeSearchState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList is not null)
+            {
+                var existingDimensionUnit = codeSearchState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList
+                    .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
+
+                if (existingDimensionUnit.Purpose is null)
+                    codeSearchState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+            }
+
+            if (codeSearchState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList is not null)
+            {
+                var existingDimensionUnit = codeSearchState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList
+                    .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
+
+                if (existingDimensionUnit.Purpose is null)
+                    codeSearchState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+            }
+        }
+    }
+    
+    public void TerminalGroup_InitializeResizeHandleDimensionUnit(DimensionUnit dimensionUnit)
+    {
+        var terminalGroupState = DotNetService.IdeService.GetTerminalGroupState();
+    
+        if (dimensionUnit.Purpose == CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN)
+        {
+            if (terminalGroupState.BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList is not null)
+            {
+                var existingDimensionUnit = terminalGroupState.BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList
+                    .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
+
+                if (existingDimensionUnit.Purpose is null)
+                    terminalGroupState.BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+            }
+
+            if (terminalGroupState.TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList is not null)
+            {
+                var existingDimensionUnit = terminalGroupState.TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList
+                    .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
+
+                if (existingDimensionUnit.Purpose is null)
+                    terminalGroupState.TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
+            }
+        }
+    }
+
     public void Dispose()
     {
         _dotNetHelper?.Dispose();

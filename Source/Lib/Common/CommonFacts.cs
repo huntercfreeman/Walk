@@ -32,6 +32,26 @@ public static class CommonFacts
         IncludeScopeTextEditor: true);
     /* End ThemeFacts */
     
+    /* Start WalkTextEditorCustomThemeFacts */
+    public static readonly ThemeRecord LightTheme = new ThemeRecord(
+        Key: 2,
+        "Walk IDE Light Theme",
+        "di_light-theme",
+        ThemeContrastKind.Default,
+        ThemeColorKind.Light,
+        IncludeScopeApp: false,
+        IncludeScopeTextEditor: true);
+
+    public static readonly ThemeRecord DarkTheme = new ThemeRecord(
+        Key: 3,
+        "Walk IDE Dark Theme",
+        "di_dark-theme",
+        ThemeContrastKind.Default,
+        ThemeColorKind.Dark,
+        IncludeScopeApp: false,
+        IncludeScopeTextEditor: true);
+    /* End WalkTextEditorCustomThemeFacts */
+    
     /* Start ContextFacts */
     /// <summary>
     /// Used when repositioning a dropdown so that it appears on screen.

@@ -6,7 +6,6 @@ public enum DotNetWorkKind
     
     /* Start DotNetBackgroundTaskApiWorkKind */
     SolutionExplorer_TreeView_MultiSelect_DeleteFiles,
-    WalkExtensionsDotNetInitializerOnInit,
     WalkExtensionsDotNetInitializerOnAfterRender,
     SubmitNuGetQuery,
     RunTestByFullyQualifiedName,

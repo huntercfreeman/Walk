@@ -94,35 +94,6 @@ public partial class IdeService
         IdeStateChanged?.Invoke(IdeStateChangedKind.CodeSearchStateChanged);
     }
 
-    public void CodeSearch_InitializeResizeHandleDimensionUnit(DimensionUnit dimensionUnit)
-    {
-        lock (_stateModificationLock)
-        {
-            if (dimensionUnit.Purpose == CommonFacts.PURPOSE_RESIZABLE_HANDLE_ROW)
-            {
-                if (_codeSearchState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList is not null)
-                {
-                    var existingDimensionUnit = _codeSearchState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList
-                        .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-
-                    if (existingDimensionUnit.Purpose is null)
-                        _codeSearchState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-                }
-
-                if (_codeSearchState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList is not null)
-                {
-                    var existingDimensionUnit = _codeSearchState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList
-                        .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-
-                    if (existingDimensionUnit.Purpose is null)
-                        _codeSearchState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-                }
-            }
-        }
-
-        IdeStateChanged?.Invoke(IdeStateChangedKind.CodeSearchStateChanged);
-    }
-
     /// <summary>
     /// TODO: This method makes use of <see cref="IThrottle"/> and yet is accessing...
     ///       ...searchEffect.CancellationToken.

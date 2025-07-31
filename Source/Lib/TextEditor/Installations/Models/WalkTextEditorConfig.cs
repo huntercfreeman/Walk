@@ -21,8 +21,6 @@ public record WalkTextEditorConfig
     /// The text editor and application theme are separate.
     /// </summary>
     public int InitialThemeKey { get; init; } = CommonFacts.VisualStudioDarkThemeClone.Key;
-    public ThemeRecord CustomThemeOne { get; init; } = TextEditorFacts.LightTheme;
-    public ThemeRecord CustomThemeTwo { get; init; } = TextEditorFacts.DarkTheme;
     /// <summary>
     /// When a user wants to customize the text editor, this settings dialog will be rendered.
     /// </summary>
