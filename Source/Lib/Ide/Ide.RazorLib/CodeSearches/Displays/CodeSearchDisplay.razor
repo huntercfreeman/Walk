@@ -47,9 +47,7 @@
         <TreeViewContainerDisplay TreeViewContainerParameter="_treeViewContainerParameter"/>
     </div>
 
-    <ResizableRow TopElementDimensions="codeSearchState.TopContentElementDimensions"
-                  BottomElementDimensions="codeSearchState.BottomContentElementDimensions"
-                  ReRenderFuncAsync="HandleResizableRowReRenderAsync"/>
+    <ResizableRow ResizableRowParameter="_resizableRowParameter"/>
     
     <div class="di_ide_find-all-bottom-content"
          style="@codeSearchState.BottomContentElementDimensions.GetStyleString(IdeService.CommonService.UiStringBuilder)">

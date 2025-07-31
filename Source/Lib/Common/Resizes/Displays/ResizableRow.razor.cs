@@ -11,11 +11,7 @@ public partial class ResizableRow : ComponentBase, IDisposable
     private CommonService CommonService { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public ElementDimensions TopElementDimensions { get; set; }
-    [Parameter, EditorRequired]
-    public ElementDimensions BottomElementDimensions { get; set; }
-    [Parameter, EditorRequired]
-    public Func<Task> ReRenderFuncAsync { get; set; } = null!;
+    public ResizableRowParameter ResizableRowParameter { get; set; }
 
     private Func<(MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;
     private MouseEventArgs? _previousDragMouseEventArgs;
@@ -54,7 +50,7 @@ public partial class ResizableRow : ComponentBase, IDisposable
                 }
 
                 _previousDragMouseEventArgs = mouseEventArgs;
-                await ReRenderFuncAsync.Invoke().ConfigureAwait(false);
+                await ResizableRowParameter.ReRenderFuncAsync.Invoke().ConfigureAwait(false);
             }
         }
     }
@@ -70,12 +66,12 @@ public partial class ResizableRow : ComponentBase, IDisposable
         (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs) mouseEventArgsTuple)
     {
         ResizeHelper.ResizeNorth(
-            TopElementDimensions,
+            ResizableRowParameter.TopElementDimensions,
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
         ResizeHelper.ResizeSouth(
-            BottomElementDimensions,
+            ResizableRowParameter.BottomElementDimensions,
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 

@@ -61,6 +61,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private ResizableColumnParameter _topLeftResizableColumnParameter;
     private ResizableColumnParameter _topRightResizableColumnParameter;
     
+    private ResizableRowParameter _resizableRowParameter;
+    
     protected override void OnInitialized()
     {
         var panelState = IdeService.CommonService.GetPanelState();
@@ -74,6 +76,12 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             _editorElementDimensions,
             CommonFacts.GetTopRightPanelGroup(panelState).ElementDimensions,
             () => InvokeAsync(StateHasChanged));
+            
+        _resizableRowParameter = new(
+            _bodyElementDimensions,
+            CommonFacts.GetBottomPanelGroup(IdeService.CommonService.GetPanelState()).ElementDimensions,
+            () => InvokeAsync(StateHasChanged));
+        
     
         _leftPanelGroupParameter = new(
             panelGroupKey: CommonFacts.LeftPanelGroupKey,

@@ -109,9 +109,7 @@
     </div>
     @* End Body *@
 
-    <ResizableRow TopElementDimensions="_bodyElementDimensions"
-                  BottomElementDimensions="CommonFacts.GetBottomPanelGroup(IdeService.CommonService.GetPanelState()).ElementDimensions"
-                  ReRenderFuncAsync="() => InvokeAsync(StateHasChanged)" />
+    <ResizableRow ResizableRowParameter="_resizableRowParameter" />
 
     <PanelGroupDisplay PanelGroupParameter="_bottomPanelGroupParameter"/>
 </div>
