@@ -4,7 +4,6 @@ using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.Extensions.DotNet.CSharpProjects.Models;
 using Walk.Ide.RazorLib;
-using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.Namespaces.Models;
 
 namespace Walk.Extensions.DotNet.Namespaces.Models;

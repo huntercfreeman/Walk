@@ -1,5 +1,4 @@
 using Walk.Common.RazorLib.Commands.Models;
-using Walk.Common.RazorLib.Keys.Models;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace Walk.Common.RazorLib.Keymaps.Models;

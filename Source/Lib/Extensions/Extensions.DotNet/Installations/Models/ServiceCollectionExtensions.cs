@@ -3,8 +3,6 @@ using Walk.Common.RazorLib.Installations.Models;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.AppDatas.Models;
 using Walk.Ide.RazorLib.Installations.Models;
-using Walk.Extensions.DotNet.CSharpProjects.Displays;
-using Walk.Extensions.DotNet.Nugets.Displays;
 
 namespace Walk.Extensions.DotNet.Installations.Models;
 

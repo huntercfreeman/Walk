@@ -1,4 +1,3 @@
-using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
 
 namespace Walk.Common.RazorLib;
