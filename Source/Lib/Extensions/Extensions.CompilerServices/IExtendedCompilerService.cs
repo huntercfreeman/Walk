@@ -1,3 +1,4 @@
+using Walk.Common.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
@@ -7,6 +8,8 @@ namespace Walk.Extensions.CompilerServices;
 
 public interface IExtendedCompilerService : ICompilerService
 {
+    public string GetSourceText(string absolutePath);
+
     public IReadOnlyList<Walk.Extensions.CompilerServices.Syntax.Nodes.GenericParameterEntry> GenericParameterEntryList { get; }
     public IReadOnlyList<Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionParameterEntry> FunctionParameterEntryList { get; }
     public IReadOnlyList<Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionArgumentEntry> FunctionArgumentEntryList { get; }

@@ -34,20 +34,25 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     private readonly object _resourceMapLock = new();
     private readonly StringBuilder _getAutocompleteMenuStringBuilder = new();
     
+    private readonly Dictionary<string, string> _absolutePathStringToSourceTextMap = new();
+    
     // Service dependencies
     private readonly TextEditorService _textEditorService;
+    
+    private const string EmptyFileHackForLanguagePrimitiveText = "NotApplicable empty" + " void int char string bool var";
     
     public CSharpCompilerService(TextEditorService textEditorService)
     {
         _textEditorService = textEditorService;
         
-        __CSharpBinder = new(_textEditorService);
+        __CSharpBinder = new(_textEditorService, this);
         
-        var primitiveKeywordsTextFile = new CSharpCompilationUnit(
-            "NotApplicable empty" + " void int char string bool var",
-            CompilationUnitKind.IndividualFile_AllData);
+        var primitiveKeywordsTextFile = new CSharpCompilationUnit(CompilationUnitKind.IndividualFile_AllData);
         
         __CSharpBinder.UpsertCompilationUnit(new ResourceUri(string.Empty), primitiveKeywordsTextFile);
+        
+        // Internally will add EmptyFileHackForLanguagePrimitiveText to the cache.
+        ClearSourceTextMap();
     }
 
     public event Action? ResourceRegistered;
@@ -64,9 +69,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
     public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified)
     {
-        __CSharpBinder.UpsertCompilationUnit(resourceUri, new CSharpCompilationUnit(
-            string.Empty,
-            CompilationUnitKind.IndividualFile_AllData));
+        __CSharpBinder.UpsertCompilationUnit(resourceUri, new CSharpCompilationUnit(CompilationUnitKind.IndividualFile_AllData));
             
         if (shouldTriggerResourceWasModified)
             ResourceWasModified(resourceUri, Array.Empty<TextEditorTextSpan>());
@@ -102,6 +105,41 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     public MenuRecord GetContextMenu(TextEditorVirtualizationResult virtualizationResult, ContextMenu contextMenu)
     {
         return contextMenu.GetDefaultMenuRecord();
+    }
+    
+    public string GetSourceText(string absolutePathString)
+    {
+        if (_absolutePathStringToSourceTextMap.TryGetValue(absolutePathString, out var sourceText))
+        {
+            return sourceText;
+        }
+        else
+        {
+            sourceText = _textEditorService.CommonService.FileSystemProvider.File.ReadAllText(absolutePathString);
+            _absolutePathStringToSourceTextMap.Add(absolutePathString, sourceText);
+            return sourceText;
+        }
+    }
+    
+    /// <summary>
+    /// This is not currently thread safe since UI events like a tooltip can trigger GetSourceText(...) outside of the TextEditorEditContext.
+    /// </summary>
+    public void SetSourceText(string absolutePathString, string sourceText)
+    {
+        if (_absolutePathStringToSourceTextMap.ContainsKey(absolutePathString))
+        {
+            _absolutePathStringToSourceTextMap[absolutePathString] = sourceText;
+        }
+        else
+        {
+            _absolutePathStringToSourceTextMap.Add(absolutePathString, sourceText);
+        }
+    }
+    
+    public void ClearSourceTextMap()
+    {
+        _absolutePathStringToSourceTextMap.Clear();
+        _absolutePathStringToSourceTextMap.Add(string.Empty, EmptyFileHackForLanguagePrimitiveText);
     }
     
     private MenuRecord? GetAutocompleteMenuPart(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu, int positionIndex)
@@ -399,13 +437,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                             {
                                 foreach (var typeDefinitionNode in __CSharpBinder.GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup).Where(x => x.TypeIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService).Contains(filteringWord)).Take(5))
                                 {
-                                    var sourceText = compilationUnitLocal.SourceText;
+                                    var sourceText = GetSourceText(virtualizationResult.Model.PersistentState.ResourceUri.Value);
                                 
                                     if (typeDefinitionNode.ResourceUri != virtualizationResult.Model.PersistentState.ResourceUri)
                                     {
                                         if (__CSharpBinder.__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var innerCompilationUnit))
                                         {
-                                            sourceText = innerCompilationUnit.SourceText;
+                                            sourceText = GetSourceText(typeDefinitionNode.ResourceUri.Value);
                                         }
                                     }
                                 
@@ -522,13 +560,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                             if (variableDeclarationNode.ResourceUri != innerResourceUri)
                                             {
                                                 if (__CSharpBinder.__CompilationUnitMap.TryGetValue(variableDeclarationNode.ResourceUri, out var variableDeclarationCompilationUnit))
-                                                    sourceText = variableDeclarationCompilationUnit.SourceText;
+                                                    sourceText = GetSourceText(variableDeclarationNode.ResourceUri.Value);
                                                 else
-                                                    sourceText = innerCompilationUnit.SourceText;
+                                                    sourceText = GetSourceText(innerResourceUri.Value);
                                             }
                                             else
                                             {
-                                                sourceText = innerCompilationUnit.SourceText;
+                                                sourceText = GetSourceText(innerResourceUri.Value);
                                             }
                                             
                                             autocompleteEntryList.Add(new AutocompleteEntry(
@@ -545,13 +583,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                             if (functionDefinitionNode.ResourceUri != innerResourceUri)
                                             {
                                                 if (__CSharpBinder.__CompilationUnitMap.TryGetValue(functionDefinitionNode.ResourceUri, out var functionDefinitionCompilationUnit))
-                                                    sourceText = functionDefinitionCompilationUnit.SourceText;
+                                                    sourceText = GetSourceText(functionDefinitionNode.ResourceUri.Value);
                                                 else
-                                                    sourceText = innerCompilationUnit.SourceText;
+                                                    sourceText = GetSourceText(innerResourceUri.Value);
                                             }
                                             else
                                             {
-                                                sourceText = innerCompilationUnit.SourceText;
+                                                sourceText = GetSourceText(innerResourceUri.Value);
                                             }
                                             
                                             autocompleteEntryList.Add(new AutocompleteEntry(
@@ -564,9 +602,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                         {
                                             var innerTypeDefinitionNode = (TypeDefinitionNode)member;
                                             autocompleteEntryList.Add(new AutocompleteEntry(
-                                                innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService),
+                                                innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(GetSourceText(innerResourceUri.Value), _textEditorService),
                                                 AutocompleteEntryKind.Type,
-                                                () => MemberAutocomplete(innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, _textEditorService), filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+                                                () => MemberAutocomplete(innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(GetSourceText(innerResourceUri.Value), _textEditorService), filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
                                             break;
                                         }
                                     }
@@ -1260,9 +1298,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var presentationModel = modelModifier.PresentationModelList.First(
             x => x.TextEditorPresentationKey == TextEditorFacts.CompilerServiceDiagnosticPresentation_PresentationKey);
         
-        var cSharpCompilationUnit = new CSharpCompilationUnit(
-            presentationModel.PendingCalculation.ContentAtRequest,
-            CompilationUnitKind.IndividualFile_AllData);
+        var cSharpCompilationUnit = new CSharpCompilationUnit(CompilationUnitKind.IndividualFile_AllData);
+        
+        SetSourceText(resourceUri.Value, presentationModel.PendingCalculation.ContentAtRequest);
         
         var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, presentationModel.PendingCalculation.ContentAtRequest, shouldUseSharedStringWalker: true);
 
@@ -1311,7 +1349,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         if (!__CSharpBinder.__CompilationUnitMap.ContainsKey(resourceUri))
             return;
 
-        var cSharpCompilationUnit = new CSharpCompilationUnit(content, compilationUnitKind);
+        var cSharpCompilationUnit = new CSharpCompilationUnit(compilationUnitKind);
+        
+        SetSourceText(resourceUri.Value, content);
         
         var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, content, shouldUseSharedStringWalker: true);
 
@@ -1326,7 +1366,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     
         var content = fileSystemProvider.File.ReadAllText(resourceUri.Value);
 
-        var cSharpCompilationUnit = new CSharpCompilationUnit(content, compilationUnitKind);
+        var cSharpCompilationUnit = new CSharpCompilationUnit(compilationUnitKind);
+        
+        SetSourceText(resourceUri.Value, content);
         
         var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, content, shouldUseSharedStringWalker: true);
 

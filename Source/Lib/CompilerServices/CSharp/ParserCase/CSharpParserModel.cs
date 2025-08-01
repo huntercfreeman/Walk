@@ -162,7 +162,7 @@ public ref struct CSharpParserModel
     public CSharpParserContextKind ParserContextKind { get; set; }
     
     public CSharpBinder Binder { get; set; }
-    public CSharpCompilationUnit Compilation { get; set; }
+    public CSharpCompilationUnit Compilation;
 
     public ICodeBlockOwner CurrentCodeBlockOwner { get; set; }
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
@@ -581,7 +581,10 @@ public ref struct CSharpParserModel
     {
         var typeIdentifierText = Binder.TextEditorService.EditContext_GetText(Text.Slice(typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeDefinitionNode.TypeIdentifierToken.TextSpan.Length));
 
-        var currentNamespaceStatementText = CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText(Compilation.SourceText, Binder.TextEditorService);
+        var currentNamespaceStatementText = CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText(
+            Binder.CSharpCompilerService.GetSourceText(ResourceUri.Value),
+            Binder.TextEditorService);
+            
         var namespaceAndTypeIdentifiers = new NamespaceAndTypeIdentifiers(currentNamespaceStatementText, typeIdentifierText);
 
         typeDefinitionNode.EncompassingNamespaceIdentifierString = currentNamespaceStatementText;
@@ -1182,13 +1185,18 @@ public ref struct CSharpParserModel
                     {
                         innerCompilationUnit = Compilation;
                         innerResourceUri = resourceUri;
-                        identifierText = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, Binder.TextEditorService);
+                        identifierText = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan.GetText(
+                            Binder.CSharpCompilerService.GetSourceText(innerResourceUri.Value),
+                            Binder.TextEditorService);
                     }
                     else
                     {
                         if (Binder.__CompilationUnitMap.TryGetValue(typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
                         {
-                            identifierText = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, Binder.TextEditorService);
+                            identifierText = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan.GetText(
+                                Binder.CSharpCompilerService.GetSourceText(typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri.Value),
+                                Binder.TextEditorService);
+                                
                             innerResourceUri = typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri;
                         }
                         else
@@ -1443,6 +1451,8 @@ public ref struct CSharpParserModel
     ///
     /// TODO: don't pass the initial compilationUnit it is default.
     /// TODO: Are these adds being invoked separately?
+    ///
+    /// !!!! TODO: This method reads files other than the one being parsed without a textspan bounds check? This should be changed.
     /// </summary>
     public string GetIdentifierText(ISyntaxNode node, ResourceUri resourceUri, CSharpCompilationUnit compilationUnit)
     {
@@ -1458,7 +1468,7 @@ public ref struct CSharpParserModel
                 else
                 {
                     if (Binder.__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var innerCompilationUnit))
-                        return Binder.TextEditorService.EditContext_GetText(innerCompilationUnit.SourceText.AsSpan(typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeDefinitionNode.TypeIdentifierToken.TextSpan.Length));
+                        return Binder.TextEditorService.EditContext_GetText(Binder.CSharpCompilerService.GetSourceText(typeDefinitionNode.ResourceUri.Value).AsSpan(typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeDefinitionNode.TypeIdentifierToken.TextSpan.Length));
                     else
                         return string.Empty;
                 }
@@ -1473,7 +1483,7 @@ public ref struct CSharpParserModel
                 else
                 {
                     if (Binder.__CompilationUnitMap.TryGetValue(typeClauseNode.ExplicitDefinitionResourceUri, out var innerCompilationUnit))
-                        return Binder.TextEditorService.EditContext_GetText(innerCompilationUnit.SourceText.AsSpan(typeClauseNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeClauseNode.TypeIdentifierToken.TextSpan.Length));
+                        return Binder.TextEditorService.EditContext_GetText(Binder.CSharpCompilerService.GetSourceText(typeClauseNode.ExplicitDefinitionResourceUri.Value).AsSpan(typeClauseNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeClauseNode.TypeIdentifierToken.TextSpan.Length));
                     else
                         return string.Empty;
                 }
@@ -1488,7 +1498,7 @@ public ref struct CSharpParserModel
                 else
                 {
                     if (Binder.__CompilationUnitMap.TryGetValue(functionDefinitionNode.ResourceUri, out var innerCompilationUnit))
-                        return Binder.TextEditorService.EditContext_GetText(innerCompilationUnit.SourceText.AsSpan(functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex, functionDefinitionNode.FunctionIdentifierToken.TextSpan.Length));
+                        return Binder.TextEditorService.EditContext_GetText(Binder.CSharpCompilerService.GetSourceText(functionDefinitionNode.ResourceUri.Value).AsSpan(functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex, functionDefinitionNode.FunctionIdentifierToken.TextSpan.Length));
                     else
                         return string.Empty;
                 }
@@ -1503,7 +1513,7 @@ public ref struct CSharpParserModel
                 else
                 {
                     if (Binder.__CompilationUnitMap.TryGetValue(functionInvocationNode.ResourceUri, out var innerCompilationUnit))
-                        return Binder.TextEditorService.EditContext_GetText(innerCompilationUnit.SourceText.AsSpan(functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Length));
+                        return Binder.TextEditorService.EditContext_GetText(Binder.CSharpCompilerService.GetSourceText(functionInvocationNode.ResourceUri.Value).AsSpan(functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Length));
                     else
                         return string.Empty;
                 }
@@ -1518,7 +1528,7 @@ public ref struct CSharpParserModel
                 else
                 {
                     if (Binder.__CompilationUnitMap.TryGetValue(variableDeclarationNode.ResourceUri, out var innerCompilationUnit))
-                        return Binder.TextEditorService.EditContext_GetText(innerCompilationUnit.SourceText.AsSpan(variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, variableDeclarationNode.IdentifierToken.TextSpan.Length));
+                        return Binder.TextEditorService.EditContext_GetText(Binder.CSharpCompilerService.GetSourceText(variableDeclarationNode.ResourceUri.Value).AsSpan(variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, variableDeclarationNode.IdentifierToken.TextSpan.Length));
                     else
                         return string.Empty;
                 }
