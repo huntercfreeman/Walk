@@ -1031,10 +1031,7 @@ public static class ParseExpressions
                 
                 TypeClauseNode typeClauseNode;
                 
-                if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-                    typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, ref parserModel);
-                else
-                    typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, ref parserModel);
+                typeClauseNode = UtilityApi.ConvertTokenToTypeClauseNode(ref token, ref parserModel);
                 
                 typeClauseNode.HasQuestionMark = ambiguousIdentifierExpressionNode.HasQuestionMark;
 
