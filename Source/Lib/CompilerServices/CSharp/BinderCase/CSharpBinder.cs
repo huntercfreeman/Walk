@@ -107,6 +107,13 @@ public class CSharpBinder
     {
         TextEditorService = textEditorService;
         CSharpCompilerService = cSharpCompilerService;
+        
+        _allTypeDefinitions.Add("void", CSharpFacts.Types.Void);
+        _allTypeDefinitions.Add("int", CSharpFacts.Types.Int);
+        _allTypeDefinitions.Add("char", CSharpFacts.Types.Char);
+        _allTypeDefinitions.Add("string", CSharpFacts.Types.String);
+        _allTypeDefinitions.Add("bool", CSharpFacts.Types.Bool);
+        _allTypeDefinitions.Add("var", CSharpFacts.Types.Var);
     }
     
     /// <summary><see cref="FinalizeCompilationUnit"/></summary>
