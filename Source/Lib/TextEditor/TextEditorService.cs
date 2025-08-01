@@ -501,7 +501,7 @@ public sealed partial class TextEditorService
                     break;
                 case 'B':
                     C++;
-                    E++;
+                    D++;
                     E++;
                     F++;
                     G++;
@@ -2065,7 +2065,7 @@ public sealed partial class TextEditorService
         // Track index of each first letter
         // 
         // Linear search within the first letter
-    
+
         switch (span.Length)
         {
             case 0:
@@ -2096,11 +2096,23 @@ public sealed partial class TextEditorService
     }
 
     public void EditContext_GetText_Clear()
-    {        _bucket_123.Clear();        _bucket_456.Clear();        _bucket_789.Clear();        _bucket_101112.Clear();        _bucket_131415.Clear();        _bucket_default.Clear();
+    {
+        _bucket_123.Clear();
+        _bucket_456.Clear();
+        _bucket_789.Clear();
+        _bucket_101112.Clear();
+        _bucket_131415.Clear();
+        _bucket_default.Clear();
     }
     
     public int EditContext_GetText_Count()
-    {        return _bucket_123.Count +            _bucket_456.Count +            _bucket_789.Count +            _bucket_101112.Count +            _bucket_131415.Count +            _bucket_default.Count;
+    {
+        return _bucket_123.Count +
+            _bucket_456.Count +
+            _bucket_789.Count +
+            _bucket_101112.Count +
+            _bucket_131415.Count +
+            _bucket_default.Count;
     }
 
     public void InsertTab(TextEditorEditContext editContext, TextEditorModel modelModifier, TextEditorViewModel viewModel)
