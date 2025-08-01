@@ -1533,4 +1533,20 @@ public ref struct CSharpParserModel
     {
         return Binder.TextEditorService.EditContext_GetText(Text.Slice(textSpan.StartInclusiveIndex, textSpan.Length));
     }
+    
+    public TypeClauseNode ToTypeClause(TypeDefinitionNode typeDefinitionNode)
+    {
+        var typeClauseNode = ConstructOrRecycleTypeClauseNode(
+            typeDefinitionNode.TypeIdentifierToken,
+            openAngleBracketToken: default,
+            indexGenericParameterEntryList: -1,
+            countGenericParameterEntryList: 0,
+            closeAngleBracketToken: default,
+            typeDefinitionNode.IsKeywordType);
+            
+        typeClauseNode.ExplicitDefinitionTextSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
+        typeClauseNode.ExplicitDefinitionResourceUri = typeDefinitionNode.ResourceUri;
+        
+        return typeClauseNode;
+    }
 }
