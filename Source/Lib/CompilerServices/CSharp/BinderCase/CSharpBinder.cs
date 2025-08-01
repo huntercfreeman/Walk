@@ -402,7 +402,7 @@ public class CSharpBinder
                     {
                         if (PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
                         {
-                            CSharpCompilationUnit? innerCompilationUnit;
+                            CSharpCompilationUnit innerCompilationUnit;
                             
                             if (PartialTypeDefinitionList[positionExclusive].ScopeIndexKey != -1)
                             {
@@ -411,14 +411,14 @@ public class CSharpBinder
                                     if (__CompilationUnitMap.TryGetValue(PartialTypeDefinitionList[positionExclusive].ResourceUri, out var temporaryCompilationUnit))
                                         innerCompilationUnit = temporaryCompilationUnit;
                                     else
-                                        innerCompilationUnit = null;
+                                        innerCompilationUnit = default;
                                 }
                                 else
                                 {
                                     innerCompilationUnit = compilationUnit;
                                 }
                                 
-                                if (innerCompilationUnit is not null)
+                                if (!innerCompilationUnit.IsDefault())
                                 {
                                     var innerScopeIndexKey = PartialTypeDefinitionList[positionExclusive].ScopeIndexKey;
                                     GetVariableDeclarationNodesByScope(
@@ -554,7 +554,7 @@ public class CSharpBinder
             {
                 if (PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
                 {
-                    CSharpCompilationUnit? innerCompilationUnit;
+                    CSharpCompilationUnit innerCompilationUnit;
                     ResourceUri innerResourceUri;
                     
                     if (PartialTypeDefinitionList[positionExclusive].ScopeIndexKey != -1)
@@ -568,7 +568,7 @@ public class CSharpBinder
                             }
                             else
                             {
-                                innerCompilationUnit = null;
+                                innerCompilationUnit = default;
                                 innerResourceUri = default;
                             }
                         }
@@ -578,7 +578,7 @@ public class CSharpBinder
                             innerResourceUri = resourceUri;
                         }
                         
-                        if (innerCompilationUnit != null)
+                        if (!innerCompilationUnit.IsDefault())
                         {
                             var innerScopeIndexKey = PartialTypeDefinitionList[positionExclusive].ScopeIndexKey;
                         
@@ -1358,7 +1358,7 @@ public class CSharpBinder
             {
                 if (PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
                 {
-                    CSharpCompilationUnit? innerCompilationUnit;
+                    CSharpCompilationUnit innerCompilationUnit;
                     ResourceUri innerResourceUri;
                     
                     if (PartialTypeDefinitionList[positionExclusive].ScopeIndexKey != -1)
@@ -1372,7 +1372,7 @@ public class CSharpBinder
                             }
                             else
                             {
-                                innerCompilationUnit = null;
+                                innerCompilationUnit = default;
                                 innerResourceUri = default;
                             }
                         }
@@ -1382,7 +1382,7 @@ public class CSharpBinder
                             innerResourceUri = typeDefinitionNode.ResourceUri;
                         }
                         
-                        if (innerCompilationUnit != null)
+                        if (!innerCompilationUnit.IsDefault())
                         {
                             var innerScopeIndexKey = PartialTypeDefinitionList[positionExclusive].ScopeIndexKey;
                             
@@ -1474,7 +1474,7 @@ public class CSharpBinder
             {
                 if (PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
                 {
-                    CSharpCompilationUnit? innerCompilationUnit;
+                    CSharpCompilationUnit innerCompilationUnit;
                     ResourceUri innerResourceUri;
                     
                     if (PartialTypeDefinitionList[positionExclusive].ScopeIndexKey != -1)
@@ -1488,7 +1488,7 @@ public class CSharpBinder
                             }
                             else
                             {
-                                innerCompilationUnit = null;
+                                innerCompilationUnit = default;
                                 innerResourceUri = default;
                             }
                         }
@@ -1498,7 +1498,7 @@ public class CSharpBinder
                             innerResourceUri = typeDefinitionNode.ResourceUri;
                         }
                         
-                        if (innerCompilationUnit != null)
+                        if (!innerCompilationUnit.IsDefault())
                         {
                             var partialTypeDefinition = PartialTypeDefinitionList[positionExclusive];
                             var innerScopeIndexKey = partialTypeDefinition.ScopeIndexKey;

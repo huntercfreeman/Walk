@@ -16,7 +16,7 @@ namespace Walk.CompilerServices.CSharp.CompilerServiceCase;
 /// after the parse finished, or if the data should be cleared immediately after the parse finishes
 /// (respectively).
 /// </summary>
-public sealed class CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerServiceResource
+public struct CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerServiceResource
 {
     public CSharpCompilationUnit(CompilationUnitKind compilationUnitKind)
     {
@@ -46,4 +46,6 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerS
     /// <summary>Set this index in the CSharpParserModel constructor</summary>
     public int IndexNodeList { get; set; }
     public int CountNodeList { get; set; }
+    
+    public bool IsDefault() => CompilationUnitKind == CompilationUnitKind.None;
 }

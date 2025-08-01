@@ -30,11 +30,11 @@ public ref struct CSharpParserModel
     public CSharpParserModel(
         CSharpBinder binder,
         ResourceUri resourceUri,
-        CSharpCompilationUnit compilationUnit,
+        ref CSharpCompilationUnit compilationUnit,
         ref CSharpLexerOutput lexerOutput)
     {
         Binder = binder;
-        Compilation = compilationUnit;
+        Compilation = ref compilationUnit;
         CurrentCodeBlockOwner = binder.GlobalCodeBlockNode;
         CurrentNamespaceStatementNode = binder.TopLevelNamespaceStatementNode;
         ResourceUri = resourceUri;
@@ -162,7 +162,7 @@ public ref struct CSharpParserModel
     public CSharpParserContextKind ParserContextKind { get; set; }
     
     public CSharpBinder Binder { get; set; }
-    public CSharpCompilationUnit Compilation;
+    public ref CSharpCompilationUnit Compilation;
 
     public ICodeBlockOwner CurrentCodeBlockOwner { get; set; }
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
@@ -339,9 +339,6 @@ public ref struct CSharpParserModel
                 // TODO: Track one or many declarations?...
                 // (if there is an error where something is defined twice for example)
                 SetVariableDeclarationNodeByScope(
-                    ResourceUri,
-                    Compilation,
-                    CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                     text,
                     variableDeclarationNode);
             }
@@ -359,9 +356,6 @@ public ref struct CSharpParserModel
         else
         {
             _ = TryAddVariableDeclarationNodeByScope(
-                ResourceUri,
-                Compilation,
-                CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 text,
                 variableDeclarationNode);
         }
@@ -369,7 +363,6 @@ public ref struct CSharpParserModel
     
     public void BindLabelDeclarationNode(LabelDeclarationNode labelDeclarationNode)
     {
-    
         Binder.SymbolList.Insert(
             Compilation.IndexSymbolList + Compilation.CountSymbolList,
             new Symbol(
@@ -384,8 +377,6 @@ public ref struct CSharpParserModel
         var text = Binder.TextEditorService.EditContext_GetText(Text.Slice(labelDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, labelDeclarationNode.IdentifierToken.TextSpan.Length));
         
         if (TryGetLabelDeclarationNodeByScope(
-                ResourceUri,
-                Compilation,
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 text,
                 out var existingLabelDeclarationNode))
@@ -397,8 +388,6 @@ public ref struct CSharpParserModel
                 // TODO: Track one or many declarations?...
                 // (if there is an error where something is defined twice for example)
                 SetLabelDeclarationNodeByScope(
-                    ResourceUri,
-                    Compilation,
                     CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                     text,
                     labelDeclarationNode);
@@ -417,8 +406,6 @@ public ref struct CSharpParserModel
         else
         {
             _ = TryAddLabelDeclarationNodeByScope(
-                ResourceUri,
-                Compilation,
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                 text,
                 labelDeclarationNode);
@@ -607,7 +594,7 @@ public ref struct CSharpParserModel
     /// 
     /// Also will update the 'CurrentCodeBlockBuilder'.
     /// </summary>
-    public void NewScopeAndBuilderFromOwner(ICodeBlockOwner codeBlockOwner, ResourceUri resourceUri, TextEditorTextSpan textSpan)
+    public void NewScopeAndBuilderFromOwner(ICodeBlockOwner codeBlockOwner, TextEditorTextSpan textSpan)
     {
         codeBlockOwner.Unsafe_ParentIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
         codeBlockOwner.Scope_StartInclusiveIndex = textSpan.StartInclusiveIndex;
@@ -626,7 +613,7 @@ public ref struct CSharpParserModel
     
         CurrentCodeBlockOwner = codeBlockOwner;
         
-        OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, resourceUri, Compilation);
+        OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, Compilation);
     }
 
     public void AddNamespaceToCurrentScope(string namespaceString)
@@ -739,7 +726,7 @@ public ref struct CSharpParserModel
         CurrentNamespaceStatementNode = namespaceStatementNode;
     }
     
-    public void OnBoundScopeCreatedAndSetAsCurrent(ICodeBlockOwner codeBlockOwner, ResourceUri resourceUri, CSharpCompilationUnit compilationUnit)
+    public void OnBoundScopeCreatedAndSetAsCurrent(ICodeBlockOwner codeBlockOwner, CSharpCompilationUnit compilationUnit)
     {
         switch (codeBlockOwner.SyntaxKind)
         {
@@ -794,7 +781,7 @@ public ref struct CSharpParserModel
                                 closeParenthesisToken: default,
                                 inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
                                 string.Empty,
-                                resourceUri));
+                                ResourceUri));
                     }
                 }
                 
@@ -1079,7 +1066,7 @@ public ref struct CSharpParserModel
         {
             if (Binder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
             {
-                CSharpCompilationUnit? innerCompilationUnit;
+                CSharpCompilationUnit innerCompilationUnit;
                 ResourceUri innerResourceUri;
                 
                 if (Binder.PartialTypeDefinitionList[positionExclusive].ScopeIndexKey != -1)
@@ -1093,7 +1080,7 @@ public ref struct CSharpParserModel
                         }
                         else
                         {
-                            innerCompilationUnit = null;
+                            innerCompilationUnit = default;
                             innerResourceUri = default;
                         }
                     }
@@ -1103,7 +1090,7 @@ public ref struct CSharpParserModel
                         innerResourceUri = resourceUri;
                     }
                     
-                    if (innerCompilationUnit != null)
+                    if (!innerCompilationUnit.IsDefault())
                     {
                         var innerScopeIndexKey = Binder.PartialTypeDefinitionList[positionExclusive].ScopeIndexKey;
                     
@@ -1241,19 +1228,18 @@ public ref struct CSharpParserModel
     }
     
     public bool TryAddVariableDeclarationNodeByScope(
-        ResourceUri resourceUri,
-        CSharpCompilationUnit compilationUnit,
-        int scopeIndexKey,
         string variableIdentifierText,
         VariableDeclarationNode variableDeclarationNode)
     {
+        var scopeIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
+
         VariableDeclarationNode? matchNode = null;
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = Compilation.IndexNodeList; i < Compilation.IndexNodeList + Compilation.CountNodeList; i++)
         {
             var x = Binder.NodeList[i];
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
-                GetIdentifierText(x, resourceUri, compilationUnit) == variableIdentifierText)
+                GetIdentifierText(x, ResourceUri, Compilation) == variableIdentifierText)
             {
                 matchNode = (VariableDeclarationNode)x;
                 break;
@@ -1265,9 +1251,9 @@ public ref struct CSharpParserModel
             variableDeclarationNode.Unsafe_ParentIndexKey = scopeIndexKey;
             
             Binder.NodeList.Insert(
-                compilationUnit.IndexNodeList + compilationUnit.CountNodeList,
+                Compilation.IndexNodeList + Compilation.CountNodeList,
                 variableDeclarationNode);
-            ++compilationUnit.CountNodeList;
+            ++Compilation.CountNodeList;
             
             return true;
         }
@@ -1278,21 +1264,20 @@ public ref struct CSharpParserModel
     }
     
     public void SetVariableDeclarationNodeByScope(
-        ResourceUri resourceUri,
-        CSharpCompilationUnit compilationUnit,
-        int scopeIndexKey,
         string variableIdentifierText,
         VariableDeclarationNode variableDeclarationNode)
     {
+        int scopeIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
+
         VariableDeclarationNode? matchNode = null;
-        int index = compilationUnit.IndexNodeList;
-        for (; index < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; index++)
+        int index = Compilation.IndexNodeList;
+        for (; index < Compilation.IndexNodeList + Compilation.CountNodeList; index++)
         {
             var x = Binder.NodeList[index];
             
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.VariableDeclarationNode &&
-                GetIdentifierText(x, resourceUri, compilationUnit) == variableIdentifierText)
+                GetIdentifierText(x, ResourceUri, Compilation) == variableIdentifierText)
             {
                 matchNode = (VariableDeclarationNode)x;
                 break;
@@ -1307,19 +1292,16 @@ public ref struct CSharpParserModel
     }
     
     public bool TryGetLabelDeclarationHierarchically(
-        ResourceUri resourceUri,
-        CSharpCompilationUnit compilationUnit,
-        int initialScopeIndexKey,
         string identifierText,
         out LabelDeclarationNode? labelDeclarationNode)
     {
-        var localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, initialScopeIndexKey);
+        int initialScopeIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
+
+        var localScope = Binder.GetScopeByScopeIndexKey(Compilation, initialScopeIndexKey);
 
         while (localScope is not null)
         {
             if (TryGetLabelDeclarationNodeByScope(
-                    resourceUri,
-                    compilationUnit,
                     localScope.Unsafe_SelfIndexKey,
                     identifierText,
                     out labelDeclarationNode))
@@ -1330,7 +1312,7 @@ public ref struct CSharpParserModel
             if (localScope.Unsafe_ParentIndexKey == -1)
                 localScope = default;
             else
-                localScope = Binder.GetScopeByScopeIndexKey(compilationUnit, localScope.Unsafe_ParentIndexKey);
+                localScope = Binder.GetScopeByScopeIndexKey(Compilation, localScope.Unsafe_ParentIndexKey);
         }
         
         labelDeclarationNode = null;
@@ -1338,20 +1320,18 @@ public ref struct CSharpParserModel
     }
     
     public bool TryGetLabelDeclarationNodeByScope(
-        ResourceUri resourceUri,
-        CSharpCompilationUnit compilationUnit,
         int scopeIndexKey,
         string labelIdentifierText,
         out LabelDeclarationNode labelDeclarationNode)
     {
         labelDeclarationNode = null;
-        for (int i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (int i = Compilation.IndexNodeList; i < Compilation.IndexNodeList + Compilation.CountNodeList; i++)
         {
             var x = Binder.NodeList[i];
             
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
-                GetIdentifierText(x, resourceUri, compilationUnit) == labelIdentifierText)
+                GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
             {
                 labelDeclarationNode = (LabelDeclarationNode)x;
                 break;
@@ -1365,20 +1345,18 @@ public ref struct CSharpParserModel
     }
     
     public bool TryAddLabelDeclarationNodeByScope(
-        ResourceUri resourceUri,
-        CSharpCompilationUnit compilationUnit,
         int scopeIndexKey,
         string labelIdentifierText,
         LabelDeclarationNode labelDeclarationNode)
     {
         LabelDeclarationNode? matchNode = null;
-        for (var i = compilationUnit.IndexNodeList; i < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; i++)
+        for (var i = Compilation.IndexNodeList; i < Compilation.IndexNodeList + Compilation.CountNodeList; i++)
         {
             var x = Binder.NodeList[i];
             
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
-                GetIdentifierText(x, resourceUri, compilationUnit) == labelIdentifierText)
+                GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
             {
                 matchNode = (LabelDeclarationNode)x;
                 break;
@@ -1390,9 +1368,9 @@ public ref struct CSharpParserModel
             labelDeclarationNode.Unsafe_ParentIndexKey = scopeIndexKey;
             
             Binder.NodeList.Insert(
-                compilationUnit.IndexNodeList + compilationUnit.CountNodeList,
+                Compilation.IndexNodeList + Compilation.CountNodeList,
                 labelDeclarationNode);
-            ++compilationUnit.CountNodeList;
+            ++Compilation.CountNodeList;
             
             return true;
         }
@@ -1403,21 +1381,19 @@ public ref struct CSharpParserModel
     }
     
     public void SetLabelDeclarationNodeByScope(
-        ResourceUri resourceUri,
-        CSharpCompilationUnit compilationUnit,
         int scopeIndexKey,
         string labelIdentifierText,
         LabelDeclarationNode labelDeclarationNode)
     {
         LabelDeclarationNode? matchNode = null;
-        int index = compilationUnit.IndexNodeList;
-        for (; index < compilationUnit.IndexNodeList + compilationUnit.CountNodeList; index++)
+        int index = Compilation.IndexNodeList;
+        for (; index < Compilation.IndexNodeList + Compilation.CountNodeList; index++)
         {
             var x = Binder.NodeList[index];
             
             if (x.Unsafe_ParentIndexKey == scopeIndexKey &&
                 x.SyntaxKind == SyntaxKind.LabelDeclarationNode &&
-                GetIdentifierText(x, resourceUri, compilationUnit) == labelIdentifierText)
+                GetIdentifierText(x, ResourceUri, Compilation) == labelIdentifierText)
             {
                 matchNode = (LabelDeclarationNode)x;
                 break;

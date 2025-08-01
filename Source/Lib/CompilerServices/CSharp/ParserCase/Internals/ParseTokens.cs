@@ -285,7 +285,6 @@ public static class ParseTokens
     
         parserModel.NewScopeAndBuilderFromOwner(
             getterOrSetterNode,
-            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
@@ -323,7 +322,6 @@ public static class ParseTokens
             
             parserModel.NewScopeAndBuilderFromOwner(
                 arbitraryCodeBlockNode,
-                parserModel.ResourceUri,
                 openBraceToken.TextSpan);
         }
         

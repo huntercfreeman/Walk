@@ -48,7 +48,6 @@ public class ParseFunctions
         
         parserModel.NewScopeAndBuilderFromOwner(
             functionDefinitionNode,
-            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
     
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
@@ -263,7 +262,6 @@ public class ParseFunctions
         
         parserModel.NewScopeAndBuilderFromOwner(
             constructorDefinitionNode,
-            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
         
         HandleFunctionArguments(constructorDefinitionNode, ref parserModel);

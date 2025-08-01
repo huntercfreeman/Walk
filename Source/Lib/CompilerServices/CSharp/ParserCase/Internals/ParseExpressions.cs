@@ -1150,9 +1150,6 @@ public static class ParseExpressions
             }
             
             if (parserModel.TryGetLabelDeclarationHierarchically(
-                    parserModel.ResourceUri,
-                    parserModel.Compilation,
-                    parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
                     ambiguousIdentifierTokenText,
                     out var labelDefinitionNode))
             {
@@ -2862,7 +2859,6 @@ public static class ParseExpressions
     {
         parserModel.NewScopeAndBuilderFromOwner(
             lambdaExpressionNode,
-            parserModel.ResourceUri,
             openBraceToken.TextSpan);
     }
     
