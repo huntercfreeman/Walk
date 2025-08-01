@@ -696,9 +696,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             ? null
             : modelModifier.GetPositionIndex(viewModelModifier);
 
-        var syntaxNode = primaryCursorPositionIndex is null || __CSharpBinder is null || compilerServiceResource?.CompilationUnit is null
+        ISyntaxNode? syntaxNode = primaryCursorPositionIndex is null || __CSharpBinder is null || compilerServiceResource?.CompilationUnit is null
             ? null
-            : __CSharpBinder.GetSyntaxNode(null, primaryCursorPositionIndex.Value, (CSharpCompilationUnit)compilerServiceResource);
+            : null; // __CSharpBinder.GetSyntaxNode(null, primaryCursorPositionIndex.Value, (CSharpCompilationUnit)compilerServiceResource);
             
         var menuOptionList = new List<MenuOptionRecord>();
             
@@ -1309,7 +1309,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         try
         {
             __CSharpBinder.StartCompilationUnit(resourceUri);
-            CSharpParser.Parse(resourceUri, cSharpCompilationUnit, __CSharpBinder, ref lexerOutput);
+            CSharpParser.Parse(resourceUri, ref cSharpCompilationUnit, __CSharpBinder, ref lexerOutput);
         }
         finally
         {
@@ -1356,7 +1356,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, content, shouldUseSharedStringWalker: true);
 
         __CSharpBinder.StartCompilationUnit(resourceUri);
-        CSharpParser.Parse(resourceUri, cSharpCompilationUnit, __CSharpBinder, ref lexerOutput);
+        CSharpParser.Parse(resourceUri, ref cSharpCompilationUnit, __CSharpBinder, ref lexerOutput);
     }
     
     public void FastParse(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
@@ -1373,7 +1373,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, content, shouldUseSharedStringWalker: true);
 
         __CSharpBinder.StartCompilationUnit(resourceUri);
-        CSharpParser.Parse(resourceUri, cSharpCompilationUnit, __CSharpBinder, ref lexerOutput);
+        CSharpParser.Parse(resourceUri, ref cSharpCompilationUnit, __CSharpBinder, ref lexerOutput);
     }
     
     /// <summary>
@@ -1392,7 +1392,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// </summary>
     public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource)
     {
-        return __CSharpBinder.GetSyntaxNode(compilationUnit: null, positionIndex, (CSharpCompilationUnit)compilerServiceResource);
+        return null;
+        // return __CSharpBinder.GetSyntaxNode(compilationUnit: null, positionIndex, (CSharpCompilationUnit)compilerServiceResource);
     }
     
     /// <summary>

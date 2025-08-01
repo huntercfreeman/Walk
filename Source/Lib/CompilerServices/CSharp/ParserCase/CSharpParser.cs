@@ -9,7 +9,7 @@ namespace Walk.CompilerServices.CSharp.ParserCase;
 
 public static class CSharpParser
 {
-    public static void Parse(Walk.TextEditor.RazorLib.Lexers.Models.ResourceUri resourceUri, CSharpCompilationUnit compilationUnit, CSharpBinder binder, ref CSharpLexerOutput lexerOutput)
+    public static void Parse(Walk.TextEditor.RazorLib.Lexers.Models.ResourceUri resourceUri, ref CSharpCompilationUnit compilationUnit, CSharpBinder binder, ref CSharpLexerOutput lexerOutput)
     {
         compilationUnit.IndexCodeBlockOwnerList = binder.CodeBlockOwnerList.Count;
         compilationUnit.IndexNodeList = binder.NodeList.Count;
@@ -22,7 +22,7 @@ public static class CSharpParser
         var parserModel = new CSharpParserModel(
             binder,
             resourceUri,
-            compilationUnit,
+            ref compilationUnit,
             ref lexerOutput);
         
         while (true)
@@ -186,7 +186,28 @@ public static class CSharpParser
 
         if (parserModel.GetParent(parserModel.CurrentCodeBlockOwner, compilationUnit) is not null)
             parserModel.CloseScope(parserModel.TokenWalker.Current.TextSpan); // The current token here would be the EOF token.
-        
+
+        /*Console.WriteLine();
+        Console.WriteLine();
+
+        Console.WriteLine($"compilationUnit.IndexDiagnosticList: {compilationUnit.IndexDiagnosticList}");
+        Console.WriteLine($"compilationUnit.CountDiagnosticList: {compilationUnit.CountDiagnosticList}");
+    
+        Console.WriteLine($"compilationUnit.IndexSymbolList: {compilationUnit.IndexSymbolList}");
+        Console.WriteLine($"compilationUnit.CountSymbolList: {compilationUnit.CountSymbolList}");
+    
+        Console.WriteLine($"compilationUnit.IndexFunctionInvocationParameterMetadataList: {compilationUnit.IndexFunctionInvocationParameterMetadataList}");
+        Console.WriteLine($"compilationUnit.CountFunctionInvocationParameterMetadataList: {compilationUnit.CountFunctionInvocationParameterMetadataList}");
+    
+        Console.WriteLine($"compilationUnit.IndexCodeBlockOwnerList: {compilationUnit.IndexCodeBlockOwnerList}");
+        Console.WriteLine($"compilationUnit.CountCodeBlockOwnerList: {compilationUnit.CountCodeBlockOwnerList}");
+    
+        Console.WriteLine($"compilationUnit.IndexNodeList: {compilationUnit.IndexNodeList}");
+        Console.WriteLine($"compilationUnit.CountNodeList: {compilationUnit.CountNodeList}");
+
+        Console.WriteLine();
+        Console.WriteLine();*/
+
         parserModel.Binder.FinalizeCompilationUnit(parserModel.ResourceUri, compilationUnit);
     }
 }

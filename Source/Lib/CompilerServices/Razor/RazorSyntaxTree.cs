@@ -111,7 +111,7 @@ public class RazorSyntaxTree
         
         _cSharpCompilerService.__CSharpBinder.StartCompilationUnit(_codebehindResourceUri);
         
-        CSharpParser.Parse(_codebehindResourceUri, compilationUnit, _cSharpCompilerService.__CSharpBinder, ref lexerOutput);
+        CSharpParser.Parse(_codebehindResourceUri, ref compilationUnit, _cSharpCompilerService.__CSharpBinder, ref lexerOutput);
         
         SemanticResultRazor = new SemanticResultRazor(
             compilationUnit,

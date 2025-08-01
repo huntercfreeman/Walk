@@ -55,7 +55,6 @@ public class ParseDefaultKeywords
         
         parserModel.NewScopeAndBuilderFromOwner(
             catchNode,
-            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
         
         parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
@@ -135,7 +134,6 @@ public class ParseDefaultKeywords
         
         parserModel.NewScopeAndBuilderFromOwner(
             doWhileStatementNode,
-            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
         
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
@@ -163,7 +161,6 @@ public class ParseDefaultKeywords
         
         parserModel.NewScopeAndBuilderFromOwner(
             ifStatementNode,
-            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
         
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
@@ -216,7 +213,6 @@ public class ParseDefaultKeywords
         
         parserModel.NewScopeAndBuilderFromOwner(
             finallyNode,
-            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
     
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
@@ -248,7 +244,6 @@ public class ParseDefaultKeywords
             
         parserModel.NewScopeAndBuilderFromOwner(
             forStatementNode,
-            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
         
         parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = false;
@@ -285,7 +280,6 @@ public class ParseDefaultKeywords
         
         parserModel.NewScopeAndBuilderFromOwner(
             foreachStatementNode,
-            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
             
         var successParse = ParseExpressions.TryParseVariableDeclarationNode(ref parserModel, out var variableDeclarationNode);
@@ -357,7 +351,6 @@ public class ParseDefaultKeywords
             
         parserModel.NewScopeAndBuilderFromOwner(
             lockStatementNode,
-            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
     
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
@@ -460,7 +453,6 @@ public class ParseDefaultKeywords
             
         parserModel.NewScopeAndBuilderFromOwner(
             switchStatementNode,
-            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
     }
 
@@ -500,7 +492,6 @@ public class ParseDefaultKeywords
         
         parserModel.NewScopeAndBuilderFromOwner(
             tryStatementTryNode,
-            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
     
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
@@ -577,7 +568,6 @@ public class ParseDefaultKeywords
             
         parserModel.NewScopeAndBuilderFromOwner(
             whileStatementNode,
-            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
     
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
@@ -679,7 +669,6 @@ public class ParseDefaultKeywords
         
         parserModel.NewScopeAndBuilderFromOwner(
             ifStatementNode,
-            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
         
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
@@ -847,7 +836,6 @@ public class ParseDefaultKeywords
         
         parserModel.NewScopeAndBuilderFromOwner(
             typeDefinitionNode,
-            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
             
         parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = false;
@@ -1105,7 +1093,6 @@ public class ParseDefaultKeywords
         
         parserModel.NewScopeAndBuilderFromOwner(
             namespaceStatementNode,
-            parserModel.ResourceUri,
             parserModel.TokenWalker.Current.TextSpan);
         
         // Do not set 'IsImplicitOpenCodeBlockTextSpan' for namespace file scoped.

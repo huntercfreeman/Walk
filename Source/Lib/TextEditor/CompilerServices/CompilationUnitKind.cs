@@ -14,6 +14,7 @@ namespace Walk.TextEditor.RazorLib.CompilerServices;
 /// </summary>
 public enum CompilationUnitKind
 {
+    None,
     SolutionWide_DefinitionsOnly,
     SolutionWide_MinimumLocalsData,
     IndividualFile_AllData,
