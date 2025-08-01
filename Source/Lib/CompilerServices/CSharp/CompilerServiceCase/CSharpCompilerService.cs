@@ -1332,6 +1332,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         .Concat(__CSharpBinder.SymbolList.Skip(cSharpCompilationUnit.IndexSymbolList).Take(cSharpCompilationUnit.CountSymbolList).Select(x => x.TextSpan)));
             }
 
+            ClearSourceTextMap();
+            
             ResourceParsed?.Invoke();
         }
         
@@ -1357,6 +1359,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         __CSharpBinder.StartCompilationUnit(resourceUri);
         CSharpParser.Parse(resourceUri, ref cSharpCompilationUnit, __CSharpBinder, ref lexerOutput);
+        
+        ClearSourceTextMap();
     }
     
     public void FastParse(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
@@ -1374,6 +1378,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         __CSharpBinder.StartCompilationUnit(resourceUri);
         CSharpParser.Parse(resourceUri, ref cSharpCompilationUnit, __CSharpBinder, ref lexerOutput);
+        
+        ClearSourceTextMap();
     }
     
     /// <summary>
