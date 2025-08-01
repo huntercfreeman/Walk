@@ -53,6 +53,21 @@ public record struct TypeReference
         ExplicitDefinitionTextSpan = typeClauseNode.ExplicitDefinitionTextSpan;
         ExplicitDefinitionResourceUri = typeClauseNode.ExplicitDefinitionResourceUri;
     }
+    
+    public TypeReference(TypeDefinitionNode typeDefinitionNode)
+    {
+        IsKeywordType = typeDefinitionNode.IsKeywordType;
+        TypeIdentifierToken = typeDefinitionNode.TypeIdentifierToken;
+        
+        OpenAngleBracketToken = typeDefinitionNode.OpenAngleBracketToken;
+        IndexGenericParameterEntryList = typeDefinitionNode.IndexGenericParameterEntryList;
+        CountGenericParameterEntryList = typeDefinitionNode.CountGenericParameterEntryList;
+        CloseAngleBracketToken = typeDefinitionNode.CloseAngleBracketToken;
+        
+        IsFabricated = typeDefinitionNode.IsFabricated;
+        ExplicitDefinitionTextSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
+        ExplicitDefinitionResourceUri = typeDefinitionNode.ResourceUri;
+    }
 
     public SyntaxToken TypeIdentifierToken { get; }
     

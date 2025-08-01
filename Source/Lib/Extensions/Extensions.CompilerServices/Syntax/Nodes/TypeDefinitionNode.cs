@@ -50,11 +50,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
         ResourceUri = resourceUri;
     }
 
-    private TypeClauseNode? _toTypeClauseResult;
-    
-    private bool _hasCalculatedToTypeReference = false;
-    private TypeReference _toTypeReferenceResult;
-
     public AccessModifierKind AccessModifierKind { get; }
     /// <summary>TODO: Use 'IndexPartialTypeDefinition != -1' to signify this bool.</summary>
     public bool HasPartialModifier { get; }
@@ -150,31 +145,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     /// </summary>
     public bool IsParsingGenericParameters { get; set; }
 
-    public TypeClauseNode ToTypeClause()
-    {
-        return _toTypeClauseResult ??= new TypeClauseNode(
-            TypeIdentifierToken,
-            
-            openAngleBracketToken: default,
-    		indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
-    		closeAngleBracketToken: default, 
-            
-            isKeywordType: IsKeywordType)
-        {
-            ExplicitDefinitionTextSpan = TypeIdentifierToken.TextSpan,
-            ExplicitDefinitionResourceUri = ResourceUri,
-        };
-    }
-    
-    public TypeReference ToTypeReference()
-    {
-        if (!_hasCalculatedToTypeReference)
-            _toTypeReferenceResult = new TypeReference(ToTypeClause());
-        
-        return _toTypeReferenceResult;
-    }
-
     #region ICodeBlockOwner_Methods
     public TypeReference GetReturnTypeReference()
     {
@@ -186,6 +156,11 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner, IFunctionDefinitionNod
     {
         InheritedTypeReference = typeReference;
         return this;
+    }
+    
+    public TypeReference ToTypeReference()
+    {
+        return new TypeReference(this);
     }
 
     #if DEBUG    
