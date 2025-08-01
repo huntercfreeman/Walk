@@ -25,7 +25,7 @@ namespace Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 /// </summary>
 public sealed class TextEditorComponentData
 {
-    private readonly Throttle _throttleApplySyntaxHighlighting = new(TimeSpan.FromMilliseconds(500));
+    private readonly Throttle _throttleApplySyntaxHighlighting = new(TimeSpan.FromMilliseconds(1_000));
 
     public static TimeSpan ThrottleDelayDefault { get; } = TimeSpan.FromMilliseconds(60);
     public static TimeSpan OnMouseOutTooltipDelay { get; } = TimeSpan.FromMilliseconds(1_000);
