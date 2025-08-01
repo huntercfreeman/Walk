@@ -135,6 +135,18 @@ public class CSharpBinder
         UpsertCompilationUnit(resourceUri, compilationUnit);
     }
     
+    /// <summary>This also clears any pooled lists.</summary>
+    public void ClearAllCompilationUnits()
+    {
+        __CompilationUnitMap.Clear();
+        
+        DiagnosticList.Clear();
+        SymbolList.Clear();
+        FunctionInvocationParameterMetadataList.Clear();
+        CodeBlockOwnerList.Clear();
+        NodeList.Clear();
+    }
+    
     /// <summary>TextEditorEditContext is required for thread safety.</summary>
     public void UpsertCompilationUnit(ResourceUri resourceUri, CSharpCompilationUnit compilationUnit)
     {
