@@ -95,6 +95,7 @@ public ref struct CSharpParserModel
         
         ExternalTypeDefinitionList = Binder.CSharpParserModel_ExternalTypeDefinitionList;
         ExternalTypeDefinitionList.Clear();
+        ExternalTypeDefinitionList.AddRange(CSharpFacts.Types.TypeDefinitionNodes);
         
         Binder.AmbiguousParenthesizedExpressionNodeChildList.Clear();
         Binder.LambdaExpressionNodeChildList.Clear();

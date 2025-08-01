@@ -158,6 +158,7 @@ public partial class CSharpFacts
         {
             Void,
             Int,
+            Char,
             String,
             Bool,
             Var
