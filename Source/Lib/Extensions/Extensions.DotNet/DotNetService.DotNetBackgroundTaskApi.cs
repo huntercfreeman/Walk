@@ -21,6 +21,7 @@ using Walk.CompilerServices.DotNetSolution.SyntaxActors;
 using Walk.CompilerServices.Xml.Html.SyntaxActors;
 using Walk.CompilerServices.Xml.Html.SyntaxEnums;
 using Walk.CompilerServices.Xml.Html.SyntaxObjects;
+using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.Extensions.DotNet.AppDatas.Models;
 using Walk.Extensions.DotNet.CommandLines.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Displays;
@@ -654,6 +655,13 @@ public partial class DotNetService
                 ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_MinimumLocalsData);
                 
                 IdeService.TextEditorService.EditContext_GetText_Clear();
+                
+                var compilerService = IdeService.TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
+                if (compilerService is CSharpCompilerService cSharpCompilerService)
+                {
+                    cSharpCompilerService.ClearSourceTextMap();
+                }
+                
                 return ValueTask.CompletedTask;
             }));
 

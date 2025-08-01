@@ -12,6 +12,4 @@ public interface IExtendedCompilationUnit : ICompilationUnit
     
     public int IndexNodeList { get; set; }
     public int CountNodeList { get; set; }
-    
-    public string SourceText { get; }
 }

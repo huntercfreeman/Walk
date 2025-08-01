@@ -59,7 +59,7 @@ public class RazorSyntaxTree
         _codebehindClassBuilder = new($"public class {_codebehindClassIdentifier}\n{{");
         _codebehindRenderFunctionBuilder = new($"public void {_codebehindRenderFunctionIdentifier}()\n\t{{");
 
-        _codebehindResourceUri = new ResourceUri($"{resourceUri.Value}.cs");
+        _codebehindResourceUri = new ResourceUri($"{resourceUri.Value}_WALK.cs");
     }
 
     /// <summary>
@@ -104,7 +104,8 @@ public class RazorSyntaxTree
 
         var classContents = _codebehindClassBuilder.ToString();
 
-        var compilationUnit = new CSharpCompilationUnit(classContents, CompilationUnitKind.IndividualFile_AllData);
+        var compilationUnit = new CSharpCompilationUnit(CompilationUnitKind.IndividualFile_AllData);
+        _cSharpCompilerService.SetSourceText(_codebehindResourceUri.Value, classContents);
             
         var lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, _codebehindResourceUri, classContents, shouldUseSharedStringWalker: true);
         

@@ -143,7 +143,11 @@ public struct SyntaxViewModel
             var compilationUnit = ExtendedCompilerService.GetResource(ResourceUri)?.CompilationUnit;
             
             if (compilationUnit is IExtendedCompilationUnit extendedCompilationUnit)
-                return textSpan.GetText(extendedCompilationUnit.SourceText, TextEditorService);
+            {
+                return textSpan.GetText(
+                    ExtendedCompilerService.GetSourceText(ResourceUri.Value),
+                    TextEditorService);
+            }
         }
         
         return "null";

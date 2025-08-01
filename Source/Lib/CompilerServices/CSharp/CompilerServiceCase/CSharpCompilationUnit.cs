@@ -18,9 +18,8 @@ namespace Walk.CompilerServices.CSharp.CompilerServiceCase;
 /// </summary>
 public sealed class CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerServiceResource
 {
-    public CSharpCompilationUnit(string sourceText, CompilationUnitKind compilationUnitKind)
+    public CSharpCompilationUnit(CompilationUnitKind compilationUnitKind)
     {
-        SourceText = sourceText;
         CompilationUnitKind = compilationUnitKind;
     }
     
@@ -28,8 +27,6 @@ public sealed class CSharpCompilationUnit : IExtendedCompilationUnit, ICompilerS
     
     public CompilationUnitKind CompilationUnitKind { get; }
 
-    public string SourceText { get; set; }
-    
     /// <summary>Set this index in the CSharpParserModel constructor</summary>
     public int IndexDiagnosticList { get; set; }
     public int CountDiagnosticList { get; set; }

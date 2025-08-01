@@ -99,12 +99,14 @@ public class CSharpBinder
     public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> CSharpStatementBuilder_ParseLambdaStatementScopeStack { get; } = new();
     
     public TextEditorService TextEditorService { get; set; }
+    public CSharpCompilerService CSharpCompilerService { get; set; }
     
     public GlobalCodeBlockNode GlobalCodeBlockNode { get; } = new GlobalCodeBlockNode();
     
-    public CSharpBinder(TextEditorService textEditorService)
+    public CSharpBinder(TextEditorService textEditorService, CSharpCompilerService cSharpCompilerService)
     {
         TextEditorService = textEditorService;
+        CSharpCompilerService = cSharpCompilerService;
     }
     
     /// <summary><see cref="FinalizeCompilationUnit"/></summary>
@@ -446,14 +448,18 @@ public class CSharpBinder
                     {
                         innerCompilationUnit = compilationUnit;
                         innerResourceUri = resourceUri;
-                        identifierText = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, TextEditorService);
+                        identifierText = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan.GetText(
+                            CSharpCompilerService.GetSourceText(innerResourceUri.Value),
+                            TextEditorService);
                     }
                     else
                     {
                         if (__CompilationUnitMap.TryGetValue(typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
                         {
-                            identifierText = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, TextEditorService);
                             innerResourceUri = typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri;
+                            identifierText = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan.GetText(
+                                CSharpCompilerService.GetSourceText(innerResourceUri.Value),
+                                TextEditorService);
                         }
                         else
                         {
@@ -772,7 +778,7 @@ public class CSharpBinder
                         resourceUri,
                         compilationUnit,
                         scope.Unsafe_SelfIndexKey,
-                        getTextResult ?? textSpan.GetText(compilationUnit.SourceText, TextEditorService),
+                        getTextResult ?? textSpan.GetText(CSharpCompilerService.GetSourceText(resourceUri.Value), TextEditorService),
                         out var variableDeclarationStatementNode)
                     && variableDeclarationStatementNode is not null)
                 {
@@ -790,7 +796,7 @@ public class CSharpBinder
                              resourceUri,
                              compilationUnit,
                              scope.Unsafe_SelfIndexKey,
-                             getTextResult ?? textSpan.GetText(compilationUnit.SourceText, TextEditorService),
+                             getTextResult ?? textSpan.GetText(CSharpCompilerService.GetSourceText(resourceUri.Value), TextEditorService),
                              out var functionDefinitionNode)
                          && functionDefinitionNode is not null)
                 {
@@ -831,15 +837,19 @@ public class CSharpBinder
                                         if (parameter.TypeReference.ExplicitDefinitionTextSpan != default &&
                                             __CompilationUnitMap.TryGetValue(parameter.TypeReference.ExplicitDefinitionResourceUri, out var parameterCompilationUnit))
                                         {
-                                            parameterTypeText = parameter.TypeReference.TypeIdentifierToken.TextSpan.GetText(parameterCompilationUnit.SourceText, TextEditorService);
+                                            parameterTypeText = parameter.TypeReference.TypeIdentifierToken.TextSpan.GetText(
+                                                CSharpCompilerService.GetSourceText(parameter.TypeReference.ExplicitDefinitionResourceUri.Value),
+                                                TextEditorService);
                                         }
                                         else
                                         {
-                                            parameterTypeText = parameter.TypeReference.TypeIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+                                            parameterTypeText = parameter.TypeReference.TypeIdentifierToken.TextSpan.GetText(
+                                                CSharpCompilerService.GetSourceText(resourceUri.Value),
+                                                TextEditorService);
                                         }
                                         
                                         if (ArgumentModifierEqualsParameterModifier(argument.ArgumentModifierKind, parameter.ParameterModifierKind) &&
-                                            argument.VariableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText(innerCompilationUnit.SourceText, TextEditorService) ==
+                                            argument.VariableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText(CSharpCompilerService.GetSourceText(entry.ResourceUri.Value), TextEditorService) ==
                                                 parameterTypeText)
                                         {
                                             return innerFunctionDefinitionNode;
@@ -865,7 +875,7 @@ public class CSharpBinder
                              resourceUri,
                              compilationUnit,
                              scope.Unsafe_SelfIndexKey,
-                             getTextResult ?? textSpan.GetText(compilationUnit.SourceText, TextEditorService),
+                             getTextResult ?? textSpan.GetText(CSharpCompilerService.GetSourceText(resourceUri.Value), TextEditorService),
                              out var typeDefinitionNode) &&
                          typeDefinitionNode is not null)
                 {
@@ -878,7 +888,7 @@ public class CSharpBinder
             case SyntaxKind.NamespaceSymbol:
             {
                 if (NamespacePrefixTree.__Root.Children.TryGetValue(
-                        textSpan.GetText(compilationUnit.SourceText, TextEditorService),
+                        textSpan.GetText(CSharpCompilerService.GetSourceText(resourceUri.Value), TextEditorService),
                         out var namespacePrefixNode))
                 {
                     return new NamespaceClauseNode(new SyntaxToken(SyntaxKind.IdentifierToken, textSpan));
@@ -886,7 +896,7 @@ public class CSharpBinder
                 
                 if (symbol is not null)
                 {
-                    var fullNamespaceName = symbol.Value.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+                    var fullNamespaceName = symbol.Value.TextSpan.GetText(CSharpCompilerService.GetSourceText(resourceUri.Value), TextEditorService);
                     var splitResult = fullNamespaceName.Split('.');
                     
                     int position = 0;
@@ -935,7 +945,7 @@ public class CSharpBinder
                                 default),
                             externalSyntaxKind,
                             symbol: symbol,
-                            getTextResult: textSpan.GetText(compilationUnit.SourceText, TextEditorService));
+                            getTextResult: textSpan.GetText(CSharpCompilerService.GetSourceText(resourceUri.Value), TextEditorService));
                     }
                 }
             }
@@ -1176,12 +1186,12 @@ public class CSharpBinder
                 var typeDefinitionNode = (TypeDefinitionNode)node;
                 if (typeDefinitionNode.ResourceUri == resourceUri)
                 {
-                    sourceText = compilationUnit.SourceText;
+                    sourceText = CSharpCompilerService.GetSourceText(resourceUri.Value);
                 }
                 else
                 {
                     if (__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var innerCompilationUnit))
-                        sourceText = innerCompilationUnit.SourceText;
+                        sourceText = CSharpCompilerService.GetSourceText(typeDefinitionNode.ResourceUri.Value);
                     else
                         return string.Empty;
                 }
@@ -1192,12 +1202,12 @@ public class CSharpBinder
                 var typeClauseNode = (TypeClauseNode)node;
                 if (typeClauseNode.ExplicitDefinitionResourceUri == resourceUri)
                 {
-                    sourceText = compilationUnit.SourceText;
+                    sourceText = CSharpCompilerService.GetSourceText(resourceUri.Value);
                 }
                 else
                 {
                     if (__CompilationUnitMap.TryGetValue(typeClauseNode.ExplicitDefinitionResourceUri, out var innerCompilationUnit))
-                        sourceText = innerCompilationUnit.SourceText;
+                        sourceText = CSharpCompilerService.GetSourceText(typeClauseNode.ExplicitDefinitionResourceUri.Value);
                     else
                         return string.Empty;
                 }
@@ -1208,12 +1218,12 @@ public class CSharpBinder
                 var functionDefinitionNode = (FunctionDefinitionNode)node;
                 if (functionDefinitionNode.ResourceUri == resourceUri)
                 {
-                    sourceText = compilationUnit.SourceText;
+                    sourceText = CSharpCompilerService.GetSourceText(resourceUri.Value);
                 }
                 else
                 {
                     if (__CompilationUnitMap.TryGetValue(functionDefinitionNode.ResourceUri, out var innerCompilationUnit))
-                        sourceText = innerCompilationUnit.SourceText;
+                        sourceText = CSharpCompilerService.GetSourceText(functionDefinitionNode.ResourceUri.Value);
                     else
                         return string.Empty;
                 }
@@ -1224,12 +1234,12 @@ public class CSharpBinder
                 var functionInvocationNode = (FunctionInvocationNode)node;
                 if (functionInvocationNode.ResourceUri == resourceUri)
                 {
-                    sourceText = compilationUnit.SourceText;
+                    sourceText = CSharpCompilerService.GetSourceText(resourceUri.Value);
                 }
                 else
                 {
                     if (__CompilationUnitMap.TryGetValue(functionInvocationNode.ResourceUri, out var innerCompilationUnit))
-                        sourceText = innerCompilationUnit.SourceText;
+                        sourceText = CSharpCompilerService.GetSourceText(functionInvocationNode.ResourceUri.Value);
                     else
                         return string.Empty;
                 }
@@ -1240,12 +1250,12 @@ public class CSharpBinder
                 var variableDeclarationNode = (VariableDeclarationNode)node;
                 if (variableDeclarationNode.ResourceUri == resourceUri)
                 {
-                    sourceText = compilationUnit.SourceText;
+                    sourceText = CSharpCompilerService.GetSourceText(resourceUri.Value);
                 }
                 else
                 {
                     if (__CompilationUnitMap.TryGetValue(variableDeclarationNode.ResourceUri, out var innerCompilationUnit))
-                        sourceText = innerCompilationUnit.SourceText;
+                        sourceText = CSharpCompilerService.GetSourceText(variableDeclarationNode.ResourceUri.Value);
                     else
                         return string.Empty;
                 }
@@ -1254,17 +1264,17 @@ public class CSharpBinder
             case SyntaxKind.VariableReferenceNode:
             {
                 var variableReferenceNode = (VariableReferenceNode)node;
-                return variableReferenceNode.VariableIdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+                return variableReferenceNode.VariableIdentifierToken.TextSpan.GetText(CSharpCompilerService.GetSourceText(resourceUri.Value), TextEditorService);
             }
             case SyntaxKind.LabelDeclarationNode:
             {
                 var labelDeclarationNode = (LabelDeclarationNode)node;
-                return labelDeclarationNode.IdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+                return labelDeclarationNode.IdentifierToken.TextSpan.GetText(CSharpCompilerService.GetSourceText(resourceUri.Value), TextEditorService);
             }
             case SyntaxKind.LabelReferenceNode:
             {
                 var labelReferenceNode = (LabelReferenceNode)node;
-                return labelReferenceNode.IdentifierToken.TextSpan.GetText(compilationUnit.SourceText, TextEditorService);
+                return labelReferenceNode.IdentifierToken.TextSpan.GetText(CSharpCompilerService.GetSourceText(resourceUri.Value), TextEditorService);
             }
             default:
             {
