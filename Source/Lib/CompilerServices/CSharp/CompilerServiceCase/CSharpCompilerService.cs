@@ -1,27 +1,29 @@
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using System.Text;
-using Walk.Common.RazorLib.Menus.Models;
-using Walk.Common.RazorLib.Menus.Displays;
-using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
-using Walk.TextEditor.RazorLib;
-using Walk.TextEditor.RazorLib.Autocompletes.Models;
-using Walk.TextEditor.RazorLib.CompilerServices;
-using Walk.TextEditor.RazorLib.TextEditors.Models;
-using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
-using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.TextEditor.RazorLib.Events.Models;
-using Walk.TextEditor.RazorLib.Keymaps.Models.Defaults;
-using Walk.Extensions.CompilerServices;
-using Walk.Extensions.CompilerServices.Syntax;
-using Walk.Extensions.CompilerServices.Syntax.Nodes;
-using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
-using Walk.Extensions.CompilerServices.Displays;
+using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Menus.Displays;
+using Walk.Common.RazorLib.Menus.Models;
 using Walk.CompilerServices.CSharp.BinderCase;
 using Walk.CompilerServices.CSharp.LexerCase;
 using Walk.CompilerServices.CSharp.ParserCase;
+using Walk.Extensions.CompilerServices;
+using Walk.Extensions.CompilerServices.Displays;
+using Walk.Extensions.CompilerServices.Syntax;
+using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.Extensions.CompilerServices.Syntax.Nodes.Interfaces;
+using Walk.TextEditor.RazorLib;
+using Walk.TextEditor.RazorLib.Autocompletes.Models;
+using Walk.TextEditor.RazorLib.CompilerServices;
+using Walk.TextEditor.RazorLib.Events.Models;
+using Walk.TextEditor.RazorLib.Keymaps.Models.Defaults;
+using Walk.TextEditor.RazorLib.Lexers.Models;
+using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
+using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Walk.CompilerServices.CSharp.CompilerServiceCase;
 
@@ -1281,12 +1283,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// <summary>
     /// This implementation is NOT thread safe.
     /// </summary>
-    public ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
+    public async ValueTask ParseAsync(TextEditorEditContext editContext, TextEditorModel modelModifier, bool shouldApplySyntaxHighlighting)
     {
         var resourceUri = modelModifier.PersistentState.ResourceUri;
     
         if (!__CSharpBinder.__CompilationUnitMap.ContainsKey(resourceUri))
-            return ValueTask.CompletedTask;
+            return;
     
         _textEditorService.Model_StartPendingCalculatePresentationModel(
             editContext,
@@ -1300,7 +1302,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var cSharpCompilationUnit = new CSharpCompilationUnit(CompilationUnitKind.IndividualFile_AllData);
         
         SetSourceText(resourceUri.Value, presentationModel.PendingCalculation.ContentAtRequest);
-        
+
+        await RunEfCore();
+
         var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, presentationModel.PendingCalculation.ContentAtRequest, shouldUseSharedStringWalker: true);
 
         // Even if the parser throws an exception, be sure to
@@ -1335,8 +1339,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             
             ResourceParsed?.Invoke();
         }
-        
-        return ValueTask.CompletedTask;
     }
     
     private readonly List<TextEditorTextSpan> _emptyDiagnosticTextSpans = new();
@@ -1743,5 +1745,29 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             return __CSharpBinder.GetIdentifierText(node, resourceUri, compilationUnit);
     
         return string.Empty;
+    }
+
+    public async Task RunEfCore()
+    {
+        var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = ":memory:" };
+        var connection = new SqliteConnection(connectionStringBuilder.ToString());
+
+        var options = new DbContextOptionsBuilder<TestDbContext>()
+            .UseSqlite(connection)
+            .Options;
+
+        using var db = new TestDbContext(options);
+        db.Database.OpenConnection();
+        await db.Database.EnsureCreatedAsync();
+        var nextId = db.Names!.Count() + 1;
+        db.Names.Add(new Name { Id = nextId, FullName = "Abdul Rahman" });
+        await db.SaveChangesAsync();
+
+        Console.WriteLine();
+        await foreach (var name in db.Names.AsAsyncEnumerable())
+        {
+            Console.WriteLine(name.FullName);
+        }
+        db.Database.CloseConnection();
     }
 }
