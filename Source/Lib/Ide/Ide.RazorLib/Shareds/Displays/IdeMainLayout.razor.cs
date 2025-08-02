@@ -43,11 +43,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     private static readonly Key<IDynamicViewModel> _infoDialogKey = Key<IDynamicViewModel>.NewKey();
     
-    public ElementReference? _buttonFileElementReference;
-    public ElementReference? _buttonToolsElementReference;
-    public ElementReference? _buttonViewElementReference;
-    public ElementReference? _buttonRunElementReference;
-    
     private IDialog _dialogRecord = new DialogViewModel(
         Key<IDynamicViewModel>.NewKey(),
         "Settings",
@@ -263,7 +258,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             DropdownOrientation.Bottom,
             IdeState.DropdownKeyFile,
             IdeService.GetIdeState().MenuFile,
-            _buttonFileElementReference);
+            IdeState.ButtonFileId,
+            preventScroll: false);
     }
     
     public Task RenderToolsDropdownOnClick()
@@ -275,7 +271,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             DropdownOrientation.Bottom,
             IdeState.DropdownKeyTools,
             IdeService.GetIdeState().MenuTools,
-            _buttonToolsElementReference);
+            IdeState.ButtonToolsId,
+            preventScroll: false);
     }
     
     public Task RenderViewDropdownOnClick()
@@ -289,7 +286,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             DropdownOrientation.Bottom,
             IdeState.DropdownKeyView,
             IdeService.GetIdeState().MenuView,
-            _buttonViewElementReference);
+            IdeState.ButtonViewId,
+            preventScroll: false);
     }
     
     public Task RenderRunDropdownOnClick()
@@ -301,7 +299,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             DropdownOrientation.Bottom,
             IdeState.DropdownKeyRun,
             IdeService.GetIdeState().MenuRun,
-            _buttonRunElementReference);
+            IdeState.ButtonRunId,
+            preventScroll: false);
     }
     
     public void InitializeMenuView()
