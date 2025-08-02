@@ -6,14 +6,12 @@ using Walk.Common.RazorLib.Dropdowns.Models;
 namespace Walk.Ide.RazorLib.Shareds.Models;
 
 public record struct IdeState(
-    IReadOnlyList<IBadgeModel> FooterBadgeList,
     MenuRecord MenuFile,
     MenuRecord MenuTools,
     MenuRecord MenuView,
     MenuRecord MenuRun)
 {
     public IdeState() : this(
-        Array.Empty<IBadgeModel>(),
         new MenuRecord(Array.Empty<MenuOptionRecord>()),
         new MenuRecord(Array.Empty<MenuOptionRecord>()),
         new MenuRecord(Array.Empty<MenuOptionRecord>()),

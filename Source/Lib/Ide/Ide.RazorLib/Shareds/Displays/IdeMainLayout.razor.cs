@@ -10,6 +10,7 @@ using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Resizes.Models;
+using Walk.Common.RazorLib.Badges.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Ide.RazorLib.Shareds.Displays.Internals;
@@ -38,6 +39,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private string _styleCssString;
     private string _headerCssStyle;
     
+    private readonly List<IBadgeModel> _footerBadgeList = new();
+    
     private static readonly Key<IDynamicViewModel> _infoDialogKey = Key<IDynamicViewModel>.NewKey();
     
     public ElementReference? _buttonFileElementReference;
@@ -65,6 +68,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
+        _footerBadgeList.Add(new Walk.TextEditor.RazorLib.Edits.Models.DirtyResourceUriBadge(IdeService.TextEditorService));
+        _footerBadgeList.Add(new Walk.Common.RazorLib.Notifications.Models.NotificationBadge(IdeService.CommonService));
+    
         var panelState = IdeService.CommonService.GetPanelState();
     
         _topLeftResizableColumnParameter = new(
@@ -105,7 +111,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             adjacentElementDimensions: _bodyElementDimensions,
             dimensionAttributeKind: DimensionAttributeKind.Height,
             reRenderSelfAndAdjacentElementDimensionsFunc: () => InvokeAsync(StateHasChanged),
-            badgeList: IdeService.GetIdeState().FooterBadgeList);
+            badgeList: _footerBadgeList);
     
         IdeService.TextEditorService.IdeBackgroundTaskApi = IdeService;
     
