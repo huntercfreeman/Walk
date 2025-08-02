@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Resizes.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
@@ -165,5 +162,6 @@ public partial class InputFileDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         IdeService.IdeStateChanged -= OnInputFileStateChanged;
+        IdeService.CommonService.TreeView_DisposeContainerAction(InputFileSidebar_TreeViewContainerKey);
     }
 }
