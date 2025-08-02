@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Walk.Common.RazorLib.FileSystems.Models;
 
 public class LocalEnvironmentProvider : IEnvironmentProvider
@@ -12,35 +14,50 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
 
     public LocalEnvironmentProvider()
     {
+        var tokenBuilder = new StringBuilder();
+        var formattedBuilder = new StringBuilder();
+    
         RootDirectoryAbsolutePath = new AbsolutePath(
             "/",
             true,
-            this);
+            this,
+            tokenBuilder,
+            formattedBuilder);
 
         HomeDirectoryAbsolutePath = new AbsolutePath(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             true,
-            this);
+            this,
+            tokenBuilder,
+            formattedBuilder);
             
         ActualRoamingApplicationDataDirectoryAbsolutePath = new AbsolutePath(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             true,
-            this);
+            this,
+            tokenBuilder,
+            formattedBuilder);
             
         SafeRoamingApplicationDataDirectoryAbsolutePath = new AbsolutePath(
             JoinPaths(ActualRoamingApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
             true,
-            this);
+            this,
+            tokenBuilder,
+            formattedBuilder);
             
         ActualLocalApplicationDataDirectoryAbsolutePath = new AbsolutePath(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             true,
-            this);
+            this,
+            tokenBuilder,
+            formattedBuilder);
         
         SafeLocalApplicationDataDirectoryAbsolutePath = new AbsolutePath(
             JoinPaths(ActualLocalApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
             true,
-            this);
+            this,
+            tokenBuilder,
+            formattedBuilder);
 
         ProtectedPathList.Add(new(
             RootDirectoryAbsolutePath.Value,
@@ -142,7 +159,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
         PermittanceChecker.AssertDeletionPermitted(this, path, isDirectory);
     }
 
-    public void DeletionPermittedRegister(SimplePath simplePath)
+    public void DeletionPermittedRegister(SimplePath simplePath, StringBuilder? tokenBuilder, StringBuilder? formattedBuilder)
     {
         lock (_pathLock)
         {
@@ -151,7 +168,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
             if (absolutePath == "/" || absolutePath == "\\" || string.IsNullOrWhiteSpace(absolutePath))
                 return;
 
-            if (PermittanceChecker.IsRootOrHomeDirectory(simplePath, this))
+            if (PermittanceChecker.IsRootOrHomeDirectory(simplePath, this, tokenBuilder, formattedBuilder))
                 return;
 
             DeletionPermittedPathList.Add(simplePath);
@@ -174,7 +191,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
         }
     }
 
-    public void ProtectedPathsDispose(SimplePath simplePath)
+    public void ProtectedPathsDispose(SimplePath simplePath, StringBuilder? tokenBuilder, StringBuilder? formattedBuilder)
     {
         lock (_pathLock)
         {
@@ -183,16 +200,16 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
             if (absolutePath == "/" || absolutePath == "\\" || string.IsNullOrWhiteSpace(absolutePath))
                 return;
 
-            if (PermittanceChecker.IsRootOrHomeDirectory(simplePath, this))
+            if (PermittanceChecker.IsRootOrHomeDirectory(simplePath, this, tokenBuilder, formattedBuilder))
                 return;
 
             ProtectedPathList.Remove(simplePath);
         }
     }
 
-    public AbsolutePath AbsolutePathFactory(string path, bool isDirectory)
+    public AbsolutePath AbsolutePathFactory(string path, bool isDirectory, StringBuilder? tokenBuilder, StringBuilder? formattedBuilder)
     {
-        return new AbsolutePath(path, isDirectory, this);
+        return new AbsolutePath(path, isDirectory, this, tokenBuilder, formattedBuilder);
     }
 
     public RelativePath RelativePathFactory(string path, bool isDirectory)

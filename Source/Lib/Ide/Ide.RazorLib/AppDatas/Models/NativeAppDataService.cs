@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.FileSystems.Models;
@@ -43,7 +44,9 @@ public class NativeAppDataService : IAppDataService
             }
             
             _commonService.EnvironmentProvider.DeletionPermittedRegister(
-                new SimplePath(directoryPath, true));
+                new SimplePath(directoryPath, true),
+                tokenBuilder: new StringBuilder(),
+                formattedBuilder: new StringBuilder());
         }
         
         var options = new JsonSerializerOptions { WriteIndented = true };

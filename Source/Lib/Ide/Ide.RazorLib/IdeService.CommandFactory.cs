@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
@@ -482,7 +483,7 @@ public partial class IdeService
 
     public async ValueTask CommandFactory_PeekCodeSearchDialog(TextEditorEditContext editContext, string? resourceUriValue, int? indexInclusiveStart)
     {
-        var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(resourceUriValue, isDirectory: false);
+        var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(resourceUriValue, isDirectory: false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
 
         // Duplicated Code: 'OpenCodeSearchDialog(...)'
         CodeSearchDialog ??= new DialogViewModel(

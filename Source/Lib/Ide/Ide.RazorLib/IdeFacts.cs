@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
@@ -101,7 +102,9 @@ public static class IdeFacts
         // Create AbsolutePath as to leverage it for knowing the file extension and other details
         var emptyFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
             emptyFileAbsolutePathString,
-            false);
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
 
         var templatedFileContent = GetContent(
             emptyFileAbsolutePath.NameNoExtension,
@@ -114,7 +117,9 @@ public static class IdeFacts
 
         var templatedFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
             templatedFileAbsolutePathString,
-            false);
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
 
         var templatedFileNamespacePath = new NamespacePath(
             templateParameter.ParentDirectory.Namespace,
@@ -150,7 +155,9 @@ public class {fileNameNoExtension}
         // Create AbsolutePath as to leverage it for knowing the file extension and other details
         var emptyFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
             emptyFileAbsolutePathString,
-            false);
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
 
         var templatedFileContent = GetContent(emptyFileAbsolutePath.NameNoExtension);
 
@@ -161,7 +168,9 @@ public class {fileNameNoExtension}
 
         var templatedFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
             templatedFileAbsolutePathString,
-            false);
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
 
         var templatedFileNamespacePath = new NamespacePath(
             templateParameter.ParentDirectory.Namespace,
@@ -213,7 +222,9 @@ public partial class {className} : ComponentBase
         // Create AbsolutePath as to leverage it for knowing the file extension and other details
         var emptyFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
             emptyFileAbsolutePathString,
-            false);
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
 
         var templatedFileContent = GetContent(
             emptyFileAbsolutePath.NameNoExtension,
@@ -229,7 +240,9 @@ public partial class {className} : ComponentBase
 
         var templatedFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
             templatedFileAbsolutePathString,
-            false);
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
 
         var templatedFileNamespacePath = new NamespacePath(
             templateParameter.ParentDirectory.Namespace,

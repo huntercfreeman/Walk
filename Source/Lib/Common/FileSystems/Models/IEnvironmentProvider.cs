@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Walk.Common.RazorLib.FileSystems.Models;
 
 public partial interface IEnvironmentProvider
@@ -72,7 +74,7 @@ public partial interface IEnvironmentProvider
 
     public bool IsDirectorySeparator(char input);
     public string GetRandomFileName();
-    public AbsolutePath AbsolutePathFactory(string path, bool isDirectory);
+    public AbsolutePath AbsolutePathFactory(string path, bool isDirectory, StringBuilder? tokenBuilder, StringBuilder? formattedBuilder);
     public RelativePath RelativePathFactory(string path, bool isDirectory);
     /// <summary>
     /// Takes two absolute file path strings and makes
@@ -91,8 +93,8 @@ public partial interface IEnvironmentProvider
     /// These steps were taken in order to reduce the chance that one
     /// accidentally uses one method, when meant the other.
     /// </summary>
-    public void DeletionPermittedRegister(SimplePath simplePath);
+    public void DeletionPermittedRegister(SimplePath simplePath, StringBuilder? tokenBuilder, StringBuilder? formattedBuilder);
     public void DeletionPermittedDispose(SimplePath simplePath);
     public void ProtectedPathsRegister(SimplePath simplePath);
-    public void ProtectedPathsDispose(SimplePath simplePath);
+    public void ProtectedPathsDispose(SimplePath simplePath, StringBuilder? tokenBuilder, StringBuilder? formattedBuilder);
 }

@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
@@ -99,6 +100,9 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
             .ToList();
 
         List<CSharpProjectToProjectReference> cSharpProjectToProjectReferences = new();
+        
+        var tokenBuilder = new StringBuilder();
+        var formattedBuilder = new StringBuilder();
 
         foreach (var projectReference in projectReferences)
         {
@@ -120,11 +124,15 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
             var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
                 Item.CSharpProjectNamespacePath.AbsolutePath,
                 includeAttribute.Item2,
-                (IEnvironmentProvider)CommonService.EnvironmentProvider);
+                (IEnvironmentProvider)CommonService.EnvironmentProvider,
+                tokenBuilder,
+                formattedBuilder);
 
             var referenceProjectAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
                 referenceProjectAbsolutePathString,
-                false);
+                false,
+                tokenBuilder,
+                formattedBuilder);
 
             var cSharpProjectToProjectReference = new CSharpProjectToProjectReference(
                 Item.CSharpProjectNamespacePath,

@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib;
@@ -331,7 +332,9 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
     
         var slnAbsolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
             solutionMostRecent,
-            false);
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
 
         DotNetService.Enqueue(new DotNetWorkArgs
         {

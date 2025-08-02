@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib.Notifications.Models;
 
 namespace Walk.Common.RazorLib.FileSystems.Models;
@@ -31,7 +32,9 @@ public class LocalDirectoryHandler : IDirectoryHandler
         Directory.CreateDirectory(absolutePathString);
 
         _commonService.EnvironmentProvider.DeletionPermittedRegister(
-            new SimplePath(absolutePathString, IS_DIRECTORY_RESPONSE));
+            new SimplePath(absolutePathString, IS_DIRECTORY_RESPONSE),
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
     }
 
     public Task DeleteAsync(
@@ -94,7 +97,9 @@ public class LocalDirectoryHandler : IDirectoryHandler
                 destinationAbsolutePathString);
 
             _commonService.EnvironmentProvider.DeletionPermittedRegister(
-                new SimplePath(destinationAbsolutePathString, true));
+                new SimplePath(destinationAbsolutePathString, true),
+                tokenBuilder: new StringBuilder(),
+                formattedBuilder: new StringBuilder());
         }
         catch (Exception exception)
         {

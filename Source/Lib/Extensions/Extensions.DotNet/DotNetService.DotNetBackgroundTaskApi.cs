@@ -1,5 +1,6 @@
 using CliWrap.EventStream;
 using System.Runtime.InteropServices;
+using System.Text;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
@@ -248,7 +249,7 @@ public partial class DotNetService
     private void BuildProjectOnClick(string projectAbsolutePathString)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuildProject(projectAbsolutePathString);
-        var solutionAbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false);
+        var solutionAbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
 
         var localParentDirectory = solutionAbsolutePath.ParentDirectory;
         if (localParentDirectory is null)
@@ -280,7 +281,7 @@ public partial class DotNetService
     private void CleanProjectOnClick(string projectAbsolutePathString)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanProject(projectAbsolutePathString);
-        var solutionAbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false);
+        var solutionAbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
 
         var localParentDirectory = solutionAbsolutePath.ParentDirectory;
         if (localParentDirectory is null)
@@ -312,7 +313,7 @@ public partial class DotNetService
     private void BuildSolutionOnClick(string solutionAbsolutePathString)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuildSolution(solutionAbsolutePathString);
-        var solutionAbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false);
+        var solutionAbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
 
         var localParentDirectory = solutionAbsolutePath.ParentDirectory;
         if (localParentDirectory is null)
@@ -344,7 +345,7 @@ public partial class DotNetService
     private void CleanSolutionOnClick(string solutionAbsolutePathString)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanSolution(solutionAbsolutePathString);
-        var solutionAbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false);
+        var solutionAbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
 
         var localParentDirectory = solutionAbsolutePath.ParentDirectory;
         if (localParentDirectory is null)
@@ -498,9 +499,14 @@ public partial class DotNetService
 
         var content = IdeService.TextEditorService.CommonService.FileSystemProvider.File.ReadAllText(dotNetSolutionAbsolutePathString);
 
+        var tokenBuilder = new StringBuilder();
+        var formattedBuilder = new StringBuilder();
+
         var solutionAbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
             dotNetSolutionAbsolutePathString,
-            false);
+            false,
+            tokenBuilder,
+            formattedBuilder);
 
         var solutionNamespacePath = new NamespacePath(
             string.Empty,
@@ -537,11 +543,11 @@ public partial class DotNetService
         DotNetSolutionModel dotNetSolutionModel;
 
         if (dotNetSolutionAbsolutePathString.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
-            dotNetSolutionModel = ParseSlnx(solutionAbsolutePath, resourceUri, content);
+            dotNetSolutionModel = ParseSlnx(solutionAbsolutePath, resourceUri, content, tokenBuilder, formattedBuilder);
         else
             dotNetSolutionModel = ParseSln(solutionAbsolutePath, resourceUri, content);
 
-        dotNetSolutionModel.DotNetProjectList = SortProjectReferences(dotNetSolutionModel);
+        dotNetSolutionModel.DotNetProjectList = SortProjectReferences(dotNetSolutionModel, tokenBuilder, formattedBuilder);
 
         /*    
         // FindAllReferences
@@ -580,7 +586,7 @@ public partial class DotNetService
 
         if (parentDirectory is not null)
         {
-            IdeService.TextEditorService.CommonService.EnvironmentProvider.DeletionPermittedRegister(new(parentDirectory, true));
+            IdeService.TextEditorService.CommonService.EnvironmentProvider.DeletionPermittedRegister(new(parentDirectory, true), tokenBuilder, formattedBuilder);
 
             IdeService.TextEditorService.SetStartingDirectoryPath(parentDirectory);
 
@@ -654,7 +660,7 @@ public partial class DotNetService
                     cSharpCompilerService.__CSharpBinder.ClearAllCompilationUnits();
                 }
                 
-                ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_DefinitionsOnly);
+                ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_DefinitionsOnly, tokenBuilder, formattedBuilder);
                 
                 
                 
@@ -686,7 +692,7 @@ public partial class DotNetService
                     countNodeList = 0;
                 }
                 
-                ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_MinimumLocalsData);
+                ParseSolution(editContext, dotNetSolutionModel.Key, CompilationUnitKind.SolutionWide_MinimumLocalsData, tokenBuilder, formattedBuilder);
                 
                 cSharpCompilerService.__CSharpBinder.DiagnosticList.RemoveRange(0, countDiagnosticList);
                 cSharpCompilerService.__CSharpBinder.SymbolList.RemoveRange(0, countSymbolList);
@@ -723,7 +729,9 @@ public partial class DotNetService
     public DotNetSolutionModel ParseSlnx(
         AbsolutePath solutionAbsolutePath,
         ResourceUri resourceUri,
-        string content)
+        string content,
+        StringBuilder tokenBuilder,
+        StringBuilder formattedBuilder)
     {
         var htmlSyntaxUnit = HtmlSyntaxTree.ParseText(
             IdeService.TextEditorService,
@@ -777,6 +785,8 @@ public partial class DotNetService
                 attribute.Item2,
                 isDirectory: true,
                 IdeService.TextEditorService.CommonService.EnvironmentProvider,
+                tokenBuilder,
+                formattedBuilder,
                 ancestorDirectoryList);
 
             solutionFolderPathHashSet.Add(absolutePath.Value);
@@ -829,7 +839,9 @@ public partial class DotNetService
             var absolutePath = new AbsolutePath(
                 solutionFolderPath,
                 isDirectory: true,
-                IdeService.TextEditorService.CommonService.EnvironmentProvider);
+                IdeService.TextEditorService.CommonService.EnvironmentProvider,
+                tokenBuilder,
+                formattedBuilder);
 
             solutionFolderList.Add(new SolutionFolder(
                 absolutePath.NameNoExtension,
@@ -936,7 +948,7 @@ public partial class DotNetService
     /// <summary>
     /// This solution is incomplete, the current code for this was just to get a "feel" for things.
     /// </summary>
-    private List<IDotNetProject> SortProjectReferences(DotNetSolutionModel dotNetSolutionModel)
+    private List<IDotNetProject> SortProjectReferences(DotNetSolutionModel dotNetSolutionModel, StringBuilder tokenBuilder, StringBuilder formattedBuilder)
     {
         for (int i = dotNetSolutionModel.DotNetProjectList.Count - 1; i >= 0; i--)
         {
@@ -959,8 +971,10 @@ public partial class DotNetService
             var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
                 dotNetSolutionModel.AbsolutePath,
                 relativePathFromSolutionFileString,
-                IdeService.TextEditorService.CommonService.EnvironmentProvider);
-            projectTuple.AbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(absolutePathString, false);
+                IdeService.TextEditorService.CommonService.EnvironmentProvider,
+                tokenBuilder,
+                formattedBuilder);
+            projectTuple.AbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(absolutePathString, false, tokenBuilder, formattedBuilder);
 
             if (!IdeService.TextEditorService.CommonService.FileSystemProvider.File.Exists(projectTuple.AbsolutePath.Value))
             {
@@ -972,7 +986,7 @@ public partial class DotNetService
 
             var innerParentDirectory = projectTuple.AbsolutePath.ParentDirectory;
             if (innerParentDirectory is not null)
-                IdeService.TextEditorService.CommonService.EnvironmentProvider.DeletionPermittedRegister(new(innerParentDirectory, true));
+                IdeService.TextEditorService.CommonService.EnvironmentProvider.DeletionPermittedRegister(new(innerParentDirectory, true), tokenBuilder, formattedBuilder);
 
             var content = IdeService.TextEditorService.CommonService.FileSystemProvider.File.ReadAllText(projectTuple.AbsolutePath.Value);
 
@@ -1012,11 +1026,15 @@ public partial class DotNetService
                 var referenceProjectAbsolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
                     projectTuple.AbsolutePath,
                     includeAttribute.Item2,
-                    IdeService.TextEditorService.CommonService.EnvironmentProvider);
+                    IdeService.TextEditorService.CommonService.EnvironmentProvider,
+                    tokenBuilder,
+                    formattedBuilder);
 
                 var referenceProjectAbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
                     referenceProjectAbsolutePathString,
-                    false);
+                    false,
+                    tokenBuilder,
+                    formattedBuilder);
 
                 projectTuple.ReferencedAbsolutePathList.Add(referenceProjectAbsolutePath);
             }
@@ -1082,7 +1100,9 @@ public partial class DotNetService
     private void ParseSolution(
         TextEditorEditContext editContext,
         Key<DotNetSolutionModel> dotNetSolutionModelKey,
-        CompilationUnitKind compilationUnitKind)
+        CompilationUnitKind compilationUnitKind,
+        StringBuilder? tokenBuilder,
+        StringBuilder? formattedBuilder)
     {
         var dotNetSolutionState = GetDotNetSolutionState();
 
@@ -1157,7 +1177,7 @@ public partial class DotNetService
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                DiscoverClassesInProject(editContext, project, progressBarModel, currentProgress, maximumProgressAvailableToProject, compilationUnitKind);
+                DiscoverClassesInProject(editContext, project, progressBarModel, currentProgress, maximumProgressAvailableToProject, compilationUnitKind, tokenBuilder, formattedBuilder);
                 projectsParsedCount++;
             }
 
@@ -1182,7 +1202,9 @@ public partial class DotNetService
         ProgressBarModel progressBarModel,
         double currentProgress,
         double maximumProgressAvailableToProject,
-        CompilationUnitKind compilationUnitKind)
+        CompilationUnitKind compilationUnitKind,
+        StringBuilder tokenBuilder,
+        StringBuilder formattedBuilder)
     {
         if (!IdeService.TextEditorService.CommonService.FileSystemProvider.File.Exists(dotNetProject.AbsolutePath.Value))
             return; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
@@ -1203,7 +1225,9 @@ public partial class DotNetService
             currentProgress,
             maximumProgressAvailableToProject,
             discoveredFileList,
-            compilationUnitKind);
+            compilationUnitKind,
+            tokenBuilder,
+            formattedBuilder);
 
         void DiscoverFilesRecursively(string directoryPathParent, List<string> discoveredFileList, bool isFirstInvocation)
         {
@@ -1236,13 +1260,15 @@ public partial class DotNetService
         double currentProgress,
         double maximumProgressAvailableToProject,
         List<string> discoveredFileList,
-        CompilationUnitKind compilationUnitKind)
+        CompilationUnitKind compilationUnitKind,
+        StringBuilder? tokenBuilder,
+        StringBuilder? formattedBuilder)
     {
         var fileParsedCount = 0;
 
         foreach (var file in discoveredFileList)
         {
-            var fileAbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(file, false);
+            var fileAbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(file, false, tokenBuilder, formattedBuilder);
             var progress = currentProgress + maximumProgressAvailableToProject * (fileParsedCount / (double)discoveredFileList.Count);
             var resourceUri = new ResourceUri(file);
             var compilerService = IdeService.TextEditorService.GetCompilerService(fileAbsolutePath.ExtensionNoPeriod);

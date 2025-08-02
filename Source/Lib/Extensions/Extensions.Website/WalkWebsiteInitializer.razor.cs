@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
@@ -90,7 +91,9 @@ public partial class WalkWebsiteInitializer : ComponentBase
 
         var solutionAbsolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
             InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
-            false);
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
 
         // This line is also in WalkExtensionsDotNetInitializer,
         // but its duplicated here because the website
@@ -126,10 +129,13 @@ public partial class WalkWebsiteInitializer : ComponentBase
                 await RecursiveStep(childDirectories, allFiles).ConfigureAwait(false);
             }
         }
+        
+        var tokenBuilder = new StringBuilder();
+        var formattedBuilder = new StringBuilder();
 
         foreach (var file in allFiles)
         {
-            var absolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(file, false);
+            var absolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(file, false, tokenBuilder, formattedBuilder);
             var resourceUri = new ResourceUri(file);
             var fileLastWriteTime = await DotNetService.TextEditorService.CommonService.FileSystemProvider.File.GetLastWriteTimeAsync(file).ConfigureAwait(false);
             var content = await DotNetService.TextEditorService.CommonService.FileSystemProvider.File.ReadAllTextAsync(file).ConfigureAwait(false);
@@ -177,7 +183,9 @@ public partial class WalkWebsiteInitializer : ComponentBase
             // Display a file from the get-go so the user is less confused on what the website is.
             var absolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
                 "/BlazorCrudApp/ConsoleApp/Program.cs",
-                false);
+                false,
+                tokenBuilder: new StringBuilder(),
+                formattedBuilder: new StringBuilder());
         
             await DotNetService.TextEditorService.OpenInEditorAsync(
                 editContext,

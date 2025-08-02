@@ -10,10 +10,20 @@ public struct AbsolutePath
     private string? _nameWithExtension;
     private List<string>? _ancestorDirectoryList;
     
+    private static int _countConstructor;
+    private static int _countTokenBuilder;
+    private static int _countFormattedBuilder;
+    
+    /// <summary>
+    /// If providing tokenBuilder or formattedBuilder, ensure they are '.Clear()'ed prior to invoking the constructor.
+    /// Prior to returning from the constructor, tokenBuilder and formattedBuilder will be '.Clear()'ed.
+    /// </summary>
     public AbsolutePath(
         string absolutePathString,
         bool isDirectory,
         IEnvironmentProvider environmentProvider,
+        StringBuilder? tokenBuilder,
+        StringBuilder? formattedBuilder,
         List<string>? ancestorDirectoryList = null)
     {
         ExactInput = absolutePathString;
@@ -31,8 +41,15 @@ public struct AbsolutePath
                 lengthAbsolutePathString--;
         }
         
-        var tokenBuilder = new StringBuilder();
-        var formattedBuilder = new StringBuilder();
+        if (tokenBuilder is null)
+        {
+            tokenBuilder = new StringBuilder();
+        }
+        
+        if (formattedBuilder is null)
+        {
+            formattedBuilder = new StringBuilder();
+        }
         
         int position = 0;
         int parentDirectoryEndExclusiveIndex = -1;
@@ -126,6 +143,9 @@ public struct AbsolutePath
         }
 
         var formattedString = formattedBuilder.ToString();
+        
+        tokenBuilder.Clear();
+        formattedBuilder.Clear();
 
         if (formattedString.Length == 2)
         {
@@ -162,12 +182,32 @@ public struct AbsolutePath
     public string NameWithExtension => _nameWithExtension ??= PathHelper.CalculateNameWithExtension(NameNoExtension, ExtensionNoPeriod, IsDirectory);
     public bool IsRootDirectory => ParentDirectory is null;
     
-    public List<string> GetAncestorDirectoryList(IEnvironmentProvider environmentProvider)
+    private static int _countGetAncestorDirectoryList;
+    
+    /// <summary>
+    /// If providing tokenBuilder or formattedBuilder, ensure they are '.Clear()'ed.
+    /// </summary>
+    public List<string> GetAncestorDirectoryList(
+        IEnvironmentProvider environmentProvider,
+        StringBuilder? tokenBuilder,
+        StringBuilder? formattedBuilder)
     {
+        if (tokenBuilder is null)
+        {
+            tokenBuilder = new StringBuilder();
+        }
+        
+        if (formattedBuilder is null)
+        {
+            formattedBuilder = new StringBuilder();
+        }
+        
         return _ancestorDirectoryList ??= new AbsolutePath(
                 Value,
                 IsDirectory,
                 environmentProvider,
+                tokenBuilder,
+                formattedBuilder,
                 ancestorDirectoryList: new())
             ._ancestorDirectoryList;
     }

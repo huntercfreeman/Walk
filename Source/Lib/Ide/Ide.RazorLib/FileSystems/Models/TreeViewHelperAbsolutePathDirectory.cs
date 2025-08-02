@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 
@@ -13,12 +14,15 @@ public class TreeViewHelperAbsolutePathDirectory
             .GetDirectoriesAsync(directoryAbsolutePathString)
             .ConfigureAwait(false);
 
+        var tokenBuilder = new StringBuilder();
+        var formattedBuilder = new StringBuilder();
+        
         var childDirectoryTreeViewModels = directoryPathStringsList
             .OrderBy(pathString => pathString)
             .Select(x =>
             {
                 return (TreeViewNoType)new TreeViewAbsolutePath(
-                    directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true),
+                    directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder, formattedBuilder),
                     directoryTreeView.CommonService,
                     true,
                     false)
@@ -36,7 +40,7 @@ public class TreeViewHelperAbsolutePathDirectory
             .Select(x =>
             {
                 return (TreeViewNoType)new TreeViewAbsolutePath(
-                    directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false),
+                    directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder),
                     directoryTreeView.CommonService,
                     false,
                     false)

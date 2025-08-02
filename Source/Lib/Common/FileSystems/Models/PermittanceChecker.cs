@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib.Exceptions;
 
 namespace Walk.Common.RazorLib.FileSystems.Models;
@@ -56,11 +57,15 @@ public static class PermittanceChecker
     /// </summary>
     public static bool IsRootOrHomeDirectory(
         SimplePath simplePath,
-        IEnvironmentProvider environmentProvider)
+        IEnvironmentProvider environmentProvider,
+        StringBuilder? tokenBuilder,
+        StringBuilder? formattedBuilder)
     {
         var absolutePath = environmentProvider.AbsolutePathFactory(
             simplePath.AbsolutePath,
-            simplePath.IsDirectory);
+            simplePath.IsDirectory,
+            tokenBuilder,
+            formattedBuilder);
 
         if (absolutePath.Value == environmentProvider.RootDirectoryAbsolutePath.Value ||
             absolutePath.Value == environmentProvider.HomeDirectoryAbsolutePath.Value)

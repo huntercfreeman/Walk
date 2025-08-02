@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Menus.Models;
@@ -187,7 +188,9 @@ public partial class IdeService
 
             var emptyFileAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
                 emptyFileAbsolutePathString,
-                false);
+                false,
+                tokenBuilder: new StringBuilder(),
+                formattedBuilder: new StringBuilder());
 
             await CommonService.FileSystemProvider.File.WriteAllTextAsync(
                     emptyFileAbsolutePath.Value,
@@ -231,7 +234,7 @@ public partial class IdeService
     private async ValueTask Do_PerformNewDirectory(string directoryName, AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         var directoryAbsolutePathString = parentDirectory.Value + directoryName;
-        var directoryAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(directoryAbsolutePathString, true);
+        var directoryAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(directoryAbsolutePathString, true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
 
         await CommonService.FileSystemProvider.Directory.CreateDirectoryAsync(
                 directoryAbsolutePath.Value,
@@ -345,13 +348,17 @@ public partial class IdeService
                     {
                         clipboardAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
                             clipboardPhrase.Value,
-                            true);
+                            true,
+                            tokenBuilder: new StringBuilder(),
+                            formattedBuilder: new StringBuilder());
                     }
                     else if (await CommonService.FileSystemProvider.File.ExistsAsync(clipboardPhrase.Value).ConfigureAwait(false))
                     {
                         clipboardAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
                             clipboardPhrase.Value,
-                            false);
+                            false,
+                            tokenBuilder: new StringBuilder(),
+                            formattedBuilder: new StringBuilder());
                     }
 
                     if (clipboardAbsolutePath.ExactInput is not null)
@@ -444,7 +451,7 @@ public partial class IdeService
 
         onAfterCompletion.Invoke();
 
-        return CommonService.EnvironmentProvider.AbsolutePathFactory(destinationAbsolutePathString, sourceAbsolutePath.IsDirectory);
+        return CommonService.EnvironmentProvider.AbsolutePathFactory(destinationAbsolutePathString, sourceAbsolutePath.IsDirectory, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
     }
 
     /// <summary>

@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib.Notifications.Models;
 
 namespace Walk.Common.RazorLib.FileSystems.Models;
@@ -178,7 +179,11 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             if (existingFile.Data is not null)
                 return Task.CompletedTask;
 
-            var absolutePath = _commonService.EnvironmentProvider.AbsolutePathFactory(absolutePathString, true);
+            var absolutePath = _commonService.EnvironmentProvider.AbsolutePathFactory(
+                absolutePathString,
+                true,
+                tokenBuilder: new StringBuilder(),
+                formattedBuilder: new StringBuilder());
 
             var outDirectory = new InMemoryFile(
                 string.Empty,
@@ -188,9 +193,12 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
 
             _inMemoryFileSystemProvider._files.Add(outDirectory);
 
-            _commonService.EnvironmentProvider.DeletionPermittedRegister(new SimplePath(
-                absolutePathString,
-                IS_DIRECTORY_RESPONSE));
+            _commonService.EnvironmentProvider.DeletionPermittedRegister(
+                new SimplePath(
+                    absolutePathString,
+                    IS_DIRECTORY_RESPONSE),
+                tokenBuilder: new StringBuilder(),
+                formattedBuilder: new StringBuilder());
 
             return Task.CompletedTask;
         }
@@ -248,14 +256,18 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             if (indexOfExistingFile == -1)
                 return;
 
-            var sourceAbsolutePath = _commonService.EnvironmentProvider.AbsolutePathFactory(sourceAbsolutePathString, true);
+            var sourceAbsolutePath = _commonService.EnvironmentProvider.AbsolutePathFactory(
+                sourceAbsolutePathString,
+                true,
+                tokenBuilder: new StringBuilder(),
+                formattedBuilder: new StringBuilder());
 
             var childDirectories = (await GetDirectoriesAsync(sourceAbsolutePathString, cancellationToken).ConfigureAwait(false))
-                .Select(x => _commonService.EnvironmentProvider.AbsolutePathFactory(x, true))
+                .Select(x => _commonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder()))
                 .ToArray();
 
             var childFiles = (await GetFilesAsync(sourceAbsolutePathString, cancellationToken).ConfigureAwait(false))
-                .Select(x => _commonService.EnvironmentProvider.AbsolutePathFactory(x, false))
+                .Select(x => _commonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder()))
                 .ToArray();
 
             var children = childDirectories.Union(childFiles);
@@ -270,7 +282,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             {
                 var destinationAbsolutePath = _commonService.EnvironmentProvider.AbsolutePathFactory(
                     destinationAbsolutePathString,
-                    true);
+                    true,
+                    tokenBuilder: new StringBuilder(),
+                    formattedBuilder: new StringBuilder());
 
                 var destinationFile = new InMemoryFile(
                     string.Empty,

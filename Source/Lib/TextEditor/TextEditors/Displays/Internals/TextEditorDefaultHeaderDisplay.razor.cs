@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Components;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 
@@ -240,7 +241,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
             
         var menuOptionList = new List<MenuOptionRecord>();
         
-        var absolutePath = TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(virtualizationResult.Model.PersistentState.ResourceUri.Value, false);
+        var absolutePath = TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(virtualizationResult.Model.PersistentState.ResourceUri.Value, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
 
         menuOptionList.Add(new MenuOptionRecord(
             "Cancel",

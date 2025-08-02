@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
@@ -311,11 +312,16 @@ public partial class TextEditorService
     {
         var groupedResults = textEditorFindAllState.SearchResultList.GroupBy(x => x.ResourceUri);
 
+        var tokenBuilder = new StringBuilder();
+        var formattedBuilder = new StringBuilder();
+        
         var treeViewList = groupedResults.Select(group =>
         {
             var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
                 group.Key.Value,
-                false);
+                false,
+                tokenBuilder,
+                formattedBuilder);
 
             return (TreeViewNoType)new TreeViewFindAllGroup(
                 group.Select(textSpan => new TreeViewFindAllTextSpan(

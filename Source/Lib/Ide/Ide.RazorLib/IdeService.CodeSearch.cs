@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
@@ -119,6 +120,9 @@ public partial class IdeService
             {
                 return;
             }
+            
+            var tokenBuilder = new StringBuilder();
+            var formattedBuilder = new StringBuilder();
 
             await RecursiveHandleSearchEffect(startingAbsolutePathForSearch).ConfigureAwait(false);
 
@@ -138,7 +142,7 @@ public partial class IdeService
 
                 foreach (var filePathChild in filePathChildList)
                 {
-                    var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(filePathChild, false);
+                    var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(filePathChild, false, tokenBuilder, formattedBuilder);
 
                     if (absolutePath.NameWithExtension.Contains(codeSearchState.Query))
                         CodeSearch_AddResult(filePathChild);
@@ -162,13 +166,16 @@ public partial class IdeService
 
     private void CodeSearch_ConstructTreeView(CodeSearchState codeSearchState)
     {
+        var tokenBuilder = new StringBuilder();
+        var formattedBuilder = new StringBuilder();
+    
         var treeViewList = codeSearchState.ResultList.Select(
             x => (TreeViewNoType)new TreeViewCodeSearchTextSpan(
                 new TextEditorTextSpan(
                     0,
                     0,
                     (byte)GenericDecorationKind.None),
-                new AbsolutePath(x, false, CommonService.EnvironmentProvider),
+                new AbsolutePath(x, false, CommonService.EnvironmentProvider, tokenBuilder, formattedBuilder),
                 CommonService.EnvironmentProvider,
                 CommonService.FileSystemProvider,
                 false,
