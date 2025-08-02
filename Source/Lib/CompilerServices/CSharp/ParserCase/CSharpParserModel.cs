@@ -805,7 +805,7 @@ public ref struct CSharpParserModel
     /// If a match is found, then set the out parameter to it and return true.<br/><br/>
     /// If none of the searched scopes contained a match then set the out parameter to null and return false.
     /// </summary>
-    public bool TryGetTypeDefinitionHierarchically(
+    public readonly bool TryGetTypeDefinitionHierarchically(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
         int initialScopeIndexKey,
@@ -942,7 +942,7 @@ public ref struct CSharpParserModel
     /// If a match is found, then set the out parameter to it and return true.<br/><br/>
     /// If none of the searched scopes contained a match then set the out parameter to null and return false.
     /// </summary>
-    public bool TryGetFunctionHierarchically(
+    public readonly bool TryGetFunctionHierarchically(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
         int initialScopeIndexKey,
@@ -1292,7 +1292,7 @@ public ref struct CSharpParserModel
         }
     }
     
-    public bool TryGetLabelDeclarationHierarchically(
+    public readonly bool TryGetLabelDeclarationHierarchically(
         string identifierText,
         out LabelDeclarationNode? labelDeclarationNode)
     {
