@@ -3,14 +3,14 @@
     display: flex;
 }
 
-/* TODO: Don't duplicate this from TabDisplay.razor.css */
+/* TODO: Don't duplicate this from TabListDisplay.razor.css */
 button.di_polymorphic-tab.di_drag {
 	overflow: hidden;
 	cursor: default;
 	background-color: var(--di_button-hover-background-color);
 }
 
-/* TODO: Don't duplicate this from TabDisplay.razor.css */
+/* TODO: Don't duplicate this from TabListDisplay.razor.css */
 button.di_polymorphic-tab.di_drag.di_active {
 	background-color: var(--di_toggled-on-hover-background-color);
 }

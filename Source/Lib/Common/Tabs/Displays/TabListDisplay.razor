@@ -1,6 +1,7 @@
 @using Walk.Common.RazorLib.Dropdowns.Displays
 @using Walk.Common.RazorLib.Dropdowns.Models
 @using Walk.Common.RazorLib.Notifications.Models
+@using Walk.Common.RazorLib.Notifications.Models;
 
 <div class="di_polymorphic-tab-list">
 
@@ -9,14 +10,42 @@
 	    
         _tabCascadingValueBatch.CommonService = CommonService;
     	_tabCascadingValueBatch.HandleTabButtonOnContextMenu = HandleTabButtonOnContextMenu;
+    
+    	var appOptionsState = CommonService.GetAppOptionsState();
+    	var iconDriver = new IconDriver(
+			appOptionsState.Options.IconSizeInPixels,
+			appOptionsState.Options.IconSizeInPixels);
     }
 
-	<CascadingValue Value="_tabCascadingValueBatch"
-	                IsFixed="true">
-		@foreach (var tab in localTabList)
-		{
-			<TabDisplay @key="tab.DynamicViewModelKey"
-						Tab="tab"/>
-		}
-	</CascadingValue>
+	@foreach (var tab in localTabList)
+	{
+	    var Tab = tab;
+
+        @if (_tabCascadingValueBatch is not null)
+        {
+        	var localTabViewModel = Tab;
+        	var localTabGroup = localTabViewModel.TabGroup;
+        	
+        	// localTabGroup can be null here
+            
+            <button class="@GetCssClass(localTabGroup, localTabViewModel)"
+                    title="@localTabViewModel.TitleVerbose"
+            		@key="tab.DynamicViewModelKey"
+            		@onclick="e => OnClick(localTabViewModel, e)"
+                    @onmousedown="e => HandleOnMouseDownAsync(localTabViewModel, e)"
+                    @onmouseup="HandleOnMouseUp"
+                    @onmouseout="e => HandleOnMouseOutAsync(localTabViewModel, e)"
+            		@oncontextmenu:preventDefault="true"
+            		@oncontextmenu="e => ManuallyPropagateOnContextMenu(e, localTabViewModel)">
+            
+            	<span class="di_polymorphic-tab-text">@localTabViewModel.Title</span>
+            
+        		<button class="di_button di_button-close"
+        	            @onclick:stopPropagation="true"
+        	            @onclick="e => CloseTabOnClickAsync(localTabViewModel)">
+        	        @IconCloseFragment.Render(iconDriver)
+            	</button>
+            </button>
+        }
+	}
 </div>

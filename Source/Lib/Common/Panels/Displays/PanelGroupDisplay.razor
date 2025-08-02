@@ -35,7 +35,6 @@
 			
 			foreach (var panelTab in tabList)
             {
-                var key = panelTab.Key;
                 var Tab = panelTab;
                 var localTabViewModel = panelTab;
 				var ShouldDisplayCloseButton = false;
@@ -48,6 +47,7 @@
                 	
                     <button class="@GetCssClass(localTabGroup, localTabViewModel)"
                             title="@localTabViewModel.TitleVerbose"
+                    		@key="panelTab.Key"
                     		@onclick="e => OnClick(localTabViewModel, e)"
                             @onmousedown="e => HandleOnMouseDownAsync(localTabViewModel, e)"
                             @onmouseup="HandleOnMouseUp"
