@@ -126,9 +126,6 @@ public ref struct CSharpParserModel
     
     public ResourceUri ResourceUri { get; }
 
-    /// I'm gonna make this commit so there is a commit message that starts with Visual Studio: to match the pattern I'd been using.
-    /// But yeah I'm looking at all the warning/recommendations visual studio has for the previous few commits and the ones to come.
-    
     /// <summary>
     /// Prior to closing a statement-codeblock, you must check whether ParseChildScopeStack has a child that needs to be parsed.
     /// </summary>
@@ -460,7 +457,6 @@ public ref struct CSharpParserModel
     
     public void BindLabelReferenceNode(LabelReferenceNode labelReferenceNode)
     {
-    
         Binder.SymbolList.Insert(
             Compilation.IndexSymbolList + Compilation.CountSymbolList,
             new Symbol(
@@ -738,7 +734,7 @@ public ref struct CSharpParserModel
                 var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
                 var namespaceString = Binder.TextEditorService.EditContext_GetText(Text.Slice(namespaceStatementNode.IdentifierToken.TextSpan.StartInclusiveIndex, namespaceStatementNode.IdentifierToken.TextSpan.Length));
                 AddNamespaceToCurrentScope(namespaceString);
-                
+
                 BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner);
                 return;
             case SyntaxKind.LambdaExpressionNode:
@@ -1272,7 +1268,7 @@ public ref struct CSharpParserModel
         VariableDeclarationNode variableDeclarationNode)
     {
         int scopeIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
-
+        
         VariableDeclarationNode? matchNode = null;
         int index = Compilation.IndexNodeList;
         for (; index < Compilation.IndexNodeList + Compilation.CountNodeList; index++)
