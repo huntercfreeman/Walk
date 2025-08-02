@@ -125,6 +125,9 @@ public ref struct CSharpParserModel
     public CSharpStatementBuilder StatementBuilder { get; set; }
     
     public ResourceUri ResourceUri { get; }
+
+    /// I'm gonna make this commit so there is a commit message that starts with Visual Studio: to match the pattern I'd been using.
+    /// But yeah I'm looking at all the warning/recommendations visual studio has for the previous few commits and the ones to come.
     
     /// <summary>
     /// Prior to closing a statement-codeblock, you must check whether ParseChildScopeStack has a child that needs to be parsed.
