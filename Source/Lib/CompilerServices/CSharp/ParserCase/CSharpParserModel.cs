@@ -559,7 +559,7 @@ public ref struct CSharpParserModel
         }
     }
 
-    public void BindUsingStatementTuple(SyntaxToken usingKeywordToken, SyntaxToken namespaceIdentifierToken)
+    public readonly void BindUsingStatementTuple(SyntaxToken usingKeywordToken, SyntaxToken namespaceIdentifierToken)
     {
         AddNamespaceToCurrentScope(
             Binder.TextEditorService.EditContext_GetText(Text.Slice(namespaceIdentifierToken.TextSpan.StartInclusiveIndex, namespaceIdentifierToken.TextSpan.Length)));
@@ -838,7 +838,7 @@ public ref struct CSharpParserModel
         return false;
     }
     
-    public bool TryGetTypeDefinitionNodeByScope(
+    public readonly bool TryGetTypeDefinitionNodeByScope(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey,
@@ -885,7 +885,7 @@ public ref struct CSharpParserModel
         }
     }
     
-    public bool TryAddTypeDefinitionNodeByScope(
+    public readonly bool TryAddTypeDefinitionNodeByScope(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey,
@@ -973,7 +973,7 @@ public ref struct CSharpParserModel
         return false;
     }
     
-    public bool TryGetFunctionDefinitionNodeByScope(
+    public readonly bool TryGetFunctionDefinitionNodeByScope(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey,
@@ -1264,7 +1264,7 @@ public ref struct CSharpParserModel
         }
     }
     
-    public void SetVariableDeclarationNodeByScope(
+    public readonly void SetVariableDeclarationNodeByScope(
         string variableIdentifierText,
         VariableDeclarationNode variableDeclarationNode)
     {
@@ -1320,7 +1320,7 @@ public ref struct CSharpParserModel
         return false;
     }
     
-    public bool TryGetLabelDeclarationNodeByScope(
+    public readonly bool TryGetLabelDeclarationNodeByScope(
         int scopeIndexKey,
         string labelIdentifierText,
         out LabelDeclarationNode labelDeclarationNode)
@@ -1381,7 +1381,7 @@ public ref struct CSharpParserModel
         }
     }
     
-    public void SetLabelDeclarationNodeByScope(
+    public readonly void SetLabelDeclarationNodeByScope(
         int scopeIndexKey,
         string labelIdentifierText,
         LabelDeclarationNode labelDeclarationNode)
@@ -1534,7 +1534,7 @@ public ref struct CSharpParserModel
         return Binder.TextEditorService.EditContext_GetText(Text.Slice(textSpan.StartInclusiveIndex, textSpan.Length));
     }
     
-    public TypeClauseNode ToTypeClause(TypeDefinitionNode typeDefinitionNode)
+    public readonly TypeClauseNode ToTypeClause(TypeDefinitionNode typeDefinitionNode)
     {
         var typeClauseNode = ConstructOrRecycleTypeClauseNode(
             typeDefinitionNode.TypeIdentifierToken,
