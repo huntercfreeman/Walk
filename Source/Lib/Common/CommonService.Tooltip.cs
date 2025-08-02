@@ -1,6 +1,4 @@
 using System.Text;
-using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.JavaScriptObjects.Models;
 using Walk.Common.RazorLib.Tooltips.Models;
 
 namespace Walk.Common.RazorLib;

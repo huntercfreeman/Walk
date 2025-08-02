@@ -8,15 +8,11 @@ namespace Walk.Ide.RazorLib.InputFiles.Models;
 public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
     private readonly IdeService _ideService;
-    private readonly Func<AbsolutePath, Task> _setInputFileContentTreeViewRootFunc;
 
-    public InputFileTreeViewMouseEventHandler(
-        IdeService ideService,
-        Func<AbsolutePath, Task> setInputFileContentTreeViewRootFunc)
+    public InputFileTreeViewMouseEventHandler(IdeService ideService)
         : base(ideService.CommonService)
     {
         _ideService = ideService;
-        _setInputFileContentTreeViewRootFunc = setInputFileContentTreeViewRootFunc;
     }
 
     protected override void OnClick(TreeViewCommandArgs commandArgs)
@@ -36,7 +32,6 @@ public class InputFileTreeViewMouseEventHandler : TreeViewMouseEventHandler
         if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewAbsolutePath treeViewAbsolutePath)
             return Task.CompletedTask;
 
-        _setInputFileContentTreeViewRootFunc.Invoke(treeViewAbsolutePath.Item);
         return Task.CompletedTask;
     }
 }

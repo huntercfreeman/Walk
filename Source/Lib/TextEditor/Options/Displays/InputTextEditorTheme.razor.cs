@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib;
-using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Themes.Models;
 using Walk.Common.RazorLib.Options.Models;
 
 namespace Walk.TextEditor.RazorLib.Options.Displays;

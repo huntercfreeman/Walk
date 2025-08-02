@@ -86,7 +86,6 @@ public partial class CommonService
 
         if (indexContainer == -1)
         {
-            CommonUiStateChanged?.Invoke(CommonUiEventKind.TreeViewStateChanged);
             return;
         }
         

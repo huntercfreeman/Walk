@@ -6,7 +6,6 @@ using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Tooltips.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
 
 namespace Walk.Common.RazorLib.Installations.Displays;
 

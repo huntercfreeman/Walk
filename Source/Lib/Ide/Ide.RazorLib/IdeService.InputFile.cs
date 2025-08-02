@@ -46,28 +46,6 @@ public partial class IdeService
         IdeStateChanged?.Invoke(IdeStateChangedKind.InputFileStateChanged);
     }
 
-    public void InputFile_SetOpenedTreeViewModel(
-        TreeViewAbsolutePath treeViewModel,
-        CommonService commonService)
-    {
-        lock (_stateModificationLock)
-        {
-            if (treeViewModel.Item.IsDirectory)
-            {
-                _inputFileState = InputFileState.NewOpenedTreeViewModelHistory(
-                    _inputFileState,
-                    treeViewModel,
-                    commonService);
-            }
-            else
-            {
-                _inputFileState = _inputFileState;
-            }
-        }
-
-        IdeStateChanged?.Invoke(IdeStateChangedKind.InputFileStateChanged);
-    }
-
     public void InputFile_SetSelectedInputFilePattern(InputFilePattern inputFilePattern)
     {
         lock (_stateModificationLock)

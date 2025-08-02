@@ -7,15 +7,11 @@ using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.Notifications.Models;
-using Walk.TextEditor.RazorLib.Edits.Models;
 using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.InputFiles.Displays;
 using Walk.Ide.RazorLib.Terminals.Models;
-using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Ide.RazorLib.FolderExplorers.Displays;
 using Walk.Extensions.DotNet;
 using Walk.Extensions.DotNet.AppDatas.Models;
@@ -342,56 +338,6 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
             WorkKind = DotNetWorkKind.SetDotNetSolution,
             DotNetSolutionAbsolutePath = slnAbsolutePath,
         });
-
-        var parentDirectory = slnAbsolutePath.ParentDirectory;
-        if (parentDirectory is not null)
-        {
-            var parentDirectoryAbsolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
-                parentDirectory,
-                true);
-
-            var pseudoRootNode = new TreeViewAbsolutePath(
-                parentDirectoryAbsolutePath,
-                DotNetService.TextEditorService.CommonService,
-                true,
-                false);
-
-            await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
-
-            var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(pseudoRootNode.ChildList.ToArray());
-
-            foreach (var child in adhocRootNode.ChildList)
-            {
-                child.IsExpandable = false;
-            }
-
-            var activeNode = adhocRootNode.ChildList.FirstOrDefault();
-
-            if (!DotNetService.TextEditorService.CommonService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
-            {
-                DotNetService.TextEditorService.CommonService.TreeView_RegisterContainerAction(new TreeViewContainer(
-                    InputFileContent.TreeViewContainerKey,
-                    adhocRootNode,
-                    activeNode is null
-                        ? new List<TreeViewNoType>()
-                        : new() { activeNode }));
-            }
-            else
-            {
-                DotNetService.TextEditorService.CommonService.TreeView_WithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
-
-                DotNetService.TextEditorService.CommonService.TreeView_SetActiveNodeAction(
-                    InputFileContent.TreeViewContainerKey,
-                    activeNode,
-                    true,
-                    false);
-            }
-            await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
-
-            DotNetService.IdeService.InputFile_SetOpenedTreeViewModel(
-                pseudoRootNode,
-                DotNetService.TextEditorService.CommonService);
-        }
 
         /*
         if (!string.IsNullOrWhiteSpace(projectPersonalPath) &&

@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Menus.Models;
-using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.Shareds.Models;
 
 namespace Walk.Ide.RazorLib.Shareds.Displays;

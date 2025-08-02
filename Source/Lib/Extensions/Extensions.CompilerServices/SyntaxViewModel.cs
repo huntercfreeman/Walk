@@ -3,7 +3,6 @@ using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Extensions.CompilerServices.Syntax;
-using Walk.TextEditor.RazorLib.CompilerServices;
 
 namespace Walk.Extensions.CompilerServices;
 
