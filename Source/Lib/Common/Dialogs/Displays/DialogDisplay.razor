@@ -11,9 +11,6 @@
      id="@Dialog.DialogFocusPointHtmlElementId"
      tabindex="-1"
      @onfocusin="HandleOnFocusIn"
-     @onfocusin:stopPropagation="true"
-     @onfocusout="HandleOnFocusOut"
-     @onfocusout:stopPropagation="true"
      @onmousedown="HandleOnMouseDown">
 
     @if (Dialog.DialogIsResizable && !Dialog.DialogIsMaximized)
@@ -67,9 +64,8 @@
     </div>
 
     <div class="di_dialog-display-body">
-        <CascadingValue Value="Dialog">
-            <DynamicComponent @key="Dialog.DynamicViewModelKey"
-                              Type="Dialog.ComponentType"
+        <CascadingValue Value="Dialog" IsFixed="true">
+            <DynamicComponent Type="Dialog.ComponentType"
                               Parameters="Dialog.ComponentParameterMap" />
         </CascadingValue>
     </div>
