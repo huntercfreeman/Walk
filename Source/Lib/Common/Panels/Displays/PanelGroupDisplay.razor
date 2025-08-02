@@ -1,6 +1,7 @@
 @using Walk.Common.RazorLib.Panels.Models;
 @using Walk.Common.RazorLib.Tabs.Displays;
 @using Walk.Common.RazorLib.Badges.Displays;
+@using Walk.Common.RazorLib.Notifications.Models;
 
 @{
     var panelState = CommonService.GetPanelState();
@@ -11,6 +12,11 @@
 
     if (panelGroup is not null)
         activePanelTab = panelGroup.TabList.FirstOrDefault(x => x.Key == panelGroup.ActiveTabKey);
+
+	var appOptionsState = CommonService.GetAppOptionsState();
+	var iconDriver = new IconDriver(
+		appOptionsState.Options.IconSizeInPixels,
+		appOptionsState.Options.IconSizeInPixels);
 }
 
 <div class="@GetPanelElementCssClass()"
@@ -27,16 +33,41 @@
             _tabCascadingValueBatch.CommonService = CommonService;
         	_tabCascadingValueBatch.HandleTabButtonOnContextMenu = null;
 			
-			<CascadingValue Value="_tabCascadingValueBatch"
-        	                IsFixed="true">
-    			@foreach (var panelTab in tabList)
+			foreach (var panelTab in tabList)
+            {
+                var key = panelTab.Key;
+                var Tab = panelTab;
+                var localTabViewModel = panelTab;
+				var ShouldDisplayCloseButton = false;
+            
+                @if (_tabCascadingValueBatch is not null)
                 {
-                    <TabDisplay @key="panelTab.Key"
-                                Tab="panelTab"
-    							CssClassString="di_ide_panel-tab"
-    							ShouldDisplayCloseButton="false" />
+                	var localTabGroup = localTabViewModel.TabGroup;
+                	
+                	// localTabGroup can be null here
+                	
+                    <button class="@GetCssClass(localTabGroup, localTabViewModel)"
+                            title="@localTabViewModel.TitleVerbose"
+                    		@onclick="e => OnClick(localTabViewModel, e)"
+                            @onmousedown="e => HandleOnMouseDownAsync(localTabViewModel, e)"
+                            @onmouseup="HandleOnMouseUp"
+                            @onmouseout="e => HandleOnMouseOutAsync(localTabViewModel, e)"
+                    		@oncontextmenu:preventDefault="true"
+                    		@oncontextmenu="e => ManuallyPropagateOnContextMenu(e, localTabViewModel)">
+                    
+                    	<span class="di_polymorphic-tab-text">@localTabViewModel.Title</span>
+                    
+                    	@if (ShouldDisplayCloseButton)
+                    	{
+                    		<button class="di_button di_button-close"
+                    	            @onclick:stopPropagation="true"
+                    	            @onclick="() => CloseTabOnClickAsync(localTabViewModel)">
+                    	        @IconCloseFragment.Render(iconDriver)
+                        	</button>
+                    	}
+                    </button>
                 }
-            </CascadingValue>
+            }
         }
 
         @if (PanelGroupParameter.BadgeList is not null)
