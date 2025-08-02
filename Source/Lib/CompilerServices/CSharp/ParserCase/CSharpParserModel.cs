@@ -885,6 +885,8 @@ public ref struct CSharpParserModel
         }
     }
     
+    // These last two commits with the readonly modifier changes were done in Visual Studio.
+    // I'm looking at the code with Visual Studio and realizing there are warning and recommendations all over the place that I never see lol.
     public readonly bool TryAddTypeDefinitionNodeByScope(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
