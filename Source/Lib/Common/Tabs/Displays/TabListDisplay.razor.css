@@ -68,3 +68,15 @@
 .di_ide_panel_bottom .di_ide_panel-tab:not(:first-of-type) {
     border-left: 2px solid var(--di_primary-border-color) !important;
 }
+
+/* TODO: Don't duplicate this inside PanelGroupDisplay.razor.css */
+button.di_polymorphic-tab.di_drag {
+	overflow: hidden;
+	cursor: default;
+	background-color: var(--di_button-hover-background-color);
+}
+
+/* TODO: Don't duplicate this inside PanelGroupDisplay.razor.css */
+button.di_polymorphic-tab.di_drag.di_active {
+	background-color: var(--di_toggled-on-hover-background-color);
+}

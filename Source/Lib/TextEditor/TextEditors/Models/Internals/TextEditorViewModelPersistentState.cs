@@ -74,7 +74,7 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
             { nameof(TextEditorViewModelDisplay.TextEditorViewModelKey), ViewModelKey }
         };
 
-        _dragTabComponentType = typeof(TabDisplay);
+        _dragTabComponentType = typeof(Walk.Common.RazorLib.Drags.Displays.DragDisplay);
 
         DialogFocusPointHtmlElementId = $"di_dialog-focus-point_{DynamicViewModelKey.Guid}";
     
