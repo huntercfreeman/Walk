@@ -43,15 +43,6 @@ public partial class IdeService : IBackgroundTaskGroup
         TextEditorService = textEditorService;
         _serviceProvider = serviceProvider;
         
-        _ideState = _ideState with
-        {
-            FooterBadgeList = new List<IBadgeModel>
-            {
-                new Walk.TextEditor.RazorLib.Edits.Models.DirtyResourceUriBadge(TextEditorService),
-                new NotificationBadge(TextEditorService.CommonService)
-            }
-        };
-        
         AddTerminals();
     }
     

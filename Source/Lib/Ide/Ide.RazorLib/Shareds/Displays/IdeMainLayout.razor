@@ -48,32 +48,28 @@
             </button>
             @* End SettingsDialogEntryPoint *@
     
-            <button @ref="_buttonFileElementReference"
-                    @onclick="RenderFileDropdownOnClick"
+            <button @onclick="RenderFileDropdownOnClick"
     			    id="@IdeState.ButtonFileId"
                     class="di_button"
                     style="margin-left: 15px;">
                 <u>F</u>ile
             </button>
     
-    		<button @ref="_buttonToolsElementReference"
-                    @onclick="RenderToolsDropdownOnClick"
+    		<button @onclick="RenderToolsDropdownOnClick"
     			    id="@IdeState.ButtonToolsId"
                     class="di_button"
                     style="margin-left: 15px;">
                 <u>T</u>ools
             </button>
     
-    		<button @ref="_buttonViewElementReference"
-                    @onclick="RenderViewDropdownOnClick"
+    		<button @onclick="RenderViewDropdownOnClick"
     			    id="@IdeState.ButtonViewId"
                     class="di_button"
                     style="margin-left: 15px;">
     			<u>V</u>iew
              </button>
     
-    		<button @ref="_buttonRunElementReference"
-                    @onclick="RenderRunDropdownOnClick"
+    		<button @onclick="RenderRunDropdownOnClick"
     			    id="@IdeState.ButtonRunId"
     				class="di_button"
                     style="margin-left: 15px;">
@@ -110,6 +106,6 @@
     @* End Body *@
 
     <ResizableRow ResizableRowParameter="_resizableRowParameter" />
-
+    
     <PanelGroupDisplay PanelGroupParameter="_bottomPanelGroupParameter"/>
 </div>

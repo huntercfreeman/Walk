@@ -92,11 +92,6 @@ public partial class DialogDisplay : ComponentBase, IDisposable
         CommonService.Dialog_ReduceSetActiveDialogKeyAction(Dialog.DynamicViewModelKey);
         return Task.CompletedTask;
     }
-    
-    private Task HandleOnFocusOut()
-    {
-        return Task.CompletedTask;
-    }
 
     private void HandleOnMouseDown()
     {
