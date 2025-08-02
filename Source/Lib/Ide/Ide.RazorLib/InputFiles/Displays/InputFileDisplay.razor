@@ -1,35 +1,59 @@
 @using Walk.Common.RazorLib.Resizes.Displays
+@using Walk.Common.RazorLib.FileSystems.Models
+@using Walk.Common.RazorLib.Dropdowns.Displays
+@using Walk.Common.RazorLib.Dropdowns.Models
+@using Walk.Common.RazorLib.TreeViews.Displays
 
 <div class="di_ide_input-file-display">
     @{
         var inputFileState = IdeService.GetInputFileState();
-        
-        _searchMatchTuples = new();
     }
     
-    <CascadingValue Value="inputFileState">
-        <CascadingValue Name="SetInputFileContentTreeViewRootFunc" Value="SetInputFileContentTreeViewRootFunc">
-            <CascadingValue Value="_inputFileTreeViewMouseEventHandler">
-                <CascadingValue Value="_inputFileTreeViewKeyboardEventHandler">
-                    <CascadingValue Name="SearchMatchTuples" Value="_searchMatchTuples">
-                        <InputFileTopNavBar @ref="_inputFileTopNavBarComponent"/>
-                        
-                        <div class="di_ide_input-file-display-body @BodyClassCssString"
-                             style="@BodyStyleCssString">
-
-                            <InputFileSidebar ElementDimensions="_sidebarElementDimensions"
-                                              SetSelectedAbsolutePath="tvm => _selectedAbsolutePath = tvm"/>
-                            
-                            <ResizableColumn ResizableColumnParameter="_resizableColumnParameter" />
-                            
-                            <InputFileContent ElementDimensions="_contentElementDimensions"
-                                              SetSelectedAbsolutePath="tvm => _selectedAbsolutePath = tvm" />
-                        </div>
-                        
-                        <InputFileBottomControls />
-                    </CascadingValue>
-                </CascadingValue>
-            </CascadingValue>
-        </CascadingValue>
-    </CascadingValue>
+    @{
+    	var appOptionsState = IdeService.CommonService.GetAppOptionsState();
+    
+    	var iconDriver = new IconDriver(
+    		appOptionsState.Options.IconSizeInPixels,
+    		appOptionsState.Options.IconSizeInPixels);
+    }
+    
+    <div class="di_ide_input-file-display-body">
+        <TreeViewContainerDisplay TreeViewContainerParameter="InputFileSidebar_treeViewContainerParameter"/>
+    </div>
+    
+    <div class="di_ide_input-file-display-bottom-controls">
+        <div class="di_ide_input-file-display-bottom-controls-text-input">
+            <div>
+                @GetSelectedTreeViewModelAbsolutePathString(inputFileState)    
+            </div>
+            <div>
+                (@inputFileState.Message)    
+            </div>
+        </div>
+        <div class="di_ide_input-file-display-bottom-controls-non-text">
+            <div>
+                <select @onchange="SelectInputFilePatternOnChange">
+                    @foreach (var inputFilePattern in inputFileState.InputFilePatternsList)
+                    {
+                        <option value="@inputFilePattern.PatternName"
+                                selected="@GetInputFilePatternIsSelected(inputFilePattern, inputFileState)">
+                            @inputFilePattern.PatternName
+                        </option>
+                    }
+                </select>
+            </div>
+            <div style="display: flex;">
+                <button class="di_button"
+                        disabled=@OnAfterSubmitIsDisabled()
+                        @onclick="FireOnAfterSubmit">
+                    Select
+                </button>
+                
+                <button class="di_button"
+                        @onclick="CancelOnClick">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
 </div>

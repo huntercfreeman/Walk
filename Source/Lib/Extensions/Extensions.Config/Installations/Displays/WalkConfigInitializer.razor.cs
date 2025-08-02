@@ -339,56 +339,6 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
             DotNetSolutionAbsolutePath = slnAbsolutePath,
         });
 
-        var parentDirectory = slnAbsolutePath.ParentDirectory;
-        if (parentDirectory is not null)
-        {
-            var parentDirectoryAbsolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
-                parentDirectory,
-                true);
-
-            var pseudoRootNode = new TreeViewAbsolutePath(
-                parentDirectoryAbsolutePath,
-                DotNetService.TextEditorService.CommonService,
-                true,
-                false);
-
-            await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
-
-            var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(pseudoRootNode.ChildList.ToArray());
-
-            foreach (var child in adhocRootNode.ChildList)
-            {
-                child.IsExpandable = false;
-            }
-
-            var activeNode = adhocRootNode.ChildList.FirstOrDefault();
-
-            if (!DotNetService.TextEditorService.CommonService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
-            {
-                DotNetService.TextEditorService.CommonService.TreeView_RegisterContainerAction(new TreeViewContainer(
-                    InputFileContent.TreeViewContainerKey,
-                    adhocRootNode,
-                    activeNode is null
-                        ? new List<TreeViewNoType>()
-                        : new() { activeNode }));
-            }
-            else
-            {
-                DotNetService.TextEditorService.CommonService.TreeView_WithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
-
-                DotNetService.TextEditorService.CommonService.TreeView_SetActiveNodeAction(
-                    InputFileContent.TreeViewContainerKey,
-                    activeNode,
-                    true,
-                    false);
-            }
-            await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
-
-            DotNetService.IdeService.InputFile_SetOpenedTreeViewModel(
-                pseudoRootNode,
-                DotNetService.TextEditorService.CommonService);
-        }
-
         /*
         if (!string.IsNullOrWhiteSpace(projectPersonalPath) &&
             await FileSystemProvider.File.ExistsAsync(projectPersonalPath).ConfigureAwait(false))

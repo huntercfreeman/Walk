@@ -67,6 +67,9 @@ public partial class InputFileContextMenu : ComponentBase
 
         // Default case
         {
+            if (menuRecordsList.Count == 0)
+                menuRecordsList = MenuRecord.NoMenuOptionsExistList.ToList();
+
             var menuRecord = new MenuRecord(menuRecordsList);
             _previousGetMenuRecordInvocation = (commandArgs, menuRecord);
             return menuRecord;
@@ -83,7 +86,7 @@ public partial class InputFileContextMenu : ComponentBase
             IdeService.NewDirectory(
                 treeViewModel.Item,
                 async () => await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false)),
-            IdeService.PasteClipboard(
+            /*IdeService.PasteClipboard(
                 treeViewModel.Item,
                 async () =>
                 {
@@ -94,7 +97,7 @@ public partial class InputFileContextMenu : ComponentBase
                         await ReloadTreeViewModel(localParentOfCutFile).ConfigureAwait(false);
 
                     await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false);
-                }),
+                }),*/
         };
     }
 
@@ -102,7 +105,8 @@ public partial class InputFileContextMenu : ComponentBase
         TreeViewAbsolutePath treeViewModel,
         TreeViewAbsolutePath? parentTreeViewModel)
     {
-        return new[]
+        return Array.Empty<MenuOptionRecord>();
+        /*return new[]
         {
             IdeService.CopyFile(
                 treeViewModel.Item,
@@ -124,7 +128,7 @@ public partial class InputFileContextMenu : ComponentBase
                 treeViewModel.Item,
                 IdeService.CommonService,
                 async ()  => await ReloadTreeViewModel(parentTreeViewModel).ConfigureAwait(false)),
-        };
+        };*/
     }
 
     private MenuOptionRecord[] GetDebugMenuOptions(TreeViewAbsolutePath treeViewModel)
@@ -154,10 +158,10 @@ public partial class InputFileContextMenu : ComponentBase
 
         await treeViewModel.LoadChildListAsync().ConfigureAwait(false);
 
-        IdeService.CommonService.TreeView_ReRenderNodeAction(InputFileSidebar.TreeViewContainerKey, treeViewModel);
+        IdeService.CommonService.TreeView_ReRenderNodeAction(InputFileDisplay.InputFileSidebar_TreeViewContainerKey, treeViewModel);
         
         IdeService.CommonService.TreeView_MoveUpAction(
-            InputFileSidebar.TreeViewContainerKey,
+            InputFileDisplay.InputFileSidebar_TreeViewContainerKey,
             false,
             false);
     }

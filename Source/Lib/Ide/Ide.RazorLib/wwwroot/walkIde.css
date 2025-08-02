@@ -143,6 +143,11 @@ input[type="checkbox"]{
 .di_ide_input-file-display-body {
     height: var(--di_ide_input-file-display-body-height);
     display: flex;
+    padding: 7px;
+}
+
+.di_ide_input-file-display-body > .di_tree-view-state {
+    width: 100%;
 }
 
 .di_ide_input-file-display-side-bar {
@@ -415,7 +420,7 @@ button.di_ide_input-file-address-hierarchy-entry {
     --di_ide_section-body-padding: 5px;
     --di_ide_input-file-display-top-nav-bar-height: 2.5rem;
     --di_ide_input-file-display-bottom-controls-height: 5.5rem;
-    --di_ide_input-file-display-body-height: calc(100% - var(--di_ide_input-file-display-top-nav-bar-height) - var(--di_ide_input-file-display-bottom-controls-height));
+    --di_ide_input-file-display-body-height: calc(100% - var(--di_ide_input-file-display-bottom-controls-height));
     --di_ide_checkbox-size: 1.75rem;
     --di_ide_header-border-bottom-size: 4px;
     --di_ide_header-height: 3rem;

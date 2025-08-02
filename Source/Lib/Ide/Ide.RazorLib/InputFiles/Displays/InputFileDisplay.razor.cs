@@ -4,6 +4,9 @@ using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Resizes.Models;
+using Walk.Common.RazorLib.Dropdowns.Models;
+using Walk.Common.RazorLib.Commands.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 
@@ -13,180 +16,62 @@ public partial class InputFileDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private IdeService IdeService { get; set; } = null!;
+    
+    [CascadingParameter]
+    public IDialog? DialogRecord { get; set; }
 
-    /// <summary>
-    /// Receives the <see cref="_selectedAbsolutePath"/> as
-    /// a parameter to the <see cref="RenderFragment"/>
-    /// </summary>
-    [Parameter]
-    public RenderFragment<AbsolutePath?>? HeaderRenderFragment { get; set; }
-    /// <summary>
-    /// Receives the <see cref="_selectedAbsolutePath"/> as
-    /// a parameter to the <see cref="RenderFragment"/>
-    /// </summary>
-    [Parameter]
-    public RenderFragment<AbsolutePath?>? FooterRenderFragment { get; set; }
-    /// <summary>
-    /// One would likely use <see cref="BodyClassCssString"/> in the case where
-    /// either <see cref="HeaderRenderFragment"/> or <see cref="FooterRenderFragment"/>
-    /// are being used.
-    /// <br/><br/>
-    /// This is due to one likely wanting to set a fixed height for the <see cref="HeaderRenderFragment"/>
-    /// and a fixed height for the <see cref="FooterRenderFragment"/> and lastly
-    /// the body gets a fixed height of calc(100% - HeightForHeaderRenderFragment - HeightForFooterRenderFragment); 
-    /// </summary>
-    [Parameter]
-    public string BodyClassCssString { get; set; } = null!;
-    /// <summary>
-    /// One would likely use <see cref="BodyStyleCssString"/> in the case where
-    /// either <see cref="HeaderRenderFragment"/> or <see cref="FooterRenderFragment"/>
-    /// are being used.
-    /// <br/><br/>
-    /// This is due to one likely wanting to set a fixed height for the <see cref="HeaderRenderFragment"/>
-    /// and a fixed height for the <see cref="FooterRenderFragment"/> and lastly
-    /// the body gets a fixed height of calc(100% - HeightForHeaderRenderFragment - HeightForFooterRenderFragment); 
-    /// </summary>
-    [Parameter]
-    public string BodyStyleCssString { get; set; } = null!;
-
-    private readonly ElementDimensions _sidebarElementDimensions = new();
-    private readonly ElementDimensions _contentElementDimensions = new();
-
-    private AbsolutePath? _selectedAbsolutePath;
     private InputFileTreeViewMouseEventHandler _inputFileTreeViewMouseEventHandler = null!;
     private InputFileTreeViewKeyboardEventHandler _inputFileTreeViewKeyboardEventHandler = null!;
-    private InputFileTopNavBar? _inputFileTopNavBarComponent;
 
-    /// <summary>
-    /// <see cref="_searchMatchTuples"/> feels a bit hacky.
-    /// It is currently being used to track what TreeView nodes are both
-    /// displayed on the UI and part of the user's search result.
-    ///
-    /// A presumption that any mutations to the HashSet are done
-    /// via the UI thread. Therefore concurrency is not an issue.
-    /// </summary>
-    private List<(Key<TreeViewContainer> treeViewContainerKey, TreeViewAbsolutePath treeViewAbsolutePath)> _searchMatchTuples = new();
-
-    public ElementReference? SearchElementReference => _inputFileTopNavBarComponent?.SearchElementReference;
-
-    private ResizableColumnParameter _resizableColumnParameter;
+    public static readonly Key<TreeViewContainer> InputFileSidebar_TreeViewContainerKey = Key<TreeViewContainer>.NewKey();
+    private TreeViewContainerParameter InputFileSidebar_treeViewContainerParameter;
 
     protected override void OnInitialized()
     {
-        _resizableColumnParameter = new(
-            _sidebarElementDimensions,
-            _contentElementDimensions,
-            () => InvokeAsync(StateHasChanged));
-    
-        IdeService.IdeStateChanged += OnInputFileStateChanged;
+        _inputFileTreeViewMouseEventHandler = new InputFileTreeViewMouseEventHandler(IdeService);
+        _inputFileTreeViewKeyboardEventHandler = new InputFileTreeViewKeyboardEventHandler(IdeService);
+
+        InputFileSidebar_treeViewContainerParameter = new(
+            InputFileSidebar_TreeViewContainerKey,
+            _inputFileTreeViewKeyboardEventHandler,
+            _inputFileTreeViewMouseEventHandler,
+            OnTreeViewContextMenuFunc);
         
-        _inputFileTreeViewMouseEventHandler = new InputFileTreeViewMouseEventHandler(
-            IdeService,
-            SetInputFileContentTreeViewRootFunc);
-
-        _inputFileTreeViewKeyboardEventHandler = new InputFileTreeViewKeyboardEventHandler(
-            IdeService,
-            SetInputFileContentTreeViewRootFunc,
-            async () =>
-            {
-                try
-                {
-                    if (SearchElementReference is not null)
-                    {
-                        await SearchElementReference.Value
-                            .FocusAsync()
-                            .ConfigureAwait(false);
-                    }
-                }
-                catch (Exception)
-                {
-                    // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
-                    //             This bug is seemingly happening randomly. I have a suspicion
-                    //             that there are race-condition exceptions occurring with "FocusAsync"
-                    //             on an ElementReference.
-                }
-            },
-            () => _searchMatchTuples);
-
-        InitializeElementDimensions();
+        IdeService.IdeStateChanged += OnInputFileStateChanged;
     }
-
-    private void InitializeElementDimensions()
-    {
-        var appOptionsState = IdeService.CommonService.GetAppOptionsState();
     
-        _sidebarElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
-        {
-            new DimensionUnit(
-                40,
-                DimensionUnitKind.Percentage),
-            new DimensionUnit(
-                appOptionsState.Options.ResizeHandleWidthInPixels / 2,
-                DimensionUnitKind.Pixels,
-                DimensionOperatorKind.Subtract)
-        });
-
-        _contentElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
-        {
-            new DimensionUnit(
-                60,
-                DimensionUnitKind.Percentage),
-            new DimensionUnit(
-                appOptionsState.Options.ResizeHandleWidthInPixels / 2,
-                DimensionUnitKind.Pixels,
-                DimensionOperatorKind.Subtract)
-        });
-    }
-
-    /// <summary>
-    /// TODO: This code should be moved to an Effect, of which is throttled. (2024-05-03)
-    /// </summary>
-    private async Task SetInputFileContentTreeViewRootFunc(AbsolutePath absolutePath)
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        var pseudoRootNode = new TreeViewAbsolutePath(
-            absolutePath,
-            IdeService.CommonService,
-            true,
-            false);
-
-        await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
-
-        var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(pseudoRootNode.ChildList.ToArray());
-
-        foreach (var child in adhocRootNode.ChildList)
+        if (firstRender)
         {
-            child.IsExpandable = false;
-        }
-
-        var activeNode = adhocRootNode.ChildList.FirstOrDefault();
-
-        if (!IdeService.CommonService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
-        {
-            IdeService.CommonService.TreeView_RegisterContainerAction(new TreeViewContainer(
-                InputFileContent.TreeViewContainerKey,
-                adhocRootNode,
-                activeNode is null
-                    ? Array.Empty<TreeViewNoType>()
-                    : new List<TreeViewNoType> { activeNode }));
-        }
-        else
-        {
-            IdeService.CommonService.TreeView_WithRootNodeAction(InputFileContent.TreeViewContainerKey, adhocRootNode);
-            
-            IdeService.CommonService.TreeView_SetActiveNodeAction(
-                InputFileContent.TreeViewContainerKey,
-                activeNode,
+            var directoryHomeNode = new TreeViewAbsolutePath(
+                IdeService.CommonService.EnvironmentProvider.HomeDirectoryAbsolutePath,
+                IdeService.CommonService,
                 true,
                 false);
+
+            var directoryRootNode = new TreeViewAbsolutePath(
+                IdeService.CommonService.EnvironmentProvider.RootDirectoryAbsolutePath,
+                IdeService.CommonService,
+                true,
+                false);
+
+            var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(directoryHomeNode, directoryRootNode);
+
+            if (!IdeService.CommonService.TryGetTreeViewContainer(InputFileSidebar_TreeViewContainerKey, out var treeViewContainer))
+            {
+                IdeService.CommonService.TreeView_RegisterContainerAction(new TreeViewContainer(
+                    InputFileSidebar_TreeViewContainerKey,
+                    adhocRootNode,
+                    directoryHomeNode is null
+                        ? Array.Empty<TreeViewNoType>()
+                        : new List<TreeViewNoType> { directoryHomeNode }));
+            }
         }
 
-        await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
-
-        IdeService.InputFile_SetOpenedTreeViewModel(
-            pseudoRootNode,
-            IdeService.CommonService);
+        return Task.CompletedTask;
     }
-    
+
     public async void OnInputFileStateChanged(IdeStateChangedKind ideStateChangedKind)
     {
         if (ideStateChangedKind == IdeStateChangedKind.InputFileStateChanged)
@@ -194,6 +79,88 @@ public partial class InputFileDisplay : ComponentBase, IDisposable
             await InvokeAsync(StateHasChanged);
         }
     }
+    
+    /* Start InputFileSideBar */
+    private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
+    {
+        var dropdownRecord = new DropdownRecord(
+            InputFileContextMenu.ContextMenuKey,
+            treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
+            treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
+            typeof(InputFileContextMenu),
+            new Dictionary<string, object?>
+            {
+                {
+                    nameof(InputFileContextMenu.TreeViewCommandArgs),
+                    treeViewCommandArgs
+                }
+            },
+            restoreFocusOnClose: null);
+
+        IdeService.CommonService.Dropdown_ReduceRegisterAction(dropdownRecord);
+        return Task.CompletedTask;
+    }
+    /* End InputFileSideBar */
+
+    /* Start InputFileBottomControls */
+    private void SelectInputFilePatternOnChange(ChangeEventArgs changeEventArgs)
+    {
+        var patternName = (string)(changeEventArgs.Value ?? string.Empty);
+
+        var pattern = IdeService.GetInputFileState().InputFilePatternsList
+            .FirstOrDefault(x => x.PatternName == patternName);
+
+        if (pattern.ConstructorWasInvoked)
+            IdeService.InputFile_SetSelectedInputFilePattern(pattern);
+    }
+
+    private string GetSelectedTreeViewModelAbsolutePathString(InputFileState inputFileState)
+    {
+        var selectedAbsolutePath = inputFileState.SelectedTreeViewModel?.Item;
+
+        if (selectedAbsolutePath is null)
+            return "Selection is null";
+
+        return selectedAbsolutePath.Value.Value;
+    }
+
+    private async Task FireOnAfterSubmit()
+    {
+        var valid = await IdeService.GetInputFileState().SelectionIsValidFunc
+            .Invoke(IdeService.GetInputFileState().SelectedTreeViewModel?.Item ?? default)
+            .ConfigureAwait(false);
+
+        if (valid)
+        {
+            if (DialogRecord is not null)
+                IdeService.CommonService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+
+            await IdeService.GetInputFileState().OnAfterSubmitFunc
+                .Invoke(IdeService.GetInputFileState().SelectedTreeViewModel?.Item ?? default)
+                .ConfigureAwait(false);
+        }
+    }
+
+    private bool OnAfterSubmitIsDisabled()
+    {
+        return !IdeService.GetInputFileState().SelectionIsValidFunc.Invoke(IdeService.GetInputFileState().SelectedTreeViewModel?.Item ?? default)
+            .Result;
+    }
+
+    private Task CancelOnClick()
+    {
+        if (DialogRecord is not null)
+            IdeService.CommonService.Dialog_ReduceDisposeAction(DialogRecord.DynamicViewModelKey);
+
+        return Task.CompletedTask;
+    }
+    
+    private bool GetInputFilePatternIsSelected(InputFilePattern inputFilePattern, InputFileState localInputFileState)
+    {
+        return (localInputFileState.SelectedInputFilePattern?.PatternName ?? string.Empty) ==
+            inputFilePattern.PatternName;
+    }
+    /* End InputFileBottomControls */
     
     public void Dispose()
     {
