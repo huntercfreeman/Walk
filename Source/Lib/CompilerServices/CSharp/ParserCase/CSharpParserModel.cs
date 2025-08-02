@@ -140,7 +140,7 @@ public ref struct CSharpParserModel
     ///
     /// Walk.CompilerServices.CSharp.ParserCase.Internals.ParseOthers.SyntaxIsEndDelimiter(SyntaxKind syntaxKind) {...}
     /// </summary>
-    public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; }
+    public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode? ExpressionNode)> ExpressionList { get; set; }
     
     public List<TypeDefinitionNode> ExternalTypeDefinitionList { get; }
     
