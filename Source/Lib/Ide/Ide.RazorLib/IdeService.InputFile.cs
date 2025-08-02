@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
@@ -110,7 +111,9 @@ public partial class IdeService
 
                 var parentDirectoryAbsolutePath = commonService.EnvironmentProvider.AbsolutePathFactory(
                     parentDirectory,
-                    true);
+                    true,
+                    tokenBuilder: new StringBuilder(),
+                    formattedBuilder: new StringBuilder());
 
                 parentDirectoryTreeViewModel = new TreeViewAbsolutePath(
                     parentDirectoryAbsolutePath,

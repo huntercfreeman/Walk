@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
@@ -142,7 +143,9 @@ public partial class DotNetService
             {
                 var viewModelAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
                     textEditorViewModel.PersistentState.ResourceUri.Value,
-                    false);
+                    false,
+                    tokenBuilder: new StringBuilder(),
+                    formattedBuilder: new StringBuilder());
 
                 if (viewModelAbsolutePath.Value ==
                         treeViewNamespacePath.Item.AbsolutePath.Value)

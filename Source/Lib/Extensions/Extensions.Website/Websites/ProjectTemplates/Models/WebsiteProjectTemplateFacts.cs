@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Extensions.DotNet;
 using Walk.Ide.Wasm.Facts;
@@ -40,7 +41,7 @@ public static class WebsiteProjectTemplateFacts
         string cSharpProjectAbsolutePathString,
         CommonService commonService)
     {
-        var cSharpProjectAbsolutePath = commonService.EnvironmentProvider.AbsolutePathFactory(cSharpProjectAbsolutePathString, false);
+        var cSharpProjectAbsolutePath = commonService.EnvironmentProvider.AbsolutePathFactory(cSharpProjectAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
         var parentDirectoryOfProject = cSharpProjectAbsolutePath.ParentDirectory;
 
         if (parentDirectoryOfProject is null)

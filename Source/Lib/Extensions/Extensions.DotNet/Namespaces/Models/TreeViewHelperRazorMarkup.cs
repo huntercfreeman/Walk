@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Common.RazorLib.Keys.Models;
@@ -25,10 +26,13 @@ public class TreeViewHelperRazorMarkup
             .GetFilesAsync(ancestorDirectory)
             .ConfigureAwait(false);
 
+        var tokenBuilder = new StringBuilder();
+        var formattedBuilder = new StringBuilder();
+        
         var childFileTreeViewModels = filePathStringsList
             .Select(x =>
             {
-                var absolutePath = razorMarkupTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false);
+                var absolutePath = razorMarkupTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder);
                 var namespaceString = razorMarkupTreeView.Item.Namespace;
 
                 return (TreeViewNoType)new TreeViewNamespacePath(

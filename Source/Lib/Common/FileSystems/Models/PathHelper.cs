@@ -30,7 +30,9 @@ public static class PathHelper
     public static string GetAbsoluteFromAbsoluteAndRelative(
         AbsolutePath absolutePath,
         string relativePathString,
-        IEnvironmentProvider environmentProvider)
+        IEnvironmentProvider environmentProvider,
+        StringBuilder tokenBuilder,
+        StringBuilder formattedBuilder)
     {
         // Normalize the directory separator character
         relativePathString = relativePathString.Replace(
@@ -71,7 +73,7 @@ public static class PathHelper
 
         if (moveUpDirectoryCount > 0)
         {
-            var sharedAncestorDirectories = absolutePath.GetAncestorDirectoryList(environmentProvider)
+            var sharedAncestorDirectories = absolutePath.GetAncestorDirectoryList(environmentProvider, tokenBuilder, formattedBuilder)
                 .SkipLast(moveUpDirectoryCount)
                 .ToArray();
         
@@ -121,12 +123,14 @@ public static class PathHelper
     public static string GetRelativeFromTwoAbsolutes(
         AbsolutePath startingPath,
         AbsolutePath endingPath,
-        IEnvironmentProvider environmentProvider)
+        IEnvironmentProvider environmentProvider,
+        StringBuilder? tokenBuilder,
+        StringBuilder? formattedBuilder)
     {
         var pathBuilder = new StringBuilder();
         
-        var startingPathAncestorDirectoryList = startingPath.GetAncestorDirectoryList(environmentProvider);
-        var endingPathAncestorDirectoryList = endingPath.GetAncestorDirectoryList(environmentProvider);
+        var startingPathAncestorDirectoryList = startingPath.GetAncestorDirectoryList(environmentProvider, tokenBuilder, formattedBuilder);
+        var endingPathAncestorDirectoryList = endingPath.GetAncestorDirectoryList(environmentProvider, tokenBuilder, formattedBuilder);
         
         var commonPath = startingPathAncestorDirectoryList.First();
 
@@ -153,11 +157,15 @@ public static class PathHelper
             {
                 var startingPathAncestor = environmentProvider.AbsolutePathFactory(
                     startingPathAncestorDirectoryList[i],
-                    true);
+                    true,
+                    tokenBuilder,
+                    formattedBuilder);
 
                 var endingPathAncestor = environmentProvider.AbsolutePathFactory(
                     endingPathAncestorDirectoryList[i],
-                    true);
+                    true,
+                    tokenBuilder,
+                    formattedBuilder);
 
                 if (startingPathAncestor.NameWithExtension == endingPathAncestor.NameWithExtension)
                     commonPath = startingPathAncestor.Value;

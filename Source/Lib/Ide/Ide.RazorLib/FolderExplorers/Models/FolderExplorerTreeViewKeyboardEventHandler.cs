@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Menus.Models;
@@ -137,7 +138,9 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
             var parentDirectoryAbsolutePath = _ideService.CommonService.EnvironmentProvider.AbsolutePathFactory(
                 parentDirectory,
-                true);
+                true,
+                tokenBuilder: new StringBuilder(),
+                formattedBuilder: new StringBuilder());
 
             pasteMenuOptionRecord = _ideService.PasteClipboard(
                 parentDirectoryAbsolutePath,

@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;
@@ -15,11 +16,14 @@ public class TreeViewHelperNamespacePathDirectory
             .GetDirectoriesAsync(directoryAbsolutePathString)
             .ConfigureAwait(false);
 
+        var tokenBuilder = new StringBuilder();
+        var formattedBuilder = new StringBuilder();
+        
         var childDirectoryTreeViewModels = directoryPathStringsList
             .OrderBy(pathString => pathString)
             .Select(x =>
             {
-                var absolutePath = directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true);
+                var absolutePath = directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder, formattedBuilder);
 
                 var namespaceString = directoryTreeView.Item.Namespace +
                     TreeViewNamespaceHelper.NAMESPACE_DELIMITER +
@@ -40,7 +44,7 @@ public class TreeViewHelperNamespacePathDirectory
             .OrderBy(pathString => pathString)
             .Select(x =>
             {
-                var absolutePath = directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false);
+                var absolutePath = directoryTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder);
                 var namespaceString = directoryTreeView.Item.Namespace;
 
                 return (TreeViewNoType)new TreeViewNamespacePath(

@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib.Notifications.Models;
 
 namespace Walk.Common.RazorLib.FileSystems.Models;
@@ -54,7 +55,9 @@ public class LocalFileHandler : IFileHandler
             destinationAbsolutePathString);
 
         _commonService.EnvironmentProvider.DeletionPermittedRegister(
-            new SimplePath(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE));
+            new SimplePath(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE),
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
 
         return Task.CompletedTask;
     }
@@ -76,7 +79,9 @@ public class LocalFileHandler : IFileHandler
                 destinationAbsolutePathString);
 
             _commonService.EnvironmentProvider.DeletionPermittedRegister(
-                new SimplePath(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE));
+                new SimplePath(destinationAbsolutePathString, IS_DIRECTORY_RESPONSE),
+                tokenBuilder: new StringBuilder(),
+                formattedBuilder: new StringBuilder());
         }
         catch (Exception exception)
         {
@@ -126,7 +131,9 @@ public class LocalFileHandler : IFileHandler
                 .ConfigureAwait(false);
 
             _commonService.EnvironmentProvider.DeletionPermittedRegister(
-                new SimplePath(absolutePathString, IS_DIRECTORY_RESPONSE));
+                new SimplePath(absolutePathString, IS_DIRECTORY_RESPONSE),
+                tokenBuilder: new StringBuilder(),
+                formattedBuilder: new StringBuilder());
         }
         catch (Exception exception)
         {

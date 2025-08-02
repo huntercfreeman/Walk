@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using System.Text;
 using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Keys.Models;
@@ -104,7 +105,9 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
                     // Open the created .NET Solution
                     var parentDirectoryAbsolutePath = DotNetService.IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
                         localParentDirectoryName,
-                        true);
+                        true,
+                        tokenBuilder: new StringBuilder(),
+                        formattedBuilder: new StringBuilder());
 
                     var solutionAbsolutePathString =
                         parentDirectoryAbsolutePath.Value +
@@ -116,7 +119,9 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 
                     var solutionAbsolutePath = DotNetService.IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
                         solutionAbsolutePathString,
-                        false);
+                        false,
+                        tokenBuilder: new StringBuilder(),
+                        formattedBuilder: new StringBuilder());
 
                     DotNetService.Enqueue(new DotNetWorkArgs
                     {
@@ -164,7 +169,9 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
 
         var solutionAbsolutePath = DotNetService.IdeService.CommonService.EnvironmentProvider.AbsolutePathFactory(
             solutionAbsolutePathString,
-            false);
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
 
         DotNetService.Enqueue(new DotNetWorkArgs
         {

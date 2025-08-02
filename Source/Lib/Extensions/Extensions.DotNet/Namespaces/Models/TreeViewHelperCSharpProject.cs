@@ -1,3 +1,4 @@
+using System.Text;
 using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
@@ -20,12 +21,15 @@ public class TreeViewHelperCSharpProject
             .GetDirectoriesAsync(ancestorDirectory)
             .ConfigureAwait(false);
 
+        var tokenBuilder = new StringBuilder();
+        var formattedBuilder = new StringBuilder();
+
         var childDirectoryTreeViewModelsList = directoryPathStringsList
             .OrderBy(pathString => pathString)
             .Where(x => hiddenFiles.All(hidden => !x.EndsWith(hidden)))
             .Select(x =>
             {
-                var absolutePath = cSharpProjectTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true);
+                var absolutePath = cSharpProjectTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder, formattedBuilder);
 
                 var namespaceString = cSharpProjectTreeView.Item.Namespace +
                     TreeViewNamespaceHelper.NAMESPACE_DELIMITER +
@@ -61,7 +65,7 @@ public class TreeViewHelperCSharpProject
             .Where(x => !x.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
             .Select(x =>
             {
-                var absolutePath = cSharpProjectTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false);
+                var absolutePath = cSharpProjectTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder);
                 var namespaceString = cSharpProjectTreeView.Item.Namespace;
 
                 return (TreeViewNoType)new TreeViewNamespacePath(new NamespacePath(namespaceString, absolutePath),

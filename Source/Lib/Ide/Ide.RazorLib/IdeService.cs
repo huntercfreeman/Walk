@@ -1,3 +1,4 @@
+using System.Text;
 using System.Collections.Concurrent;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Dialogs.Models;
@@ -392,7 +393,7 @@ public partial class IdeService : IBackgroundTaskGroup
             OnAfterSubmitFunc = absolutePath =>
             {
                 // TODO: Why does 'isDirectory: false' not work?
-                CommonService.EnvironmentProvider.DeletionPermittedRegister(new(absolutePath.Value, isDirectory: true));
+                CommonService.EnvironmentProvider.DeletionPermittedRegister(new(absolutePath.Value, isDirectory: true), tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
             
                 TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
                 {
@@ -459,7 +460,7 @@ public partial class IdeService : IBackgroundTaskGroup
             .ReadAllTextAsync(resourceUri.Value)
             .ConfigureAwait(false);
 
-        var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(resourceUri.Value, false);
+        var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(resourceUri.Value, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
         var decorationMapper = TextEditorService.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
         var compilerService = TextEditorService.GetCompilerService(absolutePath.ExtensionNoPeriod);
 
@@ -531,7 +532,9 @@ public partial class IdeService : IBackgroundTaskGroup
 
         var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
             registerViewModelArgs.ResourceUri.Value,
-            false);
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
 
         viewModel.PersistentState.OnSaveRequested = Editor_HandleOnSaveRequested;
         viewModel.PersistentState.GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension;
@@ -547,7 +550,9 @@ public partial class IdeService : IBackgroundTaskGroup
         
         var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
             innerTextEditor.PersistentState.ResourceUri.Value,
-            false);
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
 
         Enqueue(new IdeWorkArgs
         {
@@ -763,7 +768,10 @@ public partial class IdeService : IBackgroundTaskGroup
             IsLoadingFolderExplorer = true
         });
         
-        CommonService.EnvironmentProvider.DeletionPermittedRegister(new(folderAbsolutePath.Value, true));
+        CommonService.EnvironmentProvider.DeletionPermittedRegister(
+            new(folderAbsolutePath.Value, true),
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
 
         var rootNode = new TreeViewAbsolutePath(
             folderAbsolutePath,

@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
@@ -260,7 +261,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 return Array.Empty<MenuOptionRecord>();
         }
 
-        var parentDirectoryAbsolutePath = DotNetService.IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(parentDirectory, true);
+        var parentDirectoryAbsolutePath = DotNetService.IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(parentDirectory, true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
 
         return new[]
         {

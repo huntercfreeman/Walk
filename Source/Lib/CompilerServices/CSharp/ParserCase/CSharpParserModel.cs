@@ -125,7 +125,7 @@ public ref struct CSharpParserModel
     public CSharpStatementBuilder StatementBuilder { get; set; }
     
     public ResourceUri ResourceUri { get; }
-    
+
     /// <summary>
     /// Prior to closing a statement-codeblock, you must check whether ParseChildScopeStack has a child that needs to be parsed.
     /// </summary>
@@ -140,7 +140,7 @@ public ref struct CSharpParserModel
     ///
     /// Walk.CompilerServices.CSharp.ParserCase.Internals.ParseOthers.SyntaxIsEndDelimiter(SyntaxKind syntaxKind) {...}
     /// </summary>
-    public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; }
+    public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode? ExpressionNode)> ExpressionList { get; set; }
     
     public List<TypeDefinitionNode> ExternalTypeDefinitionList { get; }
     
@@ -194,7 +194,7 @@ public ref struct CSharpParserModel
     
     public IExpressionNode ExpressionPrimary { get; set; }
     
-    public TypeClauseNode ConstructOrRecycleTypeClauseNode(
+    public readonly TypeClauseNode ConstructOrRecycleTypeClauseNode(
         SyntaxToken typeIdentifier,
         
         SyntaxToken openAngleBracketToken,
@@ -235,7 +235,7 @@ public ref struct CSharpParserModel
     /// </summary>
     public VariableReferenceNode VariableReferenceNode { get; }
     
-    public VariableReferenceNode ConstructOrRecycleVariableReferenceNode(
+    public readonly VariableReferenceNode ConstructOrRecycleVariableReferenceNode(
         SyntaxToken variableIdentifierToken,
         VariableDeclarationNode variableDeclarationNode)
     {
@@ -246,7 +246,7 @@ public ref struct CSharpParserModel
         return VariableReferenceNode;
     }
     
-    public ICodeBlockOwner? GetParent(
+    public readonly ICodeBlockOwner? GetParent(
         ICodeBlockOwner codeBlockOwner,
         Walk.CompilerServices.CSharp.CompilerServiceCase.CSharpCompilationUnit cSharpCompilationUnit)
     {
@@ -294,7 +294,7 @@ public ref struct CSharpParserModel
         ++Compilation.CountSymbolList;
     }
     
-    public void BindNamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
+    public readonly void BindNamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
     {
         var namespaceString = Binder.TextEditorService.EditContext_GetText(Text.Slice(namespaceStatementNode.IdentifierToken.TextSpan.StartInclusiveIndex, namespaceStatementNode.IdentifierToken.TextSpan.Length));
 
@@ -457,7 +457,6 @@ public ref struct CSharpParserModel
     
     public void BindLabelReferenceNode(LabelReferenceNode labelReferenceNode)
     {
-    
         Binder.SymbolList.Insert(
             Compilation.IndexSymbolList + Compilation.CountSymbolList,
             new Symbol(
@@ -559,13 +558,13 @@ public ref struct CSharpParserModel
         }
     }
 
-    public void BindUsingStatementTuple(SyntaxToken usingKeywordToken, SyntaxToken namespaceIdentifierToken)
+    public readonly void BindUsingStatementTuple(SyntaxToken usingKeywordToken, SyntaxToken namespaceIdentifierToken)
     {
         AddNamespaceToCurrentScope(
             Binder.TextEditorService.EditContext_GetText(Text.Slice(namespaceIdentifierToken.TextSpan.StartInclusiveIndex, namespaceIdentifierToken.TextSpan.Length)));
     }
     
-    public void BindTypeDefinitionNode(TypeDefinitionNode typeDefinitionNode, bool shouldOverwrite = false)
+    public readonly void BindTypeDefinitionNode(TypeDefinitionNode typeDefinitionNode, bool shouldOverwrite = false)
     {
         var typeIdentifierText = Binder.TextEditorService.EditContext_GetText(Text.Slice(typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeDefinitionNode.TypeIdentifierToken.TextSpan.Length));
 
@@ -617,7 +616,7 @@ public ref struct CSharpParserModel
         OnBoundScopeCreatedAndSetAsCurrent(codeBlockOwner, Compilation);
     }
 
-    public void AddNamespaceToCurrentScope(string namespaceString)
+    public readonly void AddNamespaceToCurrentScope(string namespaceString)
     {
         if (!Binder.CSharpParserModel_AddedNamespaceHashSet.Add(namespaceString))
             return;
@@ -735,7 +734,7 @@ public ref struct CSharpParserModel
                 var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
                 var namespaceString = Binder.TextEditorService.EditContext_GetText(Text.Slice(namespaceStatementNode.IdentifierToken.TextSpan.StartInclusiveIndex, namespaceStatementNode.IdentifierToken.TextSpan.Length));
                 AddNamespaceToCurrentScope(namespaceString);
-                
+
                 BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner);
                 return;
             case SyntaxKind.LambdaExpressionNode:
@@ -790,12 +789,12 @@ public ref struct CSharpParserModel
         }
     }
     
-    public void SetOpenCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, int codeBlock_StartInclusiveIndex)
+    public readonly void SetOpenCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, int codeBlock_StartInclusiveIndex)
     {
         codeBlockOwner.CodeBlock_StartInclusiveIndex = codeBlock_StartInclusiveIndex;
     }
     
-    public void SetCloseCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, int codeBlock_EndExclusiveIndex)
+    public readonly void SetCloseCodeBlockTextSpan(ICodeBlockOwner codeBlockOwner, int codeBlock_EndExclusiveIndex)
     {
         codeBlockOwner.CodeBlock_EndExclusiveIndex = codeBlock_EndExclusiveIndex;
     }
@@ -805,7 +804,7 @@ public ref struct CSharpParserModel
     /// If a match is found, then set the out parameter to it and return true.<br/><br/>
     /// If none of the searched scopes contained a match then set the out parameter to null and return false.
     /// </summary>
-    public bool TryGetTypeDefinitionHierarchically(
+    public readonly bool TryGetTypeDefinitionHierarchically(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
         int initialScopeIndexKey,
@@ -838,7 +837,7 @@ public ref struct CSharpParserModel
         return false;
     }
     
-    public bool TryGetTypeDefinitionNodeByScope(
+    public readonly bool TryGetTypeDefinitionNodeByScope(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey,
@@ -885,7 +884,7 @@ public ref struct CSharpParserModel
         }
     }
     
-    public bool TryAddTypeDefinitionNodeByScope(
+    public readonly bool TryAddTypeDefinitionNodeByScope(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey,
@@ -920,7 +919,7 @@ public ref struct CSharpParserModel
         }
     }
     
-    public FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(
+    public readonly FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey)
     {
@@ -942,7 +941,7 @@ public ref struct CSharpParserModel
     /// If a match is found, then set the out parameter to it and return true.<br/><br/>
     /// If none of the searched scopes contained a match then set the out parameter to null and return false.
     /// </summary>
-    public bool TryGetFunctionHierarchically(
+    public readonly bool TryGetFunctionHierarchically(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
         int initialScopeIndexKey,
@@ -973,7 +972,7 @@ public ref struct CSharpParserModel
         return false;
     }
     
-    public bool TryGetFunctionDefinitionNodeByScope(
+    public readonly bool TryGetFunctionDefinitionNodeByScope(
         ResourceUri resourceUri,
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey,
@@ -1001,7 +1000,7 @@ public ref struct CSharpParserModel
             return true;
     }
     
-    public VariableDeclarationNode[] GetVariableDeclarationNodesByScope(
+    public readonly VariableDeclarationNode[] GetVariableDeclarationNodesByScope(
         CSharpCompilationUnit compilationUnit,
         int scopeIndexKey)
     {
@@ -1264,12 +1263,12 @@ public ref struct CSharpParserModel
         }
     }
     
-    public void SetVariableDeclarationNodeByScope(
+    public readonly void SetVariableDeclarationNodeByScope(
         string variableIdentifierText,
         VariableDeclarationNode variableDeclarationNode)
     {
         int scopeIndexKey = CurrentCodeBlockOwner.Unsafe_SelfIndexKey;
-
+        
         VariableDeclarationNode? matchNode = null;
         int index = Compilation.IndexNodeList;
         for (; index < Compilation.IndexNodeList + Compilation.CountNodeList; index++)
@@ -1292,7 +1291,7 @@ public ref struct CSharpParserModel
         }
     }
     
-    public bool TryGetLabelDeclarationHierarchically(
+    public readonly bool TryGetLabelDeclarationHierarchically(
         string identifierText,
         out LabelDeclarationNode? labelDeclarationNode)
     {
@@ -1320,7 +1319,7 @@ public ref struct CSharpParserModel
         return false;
     }
     
-    public bool TryGetLabelDeclarationNodeByScope(
+    public readonly bool TryGetLabelDeclarationNodeByScope(
         int scopeIndexKey,
         string labelIdentifierText,
         out LabelDeclarationNode labelDeclarationNode)
@@ -1381,7 +1380,7 @@ public ref struct CSharpParserModel
         }
     }
     
-    public void SetLabelDeclarationNodeByScope(
+    public readonly void SetLabelDeclarationNodeByScope(
         int scopeIndexKey,
         string labelIdentifierText,
         LabelDeclarationNode labelDeclarationNode)
@@ -1431,7 +1430,7 @@ public ref struct CSharpParserModel
     ///
     /// !!!! TODO: This method reads files other than the one being parsed without a textspan bounds check? This should be changed.
     /// </summary>
-    public string GetIdentifierText(ISyntaxNode node, ResourceUri resourceUri, CSharpCompilationUnit compilationUnit)
+    public readonly string GetIdentifierText(ISyntaxNode node, ResourceUri resourceUri, CSharpCompilationUnit compilationUnit)
     {
         switch (node.SyntaxKind)
         {
@@ -1529,12 +1528,12 @@ public ref struct CSharpParserModel
         }
     }
     
-    public string GetTextSpanText(TextEditorTextSpan textSpan)
+    public readonly string GetTextSpanText(TextEditorTextSpan textSpan)
     {
         return Binder.TextEditorService.EditContext_GetText(Text.Slice(textSpan.StartInclusiveIndex, textSpan.Length));
     }
     
-    public TypeClauseNode ToTypeClause(TypeDefinitionNode typeDefinitionNode)
+    public readonly TypeClauseNode ToTypeClause(TypeDefinitionNode typeDefinitionNode)
     {
         var typeClauseNode = ConstructOrRecycleTypeClauseNode(
             typeDefinitionNode.TypeIdentifierToken,

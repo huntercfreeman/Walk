@@ -1127,8 +1127,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     .ConfigureAwait(false);
             }
     
-            var resourceAbsolutePath = _textEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(modelModifier.PersistentState.ResourceUri.Value, false);
-            var parentDirectoryAbsolutePath = _textEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true);
+            var resourceAbsolutePath = _textEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(modelModifier.PersistentState.ResourceUri.Value, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+            var parentDirectoryAbsolutePath = _textEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory, true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
         
             var siblingFileStringList = new List<(string ResourceUriValue, int ScopeIndexKey)>();
             
@@ -1161,7 +1161,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 var tuple = siblingFileStringList[i];
                 var file = tuple.ResourceUriValue;
                 
-                var siblingAbsolutePath = _textEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(file, false);
+                var siblingAbsolutePath = _textEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(file, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
                 
                 menuOptionList.Add(new MenuOptionRecord(
                     siblingAbsolutePath.NameWithExtension,

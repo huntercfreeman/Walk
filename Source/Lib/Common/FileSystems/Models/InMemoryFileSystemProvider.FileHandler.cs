@@ -331,7 +331,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
 
             var absolutePath = _commonService.EnvironmentProvider.AbsolutePathFactory(
                 absolutePathString,
-                false);
+                false,
+                tokenBuilder: new StringBuilder(),
+                formattedBuilder: new StringBuilder());
 
             var outFile = new InMemoryFile(
                 contents,
@@ -342,7 +344,9 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             _inMemoryFileSystemProvider._files.Add(outFile);
 
             _commonService.EnvironmentProvider.DeletionPermittedRegister(
-                new SimplePath(absolutePathString, IS_DIRECTORY_RESPONSE));
+                new SimplePath(absolutePathString, IS_DIRECTORY_RESPONSE),
+                tokenBuilder: new StringBuilder(),
+                formattedBuilder: new StringBuilder());
 
             return Task.CompletedTask;
         }
