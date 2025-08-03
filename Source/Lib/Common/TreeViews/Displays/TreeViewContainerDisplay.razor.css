@@ -4,7 +4,7 @@
     outline: none;
 }
 
-.di_tree-view-state:focus-within .di_tree-view-title.di_selected {
+.di_tree-view-state:focus-within > div.di_selected {
     background-color: var(--di_active-with-focus-background-color);
 }
 
@@ -12,25 +12,25 @@
     outline: var(--di_outline-with-focus-color) inset;
 }
 
-.di_tree-view-state:focus .di_tree-view-title.di_active {
+.di_tree-view-state:focus > div.di_active {
     background-color: var(--di_active-with-focus-background-color);
 }
 
-.di_tree-view-title {
+.di_tree-view-state > div {
     display: flex;
     white-space: nowrap;
     outline: none;
 }
 
-.di_tree-view-title.di_selected {
+.di_tree-view-state > div.di_selected {
     background-color: var(--di_active-no-focus-background-color);
 }
 
-.di_tree-view-title.di_active {
+.di_tree-view-state > div.di_active {
     background-color: var(--di_active-no-focus-background-color);
 }
 
-.di_tree-view-title.di_active:focus {
+.di_tree-view-state > div.di_active:focus {
     background-color: var(--di_active-with-focus-background-color);
 }
 
