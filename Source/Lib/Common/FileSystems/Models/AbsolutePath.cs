@@ -8,11 +8,6 @@ namespace Walk.Common.RazorLib.FileSystems.Models;
 public struct AbsolutePath
 {
     private string? _nameWithExtension;
-    private List<string>? _ancestorDirectoryList;
-    
-    private static int _countConstructor;
-    private static int _countTokenBuilder;
-    private static int _countFormattedBuilder;
     
     /// <summary>
     /// If providing tokenBuilder or formattedBuilder, ensure they are '.Clear()'ed prior to invoking the constructor.
@@ -28,7 +23,6 @@ public struct AbsolutePath
     {
         ExactInput = absolutePathString;
         IsDirectory = isDirectory;
-        _ancestorDirectoryList = ancestorDirectoryList;
 
         var lengthAbsolutePathString = absolutePathString.Length;
         
@@ -182,10 +176,9 @@ public struct AbsolutePath
     public string NameWithExtension => _nameWithExtension ??= PathHelper.CalculateNameWithExtension(NameNoExtension, ExtensionNoPeriod, IsDirectory);
     public bool IsRootDirectory => ParentDirectory is null;
     
-    private static int _countGetAncestorDirectoryList;
-    
     /// <summary>
-    /// If providing tokenBuilder or formattedBuilder, ensure they are '.Clear()'ed.
+    ///  If providing tokenBuilder or formattedBuilder, ensure they are '.Clear()'ed prior to invoking.
+    /// Prior to returning, tokenBuilder and formattedBuilder will be '.Clear()'ed.
     /// </summary>
     public List<string> GetAncestorDirectoryList(
         IEnvironmentProvider environmentProvider,
@@ -202,13 +195,16 @@ public struct AbsolutePath
             formattedBuilder = new StringBuilder();
         }
         
-        return _ancestorDirectoryList ??= new AbsolutePath(
-                Value,
-                IsDirectory,
-                environmentProvider,
-                tokenBuilder,
-                formattedBuilder,
-                ancestorDirectoryList: new())
-            ._ancestorDirectoryList;
+        var ancestorDirectoryList = new List<string>();
+        
+        _ = new AbsolutePath(
+            Value,
+            IsDirectory,
+            environmentProvider,
+            tokenBuilder,
+            formattedBuilder,
+            ancestorDirectoryList);
+    
+        return ancestorDirectoryList;
     }
 }

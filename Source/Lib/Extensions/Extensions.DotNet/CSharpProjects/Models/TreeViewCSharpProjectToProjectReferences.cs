@@ -103,7 +103,16 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
         
         var tokenBuilder = new StringBuilder();
         var formattedBuilder = new StringBuilder();
+        
+        var moveUpDirectoryToken = $"..{CommonService.EnvironmentProvider.DirectorySeparatorChar}";
+        // "./" is being called the 'sameDirectoryToken'
+        var sameDirectoryToken = $".{CommonService.EnvironmentProvider.DirectorySeparatorChar}";
 
+        var projectAncestorDirectoryList = Item.CSharpProjectNamespacePath.AbsolutePath.GetAncestorDirectoryList(
+            CommonService.EnvironmentProvider,
+            tokenBuilder,
+            formattedBuilder);
+        
         foreach (var projectReference in projectReferences)
         {
             var attributeNameValueTuples = projectReference
@@ -126,7 +135,10 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
                 includeAttribute.Item2,
                 (IEnvironmentProvider)CommonService.EnvironmentProvider,
                 tokenBuilder,
-                formattedBuilder);
+                formattedBuilder,
+                moveUpDirectoryToken: moveUpDirectoryToken,
+                sameDirectoryToken: sameDirectoryToken,
+                projectAncestorDirectoryList);
 
             var referenceProjectAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(
                 referenceProjectAbsolutePathString,

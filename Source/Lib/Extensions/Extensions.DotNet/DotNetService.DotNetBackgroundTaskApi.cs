@@ -950,6 +950,17 @@ public partial class DotNetService
     /// </summary>
     private List<IDotNetProject> SortProjectReferences(DotNetSolutionModel dotNetSolutionModel, StringBuilder tokenBuilder, StringBuilder formattedBuilder)
     {
+        var moveUpDirectoryToken = $"..{IdeService.TextEditorService.CommonService.EnvironmentProvider.DirectorySeparatorChar}";
+        // "./" is being called the 'sameDirectoryToken'
+        var sameDirectoryToken = $".{IdeService.TextEditorService.CommonService.EnvironmentProvider.DirectorySeparatorChar}";
+        
+        var cSharpProjectSyntaxWalker = new CSharpProjectSyntaxWalker();
+        
+        var dotNetSolutionAncestorDirectoryList = dotNetSolutionModel.AbsolutePath.GetAncestorDirectoryList(
+            IdeService.TextEditorService.CommonService.EnvironmentProvider,
+            tokenBuilder,
+            formattedBuilder);
+    
         for (int i = dotNetSolutionModel.DotNetProjectList.Count - 1; i >= 0; i--)
         {
             var projectTuple = dotNetSolutionModel.DotNetProjectList[i];
@@ -973,7 +984,10 @@ public partial class DotNetService
                 relativePathFromSolutionFileString,
                 IdeService.TextEditorService.CommonService.EnvironmentProvider,
                 tokenBuilder,
-                formattedBuilder);
+                formattedBuilder,
+                moveUpDirectoryToken: moveUpDirectoryToken,
+                sameDirectoryToken: sameDirectoryToken,
+                dotNetSolutionAncestorDirectoryList);
             projectTuple.AbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(absolutePathString, false, tokenBuilder, formattedBuilder);
 
             if (!IdeService.TextEditorService.CommonService.FileSystemProvider.File.Exists(projectTuple.AbsolutePath.Value))
@@ -998,14 +1012,18 @@ public partial class DotNetService
 
             var syntaxNodeRoot = htmlSyntaxUnit.RootTagSyntax;
 
-            var cSharpProjectSyntaxWalker = new CSharpProjectSyntaxWalker();
-
+            cSharpProjectSyntaxWalker.TagNodes.Clear();
             cSharpProjectSyntaxWalker.Visit(syntaxNodeRoot);
 
             var projectReferences = cSharpProjectSyntaxWalker.TagNodes
                 .Where(ts => (ts.OpenTagNameNode?.TextEditorTextSpan.GetText(content, IdeService.TextEditorService) ?? string.Empty) == "ProjectReference")
                 .ToList();
 
+            var projectAncestorDirectoryList = projectTuple.AbsolutePath.GetAncestorDirectoryList(
+                IdeService.TextEditorService.CommonService.EnvironmentProvider,
+                tokenBuilder,
+                formattedBuilder);
+            
             foreach (var projectReference in projectReferences)
             {
                 var attributeNameValueTuples = projectReference
@@ -1028,7 +1046,10 @@ public partial class DotNetService
                     includeAttribute.Item2,
                     IdeService.TextEditorService.CommonService.EnvironmentProvider,
                     tokenBuilder,
-                    formattedBuilder);
+                    formattedBuilder,
+                    moveUpDirectoryToken: moveUpDirectoryToken,
+                    sameDirectoryToken: sameDirectoryToken,
+                    projectAncestorDirectoryList);
 
                 var referenceProjectAbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
                     referenceProjectAbsolutePathString,
