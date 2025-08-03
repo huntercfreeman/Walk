@@ -79,50 +79,6 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
         await InvokeAsync(StateHasChanged);
     }
 
-    private Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
-    {
-        var virtualizationResult = GetVirtualizationResult();
-        if (!virtualizationResult.IsValid)
-            return Task.CompletedTask;
-    
-        if (CommonFacts.ESCAPE == keyboardEventArgs.Key)
-            return ReturnFocusToThisAsync();
-            
-        return Task.CompletedTask;
-    }
-
-    private async Task ReturnFocusToThisAsync()
-    {
-        var virtualizationResult = GetVirtualizationResult();
-        if (!virtualizationResult.IsValid)
-            return;
-            
-        try
-        {
-            TextEditorService.WorkerArbitrary.PostUnique(editContext =>
-            {
-                var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
-
-                if (viewModelModifier.PersistentState.MenuKind != MenuKind.None)
-                {
-                    TextEditorCommandDefaultFunctions.RemoveDropdown(
-                        editContext,
-                        viewModelModifier,
-                        TextEditorService.CommonService);
-                }
-
-                return ValueTask.CompletedTask;
-            });
-                
-            await virtualizationResult.ViewModel.FocusAsync();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-
     private MenuRecord GetMenuRecord()
     {
         var virtualizationResult = GetVirtualizationResult();
@@ -311,5 +267,16 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
     public void Dispose()
     {
         TextEditorService.TextEditorStateChanged -= OnTextEditorStateChanged;
+        
+        var virtualizationResult = GetVirtualizationResult();
+        if (!virtualizationResult.IsValid)
+            return;
+        
+        TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+        {
+            var viewModelModifier = editContext.GetViewModelModifier(virtualizationResult.ViewModel.PersistentState.ViewModelKey);
+            viewModelModifier.PersistentState.MenuKind = MenuKind.None;
+            return ValueTask.CompletedTask;
+        });
     }
 }
