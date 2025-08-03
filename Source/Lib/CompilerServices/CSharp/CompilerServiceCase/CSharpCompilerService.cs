@@ -614,6 +614,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 }
             }
         
+            if (autocompleteEntryList.Count == 0)
+                return new MenuRecord(MenuRecord.NoMenuOptionsExistList);
+            
             return new MenuRecord(
                 autocompleteEntryList.Select(entry =>
                 {
