@@ -1303,6 +1303,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var cSharpCompilationUnit = new CSharpCompilationUnit(CompilationUnitKind.IndividualFile_AllData);
         
         SetSourceText(resourceUri.Value, presentationModel.PendingCalculation.ContentAtRequest);
+        _textEditorService.EditContext_GetText_Clear();
         
         var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, presentationModel.PendingCalculation.ContentAtRequest, shouldUseSharedStringWalker: true);
 
