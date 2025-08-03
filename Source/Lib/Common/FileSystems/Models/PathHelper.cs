@@ -32,7 +32,10 @@ public static class PathHelper
         string relativePathString,
         IEnvironmentProvider environmentProvider,
         StringBuilder tokenBuilder,
-        StringBuilder formattedBuilder)
+        StringBuilder formattedBuilder,
+        string moveUpDirectoryToken,
+        string sameDirectoryToken,
+        List<string> ancestorDirectoryList)
     {
         // Normalize the directory separator character
         relativePathString = relativePathString.Replace(
@@ -41,7 +44,6 @@ public static class PathHelper
 
         // "../" is being called the 'moveUpDirectoryToken'
         var moveUpDirectoryCount = 0;
-        var moveUpDirectoryToken = $"..{environmentProvider.DirectorySeparatorChar}";
 
         // Count all usages of "../",
         // and each time one is found: remove it from the relativePathString.
@@ -50,9 +52,6 @@ public static class PathHelper
             moveUpDirectoryCount++;
             relativePathString = relativePathString[moveUpDirectoryToken.Length..];
         }
-
-        // "./" is being called the 'sameDirectoryToken'
-        var sameDirectoryToken = $".{environmentProvider.DirectorySeparatorChar}";
 
         if (relativePathString.StartsWith(sameDirectoryToken))
         {
@@ -73,16 +72,10 @@ public static class PathHelper
 
         if (moveUpDirectoryCount > 0)
         {
-            var sharedAncestorDirectories = absolutePath.GetAncestorDirectoryList(environmentProvider, tokenBuilder, formattedBuilder)
-                .SkipLast(moveUpDirectoryCount)
-                .ToArray();
-        
-            if (sharedAncestorDirectories.Length > 0)
+            if (moveUpDirectoryCount < ancestorDirectoryList.Count)
             {
-                var nearestSharedAncestor = sharedAncestorDirectories.Last();
-                var nearestSharedAncestorAbsolutePathString = nearestSharedAncestor;
-
-                return nearestSharedAncestorAbsolutePathString + relativePathString;
+                var nearestSharedAncestor = ancestorDirectoryList[^(1 + moveUpDirectoryCount)];
+                return nearestSharedAncestor + relativePathString;
             }
             else
             {
@@ -105,9 +98,13 @@ public static class PathHelper
             else
             {
                 if (absolutePath.ParentDirectory is null)
+                {
                     throw new NotImplementedException();
+                }
                 else
+                {
                     return absolutePath.ParentDirectory + relativePathString;
+                }
             }
         }
     }
