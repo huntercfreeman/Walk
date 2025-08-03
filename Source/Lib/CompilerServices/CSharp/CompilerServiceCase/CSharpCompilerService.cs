@@ -502,7 +502,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         var typeDefinitionNode = (TypeDefinitionNode)definitionNode;
                         typeReference = typeDefinitionNode.ToTypeReference();
                     }
-                        
+                    
                     if (typeReference != default)
                     {
                         Symbol innerFoundSymbol = default;
@@ -513,8 +513,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         {
                             if (__CSharpBinder.__CompilationUnitMap.TryGetValue(typeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
                             {
-                                // innerCompilationUnit = compilationUnitLocal;
-                                // innerResourceUri = ...;
+                                innerResourceUri = typeReference.ExplicitDefinitionResourceUri;
                                 symbols = __CSharpBinder.SymbolList.Skip(innerCompilationUnit.IndexSymbolList).Take(innerCompilationUnit.CountSymbolList).ToList();
                             }
                         }
