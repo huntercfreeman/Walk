@@ -88,14 +88,13 @@ public static class CSharpLexer
             }
         }
 
-        private char _currentCharacter;
         public char CurrentCharacter
         {
             get
             {
                 if (_peekIndex == -1)
                 {
-                    return _currentCharacter;
+                    return _currentCharBuffer[0];
                 }
                 else
                 {
@@ -121,7 +120,7 @@ public static class CSharpLexer
                     }
                     else
                     {
-                        return _currentCharacter;
+                        return _currentCharBuffer[0];
                     }
                 }
             }
@@ -284,7 +283,8 @@ public static class CSharpLexer
         var interpolatedExpressionUnmatchedBraceCount = -1;
 
         var streamReaderWrap = new StreamReaderWrap(streamReader);
-        
+        streamReaderWrap.ReadCharacter();
+
         Lex_Frame(binder, ref lexerOutput, streamReaderWrap, ref previousEscapeCharacterTextSpan, ref interpolatedExpressionUnmatchedBraceCount);
         
         var endOfFileTextSpan = new TextEditorTextSpan(
