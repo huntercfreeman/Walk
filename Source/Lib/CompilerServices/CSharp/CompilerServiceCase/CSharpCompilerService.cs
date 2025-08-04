@@ -1303,8 +1303,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         
         SetSourceText(resourceUri.Value, presentationModel.PendingCalculation.ContentAtRequest);
         _textEditorService.EditContext_GetText_Clear();
-        
-        var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, presentationModel.PendingCalculation.ContentAtRequest, shouldUseSharedStringWalker: true);
+
+        CSharpLexerOutput lexerOutput;
+
+        using (StreamReader sr = new StreamReader(resourceUri.Value))
+        {
+            lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, presentationModel.PendingCalculation.ContentAtRequest, sr, shouldUseSharedStringWalker: true);
+        }
 
         // Even if the parser throws an exception, be sure to
         // make use of the Lexer to do whatever syntax highlighting is possible.
@@ -1356,8 +1361,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var cSharpCompilationUnit = new CSharpCompilationUnit(compilationUnitKind);
         
         SetSourceText(resourceUri.Value, content);
-        
-        var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, content, shouldUseSharedStringWalker: true);
+
+        CSharpLexerOutput lexerOutput;
+
+        using (StreamReader sr = new StreamReader(resourceUri.Value))
+        {
+            lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, content, sr, shouldUseSharedStringWalker: true);
+        }
 
         __CSharpBinder.StartCompilationUnit(resourceUri);
         CSharpParser.Parse(resourceUri, ref cSharpCompilationUnit, __CSharpBinder, ref lexerOutput);
@@ -1375,8 +1385,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var cSharpCompilationUnit = new CSharpCompilationUnit(compilationUnitKind);
         
         SetSourceText(resourceUri.Value, content);
-        
-        var lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, content, shouldUseSharedStringWalker: true);
+
+        CSharpLexerOutput lexerOutput;
+
+        using (StreamReader sr = new StreamReader(resourceUri.Value))
+        {
+            lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, content, sr, shouldUseSharedStringWalker: true);
+        }
 
         __CSharpBinder.StartCompilationUnit(resourceUri);
         CSharpParser.Parse(resourceUri, ref cSharpCompilationUnit, __CSharpBinder, ref lexerOutput);

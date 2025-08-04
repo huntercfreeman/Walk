@@ -1,11 +1,6 @@
 using System.Text;
 using Walk.Common.RazorLib.FileSystems.Models;
-using Walk.TextEditor.RazorLib;
-using Walk.TextEditor.RazorLib.CompilerServices;
-using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.TextEditor.RazorLib.Decorations.Models;
-using Walk.Extensions.CompilerServices;
-using Walk.Extensions.CompilerServices.Syntax;
+using Walk.CompilerServices.CSharp.BinderCase;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.CompilerServices.CSharp.LexerCase;
 using Walk.CompilerServices.CSharp.ParserCase;
@@ -17,6 +12,12 @@ using Walk.CompilerServices.Xml.Html.Facts;
 using Walk.CompilerServices.Xml.Html.InjectedLanguage;
 using Walk.CompilerServices.Xml.Html.SyntaxActors;
 using Walk.CompilerServices.Xml.Html.SyntaxObjects;
+using Walk.Extensions.CompilerServices;
+using Walk.Extensions.CompilerServices.Syntax;
+using Walk.TextEditor.RazorLib;
+using Walk.TextEditor.RazorLib.CompilerServices;
+using Walk.TextEditor.RazorLib.Decorations.Models;
+using Walk.TextEditor.RazorLib.Lexers.Models;
 
 namespace Walk.CompilerServices.Razor;
 
@@ -106,8 +107,13 @@ public class RazorSyntaxTree
 
         var compilationUnit = new CSharpCompilationUnit(CompilationUnitKind.IndividualFile_AllData);
         _cSharpCompilerService.SetSourceText(_codebehindResourceUri.Value, classContents);
-            
-        var lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, _codebehindResourceUri, classContents, shouldUseSharedStringWalker: true);
+
+        CSharpLexerOutput lexerOutput;
+
+        using (StreamReader sr = new StreamReader(_codebehindResourceUri.Value))
+        {
+            lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, _codebehindResourceUri, classContents, sr, shouldUseSharedStringWalker: true);
+        }
         
         _cSharpCompilerService.__CSharpBinder.StartCompilationUnit(_codebehindResourceUri);
         
@@ -1332,7 +1338,12 @@ public class RazorSyntaxTree
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
 
-        var lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, ResourceUri.Empty, cSharpText, shouldUseSharedStringWalker: true);
+        CSharpLexerOutput lexerOutput;
+
+        using (StreamReader sr = new StreamReader(_codebehindResourceUri.Value))
+        {
+            lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, ResourceUri.Empty, cSharpText, sr, shouldUseSharedStringWalker: true);
+        }
 
         foreach (var lexedTokenTextSpan in lexerOutput.SyntaxTokenList.Select(x => x.TextSpan).Union(lexerOutput.MiscTextSpanList))
         {

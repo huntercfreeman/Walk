@@ -10,7 +10,7 @@ public static class CSharpLexer
     /// <summary>
     /// Initialize the CSharpLexerOutput here, then start the while loop with 'Lex_Frame(...)'.
     /// </summary>
-    public static CSharpLexerOutput Lex(CSharpBinder binder, ResourceUri resourceUri, string sourceText, bool shouldUseSharedStringWalker)
+    public static CSharpLexerOutput Lex(CSharpBinder binder, ResourceUri resourceUri, string sourceText, StreamReader streamReader, bool shouldUseSharedStringWalker)
     {
         var lexerOutput = new CSharpLexerOutput(sourceText);
         StringWalker stringWalker;
