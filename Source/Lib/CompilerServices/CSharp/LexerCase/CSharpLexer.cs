@@ -26,6 +26,8 @@ public static class CSharpLexer
         private int _peekIndex = -1;
         private int _peekSize = -1;
 
+        private (char Character, int PositionIndex, int ByteIndex) _backtrackTuple;
+
         public StreamReader StreamReader { get; }
 
         private int _positionIndex;
@@ -129,7 +131,7 @@ public static class CSharpLexer
         {
             if (_peekIndex != -1)
             {
-                var character = _peekBuffer[_peekIndex].Character;
+                _backtrackTuple = _peekBuffer[_peekIndex];
 
                 if (_peekIndex < _peekSize)
                 {
@@ -142,12 +144,16 @@ public static class CSharpLexer
                     _peekSize = -1;
                 }
 
-                return character;
+                _currentCharBuffer[0] = _backtrackTuple.Character;
+
+                return _currentCharBuffer[0];
             }
             else
             {
                 if (StreamReader.EndOfStream)
                     return ParserFacts.END_OF_FILE;
+
+                _backtrackTuple = (_currentCharBuffer[0], PositionIndex, ByteIndex);
 
                 // This is duplicated inside the Peek(int) code.
                 StreamReader.Read(_currentCharBuffer);
@@ -204,35 +210,53 @@ public static class CSharpLexer
                 throw new NotImplementedException();
             }
 
-            _peekIndex = 0;
-
             for (int i = 0; i < offset; i++)
             {
-                var current = ;
+                // TODO: Peek() before any Read()
+                _peekBuffer[i] = (_currentCharBuffer[0], PositionIndex, ByteIndex);
+                _peekIndex++;
+                _peekSize++;
 
                 // This is duplicated inside the ReadCharacter() code.
                 StreamReader.Read(_currentCharBuffer);
                 PositionIndex++;
                 ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_currentCharBuffer);
-
-                StreamReader.Read(_currentCharBuffer);
-
-                _peekBuffer[i] = _currentCharBuffer[0];
             }
-            StreamReader.Peek();
-            StreamReader.Peek();
-            if (PositionIndex + offset >= SourceText.Length)
-                return ParserFacts.END_OF_FILE;
 
-            return SourceText[PositionIndex + offset];
+            // TODO: Peek EOF
+            // TODO: Peek overlap EOF
+            return _currentCharBuffer[0];
         }
 
+        /// <summary>
+        /// Backtrack is somewhat a sub-case of Peek(int)
+        /// </summary>
         public void BacktrackCharacterNoReturnValue()
         {
+            if (_peekIndex != -1)
+            {
+                // This means a Peek() was performed,
+                // then before the PeekBuffer was fully traversed
+                // another peek occurred.
+                //
+                // I'm hoping that this case just doesn't occur in the Lexer at the moment
+                // because I'm quite tired.
+                throw new NotImplementedException();
+            }
+
             if (PositionIndex == 0)
                 return;
 
-            PositionIndex--;
+            // This code is a repeat of the Peek() method's for loop but for one iteration
+
+            _peekBuffer[0] = _backtrackTuple;
+            _peekIndex++;
+            _peekSize++;
+
+            // This is duplicated inside the ReadCharacter() code.
+            StreamReader.Read(_currentCharBuffer);
+            PositionIndex++;
+            ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_currentCharBuffer);
         }
 
         public void SkipRange(int length)
