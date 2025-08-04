@@ -36,12 +36,13 @@ public abstract class TreeViewNoType
 
     public virtual string GetDisplayText() => this.GetType().Name;
     /// <summary>
-    /// You have to hardcode `di_tree-view-title-content` as the first "class entry" in the string.
-    /// This is annoying, but I have other things I'm triaging at higher priority and this will avoid
-    /// string concatenation for the short term.
+    /// Make sure to return null if you don't use this, in order to avoid the 'class' attribute for no reason.
     /// </summary>
-    public virtual string GetDisplayTextCssClass() => "di_tree-view-title-content";
-    public virtual string GetHoverText() => GetDisplayText();
+    public virtual string? GetDisplayTextCssClass() => null;
+    /// <summary>
+    /// Make sure to return null if you don't use this, in order to avoid the 'class' attribute for no reason.
+    /// </summary>
+    public virtual string? GetHoverText() => null;
     public virtual Microsoft.AspNetCore.Components.RenderFragment<IconDriver> GetIcon => IconNoneFragment.Render;
     
     public abstract Task LoadChildListAsync();

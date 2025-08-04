@@ -25,10 +25,11 @@
     
         var list = GetFlatNodes();
         IndexActiveNode = 0;
+        string? cssClass;
+
         for (int i = 0; i < list.Count; i++)
         {
             var node = list[i];
-            string cssClass;
         
             if ((_treeViewContainer.ActiveNode?.Key ?? Key<TreeViewNoType>.Empty) == node.Key)
             {
@@ -55,7 +56,6 @@
                             @IconChevronRightFragment.Render(iconDriver)
                         }
                     </span>
-                    
                 }
                 else
                 {
@@ -63,12 +63,12 @@
                         @IconBlankFragment.Render(iconDriver)
                     </span>
                 }
-                
+
                 @node.GetIcon(iconDriver)
-                
-                <span style="margin-left: 3px;" class="@node.GetDisplayTextCssClass()" title="@node.GetHoverText()">
+
+                <div class="@node.GetDisplayTextCssClass()" title="@node.GetHoverText()">
                     @node.GetDisplayText()
-                </span>
+                </div>
             </div>
         }
     }
