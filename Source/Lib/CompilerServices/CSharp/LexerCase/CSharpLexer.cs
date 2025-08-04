@@ -16,29 +16,211 @@ public static class CSharpLexer
             StreamReader = streamReader;
         }
 
-        public StreamReader StreamReader { get; }
+        private char[] _currentCharBuffer = new char[1];
+
         /// <summary>
-        /// Character based
+        /// I'm pretty sure the PositionIndex is '_positionIndex - PeekSize;'
+        /// But I'm adding it here cause I'm tired and don't want to end up in a possible rabbit hole over this right now.
         /// </summary>
-        public int PositionIndex { get; set; }
-        public int ByteIndex { get; set; }
-        public bool IsEof { get; set; }
-        public char CurrentCharacter { get; set; }
-        public char NextCharacter { get; set; }
+        private (char Character, int PositionIndex, int ByteIndex)[] _peekBuffer = new (char Character, int PositionIndex, int ByteIndex)[3]; // largest Peek is 2
+        private int _peekIndex = -1;
+        private int _peekSize = -1;
+
+        public StreamReader StreamReader { get; }
+
+        private int _positionIndex;
+        public int PositionIndex
+        {
+            get
+            {
+                if (_peekIndex == -1)
+                {
+                    return _positionIndex;
+                }
+                else
+                {
+                    return _peekBuffer[_peekIndex].PositionIndex;
+                }
+            }
+            set
+            {
+                _positionIndex = value;
+            }
+        }
+
+        private int _byteIndex;
+        public int ByteIndex
+        {
+            get
+            {
+                if (_peekIndex == -1)
+                {
+                    return _byteIndex;
+                }
+                else
+                {
+                    return _peekBuffer[_peekIndex].ByteIndex;
+                }
+            }
+            set
+            {
+                _byteIndex = value;
+            }
+        }
+
+        public bool IsEof
+        {
+            get
+            {
+                if (_peekIndex == -1)
+                {
+                    return StreamReader.EndOfStream;
+                }
+                else
+                {
+                    // peak immediate end of stream bad
+                    // peak overlap end of stream bad
+
+                    return false;
+                }
+            }
+        }
+
+        private char _currentCharacter;
+        public char CurrentCharacter
+        {
+            get
+            {
+                if (_peekIndex == -1)
+                {
+                    return _currentCharacter;
+                }
+                else
+                {
+                    return _peekBuffer[_peekIndex].Character;
+                }
+            }
+        }
+
+        private char _nextCharacter;
+        public char NextCharacter
+        {
+            get
+            {
+                if (_peekIndex == -1)
+                {
+                    return _nextCharacter;
+                }
+                else
+                {
+                    if (_peekIndex + 1 < _peekSize)
+                    {
+                        return _peekBuffer[_peekIndex + 1].Character;
+                    }
+                    else
+                    {
+                        return _currentCharacter;
+                    }
+                }
+            }
+        }
 
         public char ReadCharacter()
         {
-            if (PositionIndex >= SourceText.Length)
-                return ParserFacts.END_OF_FILE;
+            if (_peekIndex != -1)
+            {
+                var character = _peekBuffer[_peekIndex].Character;
 
-            return SourceText[PositionIndex++];
+                if (_peekIndex < _peekSize)
+                {
+                    _peekIndex++;
+                    _peekSize--;
+                }
+                else
+                {
+                    _peekIndex = -1;
+                    _peekSize = -1;
+                }
+
+                return character;
+            }
+            else
+            {
+                if (StreamReader.EndOfStream)
+                    return ParserFacts.END_OF_FILE;
+
+                // This is duplicated inside the Peek(int) code.
+                StreamReader.Read(_currentCharBuffer);
+                PositionIndex++;
+                ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_currentCharBuffer);
+
+                return _currentCharBuffer[0];
+            }
+
+            // Forget backtracking for now
         }
 
         public char PeekCharacter(int offset)
         {
+            // Peek(1)
+            // -------
+            //
+            // 
+            // The '=' represents the StreamReader
+            // The '+' represents the "peek buffer position".
+            //
+            //
+            // Before state
+            // ------------
+            // Abcd
+            //  =
+            //
+            //
+            // After state
+            // -----------
+            // Abcd
+            //  +=
+            //
+            // 
+            // The _peekCount = 1
+            // The _peekIndex is _peekCount - 1
+            //
+            // 
+
+
             if (offset <= -1)
                 throw new WalkTextEditorException($"{nameof(offset)} must be > -1");
+            if (offset == 0)
+                return _currentCharBuffer[0];
 
+            if (_peekIndex != -1)
+            {
+                // This means a Peek() was performed,
+                // then before the PeekBuffer was fully traversed
+                // another peek occurred.
+                //
+                // I'm hoping that this case just doesn't occur in the Lexer at the moment
+                // because I'm quite tired.
+                throw new NotImplementedException();
+            }
+
+            _peekIndex = 0;
+
+            for (int i = 0; i < offset; i++)
+            {
+                var current = ;
+
+                // This is duplicated inside the ReadCharacter() code.
+                StreamReader.Read(_currentCharBuffer);
+                PositionIndex++;
+                ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_currentCharBuffer);
+
+                StreamReader.Read(_currentCharBuffer);
+
+                _peekBuffer[i] = _currentCharBuffer[0];
+            }
+            StreamReader.Peek();
+            StreamReader.Peek();
             if (PositionIndex + offset >= SourceText.Length)
                 return ParserFacts.END_OF_FILE;
 
