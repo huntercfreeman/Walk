@@ -16,7 +16,7 @@ public static class CSharpLexer
             StreamReader = streamReader;
         }
 
-        private char[] _currentCharBuffer = new char[1];
+        private char[] _streamReaderCharBuffer = new char[1];
 
         /// <summary>
         /// I'm pretty sure the PositionIndex is '_positionIndex - PeekSize;'
@@ -94,7 +94,7 @@ public static class CSharpLexer
             {
                 if (_peekIndex == -1)
                 {
-                    return _currentCharBuffer[0];
+                    return _streamReaderCharBuffer[0];
                 }
                 else
                 {
@@ -103,14 +103,13 @@ public static class CSharpLexer
             }
         }
 
-        private char _nextCharacter;
         public char NextCharacter
         {
             get
             {
                 if (_peekIndex == -1)
                 {
-                    return _nextCharacter;
+                    return PeekCharacter(1);
                 }
                 else
                 {
@@ -120,7 +119,7 @@ public static class CSharpLexer
                     }
                     else
                     {
-                        return _currentCharBuffer[0];
+                        return _streamReaderCharBuffer[0];
                     }
                 }
             }
@@ -142,27 +141,21 @@ public static class CSharpLexer
                     _peekIndex = -1;
                     _peekSize = -1;
                 }
-
-                _currentCharBuffer[0] = _backtrackTuple.Character;
-
-                return _currentCharBuffer[0];
             }
             else
             {
                 if (StreamReader.EndOfStream)
                     return ParserFacts.END_OF_FILE;
 
-                _backtrackTuple = (_currentCharBuffer[0], PositionIndex, ByteIndex);
+                _backtrackTuple = (_streamReaderCharBuffer[0], PositionIndex, ByteIndex);
 
                 // This is duplicated inside the Peek(int) code.
-                StreamReader.Read(_currentCharBuffer);
+                StreamReader.Read(_streamReaderCharBuffer, 0, 1);
                 PositionIndex++;
-                ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_currentCharBuffer);
-
-                return _currentCharBuffer[0];
+                ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
             }
 
-            // Forget backtracking for now
+            return CurrentCharacter;
         }
 
         public char PeekCharacter(int offset)
@@ -196,7 +189,7 @@ public static class CSharpLexer
             if (offset <= -1)
                 throw new WalkTextEditorException($"{nameof(offset)} must be > -1");
             if (offset == 0)
-                return _currentCharBuffer[0];
+                return _streamReaderCharBuffer[0];
 
             if (_peekIndex != -1)
             {
@@ -232,19 +225,19 @@ public static class CSharpLexer
             for (int i = 0; i < offset; i++)
             {
                 // TODO: Peek() before any Read()
-                _peekBuffer[i] = (_currentCharBuffer[0], PositionIndex, ByteIndex);
+                _peekBuffer[i] = (_streamReaderCharBuffer[0], PositionIndex, ByteIndex);
                 _peekIndex++;
                 _peekSize++;
 
                 // This is duplicated inside the ReadCharacter() code.
-                StreamReader.Read(_currentCharBuffer);
+                StreamReader.Read(_streamReaderCharBuffer);
                 PositionIndex++;
-                ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_currentCharBuffer);
+                ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
             }
 
             // TODO: Peek EOF
             // TODO: Peek overlap EOF
-            return _currentCharBuffer[0];
+            return _streamReaderCharBuffer[0];
         }
 
         /// <summary>
@@ -273,9 +266,9 @@ public static class CSharpLexer
             _peekSize++;
 
             // This is duplicated inside the ReadCharacter() code.
-            StreamReader.Read(_currentCharBuffer);
+            StreamReader.Read(_streamReaderCharBuffer);
             PositionIndex++;
-            ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_currentCharBuffer);
+            ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
         }
 
         public void SkipRange(int length)
