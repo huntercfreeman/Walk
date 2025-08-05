@@ -25,12 +25,16 @@ public static class CSharpLexer
         /// </summary>
         private (char Character, int PositionIndex, int ByteIndex)[] _peekBuffer = new (char Character, int PositionIndex, int ByteIndex)[3]; // largest Peek is 2
         private int _peekIndex = -1;
-        private int _peekSize = -1;
+        private int _peekSize = 0;
         
         private (char Character, int PositionIndex, int ByteIndex) _backtrackTuple;
 
         public StreamReader StreamReader { get; }
 
+        /// <summary>
+        /// The count is unreliable (on accurate when the most recent ReadCharacter() came from the StreamReader.
+        /// The main purpose is to check if it is non-zero to indicate you are NOT at the end of the file.
+        /// </summary>
         public int LastReadCharacterCount { get; set; }
 
         private int _positionIndex;
@@ -132,17 +136,12 @@ public static class CSharpLexer
         {
             if (_peekIndex != -1)
             {
-                _backtrackTuple = _peekBuffer[_peekIndex];
+                _backtrackTuple = _peekBuffer[_peekIndex++];
 
-                if (_peekIndex < _peekSize)
-                {
-                    _peekIndex++;
-                    _peekSize--;
-                }
-                else
+                if (_peekIndex >= _peekSize)
                 {
                     _peekIndex = -1;
-                    _peekSize = -1;
+                    _peekSize = 0;
                 }
 
                 LastReadCharacterCount = 1;
@@ -152,13 +151,12 @@ public static class CSharpLexer
                 if (StreamReader.EndOfStream)
                     return ParserFacts.END_OF_FILE;
 
-                // This is duplicated inside the Peek(int) code.
+                // This is duplicated more than once inside the Peek(int) code.
 
                 _backtrackTuple = (_streamReaderCharBuffer[0], PositionIndex, ByteIndex);
 
                 PositionIndex++;
                 ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
-
 
                 LastReadCharacterCount = StreamReader.Read(_streamReaderCharBuffer, 0, 1);
             }
@@ -219,12 +217,36 @@ public static class CSharpLexer
                 {
                     throw new NotImplementedException();
                 }
-                else if (_peekIndex + offset == _peekSize + 1)
+                // This 'else if' is probably wrong.
+                else if (_peekIndex + offset == _peekSize)
                 {
                     return _streamReaderCharBuffer[0];
                 }
                 else
                 {
+                    if (_peekIndex == 0)
+                    {
+                        // Note: this says '<' NOT '<=' (which is probably what people would expect)...
+                        // ...I'm tired and worried so I'm just moving extremely one by one.
+                        // I know the less than works, maybe the less than equal to works.
+                        // I mean it probably should work but I have a somewhat empty fuel tank right now.
+                        if (_peekSize < _peekBuffer.Length)
+                        {
+                            if (_peekSize == 1 && offset == 2)
+                            {
+                                _peekBuffer[_peekSize] = (_streamReaderCharBuffer[0], PositionIndex, ByteIndex);
+                                _peekSize++;
+
+                                // This is duplicated inside the ReadCharacter() code.
+
+                                PositionIndex++;
+                                ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
+                                StreamReader.Read(_streamReaderCharBuffer);
+                                return _streamReaderCharBuffer[0];
+                            }
+                        }
+                    }
+
                     throw new NotImplementedException();
                 }
             }
