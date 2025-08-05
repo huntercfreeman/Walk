@@ -206,7 +206,27 @@ public static class CSharpLexer
                 //
                 // I'm hoping that this case just doesn't occur in the Lexer at the moment
                 // because I'm quite tired.
-                throw new NotImplementedException();
+
+                // Followup: this did happen
+                // so I'm splitting by cases
+                //
+                // - Second Peek(int) is within PeekSize
+                // - Second Peek(int) is currentCharacter
+                // - ...
+
+                if (_peekIndex + offset < _peekSize)
+                {
+                    throw new NotImplementedException();
+                }
+                else if (_peekIndex + offset == _peekSize + 1)
+                {
+                    // This won't work because Peek overwrote
+                    throw new NotImplementedException();
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
             }
 
             for (int i = 0; i < offset; i++)
