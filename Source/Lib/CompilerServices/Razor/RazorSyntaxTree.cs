@@ -112,7 +112,7 @@ public class RazorSyntaxTree
 
         using (StreamReader sr = new StreamReader(_codebehindResourceUri.Value))
         {
-            lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, _codebehindResourceUri, classContents, sr, shouldUseSharedStringWalker: true);
+            lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, classContents, sr, shouldUseSharedStringWalker: true);
         }
         
         _cSharpCompilerService.__CSharpBinder.StartCompilationUnit(_codebehindResourceUri);
@@ -1342,7 +1342,7 @@ public class RazorSyntaxTree
 
         using (StreamReader sr = new StreamReader(_codebehindResourceUri.Value))
         {
-            lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, ResourceUri.Empty, cSharpText, sr, shouldUseSharedStringWalker: true);
+            lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, cSharpText, sr, shouldUseSharedStringWalker: true);
         }
 
         foreach (var lexedTokenTextSpan in lexerOutput.SyntaxTokenList.Select(x => x.TextSpan).Union(lexerOutput.MiscTextSpanList))

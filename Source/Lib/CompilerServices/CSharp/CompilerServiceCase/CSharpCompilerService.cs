@@ -1308,7 +1308,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         using (StreamReader sr = new StreamReader(resourceUri.Value))
         {
-            lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, presentationModel.PendingCalculation.ContentAtRequest, sr, shouldUseSharedStringWalker: true);
+            lexerOutput = CSharpLexer.Lex(__CSharpBinder, presentationModel.PendingCalculation.ContentAtRequest, sr, shouldUseSharedStringWalker: true);
         }
 
         // Even if the parser throws an exception, be sure to
@@ -1366,7 +1366,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         using (StreamReader sr = new StreamReader(resourceUri.Value))
         {
-            lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, content, sr, shouldUseSharedStringWalker: true);
+            lexerOutput = CSharpLexer.Lex(__CSharpBinder, content, sr, shouldUseSharedStringWalker: true);
         }
 
         __CSharpBinder.StartCompilationUnit(resourceUri);
@@ -1390,7 +1390,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         using (StreamReader sr = new StreamReader(resourceUri.Value))
         {
-            lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, content, sr, shouldUseSharedStringWalker: true);
+            lexerOutput = CSharpLexer.Lex(__CSharpBinder, content, sr, shouldUseSharedStringWalker: true);
         }
 
         __CSharpBinder.StartCompilationUnit(resourceUri);
