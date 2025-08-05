@@ -21,7 +21,7 @@ public record struct TextEditorTextSpan(
     public int Length => EndExclusiveIndex - StartInclusiveIndex;
     public bool ConstructorWasInvoked => this != default;
 
-    private int ByteIndex { get; init; }
+    public int ByteIndex { get; init; }
 
     public string? GetText(string sourceText, TextEditorService? textEditorService)
     {

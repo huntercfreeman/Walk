@@ -30,8 +30,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     // <summary>Public because the RazorCompilerService uses it.</summary>
     public readonly CSharpBinder __CSharpBinder;
     
-    private readonly Dictionary<string, string> _absolutePathStringToSourceTextMap = new();
-    
     // Service dependencies
     private readonly TextEditorService _textEditorService;
     
@@ -46,10 +44,19 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var primitiveKeywordsTextFile = new CSharpCompilationUnit(CompilationUnitKind.IndividualFile_AllData);
         
         __CSharpBinder.UpsertCompilationUnit(new ResourceUri(string.Empty), primitiveKeywordsTextFile);
-        
-        // Internally will add EmptyFileHackForLanguagePrimitiveText to the cache.
-        ClearSourceTextMap();
     }
+
+    private readonly StringBuilder _getTextStringBuilder = new();
+    private readonly char[] _getTextBuffer = new char[1];
+
+    /// <summary>
+    /// The currently being parsed file should reflect the TextEditorModel NOT the file system.
+    /// Furthermore, long term, all files should reflect their TextEditorModel IF it exists.
+    /// 
+    /// This is a bit of misnomer because the solution wide parse doesn't set this.
+    /// It is specifically a TextEditor based event having led to a parse that sets this.
+    /// </summary>
+    private (string AbsolutePathString, string Content) _currentFileBeingParsedTuple;
 
     public event Action? ResourceRegistered;
     public event Action? ResourceParsed;
@@ -103,39 +110,41 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         return contextMenu.GetDefaultMenuRecord();
     }
     
-    public string GetSourceText(string absolutePathString)
-    {
-        if (_absolutePathStringToSourceTextMap.TryGetValue(absolutePathString, out var sourceText))
-        {
-            return sourceText;
-        }
-        else
-        {
-            sourceText = _textEditorService.CommonService.FileSystemProvider.File.ReadAllText(absolutePathString);
-            _absolutePathStringToSourceTextMap.Add(absolutePathString, sourceText);
-            return sourceText;
-        }
-    }
-    
     /// <summary>
-    /// This is not currently thread safe since UI events like a tooltip can trigger GetSourceText(...) outside of the TextEditorEditContext.
+    /// This is not thread safe due to the tooltips and various other UI events
+    /// not invoking this from the "TextEditorEditContext".
     /// </summary>
-    public void SetSourceText(string absolutePathString, string sourceText)
+    public string? GetText(string absolutePathString, TextEditorTextSpan textSpan)
     {
-        if (_absolutePathStringToSourceTextMap.ContainsKey(absolutePathString))
+        if (absolutePathString == string.Empty)
         {
-            _absolutePathStringToSourceTextMap[absolutePathString] = sourceText;
+            return textSpan.GetText(EmptyFileHackForLanguagePrimitiveText, _textEditorService);
+        }
+        else if (absolutePathString == _currentFileBeingParsedTuple.AbsolutePathString)
+        {
+            return textSpan.GetText(_currentFileBeingParsedTuple.Content, _textEditorService);
         }
         else
         {
-            _absolutePathStringToSourceTextMap.Add(absolutePathString, sourceText);
+            using (StreamReader sr = new StreamReader(absolutePathString))
+            {
+                // I presume this is needed so the StreamReader can get the encoding.
+                sr.Read(); 
+
+                // TODO: What happens if I split a multibyte word?
+                sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+
+                _getTextStringBuilder.Clear();
+
+                for (int i = 0; i < textSpan.Length; i++)
+                {
+                    sr.Read(_getTextBuffer, 0, 1);
+                    _getTextStringBuilder.Append(_getTextBuffer[0]);
+                }
+
+                return _getTextStringBuilder.ToString();
+            }
         }
-    }
-    
-    public void ClearSourceTextMap()
-    {
-        _absolutePathStringToSourceTextMap.Clear();
-        _absolutePathStringToSourceTextMap.Add(string.Empty, EmptyFileHackForLanguagePrimitiveText);
     }
     
     private MenuRecord? GetAutocompleteMenuPart(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu, int positionIndex)
@@ -1297,15 +1306,23 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             x => x.TextEditorPresentationKey == TextEditorFacts.CompilerServiceDiagnosticPresentation_PresentationKey);
         
         var cSharpCompilationUnit = new CSharpCompilationUnit(CompilationUnitKind.IndividualFile_AllData);
-        
-        SetSourceText(resourceUri.Value, presentationModel.PendingCalculation.ContentAtRequest);
+
+        _currentFileBeingParsedTuple = (resourceUri.Value, presentationModel.PendingCalculation.ContentAtRequest);
         _textEditorService.EditContext_GetText_Clear();
 
         CSharpLexerOutput lexerOutput;
 
-        using (StreamReader sr = new StreamReader(resourceUri.Value))
+        // Convert the string to a byte array using a specific encoding
+        byte[] byteArray = Encoding.UTF8.GetBytes(presentationModel.PendingCalculation.ContentAtRequest);
+
+        // Create a MemoryStream from the byte array
+        using (MemoryStream memoryStream = new MemoryStream(byteArray))
         {
-            lexerOutput = CSharpLexer.Lex(__CSharpBinder, presentationModel.PendingCalculation.ContentAtRequest, sr, shouldUseSharedStringWalker: true);
+            // Create a StreamReader from the MemoryStream
+            using (StreamReader reader = new StreamReader(memoryStream))
+            {
+                lexerOutput = CSharpLexer.Lex(__CSharpBinder, reader, shouldUseSharedStringWalker: true);
+            }
         }
 
         // Even if the parser throws an exception, be sure to
@@ -1336,8 +1353,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         .Concat(__CSharpBinder.SymbolList.Skip(cSharpCompilationUnit.IndexSymbolList).Take(cSharpCompilationUnit.CountSymbolList).Select(x => x.TextSpan)));
             }
 
-            ClearSourceTextMap();
-            
             ResourceParsed?.Invoke();
         }
         
@@ -1356,20 +1371,16 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             return;
 
         var cSharpCompilationUnit = new CSharpCompilationUnit(compilationUnitKind);
-        
-        SetSourceText(resourceUri.Value, content);
 
         CSharpLexerOutput lexerOutput;
 
         using (StreamReader sr = new StreamReader(resourceUri.Value))
         {
-            lexerOutput = CSharpLexer.Lex(__CSharpBinder, content, sr, shouldUseSharedStringWalker: true);
+            lexerOutput = CSharpLexer.Lex(__CSharpBinder, sr, shouldUseSharedStringWalker: true);
         }
 
         __CSharpBinder.StartCompilationUnit(resourceUri);
         CSharpParser.Parse(resourceUri, ref cSharpCompilationUnit, __CSharpBinder, ref lexerOutput);
-        
-        ClearSourceTextMap();
     }
     
     public void FastParse(TextEditorEditContext editContext, ResourceUri resourceUri, IFileSystemProvider fileSystemProvider, CompilationUnitKind compilationUnitKind)
@@ -1380,20 +1391,16 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         var content = fileSystemProvider.File.ReadAllText(resourceUri.Value);
 
         var cSharpCompilationUnit = new CSharpCompilationUnit(compilationUnitKind);
-        
-        SetSourceText(resourceUri.Value, content);
 
         CSharpLexerOutput lexerOutput;
 
         using (StreamReader sr = new StreamReader(resourceUri.Value))
         {
-            lexerOutput = CSharpLexer.Lex(__CSharpBinder, content, sr, shouldUseSharedStringWalker: true);
+            lexerOutput = CSharpLexer.Lex(__CSharpBinder, sr, shouldUseSharedStringWalker: true);
         }
 
         __CSharpBinder.StartCompilationUnit(resourceUri);
         CSharpParser.Parse(resourceUri, ref cSharpCompilationUnit, __CSharpBinder, ref lexerOutput);
-        
-        ClearSourceTextMap();
     }
     
     /// <summary>

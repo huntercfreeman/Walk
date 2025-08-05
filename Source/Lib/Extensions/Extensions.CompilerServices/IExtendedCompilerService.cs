@@ -7,7 +7,7 @@ namespace Walk.Extensions.CompilerServices;
 
 public interface IExtendedCompilerService : ICompilerService
 {
-    public string GetSourceText(string absolutePath);
+    public string? GetText(string absolutePath, TextEditorTextSpan textSpan);
 
     public IReadOnlyList<Walk.Extensions.CompilerServices.Syntax.Nodes.GenericParameterEntry> GenericParameterEntryList { get; }
     public IReadOnlyList<Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionParameterEntry> FunctionParameterEntryList { get; }
