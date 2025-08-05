@@ -30,9 +30,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     // <summary>Public because the RazorCompilerService uses it.</summary>
     public readonly CSharpBinder __CSharpBinder;
     
-    private readonly object _resourceMapLock = new();
-    private readonly StringBuilder _getAutocompleteMenuStringBuilder = new();
-    
     private readonly Dictionary<string, string> _absolutePathStringToSourceTextMap = new();
     
     // Service dependencies
@@ -53,6 +50,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         // Internally will add EmptyFileHackForLanguagePrimitiveText to the cache.
         ClearSourceTextMap();
     }
+
+    //
 
     public event Action? ResourceRegistered;
     public event Action? ResourceParsed;
