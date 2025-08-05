@@ -14,6 +14,7 @@ public static class CSharpLexer
         public StreamReaderWrap(StreamReader streamReader)
         {
             StreamReader = streamReader;
+            StreamReader.Read(_streamReaderCharBuffer);
         }
 
         private char[] _streamReaderCharBuffer = new char[1];
@@ -25,10 +26,12 @@ public static class CSharpLexer
         private (char Character, int PositionIndex, int ByteIndex)[] _peekBuffer = new (char Character, int PositionIndex, int ByteIndex)[3]; // largest Peek is 2
         private int _peekIndex = -1;
         private int _peekSize = -1;
-
+        
         private (char Character, int PositionIndex, int ByteIndex) _backtrackTuple;
 
         public StreamReader StreamReader { get; }
+
+        public int LastReadCharacterCount { get; set; }
 
         private int _positionIndex;
         public int PositionIndex
@@ -141,20 +144,25 @@ public static class CSharpLexer
                     _peekIndex = -1;
                     _peekSize = -1;
                 }
+
+                LastReadCharacterCount = 1;
             }
             else
             {
                 if (StreamReader.EndOfStream)
                     return ParserFacts.END_OF_FILE;
 
+                // This is duplicated inside the Peek(int) code.
+
                 _backtrackTuple = (_streamReaderCharBuffer[0], PositionIndex, ByteIndex);
 
-                // This is duplicated inside the Peek(int) code.
-                StreamReader.Read(_streamReaderCharBuffer, 0, 1);
                 PositionIndex++;
                 ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
-            }
 
+
+                LastReadCharacterCount = StreamReader.Read(_streamReaderCharBuffer, 0, 1);
+            }
+            
             return CurrentCharacter;
         }
 
@@ -213,8 +221,7 @@ public static class CSharpLexer
                 }
                 else if (_peekIndex + offset == _peekSize + 1)
                 {
-                    // This won't work because Peek overwrote
-                    throw new NotImplementedException();
+                    return _streamReaderCharBuffer[0];
                 }
                 else
                 {
@@ -225,14 +232,16 @@ public static class CSharpLexer
             for (int i = 0; i < offset; i++)
             {
                 // TODO: Peek() before any Read()
+
                 _peekBuffer[i] = (_streamReaderCharBuffer[0], PositionIndex, ByteIndex);
                 _peekIndex++;
                 _peekSize++;
 
                 // This is duplicated inside the ReadCharacter() code.
-                StreamReader.Read(_streamReaderCharBuffer);
+
                 PositionIndex++;
                 ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
+                StreamReader.Read(_streamReaderCharBuffer);
             }
 
             // TODO: Peek EOF
@@ -265,10 +274,12 @@ public static class CSharpLexer
             _peekIndex++;
             _peekSize++;
 
+            /*
             // This is duplicated inside the ReadCharacter() code.
             StreamReader.Read(_streamReaderCharBuffer);
             PositionIndex++;
             ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
+            */
         }
 
         public void SkipRange(int length)
@@ -296,7 +307,6 @@ public static class CSharpLexer
         var interpolatedExpressionUnmatchedBraceCount = -1;
 
         var streamReaderWrap = new StreamReaderWrap(streamReader);
-        streamReaderWrap.ReadCharacter();
 
         Lex_Frame(binder, ref lexerOutput, streamReaderWrap, ref previousEscapeCharacterTextSpan, ref interpolatedExpressionUnmatchedBraceCount);
         
