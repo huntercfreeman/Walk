@@ -51,8 +51,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         ClearSourceTextMap();
     }
 
-    //
-
     public event Action? ResourceRegistered;
     public event Action? ResourceParsed;
     public event Action? ResourceDisposed;

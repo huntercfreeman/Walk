@@ -445,7 +445,7 @@ public static class CSharpLexer
                     {
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DivisionToken, textSpan));
                     }
                     break;
@@ -455,14 +455,14 @@ public static class CSharpLexer
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PlusPlusToken, textSpan));
                     }
                     else
                     {
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PlusToken, textSpan));
                     }
                     break;
@@ -472,14 +472,14 @@ public static class CSharpLexer
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.MinusMinusToken, textSpan));
                     }
                     else
                     {
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.MinusToken, textSpan));
                     }
                     break;
@@ -489,7 +489,7 @@ public static class CSharpLexer
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EqualsEqualsToken, textSpan));
                     }
                     else if (streamReaderWrap.PeekCharacter(1) == '>')
@@ -497,14 +497,14 @@ public static class CSharpLexer
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EqualsCloseAngleBracketToken, textSpan));
                     }
                     else
                     {
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EqualsToken, textSpan));
                     }
                     break;
@@ -514,14 +514,14 @@ public static class CSharpLexer
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.QuestionMarkQuestionMarkToken, textSpan));
                     }
                     else
                     {
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.QuestionMarkToken, textSpan));
                     }
                     break;
@@ -531,14 +531,14 @@ public static class CSharpLexer
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PipePipeToken, textSpan));
                     }
                     else
                     {
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PipeToken, textSpan));
                     }
                     break;
@@ -548,14 +548,14 @@ public static class CSharpLexer
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AmpersandAmpersandToken, textSpan));
                     }
                     else
                     {
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AmpersandToken, textSpan));
                     }
                     break;
@@ -563,7 +563,7 @@ public static class CSharpLexer
                 {
                     var entryPositionIndex = streamReaderWrap.PositionIndex;
                     streamReaderWrap.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StarToken, textSpan));
                     break;
                 }
@@ -574,14 +574,14 @@ public static class CSharpLexer
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BangEqualsToken, textSpan));
                     }
                     else
                     {
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BangToken, textSpan));
                     }
                     break;
@@ -590,7 +590,7 @@ public static class CSharpLexer
                 {
                     var entryPositionIndex = streamReaderWrap.PositionIndex;
                     streamReaderWrap.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StatementDelimiterToken, textSpan));
                     break;
                 }
@@ -598,7 +598,7 @@ public static class CSharpLexer
                 {
                     var entryPositionIndex = streamReaderWrap.PositionIndex;
                     streamReaderWrap.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenParenthesisToken, textSpan));
                     break;
                 }
@@ -606,7 +606,7 @@ public static class CSharpLexer
                 {
                     var entryPositionIndex = streamReaderWrap.PositionIndex;
                     streamReaderWrap.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseParenthesisToken, textSpan));
                     break;
                 }
@@ -617,7 +617,7 @@ public static class CSharpLexer
                 
                     var entryPositionIndex = streamReaderWrap.PositionIndex;
                     streamReaderWrap.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenBraceToken, textSpan));
                     break;
                 }
@@ -631,7 +631,7 @@ public static class CSharpLexer
                 
                     var entryPositionIndex = streamReaderWrap.PositionIndex;
                     streamReaderWrap.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseBraceToken, textSpan));
                     break;
                 }
@@ -642,14 +642,14 @@ public static class CSharpLexer
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenAngleBracketEqualsToken, textSpan));
                     }
                     else
                     {
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenAngleBracketToken, textSpan));
                     }
                     break;
@@ -661,14 +661,14 @@ public static class CSharpLexer
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseAngleBracketEqualsToken, textSpan));
                     }
                     else
                     {
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseAngleBracketToken, textSpan));
                     }
                     break;
@@ -677,7 +677,7 @@ public static class CSharpLexer
                 {
                     var entryPositionIndex = streamReaderWrap.PositionIndex;
                     streamReaderWrap.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenSquareBracketToken, textSpan));
                     break;
                 }
@@ -685,7 +685,7 @@ public static class CSharpLexer
                 {
                     var entryPositionIndex = streamReaderWrap.PositionIndex;
                     streamReaderWrap.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseSquareBracketToken, textSpan));
                     break;
                 }
@@ -716,7 +716,7 @@ public static class CSharpLexer
                         
                         // Only the last '$' (dollar sign character) will be syntax highlighted
                         // if this code is NOT included.
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.StringLiteral);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.StringLiteral, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StringLiteralToken, textSpan));
                         
                         // From the LexString(...) method:
@@ -731,7 +731,7 @@ public static class CSharpLexer
                     {
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DollarSignToken, textSpan));
                         break;
                     }
@@ -749,7 +749,7 @@ public static class CSharpLexer
                     {
                         var entryPositionIndex = streamReaderWrap.PositionIndex;
                         streamReaderWrap.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AtToken, textSpan));
                         break;
                     }
@@ -758,7 +758,7 @@ public static class CSharpLexer
                 {
                     var entryPositionIndex = streamReaderWrap.PositionIndex;
                     streamReaderWrap.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ColonToken, textSpan));
                     break;
                 }
@@ -766,7 +766,7 @@ public static class CSharpLexer
                 {
                     var entryPositionIndex = streamReaderWrap.PositionIndex;
                     streamReaderWrap.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.MemberAccessToken, textSpan));
                     break;
                 }
@@ -774,7 +774,7 @@ public static class CSharpLexer
                 {
                     var entryPositionIndex = streamReaderWrap.PositionIndex;
                     streamReaderWrap.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None);
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, streamReaderWrap.ByteIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CommaToken, textSpan));
                     break;
                 }
@@ -865,7 +865,8 @@ public static class CSharpLexer
                     EscapeCharacterListAdd(ref lexerOutput, streamReaderWrap, ref previousEscapeCharacterTextSpan, new TextEditorTextSpan(
                         streamReaderWrap.PositionIndex,
                         streamReaderWrap.PositionIndex + 2,
-                        (byte)GenericDecorationKind.EscapeCharacterPrimary));
+                        (byte)GenericDecorationKind.EscapeCharacterPrimary,
+                        streamReaderWrap.ByteIndex));
     
                     _ = streamReaderWrap.ReadCharacter();
                 }
@@ -880,7 +881,8 @@ public static class CSharpLexer
                 EscapeCharacterListAdd(ref lexerOutput, streamReaderWrap, ref previousEscapeCharacterTextSpan, new TextEditorTextSpan(
                     streamReaderWrap.PositionIndex,
                     streamReaderWrap.PositionIndex + 2,
-                    (byte)GenericDecorationKind.EscapeCharacterPrimary));
+                    (byte)GenericDecorationKind.EscapeCharacterPrimary,
+                    streamReaderWrap.ByteIndex));
 
                 // Presuming the escaped text is 2 characters, then read an extra character.
                 _ = streamReaderWrap.ReadCharacter();
@@ -962,7 +964,8 @@ public static class CSharpLexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             streamReaderWrap.PositionIndex,
-            (byte)GenericDecorationKind.StringLiteral);
+            (byte)GenericDecorationKind.StringLiteral,
+            streamReaderWrap.ByteIndex);
 
         if (useInterpolation)
         {
@@ -975,7 +978,8 @@ public static class CSharpLexer
                 new TextEditorTextSpan(
                     streamReaderWrap.PositionIndex,
                     streamReaderWrap.PositionIndex,
-                    (byte)GenericDecorationKind.None)));
+                    (byte)GenericDecorationKind.None,
+                    streamReaderWrap.ByteIndex)));
         }
         else
         {
@@ -1010,7 +1014,8 @@ public static class CSharpLexer
             lexerOutput.MiscTextSpanList.Add(new TextEditorTextSpan(
                 streamReaderWrap.PositionIndex - countDollarSign,
                 streamReaderWrap.PositionIndex,
-                (byte)GenericDecorationKind.None));
+                (byte)GenericDecorationKind.None,
+                streamReaderWrap.ByteIndex));
         
             /*var readOpenDelimiterCount = streamReaderWrap.PositionIndex - startInclusiveOpenDelimiter;
         
@@ -1028,7 +1033,8 @@ public static class CSharpLexer
             lexerOutput.MiscTextSpanList.Add(new TextEditorTextSpan(
                 streamReaderWrap.PositionIndex,
                 streamReaderWrap.PositionIndex + 1,
-                (byte)GenericDecorationKind.None));
+                (byte)GenericDecorationKind.None,
+                streamReaderWrap.ByteIndex));
                 
             var readOpenDelimiterCount = streamReaderWrap.PositionIndex - startInclusiveOpenDelimiter;
         
@@ -1057,7 +1063,8 @@ public static class CSharpLexer
                 new TextEditorTextSpan(
                     streamReaderWrap.PositionIndex - 1,
                     streamReaderWrap.PositionIndex,
-                    (byte)GenericDecorationKind.None)));
+                    (byte)GenericDecorationKind.None,
+                    streamReaderWrap.ByteIndex)));
         }
         else
         {
@@ -1068,7 +1075,8 @@ public static class CSharpLexer
                 new TextEditorTextSpan(
                     streamReaderWrap.PositionIndex - 1,
                     streamReaderWrap.PositionIndex,
-                    (byte)GenericDecorationKind.None)));
+                    (byte)GenericDecorationKind.None,
+                    streamReaderWrap.ByteIndex)));
         }
     }
     
@@ -1109,7 +1117,8 @@ public static class CSharpLexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             streamReaderWrap.PositionIndex,
-            (byte)GenericDecorationKind.None);
+            (byte)GenericDecorationKind.None,
+            streamReaderWrap.ByteIndex);
         
         switch (binder.TextEditorService.EditContext_GetText(lexerOutput.Text.Slice(textSpan.StartInclusiveIndex, textSpan.Length)))
         {
@@ -1643,7 +1652,8 @@ public static class CSharpLexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             streamReaderWrap.PositionIndex,
-            (byte)GenericDecorationKind.None);
+            (byte)GenericDecorationKind.None,
+            streamReaderWrap.ByteIndex);
 
         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NumericLiteralToken, textSpan));
     }
@@ -1670,7 +1680,8 @@ public static class CSharpLexer
                 lexerOutput.MiscTextSpanList.Add(new TextEditorTextSpan(
                     streamReaderWrap.PositionIndex,
                     streamReaderWrap.PositionIndex + 2,
-                    (byte)GenericDecorationKind.EscapeCharacterPrimary));
+                    (byte)GenericDecorationKind.EscapeCharacterPrimary,
+                    streamReaderWrap.ByteIndex));
 
                 // Presuming the escaped text is 2 characters,
                 // then read an extra character.
@@ -1683,7 +1694,8 @@ public static class CSharpLexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             streamReaderWrap.PositionIndex,
-            (byte)GenericDecorationKind.StringLiteral);
+            (byte)GenericDecorationKind.StringLiteral,
+            streamReaderWrap.ByteIndex);
 
         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CharLiteralToken, textSpan));
     }
@@ -1716,7 +1728,8 @@ public static class CSharpLexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             streamReaderWrap.PositionIndex,
-            (byte)GenericDecorationKind.CommentSingleLine);
+            (byte)GenericDecorationKind.CommentSingleLine,
+            streamReaderWrap.ByteIndex);
 
         lexerOutput.MiscTextSpanList.Add(textSpan);
     }
@@ -1756,7 +1769,8 @@ public static class CSharpLexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             streamReaderWrap.PositionIndex,
-            (byte)GenericDecorationKind.CommentMultiLine);
+            (byte)GenericDecorationKind.CommentMultiLine,
+            streamReaderWrap.ByteIndex);
 
         lexerOutput.MiscTextSpanList.Add(textSpan);
     }
@@ -1798,7 +1812,8 @@ public static class CSharpLexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             firstWhitespaceCharacterPositionIndex,
-            (byte)GenericDecorationKind.PreprocessorDirective);
+            (byte)GenericDecorationKind.PreprocessorDirective,
+            streamReaderWrap.ByteIndex);
 
         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PreprocessorDirectiveToken, textSpan));
     }
