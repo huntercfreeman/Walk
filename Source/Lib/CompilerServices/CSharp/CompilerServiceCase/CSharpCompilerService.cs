@@ -24,7 +24,7 @@ using Walk.CompilerServices.CSharp.LexerCase;
 using Walk.CompilerServices.CSharp.ParserCase;
 
 namespace Walk.CompilerServices.CSharp.CompilerServiceCase;
-// Previous commits were in Visual Studio, if this is usable now I'll start dogfooding again.
+
 public sealed class CSharpCompilerService : IExtendedCompilerService
 {
     // <summary>Public because the RazorCompilerService uses it.</summary>
@@ -78,13 +78,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// </summary>
     public (string AbsolutePathString, StreamReader Sr) FastParseTuple;
 
-    public Dictionary<string, (int UsageCount, StreamReader StreamReader)> StreamReaderTupleCache = new();
+    public Dictionary<string, StreamReader> StreamReaderTupleCache = new();
 
     public void ClearStreamReaderTupleCache()
     {
-        foreach (var tuple in StreamReaderTupleCache.Values)
+        foreach (var streamReader in StreamReaderTupleCache.Values)
         {
-            tuple.StreamReader.Dispose();
+            streamReader.Dispose();
         }
         StreamReaderTupleCache.Clear();
     }
@@ -216,40 +216,15 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             return _safeGetTextStringBuilder.ToString();
         }
 
-        if (StreamReaderTupleCache.TryGetValue(absolutePathString, out var srTuple))
-        {
-            sr = srTuple.StreamReader;
-            srTuple.UsageCount++;
-        }
-        else
+        if (!StreamReaderTupleCache.TryGetValue(absolutePathString, out sr))
         {
             sr = new StreamReader(absolutePathString);
-            if (StreamReaderTupleCache.Count >= 256)
+            if (StreamReaderTupleCache.Count >= 350)
             {
-                int min = int.MaxValue;
-                string? leastUsedAbsolutePathString = null;
-
-                foreach (var tupleKvp in StreamReaderTupleCache)
-                {
-                    if (tupleKvp.Value.UsageCount < min)
-                    {
-                        min = tupleKvp.Value.UsageCount;
-                        leastUsedAbsolutePathString = tupleKvp.Key;
-                    }
-                }
-
-                if (leastUsedAbsolutePathString is not null)
-                {
-                    StreamReaderTupleCache[leastUsedAbsolutePathString].StreamReader.Dispose();
-                    StreamReaderTupleCache.Remove(leastUsedAbsolutePathString);
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
+                ClearStreamReaderTupleCache();
             }
 
-            StreamReaderTupleCache.Add(absolutePathString, (1, sr));
+            StreamReaderTupleCache.Add(absolutePathString, sr);
         }
 
         // I presume this is needed so the StreamReader can get the encoding.

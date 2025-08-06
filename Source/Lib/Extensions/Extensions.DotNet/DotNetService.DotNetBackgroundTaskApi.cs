@@ -1309,13 +1309,6 @@ public partial class DotNetService
             compilerService.FastParse(editContext, resourceUri, IdeService.TextEditorService.CommonService.FileSystemProvider, compilationUnitKind);
             fileParsedCount++;
         }
-
-        var maybeCSharpCompilerService = IdeService.TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
-        var cSharpCompilerService = maybeCSharpCompilerService as CSharpCompilerService;
-        if (cSharpCompilerService is not null)
-        {
-            cSharpCompilerService.ClearStreamReaderTupleCache();
-        }
     }
 
     private async ValueTask Do_SetDotNetSolutionTreeView(Key<DotNetSolutionModel> dotNetSolutionModelKey)
