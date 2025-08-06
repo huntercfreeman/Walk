@@ -189,16 +189,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         }
         else if (absolutePathString == _fastParseTuple.AbsolutePathString)
         {
-            if (textSpan.ByteIndex >= 1)
-            {
-                // TODO: What happens if I split a multibyte word?
-                _fastParseTuple.Sr.BaseStream.Seek(textSpan.ByteIndex - 1, SeekOrigin.Begin);
-            }
-            else
-            {
-                // TODO: What happens if I split a multibyte word?
-                _fastParseTuple.Sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
-            }
+            // TODO: What happens if I split a multibyte word?
+            _fastParseTuple.Sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
             // sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
             _fastParseTuple.Sr.DiscardBufferedData();
 
@@ -219,16 +211,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 // I presume this is needed so the StreamReader can get the encoding.
                 sr.Read();
 
-                if (textSpan.ByteIndex >= 1)
-                {
-                    // TODO: What happens if I split a multibyte word?
-                    _fastParseTuple.Sr.BaseStream.Seek(textSpan.ByteIndex - 1, SeekOrigin.Begin);
-                }
-                else
-                {
-                    // TODO: What happens if I split a multibyte word?
-                    _fastParseTuple.Sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
-                }
+                // TODO: What happens if I split a multibyte word?
+                sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
                 // sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
                 sr.DiscardBufferedData();
 
@@ -1490,16 +1474,15 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         if (!__CSharpBinder.__CompilationUnitMap.ContainsKey(resourceUri))
             return;
     
-        var content = fileSystemProvider.File.ReadAllText(resourceUri.Value);
-
         var cSharpCompilationUnit = new CSharpCompilationUnit(compilationUnitKind);
 
         CSharpLexerOutput lexerOutput;
 
         using (StreamReader sr = new StreamReader(resourceUri.Value))
         {
-            _fastParseTuple = (resourceUri.Value, sr);
             lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, sr, shouldUseSharedStringWalker: true);
+
+            _fastParseTuple = (resourceUri.Value, sr);
             __CSharpBinder.StartCompilationUnit(resourceUri);
             CSharpParser.Parse(resourceUri, ref cSharpCompilationUnit, __CSharpBinder, ref lexerOutput);
         }
