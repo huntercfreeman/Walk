@@ -16,5 +16,4 @@ public ref struct CSharpLexerOutput
     /// MiscTextSpanList contains the comments and the escape characters.
     /// </summary>
     public List<TextEditorTextSpan> MiscTextSpanList { get; }
-    public ReadOnlySpan<char> Text { get; }
 }

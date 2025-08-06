@@ -89,8 +89,6 @@ public ref struct CSharpParserModel
         
         Binder.MethodOverload_ResourceUri_WasCleared = false;
         
-        Text = lexerOutput.Text;
-        
         Binder.CSharpParserModel_AddedNamespaceHashSet.Clear();
         
         ExternalTypeDefinitionList = Binder.CSharpParserModel_ExternalTypeDefinitionList;
@@ -119,8 +117,6 @@ public ref struct CSharpParserModel
         Compilation.IndexNodeList = Binder.NodeList.Count;
     }
     
-    public ReadOnlySpan<char> Text { get; }
-
     public TokenWalker TokenWalker { get; }
     public CSharpStatementBuilder StatementBuilder { get; set; }
     
