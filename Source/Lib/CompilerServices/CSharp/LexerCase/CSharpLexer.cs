@@ -317,9 +317,9 @@ public static class CSharpLexer
     /// <summary>
     /// Initialize the CSharpLexerOutput here, then start the while loop with 'Lex_Frame(...)'.
     /// </summary>
-    public static CSharpLexerOutput Lex(CSharpBinder binder, StreamReader streamReader, bool shouldUseSharedStringWalker)
+    public static CSharpLexerOutput Lex(CSharpBinder binder, ResourceUri resourceUri, StreamReader streamReader, bool shouldUseSharedStringWalker)
     {
-        var lexerOutput = new CSharpLexerOutput();
+        var lexerOutput = new CSharpLexerOutput(resourceUri);
         
         var previousEscapeCharacterTextSpan = new TextEditorTextSpan(
             0,
@@ -1120,7 +1120,7 @@ public static class CSharpLexer
             (byte)GenericDecorationKind.None,
             streamReaderWrap.ByteIndex);
         
-        switch (binder.TextEditorService.EditContext_GetText(lexerOutput.Text.Slice(textSpan.StartInclusiveIndex, textSpan.Length)))
+        switch (binder.CSharpCompilerService.SafeGetText(lexerOutput.ResourceUri.Value, textSpan))
         {
             // NonContextualKeywords-NonControl
             // ================================

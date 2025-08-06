@@ -1344,7 +1344,7 @@ public class RazorSyntaxTree
 
         using (StreamReader sr = new StreamReader(_codebehindResourceUri.Value))
         {
-            lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, sr, shouldUseSharedStringWalker: true);
+            lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, _codebehindResourceUri, sr, shouldUseSharedStringWalker: true);
         }
 
         foreach (var lexedTokenTextSpan in lexerOutput.SyntaxTokenList.Select(x => x.TextSpan).Union(lexerOutput.MiscTextSpanList))

@@ -1371,7 +1371,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             // Create a StreamReader from the MemoryStream
             using (StreamReader reader = new StreamReader(memoryStream))
             {
-                lexerOutput = CSharpLexer.Lex(__CSharpBinder, reader, shouldUseSharedStringWalker: true);
+                lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, reader, shouldUseSharedStringWalker: true);
             }
         }
 
@@ -1426,7 +1426,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         using (StreamReader sr = new StreamReader(resourceUri.Value))
         {
-            lexerOutput = CSharpLexer.Lex(__CSharpBinder, sr, shouldUseSharedStringWalker: true);
+            lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, sr, shouldUseSharedStringWalker: true);
         }
 
         __CSharpBinder.StartCompilationUnit(resourceUri);
@@ -1446,7 +1446,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         using (StreamReader sr = new StreamReader(resourceUri.Value))
         {
-            lexerOutput = CSharpLexer.Lex(__CSharpBinder, sr, shouldUseSharedStringWalker: true);
+            lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, sr, shouldUseSharedStringWalker: true);
         }
 
         __CSharpBinder.StartCompilationUnit(resourceUri);

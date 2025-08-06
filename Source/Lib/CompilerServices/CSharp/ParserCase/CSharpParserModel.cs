@@ -292,7 +292,7 @@ public ref struct CSharpParserModel
     
     public readonly void BindNamespaceStatementNode(NamespaceStatementNode namespaceStatementNode)
     {
-        var namespaceString = Binder.TextEditorService.EditContext_GetText(Text.Slice(namespaceStatementNode.IdentifierToken.TextSpan.StartInclusiveIndex, namespaceStatementNode.IdentifierToken.TextSpan.Length));
+        var namespaceString = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, namespaceStatementNode.IdentifierToken.TextSpan);
 
         if (Binder._namespaceGroupMap.TryGetValue(namespaceString, out var inNamespaceGroupNode))
         {
@@ -320,7 +320,7 @@ public ref struct CSharpParserModel
         if (shouldCreateVariableSymbol)
             CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind);
         
-        var text = Binder.TextEditorService.EditContext_GetText(Text.Slice(variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, variableDeclarationNode.IdentifierToken.TextSpan.Length));
+        var text = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, variableDeclarationNode.IdentifierToken.TextSpan);
         
         if (TryGetVariableDeclarationNodeByScope(
                 ResourceUri,
@@ -371,7 +371,7 @@ public ref struct CSharpParserModel
                 }));
         ++Compilation.CountSymbolList;
     
-        var text = Binder.TextEditorService.EditContext_GetText(Text.Slice(labelDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, labelDeclarationNode.IdentifierToken.TextSpan.Length));
+        var text = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, labelDeclarationNode.IdentifierToken.TextSpan);
         
         if (TryGetLabelDeclarationNodeByScope(
                 CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
@@ -413,7 +413,7 @@ public ref struct CSharpParserModel
         SyntaxToken variableIdentifierToken,
         bool shouldCreateSymbol = true)
     {
-        var text = Binder.TextEditorService.EditContext_GetText(Text.Slice(variableIdentifierToken.TextSpan.StartInclusiveIndex, variableIdentifierToken.TextSpan.Length));
+        var text = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, variableIdentifierToken.TextSpan);
         VariableReferenceNode? variableReferenceNode;
 
         if (TryGetVariableDeclarationHierarchically(
@@ -481,7 +481,7 @@ public ref struct CSharpParserModel
 
     public void BindFunctionInvocationNode(FunctionInvocationNode functionInvocationNode)
     {
-        var functionInvocationIdentifierText = Binder.TextEditorService.EditContext_GetText(Text.Slice(functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Length));
+        var functionInvocationIdentifierText = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan);
 
         Binder.SymbolList.Insert(
             Compilation.IndexSymbolList + Compilation.CountSymbolList,
@@ -557,12 +557,12 @@ public ref struct CSharpParserModel
     public readonly void BindUsingStatementTuple(SyntaxToken usingKeywordToken, SyntaxToken namespaceIdentifierToken)
     {
         AddNamespaceToCurrentScope(
-            Binder.TextEditorService.EditContext_GetText(Text.Slice(namespaceIdentifierToken.TextSpan.StartInclusiveIndex, namespaceIdentifierToken.TextSpan.Length)));
+            Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, namespaceIdentifierToken.TextSpan));
     }
     
     public readonly void BindTypeDefinitionNode(TypeDefinitionNode typeDefinitionNode, bool shouldOverwrite = false)
     {
-        var typeIdentifierText = Binder.TextEditorService.EditContext_GetText(Text.Slice(typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeDefinitionNode.TypeIdentifierToken.TextSpan.Length));
+        var typeIdentifierText = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, typeDefinitionNode.TypeIdentifierToken.TextSpan);
 
         var currentNamespaceStatementText = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, CurrentNamespaceStatementNode.IdentifierToken.TextSpan);
             
@@ -726,7 +726,7 @@ public ref struct CSharpParserModel
         {
             case SyntaxKind.NamespaceStatementNode:
                 var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
-                var namespaceString = Binder.TextEditorService.EditContext_GetText(Text.Slice(namespaceStatementNode.IdentifierToken.TextSpan.StartInclusiveIndex, namespaceStatementNode.IdentifierToken.TextSpan.Length));
+                var namespaceString = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, namespaceStatementNode.IdentifierToken.TextSpan);
                 AddNamespaceToCurrentScope(namespaceString);
 
                 BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner);
@@ -1432,7 +1432,7 @@ public ref struct CSharpParserModel
                 var typeDefinitionNode = (TypeDefinitionNode)node;
                 if (typeDefinitionNode.ResourceUri == resourceUri && resourceUri == ResourceUri)
                 {
-                    return Binder.TextEditorService.EditContext_GetText(Text.Slice(typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeDefinitionNode.TypeIdentifierToken.TextSpan.Length));
+                    return Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, typeDefinitionNode.TypeIdentifierToken.TextSpan);
                 }
                 else
                 {
@@ -1447,7 +1447,7 @@ public ref struct CSharpParserModel
                 var typeClauseNode = (TypeClauseNode)node;
                 if (typeClauseNode.ExplicitDefinitionResourceUri == resourceUri && resourceUri == ResourceUri)
                 {
-                    return Binder.TextEditorService.EditContext_GetText(Text.Slice(typeClauseNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeClauseNode.TypeIdentifierToken.TextSpan.Length));
+                    return Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, typeClauseNode.TypeIdentifierToken.TextSpan);
                 }
                 else
                 {
@@ -1462,7 +1462,7 @@ public ref struct CSharpParserModel
                 var functionDefinitionNode = (FunctionDefinitionNode)node;
                 if (functionDefinitionNode.ResourceUri == resourceUri && resourceUri == ResourceUri)
                 {
-                    return Binder.TextEditorService.EditContext_GetText(Text.Slice(functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex, functionDefinitionNode.FunctionIdentifierToken.TextSpan.Length));
+                    return Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, functionDefinitionNode.FunctionIdentifierToken.TextSpan);
                 }
                 else
                 {
@@ -1477,7 +1477,7 @@ public ref struct CSharpParserModel
                 var functionInvocationNode = (FunctionInvocationNode)node;
                 if (functionInvocationNode.ResourceUri == resourceUri && resourceUri == ResourceUri)
                 {
-                    return Binder.TextEditorService.EditContext_GetText(Text.Slice(functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Length));
+                    return Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan);
                 }
                 else
                 {
@@ -1492,7 +1492,7 @@ public ref struct CSharpParserModel
                 var variableDeclarationNode = (VariableDeclarationNode)node;
                 if (variableDeclarationNode.ResourceUri == resourceUri && resourceUri == ResourceUri)
                 {
-                    return Binder.TextEditorService.EditContext_GetText(Text.Slice(variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, variableDeclarationNode.IdentifierToken.TextSpan.Length));
+                    return Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, variableDeclarationNode.IdentifierToken.TextSpan);
                 }
                 else
                 {
@@ -1504,15 +1504,15 @@ public ref struct CSharpParserModel
             }
             case SyntaxKind.VariableReferenceNode:
             {
-                return Binder.TextEditorService.EditContext_GetText(Text.Slice(((VariableReferenceNode)node).VariableIdentifierToken.TextSpan.StartInclusiveIndex, ((VariableReferenceNode)node).VariableIdentifierToken.TextSpan.Length));
+                return Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, ((VariableReferenceNode)node).VariableIdentifierToken.TextSpan);
             }
             case SyntaxKind.LabelDeclarationNode:
             {
-                return Binder.TextEditorService.EditContext_GetText(Text.Slice(((LabelDeclarationNode)node).IdentifierToken.TextSpan.StartInclusiveIndex, ((LabelDeclarationNode)node).IdentifierToken.TextSpan.Length));
+                return Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, ((LabelDeclarationNode)node).IdentifierToken.TextSpan);
             }
             case SyntaxKind.LabelReferenceNode:
             {
-                return Binder.TextEditorService.EditContext_GetText(Text.Slice(((LabelReferenceNode)node).IdentifierToken.TextSpan.StartInclusiveIndex, ((LabelReferenceNode)node).IdentifierToken.TextSpan.Length));
+                return Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, ((LabelReferenceNode)node).IdentifierToken.TextSpan);
             }
             default:
             {
@@ -1523,7 +1523,7 @@ public ref struct CSharpParserModel
     
     public readonly string GetTextSpanText(TextEditorTextSpan textSpan)
     {
-        return Binder.TextEditorService.EditContext_GetText(Text.Slice(textSpan.StartInclusiveIndex, textSpan.Length));
+        return Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, textSpan);
     }
     
     public readonly TypeClauseNode ToTypeClause(TypeDefinitionNode typeDefinitionNode)
