@@ -24,7 +24,7 @@ using Walk.CompilerServices.CSharp.LexerCase;
 using Walk.CompilerServices.CSharp.ParserCase;
 
 namespace Walk.CompilerServices.CSharp.CompilerServiceCase;
-
+// Previous commits were in Visual Studio, if this is usable now I'll start dogfooding again.
 public sealed class CSharpCompilerService : IExtendedCompilerService
 {
     // <summary>Public because the RazorCompilerService uses it.</summary>
