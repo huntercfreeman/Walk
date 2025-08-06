@@ -568,9 +568,7 @@ public ref struct CSharpParserModel
     {
         var typeIdentifierText = Binder.TextEditorService.EditContext_GetText(Text.Slice(typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeDefinitionNode.TypeIdentifierToken.TextSpan.Length));
 
-        var currentNamespaceStatementText = CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText(
-            Binder.CSharpCompilerService.GetSourceText(ResourceUri.Value),
-            Binder.TextEditorService);
+        var currentNamespaceStatementText = Binder.CSharpCompilerService.SafeGetText(ResourceUri.Value, CurrentNamespaceStatementNode.IdentifierToken.TextSpan);
             
         var namespaceAndTypeIdentifiers = new NamespaceAndTypeIdentifiers(currentNamespaceStatementText, typeIdentifierText);
 
@@ -1172,18 +1170,17 @@ public ref struct CSharpParserModel
                     {
                         innerCompilationUnit = Compilation;
                         innerResourceUri = resourceUri;
-                        identifierText = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan.GetText(
-                            Binder.CSharpCompilerService.GetSourceText(innerResourceUri.Value),
-                            Binder.TextEditorService);
+                        identifierText = Binder.CSharpCompilerService.SafeGetText(
+                            innerResourceUri.Value,
+                            typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan);
                     }
                     else
                     {
                         if (Binder.__CompilationUnitMap.TryGetValue(typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri, out innerCompilationUnit))
                         {
-                            identifierText = typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan.GetText(
-                                Binder.CSharpCompilerService.GetSourceText(typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri.Value),
-                                Binder.TextEditorService);
-                                
+                            identifierText = Binder.CSharpCompilerService.SafeGetText(
+                                typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri.Value,
+                                typeDefinitionNode.InheritedTypeReference.TypeIdentifierToken.TextSpan);
                             innerResourceUri = typeDefinitionNode.InheritedTypeReference.ExplicitDefinitionResourceUri;
                         }
                         else
@@ -1444,7 +1441,7 @@ public ref struct CSharpParserModel
                 else
                 {
                     if (Binder.__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var innerCompilationUnit))
-                        return Binder.TextEditorService.EditContext_GetText(Binder.CSharpCompilerService.GetSourceText(typeDefinitionNode.ResourceUri.Value).AsSpan(typeDefinitionNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeDefinitionNode.TypeIdentifierToken.TextSpan.Length));
+                        return Binder.CSharpCompilerService.SafeGetText(typeDefinitionNode.ResourceUri.Value, typeDefinitionNode.TypeIdentifierToken.TextSpan);
                     else
                         return string.Empty;
                 }
@@ -1459,7 +1456,7 @@ public ref struct CSharpParserModel
                 else
                 {
                     if (Binder.__CompilationUnitMap.TryGetValue(typeClauseNode.ExplicitDefinitionResourceUri, out var innerCompilationUnit))
-                        return Binder.TextEditorService.EditContext_GetText(Binder.CSharpCompilerService.GetSourceText(typeClauseNode.ExplicitDefinitionResourceUri.Value).AsSpan(typeClauseNode.TypeIdentifierToken.TextSpan.StartInclusiveIndex, typeClauseNode.TypeIdentifierToken.TextSpan.Length));
+                        return Binder.CSharpCompilerService.SafeGetText(typeClauseNode.ExplicitDefinitionResourceUri.Value, typeClauseNode.TypeIdentifierToken.TextSpan);
                     else
                         return string.Empty;
                 }
@@ -1474,7 +1471,7 @@ public ref struct CSharpParserModel
                 else
                 {
                     if (Binder.__CompilationUnitMap.TryGetValue(functionDefinitionNode.ResourceUri, out var innerCompilationUnit))
-                        return Binder.TextEditorService.EditContext_GetText(Binder.CSharpCompilerService.GetSourceText(functionDefinitionNode.ResourceUri.Value).AsSpan(functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartInclusiveIndex, functionDefinitionNode.FunctionIdentifierToken.TextSpan.Length));
+                        return Binder.CSharpCompilerService.SafeGetText(functionDefinitionNode.ResourceUri.Value, functionDefinitionNode.FunctionIdentifierToken.TextSpan);
                     else
                         return string.Empty;
                 }
@@ -1489,7 +1486,7 @@ public ref struct CSharpParserModel
                 else
                 {
                     if (Binder.__CompilationUnitMap.TryGetValue(functionInvocationNode.ResourceUri, out var innerCompilationUnit))
-                        return Binder.TextEditorService.EditContext_GetText(Binder.CSharpCompilerService.GetSourceText(functionInvocationNode.ResourceUri.Value).AsSpan(functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.Length));
+                        return Binder.CSharpCompilerService.SafeGetText(functionInvocationNode.ResourceUri.Value, functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan);
                     else
                         return string.Empty;
                 }
@@ -1504,7 +1501,7 @@ public ref struct CSharpParserModel
                 else
                 {
                     if (Binder.__CompilationUnitMap.TryGetValue(variableDeclarationNode.ResourceUri, out var innerCompilationUnit))
-                        return Binder.TextEditorService.EditContext_GetText(Binder.CSharpCompilerService.GetSourceText(variableDeclarationNode.ResourceUri.Value).AsSpan(variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex, variableDeclarationNode.IdentifierToken.TextSpan.Length));
+                        return Binder.CSharpCompilerService.SafeGetText(variableDeclarationNode.ResourceUri.Value, variableDeclarationNode.IdentifierToken.TextSpan);
                     else
                         return string.Empty;
                 }

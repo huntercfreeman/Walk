@@ -32,7 +32,7 @@ public static class CSharpLexer
         public StreamReader StreamReader { get; }
 
         /// <summary>
-        /// The count is unreliable (on accurate when the most recent ReadCharacter() came from the StreamReader.
+        /// The count is unreliable (only accurate when the most recent ReadCharacter() came from the StreamReader.
         /// The main purpose is to check if it is non-zero to indicate you are NOT at the end of the file.
         /// </summary>
         public int LastReadCharacterCount { get; set; }

@@ -46,8 +46,19 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         __CSharpBinder.UpsertCompilationUnit(new ResourceUri(string.Empty), primitiveKeywordsTextFile);
     }
 
-    private readonly StringBuilder _getTextStringBuilder = new();
-    private readonly char[] _getTextBuffer = new char[1];
+    /// <summary>
+    /// unsafe vs safe are duplicates of the same code
+    /// Safe implies the "TextEditorEditContext"
+    /// </summary>
+    private readonly StringBuilder _unsafeGetTextStringBuilder = new();
+    private readonly char[] _unsafeGetTextBuffer = new char[1];
+
+    /// <summary>
+    /// unsafe vs safe are duplicates of the same code
+    /// Safe implies the "TextEditorEditContext"
+    /// </summary>
+    private readonly StringBuilder _safeGetTextStringBuilder = new();
+    private readonly char[] _safeGetTextBuffer = new char[1];
 
     /// <summary>
     /// The currently being parsed file should reflect the TextEditorModel NOT the file system.
@@ -109,12 +120,12 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     {
         return contextMenu.GetDefaultMenuRecord();
     }
-    
+
     /// <summary>
-    /// This is not thread safe due to the tooltips and various other UI events
-    /// not invoking this from the "TextEditorEditContext".
+    /// unsafe vs safe are duplicates of the same code
+    /// Safe implies the "TextEditorEditContext"
     /// </summary>
-    public string? GetText(string absolutePathString, TextEditorTextSpan textSpan)
+    public string? UnsafeGetText(string absolutePathString, TextEditorTextSpan textSpan)
     {
         if (absolutePathString == string.Empty)
         {
@@ -134,19 +145,56 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 // TODO: What happens if I split a multibyte word?
                 sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
 
-                _getTextStringBuilder.Clear();
+                _unsafeGetTextStringBuilder.Clear();
 
                 for (int i = 0; i < textSpan.Length; i++)
                 {
-                    sr.Read(_getTextBuffer, 0, 1);
-                    _getTextStringBuilder.Append(_getTextBuffer[0]);
+                    sr.Read(_unsafeGetTextBuffer, 0, 1);
+                    _unsafeGetTextStringBuilder.Append(_unsafeGetTextBuffer[0]);
                 }
 
-                return _getTextStringBuilder.ToString();
+                return _unsafeGetTextStringBuilder.ToString();
             }
         }
     }
-    
+
+    /// <summary>
+    /// unsafe vs safe are duplicates of the same code
+    /// Safe implies the "TextEditorEditContext"
+    /// </summary>
+    public string? SafeGetText(string absolutePathString, TextEditorTextSpan textSpan)
+    {
+        if (absolutePathString == string.Empty)
+        {
+            return textSpan.GetText(EmptyFileHackForLanguagePrimitiveText, _textEditorService);
+        }
+        else if (absolutePathString == _currentFileBeingParsedTuple.AbsolutePathString)
+        {
+            return textSpan.GetText(_currentFileBeingParsedTuple.Content, _textEditorService);
+        }
+        else
+        {
+            using (StreamReader sr = new StreamReader(absolutePathString))
+            {
+                // I presume this is needed so the StreamReader can get the encoding.
+                sr.Read();
+
+                // TODO: What happens if I split a multibyte word?
+                sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+
+                _safeGetTextStringBuilder.Clear();
+
+                for (int i = 0; i < textSpan.Length; i++)
+                {
+                    sr.Read(_safeGetTextBuffer, 0, 1);
+                    _safeGetTextStringBuilder.Append(_safeGetTextBuffer[0]);
+                }
+
+                return _safeGetTextStringBuilder.ToString();
+            }
+        }
+    }
+
     private MenuRecord? GetAutocompleteMenuPart(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu, int positionIndex)
     {
         var character = '\0';
@@ -442,20 +490,21 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                             {
                                 foreach (var typeDefinitionNode in __CSharpBinder.GetTopLevelTypeDefinitionNodes_NamespaceGroup(namespaceGroup).Where(x => x.TypeIdentifierToken.TextSpan.GetText(virtualizationResult.Model.GetAllText(), _textEditorService).Contains(filteringWord)).Take(5))
                                 {
-                                    var sourceText = GetSourceText(virtualizationResult.Model.PersistentState.ResourceUri.Value);
-                                
+                                    var resourceUriValue = virtualizationResult.Model.PersistentState.ResourceUri.Value;
+
+
                                     if (typeDefinitionNode.ResourceUri != virtualizationResult.Model.PersistentState.ResourceUri)
                                     {
                                         if (__CSharpBinder.__CompilationUnitMap.TryGetValue(typeDefinitionNode.ResourceUri, out var innerCompilationUnit))
                                         {
-                                            sourceText = GetSourceText(typeDefinitionNode.ResourceUri.Value);
+                                            resourceUriValue = typeDefinitionNode.ResourceUri.Value;
                                         }
                                     }
                                 
                                     autocompleteEntryList.Add(new AutocompleteEntry(
-                                        typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(sourceText, _textEditorService),
+                                        UnsafeGetText(resourceUriValue, typeDefinitionNode.TypeIdentifierToken.TextSpan),
                                         AutocompleteEntryKind.Type,
-                                        () => MemberAutocomplete(typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(sourceText, _textEditorService), filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+                                        () => MemberAutocomplete(UnsafeGetText(resourceUriValue, typeDefinitionNode.TypeIdentifierToken.TextSpan), filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
                                 }
                             }
                             
@@ -558,57 +607,58 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                     {
                                         case SyntaxKind.VariableDeclarationNode:
                                         {
-                                            string sourceText;
+                                            string resourceUriValue;
                                             var variableDeclarationNode = (VariableDeclarationNode)member;
                                             
                                             if (variableDeclarationNode.ResourceUri != innerResourceUri)
                                             {
                                                 if (__CSharpBinder.__CompilationUnitMap.TryGetValue(variableDeclarationNode.ResourceUri, out var variableDeclarationCompilationUnit))
-                                                    sourceText = GetSourceText(variableDeclarationNode.ResourceUri.Value);
+                                                    resourceUriValue = variableDeclarationNode.ResourceUri.Value;
                                                 else
-                                                    sourceText = GetSourceText(innerResourceUri.Value);
+                                                    resourceUriValue = innerResourceUri.Value;
                                             }
                                             else
                                             {
-                                                sourceText = GetSourceText(innerResourceUri.Value);
+                                                resourceUriValue = innerResourceUri.Value;
                                             }
                                             
                                             autocompleteEntryList.Add(new AutocompleteEntry(
-                                                variableDeclarationNode.IdentifierToken.TextSpan.GetText(sourceText, _textEditorService),
+                                                UnsafeGetText(resourceUriValue, variableDeclarationNode.IdentifierToken.TextSpan),
                                                 AutocompleteEntryKind.Variable,
-                                                () => MemberAutocomplete(variableDeclarationNode.IdentifierToken.TextSpan.GetText(sourceText, _textEditorService), filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+                                                () => MemberAutocomplete(UnsafeGetText(resourceUriValue, variableDeclarationNode.IdentifierToken.TextSpan), filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
                                             break;
                                         }
                                         case SyntaxKind.FunctionDefinitionNode:
                                         {
                                             string sourceText;
+                                            string resourceUriValue;
                                             var functionDefinitionNode = (FunctionDefinitionNode)member;
                                             
                                             if (functionDefinitionNode.ResourceUri != innerResourceUri)
                                             {
                                                 if (__CSharpBinder.__CompilationUnitMap.TryGetValue(functionDefinitionNode.ResourceUri, out var functionDefinitionCompilationUnit))
-                                                    sourceText = GetSourceText(functionDefinitionNode.ResourceUri.Value);
+                                                    resourceUriValue = functionDefinitionNode.ResourceUri.Value;
                                                 else
-                                                    sourceText = GetSourceText(innerResourceUri.Value);
+                                                    resourceUriValue = innerResourceUri.Value;
                                             }
                                             else
                                             {
-                                                sourceText = GetSourceText(innerResourceUri.Value);
+                                                resourceUriValue = innerResourceUri.Value;
                                             }
                                             
                                             autocompleteEntryList.Add(new AutocompleteEntry(
-                                                functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(sourceText, _textEditorService),
+                                                UnsafeGetText(resourceUriValue, functionDefinitionNode.FunctionIdentifierToken.TextSpan),
                                                 AutocompleteEntryKind.Function,
-                                                () => MemberAutocomplete(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(sourceText, _textEditorService), filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+                                                () => MemberAutocomplete(UnsafeGetText(resourceUriValue, functionDefinitionNode.FunctionIdentifierToken.TextSpan), filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
                                             break;
                                         }
                                         case SyntaxKind.TypeDefinitionNode:
                                         {
                                             var innerTypeDefinitionNode = (TypeDefinitionNode)member;
                                             autocompleteEntryList.Add(new AutocompleteEntry(
-                                                innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(GetSourceText(innerResourceUri.Value), _textEditorService),
+                                                UnsafeGetText(innerResourceUri.Value, innerTypeDefinitionNode.TypeIdentifierToken.TextSpan),
                                                 AutocompleteEntryKind.Type,
-                                                () => MemberAutocomplete(innerTypeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(GetSourceText(innerResourceUri.Value), _textEditorService), filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
+                                                () => MemberAutocomplete(UnsafeGetText(innerResourceUri.Value, innerTypeDefinitionNode.TypeIdentifierToken.TextSpan), filteringWord, virtualizationResult.Model.PersistentState.ResourceUri, virtualizationResult.ViewModel.PersistentState.ViewModelKey)));
                                             break;
                                         }
                                     }

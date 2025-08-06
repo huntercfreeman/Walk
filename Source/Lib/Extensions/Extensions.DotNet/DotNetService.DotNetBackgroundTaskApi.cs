@@ -715,10 +715,10 @@ public partial class DotNetService
                 
                 IdeService.TextEditorService.EditContext_GetText_Clear();
                 
-                if (cSharpCompilerService is not null)
+                /*if (cSharpCompilerService is not null)
                 {
                     cSharpCompilerService.ClearSourceTextMap();
-                }
+                }*/
                 
                 return ValueTask.CompletedTask;
             }));

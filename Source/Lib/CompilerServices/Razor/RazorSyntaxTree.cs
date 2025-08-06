@@ -77,7 +77,9 @@ public class RazorSyntaxTree
     /// </summary>
     public void ParseCodebehind()
     {
-        StringWalker? stringWalker = null;
+        return;
+
+        /*StringWalker? stringWalker = null;
 
         if (_codebehindClassInsertions.Any())
             stringWalker = _codebehindClassInsertions.First().StringWalker;
@@ -125,7 +127,7 @@ public class RazorSyntaxTree
             _codebehindClassInsertions,
             _codebehindRenderFunctionInsertions,
             renderFunctionAdhocTextInsertion,
-            classContents);
+            classContents);*/
     }
 
     /// <summary>currentCharacterIn:<br/> -<see cref="InjectedLanguageDefinition.TransitionSubstring"/><br/></summary>
@@ -1342,7 +1344,7 @@ public class RazorSyntaxTree
 
         using (StreamReader sr = new StreamReader(_codebehindResourceUri.Value))
         {
-            lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, cSharpText, sr, shouldUseSharedStringWalker: true);
+            lexerOutput = CSharpLexer.Lex(_cSharpCompilerService.__CSharpBinder, sr, shouldUseSharedStringWalker: true);
         }
 
         foreach (var lexedTokenTextSpan in lexerOutput.SyntaxTokenList.Select(x => x.TextSpan).Union(lexerOutput.MiscTextSpanList))
