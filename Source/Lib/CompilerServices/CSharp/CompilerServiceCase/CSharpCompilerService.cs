@@ -131,26 +131,34 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         {
             return textSpan.GetText(EmptyFileHackForLanguagePrimitiveText, _textEditorService);
         }
+
+        var model = _textEditorService.Model_GetOrDefault(new ResourceUri(absolutePathString));
+
+        if (model is not null)
+        {
+            return textSpan.GetText(model.AllText, _textEditorService);
+        }
         else
         {
             using (StreamReader sr = new StreamReader(absolutePathString))
             {
                 // I presume this is needed so the StreamReader can get the encoding.
-                sr.Read(); 
+                sr.Read();
 
                 // TODO: What happens if I split a multibyte word?
                 sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+                // sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
                 sr.DiscardBufferedData();
 
-                _unsafeGetTextStringBuilder.Clear();
+                _safeGetTextStringBuilder.Clear();
 
                 for (int i = 0; i < textSpan.Length; i++)
                 {
-                    sr.Read(_unsafeGetTextBuffer, 0, 1);
-                    _unsafeGetTextStringBuilder.Append(_unsafeGetTextBuffer[0]);
+                    sr.Read(_safeGetTextBuffer, 0, 1);
+                    _safeGetTextStringBuilder.Append(_safeGetTextBuffer[0]);
                 }
 
-                return _unsafeGetTextStringBuilder.ToString();
+                return _safeGetTextStringBuilder.ToString();
             }
         }
     }
