@@ -69,6 +69,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// </summary>
     private (string AbsolutePathString, string Content) _currentFileBeingParsedTuple;
 
+    private (string AbsolutePathString, StreamReader Sr) _fastParseTuple;
+
     public event Action? ResourceRegistered;
     public event Action? ResourceParsed;
     public event Action? ResourceDisposed;
@@ -176,6 +178,23 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         else if (absolutePathString == _currentFileBeingParsedTuple.AbsolutePathString)
         {
             return textSpan.GetText(_currentFileBeingParsedTuple.Content, _textEditorService);
+        }
+        else if (absolutePathString == _fastParseTuple.AbsolutePathString)
+        {
+            // TODO: What happens if I split a multibyte word?
+            _fastParseTuple.Sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+            // sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+            _fastParseTuple.Sr.DiscardBufferedData();
+
+            _safeGetTextStringBuilder.Clear();
+
+            for (int i = 0; i < textSpan.Length; i++)
+            {
+                _fastParseTuple.Sr.Read(_safeGetTextBuffer, 0, 1);
+                _safeGetTextStringBuilder.Append(_safeGetTextBuffer[0]);
+            }
+
+            return _safeGetTextStringBuilder.ToString();
         }
         else
         {
@@ -1455,11 +1474,13 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         using (StreamReader sr = new StreamReader(resourceUri.Value))
         {
+            _fastParseTuple = (resourceUri.Value, sr);
             lexerOutput = CSharpLexer.Lex(__CSharpBinder, resourceUri, sr, shouldUseSharedStringWalker: true);
+            __CSharpBinder.StartCompilationUnit(resourceUri);
+            CSharpParser.Parse(resourceUri, ref cSharpCompilationUnit, __CSharpBinder, ref lexerOutput);
         }
 
-        __CSharpBinder.StartCompilationUnit(resourceUri);
-        CSharpParser.Parse(resourceUri, ref cSharpCompilationUnit, __CSharpBinder, ref lexerOutput);
+        _fastParseTuple = (null, null);
     }
     
     /// <summary>
