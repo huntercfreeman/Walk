@@ -1339,8 +1339,9 @@ public class RazorSyntaxTree
         int offsetPositionIndex)
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
+        return injectedLanguageFragmentSyntaxes;
 
-        CSharpLexerOutput lexerOutput;
+        /*CSharpLexerOutput lexerOutput;
 
         using (StreamReader sr = new StreamReader(_codebehindResourceUri.Value))
         {
@@ -1479,5 +1480,6 @@ public class RazorSyntaxTree
         }
 
         return injectedLanguageFragmentSyntaxes;
+        */
     }
 }
