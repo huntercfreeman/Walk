@@ -1702,7 +1702,7 @@ public static class ParseExpressions
         //
         if (parserModel.Binder.__CompilationUnitMap.TryGetValue(constructorInvocationExpressionNode.ResultTypeReference.ExplicitDefinitionResourceUri, out var innerCompilationUnit))
         {
-            if ("void" == constructorInvocationExpressionNode.ResultTypeReference.TypeIdentifierToken.TextSpan.GetText(parserModel.Binder.CSharpCompilerService.GetSourceText(constructorInvocationExpressionNode.ResultTypeReference.ExplicitDefinitionResourceUri.Value), parserModel.Binder.TextEditorService))
+            if ("void" == parserModel.Binder.CSharpCompilerService.SafeGetText(constructorInvocationExpressionNode.ResultTypeReference.ExplicitDefinitionResourceUri.Value, constructorInvocationExpressionNode.ResultTypeReference.TypeIdentifierToken.TextSpan))
                 isVoidType = true;
         }
         
@@ -3016,7 +3016,7 @@ public static class ParseExpressions
                                 innerResourceUri,
                                 innerCompilationUnit,
                                 scope.Unsafe_SelfIndexKey,
-                                typeReference.ExplicitDefinitionTextSpan.GetText(parserModel.Binder.CSharpCompilerService.GetSourceText(typeReference.ExplicitDefinitionResourceUri.Value), parserModel.Binder.TextEditorService) ?? string.Empty,
+                                parserModel.Binder.CSharpCompilerService.SafeGetText(typeReference.ExplicitDefinitionResourceUri.Value, typeReference.ExplicitDefinitionTextSpan) ?? string.Empty,
                                 out var innerTypeDefinitionNode) &&
                             innerTypeDefinitionNode is not null)
                         {
@@ -3057,7 +3057,7 @@ public static class ParseExpressions
                             parserModel.ResourceUri,
                             parserModel.Compilation,
                             scope.Unsafe_SelfIndexKey,
-                            typeReference.TypeIdentifierToken.TextSpan.GetText(parserModel.Binder.CSharpCompilerService.GetSourceText(parserModel.ResourceUri.Value), parserModel.Binder.TextEditorService) ?? string.Empty,
+                            parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, typeReference.TypeIdentifierToken.TextSpan) ?? string.Empty,
                             out var innerTypeDefinitionNode) &&
                         innerTypeDefinitionNode is not null)
                     {
@@ -3101,20 +3101,21 @@ public static class ParseExpressions
                         continue;
                     
                     string sourceText;
+                    string resourceUriValue;
                     
                     if (variableDeclarationNode.ResourceUri != parserModel.ResourceUri)
                     {
                         if (parserModel.Binder.__CompilationUnitMap.TryGetValue(variableDeclarationNode.ResourceUri, out var variableDeclarationCompilationUnit))
-                            sourceText = parserModel.Binder.CSharpCompilerService.GetSourceText(variableDeclarationNode.ResourceUri.Value);
+                            resourceUriValue = variableDeclarationNode.ResourceUri.Value;
                         else
-                            sourceText = parserModel.Binder.CSharpCompilerService.GetSourceText(innerResourceUri.Value);
+                            resourceUriValue = innerResourceUri.Value;
                     }
                     else
                     {
-                        sourceText = parserModel.Binder.CSharpCompilerService.GetSourceText(innerResourceUri.Value);
+                        resourceUriValue = innerResourceUri.Value;
                     }
                     
-                    if (variableDeclarationNode.IdentifierToken.TextSpan.GetText(sourceText, parserModel.Binder.TextEditorService) == memberIdentifierText)
+                    if (parserModel.Binder.CSharpCompilerService.SafeGetText(resourceUriValue, variableDeclarationNode.IdentifierToken.TextSpan) == memberIdentifierText)
                     {
                         foundDefinitionNode = variableDeclarationNode;
                         break;
@@ -3128,20 +3129,21 @@ public static class ParseExpressions
                         continue;
                     
                     string sourceText;
+                    string resourceUriValue;
                     
                     if (functionDefinitionNode.ResourceUri != parserModel.ResourceUri)
                     {
                         if (parserModel.Binder.__CompilationUnitMap.TryGetValue(functionDefinitionNode.ResourceUri, out var functionDefinitionCompilationUnit))
-                            sourceText = parserModel.Binder.CSharpCompilerService.GetSourceText(functionDefinitionNode.ResourceUri.Value);
+                            resourceUriValue = functionDefinitionNode.ResourceUri.Value;
                         else
-                            sourceText = parserModel.Binder.CSharpCompilerService.GetSourceText(innerResourceUri.Value);
+                            resourceUriValue = innerResourceUri.Value;
                     }
                     else
                     {
-                        sourceText = parserModel.Binder.CSharpCompilerService.GetSourceText(innerResourceUri.Value);
+                        resourceUriValue = innerResourceUri.Value;
                     }
                     
-                    if (functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText(sourceText, parserModel.Binder.TextEditorService) == memberIdentifierText)
+                    if (parserModel.Binder.CSharpCompilerService.SafeGetText(resourceUriValue, functionDefinitionNode.FunctionIdentifierToken.TextSpan) == memberIdentifierText)
                     {
                         foundDefinitionNode = functionDefinitionNode;
                         break;
@@ -3270,7 +3272,7 @@ public static class ParseExpressions
                 if (firstNamespacePrefixNode is null)
                 {
                     if(parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
-                        firstNamespaceClauseNode.IdentifierToken.TextSpan.GetText(parserModel.Binder.CSharpCompilerService.GetSourceText(parserModel.ResourceUri.Value), parserModel.Binder.TextEditorService),
+                        parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, firstNamespaceClauseNode.IdentifierToken.TextSpan),
                         out firstNamespacePrefixNode))
                     {
                         firstNamespaceClauseNode.NamespacePrefixNode = firstNamespacePrefixNode;
@@ -3278,7 +3280,7 @@ public static class ParseExpressions
                     }
                 }
                 
-                var memberIdentifierText = memberIdentifierToken.TextSpan.GetText(parserModel.Binder.CSharpCompilerService.GetSourceText(parserModel.ResourceUri.Value), parserModel.Binder.TextEditorService);
+                var memberIdentifierText = parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, memberIdentifierToken.TextSpan);
                 
                 if (firstNamespacePrefixNode is not null)
                 {
@@ -3306,7 +3308,7 @@ public static class ParseExpressions
                     }
                 }
                 
-                if (parserModel.Binder.NamespaceGroupMap.TryGetValue(firstNamespaceClauseNode.IdentifierToken.TextSpan.GetText(parserModel.Binder.CSharpCompilerService.GetSourceText(parserModel.ResourceUri.Value), parserModel.Binder.TextEditorService), out var namespaceGroup))
+                if (parserModel.Binder.NamespaceGroupMap.TryGetValue(parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, firstNamespaceClauseNode.IdentifierToken.TextSpan), out var namespaceGroup))
                 {
                     var innerCompilationUnit = parserModel.Compilation;
                     var innerResourceUri = parserModel.ResourceUri;
@@ -3319,7 +3321,7 @@ public static class ParseExpressions
                                 continue;
                         }
                     
-                        if (typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(parserModel.Binder.CSharpCompilerService.GetSourceText(typeDefinitionNode.ResourceUri.Value), parserModel.Binder.TextEditorService) == memberIdentifierText)
+                        if (parserModel.Binder.CSharpCompilerService.SafeGetText(typeDefinitionNode.ResourceUri.Value, typeDefinitionNode.TypeIdentifierToken.TextSpan) == memberIdentifierText)
                         {
                             var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
                                 memberIdentifierToken,
@@ -3636,7 +3638,7 @@ public static class ParseExpressions
         {
             var variableDeclarationNode = (VariableDeclarationNode)expressionSecondary;
             
-            if (variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan.GetText(parserModel.Binder.CSharpCompilerService.GetSourceText(parserModel.ResourceUri.Value), parserModel.Binder.TextEditorService) ==
+            if (parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan) ==
                 "var")
             {
                 if (invocationNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)

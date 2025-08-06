@@ -1,29 +1,325 @@
-using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.TextEditor.RazorLib.Decorations.Models;
-using Walk.Extensions.CompilerServices.Syntax;
 using Walk.CompilerServices.CSharp.BinderCase;
+using Walk.Extensions.CompilerServices.Syntax;
+using Walk.TextEditor.RazorLib.CompilerServices;
+using Walk.TextEditor.RazorLib.Decorations.Models;
+using Walk.TextEditor.RazorLib.Exceptions;
+using Walk.TextEditor.RazorLib.Lexers.Models;
 
 namespace Walk.CompilerServices.CSharp.LexerCase;
 
 public static class CSharpLexer
 {
+    public class StreamReaderWrap
+    {
+        public StreamReaderWrap(StreamReader streamReader)
+        {
+            StreamReader = streamReader;
+            StreamReader.Read(_streamReaderCharBuffer);
+        }
+
+        private char[] _streamReaderCharBuffer = new char[1];
+
+        /// <summary>
+        /// I'm pretty sure the PositionIndex is '_positionIndex - PeekSize;'
+        /// But I'm adding it here cause I'm tired and don't want to end up in a possible rabbit hole over this right now.
+        /// </summary>
+        private (char Character, int PositionIndex, int ByteIndex)[] _peekBuffer = new (char Character, int PositionIndex, int ByteIndex)[3]; // largest Peek is 2
+        private int _peekIndex = -1;
+        private int _peekSize = 0;
+        
+        private (char Character, int PositionIndex, int ByteIndex) _backtrackTuple;
+
+        public StreamReader StreamReader { get; }
+
+        /// <summary>
+        /// The count is unreliable (only accurate when the most recent ReadCharacter() came from the StreamReader.
+        /// The main purpose is to check if it is non-zero to indicate you are NOT at the end of the file.
+        /// </summary>
+        public int LastReadCharacterCount { get; set; }
+
+        private int _positionIndex;
+        public int PositionIndex
+        {
+            get
+            {
+                if (_peekIndex == -1)
+                {
+                    return _positionIndex;
+                }
+                else
+                {
+                    return _peekBuffer[_peekIndex].PositionIndex;
+                }
+            }
+            set
+            {
+                _positionIndex = value;
+            }
+        }
+
+        private int _byteIndex;
+        public int ByteIndex
+        {
+            get
+            {
+                if (_peekIndex == -1)
+                {
+                    return _byteIndex;
+                }
+                else
+                {
+                    return _peekBuffer[_peekIndex].ByteIndex;
+                }
+            }
+            set
+            {
+                _byteIndex = value;
+            }
+        }
+
+        public bool IsEof
+        {
+            get
+            {
+                if (_peekIndex == -1)
+                {
+                    return StreamReader.EndOfStream;
+                }
+                else
+                {
+                    // peak immediate end of stream bad
+                    // peak overlap end of stream bad
+
+                    return false;
+                }
+            }
+        }
+
+        public char CurrentCharacter
+        {
+            get
+            {
+                if (_peekIndex == -1)
+                {
+                    return _streamReaderCharBuffer[0];
+                }
+                else
+                {
+                    return _peekBuffer[_peekIndex].Character;
+                }
+            }
+        }
+
+        public char NextCharacter
+        {
+            get
+            {
+                if (_peekIndex == -1)
+                {
+                    return PeekCharacter(1);
+                }
+                else
+                {
+                    if (_peekIndex + 1 < _peekSize)
+                    {
+                        return _peekBuffer[_peekIndex + 1].Character;
+                    }
+                    else
+                    {
+                        return _streamReaderCharBuffer[0];
+                    }
+                }
+            }
+        }
+
+        public char ReadCharacter()
+        {
+            if (_peekIndex != -1)
+            {
+                _backtrackTuple = _peekBuffer[_peekIndex++];
+
+                if (_peekIndex >= _peekSize)
+                {
+                    _peekIndex = -1;
+                    _peekSize = 0;
+                }
+
+                LastReadCharacterCount = 1;
+            }
+            else
+            {
+                if (StreamReader.EndOfStream)
+                    return ParserFacts.END_OF_FILE;
+
+                // This is duplicated more than once inside the Peek(int) code.
+
+                _backtrackTuple = (_streamReaderCharBuffer[0], PositionIndex, ByteIndex);
+
+                PositionIndex++;
+                ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
+
+                LastReadCharacterCount = StreamReader.Read(_streamReaderCharBuffer, 0, 1);
+            }
+            
+            return CurrentCharacter;
+        }
+
+        public char PeekCharacter(int offset)
+        {
+            // Peek(1)
+            // -------
+            //
+            // 
+            // The '=' represents the StreamReader
+            // The '+' represents the "peek buffer position".
+            //
+            //
+            // Before state
+            // ------------
+            // Abcd
+            //  =
+            //
+            //
+            // After state
+            // -----------
+            // Abcd
+            //  +=
+            //
+            // 
+            // The _peekCount = 1
+            // The _peekIndex is _peekCount - 1
+            //
+            // 
+
+
+            if (offset <= -1)
+                throw new WalkTextEditorException($"{nameof(offset)} must be > -1");
+            if (offset == 0)
+                return _streamReaderCharBuffer[0];
+
+            if (_peekIndex != -1)
+            {
+                // This means a Peek() was performed,
+                // then before the PeekBuffer was fully traversed
+                // another peek occurred.
+                //
+                // I'm hoping that this case just doesn't occur in the Lexer at the moment
+                // because I'm quite tired.
+
+                // Followup: this did happen
+                // so I'm splitting by cases
+                //
+                // - Second Peek(int) is within PeekSize
+                // - Second Peek(int) is currentCharacter
+                // - ...
+
+                if (_peekIndex + offset < _peekSize)
+                {
+                    throw new NotImplementedException();
+                }
+                // This 'else if' is probably wrong.
+                else if (_peekIndex + offset == _peekSize)
+                {
+                    return _streamReaderCharBuffer[0];
+                }
+                else
+                {
+                    if (_peekIndex == 0)
+                    {
+                        // Note: this says '<' NOT '<=' (which is probably what people would expect)...
+                        // ...I'm tired and worried so I'm just moving extremely one by one.
+                        // I know the less than works, maybe the less than equal to works.
+                        // I mean it probably should work but I have a somewhat empty fuel tank right now.
+                        if (_peekSize < _peekBuffer.Length)
+                        {
+                            if (_peekSize == 1 && offset == 2)
+                            {
+                                _peekBuffer[_peekSize] = (_streamReaderCharBuffer[0], PositionIndex, ByteIndex);
+                                _peekSize++;
+
+                                // This is duplicated inside the ReadCharacter() code.
+
+                                PositionIndex++;
+                                ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
+                                StreamReader.Read(_streamReaderCharBuffer);
+                                return _streamReaderCharBuffer[0];
+                            }
+                        }
+                    }
+
+                    throw new NotImplementedException();
+                }
+            }
+
+            for (int i = 0; i < offset; i++)
+            {
+                // TODO: Peek() before any Read()
+
+                _peekBuffer[i] = (_streamReaderCharBuffer[0], PositionIndex, ByteIndex);
+                _peekIndex++;
+                _peekSize++;
+
+                // This is duplicated inside the ReadCharacter() code.
+
+                PositionIndex++;
+                ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
+                StreamReader.Read(_streamReaderCharBuffer);
+            }
+
+            // TODO: Peek EOF
+            // TODO: Peek overlap EOF
+            return _streamReaderCharBuffer[0];
+        }
+
+        /// <summary>
+        /// Backtrack is somewhat a sub-case of Peek(int)
+        /// </summary>
+        public void BacktrackCharacterNoReturnValue()
+        {
+            if (_peekIndex != -1)
+            {
+                // This means a Peek() was performed,
+                // then before the PeekBuffer was fully traversed
+                // another peek occurred.
+                //
+                // I'm hoping that this case just doesn't occur in the Lexer at the moment
+                // because I'm quite tired.
+                throw new NotImplementedException();
+            }
+
+            if (PositionIndex == 0)
+                return;
+
+            // This code is a repeat of the Peek() method's for loop but for one iteration
+
+            _peekBuffer[0] = _backtrackTuple;
+            _peekIndex++;
+            _peekSize++;
+
+            /*
+            // This is duplicated inside the ReadCharacter() code.
+            StreamReader.Read(_streamReaderCharBuffer);
+            PositionIndex++;
+            ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
+            */
+        }
+
+        public void SkipRange(int length)
+        {
+            for (var i = 0; i < length; i++)
+            {
+                if (ReadCharacter() == ParserFacts.END_OF_FILE)
+                    break;
+            }
+        }
+    }
+
     /// <summary>
     /// Initialize the CSharpLexerOutput here, then start the while loop with 'Lex_Frame(...)'.
     /// </summary>
-    public static CSharpLexerOutput Lex(CSharpBinder binder, ResourceUri resourceUri, string sourceText, bool shouldUseSharedStringWalker)
+    public static CSharpLexerOutput Lex(CSharpBinder binder, ResourceUri resourceUri, StreamReader streamReader, bool shouldUseSharedStringWalker)
     {
-        var lexerOutput = new CSharpLexerOutput(sourceText);
-        StringWalker stringWalker;
-        
-        if (shouldUseSharedStringWalker)
-        {
-            stringWalker = binder.TextEditorService.__StringWalker;
-            stringWalker.Initialize(resourceUri, sourceText);
-        }
-        else
-        {
-            stringWalker = new(resourceUri, sourceText);
-        }
+        var lexerOutput = new CSharpLexerOutput(resourceUri);
         
         var previousEscapeCharacterTextSpan = new TextEditorTextSpan(
             0,
@@ -31,13 +327,16 @@ public static class CSharpLexer
             (byte)GenericDecorationKind.None);
             
         var interpolatedExpressionUnmatchedBraceCount = -1;
-        
-        Lex_Frame(binder, ref lexerOutput, stringWalker, ref previousEscapeCharacterTextSpan, ref interpolatedExpressionUnmatchedBraceCount);
+
+        var streamReaderWrap = new StreamReaderWrap(streamReader);
+
+        Lex_Frame(binder, ref lexerOutput, streamReaderWrap, ref previousEscapeCharacterTextSpan, ref interpolatedExpressionUnmatchedBraceCount);
         
         var endOfFileTextSpan = new TextEditorTextSpan(
-            stringWalker.PositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None);
+            streamReaderWrap.PositionIndex,
+            streamReaderWrap.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            streamReaderWrap.ByteIndex);
 
         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EndOfFileToken, endOfFileTextSpan));
         return lexerOutput;
@@ -49,13 +348,13 @@ public static class CSharpLexer
     public static void Lex_Frame(
         CSharpBinder binder,
         ref CSharpLexerOutput lexerOutput,
-        StringWalker stringWalker,
+        StreamReaderWrap streamReaderWrap,
         ref TextEditorTextSpan previousEscapeCharacterTextSpan,
         ref int interpolatedExpressionUnmatchedBraceCount)
     {
-        while (!stringWalker.IsEof)
+        while (!streamReaderWrap.IsEof)
         {
-            switch (stringWalker.CurrentCharacter)
+            switch (streamReaderWrap.CurrentCharacter)
             {
                 /* Lowercase Letters */
                 case 'a':
@@ -113,7 +412,7 @@ public static class CSharpLexer
                 case 'Z':
                 /* Underscore */
                 case '_':
-                    LexIdentifierOrKeywordOrKeywordContextual(binder, ref lexerOutput, stringWalker);
+                    LexIdentifierOrKeywordOrKeywordContextual(binder, ref lexerOutput, streamReaderWrap);
                     break;
                 case '0':
                 case '1':
@@ -125,189 +424,209 @@ public static class CSharpLexer
                 case '7':
                 case '8':
                 case '9':
-                    LexNumericLiteralToken(binder, ref lexerOutput, stringWalker);
+                    LexNumericLiteralToken(binder, ref lexerOutput, streamReaderWrap);
                     break;
                 case '\'':
-                    LexCharLiteralToken(binder, ref lexerOutput, stringWalker);
+                    LexCharLiteralToken(binder, ref lexerOutput, streamReaderWrap);
                     break;
                 case '"':
-                    LexString(binder, ref lexerOutput, stringWalker, ref previousEscapeCharacterTextSpan, countDollarSign: 0, useVerbatim: false);
+                    LexString(binder, ref lexerOutput, streamReaderWrap, ref previousEscapeCharacterTextSpan, countDollarSign: 0, useVerbatim: false);
                     break;
                 case '/':
-                    if (stringWalker.PeekCharacter(1) == '/')
+                    if (streamReaderWrap.PeekCharacter(1) == '/')
                     {
-                        LexCommentSingleLineToken(ref lexerOutput, stringWalker);
+                        LexCommentSingleLineToken(ref lexerOutput, streamReaderWrap);
                     }
-                    else if (stringWalker.PeekCharacter(1) == '*')
+                    else if (streamReaderWrap.PeekCharacter(1) == '*')
                     {
-                        LexCommentMultiLineToken(ref lexerOutput, stringWalker);
+                        LexCommentMultiLineToken(ref lexerOutput, streamReaderWrap);
                     }
                     else
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DivisionToken, textSpan));
                     }
                     break;
                 case '+':
-                    if (stringWalker.PeekCharacter(1) == '+')
+                    if (streamReaderWrap.PeekCharacter(1) == '+')
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PlusPlusToken, textSpan));
                     }
                     else
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PlusToken, textSpan));
                     }
                     break;
                 case '-':
-                    if (stringWalker.PeekCharacter(1) == '-')
+                    if (streamReaderWrap.PeekCharacter(1) == '-')
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.MinusMinusToken, textSpan));
                     }
                     else
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.MinusToken, textSpan));
                     }
                     break;
                 case '=':
-                    if (stringWalker.PeekCharacter(1) == '=')
+                    if (streamReaderWrap.PeekCharacter(1) == '=')
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EqualsEqualsToken, textSpan));
                     }
-                    else if (stringWalker.PeekCharacter(1) == '>')
+                    else if (streamReaderWrap.PeekCharacter(1) == '>')
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EqualsCloseAngleBracketToken, textSpan));
                     }
                     else
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EqualsToken, textSpan));
                     }
                     break;
                 case '?':
-                    if (stringWalker.PeekCharacter(1) == '?')
+                    if (streamReaderWrap.PeekCharacter(1) == '?')
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.QuestionMarkQuestionMarkToken, textSpan));
                     }
                     else
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.QuestionMarkToken, textSpan));
                     }
                     break;
                 case '|':
-                    if (stringWalker.PeekCharacter(1) == '|')
+                    if (streamReaderWrap.PeekCharacter(1) == '|')
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PipePipeToken, textSpan));
                     }
                     else
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PipeToken, textSpan));
                     }
                     break;
                 case '&':
-                    if (stringWalker.PeekCharacter(1) == '&')
+                    if (streamReaderWrap.PeekCharacter(1) == '&')
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AmpersandAmpersandToken, textSpan));
                     }
                     else
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AmpersandToken, textSpan));
                     }
                     break;
                 case '*':
                 {
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                    var entryPositionIndex = streamReaderWrap.PositionIndex;
+                    var byteEntryIndex = streamReaderWrap.ByteIndex;
+                    streamReaderWrap.ReadCharacter();
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StarToken, textSpan));
                     break;
                 }
                 case '!':
                 {
-                    if (stringWalker.PeekCharacter(1) == '=')
+                    if (streamReaderWrap.PeekCharacter(1) == '=')
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BangEqualsToken, textSpan));
                     }
                     else
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BangToken, textSpan));
                     }
                     break;
                 }
                 case ';':
                 {
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                    var entryPositionIndex = streamReaderWrap.PositionIndex;
+                    var byteEntryIndex = streamReaderWrap.ByteIndex;
+                    streamReaderWrap.ReadCharacter();
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StatementDelimiterToken, textSpan));
                     break;
                 }
                 case '(':
                 {
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                    var entryPositionIndex = streamReaderWrap.PositionIndex;
+                    var byteEntryIndex = streamReaderWrap.ByteIndex;
+                    streamReaderWrap.ReadCharacter();
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenParenthesisToken, textSpan));
                     break;
                 }
                 case ')':
                 {
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                    var entryPositionIndex = streamReaderWrap.PositionIndex;
+                    var byteEntryIndex = streamReaderWrap.ByteIndex;
+                    streamReaderWrap.ReadCharacter();
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseParenthesisToken, textSpan));
                     break;
                 }
@@ -316,9 +635,10 @@ public static class CSharpLexer
                     if (interpolatedExpressionUnmatchedBraceCount != -1)
                         ++interpolatedExpressionUnmatchedBraceCount;
                 
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                    var entryPositionIndex = streamReaderWrap.PositionIndex;
+                    var byteEntryIndex = streamReaderWrap.ByteIndex;
+                    streamReaderWrap.ReadCharacter();
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenBraceToken, textSpan));
                     break;
                 }
@@ -330,160 +650,173 @@ public static class CSharpLexer
                             goto forceExit;
                     }
                 
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                    var entryPositionIndex = streamReaderWrap.PositionIndex;
+                    var byteEntryIndex = streamReaderWrap.ByteIndex;
+                    streamReaderWrap.ReadCharacter();
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseBraceToken, textSpan));
                     break;
                 }
                 case '<':
                 {
-                    if (stringWalker.PeekCharacter(1) == '=')
+                    if (streamReaderWrap.PeekCharacter(1) == '=')
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenAngleBracketEqualsToken, textSpan));
                     }
                     else
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenAngleBracketToken, textSpan));
                     }
                     break;
                 }
                 case '>':
                 {
-                    if (stringWalker.PeekCharacter(1) == '=')
+                    if (streamReaderWrap.PeekCharacter(1) == '=')
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseAngleBracketEqualsToken, textSpan));
                     }
                     else
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseAngleBracketToken, textSpan));
                     }
                     break;
                 }
                 case '[':
                 {
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                    var entryPositionIndex = streamReaderWrap.PositionIndex;
+                    var byteEntryIndex = streamReaderWrap.ByteIndex;
+                    streamReaderWrap.ReadCharacter();
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenSquareBracketToken, textSpan));
                     break;
                 }
                 case ']':
                 {
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                    var entryPositionIndex = streamReaderWrap.PositionIndex;
+                    var byteEntryIndex = streamReaderWrap.ByteIndex;
+                    streamReaderWrap.ReadCharacter();
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseSquareBracketToken, textSpan));
                     break;
                 }
                 case '$':
-                    if (stringWalker.NextCharacter == '"')
+                    if (streamReaderWrap.NextCharacter == '"')
                     {
-                        LexString(binder, ref lexerOutput, stringWalker, ref previousEscapeCharacterTextSpan, countDollarSign: 1, useVerbatim: false);
+                        LexString(binder, ref lexerOutput, streamReaderWrap, ref previousEscapeCharacterTextSpan, countDollarSign: 1, useVerbatim: false);
                     }
-                    else if (stringWalker.PeekCharacter(1) == '@' && stringWalker.PeekCharacter(2) == '"')
+                    else if (streamReaderWrap.PeekCharacter(1) == '@' && streamReaderWrap.PeekCharacter(2) == '"')
                     {
-                        LexString(binder, ref lexerOutput, stringWalker, ref previousEscapeCharacterTextSpan, countDollarSign: 1, useVerbatim: true);
+                        LexString(binder, ref lexerOutput, streamReaderWrap, ref previousEscapeCharacterTextSpan, countDollarSign: 1, useVerbatim: true);
                     }
-                    else if (stringWalker.NextCharacter == '$')
+                    else if (streamReaderWrap.NextCharacter == '$')
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+
                         // The while loop starts counting from and including the first dollar sign.
                         var countDollarSign = 0;
                     
-                        while (!stringWalker.IsEof)
+                        while (!streamReaderWrap.IsEof)
                         {
-                            if (stringWalker.CurrentCharacter != '$')
+                            if (streamReaderWrap.CurrentCharacter != '$')
                                 break;
                             
                             ++countDollarSign;
-                            _ = stringWalker.ReadCharacter();
+                            _ = streamReaderWrap.ReadCharacter();
                         }
                         
                         // Only the last '$' (dollar sign character) will be syntax highlighted
                         // if this code is NOT included.
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.StringLiteral);
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.StringLiteral, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StringLiteralToken, textSpan));
                         
                         // From the LexString(...) method:
                         //     "awkwardly even if there are many of these it is expected
                         //      that the last one will not have been consumed."
-                        stringWalker.BacktrackCharacterNoReturnValue();
+                        streamReaderWrap.BacktrackCharacterNoReturnValue();
                         
-                        if (stringWalker.NextCharacter == '"')
-                            LexString(binder, ref lexerOutput, stringWalker, ref previousEscapeCharacterTextSpan, countDollarSign: countDollarSign, useVerbatim: false);
+                        if (streamReaderWrap.NextCharacter == '"')
+                            LexString(binder, ref lexerOutput, streamReaderWrap, ref previousEscapeCharacterTextSpan, countDollarSign: countDollarSign, useVerbatim: false);
                     }
                     else
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DollarSignToken, textSpan));
                         break;
                     }
                     break;
                 case '@':
-                    if (stringWalker.NextCharacter == '"')
+                    if (streamReaderWrap.NextCharacter == '"')
                     {
-                        LexString(binder, ref lexerOutput, stringWalker, ref previousEscapeCharacterTextSpan, countDollarSign: 0, useVerbatim: true);
+                        LexString(binder, ref lexerOutput, streamReaderWrap, ref previousEscapeCharacterTextSpan, countDollarSign: 0, useVerbatim: true);
                     }
-                    else if (stringWalker.PeekCharacter(1) == '$' && stringWalker.PeekCharacter(2) == '"')
+                    else if (streamReaderWrap.PeekCharacter(1) == '$' && streamReaderWrap.PeekCharacter(2) == '"')
                     {
-                        LexString(binder, ref lexerOutput, stringWalker, ref previousEscapeCharacterTextSpan, countDollarSign: 1, useVerbatim: true);
+                        LexString(binder, ref lexerOutput, streamReaderWrap, ref previousEscapeCharacterTextSpan, countDollarSign: 1, useVerbatim: true);
                     }
                     else
                     {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                        var entryPositionIndex = streamReaderWrap.PositionIndex;
+                        var byteEntryIndex = streamReaderWrap.ByteIndex;
+                        streamReaderWrap.ReadCharacter();
+                        var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AtToken, textSpan));
                         break;
                     }
                     break;
                 case ':':
                 {
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                    var entryPositionIndex = streamReaderWrap.PositionIndex;
+                    var byteEntryIndex = streamReaderWrap.ByteIndex;
+                    streamReaderWrap.ReadCharacter();
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ColonToken, textSpan));
                     break;
                 }
                 case '.':
                 {
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                    var entryPositionIndex = streamReaderWrap.PositionIndex;
+                    var byteEntryIndex = streamReaderWrap.ByteIndex;
+                    streamReaderWrap.ReadCharacter();
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.MemberAccessToken, textSpan));
                     break;
                 }
                 case ',':
                 {
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
+                    var entryPositionIndex = streamReaderWrap.PositionIndex;
+                    var byteEntryIndex = streamReaderWrap.ByteIndex;
+                    streamReaderWrap.ReadCharacter();
+                    var textSpan = new TextEditorTextSpan(entryPositionIndex, streamReaderWrap.PositionIndex, (byte)GenericDecorationKind.None, byteEntryIndex);
                     lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CommaToken, textSpan));
                     break;
                 }
                 case '#':
-                    LexPreprocessorDirectiveToken(ref lexerOutput, stringWalker);
+                    LexPreprocessorDirectiveToken(ref lexerOutput, streamReaderWrap);
                     break;
                 default:
-                    _ = stringWalker.ReadCharacter();
+                    _ = streamReaderWrap.ReadCharacter();
                     break;
             }
         }
@@ -502,7 +835,7 @@ public static class CSharpLexer
     private static void LexString(
         CSharpBinder binder,
         ref CSharpLexerOutput lexerOutput,
-        StringWalker stringWalker,
+        StreamReaderWrap streamReaderWrap,
         ref TextEditorTextSpan previousEscapeCharacterTextSpan,
         int countDollarSign,
         bool useVerbatim)
@@ -510,83 +843,86 @@ public static class CSharpLexer
         // Interpolated expressions will be done recursively and added to this 'SyntaxTokenList'
         var syntaxTokenListIndex = lexerOutput.SyntaxTokenList.Count;
     
-        var entryPositionIndex = stringWalker.PositionIndex;
+        var entryPositionIndex = streamReaderWrap.PositionIndex;
+        var byteEntryIndex = streamReaderWrap.ByteIndex;
 
         var useInterpolation = countDollarSign > 0;
         
         if (useInterpolation)
-            _ = stringWalker.ReadCharacter(); // Move past the '$' (dollar sign character); awkwardly even if there are many of these it is expected that the last one will not have been consumed.
+            _ = streamReaderWrap.ReadCharacter(); // Move past the '$' (dollar sign character); awkwardly even if there are many of these it is expected that the last one will not have been consumed.
         if (useVerbatim)
-            _ = stringWalker.ReadCharacter(); // Move past the '@' (at character)
+            _ = streamReaderWrap.ReadCharacter(); // Move past the '@' (at character)
         
         var useRaw = false;
         int countDoubleQuotes = 0;
         
-        if (!useVerbatim && stringWalker.PeekCharacter(1) == '\"' && stringWalker.PeekCharacter(2) == '\"')
+        if (!useVerbatim && streamReaderWrap.PeekCharacter(1) == '\"' && streamReaderWrap.PeekCharacter(2) == '\"')
         {
             useRaw = true;
             
             // Count the amount of double quotes to be used as the delimiter.
-            while (!stringWalker.IsEof)
+            while (!streamReaderWrap.IsEof)
             {
-                if (stringWalker.CurrentCharacter != '\"')
+                if (streamReaderWrap.CurrentCharacter != '\"')
                     break;
     
                 ++countDoubleQuotes;
-                _ = stringWalker.ReadCharacter();
+                _ = streamReaderWrap.ReadCharacter();
             }
         }
         else
         {
-            _ = stringWalker.ReadCharacter(); // Move past the '"' (double quote character)
+            _ = streamReaderWrap.ReadCharacter(); // Move past the '"' (double quote character)
         }
 
-        while (!stringWalker.IsEof)
+        while (!streamReaderWrap.IsEof)
         {
-            if (stringWalker.CurrentCharacter == '\"')
+            if (streamReaderWrap.CurrentCharacter == '\"')
             {
                 if (useRaw)
                 {
                     var matchDoubleQuotes = 0;
                     
-                    while (!stringWalker.IsEof)
+                    while (!streamReaderWrap.IsEof)
                     {
-                        if (stringWalker.CurrentCharacter != '\"')
+                        if (streamReaderWrap.CurrentCharacter != '\"')
                             break;
                         
-                        _ = stringWalker.ReadCharacter();
+                        _ = streamReaderWrap.ReadCharacter();
                         if (++matchDoubleQuotes == countDoubleQuotes)
                             goto foundEndDelimiter;
                     }
                     
                     continue;
                 }
-                else if (useVerbatim && stringWalker.NextCharacter == '\"')
+                else if (useVerbatim && streamReaderWrap.NextCharacter == '\"')
                 {
-                    EscapeCharacterListAdd(ref lexerOutput, stringWalker, ref previousEscapeCharacterTextSpan, new TextEditorTextSpan(
-                        stringWalker.PositionIndex,
-                        stringWalker.PositionIndex + 2,
-                        (byte)GenericDecorationKind.EscapeCharacterPrimary));
+                    EscapeCharacterListAdd(ref lexerOutput, streamReaderWrap, ref previousEscapeCharacterTextSpan, new TextEditorTextSpan(
+                        streamReaderWrap.PositionIndex,
+                        streamReaderWrap.PositionIndex + 2,
+                        (byte)GenericDecorationKind.EscapeCharacterPrimary,
+                        streamReaderWrap.ByteIndex));
     
-                    _ = stringWalker.ReadCharacter();
+                    _ = streamReaderWrap.ReadCharacter();
                 }
                 else
                 {
-                    _ = stringWalker.ReadCharacter();
+                    _ = streamReaderWrap.ReadCharacter();
                     break;
                 }
             }
-            else if (!useVerbatim && stringWalker.CurrentCharacter == '\\')
+            else if (!useVerbatim && streamReaderWrap.CurrentCharacter == '\\')
             {
-                EscapeCharacterListAdd(ref lexerOutput, stringWalker, ref previousEscapeCharacterTextSpan, new TextEditorTextSpan(
-                    stringWalker.PositionIndex,
-                    stringWalker.PositionIndex + 2,
-                    (byte)GenericDecorationKind.EscapeCharacterPrimary));
+                EscapeCharacterListAdd(ref lexerOutput, streamReaderWrap, ref previousEscapeCharacterTextSpan, new TextEditorTextSpan(
+                    streamReaderWrap.PositionIndex,
+                    streamReaderWrap.PositionIndex + 2,
+                    (byte)GenericDecorationKind.EscapeCharacterPrimary,
+                    streamReaderWrap.ByteIndex));
 
                 // Presuming the escaped text is 2 characters, then read an extra character.
-                _ = stringWalker.ReadCharacter();
+                _ = streamReaderWrap.ReadCharacter();
             }
-            else if (useInterpolation && stringWalker.CurrentCharacter == '{')
+            else if (useInterpolation && streamReaderWrap.CurrentCharacter == '{')
             {
                 // With raw, one is escaping by way of typing less.
                 // With normal interpolation, one is escaping by way of typing more.
@@ -594,20 +930,20 @@ public static class CSharpLexer
                 // Thus, these are two separate cases written as an if-else.
                 if (useRaw)
                 {
-                    var interpolationTemporaryPositionIndex = stringWalker.PositionIndex;
+                    var interpolationTemporaryPositionIndex = streamReaderWrap.PositionIndex;
                     var matchBrace = 0;
                         
-                    while (!stringWalker.IsEof)
+                    while (!streamReaderWrap.IsEof)
                     {
-                        if (stringWalker.CurrentCharacter != '{')
+                        if (streamReaderWrap.CurrentCharacter != '{')
                             break;
                         
-                        _ = stringWalker.ReadCharacter();
+                        _ = streamReaderWrap.ReadCharacter();
                         if (++matchBrace >= countDollarSign)
                         {
                             // Found yet another '{' match beyond what was needed.
                             // So, this logic will match from the inside to the outside.
-                            if (stringWalker.CurrentCharacter == '{')
+                            if (streamReaderWrap.CurrentCharacter == '{')
                             {
                                 ++interpolationTemporaryPositionIndex;
                             }
@@ -621,21 +957,21 @@ public static class CSharpLexer
                                 LexInterpolatedExpression(
                                     binder,
                                     ref lexerOutput,
-                                    stringWalker,
+                                    streamReaderWrap,
                                     ref previousEscapeCharacterTextSpan,
                                     startInclusiveOpenDelimiter: interpolationTemporaryPositionIndex,
                                     countDollarSign: countDollarSign,
                                     useRaw);
-                                stringWalker.BacktrackCharacterNoReturnValue();
+                                streamReaderWrap.BacktrackCharacterNoReturnValue();
                             }
                         }
                     }
                 }
                 else
                 {
-                    if (stringWalker.NextCharacter == '{')
+                    if (streamReaderWrap.NextCharacter == '{')
                     {
-                        _ = stringWalker.ReadCharacter();
+                        _ = streamReaderWrap.ReadCharacter();
                     }
                     else
                     {
@@ -645,9 +981,9 @@ public static class CSharpLexer
                         LexInterpolatedExpression(
                             binder,
                             ref lexerOutput,
-                            stringWalker,
+                            streamReaderWrap,
                             ref previousEscapeCharacterTextSpan,
-                            startInclusiveOpenDelimiter: stringWalker.PositionIndex,
+                            startInclusiveOpenDelimiter: streamReaderWrap.PositionIndex,
                             countDollarSign: countDollarSign,
                             useRaw);
                         continue;
@@ -655,15 +991,16 @@ public static class CSharpLexer
                 }
             }
 
-            _ = stringWalker.ReadCharacter();
+            _ = streamReaderWrap.ReadCharacter();
         }
 
         foundEndDelimiter:
 
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.StringLiteral);
+            streamReaderWrap.PositionIndex,
+            (byte)GenericDecorationKind.StringLiteral,
+            byteEntryIndex);
 
         if (useInterpolation)
         {
@@ -674,9 +1011,10 @@ public static class CSharpLexer
             lexerOutput.SyntaxTokenList.Add(new SyntaxToken(
                 SyntaxKind.StringInterpolatedEndToken,
                 new TextEditorTextSpan(
-                    stringWalker.PositionIndex,
-                    stringWalker.PositionIndex,
-                    (byte)GenericDecorationKind.None)));
+                    streamReaderWrap.PositionIndex,
+                    streamReaderWrap.PositionIndex,
+                    (byte)GenericDecorationKind.None,
+                    streamReaderWrap.ByteIndex)));
         }
         else
         {
@@ -696,7 +1034,7 @@ public static class CSharpLexer
     private static void LexInterpolatedExpression(
         CSharpBinder binder,
         ref CSharpLexerOutput lexerOutput,
-        StringWalker stringWalker,
+        StreamReaderWrap streamReaderWrap,
         ref TextEditorTextSpan previousEscapeCharacterTextSpan,
         int startInclusiveOpenDelimiter,
         int countDollarSign,
@@ -707,17 +1045,19 @@ public static class CSharpLexer
         if (useRaw)
         {
             // Starts inside the expression
-        
+
+            // TODO: streamReaderWrap.ByteIndex - countDollarSign
             lexerOutput.MiscTextSpanList.Add(new TextEditorTextSpan(
-                stringWalker.PositionIndex - countDollarSign,
-                stringWalker.PositionIndex,
-                (byte)GenericDecorationKind.None));
+                streamReaderWrap.PositionIndex - countDollarSign,
+                streamReaderWrap.PositionIndex,
+                (byte)GenericDecorationKind.None,
+                streamReaderWrap.ByteIndex));
         
-            /*var readOpenDelimiterCount = stringWalker.PositionIndex - startInclusiveOpenDelimiter;
+            /*var readOpenDelimiterCount = streamReaderWrap.PositionIndex - startInclusiveOpenDelimiter;
         
             for (; readOpenDelimiterCount < countDollarSign; readOpenDelimiterCount++)
             {
-                _ = stringWalker.ReadCharacter();
+                _ = streamReaderWrap.ReadCharacter();
             }*/
             
             unmatchedBraceCounter = countDollarSign;
@@ -727,15 +1067,16 @@ public static class CSharpLexer
             // Starts at the OpenBraceToken
         
             lexerOutput.MiscTextSpanList.Add(new TextEditorTextSpan(
-                stringWalker.PositionIndex,
-                stringWalker.PositionIndex + 1,
-                (byte)GenericDecorationKind.None));
+                streamReaderWrap.PositionIndex,
+                streamReaderWrap.PositionIndex + 1,
+                (byte)GenericDecorationKind.None,
+                streamReaderWrap.ByteIndex));
                 
-            var readOpenDelimiterCount = stringWalker.PositionIndex - startInclusiveOpenDelimiter;
+            var readOpenDelimiterCount = streamReaderWrap.PositionIndex - startInclusiveOpenDelimiter;
         
             for (; readOpenDelimiterCount < countDollarSign; readOpenDelimiterCount++)
             {
-                _ = stringWalker.ReadCharacter();
+                _ = streamReaderWrap.ReadCharacter();
             }
             
             unmatchedBraceCounter = countDollarSign;
@@ -745,36 +1086,40 @@ public static class CSharpLexer
         Lex_Frame(
             binder,
             ref lexerOutput,
-            stringWalker,
+            streamReaderWrap,
             ref previousEscapeCharacterTextSpan,
             ref unmatchedBraceCounter);
         
         if (useRaw)
         {
-            _ = stringWalker.ReadCharacter(); // This consumes the final '}'.
+            _ = streamReaderWrap.ReadCharacter(); // This consumes the final '}'.
 
+            // TODO: streamReaderWrap.ByteIndex - 1
             lexerOutput.SyntaxTokenList.Add(new SyntaxToken(
                 SyntaxKind.StringInterpolatedContinueToken,
                 new TextEditorTextSpan(
-                    stringWalker.PositionIndex - 1,
-                    stringWalker.PositionIndex,
-                    (byte)GenericDecorationKind.None)));
+                    streamReaderWrap.PositionIndex - 1,
+                    streamReaderWrap.PositionIndex,
+                    (byte)GenericDecorationKind.None,
+                    streamReaderWrap.ByteIndex)));
         }
         else
         {
-            _ = stringWalker.ReadCharacter(); // This consumes the final '}'.
+            _ = streamReaderWrap.ReadCharacter(); // This consumes the final '}'.
 
+            // TODO: streamReaderWrap.ByteIndex - 1
             lexerOutput.SyntaxTokenList.Add(new SyntaxToken(
                 SyntaxKind.StringInterpolatedContinueToken,
                 new TextEditorTextSpan(
-                    stringWalker.PositionIndex - 1,
-                    stringWalker.PositionIndex,
-                    (byte)GenericDecorationKind.None)));
+                    streamReaderWrap.PositionIndex - 1,
+                    streamReaderWrap.PositionIndex,
+                    (byte)GenericDecorationKind.None,
+                    streamReaderWrap.ByteIndex)));
         }
     }
     
     private static void EscapeCharacterListAdd(
-        ref CSharpLexerOutput lexerOutput, StringWalker stringWalker, ref TextEditorTextSpan previousEscapeCharacterTextSpan, TextEditorTextSpan textSpan)
+        ref CSharpLexerOutput lexerOutput, StreamReaderWrap streamReaderWrap, ref TextEditorTextSpan previousEscapeCharacterTextSpan, TextEditorTextSpan textSpan)
     {
         if (lexerOutput.MiscTextSpanList.Count > 0)
         {
@@ -792,27 +1137,29 @@ public static class CSharpLexer
         lexerOutput.MiscTextSpanList.Add(textSpan);
     }
     
-    public static void LexIdentifierOrKeywordOrKeywordContextual(CSharpBinder binder, ref CSharpLexerOutput lexerOutput, StringWalker stringWalker)
+    public static void LexIdentifierOrKeywordOrKeywordContextual(CSharpBinder binder, ref CSharpLexerOutput lexerOutput, StreamReaderWrap streamReaderWrap)
     {
-        var entryPositionIndex = stringWalker.PositionIndex;
+        var entryPositionIndex = streamReaderWrap.PositionIndex;
+        var byteEntryIndex = streamReaderWrap.ByteIndex;
 
-        while (!stringWalker.IsEof)
+        while (!streamReaderWrap.IsEof)
         {
-            if (!char.IsLetterOrDigit(stringWalker.CurrentCharacter) &&
-                stringWalker.CurrentCharacter != '_')
+            if (!char.IsLetterOrDigit(streamReaderWrap.CurrentCharacter) &&
+                streamReaderWrap.CurrentCharacter != '_')
             {
                 break;
             }
 
-            _ = stringWalker.ReadCharacter();
+            _ = streamReaderWrap.ReadCharacter();
         }
 
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None);
+            streamReaderWrap.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            byteEntryIndex);
         
-        switch (binder.TextEditorService.EditContext_GetText(lexerOutput.Text.Slice(textSpan.StartInclusiveIndex, textSpan.Length)))
+        switch (binder.CSharpCompilerService.SafeGetText(lexerOutput.ResourceUri.Value, textSpan))
         {
             // NonContextualKeywords-NonControl
             // ================================
@@ -1308,16 +1655,17 @@ public static class CSharpLexer
         }
     }
     
-    public static void LexNumericLiteralToken(CSharpBinder binder, ref CSharpLexerOutput lexerOutput, StringWalker stringWalker)
+    public static void LexNumericLiteralToken(CSharpBinder binder, ref CSharpLexerOutput lexerOutput, StreamReaderWrap streamReaderWrap)
     {
-        var entryPositionIndex = stringWalker.PositionIndex;
+        var entryPositionIndex = streamReaderWrap.PositionIndex;
+        var byteEntryIndex = streamReaderWrap.ByteIndex;
 
         // Declare outside the while loop to avoid overhead of redeclaring each loop? not sure
         var isNotANumber = false;
 
-        while (!stringWalker.IsEof)
+        while (!streamReaderWrap.IsEof)
         {
-            switch (stringWalker.CurrentCharacter)
+            switch (streamReaderWrap.CurrentCharacter)
             {
                 case '0':
                 case '1':
@@ -1338,67 +1686,72 @@ public static class CSharpLexer
             if (isNotANumber)
                 break;
 
-            _ = stringWalker.ReadCharacter();
+            _ = streamReaderWrap.ReadCharacter();
         }
 
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None);
+            streamReaderWrap.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            byteEntryIndex);
 
         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NumericLiteralToken, textSpan));
     }
     
-    public static void LexCharLiteralToken(CSharpBinder binder, ref CSharpLexerOutput lexerOutput, StringWalker stringWalker)
+    public static void LexCharLiteralToken(CSharpBinder binder, ref CSharpLexerOutput lexerOutput, StreamReaderWrap streamReaderWrap)
     {
         var delimiter = '\'';
         var escapeCharacter = '\\';
         
-        var entryPositionIndex = stringWalker.PositionIndex;
+        var entryPositionIndex = streamReaderWrap.PositionIndex;
+        var byteEntryIndex = streamReaderWrap.ByteIndex;
 
         // Move past the opening delimiter
-        _ = stringWalker.ReadCharacter();
+        _ = streamReaderWrap.ReadCharacter();
 
-        while (!stringWalker.IsEof)
+        while (!streamReaderWrap.IsEof)
         {
-            if (stringWalker.CurrentCharacter == delimiter)
+            if (streamReaderWrap.CurrentCharacter == delimiter)
             {
-                _ = stringWalker.ReadCharacter();
+                _ = streamReaderWrap.ReadCharacter();
                 break;
             }
-            else if (stringWalker.CurrentCharacter == escapeCharacter)
+            else if (streamReaderWrap.CurrentCharacter == escapeCharacter)
             {
                 lexerOutput.MiscTextSpanList.Add(new TextEditorTextSpan(
-                    stringWalker.PositionIndex,
-                    stringWalker.PositionIndex + 2,
-                    (byte)GenericDecorationKind.EscapeCharacterPrimary));
+                    streamReaderWrap.PositionIndex,
+                    streamReaderWrap.PositionIndex + 2,
+                    (byte)GenericDecorationKind.EscapeCharacterPrimary,
+                    streamReaderWrap.ByteIndex));
 
                 // Presuming the escaped text is 2 characters,
                 // then read an extra character.
-                _ = stringWalker.ReadCharacter();
+                _ = streamReaderWrap.ReadCharacter();
             }
 
-            _ = stringWalker.ReadCharacter();
+            _ = streamReaderWrap.ReadCharacter();
         }
 
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.StringLiteral);
+            streamReaderWrap.PositionIndex,
+            (byte)GenericDecorationKind.StringLiteral,
+            byteEntryIndex);
 
         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CharLiteralToken, textSpan));
     }
     
-    public static void LexCommentSingleLineToken(ref CSharpLexerOutput lexerOutput, StringWalker stringWalker)
+    public static void LexCommentSingleLineToken(ref CSharpLexerOutput lexerOutput, StreamReaderWrap streamReaderWrap)
     {
-        var entryPositionIndex = stringWalker.PositionIndex;
+        var entryPositionIndex = streamReaderWrap.PositionIndex;
+        var byteEntryIndex = streamReaderWrap.ByteIndex;
 
         // Declare outside the while loop to avoid overhead of redeclaring each loop? not sure
         var isNewLineCharacter = false;
 
-        while (!stringWalker.IsEof)
+        while (!streamReaderWrap.IsEof)
         {
-            switch (stringWalker.CurrentCharacter)
+            switch (streamReaderWrap.CurrentCharacter)
             {
                 case '\r':
                 case '\n':
@@ -1411,31 +1764,33 @@ public static class CSharpLexer
             if (isNewLineCharacter)
                 break;
 
-            _ = stringWalker.ReadCharacter();
+            _ = streamReaderWrap.ReadCharacter();
         }
 
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.CommentSingleLine);
+            streamReaderWrap.PositionIndex,
+            (byte)GenericDecorationKind.CommentSingleLine,
+            byteEntryIndex);
 
         lexerOutput.MiscTextSpanList.Add(textSpan);
     }
     
-    public static void LexCommentMultiLineToken(ref CSharpLexerOutput lexerOutput, StringWalker stringWalker)
+    public static void LexCommentMultiLineToken(ref CSharpLexerOutput lexerOutput, StreamReaderWrap streamReaderWrap)
     {
-        var entryPositionIndex = stringWalker.PositionIndex;
+        var entryPositionIndex = streamReaderWrap.PositionIndex;
+        var byteEntryIndex = streamReaderWrap.ByteIndex;
 
         // Move past the initial "/*"
-        stringWalker.SkipRange(2);
+        streamReaderWrap.SkipRange(2);
 
         // Declare outside the while loop to avoid overhead of redeclaring each loop? not sure
         var possibleClosingText = false;
         var sawClosingText = false;
 
-        while (!stringWalker.IsEof)
+        while (!streamReaderWrap.IsEof)
         {
-            switch (stringWalker.CurrentCharacter)
+            switch (streamReaderWrap.CurrentCharacter)
             {
                 case '*':
                     possibleClosingText = true;
@@ -1448,7 +1803,7 @@ public static class CSharpLexer
                     break;
             }
 
-            _ = stringWalker.ReadCharacter();
+            _ = streamReaderWrap.ReadCharacter();
 
             if (sawClosingText)
                 break;
@@ -1456,23 +1811,25 @@ public static class CSharpLexer
 
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.CommentMultiLine);
+            streamReaderWrap.PositionIndex,
+            (byte)GenericDecorationKind.CommentMultiLine,
+            byteEntryIndex);
 
         lexerOutput.MiscTextSpanList.Add(textSpan);
     }
     
-    public static void LexPreprocessorDirectiveToken(ref CSharpLexerOutput lexerOutput, StringWalker stringWalker)
+    public static void LexPreprocessorDirectiveToken(ref CSharpLexerOutput lexerOutput, StreamReaderWrap streamReaderWrap)
     {
-        var entryPositionIndex = stringWalker.PositionIndex;
+        var entryPositionIndex = streamReaderWrap.PositionIndex;
+        var byteEntryIndex = streamReaderWrap.ByteIndex;
 
         // Declare outside the while loop to avoid overhead of redeclaring each loop? not sure
         var isNewLineCharacter = false;
         var firstWhitespaceCharacterPositionIndex = -1;
 
-        while (!stringWalker.IsEof)
+        while (!streamReaderWrap.IsEof)
         {
-            switch (stringWalker.CurrentCharacter)
+            switch (streamReaderWrap.CurrentCharacter)
             {
                 case '\r':
                 case '\n':
@@ -1481,7 +1838,7 @@ public static class CSharpLexer
                 case '\t':
                 case ' ':
                     if (firstWhitespaceCharacterPositionIndex == -1)
-                        firstWhitespaceCharacterPositionIndex = stringWalker.PositionIndex;
+                        firstWhitespaceCharacterPositionIndex = streamReaderWrap.PositionIndex;
                     break;
                 default:
                     break;
@@ -1490,16 +1847,17 @@ public static class CSharpLexer
             if (isNewLineCharacter)
                 break;
 
-            _ = stringWalker.ReadCharacter();
+            _ = streamReaderWrap.ReadCharacter();
         }
         
         if (firstWhitespaceCharacterPositionIndex == -1)
-            firstWhitespaceCharacterPositionIndex = stringWalker.PositionIndex;
+            firstWhitespaceCharacterPositionIndex = streamReaderWrap.PositionIndex;
 
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             firstWhitespaceCharacterPositionIndex,
-            (byte)GenericDecorationKind.PreprocessorDirective);
+            (byte)GenericDecorationKind.PreprocessorDirective,
+            byteEntryIndex);
 
         lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PreprocessorDirectiveToken, textSpan));
     }

@@ -18,13 +18,11 @@ namespace Walk.TextEditor.RazorLib;
 public sealed partial class TextEditorService
 {
     private readonly IJSRuntime _jsRuntime;
-    private readonly IServiceProvider _serviceProvider;
 
     public TextEditorService(
         WalkTextEditorConfig textEditorConfig,
         IJSRuntime jsRuntime,
-        CommonService commonService,
-        IServiceProvider serviceProvider)
+        CommonService commonService)
     {
         __TextEditorViewModelLiason = new(this);
     
@@ -42,7 +40,6 @@ public sealed partial class TextEditorService
                 return Task.CompletedTask;
             });
         
-        _serviceProvider = serviceProvider;
         TextEditorConfig = textEditorConfig;
         _jsRuntime = jsRuntime;
         JsRuntimeTextEditorApi = _jsRuntime.GetWalkTextEditorApi();
