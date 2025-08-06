@@ -78,6 +78,17 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// </summary>
     public (string AbsolutePathString, StreamReader Sr) FastParseTuple;
 
+    public Dictionary<string, (int UsageCount, StreamReader StreamReader)> StreamReaderTupleCache = new();
+
+    public void ClearStreamReaderTupleCache()
+    {
+        foreach (var tuple in StreamReaderTupleCache.Values)
+        {
+            tuple.StreamReader.Dispose();
+        }
+        StreamReaderTupleCache.Clear();
+    }
+
     public event Action? ResourceRegistered;
     public event Action? ResourceParsed;
     public event Action? ResourceDisposed;
@@ -177,6 +188,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
     /// </summary>
     public string? SafeGetText(string absolutePathString, TextEditorTextSpan textSpan)
     {
+        StreamReader sr;
+
         if (absolutePathString == string.Empty)
         {
             return textSpan.GetText(EmptyFileHackForLanguagePrimitiveText, _textEditorService);
@@ -202,29 +215,60 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
             return _safeGetTextStringBuilder.ToString();
         }
+
+        if (StreamReaderTupleCache.TryGetValue(absolutePathString, out var srTuple))
+        {
+            sr = srTuple.StreamReader;
+            srTuple.UsageCount++;
+        }
         else
         {
-            using (StreamReader sr = new StreamReader(absolutePathString))
+            sr = new StreamReader(absolutePathString);
+            if (StreamReaderTupleCache.Count >= 256)
             {
-                // I presume this is needed so the StreamReader can get the encoding.
-                sr.Read();
+                int min = int.MaxValue;
+                string? leastUsedAbsolutePathString = null;
 
-                // TODO: What happens if I split a multibyte word?
-                sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
-                // sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
-                sr.DiscardBufferedData();
-
-                _safeGetTextStringBuilder.Clear();
-
-                for (int i = 0; i < textSpan.Length; i++)
+                foreach (var tupleKvp in StreamReaderTupleCache)
                 {
-                    sr.Read(_safeGetTextBuffer, 0, 1);
-                    _safeGetTextStringBuilder.Append(_safeGetTextBuffer[0]);
+                    if (tupleKvp.Value.UsageCount < min)
+                    {
+                        min = tupleKvp.Value.UsageCount;
+                        leastUsedAbsolutePathString = tupleKvp.Key;
+                    }
                 }
 
-                return _safeGetTextStringBuilder.ToString();
+                if (leastUsedAbsolutePathString is not null)
+                {
+                    StreamReaderTupleCache[leastUsedAbsolutePathString].StreamReader.Dispose();
+                    StreamReaderTupleCache.Remove(leastUsedAbsolutePathString);
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
             }
+
+            StreamReaderTupleCache.Add(absolutePathString, (1, sr));
         }
+
+        // I presume this is needed so the StreamReader can get the encoding.
+        sr.Read();
+
+        // TODO: What happens if I split a multibyte word?
+        sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+        // sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+        sr.DiscardBufferedData();
+
+        _safeGetTextStringBuilder.Clear();
+
+        for (int i = 0; i < textSpan.Length; i++)
+        {
+            sr.Read(_safeGetTextBuffer, 0, 1);
+            _safeGetTextStringBuilder.Append(_safeGetTextBuffer[0]);
+        }
+
+        return _safeGetTextStringBuilder.ToString();
     }
 
     private MenuRecord? GetAutocompleteMenuPart(TextEditorVirtualizationResult virtualizationResult, AutocompleteMenu autocompleteMenu, int positionIndex)
@@ -1436,6 +1480,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             }
 
             _currentFileBeingParsedTuple = (null, null);
+
+            ClearStreamReaderTupleCache();
 
             ResourceParsed?.Invoke();
         }
