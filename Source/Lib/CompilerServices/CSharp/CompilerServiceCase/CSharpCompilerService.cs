@@ -147,8 +147,16 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 // I presume this is needed so the StreamReader can get the encoding.
                 sr.Read();
 
-                // TODO: What happens if I split a multibyte word?
-                sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+                if (textSpan.ByteIndex >= 1)
+                {
+                    // TODO: What happens if I split a multibyte word?
+                    _fastParseTuple.Sr.BaseStream.Seek(textSpan.ByteIndex - 1, SeekOrigin.Begin);
+                }
+                else
+                {
+                    // TODO: What happens if I split a multibyte word?
+                    _fastParseTuple.Sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+                }
                 // sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
                 sr.DiscardBufferedData();
 
@@ -181,8 +189,16 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         }
         else if (absolutePathString == _fastParseTuple.AbsolutePathString)
         {
-            // TODO: What happens if I split a multibyte word?
-            _fastParseTuple.Sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+            if (textSpan.ByteIndex >= 1)
+            {
+                // TODO: What happens if I split a multibyte word?
+                _fastParseTuple.Sr.BaseStream.Seek(textSpan.ByteIndex - 1, SeekOrigin.Begin);
+            }
+            else
+            {
+                // TODO: What happens if I split a multibyte word?
+                _fastParseTuple.Sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+            }
             // sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
             _fastParseTuple.Sr.DiscardBufferedData();
 
@@ -203,8 +219,16 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 // I presume this is needed so the StreamReader can get the encoding.
                 sr.Read();
 
-                // TODO: What happens if I split a multibyte word?
-                sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+                if (textSpan.ByteIndex >= 1)
+                {
+                    // TODO: What happens if I split a multibyte word?
+                    _fastParseTuple.Sr.BaseStream.Seek(textSpan.ByteIndex - 1, SeekOrigin.Begin);
+                }
+                else
+                {
+                    // TODO: What happens if I split a multibyte word?
+                    _fastParseTuple.Sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+                }
                 // sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
                 sr.DiscardBufferedData();
 
