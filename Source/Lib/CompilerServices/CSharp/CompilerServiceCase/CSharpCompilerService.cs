@@ -131,10 +131,6 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         {
             return textSpan.GetText(EmptyFileHackForLanguagePrimitiveText, _textEditorService);
         }
-        else if (absolutePathString == _currentFileBeingParsedTuple.AbsolutePathString)
-        {
-            return textSpan.GetText(_currentFileBeingParsedTuple.Content, _textEditorService);
-        }
         else
         {
             using (StreamReader sr = new StreamReader(absolutePathString))
@@ -144,6 +140,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
                 // TODO: What happens if I split a multibyte word?
                 sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+                sr.DiscardBufferedData();
 
                 _unsafeGetTextStringBuilder.Clear();
 
@@ -181,6 +178,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
                 // TODO: What happens if I split a multibyte word?
                 sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+                // sr.BaseStream.Seek(textSpan.ByteIndex, SeekOrigin.Begin);
+                sr.DiscardBufferedData();
 
                 _safeGetTextStringBuilder.Clear();
 
@@ -1402,6 +1401,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                         .Concat(lexerOutput.MiscTextSpanList)
                         .Concat(__CSharpBinder.SymbolList.Skip(cSharpCompilationUnit.IndexSymbolList).Take(cSharpCompilationUnit.CountSymbolList).Select(x => x.TextSpan)));
             }
+
+            _currentFileBeingParsedTuple = (null, null);
 
             ResourceParsed?.Invoke();
         }
