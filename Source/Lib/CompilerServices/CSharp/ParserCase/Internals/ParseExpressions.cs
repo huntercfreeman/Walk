@@ -778,6 +778,18 @@ public static class ParseExpressions
                 
                 return EmptyExpressionNode.Empty;
             }
+            case SyntaxKind.AsTokenKeyword:
+            {
+                var decidedNode = ForceDecisionAmbiguousIdentifier(
+                    EmptyExpressionNode.Empty,
+                    ambiguousIdentifierExpressionNode,
+                    ref parserModel);
+                    
+                if (decidedNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                    return VariableReferenceMergeToken((VariableReferenceNode)decidedNode, ref parserModel);
+                
+                goto default;
+            }
             case SyntaxKind.WithTokenContextualKeyword:
             {
                 var decidedNode = ForceDecisionAmbiguousIdentifier(
@@ -1233,6 +1245,12 @@ public static class ParseExpressions
                 {
                     _ = parserModel.TokenWalker.Consume(); // Consume the NullTokenKeyword
                 }
+                
+                return EmptyExpressionNode.Empty;
+            }
+            case SyntaxKind.AsTokenKeyword:
+            {
+                _ = parserModel.TokenWalker.Consume();
                 
                 return EmptyExpressionNode.Empty;
             }
