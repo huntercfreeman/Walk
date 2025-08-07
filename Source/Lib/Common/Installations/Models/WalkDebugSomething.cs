@@ -71,6 +71,7 @@ public static class WalkDebugSomething
     public static int TypeDefinitionNode { get; set; }
     public static int UnaryExpressionNode { get; set; }
     public static int UnaryOperatorNode { get; set; }
+    public static int UsingStatementCodeBlockNode { get; set; }
     public static int UsingStatementListingNode { get; set; }
     public static int VariableAssignmentExpressionNode { get; set; }
     public static int VariableDeclarationNode { get; set; }
@@ -162,6 +163,7 @@ public static class WalkDebugSomething
             ("TypeDefinitionNode", TypeDefinitionNode),
             ("UnaryExpressionNode", UnaryExpressionNode),
             ("UnaryOperatorNode", UnaryOperatorNode),
+            ("UsingStatementCodeBlockNode", UsingStatementCodeBlockNode),
             ("UsingStatementListingNode", UsingStatementListingNode),
             ("VariableAssignmentExpressionNode", VariableAssignmentExpressionNode),
             ("VariableDeclarationNode", VariableDeclarationNode),
@@ -226,6 +228,7 @@ public static class WalkDebugSomething
             TypeDefinitionNode +
             UnaryExpressionNode +
             UnaryOperatorNode +
+            UsingStatementCodeBlockNode +
             UsingStatementListingNode +
             VariableAssignmentExpressionNode +
             VariableDeclarationNode +

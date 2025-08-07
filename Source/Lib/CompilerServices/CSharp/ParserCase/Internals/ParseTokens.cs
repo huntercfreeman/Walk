@@ -178,6 +178,68 @@ public static class ParseTokens
         }
     }
     
+    public static void HandleMultiVariableDeclaration(VariableDeclarationNode variableDeclarationNode, ref CSharpParserModel parserModel)
+    {
+        var previousTokenIndex = parserModel.TokenWalker.Index;
+        
+        while (!parserModel.TokenWalker.IsEof)
+        {
+            parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+            parserModel.ExpressionList.Add((SyntaxKind.CommaToken, null));
+            
+            if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+            {
+                ParseTokens.MoveToHandleVariableDeclarationNode(variableDeclarationNode, ref parserModel);
+            }
+            
+            if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.CommaToken)
+            {
+                break;
+            }
+            
+            _ = parserModel.TokenWalker.Consume(); // Comma Token
+            
+            if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind))
+            {
+                var token = parserModel.TokenWalker.Consume();
+                var identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, ref parserModel);
+            
+                variableDeclarationNode = new VariableDeclarationNode(
+                    variableDeclarationNode.TypeReference,
+                    identifierToken,
+                    VariableKind.Local,
+                    isInitialized: false,
+                    resourceUri: parserModel.ResourceUri);
+            }
+            else
+            {
+                var openParenthesisCounter = 1;
+                while (true)
+                {
+                    if (parserModel.TokenWalker.IsEof)
+                        break;
+                
+                    if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+                    {
+                        ++openParenthesisCounter;
+                    }
+                    else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+                    {
+                        if (--openParenthesisCounter <= 0)
+                            break;
+                    }
+                
+                    _ = parserModel.TokenWalker.Consume();
+                }
+            }
+            
+            if (previousTokenIndex == parserModel.TokenWalker.Index)
+                break;
+            
+            previousTokenIndex = parserModel.TokenWalker.Index;
+        }
+    }
+    
     public static void MoveToHandleTypeClauseNode(int originalTokenIndex, TypeClauseNode typeClauseNode, ref CSharpParserModel parserModel)
     {
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
