@@ -2599,9 +2599,27 @@ public static class ParseExpressions
                         // If it truly is a VariableDeclarationNode,
                         // then it is the responsibility of the statement code
                         // to bind the VariableDeclarationNode, and add it to the current code block builder.
+                        
+                        var nameToken = identifierToken;
+                        
+                        if (parserModel.CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                            parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken)
+                        {
+                            parserModel.ParserContextKind = CSharpParserContextKind.None;
+                            var ambiguousExpressionNode = new AmbiguousIdentifierExpressionNode(
+                                parserModel.TokenWalker.Current,
+                                openAngleBracketToken: default,
+                                indexGenericParameterEntryList: -1,
+                                countGenericParameterEntryList: 0,
+                                closeAngleBracketToken: default,
+                                resultTypeReference: default);
+                            var expressionNode = ForceDecisionAmbiguousIdentifier(typeClauseNode, ambiguousExpressionNode, ref parserModel);
+                            nameToken = parserModel.Binder.GetNameToken(expressionNode);
+                        }
+                        
                         variableDeclarationNode = new VariableDeclarationNode(
                             new TypeReference(typeClauseNode),
-                            identifierToken,
+                            nameToken,
                             VariableKind.Local,
                             false,
                             parserModel.ResourceUri);

@@ -6,12 +6,10 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
 {
     public AmbiguousIdentifierExpressionNode(
         SyntaxToken token,
-        
         SyntaxToken openAngleBracketToken,
         int indexGenericParameterEntryList,
         int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
-        
         TypeReference resultTypeReference)
     {
         #if DEBUG
