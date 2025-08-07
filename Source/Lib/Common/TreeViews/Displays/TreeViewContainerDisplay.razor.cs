@@ -183,11 +183,17 @@ public partial class TreeViewContainerDisplay : ComponentBase, IDisposable
                 
                 if (top < eventArgsKeyDown.ScrollTop)
                 {
-                    await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync("walkCommon.treeViewScrollVertical", _htmlId, top - eventArgsKeyDown.ScrollTop);
+                    await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
+                        "walkCommon.treeViewScrollVertical",
+                        _htmlId,
+                        top - eventArgsKeyDown.ScrollTop);
                 }
-                else if (top + LineHeight > eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight)
+                else if (top + (2 * LineHeight) > eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight)
                 {
-                    await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync("walkCommon.treeViewScrollVertical", _htmlId, top - (eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight) + LineHeight);
+                    await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
+                        "walkCommon.treeViewScrollVertical",
+                        _htmlId,
+                        top - (eventArgsKeyDown.ScrollTop + eventArgsKeyDown.ViewHeight) + (2 * LineHeight));
                 }
                 break;
             }
