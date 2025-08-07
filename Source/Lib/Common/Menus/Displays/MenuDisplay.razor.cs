@@ -236,6 +236,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
         else if (option.WidgetRendererType is not null)
         {
             _indexMenuOptionShouldDisplayWidget = indexClicked;
+            StateHasChanged();
         }
     }
     
