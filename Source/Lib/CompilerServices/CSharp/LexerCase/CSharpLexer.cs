@@ -37,14 +37,14 @@ public static class CSharpLexer
         /// </summary>
         public int LastReadCharacterCount { get; set; }
 
-        private int _positionIndex;
+        private int _streamPositionIndex;
         public int PositionIndex
         {
             get
             {
                 if (_peekIndex == -1)
                 {
-                    return _positionIndex;
+                    return _streamPositionIndex;
                 }
                 else
                 {
@@ -53,18 +53,18 @@ public static class CSharpLexer
             }
             set
             {
-                _positionIndex = value;
+                _streamPositionIndex = value;
             }
         }
 
-        private int _byteIndex;
+        private int _streamByteIndex;
         public int ByteIndex
         {
             get
             {
                 if (_peekIndex == -1)
                 {
-                    return _byteIndex;
+                    return _streamByteIndex;
                 }
                 else
                 {
@@ -73,7 +73,7 @@ public static class CSharpLexer
             }
             set
             {
-                _byteIndex = value;
+                _streamByteIndex = value;
             }
         }
 
@@ -155,8 +155,8 @@ public static class CSharpLexer
 
                 _backtrackTuple = (_streamReaderCharBuffer[0], PositionIndex, ByteIndex);
 
-                PositionIndex++;
-                ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
+                _streamPositionIndex++;
+                _streamByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
 
                 LastReadCharacterCount = StreamReader.Read(_streamReaderCharBuffer, 0, 1);
             }
@@ -239,8 +239,8 @@ public static class CSharpLexer
 
                                 // This is duplicated inside the ReadCharacter() code.
 
-                                PositionIndex++;
-                                ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
+                                _streamPositionIndex++;
+                                _streamByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
                                 StreamReader.Read(_streamReaderCharBuffer);
                                 return _streamReaderCharBuffer[0];
                             }
@@ -261,8 +261,8 @@ public static class CSharpLexer
 
                 // This is duplicated inside the ReadCharacter() code.
 
-                PositionIndex++;
-                ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
+                _streamPositionIndex++;
+                _streamByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
                 StreamReader.Read(_streamReaderCharBuffer);
             }
 
@@ -299,8 +299,8 @@ public static class CSharpLexer
             /*
             // This is duplicated inside the ReadCharacter() code.
             StreamReader.Read(_streamReaderCharBuffer);
-            PositionIndex++;
-            ByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
+            _streamPositionIndex++;
+            _streamByteIndex += StreamReader.CurrentEncoding.GetByteCount(_streamReaderCharBuffer);
             */
         }
 
