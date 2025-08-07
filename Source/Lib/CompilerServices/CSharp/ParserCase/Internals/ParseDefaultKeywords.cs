@@ -712,13 +712,31 @@ public class ParseDefaultKeywords
         if (successParse)
         {
             ParseTokens.HandleMultiVariableDeclaration(variableDeclarationNode, ref parserModel);
+            var openParenthesisCounter = 1;
+            while (true)
+            {
+                if (parserModel.TokenWalker.IsEof)
+                    break;
+            
+                if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+                {
+                    ++openParenthesisCounter;
+                }
+                else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+                {
+                    if (--openParenthesisCounter <= 0)
+                        break;
+                }
+            
+                _ = parserModel.TokenWalker.Consume();
+            }
         }
         else
         {
             parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
             _ = ParseExpressions.ParseExpression(ref parserModel);
         }
-
+        
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
         
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
