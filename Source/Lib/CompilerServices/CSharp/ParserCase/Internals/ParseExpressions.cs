@@ -917,8 +917,9 @@ public static class ParseExpressions
     /// The issue is:
     /// - ExplicitCast
     /// - GenericParameters
+    /// - SyntaxKind.AsTokenKeyword
     ///
-    /// will forceable make a TypeClauseNode under certain scenarios.
+    /// will forcibly make a TypeClauseNode under certain scenarios.
     /// But, the current token is not necessarily in the correct place during these scenarios.
     /// Thus invoking `ForceDecisionAmbiguousIdentifier` needs to be looked into further.
     /// </summary>
@@ -976,6 +977,7 @@ public static class ParseExpressions
     
     /// <summary>
     /// TODO: Combine searches for Types, Functions, etc... where possible?
+    /// TODO: This method needs to be verified and then made clear that it looks the current tokens.
     /// </summary>
     public static IExpressionNode ForceDecisionAmbiguousIdentifier(
         IExpressionNode expressionPrimary,
@@ -1250,7 +1252,25 @@ public static class ParseExpressions
             }
             case SyntaxKind.AsTokenKeyword:
             {
-                _ = parserModel.TokenWalker.Consume();
+                _ = parserModel.TokenWalker.Consume(); // Consume the AsTokenKeyword
+                
+                if (UtilityApi.IsConvertibleToTypeClauseNode(parserModel.TokenWalker.Current.SyntaxKind))
+                {
+                    var nameableToken = parserModel.TokenWalker.Consume();
+                    
+                    var typeClauseNode = ExplicitCastAndGenericParametersForceType(
+                        ref nameableToken,
+                        ref parserModel);
+                
+                    return new VariableReferenceNode(
+                        nameableToken,
+                        new VariableDeclarationNode(
+                            new TypeReference(typeClauseNode),
+                            nameableToken,
+                            VariableKind.Local,
+                            isInitialized: true,
+                            parserModel.ResourceUri));
+                }
                 
                 return EmptyExpressionNode.Empty;
             }
