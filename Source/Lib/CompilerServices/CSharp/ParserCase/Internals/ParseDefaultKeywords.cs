@@ -682,7 +682,8 @@ public class ParseDefaultKeywords
         {
             HandleUsingCodeBlockOwner(ref usingKeywordToken, ref parserModel);
         }
-        else
+        else if (parserModel.CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.GlobalCodeBlockNode ||
+                 parserModel.CurrentCodeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
             var namespaceIdentifierToken = ParseOthers.HandleNamespaceIdentifier(ref parserModel, isNamespaceStatement: false);
     
@@ -693,6 +694,10 @@ public class ParseDefaultKeywords
             }
             
             parserModel.BindUsingStatementTuple(usingKeywordToken, namespaceIdentifierToken);
+        }
+        else
+        {
+            // Ignore the 'using' keyword in this scenario for now.
         }
     }
     
