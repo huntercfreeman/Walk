@@ -679,15 +679,59 @@ public class ParseDefaultKeywords
     {
         var usingKeywordToken = parserModel.TokenWalker.Consume();
         
-        var namespaceIdentifierToken = ParseOthers.HandleNamespaceIdentifier(ref parserModel, isNamespaceStatement: false);
-
-        if (!namespaceIdentifierToken.ConstructorWasInvoked)
+        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
         {
-            // parserModel.Compilation.DiagnosticBag.ReportTodoException(usingKeywordToken.TextSpan, "Expected a namespace identifier.");
-            return;
+            HandleUsingCodeBlockOwner(ref parserModel);
+        }
+        else
+        {
+            var namespaceIdentifierToken = ParseOthers.HandleNamespaceIdentifier(ref parserModel, isNamespaceStatement: false);
+    
+            if (!namespaceIdentifierToken.ConstructorWasInvoked)
+            {
+                // parserModel.Compilation.DiagnosticBag.ReportTodoException(usingKeywordToken.TextSpan, "Expected a namespace identifier.");
+                return;
+            }
+            
+            parserModel.BindUsingStatementTuple(usingKeywordToken, namespaceIdentifierToken);
+        }
+    }
+    
+    public static void HandleUsingCodeBlockOwner(ref CSharpParserModel parserModel)
+    {
+        parserModel.TokenWalker.Consume();
+        var openParenthesisCounter = 1;
+        
+        while (true)
+        {
+            if (parserModel.TokenWalker.IsEof)
+                break;
+        
+            if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+            {
+                ++openParenthesisCounter;
+            }
+            else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+            {
+                if (--openParenthesisCounter <= 0)
+                    break;
+            }
+        
+            _ = parserModel.TokenWalker.Consume();
         }
         
-        parserModel.BindUsingStatementTuple(usingKeywordToken, namespaceIdentifierToken);
+        var parenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+        
+        /*var ifStatementNode = new IfStatementNode(
+            default,
+            default);
+        
+        parserModel.NewScopeAndBuilderFromOwner(
+            ifStatementNode,
+            parserModel.TokenWalker.Current.TextSpan);
+        
+        if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+            parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;*/
     }
 
     public static void HandleInterfaceTokenKeyword(ref CSharpParserModel parserModel)
