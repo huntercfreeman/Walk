@@ -245,6 +245,7 @@ public enum SyntaxKind
     NamespaceClauseNode,
     NamespaceStatementNode,
     NamespaceGroupNode,
+    UsingStatementCodeBlockNode,
     UsingStatementListingNode,
     BadExpressionNode,
     UnaryOperatorNode,
