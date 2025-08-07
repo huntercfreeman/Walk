@@ -85,6 +85,10 @@ public static class ParseTokens
                 }
                 
                 MoveToHandleVariableDeclarationNode((VariableDeclarationNode)expressionNode, ref parserModel);
+                if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
+                {
+                    HandleMultiVariableDeclaration((VariableDeclarationNode)expressionNode, ref parserModel);
+                }
                 return;
             case SyntaxKind.VariableReferenceNode:
             
@@ -159,6 +163,10 @@ public static class ParseTokens
                 IExpressionNode expression;
             
                 parserModel.ForceParseExpressionInitialPrimaryExpression = variableDeclarationNode;
+                if (variableKind == VariableKind.Local)
+                {
+                    parserModel.ExpressionList.Add((SyntaxKind.CommaToken, null));
+                }
                 expression = ParseExpressions.ParseExpression(ref parserModel);
                 parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
                 
@@ -191,6 +199,15 @@ public static class ParseTokens
             {
                 ParseTokens.MoveToHandleVariableDeclarationNode(variableDeclarationNode, ref parserModel);
             }
+            else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
+            {
+                parserModel.BindVariableDeclarationNode(variableDeclarationNode);
+            }
+            else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+            {
+                parserModel.BindVariableDeclarationNode(variableDeclarationNode);
+                return;
+            }
             
             if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.CommaToken)
             {
@@ -213,28 +230,13 @@ public static class ParseTokens
             }
             else
             {
-                var openParenthesisCounter = 1;
-                while (true)
-                {
-                    if (parserModel.TokenWalker.IsEof)
-                        break;
-                
-                    if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
-                    {
-                        ++openParenthesisCounter;
-                    }
-                    else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
-                    {
-                        if (--openParenthesisCounter <= 0)
-                            break;
-                    }
-                
-                    _ = parserModel.TokenWalker.Consume();
-                }
+                return;
             }
             
             if (previousTokenIndex == parserModel.TokenWalker.Index)
+            {
                 break;
+            }
             
             previousTokenIndex = parserModel.TokenWalker.Index;
         }
