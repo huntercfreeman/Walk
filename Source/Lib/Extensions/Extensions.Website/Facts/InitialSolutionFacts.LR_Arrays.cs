@@ -5,1519 +5,1174 @@ public partial class InitialSolutionFacts
     public const string PERSON_CS_ABSOLUTE_FILE_PATH = @"/BlazorCrudApp/ConsoleApp/Persons/Person.cs";
     public const string PERSON_CS_CONTENTS =
 """""""""
-using Walk.TextEditor.RazorLib.Lexers.Models;
-using Walk.TextEditor.RazorLib.Decorations.Models;
+using Walk.Extensions.CompilerServices;
 using Walk.Extensions.CompilerServices.Syntax;
-using Walk.CompilerServices.CSharp.BinderCase;
+using Walk.Extensions.CompilerServices.Syntax.Nodes;
+using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 
-namespace Walk.CompilerServices.CSharp.LexerCase;
+namespace Walk.CompilerServices.CSharp.ParserCase.Internals;
 
-public static class CSharpLexer
+public class ParseDefaultKeywords
 {
-    // I hovered this locally and got an infinite loop.
-	// My memory spiked, I was able to stop the application with task manager.
-	// But I'm adding this to the demo so I can hover it before every PR I accept
-	// to make sure it never happens again.
-    public Dictionary<string, Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)>> SymbolIdToExternalTextSpanMap { get; }
-
-    /// <summary>
-    /// Initialize the CSharpLexerOutput here, then start the while loop with 'Lex_Frame(...)'.
-    /// </summary>
-    public static CSharpLexerOutput Lex(CSharpBinder binder, ResourceUri resourceUri, string sourceText, bool shouldUseSharedStringWalker)
+    public static void HandleAsTokenKeyword(ref CSharpParserModel parserModel)
     {
-        var lexerOutput = new CSharpLexerOutput(sourceText);
-        StringWalker stringWalker;
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleBaseTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleBoolTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleTypeIdentifierKeyword(ref parserModel);
+    }
+
+    public static void HandleBreakTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleByteTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleTypeIdentifierKeyword(ref parserModel);
+    }
+
+    public static void HandleCaseTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var caseKeyword = parserModel.TokenWalker.Consume();
         
-        if (shouldUseSharedStringWalker)
+        parserModel.ExpressionList.Add((SyntaxKind.ColonToken, null));
+        var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
+        var colonToken = parserModel.TokenWalker.Match(SyntaxKind.ColonToken);
+    }
+
+    public static void HandleCatchTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var catchKeywordToken = parserModel.TokenWalker.Consume();
+        var openParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+        
+        var catchNode = new TryStatementCatchNode(
+            // parent: null,
+            catchKeywordToken,
+            openParenthesisToken,
+            closeParenthesisToken: default,
+            codeBlock: default);
+        
+        parserModel.NewScopeAndBuilderFromOwner(
+            catchNode,
+            parserModel.TokenWalker.Current.TextSpan);
+        
+        parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+        var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
+        
+        var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+    
+        TryStatementNode? tryStatementNode = null;
+        
+        if (expressionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
         {
-            stringWalker = binder.TextEditorService.__StringWalker;
-            stringWalker.Initialize(resourceUri, sourceText);
+            var variableDeclarationNode = (VariableDeclarationNode)expressionNode;
+            catchNode.VariableDeclarationNode = variableDeclarationNode;
+        }
+        
+        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.WhenTokenContextualKeyword)
+        {
+            _ = parserModel.TokenWalker.Consume(); // WhenTokenContextualKeyword
+            
+            parserModel.ExpressionList.Add((SyntaxKind.OpenBraceToken, null));
+            _ = ParseExpressions.ParseExpression(ref parserModel);
+        }
+        
+        // Not valid C# -- catch requires brace deliminated code block --, but here for parser recovery.
+        if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+            parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
+    }
+
+    public static void HandleCharTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleTypeIdentifierKeyword(ref parserModel);
+    }
+
+    public static void HandleCheckedTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleConstTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleContinueTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleDecimalTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleTypeIdentifierKeyword(ref parserModel);
+    }
+
+    public static void HandleDefaultTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        // Switch statement default case.
+        if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.ColonToken)
+            _ = parserModel.TokenWalker.Consume();
+        else
+            _ = ParseExpressions.ParseExpression(ref parserModel);
+    }
+
+    public static void HandleDelegateTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleTypeIdentifierKeyword(ref parserModel);
+    }
+
+    public static void HandleDoTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var doKeywordToken = parserModel.TokenWalker.Consume();
+        
+        var doWhileStatementNode = new DoWhileStatementNode(
+            doKeywordToken,
+            whileKeywordToken: default,
+            openParenthesisToken: default,
+            closeParenthesisToken: default);
+        
+        parserModel.NewScopeAndBuilderFromOwner(
+            doWhileStatementNode,
+            parserModel.TokenWalker.Current.TextSpan);
+        
+        if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+            parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
+    }
+
+    public static void HandleDoubleTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleTypeIdentifierKeyword(ref parserModel);
+    }
+
+    public static void HandleElseTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.IfTokenKeyword)
+        {
+            parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+            return;
+        }
+    
+        var elseTokenKeyword = parserModel.TokenWalker.Consume();
+        
+        var ifStatementNode = new IfStatementNode(
+            elseTokenKeyword,
+            default);
+        
+        parserModel.NewScopeAndBuilderFromOwner(
+            ifStatementNode,
+            parserModel.TokenWalker.Current.TextSpan);
+        
+        if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+            parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
+    }
+
+    public static void HandleEnumTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleStorageModifierTokenKeyword(ref parserModel);
+
+        // Why was this method invocation here? (2024-01-23)
+        //
+        // HandleTypeIdentifierKeyword(ref parserModel);
+    }
+
+    public static void HandleEventTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleExplicitTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleExternTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleFalseTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
+        parserModel.StatementBuilder.ChildList.Add(expressionNode);
+    }
+
+    public static void HandleFinallyTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var finallyKeywordToken = parserModel.TokenWalker.Consume();
+        
+        // TryStatementNode? tryStatementNode = null;
+        
+        var finallyNode = new TryStatementFinallyNode(
+            // tryStatementNode,
+            finallyKeywordToken,
+            codeBlock: default);
+    
+        // This was done with CSharpParserModel's SyntaxStack, but that property is now being removed. A different way to accomplish this needs to be done. (2025-02-06)
+        // tryStatementNode.SetTryStatementFinallyNode(finallyNode);
+        
+        parserModel.NewScopeAndBuilderFromOwner(
+            finallyNode,
+            parserModel.TokenWalker.Current.TextSpan);
+    
+        if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+            parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
+    }
+
+    public static void HandleFixedTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleFloatTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleTypeIdentifierKeyword(ref parserModel);
+    }
+
+    public static void HandleForTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var forKeywordToken = parserModel.TokenWalker.Consume();
+        var openParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+        
+        var forStatementNode = new ForStatementNode(
+            forKeywordToken,
+            openParenthesisToken,
+            initializationStatementDelimiterToken: default,
+            conditionStatementDelimiterToken: default,
+            closeParenthesisToken: default,
+            codeBlock: default);
+            
+        parserModel.NewScopeAndBuilderFromOwner(
+            forStatementNode,
+            parserModel.TokenWalker.Current.TextSpan);
+        
+        parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = false;
+        
+        for (int i = 0; i < 3; i++)
+        {
+            parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+            _ = ParseExpressions.ParseExpression(ref parserModel);
+            
+            var statementDelimiterToken = parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
+            
+            if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+                break;
+        }
+        
+        var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+        
+        if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+            parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
+    }
+
+    public static void HandleForeachTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var foreachKeywordToken = parserModel.TokenWalker.Consume();
+        
+        var openParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+        
+        var foreachStatementNode = new ForeachStatementNode(
+            foreachKeywordToken,
+            openParenthesisToken,
+            inKeywordToken: default,
+            closeParenthesisToken: default,
+            codeBlock: default);
+        
+        parserModel.NewScopeAndBuilderFromOwner(
+            foreachStatementNode,
+            parserModel.TokenWalker.Current.TextSpan);
+            
+        var successParse = ParseExpressions.TryParseVariableDeclarationNode(ref parserModel, out var variableDeclarationNode);
+        if (successParse)
+            parserModel.BindVariableDeclarationNode(variableDeclarationNode);
+        
+        var inKeywordToken = parserModel.TokenWalker.Match(SyntaxKind.InTokenKeyword);
+        
+        parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+        parserModel.ParserContextKind = CSharpParserContextKind.None;
+        var enumerable = ParseExpressions.ParseExpression(ref parserModel);
+        
+        if (enumerable.ResultTypeReference.IndexGenericParameterEntryList != -1 &&
+            variableDeclarationNode is not null &&
+            parserModel.GetTextSpanText(variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan) == "var")
+        {
+            if (enumerable.ResultTypeReference.CountGenericParameterEntryList == 1)
+                variableDeclarationNode.SetImplicitTypeReference(
+                    parserModel.Binder.GenericParameterEntryList[enumerable.ResultTypeReference.IndexGenericParameterEntryList].TypeReference);
+        }
+        
+        var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+            
+        if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+            parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
+    }
+
+    public static void HandleGotoTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        _ = ParseExpressions.ParseExpression(ref parserModel);
+    }
+
+    public static void HandleImplicitTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleInTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleIntTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleTypeIdentifierKeyword(ref parserModel);
+    }
+
+    public static void HandleIsTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleLockTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var lockKeywordToken = parserModel.TokenWalker.Consume();
+        
+        var openParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+        
+        parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+        _ = ParseExpressions.ParseExpression(ref parserModel);
+        
+        var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+        
+        var lockStatementNode = new LockStatementNode(
+            lockKeywordToken,
+            openParenthesisToken,
+            closeParenthesisToken,
+            codeBlock: default);
+            
+        parserModel.NewScopeAndBuilderFromOwner(
+            lockStatementNode,
+            parserModel.TokenWalker.Current.TextSpan);
+    
+        if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+            parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
+    }
+
+    public static void HandleLongTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleTypeIdentifierKeyword(ref parserModel);
+    }
+
+    public static void HandleNullTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleTypeIdentifierKeyword(ref parserModel);
+    }
+
+    public static void HandleObjectTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleTypeIdentifierKeyword(ref parserModel);
+    }
+
+    public static void HandleOperatorTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleOutTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleParamsTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleProtectedTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var protectedTokenKeyword = parserModel.TokenWalker.Consume();
+        parserModel.StatementBuilder.ChildList.Add(protectedTokenKeyword);
+    }
+
+    public static void HandleReadonlyTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleRefTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleSbyteTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleTypeIdentifierKeyword(ref parserModel);
+    }
+
+    public static void HandleShortTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleTypeIdentifierKeyword(ref parserModel);
+    }
+
+    public static void HandleSizeofTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        _ = ParseExpressions.ParseExpression(ref parserModel);
+    }
+
+    public static void HandleStackallocTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleStringTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleTypeIdentifierKeyword(ref parserModel);
+    }
+
+    public static void HandleStructTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleStorageModifierTokenKeyword(ref parserModel);
+    }
+
+    public static void HandleSwitchTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var switchKeywordToken = parserModel.TokenWalker.Consume();
+        
+        var openParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+        
+        parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+        var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
+        
+        var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+        
+        var switchStatementNode = new SwitchStatementNode(
+            switchKeywordToken,
+            openParenthesisToken,
+            expressionNode,
+            closeParenthesisToken,
+            codeBlock: default);
+            
+        parserModel.NewScopeAndBuilderFromOwner(
+            switchStatementNode,
+            parserModel.TokenWalker.Current.TextSpan);
+    }
+
+    public static void HandleThisTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleThrowTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleTrueTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
+        parserModel.StatementBuilder.ChildList.Add(expressionNode);
+    }
+
+    public static void HandleTryTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var tryKeywordToken = parserModel.TokenWalker.Consume();
+        
+        /*var tryStatementNode = new TryStatementNode(
+            tryNode: null,
+            catchNode: null,
+            finallyNode: null);*/
+    
+        var tryStatementTryNode = new TryStatementTryNode(
+            // tryStatementNode,
+            tryKeywordToken,
+            codeBlock: default);
+            
+        // tryStatementNode.TryNode = tryStatementTryNode;
+            
+        // parserModel.CurrentCodeBlockBuilder.AddChild(tryStatementTryNode);
+        
+        parserModel.NewScopeAndBuilderFromOwner(
+            tryStatementTryNode,
+            parserModel.TokenWalker.Current.TextSpan);
+    
+        if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+            parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
+    }
+
+    public static void HandleTypeofTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        _ = ParseExpressions.ParseExpression(ref parserModel);
+    }
+
+    public static void HandleUintTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleTypeIdentifierKeyword(ref parserModel);
+    }
+
+    public static void HandleUlongTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleTypeIdentifierKeyword(ref parserModel);
+    }
+
+    public static void HandleUncheckedTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleUnsafeTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleUshortTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleTypeIdentifierKeyword(ref parserModel);
+    }
+
+    public static void HandleVoidTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleTypeIdentifierKeyword(ref parserModel);
+    }
+
+    public static void HandleVolatileTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleWhileTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var whileKeywordToken = parserModel.TokenWalker.Consume();
+        
+        var openParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+        
+        parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+        _ = ParseExpressions.ParseExpression(ref parserModel);
+        
+        var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+        
+        /* This was done with CSharpParserModel's SyntaxStack, but that property is now being removed. A different way to accomplish this needs to be done. (2025-02-06)
+        {
+            doWhileStatementNode.SetWhileProperties(
+                whileKeywordToken,
+                openParenthesisToken,
+                expressionNode,
+                closeParenthesisToken);
+            
+            return;
+        }*/
+        
+        var whileStatementNode = new WhileStatementNode(
+            whileKeywordToken,
+            openParenthesisToken,
+            closeParenthesisToken,
+            codeBlock: default);
+            
+        parserModel.NewScopeAndBuilderFromOwner(
+            whileStatementNode,
+            parserModel.TokenWalker.Current.TextSpan);
+    
+        if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+            parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
+    }
+
+    public static void HandleUnrecognizedTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    /// <summary>The 'Default' of this method name is confusing.
+    /// It seems to refer to the 'default' of switch statement rather than the 'default' keyword itself?
+    /// </summary>
+    public static void HandleDefault(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleTypeIdentifierKeyword(ref CSharpParserModel parserModel)
+    {
+        ParseTokens.ParseIdentifierToken(ref parserModel);
+    }
+
+    public static void HandleNewTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
+            UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Next.SyntaxKind))
+        {
+            var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
+            parserModel.StatementBuilder.ChildList.Add(expressionNode);
         }
         else
         {
-            stringWalker = new(resourceUri, sourceText);
+            parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
         }
-        
-        var previousEscapeCharacterTextSpan = new TextEditorTextSpan(
-            0,
-            0,
-            (byte)GenericDecorationKind.None);
-            
-        var interpolatedExpressionUnmatchedBraceCount = -1;
-        
-        Lex_Frame(binder, ref lexerOutput, stringWalker, ref previousEscapeCharacterTextSpan, ref interpolatedExpressionUnmatchedBraceCount);
-        
-        var endOfFileTextSpan = new TextEditorTextSpan(
-            stringWalker.PositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None);
+    }
 
-        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EndOfFileToken, endOfFileTextSpan));
-        return lexerOutput;
+    public static void HandlePublicTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var publicKeywordToken = parserModel.TokenWalker.Consume();
+        parserModel.StatementBuilder.ChildList.Add(publicKeywordToken);
+    }
+
+    public static void HandleInternalTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var internalTokenKeyword = parserModel.TokenWalker.Consume();
+        parserModel.StatementBuilder.ChildList.Add(internalTokenKeyword);
+    }
+
+    public static void HandlePrivateTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var privateTokenKeyword = parserModel.TokenWalker.Consume();
+        parserModel.StatementBuilder.ChildList.Add(privateTokenKeyword);
+    }
+
+    public static void HandleStaticTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleOverrideTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleVirtualTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleAbstractTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleSealedTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        parserModel.StatementBuilder.ChildList.Add(parserModel.TokenWalker.Consume());
+    }
+
+    public static void HandleIfTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var ifTokenKeyword = parserModel.TokenWalker.Consume();
+        
+        var openParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+        if (openParenthesisToken.IsFabricated)
+            return;
+
+        parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+        _ = ParseExpressions.ParseExpression(ref parserModel);
+        
+        var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+
+        var ifStatementNode = new IfStatementNode(
+            ifTokenKeyword,
+            default);
+        
+        parserModel.NewScopeAndBuilderFromOwner(
+            ifStatementNode,
+            parserModel.TokenWalker.Current.TextSpan);
+        
+        if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+            parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
+    }
+
+    public static void HandleUsingTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var usingKeywordToken = parserModel.TokenWalker.Consume();
+        
+        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+        {
+            HandleUsingCodeBlockOwner(ref usingKeywordToken, ref parserModel);
+        }
+        else
+        {
+            var namespaceIdentifierToken = ParseOthers.HandleNamespaceIdentifier(ref parserModel, isNamespaceStatement: false);
+    
+            if (!namespaceIdentifierToken.ConstructorWasInvoked)
+            {
+                // parserModel.Compilation.DiagnosticBag.ReportTodoException(usingKeywordToken.TextSpan, "Expected a namespace identifier.");
+                return;
+            }
+            
+            parserModel.BindUsingStatementTuple(usingKeywordToken, namespaceIdentifierToken);
+        }
     }
     
-    /// <summary>
-    /// Isolate the while loop within its own function in order to permit recursion without allocating new state.
-    /// </summary>
-    public static void Lex_Frame(
-        CSharpBinder binder,
-        ref CSharpLexerOutput lexerOutput,
-        StringWalker stringWalker,
-        ref TextEditorTextSpan previousEscapeCharacterTextSpan,
-        ref int interpolatedExpressionUnmatchedBraceCount)
+    public static void HandleUsingCodeBlockOwner(ref SyntaxToken usingKeywordToken, ref CSharpParserModel parserModel)
     {
-        while (!stringWalker.IsEof)
+        var openParenthesisToken = parserModel.TokenWalker.Consume();
+        
+        var usingStatementNode = new UsingStatementCodeBlockNode(
+            usingKeywordToken,
+            default);
+            
+        parserModel.NewScopeAndBuilderFromOwner(
+            usingStatementNode,
+            parserModel.TokenWalker.Current.TextSpan);
+            
+        var successParse = ParseExpressions.TryParseVariableDeclarationNode(ref parserModel, out var variableDeclarationNode);
+        if (successParse)
         {
-            switch (stringWalker.CurrentCharacter)
+            ParseTokens.HandleMultiVariableDeclaration(variableDeclarationNode, ref parserModel);
+            var openParenthesisCounter = 1;
+            while (true)
             {
-                /* Lowercase Letters */
-                case 'a':
-                case 'b':
-                case 'c':
-                case 'd':
-                case 'e':
-                case 'f':
-                case 'g':
-                case 'h':
-                case 'i':
-                case 'j':
-                case 'k':
-                case 'l':
-                case 'm':
-                case 'n':
-                case 'o':
-                case 'p':
-                case 'q':
-                case 'r':
-                case 's':
-                case 't':
-                case 'u':
-                case 'v':
-                case 'w':
-                case 'x':
-                case 'y':
-                case 'z':
-                /* Uppercase Letters */
-                case 'A':
-                case 'B':
-                case 'C':
-                case 'D':
-                case 'E':
-                case 'F':
-                case 'G':
-                case 'H':
-                case 'I':
-                case 'J':
-                case 'K':
-                case 'L':
-                case 'M':
-                case 'N':
-                case 'O':
-                case 'P':
-                case 'Q':
-                case 'R':
-                case 'S':
-                case 'T':
-                case 'U':
-                case 'V':
-                case 'W':
-                case 'X':
-                case 'Y':
-                case 'Z':
-                /* Underscore */
-                case '_':
-                    LexIdentifierOrKeywordOrKeywordContextual(binder, ref lexerOutput, stringWalker);
+                if (parserModel.TokenWalker.IsEof)
                     break;
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                    LexNumericLiteralToken(binder, ref lexerOutput, stringWalker);
-                    break;
-                case '\'':
-                    LexCharLiteralToken(binder, ref lexerOutput, stringWalker);
-                    break;
-                case '"':
-                    LexString(binder, ref lexerOutput, stringWalker, ref previousEscapeCharacterTextSpan, countDollarSign: 0, useVerbatim: false);
-                    break;
-                case '/':
-                    if (stringWalker.PeekCharacter(1) == '/')
-                    {
-                        LexCommentSingleLineToken(ref lexerOutput, stringWalker);
-                    }
-                    else if (stringWalker.PeekCharacter(1) == '*')
-                    {
-                        LexCommentMultiLineToken(ref lexerOutput, stringWalker);
-                    }
-                    else
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DivisionToken, textSpan));
-                    }
-                    break;
-                case '+':
-                    if (stringWalker.PeekCharacter(1) == '+')
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PlusPlusToken, textSpan));
-                    }
-                    else
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PlusToken, textSpan));
-                    }
-                    break;
-                case '-':
-                    if (stringWalker.PeekCharacter(1) == '-')
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.MinusMinusToken, textSpan));
-                    }
-                    else
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.MinusToken, textSpan));
-                    }
-                    break;
-                case '=':
-                    if (stringWalker.PeekCharacter(1) == '=')
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EqualsEqualsToken, textSpan));
-                    }
-                    else if (stringWalker.PeekCharacter(1) == '>')
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EqualsCloseAngleBracketToken, textSpan));
-                    }
-                    else
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EqualsToken, textSpan));
-                    }
-                    break;
-                case '?':
-                    if (stringWalker.PeekCharacter(1) == '?')
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.QuestionMarkQuestionMarkToken, textSpan));
-                    }
-                    else
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.QuestionMarkToken, textSpan));
-                    }
-                    break;
-                case '|':
-                    if (stringWalker.PeekCharacter(1) == '|')
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PipePipeToken, textSpan));
-                    }
-                    else
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PipeToken, textSpan));
-                    }
-                    break;
-                case '&':
-                    if (stringWalker.PeekCharacter(1) == '&')
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AmpersandAmpersandToken, textSpan));
-                    }
-                    else
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AmpersandToken, textSpan));
-                    }
-                    break;
-                case '*':
+            
+                if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
                 {
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StarToken, textSpan));
-                    break;
+                    ++openParenthesisCounter;
                 }
-                case '!':
+                else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
                 {
-                    if (stringWalker.PeekCharacter(1) == '=')
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BangEqualsToken, textSpan));
-                    }
-                    else
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BangToken, textSpan));
-                    }
-                    break;
+                    if (--openParenthesisCounter <= 0)
+                        break;
                 }
-                case ';':
+            
+                _ = parserModel.TokenWalker.Consume();
+            }
+        }
+        else
+        {
+            parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+            _ = ParseExpressions.ParseExpression(ref parserModel);
+        }
+        
+        var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+        
+        if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+            parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
+    }
+
+    public static void HandleInterfaceTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleStorageModifierTokenKeyword(ref parserModel);
+    }
+
+    /// <summary>
+    /// Example:
+    /// public class MyClass { }
+    ///              ^
+    ///
+    /// Given the example the 'MyClass' is the next token
+    /// upon invocation of this method.
+    ///
+    /// Invocation of this method implies the current token was
+    /// class, interface, struct, etc...
+    /// </summary>
+    public static void HandleStorageModifierTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var storageModifierToken = parserModel.TokenWalker.Consume();
+        
+        // Given: public partial class MyClass { }
+        // Then: partial
+        var hasPartialModifier = false;
+        if (parserModel.StatementBuilder.TryPeek(out var syntax) && syntax is SyntaxToken syntaxToken)
+        {
+            if (syntaxToken.SyntaxKind == SyntaxKind.PartialTokenContextualKeyword)
+            {
+                _ = parserModel.StatementBuilder.Pop();
+                hasPartialModifier = true;
+            }
+        }
+    
+        // TODO: Fix; the code that parses the accessModifierKind is a mess
+        //
+        // Given: public class MyClass { }
+        // Then: public
+        var accessModifierKind = AccessModifierKind.Public;
+        if (parserModel.StatementBuilder.TryPeek(out syntax) && syntax is SyntaxToken firstSyntaxToken)
+        {
+            var firstOutput = UtilityApi.GetAccessModifierKindFromToken(firstSyntaxToken);
+
+            if (firstOutput != AccessModifierKind.None)
+            {
+                _ = parserModel.StatementBuilder.Pop();
+                accessModifierKind = firstOutput;
+
+                // Given: protected internal class MyClass { }
+                // Then: protected internal
+                if (parserModel.StatementBuilder.TryPeek(out syntax) && syntax is SyntaxToken secondSyntaxToken)
                 {
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StatementDelimiterToken, textSpan));
-                    break;
-                }
-                case '(':
-                {
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenParenthesisToken, textSpan));
-                    break;
-                }
-                case ')':
-                {
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseParenthesisToken, textSpan));
-                    break;
-                }
-                case '{':
-                {
-                    if (interpolatedExpressionUnmatchedBraceCount != -1)
-                        ++interpolatedExpressionUnmatchedBraceCount;
-                
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenBraceToken, textSpan));
-                    break;
-                }
-                case '}':
-                {
-                    if (interpolatedExpressionUnmatchedBraceCount != -1)
+                    var secondOutput = UtilityApi.GetAccessModifierKindFromToken(secondSyntaxToken);
+
+                    if (secondOutput != AccessModifierKind.None)
                     {
-                        if (--interpolatedExpressionUnmatchedBraceCount <= 0)
-                            goto forceExit;
-                    }
-                
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseBraceToken, textSpan));
-                    break;
-                }
-                case '<':
-                {
-                    if (stringWalker.PeekCharacter(1) == '=')
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenAngleBracketEqualsToken, textSpan));
-                    }
-                    else
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenAngleBracketToken, textSpan));
-                    }
-                    break;
-                }
-                case '>':
-                {
-                    if (stringWalker.PeekCharacter(1) == '=')
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseAngleBracketEqualsToken, textSpan));
-                    }
-                    else
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseAngleBracketToken, textSpan));
-                    }
-                    break;
-                }
-                case '[':
-                {
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OpenSquareBracketToken, textSpan));
-                    break;
-                }
-                case ']':
-                {
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CloseSquareBracketToken, textSpan));
-                    break;
-                }
-                case '$':
-                    if (stringWalker.NextCharacter == '"')
-                    {
-                        LexString(binder, ref lexerOutput, stringWalker, ref previousEscapeCharacterTextSpan, countDollarSign: 1, useVerbatim: false);
-                    }
-                    else if (stringWalker.PeekCharacter(1) == '@' && stringWalker.PeekCharacter(2) == '"')
-                    {
-                        LexString(binder, ref lexerOutput, stringWalker, ref previousEscapeCharacterTextSpan, countDollarSign: 1, useVerbatim: true);
-                    }
-                    else if (stringWalker.NextCharacter == '$')
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        
-                        // The while loop starts counting from and including the first dollar sign.
-                        var countDollarSign = 0;
-                    
-                        while (!stringWalker.IsEof)
+                        _ = parserModel.StatementBuilder.Pop();
+
+                        if ((firstOutput.ToString().ToLower() == "protected" &&
+                                secondOutput.ToString().ToLower() == "internal") ||
+                            (firstOutput.ToString().ToLower() == "internal" &&
+                                secondOutput.ToString().ToLower() == "protected"))
                         {
-                            if (stringWalker.CurrentCharacter != '$')
-                                break;
+                            accessModifierKind = AccessModifierKind.ProtectedInternal;
+                        }
+                        else if ((firstOutput.ToString().ToLower() == "private" &&
+                                    secondOutput.ToString().ToLower() == "protected") ||
+                                (firstOutput.ToString().ToLower() == "protected" &&
+                                    secondOutput.ToString().ToLower() == "private"))
+                        {
+                            accessModifierKind = AccessModifierKind.PrivateProtected;
+                        }
+                        // else use the firstOutput.
+                    }
+                }
+            }
+        }
+    
+        // TODO: Fix nullability spaghetti code
+        var storageModifierKind = UtilityApi.GetStorageModifierKindFromToken(storageModifierToken);
+        if (storageModifierKind == StorageModifierKind.None)
+            return;
+        if (storageModifierKind == StorageModifierKind.Record &&
+            parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StructTokenKeyword)
+        {
+            var structKeywordToken = parserModel.TokenWalker.Consume();
+            storageModifierKind = StorageModifierKind.RecordStruct;
+        }
+    
+        // Given: public class MyClass<T> { }
+        // Then: MyClass
+        SyntaxToken identifierToken;
+        // Retrospective: What is the purpose of this 'if (contextualKeyword) logic'?
+        // Response: maybe it is because 'var' contextual keyword is allowed to be a class name?
+        if (UtilityApi.IsContextualKeywordSyntaxKind(parserModel.TokenWalker.Current.SyntaxKind))
+        {
+            var contextualKeywordToken = parserModel.TokenWalker.Consume();
+            // Take the contextual keyword as an identifier
+            identifierToken = new SyntaxToken(SyntaxKind.IdentifierToken, contextualKeywordToken.TextSpan);
+        }
+        else
+        {
+            identifierToken = parserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
+        }
+
+        // Given: public class MyClass<T> { }
+        // Then: <T>
+        (SyntaxToken OpenAngleBracketToken, int IndexGenericParameterEntryList, int CountGenericParameterEntryList, SyntaxToken CloseAngleBracketToken) genericParameterListing = default;
+        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+            genericParameterListing = ParseTypes.HandleGenericParameters(ref parserModel);
+
+        var typeDefinitionNode = new TypeDefinitionNode(
+            accessModifierKind,
+            hasPartialModifier,
+            storageModifierKind,
+            identifierToken,
+            genericParameterListing.OpenAngleBracketToken,
+            genericParameterListing.IndexGenericParameterEntryList,
+            genericParameterListing.CountGenericParameterEntryList,
+            genericParameterListing.CloseAngleBracketToken,
+            openParenthesisToken: default,
+            indexFunctionArgumentEntryList: -1,
+            countFunctionArgumentEntryList: 0,
+            closeParenthesisToken: default,
+            inheritedTypeReference: TypeFacts.NotApplicable.ToTypeReference(),
+            namespaceName: parserModel.GetTextSpanText(parserModel.CurrentNamespaceStatementNode.IdentifierToken.TextSpan),
+            parserModel.ResourceUri);
+        
+        if (typeDefinitionNode.HasPartialModifier)
+        {
+            if (parserModel.TryGetTypeDefinitionHierarchically(
+                    parserModel.ResourceUri,
+                    parserModel.Compilation,
+                    parserModel.CurrentCodeBlockOwner.Unsafe_SelfIndexKey,
+                    parserModel.GetTextSpanText(identifierToken.TextSpan),
+                    out TypeDefinitionNode innerTypeDefinitionNode))
+            {
+                typeDefinitionNode.IndexPartialTypeDefinition = innerTypeDefinitionNode.IndexPartialTypeDefinition;
+            }
+        }
+        
+        parserModel.BindTypeDefinitionNode(typeDefinitionNode);
+        parserModel.BindTypeIdentifier(identifierToken);
+        
+        parserModel.StatementBuilder.ChildList.Add(typeDefinitionNode);
+        
+        parserModel.NewScopeAndBuilderFromOwner(
+            typeDefinitionNode,
+            parserModel.TokenWalker.Current.TextSpan);
+            
+        parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = false;
+        
+        if (typeDefinitionNode.HasPartialModifier)
+        {
+            if (typeDefinitionNode.IndexPartialTypeDefinition == -1)
+            {
+                if (parserModel.Binder.__CompilationUnitMap.TryGetValue(parserModel.ResourceUri, out var previousCompilationUnit))
+                {
+                    if (typeDefinitionNode.Unsafe_ParentIndexKey < previousCompilationUnit.CountCodeBlockOwnerList)
+                    {
+                        var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.IndexCodeBlockOwnerList + typeDefinitionNode.Unsafe_ParentIndexKey];
+                        var currentParent = parserModel.GetParent(typeDefinitionNode, parserModel.Compilation);
+                        
+                        if (currentParent.SyntaxKind == previousParent.SyntaxKind &&
+                            parserModel.Binder.GetIdentifierText(currentParent, parserModel.ResourceUri, parserModel.Compilation) == parserModel.Binder.GetIdentifierText(previousParent, parserModel.ResourceUri, previousCompilationUnit))
+                        {
+                            // All the existing entires will be "emptied"
+                            // so don't both with checking whether the arguments are the same here.
+                            //
+                            // All that matters is that they're put in the same "method group".
+                            //
+                            var binder = parserModel.Binder;
                             
-                            ++countDollarSign;
-                            _ = stringWalker.ReadCharacter();
+                            // TODO: Cannot use ref, out, or in...
+                            var compilation = parserModel.Compilation;
+                            
+                            ISyntaxNode? previousNode = null;
+                            
+                            for (int i = previousCompilationUnit.IndexCodeBlockOwnerList; i < previousCompilationUnit.IndexCodeBlockOwnerList + previousCompilationUnit.CountCodeBlockOwnerList; i++)
+                            {
+                                var x = parserModel.Binder.CodeBlockOwnerList[i];
+                                
+                                if (x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
+                                    x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                                    binder.GetIdentifierText(x, parserModel.ResourceUri, previousCompilationUnit) == binder.GetIdentifierText(typeDefinitionNode, parserModel.ResourceUri, compilation))
+                                {
+                                    previousNode = x;
+                                    break;
+                                }
+                            }
+                            
+                            if (previousNode is not null)
+                            {
+                                var previousTypeDefinitionNode = (TypeDefinitionNode)previousNode;
+                                typeDefinitionNode.IndexPartialTypeDefinition = previousTypeDefinitionNode.IndexPartialTypeDefinition;
+                            }
                         }
-                        
-                        // Only the last '$' (dollar sign character) will be syntax highlighted
-                        // if this code is NOT included.
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.StringLiteral);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StringLiteralToken, textSpan));
-                        
-                        // From the LexString(...) method:
-                        //     "awkwardly even if there are many of these it is expected
-                        //      that the last one will not have been consumed."
-                        _ = stringWalker.BacktrackCharacter();
-                        
-                        if (stringWalker.NextCharacter == '"')
-                            LexString(binder, ref lexerOutput, stringWalker, ref previousEscapeCharacterTextSpan, countDollarSign: countDollarSign, useVerbatim: false);
                     }
-                    else
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DollarSignToken, textSpan));
-                        break;
-                    }
-                    break;
-                case '@':
-                    if (stringWalker.NextCharacter == '"')
-                    {
-                        LexString(binder, ref lexerOutput, stringWalker, ref previousEscapeCharacterTextSpan, countDollarSign: 0, useVerbatim: true);
-                    }
-                    else if (stringWalker.PeekCharacter(1) == '$' && stringWalker.PeekCharacter(2) == '"')
-                    {
-                        LexString(binder, ref lexerOutput, stringWalker, ref previousEscapeCharacterTextSpan, countDollarSign: 1, useVerbatim: true);
-                    }
-                    else
-                    {
-                        var entryPositionIndex = stringWalker.PositionIndex;
-                        stringWalker.ReadCharacter();
-                        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AtToken, textSpan));
-                        break;
-                    }
-                    break;
-                case ':':
-                {
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ColonToken, textSpan));
-                    break;
                 }
-                case '.':
-                {
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.MemberAccessToken, textSpan));
-                    break;
-                }
-                case ',':
-                {
-                    var entryPositionIndex = stringWalker.PositionIndex;
-                    stringWalker.ReadCharacter();
-                    var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None);
-                    lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CommaToken, textSpan));
-                    break;
-                }
-                case '#':
-                    LexPreprocessorDirectiveToken(ref lexerOutput, stringWalker);
-                    break;
-                default:
-                    _ = stringWalker.ReadCharacter();
-                    break;
             }
-        }
-
-        forceExit:
-        return;
-    }
-    
-    /// <summary>
-    /// The invoker of this method is expected to count the amount of '$' (dollar sign characters).
-    /// When it comes to raw strings however, this logic will counted inside of this method.
-    ///
-    /// The reason being: you don't know if it is a string until you've read all of the '$' (dollar sign characters).
-    /// So in order to invoke this method the invoker had to have counted them.
-    /// </summary>
-    private static void LexString(
-        CSharpBinder binder,
-        ref CSharpLexerOutput lexerOutput,
-        StringWalker stringWalker,
-        ref TextEditorTextSpan previousEscapeCharacterTextSpan,
-        int countDollarSign,
-        bool useVerbatim)
-    {
-        // Interpolated expressions will be done recursively and added to this 'SyntaxTokenList'
-        var syntaxTokenListIndex = lexerOutput.SyntaxTokenList.Count;
-    
-        var entryPositionIndex = stringWalker.PositionIndex;
-
-        var useInterpolation = countDollarSign > 0;
-        
-        if (useInterpolation)
-            _ = stringWalker.ReadCharacter(); // Move past the '$' (dollar sign character); awkwardly even if there are many of these it is expected that the last one will not have been consumed.
-        if (useVerbatim)
-            _ = stringWalker.ReadCharacter(); // Move past the '@' (at character)
-        
-        var useRaw = false;
-        int countDoubleQuotes = 0;
-        
-        if (!useVerbatim && stringWalker.PeekCharacter(1) == '\"' && stringWalker.PeekCharacter(2) == '\"')
-        {
-            useRaw = true;
             
-            // Count the amount of double quotes to be used as the delimiter.
-            while (!stringWalker.IsEof)
+            if (parserModel.ClearedPartialDefinitionHashSet.Add(parserModel.GetTextSpanText(identifierToken.TextSpan)) &&
+                typeDefinitionNode.IndexPartialTypeDefinition != -1)
             {
-                if (stringWalker.CurrentCharacter != '\"')
-                    break;
-    
-                ++countDoubleQuotes;
-                _ = stringWalker.ReadCharacter();
-            }
-        }
-        else
-        {
-            _ = stringWalker.ReadCharacter(); // Move past the '"' (double quote character)
-        }
-
-        while (!stringWalker.IsEof)
-        {
-            if (stringWalker.CurrentCharacter == '\"')
-            {
-                if (useRaw)
+                // Partial definitions of the same type from the same ResourceUri are made contiguous.
+                var seenResourceUri = false;
+                
+                int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
+                while (positionExclusive < parserModel.Binder.PartialTypeDefinitionList.Count)
                 {
-                    var matchDoubleQuotes = 0;
-                    
-                    while (!stringWalker.IsEof)
+                    if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
                     {
-                        if (stringWalker.CurrentCharacter != '\"')
-                            break;
-                        
-                        _ = stringWalker.ReadCharacter();
-                        if (++matchDoubleQuotes == countDoubleQuotes)
-                            goto foundEndDelimiter;
-                    }
-                    
-                    continue;
-                }
-                else if (useVerbatim && stringWalker.NextCharacter == '\"')
-                {
-                    EscapeCharacterListAdd(ref lexerOutput, stringWalker, ref previousEscapeCharacterTextSpan, new TextEditorTextSpan(
-                        stringWalker.PositionIndex,
-                        stringWalker.PositionIndex + 2,
-                        (byte)GenericDecorationKind.EscapeCharacterPrimary));
-    
-                    _ = stringWalker.ReadCharacter();
-                }
-                else
-                {
-                    _ = stringWalker.ReadCharacter();
-                    break;
-                }
-            }
-            else if (!useVerbatim && stringWalker.CurrentCharacter == '\\')
-            {
-                EscapeCharacterListAdd(ref lexerOutput, stringWalker, ref previousEscapeCharacterTextSpan, new TextEditorTextSpan(
-                    stringWalker.PositionIndex,
-                    stringWalker.PositionIndex + 2,
-                    (byte)GenericDecorationKind.EscapeCharacterPrimary));
-
-                // Presuming the escaped text is 2 characters, then read an extra character.
-                _ = stringWalker.ReadCharacter();
-            }
-            else if (useInterpolation && stringWalker.CurrentCharacter == '{')
-            {
-                // With raw, one is escaping by way of typing less.
-                // With normal interpolation, one is escaping by way of typing more.
-                //
-                // Thus, these are two separate cases written as an if-else.
-                if (useRaw)
-                {
-                    var interpolationTemporaryPositionIndex = stringWalker.PositionIndex;
-                    var matchBrace = 0;
-                        
-                    while (!stringWalker.IsEof)
-                    {
-                        if (stringWalker.CurrentCharacter != '{')
-                            break;
-                        
-                        _ = stringWalker.ReadCharacter();
-                        if (++matchBrace >= countDollarSign)
+                        if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri == parserModel.ResourceUri)
                         {
-                            // Found yet another '{' match beyond what was needed.
-                            // So, this logic will match from the inside to the outside.
-                            if (stringWalker.CurrentCharacter == '{')
-                            {
-                                ++interpolationTemporaryPositionIndex;
-                            }
-                            else
-                            {
-                                // 'LexInterpolatedExpression' is expected to consume one more after it is finished.
-                                // Thus, if this while loop were to consume, it would skip the
-                                // closing double quotes if the expression were the last thing in the string.
-                                //
-                                // So, a backtrack is done.
-                                LexInterpolatedExpression(
-                                    binder,
-                                    ref lexerOutput,
-                                    stringWalker,
-                                    ref previousEscapeCharacterTextSpan,
-                                    startInclusiveOpenDelimiter: interpolationTemporaryPositionIndex,
-                                    countDollarSign: countDollarSign,
-                                    useRaw);
-                                stringWalker.BacktrackCharacter();
-                            }
+                            seenResourceUri = true;
+                        
+                            var partialTypeDefinitionEntry = parserModel.Binder.PartialTypeDefinitionList[positionExclusive];
+                            partialTypeDefinitionEntry.ScopeIndexKey = -1;
+                            parserModel.Binder.PartialTypeDefinitionList[positionExclusive] = partialTypeDefinitionEntry;
+                            
+                            positionExclusive++;
                         }
+                        else
+                        {
+                            if (seenResourceUri)
+                                break;
+                            positionExclusive++;
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        
+        if (storageModifierKind == StorageModifierKind.Enum)
+        {
+            ParseTypes.HandleEnumDefinitionNode(typeDefinitionNode, ref parserModel);
+            return;
+        }
+    
+        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+        {
+            ParseTypes.HandlePrimaryConstructorDefinition(
+                typeDefinitionNode,
+                ref parserModel);
+        }
+        
+        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
+        {
+            _ = parserModel.TokenWalker.Consume(); // Consume the ColonToken
+            var inheritedTypeClauseNode = parserModel.TokenWalker.MatchTypeClauseNode(ref parserModel);
+            // parserModel.BindTypeClauseNode(inheritedTypeClauseNode);
+            typeDefinitionNode.SetInheritedTypeReference(new TypeReference(inheritedTypeClauseNode));
+            
+            while (!parserModel.TokenWalker.IsEof)
+            {
+                if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
+                {
+                    _ = parserModel.TokenWalker.Consume(); // Consume the CommaToken
+                
+                    var consumeCounter = parserModel.TokenWalker.ConsumeCounter;
+                    
+                    _ = parserModel.TokenWalker.MatchTypeClauseNode(ref parserModel);
+                    // parserModel.BindTypeClauseNode();
+                    
+                    if (consumeCounter == parserModel.TokenWalker.ConsumeCounter)
+                        break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+        
+        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.WhereTokenContextualKeyword)
+        {
+            parserModel.ExpressionList.Add((SyntaxKind.OpenBraceToken, null));
+            var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
+        }
+        
+        if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+            parserModel.CurrentCodeBlockOwner.IsImplicitOpenCodeBlockTextSpan = true;
+    
+        if (typeDefinitionNode.HasPartialModifier)
+            HandlePartialTypeDefinition(typeDefinitionNode, ref parserModel);
+    }
+    
+    public static void HandlePartialTypeDefinition(TypeDefinitionNode typeDefinitionNode, ref CSharpParserModel parserModel)
+    {
+        var wroteToExistingSlot = false;
+    
+        int indexForInsertion;
+    
+        if (typeDefinitionNode.IndexPartialTypeDefinition == -1)
+        {
+            typeDefinitionNode.IndexPartialTypeDefinition = parserModel.Binder.PartialTypeDefinitionList.Count;
+            indexForInsertion = typeDefinitionNode.IndexPartialTypeDefinition;
+        }
+        else
+        {
+            var seenResourceUri = false;
+        
+            int positionExclusive = typeDefinitionNode.IndexPartialTypeDefinition;
+            while (positionExclusive < parserModel.Binder.PartialTypeDefinitionList.Count)
+            {
+                if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup == typeDefinitionNode.IndexPartialTypeDefinition)
+                {
+                    if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ResourceUri == parserModel.ResourceUri)
+                    {
+                        if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].ScopeIndexKey == -1)
+                        {
+                            var partialTypeDefinitionEntry = parserModel.Binder.PartialTypeDefinitionList[positionExclusive];
+                            partialTypeDefinitionEntry.ScopeIndexKey = typeDefinitionNode.Unsafe_SelfIndexKey;
+                            parserModel.Binder.PartialTypeDefinitionList[positionExclusive] = partialTypeDefinitionEntry;
+                            wroteToExistingSlot = true;
+                            break;
+                        }
+                        
+                        seenResourceUri = true;
+                        positionExclusive++;
+                    }
+                    else
+                    {
+                        if (seenResourceUri)
+                            break;
+                    
+                        positionExclusive++;
                     }
                 }
                 else
                 {
-                    if (stringWalker.NextCharacter == '{')
-                    {
-                        _ = stringWalker.ReadCharacter();
-                    }
-                    else
-                    {
-                        // 'LexInterpolatedExpression' is expected to consume one more after it is finished.
-                        // Thus, if this while loop were to consume, it would skip the
-                        // closing double quotes if the expression were the last thing in the string.
-                        LexInterpolatedExpression(
-                            binder,
-                            ref lexerOutput,
-                            stringWalker,
-                            ref previousEscapeCharacterTextSpan,
-                            startInclusiveOpenDelimiter: stringWalker.PositionIndex,
-                            countDollarSign: countDollarSign,
-                            useRaw);
-                        continue;
-                    }
+                    break;
                 }
             }
-
-            _ = stringWalker.ReadCharacter();
-        }
-
-        foundEndDelimiter:
-
-        var textSpan = new TextEditorTextSpan(
-            entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.StringLiteral);
-
-        if (useInterpolation)
-        {
-            lexerOutput.SyntaxTokenList.Insert(
-                syntaxTokenListIndex,
-                new SyntaxToken(SyntaxKind.StringInterpolatedStartToken, textSpan));
-                
-            lexerOutput.SyntaxTokenList.Add(new SyntaxToken(
-                SyntaxKind.StringInterpolatedEndToken,
-                new TextEditorTextSpan(
-                    stringWalker.PositionIndex,
-                    stringWalker.PositionIndex,
-                    (byte)GenericDecorationKind.None)));
-        }
-        else
-        {
-            lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StringLiteralToken, textSpan));
-        }
-    }
-    
-    /// <summary>
-    /// 'startInclusiveFirstOpenDelimiter' refers to:
-    ///     $"Hello, {name}"
-    ///
-    /// how there is a '{' that deliminates the start of the interpolated expression.
-    /// at what position index does it lie at?
-    ///
-    /// In the case of raw strings, the start-inclusive of the multi-character open delimiter is what needs to be provided.
-    /// </summary>
-    private static void LexInterpolatedExpression(
-        CSharpBinder binder,
-        ref CSharpLexerOutput lexerOutput,
-        StringWalker stringWalker,
-        ref TextEditorTextSpan previousEscapeCharacterTextSpan,
-        int startInclusiveOpenDelimiter,
-        int countDollarSign,
-        bool useRaw)
-    {
-        int unmatchedBraceCounter;
-        
-        if (useRaw)
-        {
-            // Starts inside the expression
-        
-            lexerOutput.MiscTextSpanList.Add(new TextEditorTextSpan(
-                stringWalker.PositionIndex - countDollarSign,
-                stringWalker.PositionIndex,
-                (byte)GenericDecorationKind.None));
-        
-            /*var readOpenDelimiterCount = stringWalker.PositionIndex - startInclusiveOpenDelimiter;
-        
-            for (; readOpenDelimiterCount < countDollarSign; readOpenDelimiterCount++)
-            {
-                _ = stringWalker.ReadCharacter();
-            }*/
             
-            unmatchedBraceCounter = countDollarSign;
+            indexForInsertion = positionExclusive;
         }
-        else
+        
+        if (!wroteToExistingSlot)
         {
-            // Starts at the OpenBraceToken
+            parserModel.Binder.PartialTypeDefinitionList.Insert(
+                indexForInsertion,
+                new PartialTypeDefinitionEntry(
+                    typeDefinitionNode.ResourceUri,
+                    typeDefinitionNode.IndexPartialTypeDefinition,
+                    typeDefinitionNode.Unsafe_SelfIndexKey));
         
-            lexerOutput.MiscTextSpanList.Add(new TextEditorTextSpan(
-                stringWalker.PositionIndex,
-                stringWalker.PositionIndex + 1,
-                (byte)GenericDecorationKind.None));
-                
-            var readOpenDelimiterCount = stringWalker.PositionIndex - startInclusiveOpenDelimiter;
-        
-            for (; readOpenDelimiterCount < countDollarSign; readOpenDelimiterCount++)
+            int positionExclusive = indexForInsertion + 1;
+            int lastSeenIndexStartGroup = typeDefinitionNode.IndexPartialTypeDefinition;
+            while (positionExclusive < parserModel.Binder.PartialTypeDefinitionList.Count)
             {
-                _ = stringWalker.ReadCharacter();
-            }
-            
-            unmatchedBraceCounter = countDollarSign;
-        }
-    
-        // Recursive solution that lexes the interpolated expression only, (not including the '{' or '}').
-        Lex_Frame(
-            binder,
-            ref lexerOutput,
-            stringWalker,
-            ref previousEscapeCharacterTextSpan,
-            ref unmatchedBraceCounter);
-        
-        if (useRaw)
-        {
-            _ = stringWalker.ReadCharacter(); // This consumes the final '}'.
-
-            lexerOutput.SyntaxTokenList.Add(new SyntaxToken(
-                SyntaxKind.StringInterpolatedContinueToken,
-                new TextEditorTextSpan(
-                    stringWalker.PositionIndex - 1,
-                    stringWalker.PositionIndex,
-                    (byte)GenericDecorationKind.None)));
-        }
-        else
-        {
-            _ = stringWalker.ReadCharacter(); // This consumes the final '}'.
-
-            lexerOutput.SyntaxTokenList.Add(new SyntaxToken(
-                SyntaxKind.StringInterpolatedContinueToken,
-                new TextEditorTextSpan(
-                    stringWalker.PositionIndex - 1,
-                    stringWalker.PositionIndex,
-                    (byte)GenericDecorationKind.None)));
-        }
-    }
-    
-    private static void EscapeCharacterListAdd(
-        ref CSharpLexerOutput lexerOutput, StringWalker stringWalker, ref TextEditorTextSpan previousEscapeCharacterTextSpan, TextEditorTextSpan textSpan)
-    {
-        if (lexerOutput.MiscTextSpanList.Count > 0)
-        {
-            if (previousEscapeCharacterTextSpan.EndExclusiveIndex == textSpan.StartInclusiveIndex &&
-                previousEscapeCharacterTextSpan.DecorationByte == (byte)GenericDecorationKind.EscapeCharacterPrimary)
-            {
-                textSpan = textSpan with
+                if (parserModel.Binder.PartialTypeDefinitionList[positionExclusive].IndexStartGroup != typeDefinitionNode.IndexPartialTypeDefinition)
                 {
-                    DecorationByte = (byte)GenericDecorationKind.EscapeCharacterSecondary,
-                };
+                    var partialTypeDefinitionEntry = parserModel.Binder.PartialTypeDefinitionList[positionExclusive];
+                    
+                    if (lastSeenIndexStartGroup != partialTypeDefinitionEntry.IndexStartGroup)
+                    {
+                        lastSeenIndexStartGroup = partialTypeDefinitionEntry.IndexStartGroup;
+                        
+                        if (parserModel.Binder.__CompilationUnitMap.TryGetValue(partialTypeDefinitionEntry.ResourceUri, out var innerCompilationUnit))
+                        {
+                            ((TypeDefinitionNode)parserModel.Binder.CodeBlockOwnerList[innerCompilationUnit.IndexCodeBlockOwnerList + partialTypeDefinitionEntry.ScopeIndexKey]).IndexPartialTypeDefinition = partialTypeDefinitionEntry.IndexStartGroup + 1;
+                        }
+                    }
+                    
+                    partialTypeDefinitionEntry.IndexStartGroup = partialTypeDefinitionEntry.IndexStartGroup + 1;
+                    parserModel.Binder.PartialTypeDefinitionList[positionExclusive] = partialTypeDefinitionEntry;
+                }
+                
+                positionExclusive++;
             }
         }
+    }
+
+    public static void HandleClassTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        HandleStorageModifierTokenKeyword(ref parserModel);
+    }
+
+    public static void HandleNamespaceTokenKeyword(ref CSharpParserModel parserModel)
+    {
+        var namespaceKeywordToken = parserModel.TokenWalker.Consume();
         
-        previousEscapeCharacterTextSpan = textSpan;
-        lexerOutput.MiscTextSpanList.Add(textSpan);
-    }
-    
-    public static void LexIdentifierOrKeywordOrKeywordContextual(CSharpBinder binder, ref CSharpLexerOutput lexerOutput, StringWalker stringWalker)
-    {
-        var entryPositionIndex = stringWalker.PositionIndex;
+        var namespaceIdentifier = ParseOthers.HandleNamespaceIdentifier(ref parserModel, isNamespaceStatement: true);
 
-        while (!stringWalker.IsEof)
+        if (!namespaceIdentifier.ConstructorWasInvoked)
         {
-            if (!char.IsLetterOrDigit(stringWalker.CurrentCharacter) &&
-                stringWalker.CurrentCharacter != '_')
-            {
-                break;
-            }
-
-            _ = stringWalker.ReadCharacter();
+            // parserModel.Compilation.DiagnosticBag.ReportTodoException(namespaceKeywordToken.TextSpan, "Expected a namespace identifier.");
+            return;
         }
 
-        var textSpan = new TextEditorTextSpan(
-            entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None);
+        var namespaceStatementNode = new NamespaceStatementNode(
+            namespaceKeywordToken,
+            (SyntaxToken)namespaceIdentifier,
+            default,
+            parserModel.ResourceUri);
+
+        parserModel.SetCurrentNamespaceStatementNode(namespaceStatementNode);
         
-        switch (binder.TextEditorService.EditContext_GetText(lexerOutput.Text.Slice(textSpan.StartInclusiveIndex, textSpan.Length)))
-        {
-            // NonContextualKeywords-NonControl
-            // ================================
-            case "abstract":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AbstractTokenKeyword, textSpan));
-                return;
-            case "as":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AsTokenKeyword, textSpan));
-                return;
-            case "base":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BaseTokenKeyword, textSpan));
-                return;
-            case "bool":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BoolTokenKeyword, textSpan));
-                return;
-            case "byte":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ByteTokenKeyword, textSpan));
-                return;
-            case "catch":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CatchTokenKeyword, textSpan));
-                return;
-            case "char":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CharTokenKeyword, textSpan));
-                return;
-            case "checked":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CheckedTokenKeyword, textSpan));
-                return;
-            case "class":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ClassTokenKeyword, textSpan));
-                return;
-            case "const":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ConstTokenKeyword, textSpan));
-                return;
-            case "decimal":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DecimalTokenKeyword, textSpan));
-                return;
-            case "default":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DefaultTokenKeyword, textSpan));
-                return;
-            case "delegate":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DelegateTokenKeyword, textSpan));
-                return;
-            case "double":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DoubleTokenKeyword, textSpan));
-                return;
-            case "enum":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EnumTokenKeyword, textSpan));
-                return;
-            case "event":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EventTokenKeyword, textSpan));
-                return;
-            case "explicit":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ExplicitTokenKeyword, textSpan));
-                return;
-            case "extern":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ExternTokenKeyword, textSpan));
-                return;
-            case "false":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FalseTokenKeyword, textSpan));
-                return;
-            case "finally":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FinallyTokenKeyword, textSpan));
-                return;
-            case "fixed":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FixedTokenKeyword, textSpan));
-                return;
-            case "float":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FloatTokenKeyword, textSpan));
-                return;
-            case "implicit":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ImplicitTokenKeyword, textSpan));
-                return;
-            case "in":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InTokenKeyword, textSpan));
-                return;
-            case "int":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IntTokenKeyword, textSpan));
-                return;
-            case "interface":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InterfaceTokenKeyword, textSpan));
-                return;
-            case "internal":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InternalTokenKeyword, textSpan));
-                return;
-            case "is":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IsTokenKeyword, textSpan));
-                return;
-            case "lock":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.LockTokenKeyword, textSpan));
-                return;
-            case "long":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.LongTokenKeyword, textSpan));
-                return;
-            case "namespace":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NamespaceTokenKeyword, textSpan));
-                return;
-            case "new":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NewTokenKeyword, textSpan));
-                return;
-            case "null":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NullTokenKeyword, textSpan));
-                return;
-            case "object":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ObjectTokenKeyword, textSpan));
-                return;
-            case "operator":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OperatorTokenKeyword, textSpan));
-                return;
-            case "out":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OutTokenKeyword, textSpan));
-                return;
-            case "override":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OverrideTokenKeyword, textSpan));
-                return;
-            case "params":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ParamsTokenKeyword, textSpan));
-                return;
-            case "private":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PrivateTokenKeyword, textSpan));
-                return;
-            case "protected":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ProtectedTokenKeyword, textSpan));
-                return;
-            case "public":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PublicTokenKeyword, textSpan));
-                return;
-            case "readonly":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ReadonlyTokenKeyword, textSpan));
-                return;
-            case "ref":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RefTokenKeyword, textSpan));
-                return;
-            case "sbyte":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SbyteTokenKeyword, textSpan));
-                return;
-            case "sealed":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SealedTokenKeyword, textSpan));
-                return;
-            case "short":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ShortTokenKeyword, textSpan));
-                return;
-            case "sizeof":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SizeofTokenKeyword, textSpan));
-                return;
-            case "stackalloc":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StackallocTokenKeyword, textSpan));
-                return;
-            case "static":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StaticTokenKeyword, textSpan));
-                return;
-            case "string":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StringTokenKeyword, textSpan));
-                return;
-            case "struct":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.StructTokenKeyword, textSpan));
-                return;
-            case "this":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ThisTokenKeyword, textSpan));
-                return;
-            case "true":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.TrueTokenKeyword, textSpan));
-                return;
-            case "try":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.TryTokenKeyword, textSpan));
-                return;
-            case "typeof":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.TypeofTokenKeyword, textSpan));
-                return;
-            case "uint":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UintTokenKeyword, textSpan));
-                return;
-            case "ulong":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UlongTokenKeyword, textSpan));
-                return;
-            case "unchecked":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UncheckedTokenKeyword, textSpan));
-                return;
-            case "unsafe":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UnsafeTokenKeyword, textSpan));
-                return;
-            case "ushort":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UshortTokenKeyword, textSpan));
-                return;
-            case "using":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UsingTokenKeyword, textSpan));
-                return;
-            case "virtual":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VirtualTokenKeyword, textSpan));
-                return;
-            case "void":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VoidTokenKeyword, textSpan));
-                return;
-            case "volatile":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VolatileTokenKeyword, textSpan));
-                return;
-            // NonContextualKeywords-IsControl
-            // ===============================
-            case "break":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.BreakTokenKeyword, textSpan));
-                return;
-            case "case":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CaseTokenKeyword, textSpan));
-                return;
-            case "continue":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ContinueTokenKeyword, textSpan));
-                return;
-            case "do":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DoTokenKeyword, textSpan));
-                return;
-            case "else":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ElseTokenKeyword, textSpan));
-                return;
-            case "for":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ForTokenKeyword, textSpan));
-                return;
-            case "foreach":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ForeachTokenKeyword, textSpan));
-                return;
-            case "goto":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GotoTokenKeyword, textSpan));
-                return;
-            case "if":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IfTokenKeyword, textSpan));
-                return;
-            case "return":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ReturnTokenKeyword, textSpan));
-                return;
-            case "switch":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SwitchTokenKeyword, textSpan));
-                return;
-            case "throw":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ThrowTokenKeyword, textSpan));
-                return;
-            case "while":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WhileTokenKeyword, textSpan));
-                return;
-            // ContextualKeywords-NotControl
-            // =============================
-            case "add":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AddTokenContextualKeyword, textSpan));
-                return;
-            case "and":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AndTokenContextualKeyword, textSpan));
-                return;
-            case "alias":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AliasTokenContextualKeyword, textSpan));
-                return;
-            case "ascending":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AscendingTokenContextualKeyword, textSpan));
-                return;
-            case "args":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ArgsTokenContextualKeyword, textSpan));
-                return;
-            case "async":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AsyncTokenContextualKeyword, textSpan));
-                return;
-            case "await":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.AwaitTokenContextualKeyword, textSpan));
-                return;
-            case "by":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ByTokenContextualKeyword, textSpan));
-                return;
-            case "descending":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DescendingTokenContextualKeyword, textSpan));
-                return;
-            case "dynamic":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.DynamicTokenContextualKeyword, textSpan));
-                return;
-            case "equals":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.EqualsTokenContextualKeyword, textSpan));
-                return;
-            case "file":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FileTokenContextualKeyword, textSpan));
-                return;
-            case "from":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.FromTokenContextualKeyword, textSpan));
-                return;
-            case "get":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GetTokenContextualKeyword, textSpan));
-                return;
-            case "global":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GlobalTokenContextualKeyword, textSpan));
-                return;
-            case "group":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.GroupTokenContextualKeyword, textSpan));
-                return;
-            case "init":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.InitTokenContextualKeyword, textSpan));
-                return;
-            case "into":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IntoTokenContextualKeyword, textSpan));
-                return;
-            case "join":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.JoinTokenContextualKeyword, textSpan));
-                return;
-            case "let":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.LetTokenContextualKeyword, textSpan));
-                return;
-            case "managed":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ManagedTokenContextualKeyword, textSpan));
-                return;
-            case "nameof":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NameofTokenContextualKeyword, textSpan));
-                return;
-            case "nint":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NintTokenContextualKeyword, textSpan));
-                return;
-            case "not":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NotTokenContextualKeyword, textSpan));
-                return;
-            case "notnull":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NotnullTokenContextualKeyword, textSpan));
-                return;
-            case "nuint":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NuintTokenContextualKeyword, textSpan));
-                return;
-            case "on":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OnTokenContextualKeyword, textSpan));
-                return;
-            case "or":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OrTokenContextualKeyword, textSpan));
-                return;
-            case "orderby":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.OrderbyTokenContextualKeyword, textSpan));
-                return;
-            case "partial":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PartialTokenContextualKeyword, textSpan));
-                return;
-            case "record":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RecordTokenContextualKeyword, textSpan));
-                return;
-            case "remove":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RemoveTokenContextualKeyword, textSpan));
-                return;
-            case "required":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.RequiredTokenContextualKeyword, textSpan));
-                return;
-            case "scoped":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ScopedTokenContextualKeyword, textSpan));
-                return;
-            case "select":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SelectTokenContextualKeyword, textSpan));
-                return;
-            case "set":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.SetTokenContextualKeyword, textSpan));
-                return;
-            case "unmanaged":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.UnmanagedTokenContextualKeyword, textSpan));
-                return;
-            case "value":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.ValueTokenContextualKeyword, textSpan));
-                return;
-            case "var":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.VarTokenContextualKeyword, textSpan));
-                return;
-            case "when":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WhenTokenContextualKeyword, textSpan));
-                return;
-            case "where":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WhereTokenContextualKeyword, textSpan));
-                return;
-            case "with":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.Keyword };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.WithTokenContextualKeyword, textSpan));
-                return;
-            // ContextualKeywords-IsControl
-            // ============================
-            case "yield":
-                textSpan = textSpan with { DecorationByte = (byte)GenericDecorationKind.KeywordControl };
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.YieldTokenContextualKeyword, textSpan));
-                return;
-            default:
-                lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.IdentifierToken, textSpan));
-                return;
-        }
-    }
-    
-    public static void LexNumericLiteralToken(CSharpBinder binder, ref CSharpLexerOutput lexerOutput, StringWalker stringWalker)
-    {
-        var entryPositionIndex = stringWalker.PositionIndex;
-
-        // Declare outside the while loop to avoid overhead of redeclaring each loop? not sure
-        var isNotANumber = false;
-
-        while (!stringWalker.IsEof)
-        {
-            switch (stringWalker.CurrentCharacter)
-            {
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                    break;
-                default:
-                    isNotANumber = true;
-                    break;
-            }
-
-            if (isNotANumber)
-                break;
-
-            _ = stringWalker.ReadCharacter();
-        }
-
-        var textSpan = new TextEditorTextSpan(
-            entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None);
-
-        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.NumericLiteralToken, textSpan));
-    }
-    
-    public static void LexCharLiteralToken(CSharpBinder binder, ref CSharpLexerOutput lexerOutput, StringWalker stringWalker)
-    {
-        var delimiter = '\'';
-        var escapeCharacter = '\\';
+        parserModel.NewScopeAndBuilderFromOwner(
+            namespaceStatementNode,
+            parserModel.TokenWalker.Current.TextSpan);
         
-        var entryPositionIndex = stringWalker.PositionIndex;
-
-        // Move past the opening delimiter
-        _ = stringWalker.ReadCharacter();
-
-        while (!stringWalker.IsEof)
-        {
-            if (stringWalker.CurrentCharacter == delimiter)
-            {
-                _ = stringWalker.ReadCharacter();
-                break;
-            }
-            else if (stringWalker.CurrentCharacter == escapeCharacter)
-            {
-                lexerOutput.MiscTextSpanList.Add(new TextEditorTextSpan(
-                    stringWalker.PositionIndex,
-                    stringWalker.PositionIndex + 2,
-                    (byte)GenericDecorationKind.EscapeCharacterPrimary));
-
-                // Presuming the escaped text is 2 characters,
-                // then read an extra character.
-                _ = stringWalker.ReadCharacter();
-            }
-
-            _ = stringWalker.ReadCharacter();
-        }
-
-        var textSpan = new TextEditorTextSpan(
-            entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.StringLiteral);
-
-        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.CharLiteralToken, textSpan));
+        // Do not set 'IsImplicitOpenCodeBlockTextSpan' for namespace file scoped.
     }
-    
-    public static void LexCommentSingleLineToken(ref CSharpLexerOutput lexerOutput, StringWalker stringWalker)
+
+    public static void HandleReturnTokenKeyword(ref CSharpParserModel parserModel)
     {
-        var entryPositionIndex = stringWalker.PositionIndex;
-
-        // Declare outside the while loop to avoid overhead of redeclaring each loop? not sure
-        var isNewLineCharacter = false;
-
-        while (!stringWalker.IsEof)
-        {
-            switch (stringWalker.CurrentCharacter)
-            {
-                case '\r':
-                case '\n':
-                    isNewLineCharacter = true;
-                    break;
-                default:
-                    break;
-            }
-
-            if (isNewLineCharacter)
-                break;
-
-            _ = stringWalker.ReadCharacter();
-        }
-
-        var textSpan = new TextEditorTextSpan(
-            entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.CommentSingleLine);
-
-        lexerOutput.MiscTextSpanList.Add(textSpan);
-    }
-    
-    public static void LexCommentMultiLineToken(ref CSharpLexerOutput lexerOutput, StringWalker stringWalker)
-    {
-        var entryPositionIndex = stringWalker.PositionIndex;
-
-        // Move past the initial "/*"
-        stringWalker.SkipRange(2);
-
-        // Declare outside the while loop to avoid overhead of redeclaring each loop? not sure
-        var possibleClosingText = false;
-        var sawClosingText = false;
-
-        while (!stringWalker.IsEof)
-        {
-            switch (stringWalker.CurrentCharacter)
-            {
-                case '*':
-                    possibleClosingText = true;
-                    break;
-                case '/':
-                    if (possibleClosingText)
-                        sawClosingText = true;
-                    break;
-                default:
-                    break;
-            }
-
-            _ = stringWalker.ReadCharacter();
-
-            if (sawClosingText)
-                break;
-        }
-
-        var textSpan = new TextEditorTextSpan(
-            entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.CommentMultiLine);
-
-        lexerOutput.MiscTextSpanList.Add(textSpan);
-    }
-    
-    public static void LexPreprocessorDirectiveToken(ref CSharpLexerOutput lexerOutput, StringWalker stringWalker)
-    {
-        var entryPositionIndex = stringWalker.PositionIndex;
-
-        // Declare outside the while loop to avoid overhead of redeclaring each loop? not sure
-        var isNewLineCharacter = false;
-        var firstWhitespaceCharacterPositionIndex = -1;
-
-        while (!stringWalker.IsEof)
-        {
-            switch (stringWalker.CurrentCharacter)
-            {
-                case '\r':
-                case '\n':
-                    isNewLineCharacter = true;
-                    break;
-                case '\t':
-                case ' ':
-                    if (firstWhitespaceCharacterPositionIndex == -1)
-                        firstWhitespaceCharacterPositionIndex = stringWalker.PositionIndex;
-                    break;
-                default:
-                    break;
-            }
-
-            if (isNewLineCharacter)
-                break;
-
-            _ = stringWalker.ReadCharacter();
-        }
+        var returnKeywordToken = parserModel.TokenWalker.Consume();
+        var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
+        var returnStatementNode = new ReturnStatementNode(returnKeywordToken, expressionNode);
         
-        if (firstWhitespaceCharacterPositionIndex == -1)
-            firstWhitespaceCharacterPositionIndex = stringWalker.PositionIndex;
-
-        var textSpan = new TextEditorTextSpan(
-            entryPositionIndex,
-            firstWhitespaceCharacterPositionIndex,
-            (byte)GenericDecorationKind.PreprocessorDirective);
-
-        lexerOutput.SyntaxTokenList.Add(new SyntaxToken(SyntaxKind.PreprocessorDirectiveToken, textSpan));
+        parserModel.StatementBuilder.ChildList.Add(returnStatementNode);
     }
 }
 
+// I hovered this locally and got an infinite loop.
+// My memory spiked, I was able to stop the application with task manager.
+// But I'm adding this to the demo so I can hover it before every PR I accept
+// to make sure it never happens again.
+public Dictionary<string, Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)>> SymbolIdToExternalTextSpanMap { get; }
 
 """"""""";
 }
