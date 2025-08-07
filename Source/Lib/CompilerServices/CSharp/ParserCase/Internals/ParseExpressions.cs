@@ -3886,11 +3886,37 @@ public static class ParseExpressions
     
         if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind))
         {
-            var typeClauseNode = ExplicitCastAndGenericParametersForceType(
-                ref token,
-                ref parserModel);
+            var nameToken = token;
+                        
+            TypeClauseNode? typeClauseNode = null;
+            
+            if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken)
+            {
+                parserModel.ParserContextKind = CSharpParserContextKind.None;
+                var ambiguousExpressionNode = new AmbiguousIdentifierExpressionNode(
+                    parserModel.TokenWalker.Current,
+                    openAngleBracketToken: default,
+                    indexGenericParameterEntryList: -1,
+                    countGenericParameterEntryList: 0,
+                    closeAngleBracketToken: default,
+                    resultTypeReference: default);
+                var expressionNode = ForceDecisionAmbiguousIdentifier(genericParameterNode, ambiguousExpressionNode, ref parserModel);
+                nameToken = parserModel.Binder.GetNameToken(expressionNode);
+                
+                if (expressionNode.SyntaxKind == SyntaxKind.TypeClauseNode)
+                {
+                    typeClauseNode = (TypeClauseNode)expressionNode;
+                }
+                else
+                {
+                    nameToken = parserModel.Binder.GetNameToken(expressionNode);
+                }
+            }
             
             // TODO: Does typeClauseNode -> Generic params?
+            typeClauseNode ??= ExplicitCastAndGenericParametersForceType(
+                ref nameToken,
+                ref parserModel);
             return typeClauseNode;
         }
     
