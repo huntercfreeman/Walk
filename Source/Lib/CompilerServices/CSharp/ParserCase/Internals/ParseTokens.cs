@@ -553,7 +553,7 @@ public static class ParseTokens
             {
                 shouldBacktrack = true;
                 parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = new TypeReference((TypeClauseNode)previousNode);
-                parserModel.Return_TypeClauseNode((TypeClauseNode)previousNode, clearTypeClauseNode: true);
+                parserModel.Return_TypeClauseNode((TypeClauseNode)previousNode);
                 backtrackNode = (TypeClauseNode)previousNode;
             }
             else

@@ -22,7 +22,7 @@ public static class ParseVariables
             false,
             parserModel.ResourceUri);
         
-        parserModel.Return_TypeClauseNode(consumedTypeClauseNode, clearTypeClauseNode: true);
+        parserModel.Return_TypeClauseNode(consumedTypeClauseNode);
         
         parserModel.BindVariableDeclarationNode(variableDeclarationNode);
         return variableDeclarationNode;

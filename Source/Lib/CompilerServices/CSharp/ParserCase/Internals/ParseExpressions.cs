@@ -1215,7 +1215,7 @@ public static class ParseExpressions
         
         finalize:
         
-        parserModel.Return_AmbiguousIdentifierExpressionNode(ambiguousIdentifierExpressionNode, clearAmbiguousIdentifierExpressionNode: true);
+        parserModel.Return_AmbiguousIdentifierExpressionNode(ambiguousIdentifierExpressionNode);
         
         if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken &&
             UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind))
@@ -1268,7 +1268,7 @@ public static class ParseExpressions
                         ref parserModel);
                 
                     var typeReference = new TypeReference(typeClauseNode);
-                    parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
+                    parserModel.Return_TypeClauseNode(typeClauseNode);
                     return new VariableReferenceNode(
                         nameableToken,
                         new VariableDeclarationNode(
@@ -1284,7 +1284,7 @@ public static class ParseExpressions
             case SyntaxKind.WithTokenContextualKeyword:
             {
                 return new WithExpressionNode(
-                    parserModel.Return_VariableReferenceNode_ToStruct(variableReferenceNode, clearVariableReferenceNode: true));
+                    parserModel.Return_VariableReferenceNode_ToStruct(variableReferenceNode));
             }
             case SyntaxKind.SwitchTokenKeyword:
             {
@@ -1677,7 +1677,7 @@ public static class ParseExpressions
                 {
                     typeClauseNode.CloseAngleBracketToken = parserModel.TokenWalker.Current;
                     constructorInvocationExpressionNode.ResultTypeReference = new TypeReference(typeClauseNode);
-                    parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
+                    parserModel.Return_TypeClauseNode(typeClauseNode);
                     return constructorInvocationExpressionNode;
                 }
                 
@@ -1698,7 +1698,7 @@ public static class ParseExpressions
                 if (expressionSecondary is TypeClauseNode typeClauseNode)
                 {
                     constructorInvocationExpressionNode.ResultTypeReference = new TypeReference(typeClauseNode);
-                    parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
+                    parserModel.Return_TypeClauseNode(typeClauseNode);
                 }
                 else
                 {
@@ -2364,7 +2364,7 @@ public static class ParseExpressions
                 {
                     var typeClauseNode = (TypeClauseNode)parenthesizedExpressionNode.InnerExpression;
                     var explicitCastNode = new ExplicitCastNode(parenthesizedExpressionNode.OpenParenthesisToken, new TypeReference(typeClauseNode));
-                    parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
+                    parserModel.Return_TypeClauseNode(typeClauseNode);
                     return ExplicitCastMergeToken(explicitCastNode, ref parserModel);
                 }
                 
@@ -2425,7 +2425,7 @@ public static class ParseExpressions
                 parserModel.BindTypeClauseNode(typeClauseNode);
                 
                 var typeReference = new TypeReference(typeClauseNode);
-                parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
+                parserModel.Return_TypeClauseNode(typeClauseNode);
                 return new ExplicitCastNode(parenthesizedExpressionNode.OpenParenthesisToken, typeReference);
              }
         }
@@ -2627,7 +2627,7 @@ public static class ParseExpressions
                             VariableKind.Local,
                             false,
                             parserModel.ResourceUri);
-                        parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
+                        parserModel.Return_TypeClauseNode(typeClauseNode);
                     }
                     else
                     {
@@ -2639,7 +2639,7 @@ public static class ParseExpressions
                                 VariableKind.Local,
                                 false,
                                 parserModel.ResourceUri);
-                            parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
+                            parserModel.Return_TypeClauseNode(typeClauseNode);
                             parserModel.CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind);
                         }
                         else
@@ -3048,7 +3048,7 @@ public static class ParseExpressions
                 // explicitDefinitionTextSpan = typeClauseNode.ExplicitDefinitionTextSpan;
                 // explicitDefinitionResourceUri = typeClauseNode.ExplicitDefinitionResourceUri;
                 typeReference = new TypeReference(typeClauseNode);
-                parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
+                parserModel.Return_TypeClauseNode(typeClauseNode);
             }
             else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
@@ -3057,6 +3057,10 @@ public static class ParseExpressions
                 
             if (typeReference == default)
             {
+                if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                {
+                    parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
+                }
                 expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, ref parserModel);
                 continue;
             }
@@ -3145,6 +3149,10 @@ public static class ParseExpressions
             
             if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
             {
+                if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                {
+                    parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
+                }
                 expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, ref parserModel);
                 continue;
             }
@@ -3217,6 +3225,10 @@ public static class ParseExpressions
             
             if (foundDefinitionNode is null)
             {
+                if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                {
+                    parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
+                }
                 expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, ref parserModel);
                 continue;
             }
@@ -3237,6 +3249,10 @@ public static class ParseExpressions
                         (variableDeclarationNode.ResourceUri, variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex));
                 }
                 
+                if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                {
+                    parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
+                }
                 expressionPrimary = variableReferenceNode;
             }
             else if (foundDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
@@ -3283,6 +3299,10 @@ public static class ParseExpressions
                 
                 // TODO: Transition from 'FunctionInvocationNode' to GenericParameters / FunctionParameters
                 // TODO: Method group if next token is not '<' or '('
+                if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                {
+                    parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
+                }
                 expressionPrimary = functionInvocationNode;
             }
         }
@@ -3514,7 +3534,7 @@ public static class ParseExpressions
         }
         
         var explicitCastNode = new ExplicitCastNode(ambiguousParenthesizedExpressionNode.OpenParenthesisToken, new TypeReference(typeClauseNode), closeParenthesisToken);
-        parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
+        parserModel.Return_TypeClauseNode(typeClauseNode);
         return explicitCastNode;
     }
     
@@ -3735,7 +3755,7 @@ public static class ParseExpressions
                         {
                             var matchingArgument = parserModel.Binder.FunctionArgumentEntryList[functionDefinitionNode.IndexFunctionArgumentEntryList + invocationNode.CountFunctionParameterEntryList];
                             
-                            variableDeclarationNode.SetImplicitTypeReference(matchingArgument.VariableDeclarationNode.TypeReference);
+                            variableDeclarationNode.SetImplicitTypeReference(matchingArgument.TypeReference);
                         }
                     }
                 }
@@ -3973,7 +3993,7 @@ public static class ParseExpressions
             parserModel.Binder.GenericParameterEntryList.Insert(
                 genericParameterNode.IndexGenericParameterEntryList + genericParameterNode.CountGenericParameterEntryList,
                 new GenericParameterEntry(new TypeReference(typeClauseNode)));
-            parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
+            parserModel.Return_TypeClauseNode(typeClauseNode);
             genericParameterNode.CountGenericParameterEntryList++;
             
             return genericParameterNode;
@@ -3985,7 +4005,7 @@ public static class ParseExpressions
             parserModel.Binder.GenericParameterEntryList.Insert(
                 genericParameterNode.IndexGenericParameterEntryList + genericParameterNode.CountGenericParameterEntryList,
                 new GenericParameterEntry(new TypeReference(typeClauseNode)));
-            parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
+            parserModel.Return_TypeClauseNode(typeClauseNode);
             genericParameterNode.CountGenericParameterEntryList++;
             
             return genericParameterNode;

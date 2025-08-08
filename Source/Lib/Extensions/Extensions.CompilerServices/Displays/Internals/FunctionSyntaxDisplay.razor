@@ -269,13 +269,20 @@
     			    </span>
     			}
     			
+			    var variableDeclarationNode = new VariableDeclarationNode(
+			        argumentEntry.TypeReference,
+                    argumentEntry.IdentifierToken,
+                    argumentEntry.VariableKind,
+                    isInitialized: true,
+                    SyntaxViewModel.ResourceUri);
+    			
     			var syntaxViewModel = new SyntaxViewModel(
         		    SyntaxViewModel.ExtendedCompilerService,
     				SyntaxViewModel.TextEditorService,
     				SyntaxViewModel.ResourceUri,
     				targetSymbol: null,
-    				targetNode: argumentEntry.VariableDeclarationNode,
-    				definitionNode: argumentEntry.VariableDeclarationNode,
+    				targetNode: variableDeclarationNode,
+    				definitionNode: variableDeclarationNode,
     				depth: syntaxViewModelLocal.Depth + 1);
     			<VariableSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
     			

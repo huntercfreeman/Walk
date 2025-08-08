@@ -13,12 +13,10 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner, IFunctionDefinitio
         AccessModifierKind accessModifierKind,
         TypeReference returnTypeReference,
         SyntaxToken functionIdentifierToken,
-        
         SyntaxToken openAngleBracketToken,
         int indexGenericParameterEntryList,
         int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
-        
         SyntaxToken openParenthesisToken,
         int indexFunctionArgumentEntryList,
         int countFunctionArgumentEntryList,

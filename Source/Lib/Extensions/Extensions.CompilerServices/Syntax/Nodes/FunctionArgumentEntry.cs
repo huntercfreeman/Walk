@@ -1,3 +1,4 @@
+using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Extensions.CompilerServices.Syntax.Nodes.Enums;
 
 namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
@@ -12,15 +13,17 @@ public struct FunctionArgumentEntry
         SyntaxToken optionalCompileTimeConstantToken,
         ArgumentModifierKind argumentModifierKind)
     {
-        VariableDeclarationNode = variableDeclarationNode;
+        TypeReference = variableDeclarationNode.TypeReference;
+        IdentifierToken = variableDeclarationNode.IdentifierToken;
+        VariableKind = variableDeclarationNode.VariableKind;
+        
         OptionalCompileTimeConstantToken = optionalCompileTimeConstantToken;
         ArgumentModifierKind = argumentModifierKind;
     }
 
-    /// <summary>
-    /// TODO: Don't store the VariableDeclarationNode here. Bring any properties needed here directly inline. (avoids struct containing a reference to reference type.
-    /// <summary/>
-    public VariableDeclarationNode VariableDeclarationNode { get; }
+    public TypeReference TypeReference { get; }
+    public SyntaxToken IdentifierToken { get; }
+    public VariableKind VariableKind { get; }
     public SyntaxToken OptionalCompileTimeConstantToken { get; }
     public ArgumentModifierKind ArgumentModifierKind { get; }
 }
