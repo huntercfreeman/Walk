@@ -65,8 +65,6 @@ public struct CSharpStatementBuilder
     /// </summary>
     public bool FinishStatement(int finishTokenIndex, ref CSharpParserModel parserModel)
     {
-        parserModel.VariableReferenceNode.IsBeingUsed = false;
-        
         ChildList.Clear();
         /*if (ChildList.Count != 0)
         {

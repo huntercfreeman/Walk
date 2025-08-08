@@ -3212,9 +3212,9 @@ public static class ParseExpressions
             {
                 var variableDeclarationNode = (VariableDeclarationNode)foundDefinitionNode;
                 
-                var variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(
-                    memberIdentifierToken,
-                    variableDeclarationNode);
+                var variableReferenceNode = parserModel.Rent_VariableReferenceNode();
+                variableReferenceNode.VariableIdentifierToken = memberIdentifierToken;
+                variableReferenceNode.VariableDeclarationNode = variableDeclarationNode;
                 var symbolId = parserModel.CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind);
                 
                 if (parserModel.Binder.SymbolIdToExternalTextSpanMap.TryGetValue(parserModel.ResourceUri.Value, out var symbolIdToExternalTextSpanMap))
@@ -3407,9 +3407,9 @@ public static class ParseExpressions
                 }
             }
         
-            var variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(
-                memberIdentifierToken,
-                variableDeclarationNode: null);
+            var variableReferenceNode = parserModel.Rent_VariableReferenceNode();
+            variableReferenceNode.VariableIdentifierToken = memberIdentifierToken;
+            variableReferenceNode.VariableDeclarationNode = null;
             _ = parserModel.CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, VariableKind.Property);
             return variableReferenceNode;
         }

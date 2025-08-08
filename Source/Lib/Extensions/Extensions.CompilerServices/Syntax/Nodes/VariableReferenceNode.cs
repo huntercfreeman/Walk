@@ -27,15 +27,13 @@ public sealed class VariableReferenceNode : IExpressionNode
     }
 
     public int Unsafe_ParentIndexKey { get; set; }
-    private bool _isFabricated;
-    
-    public bool IsBeingUsed { get; set; } = false;
+    public bool _isFabricated;
 
-    public SyntaxToken VariableIdentifierToken { get; private set; }
+    public SyntaxToken VariableIdentifierToken { get; set; }
     /// <summary>
     /// The <see cref="VariableDeclarationNode"/> is null when the variable is undeclared
     /// </summary>
-    public VariableDeclarationNode VariableDeclarationNode { get; private set; }
+    public VariableDeclarationNode VariableDeclarationNode { get; set; }
     public TypeReference ResultTypeReference
     {
         get
@@ -59,17 +57,6 @@ public sealed class VariableReferenceNode : IExpressionNode
         }
     }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableReferenceNode;
-
-    public void SetSharedInstance(
-        SyntaxToken variableIdentifierToken,
-        VariableDeclarationNode variableDeclarationNode)
-    {
-        IsBeingUsed = true;
-    
-        VariableIdentifierToken = variableIdentifierToken;
-        VariableDeclarationNode = variableDeclarationNode;
-        _isFabricated = false;
-    }
 
     #if DEBUG    
     ~VariableReferenceNode()

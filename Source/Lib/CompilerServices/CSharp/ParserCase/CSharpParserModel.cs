@@ -67,12 +67,6 @@ public ref struct CSharpParserModel
     		closeAngleBracketToken: default,
             CSharpFacts.Types.Void.ToTypeReference(),
             followsMemberAccessToken: false);
-            
-        VariableReferenceNode = Binder.CSharpParserModel_VariableReferenceNode;
-        VariableReferenceNode.SetSharedInstance(
-            variableIdentifierToken: default,
-            variableDeclarationNode: null);
-        VariableReferenceNode.IsBeingUsed = false;
         
         ClearedPartialDefinitionHashSet = Binder.CSharpParserModel_ClearedPartialDefinitionHashSet;
         ClearedPartialDefinitionHashSet.Clear();
@@ -177,11 +171,6 @@ public ref struct CSharpParserModel
     
     public IExpressionNode ExpressionPrimary { get; set; }
     
-    /// <summary>
-    /// TODO: Consider the case where you have just a TypeClauseNode then StatementDelimiterToken.
-    /// </summary>
-    private TypeClauseNode _pool_TypeClauseNode;
-    
     public readonly TypeClauseNode Rent_TypeClauseNode()
     {
         if (Binder.Pool_TypeClauseNode_Queue.TryDequeue(out var typeClauseNode))
@@ -215,7 +204,7 @@ public ref struct CSharpParserModel
             typeClauseNode.ExplicitDefinitionResourceUri = default;
         }
     
-        if (Binder.Pool_TypeClauseNode_Queue.Count < 3)
+        if (Binder.Pool_TypeClauseNode_Queue.Count < CSharpBinder.POOL_TYPE_CLAUSE_NODE_MAX_COUNT)
         {
             Binder.Pool_TypeClauseNode_Queue.Enqueue(typeClauseNode);
         }
@@ -229,20 +218,37 @@ public ref struct CSharpParserModel
         return new TypeReference(typeClauseNode);
     }
     
-    /// <summary>
-    /// TODO: Consider the case where you have just a VariableReferenceNode then StatementDelimiterToken.
-    /// </summary>
-    public VariableReferenceNode VariableReferenceNode { get; }
-    
-    public readonly VariableReferenceNode ConstructOrRecycleVariableReferenceNode(
-        SyntaxToken variableIdentifierToken,
-        VariableDeclarationNode variableDeclarationNode)
+    public readonly VariableReferenceNode Rent_VariableReferenceNode()
     {
-        if (VariableReferenceNode.IsBeingUsed)
-            return new VariableReferenceNode(variableIdentifierToken, variableDeclarationNode);
+        if (Binder.Pool_VariableReferenceNode_Queue.TryDequeue(out var variableReferenceNode))
+            return variableReferenceNode;
+        
+        return new VariableReferenceNode(
+            variableIdentifierToken: default,
+            variableDeclarationNode: default);
+    }
     
-        VariableReferenceNode.SetSharedInstance(variableIdentifierToken, variableDeclarationNode);
-        return VariableReferenceNode;
+    public readonly void Return_VariableReferenceNode(VariableReferenceNode variableReferenceNode, bool clearVariableReferenceNode = false)
+    {
+        if (clearVariableReferenceNode)
+        {
+            variableReferenceNode.VariableIdentifierToken = default;
+            variableReferenceNode.VariableDeclarationNode = default;
+            variableReferenceNode._isFabricated = false;
+        }
+    
+        if (Binder.Pool_VariableReferenceNode_Queue.Count < CSharpBinder.POOL_VARIABLE_REFERENCE_NODE_MAX_COUNT)
+        {
+            Binder.Pool_VariableReferenceNode_Queue.Enqueue(variableReferenceNode);
+        }
+    }
+    
+    public readonly VariableReference Return_VariableReferenceNode_ToStruct(VariableReferenceNode variableReferenceNode, bool clearVariableReferenceNode = false)
+    {
+        Return_VariableReferenceNode(variableReferenceNode, clearVariableReferenceNode);
+        // This is thread safe since parsing is "single threaded"
+        // and this avoids copying the struct as a local variable before returning it.
+        return new VariableReference(variableReferenceNode);
     }
     
     public readonly ICodeBlockOwner? GetParent(
@@ -427,9 +433,9 @@ public ref struct CSharpParserModel
                 out var variableDeclarationNode)
             && variableDeclarationNode is not null)
         {
-            variableReferenceNode = ConstructOrRecycleVariableReferenceNode(
-                variableIdentifierToken,
-                variableDeclarationNode);
+            variableReferenceNode = Rent_VariableReferenceNode();
+            variableReferenceNode.VariableIdentifierToken = variableIdentifierToken;
+            variableReferenceNode.VariableDeclarationNode = variableDeclarationNode;
         }
         else
         {
@@ -443,9 +449,9 @@ public ref struct CSharpParserModel
                 IsFabricated = true,
             };
 
-            variableReferenceNode = ConstructOrRecycleVariableReferenceNode(
-                variableIdentifierToken,
-                variableDeclarationNode);
+            variableReferenceNode = Rent_VariableReferenceNode();
+            variableReferenceNode.VariableIdentifierToken = variableIdentifierToken;
+            variableReferenceNode.VariableDeclarationNode = variableDeclarationNode;
         }
 
         if (shouldCreateSymbol)

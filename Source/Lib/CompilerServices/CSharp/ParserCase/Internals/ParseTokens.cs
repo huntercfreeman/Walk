@@ -23,9 +23,8 @@ public static class ParseTokens
                 parserModel.BindDiscard(parserModel.TokenWalker.Current);
                 var identifierToken = parserModel.TokenWalker.Consume();
                 
-                var variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(
-                    identifierToken,
-                    null);
+                var variableReferenceNode = parserModel.Rent_VariableReferenceNode();
+                variableReferenceNode.VariableIdentifierToken = identifierToken;
                     
                 parserModel.StatementBuilder.ChildList.Add(variableReferenceNode);
                 return;
