@@ -1277,7 +1277,7 @@ public static class ParseExpressions
             case SyntaxKind.WithTokenContextualKeyword:
             {
                 return new WithExpressionNode(
-                    new VariableReference(variableReferenceNode));
+                    parserModel.Return_VariableReferenceNode_ToStruct(variableReferenceNode, clearVariableReferenceNode: true));
             }
             case SyntaxKind.SwitchTokenKeyword:
             {
