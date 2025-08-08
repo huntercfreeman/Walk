@@ -68,16 +68,6 @@ public ref struct CSharpParserModel
             CSharpFacts.Types.Void.ToTypeReference(),
             followsMemberAccessToken: false);
             
-        TypeClauseNode = Binder.CSharpParserModel_TypeClauseNode;
-        TypeClauseNode.SetSharedInstance(
-            typeIdentifier: default,
-            openAngleBracketToken: default,
-    		indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
-    		closeAngleBracketToken: default,
-            isKeywordType: false);
-        TypeClauseNode.IsBeingUsed = false;
-            
         VariableReferenceNode = Binder.CSharpParserModel_VariableReferenceNode;
         VariableReferenceNode.SetSharedInstance(
             variableIdentifierToken: default,
@@ -170,10 +160,7 @@ public ref struct CSharpParserModel
     /// </summary>
     public AmbiguousIdentifierExpressionNode AmbiguousIdentifierExpressionNode { get; }
     
-    /// <summary>
-    /// TODO: Consider the case where you have just a TypeClauseNode then StatementDelimiterToken.
-    /// </summary>
-    public TypeClauseNode TypeClauseNode { get; }
+    
     
     /// <summary>
     /// In order to have many partial definitions for the same type in the same file,
@@ -190,7 +177,51 @@ public ref struct CSharpParserModel
     
     public IExpressionNode ExpressionPrimary { get; set; }
     
+    /// <summary>
+    /// TODO: Consider the case where you have just a TypeClauseNode then StatementDelimiterToken.
+    /// </summary>
+    private TypeClauseNode _pool_TypeClauseNode;
+    
+    public readonly TypeClauseNode Rent_TypeClauseNode()
+    {
+    }
+    
+    public readonly void Return_TypeClauseNode(TypeClauseNode typeClauseNode, bool clearTypeClauseNode = false)
+    {
+    }
+    
     public readonly TypeClauseNode ConstructOrRecycleTypeClauseNode(
+        SyntaxToken typeIdentifier,
+        SyntaxToken openAngleBracketToken,
+        int indexGenericParameterEntryList,
+        int countGenericParameterEntryList,
+        SyntaxToken closeAngleBracketToken,
+        bool isKeywordType)
+    {
+        if (TypeClauseNode.IsBeingUsed)
+        {
+            return new TypeClauseNode(
+                typeIdentifier,
+                openAngleBracketToken,
+                indexGenericParameterEntryList,
+                countGenericParameterEntryList,
+                closeAngleBracketToken,
+                isKeywordType);
+        }    
+        
+        TypeClauseNode.SetSharedInstance(
+            typeIdentifier,
+            openAngleBracketToken,
+            indexGenericParameterEntryList,
+            countGenericParameterEntryList,
+            closeAngleBracketToken,
+            isKeywordType);
+            
+        return TypeClauseNode;
+    }
+    
+    /*
+    public void SetSharedInstance(
         SyntaxToken typeIdentifier,
         
         SyntaxToken openAngleBracketToken,
@@ -200,31 +231,25 @@ public ref struct CSharpParserModel
         
         bool isKeywordType)
     {
-        if (TypeClauseNode.IsBeingUsed)
-        {
-            return new TypeClauseNode(
-                typeIdentifier,
-                
-                openAngleBracketToken,
-                indexGenericParameterEntryList,
-                countGenericParameterEntryList,
-                closeAngleBracketToken,
-                
-                isKeywordType);
-        }    
+        IsBeingUsed = true;
+    
+        TypeIdentifierToken = typeIdentifier;
         
-        TypeClauseNode.SetSharedInstance(
-            typeIdentifier,
-            
-            openAngleBracketToken,
-            indexGenericParameterEntryList,
-            countGenericParameterEntryList,
-            closeAngleBracketToken,
-            
-            isKeywordType);
-            
-        return TypeClauseNode;
+        OpenAngleBracketToken = openAngleBracketToken;
+        IndexGenericParameterEntryList = indexGenericParameterEntryList;
+        CountGenericParameterEntryList = countGenericParameterEntryList;
+        CloseAngleBracketToken = closeAngleBracketToken;
+        
+        IsKeywordType = isKeywordType;
+        TypeKind = TypeKind.None;
+        HasQuestionMark = false;
+        ArrayRank = 0;
+        _isFabricated = false;
+        IsParsingGenericParameters = false;
+        ExplicitDefinitionTextSpan = default;
+        ExplicitDefinitionResourceUri = default;
     }
+    */
     
     /// <summary>
     /// TODO: Consider the case where you have just a VariableReferenceNode then StatementDelimiterToken.

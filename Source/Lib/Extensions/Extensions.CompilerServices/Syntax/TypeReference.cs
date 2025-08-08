@@ -36,8 +36,6 @@ public record struct TypeReference
     
     public TypeReference(TypeClauseNode typeClauseNode)
     {
-        typeClauseNode.IsBeingUsed = false;
-    
         IsKeywordType = typeClauseNode.IsKeywordType;
         TypeIdentifierToken = typeClauseNode.TypeIdentifierToken;
         

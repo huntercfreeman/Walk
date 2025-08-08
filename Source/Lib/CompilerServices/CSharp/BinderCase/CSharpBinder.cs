@@ -78,13 +78,7 @@ public class CSharpBinder
 		closeAngleBracketToken: default,
         CSharpFacts.Types.Void.ToTypeReference());
         
-    public TypeClauseNode CSharpParserModel_TypeClauseNode { get; } = new TypeClauseNode(
-        typeIdentifier: default,
-        openAngleBracketToken: default,
-		indexGenericParameterEntryList: -1,
-        countGenericParameterEntryList: 0,
-		closeAngleBracketToken: default,
-        isKeywordType: false);
+    internal Queue<TypeClauseNode> Pool_TypeClauseNode_Queue = new();
         
     public VariableReferenceNode CSharpParserModel_VariableReferenceNode { get; } = new VariableReferenceNode(
         variableIdentifierToken: default,
@@ -114,6 +108,14 @@ public class CSharpBinder
         _allTypeDefinitions.Add("string", CSharpFacts.Types.String);
         _allTypeDefinitions.Add("bool", CSharpFacts.Types.Bool);
         _allTypeDefinitions.Add("var", CSharpFacts.Types.Var);
+    
+        Pool_TypeClauseNode_Queue.Enqueue(new TypeClauseNode(
+            typeIdentifier: default,
+            openAngleBracketToken: default,
+    		indexGenericParameterEntryList: -1,
+            countGenericParameterEntryList: 0,
+    		closeAngleBracketToken: default,
+            isKeywordType: false));
     }
     
     /// <summary><see cref="FinalizeCompilationUnit"/></summary>
