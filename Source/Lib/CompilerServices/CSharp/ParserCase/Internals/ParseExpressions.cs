@@ -3061,10 +3061,6 @@ public static class ParseExpressions
                 {
                     parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
                 }
-                else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
-                {
-                    parserModel.Return_TypeClauseNode((TypeClauseNode)expressionPrimary);
-                }
                 expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, ref parserModel);
                 continue;
             }
@@ -3157,10 +3153,6 @@ public static class ParseExpressions
                 {
                     parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
                 }
-                else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
-                {
-                    parserModel.Return_TypeClauseNode((TypeClauseNode)expressionPrimary);
-                }
                 expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, ref parserModel);
                 continue;
             }
@@ -3237,10 +3229,6 @@ public static class ParseExpressions
                 {
                     parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
                 }
-                else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
-                {
-                    parserModel.Return_TypeClauseNode((TypeClauseNode)expressionPrimary);
-                }
                 expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, ref parserModel);
                 continue;
             }
@@ -3264,10 +3252,6 @@ public static class ParseExpressions
                 if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
                 {
                     parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
-                }
-                else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
-                {
-                    parserModel.Return_TypeClauseNode((TypeClauseNode)expressionPrimary);
                 }
                 expressionPrimary = variableReferenceNode;
             }
@@ -3318,10 +3302,6 @@ public static class ParseExpressions
                 if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
                 {
                     parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
-                }
-                else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
-                {
-                    parserModel.Return_TypeClauseNode((TypeClauseNode)expressionPrimary);
                 }
                 expressionPrimary = functionInvocationNode;
             }
