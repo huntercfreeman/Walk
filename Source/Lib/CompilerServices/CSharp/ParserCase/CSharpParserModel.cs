@@ -193,13 +193,6 @@ public ref struct CSharpParserModel
         }
     }
     
-    public readonly TypeReference Return_TypeClauseNode_ToStruct(TypeClauseNode typeClauseNode, bool clearTypeClauseNode = false)
-    {
-        var typeReference = new TypeReference(typeClauseNode);
-        Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode);
-        return typeReference;
-    }
-    
     public readonly VariableReferenceNode Rent_VariableReferenceNode()
     {
         if (Binder.Pool_VariableReferenceNode_Queue.TryDequeue(out var variableReferenceNode))
