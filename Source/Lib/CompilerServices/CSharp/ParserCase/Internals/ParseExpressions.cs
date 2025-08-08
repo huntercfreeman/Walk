@@ -3057,6 +3057,10 @@ public static class ParseExpressions
                 
             if (typeReference == default)
             {
+                if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                {
+                    parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary, clearVariableReferenceNode: true);
+                }
                 expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, ref parserModel);
                 continue;
             }
@@ -3145,6 +3149,10 @@ public static class ParseExpressions
             
             if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
             {
+                if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                {
+                    parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary, clearVariableReferenceNode: true);
+                }
                 expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, ref parserModel);
                 continue;
             }
@@ -3217,6 +3225,10 @@ public static class ParseExpressions
             
             if (foundDefinitionNode is null)
             {
+                if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                {
+                    parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary, clearVariableReferenceNode: true);
+                }
                 expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, ref parserModel);
                 continue;
             }
@@ -3237,6 +3249,10 @@ public static class ParseExpressions
                         (variableDeclarationNode.ResourceUri, variableDeclarationNode.IdentifierToken.TextSpan.StartInclusiveIndex));
                 }
                 
+                if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                {
+                    parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary, clearVariableReferenceNode: true);
+                }
                 expressionPrimary = variableReferenceNode;
             }
             else if (foundDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
@@ -3283,6 +3299,10 @@ public static class ParseExpressions
                 
                 // TODO: Transition from 'FunctionInvocationNode' to GenericParameters / FunctionParameters
                 // TODO: Method group if next token is not '<' or '('
+                if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                {
+                    parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary, clearVariableReferenceNode: true);
+                }
                 expressionPrimary = functionInvocationNode;
             }
         }
