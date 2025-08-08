@@ -16,7 +16,7 @@ public static class ParseVariables
         VariableDeclarationNode variableDeclarationNode;
 
         variableDeclarationNode = new VariableDeclarationNode(
-            new TypeReference(consumedTypeClauseNode),
+            parserModel.Return_TypeClauseNode_ToStruct(consumedTypeClauseNode, clearTypeClauseNode: true),
             consumedIdentifierToken,
             variableKind,
             false,

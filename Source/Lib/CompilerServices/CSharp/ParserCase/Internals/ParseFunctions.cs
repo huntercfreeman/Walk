@@ -222,7 +222,7 @@ public class ParseFunctions
         typeClauseNode.TypeIdentifierToken = typeDefinitionNodeCodeBlockOwner.TypeIdentifierToken;
 
         var constructorDefinitionNode = new ConstructorDefinitionNode(
-            new TypeReference(typeClauseNode),
+            parserModel.Return_TypeClauseNode_ToStruct(typeClauseNode, clearTypeClauseNode: true),
             consumedIdentifierToken,
             openAngleBracketToken: default,
     		indexGenericParameterEntryList: -1,

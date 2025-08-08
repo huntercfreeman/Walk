@@ -221,6 +221,14 @@ public ref struct CSharpParserModel
         }
     }
     
+    public readonly TypeReference Return_TypeClauseNode_ToStruct(TypeClauseNode typeClauseNode, bool clearTypeClauseNode = false)
+    {
+        Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode);
+        // This is thread safe since parsing is "single threaded"
+        // and this avoids copying the struct as a local variable before returning it.
+        return new TypeReference(typeClauseNode);
+    }
+    
     /// <summary>
     /// TODO: Consider the case where you have just a VariableReferenceNode then StatementDelimiterToken.
     /// </summary>
