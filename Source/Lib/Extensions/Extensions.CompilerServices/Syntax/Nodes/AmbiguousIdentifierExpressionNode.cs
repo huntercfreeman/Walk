@@ -42,6 +42,22 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
     public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierExpressionNode;
     
     public bool IsParsingGenericParameters { get; set; }
+    
+    public AmbiguousIdentifierExpressionNode GetClone()
+    {
+        return new AmbiguousIdentifierExpressionNode(
+            Token,
+            OpenAngleBracketToken,
+            IndexGenericParameterEntryList,
+            CountGenericParameterEntryList,
+            CloseAngleBracketToken,
+            ResultTypeReference)
+        {
+            IsParsingGenericParameters = IsParsingGenericParameters,
+            FollowsMemberAccessToken = FollowsMemberAccessToken,
+            HasQuestionMark = HasQuestionMark,
+        };
+    }
 
     #if DEBUG
     ~AmbiguousIdentifierExpressionNode()

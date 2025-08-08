@@ -841,9 +841,11 @@ public static class ParseExpressions
             case SyntaxKind.BangToken:
             case SyntaxKind.QuestionMarkToken:
             {
+                var copyAmbiguousIdentifierExpressionNode = ambiguousIdentifierExpressionNode.GetClone();
+                
                 var decidedNode = ForceDecisionAmbiguousIdentifier(
                     EmptyExpressionNode.Empty,
-                    ambiguousIdentifierExpressionNode,
+                    copyAmbiguousIdentifierExpressionNode,
                     ref parserModel);
             
                 if (decidedNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
@@ -1207,10 +1209,13 @@ public static class ParseExpressions
             }
         }
         
-        result = ambiguousIdentifierExpressionNode;
+        result = ambiguousIdentifierExpressionNode.GetClone();
+        
         goto finalize;
         
         finalize:
+        
+        parserModel.Return_AmbiguousIdentifierExpressionNode(ambiguousIdentifierExpressionNode, clearAmbiguousIdentifierExpressionNode: true);
         
         if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken &&
             UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind))
