@@ -16,7 +16,6 @@ public struct FunctionArgumentEntry
         TypeReference = variableDeclarationNode.TypeReference;
         IdentifierToken = variableDeclarationNode.IdentifierToken;
         VariableKind = variableDeclarationNode.VariableKind;
-        ResourceUri = variableDeclarationNode.ResourceUri;
         
         OptionalCompileTimeConstantToken = optionalCompileTimeConstantToken;
         ArgumentModifierKind = argumentModifierKind;
@@ -25,7 +24,6 @@ public struct FunctionArgumentEntry
     public TypeReference TypeReference { get; }
     public SyntaxToken IdentifierToken { get; }
     public VariableKind VariableKind { get; }
-    public ResourceUri ResourceUri { get; }
     public SyntaxToken OptionalCompileTimeConstantToken { get; }
     public ArgumentModifierKind ArgumentModifierKind { get; }
 }
