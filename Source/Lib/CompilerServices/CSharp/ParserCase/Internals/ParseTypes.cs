@@ -31,7 +31,7 @@ public static class ParseTypes
                 break;
 
             var genericArgumentEntryNode = new GenericParameterEntry(new TypeReference(typeClauseNode));
-            parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
+            parserModel.Return_TypeClauseNode(typeClauseNode);
             parserModel.Binder.GenericParameterEntryList.Add(genericArgumentEntryNode);
             countGenericParameterEntryList++;
 

@@ -235,7 +235,7 @@ public class ParseFunctions
             default,
             parserModel.ResourceUri);
         
-        parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
+        parserModel.Return_TypeClauseNode(typeClauseNode);
     
         parserModel.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken);
         
