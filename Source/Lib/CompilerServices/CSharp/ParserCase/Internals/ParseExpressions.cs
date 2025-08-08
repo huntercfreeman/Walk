@@ -469,6 +469,11 @@ public static class ParseExpressions
                     
                     parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionPrecedent));
                     
+                    if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                    {
+                        parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
+                    }
+                    
                     return EmptyExpressionNode.Empty;
                 }
                 else
@@ -481,6 +486,12 @@ public static class ParseExpressions
                     binaryExpressionAntecedent.RightExpressionResultTypeReference = binaryExpressionNodePrecedent.ResultTypeReference;
                     
                     parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNodePrecedent));
+                    
+                    if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                    {
+                        parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
+                    }
+                    
                     return EmptyExpressionNode.Empty;
                 }
             }
@@ -499,6 +510,12 @@ public static class ParseExpressions
                 // for the sake of parser recovery.
                 ClearFromExpressionList(expressionPrimary, ref parserModel);
                 ClearFromExpressionList(binaryExpressionAntecedent, ref parserModel);
+                
+                if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                {
+                    parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
+                }
+                
                 return parserModel.Binder.Shared_BadExpressionNode;
             }
         }
@@ -508,6 +525,12 @@ public static class ParseExpressions
             var binaryExpressionNode = new BinaryExpressionNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
             
             parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
+            
+            if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+            {
+                parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
+            }
+            
             return EmptyExpressionNode.Empty;
         }
     }
@@ -1252,6 +1275,8 @@ public static class ParseExpressions
                 {
                     _ = parserModel.TokenWalker.Consume(); // Consume the NullTokenKeyword
                 }
+                
+                parserModel.Return_VariableReferenceNode(variableReferenceNode);
                 
                 return EmptyExpressionNode.Empty;
             }
