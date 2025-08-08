@@ -2412,14 +2412,8 @@ public static class ParseExpressions
              
              if (variableReferenceNode.IsFabricated)
              {
-                 var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
-                     variableReferenceNode.VariableIdentifierToken,
-                     openAngleBracketToken: default,
-            		 indexGenericParameterEntryList: -1,
-                    countGenericParameterEntryList: 0,
-            		 closeAngleBracketToken: default,
-                     isKeywordType: false);
-                
+                 var typeClauseNode = parserModel.Rent_TypeClauseNode();
+                 typeClauseNode.TypeIdentifierToken = variableReferenceNode.VariableIdentifierToken;
                 parserModel.BindTypeClauseNode(typeClauseNode);
                     
                 return new ExplicitCastNode(parenthesizedExpressionNode.OpenParenthesisToken, new TypeReference(typeClauseNode));
@@ -3379,13 +3373,8 @@ public static class ParseExpressions
                     
                         if (parserModel.Binder.CSharpCompilerService.SafeGetText(typeDefinitionNode.ResourceUri.Value, typeDefinitionNode.TypeIdentifierToken.TextSpan) == memberIdentifierText)
                         {
-                            var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
-                                memberIdentifierToken,
-                                openAngleBracketToken: default,
-                        		indexGenericParameterEntryList: -1,
-                                countGenericParameterEntryList: 0,
-                        		closeAngleBracketToken: default,
-                                isKeywordType: false);
+                            var typeClauseNode = parserModel.Rent_TypeClauseNode();
+                            typeClauseNode.TypeIdentifierToken = memberIdentifierToken;
                             
                             var symbolId = parserModel.GetNextSymbolId();
                             
@@ -3518,18 +3507,14 @@ public static class ParseExpressions
     private static IExpressionNode AmbiguousParenthesizedExpressionTransformTo_TypeClauseNode(
         AmbiguousParenthesizedExpressionNode ambiguousParenthesizedExpressionNode, ref SyntaxToken token, ref CSharpParserModel parserModel)
     {        
-        var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
-            new SyntaxToken(
-                SyntaxKind.IdentifierToken,
-                new TextEditorTextSpan(
-                    ambiguousParenthesizedExpressionNode.OpenParenthesisToken.TextSpan.StartInclusiveIndex,
-                    token.TextSpan.EndExclusiveIndex,
-                    default(byte))),
-            openAngleBracketToken: default,
-    		indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
-    		closeAngleBracketToken: default,
-            isKeywordType: false);
+        var typeClauseNode = parserModel.Rent_TypeClauseNode();
+        
+        typeClauseNode.TypeIdentifierToken = new SyntaxToken(
+            SyntaxKind.IdentifierToken,
+            new TextEditorTextSpan(
+                ambiguousParenthesizedExpressionNode.OpenParenthesisToken.TextSpan.StartInclusiveIndex,
+                token.TextSpan.EndExclusiveIndex,
+                default(byte)));
         
         if (typeClauseNode.ExplicitDefinitionResourceUri.Value is null &&
             typeClauseNode.ExplicitDefinitionTextSpan == default)

@@ -184,72 +184,42 @@ public ref struct CSharpParserModel
     
     public readonly TypeClauseNode Rent_TypeClauseNode()
     {
+        if (Binder.Pool_TypeClauseNode_Queue.TryDequeue(out var typeClauseNode))
+            return typeClauseNode;
+        
+        return new TypeClauseNode(
+            typeIdentifier: default,
+            openAngleBracketToken: default,
+    		indexGenericParameterEntryList: -1,
+            countGenericParameterEntryList: 0,
+    		closeAngleBracketToken: default,
+            isKeywordType: false);
     }
     
     public readonly void Return_TypeClauseNode(TypeClauseNode typeClauseNode, bool clearTypeClauseNode = false)
     {
-    }
-    
-    public readonly TypeClauseNode ConstructOrRecycleTypeClauseNode(
-        SyntaxToken typeIdentifier,
-        SyntaxToken openAngleBracketToken,
-        int indexGenericParameterEntryList,
-        int countGenericParameterEntryList,
-        SyntaxToken closeAngleBracketToken,
-        bool isKeywordType)
-    {
-        if (TypeClauseNode.IsBeingUsed)
+        if (clearTypeClauseNode)
         {
-            return new TypeClauseNode(
-                typeIdentifier,
-                openAngleBracketToken,
-                indexGenericParameterEntryList,
-                countGenericParameterEntryList,
-                closeAngleBracketToken,
-                isKeywordType);
-        }    
-        
-        TypeClauseNode.SetSharedInstance(
-            typeIdentifier,
-            openAngleBracketToken,
-            indexGenericParameterEntryList,
-            countGenericParameterEntryList,
-            closeAngleBracketToken,
-            isKeywordType);
-            
-        return TypeClauseNode;
-    }
+            typeClauseNode.TypeIdentifierToken = default;
+            typeClauseNode.OpenAngleBracketToken = default;
+            typeClauseNode.IndexGenericParameterEntryList = -1;
+            typeClauseNode.CountGenericParameterEntryList = 0;
+            typeClauseNode.CloseAngleBracketToken = default;
+            typeClauseNode.IsKeywordType = false;
+            typeClauseNode.TypeKind = TypeKind.None;
+            typeClauseNode.HasQuestionMark = false;
+            typeClauseNode.ArrayRank = 0;
+            typeClauseNode._isFabricated = false;
+            typeClauseNode.IsParsingGenericParameters = false;
+            typeClauseNode.ExplicitDefinitionTextSpan = default;
+            typeClauseNode.ExplicitDefinitionResourceUri = default;
+        }
     
-    /*
-    public void SetSharedInstance(
-        SyntaxToken typeIdentifier,
-        
-        SyntaxToken openAngleBracketToken,
-        int indexGenericParameterEntryList,
-        int countGenericParameterEntryList,
-        SyntaxToken closeAngleBracketToken,
-        
-        bool isKeywordType)
-    {
-        IsBeingUsed = true;
-    
-        TypeIdentifierToken = typeIdentifier;
-        
-        OpenAngleBracketToken = openAngleBracketToken;
-        IndexGenericParameterEntryList = indexGenericParameterEntryList;
-        CountGenericParameterEntryList = countGenericParameterEntryList;
-        CloseAngleBracketToken = closeAngleBracketToken;
-        
-        IsKeywordType = isKeywordType;
-        TypeKind = TypeKind.None;
-        HasQuestionMark = false;
-        ArrayRank = 0;
-        _isFabricated = false;
-        IsParsingGenericParameters = false;
-        ExplicitDefinitionTextSpan = default;
-        ExplicitDefinitionResourceUri = default;
+        if (Binder.Pool_TypeClauseNode_Queue.Count < 3)
+        {
+            Binder.Pool_TypeClauseNode_Queue.Enqueue(typeClauseNode);
+        }
     }
-    */
     
     /// <summary>
     /// TODO: Consider the case where you have just a VariableReferenceNode then StatementDelimiterToken.
@@ -1553,13 +1523,9 @@ public ref struct CSharpParserModel
     
     public readonly TypeClauseNode ToTypeClause(TypeDefinitionNode typeDefinitionNode)
     {
-        var typeClauseNode = ConstructOrRecycleTypeClauseNode(
-            typeDefinitionNode.TypeIdentifierToken,
-            openAngleBracketToken: default,
-            indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
-            closeAngleBracketToken: default,
-            typeDefinitionNode.IsKeywordType);
+        var typeClauseNode = Rent_TypeClauseNode();
+        typeClauseNode.TypeIdentifierToken = typeDefinitionNode.TypeIdentifierToken;
+        typeClauseNode.IsKeywordType = typeDefinitionNode.IsKeywordType;
             
         typeClauseNode.ExplicitDefinitionTextSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
         typeClauseNode.ExplicitDefinitionResourceUri = typeDefinitionNode.ResourceUri;

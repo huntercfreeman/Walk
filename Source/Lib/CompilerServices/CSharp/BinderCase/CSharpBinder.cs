@@ -78,6 +78,7 @@ public class CSharpBinder
 		closeAngleBracketToken: default,
         CSharpFacts.Types.Void.ToTypeReference());
         
+    internal const int POOL_TYPE_CLAUSE_NODE_MAX_COUNT = 3;
     internal Queue<TypeClauseNode> Pool_TypeClauseNode_Queue = new();
         
     public VariableReferenceNode CSharpParserModel_VariableReferenceNode { get; } = new VariableReferenceNode(
@@ -109,13 +110,16 @@ public class CSharpBinder
         _allTypeDefinitions.Add("bool", CSharpFacts.Types.Bool);
         _allTypeDefinitions.Add("var", CSharpFacts.Types.Var);
     
-        Pool_TypeClauseNode_Queue.Enqueue(new TypeClauseNode(
-            typeIdentifier: default,
-            openAngleBracketToken: default,
-    		indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
-    		closeAngleBracketToken: default,
-            isKeywordType: false));
+        for (int i = 0; i < POOL_TYPE_CLAUSE_NODE_MAX_COUNT; i++)
+        {
+            Pool_TypeClauseNode_Queue.Enqueue(new TypeClauseNode(
+                typeIdentifier: default,
+                openAngleBracketToken: default,
+        		indexGenericParameterEntryList: -1,
+                countGenericParameterEntryList: 0,
+        		closeAngleBracketToken: default,
+                isKeywordType: false));
+        }
     }
     
     /// <summary><see cref="FinalizeCompilationUnit"/></summary>

@@ -211,24 +211,6 @@ public class ParseFunctions
                     existingNode.IndexMethodOverloadDefinition,
                     newNode.Unsafe_SelfIndexKey));
         }
-        
-        /*Console.WriteLine();
-        Console.WriteLine("========");
-        
-        foreach (var entry in parserModel.Binder.MethodOverloadDefinitionList)
-        {
-            Console.Write($"isg:{entry.IndexStartGroup}");
-            Console.Write(", ");
-            Console.Write($"sik:{entry.ScopeIndexKey}");
-            Console.Write(", ");
-            Console.Write($"ruv:{entry.ResourceUri.Value}");
-            Console.Write(",");
-            Console.WriteLine();
-        }
-        
-        Console.WriteLine("========");
-        Console.WriteLine();*//*
-        */
     }
 
     public static void HandleConstructorDefinition(
@@ -236,13 +218,8 @@ public class ParseFunctions
         SyntaxToken consumedIdentifierToken,
         ref CSharpParserModel parserModel)
     {
-        var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
-            typeDefinitionNodeCodeBlockOwner.TypeIdentifierToken,
-            openAngleBracketToken: default,
-    		indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
-    		closeAngleBracketToken: default,
-            isKeywordType: false);
+        var typeClauseNode = parserModel.Rent_TypeClauseNode();
+        typeClauseNode.TypeIdentifierToken = typeDefinitionNodeCodeBlockOwner.TypeIdentifierToken;
 
         var constructorDefinitionNode = new ConstructorDefinitionNode(
             new TypeReference(typeClauseNode),

@@ -63,85 +63,10 @@ public static class ParseTypes
         else
         {
             var syntaxToken = parserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
-            
-            return parserModel.ConstructOrRecycleTypeClauseNode(
-                syntaxToken,
-                openAngleBracketToken: default,
-        		indexGenericParameterEntryList: -1,
-                countGenericParameterEntryList: 0,
-        		closeAngleBracketToken: default,
-                isKeywordType: false);
+            var typeClauseNode = parserModel.Rent_TypeClauseNode();
+            typeClauseNode.TypeIdentifierToken = syntaxToken;
+            return typeClauseNode;
         }
-        
-        /*ISyntaxToken syntaxToken;
-        
-        if (UtilityApi.IsKeywordSyntaxKind(parserModel.TokenWalker.Current.SyntaxKind) &&
-                (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(parserModel.TokenWalker.Current.SyntaxKind) ||
-                UtilityApi.IsVarContextualKeyword(compilationUnit, parserModel.TokenWalker.Current.SyntaxKind)))
-        {
-            syntaxToken = parserModel.TokenWalker.Consume();
-        }
-        else
-        {
-            syntaxToken = parserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
-        }
-
-        var typeClauseNode = new TypeClauseNode(
-            syntaxToken,
-            null,
-            null);
-
-        parserModel.Binder.BindTypeClauseNode(typeClauseNode, compilationUnit);
-
-        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-        {
-            var genericParametersListingNode = (GenericParametersListingNode)ParseOthers.Force_ParseExpression(
-                SyntaxKind.GenericParametersListingNode,
-                compilationUnit);
-                
-            typeClauseNode.SetGenericParametersListingNode(genericParametersListingNode);
-        }
-        
-        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.QuestionMarkToken)
-        {
-            typeClauseNode.HasQuestionMark = true;
-            _ = parserModel.TokenWalker.Consume();
-        }
-        
-        while (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenSquareBracketToken)
-        {
-            var openSquareBracketToken = parserModel.TokenWalker.Consume();
-            var closeSquareBracketToken = parserModel.TokenWalker.Match(SyntaxKind.CloseSquareBracketToken);
-
-            var arraySyntaxTokenTextSpan = syntaxToken.TextSpan with
-            {
-                EndExclusiveIndex = closeSquareBracketToken.TextSpan.EndExclusiveIndex
-            };
-
-            var arraySyntaxToken = new ArraySyntaxToken(arraySyntaxTokenTextSpan);
-            var genericParameterEntryNode = new GenericParameterEntryNode(typeClauseNode);
-
-            var genericParametersListingNode = new GenericParametersListingNode(
-                new OpenAngleBracketToken(openSquareBracketToken.TextSpan)
-                {
-                    IsFabricated = true
-                },
-                new List<GenericParameterEntryNode> { genericParameterEntryNode },
-                new CloseAngleBracketToken(closeSquareBracketToken.TextSpan)
-                {
-                    IsFabricated = true
-                });
-
-            return new TypeClauseNode(
-                arraySyntaxToken,
-                null,
-                genericParametersListingNode);
-
-            // TODO: Implement multidimensional arrays. This array logic always returns after finding the first array syntax.
-        }
-
-        return typeClauseNode;
-        */
     }
 
     public static void HandlePrimaryConstructorDefinition(

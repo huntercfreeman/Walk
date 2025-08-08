@@ -60,7 +60,7 @@ public sealed class TypeClauseNode : IGenericParameterNode
         ExplicitDefinitionResourceUri = typeReference.ExplicitDefinitionResourceUri;
     }
 
-    private bool _isFabricated;
+    public bool _isFabricated;
 
     /// <summary>
     /// Given: 'int x = 2;'<br/>
