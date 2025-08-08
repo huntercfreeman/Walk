@@ -841,7 +841,6 @@ public static class ParseExpressions
             case SyntaxKind.BangToken:
             case SyntaxKind.QuestionMarkToken:
             {
-                CSharpParserModel.Pool_AmbiguousIdentifierExpressionNode_Miss++;
                 var copyAmbiguousIdentifierExpressionNode = ambiguousIdentifierExpressionNode.GetClone();
                 
                 var decidedNode = ForceDecisionAmbiguousIdentifier(
@@ -1095,7 +1094,6 @@ public static class ParseExpressions
                     out _))
             {
                 parserModel.BindDiscard(ambiguousIdentifierExpressionNode.Token);
-                CSharpParserModel.Pool_AmbiguousIdentifierExpressionNode_Miss++;
                 result = ambiguousIdentifierExpressionNode.GetClone();
                 goto finalize;
             }
