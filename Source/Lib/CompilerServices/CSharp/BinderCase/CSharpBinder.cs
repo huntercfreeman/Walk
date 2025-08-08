@@ -69,7 +69,7 @@ public class CSharpBinder
     public List<Symbol> SymbolList { get; } = new();
     public List<ISyntaxNode> NodeList { get; } = new();
     public List<ICodeBlockOwner> CodeBlockOwnerList { get; } = new();
-        
+    
     internal const int POOL_TYPE_CLAUSE_NODE_MAX_COUNT = 3;
     /// <summary>This is only safe to use while parsing</summary>
     internal readonly Queue<TypeClauseNode> Pool_TypeClauseNode_Queue = new();
@@ -81,7 +81,7 @@ public class CSharpBinder
     internal const int POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT = 3;
     /// <summary>This is only safe to use while parsing</summary>
     internal readonly Queue<AmbiguousIdentifierExpressionNode> Pool_AmbiguousIdentifierExpressionNode_Queue = new();
-    
+        
     public BadExpressionNode Shared_BadExpressionNode { get; } = new BadExpressionNode(
         CSharpFacts.Types.Void.ToTypeReference(),
         EmptyExpressionNode.Empty,
@@ -885,7 +885,7 @@ public class CSharpBinder
                                         }
                                         
                                         if (ArgumentModifierEqualsParameterModifier(argument.ArgumentModifierKind, parameter.ParameterModifierKind) &&
-                                            CSharpCompilerService.UnsafeGetText(entry.ResourceUri.Value, argument.VariableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan) ==
+                                            CSharpCompilerService.UnsafeGetText(entry.ResourceUri.Value, argument.TypeReference.TypeIdentifierToken.TextSpan) ==
                                                 parameterTypeText)
                                         {
                                             return innerFunctionDefinitionNode;
@@ -1380,13 +1380,13 @@ public class CSharpBinder
             }
         }
         
-        if (typeDefinitionNode.IndexFunctionArgumentEntryList != -1)
+        /*if (typeDefinitionNode.IndexFunctionArgumentEntryList != -1)
         {
             for (int i = typeDefinitionNode.IndexFunctionArgumentEntryList; i < typeDefinitionNode.IndexFunctionArgumentEntryList + typeDefinitionNode.CountFunctionArgumentEntryList; i++)
             {
                 syntaxNodeList.Add(FunctionArgumentEntryList[i].VariableDeclarationNode);
             }
-        }
+        }*/
         
         if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
         {
@@ -1495,14 +1495,14 @@ public class CSharpBinder
             }
         }
         
-        if (typeDefinitionNode.IndexFunctionArgumentEntryList != -1)
+        /*if (typeDefinitionNode.IndexFunctionArgumentEntryList != -1)
         {
             for (int i = typeDefinitionNode.IndexFunctionArgumentEntryList; i < typeDefinitionNode.IndexFunctionArgumentEntryList + typeDefinitionNode.CountFunctionArgumentEntryList; i++)
             {
                 var entry = FunctionArgumentEntryList[i];
                 _getMemberList.Add(entry.VariableDeclarationNode);
             }
-        }
+        }*/
         
         if (typeDefinitionNode.IndexPartialTypeDefinition != -1)
         {
@@ -1572,14 +1572,14 @@ public class CSharpBinder
                                         }
                                     }
                                     
-                                    if (innerTypeDefinitionNode.IndexFunctionArgumentEntryList != -1)
+                                    /*if (innerTypeDefinitionNode.IndexFunctionArgumentEntryList != -1)
                                     {
                                         for (int i = innerTypeDefinitionNode.IndexFunctionArgumentEntryList; i < innerTypeDefinitionNode.IndexFunctionArgumentEntryList + innerTypeDefinitionNode.CountFunctionArgumentEntryList; i++)
                                         {
                                             var entry = FunctionArgumentEntryList[i];
                                             _getMemberList.Add(entry.VariableDeclarationNode);
                                         }
-                                    }
+                                    }*/
                                 }
                             }
                         }

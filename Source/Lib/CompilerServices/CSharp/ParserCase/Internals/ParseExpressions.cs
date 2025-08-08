@@ -3735,7 +3735,7 @@ public static class ParseExpressions
                         {
                             var matchingArgument = parserModel.Binder.FunctionArgumentEntryList[functionDefinitionNode.IndexFunctionArgumentEntryList + invocationNode.CountFunctionParameterEntryList];
                             
-                            variableDeclarationNode.SetImplicitTypeReference(matchingArgument.VariableDeclarationNode.TypeReference);
+                            variableDeclarationNode.SetImplicitTypeReference(matchingArgument.TypeReference);
                         }
                     }
                 }
