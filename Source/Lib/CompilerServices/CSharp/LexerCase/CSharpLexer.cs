@@ -11,9 +11,36 @@ public static class CSharpLexer
 {
     public class StreamReaderWrap
     {
+        public StreamReaderWrap()
+        {
+        }
+        
         public StreamReaderWrap(StreamReader streamReader)
         {
             StreamReader = streamReader;
+            StreamReader.Read(_streamReaderCharBuffer);
+        }
+        
+        public void ReInitialize(StreamReader streamReader)
+        {
+            // You probably don't have to set these to default because they just get overwritten when the time comes.
+            // But I'm unsure, and there is far more valuable changes to be made so I'm just gonna set them to default.
+            _peekBuffer[0] = default;
+            _peekBuffer[1] = default;
+            _peekBuffer[2] = default;
+            
+            _peekIndex = -1;
+            _peekSize = 0;
+            
+            _backtrackTuple = default;
+    
+            StreamReader = streamReader;
+    
+            LastReadCharacterCount = 1;
+    
+            _streamPositionIndex = default;
+            _streamByteIndex = default;
+            
             StreamReader.Read(_streamReaderCharBuffer);
         }
 
@@ -29,13 +56,13 @@ public static class CSharpLexer
         
         private (char Character, int PositionIndex, int ByteIndex) _backtrackTuple;
 
-        public StreamReader StreamReader { get; }
+        public StreamReader StreamReader { get; private set; }
 
         /// <summary>
         /// The count is unreliable (only accurate when the most recent ReadCharacter() came from the StreamReader.
         /// The main purpose is to check if it is non-zero to indicate you are NOT at the end of the file.
         /// </summary>
-        public int LastReadCharacterCount { get; set; }
+        public int LastReadCharacterCount { get; set; } = 1;
 
         private int _streamPositionIndex;
         public int PositionIndex
@@ -317,7 +344,7 @@ public static class CSharpLexer
     /// <summary>
     /// Initialize the CSharpLexerOutput here, then start the while loop with 'Lex_Frame(...)'.
     /// </summary>
-    public static CSharpLexerOutput Lex(CSharpBinder binder, ResourceUri resourceUri, StreamReader streamReader, bool shouldUseSharedStringWalker)
+    public static CSharpLexerOutput Lex(CSharpBinder binder, ResourceUri resourceUri, StreamReaderWrap streamReaderWrap, bool shouldUseSharedStringWalker)
     {
         var lexerOutput = new CSharpLexerOutput(resourceUri);
         
@@ -327,8 +354,6 @@ public static class CSharpLexer
             (byte)GenericDecorationKind.None);
             
         var interpolatedExpressionUnmatchedBraceCount = -1;
-
-        var streamReaderWrap = new StreamReaderWrap(streamReader);
 
         Lex_Frame(binder, ref lexerOutput, streamReaderWrap, ref previousEscapeCharacterTextSpan, ref interpolatedExpressionUnmatchedBraceCount);
         
