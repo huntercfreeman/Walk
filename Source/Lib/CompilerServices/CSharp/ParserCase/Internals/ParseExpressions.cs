@@ -1095,7 +1095,8 @@ public static class ParseExpressions
                     out _))
             {
                 parserModel.BindDiscard(ambiguousIdentifierExpressionNode.Token);
-                result = ambiguousIdentifierExpressionNode;
+                CSharpParserModel.Pool_AmbiguousIdentifierExpressionNode_Miss++;
+                result = ambiguousIdentifierExpressionNode.GetClone();
                 goto finalize;
             }
         }
