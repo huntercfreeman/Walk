@@ -16,12 +16,14 @@ public static class ParseVariables
         VariableDeclarationNode variableDeclarationNode;
 
         variableDeclarationNode = new VariableDeclarationNode(
-            parserModel.Return_TypeClauseNode_ToStruct(consumedTypeClauseNode, clearTypeClauseNode: true),
+            new TypeReference(consumedTypeClauseNode),
             consumedIdentifierToken,
             variableKind,
             false,
             parserModel.ResourceUri);
-
+        
+        parserModel.Return_TypeClauseNode(consumedTypeClauseNode, clearTypeClauseNode: true);
+        
         parserModel.BindVariableDeclarationNode(variableDeclarationNode);
         return variableDeclarationNode;
     }

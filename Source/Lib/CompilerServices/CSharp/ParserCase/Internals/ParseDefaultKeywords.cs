@@ -1001,7 +1001,8 @@ public class ParseDefaultKeywords
             _ = parserModel.TokenWalker.Consume(); // Consume the ColonToken
             var inheritedTypeClauseNode = parserModel.TokenWalker.MatchTypeClauseNode(ref parserModel);
             // parserModel.BindTypeClauseNode(inheritedTypeClauseNode);
-            typeDefinitionNode.SetInheritedTypeReference(parserModel.Return_TypeClauseNode_ToStruct(inheritedTypeClauseNode, clearTypeClauseNode: true));
+            typeDefinitionNode.SetInheritedTypeReference(new TypeReference(inheritedTypeClauseNode));
+            parserModel.Return_TypeClauseNode(inheritedTypeClauseNode, clearTypeClauseNode: true);
             
             while (!parserModel.TokenWalker.IsEof)
             {

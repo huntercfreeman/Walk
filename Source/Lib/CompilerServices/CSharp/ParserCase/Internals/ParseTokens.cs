@@ -552,7 +552,8 @@ public static class ParseTokens
             else if (previousNode.SyntaxKind == SyntaxKind.TypeClauseNode)
             {
                 shouldBacktrack = true;
-                parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = parserModel.Return_TypeClauseNode_ToStruct((TypeClauseNode)previousNode, clearTypeClauseNode: true);
+                parserModel.MostRecentLeftHandSideAssignmentExpressionTypeClauseNode = new TypeReference((TypeClauseNode)previousNode);
+                parserModel.Return_TypeClauseNode((TypeClauseNode)previousNode, clearTypeClauseNode: true);
                 backtrackNode = (TypeClauseNode)previousNode;
             }
             else

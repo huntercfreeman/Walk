@@ -30,7 +30,8 @@ public static class ParseTypes
             if (typeClauseNode.IsFabricated)
                 break;
 
-            var genericArgumentEntryNode = new GenericParameterEntry(parserModel.Return_TypeClauseNode_ToStruct(typeClauseNode, clearTypeClauseNode: true));
+            var genericArgumentEntryNode = new GenericParameterEntry(new TypeReference(typeClauseNode));
+            parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
             parserModel.Binder.GenericParameterEntryList.Add(genericArgumentEntryNode);
             countGenericParameterEntryList++;
 
