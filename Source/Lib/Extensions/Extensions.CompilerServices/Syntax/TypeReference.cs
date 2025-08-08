@@ -8,12 +8,10 @@ public record struct TypeReference
 {
     public TypeReference(
         SyntaxToken typeIdentifier,
-        
         SyntaxToken openAngleBracketToken,
         int indexGenericParameterEntryList,
         int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
-        
         bool isKeywordType,
         TypeKind typeKind,
         bool hasQuestionMark,
@@ -36,8 +34,6 @@ public record struct TypeReference
     
     public TypeReference(TypeClauseNode typeClauseNode)
     {
-        typeClauseNode.IsBeingUsed = false;
-    
         IsKeywordType = typeClauseNode.IsKeywordType;
         TypeIdentifierToken = typeClauseNode.TypeIdentifierToken;
         

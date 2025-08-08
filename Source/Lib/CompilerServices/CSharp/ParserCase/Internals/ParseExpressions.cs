@@ -841,9 +841,12 @@ public static class ParseExpressions
             case SyntaxKind.BangToken:
             case SyntaxKind.QuestionMarkToken:
             {
+                CSharpParserModel.Pool_AmbiguousIdentifierExpressionNode_Miss++;
+                var copyAmbiguousIdentifierExpressionNode = ambiguousIdentifierExpressionNode.GetClone();
+                
                 var decidedNode = ForceDecisionAmbiguousIdentifier(
                     EmptyExpressionNode.Empty,
-                    ambiguousIdentifierExpressionNode,
+                    copyAmbiguousIdentifierExpressionNode,
                     ref parserModel);
             
                 if (decidedNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
@@ -1092,7 +1095,8 @@ public static class ParseExpressions
                     out _))
             {
                 parserModel.BindDiscard(ambiguousIdentifierExpressionNode.Token);
-                result = ambiguousIdentifierExpressionNode;
+                CSharpParserModel.Pool_AmbiguousIdentifierExpressionNode_Miss++;
+                result = ambiguousIdentifierExpressionNode.GetClone();
                 goto finalize;
             }
         }
@@ -1207,10 +1211,13 @@ public static class ParseExpressions
             }
         }
         
-        result = ambiguousIdentifierExpressionNode;
+        result = ambiguousIdentifierExpressionNode.GetClone();
+        
         goto finalize;
         
         finalize:
+        
+        parserModel.Return_AmbiguousIdentifierExpressionNode(ambiguousIdentifierExpressionNode, clearAmbiguousIdentifierExpressionNode: true);
         
         if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken &&
             UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind))
@@ -1262,10 +1269,12 @@ public static class ParseExpressions
                         ref nameableToken,
                         ref parserModel);
                 
+                    var typeReference = new TypeReference(typeClauseNode);
+                    parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
                     return new VariableReferenceNode(
                         nameableToken,
                         new VariableDeclarationNode(
-                            new TypeReference(typeClauseNode),
+                            typeReference,
                             nameableToken,
                             VariableKind.Local,
                             isInitialized: true,
@@ -1277,7 +1286,7 @@ public static class ParseExpressions
             case SyntaxKind.WithTokenContextualKeyword:
             {
                 return new WithExpressionNode(
-                    new VariableReference(variableReferenceNode));
+                    parserModel.Return_VariableReferenceNode_ToStruct(variableReferenceNode, clearVariableReferenceNode: true));
             }
             case SyntaxKind.SwitchTokenKeyword:
             {
@@ -1670,6 +1679,7 @@ public static class ParseExpressions
                 {
                     typeClauseNode.CloseAngleBracketToken = parserModel.TokenWalker.Current;
                     constructorInvocationExpressionNode.ResultTypeReference = new TypeReference(typeClauseNode);
+                    parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
                     return constructorInvocationExpressionNode;
                 }
                 
@@ -1688,10 +1698,15 @@ public static class ParseExpressions
             case ConstructorInvocationStageKind.Type:
             {
                 if (expressionSecondary is TypeClauseNode typeClauseNode)
-                    constructorInvocationExpressionNode.ResultTypeReference = new(typeClauseNode);
+                {
+                    constructorInvocationExpressionNode.ResultTypeReference = new TypeReference(typeClauseNode);
+                    parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
+                }
                 else
+                {
                     constructorInvocationExpressionNode.ResultTypeReference = CSharpFacts.Types.Void.ToTypeReference();
-            
+                }
+                
                 constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
                 parserModel.ParserContextKind = CSharpParserContextKind.None;
                 
@@ -1863,15 +1878,9 @@ public static class ParseExpressions
     
         if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind) && token.SyntaxKind != SyntaxKind.NameofTokenContextualKeyword)
         {
-            parserModel.AmbiguousIdentifierExpressionNode.SetSharedInstance(
-                token,
-                openAngleBracketToken: default,
-        		indexGenericParameterEntryList: -1,
-                countGenericParameterEntryList: 0,
-        		closeAngleBracketToken: default,
-                CSharpFacts.Types.Void.ToTypeReference(),
-                emptyExpressionNode.FollowsMemberAccessToken);
-            var ambiguousExpressionNode = parserModel.AmbiguousIdentifierExpressionNode;
+            var ambiguousExpressionNode = parserModel.Rent_AmbiguousIdentifierExpressionNode();
+            ambiguousExpressionNode.Token = token;
+            ambiguousExpressionNode.FollowsMemberAccessToken = emptyExpressionNode.FollowsMemberAccessToken;
             
             if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.StatementDelimiterToken && !ambiguousExpressionNode.FollowsMemberAccessToken ||
                 parserModel.TryParseExpressionSyntaxKindList.Contains(SyntaxKind.TypeClauseNode) && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.WithTokenContextualKeyword &&
@@ -2271,7 +2280,7 @@ public static class ParseExpressions
     
         if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
         {
-            ForceDecisionAmbiguousIdentifier(
+            expressionSecondary = ForceDecisionAmbiguousIdentifier(
                 EmptyExpressionNode.Empty,
                 (AmbiguousIdentifierExpressionNode)expressionSecondary,
                 ref parserModel);
@@ -2357,6 +2366,7 @@ public static class ParseExpressions
                 {
                     var typeClauseNode = (TypeClauseNode)parenthesizedExpressionNode.InnerExpression;
                     var explicitCastNode = new ExplicitCastNode(parenthesizedExpressionNode.OpenParenthesisToken, new TypeReference(typeClauseNode));
+                    parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
                     return ExplicitCastMergeToken(explicitCastNode, ref parserModel);
                 }
                 
@@ -2412,17 +2422,13 @@ public static class ParseExpressions
              
              if (variableReferenceNode.IsFabricated)
              {
-                 var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
-                     variableReferenceNode.VariableIdentifierToken,
-                     openAngleBracketToken: default,
-            		 indexGenericParameterEntryList: -1,
-                    countGenericParameterEntryList: 0,
-            		 closeAngleBracketToken: default,
-                     isKeywordType: false);
-                
+                 var typeClauseNode = parserModel.Rent_TypeClauseNode();
+                 typeClauseNode.TypeIdentifierToken = variableReferenceNode.VariableIdentifierToken;
                 parserModel.BindTypeClauseNode(typeClauseNode);
-                    
-                return new ExplicitCastNode(parenthesizedExpressionNode.OpenParenthesisToken, new TypeReference(typeClauseNode));
+                
+                var typeReference = new TypeReference(typeClauseNode);
+                parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
+                return new ExplicitCastNode(parenthesizedExpressionNode.OpenParenthesisToken, typeReference);
              }
         }
 
@@ -2623,6 +2629,7 @@ public static class ParseExpressions
                             VariableKind.Local,
                             false,
                             parserModel.ResourceUri);
+                        parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
                     }
                     else
                     {
@@ -2634,6 +2641,7 @@ public static class ParseExpressions
                                 VariableKind.Local,
                                 false,
                                 parserModel.ResourceUri);
+                            parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
                             parserModel.CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind);
                         }
                         else
@@ -3042,6 +3050,7 @@ public static class ParseExpressions
                 // explicitDefinitionTextSpan = typeClauseNode.ExplicitDefinitionTextSpan;
                 // explicitDefinitionResourceUri = typeClauseNode.ExplicitDefinitionResourceUri;
                 typeReference = new TypeReference(typeClauseNode);
+                parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
             }
             else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             {
@@ -3218,9 +3227,9 @@ public static class ParseExpressions
             {
                 var variableDeclarationNode = (VariableDeclarationNode)foundDefinitionNode;
                 
-                var variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(
-                    memberIdentifierToken,
-                    variableDeclarationNode);
+                var variableReferenceNode = parserModel.Rent_VariableReferenceNode();
+                variableReferenceNode.VariableIdentifierToken = memberIdentifierToken;
+                variableReferenceNode.VariableDeclarationNode = variableDeclarationNode;
                 var symbolId = parserModel.CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind);
                 
                 if (parserModel.Binder.SymbolIdToExternalTextSpanMap.TryGetValue(parserModel.ResourceUri.Value, out var symbolIdToExternalTextSpanMap))
@@ -3379,13 +3388,8 @@ public static class ParseExpressions
                     
                         if (parserModel.Binder.CSharpCompilerService.SafeGetText(typeDefinitionNode.ResourceUri.Value, typeDefinitionNode.TypeIdentifierToken.TextSpan) == memberIdentifierText)
                         {
-                            var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
-                                memberIdentifierToken,
-                                openAngleBracketToken: default,
-                        		indexGenericParameterEntryList: -1,
-                                countGenericParameterEntryList: 0,
-                        		closeAngleBracketToken: default,
-                                isKeywordType: false);
+                            var typeClauseNode = parserModel.Rent_TypeClauseNode();
+                            typeClauseNode.TypeIdentifierToken = memberIdentifierToken;
                             
                             var symbolId = parserModel.GetNextSymbolId();
                             
@@ -3418,9 +3422,9 @@ public static class ParseExpressions
                 }
             }
         
-            var variableReferenceNode = parserModel.ConstructOrRecycleVariableReferenceNode(
-                memberIdentifierToken,
-                variableDeclarationNode: null);
+            var variableReferenceNode = parserModel.Rent_VariableReferenceNode();
+            variableReferenceNode.VariableIdentifierToken = memberIdentifierToken;
+            variableReferenceNode.VariableDeclarationNode = null;
             _ = parserModel.CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, VariableKind.Property);
             return variableReferenceNode;
         }
@@ -3512,24 +3516,21 @@ public static class ParseExpressions
         }
         
         var explicitCastNode = new ExplicitCastNode(ambiguousParenthesizedExpressionNode.OpenParenthesisToken, new TypeReference(typeClauseNode), closeParenthesisToken);
+        parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
         return explicitCastNode;
     }
     
     private static IExpressionNode AmbiguousParenthesizedExpressionTransformTo_TypeClauseNode(
         AmbiguousParenthesizedExpressionNode ambiguousParenthesizedExpressionNode, ref SyntaxToken token, ref CSharpParserModel parserModel)
     {        
-        var typeClauseNode = parserModel.ConstructOrRecycleTypeClauseNode(
-            new SyntaxToken(
-                SyntaxKind.IdentifierToken,
-                new TextEditorTextSpan(
-                    ambiguousParenthesizedExpressionNode.OpenParenthesisToken.TextSpan.StartInclusiveIndex,
-                    token.TextSpan.EndExclusiveIndex,
-                    default(byte))),
-            openAngleBracketToken: default,
-    		indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
-    		closeAngleBracketToken: default,
-            isKeywordType: false);
+        var typeClauseNode = parserModel.Rent_TypeClauseNode();
+        
+        typeClauseNode.TypeIdentifierToken = new SyntaxToken(
+            SyntaxKind.IdentifierToken,
+            new TextEditorTextSpan(
+                ambiguousParenthesizedExpressionNode.OpenParenthesisToken.TextSpan.StartInclusiveIndex,
+                token.TextSpan.EndExclusiveIndex,
+                default(byte)));
         
         if (typeClauseNode.ExplicitDefinitionResourceUri.Value is null &&
             typeClauseNode.ExplicitDefinitionTextSpan == default)
@@ -3974,6 +3975,7 @@ public static class ParseExpressions
             parserModel.Binder.GenericParameterEntryList.Insert(
                 genericParameterNode.IndexGenericParameterEntryList + genericParameterNode.CountGenericParameterEntryList,
                 new GenericParameterEntry(new TypeReference(typeClauseNode)));
+            parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
             genericParameterNode.CountGenericParameterEntryList++;
             
             return genericParameterNode;
@@ -3985,6 +3987,7 @@ public static class ParseExpressions
             parserModel.Binder.GenericParameterEntryList.Insert(
                 genericParameterNode.IndexGenericParameterEntryList + genericParameterNode.CountGenericParameterEntryList,
                 new GenericParameterEntry(new TypeReference(typeClauseNode)));
+            parserModel.Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode: true);
             genericParameterNode.CountGenericParameterEntryList++;
             
             return genericParameterNode;

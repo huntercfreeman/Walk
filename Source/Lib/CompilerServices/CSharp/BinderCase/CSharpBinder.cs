@@ -78,13 +78,17 @@ public class CSharpBinder
 		closeAngleBracketToken: default,
         CSharpFacts.Types.Void.ToTypeReference());
         
-    public TypeClauseNode CSharpParserModel_TypeClauseNode { get; } = new TypeClauseNode(
-        typeIdentifier: default,
-        openAngleBracketToken: default,
-		indexGenericParameterEntryList: -1,
-        countGenericParameterEntryList: 0,
-		closeAngleBracketToken: default,
-        isKeywordType: false);
+    internal const int POOL_TYPE_CLAUSE_NODE_MAX_COUNT = 3;
+    /// <summary>This is only safe to use while parsing</summary>
+    internal readonly Queue<TypeClauseNode> Pool_TypeClauseNode_Queue = new();
+    
+    internal const int POOL_VARIABLE_REFERENCE_NODE_MAX_COUNT = 3;
+    /// <summary>This is only safe to use while parsing</summary>
+    internal readonly Queue<VariableReferenceNode> Pool_VariableReferenceNode_Queue = new();
+    
+    internal const int POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT = 3;
+    /// <summary>This is only safe to use while parsing</summary>
+    internal readonly Queue<AmbiguousIdentifierExpressionNode> Pool_AmbiguousIdentifierExpressionNode_Queue = new();
         
     public VariableReferenceNode CSharpParserModel_VariableReferenceNode { get; } = new VariableReferenceNode(
         variableIdentifierToken: default,
@@ -114,6 +118,35 @@ public class CSharpBinder
         _allTypeDefinitions.Add("string", CSharpFacts.Types.String);
         _allTypeDefinitions.Add("bool", CSharpFacts.Types.Bool);
         _allTypeDefinitions.Add("var", CSharpFacts.Types.Var);
+    
+        for (int i = 0; i < POOL_TYPE_CLAUSE_NODE_MAX_COUNT; i++)
+        {
+            Pool_TypeClauseNode_Queue.Enqueue(new TypeClauseNode(
+                typeIdentifier: default,
+                openAngleBracketToken: default,
+        		indexGenericParameterEntryList: -1,
+                countGenericParameterEntryList: 0,
+        		closeAngleBracketToken: default,
+                isKeywordType: false));
+        }
+        
+        for (int i = 0; i < POOL_VARIABLE_REFERENCE_NODE_MAX_COUNT; i++)
+        {
+            Pool_VariableReferenceNode_Queue.Enqueue(new VariableReferenceNode(
+                variableIdentifierToken: default,
+                variableDeclarationNode: default));
+        }
+        
+        for (int i = 0; i < POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT; i++)
+        {
+            Pool_AmbiguousIdentifierExpressionNode_Queue.Enqueue(new AmbiguousIdentifierExpressionNode(
+                token: default,
+                openAngleBracketToken: default,
+                indexGenericParameterEntryList: -1,
+                countGenericParameterEntryList: 0,
+                closeAngleBracketToken: default,
+                resultTypeReference: CSharpFacts.Types.Void.ToTypeReference()));
+        }
     }
     
     /// <summary><see cref="FinalizeCompilationUnit"/></summary>

@@ -18,8 +18,6 @@ public record struct VariableReference
     
     public VariableReference(VariableReferenceNode variableReferenceNode)
     {
-        variableReferenceNode.IsBeingUsed = false;
-    
         VariableIdentifierToken = variableReferenceNode.VariableIdentifierToken;
         ResultTypeReference = variableReferenceNode.ResultTypeReference;
         IsFabricated = variableReferenceNode.IsFabricated;

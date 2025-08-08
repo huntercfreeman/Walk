@@ -11,12 +11,10 @@ public sealed class TypeClauseNode : IGenericParameterNode
 {
     public TypeClauseNode(
         SyntaxToken typeIdentifier,
-        
         SyntaxToken openAngleBracketToken,
         int indexGenericParameterEntryList,
         int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
-        
         bool isKeywordType)
     {
         #if DEBUG
@@ -62,7 +60,7 @@ public sealed class TypeClauseNode : IGenericParameterNode
         ExplicitDefinitionResourceUri = typeReference.ExplicitDefinitionResourceUri;
     }
 
-    private bool _isFabricated;
+    public bool _isFabricated;
 
     /// <summary>
     /// Given: 'int x = 2;'<br/>
@@ -89,8 +87,6 @@ public sealed class TypeClauseNode : IGenericParameterNode
     public bool HasQuestionMark { get; set; }
     public int ArrayRank { get; set; }
     
-    public bool IsBeingUsed { get; set; } = false;
-    
     public TextEditorTextSpan ExplicitDefinitionTextSpan { get; set; }
     public ResourceUri ExplicitDefinitionResourceUri { get; set; }
 
@@ -110,35 +106,6 @@ public sealed class TypeClauseNode : IGenericParameterNode
     public SyntaxKind SyntaxKind => SyntaxKind.TypeClauseNode;
     
     public bool IsParsingGenericParameters { get; set; }
-
-    public void SetSharedInstance(
-        SyntaxToken typeIdentifier,
-        
-        SyntaxToken openAngleBracketToken,
-        int indexGenericParameterEntryList,
-        int countGenericParameterEntryList,
-        SyntaxToken closeAngleBracketToken,
-        
-        bool isKeywordType)
-    {
-        IsBeingUsed = true;
-    
-        TypeIdentifierToken = typeIdentifier;
-        
-        OpenAngleBracketToken = openAngleBracketToken;
-        IndexGenericParameterEntryList = indexGenericParameterEntryList;
-        CountGenericParameterEntryList = countGenericParameterEntryList;
-        CloseAngleBracketToken = closeAngleBracketToken;
-        
-        IsKeywordType = isKeywordType;
-        TypeKind = TypeKind.None;
-        HasQuestionMark = false;
-        ArrayRank = 0;
-        _isFabricated = false;
-        IsParsingGenericParameters = false;
-        ExplicitDefinitionTextSpan = default;
-        ExplicitDefinitionResourceUri = default;
-    }
 
     #if DEBUG    
     ~TypeClauseNode()

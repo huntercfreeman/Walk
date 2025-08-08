@@ -219,7 +219,25 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         if (!StreamReaderTupleCache.TryGetValue(absolutePathString, out sr))
         {
             sr = new StreamReader(absolutePathString);
-            if (StreamReaderTupleCache.Count >= 350)
+            // Solution wide parse on Walk.sln
+            //
+            // 350 -> _countCacheClear: 15
+            // 450 -> _countCacheClear: 9
+            // 500 -> _countCacheClear: 7
+            // 800 -> _countCacheClear: 2
+            // 1000 -> _countCacheClear: 0
+            //
+            // 512 is c library limit?
+            // 1024 is linux DEFAULT soft limit?
+            // The reality is that you can go FAR higher when not limited?
+            // But how do I know the limit of each user?
+            // So I guess 500 is a safe bet for now?
+            //
+            // CSharpCompilerService at ~2k lines of text needed `StreamReaderTupleCache.Count: 214`.
+            // ParseExpressions at ~4k lines of text needed `StreamReaderTupleCache.Count: 139`.
+            //
+            // This isn't just used for single file parsing though, it is also used for solution wide.
+            if (StreamReaderTupleCache.Count >= 500)
             {
                 ClearStreamReaderTupleCache();
             }

@@ -58,32 +58,6 @@ public ref struct CSharpParserModel
         TryParseExpressionSyntaxKindList = Binder.CSharpParserModel_TryParseExpressionSyntaxKindList;
         TryParseExpressionSyntaxKindList.Clear();
         
-        AmbiguousIdentifierExpressionNode = Binder.CSharpParserModel_AmbiguousIdentifierExpressionNode;
-        AmbiguousIdentifierExpressionNode.SetSharedInstance(
-            default,
-            openAngleBracketToken: default,
-    		indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
-    		closeAngleBracketToken: default,
-            CSharpFacts.Types.Void.ToTypeReference(),
-            followsMemberAccessToken: false);
-            
-        TypeClauseNode = Binder.CSharpParserModel_TypeClauseNode;
-        TypeClauseNode.SetSharedInstance(
-            typeIdentifier: default,
-            openAngleBracketToken: default,
-    		indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
-    		closeAngleBracketToken: default,
-            isKeywordType: false);
-        TypeClauseNode.IsBeingUsed = false;
-            
-        VariableReferenceNode = Binder.CSharpParserModel_VariableReferenceNode;
-        VariableReferenceNode.SetSharedInstance(
-            variableIdentifierToken: default,
-            variableDeclarationNode: null);
-        VariableReferenceNode.IsBeingUsed = false;
-        
         ClearedPartialDefinitionHashSet = Binder.CSharpParserModel_ClearedPartialDefinitionHashSet;
         ClearedPartialDefinitionHashSet.Clear();
         
@@ -166,16 +140,6 @@ public ref struct CSharpParserModel
     public TypeReference MostRecentLeftHandSideAssignmentExpressionTypeClauseNode { get; set; } = CSharpFacts.Types.Void.ToTypeReference();
     
     /// <summary>
-    /// TODO: Consider the case where you have just an AmbiguousIdentifierExpressionNode then StatementDelimiterToken.
-    /// </summary>
-    public AmbiguousIdentifierExpressionNode AmbiguousIdentifierExpressionNode { get; }
-    
-    /// <summary>
-    /// TODO: Consider the case where you have just a TypeClauseNode then StatementDelimiterToken.
-    /// </summary>
-    public TypeClauseNode TypeClauseNode { get; }
-    
-    /// <summary>
     /// In order to have many partial definitions for the same type in the same file,
     /// you need to set the ScopeIndexKey to -1 for any entry in the
     /// 'CSharpBinder.PartialTypeDefinitionList' only once per parse.
@@ -190,56 +154,111 @@ public ref struct CSharpParserModel
     
     public IExpressionNode ExpressionPrimary { get; set; }
     
-    public readonly TypeClauseNode ConstructOrRecycleTypeClauseNode(
-        SyntaxToken typeIdentifier,
-        
-        SyntaxToken openAngleBracketToken,
-        int indexGenericParameterEntryList,
-        int countGenericParameterEntryList,
-        SyntaxToken closeAngleBracketToken,
-        
-        bool isKeywordType)
+    public readonly TypeClauseNode Rent_TypeClauseNode()
     {
-        if (TypeClauseNode.IsBeingUsed)
-        {
-            return new TypeClauseNode(
-                typeIdentifier,
-                
-                openAngleBracketToken,
-                indexGenericParameterEntryList,
-                countGenericParameterEntryList,
-                closeAngleBracketToken,
-                
-                isKeywordType);
-        }    
+        if (Binder.Pool_TypeClauseNode_Queue.TryDequeue(out var typeClauseNode))
+            return typeClauseNode;
         
-        TypeClauseNode.SetSharedInstance(
-            typeIdentifier,
-            
-            openAngleBracketToken,
-            indexGenericParameterEntryList,
-            countGenericParameterEntryList,
-            closeAngleBracketToken,
-            
-            isKeywordType);
-            
-        return TypeClauseNode;
+        return new TypeClauseNode(
+            typeIdentifier: default,
+            openAngleBracketToken: default,
+    		indexGenericParameterEntryList: -1,
+            countGenericParameterEntryList: 0,
+    		closeAngleBracketToken: default,
+            isKeywordType: false);
     }
     
-    /// <summary>
-    /// TODO: Consider the case where you have just a VariableReferenceNode then StatementDelimiterToken.
-    /// </summary>
-    public VariableReferenceNode VariableReferenceNode { get; }
-    
-    public readonly VariableReferenceNode ConstructOrRecycleVariableReferenceNode(
-        SyntaxToken variableIdentifierToken,
-        VariableDeclarationNode variableDeclarationNode)
+    public readonly void Return_TypeClauseNode(TypeClauseNode typeClauseNode, bool clearTypeClauseNode = false)
     {
-        if (VariableReferenceNode.IsBeingUsed)
-            return new VariableReferenceNode(variableIdentifierToken, variableDeclarationNode);
+        if (clearTypeClauseNode)
+        {
+            typeClauseNode.TypeIdentifierToken = default;
+            typeClauseNode.OpenAngleBracketToken = default;
+            typeClauseNode.IndexGenericParameterEntryList = -1;
+            typeClauseNode.CountGenericParameterEntryList = 0;
+            typeClauseNode.CloseAngleBracketToken = default;
+            typeClauseNode.IsKeywordType = false;
+            typeClauseNode.TypeKind = TypeKind.None;
+            typeClauseNode.HasQuestionMark = false;
+            typeClauseNode.ArrayRank = 0;
+            typeClauseNode._isFabricated = false;
+            typeClauseNode.IsParsingGenericParameters = false;
+            typeClauseNode.ExplicitDefinitionTextSpan = default;
+            typeClauseNode.ExplicitDefinitionResourceUri = default;
+        }
     
-        VariableReferenceNode.SetSharedInstance(variableIdentifierToken, variableDeclarationNode);
-        return VariableReferenceNode;
+        if (Binder.Pool_TypeClauseNode_Queue.Count < CSharpBinder.POOL_TYPE_CLAUSE_NODE_MAX_COUNT)
+        {
+            Binder.Pool_TypeClauseNode_Queue.Enqueue(typeClauseNode);
+        }
+    }
+    
+    public readonly VariableReferenceNode Rent_VariableReferenceNode()
+    {
+        if (Binder.Pool_VariableReferenceNode_Queue.TryDequeue(out var variableReferenceNode))
+            return variableReferenceNode;
+        
+        return new VariableReferenceNode(
+            variableIdentifierToken: default,
+            variableDeclarationNode: default);
+    }
+    
+    public readonly void Return_VariableReferenceNode(VariableReferenceNode variableReferenceNode, bool clearVariableReferenceNode = false)
+    {
+        if (clearVariableReferenceNode)
+        {
+            variableReferenceNode.VariableIdentifierToken = default;
+            variableReferenceNode.VariableDeclarationNode = default;
+            variableReferenceNode._isFabricated = false;
+        }
+    
+        if (Binder.Pool_VariableReferenceNode_Queue.Count < CSharpBinder.POOL_VARIABLE_REFERENCE_NODE_MAX_COUNT)
+        {
+            Binder.Pool_VariableReferenceNode_Queue.Enqueue(variableReferenceNode);
+        }
+    }
+    
+    public readonly VariableReference Return_VariableReferenceNode_ToStruct(VariableReferenceNode variableReferenceNode, bool clearVariableReferenceNode = false)
+    {
+        var variableReference = new VariableReference(variableReferenceNode);
+        Return_VariableReferenceNode(variableReferenceNode, clearVariableReferenceNode);
+        return variableReference;
+    }
+    
+    public readonly AmbiguousIdentifierExpressionNode Rent_AmbiguousIdentifierExpressionNode()
+    {
+        if (Binder.Pool_AmbiguousIdentifierExpressionNode_Queue.TryDequeue(out var ambiguousIdentifierExpressionNode))
+            return ambiguousIdentifierExpressionNode;
+        
+        return new AmbiguousIdentifierExpressionNode(
+            token: default,
+            openAngleBracketToken: default,
+            indexGenericParameterEntryList: -1,
+            countGenericParameterEntryList: 0,
+            closeAngleBracketToken: default,
+            resultTypeReference: CSharpFacts.Types.Void.ToTypeReference());
+    }
+    
+    public readonly void Return_AmbiguousIdentifierExpressionNode(AmbiguousIdentifierExpressionNode ambiguousIdentifierExpressionNode, bool clearAmbiguousIdentifierExpressionNode = false)
+    {
+        if (clearAmbiguousIdentifierExpressionNode)
+        {
+            ambiguousIdentifierExpressionNode.Token = default;
+            
+            ambiguousIdentifierExpressionNode.OpenAngleBracketToken = default;
+            ambiguousIdentifierExpressionNode.IndexGenericParameterEntryList = -1;
+            ambiguousIdentifierExpressionNode.CountGenericParameterEntryList = 0;
+            ambiguousIdentifierExpressionNode.CloseAngleBracketToken = default;
+            
+            ambiguousIdentifierExpressionNode.ResultTypeReference = CSharpFacts.Types.Void.ToTypeReference();
+            ambiguousIdentifierExpressionNode.FollowsMemberAccessToken = false;
+            ambiguousIdentifierExpressionNode.HasQuestionMark = false;
+        }
+    
+        if (Binder.Pool_AmbiguousIdentifierExpressionNode_Queue.Count < CSharpBinder.POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT)
+        {
+            Binder.Pool_AmbiguousIdentifierExpressionNode_Queue.Enqueue(ambiguousIdentifierExpressionNode);
+        }
     }
     
     public readonly ICodeBlockOwner? GetParent(
@@ -424,9 +443,9 @@ public ref struct CSharpParserModel
                 out var variableDeclarationNode)
             && variableDeclarationNode is not null)
         {
-            variableReferenceNode = ConstructOrRecycleVariableReferenceNode(
-                variableIdentifierToken,
-                variableDeclarationNode);
+            variableReferenceNode = Rent_VariableReferenceNode();
+            variableReferenceNode.VariableIdentifierToken = variableIdentifierToken;
+            variableReferenceNode.VariableDeclarationNode = variableDeclarationNode;
         }
         else
         {
@@ -440,9 +459,9 @@ public ref struct CSharpParserModel
                 IsFabricated = true,
             };
 
-            variableReferenceNode = ConstructOrRecycleVariableReferenceNode(
-                variableIdentifierToken,
-                variableDeclarationNode);
+            variableReferenceNode = Rent_VariableReferenceNode();
+            variableReferenceNode.VariableIdentifierToken = variableIdentifierToken;
+            variableReferenceNode.VariableDeclarationNode = variableDeclarationNode;
         }
 
         if (shouldCreateSymbol)
@@ -1528,13 +1547,9 @@ public ref struct CSharpParserModel
     
     public readonly TypeClauseNode ToTypeClause(TypeDefinitionNode typeDefinitionNode)
     {
-        var typeClauseNode = ConstructOrRecycleTypeClauseNode(
-            typeDefinitionNode.TypeIdentifierToken,
-            openAngleBracketToken: default,
-            indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
-            closeAngleBracketToken: default,
-            typeDefinitionNode.IsKeywordType);
+        var typeClauseNode = Rent_TypeClauseNode();
+        typeClauseNode.TypeIdentifierToken = typeDefinitionNode.TypeIdentifierToken;
+        typeClauseNode.IsKeywordType = typeDefinitionNode.IsKeywordType;
             
         typeClauseNode.ExplicitDefinitionTextSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
         typeClauseNode.ExplicitDefinitionResourceUri = typeDefinitionNode.ResourceUri;

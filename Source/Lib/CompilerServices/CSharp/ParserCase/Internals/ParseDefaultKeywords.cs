@@ -1002,6 +1002,7 @@ public class ParseDefaultKeywords
             var inheritedTypeClauseNode = parserModel.TokenWalker.MatchTypeClauseNode(ref parserModel);
             // parserModel.BindTypeClauseNode(inheritedTypeClauseNode);
             typeDefinitionNode.SetInheritedTypeReference(new TypeReference(inheritedTypeClauseNode));
+            parserModel.Return_TypeClauseNode(inheritedTypeClauseNode, clearTypeClauseNode: true);
             
             while (!parserModel.TokenWalker.IsEof)
             {

@@ -336,33 +336,23 @@ public static class UtilityApi
     {
         if (token.SyntaxKind == SyntaxKind.IdentifierToken)
         {
-            return parserModel.ConstructOrRecycleTypeClauseNode(
-                token,
-                openAngleBracketToken: default,
-        		indexGenericParameterEntryList: -1,
-                countGenericParameterEntryList: 0,
-        		closeAngleBracketToken: default,
-                isKeywordType: false);
+            var typeClauseNode = parserModel.Rent_TypeClauseNode();
+            typeClauseNode.TypeIdentifierToken = token;
+            return typeClauseNode;
         }
         else if (IsTypeIdentifierKeywordSyntaxKind(token.SyntaxKind))
         {
-            return parserModel.ConstructOrRecycleTypeClauseNode(
-                token,
-                openAngleBracketToken: default,
-        		indexGenericParameterEntryList: -1,
-                countGenericParameterEntryList: 0,
-        		closeAngleBracketToken: default,
-                isKeywordType: true);
+            var typeClauseNode = parserModel.Rent_TypeClauseNode();
+            typeClauseNode.TypeIdentifierToken = token;
+            typeClauseNode.IsKeywordType = true;
+            return typeClauseNode;
         }
         else if (IsContextualKeywordSyntaxKind(token.SyntaxKind))
         {
-            return parserModel.ConstructOrRecycleTypeClauseNode(
-                token,
-                openAngleBracketToken: default,
-        		indexGenericParameterEntryList: -1,
-                countGenericParameterEntryList: 0,
-        		closeAngleBracketToken: default,
-                isKeywordType: true);
+            var typeClauseNode = parserModel.Rent_TypeClauseNode();
+            typeClauseNode.TypeIdentifierToken = token;
+            typeClauseNode.IsKeywordType = true;
+            return typeClauseNode;
         }
         else
         {
