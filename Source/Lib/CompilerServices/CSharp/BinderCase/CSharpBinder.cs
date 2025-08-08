@@ -85,6 +85,10 @@ public class CSharpBinder
     internal const int POOL_VARIABLE_REFERENCE_NODE_MAX_COUNT = 3;
     /// <summary>This is only safe to use while parsing</summary>
     internal readonly Queue<VariableReferenceNode> Pool_VariableReferenceNode_Queue = new();
+    
+    internal const int POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT = 3;
+    /// <summary>This is only safe to use while parsing</summary>
+    internal readonly Queue<AmbiguousIdentifierExpressionNode> Pool_AmbiguousIdentifierExpressionNode_Queue = new();
         
     public VariableReferenceNode CSharpParserModel_VariableReferenceNode { get; } = new VariableReferenceNode(
         variableIdentifierToken: default,
@@ -131,6 +135,17 @@ public class CSharpBinder
             Pool_VariableReferenceNode_Queue.Enqueue(new VariableReferenceNode(
                 variableIdentifierToken: default,
                 variableDeclarationNode: default));
+        }
+        
+        for (int i = 0; i < POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT; i++)
+        {
+            Pool_AmbiguousIdentifierExpressionNode_Queue.Enqueue(new AmbiguousIdentifierExpressionNode(
+                token: default,
+                openAngleBracketToken: default,
+                indexGenericParameterEntryList: -1,
+                countGenericParameterEntryList: 0,
+                closeAngleBracketToken: default,
+                resultTypeReference: CSharpFacts.Types.Void.ToTypeReference()));
         }
     }
     

@@ -58,16 +58,6 @@ public ref struct CSharpParserModel
         TryParseExpressionSyntaxKindList = Binder.CSharpParserModel_TryParseExpressionSyntaxKindList;
         TryParseExpressionSyntaxKindList.Clear();
         
-        AmbiguousIdentifierExpressionNode = Binder.CSharpParserModel_AmbiguousIdentifierExpressionNode;
-        AmbiguousIdentifierExpressionNode.SetSharedInstance(
-            default,
-            openAngleBracketToken: default,
-    		indexGenericParameterEntryList: -1,
-            countGenericParameterEntryList: 0,
-    		closeAngleBracketToken: default,
-            CSharpFacts.Types.Void.ToTypeReference(),
-            followsMemberAccessToken: false);
-        
         ClearedPartialDefinitionHashSet = Binder.CSharpParserModel_ClearedPartialDefinitionHashSet;
         ClearedPartialDefinitionHashSet.Clear();
         
@@ -150,13 +140,6 @@ public ref struct CSharpParserModel
     public TypeReference MostRecentLeftHandSideAssignmentExpressionTypeClauseNode { get; set; } = CSharpFacts.Types.Void.ToTypeReference();
     
     /// <summary>
-    /// TODO: Consider the case where you have just an AmbiguousIdentifierExpressionNode then StatementDelimiterToken.
-    /// </summary>
-    public AmbiguousIdentifierExpressionNode AmbiguousIdentifierExpressionNode { get; }
-    
-    
-    
-    /// <summary>
     /// In order to have many partial definitions for the same type in the same file,
     /// you need to set the ScopeIndexKey to -1 for any entry in the
     /// 'CSharpBinder.PartialTypeDefinitionList' only once per parse.
@@ -212,10 +195,9 @@ public ref struct CSharpParserModel
     
     public readonly TypeReference Return_TypeClauseNode_ToStruct(TypeClauseNode typeClauseNode, bool clearTypeClauseNode = false)
     {
+        var typeReference = new TypeReference(typeClauseNode);
         Return_TypeClauseNode(typeClauseNode, clearTypeClauseNode);
-        // This is thread safe since parsing is "single threaded"
-        // and this avoids copying the struct as a local variable before returning it.
-        return new TypeReference(typeClauseNode);
+        return typeReference;
     }
     
     public readonly VariableReferenceNode Rent_VariableReferenceNode()
@@ -245,10 +227,45 @@ public ref struct CSharpParserModel
     
     public readonly VariableReference Return_VariableReferenceNode_ToStruct(VariableReferenceNode variableReferenceNode, bool clearVariableReferenceNode = false)
     {
+        var variableReference = new VariableReference(variableReferenceNode);
         Return_VariableReferenceNode(variableReferenceNode, clearVariableReferenceNode);
-        // This is thread safe since parsing is "single threaded"
-        // and this avoids copying the struct as a local variable before returning it.
-        return new VariableReference(variableReferenceNode);
+        return variableReference;
+    }
+    
+    public readonly AmbiguousIdentifierExpressionNode Rent_AmbiguousIdentifierExpressionNode()
+    {
+        if (Binder.Pool_AmbiguousIdentifierExpressionNode_Queue.TryDequeue(out var ambiguousIdentifierExpressionNode))
+            return ambiguousIdentifierExpressionNode;
+        
+        return new AmbiguousIdentifierExpressionNode(
+            token: default,
+            openAngleBracketToken: default,
+            indexGenericParameterEntryList: -1,
+            countGenericParameterEntryList: 0,
+            closeAngleBracketToken: default,
+            resultTypeReference: CSharpFacts.Types.Void.ToTypeReference());
+    }
+    
+    public readonly void Return_AmbiguousIdentifierExpressionNode(AmbiguousIdentifierExpressionNode ambiguousIdentifierExpressionNode, bool clearAmbiguousIdentifierExpressionNode = false)
+    {
+        if (clearAmbiguousIdentifierExpressionNode)
+        {
+            ambiguousIdentifierExpressionNode.Token = default;
+            
+            ambiguousIdentifierExpressionNode.OpenAngleBracketToken = default;
+            ambiguousIdentifierExpressionNode.IndexGenericParameterEntryList = -1;
+            ambiguousIdentifierExpressionNode.CountGenericParameterEntryList = 0;
+            ambiguousIdentifierExpressionNode.CloseAngleBracketToken = default;
+            
+            ambiguousIdentifierExpressionNode.ResultTypeReference = CSharpFacts.Types.Void.ToTypeReference();
+            ambiguousIdentifierExpressionNode.FollowsMemberAccessToken = false;
+            ambiguousIdentifierExpressionNode.HasQuestionMark = false;
+        }
+    
+        if (Binder.Pool_AmbiguousIdentifierExpressionNode_Queue.Count < CSharpBinder.POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT)
+        {
+            Binder.Pool_AmbiguousIdentifierExpressionNode_Queue.Enqueue(ambiguousIdentifierExpressionNode);
+        }
     }
     
     public readonly ICodeBlockOwner? GetParent(

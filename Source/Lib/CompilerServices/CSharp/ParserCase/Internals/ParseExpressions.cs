@@ -1863,15 +1863,9 @@ public static class ParseExpressions
     
         if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind) && token.SyntaxKind != SyntaxKind.NameofTokenContextualKeyword)
         {
-            parserModel.AmbiguousIdentifierExpressionNode.SetSharedInstance(
-                token,
-                openAngleBracketToken: default,
-        		indexGenericParameterEntryList: -1,
-                countGenericParameterEntryList: 0,
-        		closeAngleBracketToken: default,
-                CSharpFacts.Types.Void.ToTypeReference(),
-                emptyExpressionNode.FollowsMemberAccessToken);
-            var ambiguousExpressionNode = parserModel.AmbiguousIdentifierExpressionNode;
+            var ambiguousExpressionNode = parserModel.Rent_AmbiguousIdentifierExpressionNode();
+            ambiguousExpressionNode.Token = token;
+            ambiguousExpressionNode.FollowsMemberAccessToken = emptyExpressionNode.FollowsMemberAccessToken;
             
             if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.StatementDelimiterToken && !ambiguousExpressionNode.FollowsMemberAccessToken ||
                 parserModel.TryParseExpressionSyntaxKindList.Contains(SyntaxKind.TypeClauseNode) && parserModel.TokenWalker.Next.SyntaxKind != SyntaxKind.WithTokenContextualKeyword &&

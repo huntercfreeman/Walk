@@ -41,37 +41,12 @@ public sealed class AmbiguousIdentifierExpressionNode : IGenericParameterNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierExpressionNode;
     
-    public void SetSharedInstance(
-        SyntaxToken token,
-        
-        SyntaxToken openAngleBracketToken,
-        int indexGenericParameterEntryList,
-        int countGenericParameterEntryList,
-        SyntaxToken closeAngleBracketToken,
-        
-        TypeReference resultTypeReference,
-        bool followsMemberAccessToken)
-    {
-        Token = token;
-        
-        OpenAngleBracketToken = openAngleBracketToken;
-        IndexGenericParameterEntryList = indexGenericParameterEntryList;
-        CountGenericParameterEntryList = countGenericParameterEntryList;
-        CloseAngleBracketToken = closeAngleBracketToken;
-        
-        ResultTypeReference = resultTypeReference;
-        FollowsMemberAccessToken = followsMemberAccessToken;
-        HasQuestionMark = false;
-    }
-    
     public bool IsParsingGenericParameters { get; set; }
 
-#if DEBUG
+    #if DEBUG
     ~AmbiguousIdentifierExpressionNode()
     {
         Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.AmbiguousIdentifierExpressionNode--;
-        // Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.Asdfg;
-        // Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.CreateText();
     }
     #endif
 }
