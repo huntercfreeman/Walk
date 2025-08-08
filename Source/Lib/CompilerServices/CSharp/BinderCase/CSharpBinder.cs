@@ -69,14 +69,6 @@ public class CSharpBinder
     public List<Symbol> SymbolList { get; } = new();
     public List<ISyntaxNode> NodeList { get; } = new();
     public List<ICodeBlockOwner> CodeBlockOwnerList { get; } = new();
-    
-    public AmbiguousIdentifierExpressionNode CSharpParserModel_AmbiguousIdentifierExpressionNode { get; } = new AmbiguousIdentifierExpressionNode(
-        default,
-        openAngleBracketToken: default,
-		indexGenericParameterEntryList: -1,
-        countGenericParameterEntryList: 0,
-		closeAngleBracketToken: default,
-        CSharpFacts.Types.Void.ToTypeReference());
         
     internal const int POOL_TYPE_CLAUSE_NODE_MAX_COUNT = 3;
     /// <summary>This is only safe to use while parsing</summary>
@@ -89,10 +81,6 @@ public class CSharpBinder
     internal const int POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT = 3;
     /// <summary>This is only safe to use while parsing</summary>
     internal readonly Queue<AmbiguousIdentifierExpressionNode> Pool_AmbiguousIdentifierExpressionNode_Queue = new();
-        
-    public VariableReferenceNode CSharpParserModel_VariableReferenceNode { get; } = new VariableReferenceNode(
-        variableIdentifierToken: default,
-        variableDeclarationNode: null);
     
     public BadExpressionNode Shared_BadExpressionNode { get; } = new BadExpressionNode(
         CSharpFacts.Types.Void.ToTypeReference(),
