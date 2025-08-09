@@ -2243,6 +2243,15 @@ public static class ParseExpressions
                 ref parserModel);
         }
         
+        if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+        }
+        else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+        {
+            parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+        }
+        
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
             return switchExpressionNode;
     
@@ -2580,9 +2589,17 @@ public static class ParseExpressions
                         ref parserModel);
                 }
                 
+                if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                {
+                    parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+                }
+                else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+                {
+                    parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+                }
+                
                 if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken || parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
                 {
-                    // tupleExpressionNode.InnerExpressionList.Add(expressionSecondary);
                     return tupleExpressionNode;
                 }
             
