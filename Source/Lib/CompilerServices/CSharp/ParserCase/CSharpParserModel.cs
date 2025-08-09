@@ -336,10 +336,6 @@ public ref struct CSharpParserModel
         Binder.Pool_FunctionInvocationNode_Queue.Enqueue(functionInvocationNode);
     }
     
-    public static int Pool_ConstructorInvocationNode_Hit { get; set; }
-    public static int Pool_ConstructorInvocationNode_Miss { get; set; }
-    public static int Pool_ConstructorInvocationNode_Return { get; set; }
-    
     /// <summary>
     /// It is expected that any invoker of this method will immediately set the returned ConstructorInvocationExpressionNode instance's:
     /// - NewKeywordToken
@@ -349,11 +345,9 @@ public ref struct CSharpParserModel
     {
         if (Binder.Pool_ConstructorInvocationExpressionNode_Queue.TryDequeue(out var constructorInvocationExpressionNode))
         {
-            Pool_ConstructorInvocationNode_Hit++;
             return constructorInvocationExpressionNode;
         }
 
-        Pool_ConstructorInvocationNode_Miss++;
         return new ConstructorInvocationExpressionNode(
             newKeywordToken: default,
             typeReference: default,
@@ -370,8 +364,6 @@ public ref struct CSharpParserModel
     /// </summary>
     public readonly void Return_ConstructorInvocationExpressionNode(ConstructorInvocationExpressionNode constructorInvocationExpressionNode)
     {
-        Pool_ConstructorInvocationNode_Return++;
-        
         constructorInvocationExpressionNode.ResultTypeReference = default;
         
         constructorInvocationExpressionNode.OpenParenthesisToken = default;
