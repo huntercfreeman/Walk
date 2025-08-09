@@ -257,6 +257,10 @@ public class ParseDefaultKeywords
             {
                 parserModel.Return_VariableReferenceNode((VariableReferenceNode)expression);
             }
+            else if (expression.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+            {
+                parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expression);
+            }
             
             var statementDelimiterToken = parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
             
@@ -464,6 +468,10 @@ public class ParseDefaultKeywords
         if (expressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
         {
             parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionNode);
+        }
+        else if (expressionNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+        {
+            parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionNode);
         }
         
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
