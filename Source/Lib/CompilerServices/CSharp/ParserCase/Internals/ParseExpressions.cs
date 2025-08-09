@@ -210,6 +210,11 @@ public static class ParseExpressions
                         parserModel.TokenWalker.BacktrackNoReturnValue();
                     }
                     
+                    if (parserModel.ExpressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+                    {
+                        parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)parserModel.ExpressionPrimary);
+                    }
+                    
                     parserModel.ExpressionPrimary = expressionPrimaryPreviousRoot;
                     
                     forceExit = true;
@@ -1397,6 +1402,15 @@ public static class ParseExpressions
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseSquareBracketToken ||
             parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
         {
+            if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+            {
+                parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+            }
+            else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+            {
+                parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+            }
+            
             return variableReferenceNode;
         }
     
@@ -1477,6 +1491,15 @@ public static class ParseExpressions
         #if DEBUG
         badExpressionNode.ClobberCount++;
         #endif
+        
+        if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+        }
+        else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+        {
+            parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+        }
         
         return badExpressionNode;
     }
@@ -1569,9 +1592,27 @@ public static class ParseExpressions
                 
             binaryExpressionNode.RightExpressionResultTypeReference = expressionSecondary.ResultTypeReference;
             
+            if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+            {
+                parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+            }
+            else if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+            {
+                parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+            }
+            
             return binaryExpressionNode;
         }
     
+        if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+        {
+            parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+        }
+        else if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+        }
+        
         return parserModel.Binder.Shared_BadExpressionNode;
     }
     
@@ -1606,6 +1647,15 @@ public static class ParseExpressions
          IExpressionNode expressionSecondary, ref CSharpParserModel parserModel)
     {
         var collectionInitializationNode = (CollectionInitializationNode)parserModel.ExpressionPrimary;
+    
+        if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+        }
+        else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+        {
+            parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+        }
     
         if (collectionInitializationNode.IsClosed)
             return parserModel.Binder.Shared_BadExpressionNode;
@@ -2171,6 +2221,15 @@ public static class ParseExpressions
                 (AmbiguousIdentifierExpressionNode)expressionSecondary,
                 ref parserModel);
         }
+        
+        if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+        }
+        else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+        {
+            parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+        }
     
         return keywordFunctionOperatorNode;
     }
@@ -2200,6 +2259,15 @@ public static class ParseExpressions
                 EmptyExpressionNode.Empty,
                 (AmbiguousIdentifierExpressionNode)expressionSecondary,
                 ref parserModel);
+        }
+        
+        if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+        }
+        else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+        {
+            parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
         }
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
@@ -2320,15 +2388,20 @@ public static class ParseExpressions
                 (AmbiguousIdentifierExpressionNode)expressionSecondary,
                 ref parserModel);
         }
-    
-        switch (expressionSecondary.SyntaxKind)
+        
+        if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
         {
-            default:
-                if (lambdaExpressionNode.CodeBlock_StartInclusiveIndex == -1)
-                    CloseLambdaExpressionScope(lambdaExpressionNode, ref parserModel);
-                
-                return lambdaExpressionNode;
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
         }
+        else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+        {
+            parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+        }
+    
+        if (lambdaExpressionNode.CodeBlock_StartInclusiveIndex == -1)
+            CloseLambdaExpressionScope(lambdaExpressionNode, ref parserModel);
+        
+        return lambdaExpressionNode;
     }
 
     public static IExpressionNode LiteralMergeToken(
@@ -2365,9 +2438,18 @@ public static class ParseExpressions
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StringInterpolatedEndToken)
         {
             if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-                ForceDecisionAmbiguousIdentifier(EmptyExpressionNode.Empty, (AmbiguousIdentifierExpressionNode)expressionSecondary, ref parserModel);
+                expressionSecondary = ForceDecisionAmbiguousIdentifier(EmptyExpressionNode.Empty, (AmbiguousIdentifierExpressionNode)expressionSecondary, ref parserModel);
 
             interpolatedStringNode.StringInterpolatedEndToken = parserModel.TokenWalker.Current;
+            
+            if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+            {
+                parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+            }
+            else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+            {
+                parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+            }
 
             // Interpolated strings have their interpolated expressions inserted into the syntax token list
             // immediately following the StringInterpolatedStartToken itself.
@@ -2381,12 +2463,30 @@ public static class ParseExpressions
         else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StringInterpolatedContinueToken)
         {
             if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-                ForceDecisionAmbiguousIdentifier(EmptyExpressionNode.Empty, (AmbiguousIdentifierExpressionNode)expressionSecondary, ref parserModel);
+                expressionSecondary = ForceDecisionAmbiguousIdentifier(EmptyExpressionNode.Empty, (AmbiguousIdentifierExpressionNode)expressionSecondary, ref parserModel);
 
+            if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+            {
+                parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+            }
+            else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+            {
+                parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+            }
+            
             return interpolatedStringNode;
         }
         else
         {
+            if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+            {
+                parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+            }
+            else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+            {
+                parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+            }
+            
             return parserModel.Binder.Shared_BadExpressionNode;
         }
     }
@@ -2507,9 +2607,17 @@ public static class ParseExpressions
                         ref parserModel);
                 }
                 
+                if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                {
+                    parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+                }
+                else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+                {
+                    parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+                }
+                
                 if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken || parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
                 {
-                    // tupleExpressionNode.InnerExpressionList.Add(expressionSecondary);
                     return tupleExpressionNode;
                 }
             
@@ -3631,11 +3739,13 @@ public static class ParseExpressions
                     else if (node.SyntaxKind == SyntaxKind.TypeClauseNode)
                     {
                         var token = ((TypeClauseNode)node).TypeIdentifierToken;
+                        // TODO: why is this double assignment?
                         identifierToken = identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, ref parserModel);
                     }
                     else if (node.SyntaxKind == SyntaxKind.VariableReferenceNode)
                     {
                         var token = ((VariableReferenceNode)node).VariableIdentifierToken;
+                        // TODO: why is this double assignment?
                         identifierToken = identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, ref parserModel);
                     }
                     else
