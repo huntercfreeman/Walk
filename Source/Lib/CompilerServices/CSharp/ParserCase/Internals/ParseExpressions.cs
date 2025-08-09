@@ -716,9 +716,6 @@ public static class ParseExpressions
                     functionInvocationNode.CloseAngleBracketToken = ambiguousIdentifierExpressionNode.CloseAngleBracketToken;
                     functionInvocationNode.OpenParenthesisToken = parserModel.TokenWalker.Current;
                     functionInvocationNode.IndexFunctionParameterEntryList = parserModel.Binder.FunctionParameterEntryList.Count;
-                    functionInvocationNode.CountFunctionParameterEntryList = 0;
-                    functionInvocationNode.CloseParenthesisToken = default;
-                    functionInvocationNode.ResultTypeReference = CSharpFacts.Types.Void.ToTypeReference();
                     
                     parserModel.BindFunctionInvocationNode(functionInvocationNode);
                     
@@ -2538,18 +2535,15 @@ public static class ParseExpressions
                     UtilityApi.IsConvertibleToIdentifierToken(typeClauseNode.TypeIdentifierToken.SyntaxKind))
                 {
                     var typeClauseToken = typeClauseNode.TypeIdentifierToken;
-                    CSharpParserModel.Pool_FunctionInvocationNode_Miss++;
-                    var functionInvocationNode = new FunctionInvocationNode(
-                        UtilityApi.ConvertToIdentifierToken(ref typeClauseToken, ref parserModel),
-                        typeClauseNode.OpenAngleBracketToken,
-                        typeClauseNode.IndexGenericParameterEntryList,
-                        typeClauseNode.CountGenericParameterEntryList,
-                        typeClauseNode.CloseAngleBracketToken,
-                        openParenthesisToken: parserModel.TokenWalker.Current,
-                        indexFunctionParameterEntryList: parserModel.Binder.FunctionParameterEntryList.Count,
-                		countFunctionParameterEntryList: 0,
-                        closeParenthesisToken: default,
-                        CSharpFacts.Types.Void.ToTypeReference());
+                    
+                    var functionInvocationNode = parserModel.Rent_FunctionInvocationNode();
+                    functionInvocationNode.FunctionInvocationIdentifierToken = UtilityApi.ConvertToIdentifierToken(ref typeClauseToken, ref parserModel);
+                    functionInvocationNode.OpenAngleBracketToken = typeClauseNode.OpenAngleBracketToken;
+                    functionInvocationNode.IndexGenericParameterEntryList = typeClauseNode.IndexGenericParameterEntryList;
+                    functionInvocationNode.CountGenericParameterEntryList = typeClauseNode.CountGenericParameterEntryList;
+                    functionInvocationNode.CloseAngleBracketToken = typeClauseNode.CloseAngleBracketToken;
+                    functionInvocationNode.OpenParenthesisToken = parserModel.TokenWalker.Current;
+                    functionInvocationNode.IndexFunctionParameterEntryList = parserModel.Binder.FunctionParameterEntryList.Count;
                         
                     parserModel.BindFunctionInvocationNode(functionInvocationNode);
         
@@ -3301,21 +3295,13 @@ public static class ParseExpressions
                 var functionDefinitionNode = (FunctionDefinitionNode)foundDefinitionNode;
                 
                 // TODO: Method group node?
-                CSharpParserModel.Pool_FunctionInvocationNode_Miss++;
-                var functionInvocationNode = new FunctionInvocationNode(
-                    memberIdentifierToken,
-                    // TODO: Don't store a reference to definitons.
-                    // TODO: Type -> "<...>" -> "(" -> FunctionInvocationNode, but will FunctionInvocationNode -> "<...>"?
-                    // TODO: Bind the named arguments to their declaration within the definition.
-                    openAngleBracketToken: default,
-            		indexGenericParameterEntryList: -1,
-                    countGenericParameterEntryList: 0,
-            		closeAngleBracketToken: default,
-                    openParenthesisToken: default,
-            		indexFunctionParameterEntryList: -1,
-                    countFunctionParameterEntryList: 0,
-            		closeParenthesisToken: default,
-                    functionDefinitionNode.ReturnTypeReference);
+                // TODO: Don't store a reference to definitons.
+                // TODO: Type -> "<...>" -> "(" -> FunctionInvocationNode, but will FunctionInvocationNode -> "<...>"?
+                // TODO: Bind the named arguments to their declaration within the definition.
+                
+                var functionInvocationNode = parserModel.Rent_FunctionInvocationNode();
+                functionInvocationNode.FunctionInvocationIdentifierToken = memberIdentifierToken;
+                functionInvocationNode.ResultTypeReference = functionDefinitionNode.ReturnTypeReference;
                 
                 var symbolId = parserModel.GetNextSymbolId();
                 
@@ -3367,18 +3353,9 @@ public static class ParseExpressions
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
             parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
         {
-            CSharpParserModel.Pool_FunctionInvocationNode_Miss++;
-            var functionInvocationNode = new FunctionInvocationNode(
-                memberIdentifierToken,
-                openAngleBracketToken: default,
-        		indexGenericParameterEntryList: -1,
-                countGenericParameterEntryList: 0,
-        		closeAngleBracketToken: default,
-                openParenthesisToken: default,
-        		indexFunctionParameterEntryList: -1,
-                countFunctionParameterEntryList: 0,
-        		closeParenthesisToken: default,
-                TypeFacts.Empty.ToTypeReference());
+            var functionInvocationNode = parserModel.Rent_FunctionInvocationNode();
+            functionInvocationNode.FunctionInvocationIdentifierToken = memberIdentifierToken;
+            functionInvocationNode.ResultTypeReference = TypeFacts.Empty.ToTypeReference();
                 
             parserModel.Binder.SymbolList.Insert(
                 parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
