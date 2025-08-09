@@ -1492,6 +1492,15 @@ public static class ParseExpressions
         badExpressionNode.ClobberCount++;
         #endif
         
+        if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+        }
+        else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+        {
+            parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+        }
+        
         return badExpressionNode;
     }
 
@@ -2211,6 +2220,15 @@ public static class ParseExpressions
                 EmptyExpressionNode.Empty,
                 (AmbiguousIdentifierExpressionNode)expressionSecondary,
                 ref parserModel);
+        }
+        
+        if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+        }
+        else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+        {
+            parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
         }
     
         return keywordFunctionOperatorNode;
