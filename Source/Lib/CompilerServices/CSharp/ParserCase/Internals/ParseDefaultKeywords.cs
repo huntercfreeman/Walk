@@ -194,7 +194,7 @@ public class ParseDefaultKeywords
     public static void HandleFalseTokenKeyword(ref CSharpParserModel parserModel)
     {
         var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
-        parserModel.StatementBuilder.ChildList.Add(expressionNode);
+        parserModel.StatementBuilder.MostRecentNode = expressionNode;
     }
 
     public static void HandleFinallyTokenKeyword(ref CSharpParserModel parserModel)
@@ -251,7 +251,12 @@ public class ParseDefaultKeywords
         for (int i = 0; i < 3; i++)
         {
             parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-            _ = ParseExpressions.ParseExpression(ref parserModel);
+            var expression = ParseExpressions.ParseExpression(ref parserModel);
+            
+            if (expression.SyntaxKind == SyntaxKind.VariableReferenceNode)
+            {
+                parserModel.Return_VariableReferenceNode((VariableReferenceNode)expression);
+            }
             
             var statementDelimiterToken = parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
             
@@ -301,6 +306,11 @@ public class ParseDefaultKeywords
                     parserModel.Binder.GenericParameterEntryList[enumerable.ResultTypeReference.IndexGenericParameterEntryList].TypeReference);
         }
         
+        if (enumerable.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)enumerable);
+        }
+        
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
             
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
@@ -339,7 +349,12 @@ public class ParseDefaultKeywords
         var openParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
         
         parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-        _ = ParseExpressions.ParseExpression(ref parserModel);
+        var expression = ParseExpressions.ParseExpression(ref parserModel);
+        
+        if (expression.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expression);
+        }
         
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
         
@@ -442,6 +457,11 @@ public class ParseDefaultKeywords
         parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
         var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
         
+        if (expressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionNode);
+        }
+        
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
         
         var switchStatementNode = new SwitchStatementNode(
@@ -469,7 +489,7 @@ public class ParseDefaultKeywords
     public static void HandleTrueTokenKeyword(ref CSharpParserModel parserModel)
     {
         var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
-        parserModel.StatementBuilder.ChildList.Add(expressionNode);
+        parserModel.StatementBuilder.MostRecentNode = expressionNode;
     }
 
     public static void HandleTryTokenKeyword(ref CSharpParserModel parserModel)
@@ -545,7 +565,12 @@ public class ParseDefaultKeywords
         var openParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
         
         parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-        _ = ParseExpressions.ParseExpression(ref parserModel);
+        var expression = ParseExpressions.ParseExpression(ref parserModel);
+        
+        if (expression.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expression);
+        }
         
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
         
@@ -598,7 +623,7 @@ public class ParseDefaultKeywords
             UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Next.SyntaxKind))
         {
             var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
-            parserModel.StatementBuilder.ChildList.Add(expressionNode);
+            parserModel.StatementBuilder.MostRecentNode = expressionNode;
         }
         else
         {
@@ -658,7 +683,12 @@ public class ParseDefaultKeywords
             return;
 
         parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-        _ = ParseExpressions.ParseExpression(ref parserModel);
+        var expression = ParseExpressions.ParseExpression(ref parserModel);
+        
+        if (expression.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expression);
+        }
         
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 
@@ -771,9 +801,9 @@ public class ParseDefaultKeywords
         // Given: public partial class MyClass { }
         // Then: partial
         var hasPartialModifier = false;
-        if (parserModel.StatementBuilder.TryPeek(out var syntax) && syntax is SyntaxToken syntaxToken)
+        if (parserModel.StatementBuilder.TryPeek(out var token))
         {
-            if (syntaxToken.SyntaxKind == SyntaxKind.PartialTokenContextualKeyword)
+            if (token.SyntaxKind == SyntaxKind.PartialTokenContextualKeyword)
             {
                 _ = parserModel.StatementBuilder.Pop();
                 hasPartialModifier = true;
@@ -785,7 +815,7 @@ public class ParseDefaultKeywords
         // Given: public class MyClass { }
         // Then: public
         var accessModifierKind = AccessModifierKind.Public;
-        if (parserModel.StatementBuilder.TryPeek(out syntax) && syntax is SyntaxToken firstSyntaxToken)
+        if (parserModel.StatementBuilder.TryPeek(out var firstSyntaxToken))
         {
             var firstOutput = UtilityApi.GetAccessModifierKindFromToken(firstSyntaxToken);
 
@@ -796,7 +826,7 @@ public class ParseDefaultKeywords
 
                 // Given: protected internal class MyClass { }
                 // Then: protected internal
-                if (parserModel.StatementBuilder.TryPeek(out syntax) && syntax is SyntaxToken secondSyntaxToken)
+                if (parserModel.StatementBuilder.TryPeek(out var secondSyntaxToken))
                 {
                     var secondOutput = UtilityApi.GetAccessModifierKindFromToken(secondSyntaxToken);
 
@@ -890,7 +920,7 @@ public class ParseDefaultKeywords
         parserModel.BindTypeDefinitionNode(typeDefinitionNode);
         parserModel.BindTypeIdentifier(identifierToken);
         
-        parserModel.StatementBuilder.ChildList.Add(typeDefinitionNode);
+        parserModel.StatementBuilder.MostRecentNode = typeDefinitionNode;
         
         parserModel.NewScopeAndBuilderFromOwner(
             typeDefinitionNode,
@@ -1161,8 +1191,14 @@ public class ParseDefaultKeywords
     {
         var returnKeywordToken = parserModel.TokenWalker.Consume();
         var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
-        var returnStatementNode = new ReturnStatementNode(returnKeywordToken, expressionNode);
         
-        parserModel.StatementBuilder.ChildList.Add(returnStatementNode);
+        if (expressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionNode);
+        }
+        
+        // var returnStatementNode = new ReturnStatementNode(returnKeywordToken, expressionNode);
+        
+        // parserModel.StatementBuilder.ChildList.Add(returnStatementNode);
     }
 }

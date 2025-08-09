@@ -469,6 +469,11 @@ public static class ParseExpressions
                     
                     parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionPrecedent));
                     
+                    if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                    {
+                        parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
+                    }
+                    
                     return EmptyExpressionNode.Empty;
                 }
                 else
@@ -481,6 +486,12 @@ public static class ParseExpressions
                     binaryExpressionAntecedent.RightExpressionResultTypeReference = binaryExpressionNodePrecedent.ResultTypeReference;
                     
                     parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNodePrecedent));
+                    
+                    if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                    {
+                        parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
+                    }
+                    
                     return EmptyExpressionNode.Empty;
                 }
             }
@@ -499,6 +510,12 @@ public static class ParseExpressions
                 // for the sake of parser recovery.
                 ClearFromExpressionList(expressionPrimary, ref parserModel);
                 ClearFromExpressionList(binaryExpressionAntecedent, ref parserModel);
+                
+                if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+                {
+                    parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
+                }
+                
                 return parserModel.Binder.Shared_BadExpressionNode;
             }
         }
@@ -508,6 +525,12 @@ public static class ParseExpressions
             var binaryExpressionNode = new BinaryExpressionNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
             
             parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
+            
+            if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+            {
+                parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
+            }
+            
             return EmptyExpressionNode.Empty;
         }
     }
@@ -1253,6 +1276,8 @@ public static class ParseExpressions
                     _ = parserModel.TokenWalker.Consume(); // Consume the NullTokenKeyword
                 }
                 
+                parserModel.Return_VariableReferenceNode(variableReferenceNode);
+                
                 return EmptyExpressionNode.Empty;
             }
             case SyntaxKind.AsTokenKeyword:
@@ -1269,6 +1294,7 @@ public static class ParseExpressions
                 
                     var typeReference = new TypeReference(typeClauseNode);
                     parserModel.Return_TypeClauseNode(typeClauseNode);
+                    parserModel.Return_VariableReferenceNode(variableReferenceNode);
                     return new VariableReferenceNode(
                         nameableToken,
                         new VariableDeclarationNode(
@@ -1288,6 +1314,7 @@ public static class ParseExpressions
             }
             case SyntaxKind.SwitchTokenKeyword:
             {
+                parserModel.Return_VariableReferenceNode(variableReferenceNode);
                 return new SwitchExpressionNode();
             }
             case SyntaxKind.PlusPlusToken:
@@ -1319,10 +1346,12 @@ public static class ParseExpressions
                 if (variableReferenceNode.ResultTypeReference.IndexGenericParameterEntryList != -1 &&
                     variableReferenceNode.ResultTypeReference.CountGenericParameterEntryList == 1)
                 {
+                    var indexGenericParameterEntryList = variableReferenceNode.ResultTypeReference.IndexGenericParameterEntryList;
+                    parserModel.Return_VariableReferenceNode(variableReferenceNode);
                     return new VariableReferenceNode(
                         token,
                         new VariableDeclarationNode(
-                            parserModel.Binder.GenericParameterEntryList[variableReferenceNode.ResultTypeReference.IndexGenericParameterEntryList].TypeReference,
+                            parserModel.Binder.GenericParameterEntryList[indexGenericParameterEntryList].TypeReference,
                             token,
                             VariableKind.Local,
                             isInitialized: true,
@@ -1330,6 +1359,7 @@ public static class ParseExpressions
                 }
                 else
                 {
+                    parserModel.Return_VariableReferenceNode(variableReferenceNode);
                     return new VariableReferenceNode(
                         token,
                         new VariableDeclarationNode(
@@ -1341,6 +1371,7 @@ public static class ParseExpressions
                 }
             }
             default:
+                parserModel.Return_VariableReferenceNode(variableReferenceNode);
                 return parserModel.Binder.Shared_BadExpressionNode;
         }
     }
@@ -1364,6 +1395,7 @@ public static class ParseExpressions
             return variableReferenceNode;
         }
     
+        parserModel.Return_VariableReferenceNode(variableReferenceNode);
         return parserModel.Binder.Shared_BadExpressionNode;
     }
         
@@ -3779,6 +3811,11 @@ public static class ParseExpressions
                     expressionSecondary.ResultTypeReference,
                     parserModel.ParameterModifierKind));
             ++parserModel.Compilation.CountFunctionInvocationParameterMetadataList;
+        }
+        
+        if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
         }
         
         // Just needs to be set to anything other than out, in, ref.

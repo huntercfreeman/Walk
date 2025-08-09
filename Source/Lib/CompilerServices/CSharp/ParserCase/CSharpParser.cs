@@ -42,14 +42,14 @@ public static class CSharpParser
                 case SyntaxKind.StarToken:
                 case SyntaxKind.DollarSignToken:
                 case SyntaxKind.AtToken:
-                    if (parserModel.StatementBuilder.ChildList.Count == 0)
+                    if (parserModel.StatementBuilder.StatementIsEmpty)
                     {
                         _ = ParseExpressions.ParseExpression(ref parserModel);
                     }
                     else
                     {
                         var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
-                        parserModel.StatementBuilder.ChildList.Add(expressionNode);
+                        parserModel.StatementBuilder.MostRecentNode = expressionNode;
                     }
                     break;
                 case SyntaxKind.IdentifierToken:
@@ -96,7 +96,7 @@ public static class CSharpParser
                     ParseTokens.ParseOpenSquareBracketToken(ref parserModel);
                     break;
                 case SyntaxKind.OpenAngleBracketToken:
-                    if (parserModel.StatementBuilder.ChildList.Count == 0)
+                    if (parserModel.StatementBuilder.StatementIsEmpty)
                         _ = ParseExpressions.ParseExpression(ref parserModel);
                     else
                         _ = parserModel.TokenWalker.Consume();
@@ -185,12 +185,7 @@ public static class CSharpParser
         }
 
         if (parserModel.GetParent(parserModel.CurrentCodeBlockOwner, compilationUnit) is not null)
-            parserModel.CloseScope(parserModel.TokenWalker.Current.TextSpan); // The current token here would be the EOF token.
-
-        /*Console.WriteLine();
-        Console.WriteLine();
-
-        Console.WriteLine($"compilationUnit.IndexDiagnosticList: {compilationUnit.IndexDiagnosticList}");
+            parserModel.CloseScope(parserModel.TokenWalker.Current.TextSpan); // The current token here would be the EOF token.        /*Console.WriteLine();        Console.WriteLine();        Console.WriteLine($"compilationUnit.IndexDiagnosticList: {compilationUnit.IndexDiagnosticList}");
         Console.WriteLine($"compilationUnit.CountDiagnosticList: {compilationUnit.CountDiagnosticList}");
     
         Console.WriteLine($"compilationUnit.IndexSymbolList: {compilationUnit.IndexSymbolList}");
@@ -205,8 +200,7 @@ public static class CSharpParser
         Console.WriteLine($"compilationUnit.IndexNodeList: {compilationUnit.IndexNodeList}");
         Console.WriteLine($"compilationUnit.CountNodeList: {compilationUnit.CountNodeList}");
 
-        Console.WriteLine();
-        Console.WriteLine();*/
+        Console.WriteLine();        Console.WriteLine();*/
 
         parserModel.Binder.FinalizeCompilationUnit(parserModel.ResourceUri, compilationUnit);
     }

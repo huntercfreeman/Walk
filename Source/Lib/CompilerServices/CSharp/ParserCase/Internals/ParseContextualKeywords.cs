@@ -4,7 +4,7 @@ public class ParseContextualKeywords
 {
     public static void HandleVarTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
-        if (parserModel.StatementBuilder.ChildList.Count == 0)
+        if (parserModel.StatementBuilder.StatementIsEmpty)
             ParseTokens.ParseIdentifierToken(ref parserModel);
         else
             _ = ParseExpressions.ParseExpression(ref parserModel);
@@ -122,7 +122,12 @@ public class ParseContextualKeywords
 
     public static void HandleNameofTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
-        _ = ParseExpressions.ParseExpression(ref parserModel);
+        var expression = ParseExpressions.ParseExpression(ref parserModel);
+        
+        if (expression.SyntaxKind == Walk.Extensions.CompilerServices.Syntax.SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((Walk.Extensions.CompilerServices.Syntax.Nodes.VariableReferenceNode)expression);
+        }
     }
 
     public static void HandleNintTokenContextualKeyword(ref CSharpParserModel parserModel)

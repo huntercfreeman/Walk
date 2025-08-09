@@ -26,7 +26,7 @@ public static class ParseTokens
                 var variableReferenceNode = parserModel.Rent_VariableReferenceNode();
                 variableReferenceNode.VariableIdentifierToken = identifierToken;
                     
-                parserModel.StatementBuilder.ChildList.Add(variableReferenceNode);
+                parserModel.StatementBuilder.MostRecentNode = variableReferenceNode;
                 return;
             }
         }
@@ -66,7 +66,7 @@ public static class ParseTokens
         if (!successParse)
         {
             expressionNode = ParseExpressions.ParseExpression(ref parserModel);
-            parserModel.StatementBuilder.ChildList.Add(expressionNode);
+            parserModel.StatementBuilder.MostRecentNode = expressionNode;
             return;
         }
         
@@ -102,15 +102,15 @@ public static class ParseTokens
                 {
                     parserModel.TokenWalker.BacktrackNoReturnValue();
                     expressionNode = ParseExpressions.ParseExpression(ref parserModel);
-                    parserModel.StatementBuilder.ChildList.Add(expressionNode);
+                    parserModel.StatementBuilder.MostRecentNode = expressionNode;
                     return;
                 }
                 
-                parserModel.StatementBuilder.ChildList.Add(expressionNode);
+                parserModel.StatementBuilder.MostRecentNode = expressionNode;
                 return;
             case SyntaxKind.FunctionInvocationNode:
             case SyntaxKind.ConstructorInvocationExpressionNode:
-                parserModel.StatementBuilder.ChildList.Add(expressionNode);
+                parserModel.StatementBuilder.MostRecentNode = expressionNode;
                 return;
             default:
                 // compilationUnit.DiagnosticBag.ReportTodoException(parserModel.TokenWalker.Current.TextSpan, $"nameof(ParseIdentifierToken) default case");
@@ -144,7 +144,7 @@ public static class ParseTokens
         
         parserModel.BindVariableDeclarationNode(variableDeclarationNode);
         // parserModel.CurrentCodeBlockBuilder.AddChild(variableDeclarationNode);
-        parserModel.StatementBuilder.ChildList.Add(variableDeclarationNode);
+        parserModel.StatementBuilder.MostRecentNode = variableDeclarationNode;
         
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
         {
@@ -169,18 +169,14 @@ public static class ParseTokens
                 expression = ParseExpressions.ParseExpression(ref parserModel);
                 parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
                 
-                if (parserModel.GetTextSpanText(variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan) ==
-                        "var")
+                if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode &&
+                    parserModel.GetTextSpanText(variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan) == "var")
                 {
-                    if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode)
-                    {
-                        var binaryExpressionNode = (BinaryExpressionNode)expression;
-                        if (binaryExpressionNode.OperatorToken.SyntaxKind == SyntaxKind.EqualsToken)
-                            variableDeclarationNode.SetImplicitTypeReference(binaryExpressionNode.RightExpressionResultTypeReference);
-                    }
+                    var binaryExpressionNode = (BinaryExpressionNode)expression;
+                    variableDeclarationNode.SetImplicitTypeReference(binaryExpressionNode.RightExpressionResultTypeReference);
                 }
                 
-                parserModel.StatementBuilder.ChildList.Add(expression);
+                parserModel.StatementBuilder.MostRecentNode = expression;
             }
         }
     }
@@ -248,7 +244,7 @@ public static class ParseTokens
             parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
             parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
         {
-            parserModel.StatementBuilder.ChildList.Add(typeClauseNode);
+            parserModel.StatementBuilder.MostRecentNode = typeClauseNode;
         }
         else if (parserModel.CurrentCodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
                  UtilityApi.IsConvertibleToIdentifierToken(typeClauseNode.TypeIdentifierToken.SyntaxKind) &&
@@ -267,7 +263,7 @@ public static class ParseTokens
         }
         else
         {
-            parserModel.StatementBuilder.ChildList.Add(typeClauseNode);
+            parserModel.StatementBuilder.MostRecentNode = typeClauseNode;
         }
         
         return;
@@ -459,7 +455,7 @@ public static class ParseTokens
         if (!successParse)
         {
             expressionNode = ParseExpressions.ParseExpression(ref parserModel);
-            parserModel.StatementBuilder.ChildList.Add(expressionNode);
+            parserModel.StatementBuilder.MostRecentNode = expressionNode;
             return;
         }
         
@@ -488,7 +484,7 @@ public static class ParseTokens
     {
         var openSquareBracketToken = parserModel.TokenWalker.Consume();
     
-        if (parserModel.StatementBuilder.ChildList.Count != 0)
+        if (!parserModel.StatementBuilder.StatementIsEmpty)
         {
             /*compilationUnit.DiagnosticBag.ReportTodoException(
                 openSquareBracketToken.TextSpan,
@@ -536,9 +532,9 @@ public static class ParseTokens
         var shouldBacktrack = false;
         IExpressionNode backtrackNode = EmptyExpressionNode.Empty;
         
-        if (parserModel.StatementBuilder.ChildList.Count == 1)
+        if (parserModel.StatementBuilder.MostRecentNode is not null)
         {
-            var previousNode = parserModel.StatementBuilder.ChildList[0];
+            var previousNode = parserModel.StatementBuilder.MostRecentNode;
             
             if (previousNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
             {

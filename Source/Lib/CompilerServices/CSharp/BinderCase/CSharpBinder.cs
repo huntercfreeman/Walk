@@ -50,6 +50,7 @@ public class CSharpBinder
     public List<SyntaxKind> CSharpParserModel_TryParseExpressionSyntaxKindList { get; } = new();
     public HashSet<string> CSharpParserModel_ClearedPartialDefinitionHashSet { get; } = new();
     public List<TypeDefinitionNode> CSharpParserModel_ExternalTypeDefinitionList { get; } = new();
+    public CSharpStatementBuilder CSharpParserModel_StatementBuilder { get; } = new();
     
     public TokenWalker CSharpParserModel_TokenWalker { get; } = new(Array.Empty<SyntaxToken>(), useDeferredParsing: true);
     
@@ -86,9 +87,6 @@ public class CSharpBinder
         CSharpFacts.Types.Void.ToTypeReference(),
         EmptyExpressionNode.Empty,
         EmptyExpressionNode.Empty);
-    
-    public List<ISyntax> CSharpStatementBuilder_ChildList { get; } = new();
-    public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> CSharpStatementBuilder_ParseLambdaStatementScopeStack { get; } = new();
     
     public TextEditorService TextEditorService { get; set; }
     public CSharpCompilerService CSharpCompilerService { get; set; }
@@ -154,6 +152,21 @@ public class CSharpBinder
     public void FinalizeCompilationUnit(ResourceUri resourceUri, CSharpCompilationUnit compilationUnit)
     {
         UpsertCompilationUnit(resourceUri, compilationUnit);
+        
+        while (Pool_TypeClauseNode_Queue.Count > POOL_TYPE_CLAUSE_NODE_MAX_COUNT)
+        {
+            _ = Pool_TypeClauseNode_Queue.Dequeue();
+        }
+        
+        while (Pool_VariableReferenceNode_Queue.Count > POOL_VARIABLE_REFERENCE_NODE_MAX_COUNT)
+        {
+            _  = Pool_VariableReferenceNode_Queue.Dequeue();
+        }
+        
+        while (Pool_AmbiguousIdentifierExpressionNode_Queue.Count > POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT)
+        {
+            _  = Pool_AmbiguousIdentifierExpressionNode_Queue.Dequeue();
+        }
     }
     
     /// <summary>This also clears any pooled lists.</summary>
