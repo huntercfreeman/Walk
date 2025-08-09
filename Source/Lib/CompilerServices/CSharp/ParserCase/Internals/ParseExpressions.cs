@@ -1660,6 +1660,10 @@ public static class ParseExpressions
         {
             parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
         }
+        else if (expressionSecondary.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
+        {
+            parserModel.Return_ConstructorInvocationExpressionNode((ConstructorInvocationExpressionNode)expressionSecondary);
+        }
     
         if (collectionInitializationNode.IsClosed)
             return parserModel.Binder.Shared_BadExpressionNode;
@@ -3940,6 +3944,10 @@ public static class ParseExpressions
         else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
         {
             parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+        }
+        else if (expressionSecondary.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
+        {
+            parserModel.Return_ConstructorInvocationExpressionNode((ConstructorInvocationExpressionNode)expressionSecondary);
         }
         
         // Just needs to be set to anything other than out, in, ref.
