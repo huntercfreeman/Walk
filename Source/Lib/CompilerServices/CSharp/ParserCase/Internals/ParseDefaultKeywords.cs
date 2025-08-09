@@ -301,6 +301,11 @@ public class ParseDefaultKeywords
                     parserModel.Binder.GenericParameterEntryList[enumerable.ResultTypeReference.IndexGenericParameterEntryList].TypeReference);
         }
         
+        if (enumerable.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)enumerable);
+        }
+        
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
             
         if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)

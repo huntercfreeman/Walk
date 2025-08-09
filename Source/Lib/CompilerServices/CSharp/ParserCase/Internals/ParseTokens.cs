@@ -169,15 +169,11 @@ public static class ParseTokens
                 expression = ParseExpressions.ParseExpression(ref parserModel);
                 parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
                 
-                if (parserModel.GetTextSpanText(variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan) ==
-                        "var")
+                if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode &&
+                    parserModel.GetTextSpanText(variableDeclarationNode.TypeReference.TypeIdentifierToken.TextSpan) == "var")
                 {
-                    if (expression.SyntaxKind == SyntaxKind.BinaryExpressionNode)
-                    {
-                        var binaryExpressionNode = (BinaryExpressionNode)expression;
-                        if (binaryExpressionNode.OperatorToken.SyntaxKind == SyntaxKind.EqualsToken)
-                            variableDeclarationNode.SetImplicitTypeReference(binaryExpressionNode.RightExpressionResultTypeReference);
-                    }
+                    var binaryExpressionNode = (BinaryExpressionNode)expression;
+                    variableDeclarationNode.SetImplicitTypeReference(binaryExpressionNode.RightExpressionResultTypeReference);
                 }
                 
                 parserModel.StatementBuilder.ChildList.Add(expression);

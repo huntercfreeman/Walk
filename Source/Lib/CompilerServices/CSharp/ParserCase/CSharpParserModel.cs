@@ -154,6 +154,10 @@ public ref struct CSharpParserModel
     
     public IExpressionNode ExpressionPrimary { get; set; }
     
+    public static int Pool_VariableReferenceNode_Hit { get; set; }
+    public static int Pool_VariableReferenceNode_Miss { get; set; }
+    public static int Pool_VariableReferenceNode_Return { get; set; }
+    
     /// <summary>
     /// It is expected that any invoker of this method will immediately set the returned TypeClauseNode instance's:
     /// - TypeIdentifierToken
@@ -207,9 +211,11 @@ public ref struct CSharpParserModel
     {
         if (Binder.Pool_VariableReferenceNode_Queue.TryDequeue(out var variableReferenceNode))
         {
+            Pool_VariableReferenceNode_Hit++;
             return variableReferenceNode;
         }
 
+        Pool_VariableReferenceNode_Miss++;
         return new VariableReferenceNode(
             variableIdentifierToken: default,
             variableDeclarationNode: default);
@@ -222,6 +228,8 @@ public ref struct CSharpParserModel
     /// </summary>
     public readonly void Return_VariableReferenceNode(VariableReferenceNode variableReferenceNode)
     {
+        Pool_VariableReferenceNode_Return++;
+        
         variableReferenceNode.VariableDeclarationNode = default;
         variableReferenceNode._isFabricated = false;
     

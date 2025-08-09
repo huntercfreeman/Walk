@@ -3813,6 +3813,11 @@ public static class ParseExpressions
             ++parserModel.Compilation.CountFunctionInvocationParameterMetadataList;
         }
         
+        if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+        }
+        
         // Just needs to be set to anything other than out, in, ref.
         parserModel.ParameterModifierKind = ParameterModifierKind.None;
         return invocationNode;
