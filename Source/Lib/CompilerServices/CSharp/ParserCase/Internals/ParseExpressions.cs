@@ -3594,6 +3594,7 @@ public static class ParseExpressions
                                
                             expressionPrimary = typeClauseNode;
                             
+                            // Variable name collision issues, thus 'A'
                             var targetNodeA = firstNamespaceClauseNode;
                             while (targetNodeA is not null)
                             {
@@ -3607,6 +3608,7 @@ public static class ParseExpressions
                     }
                 }
                 
+                // Variable name collision issues, thus 'B'
                 var targetNodeB = firstNamespaceClauseNode;
                 while (targetNodeB is not null)
                 {
