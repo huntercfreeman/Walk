@@ -135,7 +135,6 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
                     DimensionOperatorKind.Add,
                     DimensionUnitPurposeKind));
 
-                Console.WriteLine("???");
                 await PanelGroupParameter.ReRenderSelfAndAdjacentElementDimensionsFunc
                     .Invoke()
                     .ConfigureAwait(false);
@@ -144,7 +143,6 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
             {
                 adjacentElementSizeDimensionAttribute.DimensionUnitList.RemoveAt(indexOfPreviousPassAlong);
 
-                Console.WriteLine("???");
                 await PanelGroupParameter.ReRenderSelfAndAdjacentElementDimensionsFunc
                     .Invoke()
                     .ConfigureAwait(false);
