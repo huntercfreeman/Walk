@@ -44,7 +44,7 @@ public ref struct CSharpParserModel
         
         ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
         
-        StatementBuilder = new(Binder);
+        StatementBuilder = Binder.CSharpParserModel_StatementBuilder;
         
         ParseChildScopeStack = Binder.CSharpParserModel_ParseChildScopeStack;
         ParseChildScopeStack.Clear();

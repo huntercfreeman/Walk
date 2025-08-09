@@ -4,7 +4,7 @@ public class ParseContextualKeywords
 {
     public static void HandleVarTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
-        if (parserModel.StatementBuilder.ChildList.Count == 0)
+        if (parserModel.StatementBuilder.StatementIsEmpty)
             ParseTokens.ParseIdentifierToken(ref parserModel);
         else
             _ = ParseExpressions.ParseExpression(ref parserModel);

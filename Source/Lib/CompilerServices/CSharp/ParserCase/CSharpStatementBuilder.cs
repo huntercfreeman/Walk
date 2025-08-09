@@ -4,34 +4,35 @@ using Walk.CompilerServices.CSharp.BinderCase;
 
 namespace Walk.CompilerServices.CSharp.ParserCase;
 
-public struct CSharpStatementBuilder
+public class CSharpStatementBuilder
 {
-    public CSharpStatementBuilder(CSharpBinder binder)
+    public CSharpStatementBuilder()
     {
-        ChildList = binder.CSharpStatementBuilder_ChildList;
+        MostRecentNode = null;
         ChildList.Clear();
-        
-        ParseLambdaStatementScopeStack = binder.CSharpStatementBuilder_ParseLambdaStatementScopeStack;
         ParseLambdaStatementScopeStack.Clear();
     }
+    
+    public bool StatementIsEmpty => ChildList.Count == 0 && MostRecentNode is null;
 
-    public List<ISyntax> ChildList { get; }
+    public List<SyntaxToken> ChildList { get; } = new();
+    public ISyntaxNode? MostRecentNode { get; set; }
     
     /// <summary>
     /// Prior to finishing a statement, you must check whether ParseLambdaStatementScopeStack has a child that needs to be parsed.
     /// All currently known cases of finishing a statement will do so by invoking FinishStatement(...),
     /// this method will perform this check internally.
     /// </summary>
-    public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> ParseLambdaStatementScopeStack { get; }
+    public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> ParseLambdaStatementScopeStack { get; } = new();
     
     /// <summary>Invokes the other overload with index: ^1</summary>
-    public bool TryPeek(out ISyntax syntax)
+    public bool TryPeek(out SyntaxToken syntax)
     {
         return TryPeek(^1, out syntax);
     }
     
     /// <summary>^1 gives the last entry</summary>
-    public bool TryPeek(Index index, out ISyntax syntax)
+    public bool TryPeek(Index index, out SyntaxToken syntax)
     {
         if (ChildList.Count - index.Value > -1)
         {
@@ -39,11 +40,11 @@ public struct CSharpStatementBuilder
             return true;
         }
         
-        syntax = null;
+        syntax = default;
         return false;
     }
     
-    public ISyntax Pop()
+    public SyntaxToken Pop()
     {
         var syntax = ChildList[^1];
         ChildList.RemoveAt(ChildList.Count - 1);
@@ -65,16 +66,14 @@ public struct CSharpStatementBuilder
     /// </summary>
     public bool FinishStatement(int finishTokenIndex, ref CSharpParserModel parserModel)
     {
-        if (ChildList.Count > 0)
+        if (MostRecentNode is not null && MostRecentNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
         {
-            if (ChildList[^1].SyntaxKind == SyntaxKind.VariableReferenceNode)
-            {
-                var variableReferenceNode = (Walk.Extensions.CompilerServices.Syntax.Nodes.VariableReferenceNode)ChildList[^1];
-                parserModel.Return_VariableReferenceNode(variableReferenceNode);
-            }
-            
-            ChildList.Clear();
+            var variableReferenceNode = (Walk.Extensions.CompilerServices.Syntax.Nodes.VariableReferenceNode)MostRecentNode;
+            parserModel.Return_VariableReferenceNode(variableReferenceNode);
         }
+    
+        MostRecentNode = null;
+        ChildList.Clear();
         
         /*if (ChildList.Count != 0)
         {

@@ -50,6 +50,7 @@ public class CSharpBinder
     public List<SyntaxKind> CSharpParserModel_TryParseExpressionSyntaxKindList { get; } = new();
     public HashSet<string> CSharpParserModel_ClearedPartialDefinitionHashSet { get; } = new();
     public List<TypeDefinitionNode> CSharpParserModel_ExternalTypeDefinitionList { get; } = new();
+    public CSharpStatementBuilder CSharpParserModel_StatementBuilder { get; } = new();
     
     public TokenWalker CSharpParserModel_TokenWalker { get; } = new(Array.Empty<SyntaxToken>(), useDeferredParsing: true);
     
@@ -86,9 +87,6 @@ public class CSharpBinder
         CSharpFacts.Types.Void.ToTypeReference(),
         EmptyExpressionNode.Empty,
         EmptyExpressionNode.Empty);
-    
-    public List<ISyntax> CSharpStatementBuilder_ChildList { get; } = new();
-    public Stack<(ICodeBlockOwner CodeBlockOwner, CSharpDeferredChildScope DeferredChildScope)> CSharpStatementBuilder_ParseLambdaStatementScopeStack { get; } = new();
     
     public TextEditorService TextEditorService { get; set; }
     public CSharpCompilerService CSharpCompilerService { get; set; }
