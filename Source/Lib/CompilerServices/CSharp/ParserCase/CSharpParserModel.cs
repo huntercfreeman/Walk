@@ -240,10 +240,6 @@ public ref struct CSharpParserModel
         return variableReference;
     }
     
-    public static int Pool_NamespaceClauseNode_Hit { get; set; }
-    public static int Pool_NamespaceClauseNode_Miss { get; set; }
-    public static int Pool_NamespaceClauseNode_Return { get; set; }
-    
     /// <summary>
     /// It is expected that any invoker of this method will immediately set the returned NamespaceClauseNode instance's:
     /// - IdentifierToken
@@ -253,11 +249,9 @@ public ref struct CSharpParserModel
     {
         if (Binder.Pool_NamespaceClauseNode_Queue.TryDequeue(out var namespaceClauseNode))
         {
-            Pool_NamespaceClauseNode_Hit++;
             return namespaceClauseNode;
         }
 
-        Pool_NamespaceClauseNode_Miss++;
         return new NamespaceClauseNode(
             identifierToken: default);
     }
@@ -269,8 +263,6 @@ public ref struct CSharpParserModel
     /// </summary>
     public readonly void Return_NamespaceClauseNode(NamespaceClauseNode namespaceClauseNode)
     {
-        Pool_NamespaceClauseNode_Return++;
-    
         namespaceClauseNode._isFabricated = false;
         
         namespaceClauseNode.NamespacePrefixNode = null;

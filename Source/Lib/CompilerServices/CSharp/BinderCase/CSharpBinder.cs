@@ -204,16 +204,6 @@ public class CSharpBinder
                 countFunctionParameterEntryList: 0,
                 closeParenthesisToken: default));
         }
-        
-        Task.Run(async () =>
-        {
-            await Task.Delay(25_000);
-            
-            Console.WriteLine($"Pool_NamespaceClauseNode_Hit: {CSharpParserModel.Pool_NamespaceClauseNode_Hit}");
-            Console.WriteLine($"Pool_NamespaceClauseNode_Miss: {CSharpParserModel.Pool_NamespaceClauseNode_Miss}");
-            Console.WriteLine($"Pool_NamespaceClauseNode_Return: {CSharpParserModel.Pool_NamespaceClauseNode_Return}");
-            Console.WriteLine($"Pool_NamespaceClauseNode_%: {((double)CSharpParserModel.Pool_NamespaceClauseNode_Hit / (CSharpParserModel.Pool_NamespaceClauseNode_Hit + CSharpParserModel.Pool_NamespaceClauseNode_Miss)):P1}");
-        });
     }
     
     /// <summary><see cref="FinalizeCompilationUnit"/></summary>
