@@ -1166,8 +1166,14 @@ public class ParseDefaultKeywords
     {
         var returnKeywordToken = parserModel.TokenWalker.Consume();
         var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
-        var returnStatementNode = new ReturnStatementNode(returnKeywordToken, expressionNode);
         
-        parserModel.StatementBuilder.ChildList.Add(returnStatementNode);
+        if (expressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionNode);
+        }
+        
+        // var returnStatementNode = new ReturnStatementNode(returnKeywordToken, expressionNode);
+        
+        // parserModel.StatementBuilder.ChildList.Add(returnStatementNode);
     }
 }
