@@ -1181,7 +1181,9 @@ public static class ParseExpressions
                 ambiguousIdentifierTokenText,
                 out var namespacePrefixNode))
             {
-                result = new NamespaceClauseNode(ambiguousIdentifierExpressionNode.Token);
+                var namespaceClauseNode = parserModel.Rent_NamespaceClauseNode();
+                namespaceClauseNode.IdentifierToken = ambiguousIdentifierExpressionNode.Token;
+                result = namespaceClauseNode;
                 
                 parserModel.Binder.SymbolList.Insert(
                     parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
@@ -3214,6 +3216,10 @@ public static class ParseExpressions
                 {
                     parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
                 }
+                else if (expressionPrimary.SyntaxKind == SyntaxKind.NamespaceClauseNode)
+                {
+                    parserModel.Return_NamespaceClauseNode((NamespaceClauseNode)expressionPrimary);
+                }
                 expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, ref parserModel);
                 continue;
             }
@@ -3538,10 +3544,11 @@ public static class ParseExpressions
                                 memberIdentifierToken.TextSpan));
                         ++parserModel.Compilation.CountSymbolList;
                         
-                        return new NamespaceClauseNode(
-                            memberIdentifierToken,
-                            secondNamespacePrefixNode,
-                            firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex);
+                        var namespaceClauseNode = parserModel.Rent_NamespaceClauseNode();
+                        namespaceClauseNode.IdentifierToken = memberIdentifierToken;
+                        namespaceClauseNode.NamespacePrefixNode = secondNamespacePrefixNode;
+                        namespaceClauseNode.StartOfMemberAccessChainPositionIndex = firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex;
+                        return namespaceClauseNode;
                     }
                 }
                 
