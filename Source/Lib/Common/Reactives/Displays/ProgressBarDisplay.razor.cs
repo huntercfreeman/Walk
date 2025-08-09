@@ -16,9 +16,24 @@ public partial class ProgressBarDisplay : ComponentBase, IDisposable
     public ProgressBarModel ProgressBarModel { get; set; } = null!;
 
     private bool _hasSeenProgressModelIsDisposed = false;
+    
+    private int _fillWidthInPercentage;
+    private int _cancelButtonWidthInPercentage;
+    
+    private string _progressBarFillCssStyle;
+    private string _cancelButtonContainingDivCssStyle;
 
     protected override void OnInitialized()
     {
+    	_fillWidthInPercentage = 100;
+    	_cancelButtonWidthInPercentage = 30;
+    	
+    	_progressBarFillCssStyle = $"position: relative; height: 2em; width: {_fillWidthInPercentage}%;";
+    	_cancelButtonContainingDivCssStyle = $"width: {_cancelButtonWidthInPercentage}%;";
+    	
+    	if (ProgressBarModel.IsCancellable)
+    		_fillWidthInPercentage -= _cancelButtonWidthInPercentage;
+    
         if (!ProgressBarModel.IsDisposed)
             ProgressBarModel.ProgressChanged += OnProgressChanged;
     }
