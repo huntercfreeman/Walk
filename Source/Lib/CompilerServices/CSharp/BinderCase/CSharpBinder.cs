@@ -79,6 +79,10 @@ public class CSharpBinder
     /// <summary>This is only safe to use while parsing</summary>
     internal readonly Queue<VariableReferenceNode> Pool_VariableReferenceNode_Queue = new();
     
+    internal const int POOL_NAMESPACE_CLAUSE_NODE_MAX_COUNT = 3;
+    /// <summary>This is only safe to use while parsing</summary>
+    internal readonly Queue<NamespaceClauseNode> Pool_NamespaceClauseNode_Queue = new();
+    
     internal const int POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT = 3;
     /// <summary>This is only safe to use while parsing</summary>
     internal readonly Queue<AmbiguousIdentifierExpressionNode> Pool_AmbiguousIdentifierExpressionNode_Queue = new();
@@ -131,6 +135,12 @@ public class CSharpBinder
                 variableDeclarationNode: default));
         }
         
+        for (int i = 0; i < POOL_NAMESPACE_CLAUSE_NODE_MAX_COUNT; i++)
+        {
+            Pool_NamespaceClauseNode_Queue.Enqueue(new NamespaceClauseNode(
+                identifierToken: default));
+        }
+        
         for (int i = 0; i < POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT; i++)
         {
             Pool_AmbiguousIdentifierExpressionNode_Queue.Enqueue(new AmbiguousIdentifierExpressionNode(
@@ -167,6 +177,16 @@ public class CSharpBinder
                 countFunctionParameterEntryList: 0,
                 closeParenthesisToken: default));
         }
+        
+        Task.Run(async () =>
+        {
+            await Task.Delay(25_000);
+            
+            Console.WriteLine($"Pool_NamespaceClauseNode_Hit: {CSharpParserModel.Pool_NamespaceClauseNode_Hit}");
+            Console.WriteLine($"Pool_NamespaceClauseNode_Miss: {CSharpParserModel.Pool_NamespaceClauseNode_Miss}");
+            Console.WriteLine($"Pool_NamespaceClauseNode_Return: {CSharpParserModel.Pool_NamespaceClauseNode_Return}");
+            Console.WriteLine($"Pool_NamespaceClauseNode_%: {((double)CSharpParserModel.Pool_NamespaceClauseNode_Hit / (CSharpParserModel.Pool_NamespaceClauseNode_Hit + CSharpParserModel.Pool_NamespaceClauseNode_Miss)):P1}");
+        });
     }
     
     /// <summary><see cref="FinalizeCompilationUnit"/></summary>
@@ -195,6 +215,11 @@ public class CSharpBinder
         while (Pool_VariableReferenceNode_Queue.Count > POOL_VARIABLE_REFERENCE_NODE_MAX_COUNT)
         {
             _  = Pool_VariableReferenceNode_Queue.Dequeue();
+        }
+        
+        while (Pool_NamespaceClauseNode_Queue.Count > POOL_NAMESPACE_CLAUSE_NODE_MAX_COUNT)
+        {
+            _  = Pool_NamespaceClauseNode_Queue.Dequeue();
         }
         
         while (Pool_AmbiguousIdentifierExpressionNode_Queue.Count > POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT)
