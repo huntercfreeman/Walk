@@ -473,6 +473,10 @@ public static class ParseExpressions
                     {
                         parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
                     }
+                    else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+                    {
+                        parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
+                    }
                     
                     return EmptyExpressionNode.Empty;
                 }
@@ -490,6 +494,10 @@ public static class ParseExpressions
                     if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
                     {
                         parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
+                    }
+                    else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+                    {
+                        parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
                     }
                     
                     return EmptyExpressionNode.Empty;
@@ -515,6 +523,10 @@ public static class ParseExpressions
                 {
                     parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
                 }
+                else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+                {
+                    parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
+                }
                 
                 return parserModel.Binder.Shared_BadExpressionNode;
             }
@@ -529,6 +541,10 @@ public static class ParseExpressions
             if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
             {
                 parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
+            }
+            else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+            {
+                parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
             }
             
             return EmptyExpressionNode.Empty;
@@ -2785,6 +2801,7 @@ public static class ParseExpressions
                 functionInvocationNode.CloseParenthesisToken = parserModel.TokenWalker.Current;
                 return functionInvocationNode;
             default:
+                parserModel.Return_FunctionInvocationNode(functionInvocationNode);
                 return parserModel.Binder.Shared_BadExpressionNode;
         }
     }
@@ -2817,6 +2834,7 @@ public static class ParseExpressions
             case SyntaxKind.FunctionInvocationNode:
                 return functionInvocationNode;
             default:
+                parserModel.Return_FunctionInvocationNode(functionInvocationNode);
                 return parserModel.Binder.Shared_BadExpressionNode;
         }
     }

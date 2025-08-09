@@ -310,6 +310,10 @@ public class ParseDefaultKeywords
         {
             parserModel.Return_VariableReferenceNode((VariableReferenceNode)enumerable);
         }
+        else if (enumerable.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+        {
+            parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)enumerable);
+        }
         
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
             
@@ -571,6 +575,10 @@ public class ParseDefaultKeywords
         {
             parserModel.Return_VariableReferenceNode((VariableReferenceNode)expression);
         }
+        else if (expression.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+        {
+            parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expression);
+        }
         
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
         
@@ -688,6 +696,10 @@ public class ParseDefaultKeywords
         if (expression.SyntaxKind == SyntaxKind.VariableReferenceNode)
         {
             parserModel.Return_VariableReferenceNode((VariableReferenceNode)expression);
+        }
+        else if (expression.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+        {
+            parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expression);
         }
         
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
@@ -1195,6 +1207,10 @@ public class ParseDefaultKeywords
         if (expressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
         {
             parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionNode);
+        }
+        else if (expressionNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+        {
+            parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionNode);
         }
         
         // var returnStatementNode = new ReturnStatementNode(returnKeywordToken, expressionNode);
