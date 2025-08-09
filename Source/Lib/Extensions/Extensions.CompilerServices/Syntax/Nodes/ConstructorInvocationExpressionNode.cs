@@ -12,13 +12,10 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
     public ConstructorInvocationExpressionNode(
         SyntaxToken newKeywordToken,
         TypeReference typeReference,
-        
         SyntaxToken openParenthesisToken,
         int indexFunctionParameterEntryList,
         int countFunctionParameterEntryList,
-        SyntaxToken closeParenthesisToken
-        
-        )
+        SyntaxToken closeParenthesisToken)
     {
         #if DEBUG
         Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ConstructorInvocationExpressionNode++;
@@ -34,7 +31,7 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
         
     }
 
-    public SyntaxToken NewKeywordToken { get; }
+    public SyntaxToken NewKeywordToken { get; set; }
     public TypeReference ResultTypeReference { get; set; }
     
     public SyntaxToken OpenParenthesisToken { get; set; }
@@ -47,12 +44,19 @@ public sealed class ConstructorInvocationExpressionNode : IInvocationNode
     public ConstructorInvocationStageKind ConstructorInvocationStageKind { get; set; } = ConstructorInvocationStageKind.Unset;
 
     public int Unsafe_ParentIndexKey { get; set; }
-    public bool IsFabricated { get; init; }
+    
+    public bool _isFabricated;
+    public bool IsFabricated
+    {
+        get => _isFabricated;
+        init => _isFabricated = value;
+    }
+    
     public SyntaxKind SyntaxKind => SyntaxKind.ConstructorInvocationExpressionNode;
     
     public bool IsParsingFunctionParameters { get; set; }
 
-#if DEBUG
+    #if DEBUG
     ~ConstructorInvocationExpressionNode()
     {
         Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.ConstructorInvocationExpressionNode--;

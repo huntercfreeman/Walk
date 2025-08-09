@@ -1220,6 +1220,10 @@ public class ParseDefaultKeywords
         {
             parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionNode);
         }
+        else if (expressionNode.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
+        {
+            parserModel.Return_ConstructorInvocationExpressionNode((ConstructorInvocationExpressionNode)expressionNode);
+        }
         
         // var returnStatementNode = new ReturnStatementNode(returnKeywordToken, expressionNode);
         
