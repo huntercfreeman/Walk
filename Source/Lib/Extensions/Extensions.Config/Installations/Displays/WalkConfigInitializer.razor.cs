@@ -461,7 +461,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
-                CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN));
+                DimensionUnitPurposeKind.ResizableHandleColumn));
         
         // InitializeBottomPanelTabs();
         var bottomPanel = CommonFacts.GetBottomPanelGroup(panelState);
@@ -472,7 +472,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 () => appOptionsState.Options.ResizeHandleHeightInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
-                CommonFacts.PURPOSE_RESIZABLE_HANDLE_ROW));
+                DimensionUnitPurposeKind.ResizableHandleRow));
 
         // terminalGroupPanel
         var terminalGroupPanel = new Panel(
@@ -526,7 +526,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 () => appOptionsState.Options.ResizeHandleHeightInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
-                CommonFacts.PURPOSE_RESIZABLE_HANDLE_ROW));
+                DimensionUnitPurposeKind.ResizableHandleRow));
     
         Panel_InitializeResizeHandleDimensionUnit(
             leftPanel.Key,
@@ -534,7 +534,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
-                CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN));
+                DimensionUnitPurposeKind.ResizableHandleColumn));
         
         // terminalGroupPanel: This UI has resizable parts that need to be initialized.
         TerminalGroup_InitializeResizeHandleDimensionUnit(
@@ -542,7 +542,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
-                CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN));
+                DimensionUnitPurposeKind.ResizableHandleColumn));
         
         // testExplorerPanel: This UI has resizable parts that need to be initialized.
         ReduceInitializeResizeHandleDimensionUnitAction(
@@ -550,7 +550,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
-                CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN));
+                DimensionUnitPurposeKind.ResizableHandleColumn));
     
         // SetActivePanelTabAction
         DotNetService.CommonService.SetActivePanelTab(leftPanel.Key, solutionExplorerPanel.Key);
@@ -568,28 +568,28 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
 
         if (inPanelGroup is not null)
         {
-            if (dimensionUnit.Purpose == CommonFacts.PURPOSE_RESIZABLE_HANDLE_ROW ||
-                dimensionUnit.Purpose == CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN)
+            if (dimensionUnit.Purpose == DimensionUnitPurposeKind.ResizableHandleRow ||
+                dimensionUnit.Purpose == DimensionUnitPurposeKind.ResizableHandleColumn)
             {
-                if (dimensionUnit.Purpose == CommonFacts.PURPOSE_RESIZABLE_HANDLE_ROW)
+                if (dimensionUnit.Purpose == DimensionUnitPurposeKind.ResizableHandleRow)
                 {
                     if (inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList is not null)
                     {
                         var existingDimensionUnit = inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList
                             .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
         
-                        if (existingDimensionUnit.Purpose is null)
+                        if (existingDimensionUnit.Purpose == DimensionUnitPurposeKind.None)
                             inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
                     }
                 }
-                else if (dimensionUnit.Purpose != CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN)
+                else if (dimensionUnit.Purpose != DimensionUnitPurposeKind.ResizableHandleColumn)
                 {
                     if (inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList is not null)
                     {
                         var existingDimensionUnit = inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList
                             .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
         
-                        if (existingDimensionUnit.Purpose is null)
+                        if (existingDimensionUnit.Purpose == DimensionUnitPurposeKind.None)
                             inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
                     }
                 }
@@ -601,7 +601,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
     {
         var inState = DotNetService.GetTestExplorerState();
 
-        if (dimensionUnit.Purpose != CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN)
+        if (dimensionUnit.Purpose != DimensionUnitPurposeKind.ResizableHandleColumn)
         {
             return;
         }
@@ -616,7 +616,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
             var existingDimensionUnit = inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList
                 .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
 
-            if (existingDimensionUnit.Purpose is not null)
+            if (existingDimensionUnit.Purpose != DimensionUnitPurposeKind.None)
             {
                 return;
             }
@@ -634,7 +634,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
             var existingDimensionUnit = inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList
                 .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
 
-            if (existingDimensionUnit.Purpose is not null)
+            if (existingDimensionUnit.Purpose != DimensionUnitPurposeKind.None)
             {
                 return;
             }
@@ -647,14 +647,14 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
     {
         var codeSearchState = DotNetService.IdeService.GetCodeSearchState();
     
-        if (dimensionUnit.Purpose == CommonFacts.PURPOSE_RESIZABLE_HANDLE_ROW)
+        if (dimensionUnit.Purpose == DimensionUnitPurposeKind.ResizableHandleRow)
         {
             if (codeSearchState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList is not null)
             {
                 var existingDimensionUnit = codeSearchState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList
                     .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
 
-                if (existingDimensionUnit.Purpose is null)
+                if (existingDimensionUnit.Purpose == DimensionUnitPurposeKind.None)
                     codeSearchState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
             }
 
@@ -663,7 +663,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 var existingDimensionUnit = codeSearchState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList
                     .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
 
-                if (existingDimensionUnit.Purpose is null)
+                if (existingDimensionUnit.Purpose == DimensionUnitPurposeKind.None)
                     codeSearchState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
             }
         }
@@ -673,14 +673,14 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
     {
         var terminalGroupState = DotNetService.IdeService.GetTerminalGroupState();
     
-        if (dimensionUnit.Purpose == CommonFacts.PURPOSE_RESIZABLE_HANDLE_COLUMN)
+        if (dimensionUnit.Purpose == DimensionUnitPurposeKind.ResizableHandleColumn)
         {
             if (terminalGroupState.BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList is not null)
             {
                 var existingDimensionUnit = terminalGroupState.BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList
                     .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
 
-                if (existingDimensionUnit.Purpose is null)
+                if (existingDimensionUnit.Purpose == DimensionUnitPurposeKind.None)
                     terminalGroupState.BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
             }
 
@@ -689,7 +689,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                 var existingDimensionUnit = terminalGroupState.TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList
                     .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
 
-                if (existingDimensionUnit.Purpose is null)
+                if (existingDimensionUnit.Purpose == DimensionUnitPurposeKind.None)
                     terminalGroupState.TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
             }
         }
