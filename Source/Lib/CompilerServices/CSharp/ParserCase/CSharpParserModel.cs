@@ -336,6 +336,58 @@ public ref struct CSharpParserModel
         Binder.Pool_FunctionInvocationNode_Queue.Enqueue(functionInvocationNode);
     }
     
+    public static int Pool_ConstructorInvocationNode_Hit { get; set; }
+    public static int Pool_ConstructorInvocationNode_Miss { get; set; }
+    public static int Pool_ConstructorInvocationNode_Return { get; set; }
+    
+    /// <summary>
+    /// It is expected that any invoker of this method will immediately set the returned ConstructorInvocationExpressionNode instance's:
+    /// - NewKeywordToken
+    /// Thus, the Return_ConstructorInvocationExpressionNode(...) method will NOT clear that property's state.
+    /// </summary>
+    public readonly ConstructorInvocationExpressionNode Rent_ConstructorInvocationExpressionNode()
+    {
+        if (Binder.Pool_ConstructorInvocationExpressionNode_Queue.TryDequeue(out var constructorInvocationExpressionNode))
+        {
+            Pool_ConstructorInvocationNode_Hit++;
+            return constructorInvocationExpressionNode;
+        }
+
+        Pool_ConstructorInvocationNode_Miss++;
+        return new ConstructorInvocationExpressionNode(
+            newKeywordToken: default,
+            typeReference: default,
+            openParenthesisToken: default,
+            indexFunctionParameterEntryList: -1,
+            countFunctionParameterEntryList: 0,
+            closeParenthesisToken: default);
+    }
+    
+    /// <summary>
+    /// It is expected that any invoker of this method will immediately set the returned ConstructorInvocationExpressionNode instance's:
+    /// - NewKeywordToken
+    /// Thus, the Return_ConstructorInvocationExpressionNode(...) method will NOT clear that property's state.
+    /// </summary>
+    public readonly void Return_ConstructorInvocationExpressionNode(ConstructorInvocationExpressionNode constructorInvocationExpressionNode)
+    {
+        Pool_ConstructorInvocationNode_Return++;
+        
+        constructorInvocationExpressionNode.ResultTypeReference = default;
+        
+        constructorInvocationExpressionNode.OpenParenthesisToken = default;
+        constructorInvocationExpressionNode.IndexFunctionParameterEntryList = -1;
+        constructorInvocationExpressionNode.CountFunctionParameterEntryList = 0;
+        constructorInvocationExpressionNode.CloseParenthesisToken = default;
+    
+        constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
+    
+        constructorInvocationExpressionNode.IsFabricated = false;
+        
+        constructorInvocationExpressionNode.IsParsingFunctionParameters = false;
+        
+        Binder.Pool_ConstructorInvocationExpressionNode_Queue.Enqueue(constructorInvocationExpressionNode);
+    }
+    
     public readonly ICodeBlockOwner? GetParent(
         ICodeBlockOwner codeBlockOwner,
         Walk.CompilerServices.CSharp.CompilerServiceCase.CSharpCompilationUnit cSharpCompilationUnit)

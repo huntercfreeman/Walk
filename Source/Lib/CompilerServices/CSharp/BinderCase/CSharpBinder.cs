@@ -83,13 +83,12 @@ public class CSharpBinder
     /// <summary>This is only safe to use while parsing</summary>
     internal readonly Queue<AmbiguousIdentifierExpressionNode> Pool_AmbiguousIdentifierExpressionNode_Queue = new();
     
+    internal const int POOL_CONSTRUCTOR_INVOCATION_EXPRESSION_NODE_MAX_COUNT = 3;
+    /// <summary>This is only safe to use while parsing</summary>
+    internal readonly Queue<ConstructorInvocationExpressionNode> Pool_ConstructorInvocationExpressionNode_Queue = new();
+    
     internal const int POOL_FUNCTION_INVOCATION_NODE_MAX_COUNT = 3;
-    /// <summary>
-    /// This is only safe to use while parsing
-    ///
-    /// Last checked this re-uses 'Pool_FunctionInvocationNode_%: 64.1%' of the nodes.
-    /// Preferably this would be above 90% if not approaching 100% but I'll have to revisit this later.
-    /// </summary>
+    /// <summary>This is only safe to use while parsing</summary>
     internal readonly Queue<FunctionInvocationNode> Pool_FunctionInvocationNode_Queue = new();
         
     public BadExpressionNode Shared_BadExpressionNode { get; } = new BadExpressionNode(
@@ -157,6 +156,27 @@ public class CSharpBinder
                 closeParenthesisToken: default,
                 resultTypeReference: CSharpFacts.Types.Void.ToTypeReference()));
         }
+        
+        for (int i = 0; i < POOL_CONSTRUCTOR_INVOCATION_EXPRESSION_NODE_MAX_COUNT; i++)
+        {
+            Pool_ConstructorInvocationExpressionNode_Queue.Enqueue(new ConstructorInvocationExpressionNode(
+                newKeywordToken: default,
+                typeReference: default,
+                openParenthesisToken: default,
+                indexFunctionParameterEntryList: -1,
+                countFunctionParameterEntryList: 0,
+                closeParenthesisToken: default));
+        }
+        
+        Task.Run(async () =>
+        {
+            await Task.Delay(26_000);
+            
+            Console.WriteLine($"Pool_ConstructorInvocationNode_Hit: {CSharpParserModel.Pool_ConstructorInvocationNode_Hit}");
+            Console.WriteLine($"Pool_ConstructorInvocationNode_Miss: {CSharpParserModel.Pool_ConstructorInvocationNode_Miss}");
+            Console.WriteLine($"Pool_ConstructorInvocationNode_Return: {CSharpParserModel.Pool_ConstructorInvocationNode_Return}");
+            Console.WriteLine($"Pool_ConstructorInvocationNode_%: {((double)CSharpParserModel.Pool_ConstructorInvocationNode_Hit / (CSharpParserModel.Pool_ConstructorInvocationNode_Hit + CSharpParserModel.Pool_ConstructorInvocationNode_Miss)):P1}");
+        });
     }
     
     /// <summary><see cref="FinalizeCompilationUnit"/></summary>
@@ -195,6 +215,11 @@ public class CSharpBinder
         while (Pool_FunctionInvocationNode_Queue.Count > POOL_FUNCTION_INVOCATION_NODE_MAX_COUNT)
         {
             _  = Pool_FunctionInvocationNode_Queue.Dequeue();
+        }
+        
+        while (Pool_ConstructorInvocationExpressionNode_Queue.Count > POOL_CONSTRUCTOR_INVOCATION_EXPRESSION_NODE_MAX_COUNT)
+        {
+            _  = Pool_ConstructorInvocationExpressionNode_Queue.Dequeue();
         }
     }
     
