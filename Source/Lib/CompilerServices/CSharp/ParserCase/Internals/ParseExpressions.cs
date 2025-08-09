@@ -1402,6 +1402,15 @@ public static class ParseExpressions
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseSquareBracketToken ||
             parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
         {
+            if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+            {
+                parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+            }
+            else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+            {
+                parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+            }
+            
             return variableReferenceNode;
         }
     
@@ -1629,6 +1638,15 @@ public static class ParseExpressions
          IExpressionNode expressionSecondary, ref CSharpParserModel parserModel)
     {
         var collectionInitializationNode = (CollectionInitializationNode)parserModel.ExpressionPrimary;
+    
+        if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+        }
+        else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+        {
+            parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+        }
     
         if (collectionInitializationNode.IsClosed)
             return parserModel.Binder.Shared_BadExpressionNode;
@@ -2396,6 +2414,15 @@ public static class ParseExpressions
                 ForceDecisionAmbiguousIdentifier(EmptyExpressionNode.Empty, (AmbiguousIdentifierExpressionNode)expressionSecondary, ref parserModel);
 
             interpolatedStringNode.StringInterpolatedEndToken = parserModel.TokenWalker.Current;
+            
+            if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+            {
+                parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+            }
+            else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+            {
+                parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+            }
 
             // Interpolated strings have their interpolated expressions inserted into the syntax token list
             // immediately following the StringInterpolatedStartToken itself.
@@ -2411,10 +2438,28 @@ public static class ParseExpressions
             if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
                 ForceDecisionAmbiguousIdentifier(EmptyExpressionNode.Empty, (AmbiguousIdentifierExpressionNode)expressionSecondary, ref parserModel);
 
+            if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+            {
+                parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+            }
+            else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+            {
+                parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+            }
+            
             return interpolatedStringNode;
         }
         else
         {
+            if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+            {
+                parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+            }
+            else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+            {
+                parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+            }
+            
             return parserModel.Binder.Shared_BadExpressionNode;
         }
     }
@@ -3659,11 +3704,13 @@ public static class ParseExpressions
                     else if (node.SyntaxKind == SyntaxKind.TypeClauseNode)
                     {
                         var token = ((TypeClauseNode)node).TypeIdentifierToken;
+                        // TODO: why is this double assignment?
                         identifierToken = identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, ref parserModel);
                     }
                     else if (node.SyntaxKind == SyntaxKind.VariableReferenceNode)
                     {
                         var token = ((VariableReferenceNode)node).VariableIdentifierToken;
+                        // TODO: why is this double assignment?
                         identifierToken = identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, ref parserModel);
                     }
                     else
