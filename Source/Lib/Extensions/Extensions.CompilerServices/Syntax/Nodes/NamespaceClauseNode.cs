@@ -26,6 +26,7 @@ public sealed class NamespaceClauseNode : IExpressionNode
 
     public SyntaxToken IdentifierToken { get; set; }
     public NamespacePrefixNode? NamespacePrefixNode { get; set; }
+    public NamespaceClauseNode? PreviousNamespaceClauseNode { get; set; }
     public int StartOfMemberAccessChainPositionIndex { get; set; }
 
     TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();

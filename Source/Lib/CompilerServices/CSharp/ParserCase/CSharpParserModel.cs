@@ -274,6 +274,7 @@ public ref struct CSharpParserModel
         namespaceClauseNode._isFabricated = false;
         
         namespaceClauseNode.NamespacePrefixNode = null;
+        namespaceClauseNode.PreviousNamespaceClauseNode = null;
         namespaceClauseNode.StartOfMemberAccessChainPositionIndex = default;
     
         Binder.Pool_NamespaceClauseNode_Queue.Enqueue(namespaceClauseNode);

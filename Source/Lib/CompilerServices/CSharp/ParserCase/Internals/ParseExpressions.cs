@@ -3216,10 +3216,7 @@ public static class ParseExpressions
                 {
                     parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
                 }
-                else if (expressionPrimary.SyntaxKind == SyntaxKind.NamespaceClauseNode)
-                {
-                    parserModel.Return_NamespaceClauseNode((NamespaceClauseNode)expressionPrimary);
-                }
+                
                 expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, ref parserModel);
                 continue;
             }
@@ -3424,6 +3421,7 @@ public static class ParseExpressions
                 {
                     parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
                 }
+                
                 expressionPrimary = variableReferenceNode;
             }
             else if (foundDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
@@ -3547,6 +3545,7 @@ public static class ParseExpressions
                         var namespaceClauseNode = parserModel.Rent_NamespaceClauseNode();
                         namespaceClauseNode.IdentifierToken = memberIdentifierToken;
                         namespaceClauseNode.NamespacePrefixNode = secondNamespacePrefixNode;
+                        namespaceClauseNode.PreviousNamespaceClauseNode = firstNamespaceClauseNode;
                         namespaceClauseNode.StartOfMemberAccessChainPositionIndex = firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex;
                         return namespaceClauseNode;
                     }
@@ -3595,12 +3594,28 @@ public static class ParseExpressions
                                
                             expressionPrimary = typeClauseNode;
                             
+                            var targetNodeA = firstNamespaceClauseNode;
+                            while (targetNodeA is not null)
+                            {
+                                var temporaryNode = targetNodeA.PreviousNamespaceClauseNode;
+                                parserModel.Return_NamespaceClauseNode(targetNodeA);
+                                targetNodeA = temporaryNode;
+                            }
+                            
                             return typeClauseNode;
                         }
                     }
                 }
+                
+                var targetNodeB = firstNamespaceClauseNode;
+                while (targetNodeB is not null)
+                {
+                    var temporaryNode = targetNodeB.PreviousNamespaceClauseNode;
+                    parserModel.Return_NamespaceClauseNode(targetNodeB);
+                    targetNodeB = temporaryNode;
+                }
             }
-        
+            
             var variableReferenceNode = parserModel.Rent_VariableReferenceNode();
             variableReferenceNode.VariableIdentifierToken = memberIdentifierToken;
             variableReferenceNode.VariableDeclarationNode = null;
