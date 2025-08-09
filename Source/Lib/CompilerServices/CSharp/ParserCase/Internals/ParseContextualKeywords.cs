@@ -122,7 +122,12 @@ public class ParseContextualKeywords
 
     public static void HandleNameofTokenContextualKeyword(ref CSharpParserModel parserModel)
     {
-        _ = ParseExpressions.ParseExpression(ref parserModel);
+        var expression = ParseExpressions.ParseExpression(ref parserModel);
+        
+        if (expression.SyntaxKind == Walk.Extensions.CompilerServices.Syntax.SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((Walk.Extensions.CompilerServices.Syntax.Nodes.VariableReferenceNode)expression);
+        }
     }
 
     public static void HandleNintTokenContextualKeyword(ref CSharpParserModel parserModel)

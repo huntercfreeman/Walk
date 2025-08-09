@@ -251,7 +251,12 @@ public class ParseDefaultKeywords
         for (int i = 0; i < 3; i++)
         {
             parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-            _ = ParseExpressions.ParseExpression(ref parserModel);
+            var expression = ParseExpressions.ParseExpression(ref parserModel);
+            
+            if (expression.SyntaxKind == SyntaxKind.VariableReferenceNode)
+            {
+                parserModel.Return_VariableReferenceNode((VariableReferenceNode)expression);
+            }
             
             var statementDelimiterToken = parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
             
@@ -344,7 +349,12 @@ public class ParseDefaultKeywords
         var openParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
         
         parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-        _ = ParseExpressions.ParseExpression(ref parserModel);
+        var expression = ParseExpressions.ParseExpression(ref parserModel);
+        
+        if (expression.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expression);
+        }
         
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
         
@@ -446,6 +456,11 @@ public class ParseDefaultKeywords
         
         parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
         var expressionNode = ParseExpressions.ParseExpression(ref parserModel);
+        
+        if (expressionNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionNode);
+        }
         
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
         
@@ -550,7 +565,12 @@ public class ParseDefaultKeywords
         var openParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
         
         parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-        _ = ParseExpressions.ParseExpression(ref parserModel);
+        var expression = ParseExpressions.ParseExpression(ref parserModel);
+        
+        if (expression.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expression);
+        }
         
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
         
@@ -663,7 +683,12 @@ public class ParseDefaultKeywords
             return;
 
         parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-        _ = ParseExpressions.ParseExpression(ref parserModel);
+        var expression = ParseExpressions.ParseExpression(ref parserModel);
+        
+        if (expression.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expression);
+        }
         
         var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 

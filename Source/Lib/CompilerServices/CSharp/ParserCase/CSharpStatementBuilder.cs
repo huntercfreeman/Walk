@@ -65,7 +65,17 @@ public struct CSharpStatementBuilder
     /// </summary>
     public bool FinishStatement(int finishTokenIndex, ref CSharpParserModel parserModel)
     {
-        ChildList.Clear();
+        if (ChildList.Count > 0)
+        {
+            if (ChildList[^1].SyntaxKind == SyntaxKind.VariableReferenceNode)
+            {
+                var variableReferenceNode = (Walk.Extensions.CompilerServices.Syntax.Nodes.VariableReferenceNode)ChildList[^1];
+                parserModel.Return_VariableReferenceNode(variableReferenceNode);
+            }
+            
+            ChildList.Clear();
+        }
+        
         /*if (ChildList.Count != 0)
         {
             var statementSyntax = ChildList[^1];
