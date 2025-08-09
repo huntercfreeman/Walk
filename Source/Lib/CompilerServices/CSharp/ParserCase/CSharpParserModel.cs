@@ -154,6 +154,11 @@ public ref struct CSharpParserModel
     
     public IExpressionNode ExpressionPrimary { get; set; }
     
+    /// <summary>
+    /// It is expected that any invoker of this method will immediately set the returned TypeClauseNode instance's:
+    /// - TypeIdentifierToken
+    /// Thus, the Return_TypeClauseNode(...) method will NOT clear that property's state.
+    /// </summary>
     public readonly TypeClauseNode Rent_TypeClauseNode()
     {
         if (Binder.Pool_TypeClauseNode_Queue.TryDequeue(out var typeClauseNode))
@@ -170,9 +175,13 @@ public ref struct CSharpParserModel
             isKeywordType: false);
     }
     
+    /// <summary>
+    /// It is expected that any invoker of this method will immediately set the returned TypeClauseNode instance's:
+    /// - TypeIdentifierToken
+    /// Thus, the Return_TypeClauseNode(...) method will NOT clear that property's state.
+    /// </summary>
     public readonly void Return_TypeClauseNode(TypeClauseNode typeClauseNode)
     {
-        typeClauseNode.TypeIdentifierToken = default;
         typeClauseNode.OpenAngleBracketToken = default;
         typeClauseNode.IndexGenericParameterEntryList = -1;
         typeClauseNode.CountGenericParameterEntryList = 0;
@@ -186,12 +195,14 @@ public ref struct CSharpParserModel
         typeClauseNode.ExplicitDefinitionTextSpan = default;
         typeClauseNode.ExplicitDefinitionResourceUri = default;
     
-        if (Binder.Pool_TypeClauseNode_Queue.Count < CSharpBinder.POOL_TYPE_CLAUSE_NODE_MAX_COUNT)
-        {
-            Binder.Pool_TypeClauseNode_Queue.Enqueue(typeClauseNode);
-        }
+        Binder.Pool_TypeClauseNode_Queue.Enqueue(typeClauseNode);
     }
     
+    /// <summary>
+    /// It is expected that any invoker of this method will immediately set the returned VariableReferenceNode instance's:
+    /// - VariableIdentifierToken
+    /// Thus, the Return_VariableReferenceNode(...) method will NOT clear that property's state.
+    /// </summary>
     public readonly VariableReferenceNode Rent_VariableReferenceNode()
     {
         if (Binder.Pool_VariableReferenceNode_Queue.TryDequeue(out var variableReferenceNode))
@@ -204,18 +215,24 @@ public ref struct CSharpParserModel
             variableDeclarationNode: default);
     }
     
+    /// <summary>
+    /// It is expected that any invoker of this method will immediately set the returned VariableReferenceNode instance's:
+    /// - VariableIdentifierToken
+    /// Thus, the Return_VariableReferenceNode(...) method will NOT clear that property's state.
+    /// </summary>
     public readonly void Return_VariableReferenceNode(VariableReferenceNode variableReferenceNode)
     {
-        variableReferenceNode.VariableIdentifierToken = default;
         variableReferenceNode.VariableDeclarationNode = default;
         variableReferenceNode._isFabricated = false;
     
-        if (Binder.Pool_VariableReferenceNode_Queue.Count < CSharpBinder.POOL_VARIABLE_REFERENCE_NODE_MAX_COUNT)
-        {
-            Binder.Pool_VariableReferenceNode_Queue.Enqueue(variableReferenceNode);
-        }
+        Binder.Pool_VariableReferenceNode_Queue.Enqueue(variableReferenceNode);
     }
     
+    /// <summary>
+    /// It is expected that any invoker of this method will immediately set the returned VariableReferenceNode instance's:
+    /// - VariableIdentifierToken
+    /// Thus, the Return_VariableReferenceNode(...) method will NOT clear that property's state.
+    /// </summary>
     public readonly VariableReference Return_VariableReferenceNode_ToStruct(VariableReferenceNode variableReferenceNode)
     {
         var variableReference = new VariableReference(variableReferenceNode);
@@ -223,6 +240,12 @@ public ref struct CSharpParserModel
         return variableReference;
     }
     
+    /// <summary>
+    /// It is expected that any invoker of this method will immediately set the returned AmbiguousIdentifierExpressionNode instance's:
+    /// - Token
+    /// - FollowsMemberAccessToken
+    /// Thus, the Return_AmbiguousIdentifierExpressionNode(...) method will NOT clear that property's state.
+    /// </summary>
     public readonly AmbiguousIdentifierExpressionNode Rent_AmbiguousIdentifierExpressionNode()
     {
         if (Binder.Pool_AmbiguousIdentifierExpressionNode_Queue.TryDequeue(out var ambiguousIdentifierExpressionNode))
@@ -239,23 +262,23 @@ public ref struct CSharpParserModel
             resultTypeReference: CSharpFacts.Types.Void.ToTypeReference());
     }
     
+    /// <summary>
+    /// It is expected that any invoker of this method will immediately set the returned AmbiguousIdentifierExpressionNode instance's:
+    /// - Token
+    /// - FollowsMemberAccessToken
+    /// Thus, the Return_AmbiguousIdentifierExpressionNode(...) method will NOT clear that property's state.
+    /// </summary>
     public readonly void Return_AmbiguousIdentifierExpressionNode(AmbiguousIdentifierExpressionNode ambiguousIdentifierExpressionNode)
     {
-        ambiguousIdentifierExpressionNode.Token = default;
-        
         ambiguousIdentifierExpressionNode.OpenAngleBracketToken = default;
         ambiguousIdentifierExpressionNode.IndexGenericParameterEntryList = -1;
         ambiguousIdentifierExpressionNode.CountGenericParameterEntryList = 0;
         ambiguousIdentifierExpressionNode.CloseAngleBracketToken = default;
         
         ambiguousIdentifierExpressionNode.ResultTypeReference = CSharpFacts.Types.Void.ToTypeReference();
-        ambiguousIdentifierExpressionNode.FollowsMemberAccessToken = false;
         ambiguousIdentifierExpressionNode.HasQuestionMark = false;
     
-        if (Binder.Pool_AmbiguousIdentifierExpressionNode_Queue.Count < CSharpBinder.POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT)
-        {
-            Binder.Pool_AmbiguousIdentifierExpressionNode_Queue.Enqueue(ambiguousIdentifierExpressionNode);
-        }
+        Binder.Pool_AmbiguousIdentifierExpressionNode_Queue.Enqueue(ambiguousIdentifierExpressionNode);
     }
     
     public readonly ICodeBlockOwner? GetParent(
