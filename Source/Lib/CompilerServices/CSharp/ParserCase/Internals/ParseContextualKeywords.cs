@@ -128,6 +128,10 @@ public class ParseContextualKeywords
         {
             parserModel.Return_VariableReferenceNode((Walk.Extensions.CompilerServices.Syntax.Nodes.VariableReferenceNode)expression);
         }
+        else if (expression.SyntaxKind == Walk.Extensions.CompilerServices.Syntax.SyntaxKind.FunctionInvocationNode)
+        {
+            parserModel.Return_FunctionInvocationNode((Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionInvocationNode)expression);
+        }
     }
 
     public static void HandleNintTokenContextualKeyword(ref CSharpParserModel parserModel)
