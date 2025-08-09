@@ -183,7 +183,7 @@ public record struct PanelState(
         leftPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(33.3333, DimensionUnitKind.Percentage),
-            new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, CommonFacts.PURPOSE_OFFSET)
+            new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, DimensionUnitPurposeKind.Offset)
         });
 
         return leftPanelGroup;
@@ -200,7 +200,7 @@ public record struct PanelState(
         rightPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(33.3333, DimensionUnitKind.Percentage),
-            new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, CommonFacts.PURPOSE_OFFSET),
+            new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, DimensionUnitPurposeKind.Offset),
         });
 
         return rightPanelGroup;
@@ -217,7 +217,7 @@ public record struct PanelState(
         bottomPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(22, DimensionUnitKind.Percentage),
-            new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, CommonFacts.PURPOSE_OFFSET),
+            new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, DimensionUnitPurposeKind.Offset),
             new DimensionUnit(CommonFacts.Ide_Header_Height.Value / 2, CommonFacts.Ide_Header_Height.DimensionUnitKind, DimensionOperatorKind.Subtract)
         });
 

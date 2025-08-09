@@ -35,7 +35,7 @@ public record struct CodeSearchState(
                     0,
                     DimensionUnitKind.Pixels,
                     DimensionOperatorKind.Subtract,
-                    CommonFacts.PURPOSE_OFFSET),
+                    DimensionUnitPurposeKind.Offset),
             });
         }
 
@@ -50,7 +50,7 @@ public record struct CodeSearchState(
                     0,
                     DimensionUnitKind.Pixels,
                     DimensionOperatorKind.Subtract,
-                    CommonFacts.PURPOSE_OFFSET),
+                    DimensionUnitPurposeKind.Offset),
             });
         }
     }

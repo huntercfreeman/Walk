@@ -23,7 +23,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
     
     private TabCascadingValueBatch _tabCascadingValueBatch = new();
 
-    public string DimensionAttributeModificationPurpose { get; private set; }
+    public DimensionUnitPurposeKind DimensionUnitPurposeKind { get; private set; }
 
     private string _panelPositionCss;
     private string _htmlIdTabs;
@@ -33,18 +33,25 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
         var position = string.Empty;
 
         if (CommonFacts.LeftPanelGroupKey == PanelGroupParameter.PanelGroupKey)
+        {
             position = "left";
+            DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_left;
+        }
         else if (CommonFacts.RightPanelGroupKey == PanelGroupParameter.PanelGroupKey)
+        {
             position = "right";
+            DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_right;
+        }
         else if (CommonFacts.BottomPanelGroupKey == PanelGroupParameter.PanelGroupKey)
+        {
             position = "bottom";
+            DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_bottom;
+        }
 
         _panelPositionCss = $"di_ide_panel_{position}";
         
         _htmlIdTabs = _panelPositionCss + "_tabs";
         
-        DimensionAttributeModificationPurpose = $"take_size_of_adjacent_hidden_panel_{PanelGroupParameter.PanelGroupKey}";
-    
         CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
     }
 
@@ -115,7 +122,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
             }
             
             var indexOfPreviousPassAlong = adjacentElementSizeDimensionAttribute.DimensionUnitList.FindIndex(
-                x => x.Purpose == DimensionAttributeModificationPurpose);
+                x => x.Purpose == DimensionUnitPurposeKind);
 
             if (activePanelTab is null && indexOfPreviousPassAlong == -1)
             {
@@ -126,7 +133,7 @@ public partial class PanelGroupDisplay : ComponentBase, IDisposable
                     panelGroupPercentageSize.Value,
                     panelGroupPercentageSize.DimensionUnitKind,
                     DimensionOperatorKind.Add,
-                    DimensionAttributeModificationPurpose));
+                    DimensionUnitPurposeKind));
 
                 await PanelGroupParameter.ReRenderSelfAndAdjacentElementDimensionsFunc
                     .Invoke()

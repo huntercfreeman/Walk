@@ -11,7 +11,7 @@ public struct DimensionUnit
         Func<double> valueFunc,
         DimensionUnitKind dimensionUnitKind,
         DimensionOperatorKind dimensionOperatorKind,
-        string purpose)
+        DimensionUnitPurposeKind purpose)
     {
         ValueFunc = valueFunc;
     
@@ -29,14 +29,14 @@ public struct DimensionUnit
         Value = value;
         DimensionUnitKind = dimensionUnitKind;
         DimensionOperatorKind = DimensionOperatorKind.Add;
-        Purpose = string.Empty;
+        Purpose = DimensionUnitPurposeKind.None;
     }
     
     public DimensionUnit(
         double value,
         DimensionUnitKind dimensionUnitKind,
         DimensionOperatorKind dimensionOperatorKind,
-        string purpose)
+        DimensionUnitPurposeKind purpose)
     {
         ValueFunc = null;
     
@@ -56,7 +56,7 @@ public struct DimensionUnit
         Value = value;
         DimensionUnitKind = dimensionUnitKind;
         DimensionOperatorKind = dimensionOperatorKind;
-        Purpose = string.Empty;
+        Purpose = DimensionUnitPurposeKind.None;
     }
 
     private double _value;
@@ -95,5 +95,5 @@ public struct DimensionUnit
     
     public DimensionUnitKind DimensionUnitKind { get; }
     public DimensionOperatorKind DimensionOperatorKind { get; } = DimensionOperatorKind.Add;
-    public string Purpose { get; } = string.Empty;
+    public DimensionUnitPurposeKind Purpose { get; }
 }

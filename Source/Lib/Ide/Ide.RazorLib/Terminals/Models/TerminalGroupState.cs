@@ -19,7 +19,7 @@ public record struct TerminalGroupState(Key<ITerminal> ActiveTerminalKey)
                     0,
                     DimensionUnitKind.Pixels,
                     DimensionOperatorKind.Subtract,
-                    CommonFacts.PURPOSE_OFFSET),
+                    DimensionUnitPurposeKind.Offset),
             });
         }
 
@@ -34,7 +34,7 @@ public record struct TerminalGroupState(Key<ITerminal> ActiveTerminalKey)
                     0,
                     DimensionUnitKind.Pixels,
                     DimensionOperatorKind.Subtract,
-                    CommonFacts.PURPOSE_OFFSET),
+                    DimensionUnitPurposeKind.Offset),
             });
         }
     }

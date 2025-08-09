@@ -79,12 +79,6 @@ public static class CommonFacts
     }
     /* End PanelFacts */
     
-    /* Start DimensionUnitFacts */
-    public const string PURPOSE_OFFSET = "OFFSET";
-    public const string PURPOSE_RESIZABLE_HANDLE_ROW = "RESIZABLE_HANDLE_ROW";
-    public const string PURPOSE_RESIZABLE_HANDLE_COLUMN = "RESIZABLE_HANDLE_COLUMN";
-    /* End DimensionUnitFacts */
-    
     /* Start SizeFacts */
     public static readonly DimensionUnit Ide_Header_Height = new(3, DimensionUnitKind.RootCharacterHeight);
     /* End SizeFacts */

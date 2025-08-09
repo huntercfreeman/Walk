@@ -15,21 +15,13 @@
 		var percentageComplete = $"{localDecimalPercentProgress}%";
 	}
     
-    @{
-    	var fillWidthInPercentage = 100;
-    	var cancelButtonWidthInPercentage = 30;
-    	
-    	if (localProgressBarModel.IsCancellable)
-    		fillWidthInPercentage -= cancelButtonWidthInPercentage;
-    }
-    
     <div class="di_progress-bar-time-elapsed">
 		@($"{localProgressBarModel.GetTimeElapsed().TotalSeconds:N3}") seconds
 	</div>
     
     <div class="di_progress-bar" style="display: flex;">
     	<div class="di_progress-bar-fill"
-	         style="position: relative; height: 2em; width: @(fillWidthInPercentage)%;">
+	         style="@_progressBarFillCssStyle">
 	
 			<div class="di_progress-bar-fill-slider"
 				 style="background-color: var(--di_active-with-focus-background-color); width: @(percentageComplete); height: 100%;">
@@ -43,7 +35,7 @@
 		
 		@if (localProgressBarModel.IsCancellable)
 		{
-			<div style="width: @(cancelButtonWidthInPercentage)%;">
+			<div style="@_cancelButtonContainingDivCssStyle">
 				<button class="di_button"
 						style="width: 100%; height: 100%;"
 					    disabled=@(localProgressBarModel.IsCancelled || localProgressBarModel.IntentToCancel || localProgressBarModel.IsDisposed)
