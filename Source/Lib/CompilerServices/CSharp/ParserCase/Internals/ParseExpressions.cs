@@ -210,6 +210,11 @@ public static class ParseExpressions
                         parserModel.TokenWalker.BacktrackNoReturnValue();
                     }
                     
+                    if (parserModel.ExpressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+                    {
+                        parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)parserModel.ExpressionPrimary);
+                    }
+                    
                     parserModel.ExpressionPrimary = expressionPrimaryPreviousRoot;
                     
                     forceExit = true;
