@@ -1294,6 +1294,7 @@ public static class ParseExpressions
                 
                     var typeReference = new TypeReference(typeClauseNode);
                     parserModel.Return_TypeClauseNode(typeClauseNode);
+                    parserModel.Return_VariableReferenceNode(variableReferenceNode);
                     return new VariableReferenceNode(
                         nameableToken,
                         new VariableDeclarationNode(
@@ -1313,6 +1314,7 @@ public static class ParseExpressions
             }
             case SyntaxKind.SwitchTokenKeyword:
             {
+                parserModel.Return_VariableReferenceNode(variableReferenceNode);
                 return new SwitchExpressionNode();
             }
             case SyntaxKind.PlusPlusToken:
@@ -1344,10 +1346,12 @@ public static class ParseExpressions
                 if (variableReferenceNode.ResultTypeReference.IndexGenericParameterEntryList != -1 &&
                     variableReferenceNode.ResultTypeReference.CountGenericParameterEntryList == 1)
                 {
+                    var indexGenericParameterEntryList = variableReferenceNode.ResultTypeReference.IndexGenericParameterEntryList;
+                    parserModel.Return_VariableReferenceNode(variableReferenceNode);
                     return new VariableReferenceNode(
                         token,
                         new VariableDeclarationNode(
-                            parserModel.Binder.GenericParameterEntryList[variableReferenceNode.ResultTypeReference.IndexGenericParameterEntryList].TypeReference,
+                            parserModel.Binder.GenericParameterEntryList[indexGenericParameterEntryList].TypeReference,
                             token,
                             VariableKind.Local,
                             isInitialized: true,
@@ -1355,6 +1359,7 @@ public static class ParseExpressions
                 }
                 else
                 {
+                    parserModel.Return_VariableReferenceNode(variableReferenceNode);
                     return new VariableReferenceNode(
                         token,
                         new VariableDeclarationNode(
@@ -1366,6 +1371,7 @@ public static class ParseExpressions
                 }
             }
             default:
+                parserModel.Return_VariableReferenceNode(variableReferenceNode);
                 return parserModel.Binder.Shared_BadExpressionNode;
         }
     }
@@ -1389,6 +1395,7 @@ public static class ParseExpressions
             return variableReferenceNode;
         }
     
+        parserModel.Return_VariableReferenceNode(variableReferenceNode);
         return parserModel.Binder.Shared_BadExpressionNode;
     }
         
