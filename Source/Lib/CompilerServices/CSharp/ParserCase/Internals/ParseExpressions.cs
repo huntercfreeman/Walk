@@ -1181,7 +1181,9 @@ public static class ParseExpressions
                 ambiguousIdentifierTokenText,
                 out var namespacePrefixNode))
             {
-                result = new NamespaceClauseNode(ambiguousIdentifierExpressionNode.Token);
+                var namespaceClauseNode = parserModel.Rent_NamespaceClauseNode();
+                namespaceClauseNode.IdentifierToken = ambiguousIdentifierExpressionNode.Token;
+                result = namespaceClauseNode;
                 
                 parserModel.Binder.SymbolList.Insert(
                     parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
@@ -3214,6 +3216,7 @@ public static class ParseExpressions
                 {
                     parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
                 }
+                
                 expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, ref parserModel);
                 continue;
             }
@@ -3418,6 +3421,7 @@ public static class ParseExpressions
                 {
                     parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
                 }
+                
                 expressionPrimary = variableReferenceNode;
             }
             else if (foundDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
@@ -3538,10 +3542,12 @@ public static class ParseExpressions
                                 memberIdentifierToken.TextSpan));
                         ++parserModel.Compilation.CountSymbolList;
                         
-                        return new NamespaceClauseNode(
-                            memberIdentifierToken,
-                            secondNamespacePrefixNode,
-                            firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex);
+                        var namespaceClauseNode = parserModel.Rent_NamespaceClauseNode();
+                        namespaceClauseNode.IdentifierToken = memberIdentifierToken;
+                        namespaceClauseNode.NamespacePrefixNode = secondNamespacePrefixNode;
+                        namespaceClauseNode.PreviousNamespaceClauseNode = firstNamespaceClauseNode;
+                        namespaceClauseNode.StartOfMemberAccessChainPositionIndex = firstNamespaceClauseNode.StartOfMemberAccessChainPositionIndex;
+                        return namespaceClauseNode;
                     }
                 }
                 
@@ -3588,12 +3594,30 @@ public static class ParseExpressions
                                
                             expressionPrimary = typeClauseNode;
                             
+                            // Variable name collision issues, thus 'A'
+                            var targetNodeA = firstNamespaceClauseNode;
+                            while (targetNodeA is not null)
+                            {
+                                var temporaryNode = targetNodeA.PreviousNamespaceClauseNode;
+                                parserModel.Return_NamespaceClauseNode(targetNodeA);
+                                targetNodeA = temporaryNode;
+                            }
+                            
                             return typeClauseNode;
                         }
                     }
                 }
+                
+                // Variable name collision issues, thus 'B'
+                var targetNodeB = firstNamespaceClauseNode;
+                while (targetNodeB is not null)
+                {
+                    var temporaryNode = targetNodeB.PreviousNamespaceClauseNode;
+                    parserModel.Return_NamespaceClauseNode(targetNodeB);
+                    targetNodeB = temporaryNode;
+                }
             }
-        
+            
             var variableReferenceNode = parserModel.Rent_VariableReferenceNode();
             variableReferenceNode.VariableIdentifierToken = memberIdentifierToken;
             variableReferenceNode.VariableDeclarationNode = null;

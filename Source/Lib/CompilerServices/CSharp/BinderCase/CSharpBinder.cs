@@ -79,6 +79,37 @@ public class CSharpBinder
     /// <summary>This is only safe to use while parsing</summary>
     internal readonly Queue<VariableReferenceNode> Pool_VariableReferenceNode_Queue = new();
     
+    // When parsing Walk.sln solution wide:
+    //
+    // Count of 3 => Pool_NamespaceClauseNode_%: 81.5%
+    // Count of 4 => Pool_NamespaceClauseNode_%: 89.9%
+    // Count of 5 => Pool_NamespaceClauseNode_%: 97.9%
+    // Count of 6 => Pool_NamespaceClauseNode_%: 98.0%
+    // Count of 7 => Pool_NamespaceClauseNode_%: 98.1%
+    // Count of 8 => Pool_NamespaceClauseNode_%: 98.2%
+    // Count of 9 => Pool_NamespaceClauseNode_%: 98.2%
+    // Count of 18 => Pool_NamespaceClauseNode_%: 98.8%
+    // Count of 50 => Pool_NamespaceClauseNode_%: 100.0%
+    // Count of 25 => Pool_NamespaceClauseNode_%: 99.3%
+    //
+    // Likely you don't actually have 25 namespace clause nodes one after another.
+    //
+    // Probably just have an edge case that results in no return, but it is occurring so minimally
+    // that you can just increase the count in the pool and observe a % hit increase that is oddly high.
+    //
+    // I don't commonly use explicit namespace qualification.
+    // Thus I would probably pick '5' since that is where the value slows down greatly.
+    //
+    // But, I also might not have a fair measurement of what the impact of '6' would be,
+    // due to me not commonly using explicit namespace qualification.
+    //
+    // Therefore, I'll go 1 higher than what I'd pick.
+    // So, I'd pick '5' thus go 1 higher and pick '6'.
+    // 
+    internal const int POOL_NAMESPACE_CLAUSE_NODE_MAX_COUNT = 6;
+    /// <summary>This is only safe to use while parsing</summary>
+    internal readonly Queue<NamespaceClauseNode> Pool_NamespaceClauseNode_Queue = new();
+    
     internal const int POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT = 3;
     /// <summary>This is only safe to use while parsing</summary>
     internal readonly Queue<AmbiguousIdentifierExpressionNode> Pool_AmbiguousIdentifierExpressionNode_Queue = new();
@@ -129,6 +160,12 @@ public class CSharpBinder
             Pool_VariableReferenceNode_Queue.Enqueue(new VariableReferenceNode(
                 variableIdentifierToken: default,
                 variableDeclarationNode: default));
+        }
+        
+        for (int i = 0; i < POOL_NAMESPACE_CLAUSE_NODE_MAX_COUNT; i++)
+        {
+            Pool_NamespaceClauseNode_Queue.Enqueue(new NamespaceClauseNode(
+                identifierToken: default));
         }
         
         for (int i = 0; i < POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT; i++)
@@ -195,6 +232,11 @@ public class CSharpBinder
         while (Pool_VariableReferenceNode_Queue.Count > POOL_VARIABLE_REFERENCE_NODE_MAX_COUNT)
         {
             _  = Pool_VariableReferenceNode_Queue.Dequeue();
+        }
+        
+        while (Pool_NamespaceClauseNode_Queue.Count > POOL_NAMESPACE_CLAUSE_NODE_MAX_COUNT)
+        {
+            _  = Pool_NamespaceClauseNode_Queue.Dequeue();
         }
         
         while (Pool_AmbiguousIdentifierExpressionNode_Queue.Count > POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT)

@@ -25,18 +25,30 @@ public sealed class NamespaceClauseNode : IExpressionNode
     }
 
     public SyntaxToken IdentifierToken { get; set; }
-    public Type? ValueType { get; set; }
     public NamespacePrefixNode? NamespacePrefixNode { get; set; }
+    public NamespaceClauseNode? PreviousNamespaceClauseNode { get; set; }
     public int StartOfMemberAccessChainPositionIndex { get; set; }
 
     TypeReference IExpressionNode.ResultTypeReference => TypeFacts.Pseudo.ToTypeReference();
 
     public int Unsafe_ParentIndexKey { get; set; }
-    public bool IsFabricated { get; init; }
+    
+    public bool _isFabricated;
+    public bool IsFabricated
+    {
+        get
+        {
+            return _isFabricated;
+        }
+        init
+        {
+            _isFabricated = value;
+        }
+    }
     
     public SyntaxKind SyntaxKind => SyntaxKind.NamespaceClauseNode;
 
-#if DEBUG
+    #if DEBUG
     ~NamespaceClauseNode()
     {
         Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.NamespaceClauseNode--;

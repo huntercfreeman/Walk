@@ -241,6 +241,38 @@ public ref struct CSharpParserModel
     }
     
     /// <summary>
+    /// It is expected that any invoker of this method will immediately set the returned NamespaceClauseNode instance's:
+    /// - IdentifierToken
+    /// Thus, the Return_NamespaceClauseNode(...) method will NOT clear that property's state.
+    /// </summary>
+    public readonly NamespaceClauseNode Rent_NamespaceClauseNode()
+    {
+        if (Binder.Pool_NamespaceClauseNode_Queue.TryDequeue(out var namespaceClauseNode))
+        {
+            return namespaceClauseNode;
+        }
+
+        return new NamespaceClauseNode(
+            identifierToken: default);
+    }
+    
+    /// <summary>
+    /// It is expected that any invoker of this method will immediately set the returned NamespaceClauseNode instance's:
+    /// - IdentifierToken
+    /// Thus, the Return_NamespaceClauseNode(...) method will NOT clear that property's state.
+    /// </summary>
+    public readonly void Return_NamespaceClauseNode(NamespaceClauseNode namespaceClauseNode)
+    {
+        namespaceClauseNode._isFabricated = false;
+        
+        namespaceClauseNode.NamespacePrefixNode = null;
+        namespaceClauseNode.PreviousNamespaceClauseNode = null;
+        namespaceClauseNode.StartOfMemberAccessChainPositionIndex = default;
+    
+        Binder.Pool_NamespaceClauseNode_Queue.Enqueue(namespaceClauseNode);
+    }
+    
+    /// <summary>
     /// It is expected that any invoker of this method will immediately set the returned AmbiguousIdentifierExpressionNode instance's:
     /// - Token
     /// - FollowsMemberAccessToken
