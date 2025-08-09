@@ -315,6 +315,8 @@ public class ParseFunctions
                 // Upon encountering a CommaToken the expression loop will set 'functionParametersListingNode'
                 // to the primary expression, then return an EmptyExpressionNode in order to parse the next parameter.
                 _ = ParseExpressions.ParseExpression(ref parserModel);
+                
+                parserModel.Return_FunctionInvocationNode(functionInvocationNode);
             }
         }
         
