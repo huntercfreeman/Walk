@@ -281,6 +281,10 @@ public ref struct CSharpParserModel
         Binder.Pool_AmbiguousIdentifierExpressionNode_Queue.Enqueue(ambiguousIdentifierExpressionNode);
     }
     
+    public static int Pool_FunctionInvocationNode_Hit { get; set; }
+    public static int Pool_FunctionInvocationNode_Miss { get; set; }
+    public static int Pool_FunctionInvocationNode_Return { get; set; }
+    
     /// <summary>
     /// It is expected that any invoker of this method will immediately set the returned FunctionInvocationNode instance's:
     /// - FunctionInvocationIdentifierToken
@@ -290,9 +294,11 @@ public ref struct CSharpParserModel
     {
         if (Binder.Pool_FunctionInvocationNode_Queue.TryDequeue(out var functionInvocationNode))
         {
+            Pool_FunctionInvocationNode_Hit++;
             return functionInvocationNode;
         }
 
+        Pool_FunctionInvocationNode_Miss++;
         return new FunctionInvocationNode(
             functionInvocationIdentifierToken: default,        
             openAngleBracketToken: default,
@@ -313,6 +319,8 @@ public ref struct CSharpParserModel
     /// </summary>
     public readonly void Return_FunctionInvocationNode(FunctionInvocationNode functionInvocationNode)
     {
+        Pool_FunctionInvocationNode_Return++;
+    
         functionInvocationNode.OpenAngleBracketToken = default;
         functionInvocationNode.IndexGenericParameterEntryList = -1;
         functionInvocationNode.CountGenericParameterEntryList = 0;

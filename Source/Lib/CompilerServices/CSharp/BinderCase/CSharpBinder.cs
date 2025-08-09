@@ -157,6 +157,16 @@ public class CSharpBinder
                 closeParenthesisToken: default,
                 resultTypeReference: CSharpFacts.Types.Void.ToTypeReference()));
         }
+    
+        Task.Run(async () =>
+        {
+            await Task.Delay(26_000);
+            
+            Console.WriteLine($"Pool_FunctionInvocationNode_Hit: {CSharpParserModel.Pool_FunctionInvocationNode_Hit}");
+            Console.WriteLine($"Pool_FunctionInvocationNode_Miss: {CSharpParserModel.Pool_FunctionInvocationNode_Miss}");
+            Console.WriteLine($"Pool_FunctionInvocationNode_Return: {CSharpParserModel.Pool_FunctionInvocationNode_Return}");
+            Console.WriteLine($"Pool_FunctionInvocationNode_%: {((double)CSharpParserModel.Pool_FunctionInvocationNode_Hit / (CSharpParserModel.Pool_FunctionInvocationNode_Hit + CSharpParserModel.Pool_FunctionInvocationNode_Miss)):P1}");
+        });
     }
     
     /// <summary><see cref="FinalizeCompilationUnit"/></summary>

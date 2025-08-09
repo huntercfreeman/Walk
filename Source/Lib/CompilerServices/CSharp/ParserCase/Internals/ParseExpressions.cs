@@ -1569,9 +1569,27 @@ public static class ParseExpressions
                 
             binaryExpressionNode.RightExpressionResultTypeReference = expressionSecondary.ResultTypeReference;
             
+            if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+            {
+                parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+            }
+            else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+            {
+                parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+            }
+            
             return binaryExpressionNode;
         }
     
+        if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        {
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+        }
+        else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+        {
+            parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+        }
+        
         return parserModel.Binder.Shared_BadExpressionNode;
     }
     
