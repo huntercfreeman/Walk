@@ -285,18 +285,11 @@ public class ParseFunctions
             {
                 var openParenthesisToken = parserModel.TokenWalker.Current;
             
-                var functionInvocationNode = new FunctionInvocationNode(
-                    consumedIdentifierToken,
-                    openAngleBracketToken: default,
-            		indexGenericParameterEntryList: -1,
-                    countGenericParameterEntryList: 0,
-            		closeAngleBracketToken: default,
-                    openParenthesisToken,
-                    indexFunctionParameterEntryList: parserModel.Binder.FunctionParameterEntryList.Count,
-                    countFunctionParameterEntryList: 0,
-                    closeParenthesisToken: default,
-                    CSharpFacts.Types.Void.ToTypeReference());
-                    
+                var functionInvocationNode = parserModel.Rent_FunctionInvocationNode();
+                functionInvocationNode.FunctionInvocationIdentifierToken = consumedIdentifierToken;
+                functionInvocationNode.OpenParenthesisToken = openParenthesisToken;
+                functionInvocationNode.IndexFunctionParameterEntryList = parserModel.Binder.FunctionParameterEntryList.Count;
+                
                 functionInvocationNode.IsParsingFunctionParameters = true;
                     
                 parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));

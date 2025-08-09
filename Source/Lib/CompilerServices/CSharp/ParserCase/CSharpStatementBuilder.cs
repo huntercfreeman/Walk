@@ -66,10 +66,18 @@ public class CSharpStatementBuilder
     /// </summary>
     public bool FinishStatement(int finishTokenIndex, ref CSharpParserModel parserModel)
     {
-        if (MostRecentNode is not null && MostRecentNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+        if (MostRecentNode is not null)
         {
-            var variableReferenceNode = (Walk.Extensions.CompilerServices.Syntax.Nodes.VariableReferenceNode)MostRecentNode;
-            parserModel.Return_VariableReferenceNode(variableReferenceNode);
+            if (MostRecentNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+            {
+                var variableReferenceNode = (Walk.Extensions.CompilerServices.Syntax.Nodes.VariableReferenceNode)MostRecentNode;
+                parserModel.Return_VariableReferenceNode(variableReferenceNode);
+            }
+            else if (MostRecentNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+            {
+                var functionInvocationNode = (Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionInvocationNode)MostRecentNode;
+                parserModel.Return_FunctionInvocationNode(functionInvocationNode);
+            }
         }
     
         MostRecentNode = null;

@@ -82,6 +82,15 @@ public class CSharpBinder
     internal const int POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT = 3;
     /// <summary>This is only safe to use while parsing</summary>
     internal readonly Queue<AmbiguousIdentifierExpressionNode> Pool_AmbiguousIdentifierExpressionNode_Queue = new();
+    
+    internal const int POOL_FUNCTION_INVOCATION_NODE_MAX_COUNT = 3;
+    /// <summary>
+    /// This is only safe to use while parsing
+    ///
+    /// Last checked this re-uses 'Pool_FunctionInvocationNode_%: 64.1%' of the nodes.
+    /// Preferably this would be above 90% if not approaching 100% but I'll have to revisit this later.
+    /// </summary>
+    internal readonly Queue<FunctionInvocationNode> Pool_FunctionInvocationNode_Queue = new();
         
     public BadExpressionNode Shared_BadExpressionNode { get; } = new BadExpressionNode(
         CSharpFacts.Types.Void.ToTypeReference(),
@@ -133,6 +142,21 @@ public class CSharpBinder
                 closeAngleBracketToken: default,
                 resultTypeReference: CSharpFacts.Types.Void.ToTypeReference()));
         }
+        
+        for (int i = 0; i < POOL_FUNCTION_INVOCATION_NODE_MAX_COUNT; i++)
+        {
+            Pool_FunctionInvocationNode_Queue.Enqueue(new FunctionInvocationNode(
+                functionInvocationIdentifierToken: default,        
+                openAngleBracketToken: default,
+                indexGenericParameterEntryList: -1,
+                countGenericParameterEntryList: 0,
+                closeAngleBracketToken: default,
+                openParenthesisToken: default,
+                indexFunctionParameterEntryList: -1,
+                countFunctionParameterEntryList: 0,
+                closeParenthesisToken: default,
+                resultTypeReference: CSharpFacts.Types.Void.ToTypeReference()));
+        }
     }
     
     /// <summary><see cref="FinalizeCompilationUnit"/></summary>
@@ -166,6 +190,11 @@ public class CSharpBinder
         while (Pool_AmbiguousIdentifierExpressionNode_Queue.Count > POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT)
         {
             _  = Pool_AmbiguousIdentifierExpressionNode_Queue.Dequeue();
+        }
+        
+        while (Pool_FunctionInvocationNode_Queue.Count > POOL_FUNCTION_INVOCATION_NODE_MAX_COUNT)
+        {
+            _  = Pool_FunctionInvocationNode_Queue.Dequeue();
         }
     }
     

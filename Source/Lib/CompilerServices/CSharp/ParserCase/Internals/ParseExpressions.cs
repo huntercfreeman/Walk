@@ -473,6 +473,10 @@ public static class ParseExpressions
                     {
                         parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
                     }
+                    else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+                    {
+                        parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
+                    }
                     
                     return EmptyExpressionNode.Empty;
                 }
@@ -490,6 +494,10 @@ public static class ParseExpressions
                     if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
                     {
                         parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
+                    }
+                    else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+                    {
+                        parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
                     }
                     
                     return EmptyExpressionNode.Empty;
@@ -515,6 +523,10 @@ public static class ParseExpressions
                 {
                     parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
                 }
+                else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+                {
+                    parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
+                }
                 
                 return parserModel.Binder.Shared_BadExpressionNode;
             }
@@ -529,6 +541,10 @@ public static class ParseExpressions
             if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
             {
                 parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
+            }
+            else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+            {
+                parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
             }
             
             return EmptyExpressionNode.Empty;
@@ -706,17 +722,16 @@ public static class ParseExpressions
                 if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken)
                 {
                     // TODO: ContextualKeywords as the function identifier?
-                    var functionInvocationNode = new FunctionInvocationNode(
-                        ambiguousIdentifierExpressionNode.Token,
-                        ambiguousIdentifierExpressionNode.OpenAngleBracketToken,
-                        ambiguousIdentifierExpressionNode.IndexGenericParameterEntryList,
-                        ambiguousIdentifierExpressionNode.CountGenericParameterEntryList,
-                        ambiguousIdentifierExpressionNode.CloseAngleBracketToken,
-                        parserModel.TokenWalker.Current,
-                        indexFunctionParameterEntryList: parserModel.Binder.FunctionParameterEntryList.Count,
-                        countFunctionParameterEntryList: 0,
-                        closeParenthesisToken: default,
-                        CSharpFacts.Types.Void.ToTypeReference());
+                    
+                    var functionInvocationNode = parserModel.Rent_FunctionInvocationNode();
+                    
+                    functionInvocationNode.FunctionInvocationIdentifierToken = ambiguousIdentifierExpressionNode.Token;
+                    functionInvocationNode.OpenAngleBracketToken = ambiguousIdentifierExpressionNode.OpenAngleBracketToken;
+                    functionInvocationNode.IndexGenericParameterEntryList = ambiguousIdentifierExpressionNode.IndexGenericParameterEntryList;
+                    functionInvocationNode.CountGenericParameterEntryList = ambiguousIdentifierExpressionNode.CountGenericParameterEntryList;
+                    functionInvocationNode.CloseAngleBracketToken = ambiguousIdentifierExpressionNode.CloseAngleBracketToken;
+                    functionInvocationNode.OpenParenthesisToken = parserModel.TokenWalker.Current;
+                    functionInvocationNode.IndexFunctionParameterEntryList = parserModel.Binder.FunctionParameterEntryList.Count;
                     
                     parserModel.BindFunctionInvocationNode(functionInvocationNode);
                     
@@ -1136,19 +1151,9 @@ public static class ParseExpressions
                 var token = ambiguousIdentifierExpressionNode.Token;
                 var identifierToken = UtilityApi.ConvertToIdentifierToken(ref token, ref parserModel);
                 
-                var functionInvocationNode = new FunctionInvocationNode(
-                    ambiguousIdentifierExpressionNode.Token,
-                    openAngleBracketToken: default,
-            		indexGenericParameterEntryList: -1,
-                    countGenericParameterEntryList: 0,
-            		closeAngleBracketToken: default,
-                    
-                    openParenthesisToken: default,
-            		indexFunctionParameterEntryList: -1,
-                    countFunctionParameterEntryList: 0,
-            		closeParenthesisToken: default,
-                    
-                    functionDefinitionNode?.ReturnTypeReference ?? CSharpFacts.Types.Void.ToTypeReference());
+                var functionInvocationNode = parserModel.Rent_FunctionInvocationNode();
+                functionInvocationNode.FunctionInvocationIdentifierToken = ambiguousIdentifierExpressionNode.Token;
+                functionInvocationNode.ResultTypeReference = functionDefinitionNode?.ReturnTypeReference ?? CSharpFacts.Types.Void.ToTypeReference();
 
                 parserModel.Binder.SymbolList.Insert(
                     parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
@@ -2546,17 +2551,15 @@ public static class ParseExpressions
                     UtilityApi.IsConvertibleToIdentifierToken(typeClauseNode.TypeIdentifierToken.SyntaxKind))
                 {
                     var typeClauseToken = typeClauseNode.TypeIdentifierToken;
-                    var functionInvocationNode = new FunctionInvocationNode(
-                        UtilityApi.ConvertToIdentifierToken(ref typeClauseToken, ref parserModel),
-                        typeClauseNode.OpenAngleBracketToken,
-                        typeClauseNode.IndexGenericParameterEntryList,
-                        typeClauseNode.CountGenericParameterEntryList,
-                        typeClauseNode.CloseAngleBracketToken,
-                        openParenthesisToken: parserModel.TokenWalker.Current,
-                        indexFunctionParameterEntryList: parserModel.Binder.FunctionParameterEntryList.Count,
-                		countFunctionParameterEntryList: 0,
-                        closeParenthesisToken: default,
-                        CSharpFacts.Types.Void.ToTypeReference());
+                    
+                    var functionInvocationNode = parserModel.Rent_FunctionInvocationNode();
+                    functionInvocationNode.FunctionInvocationIdentifierToken = UtilityApi.ConvertToIdentifierToken(ref typeClauseToken, ref parserModel);
+                    functionInvocationNode.OpenAngleBracketToken = typeClauseNode.OpenAngleBracketToken;
+                    functionInvocationNode.IndexGenericParameterEntryList = typeClauseNode.IndexGenericParameterEntryList;
+                    functionInvocationNode.CountGenericParameterEntryList = typeClauseNode.CountGenericParameterEntryList;
+                    functionInvocationNode.CloseAngleBracketToken = typeClauseNode.CloseAngleBracketToken;
+                    functionInvocationNode.OpenParenthesisToken = parserModel.TokenWalker.Current;
+                    functionInvocationNode.IndexFunctionParameterEntryList = parserModel.Binder.FunctionParameterEntryList.Count;
                         
                     parserModel.BindFunctionInvocationNode(functionInvocationNode);
         
@@ -2798,6 +2801,7 @@ public static class ParseExpressions
                 functionInvocationNode.CloseParenthesisToken = parserModel.TokenWalker.Current;
                 return functionInvocationNode;
             default:
+                parserModel.Return_FunctionInvocationNode(functionInvocationNode);
                 return parserModel.Binder.Shared_BadExpressionNode;
         }
     }
@@ -2830,6 +2834,7 @@ public static class ParseExpressions
             case SyntaxKind.FunctionInvocationNode:
                 return functionInvocationNode;
             default:
+                parserModel.Return_FunctionInvocationNode(functionInvocationNode);
                 return parserModel.Binder.Shared_BadExpressionNode;
         }
     }
@@ -3093,6 +3098,10 @@ public static class ParseExpressions
                 {
                     parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
                 }
+                else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+                {
+                    parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
+                }
                 expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, ref parserModel);
                 continue;
             }
@@ -3185,6 +3194,10 @@ public static class ParseExpressions
                 {
                     parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
                 }
+                else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+                {
+                    parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
+                }
                 expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, ref parserModel);
                 continue;
             }
@@ -3261,6 +3274,10 @@ public static class ParseExpressions
                 {
                     parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
                 }
+                else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+                {
+                    parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
+                }
                 expressionPrimary = ParseMemberAccessToken_UndefinedNode(expressionPrimary, memberIdentifierToken, ref parserModel);
                 continue;
             }
@@ -3285,6 +3302,10 @@ public static class ParseExpressions
                 {
                     parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
                 }
+                else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+                {
+                    parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
+                }
                 expressionPrimary = variableReferenceNode;
             }
             else if (foundDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
@@ -3292,20 +3313,13 @@ public static class ParseExpressions
                 var functionDefinitionNode = (FunctionDefinitionNode)foundDefinitionNode;
                 
                 // TODO: Method group node?
-                var functionInvocationNode = new FunctionInvocationNode(
-                    memberIdentifierToken,
-                    // TODO: Don't store a reference to definitons.
-                    // TODO: Type -> "<...>" -> "(" -> FunctionInvocationNode, but will FunctionInvocationNode -> "<...>"?
-                    // TODO: Bind the named arguments to their declaration within the definition.
-                    openAngleBracketToken: default,
-            		indexGenericParameterEntryList: -1,
-                    countGenericParameterEntryList: 0,
-            		closeAngleBracketToken: default,
-                    openParenthesisToken: default,
-            		indexFunctionParameterEntryList: -1,
-                    countFunctionParameterEntryList: 0,
-            		closeParenthesisToken: default,
-                    functionDefinitionNode.ReturnTypeReference);
+                // TODO: Don't store a reference to definitons.
+                // TODO: Type -> "<...>" -> "(" -> FunctionInvocationNode, but will FunctionInvocationNode -> "<...>"?
+                // TODO: Bind the named arguments to their declaration within the definition.
+                
+                var functionInvocationNode = parserModel.Rent_FunctionInvocationNode();
+                functionInvocationNode.FunctionInvocationIdentifierToken = memberIdentifierToken;
+                functionInvocationNode.ResultTypeReference = functionDefinitionNode.ReturnTypeReference;
                 
                 var symbolId = parserModel.GetNextSymbolId();
                 
@@ -3335,6 +3349,10 @@ public static class ParseExpressions
                 {
                     parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionPrimary);
                 }
+                else if (expressionPrimary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+                {
+                    parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionPrimary);
+                }
                 expressionPrimary = functionInvocationNode;
             }
         }
@@ -3353,17 +3371,9 @@ public static class ParseExpressions
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
             parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
         {
-            var functionInvocationNode = new FunctionInvocationNode(
-                memberIdentifierToken,
-                openAngleBracketToken: default,
-        		indexGenericParameterEntryList: -1,
-                countGenericParameterEntryList: 0,
-        		closeAngleBracketToken: default,
-                openParenthesisToken: default,
-        		indexFunctionParameterEntryList: -1,
-                countFunctionParameterEntryList: 0,
-        		closeParenthesisToken: default,
-                TypeFacts.Empty.ToTypeReference());
+            var functionInvocationNode = parserModel.Rent_FunctionInvocationNode();
+            functionInvocationNode.FunctionInvocationIdentifierToken = memberIdentifierToken;
+            functionInvocationNode.ResultTypeReference = TypeFacts.Empty.ToTypeReference();
                 
             parserModel.Binder.SymbolList.Insert(
                 parserModel.Compilation.IndexSymbolList + parserModel.Compilation.CountSymbolList,
@@ -3816,6 +3826,10 @@ public static class ParseExpressions
         if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
         {
             parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
+        }
+        else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+        {
+            parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
         }
         
         // Just needs to be set to anything other than out, in, ref.
