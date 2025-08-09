@@ -1600,6 +1600,10 @@ public static class ParseExpressions
             {
                 parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
             }
+            else if (expressionSecondary.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
+            {
+                parserModel.Return_ConstructorInvocationExpressionNode((ConstructorInvocationExpressionNode)expressionSecondary);
+            }
             
             return binaryExpressionNode;
         }
