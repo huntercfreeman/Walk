@@ -154,6 +154,21 @@ public class CSharpBinder
     public void FinalizeCompilationUnit(ResourceUri resourceUri, CSharpCompilationUnit compilationUnit)
     {
         UpsertCompilationUnit(resourceUri, compilationUnit);
+        
+        while (Pool_TypeClauseNode_Queue.Count > POOL_TYPE_CLAUSE_NODE_MAX_COUNT)
+        {
+            _ = Pool_TypeClauseNode_Queue.Dequeue();
+        }
+        
+        while (Pool_VariableReferenceNode_Queue.Count > POOL_VARIABLE_REFERENCE_NODE_MAX_COUNT)
+        {
+            _  = Pool_VariableReferenceNode_Queue.Dequeue();
+        }
+        
+        while (Pool_AmbiguousIdentifierExpressionNode_Queue.Count > POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT)
+        {
+            _  = Pool_AmbiguousIdentifierExpressionNode_Queue.Dequeue();
+        }
     }
     
     /// <summary>This also clears any pooled lists.</summary>
