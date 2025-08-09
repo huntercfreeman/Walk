@@ -6,19 +6,15 @@ namespace Walk.Extensions.CompilerServices.Syntax.Nodes;
 public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterNode
 {
     public FunctionInvocationNode(
-        SyntaxToken functionInvocationIdentifierToken,
-        
+        SyntaxToken functionInvocationIdentifierToken,        
         SyntaxToken openAngleBracketToken,
         int indexGenericParameterEntryList,
         int countGenericParameterEntryList,
         SyntaxToken closeAngleBracketToken,
-        
         SyntaxToken openParenthesisToken,
         int indexFunctionParameterEntryList,
         int countFunctionParameterEntryList,
         SyntaxToken closeParenthesisToken,
-        
-        
         TypeReference resultTypeReference)
     {
         #if DEBUG
@@ -41,7 +37,7 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
         ResultTypeReference = resultTypeReference;
     }
 
-    public SyntaxToken FunctionInvocationIdentifierToken { get; }
+    public SyntaxToken FunctionInvocationIdentifierToken { get; set; }
     
     public SyntaxToken OpenAngleBracketToken { get; set; }
     public int IndexGenericParameterEntryList { get; set; }
@@ -58,7 +54,13 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
     public int IdentifierStartInclusiveIndex => FunctionInvocationIdentifierToken.TextSpan.StartInclusiveIndex;
 
     public int Unsafe_ParentIndexKey { get; set; }
-    public bool IsFabricated { get; init; }
+    
+    public bool _isFabricated;
+    public bool IsFabricated
+    {
+        get => _isFabricated;
+        init => _isFabricated = value;
+    }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionInvocationNode;
     
     public bool IsParsingFunctionParameters { get; set; }
@@ -66,7 +68,7 @@ public sealed class FunctionInvocationNode : IInvocationNode, IGenericParameterN
     
     public TextEditorTextSpan ExplicitDefinitionTextSpan { get; set; }
 
-#if DEBUG
+    #if DEBUG
     ~FunctionInvocationNode()
     {
         Walk.Common.RazorLib.Installations.Models.WalkDebugSomething.FunctionInvocationNode--;

@@ -82,6 +82,10 @@ public class CSharpBinder
     internal const int POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT = 3;
     /// <summary>This is only safe to use while parsing</summary>
     internal readonly Queue<AmbiguousIdentifierExpressionNode> Pool_AmbiguousIdentifierExpressionNode_Queue = new();
+    
+    internal const int POOL_FUNCTION_INVOCATION_NODE_MAX_COUNT = 3;
+    /// <summary>This is only safe to use while parsing</summary>
+    internal readonly Queue<FunctionInvocationNode> Pool_FunctionInvocationNode_Queue = new();
         
     public BadExpressionNode Shared_BadExpressionNode { get; } = new BadExpressionNode(
         CSharpFacts.Types.Void.ToTypeReference(),
@@ -133,6 +137,31 @@ public class CSharpBinder
                 closeAngleBracketToken: default,
                 resultTypeReference: CSharpFacts.Types.Void.ToTypeReference()));
         }
+        
+        for (int i = 0; i < POOL_FUNCTION_INVOCATION_NODE_MAX_COUNT; i++)
+        {
+            Pool_FunctionInvocationNode_Queue.Enqueue(new FunctionInvocationNode(
+                functionInvocationIdentifierToken: default,        
+                openAngleBracketToken: default,
+                indexGenericParameterEntryList: -1,
+                countGenericParameterEntryList: 0,
+                closeAngleBracketToken: default,
+                openParenthesisToken: default,
+                indexFunctionParameterEntryList: -1,
+                countFunctionParameterEntryList: 0,
+                closeParenthesisToken: default,
+                resultTypeReference: CSharpFacts.Types.Void.ToTypeReference()));
+        }
+        
+        Task.Run(async () =>
+        {
+            await Task.Delay(31_000);
+            
+            Console.WriteLine($"Pool_FunctionInvocationNode_Hit: {CSharpParserModel.Pool_FunctionInvocationNode_Hit}");
+            Console.WriteLine($"Pool_FunctionInvocationNode_Miss: {CSharpParserModel.Pool_FunctionInvocationNode_Miss}");
+            Console.WriteLine($"Pool_FunctionInvocationNode_Return: {CSharpParserModel.Pool_FunctionInvocationNode_Return}");
+            Console.WriteLine($"Pool_FunctionInvocationNode_%: {((double)CSharpParserModel.Pool_FunctionInvocationNode_Hit / (CSharpParserModel.Pool_FunctionInvocationNode_Hit + CSharpParserModel.Pool_FunctionInvocationNode_Miss)):P1}");
+        });
     }
     
     /// <summary><see cref="FinalizeCompilationUnit"/></summary>
@@ -166,6 +195,11 @@ public class CSharpBinder
         while (Pool_AmbiguousIdentifierExpressionNode_Queue.Count > POOL_AMBIGUOUS_IDENTIFIER_EXPRESSION_NODE_MAX_COUNT)
         {
             _  = Pool_AmbiguousIdentifierExpressionNode_Queue.Dequeue();
+        }
+        
+        while (Pool_FunctionInvocationNode_Queue.Count > POOL_FUNCTION_INVOCATION_NODE_MAX_COUNT)
+        {
+            _  = Pool_FunctionInvocationNode_Queue.Dequeue();
         }
     }
     

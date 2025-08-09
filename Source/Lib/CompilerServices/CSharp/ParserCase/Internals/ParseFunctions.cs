@@ -285,6 +285,7 @@ public class ParseFunctions
             {
                 var openParenthesisToken = parserModel.TokenWalker.Current;
             
+                CSharpParserModel.Pool_FunctionInvocationNode_Miss++;
                 var functionInvocationNode = new FunctionInvocationNode(
                     consumedIdentifierToken,
                     openAngleBracketToken: default,

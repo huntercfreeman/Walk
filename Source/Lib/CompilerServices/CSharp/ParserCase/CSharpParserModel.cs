@@ -281,6 +281,69 @@ public ref struct CSharpParserModel
         Binder.Pool_AmbiguousIdentifierExpressionNode_Queue.Enqueue(ambiguousIdentifierExpressionNode);
     }
     
+    public static int Pool_FunctionInvocationNode_Hit { get; set; }
+    public static int Pool_FunctionInvocationNode_Miss { get; set; }
+    public static int Pool_FunctionInvocationNode_Return { get; set; }
+    
+    /// <summary>
+    /// It is expected that any invoker of this method will immediately set the returned FunctionInvocationNode instance's:
+    /// - FunctionInvocationIdentifierToken
+    /// Thus, the Return_FunctionInvocationNode(...) method will NOT clear that property's state.
+    /// </summary>
+    public readonly FunctionInvocationNode Rent_FunctionInvocationNode()
+    {
+        if (Binder.Pool_FunctionInvocationNode_Queue.TryDequeue(out var functionInvocationNode))
+        {
+            Pool_FunctionInvocationNode_Hit++;
+            return functionInvocationNode;
+        }
+
+        Pool_FunctionInvocationNode_Miss++;
+        return new FunctionInvocationNode(
+            functionInvocationIdentifierToken: default,        
+            openAngleBracketToken: default,
+            indexGenericParameterEntryList: -1,
+            countGenericParameterEntryList: 0,
+            closeAngleBracketToken: default,
+            openParenthesisToken: default,
+            indexFunctionParameterEntryList: -1,
+            countFunctionParameterEntryList: 0,
+            closeParenthesisToken: default,
+            resultTypeReference: CSharpFacts.Types.Void.ToTypeReference());
+    }
+    
+    /// <summary>
+    /// It is expected that any invoker of this method will immediately set the returned FunctionInvocationNode instance's:
+    /// - FunctionInvocationIdentifierToken
+    /// Thus, the Return_FunctionInvocationNode(...) method will NOT clear that property's state.
+    /// </summary>
+    public readonly void Return_FunctionInvocationNode(FunctionInvocationNode functionInvocationNode)
+    {
+        Pool_FunctionInvocationNode_Return++;
+    
+        functionInvocationNode.OpenAngleBracketToken = default;
+        functionInvocationNode.IndexGenericParameterEntryList = -1;
+        functionInvocationNode.CountGenericParameterEntryList = 0;
+        functionInvocationNode.CloseAngleBracketToken = default;
+        
+        functionInvocationNode.OpenParenthesisToken = default;
+        functionInvocationNode.IndexFunctionParameterEntryList = -1;
+        functionInvocationNode.CountFunctionParameterEntryList = 0;
+        functionInvocationNode.CloseParenthesisToken = default;
+        
+        functionInvocationNode.ResultTypeReference = CSharpFacts.Types.Void.ToTypeReference();
+        
+        functionInvocationNode.ResourceUri = default;
+        functionInvocationNode.ExplicitDefinitionTextSpan = default;
+        
+        functionInvocationNode._isFabricated = false;
+        
+        functionInvocationNode.IsParsingFunctionParameters = false;
+        functionInvocationNode.IsParsingGenericParameters = false;
+    
+        Binder.Pool_FunctionInvocationNode_Queue.Enqueue(functionInvocationNode);
+    }
+    
     public readonly ICodeBlockOwner? GetParent(
         ICodeBlockOwner codeBlockOwner,
         Walk.CompilerServices.CSharp.CompilerServiceCase.CSharpCompilationUnit cSharpCompilationUnit)
