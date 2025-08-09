@@ -2343,15 +2343,20 @@ public static class ParseExpressions
                 (AmbiguousIdentifierExpressionNode)expressionSecondary,
                 ref parserModel);
         }
-    
-        switch (expressionSecondary.SyntaxKind)
+        
+        if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
         {
-            default:
-                if (lambdaExpressionNode.CodeBlock_StartInclusiveIndex == -1)
-                    CloseLambdaExpressionScope(lambdaExpressionNode, ref parserModel);
-                
-                return lambdaExpressionNode;
+            parserModel.Return_VariableReferenceNode((VariableReferenceNode)expressionSecondary);
         }
+        else if (expressionSecondary.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+        {
+            parserModel.Return_FunctionInvocationNode((FunctionInvocationNode)expressionSecondary);
+        }
+    
+        if (lambdaExpressionNode.CodeBlock_StartInclusiveIndex == -1)
+            CloseLambdaExpressionScope(lambdaExpressionNode, ref parserModel);
+        
+        return lambdaExpressionNode;
     }
 
     public static IExpressionNode LiteralMergeToken(
