@@ -78,6 +78,11 @@ public class CSharpStatementBuilder
                 var functionInvocationNode = (Walk.Extensions.CompilerServices.Syntax.Nodes.FunctionInvocationNode)MostRecentNode;
                 parserModel.Return_FunctionInvocationNode(functionInvocationNode);
             }
+            else if (MostRecentNode.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
+            {
+                var constructorInvocationExpressionNode = (Walk.Extensions.CompilerServices.Syntax.Nodes.ConstructorInvocationExpressionNode)MostRecentNode;
+                parserModel.Return_ConstructorInvocationExpressionNode(constructorInvocationExpressionNode);
+            }
         }
     
         MostRecentNode = null;

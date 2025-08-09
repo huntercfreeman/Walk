@@ -170,7 +170,7 @@ public class CSharpBinder
         
         Task.Run(async () =>
         {
-            await Task.Delay(26_000);
+            await Task.Delay(25_000);
             
             Console.WriteLine($"Pool_ConstructorInvocationNode_Hit: {CSharpParserModel.Pool_ConstructorInvocationNode_Hit}");
             Console.WriteLine($"Pool_ConstructorInvocationNode_Miss: {CSharpParserModel.Pool_ConstructorInvocationNode_Miss}");

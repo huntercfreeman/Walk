@@ -2021,13 +2021,9 @@ public static class ParseExpressions
                 parserModel.ExpressionList.Add((SyntaxKind.CommaToken, collectionInitializationNode));
                 return EmptyExpressionNode.Empty;
             case SyntaxKind.NewTokenKeyword:
-                return new ConstructorInvocationExpressionNode(
-                    token,
-                    typeReference: default,
-                    openParenthesisToken: default,
-            		indexFunctionParameterEntryList: -1,
-                    countFunctionParameterEntryList: 0,
-            		closeParenthesisToken: default);
+                var constructorInvocationNode = parserModel.Rent_ConstructorInvocationExpressionNode();
+                constructorInvocationNode.NewKeywordToken = token;
+                return constructorInvocationNode;
             case SyntaxKind.AwaitTokenContextualKeyword:
                 return emptyExpressionNode;
             case SyntaxKind.AsyncTokenContextualKeyword:

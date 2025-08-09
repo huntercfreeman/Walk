@@ -381,7 +381,7 @@ public ref struct CSharpParserModel
     
         constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
     
-        constructorInvocationExpressionNode.IsFabricated = false;
+        constructorInvocationExpressionNode._isFabricated = false;
         
         constructorInvocationExpressionNode.IsParsingFunctionParameters = false;
         
