@@ -230,7 +230,7 @@ window.walkTextEditor = {
             });
         }
     },
-    getCharAndLineMeasurementsInPixelsById: function (elementId, amountOfCharactersRendered) {
+    getCharAndLineMeasurementsInPixelsById: function (elementId) {
         let element = document.getElementById(elementId);
 
         if (!element) {
@@ -240,11 +240,17 @@ window.walkTextEditor = {
             }
         }
         
-        let fontWidth = element.offsetWidth / amountOfCharactersRendered;
+        let elevenTimesAlphabetAndDigits = "abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789";
+        element.innerText = elevenTimesAlphabetAndDigits;
+        
+        let fontWidth = element.offsetWidth / elevenTimesAlphabetAndDigits.length;
+        let lineHeight = element.offsetHeight;
+        
+        element.innerText = "";
 
         return {
             CharacterWidth: fontWidth,
-            LineHeight: element.offsetHeight
+            LineHeight: lineHeight
         }
     },
     getRelativePosition: function (elementId, clientX, clientY) {
