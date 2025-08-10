@@ -88,6 +88,8 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
         //
         // Probably have to put any incrementations "in an if statement" to reset to 0 if you're going to wrap around to the negative values.
         //
+        // Actually, you could just increment from within InvokeAsync(...) and avoid a parent cascading render.
+        // 
         if (_countEventHandled < _countEventReceived)
         {
             _countEventHandled++;
@@ -129,6 +131,20 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
         {
             await HandleMeasureCommon();
         }
+    }
+    
+    private async Task IslandStateHasChanged()
+    {
+        if (_countEventReceived == int.MaxValue)
+        {
+            _countEventReceived = 0;
+        }
+        else
+        {
+            ++_countEventReceived;
+        }
+        
+        await InvokeAsync(StateHasChanged);
     }
     
     private async void OnCommonUiStateChanged(CommonUiEventKind commonUiEventKind)
