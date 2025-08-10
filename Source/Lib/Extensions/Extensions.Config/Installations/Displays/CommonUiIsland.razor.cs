@@ -60,15 +60,13 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
         // TODO: Does the object used here matter? Should it be a "smaller" object or is this just reference?
         _dotNetHelper = DotNetObjectReference.Create(this);
         
-        MeasureLineHeight_UiRenderStep();
-        
         DotNetService.TextEditorService.SecondaryChanged += OnNeedsMeasured;
         DotNetService.CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
     }
     
     /// <summary>TODO: Thread safety</summary>
     protected override bool ShouldRender()
-    {    
+    {
         // This is expected to cause "eventual thread safety" due to perspective.
         //
         // The '_countEventHandled < _countEventReceived' when true is guaranteed to continue being true
@@ -138,20 +136,16 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
         }
     }
     
-    private async Task IslandStateHasChanged()
+    private void IncrementCountEventReceived()
     {
-        await InvokeAsync(() =>
+        if (_countEventReceived == int.MaxValue)
         {
-            if (_countEventReceived == int.MaxValue)
-            {
-                _countEventReceived = 0;
-            }
-            else
-            {
-                ++_countEventReceived;
-            }
-            StateHasChanged();
-        });
+            _countEventReceived = 0;
+        }
+        else
+        {
+            ++_countEventReceived;
+        }
     }
     
     private async void OnCommonUiStateChanged(CommonUiEventKind commonUiEventKind)
@@ -164,10 +158,19 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
             case CommonUiEventKind.DropdownStateChanged:
             case CommonUiEventKind.OutlineStateChanged:
             case CommonUiEventKind.TooltipStateChanged:
-                await InvokeAsync(StateHasChanged);
+                await InvokeAsync(() =>
+                {
+                    IncrementCountEventReceived();
+                    StateHasChanged();
+                });
                 break;
             case CommonUiEventKind.LineHeightNeedsMeasured:
-                await InvokeAsync(MeasureLineHeight_UiRenderStep);
+                await InvokeAsync(() =>
+                {
+                    MeasureCommon_GetReady();
+                    IncrementCountEventReceived();
+                    StateHasChanged();
+                });
                 break;
         }
     }
@@ -210,7 +213,11 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
                 tooltipModel.Y = 0;
         }
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(() =>
+        {
+            IncrementCountEventReceived();
+            StateHasChanged();
+        });
     }
     
     /// <summary>Needs UI thread to ensure the measured element is rendered.</summary>
@@ -263,11 +270,13 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
         if (key == "Alt")
         {
             _altIsDown = true;
+            IncrementCountEventReceived();
             StateHasChanged();
         }
         else if (key == "Control")
         {
             _ctrlIsDown = true;
+            IncrementCountEventReceived();
             StateHasChanged();
         }
         else if (key == "Tab")
@@ -360,6 +369,7 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
                 }
             }
 
+            IncrementCountEventReceived();
             StateHasChanged();
         }
     }
@@ -370,6 +380,7 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
         if (key == "Alt")
         {
             _altIsDown = false;
+            IncrementCountEventReceived();
             StateHasChanged();
         }
         else if (key == "Control")
@@ -405,6 +416,7 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
                 }
             }
 
+            IncrementCountEventReceived();
             StateHasChanged();
         }
     }
@@ -414,6 +426,7 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
     {
         _altIsDown = false;
         _ctrlIsDown = false;
+        IncrementCountEventReceived();
         StateHasChanged();
     }
 
@@ -481,21 +494,25 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
     {
         if (secondaryChangedKind == SecondaryChangedKind.NeedsMeasured)
         {
-            await InvokeAsync(Ready);
+            await InvokeAsync(() =>
+            {
+                MeasureTextEditor_GetReady();
+                IncrementCountEventReceived();
+                StateHasChanged();
+            });
         }
     }
     
-    private void MeasureLineHeight_UiRenderStep()
+    private void MeasureCommon_GetReady()
     {
         _lineHeightCssStyle = $"{DotNetService.CommonService.Options_FontFamilyCssStyleString} {DotNetService.CommonService.Options_FontSizeCssStyleString}";
         _doCommonMeasure = true;
-        StateHasChanged();
     }
     
     /// <summary>
     /// Only invoke this method from the UI thread due to the usage of the shared UiStringBuilder.
     /// </summary>
-    private async Task Ready()
+    private void MeasureTextEditor_GetReady()
     {
         _doTextEditorMeasure = true;
     
@@ -530,10 +547,6 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
         DotNetService.CommonService.UiStringBuilder.Append(fontFamilyCssStyle);
         DotNetService.CommonService.UiStringBuilder.Append(" position:absolute;");
         _wrapperCssStyle = DotNetService.CommonService.UiStringBuilder.ToString();
-        
-        // I said "Only invoke this method from the UI thread due to the usage of the shared UiStringBuilder."
-        // But I'm still going to keep this InvokeAsync for the StateHasChanged due to superstituous anxiety.
-        await InvokeAsync(StateHasChanged);
     }
     
     public void Dispose()
