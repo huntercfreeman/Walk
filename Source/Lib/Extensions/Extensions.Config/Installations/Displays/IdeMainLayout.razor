@@ -105,8 +105,6 @@
     <div class="di_body"
          style="@_bodyElementDimensions.GetStyleString(DotNetService.CommonService.UiStringBuilder)">
     
-        @*-----------------*@
-        @*-----------------*@
         <div class="@GetPanelElementCssClass(_leftPanelGroupParameter.PanelPositionCss, _leftPanelGroupParameter.CssClassString)"
              style="@GetElementDimensionsStyleString(leftPanelGroup)"
         	 id="@_leftPanelGroupParameter.PanelPositionCss">
@@ -198,8 +196,6 @@
                 }
             </div>
         </div>
-        @*-----------------*@
-        @*-----------------*@
     
         <ResizableColumn ResizableColumnParameter="_topLeftResizableColumnParameter" />
     
@@ -207,8 +203,6 @@
         
         <ResizableColumn ResizableColumnParameter="_topRightResizableColumnParameter" />
     
-        @*-----------------*@
-        @*-----------------*@
         <div class="@GetPanelElementCssClass(_rightPanelGroupParameter.PanelPositionCss, _rightPanelGroupParameter.CssClassString)"
              style="@GetElementDimensionsStyleString(rightPanelGroup)"
         	 id="@_rightPanelGroupParameter.PanelPositionCss">
@@ -300,15 +294,11 @@
                 }
             </div>
         </div>
-        @*-----------------*@
-        @*-----------------*@
     </div>
     @* End Body *@
 
     <ResizableRow ResizableRowParameter="_resizableRowParameter" />
     
-    @*-----------------*@
-    @*-----------------*@
     <div class="@GetPanelElementCssClass(_bottomPanelGroupParameter.PanelPositionCss, _bottomPanelGroupParameter.CssClassString)"
          style="@GetElementDimensionsStyleString(bottomPanelGroup)"
     	 id="@_bottomPanelGroupParameter.PanelPositionCss">
@@ -407,62 +397,4 @@
             }
         </div>
     </div>
-    @*-----------------*@
-    @*-----------------*@
-
-    @if (_ctrlIsDown)
-    {
-        var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
-    
-        <div class="di_main-layout-overlay">
-            <div>
-                <h2>Dialogs</h2>
-                @for (int i = 0; i < dialogList.Count; i++)
-                {
-                    var dialog = dialogList[i];
-                    
-                    string cssClass;
-                    
-                    if (_ctrlTabKind == CtrlTabKind.Dialogs && _index == i)
-                    {
-                        cssClass = "di_config_ctrl-tab-entry di_active";
-                    }
-                    else
-                    {
-                        cssClass = "di_config_ctrl-tab-entry";
-                    }
-                    
-                    <div class="@cssClass">@dialog.Title</div>
-                }
-            </div>
-            
-            <div style="margin-left: 10px; border-left: 1px solid var(--di_primary-border-color);">
-                <h2>TextEditors</h2>
-                @if (textEditorGroup is not null)
-                {
-                    for (int i = 0; i < textEditorGroup.ViewModelKeyList.Count; i++)
-                    {
-                        var viewModelKey = textEditorGroup.ViewModelKeyList[i];
-                        var viewModel = DotNetService.TextEditorService.ViewModel_GetOrDefault(viewModelKey);
-                        
-                        if (viewModel is not null)
-                        {
-                            string cssClass;
-                            
-                            if (_ctrlTabKind == CtrlTabKind.TextEditors && _index == i)
-                            {
-                                cssClass = "di_config_ctrl-tab-entry di_active";
-                            }
-                            else
-                            {
-                                cssClass = "di_config_ctrl-tab-entry";
-                            }
-                        
-                            <div class="@cssClass">@viewModel.PersistentState.Title</div>
-                        }
-                    }
-                }
-            </div>
-        </div>
-    }
 </div>
