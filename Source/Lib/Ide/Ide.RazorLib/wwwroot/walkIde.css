@@ -11,12 +11,12 @@ input[type="checkbox"]{
     background-color: var(--di_primary-background-color);
 }
 
-.di_ide_header {
-    height: var(--di_ide_header-height);
-    background-color: var(--di_ide_header-background-color);
+.di_header {
+    height: var(--di_header-height);
+    background-color: var(--di_header-background-color);
 }
 
-.di_ide_header .di_button {
+.di_header .di_button {
     height: 100%;
 }
 
@@ -52,7 +52,7 @@ input[type="checkbox"]{
 	height: 100%;
 }
 
-.di_ide_header {
+.di_header {
     display: flex;
 }
 
@@ -303,6 +303,7 @@ button.di_ide_input-file-address-hierarchy-entry {
 }
 
 .di_ide_panel-tabs-justify-end {
+    display: flex;
     position: absolute;
     right: calc(3ch + 3px);
     top: 0;
@@ -438,8 +439,8 @@ button.di_ide_input-file-address-hierarchy-entry {
     --di_ide_input-file-display-bottom-controls-height: 5.5rem;
     --di_ide_input-file-display-body-height: calc(100% - var(--di_ide_input-file-display-bottom-controls-height));
     --di_ide_checkbox-size: 1.75rem;
-    --di_ide_header-border-bottom-size: 4px;
-    --di_ide_header-height: 3rem;
+    --di_header-border-bottom-size: 4px;
+    --di_header-height: 3rem;
     --di_ide_input-file-display-side-bar-margin-right: 10px;
     --di_ide_input-file-display-content-margin-left: 10px;
     --di_ide_input-padding-height: 2px;
@@ -464,7 +465,7 @@ button.di_ide_input-file-address-hierarchy-entry {
 
 :root {
     /* Dark-Theme is the default */
-    --di_ide_header-background-color: #2a2a2e;
+    --di_header-background-color: #2a2a2e;
     --di_ide_body-background-color: #1E1E1E;
     --di_ide_panel-background-color: #2b2d2d;
     --di_ide_input-background-color: #232d32;
@@ -473,7 +474,7 @@ button.di_ide_input-file-address-hierarchy-entry {
 }
 
 .di_visual-studio-light-theme-clone {
-    --di_ide_header-background-color: #cad5eb;
+    --di_header-background-color: #cad5eb;
     --di_ide_body-background-color: rgb(253, 253, 253);
     --di_ide_panel-background-color: #d4d4d4;
     --di_ide_input-background-color: rgb(250, 250, 250);

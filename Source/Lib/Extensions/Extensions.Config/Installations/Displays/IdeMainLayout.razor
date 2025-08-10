@@ -182,8 +182,8 @@
 
     @* Start Header *@
     @* ContextRecord="ContextFacts.MainLayoutHeaderContext" *@
-    <div class="di_ide_header" style="@_headerCssStyle">
-        <div class="di_ide_header-left-content"
+    <div class="di_header" style="@_headerCssStyle">
+        <div class="di_header-left-content"
              style="display: flex;">
             
             @* Start SettingsDialogEntryPoint *@
@@ -491,9 +491,7 @@
                 }
             }
     
-            <div class="di_ide_panel-tabs-justify-end"
-                 style="display: flex;">
-                 
+            <div class="di_ide_panel-tabs-justify-end">
                 <BadgeDisplay @key="_dirtyResourceUriBadge.Key"
         	                  BadgeModel="_dirtyResourceUriBadge"/>
                 <BadgeDisplay @key="_notificationBadge.Key"

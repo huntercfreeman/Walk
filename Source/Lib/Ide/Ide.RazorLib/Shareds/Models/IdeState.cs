@@ -19,14 +19,14 @@ public record struct IdeState(
     }
     
     public static readonly Key<DropdownRecord> DropdownKeyFile = Key<DropdownRecord>.NewKey();
-    public const string ButtonFileId = "di_ide_header-button-file";
+    public const string ButtonFileId = "di_header-button-file";
 
     public static readonly Key<DropdownRecord> DropdownKeyTools = Key<DropdownRecord>.NewKey();
-    public const string ButtonToolsId = "di_ide_header-button-tools";
+    public const string ButtonToolsId = "di_header-button-tools";
 
     public static readonly Key<DropdownRecord> DropdownKeyView = Key<DropdownRecord>.NewKey();
-    public const string ButtonViewId = "di_ide_header-button-view";
+    public const string ButtonViewId = "di_header-button-view";
 
     public static readonly Key<DropdownRecord> DropdownKeyRun = Key<DropdownRecord>.NewKey();
-    public const string ButtonRunId = "di_ide_header-button-run";
+    public const string ButtonRunId = "di_header-button-run";
 }
