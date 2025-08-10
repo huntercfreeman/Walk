@@ -23,7 +23,7 @@
 	{
 		prefixText = "(null)";
 		text = null;
-		textCssClass = "di_te_variable";
+		textCssClass = "di_variable";
 		variableDeclarationNode = null;
 	}
 	else if (syntaxViewModelLocal.DefinitionNode is not null && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
@@ -40,7 +40,7 @@
 		else if (variableDeclarationNode.VariableKind == VariableKind.EnumMember)
 			textCssClass = "di_te_property";
 		else
-			textCssClass = "di_te_variable";
+			textCssClass = "di_variable";
 		
 		// 'variableDeclarationNode' was set at the start of code block.
 	}
@@ -48,7 +48,7 @@
 	{
 		prefixText = "(reference)";
 		text = syntaxViewModelLocal.GetIdentifierText(syntaxViewModelLocal.TargetNode);
-		textCssClass = "di_te_variable";
+		textCssClass = "di_variable";
 		variableDeclarationNode = null;
 	}
 	else if (syntaxViewModelLocal.TargetSymbol is not null &&
@@ -59,14 +59,14 @@
 	{
 		prefixText = "(symbol)";
 		text = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
-		textCssClass = "di_te_variable";
+		textCssClass = "di_variable";
 		variableDeclarationNode = null;
 	}
 	else
 	{
 		prefixText = "(unrecognizable-state)";
 		text = null;
-		textCssClass = "di_te_variable";
+		textCssClass = "di_variable";
 		variableDeclarationNode = null;
 	}
     
@@ -94,7 +94,7 @@
         }
         else
         {
-        	<span class="di_te_keyword">
+        	<span class="di_keyword">
         		undefined
         		&nbsp;
         	</span>
@@ -117,11 +117,11 @@
         	<span>
             	{
             	
-            	<text><span class="di_te_keyword"> get</span>;</text>
+            	<text><span class="di_keyword"> get</span>;</text>
             	
             	@if (variableDeclarationNode.HasSetter)
             	{
-            		<text><span class="di_te_keyword"> set</span>;</text>
+            		<text><span class="di_keyword"> set</span>;</text>
             	}
             	
             	}

@@ -30,83 +30,83 @@
     position: relative;
 }
 
-.di_te_method {
+.di_method {
     color: var(--di_te_method-foreground-color);
 }
 
-.di_te_type {
+.di_type {
     color: var(--di_te_type-foreground-color);
 }
 
-.di_te_variable {
+.di_variable {
     color: var(--di_te_variable-foreground-color);
 }
 
-.di_te_string-literal {
+.di_string {
     color: var(--di_te_string-literal-foreground-color);
 }
 
-.di_te_string-literal-escape-character {
+.di_string-escape {
     color: var(--di_te_string-literal-escape-character-foreground-color);
 }
 
-.di_te_string-literal-escape-character-secondary {
+.di_string-escape-alt {
 	color: var(--di_te_string-literal-escape-character-secondary-foreground-color);
 }
 
-.di_te_keyword {
+.di_keyword {
     color: var(--di_te_keyword-foreground-color);
 }
 
-.di_te_keyword-control {
+.di_keyword-control {
     color: var(--di_te_keyword-control-foreground-color);
 }
 
-.di_te_preprocessor-directive {
+.di_preprocessor {
     color: var(--di_te_preprocessor-directive-foreground-color);
 }
 
-.di_te_comment {
+.di_comment {
     color: var(--di_te_comment-foreground-color);
 }
 
-.di_te_tag-name {
+.di_tag-name {
     color: var(--di_te_tag-name-foreground-color);
 }
 
-.di_te_injected-language-fragment {
+.di_injected-language-fragment {
     color: var(--di_te_injected-language-fragment-color);
 }
 
-.di_te_injected-language-component {
+.di_injected-language-component {
     color: var(--di_te_injected-language-component-color);
 }
 
-.di_te_css-property-name {
+.di_css-property-name {
     color: var(--di_te_css-property-name-color);
 }
 
-.di_te_css-property-value {
+.di_css-property-value {
     color: var(--di_te_css-property-value-color);
 }
 
-.di_te_css-identifier {
+.di_css-identifier {
     color: var(--di_te_css-identifier-color);
 }
 
-.di_te_attribute-name {
+.di_attribute-name {
     color: var(--di_te_attribute-name-color);
 }
 
-.di_te_attribute-value {
+.di_attribute-value {
     color: var(--di_te_attribute-value-color);
 }
 
-.di_te_json-property-key {
+.di_json-property-key {
     color: var(--di_te_json-property-key-color);
 }
 
-.di_te_json-property-value {
+.di_json-property-value {
     color: var(--di_te_json-property-value-color);
 }
 

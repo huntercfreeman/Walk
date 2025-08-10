@@ -11,10 +11,10 @@ public class TerminalDecorationMapper : IDecorationMapper
         return decoration switch
         {
             TerminalDecorationKind.None => string.Empty,
-            TerminalDecorationKind.Comment => "di_te_comment",
-            TerminalDecorationKind.Keyword => "di_te_keyword",
-            TerminalDecorationKind.StringLiteral => "di_te_string-literal",
-            TerminalDecorationKind.TargetFilePath => "di_te_type",
+            TerminalDecorationKind.Comment => "di_comment",
+            TerminalDecorationKind.Keyword => "di_keyword",
+            TerminalDecorationKind.StringLiteral => "di_string",
+            TerminalDecorationKind.TargetFilePath => "di_type",
             TerminalDecorationKind.Error => "di_tree-view-exception",
             TerminalDecorationKind.Warning => "di_tree-view-warning",
             _ => string.Empty,

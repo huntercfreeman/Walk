@@ -44,9 +44,9 @@
 		prefixBuilder.Append(typeDefinitionNode.StorageModifierKind.ToString().ToLower());
 		
 		prefixText = prefixBuilder.ToString();
-		prefixTextCssClass = "di_te_keyword";
+		prefixTextCssClass = "di_keyword";
 		text = syntaxViewModelLocal.GetIdentifierText(typeDefinitionNode);
-		syntaxHighlightingClassCssString = "di_te_type";
+		syntaxHighlightingClassCssString = "di_type";
 		hasGenericParameterListing = typeDefinitionNode.OpenAngleBracketToken.ConstructorWasInvoked;
 		hasQuestionMark = null;
 		arrayRank = 0;
@@ -60,9 +60,9 @@
 		text = syntaxViewModelLocal.GetIdentifierText(typeClauseNode);
 		
 		if (typeClauseNode.IsKeywordType)
-			syntaxHighlightingClassCssString = "di_te_keyword";
+			syntaxHighlightingClassCssString = "di_keyword";
 		else
-			syntaxHighlightingClassCssString = "di_te_type";
+			syntaxHighlightingClassCssString = "di_type";
 		
 		hasGenericParameterListing = typeClauseNode.OpenAngleBracketToken.ConstructorWasInvoked;
 		hasQuestionMark = typeClauseNode.HasQuestionMark;
@@ -74,7 +74,7 @@
 		prefixText = "(symbol)";
 		prefixTextCssClass = null;
 		text = syntaxViewModelLocal.GetTextFromTextSpan(syntaxViewModelLocal.TargetSymbol.Value.TextSpan);
-		syntaxHighlightingClassCssString = "di_te_type";
+		syntaxHighlightingClassCssString = "di_type";
 		hasGenericParameterListing = false;
 		hasQuestionMark = null;
 		arrayRank = 0;
@@ -96,9 +96,9 @@
     	}
 		
 		if (TypeReference.IsKeywordType)
-			syntaxHighlightingClassCssString = "di_te_keyword";
+			syntaxHighlightingClassCssString = "di_keyword";
 		else
-			syntaxHighlightingClassCssString = "di_te_type";
+			syntaxHighlightingClassCssString = "di_type";
 		
 		hasGenericParameterListing = TypeReference.OpenAngleBracketToken.ConstructorWasInvoked;
 		hasQuestionMark = TypeReference.HasQuestionMark;
