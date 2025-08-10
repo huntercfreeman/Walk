@@ -83,6 +83,11 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
         // This is avoided by incrementing '_countEventReceived' at the end of the event handlers
         // and just prior to the event handler invoking 'await InvokeAsync(StateHasChanged)'.
         //
+        // The ints going from int.MaxValue to int.MinValue without an exception messes this logic up
+        // (I can't think of the name for this so I described it).
+        //
+        // Probably have to put any incrementations "in an if statement" to reset to 0 if you're going to wrap around to the negative values.
+        //
         if (_countEventHandled < _countEventReceived)
         {
             _countEventHandled++;
