@@ -144,18 +144,18 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         var panelState = DotNetService.CommonService.GetPanelState();
     
         _topLeftResizableColumnParameter = new(
-            CommonFacts.GetTopLeftPanelGroup(panelState).ElementDimensions,
+            panelState.TopLeftPanelGroup.ElementDimensions,
             _editorElementDimensions,
             () => InvokeAsync(StateHasChanged));
             
         _topRightResizableColumnParameter = new(
             _editorElementDimensions,
-            CommonFacts.GetTopRightPanelGroup(panelState).ElementDimensions,
+            panelState.TopRightPanelGroup.ElementDimensions,
             () => InvokeAsync(StateHasChanged));
             
         _resizableRowParameter = new(
             _bodyElementDimensions,
-            CommonFacts.GetBottomPanelGroup(DotNetService.CommonService.GetPanelState()).ElementDimensions,
+            panelState.BottomPanelGroup.ElementDimensions,
             () => InvokeAsync(StateHasChanged));
         
     
@@ -974,8 +974,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     #endregion
     private TabCascadingValueBatch _tabCascadingValueBatch = new();
 
-    
-
     private List<IPanelTab> GetTabList(PanelGroup panelGroup)
     {
         var tabList = new List<IPanelTab>();
@@ -991,68 +989,62 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     private void PassAlongSizeIfNoActiveTab(PanelGroupParameter panelGroupParameter, PanelGroup panelGroup)
     {
-        if (panelGroup is not null)
+        DimensionAttribute adjacentElementSizeDimensionAttribute;
+        DimensionAttribute panelGroupSizeDimensionsAttribute;
+        
+        switch (panelGroupParameter.DimensionAttributeKind)
         {
-            var activePanelTab = panelGroup.TabList.FirstOrDefault(
-                x => x.Key == panelGroup.ActiveTabKey);
-            
-            DimensionAttribute adjacentElementSizeDimensionAttribute;
-            DimensionAttribute panelGroupSizeDimensionsAttribute;
-            
-            switch (panelGroupParameter.DimensionAttributeKind)
-            {
-                case DimensionAttributeKind.Width:
-                    adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.WidthDimensionAttribute;
-                    panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.WidthDimensionAttribute;
-                    break;
-                case DimensionAttributeKind.Height:
-                    adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.HeightDimensionAttribute;
-                    panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.HeightDimensionAttribute;
-                    break;
-                case DimensionAttributeKind.Left:
-                    adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.LeftDimensionAttribute;
-                    panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.LeftDimensionAttribute;
-                    break;
-                case DimensionAttributeKind.Right:
-                    adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.RightDimensionAttribute;
-                    panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.RightDimensionAttribute;
-                    break;
-                case DimensionAttributeKind.Top:
-                    adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.TopDimensionAttribute;
-                    panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.TopDimensionAttribute;
-                    break;
-                case DimensionAttributeKind.Bottom:
-                    adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.BottomDimensionAttribute;
-                    panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.BottomDimensionAttribute;
-                    break;
-                default:
-                    return;
-            }
-            
-            var indexOfPreviousPassAlong = adjacentElementSizeDimensionAttribute.DimensionUnitList.FindIndex(
-                x => x.Purpose == panelGroupParameter.DimensionUnitPurposeKind);
+            case DimensionAttributeKind.Width:
+                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.WidthDimensionAttribute;
+                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.WidthDimensionAttribute;
+                break;
+            case DimensionAttributeKind.Height:
+                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.HeightDimensionAttribute;
+                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.HeightDimensionAttribute;
+                break;
+            case DimensionAttributeKind.Left:
+                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.LeftDimensionAttribute;
+                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.LeftDimensionAttribute;
+                break;
+            case DimensionAttributeKind.Right:
+                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.RightDimensionAttribute;
+                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.RightDimensionAttribute;
+                break;
+            case DimensionAttributeKind.Top:
+                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.TopDimensionAttribute;
+                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.TopDimensionAttribute;
+                break;
+            case DimensionAttributeKind.Bottom:
+                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.BottomDimensionAttribute;
+                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.BottomDimensionAttribute;
+                break;
+            default:
+                return;
+        }
+        
+        var indexOfPreviousPassAlong = adjacentElementSizeDimensionAttribute.DimensionUnitList.FindIndex(
+            x => x.Purpose == panelGroupParameter.DimensionUnitPurposeKind);
 
-            if (activePanelTab is null && indexOfPreviousPassAlong == -1)
-            {
-                var panelGroupPercentageSize = panelGroupSizeDimensionsAttribute.DimensionUnitList.First(
-                    x => x.DimensionUnitKind == DimensionUnitKind.Percentage);
+        if (panelGroup.ActiveTab is null && indexOfPreviousPassAlong == -1)
+        {
+            var panelGroupPercentageSize = panelGroupSizeDimensionsAttribute.DimensionUnitList.First(
+                x => x.DimensionUnitKind == DimensionUnitKind.Percentage);
 
-                adjacentElementSizeDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                    panelGroupPercentageSize.Value,
-                    panelGroupPercentageSize.DimensionUnitKind,
-                    DimensionOperatorKind.Add,
-                    panelGroupParameter.DimensionUnitPurposeKind));
-            }
-            else if (activePanelTab is not null && indexOfPreviousPassAlong != -1)
-            {
-                adjacentElementSizeDimensionAttribute.DimensionUnitList.RemoveAt(indexOfPreviousPassAlong);
-            }
+            adjacentElementSizeDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+                panelGroupPercentageSize.Value,
+                panelGroupPercentageSize.DimensionUnitKind,
+                DimensionOperatorKind.Add,
+                panelGroupParameter.DimensionUnitPurposeKind));
+        }
+        else if (panelGroup.ActiveTab is not null && indexOfPreviousPassAlong != -1)
+        {
+            adjacentElementSizeDimensionAttribute.DimensionUnitList.RemoveAt(indexOfPreviousPassAlong);
         }
     }
 
-    private string GetElementDimensionsStyleString(PanelGroup? panelGroup, IPanelTab? activePanelTab)
+    private string GetElementDimensionsStyleString(PanelGroup? panelGroup)
     {
-        if (activePanelTab is null)
+        if (panelGroup?.ActiveTab is null)
         {
             return "calc(" +
                    "var(--di_ide_panel-tabs-font-size)" +
@@ -1067,7 +1059,24 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         var panelState = DotNetService.CommonService.GetPanelState();
 
-        var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == panelGroupKey);
+        PanelGroup panelGroup;
+        
+        if (panelGroupKey == panelState.TopLeftPanelGroup.Key)
+        {
+            panelGroup = panelState.TopLeftPanelGroup;
+        }
+        else if (panelGroupKey == panelState.TopRightPanelGroup.Key)
+        {
+            panelGroup = panelState.TopRightPanelGroup;
+        }
+        else if (panelGroupKey == panelState.BottomPanelGroup.Key)
+        {
+            panelGroup = panelState.BottomPanelGroup;
+        }
+        else
+        {
+            return Task.CompletedTask;
+        }
 
         if (panelGroup is null)
             return Task.CompletedTask;
@@ -1097,8 +1106,25 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         var panelState = DotNetService.CommonService.GetPanelState();
 
-        var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == panelGroupKey);
+        PanelGroup panelGroup;
 
+        if (panelGroupKey == panelState.TopLeftPanelGroup.Key)
+        {
+            panelGroup = panelState.TopLeftPanelGroup;
+        }
+        else if (panelGroupKey == panelState.TopRightPanelGroup.Key)
+        {
+            panelGroup = panelState.TopRightPanelGroup;
+        }
+        else if (panelGroupKey == panelState.BottomPanelGroup.Key)
+        {
+            panelGroup = panelState.BottomPanelGroup;
+        }
+        else
+        {
+            return Task.CompletedTask;
+        }
+        
         if (panelGroup is null)
             return Task.CompletedTask;
 

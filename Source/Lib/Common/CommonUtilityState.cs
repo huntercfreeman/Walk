@@ -157,20 +157,19 @@ public record struct OutlineState(
 /// TODO: SphagettiCode - The resizing and hiding/showing is a bit scuffed. (2023-09-19)
 /// </summary>
 public record struct PanelState(
-    IReadOnlyList<PanelGroup> PanelGroupList,
     IReadOnlyList<Panel> PanelList,
     (IPanelTab PanelTab, PanelGroup PanelGroup)? DragEventArgs)
 {
-    public PanelState() : this(new List<PanelGroup>(), new List<Panel>(), null)
+    public PanelState() : this(new List<Panel>(), null)
     {
-        var topLeftGroup = ConstructTopLeftGroup();
-        var topRightGroup = ConstructTopRightGroup();
-        var bottomGroup = ConstructBottomGroup();
-        
-        ((List<PanelGroup>)PanelGroupList).Add(topLeftGroup);
-        ((List<PanelGroup>)PanelGroupList).Add(topRightGroup);
-        ((List<PanelGroup>)PanelGroupList).Add(bottomGroup);
+        TopLeftPanelGroup = ConstructTopLeftGroup();
+        TopRightPanelGroup = ConstructTopRightGroup();
+        BottomPanelGroup = ConstructBottomGroup();
     }
+    
+    public PanelGroup TopLeftPanelGroup { get; set; }
+    public PanelGroup TopRightPanelGroup { get; set; }
+    public PanelGroup BottomPanelGroup { get; set; }
 
     private static PanelGroup ConstructTopLeftGroup()
     {

@@ -14,81 +14,7 @@ public partial class CommonService
     {
         _panelState = panelState;
     }
-
-    public void RegisterPanel(Panel panel)
-    {
-        lock (_stateModificationLock)
-        {
-            var inState = GetPanelState();
     
-            if (!inState.PanelList.Any(x => x.Key == panel.Key))
-            {
-                var outPanelList = new List<Panel>(inState.PanelList);
-                outPanelList.Add(panel);
-    
-                _panelState = inState with { PanelList = outPanelList };
-            }
-        }
-
-        CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
-    }
-
-    public void DisposePanel(Key<Panel> panelKey)
-    {
-        lock (_stateModificationLock)
-        {
-            var inState = GetPanelState();
-
-            var indexPanel = inState.PanelList.FindIndex(x => x.Key == panelKey);
-            if (indexPanel != -1)
-            {
-                var outPanelList = new List<Panel>(inState.PanelList);
-                outPanelList.RemoveAt(indexPanel);
-    
-                _panelState = inState with { PanelList = outPanelList };
-            }
-        }
-
-        CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
-    }
-    
-    public void RegisterPanelGroup(PanelGroup panelGroup)
-    {
-        lock (_stateModificationLock)
-        {
-            var inState = GetPanelState();
-
-            if (!inState.PanelGroupList.Any(x => x.Key == panelGroup.Key))
-            {
-                var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
-                outPanelGroupList.Add(panelGroup);
-    
-                _panelState = inState with { PanelGroupList = outPanelGroupList };
-            }
-        }
-
-        CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
-    }
-
-    public void DisposePanelGroup(Key<PanelGroup> panelGroupKey)
-    {
-        lock (_stateModificationLock)
-        {
-            var inState = GetPanelState();
-
-            var indexPanelGroup = inState.PanelGroupList.FindIndex(x => x.Key == panelGroupKey);
-            if (indexPanelGroup != -1)
-            {
-                var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
-                outPanelGroupList.RemoveAt(indexPanelGroup);
-    
-                _panelState = inState with { PanelGroupList = outPanelGroupList };
-            }
-        }
-
-        CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
-    }
-
     public void RegisterPanelTab(
         Key<PanelGroup> panelGroupKey,
         IPanelTab panelTab,
@@ -97,32 +23,67 @@ public partial class CommonService
         lock (_stateModificationLock)
         {
             var inState = GetPanelState();
-
-            var indexPanelGroup = inState.PanelGroupList.FindIndex(x => x.Key == panelGroupKey);
-            if (indexPanelGroup != -1)
+            
+            PanelGroup inPanelGroup;
+            
+            if (panelGroupKey == inState.TopLeftPanelGroup.Key)
             {
-                var inPanelGroup = inState.PanelGroupList[indexPanelGroup];
-                if (!inPanelGroup.TabList.Any(x => x.Key == panelTab.Key))
+                inPanelGroup = inState.TopLeftPanelGroup;
+            }
+            else if (panelGroupKey == inState.TopRightPanelGroup.Key)
+            {
+                inPanelGroup = inState.TopRightPanelGroup;
+            }
+            else if (panelGroupKey == inState.BottomPanelGroup.Key)
+            {
+                inPanelGroup = inState.BottomPanelGroup;
+            }
+            else
+            {
+                return;
+            }
+
+            if (!inPanelGroup.TabList.Any(x => x.Key == panelTab.Key))
+            {
+                var outTabList = new List<IPanelTab>(inPanelGroup.TabList);
+    
+                var insertionPoint = insertAtIndexZero
+                    ? 0
+                    : outTabList.Count;
+    
+                outTabList.Insert(insertionPoint, panelTab);
+    
+                var outPanelGroup = inPanelGroup with
                 {
-                    var outTabList = new List<IPanelTab>(inPanelGroup.TabList);
-        
-                    var insertionPoint = insertAtIndexZero
-                        ? 0
-                        : outTabList.Count;
-        
-                    outTabList.Insert(insertionPoint, panelTab);
-        
-                    var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
-        
-                    outPanelGroupList[indexPanelGroup] = inPanelGroup with
-                    {
-                        TabList = outTabList
-                    };
-        
+                    TabList = outTabList
+                };
+                
+                outPanelGroup.ActiveTab = outPanelGroup.TabList.FirstOrDefault(x => x.Key == outPanelGroup.ActiveTabKey);
+                
+                if (panelGroupKey == inState.TopLeftPanelGroup.Key)
+                {
                     _panelState = inState with
                     {
-                        PanelGroupList = outPanelGroupList
+                        TopLeftPanelGroup = outPanelGroup
                     };
+                }
+                else if (panelGroupKey == inState.TopRightPanelGroup.Key)
+                {
+                    _panelState = inState with
+                    {
+                        TopRightPanelGroup = outPanelGroup
+                    };
+                }
+                else if (panelGroupKey == inState.BottomPanelGroup.Key)
+                {
+                    _panelState = inState with
+                    {
+                        BottomPanelGroup = outPanelGroup
+                    };
+                }
+                else
+                {
+                    return;
                 }
             }
         }
@@ -135,26 +96,65 @@ public partial class CommonService
         lock (_stateModificationLock)
         {
             var inState = GetPanelState();
-
-            var indexPanelGroup = inState.PanelGroupList.FindIndex(x => x.Key == panelGroupKey);
-            if (indexPanelGroup != -1)
+            
+            PanelGroup inPanelGroup;
+            
+            if (panelGroupKey == inState.TopLeftPanelGroup.Key)
             {
-                var inPanelGroup = inState.PanelGroupList[indexPanelGroup];
-                var indexPanelTab = inPanelGroup.TabList.FindIndex(x => x.Key == panelTabKey);
-                if (indexPanelTab != -1)
-                {
-                    inPanelGroup.TabList[indexPanelTab].TabGroup = null;
-                
-                    var outTabList = new List<IPanelTab>(inPanelGroup.TabList);
-                    outTabList.RemoveAt(indexPanelTab);
-        
-                    var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
-                    outPanelGroupList[indexPanelGroup] = inPanelGroup with
-                    {
-                        TabList = outTabList
-                    };
+                inPanelGroup = inState.TopLeftPanelGroup;
+            }
+            else if (panelGroupKey == inState.TopRightPanelGroup.Key)
+            {
+                inPanelGroup = inState.TopRightPanelGroup;
+            }
+            else if (panelGroupKey == inState.BottomPanelGroup.Key)
+            {
+                inPanelGroup = inState.BottomPanelGroup;
+            }
+            else
+            {
+                return;
+            }
 
-                    _panelState = inState with { PanelGroupList = outPanelGroupList };
+            var indexPanelTab = inPanelGroup.TabList.FindIndex(x => x.Key == panelTabKey);
+            if (indexPanelTab != -1)
+            {
+                inPanelGroup.TabList[indexPanelTab].TabGroup = null;
+            
+                var outTabList = new List<IPanelTab>(inPanelGroup.TabList);
+                outTabList.RemoveAt(indexPanelTab);
+    
+                var outPanelGroup = inPanelGroup with
+                {
+                    TabList = outTabList
+                };
+                
+                outPanelGroup.ActiveTab = outPanelGroup.TabList.FirstOrDefault(x => x.Key == outPanelGroup.ActiveTabKey);
+
+                if (panelGroupKey == inState.TopLeftPanelGroup.Key)
+                {
+                    _panelState = inState with
+                    {
+                        TopLeftPanelGroup = outPanelGroup
+                    };
+                }
+                else if (panelGroupKey == inState.TopRightPanelGroup.Key)
+                {
+                    _panelState = inState with
+                    {
+                        TopRightPanelGroup = outPanelGroup
+                    };
+                }
+                else if (panelGroupKey == inState.BottomPanelGroup.Key)
+                {
+                    _panelState = inState with
+                    {
+                        BottomPanelGroup = outPanelGroup
+                    };
+                }
+                else
+                {
+                    return;
                 }
             }
         }
@@ -169,21 +169,60 @@ public partial class CommonService
         lock (_stateModificationLock)
         {
             var inState = GetPanelState();
-
-            var indexPanelGroup = inState.PanelGroupList.FindIndex(x => x.Key == panelGroupKey);
-            if (indexPanelGroup != -1)
+            
+            PanelGroup inPanelGroup;
+            
+            if (panelGroupKey == inState.TopLeftPanelGroup.Key)
             {
-                var inPanelGroup = inState.PanelGroupList[indexPanelGroup];
-                var outPanelGroupList = new List<PanelGroup>(inState.PanelGroupList);
-    
-                outPanelGroupList[indexPanelGroup] = inPanelGroup with
-                {
-                    ActiveTabKey = panelTabKey
-                };
-    
-                _panelState = inState with { PanelGroupList = outPanelGroupList };
-                sideEffect = true;
+                inPanelGroup = inState.TopLeftPanelGroup;
             }
+            else if (panelGroupKey == inState.TopRightPanelGroup.Key)
+            {
+                inPanelGroup = inState.TopRightPanelGroup;
+            }
+            else if (panelGroupKey == inState.BottomPanelGroup.Key)
+            {
+                inPanelGroup = inState.BottomPanelGroup;
+            }
+            else
+            {
+                return;
+            }
+
+            var outPanelGroup = inPanelGroup with
+            {
+                ActiveTabKey = panelTabKey
+            };
+                
+            outPanelGroup.ActiveTab = outPanelGroup.TabList.FirstOrDefault(x => x.Key == outPanelGroup.ActiveTabKey);
+
+            if (panelGroupKey == inState.TopLeftPanelGroup.Key)
+            {
+                _panelState = inState with
+                {
+                    TopLeftPanelGroup = outPanelGroup
+                };
+            }
+            else if (panelGroupKey == inState.TopRightPanelGroup.Key)
+            {
+                _panelState = inState with
+                {
+                    TopRightPanelGroup = outPanelGroup
+                };
+            }
+            else if (panelGroupKey == inState.BottomPanelGroup.Key)
+            {
+                _panelState = inState with
+                {
+                    BottomPanelGroup = outPanelGroup
+                };
+            }
+            else
+            {
+                return;
+            }
+            
+            sideEffect = true;
         }
 
         CommonUiStateChanged?.Invoke(CommonUiEventKind.PanelStateChanged);
