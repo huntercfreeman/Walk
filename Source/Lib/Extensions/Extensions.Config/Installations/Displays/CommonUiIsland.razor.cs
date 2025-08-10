@@ -67,6 +67,7 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
     /// <summary>TODO: Thread safety</summary>
     protected override bool ShouldRender()
     {
+        Console.WriteLine($"{_countEventHandled} < {_countEventReceived}");
         // This is expected to cause "eventual thread safety" due to perspective.
         //
         // The '_countEventHandled < _countEventReceived' when true is guaranteed to continue being true
@@ -118,6 +119,8 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
                     _dotNetHelper);
             }
         }
+        
+        Console.WriteLine("OAR");
     
         var tooltipModel = DotNetService.CommonService.GetTooltipState().TooltipModel;
         if (tooltipModel is not null && !tooltipModel.WasRepositioned && _tooltipModelPrevious != tooltipModel)
@@ -237,7 +240,7 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
     {
         _doTextEditorMeasure = false;
         var charAndLineMeasurements = await DotNetService.TextEditorService.JsRuntimeTextEditorApi
-                .GetCharAndLineMeasurementsInPixelsById(_measureCharacterWidthAndLineHeightElementId);
+            .GetCharAndLineMeasurementsInPixelsById(_measureCharacterWidthAndLineHeightElementId);
         Console.WriteLine($"{charAndLineMeasurements.CharacterWidth} {charAndLineMeasurements.LineHeight}");
 
         DotNetService.TextEditorService.Options_SetCharAndLineMeasurements(new(), charAndLineMeasurements);
@@ -263,7 +266,66 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
 
         DotNetService.CommonService.Dropdown_ReduceClearAction();
     }
-
+    
+    private async void OnNeedsMeasured(SecondaryChangedKind secondaryChangedKind)
+    {
+        if (secondaryChangedKind == SecondaryChangedKind.NeedsMeasured)
+        {
+            await InvokeAsync(() =>
+            {
+                MeasureTextEditor_GetReady();
+                IncrementCountEventReceived();
+                StateHasChanged();
+            });
+        }
+    }
+    
+    private void MeasureCommon_GetReady()
+    {
+        _lineHeightCssStyle = $"{DotNetService.CommonService.Options_FontFamilyCssStyleString} {DotNetService.CommonService.Options_FontSizeCssStyleString}";
+        _doCommonMeasure = true;
+    }
+    
+    /// <summary>
+    /// Only invoke this method from the UI thread due to the usage of the shared UiStringBuilder.
+    /// </summary>
+    private void MeasureTextEditor_GetReady()
+    {
+        _doTextEditorMeasure = true;
+    
+        DotNetService.CommonService.UiStringBuilder.Clear();
+        DotNetService.CommonService.UiStringBuilder.Append("di_te_text-editor-css-wrapper ");
+        DotNetService.CommonService.UiStringBuilder.Append(DotNetService.TextEditorService.ThemeCssClassString);
+        _wrapperCssClass = DotNetService.CommonService.UiStringBuilder.ToString();
+        
+        var options = DotNetService.TextEditorService.Options_GetTextEditorOptionsState().Options;
+        
+        var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
+        if (options.CommonOptions?.FontSizeInPixels is not null)
+            fontSizeInPixels = options!.CommonOptions.FontSizeInPixels;
+        DotNetService.CommonService.UiStringBuilder.Clear();
+        DotNetService.CommonService.UiStringBuilder.Append("font-size: ");
+        DotNetService.CommonService.UiStringBuilder.Append(fontSizeInPixels.ToCssValue());
+        DotNetService.CommonService.UiStringBuilder.Append("px;");
+        var fontSizeCssStyle = DotNetService.CommonService.UiStringBuilder.ToString();
+        
+        var fontFamily = TextEditorVirtualizationResult.DEFAULT_FONT_FAMILY;
+        if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
+            fontFamily = options!.CommonOptions!.FontFamily;
+        DotNetService.CommonService.UiStringBuilder.Clear();
+        DotNetService.CommonService.UiStringBuilder.Append("font-family: ");
+        DotNetService.CommonService.UiStringBuilder.Append(fontFamily);
+        DotNetService.CommonService.UiStringBuilder.Append(";");
+        var fontFamilyCssStyle = DotNetService.CommonService.UiStringBuilder.ToString();
+        
+        DotNetService.CommonService.UiStringBuilder.Clear();
+        DotNetService.CommonService.UiStringBuilder.Append(fontSizeCssStyle);
+        DotNetService.CommonService.UiStringBuilder.Append(" ");
+        DotNetService.CommonService.UiStringBuilder.Append(fontFamilyCssStyle);
+        DotNetService.CommonService.UiStringBuilder.Append(" position:absolute;");
+        _wrapperCssStyle = DotNetService.CommonService.UiStringBuilder.ToString();
+    }
+    
     [JSInvokable]
     public async Task ReceiveOnKeyDown(string key, bool shiftKey)
     {
@@ -488,65 +550,6 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
             viewModel.FocusAsync();
             return ValueTask.CompletedTask;
         });
-    }
-    
-    private async void OnNeedsMeasured(SecondaryChangedKind secondaryChangedKind)
-    {
-        if (secondaryChangedKind == SecondaryChangedKind.NeedsMeasured)
-        {
-            await InvokeAsync(() =>
-            {
-                MeasureTextEditor_GetReady();
-                IncrementCountEventReceived();
-                StateHasChanged();
-            });
-        }
-    }
-    
-    private void MeasureCommon_GetReady()
-    {
-        _lineHeightCssStyle = $"{DotNetService.CommonService.Options_FontFamilyCssStyleString} {DotNetService.CommonService.Options_FontSizeCssStyleString}";
-        _doCommonMeasure = true;
-    }
-    
-    /// <summary>
-    /// Only invoke this method from the UI thread due to the usage of the shared UiStringBuilder.
-    /// </summary>
-    private void MeasureTextEditor_GetReady()
-    {
-        _doTextEditorMeasure = true;
-    
-        DotNetService.CommonService.UiStringBuilder.Clear();
-        DotNetService.CommonService.UiStringBuilder.Append("di_te_text-editor-css-wrapper ");
-        DotNetService.CommonService.UiStringBuilder.Append(DotNetService.TextEditorService.ThemeCssClassString);
-        _wrapperCssClass = DotNetService.CommonService.UiStringBuilder.ToString();
-        
-        var options = DotNetService.TextEditorService.Options_GetTextEditorOptionsState().Options;
-        
-        var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
-        if (options.CommonOptions?.FontSizeInPixels is not null)
-            fontSizeInPixels = options!.CommonOptions.FontSizeInPixels;
-        DotNetService.CommonService.UiStringBuilder.Clear();
-        DotNetService.CommonService.UiStringBuilder.Append("font-size: ");
-        DotNetService.CommonService.UiStringBuilder.Append(fontSizeInPixels.ToCssValue());
-        DotNetService.CommonService.UiStringBuilder.Append("px;");
-        var fontSizeCssStyle = DotNetService.CommonService.UiStringBuilder.ToString();
-        
-        var fontFamily = TextEditorVirtualizationResult.DEFAULT_FONT_FAMILY;
-        if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
-            fontFamily = options!.CommonOptions!.FontFamily;
-        DotNetService.CommonService.UiStringBuilder.Clear();
-        DotNetService.CommonService.UiStringBuilder.Append("font-family: ");
-        DotNetService.CommonService.UiStringBuilder.Append(fontFamily);
-        DotNetService.CommonService.UiStringBuilder.Append(";");
-        var fontFamilyCssStyle = DotNetService.CommonService.UiStringBuilder.ToString();
-        
-        DotNetService.CommonService.UiStringBuilder.Clear();
-        DotNetService.CommonService.UiStringBuilder.Append(fontSizeCssStyle);
-        DotNetService.CommonService.UiStringBuilder.Append(" ");
-        DotNetService.CommonService.UiStringBuilder.Append(fontFamilyCssStyle);
-        DotNetService.CommonService.UiStringBuilder.Append(" position:absolute;");
-        _wrapperCssStyle = DotNetService.CommonService.UiStringBuilder.ToString();
     }
     
     public void Dispose()
