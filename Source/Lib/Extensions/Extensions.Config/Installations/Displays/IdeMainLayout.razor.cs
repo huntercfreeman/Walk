@@ -29,11 +29,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private BrowserResizeInterop BrowserResizeInterop { get; set; } = null!;
     
-    private bool _previousDragStateWrapShouldDisplay;
     private ElementDimensions _bodyElementDimensions = new();
     private ElementDimensions _editorElementDimensions = new();
-
-    private string UnselectableClassCss => _previousDragStateWrapShouldDisplay ? "di_unselectable" : string.Empty;
     
     /// <summary>
     /// This can only be set from the "UI thread".
@@ -77,26 +74,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     /// Only use this from the "UI thread".
     /// </summary>
     private readonly StringBuilder _styleBuilder = new();
-    
-    private readonly string _measureLineHeightElementId = "di_measure-lineHeight";
-    
-    /// <summary>The unit of measurement is Pixels (px)</summary>
-    public const double OUTLINE_THICKNESS = 4;
-    
-    private string _lineHeightCssStyle;
-    
-    public double ValueTooltipRelativeX { get; set; }
-    public double ValueTooltipRelativeY { get; set; }
-    
-    public string TooltipRelativeX { get; set; } = string.Empty;
-    public string TooltipRelativeY { get; set; } = string.Empty;
-    
-    private ITooltipModel? _tooltipModelPrevious = null;
-    
-    private string _measureCharacterWidthAndLineHeightElementId = "di_te_measure-charWidth-lineHeight";
-    
-    private string _wrapperCssClass;
-    private string _wrapperCssStyle;
     
     private Walk.TextEditor.RazorLib.Edits.Models.DirtyResourceUriBadge _dirtyResourceUriBadge;
     private Walk.Common.RazorLib.Notifications.Models.NotificationBadge _notificationBadge;
