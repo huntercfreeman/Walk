@@ -1,71 +1,45 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Walk.Common.RazorLib;
+using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.FileSystems.Displays;
+using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Panels.Models;
-using Walk.Ide.RazorLib.CodeSearches.Displays;
-using Walk.Ide.RazorLib.Shareds.Displays.Internals;
-using Walk.Ide.RazorLib.Shareds.Models;
-using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
-using Walk.Ide.RazorLib.Terminals.Models;
-using Walk.Ide.RazorLib.FolderExplorers.Displays;
-using Walk.Extensions.DotNet;
-
-// CompilerServiceRegistry.cs
-using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.CompilerServices.CSharpProject.CompilerServiceCase;
 using Walk.CompilerServices.Css;
+using Walk.CompilerServices.Css.Decoration;
 using Walk.CompilerServices.DotNetSolution.CompilerServiceCase;
 using Walk.CompilerServices.Json;
+using Walk.CompilerServices.Json.Decoration;
 using Walk.CompilerServices.Razor.CompilerServiceCase;
 using Walk.CompilerServices.Xml;
+using Walk.CompilerServices.Xml.Html.Decoration;
+using Walk.Extensions.DotNet;
+using Walk.Extensions.DotNet.AppDatas.Models;
+using Walk.Ide.RazorLib.BackgroundTasks.Models;
+using Walk.Ide.RazorLib.CodeSearches.Displays;
+using Walk.Ide.RazorLib.FolderExplorers.Displays;
+using Walk.Ide.RazorLib.Shareds.Displays.Internals;
+using Walk.Ide.RazorLib.Shareds.Models;
+using Walk.Ide.RazorLib.Terminals.Models;
+using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
 using Walk.TextEditor.RazorLib.CompilerServices;
-
 // DecorationMapperRegistry.cs
 using Walk.TextEditor.RazorLib.Decorations.Models;
-using Walk.CompilerServices.Css.Decoration;
-using Walk.CompilerServices.Json.Decoration;
-using Walk.CompilerServices.Xml.Html.Decoration;
+// CompilerServiceRegistry.cs
+using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Walk.Extensions.Config.Installations.Displays;
 
 public partial class IdeMainLayout
 {
-    // private const string TEST_STRING_FOR_MEASUREMENT = "abcdefghijklmnopqrstuvwxyz0123456789";
-    
-    // TODO: Just define all this in JavaScript to avoid the JSInterop for the parameter?
-    //
-    //      CharacterWidth         | LineHeight
-    // 99,000 => 5.021239618406285 | 20
-    // 60,000 => 7.146064814814815 | 20
-    // 30,000 => 7.146064814814815 | 20
-    // 25,000 => 7.146064444444445 | 20
-    // 18,000 => 7.146064814814815 | 20
-    //  9,000 => 7.146064814814815 | 20
-    //  5,000 => 7.146066666666667 | 20
-    //  1,000 => 7.146055555555556 | 20
-    //    100 => 7.146111111111111 | 20
-    //     40 => 7.145833333333333 | 20
-    //     20 => 7.145833333333333 | 20
-    //     11 => 7.146464646464646 | 20
-    //     10 => 7.147222222222222 | 20
-    //      9 => 7.145061728395062 | 20
-    //      8 => 7.145833333333333 | 20
-    //      7 => 7.146825396825397 | 20
-    //      6 => 7.148148148148148 | 20
-    //      5 => 7.144444444444445 | 20
-    //      4 => 7.145833333333333 | 20
-    //      3 => 7.148148148148148 | 20
-    //      2 => 7.152777777777778 | 20
-    //      1 => 7.138888888888889 | 20
-    // private const int TEST_STRING_REPEAT_COUNT = 11;
-
     private static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
     private static readonly Key<IDynamicViewModel> _backgroundTaskDialogKey = Key<IDynamicViewModel>.NewKey();
     private static readonly Key<IDynamicViewModel> _solutionVisualizationDialogKey = Key<IDynamicViewModel>.NewKey();
@@ -78,7 +52,154 @@ public partial class IdeMainLayout
         Dialogs,
         TextEditors,
     }
-    
+
+    private async Task InitializeOnAfterRenderFirstRender()
+    {
+        DotNetService.Enqueue(new DotNetWorkArgs
+        {
+            WorkKind = DotNetWorkKind.WalkExtensionsDotNetInitializerOnAfterRender
+        });
+
+        var dotNetAppData = await DotNetService.AppDataService
+            .ReadAppDataAsync<DotNetAppData>(
+                DotNetAppData.AssemblyName, DotNetAppData.TypeName, uniqueIdentifier: null, forceRefreshCache: false)
+            .ConfigureAwait(false);
+
+        await SetSolution(dotNetAppData).ConfigureAwait(false);
+
+        if (DotNetService.CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
+        {
+            // Do not ConfigureAwait(false) so that the UI doesn't change out from under you
+            // before you finish setting up the events?
+            // (is this a thing, I'm just presuming this would be true).
+            await DotNetService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
+                "walkConfig.appWideKeyboardEventsInitialize",
+                _dotNetHelper);
+        }
+
+        await DotNetService.TextEditorService.Options_SetFromLocalStorageAsync()
+            .ConfigureAwait(false);
+
+        await DotNetService.CommonService.
+            Options_SetFromLocalStorageAsync()
+            .ConfigureAwait(false);
+
+        if (DotNetService.CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
+        {
+            await DotNetService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync("walkIde.preventDefaultBrowserKeybindings").ConfigureAwait(false);
+        }
+
+        var token = _workerCancellationTokenSource.Token;
+
+        if (DotNetService.CommonService.Continuous_StartAsyncTask is null)
+        {
+            DotNetService.CommonService.Continuous_StartAsyncTask = Task.Run(
+                () => DotNetService.CommonService.Continuous_ExecuteAsync(token),
+                token);
+        }
+
+        if (DotNetService.CommonService.WalkHostingInformation.WalkPurposeKind == WalkPurposeKind.Ide)
+        {
+            if (DotNetService.CommonService.Indefinite_StartAsyncTask is null)
+            {
+                DotNetService.CommonService.Indefinite_StartAsyncTask = Task.Run(
+                    () => DotNetService.CommonService.Indefinite_ExecuteAsync(token),
+                    token);
+            }
+        }
+
+        BrowserResizeInterop.SubscribeWindowSizeChanged(DotNetService.CommonService.JsRuntimeCommonApi);
+    }
+
+    public void NoiseyOnInitializedSteps()
+    {
+        DotNetService.TextEditorService.IdeBackgroundTaskApi = DotNetService.IdeService;
+
+        _dirtyResourceUriBadge = new Walk.TextEditor.RazorLib.Edits.Models.DirtyResourceUriBadge(DotNetService.TextEditorService);
+        _notificationBadge = new Walk.Common.RazorLib.Notifications.Models.NotificationBadge(DotNetService.CommonService);
+
+        var panelState = DotNetService.CommonService.GetPanelState();
+
+        _topLeftResizableColumnParameter = new(
+            panelState.TopLeftPanelGroup.ElementDimensions,
+            _editorElementDimensions,
+            () => InvokeAsync(StateHasChanged));
+
+        _topRightResizableColumnParameter = new(
+            _editorElementDimensions,
+            panelState.TopRightPanelGroup.ElementDimensions,
+            () => InvokeAsync(StateHasChanged));
+
+        _resizableRowParameter = new(
+            _bodyElementDimensions,
+            panelState.BottomPanelGroup.ElementDimensions,
+            () => InvokeAsync(StateHasChanged));
+
+        _leftPanelGroupParameter = new(
+            panelGroupKey: CommonFacts.LeftPanelGroupKey,
+            adjacentElementDimensions: _editorElementDimensions,
+            dimensionAttributeKind: DimensionAttributeKind.Width,
+            cssClassString: null);
+
+        _rightPanelGroupParameter = new(
+            panelGroupKey: CommonFacts.RightPanelGroupKey,
+            adjacentElementDimensions: _editorElementDimensions,
+            dimensionAttributeKind: DimensionAttributeKind.Width,
+            cssClassString: null);
+
+        _bottomPanelGroupParameter = new(
+            panelGroupKey: CommonFacts.BottomPanelGroupKey,
+            cssClassString: "di_ide_footer",
+            adjacentElementDimensions: _bodyElementDimensions,
+            dimensionAttributeKind: DimensionAttributeKind.Height);
+
+        _bodyElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
+        {
+            new DimensionUnit(78, DimensionUnitKind.Percentage),
+            new DimensionUnit(
+                DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract),
+            new DimensionUnit(
+                CommonFacts.Ide_Header_Height.Value / 2,
+                CommonFacts.Ide_Header_Height.DimensionUnitKind,
+                DimensionOperatorKind.Subtract)
+        });
+
+        _editorElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
+        {
+            new DimensionUnit(
+                33.3333,
+                DimensionUnitKind.Percentage),
+            new DimensionUnit(
+                DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract)
+        });
+
+        InitPanelGroup(_leftPanelGroupParameter);
+        InitPanelGroup(_rightPanelGroupParameter);
+        InitPanelGroup(_bottomPanelGroupParameter);
+    }
+
+    public void EnqueueOnInitializedSteps()
+    {
+        DotNetService.CommonService.Continuous_Enqueue(new BackgroundTask(Key<IBackgroundTaskGroup>.Empty, () =>
+        {
+            InitializeMenuFile();
+            InitializeMenuTools();
+            InitializeMenuView();
+
+            // AddAltKeymap(ideMainLayout);
+            return ValueTask.CompletedTask;
+        }));
+
+        DotNetService.IdeService.Enqueue(new IdeWorkArgs
+        {
+            WorkKind = IdeWorkKind.WalkIdeInitializerOnInit,
+        });
+    }
+
     public Task RenderFileDropdownOnClick()
     {
         return DropdownHelper.RenderDropdownAsync(
@@ -646,4 +767,33 @@ public partial class IdeMainLayout
             }
         }
     }
+
+    // private const string TEST_STRING_FOR_MEASUREMENT = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+    // TODO: Just define all this in JavaScript to avoid the JSInterop for the parameter?
+    //
+    //      CharacterWidth         | LineHeight
+    // 99,000 => 5.021239618406285 | 20
+    // 60,000 => 7.146064814814815 | 20
+    // 30,000 => 7.146064814814815 | 20
+    // 25,000 => 7.146064444444445 | 20
+    // 18,000 => 7.146064814814815 | 20
+    //  9,000 => 7.146064814814815 | 20
+    //  5,000 => 7.146066666666667 | 20
+    //  1,000 => 7.146055555555556 | 20
+    //    100 => 7.146111111111111 | 20
+    //     40 => 7.145833333333333 | 20
+    //     20 => 7.145833333333333 | 20
+    //     11 => 7.146464646464646 | 20
+    //     10 => 7.147222222222222 | 20
+    //      9 => 7.145061728395062 | 20
+    //      8 => 7.145833333333333 | 20
+    //      7 => 7.146825396825397 | 20
+    //      6 => 7.148148148148148 | 20
+    //      5 => 7.144444444444445 | 20
+    //      4 => 7.145833333333333 | 20
+    //      3 => 7.148148148148148 | 20
+    //      2 => 7.152777777777778 | 20
+    //      1 => 7.138888888888889 | 20
+    // private const int TEST_STRING_REPEAT_COUNT = 11;
 }

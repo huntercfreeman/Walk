@@ -33,11 +33,14 @@
 <div id="@CommonFacts.RootHtmlElementId" class="@_classCssString" style="@_styleCssString">
     <Walk.Common.RazorLib.Drags.Displays.DragInitializer />
     
-    <div id="@_measureLineHeightElementId"
-         class="di_measure-lineHeight-wrap"
-         style="@_lineHeightCssStyle">
-        0
-    </div>
+    @if (_doCommonMeasure)
+    {
+        <div id="@_measureLineHeightElementId"
+             class="di_measure-lineHeight-wrap"
+             style="@_lineHeightCssStyle">
+            0
+        </div>
+    }
     
     @{
         var panelState = DotNetService.CommonService.GetPanelState();
@@ -171,14 +174,17 @@
         </div>
     }
 
-    <div class="@_wrapperCssClass"
-    	 style="@_wrapperCssStyle">
-    	<div class="di_te_measure-charWidth-lineHeight-wrap di_te_row">
-    	    <div class="di_te_measure-charWidth-lineHeight di_te_row"
-    	         id="@_measureCharacterWidthAndLineHeightElementId">
-    	    </div>
-    	</div>
-    </div>
+    @if (_doTextEditorMeasure)
+    {
+        <div class="@_wrapperCssClass"
+        	 style="@_wrapperCssStyle">
+        	<div class="di_te_measure-charWidth-lineHeight-wrap di_te_row">
+        	    <div class="di_te_measure-charWidth-lineHeight di_te_row"
+        	         id="@_measureCharacterWidthAndLineHeightElementId">
+        	    </div>
+        	</div>
+        </div>
+    }
 
     @* Start Header *@
     @* ContextRecord="ContextFacts.MainLayoutHeaderContext" *@
