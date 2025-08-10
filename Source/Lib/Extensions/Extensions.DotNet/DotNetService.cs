@@ -50,8 +50,6 @@ public partial class DotNetService : IBackgroundTaskGroup, IDisposable
         {
             case DotNetWorkKind.SolutionExplorer_TreeView_MultiSelect_DeleteFiles:
                 return Do_SolutionExplorer_TreeView_MultiSelect_DeleteFiles(workArgs.TreeViewCommandArgs);
-            case DotNetWorkKind.WalkExtensionsDotNetInitializerOnAfterRender:
-                return Do_WalkExtensionsDotNetInitializerOnAfterRender();
             case DotNetWorkKind.SubmitNuGetQuery:
                 return Do_SubmitNuGetQuery(workArgs.NugetPackageManagerQuery);
             case DotNetWorkKind.RunTestByFullyQualifiedName:

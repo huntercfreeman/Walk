@@ -36,7 +36,7 @@ using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Walk.Extensions.Config.Installations.Displays;
 
-public partial class IdeMainLayout
+public partial class InitializationHelper
 {
     private static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
     private static readonly Key<IDynamicViewModel> _backgroundTaskDialogKey = Key<IDynamicViewModel>.NewKey();
@@ -51,12 +51,80 @@ public partial class IdeMainLayout
         TextEditors,
     }
 
-    private async Task InitializeOnAfterRenderFirstRender()
+    private async Task InitializeOnAfterRenderFirstRender(DotNetService DotNetService)
     {
-        DotNetService.Enqueue(new DotNetWorkArgs
+        var menuOptionOpenDotNetSolution = new MenuOptionRecord(
+            ".NET Solution",
+            MenuOptionKind.Other,
+            () =>
+            {
+                DotNetSolutionState.ShowInputFile(IdeService, this);
+                return Task.CompletedTask;
+            });
+
+        DotNetService.IdeService.Ide_ModifyMenuFile(
+            inMenu =>
+            {
+                var indexMenuOptionOpen = inMenu.MenuOptionList.FindIndex(x => x.DisplayName == "Open");
+
+                if (indexMenuOptionOpen == -1)
+                {
+                    var copyList = new List<MenuOptionRecord>(inMenu.MenuOptionList);
+                    copyList.Add(menuOptionOpenDotNetSolution);
+                    return inMenu with
+                    {
+                        MenuOptionList = copyList
+                    };
+                }
+
+                var menuOptionOpen = inMenu.MenuOptionList[indexMenuOptionOpen];
+
+                if (menuOptionOpen.SubMenu is null)
+                    menuOptionOpen.SubMenu = new MenuRecord(new List<MenuOptionRecord>());
+
+                // UI foreach enumeration was modified nightmare. (2025-02-07)
+                var copySubMenuList = new List<MenuOptionRecord>(menuOptionOpen.SubMenu.MenuOptionList);
+                copySubMenuList.Add(menuOptionOpenDotNetSolution);
+
+                menuOptionOpen.SubMenu = menuOptionOpen.SubMenu with
+                {
+                    MenuOptionList = copySubMenuList
+                };
+
+                // Menu Option New
+                {
+                    var menuOptionNewDotNetSolution = new MenuOptionRecord(
+                        ".NET Solution",
+                        MenuOptionKind.Other,
+                        OpenNewDotNetSolutionDialog);
+
+                    var menuOptionNew = new MenuOptionRecord(
+                        "New",
+                        MenuOptionKind.Other,
+                        subMenu: new MenuRecord(new List<MenuOptionRecord> { menuOptionNewDotNetSolution }));
+
+                    var copyMenuOptionList = new List<MenuOptionRecord>(inMenu.MenuOptionList);
+                    copyMenuOptionList.Insert(0, menuOptionNew);
+
+                    return inMenu with
+                    {
+                        MenuOptionList = copyMenuOptionList
+                    };
+                }
+            });
+
+        InitializeMenuRun();
+
+        DotNetService.IdeService.TextEditorService.CommonService.SetActivePanelTab(_leftPanelGroupKey, _solutionExplorerPanelKey);
+
+        var compilerService = DotNetService.IdeService.TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
+
+        /*if (compilerService is CSharpCompilerService cSharpCompilerService)
         {
-            WorkKind = DotNetWorkKind.WalkExtensionsDotNetInitializerOnAfterRender
-        });
+            cSharpCompilerService.SetSymbolRendererType(typeof(Walk.Extensions.DotNet.TextEditors.Displays.CSharpSymbolDisplay));
+        }*/
+
+        DotNetService.IdeService.TextEditorService.UpsertHeader("cs", typeof(Walk.Extensions.CompilerServices.Displays.TextEditorCompilerServiceHeaderDisplay));
 
         var dotNetAppData = await DotNetService.AppDataService
             .ReadAppDataAsync<DotNetAppData>(
@@ -112,9 +180,6 @@ public partial class IdeMainLayout
     public void NoiseyOnInitializedSteps()
     {
         DotNetService.TextEditorService.IdeBackgroundTaskApi = DotNetService.IdeService;
-
-        _dirtyResourceUriBadge = new Walk.TextEditor.RazorLib.Edits.Models.DirtyResourceUriBadge(DotNetService.TextEditorService);
-        _notificationBadge = new Walk.Common.RazorLib.Notifications.Models.NotificationBadge(DotNetService.CommonService);
 
         var panelState = DotNetService.CommonService.GetPanelState();
 

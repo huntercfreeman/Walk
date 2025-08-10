@@ -32,6 +32,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private ElementDimensions _bodyElementDimensions = new();
     private ElementDimensions _editorElementDimensions = new();
     
+    // NOTE TO SELF: Don't put an event for Drag that makes the website unselectable,...
+    // ...just ensure the drag start target is unselectable.
+    // I'm pretty sure this works. If it doesn't make sure it isn't cause you're
+    // doing drag start on a selectable element that then propagates the drag start event?
+    
     /// <summary>
     /// This can only be set from the "UI thread".
     /// </summary>
@@ -50,7 +55,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     private ResizableRowParameter _resizableRowParameter;
     
-    private DotNetObjectReference<IdeMainLayout>? _dotNetHelper;
+    private TabCascadingValueBatch _tabCascadingValueBatch = new();
     
     private IDialog _dialogRecord = new DialogViewModel(
         Key<IDynamicViewModel>.NewKey(),
@@ -61,30 +66,15 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         true,
         null);
     
-    private CtrlTabKind _ctrlTabKind = CtrlTabKind.Dialogs;
-    
-    private int _index;
-    
-    private bool _altIsDown;
-    private bool _ctrlIsDown;
-    
     private CancellationTokenSource _workerCancellationTokenSource = new();
-    
-    /// <summary>
-    /// Only use this from the "UI thread".
-    /// </summary>
-    private readonly StringBuilder _styleBuilder = new();
     
     private Walk.TextEditor.RazorLib.Edits.Models.DirtyResourceUriBadge _dirtyResourceUriBadge;
     private Walk.Common.RazorLib.Notifications.Models.NotificationBadge _notificationBadge;
-    
-    private bool _doTextEditorMeasure = true;
-    private bool _doCommonMeasure = true;
-    
+
     protected override void OnInitialized()
     {
-        // TODO: Does the object used here matter? Should it be a "smaller" object or is this just reference?
-        _dotNetHelper = DotNetObjectReference.Create(this);
+        _dirtyResourceUriBadge = new Walk.TextEditor.RazorLib.Edits.Models.DirtyResourceUriBadge(DotNetService.TextEditorService);
+        _notificationBadge = new Walk.Common.RazorLib.Notifications.Models.NotificationBadge(DotNetService.CommonService);
     
         InitializePanelTabs();
         HandleCompilerServicesAndDecorationMappers();
@@ -93,9 +83,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
         EnqueueOnInitializedSteps();
 
-        SubscribeEvents();
-
-        MeasureLineHeight_UiRenderStep();
+        DotNetService.CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
+        
+        DotNetService.TextEditorService.SecondaryChanged += TextEditorOptionsStateWrap_StateChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -104,86 +94,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         {
             await InitializeOnAfterRenderFirstRender();
         }
-        
-        var tooltipModel = DotNetService.CommonService.GetTooltipState().TooltipModel;
-        if (tooltipModel is not null && !tooltipModel.WasRepositioned && _tooltipModelPrevious != tooltipModel)
-        {
-            await HandleTooltipRepositioning(tooltipModel);
-        }
-        
-        if (_doTextEditorMeasure)
-        {
-            await HandleMeasureTextEditor();
-        }
-        
-        if (_doCommonMeasure)
-        {
-            await HandleMeasureCommon();
-        }
-    }
-
-    /// <summary>Needs UI thread to ensure the measured element is rendered.</summary>
-    private async Task HandleMeasureCommon()
-    {
-        _doCommonMeasure = false;
-        var lineHeight = await DotNetService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeAsync<int>(
-            "walkCommon.getLineHeightInPixelsById",
-            _measureLineHeightElementId);
-        Console.WriteLine($"lineHeight: {lineHeight}");
-        
-        DotNetService.CommonService.Options_SetLineHeight(lineHeight);
-    }
-
-    /// <summary>Needs UI thread to ensure the measured element is rendered.</summary>
-    private async Task HandleMeasureTextEditor()
-    {
-        _doTextEditorMeasure = false;
-        var charAndLineMeasurements = await DotNetService.TextEditorService.JsRuntimeTextEditorApi
-                .GetCharAndLineMeasurementsInPixelsById(_measureCharacterWidthAndLineHeightElementId);
-        Console.WriteLine($"{charAndLineMeasurements.CharacterWidth} {charAndLineMeasurements.LineHeight}");
-
-        DotNetService.TextEditorService.Options_SetCharAndLineMeasurements(new(), charAndLineMeasurements);
-    }
-
-    private async Task HandleTooltipRepositioning(ITooltipModel tooltipModel)
-    {
-        _tooltipModelPrevious = tooltipModel;
-
-        var tooltip_HtmlElementDimensions = await DotNetService.CommonService.JsRuntimeCommonApi.MeasureElementById(
-            DotNetService.CommonService.Tooltip_HtmlElementId);
-        var tooltip_GlobalHtmlElementDimensions = await DotNetService.CommonService.JsRuntimeCommonApi.MeasureElementById(
-            CommonFacts.RootHtmlElementId);
-
-        var xLarge = false;
-        var yLarge = false;
-
-        if (tooltipModel.X + tooltip_HtmlElementDimensions.WidthInPixels > tooltip_GlobalHtmlElementDimensions.WidthInPixels)
-        {
-            xLarge = true;
-        }
-
-        if (tooltipModel.Y + tooltip_HtmlElementDimensions.HeightInPixels > tooltip_GlobalHtmlElementDimensions.HeightInPixels)
-        {
-            yLarge = true;
-        }
-
-        tooltipModel.WasRepositioned = true;
-
-        if (xLarge)
-        {
-            tooltipModel.X = tooltip_GlobalHtmlElementDimensions.WidthInPixels - tooltip_HtmlElementDimensions.WidthInPixels - 5;
-            if (tooltipModel.X < 0)
-                tooltipModel.X = 0;
-        }
-
-        if (yLarge)
-        {
-            tooltipModel.Y = tooltip_GlobalHtmlElementDimensions.HeightInPixels - tooltip_HtmlElementDimensions.HeightInPixels - 5;
-            if (tooltipModel.Y < 0)
-                tooltipModel.Y = 0;
-        }
-
-        await InvokeAsync(StateHasChanged);
     }
     
     /// <summary>
@@ -199,8 +109,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             
             uiStringBuilder.Clear();
             uiStringBuilder.Append("di_main-layout ");
-            uiStringBuilder.Append(UnselectableClassCss);
-            uiStringBuilder.Append(" ");
             uiStringBuilder.Append(DotNetService.CommonService.Options_ThemeCssClassString);
             uiStringBuilder.Append(" ");
             uiStringBuilder.Append(DotNetService.TextEditorService.ThemeCssClassString);
@@ -222,68 +130,352 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         }
     }
     
-    #region WalkCommonInitializer
-    private void MeasureLineHeight_UiRenderStep()
+    private async void OnCommonUiStateChanged(CommonUiEventKind commonUiEventKind)
     {
-        _lineHeightCssStyle = $"{DotNetService.CommonService.Options_FontFamilyCssStyleString} {DotNetService.CommonService.Options_FontSizeCssStyleString}";
-        _doCommonMeasure = true;
-        StateHasChanged();
+        switch (commonUiEventKind)
+        {
+            case CommonUiEventKind.PanelStateChanged:
+                await InvokeAsync(StateHasChanged);
+                break;
+        }
     }
-    #endregion
-    
-    #region StartWalkTextEditorInitializer
-    
+
+    private async void AppOptionsOnStateChanged(CommonUiEventKind commonUiEventKind)
+    {
+        if (commonUiEventKind == CommonUiEventKind.AppOptionsStateChanged)
+        {
+            await InvokeAsync(() =>
+            {
+                _shouldRecalculateCssStrings = true;
+                StateHasChanged();
+            }).ConfigureAwait(false);
+        }
+    }
+
+    private async void TextEditorOptionsStateWrap_StateChanged(SecondaryChangedKind secondaryChangedKind)
+    {
+        if (secondaryChangedKind == SecondaryChangedKind.StaticStateChanged)
+        {
+            await InvokeAsync(() =>
+            {
+                _shouldRecalculateCssStrings = true;
+                StateHasChanged();
+            }).ConfigureAwait(false);
+        }
+    }
+
+    private List<IPanelTab> GetTabList(PanelGroup panelGroup)
+    {
+        var tabList = new List<IPanelTab>();
+
+        foreach (var panelTab in panelGroup.TabList)
+        {
+            panelTab.TabGroup = panelGroup;
+            tabList.Add(panelTab);
+        }
+
+        return tabList;
+    }
+
+    private void PassAlongSizeIfNoActiveTab(PanelGroupParameter panelGroupParameter, PanelGroup panelGroup)
+    {
+        DimensionAttribute adjacentElementSizeDimensionAttribute;
+        DimensionAttribute panelGroupSizeDimensionsAttribute;
+
+        switch (panelGroupParameter.DimensionAttributeKind)
+        {
+            case DimensionAttributeKind.Width:
+                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.WidthDimensionAttribute;
+                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.WidthDimensionAttribute;
+                break;
+            case DimensionAttributeKind.Height:
+                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.HeightDimensionAttribute;
+                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.HeightDimensionAttribute;
+                break;
+            case DimensionAttributeKind.Left:
+                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.LeftDimensionAttribute;
+                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.LeftDimensionAttribute;
+                break;
+            case DimensionAttributeKind.Right:
+                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.RightDimensionAttribute;
+                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.RightDimensionAttribute;
+                break;
+            case DimensionAttributeKind.Top:
+                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.TopDimensionAttribute;
+                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.TopDimensionAttribute;
+                break;
+            case DimensionAttributeKind.Bottom:
+                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.BottomDimensionAttribute;
+                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.BottomDimensionAttribute;
+                break;
+            default:
+                return;
+        }
+
+        var indexOfPreviousPassAlong = adjacentElementSizeDimensionAttribute.DimensionUnitList.FindIndex(
+            x => x.Purpose == panelGroupParameter.DimensionUnitPurposeKind);
+
+        if (panelGroup.ActiveTab is null && indexOfPreviousPassAlong == -1)
+        {
+            var panelGroupPercentageSize = panelGroupSizeDimensionsAttribute.DimensionUnitList.First(
+                x => x.DimensionUnitKind == DimensionUnitKind.Percentage);
+
+            adjacentElementSizeDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+                panelGroupPercentageSize.Value,
+                panelGroupPercentageSize.DimensionUnitKind,
+                DimensionOperatorKind.Add,
+                panelGroupParameter.DimensionUnitPurposeKind));
+        }
+        else if (panelGroup.ActiveTab is not null && indexOfPreviousPassAlong != -1)
+        {
+            adjacentElementSizeDimensionAttribute.DimensionUnitList.RemoveAt(indexOfPreviousPassAlong);
+        }
+    }
+
+    private string GetElementDimensionsStyleString(PanelGroup? panelGroup)
+    {
+        if (panelGroup?.ActiveTab is null)
+        {
+            return "calc(" +
+                   "var(--di_panel-tabs-font-size)" +
+                   " + var(--di_panel-tabs-margin)" +
+                   " + var(--di_panel-tabs-bug-are-not-aligning-need-to-fix-todo))";
+        }
+
+        return panelGroup?.ElementDimensions.GetStyleString(DotNetService.CommonService.UiStringBuilder) ?? string.Empty;
+    }
+
+    private Task TopDropzoneOnMouseUp(Key<PanelGroup> panelGroupKey, MouseEventArgs mouseEventArgs)
+    {
+        var panelState = DotNetService.CommonService.GetPanelState();
+
+        PanelGroup panelGroup;
+
+        if (panelGroupKey == panelState.TopLeftPanelGroup.Key)
+        {
+            panelGroup = panelState.TopLeftPanelGroup;
+        }
+        else if (panelGroupKey == panelState.TopRightPanelGroup.Key)
+        {
+            panelGroup = panelState.TopRightPanelGroup;
+        }
+        else if (panelGroupKey == panelState.BottomPanelGroup.Key)
+        {
+            panelGroup = panelState.BottomPanelGroup;
+        }
+        else
+        {
+            return Task.CompletedTask;
+        }
+
+        if (panelGroup is null)
+            return Task.CompletedTask;
+
+        var panelDragEventArgs = panelState.DragEventArgs;
+
+        if (panelDragEventArgs is not null)
+        {
+            DotNetService.CommonService.DisposePanelTab(
+                panelDragEventArgs.Value.PanelGroup.Key,
+                panelDragEventArgs.Value.PanelTab.Key);
+
+            DotNetService.CommonService.RegisterPanelTab(
+                panelGroup.Key,
+                panelDragEventArgs.Value.PanelTab,
+                true);
+
+            DotNetService.CommonService.Panel_SetDragEventArgs(null);
+
+            DotNetService.CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(false, null);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private Task BottomDropzoneOnMouseUp(Key<PanelGroup> panelGroupKey, MouseEventArgs mouseEventArgs)
+    {
+        var panelState = DotNetService.CommonService.GetPanelState();
+
+        PanelGroup panelGroup;
+
+        if (panelGroupKey == panelState.TopLeftPanelGroup.Key)
+        {
+            panelGroup = panelState.TopLeftPanelGroup;
+        }
+        else if (panelGroupKey == panelState.TopRightPanelGroup.Key)
+        {
+            panelGroup = panelState.TopRightPanelGroup;
+        }
+        else if (panelGroupKey == panelState.BottomPanelGroup.Key)
+        {
+            panelGroup = panelState.BottomPanelGroup;
+        }
+        else
+        {
+            return Task.CompletedTask;
+        }
+
+        if (panelGroup is null)
+            return Task.CompletedTask;
+
+        var panelDragEventArgs = panelState.DragEventArgs;
+
+        if (panelDragEventArgs is not null)
+        {
+            DotNetService.CommonService.DisposePanelTab(
+                panelDragEventArgs.Value.PanelGroup.Key,
+                panelDragEventArgs.Value.PanelTab.Key);
+
+            DotNetService.CommonService.RegisterPanelTab(
+                panelGroup.Key,
+                panelDragEventArgs.Value.PanelTab,
+                false);
+
+            DotNetService.CommonService.Panel_SetDragEventArgs(null);
+
+            DotNetService.CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(false, null);
+        }
+
+        return Task.CompletedTask;
+    }
+
     /// <summary>
-    /// Only invoke this method from the UI thread due to the usage of the shared UiStringBuilder.
+    /// This method should only be invoked from the "UI thread" due to the usage of `CommonBackgroundTaskApi.UiStringBuilder`.
     /// </summary>
-    private async Task Ready()
+    private string GetPanelElementCssClass(string panelPositionCss, string cssClassString)
     {
-        _doTextEditorMeasure = true;
-    
         DotNetService.CommonService.UiStringBuilder.Clear();
-        DotNetService.CommonService.UiStringBuilder.Append("di_te_text-editor-css-wrapper ");
-        DotNetService.CommonService.UiStringBuilder.Append(DotNetService.TextEditorService.ThemeCssClassString);
-        _wrapperCssClass = DotNetService.CommonService.UiStringBuilder.ToString();
-        
-        var options = DotNetService.TextEditorService.Options_GetTextEditorOptionsState().Options;
-        
-        var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
-        if (options.CommonOptions?.FontSizeInPixels is not null)
-            fontSizeInPixels = options!.CommonOptions.FontSizeInPixels;
-        DotNetService.CommonService.UiStringBuilder.Clear();
-        DotNetService.CommonService.UiStringBuilder.Append("font-size: ");
-        DotNetService.CommonService.UiStringBuilder.Append(fontSizeInPixels.ToCssValue());
-        DotNetService.CommonService.UiStringBuilder.Append("px;");
-        var fontSizeCssStyle = DotNetService.CommonService.UiStringBuilder.ToString();
-        
-        var fontFamily = TextEditorVirtualizationResult.DEFAULT_FONT_FAMILY;
-        if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
-            fontFamily = options!.CommonOptions!.FontFamily;
-        DotNetService.CommonService.UiStringBuilder.Clear();
-        DotNetService.CommonService.UiStringBuilder.Append("font-family: ");
-        DotNetService.CommonService.UiStringBuilder.Append(fontFamily);
-        DotNetService.CommonService.UiStringBuilder.Append(";");
-        var fontFamilyCssStyle = DotNetService.CommonService.UiStringBuilder.ToString();
-        
-        DotNetService.CommonService.UiStringBuilder.Clear();
-        DotNetService.CommonService.UiStringBuilder.Append(fontSizeCssStyle);
+        DotNetService.CommonService.UiStringBuilder.Append("di_ide_panel ");
+        DotNetService.CommonService.UiStringBuilder.Append(panelPositionCss);
         DotNetService.CommonService.UiStringBuilder.Append(" ");
-        DotNetService.CommonService.UiStringBuilder.Append(fontFamilyCssStyle);
-        DotNetService.CommonService.UiStringBuilder.Append(" position:absolute;");
-        _wrapperCssStyle = DotNetService.CommonService.UiStringBuilder.ToString();
-        
-        // I said "Only invoke this method from the UI thread due to the usage of the shared UiStringBuilder."
-        // But I'm still going to keep this InvokeAsync for the StateHasChanged due to superstituous anxiety.
-        await InvokeAsync(StateHasChanged);
+        DotNetService.CommonService.UiStringBuilder.Append(cssClassString);
+
+        return DotNetService.CommonService.UiStringBuilder.ToString();
     }
-    #endregion
-    
+
+    private bool _thinksLeftMouseButtonIsDown;
+
+    private Key<IDynamicViewModel> _dynamicViewModelKeyPrevious;
+
+    private ElementReference? _tabButtonElementReference;
+
+    private string GetIsActiveCssClass(ITab localTabViewModel) => (localTabViewModel.TabGroup?.GetIsActive(localTabViewModel) ?? false)
+        ? "di_active"
+        : string.Empty;
+
+    private async Task OnClick(ITab localTabViewModel, MouseEventArgs e)
+    {
+        var localTabGroup = localTabViewModel.TabGroup;
+        if (localTabGroup is null)
+            return;
+
+        await localTabGroup.OnClickAsync(localTabViewModel, e).ConfigureAwait(false);
+    }
+
+    private async Task CloseTabOnClickAsync(ITab localTabViewModel)
+    {
+        var localTabGroup = localTabViewModel.TabGroup;
+        if (localTabGroup is null)
+            return;
+
+        await localTabGroup.CloseAsync(localTabViewModel).ConfigureAwait(false);
+    }
+
+    private async Task HandleOnMouseDownAsync(ITab localTabViewModel, MouseEventArgs mouseEventArgs)
+    {
+        if (mouseEventArgs.Button == 0)
+            _thinksLeftMouseButtonIsDown = true;
+        if (mouseEventArgs.Button == 1)
+            await CloseTabOnClickAsync(localTabViewModel).ConfigureAwait(false);
+        else if (mouseEventArgs.Button == 2)
+            ManuallyPropagateOnContextMenu(mouseEventArgs, localTabViewModel);
+    }
+
+    private void ManuallyPropagateOnContextMenu(
+        MouseEventArgs mouseEventArgs,
+        ITab tab)
+    {
+        var localHandleTabButtonOnContextMenu = _tabCascadingValueBatch.HandleTabButtonOnContextMenu;
+        if (localHandleTabButtonOnContextMenu is null)
+            return;
+
+        _tabCascadingValueBatch.CommonService.Enqueue(new CommonWorkArgs
+        {
+            WorkKind = CommonWorkKind.Tab_ManuallyPropagateOnContextMenu,
+            HandleTabButtonOnContextMenu = localHandleTabButtonOnContextMenu,
+            TabContextMenuEventArgs = new TabContextMenuEventArgs(mouseEventArgs, tab, () => Task.CompletedTask),
+        });
+    }
+
+    private void HandleOnMouseUp()
+    {
+        _thinksLeftMouseButtonIsDown = false;
+    }
+
+    private async Task HandleOnMouseOutAsync(ITab localTabViewModel, MouseEventArgs mouseEventArgs)
+    {
+        if ((mouseEventArgs.Buttons & 1) == 0)
+            _thinksLeftMouseButtonIsDown = false;
+
+        if (_thinksLeftMouseButtonIsDown && localTabViewModel is IDrag draggable)
+        {
+            _thinksLeftMouseButtonIsDown = false;
+
+            // This needs to run synchronously to guarantee `dragState.DragElementDimensions` is in a threadsafe state
+            // (keep any awaits after it).
+            // (only the "UI thread" touches `dragState.DragElementDimensions`).
+            var dragState = _tabCascadingValueBatch.CommonService.GetDragState();
+
+            dragState.DragElementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
+
+            dragState.DragElementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
+
+            dragState.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
+            dragState.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+                mouseEventArgs.ClientX,
+                DimensionUnitKind.Pixels));
+
+            dragState.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
+            dragState.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
+                mouseEventArgs.ClientY,
+                DimensionUnitKind.Pixels));
+
+            dragState.DragElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
+
+            await draggable.OnDragStartAsync().ConfigureAwait(false);
+
+            SubscribeToDragEventForScrolling(draggable);
+        }
+    }
+
+    public void SubscribeToDragEventForScrolling(IDrag draggable)
+    {
+        _tabCascadingValueBatch.CommonService.Drag_ShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, draggable);
+    }
+
+    /// <summary>
+    /// This method can only be invoked from the "UI thread" due to the shared `UiStringBuilder` usage.
+    /// </summary>
+    private string GetCssClass(ITabGroup localTabGroup, ITab localTabViewModel)
+    {
+        var uiStringBuilder = _tabCascadingValueBatch.CommonService.UiStringBuilder;
+
+        uiStringBuilder.Clear();
+        uiStringBuilder.Append("di_dynamic-tab di_button di_unselectable ");
+        uiStringBuilder.Append(GetIsActiveCssClass(localTabViewModel));
+        uiStringBuilder.Append(" ");
+        uiStringBuilder.Append(localTabGroup?.GetDynamicCss(localTabViewModel));
+        uiStringBuilder.Append(" ");
+        uiStringBuilder.Append("di_ide_panel-tab");
+
+        return uiStringBuilder.ToString();
+    }
     
     public void Dispose()
     {
-        DisposeEvents();
-
-        _dotNetHelper?.Dispose();
+        
+        DotNetService.CommonService.CommonUiStateChanged -= OnCommonUiStateChanged;
+        DotNetService.TextEditorService.SecondaryChanged -= TextEditorOptionsStateWrap_StateChanged;
         
         BrowserResizeInterop.DisposeWindowSizeChanged(DotNetService.CommonService.JsRuntimeCommonApi);
         
