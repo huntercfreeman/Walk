@@ -12,11 +12,14 @@ using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Resizes.Models;
+using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.TextEditor.RazorLib.Options.Models;
 using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.Settings.Displays;
+using Walk.Ide.RazorLib.Shareds.Displays.Internals;
+using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Extensions.DotNet;
 using Walk.Extensions.DotNet.AppDatas.Models;
 
@@ -76,12 +79,75 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         _dirtyResourceUriBadge = new Walk.TextEditor.RazorLib.Edits.Models.DirtyResourceUriBadge(DotNetService.TextEditorService);
         _notificationBadge = new Walk.Common.RazorLib.Notifications.Models.NotificationBadge(DotNetService.CommonService);
     
-        InitializePanelTabs();
-        HandleCompilerServicesAndDecorationMappers();
+        InitializationHelper.InitializePanelTabs(DotNetService);
+        InitializationHelper.HandleCompilerServicesAndDecorationMappers(DotNetService);
 
-        NoiseyOnInitializedSteps();
+        DotNetService.TextEditorService.IdeBackgroundTaskApi = DotNetService.IdeService;
 
-        EnqueueOnInitializedSteps();
+        var panelState = DotNetService.CommonService.GetPanelState();
+
+        _topLeftResizableColumnParameter = new(
+            panelState.TopLeftPanelGroup.ElementDimensions,
+            _editorElementDimensions,
+            () => InvokeAsync(StateHasChanged));
+
+        _topRightResizableColumnParameter = new(
+            _editorElementDimensions,
+            panelState.TopRightPanelGroup.ElementDimensions,
+            () => InvokeAsync(StateHasChanged));
+
+        _resizableRowParameter = new(
+            _bodyElementDimensions,
+            panelState.BottomPanelGroup.ElementDimensions,
+            () => InvokeAsync(StateHasChanged));
+
+        _leftPanelGroupParameter = new(
+            panelGroupKey: CommonFacts.LeftPanelGroupKey,
+            adjacentElementDimensions: _editorElementDimensions,
+            dimensionAttributeKind: DimensionAttributeKind.Width,
+            cssClassString: null);
+
+        _rightPanelGroupParameter = new(
+            panelGroupKey: CommonFacts.RightPanelGroupKey,
+            adjacentElementDimensions: _editorElementDimensions,
+            dimensionAttributeKind: DimensionAttributeKind.Width,
+            cssClassString: null);
+
+        _bottomPanelGroupParameter = new(
+            panelGroupKey: CommonFacts.BottomPanelGroupKey,
+            cssClassString: "di_ide_footer",
+            adjacentElementDimensions: _bodyElementDimensions,
+            dimensionAttributeKind: DimensionAttributeKind.Height);
+
+        _bodyElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
+        {
+            new DimensionUnit(78, DimensionUnitKind.Percentage),
+            new DimensionUnit(
+                DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract),
+            new DimensionUnit(
+                CommonFacts.Ide_Header_Height.Value / 2,
+                CommonFacts.Ide_Header_Height.DimensionUnitKind,
+                DimensionOperatorKind.Subtract)
+        });
+
+        _editorElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
+        {
+            new DimensionUnit(
+                33.3333,
+                DimensionUnitKind.Percentage),
+            new DimensionUnit(
+                DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+                DimensionUnitKind.Pixels,
+                DimensionOperatorKind.Subtract)
+        });
+
+        InitPanelGroup(DotNetService, _leftPanelGroupParameter);
+        InitPanelGroup(DotNetService, _rightPanelGroupParameter);
+        InitPanelGroup(DotNetService, _bottomPanelGroupParameter);
+
+        InitializationHelper.EnqueueOnInitializedSteps(DotNetService);
 
         DotNetService.CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
         
@@ -92,7 +158,45 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         if (firstRender)
         {
-            await InitializeOnAfterRenderFirstRender();
+            await InitializationHelper.InitializeOnAfterRenderFirstRender(DotNetService, BrowserResizeInterop, _workerCancellationTokenSource);
+        }
+    }
+    
+    private void InitPanelGroup(DotNetService DotNetService, PanelGroupParameter panelGroupParameter)
+    {
+        var position = string.Empty;
+
+        if (CommonFacts.LeftPanelGroupKey == panelGroupParameter.PanelGroupKey)
+        {
+            position = "left";
+            panelGroupParameter.DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_left;
+        }
+        else if (CommonFacts.RightPanelGroupKey == panelGroupParameter.PanelGroupKey)
+        {
+            position = "right";
+            panelGroupParameter.DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_right;
+        }
+        else if (CommonFacts.BottomPanelGroupKey == panelGroupParameter.PanelGroupKey)
+        {
+            position = "bottom";
+            panelGroupParameter.DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_bottom;
+        }
+
+        panelGroupParameter.PanelPositionCss = $"di_ide_panel_{position}";
+
+        panelGroupParameter.HtmlIdTabs = panelGroupParameter.PanelPositionCss + "_tabs";
+
+        if (CommonFacts.LeftPanelGroupKey == panelGroupParameter.PanelGroupKey)
+        {
+            _leftPanelGroupParameter = panelGroupParameter;
+        }
+        else if (CommonFacts.RightPanelGroupKey == panelGroupParameter.PanelGroupKey)
+        {
+            _rightPanelGroupParameter = panelGroupParameter;
+        }
+        else if (CommonFacts.BottomPanelGroupKey == panelGroupParameter.PanelGroupKey)
+        {
+            _bottomPanelGroupParameter = panelGroupParameter;
         }
     }
     
@@ -469,6 +573,75 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         uiStringBuilder.Append("di_ide_panel-tab");
 
         return uiStringBuilder.ToString();
+    }
+    
+    private Task RenderFileDropdownOnClick()
+    {
+        return DropdownHelper.RenderDropdownAsync(
+            DotNetService.CommonService,
+            DotNetService.CommonService.JsRuntimeCommonApi,
+            IdeState.ButtonFileId,
+            DropdownOrientation.Bottom,
+            IdeState.DropdownKeyFile,
+            DotNetService.IdeService.GetIdeState().MenuFile,
+            IdeState.ButtonFileId,
+            preventScroll: false);
+    }
+    
+    private Task RenderToolsDropdownOnClick()
+    {
+        return DropdownHelper.RenderDropdownAsync(
+            DotNetService.CommonService,
+            DotNetService.CommonService.JsRuntimeCommonApi,
+            IdeState.ButtonToolsId,
+            DropdownOrientation.Bottom,
+            IdeState.DropdownKeyTools,
+            DotNetService.IdeService.GetIdeState().MenuTools,
+            IdeState.ButtonToolsId,
+            preventScroll: false);
+    }
+    
+    private Task RenderViewDropdownOnClick()
+    {
+        InitializationHelper.InitializeMenuView(DotNetService);
+    
+        return DropdownHelper.RenderDropdownAsync(
+            DotNetService.CommonService,
+            DotNetService.CommonService.JsRuntimeCommonApi,
+            IdeState.ButtonViewId,
+            DropdownOrientation.Bottom,
+            IdeState.DropdownKeyView,
+            DotNetService.IdeService.GetIdeState().MenuView,
+            IdeState.ButtonViewId,
+            preventScroll: false);
+    }
+    
+    private Task RenderRunDropdownOnClick()
+    {
+        return DropdownHelper.RenderDropdownAsync(
+            DotNetService.CommonService,
+            DotNetService.CommonService.JsRuntimeCommonApi,
+            IdeState.ButtonRunId,
+            DropdownOrientation.Bottom,
+            IdeState.DropdownKeyRun,
+            DotNetService.IdeService.GetIdeState().MenuRun,
+            IdeState.ButtonRunId,
+            preventScroll: false);
+    }
+    
+    private Task OpenInfoDialogOnClick()
+    {
+        var dialogRecord = new DialogViewModel(
+            InitializationHelper._infoDialogKey,
+            "Info",
+            typeof(IdeInfoDisplay),
+            null,
+            null,
+            true,
+            null);
+    
+        DotNetService.CommonService.Dialog_ReduceRegisterAction(dialogRecord);
+        return Task.CompletedTask;
     }
     
     public void Dispose()

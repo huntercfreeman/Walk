@@ -1,17 +1,21 @@
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib;
+using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Tooltips.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.TextEditor.RazorLib;
+using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.TextEditor.RazorLib.Options.Models;
 using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
 using Walk.Extensions.DotNet;
 
 namespace Walk.Extensions.Config.Installations.Displays;
 
-public partial class CommonUiDisplay : ComponentBase, IDisposable
+public partial class CommonUiIsland : ComponentBase, IDisposable
 {
     [Inject]
     private DotNetService DotNetService { get; set; } = null!;
@@ -48,7 +52,7 @@ public partial class CommonUiDisplay : ComponentBase, IDisposable
     private string _wrapperCssClass;
     private string _wrapperCssStyle;
     
-    private DotNetObjectReference<IdeMainLayout>? _dotNetHelper;
+    private DotNetObjectReference<CommonUiIsland>? _dotNetHelper;
     
     protected override void OnInitialized()
     {
@@ -57,8 +61,6 @@ public partial class CommonUiDisplay : ComponentBase, IDisposable
         
         MeasureLineHeight_UiRenderStep();
         
-        DotNetService.CommonService.CommonUiStateChanged += DragStateWrapOnStateChanged;
-        DotNetService.IdeService.IdeStateChanged += OnIdeMainLayoutStateChanged;
         DotNetService.TextEditorService.SecondaryChanged += OnNeedsMeasured;
     }
     
@@ -78,6 +80,19 @@ public partial class CommonUiDisplay : ComponentBase, IDisposable
     
     protected async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (firstRender)
+        {
+            if (DotNetService.CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
+            {
+                // Do not ConfigureAwait(false) so that the UI doesn't change out from under you
+                // before you finish setting up the events?
+                // (is this a thing, I'm just presuming this would be true).
+                await DotNetService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
+                    "walkConfig.appWideKeyboardEventsInitialize",
+                    _dotNetHelper);
+            }
+        }
+    
         var tooltipModel = DotNetService.CommonService.GetTooltipState().TooltipModel;
         if (tooltipModel is not null && !tooltipModel.WasRepositioned && _tooltipModelPrevious != tooltipModel)
         {
@@ -481,8 +496,6 @@ public partial class CommonUiDisplay : ComponentBase, IDisposable
     {
         _dotNetHelper?.Dispose();
         
-        DotNetService.CommonService.CommonUiStateChanged -= DragStateWrapOnStateChanged;
-        DotNetService.IdeService.IdeStateChanged -= OnIdeMainLayoutStateChanged;
         DotNetService.TextEditorService.SecondaryChanged -= OnNeedsMeasured;
     }
 }

@@ -49,8 +49,6 @@
         PassAlongSizeIfNoActiveTab(_leftPanelGroupParameter, leftPanelGroup);
         PassAlongSizeIfNoActiveTab(_rightPanelGroupParameter, rightPanelGroup);
         PassAlongSizeIfNoActiveTab(_bottomPanelGroupParameter, bottomPanelGroup);
-        
-        var dialogList = DotNetService.CommonService.GetDialogState().DialogList;
     }
 
     @* Start Header *@
@@ -61,7 +59,7 @@
             @* Start SettingsDialogEntryPoint *@
             <button class="di_button"
                     style="margin-left: 0;"
-                    @onclick="async () => DispatchRegisterDialogRecordAction()">
+                    @onclick="async () => InitializationHelper.DispatchRegisterDialogRecordAction(DotNetService, _dialogRecord)">
                     
                 @IconSettingsGearFragment.Render(iconDriver)
             </button>

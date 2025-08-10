@@ -22,6 +22,10 @@
 @using Walk.Common.RazorLib.Badges.Displays;
 @using Walk.Common.RazorLib.Notifications.Models;
 
+@{
+    var dialogList = DotNetService.CommonService.GetDialogState().DialogList;
+}
+
 <Walk.Common.RazorLib.Drags.Displays.DragInitializer />
 
 @if (_doCommonMeasure)
@@ -87,27 +91,6 @@
 {
 	<DropdownDisplay @key="dropdown.Key"
 					 Dropdown="dropdown"/>
-}
-
-
-@{ var localOutlineState = DotNetService.CommonService.GetOutlineState(); }
-@if (localOutlineState.MeasuredHtmlElementDimensions is not null)
-{
-	<div class="di_outline di_outline-left"
-		 style="@OUTLINE_GetStyleCssLeft(localOutlineState)">
-	</div>
-	
-	<div class="di_outline di_outline-right"
-		 style="@OUTLINE_GetStyleCssRight(localOutlineState)">
-	</div>
-	
-	<div class="di_outline di_outline-top"
-		 style="@OUTLINE_GetStyleCssTop(localOutlineState)">
-	</div>
-	
-	<div class="di_outline di_outline-bottom"
-		 style="@OUTLINE_GetStyleCssBottom(localOutlineState)">
-	</div>
 }
 
 

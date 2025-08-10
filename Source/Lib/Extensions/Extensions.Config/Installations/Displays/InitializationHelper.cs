@@ -2,6 +2,7 @@ using Microsoft.JSInterop;
 using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
+using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
@@ -11,6 +12,7 @@ using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Panels.Models;
+using Walk.Common.RazorLib.ListExtensions;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.CompilerServices.CSharpProject.CompilerServiceCase;
 using Walk.CompilerServices.Css;
@@ -23,6 +25,9 @@ using Walk.CompilerServices.Xml;
 using Walk.CompilerServices.Xml.Html.Decoration;
 using Walk.Extensions.DotNet;
 using Walk.Extensions.DotNet.AppDatas.Models;
+using Walk.Extensions.DotNet.CommandLines.Models;
+using Walk.Extensions.DotNet.DotNetSolutions.Models;
+using Walk.Ide.RazorLib;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.CodeSearches.Displays;
 using Walk.Ide.RazorLib.FolderExplorers.Displays;
@@ -36,29 +41,26 @@ using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Walk.Extensions.Config.Installations.Displays;
 
-public partial class InitializationHelper
+public static class InitializationHelper
 {
-    private static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
-    private static readonly Key<IDynamicViewModel> _backgroundTaskDialogKey = Key<IDynamicViewModel>.NewKey();
-    private static readonly Key<IDynamicViewModel> _solutionVisualizationDialogKey = Key<IDynamicViewModel>.NewKey();
-    private static readonly Key<IDynamicViewModel> _infoDialogKey = Key<IDynamicViewModel>.NewKey();
+    public static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
+    public static readonly Key<IDynamicViewModel> _backgroundTaskDialogKey = Key<IDynamicViewModel>.NewKey();
+    public static readonly Key<IDynamicViewModel> _solutionVisualizationDialogKey = Key<IDynamicViewModel>.NewKey();
+    public static readonly Key<IDynamicViewModel> _infoDialogKey = Key<IDynamicViewModel>.NewKey();
     
-    private static Key<IDynamicViewModel> _notificationRecordKey = Key<IDynamicViewModel>.NewKey();
-    
-    private enum CtrlTabKind
-    {
-        Dialogs,
-        TextEditors,
-    }
+    public static Key<IDynamicViewModel> _notificationRecordKey = Key<IDynamicViewModel>.NewKey();
 
-    private async Task InitializeOnAfterRenderFirstRender(DotNetService DotNetService)
+    public static async Task InitializeOnAfterRenderFirstRender(
+        DotNetService DotNetService,
+        BrowserResizeInterop BrowserResizeInterop,
+        CancellationTokenSource _workerCancellationTokenSource)
     {
         var menuOptionOpenDotNetSolution = new MenuOptionRecord(
             ".NET Solution",
             MenuOptionKind.Other,
             () =>
             {
-                DotNetSolutionState.ShowInputFile(IdeService, this);
+                DotNetSolutionState.ShowInputFile(DotNetService.IdeService, DotNetService);
                 return Task.CompletedTask;
             });
 
@@ -96,7 +98,7 @@ public partial class InitializationHelper
                     var menuOptionNewDotNetSolution = new MenuOptionRecord(
                         ".NET Solution",
                         MenuOptionKind.Other,
-                        OpenNewDotNetSolutionDialog);
+                        DotNetService.OpenNewDotNetSolutionDialog);
 
                     var menuOptionNew = new MenuOptionRecord(
                         "New",
@@ -113,9 +115,7 @@ public partial class InitializationHelper
                 }
             });
 
-        InitializeMenuRun();
-
-        DotNetService.IdeService.TextEditorService.CommonService.SetActivePanelTab(_leftPanelGroupKey, _solutionExplorerPanelKey);
+        InitializeMenuRun(DotNetService);
 
         var compilerService = DotNetService.IdeService.TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
 
@@ -131,17 +131,9 @@ public partial class InitializationHelper
                 DotNetAppData.AssemblyName, DotNetAppData.TypeName, uniqueIdentifier: null, forceRefreshCache: false)
             .ConfigureAwait(false);
 
-        await SetSolution(dotNetAppData).ConfigureAwait(false);
+        await SetSolution(DotNetService, dotNetAppData).ConfigureAwait(false);
 
-        if (DotNetService.CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
-        {
-            // Do not ConfigureAwait(false) so that the UI doesn't change out from under you
-            // before you finish setting up the events?
-            // (is this a thing, I'm just presuming this would be true).
-            await DotNetService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
-                "walkConfig.appWideKeyboardEventsInitialize",
-                _dotNetHelper);
-        }
+        
 
         await DotNetService.TextEditorService.Options_SetFromLocalStorageAsync()
             .ConfigureAwait(false);
@@ -176,86 +168,228 @@ public partial class InitializationHelper
 
         BrowserResizeInterop.SubscribeWindowSizeChanged(DotNetService.CommonService.JsRuntimeCommonApi);
     }
-
-    public void NoiseyOnInitializedSteps()
+    
+    public static void InitializeMenuRun(DotNetService DotNetService)
     {
-        DotNetService.TextEditorService.IdeBackgroundTaskApi = DotNetService.IdeService;
+        var menuOptionsList = new List<MenuOptionRecord>();
 
-        var panelState = DotNetService.CommonService.GetPanelState();
+        // Menu Option Build Project (startup project)
+        menuOptionsList.Add(new MenuOptionRecord(
+            "Build Project (startup project)",
+            MenuOptionKind.Create,
+            () =>
+            {
+                var startupControlState = DotNetService.IdeService.GetIdeStartupControlState();
+                var activeStartupControl = startupControlState.StartupControlList.FirstOrDefault(
+                    x => x.Key == startupControlState.ActiveStartupControlKey);
 
-        _topLeftResizableColumnParameter = new(
-            panelState.TopLeftPanelGroup.ElementDimensions,
-            _editorElementDimensions,
-            () => InvokeAsync(StateHasChanged));
+                if (activeStartupControl?.StartupProjectAbsolutePath is not null)
+                    BuildProjectOnClick(DotNetService, activeStartupControl.StartupProjectAbsolutePath.Value);
+                else
+                    NotificationHelper.DispatchError(nameof(BuildProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", DotNetService.CommonService, TimeSpan.FromSeconds(6));
+                return Task.CompletedTask;
+            }));
 
-        _topRightResizableColumnParameter = new(
-            _editorElementDimensions,
-            panelState.TopRightPanelGroup.ElementDimensions,
-            () => InvokeAsync(StateHasChanged));
+        // Menu Option Clean (startup project)
+        menuOptionsList.Add(new MenuOptionRecord(
+            "Clean Project (startup project)",
+            MenuOptionKind.Create,
+            () =>
+            {
+                var startupControlState = DotNetService.IdeService.GetIdeStartupControlState();
+                var activeStartupControl = startupControlState.StartupControlList.FirstOrDefault(
+                    x => x.Key == startupControlState.ActiveStartupControlKey);
 
-        _resizableRowParameter = new(
-            _bodyElementDimensions,
-            panelState.BottomPanelGroup.ElementDimensions,
-            () => InvokeAsync(StateHasChanged));
+                if (activeStartupControl?.StartupProjectAbsolutePath is not null)
+                    CleanProjectOnClick(DotNetService, activeStartupControl.StartupProjectAbsolutePath.Value);
+                else
+                    NotificationHelper.DispatchError(nameof(CleanProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", DotNetService.CommonService, TimeSpan.FromSeconds(6));
+                return Task.CompletedTask;
+            }));
 
-        _leftPanelGroupParameter = new(
-            panelGroupKey: CommonFacts.LeftPanelGroupKey,
-            adjacentElementDimensions: _editorElementDimensions,
-            dimensionAttributeKind: DimensionAttributeKind.Width,
-            cssClassString: null);
+        // Menu Option Build Solution
+        menuOptionsList.Add(new MenuOptionRecord(
+            "Build Solution",
+            MenuOptionKind.Delete,
+            () =>
+            {
+                var dotNetSolutionState = DotNetService.GetDotNetSolutionState();
+                var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 
-        _rightPanelGroupParameter = new(
-            panelGroupKey: CommonFacts.RightPanelGroupKey,
-            adjacentElementDimensions: _editorElementDimensions,
-            dimensionAttributeKind: DimensionAttributeKind.Width,
-            cssClassString: null);
+                if (dotNetSolutionModel?.AbsolutePath is not null)
+                    BuildSolutionOnClick(DotNetService, dotNetSolutionModel.AbsolutePath.Value);
+                else
+                    NotificationHelper.DispatchError(nameof(BuildSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", DotNetService.CommonService, TimeSpan.FromSeconds(6));
+                return Task.CompletedTask;
+            }));
 
-        _bottomPanelGroupParameter = new(
-            panelGroupKey: CommonFacts.BottomPanelGroupKey,
-            cssClassString: "di_ide_footer",
-            adjacentElementDimensions: _bodyElementDimensions,
-            dimensionAttributeKind: DimensionAttributeKind.Height);
+        // Menu Option Clean Solution
+        menuOptionsList.Add(new MenuOptionRecord(
+            "Clean Solution",
+            MenuOptionKind.Delete,
+            () =>
+            {
+                var dotNetSolutionState = DotNetService.GetDotNetSolutionState();
+                var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 
-        _bodyElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
+                if (dotNetSolutionModel?.AbsolutePath is not null)
+                    CleanSolutionOnClick(DotNetService, dotNetSolutionModel.AbsolutePath.Value);
+                else
+                    NotificationHelper.DispatchError(nameof(CleanSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", DotNetService.CommonService, TimeSpan.FromSeconds(6));
+                return Task.CompletedTask;
+            }));
+
+        DotNetService.IdeService.Ide_ModifyMenuRun(inMenu =>
         {
-            new DimensionUnit(78, DimensionUnitKind.Percentage),
-            new DimensionUnit(
-                DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
-                DimensionUnitKind.Pixels,
-                DimensionOperatorKind.Subtract),
-            new DimensionUnit(
-                CommonFacts.Ide_Header_Height.Value / 2,
-                CommonFacts.Ide_Header_Height.DimensionUnitKind,
-                DimensionOperatorKind.Subtract)
+            // UI foreach enumeration was modified nightmare. (2025-02-07)
+            var copyMenuOptionList = new List<MenuOptionRecord>(inMenu.MenuOptionList);
+            copyMenuOptionList.AddRange(menuOptionsList);
+            return inMenu with
+            {
+                MenuOptionList = copyMenuOptionList
+            };
         });
-
-        _editorElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
-        {
-            new DimensionUnit(
-                33.3333,
-                DimensionUnitKind.Percentage),
-            new DimensionUnit(
-                DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
-                DimensionUnitKind.Pixels,
-                DimensionOperatorKind.Subtract)
-        });
-
-        InitPanelGroup(_leftPanelGroupParameter);
-        InitPanelGroup(_rightPanelGroupParameter);
-        InitPanelGroup(_bottomPanelGroupParameter);
     }
 
-    public async Task EnqueueOnInitializedSteps()
+    public static void BuildProjectOnClick(DotNetService DotNetService, string projectAbsolutePathString)
+    {
+        var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuildProject(projectAbsolutePathString);
+        var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+
+        var localParentDirectory = solutionAbsolutePath.ParentDirectory;
+        if (localParentDirectory is null)
+            return;
+
+        var terminalCommandRequest = new TerminalCommandRequest(
+            formattedCommand.Value,
+            localParentDirectory)
+        {
+            BeginWithFunc = parsedCommand =>
+            {
+                DotNetService.ParseOutputEntireDotNetRun(
+                    string.Empty,
+                    "Build-Project_started");
+                return Task.CompletedTask;
+            },
+            ContinueWithFunc = parsedCommand =>
+            {
+                DotNetService.ParseOutputEntireDotNetRun(
+                    parsedCommand.OutputCache.ToString(),
+                    "Build-Project_completed");
+                return Task.CompletedTask;
+            }
+        };
+
+        DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+    }
+
+    public static void CleanProjectOnClick(DotNetService DotNetService, string projectAbsolutePathString)
+    {
+        var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanProject(projectAbsolutePathString);
+        var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+
+        var localParentDirectory = solutionAbsolutePath.ParentDirectory;
+        if (localParentDirectory is null)
+            return;
+
+        var terminalCommandRequest = new TerminalCommandRequest(
+            formattedCommand.Value,
+            localParentDirectory)
+        {
+            BeginWithFunc = parsedCommand =>
+            {
+                DotNetService.ParseOutputEntireDotNetRun(
+                    string.Empty,
+                    "Clean-Project_started");
+                return Task.CompletedTask;
+            },
+            ContinueWithFunc = parsedCommand =>
+            {
+                DotNetService.ParseOutputEntireDotNetRun(
+                    parsedCommand.OutputCache.ToString(),
+                    "Clean-Project_completed");
+                return Task.CompletedTask;
+            }
+        };
+
+        DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+    }
+
+    public static void BuildSolutionOnClick(DotNetService DotNetService, string solutionAbsolutePathString)
+    {
+        var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuildSolution(solutionAbsolutePathString);
+        var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+
+        var localParentDirectory = solutionAbsolutePath.ParentDirectory;
+        if (localParentDirectory is null)
+            return;
+
+        var terminalCommandRequest = new TerminalCommandRequest(
+            formattedCommand.Value,
+            localParentDirectory)
+        {
+            BeginWithFunc = parsedCommand =>
+            {
+                DotNetService.ParseOutputEntireDotNetRun(
+                    string.Empty,
+                    "Build-Solution_started");
+                return Task.CompletedTask;
+            },
+            ContinueWithFunc = parsedCommand =>
+            {
+                DotNetService.ParseOutputEntireDotNetRun(
+                    parsedCommand.OutputCache.ToString(),
+                    "Build-Solution_completed");
+                return Task.CompletedTask;
+            }
+        };
+
+        DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+    }
+
+    public static void CleanSolutionOnClick(DotNetService DotNetService, string solutionAbsolutePathString)
+    {
+        var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanSolution(solutionAbsolutePathString);
+        var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder());
+
+        var localParentDirectory = solutionAbsolutePath.ParentDirectory;
+        if (localParentDirectory is null)
+            return;
+
+        var terminalCommandRequest = new TerminalCommandRequest(
+            formattedCommand.Value,
+            localParentDirectory)
+        {
+            BeginWithFunc = parsedCommand =>
+            {
+                DotNetService.ParseOutputEntireDotNetRun(
+                    string.Empty,
+                    "Clean-Solution_started");
+                return Task.CompletedTask;
+            },
+            ContinueWithFunc = parsedCommand =>
+            {
+                DotNetService.ParseOutputEntireDotNetRun(
+                    parsedCommand.OutputCache.ToString(),
+                    "Clean-Solution_completed");
+                return Task.CompletedTask;
+            }
+        };
+
+        DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+    }
+
+    public static async Task EnqueueOnInitializedSteps(DotNetService DotNetService)
     {
         await DotNetService.CommonService.Options_SetFromLocalStorageAsync();
         await DotNetService.TextEditorService.Options_SetFromLocalStorageAsync();
 
-        InitializeMenuFile();
-        InitializeMenuTools();
-        InitializeMenuView();
+        InitializeMenuFile(DotNetService);
+        InitializeMenuTools(DotNetService);
+        InitializeMenuView(DotNetService);
     }
 
-    private async Task SetSolution(DotNetAppData dotNetAppData)
+    public static async Task SetSolution(DotNetService DotNetService, DotNetAppData dotNetAppData)
     {
         var solutionMostRecent = dotNetAppData?.SolutionMostRecent;
 
@@ -274,100 +408,8 @@ public partial class InitializationHelper
             DotNetSolutionAbsolutePath = slnAbsolutePath,
         });
     }
-
-    private void InitPanelGroup(PanelGroupParameter panelGroupParameter)
-    {
-        var position = string.Empty;
-
-        if (CommonFacts.LeftPanelGroupKey == panelGroupParameter.PanelGroupKey)
-        {
-            position = "left";
-            panelGroupParameter.DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_left;
-        }
-        else if (CommonFacts.RightPanelGroupKey == panelGroupParameter.PanelGroupKey)
-        {
-            position = "right";
-            panelGroupParameter.DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_right;
-        }
-        else if (CommonFacts.BottomPanelGroupKey == panelGroupParameter.PanelGroupKey)
-        {
-            position = "bottom";
-            panelGroupParameter.DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_bottom;
-        }
-
-        panelGroupParameter.PanelPositionCss = $"di_ide_panel_{position}";
-
-        panelGroupParameter.HtmlIdTabs = panelGroupParameter.PanelPositionCss + "_tabs";
-
-        if (CommonFacts.LeftPanelGroupKey == panelGroupParameter.PanelGroupKey)
-        {
-            _leftPanelGroupParameter = panelGroupParameter;
-        }
-        else if (CommonFacts.RightPanelGroupKey == panelGroupParameter.PanelGroupKey)
-        {
-            _rightPanelGroupParameter = panelGroupParameter;
-        }
-        else if (CommonFacts.BottomPanelGroupKey == panelGroupParameter.PanelGroupKey)
-        {
-            _bottomPanelGroupParameter = panelGroupParameter;
-        }
-    }
-
-    public Task RenderFileDropdownOnClick()
-    {
-        return DropdownHelper.RenderDropdownAsync(
-            DotNetService.CommonService,
-            DotNetService.CommonService.JsRuntimeCommonApi,
-            IdeState.ButtonFileId,
-            DropdownOrientation.Bottom,
-            IdeState.DropdownKeyFile,
-            DotNetService.IdeService.GetIdeState().MenuFile,
-            IdeState.ButtonFileId,
-            preventScroll: false);
-    }
     
-    public Task RenderToolsDropdownOnClick()
-    {
-        return DropdownHelper.RenderDropdownAsync(
-            DotNetService.CommonService,
-            DotNetService.CommonService.JsRuntimeCommonApi,
-            IdeState.ButtonToolsId,
-            DropdownOrientation.Bottom,
-            IdeState.DropdownKeyTools,
-            DotNetService.IdeService.GetIdeState().MenuTools,
-            IdeState.ButtonToolsId,
-            preventScroll: false);
-    }
-    
-    public Task RenderViewDropdownOnClick()
-    {
-        InitializeMenuView();
-    
-        return DropdownHelper.RenderDropdownAsync(
-            DotNetService.CommonService,
-            DotNetService.CommonService.JsRuntimeCommonApi,
-            IdeState.ButtonViewId,
-            DropdownOrientation.Bottom,
-            IdeState.DropdownKeyView,
-            DotNetService.IdeService.GetIdeState().MenuView,
-            IdeState.ButtonViewId,
-            preventScroll: false);
-    }
-    
-    public Task RenderRunDropdownOnClick()
-    {
-        return DropdownHelper.RenderDropdownAsync(
-            DotNetService.CommonService,
-            DotNetService.CommonService.JsRuntimeCommonApi,
-            IdeState.ButtonRunId,
-            DropdownOrientation.Bottom,
-            IdeState.DropdownKeyRun,
-            DotNetService.IdeService.GetIdeState().MenuRun,
-            IdeState.ButtonRunId,
-            preventScroll: false);
-    }
-    
-    public void InitializeMenuView()
+    public static void InitializeMenuView(DotNetService DotNetService)
     {
         var menuOptionsList = new List<MenuOptionRecord>();
         var panelState = DotNetService.CommonService.GetPanelState();
@@ -392,26 +434,11 @@ public partial class InitializationHelper
             DotNetService.IdeService.Ide_SetMenuView(new MenuRecord(menuOptionsList));
         }
     }
-    
-    private Task OpenInfoDialogOnClick()
-    {
-        var dialogRecord = new DialogViewModel(
-            _infoDialogKey,
-            "Info",
-            typeof(IdeInfoDisplay),
-            null,
-            null,
-            true,
-            null);
-    
-        DotNetService.CommonService.Dialog_ReduceRegisterAction(dialogRecord);
-        return Task.CompletedTask;
-    }
 
-    public void DispatchRegisterDialogRecordAction() =>
-        DotNetService.CommonService.Dialog_ReduceRegisterAction(_dialogRecord);
+    public static void DispatchRegisterDialogRecordAction(DotNetService DotNetService, IDialog dialog) =>
+        DotNetService.CommonService.Dialog_ReduceRegisterAction(dialog);
 
-    private void InitializeMenuFile()
+    public static void InitializeMenuFile(DotNetService DotNetService)
     {
         var menuOptionsList = new List<MenuOptionRecord>();
 
@@ -469,14 +496,14 @@ public partial class InitializationHelper
         var menuOptionPermissions = new MenuOptionRecord(
             "Permissions",
             MenuOptionKind.Delete,
-            ShowPermissionsDialog);
+            () => ShowPermissionsDialog(DotNetService));
 
         menuOptionsList.Add(menuOptionPermissions);
 
         DotNetService.IdeService.Ide_SetMenuFile(new MenuRecord(menuOptionsList));
     }
 
-    private void InitializeMenuTools()
+    public static void InitializeMenuTools(DotNetService DotNetService)
     {
         var menuOptionsList = new List<MenuOptionRecord>();
 
@@ -516,7 +543,7 @@ public partial class InitializationHelper
         DotNetService.IdeService.Ide_SetMenuTools(new MenuRecord(menuOptionsList));
     }
 
-    private Task ShowPermissionsDialog()
+    public static Task ShowPermissionsDialog(DotNetService DotNetService)
     {
         var dialogRecord = new DialogViewModel(
             _permissionsDialogKey,
@@ -531,7 +558,7 @@ public partial class InitializationHelper
         return Task.CompletedTask;
     }
     
-    private void HandleCompilerServicesAndDecorationMappers()
+    public static void HandleCompilerServicesAndDecorationMappers(DotNetService DotNetService)
     {
         var cSharpCompilerService = new CSharpCompilerService(DotNetService.TextEditorService);
         var cSharpProjectCompilerService = new CSharpProjectCompilerService(DotNetService.TextEditorService);
@@ -591,7 +618,7 @@ public partial class InitializationHelper
         DotNetService.TextEditorService.RegisterDecorationMapper(ExtensionNoPeriodFacts.TERMINAL, terminalDecorationMapper);
     }
     
-    private void InitializePanelTabs()
+    public static void InitializePanelTabs(DotNetService DotNetService)
     {
         var panelState = DotNetService.CommonService.GetPanelState();
         var appOptionsState = DotNetService.CommonService.GetAppOptionsState();
@@ -626,6 +653,7 @@ public partial class InitializationHelper
         var rightPanel = panelState.TopRightPanelGroup;
         rightPanel.CommonService = DotNetService.CommonService;
         Panel_InitializeResizeHandleDimensionUnit(
+            DotNetService,
             rightPanel.Key,
             new DimensionUnit(
                 () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
@@ -637,6 +665,7 @@ public partial class InitializationHelper
         var bottomPanel = panelState.BottomPanelGroup;
         bottomPanel.CommonService = DotNetService.CommonService;
         Panel_InitializeResizeHandleDimensionUnit(
+            DotNetService,
             bottomPanel.Key,
             new DimensionUnit(
                 () => appOptionsState.Options.ResizeHandleHeightInPixels / 2,
@@ -692,6 +721,7 @@ public partial class InitializationHelper
         ((List<IPanelTab>)bottomPanel.TabList).Add(nuGetPanel);
         
         CodeSearch_InitializeResizeHandleDimensionUnit(
+            DotNetService,
             new DimensionUnit(
                 () => appOptionsState.Options.ResizeHandleHeightInPixels / 2,
                 DimensionUnitKind.Pixels,
@@ -699,6 +729,7 @@ public partial class InitializationHelper
                 DimensionUnitPurposeKind.ResizableHandleRow));
     
         Panel_InitializeResizeHandleDimensionUnit(
+            DotNetService,
             leftPanel.Key,
             new DimensionUnit(
                 () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
@@ -708,6 +739,7 @@ public partial class InitializationHelper
         
         // terminalGroupPanel: This UI has resizable parts that need to be initialized.
         TerminalGroup_InitializeResizeHandleDimensionUnit(
+            DotNetService,
             new DimensionUnit(
                 () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
@@ -716,6 +748,7 @@ public partial class InitializationHelper
         
         // testExplorerPanel: This UI has resizable parts that need to be initialized.
         ReduceInitializeResizeHandleDimensionUnitAction(
+            DotNetService,
             new DimensionUnit(
                 () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
@@ -729,7 +762,7 @@ public partial class InitializationHelper
         DotNetService.CommonService.SetActivePanelTab(bottomPanel.Key, outputPanel.Key);
     }
 
-    public void Panel_InitializeResizeHandleDimensionUnit(Key<PanelGroup> panelGroupKey, DimensionUnit dimensionUnit)
+    public static void Panel_InitializeResizeHandleDimensionUnit(DotNetService DotNetService, Key<PanelGroup> panelGroupKey, DimensionUnit dimensionUnit)
     {
         var inState = DotNetService.CommonService.GetPanelState();
 
@@ -783,7 +816,7 @@ public partial class InitializationHelper
         }
     }
     
-    public void ReduceInitializeResizeHandleDimensionUnitAction(DimensionUnit dimensionUnit)
+    public static void ReduceInitializeResizeHandleDimensionUnitAction(DotNetService DotNetService, DimensionUnit dimensionUnit)
     {
         var inState = DotNetService.GetTestExplorerState();
 
@@ -829,7 +862,7 @@ public partial class InitializationHelper
         }
     }
     
-    public void CodeSearch_InitializeResizeHandleDimensionUnit(DimensionUnit dimensionUnit)
+    public static void CodeSearch_InitializeResizeHandleDimensionUnit(DotNetService DotNetService, DimensionUnit dimensionUnit)
     {
         var codeSearchState = DotNetService.IdeService.GetCodeSearchState();
     
@@ -855,7 +888,7 @@ public partial class InitializationHelper
         }
     }
     
-    public void TerminalGroup_InitializeResizeHandleDimensionUnit(DimensionUnit dimensionUnit)
+    public static void TerminalGroup_InitializeResizeHandleDimensionUnit(DotNetService DotNetService, DimensionUnit dimensionUnit)
     {
         var terminalGroupState = DotNetService.IdeService.GetTerminalGroupState();
     
