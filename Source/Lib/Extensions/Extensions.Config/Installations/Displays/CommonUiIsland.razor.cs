@@ -92,7 +92,14 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
         // 
         if (_countEventHandled < _countEventReceived)
         {
-            _countEventHandled++;
+            if (_countEventHandled == int.MaxValue)
+            {
+                _countEventHandled = 0;
+            }
+            else
+            {
+                ++_countEventHandled;
+            }
             return true;
         }
         else
@@ -135,16 +142,18 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
     
     private async Task IslandStateHasChanged()
     {
-        if (_countEventReceived == int.MaxValue)
+        await InvokeAsync(() =>
         {
-            _countEventReceived = 0;
-        }
-        else
-        {
-            ++_countEventReceived;
-        }
-        
-        await InvokeAsync(StateHasChanged);
+            if (_countEventReceived == int.MaxValue)
+            {
+                _countEventReceived = 0;
+            }
+            else
+            {
+                ++_countEventReceived;
+            }
+            StateHasChanged();
+        });
     }
     
     private async void OnCommonUiStateChanged(CommonUiEventKind commonUiEventKind)
