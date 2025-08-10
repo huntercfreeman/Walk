@@ -24,6 +24,15 @@ public record PanelGroup(
     ///       ...for Walk.Ide this is done in WalkIdeInitializer.razor.cs (2024-04-08)
     /// </summary>
     public CommonService CommonService { get; set; } = null!;
+    
+    /// <summary>
+    /// If the panel group is meant to be "immutable" outside of the CommonService,
+    /// then this property can just as easily be maintained.
+    ///
+    /// Otherwise I have to iterate over the tab list and find the active one
+    /// for all 3 panel groups in IdeMainLayout.razor.cs.
+    /// </summary>
+    public IPanelTab? ActiveTab { get; set; }
 
     public bool GetIsActive(ITab tab)
     {

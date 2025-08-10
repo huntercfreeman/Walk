@@ -363,7 +363,7 @@ public partial class IdeMainLayout
         var appOptionsState = DotNetService.CommonService.GetAppOptionsState();
     
         // InitializeLeftPanelTabs();
-        var leftPanel = CommonFacts.GetTopLeftPanelGroup(panelState);
+        var leftPanel = panelState.TopLeftPanelGroup;
         leftPanel.CommonService = DotNetService.CommonService;
     
         // solutionExplorerPanel
@@ -389,7 +389,7 @@ public partial class IdeMainLayout
         ((List<IPanelTab>)leftPanel.TabList).Add(folderExplorerPanel);
         
         // InitializeRightPanelTabs();
-        var rightPanel = CommonFacts.GetTopRightPanelGroup(panelState);
+        var rightPanel = panelState.TopRightPanelGroup;
         rightPanel.CommonService = DotNetService.CommonService;
         Panel_InitializeResizeHandleDimensionUnit(
             rightPanel.Key,
@@ -400,7 +400,7 @@ public partial class IdeMainLayout
                 DimensionUnitPurposeKind.ResizableHandleColumn));
         
         // InitializeBottomPanelTabs();
-        var bottomPanel = CommonFacts.GetBottomPanelGroup(panelState);
+        var bottomPanel = panelState.BottomPanelGroup;
         bottomPanel.CommonService = DotNetService.CommonService;
         Panel_InitializeResizeHandleDimensionUnit(
             bottomPanel.Key,
@@ -499,8 +499,24 @@ public partial class IdeMainLayout
     {
         var inState = DotNetService.CommonService.GetPanelState();
 
-        var inPanelGroup = inState.PanelGroupList.FirstOrDefault(
-            x => x.Key == panelGroupKey);
+        PanelGroup inPanelGroup;
+            
+        if (panelGroupKey == inState.TopLeftPanelGroup.Key)
+        {
+            inPanelGroup = inState.TopLeftPanelGroup;
+        }
+        else if (panelGroupKey == inState.TopRightPanelGroup.Key)
+        {
+            inPanelGroup = inState.TopRightPanelGroup;
+        }
+        else if (panelGroupKey == inState.BottomPanelGroup.Key)
+        {
+            inPanelGroup = inState.BottomPanelGroup;
+        }
+        else
+        {
+            return;
+        }
 
         if (inPanelGroup is not null)
         {
