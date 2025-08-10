@@ -80,15 +80,13 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
         // without having fully executed various required code,
         // and then a cascading render from the parent causes the increment to '_countEventHandled'.
         //
-        // This is avoided by incrementing '_countEventReceived' at the end of the event handlers
-        // and just prior to the event handler invoking 'await InvokeAsync(StateHasChanged)'.
+        // This is avoided by incrementing '_countEventReceived' from within 'InvokeAsync(...)'
+        // just prior to the inner 'StateHasChanged();'.
         //
         // The ints going from int.MaxValue to int.MinValue without an exception messes this logic up
         // (I can't think of the name for this so I described it).
         //
         // Probably have to put any incrementations "in an if statement" to reset to 0 if you're going to wrap around to the negative values.
-        //
-        // Actually, you could just increment from within InvokeAsync(...) and avoid a parent cascading render.
         // 
         if (_countEventHandled < _countEventReceived)
         {
