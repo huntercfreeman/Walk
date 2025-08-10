@@ -51,7 +51,7 @@ public partial class CommonService : IBackgroundTaskGroup
     public IEnvironmentProvider EnvironmentProvider { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     
-    public Task? Continuous_StartAsyncTask { get; internal set; }
+    public Task? Continuous_StartAsyncTask { get; set; }
     public event Action? Continuous_ExecutingBackgroundTaskChanged;
 
     /// <summary>
@@ -81,7 +81,7 @@ public partial class CommonService : IBackgroundTaskGroup
         }
     }
     
-    public Task? Indefinite_StartAsyncTask { get; internal set; }
+    public Task? Indefinite_StartAsyncTask { get; set; }
     public event Action? Indefinite_ExecutingBackgroundTaskChanged;
 
     /// <summary>
