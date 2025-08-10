@@ -28,14 +28,6 @@ public partial class CommonService
         Continuous_Enqueue(this);
     }
 
-    private async ValueTask Do_WalkCommonInitializer()
-    {
-        Options_SetActiveThemeRecordKey(CommonConfig.InitialThemeKey, false);
-
-        await Options_SetFromLocalStorageAsync()
-            .ConfigureAwait(false);
-    }
-
     public async ValueTask Do_WriteToLocalStorage(string key, object value)
     {
         var valueJson = System.Text.Json.JsonSerializer.Serialize(value);
@@ -98,8 +90,6 @@ public partial class CommonService
             
         switch (workArgs.WorkKind)
         {
-            case CommonWorkKind.WalkCommonInitializerWork:
-                return Do_WalkCommonInitializer();
             case CommonWorkKind.WriteToLocalStorage:
                 return Do_WriteToLocalStorage(workArgs.WriteToLocalStorage_Key, workArgs.WriteToLocalStorage_Value);
             case CommonWorkKind.Tab_ManuallyPropagateOnContextMenu:

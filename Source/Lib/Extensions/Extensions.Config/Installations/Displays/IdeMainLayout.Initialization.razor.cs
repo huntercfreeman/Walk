@@ -1,4 +1,5 @@
 using Microsoft.JSInterop;
+using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
@@ -10,16 +11,6 @@ using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Panels.Models;
-using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
-using Walk.TextEditor.RazorLib.CompilerServices;
-using Walk.TextEditor.RazorLib.Decorations.Models;
-using Walk.TextEditor.RazorLib.TextEditors.Models;
-using Walk.Ide.RazorLib.BackgroundTasks.Models;
-using Walk.Ide.RazorLib.CodeSearches.Displays;
-using Walk.Ide.RazorLib.FolderExplorers.Displays;
-using Walk.Ide.RazorLib.Shareds.Displays.Internals;
-using Walk.Ide.RazorLib.Shareds.Models;
-using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.CompilerServices.CSharpProject.CompilerServiceCase;
 using Walk.CompilerServices.Css;
@@ -32,6 +23,16 @@ using Walk.CompilerServices.Xml;
 using Walk.CompilerServices.Xml.Html.Decoration;
 using Walk.Extensions.DotNet;
 using Walk.Extensions.DotNet.AppDatas.Models;
+using Walk.Ide.RazorLib.BackgroundTasks.Models;
+using Walk.Ide.RazorLib.CodeSearches.Displays;
+using Walk.Ide.RazorLib.FolderExplorers.Displays;
+using Walk.Ide.RazorLib.Shareds.Displays.Internals;
+using Walk.Ide.RazorLib.Shareds.Models;
+using Walk.Ide.RazorLib.Terminals.Models;
+using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
+using Walk.TextEditor.RazorLib.CompilerServices;
+using Walk.TextEditor.RazorLib.Decorations.Models;
+using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Walk.Extensions.Config.Installations.Displays;
 
@@ -179,22 +180,72 @@ public partial class IdeMainLayout
         InitPanelGroup(_bottomPanelGroupParameter);
     }
 
-    public void EnqueueOnInitializedSteps()
+    public async Task EnqueueOnInitializedSteps()
     {
-        DotNetService.CommonService.Continuous_Enqueue(new BackgroundTask(Key<IBackgroundTaskGroup>.Empty, () =>
-        {
-            InitializeMenuFile();
-            InitializeMenuTools();
-            InitializeMenuView();
+        await DotNetService.CommonService.Options_SetFromLocalStorageAsync();
+        await DotNetService.TextEditorService.Options_SetFromLocalStorageAsync();
 
-            // AddAltKeymap(ideMainLayout);
-            return ValueTask.CompletedTask;
-        }));
+        InitializeMenuFile();
+        InitializeMenuTools();
+        InitializeMenuView();
+    }
 
-        DotNetService.IdeService.Enqueue(new IdeWorkArgs
+    private async Task SetSolution(DotNetAppData dotNetAppData)
+    {
+        var solutionMostRecent = dotNetAppData?.SolutionMostRecent;
+
+        if (solutionMostRecent is null)
+            return;
+
+        var slnAbsolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
+            solutionMostRecent,
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
+
+        DotNetService.Enqueue(new DotNetWorkArgs
         {
-            WorkKind = IdeWorkKind.WalkIdeInitializerOnInit,
+            WorkKind = DotNetWorkKind.SetDotNetSolution,
+            DotNetSolutionAbsolutePath = slnAbsolutePath,
         });
+    }
+
+    private void InitPanelGroup(PanelGroupParameter panelGroupParameter)
+    {
+        var position = string.Empty;
+
+        if (CommonFacts.LeftPanelGroupKey == panelGroupParameter.PanelGroupKey)
+        {
+            position = "left";
+            panelGroupParameter.DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_left;
+        }
+        else if (CommonFacts.RightPanelGroupKey == panelGroupParameter.PanelGroupKey)
+        {
+            position = "right";
+            panelGroupParameter.DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_right;
+        }
+        else if (CommonFacts.BottomPanelGroupKey == panelGroupParameter.PanelGroupKey)
+        {
+            position = "bottom";
+            panelGroupParameter.DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_bottom;
+        }
+
+        panelGroupParameter.PanelPositionCss = $"di_ide_panel_{position}";
+
+        panelGroupParameter.HtmlIdTabs = panelGroupParameter.PanelPositionCss + "_tabs";
+
+        if (CommonFacts.LeftPanelGroupKey == panelGroupParameter.PanelGroupKey)
+        {
+            _leftPanelGroupParameter = panelGroupParameter;
+        }
+        else if (CommonFacts.RightPanelGroupKey == panelGroupParameter.PanelGroupKey)
+        {
+            _rightPanelGroupParameter = panelGroupParameter;
+        }
+        else if (CommonFacts.BottomPanelGroupKey == panelGroupParameter.PanelGroupKey)
+        {
+            _bottomPanelGroupParameter = panelGroupParameter;
+        }
     }
 
     public Task RenderFileDropdownOnClick()

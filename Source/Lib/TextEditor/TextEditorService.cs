@@ -2683,24 +2683,4 @@ public sealed partial class TextEditorService
 
         TextEditorStateChanged?.Invoke();
     }
-    
-    public void Enqueue_TextEditorInitializationBackgroundTaskGroupWorkKind()
-    {
-        CommonService.Continuous_Enqueue(new BackgroundTask(
-            Key<IBackgroundTaskGroup>.Empty,
-            Do_WalkTextEditorInitializerOnInit));
-    }
-
-    public async ValueTask Do_WalkTextEditorInitializerOnInit()
-    {
-        var initialThemeRecord = CommonService.GetThemeState().ThemeList.FirstOrDefault(
-            x => x.Key == TextEditorConfig.InitialThemeKey);
-
-        if (initialThemeRecord != default)
-            Options_SetTheme(initialThemeRecord, updateStorage: false);
-
-        await Options_SetFromLocalStorageAsync().ConfigureAwait(false);
-
-        CommonService.RegisterKeymapLayer(TextEditorFacts.KeymapDefault_HasSelectionLayer);
-    }
 }
