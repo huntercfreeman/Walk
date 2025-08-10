@@ -1,32 +1,20 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using Walk.Common.RazorLib;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.Badges.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.FileSystems.Displays;
-using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Panels.Models;
-using Walk.Common.RazorLib.Resizes.Models;
-using Walk.Ide.RazorLib;
-using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.CodeSearches.Displays;
-using Walk.Ide.RazorLib.Settings.Displays;
 using Walk.Ide.RazorLib.Shareds.Displays.Internals;
 using Walk.Ide.RazorLib.Shareds.Models;
-using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
-
-using System.Text;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.FolderExplorers.Displays;
 using Walk.Extensions.DotNet;
-using Walk.Extensions.DotNet.AppDatas.Models;
 
 // CompilerServiceRegistry.cs
 using Walk.TextEditor.RazorLib.TextEditors.Models;
@@ -44,12 +32,10 @@ using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.CompilerServices.Css.Decoration;
 using Walk.CompilerServices.Json.Decoration;
 using Walk.CompilerServices.Xml.Html.Decoration;
-using Walk.Common.RazorLib.Tooltips.Models;
-using Walk.TextEditor.RazorLib.Options.Models;
 
 namespace Walk.Extensions.Config.Installations.Displays;
 
-public partial class IdeMainLayout : ComponentBase
+public partial class IdeMainLayout
 {
     private const string TEST_STRING_FOR_MEASUREMENT = "abcdefghijklmnopqrstuvwxyz0123456789";
     private const int TEST_STRING_REPEAT_COUNT = 6;
