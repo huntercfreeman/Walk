@@ -1047,9 +1047,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         if (panelGroup?.ActiveTab is null)
         {
             return "calc(" +
-                   "var(--di_ide_panel-tabs-font-size)" +
-                   " + var(--di_ide_panel-tabs-margin)" +
-                   " + var(--di_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo))";
+                   "var(--di_panel-tabs-font-size)" +
+                   " + var(--di_panel-tabs-margin)" +
+                   " + var(--di_panel-tabs-bug-are-not-aligning-need-to-fix-todo))";
         }
 
         return panelGroup?.ElementDimensions.GetStyleString(DotNetService.CommonService.UiStringBuilder) ?? string.Empty;

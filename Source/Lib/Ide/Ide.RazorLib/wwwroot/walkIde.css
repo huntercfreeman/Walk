@@ -20,17 +20,17 @@ input[type="checkbox"]{
     height: 100%;
 }
 
-.di_ide_body {
+.di_body {
     display: flex;
     overflow: hidden;
-    background-color: var(--di_ide_body-background-color);
+    background-color: var(--di_body-background-color);
 }
 
 .di_ide_folder-explorer-display {
 }
 
 .di_ide_footer {
-    background-color: var(--di_ide_body-background-color);
+    background-color: var(--di_body-background-color);
 }
 
 .di_ide_section-title {
@@ -297,12 +297,12 @@ button.di_ide_input-file-address-hierarchy-entry {
     border: 2px solid var(--di_primary-border-color);
 }
 
-.di_ide_panel-tabs {
+.di_panel-tabs {
     position: relative;
     background-color: var(--di_ide_panel-background-color);
 }
 
-.di_ide_panel-tabs-justify-end {
+.di_panel-tabs-justify-end {
     display: flex;
     position: absolute;
     right: calc(3ch + 3px);
@@ -311,7 +311,7 @@ button.di_ide_input-file-address-hierarchy-entry {
 
 .di_ide_panel-tab {
     padding: 1px;
-    font-size: var(--di_ide_panel-tabs-font-size);
+    font-size: var(--di_panel-tabs-font-size);
     display: inline-flex !important;
     border: none !important;
     position: relative;
@@ -348,7 +348,7 @@ button.di_ide_input-file-address-hierarchy-entry {
     color: var(--di_tertiary-foreground-color);
 }
 
-.di_ide_panel_left .di_ide_panel-tabs .di_ide_panel-tab .di_polymorphic-tab-text {
+.di_ide_panel_left .di_panel-tabs .di_ide_panel-tab .di_polymorphic-tab-text {
     writing-mode: vertical-rl;
     text-orientation: mixed;
     -webkit-transform: rotate(180deg);
@@ -362,7 +362,7 @@ button.di_ide_input-file-address-hierarchy-entry {
     flex-direction: row-reverse;
 }
 
-.di_ide_panel_right .di_ide_panel-tabs .di_ide_panel-tab .di_polymorphic-tab-text {
+.di_ide_panel_right .di_panel-tabs .di_ide_panel-tab .di_polymorphic-tab-text {
     writing-mode: vertical-rl;
     text-orientation: mixed;
 }
@@ -371,28 +371,28 @@ button.di_ide_input-file-address-hierarchy-entry {
     flex-direction: column-reverse;
 }
 
-.di_ide_panel_left .di_ide_panel-tabs {
-    width: calc(var(--di_ide_panel-tabs-font-size) + var(--di_ide_panel-tabs-margin) + var(--di_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+.di_ide_panel_left .di_panel-tabs {
+    width: calc(var(--di_panel-tabs-font-size) + var(--di_panel-tabs-margin) + var(--di_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
 }
 
 .di_ide_panel_left .di_ide_panel-body {
-    width: calc(100% - var(--di_ide_panel-tabs-font-size) - var(--di_ide_panel-tabs-margin) - var(--di_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+    width: calc(100% - var(--di_panel-tabs-font-size) - var(--di_panel-tabs-margin) - var(--di_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
 }
 
-.di_ide_panel_right .di_ide_panel-tabs {
-    width: calc(var(--di_ide_panel-tabs-font-size) + var(--di_ide_panel-tabs-margin) + var(--di_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+.di_ide_panel_right .di_panel-tabs {
+    width: calc(var(--di_panel-tabs-font-size) + var(--di_panel-tabs-margin) + var(--di_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
 }
 
 .di_ide_panel_right .di_ide_panel-body {
-    width: calc(100% - var(--di_ide_panel-tabs-font-size) - var(--di_ide_panel-tabs-margin) - var(--di_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+    width: calc(100% - var(--di_panel-tabs-font-size) - var(--di_panel-tabs-margin) - var(--di_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
 }
 
-.di_ide_panel_bottom .di_ide_panel-tabs {
-    height: calc(var(--di_ide_panel-tabs-font-size) + var(--di_ide_panel-tabs-margin) + var(--di_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+.di_ide_panel_bottom .di_panel-tabs {
+    height: calc(var(--di_panel-tabs-font-size) + var(--di_panel-tabs-margin) + var(--di_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
 }
 
-.di_ide_panel_bottom .di_ide_panel-body {
-    height: calc(100% - var(--di_ide_panel-tabs-font-size) - var(--di_ide_panel-tabs-margin) - var(--di_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+.di_ide_panel_bottom .di_panel-body {
+    height: calc(100% - var(--di_panel-tabs-font-size) - var(--di_panel-tabs-margin) - var(--di_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
 }
 
 .di_ide_panel_bottom .di_ide_panel-tab:not(:first-of-type) {
@@ -458,15 +458,15 @@ button.di_ide_input-file-address-hierarchy-entry {
     --di_ide_input-file-display-bottom-controls-non-text-buttons-margin-left: 15px;
     --di_ide_input-file-display-bottom-controls-text-input-width: calc(100% - var(--di_ide_input-file-display-bottom-controls-non-text-width) - var(--di_ide_input-file-display-bottom-controls-non-text-margin-left));
     --di_ide_input-file-display-bottom-controls-text-input-padding-left: 5px;
-    --di_ide_panel-tabs-font-size: 0.85em;
-    --di_ide_panel-tabs-margin: 4px;
-    --di_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo: 0.7em;
+    --di_panel-tabs-font-size: 0.85em;
+    --di_panel-tabs-margin: 4px;
+    --di_panel-tabs-bug-are-not-aligning-need-to-fix-todo: 0.7em;
 }
 
 :root {
     /* Dark-Theme is the default */
     --di_header-background-color: #2a2a2e;
-    --di_ide_body-background-color: #1E1E1E;
+    --di_body-background-color: #1E1E1E;
     --di_ide_panel-background-color: #2b2d2d;
     --di_ide_input-background-color: #232d32;
     --di_ide_input-font-color: #dcdcdc;
@@ -475,7 +475,7 @@ button.di_ide_input-file-address-hierarchy-entry {
 
 .di_visual-studio-light-theme-clone {
     --di_header-background-color: #cad5eb;
-    --di_ide_body-background-color: rgb(253, 253, 253);
+    --di_body-background-color: rgb(253, 253, 253);
     --di_ide_panel-background-color: #d4d4d4;
     --di_ide_input-background-color: rgb(250, 250, 250);
     --di_ide_input-font-color: #000000;
