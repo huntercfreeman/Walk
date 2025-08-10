@@ -3,7 +3,6 @@ using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Menus.Models;
-using Walk.Common.RazorLib.Notifications.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 

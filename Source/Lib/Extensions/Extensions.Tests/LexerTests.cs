@@ -1,4 +1,3 @@
-using System.IO;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.CompilerServices;
 using Walk.TextEditor.RazorLib.Lexers.Models;

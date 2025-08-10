@@ -23,19 +23,6 @@ using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
 
 using System.Text;
-using Microsoft.JSInterop;
-using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib;
-using Walk.Common.RazorLib.Dimensions.Models;
-using Walk.Common.RazorLib.Panels.Models;
-using Walk.Common.RazorLib.Dialogs.Models;
-using Walk.Common.RazorLib.Installations.Models;
-using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.TreeViews.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
-using Walk.Ide.RazorLib.FileSystems.Models;
-using Walk.Ide.RazorLib.InputFiles.Displays;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.FolderExplorers.Displays;
 using Walk.Extensions.DotNet;
@@ -57,20 +44,8 @@ using Walk.TextEditor.RazorLib.Decorations.Models;
 using Walk.CompilerServices.Css.Decoration;
 using Walk.CompilerServices.Json.Decoration;
 using Walk.CompilerServices.Xml.Html.Decoration;
-
-using System.Text;
-using Microsoft.JSInterop;
-using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.Installations.Models;
-using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Tooltips.Models;
-
-using Microsoft.AspNetCore.Components;
-using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.TextEditor.RazorLib.Options.Models;
-using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Walk.Extensions.Config.Installations.Displays;
 

@@ -6,7 +6,6 @@ using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
 using Walk.Common.RazorLib.Panels.Models;
-using Walk.Common.RazorLib.Tabs.Displays;
 using Walk.Common.RazorLib.Tooltips.Models;
 using Walk.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Walk.TextEditor.RazorLib.Lexers.Models;

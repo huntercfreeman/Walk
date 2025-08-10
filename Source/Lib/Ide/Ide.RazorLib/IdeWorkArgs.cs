@@ -5,7 +5,6 @@ using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
-using Walk.Ide.RazorLib.Shareds.Displays;
 
 namespace Walk.Ide.RazorLib.BackgroundTasks.Models;
 
