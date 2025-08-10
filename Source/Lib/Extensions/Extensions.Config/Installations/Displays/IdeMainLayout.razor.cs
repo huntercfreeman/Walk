@@ -59,8 +59,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private string _classCssString;
     private string _styleCssString;
     private string _headerCssStyle;
-    
-    private readonly List<IBadgeModel> _footerBadgeList = new();
 
     private PanelGroupParameter _leftPanelGroupParameter;
     private PanelGroupParameter _rightPanelGroupParameter;
@@ -117,6 +115,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private string _wrapperCssClass;
     private string _wrapperCssStyle;
     
+    private Walk.TextEditor.RazorLib.Edits.Models.DirtyResourceUriBadge _dirtyResourceUriBadge;
+    private Walk.Common.RazorLib.Notifications.Models.NotificationBadge _notificationBadge;
+    
     protected override void OnInitialized()
     {
         // TODO: Does the object used here matter? Should it be a "smaller" object or is this just reference?
@@ -138,8 +139,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         
         ///
     
-        _footerBadgeList.Add(new Walk.TextEditor.RazorLib.Edits.Models.DirtyResourceUriBadge(DotNetService.TextEditorService));
-        _footerBadgeList.Add(new Walk.Common.RazorLib.Notifications.Models.NotificationBadge(DotNetService.CommonService));
+        _dirtyResourceUriBadge = new Walk.TextEditor.RazorLib.Edits.Models.DirtyResourceUriBadge(DotNetService.TextEditorService);
+        _notificationBadge = new Walk.Common.RazorLib.Notifications.Models.NotificationBadge(DotNetService.CommonService);
     
         var panelState = DotNetService.CommonService.GetPanelState();
     
@@ -163,25 +164,19 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             panelGroupKey: CommonFacts.LeftPanelGroupKey,
             adjacentElementDimensions: _editorElementDimensions,
             dimensionAttributeKind: DimensionAttributeKind.Width,
-            reRenderSelfAndAdjacentElementDimensionsFunc: () => InvokeAsync(StateHasChanged),
-            cssClassString: null,
-            badgeList: null);
+            cssClassString: null);
     
         _rightPanelGroupParameter = new(
             panelGroupKey: CommonFacts.RightPanelGroupKey,
             adjacentElementDimensions: _editorElementDimensions,
             dimensionAttributeKind: DimensionAttributeKind.Width,
-            reRenderSelfAndAdjacentElementDimensionsFunc: () => InvokeAsync(StateHasChanged),
-            cssClassString: null,
-            badgeList: null);
+            cssClassString: null);
         
         _bottomPanelGroupParameter = new(
             panelGroupKey: CommonFacts.BottomPanelGroupKey,
             cssClassString: "di_ide_footer",
             adjacentElementDimensions: _bodyElementDimensions,
-            dimensionAttributeKind: DimensionAttributeKind.Height,
-            reRenderSelfAndAdjacentElementDimensionsFunc: () => InvokeAsync(StateHasChanged),
-            badgeList: _footerBadgeList);
+            dimensionAttributeKind: DimensionAttributeKind.Height);
     
         DotNetService.TextEditorService.IdeBackgroundTaskApi = DotNetService.IdeService;
     
@@ -234,27 +229,47 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
         DotNetService.TextEditorService.Enqueue_TextEditorInitializationBackgroundTaskGroupWorkKind();
     
+        InitPanelGroup(_leftPanelGroupParameter);
+        InitPanelGroup(_rightPanelGroupParameter);
+        InitPanelGroup(_bottomPanelGroupParameter);
+    }
+    
+    private void InitPanelGroup(PanelGroupParameter panelGroupParameter)
+    {
         var position = string.Empty;
 
-        if (CommonFacts.LeftPanelGroupKey == PanelGroupParameter.PanelGroupKey)
+        if (CommonFacts.LeftPanelGroupKey == panelGroupParameter.PanelGroupKey)
         {
             position = "left";
-            DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_left;
+            panelGroupParameter.DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_left;
         }
-        else if (CommonFacts.RightPanelGroupKey == PanelGroupParameter.PanelGroupKey)
+        else if (CommonFacts.RightPanelGroupKey == panelGroupParameter.PanelGroupKey)
         {
             position = "right";
-            DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_right;
+            panelGroupParameter.DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_right;
         }
-        else if (CommonFacts.BottomPanelGroupKey == PanelGroupParameter.PanelGroupKey)
+        else if (CommonFacts.BottomPanelGroupKey == panelGroupParameter.PanelGroupKey)
         {
             position = "bottom";
-            DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_bottom;
+            panelGroupParameter.DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_bottom;
         }
 
-        _panelPositionCss = $"di_ide_panel_{position}";
+        panelGroupParameter.PanelPositionCss = $"di_ide_panel_{position}";
         
-        _htmlIdTabs = _panelPositionCss + "_tabs";
+        panelGroupParameter.HtmlIdTabs = panelGroupParameter.PanelPositionCss + "_tabs";
+        
+        if (CommonFacts.LeftPanelGroupKey == panelGroupParameter.PanelGroupKey)
+        {
+            _leftPanelGroupParameter = panelGroupParameter;
+        }
+        else if (CommonFacts.RightPanelGroupKey == panelGroupParameter.PanelGroupKey)
+        {
+            _rightPanelGroupParameter = panelGroupParameter;
+        }
+        else if (CommonFacts.BottomPanelGroupKey == panelGroupParameter.PanelGroupKey)
+        {
+            _bottomPanelGroupParameter = panelGroupParameter;
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -369,12 +384,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         {
             await InvokeAsync(Ready);
             QueueRemeasureBackgroundTask();
-        }
-        
-        if (!firstRender)
-        {
-            await PassAlongSizeIfNoActiveTab()
-                .ConfigureAwait(false);
         }
     }
 
@@ -970,10 +979,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     #endregion
     private TabCascadingValueBatch _tabCascadingValueBatch = new();
 
-    public DimensionUnitPurposeKind DimensionUnitPurposeKind { get; private set; }
-
-    private string _panelPositionCss;
-    private string _htmlIdTabs;
+    
 
     private List<IPanelTab> GetTabList(PanelGroup panelGroup)
     {
@@ -988,11 +994,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         return tabList;
     }
 
-    private async Task PassAlongSizeIfNoActiveTab()
+    private void PassAlongSizeIfNoActiveTab(PanelGroupParameter panelGroupParameter, PanelGroup panelGroup)
     {
-        var panelState = DotNetService.CommonService.GetPanelState();
-        var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupParameter.PanelGroupKey);
-
         if (panelGroup is not null)
         {
             var activePanelTab = panelGroup.TabList.FirstOrDefault(
@@ -1001,30 +1004,30 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             DimensionAttribute adjacentElementSizeDimensionAttribute;
             DimensionAttribute panelGroupSizeDimensionsAttribute;
             
-            switch (PanelGroupParameter.DimensionAttributeKind)
+            switch (panelGroupParameter.DimensionAttributeKind)
             {
                 case DimensionAttributeKind.Width:
-                    adjacentElementSizeDimensionAttribute = PanelGroupParameter.AdjacentElementDimensions.WidthDimensionAttribute;
+                    adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.WidthDimensionAttribute;
                     panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.WidthDimensionAttribute;
                     break;
                 case DimensionAttributeKind.Height:
-                    adjacentElementSizeDimensionAttribute = PanelGroupParameter.AdjacentElementDimensions.HeightDimensionAttribute;
+                    adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.HeightDimensionAttribute;
                     panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.HeightDimensionAttribute;
                     break;
                 case DimensionAttributeKind.Left:
-                    adjacentElementSizeDimensionAttribute = PanelGroupParameter.AdjacentElementDimensions.LeftDimensionAttribute;
+                    adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.LeftDimensionAttribute;
                     panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.LeftDimensionAttribute;
                     break;
                 case DimensionAttributeKind.Right:
-                    adjacentElementSizeDimensionAttribute = PanelGroupParameter.AdjacentElementDimensions.RightDimensionAttribute;
+                    adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.RightDimensionAttribute;
                     panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.RightDimensionAttribute;
                     break;
                 case DimensionAttributeKind.Top:
-                    adjacentElementSizeDimensionAttribute = PanelGroupParameter.AdjacentElementDimensions.TopDimensionAttribute;
+                    adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.TopDimensionAttribute;
                     panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.TopDimensionAttribute;
                     break;
                 case DimensionAttributeKind.Bottom:
-                    adjacentElementSizeDimensionAttribute = PanelGroupParameter.AdjacentElementDimensions.BottomDimensionAttribute;
+                    adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.BottomDimensionAttribute;
                     panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.BottomDimensionAttribute;
                     break;
                 default:
@@ -1032,7 +1035,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             }
             
             var indexOfPreviousPassAlong = adjacentElementSizeDimensionAttribute.DimensionUnitList.FindIndex(
-                x => x.Purpose == DimensionUnitPurposeKind);
+                x => x.Purpose == panelGroupParameter.DimensionUnitPurposeKind);
 
             if (activePanelTab is null && indexOfPreviousPassAlong == -1)
             {
@@ -1043,19 +1046,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     panelGroupPercentageSize.Value,
                     panelGroupPercentageSize.DimensionUnitKind,
                     DimensionOperatorKind.Add,
-                    DimensionUnitPurposeKind));
-
-                await PanelGroupParameter.ReRenderSelfAndAdjacentElementDimensionsFunc
-                    .Invoke()
-                    .ConfigureAwait(false);
+                    panelGroupParameter.DimensionUnitPurposeKind));
             }
             else if (activePanelTab is not null && indexOfPreviousPassAlong != -1)
             {
                 adjacentElementSizeDimensionAttribute.DimensionUnitList.RemoveAt(indexOfPreviousPassAlong);
-
-                await PanelGroupParameter.ReRenderSelfAndAdjacentElementDimensionsFunc
-                    .Invoke()
-                    .ConfigureAwait(false);
             }
         }
     }
@@ -1073,11 +1068,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         return panelGroup?.ElementDimensions.GetStyleString(DotNetService.CommonService.UiStringBuilder) ?? string.Empty;
     }
 
-    private Task TopDropzoneOnMouseUp(MouseEventArgs mouseEventArgs)
+    private Task TopDropzoneOnMouseUp(Key<PanelGroup> panelGroupKey, MouseEventArgs mouseEventArgs)
     {
         var panelState = DotNetService.CommonService.GetPanelState();
 
-        var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupParameter.PanelGroupKey);
+        var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == panelGroupKey);
 
         if (panelGroup is null)
             return Task.CompletedTask;
@@ -1103,11 +1098,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         return Task.CompletedTask;
     }
 
-    private Task BottomDropzoneOnMouseUp(MouseEventArgs mouseEventArgs)
+    private Task BottomDropzoneOnMouseUp(Key<PanelGroup> panelGroupKey, MouseEventArgs mouseEventArgs)
     {
         var panelState = DotNetService.CommonService.GetPanelState();
 
-        var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupParameter.PanelGroupKey);
+        var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == panelGroupKey);
 
         if (panelGroup is null)
             return Task.CompletedTask;
@@ -1136,13 +1131,13 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     /// <summary>
     /// This method should only be invoked from the "UI thread" due to the usage of `CommonBackgroundTaskApi.UiStringBuilder`.
     /// </summary>
-    private string GetPanelElementCssClass()
+    private string GetPanelElementCssClass(string panelPositionCss, string cssClassString)
     {
         DotNetService.CommonService.UiStringBuilder.Clear();
         DotNetService.CommonService.UiStringBuilder.Append("di_ide_panel ");
-        DotNetService.CommonService.UiStringBuilder.Append(_panelPositionCss);
+        DotNetService.CommonService.UiStringBuilder.Append(panelPositionCss);
         DotNetService.CommonService.UiStringBuilder.Append(" ");
-        DotNetService.CommonService.UiStringBuilder.Append(PanelGroupParameter.CssClassString);
+        DotNetService.CommonService.UiStringBuilder.Append(cssClassString);
     
         return DotNetService.CommonService.UiStringBuilder.ToString();
     }

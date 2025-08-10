@@ -509,7 +509,7 @@ button.di_polymorphic-tab.di_drag.di_active {
 
 .di_ide_panel_bottom .di_ide_panel-tab:not(:first-of-type) {
     border-left: 2px solid var(--di_primary-border-color) !important;
-}   
+}
 
 :root {
     /* Sizes Common */
