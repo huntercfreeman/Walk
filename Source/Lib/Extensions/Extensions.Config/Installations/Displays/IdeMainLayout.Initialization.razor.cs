@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.BackgroundTasks.Models;

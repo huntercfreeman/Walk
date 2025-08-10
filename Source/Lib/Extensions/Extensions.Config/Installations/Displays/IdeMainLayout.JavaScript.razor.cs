@@ -1,4 +1,10 @@
-﻿namespace Walk.Extensions.Config.Installations.Displays;
+﻿using Microsoft.JSInterop;
+using Walk.Common.RazorLib.Dialogs.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Keys.Models;
+using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
+
+namespace Walk.Extensions.Config.Installations.Displays;
 
 public partial class IdeMainLayout
 {

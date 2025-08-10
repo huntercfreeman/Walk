@@ -2,19 +2,15 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.Badges.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Resizes.Models;
 using Walk.Ide.RazorLib;
-using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.Settings.Displays;
 using Walk.TextEditor.RazorLib;
-using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
 
 using System.Text;
 using Walk.Extensions.DotNet;
@@ -26,15 +22,8 @@ using Walk.TextEditor.RazorLib.TextEditors.Models;
 // DecorationMapperRegistry.cs
 using Walk.Common.RazorLib.Tooltips.Models;
 using Walk.TextEditor.RazorLib.Options.Models;
-
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Walk.Common.RazorLib.Dimensions.Models;
-using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Tabs.Models;
-using Walk.Common.RazorLib.Dynamics.Models;
-using Walk.Common.RazorLib.BackgroundTasks.Models;
-using Walk.Common.RazorLib.Keys.Models;
 
 namespace Walk.Extensions.Config.Installations.Displays;
 
