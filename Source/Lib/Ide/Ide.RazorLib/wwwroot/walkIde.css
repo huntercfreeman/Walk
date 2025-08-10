@@ -412,6 +412,22 @@ button.di_ide_input-file-address-hierarchy-entry {
     padding: 0 !important;
 }
 
+.di_config_ctrl-tab-entry.di_active {
+    background-color: var(--di_active-with-focus-background-color);
+}
+
+.di_main-layout-overlay {
+    display: flex;
+    z-index: 99;
+    position: fixed;
+    left: 20vw;
+    top: 20vh;
+    width: 60vw;
+    height: 60vh;
+    color: var(--di_secondary-foreground-color);
+    background-color: var(--di_secondary-background-color);
+}
+
 :root {
     /* Sizes IDE */
     --di_ide_section-title-font-size: 1.25em;

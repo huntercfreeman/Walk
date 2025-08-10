@@ -1,21 +1,20 @@
-using System.Text;
-using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib;
-using Walk.Common.RazorLib.Dimensions.Models;
-using Walk.Common.RazorLib.Panels.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
-using Walk.Common.RazorLib.Installations.Models;
-using Walk.Common.RazorLib.Keys.Models;
-using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.Dimensions.Models;
+using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.FileSystems.Displays;
+using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Menus.Models;
+using Walk.Common.RazorLib.Panels.Models;
+using Walk.Ide.RazorLib.CodeSearches.Displays;
+using Walk.Ide.RazorLib.Shareds.Displays.Internals;
+using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
-using Walk.Ide.RazorLib.FileSystems.Models;
-using Walk.Ide.RazorLib.InputFiles.Displays;
 using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.Ide.RazorLib.FolderExplorers.Displays;
 using Walk.Extensions.DotNet;
-using Walk.Extensions.DotNet.AppDatas.Models;
 
 // CompilerServiceRegistry.cs
 using Walk.TextEditor.RazorLib.TextEditors.Models;
@@ -36,14 +35,17 @@ using Walk.CompilerServices.Xml.Html.Decoration;
 
 namespace Walk.Extensions.Config.Installations.Displays;
 
-public partial class WalkConfigInitializer : ComponentBase, IDisposable
+public partial class IdeMainLayout
 {
-    [Inject]
-    private DotNetService DotNetService { get; set; } = null!;
+    private const string TEST_STRING_FOR_MEASUREMENT = "abcdefghijklmnopqrstuvwxyz0123456789";
+    private const int TEST_STRING_REPEAT_COUNT = 6;
+
+    private static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
+    private static readonly Key<IDynamicViewModel> _backgroundTaskDialogKey = Key<IDynamicViewModel>.NewKey();
+    private static readonly Key<IDynamicViewModel> _solutionVisualizationDialogKey = Key<IDynamicViewModel>.NewKey();
+    private static readonly Key<IDynamicViewModel> _infoDialogKey = Key<IDynamicViewModel>.NewKey();
     
     private static Key<IDynamicViewModel> _notificationRecordKey = Key<IDynamicViewModel>.NewKey();
-    
-    private DotNetObjectReference<WalkConfigInitializer>? _dotNetHelper;
     
     private enum CtrlTabKind
     {
@@ -51,314 +53,222 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
         TextEditors,
     }
     
-    private CtrlTabKind _ctrlTabKind = CtrlTabKind.Dialogs;
-    
-    private int _index;
-    
-    private bool _altIsDown;
-    private bool _ctrlIsDown;
-
-    protected override void OnInitialized()
+    public Task RenderFileDropdownOnClick()
     {
-        // TODO: Does the object used here matter? Should it be a "smaller" object or is this just reference?
-        _dotNetHelper = DotNetObjectReference.Create(this);
-    
-        InitializePanelTabs();
-        HandleCompilerServicesAndDecorationMappers();
+        return DropdownHelper.RenderDropdownAsync(
+            DotNetService.CommonService,
+            DotNetService.CommonService.JsRuntimeCommonApi,
+            IdeState.ButtonFileId,
+            DropdownOrientation.Bottom,
+            IdeState.DropdownKeyFile,
+            DotNetService.IdeService.GetIdeState().MenuFile,
+            IdeState.ButtonFileId,
+            preventScroll: false);
     }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    
+    public Task RenderToolsDropdownOnClick()
     {
-        if (firstRender)
+        return DropdownHelper.RenderDropdownAsync(
+            DotNetService.CommonService,
+            DotNetService.CommonService.JsRuntimeCommonApi,
+            IdeState.ButtonToolsId,
+            DropdownOrientation.Bottom,
+            IdeState.DropdownKeyTools,
+            DotNetService.IdeService.GetIdeState().MenuTools,
+            IdeState.ButtonToolsId,
+            preventScroll: false);
+    }
+    
+    public Task RenderViewDropdownOnClick()
+    {
+        InitializeMenuView();
+    
+        return DropdownHelper.RenderDropdownAsync(
+            DotNetService.CommonService,
+            DotNetService.CommonService.JsRuntimeCommonApi,
+            IdeState.ButtonViewId,
+            DropdownOrientation.Bottom,
+            IdeState.DropdownKeyView,
+            DotNetService.IdeService.GetIdeState().MenuView,
+            IdeState.ButtonViewId,
+            preventScroll: false);
+    }
+    
+    public Task RenderRunDropdownOnClick()
+    {
+        return DropdownHelper.RenderDropdownAsync(
+            DotNetService.CommonService,
+            DotNetService.CommonService.JsRuntimeCommonApi,
+            IdeState.ButtonRunId,
+            DropdownOrientation.Bottom,
+            IdeState.DropdownKeyRun,
+            DotNetService.IdeService.GetIdeState().MenuRun,
+            IdeState.ButtonRunId,
+            preventScroll: false);
+    }
+    
+    public void InitializeMenuView()
+    {
+        var menuOptionsList = new List<MenuOptionRecord>();
+        var panelState = DotNetService.CommonService.GetPanelState();
+        var dialogState = DotNetService.CommonService.GetDialogState();
+    
+        foreach (var panel in panelState.PanelList)
         {
-            DotNetService.Enqueue(new DotNetWorkArgs
-            {
-                WorkKind = DotNetWorkKind.WalkExtensionsDotNetInitializerOnAfterRender
-            });
-        
-            var dotNetAppData = await DotNetService.AppDataService
-                .ReadAppDataAsync<DotNetAppData>(
-                    DotNetAppData.AssemblyName, DotNetAppData.TypeName, uniqueIdentifier: null, forceRefreshCache: false)
-                .ConfigureAwait(false);
-                
-            await SetSolution(dotNetAppData).ConfigureAwait(false);
-            
-            if (DotNetService.CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
-            {
-                // Do not ConfigureAwait(false) so that the UI doesn't change out from under you
-                // before you finish setting up the events?
-                // (is this a thing, I'm just presuming this would be true).
-                await DotNetService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
-                    "walkConfig.appWideKeyboardEventsInitialize",
-                    _dotNetHelper);
-            }
-        }
-    }
+            var menuOptionPanel = new MenuOptionRecord(
+                panel.Title,
+                MenuOptionKind.Delete,
+                () => DotNetService.CommonService.ShowOrAddPanelTab(panel));
     
-    [JSInvokable]
-    public async Task ReceiveOnKeyDown(string key, bool shiftKey)
-    {
-        if (key == "Alt")
-        {   
-            _altIsDown = true;
-            StateHasChanged();
+            menuOptionsList.Add(menuOptionPanel);
         }
-        else if (key == "Control")
+    
+        if (menuOptionsList.Count == 0)
         {
-            _ctrlIsDown = true;
-            StateHasChanged();
+            DotNetService.IdeService.Ide_SetMenuView(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
         }
-        else if (key == "Tab")
+        else
         {
-            _ctrlIsDown = true;
-            if (!shiftKey)
-            {
-                if (_ctrlTabKind == CtrlTabKind.Dialogs)
-                {
-                    if (_index >= DotNetService.CommonService.GetDialogState().DialogList.Count - 1)
-                    {
-                        var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
-                        if ((textEditorGroup?.ViewModelKeyList.Count ?? 0) > 0)
-                        {
-                            _ctrlTabKind = CtrlTabKind.TextEditors;
-                            _index = 0;
-                        }
-                        else
-                        {
-                            _index = 0;
-                        }
-                    }
-                    else
-                    {
-                        _index++;
-                    }
-                }
-                else if (_ctrlTabKind == CtrlTabKind.TextEditors)
-                {
-                    var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
-                    if (_index >= textEditorGroup.ViewModelKeyList.Count - 1)
-                    {
-                        if (DotNetService.CommonService.GetDialogState().DialogList.Count > 0)
-                        {
-                            _ctrlTabKind = CtrlTabKind.Dialogs;
-                            _index = 0;
-                        }
-                        else
-                        {
-                            _index = 0;
-                        }
-                    }
-                    else
-                    {
-                        _index++;
-                    }
-                }
-            }
-            else
-            {
-                if (_ctrlTabKind == CtrlTabKind.Dialogs)
-                {
-                    if (_index <= 0)
-                    {
-                        var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
-                        if (textEditorGroup.ViewModelKeyList.Count >= 0)
-                        {
-                            _ctrlTabKind = CtrlTabKind.TextEditors;
-                            _index = textEditorGroup.ViewModelKeyList.Count - 1;
-                        }
-                        else
-                        {
-                            _index = 0;
-                        }
-                    }
-                    else
-                    {
-                        _index--;
-                    }
-                }
-                else if (_ctrlTabKind == CtrlTabKind.TextEditors)
-                {
-                    var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
-                    if (_index <= 0)
-                    {
-                        if (DotNetService.CommonService.GetDialogState().DialogList.Count > 0)
-                        {
-                            _ctrlTabKind = CtrlTabKind.Dialogs;
-                            _index = DotNetService.CommonService.GetDialogState().DialogList.Count - 1;
-                        }
-                        else
-                        {
-                            _index = 0;
-                        }
-                    }
-                    else
-                    {
-                        _index--;
-                    }
-                }
-            }
-            
-            StateHasChanged();
+            DotNetService.IdeService.Ide_SetMenuView(new MenuRecord(menuOptionsList));
         }
     }
     
-    [JSInvokable]
-    public async Task ReceiveOnKeyUp(string key)
+    private Task OpenInfoDialogOnClick()
     {
-        if (key == "Alt")
-        {
-            _altIsDown = false;
-            StateHasChanged();
-        }
-        else if (key == "Control")
-        {
-            _ctrlIsDown = false;
-            
-            if (_ctrlTabKind == CtrlTabKind.Dialogs)
-            {
-                var dialogState = DotNetService.CommonService.GetDialogState();
-                if (_index < dialogState.DialogList.Count)
-                {
-                    var dialog = dialogState.DialogList[_index];
-                    await DotNetService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
-                        "walkCommon.focusHtmlElementById",
-                        dialog.DialogFocusPointHtmlElementId,
-                        /*preventScroll:*/ true);
-                }
-            }
-            else if (_ctrlTabKind == CtrlTabKind.TextEditors)
-            {
-                var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
-                if (_index < textEditorGroup.ViewModelKeyList.Count)
-                {
-                    var viewModelKey = textEditorGroup.ViewModelKeyList[_index];
-                    DotNetService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
-                    {
-                        var activeViewModel = editContext.GetViewModelModifier(textEditorGroup.ActiveViewModelKey);
-                        await activeViewModel.FocusAsync();
-                        DotNetService.TextEditorService.Group_SetActiveViewModel(
-                            Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey,
-                            viewModelKey);
-                    });
-                }
-            }
-            
-            StateHasChanged();
-        }
-    }
-    
-    [JSInvokable]
-    public async Task OnWindowBlur()
-    {
-        _altIsDown = false;
-        _ctrlIsDown = false;
-        StateHasChanged();
-    }
-    
-    [JSInvokable]
-    public async Task ReceiveWidgetOnKeyDown()
-    {
-        /*DotNetService.CommonService.SetWidget(new Walk.Common.RazorLib.Widgets.Models.WidgetModel(
-            typeof(Walk.Ide.RazorLib.CommandBars.Displays.CommandBarDisplay),
-            componentParameterMap: null,
-            cssClass: null,
-            cssStyle: "width: 80vw; height: 5em; left: 10vw; top: 0;"));*/
-    }
-    
-    /// <summary>
-    /// TODO: This triggers when you save with 'Ctrl + s' in the text editor itself...
-    /// ...the redundant save doesn't go through though since this app wide save will check the DirtyResourceUriState.
-    /// </summary>
-    [JSInvokable]
-    public async Task SaveFileOnKeyDown()
-    {
-        TextEditorCommandDefaultFunctions.TriggerSave_NoTextEditorFocus(DotNetService.TextEditorService, Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
-    }
-    
-    [JSInvokable]
-    public async Task SaveAllFileOnKeyDown()
-    {
-        TextEditorCommandDefaultFunctions.TriggerSaveAll(DotNetService.TextEditorService, Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
-    }
-    
-    [JSInvokable]
-    public async Task FindAllOnKeyDown()
-    {
-        DotNetService.TextEditorService.Options_ShowFindAllDialog();
-    }
-    
-    [JSInvokable]
-    public async Task CodeSearchOnKeyDown()
-    {
-        DotNetService.CommonService.Dialog_ReduceRegisterAction(DotNetService.IdeService.CodeSearchDialog ??= new DialogViewModel(
-            Key<IDynamicViewModel>.NewKey(),
-            "Code Search",
-            typeof(Walk.Ide.RazorLib.CodeSearches.Displays.CodeSearchDisplay),
+        var dialogRecord = new DialogViewModel(
+            _infoDialogKey,
+            "Info",
+            typeof(IdeInfoDisplay),
             null,
             null,
             true,
-            null));
+            null);
+    
+        DotNetService.CommonService.Dialog_ReduceRegisterAction(dialogRecord);
+        return Task.CompletedTask;
     }
-    
-    [JSInvokable]
-    public async Task EscapeOnKeyDown()
+
+    public void DispatchRegisterDialogRecordAction() =>
+        DotNetService.CommonService.Dialog_ReduceRegisterAction(_dialogRecord);
+
+    private void InitializeMenuFile()
     {
-        var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
-        var viewModelKey = textEditorGroup.ActiveViewModelKey;
-        
-        DotNetService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
-        {
-            var viewModel = editContext.GetViewModelModifier(viewModelKey);
-            var modelModifier = editContext.GetModelModifier(viewModel.PersistentState.ResourceUri);
-            viewModel.FocusAsync();
-            return ValueTask.CompletedTask;
-        });
+        var menuOptionsList = new List<MenuOptionRecord>();
+
+        // Menu Option Open
+        var menuOptionOpenFile = new MenuOptionRecord(
+            "File",
+            MenuOptionKind.Other,
+            () =>
+            {
+                DotNetService.IdeService.Editor_ShowInputFile();
+                return Task.CompletedTask;
+            });
+
+        var menuOptionOpenDirectory = new MenuOptionRecord(
+            "Directory",
+            MenuOptionKind.Other,
+            () =>
+            {
+                DotNetService.IdeService.FolderExplorer_ShowInputFile();
+                return Task.CompletedTask;
+            });
+
+        var menuOptionOpen = new MenuOptionRecord(
+            "Open",
+            MenuOptionKind.Other,
+            subMenu: new MenuRecord(new List<MenuOptionRecord>()
+            {
+                menuOptionOpenFile,
+                menuOptionOpenDirectory,
+            }));
+
+        menuOptionsList.Add(menuOptionOpen);
+
+        var menuOptionSave = new MenuOptionRecord(
+            "Save (Ctrl s)",
+            MenuOptionKind.Other,
+            () =>
+            {
+                TextEditorCommandDefaultFunctions.TriggerSave_NoTextEditorFocus(DotNetService.TextEditorService, Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+                return Task.CompletedTask;
+            });
+        menuOptionsList.Add(menuOptionSave);
+
+        var menuOptionSaveAll = new MenuOptionRecord(
+            "Save All (Ctrl Shift s)",
+            MenuOptionKind.Other,
+            () =>
+            {
+                TextEditorCommandDefaultFunctions.TriggerSaveAll(DotNetService.TextEditorService, Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+                return Task.CompletedTask;
+            });
+        menuOptionsList.Add(menuOptionSaveAll);
+
+        // Menu Option Permissions
+        var menuOptionPermissions = new MenuOptionRecord(
+            "Permissions",
+            MenuOptionKind.Delete,
+            ShowPermissionsDialog);
+
+        menuOptionsList.Add(menuOptionPermissions);
+
+        DotNetService.IdeService.Ide_SetMenuFile(new MenuRecord(menuOptionsList));
     }
-    
-    public async Task SetFocus(string elementId)
+
+    private void InitializeMenuTools()
     {
-        await DotNetService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync(
-            "walkCommon.focusHtmlElementById",
-            elementId,
-            /*preventScroll:*/ true);
+        var menuOptionsList = new List<MenuOptionRecord>();
+
+        // Menu Option Find All
+        var menuOptionFindAll = new MenuOptionRecord(
+            "Find All (Ctrl Shift f)",
+            MenuOptionKind.Delete,
+            () =>
+            {
+                DotNetService.TextEditorService.Options_ShowFindAllDialog();
+                return Task.CompletedTask;
+            });
+
+        menuOptionsList.Add(menuOptionFindAll);
+
+        // Menu Option Code Search
+        var menuOptionCodeSearch = new MenuOptionRecord(
+            "Code Search (Ctrl ,)",
+            MenuOptionKind.Delete,
+            () =>
+            {
+                DotNetService.IdeService.CodeSearchDialog ??= new DialogViewModel(
+                    Key<IDynamicViewModel>.NewKey(),
+                    "Code Search",
+                    typeof(CodeSearchDisplay),
+                    null,
+                    null,
+                    true,
+                    null);
+
+                DotNetService.CommonService.Dialog_ReduceRegisterAction(DotNetService.IdeService.CodeSearchDialog);
+                return Task.CompletedTask;
+            });
+
+        menuOptionsList.Add(menuOptionCodeSearch);
+
+        DotNetService.IdeService.Ide_SetMenuTools(new MenuRecord(menuOptionsList));
     }
-    
-    private async Task SetSolution(DotNetAppData dotNetAppData)
+
+    private Task ShowPermissionsDialog()
     {
-        var solutionMostRecent = dotNetAppData?.SolutionMostRecent;
-    
-        if (solutionMostRecent is null)
-            return;
-    
-        var slnAbsolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
-            solutionMostRecent,
-            false,
-            tokenBuilder: new StringBuilder(),
-            formattedBuilder: new StringBuilder());
+        var dialogRecord = new DialogViewModel(
+            _permissionsDialogKey,
+            "Permissions",
+            typeof(PermissionsDisplay),
+            null,
+            null,
+            true,
+            null);
 
-        DotNetService.Enqueue(new DotNetWorkArgs
-        {
-            WorkKind = DotNetWorkKind.SetDotNetSolution,
-            DotNetSolutionAbsolutePath = slnAbsolutePath,
-        });
-
-        /*
-        if (!string.IsNullOrWhiteSpace(projectPersonalPath) &&
-            await FileSystemProvider.File.ExistsAsync(projectPersonalPath).ConfigureAwait(false))
-        {
-            var projectAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
-                projectPersonalPath,
-                false);
-
-            var startupControl = StartupControlStateWrap.Value.StartupControlList.FirstOrDefault(
-                x => x.StartupProjectAbsolutePath.Value == projectAbsolutePath.Value);
-                
-            if (startupControl is null)
-                return;
-            
-            Dispatcher.Dispatch(new StartupControlState.SetActiveStartupControlKeyAction(startupControl.Key));    
-        }
-        */
+        DotNetService.CommonService.Dialog_ReduceRegisterAction(dialogRecord);
+        return Task.CompletedTask;
     }
     
     private void HandleCompilerServicesAndDecorationMappers()
@@ -424,7 +334,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
     private void InitializePanelTabs()
     {
         var panelState = DotNetService.CommonService.GetPanelState();
-        var appOptionsState = DotNetService.IdeService.TextEditorService.CommonService.GetAppOptionsState();
+        var appOptionsState = DotNetService.CommonService.GetAppOptionsState();
     
         // InitializeLeftPanelTabs();
         var leftPanel = CommonFacts.GetTopLeftPanelGroup(panelState);
@@ -437,7 +347,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
             Key<IDynamicViewModel>.NewKey(),
             typeof(Walk.Extensions.DotNet.DotNetSolutions.Displays.SolutionExplorerDisplay),
             null,
-            DotNetService.IdeService.TextEditorService.CommonService);
+            DotNetService.CommonService);
         ((List<Panel>)panelState.PanelList).Add(solutionExplorerPanel);
         ((List<IPanelTab>)leftPanel.TabList).Add(solutionExplorerPanel);
         
@@ -495,7 +405,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
             Key<IDynamicViewModel>.NewKey(),
             typeof(Walk.Extensions.DotNet.Outputs.Displays.OutputPanelDisplay),
             null,
-            DotNetService.IdeService.TextEditorService.CommonService);
+            DotNetService.CommonService);
         ((List<Panel>)panelState.PanelList).Add(outputPanel);
         ((List<IPanelTab>)bottomPanel.TabList).Add(outputPanel);
 
@@ -506,7 +416,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
             Key<IDynamicViewModel>.NewKey(),
             typeof(Walk.Extensions.DotNet.TestExplorers.Displays.TestExplorerDisplay),
             null,
-            DotNetService.IdeService.TextEditorService.CommonService);
+            DotNetService.CommonService);
         ((List<Panel>)panelState.PanelList).Add(testExplorerPanel);
         ((List<IPanelTab>)bottomPanel.TabList).Add(testExplorerPanel);
 
@@ -517,7 +427,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
             Key<IDynamicViewModel>.NewKey(),
             typeof(Walk.Extensions.DotNet.Nugets.Displays.NuGetPackageManager),
             null,
-            DotNetService.IdeService.TextEditorService.CommonService);
+            DotNetService.CommonService);
         ((List<Panel>)panelState.PanelList).Add(nuGetPanel);
         ((List<IPanelTab>)bottomPanel.TabList).Add(nuGetPanel);
         
@@ -556,7 +466,7 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
         DotNetService.CommonService.SetActivePanelTab(leftPanel.Key, solutionExplorerPanel.Key);
         
         // SetActivePanelTabAction
-        DotNetService.IdeService.TextEditorService.CommonService.SetActivePanelTab(bottomPanel.Key, outputPanel.Key);
+        DotNetService.CommonService.SetActivePanelTab(bottomPanel.Key, outputPanel.Key);
     }
 
     public void Panel_InitializeResizeHandleDimensionUnit(Key<PanelGroup> panelGroupKey, DimensionUnit dimensionUnit)
@@ -693,10 +603,5 @@ public partial class WalkConfigInitializer : ComponentBase, IDisposable
                     terminalGroupState.TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
             }
         }
-    }
-
-    public void Dispose()
-    {
-        _dotNetHelper?.Dispose();
     }
 }

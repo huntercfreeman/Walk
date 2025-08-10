@@ -5,14 +5,12 @@ using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 using Walk.Ide.RazorLib.InputFiles.Models;
-using Walk.Ide.RazorLib.Shareds.Displays;
 
 namespace Walk.Ide.RazorLib.BackgroundTasks.Models;
 
 public sealed class IdeWorkArgs
 {
     public IdeWorkKind WorkKind { get; set; }
-    public IdeMainLayout IdeMainLayout { get; set; }
     public string StringValue { get; set; }
     public TextEditorModel TextEditorModel { get; set; }
     public DateTime FileLastWriteTime { get; set; }

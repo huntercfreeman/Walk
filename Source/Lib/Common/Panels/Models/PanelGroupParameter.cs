@@ -10,22 +10,20 @@ public struct PanelGroupParameter
         Key<PanelGroup> panelGroupKey,
         ElementDimensions adjacentElementDimensions,
         DimensionAttributeKind dimensionAttributeKind,
-        Func<Task> reRenderSelfAndAdjacentElementDimensionsFunc,
-        string cssClassString,
-        IReadOnlyList<IBadgeModel>? badgeList)
+        string cssClassString)
     {
         PanelGroupKey = panelGroupKey;
         AdjacentElementDimensions = adjacentElementDimensions;
         DimensionAttributeKind = dimensionAttributeKind;
-        ReRenderSelfAndAdjacentElementDimensionsFunc = reRenderSelfAndAdjacentElementDimensionsFunc;
         CssClassString = cssClassString;
-        BadgeList = badgeList;
     }
 
     public Key<PanelGroup> PanelGroupKey { get; set; } = Key<PanelGroup>.Empty;
     public ElementDimensions AdjacentElementDimensions { get; set; }
     public DimensionAttributeKind DimensionAttributeKind { get; set; }
-    public Func<Task> ReRenderSelfAndAdjacentElementDimensionsFunc { get; set; } = null!;
     public string CssClassString { get; set; } = null!;
-    public IReadOnlyList<IBadgeModel>? BadgeList { get; set; } = null;
+    
+    public DimensionUnitPurposeKind DimensionUnitPurposeKind { get; set; }
+    public string PanelPositionCss { get; set; }
+    public string HtmlIdTabs { get; set; }
 }

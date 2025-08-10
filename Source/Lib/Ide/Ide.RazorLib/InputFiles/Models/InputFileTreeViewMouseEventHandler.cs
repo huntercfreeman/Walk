@@ -1,5 +1,4 @@
 using Walk.Common.RazorLib.Commands.Models;
-using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 

@@ -1,0 +1,591 @@
+@using Walk.Common.RazorLib
+@using Walk.Common.RazorLib.Panels.Models
+@using Walk.Common.RazorLib.Resizes.Displays
+@using Walk.Common.RazorLib.Dimensions.Models
+@using Walk.Common.RazorLib.Dropdowns.Displays
+@using Walk.Common.RazorLib.Dropdowns.Models
+@using Walk.Common.RazorLib.Installations.Models
+@using Walk.Common.RazorLib.Menus.Displays
+@using Walk.Ide.RazorLib.Editors.Displays
+@using Walk.Ide.RazorLib.Shareds.Displays.Internals
+@using Walk.Ide.RazorLib.Settings.Displays
+@using Walk.Ide.RazorLib.Shareds.Models
+
+@using Walk.Common.RazorLib.Dialogs.Displays
+@using Walk.Common.RazorLib.Widgets.Displays
+@using Walk.Common.RazorLib.Notifications.Displays
+@using Walk.Common.RazorLib.OutOfBoundsClicks.Displays
+@using Walk.Common.RazorLib.Dropdowns.Displays
+
+@using Walk.Common.RazorLib.Panels.Models;
+@using Walk.Common.RazorLib.Tabs.Displays;
+@using Walk.Common.RazorLib.Badges.Displays;
+@using Walk.Common.RazorLib.Notifications.Models;
+
+@inherits LayoutComponentBase
+
+@{
+    CreateCssStrings();
+}
+
+@* ContextRecord="ContextFacts.GlobalContext" *@
+
+<div id="@CommonFacts.RootHtmlElementId" class="@_classCssString" style="@_styleCssString">
+    <Walk.Common.RazorLib.Drags.Displays.DragInitializer />
+    
+    <div id="@_measureLineHeightElementId"
+         class="di_measure-line-height-wrapper"
+         style="@_lineHeightCssStyle">
+        0
+    </div>
+    
+    @{
+        var panelState = DotNetService.CommonService.GetPanelState();
+        
+        PanelGroup? leftPanelGroup = null;
+        PanelGroup? rightPanelGroup = null;
+        PanelGroup? bottomPanelGroup = null;
+        
+        foreach (var panelGroup in panelState.PanelGroupList)
+        {
+            if (panelGroup.Key == CommonFacts.LeftPanelGroupKey)
+            {
+                leftPanelGroup = panelGroup;
+            }
+            else if (panelGroup.Key == CommonFacts.RightPanelGroupKey)
+            {
+                rightPanelGroup = panelGroup;
+            }
+            else if (panelGroup.Key == CommonFacts.BottomPanelGroupKey)
+            {
+                bottomPanelGroup = panelGroup;
+            }
+        }
+    
+    	var appOptionsState = DotNetService.CommonService.GetAppOptionsState();
+    	var iconDriver = new IconDriver(
+    		appOptionsState.Options.IconSizeInPixels,
+    		appOptionsState.Options.IconSizeInPixels);
+    
+        PassAlongSizeIfNoActiveTab(_leftPanelGroupParameter, leftPanelGroup);
+        PassAlongSizeIfNoActiveTab(_rightPanelGroupParameter, rightPanelGroup);
+        PassAlongSizeIfNoActiveTab(_bottomPanelGroupParameter, bottomPanelGroup);
+    }
+    
+    @{ var dialogList = DotNetService.CommonService.GetDialogState().DialogList; }
+    @foreach (var dialog in dialogList)
+    {
+        <DialogDisplay @key="dialog.DynamicViewModelKey" 
+                       Dialog="dialog"/>
+    }
+    
+    
+    @{ var widgetState = DotNetService.CommonService.GetWidgetState(); }
+    @if (widgetState.Widget is not null)
+    {
+    	<OutOfBoundsClickDisplay ZIndex="12"
+    	                         OnMouseDownCallback="WIDGET_RemoveWidget" />
+    }
+    @if (widgetState.Widget is not null)
+    {
+    	<WidgetDisplay @key="widgetState.Widget.Key"
+    				   Widget="widgetState.Widget"/>
+    }
+    
+    
+    @{ var notificationState = DotNetService.CommonService.GetNotificationState(); }
+    @for (int i = 0; i < notificationState.DefaultList.Count; i++)
+    {
+        var index = i;
+        var notification = notificationState.DefaultList[index];
+        
+        <NotificationDisplay @key="notification.DynamicViewModelKey" 
+                             Notification="notification"
+                             Index="index"/>
+    }
+    
+    
+    @{ var dropdownState = DotNetService.CommonService.GetDropdownState(); }
+    @if (dropdownState.DropdownList.Count > 0 && dropdownState.DropdownList.Any(x => x.ShouldShowOutOfBoundsClickDisplay))
+    {
+    	<OutOfBoundsClickDisplay ZIndex="15"
+    	                         OnMouseDownCallback="DROPDOWN_ClearActiveKeyList" />
+    }
+    @foreach (var dropdown in dropdownState.DropdownList)
+    {
+    	<DropdownDisplay @key="dropdown.Key"
+    					 Dropdown="dropdown"/>
+    }
+    
+    
+    @{ var localOutlineState = DotNetService.CommonService.GetOutlineState(); }
+    @if (localOutlineState.MeasuredHtmlElementDimensions is not null)
+    {
+    	<div class="di_outline di_outline-left"
+    		 style="@OUTLINE_GetStyleCssLeft(localOutlineState)">
+    	</div>
+    	
+    	<div class="di_outline di_outline-right"
+    		 style="@OUTLINE_GetStyleCssRight(localOutlineState)">
+    	</div>
+    	
+    	<div class="di_outline di_outline-top"
+    		 style="@OUTLINE_GetStyleCssTop(localOutlineState)">
+    	</div>
+    	
+    	<div class="di_outline di_outline-bottom"
+    		 style="@OUTLINE_GetStyleCssBottom(localOutlineState)">
+    	</div>
+    }
+    
+    
+    <div class="di_tooltip-initializer"></div>
+    @{
+        var tooltipModel = DotNetService.CommonService.GetTooltipState().TooltipModel;
+        
+        if (tooltipModel is not null)
+    	{
+    		var x = tooltipModel.X;
+    		var y = tooltipModel.Y;
+    	
+    		if (Math.Abs(ValueTooltipRelativeX - x) >= 0.1)
+    		{
+    			ValueTooltipRelativeX = x;
+    			TooltipRelativeX = x.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    		}
+    	
+    		if (Math.Abs(ValueTooltipRelativeY - y) >= 0.1)
+    		{
+    			ValueTooltipRelativeY = y;
+    			TooltipRelativeY = y.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    		}
+    	}
+    }
+    @if (tooltipModel is not null)
+    {
+        <div class="di_te_tooltip di_set-selectable @(tooltipModel.CssClassString ?? string.Empty)"
+             style="left: @(TooltipRelativeX)px; top: @(TooltipRelativeY)px;"
+             id="@DotNetService.CommonService.Tooltip_HtmlElementId"
+             @onmouseover="tooltipModel.OnMouseOver"
+             @onmousedown:stopPropagation="true"
+             @onwheel="x => tooltipModel.OnWheel?.Invoke(tooltipModel, x) ?? Task.CompletedTask"
+             @onmousemove:stopPropagation="true"
+             @ondblclick:stopPropagation="true"
+             @onclick:stopPropagation="true"
+             @oncontextmenu:stopPropagation="true">
+    
+            @if (tooltipModel.RendererType is null)
+            {
+                <text>tooltipModel.RendererType is null</text>
+            }
+            else
+            {
+                <DynamicComponent Type="tooltipModel.RendererType"
+                                  Parameters="tooltipModel.ParameterMap" />
+            }
+        </div>
+    }
+
+    
+    <div class="@_wrapperCssClass"
+    	 style="@_wrapperCssStyle">
+    	<div class="di_te_measure-character-width-and-line-height-wrapper di_te_row">
+    	    <div class="di_te_measure-character-width-and-line-height di_te_row"
+    	         id="@_measureCharacterWidthAndLineHeightElementId">
+    	
+    	        @for (var i = 0; i < TEST_STRING_REPEAT_COUNT; i++)
+    	        {
+    	            <text>
+    	                @TEST_STRING_FOR_MEASUREMENT
+    	            </text>
+    	        }
+    	    </div>
+    	</div>
+    </div>
+
+    @* Start Header *@
+    @* ContextRecord="ContextFacts.MainLayoutHeaderContext" *@
+    <div class="di_ide_header" style="@_headerCssStyle">
+        <div class="di_ide_header-left-content"
+             style="display: flex;">
+            
+            @* Start SettingsDialogEntryPoint *@
+            <button class="di_button"
+                    @onclick="async () => DispatchRegisterDialogRecordAction()">
+                    
+                @IconSettingsGearFragment.Render(iconDriver)
+            </button>
+            @* End SettingsDialogEntryPoint *@
+    
+            <button @onclick="RenderFileDropdownOnClick"
+    			    id="@IdeState.ButtonFileId"
+                    class="di_button"
+                    style="margin-left: 15px;">
+                <u>F</u>ile
+            </button>
+    
+    		<button @onclick="RenderToolsDropdownOnClick"
+    			    id="@IdeState.ButtonToolsId"
+                    class="di_button"
+                    style="margin-left: 15px;">
+                <u>T</u>ools
+            </button>
+    
+    		<button @onclick="RenderViewDropdownOnClick"
+    			    id="@IdeState.ButtonViewId"
+                    class="di_button"
+                    style="margin-left: 15px;">
+    			<u>V</u>iew
+             </button>
+    
+    		<button @onclick="RenderRunDropdownOnClick"
+    			    id="@IdeState.ButtonRunId"
+    				class="di_button"
+                    style="margin-left: 15px;">
+                <u>R</u>un
+            </button>
+    
+            <button class="di_button"
+                    style="margin-left: 15px;"
+                    @onclick="OpenInfoDialogOnClick">
+                Info
+            </button>
+    
+            <Walk.Ide.RazorLib.Shareds.Displays.StartupControlDisplay/>
+        </div>
+    </div>
+    @* End Header *@
+    
+    @* Start Body *@
+    <div class="di_ide_body"
+         style="@_bodyElementDimensions.GetStyleString(DotNetService.CommonService.UiStringBuilder)">
+    
+        @*-----------------*@
+        @*-----------------*@
+        @if (leftPanelGroup is not null)
+        {
+            IPanelTab? activePanelTab = null;
+            activePanelTab = leftPanelGroup.TabList.FirstOrDefault(x => x.Key == leftPanelGroup.ActiveTabKey);
+                
+            <div class="@GetPanelElementCssClass(_leftPanelGroupParameter.PanelPositionCss, _leftPanelGroupParameter.CssClassString)"
+                 style="@GetElementDimensionsStyleString(leftPanelGroup, activePanelTab)"
+            	 id="@_leftPanelGroupParameter.PanelPositionCss">
+                
+                <div class="di_ide_panel-tabs"
+            		 id="@_leftPanelGroupParameter.HtmlIdTabs">
+            
+                    @{
+            			var tabList = GetTabList(leftPanelGroup);
+            			
+                        _tabCascadingValueBatch.CommonService = DotNetService.CommonService;
+                    	_tabCascadingValueBatch.HandleTabButtonOnContextMenu = null;
+            			
+            			foreach (var panelTab in tabList)
+                        {
+                            var Tab = panelTab;
+                            var localTabViewModel = panelTab;
+            				var ShouldDisplayCloseButton = false;
+                        
+                            @if (_tabCascadingValueBatch is not null)
+                            {
+                            	var localTabGroup = localTabViewModel.TabGroup;
+                            	
+                            	// localTabGroup can be null here
+                            	
+                                <button class="@GetCssClass(localTabGroup, localTabViewModel)"
+                                        title="@localTabViewModel.TitleVerbose"
+                                		@key="panelTab.Key"
+                                		@onclick="e => OnClick(localTabViewModel, e)"
+                                        @onmousedown="e => HandleOnMouseDownAsync(localTabViewModel, e)"
+                                        @onmouseup="HandleOnMouseUp"
+                                        @onmouseout="e => HandleOnMouseOutAsync(localTabViewModel, e)"
+                                		@oncontextmenu:preventDefault="true"
+                                		@oncontextmenu="e => ManuallyPropagateOnContextMenu(e, localTabViewModel)">
+                                
+                                	<span class="di_polymorphic-tab-text">@localTabViewModel.Title</span>
+                                
+                                	@if (ShouldDisplayCloseButton)
+                                	{
+                                		<button class="di_button di_button-close"
+                                	            @onclick:stopPropagation="true"
+                                	            @onclick="() => CloseTabOnClickAsync(localTabViewModel)">
+                                	        @IconCloseFragment.Render(iconDriver)
+                                    	</button>
+                                	}
+                                </button>
+                            }
+                        }
+                    }
+            
+                    @if (panelState.DragEventArgs is not null)
+                    {
+                        <div class="di_ide_panel-tab-dropzone di_ide_panel-tab-dropzone-top"
+                             @onmouseup:stopPropagation="true"
+                             @onmouseup="e => TopDropzoneOnMouseUp(_leftPanelGroupParameter.PanelGroupKey, e)">
+                        </div>
+                        
+                        <div class="di_ide_panel-tab-dropzone di_ide_panel-tab-dropzone-bottom"
+                             @onmouseup:stopPropagation="true"
+                             @onmouseup="e => BottomDropzoneOnMouseUp(_leftPanelGroupParameter.PanelGroupKey, e)">
+                        </div>
+                    }
+                </div>
+                
+                <div class="di_ide_panel-body">
+                    @if (activePanelTab is not null)
+                    {
+                        <DynamicComponent Type="activePanelTab.ComponentType"
+                                          Parameters="activePanelTab.ComponentParameterMap" />
+                    }
+                </div>
+                
+            </div>
+        }
+        @*-----------------*@
+        @*-----------------*@
+    
+        <ResizableColumn ResizableColumnParameter="_topLeftResizableColumnParameter" />
+    
+        <EditorDisplay EditorElementDimensions="_editorElementDimensions" />
+        
+        <ResizableColumn ResizableColumnParameter="_topRightResizableColumnParameter" />
+    
+        @*-----------------*@
+        @*-----------------*@
+        @if (rightPanelGroup is not null)
+        {
+            IPanelTab? activePanelTab = null;
+            activePanelTab = rightPanelGroup.TabList.FirstOrDefault(x => x.Key == rightPanelGroup.ActiveTabKey);
+            
+            <div class="@GetPanelElementCssClass(_rightPanelGroupParameter.PanelPositionCss, _rightPanelGroupParameter.CssClassString)"
+                 style="@GetElementDimensionsStyleString(rightPanelGroup, activePanelTab)"
+            	 id="@_rightPanelGroupParameter.PanelPositionCss">
+                
+                <div class="di_ide_panel-tabs"
+            		 id="@_rightPanelGroupParameter.HtmlIdTabs">
+            
+                    @{
+            			var tabList = GetTabList(rightPanelGroup);
+            			
+                        _tabCascadingValueBatch.CommonService = DotNetService.CommonService;
+                    	_tabCascadingValueBatch.HandleTabButtonOnContextMenu = null;
+            			
+            			foreach (var panelTab in tabList)
+                        {
+                            var Tab = panelTab;
+                            var localTabViewModel = panelTab;
+            				var ShouldDisplayCloseButton = false;
+                        
+                            @if (_tabCascadingValueBatch is not null)
+                            {
+                            	var localTabGroup = localTabViewModel.TabGroup;
+                            	
+                            	// localTabGroup can be null here
+                            	
+                                <button class="@GetCssClass(localTabGroup, localTabViewModel)"
+                                        title="@localTabViewModel.TitleVerbose"
+                                		@key="panelTab.Key"
+                                		@onclick="e => OnClick(localTabViewModel, e)"
+                                        @onmousedown="e => HandleOnMouseDownAsync(localTabViewModel, e)"
+                                        @onmouseup="HandleOnMouseUp"
+                                        @onmouseout="e => HandleOnMouseOutAsync(localTabViewModel, e)"
+                                		@oncontextmenu:preventDefault="true"
+                                		@oncontextmenu="e => ManuallyPropagateOnContextMenu(e, localTabViewModel)">
+                                
+                                	<span class="di_polymorphic-tab-text">@localTabViewModel.Title</span>
+                                
+                                	@if (ShouldDisplayCloseButton)
+                                	{
+                                		<button class="di_button di_button-close"
+                                	            @onclick:stopPropagation="true"
+                                	            @onclick="() => CloseTabOnClickAsync(localTabViewModel)">
+                                	        @IconCloseFragment.Render(iconDriver)
+                                    	</button>
+                                	}
+                                </button>
+                            }
+                        }
+                    }
+            
+                    @if (panelState.DragEventArgs is not null)
+                    {
+                        <div class="di_ide_panel-tab-dropzone di_ide_panel-tab-dropzone-top"
+                             @onmouseup:stopPropagation="true"
+                             @onmouseup="e => TopDropzoneOnMouseUp(_rightPanelGroupParameter.PanelGroupKey, e)">
+                        </div>
+                        
+                        <div class="di_ide_panel-tab-dropzone di_ide_panel-tab-dropzone-bottom"
+                             @onmouseup:stopPropagation="true"
+                             @onmouseup="e => BottomDropzoneOnMouseUp(_rightPanelGroupParameter.PanelGroupKey, e)">
+                        </div>
+                    }
+                </div>
+                
+                <div class="di_ide_panel-body">
+                    @if (activePanelTab is not null)
+                    {
+                        <DynamicComponent Type="activePanelTab.ComponentType"
+                                          Parameters="activePanelTab.ComponentParameterMap" />
+                    }
+                </div>
+                
+            </div>
+        }
+        @*-----------------*@
+        @*-----------------*@
+    </div>
+    @* End Body *@
+
+    <ResizableRow ResizableRowParameter="_resizableRowParameter" />
+    
+    @*-----------------*@
+    @*-----------------*@
+    @if (bottomPanelGroup is not null)
+    {
+        IPanelTab? activePanelTab = null;
+        activePanelTab = bottomPanelGroup.TabList.FirstOrDefault(x => x.Key == bottomPanelGroup.ActiveTabKey);
+        
+        <div class="@GetPanelElementCssClass(_bottomPanelGroupParameter.PanelPositionCss, _bottomPanelGroupParameter.CssClassString)"
+             style="@GetElementDimensionsStyleString(bottomPanelGroup, activePanelTab)"
+        	 id="@_bottomPanelGroupParameter.PanelPositionCss">
+            
+            <div class="di_ide_panel-tabs"
+        		 id="@_bottomPanelGroupParameter.HtmlIdTabs">
+        
+                @{
+        			var tabList = GetTabList(bottomPanelGroup);
+        			
+                    _tabCascadingValueBatch.CommonService = DotNetService.CommonService;
+                	_tabCascadingValueBatch.HandleTabButtonOnContextMenu = null;
+        			
+        			foreach (var panelTab in tabList)
+                    {
+                        var Tab = panelTab;
+                        var localTabViewModel = panelTab;
+        				var ShouldDisplayCloseButton = false;
+                    
+                        @if (_tabCascadingValueBatch is not null)
+                        {
+                        	var localTabGroup = localTabViewModel.TabGroup;
+                        	
+                        	// localTabGroup can be null here
+                        	
+                            <button class="@GetCssClass(localTabGroup, localTabViewModel)"
+                                    title="@localTabViewModel.TitleVerbose"
+                            		@key="panelTab.Key"
+                            		@onclick="e => OnClick(localTabViewModel, e)"
+                                    @onmousedown="e => HandleOnMouseDownAsync(localTabViewModel, e)"
+                                    @onmouseup="HandleOnMouseUp"
+                                    @onmouseout="e => HandleOnMouseOutAsync(localTabViewModel, e)"
+                            		@oncontextmenu:preventDefault="true"
+                            		@oncontextmenu="e => ManuallyPropagateOnContextMenu(e, localTabViewModel)">
+                            
+                            	<span class="di_polymorphic-tab-text">@localTabViewModel.Title</span>
+                            
+                            	@if (ShouldDisplayCloseButton)
+                            	{
+                            		<button class="di_button di_button-close"
+                            	            @onclick:stopPropagation="true"
+                            	            @onclick="() => CloseTabOnClickAsync(localTabViewModel)">
+                            	        @IconCloseFragment.Render(iconDriver)
+                                	</button>
+                            	}
+                            </button>
+                        }
+                    }
+                }
+        
+                <div class="di_ide_panel-tabs-justify-end"
+                     style="display: flex;">
+                     
+                    <BadgeDisplay @key="_dirtyResourceUriBadge.Key"
+            	                  BadgeModel="_dirtyResourceUriBadge"/>
+                    <BadgeDisplay @key="_notificationBadge.Key"
+            	                  BadgeModel="_notificationBadge"/>
+            	</div>
+                
+                @if (panelState.DragEventArgs is not null)
+                {
+                    <div class="di_ide_panel-tab-dropzone di_ide_panel-tab-dropzone-top"
+                         @onmouseup:stopPropagation="true"
+                         @onmouseup="e => TopDropzoneOnMouseUp(_bottomPanelGroupParameter.PanelGroupKey, e)">
+                    </div>
+                    
+                    <div class="di_ide_panel-tab-dropzone di_ide_panel-tab-dropzone-bottom"
+                         @onmouseup:stopPropagation="true"
+                         @onmouseup="e => BottomDropzoneOnMouseUp(_bottomPanelGroupParameter.PanelGroupKey, e)">
+                    </div>
+                }
+            </div>
+            
+            <div class="di_ide_panel-body">
+                @if (activePanelTab is not null)
+                {
+                    <DynamicComponent Type="activePanelTab.ComponentType"
+                                      Parameters="activePanelTab.ComponentParameterMap" />
+                }
+            </div>
+            
+        </div>
+    }
+    @*-----------------*@
+    @*-----------------*@
+
+    @if (_ctrlIsDown)
+    {
+        var dialogState = DotNetService.CommonService.GetDialogState();
+        
+        var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+    
+        <div class="di_main-layout-overlay">
+            <div>
+                <h2>Dialogs</h2>
+                @for (int i = 0; i < dialogState.DialogList.Count; i++)
+                {
+                    var dialog = dialogState.DialogList[i];
+                    
+                    string cssClass;
+                    
+                    if (_ctrlTabKind == CtrlTabKind.Dialogs && _index == i)
+                    {
+                        cssClass = "di_config_ctrl-tab-entry di_active";
+                    }
+                    else
+                    {
+                        cssClass = "di_config_ctrl-tab-entry";
+                    }
+                    
+                    <div class="@cssClass">@dialog.Title</div>
+                }
+            </div>
+            
+            <div style="margin-left: 10px; border-left: 1px solid var(--di_primary-border-color);">
+                <h2>TextEditors</h2>
+                @if (textEditorGroup is not null)
+                {
+                    for (int i = 0; i < textEditorGroup.ViewModelKeyList.Count; i++)
+                    {
+                        var viewModelKey = textEditorGroup.ViewModelKeyList[i];
+                        var viewModel = DotNetService.TextEditorService.ViewModel_GetOrDefault(viewModelKey);
+                        
+                        if (viewModel is not null)
+                        {
+                            string cssClass;
+                            
+                            if (_ctrlTabKind == CtrlTabKind.TextEditors && _index == i)
+                            {
+                                cssClass = "di_config_ctrl-tab-entry di_active";
+                            }
+                            else
+                            {
+                                cssClass = "di_config_ctrl-tab-entry";
+                            }
+                        
+                            <div class="@cssClass">@viewModel.PersistentState.Title</div>
+                        }
+                    }
+                }
+            </div>
+        </div>
+    }
+</div>
