@@ -334,8 +334,27 @@
                 <div class="di_ide_panel-body">
                     @if (activePanelTab is not null)
                     {
-                        <DynamicComponent Type="activePanelTab.ComponentType"
-                                          Parameters="activePanelTab.ComponentParameterMap" />
+                        if (activePanelTab.ComponentType == typeof(Walk.Extensions.DotNet.DotNetSolutions.Displays.SolutionExplorerDisplay))
+                        {
+                            <Walk.Extensions.DotNet.DotNetSolutions.Displays.SolutionExplorerDisplay/>
+                        }
+                        else if (activePanelTab.ComponentType == typeof(Walk.Ide.RazorLib.FolderExplorers.Displays.FolderExplorerDisplay))
+                        {
+                            <Walk.Ide.RazorLib.FolderExplorers.Displays.FolderExplorerDisplay/>
+                        }
+                        else if (activePanelTab.ComponentType == typeof(Walk.Ide.RazorLib.Terminals.Displays.TerminalGroupDisplay))
+                        {
+                            <Walk.Ide.RazorLib.Terminals.Displays.TerminalGroupDisplay/>
+                        }
+                        else if (activePanelTab.ComponentType == typeof(Walk.Extensions.DotNet.Outputs.Displays.OutputPanelDisplay))
+                        {
+                            <Walk.Extensions.DotNet.Outputs.Displays.OutputPanelDisplay/>
+                        }
+                        else
+                        {
+                            <DynamicComponent Type="activePanelTab.ComponentType"
+                                              Parameters="activePanelTab.ComponentParameterMap" />
+                        }
                     }
                 </div>
                 
@@ -424,8 +443,27 @@
                 <div class="di_ide_panel-body">
                     @if (activePanelTab is not null)
                     {
-                        <DynamicComponent Type="activePanelTab.ComponentType"
-                                          Parameters="activePanelTab.ComponentParameterMap" />
+                        if (activePanelTab.ComponentType == typeof(Walk.Extensions.DotNet.DotNetSolutions.Displays.SolutionExplorerDisplay))
+                        {
+                            <Walk.Extensions.DotNet.DotNetSolutions.Displays.SolutionExplorerDisplay/>
+                        }
+                        else if (activePanelTab.ComponentType == typeof(Walk.Ide.RazorLib.FolderExplorers.Displays.FolderExplorerDisplay))
+                        {
+                            <Walk.Ide.RazorLib.FolderExplorers.Displays.FolderExplorerDisplay/>
+                        }
+                        else if (activePanelTab.ComponentType == typeof(Walk.Ide.RazorLib.Terminals.Displays.TerminalGroupDisplay))
+                        {
+                            <Walk.Ide.RazorLib.Terminals.Displays.TerminalGroupDisplay/>
+                        }
+                        else if (activePanelTab.ComponentType == typeof(Walk.Extensions.DotNet.Outputs.Displays.OutputPanelDisplay))
+                        {
+                            <Walk.Extensions.DotNet.Outputs.Displays.OutputPanelDisplay/>
+                        }
+                        else
+                        {
+                            <DynamicComponent Type="activePanelTab.ComponentType"
+                                              Parameters="activePanelTab.ComponentParameterMap" />
+                        }
                     }
                 </div>
                 
@@ -521,8 +559,27 @@
             <div class="di_ide_panel-body">
                 @if (activePanelTab is not null)
                 {
-                    <DynamicComponent Type="activePanelTab.ComponentType"
-                                      Parameters="activePanelTab.ComponentParameterMap" />
+                    if (activePanelTab.ComponentType == typeof(Walk.Extensions.DotNet.DotNetSolutions.Displays.SolutionExplorerDisplay))
+                    {
+                        <Walk.Extensions.DotNet.DotNetSolutions.Displays.SolutionExplorerDisplay/>
+                    }
+                    else if (activePanelTab.ComponentType == typeof(Walk.Ide.RazorLib.FolderExplorers.Displays.FolderExplorerDisplay))
+                    {
+                        <Walk.Ide.RazorLib.FolderExplorers.Displays.FolderExplorerDisplay/>
+                    }
+                    else if (activePanelTab.ComponentType == typeof(Walk.Ide.RazorLib.Terminals.Displays.TerminalGroupDisplay))
+                    {
+                        <Walk.Ide.RazorLib.Terminals.Displays.TerminalGroupDisplay/>
+                    }
+                    else if (activePanelTab.ComponentType == typeof(Walk.Extensions.DotNet.Outputs.Displays.OutputPanelDisplay))
+                    {
+                        <Walk.Extensions.DotNet.Outputs.Displays.OutputPanelDisplay/>
+                    }
+                    else
+                    {
+                        <DynamicComponent Type="activePanelTab.ComponentType"
+                                          Parameters="activePanelTab.ComponentParameterMap" />
+                    }
                 }
             </div>
             
