@@ -48,13 +48,11 @@ public class WalkTextEditorJavaScriptInteropApi
     }
 
     public ValueTask<CharAndLineMeasurements> GetCharAndLineMeasurementsInPixelsById(
-        string measureCharacterWidthAndLineHeightElementId,
-        int countOfTestCharacters)
+        string measureCharacterWidthAndLineHeightElementId)
     {
         return _jsRuntime.InvokeAsync<CharAndLineMeasurements>(
             "walkTextEditor.getCharAndLineMeasurementsInPixelsById",
-            measureCharacterWidthAndLineHeightElementId,
-            countOfTestCharacters);
+            measureCharacterWidthAndLineHeightElementId);
     }
 
     /// <summary>

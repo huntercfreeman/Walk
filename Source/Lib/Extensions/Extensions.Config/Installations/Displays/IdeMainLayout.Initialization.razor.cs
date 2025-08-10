@@ -37,8 +37,34 @@ namespace Walk.Extensions.Config.Installations.Displays;
 
 public partial class IdeMainLayout
 {
-    private const string TEST_STRING_FOR_MEASUREMENT = "abcdefghijklmnopqrstuvwxyz0123456789";
-    private const int TEST_STRING_REPEAT_COUNT = 6;
+    // private const string TEST_STRING_FOR_MEASUREMENT = "abcdefghijklmnopqrstuvwxyz0123456789";
+    
+    // TODO: Just define all this in JavaScript to avoid the JSInterop for the parameter?
+    //
+    //      CharacterWidth         | LineHeight
+    // 99,000 => 5.021239618406285 | 20
+    // 60,000 => 7.146064814814815 | 20
+    // 30,000 => 7.146064814814815 | 20
+    // 25,000 => 7.146064444444445 | 20
+    // 18,000 => 7.146064814814815 | 20
+    //  9,000 => 7.146064814814815 | 20
+    //  5,000 => 7.146066666666667 | 20
+    //  1,000 => 7.146055555555556 | 20
+    //    100 => 7.146111111111111 | 20
+    //     40 => 7.145833333333333 | 20
+    //     20 => 7.145833333333333 | 20
+    //     11 => 7.146464646464646 | 20
+    //     10 => 7.147222222222222 | 20
+    //      9 => 7.145061728395062 | 20
+    //      8 => 7.145833333333333 | 20
+    //      7 => 7.146825396825397 | 20
+    //      6 => 7.148148148148148 | 20
+    //      5 => 7.144444444444445 | 20
+    //      4 => 7.145833333333333 | 20
+    //      3 => 7.148148148148148 | 20
+    //      2 => 7.152777777777778 | 20
+    //      1 => 7.138888888888889 | 20
+    // private const int TEST_STRING_REPEAT_COUNT = 11;
 
     private static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
     private static readonly Key<IDynamicViewModel> _backgroundTaskDialogKey = Key<IDynamicViewModel>.NewKey();

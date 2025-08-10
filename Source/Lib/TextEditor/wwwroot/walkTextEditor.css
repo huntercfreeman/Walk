@@ -115,14 +115,14 @@
 	cursor: pointer;
 }
 
-.di_te_measure-character-width-and-line-height-wrapper {
+.di_te_measure-charWidth-lineHeight-wrap {
     top: 0;
     left: 0;
     visibility: hidden;
     overflow: hidden;
 }
 
-.di_te_measure-character-width-and-line-height {
+.di_te_measure-charWidth-lineHeight {
     top: 0;
     left: 0;
     visibility: hidden;
