@@ -183,11 +183,11 @@
     @* Start Header *@
     @* ContextRecord="ContextFacts.MainLayoutHeaderContext" *@
     <div class="di_header" style="@_headerCssStyle">
-        <div class="di_header-left-content"
-             style="display: flex;">
+        <div class="di_header-left-content">
             
             @* Start SettingsDialogEntryPoint *@
             <button class="di_button"
+                    style="margin-left: 0;"
                     @onclick="async () => DispatchRegisterDialogRecordAction()">
                     
                 @IconSettingsGearFragment.Render(iconDriver)
@@ -196,34 +196,29 @@
     
             <button @onclick="RenderFileDropdownOnClick"
     			    id="@IdeState.ButtonFileId"
-                    class="di_button"
-                    style="margin-left: 15px;">
+                    class="di_button">
                 <u>F</u>ile
             </button>
     
     		<button @onclick="RenderToolsDropdownOnClick"
     			    id="@IdeState.ButtonToolsId"
-                    class="di_button"
-                    style="margin-left: 15px;">
+                    class="di_button">
                 <u>T</u>ools
             </button>
     
     		<button @onclick="RenderViewDropdownOnClick"
     			    id="@IdeState.ButtonViewId"
-                    class="di_button"
-                    style="margin-left: 15px;">
+                    class="di_button">
     			<u>V</u>iew
              </button>
     
     		<button @onclick="RenderRunDropdownOnClick"
     			    id="@IdeState.ButtonRunId"
-    				class="di_button"
-                    style="margin-left: 15px;">
+    				class="di_button">
                 <u>R</u>un
             </button>
     
             <button class="di_button"
-                    style="margin-left: 15px;"
                     @onclick="OpenInfoDialogOnClick">
                 Info
             </button>

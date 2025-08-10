@@ -429,6 +429,14 @@ button.di_ide_input-file-address-hierarchy-entry {
     background-color: var(--di_secondary-background-color);
 }
 
+.di_header-left-content {
+    display: flex;
+}
+
+    .di_header-left-content > button {
+        margin-left: 15px;
+    }
+
 :root {
     /* Sizes IDE */
     --di_ide_section-title-font-size: 1.25em;
