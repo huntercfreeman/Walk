@@ -317,7 +317,7 @@ public partial class IdeService
             async commandArgs =>
             {
                 var elementDimensions = await CommonService.JsRuntimeCommonApi
-                    .MeasureElementById("di_ide_header-button-file")
+                    .MeasureElementById("di_header-button-file")
                     .ConfigureAwait(false);
 
                 var contextState = CommonService.GetContextState();

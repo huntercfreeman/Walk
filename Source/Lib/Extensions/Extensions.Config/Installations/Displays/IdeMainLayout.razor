@@ -182,12 +182,12 @@
 
     @* Start Header *@
     @* ContextRecord="ContextFacts.MainLayoutHeaderContext" *@
-    <div class="di_ide_header" style="@_headerCssStyle">
-        <div class="di_ide_header-left-content"
-             style="display: flex;">
+    <div class="di_header" style="@_headerCssStyle">
+        <div class="di_header-left-content">
             
             @* Start SettingsDialogEntryPoint *@
             <button class="di_button"
+                    style="margin-left: 0;"
                     @onclick="async () => DispatchRegisterDialogRecordAction()">
                     
                 @IconSettingsGearFragment.Render(iconDriver)
@@ -196,34 +196,29 @@
     
             <button @onclick="RenderFileDropdownOnClick"
     			    id="@IdeState.ButtonFileId"
-                    class="di_button"
-                    style="margin-left: 15px;">
+                    class="di_button">
                 <u>F</u>ile
             </button>
     
     		<button @onclick="RenderToolsDropdownOnClick"
     			    id="@IdeState.ButtonToolsId"
-                    class="di_button"
-                    style="margin-left: 15px;">
+                    class="di_button">
                 <u>T</u>ools
             </button>
     
     		<button @onclick="RenderViewDropdownOnClick"
     			    id="@IdeState.ButtonViewId"
-                    class="di_button"
-                    style="margin-left: 15px;">
+                    class="di_button">
     			<u>V</u>iew
              </button>
     
     		<button @onclick="RenderRunDropdownOnClick"
     			    id="@IdeState.ButtonRunId"
-    				class="di_button"
-                    style="margin-left: 15px;">
+    				class="di_button">
                 <u>R</u>un
             </button>
     
             <button class="di_button"
-                    style="margin-left: 15px;"
                     @onclick="OpenInfoDialogOnClick">
                 Info
             </button>
@@ -234,7 +229,7 @@
     @* End Header *@
     
     @* Start Body *@
-    <div class="di_ide_body"
+    <div class="di_body"
          style="@_bodyElementDimensions.GetStyleString(DotNetService.CommonService.UiStringBuilder)">
     
         @*-----------------*@
@@ -243,7 +238,7 @@
              style="@GetElementDimensionsStyleString(leftPanelGroup)"
         	 id="@_leftPanelGroupParameter.PanelPositionCss">
             
-            <div class="di_ide_panel-tabs"
+            <div class="di_panel-tabs"
         		 id="@_leftPanelGroupParameter.HtmlIdTabs">
         
                 @{
@@ -274,7 +269,7 @@
                             		@oncontextmenu:preventDefault="true"
                             		@oncontextmenu="e => ManuallyPropagateOnContextMenu(e, localTabViewModel)">
                             
-                            	<span class="di_polymorphic-tab-text">@localTabViewModel.Title</span>
+                            	<span class="di_dynamic-tab-text">@localTabViewModel.Title</span>
                             
                             	@if (ShouldDisplayCloseButton)
                             	{
@@ -345,7 +340,7 @@
              style="@GetElementDimensionsStyleString(rightPanelGroup)"
         	 id="@_rightPanelGroupParameter.PanelPositionCss">
             
-            <div class="di_ide_panel-tabs"
+            <div class="di_panel-tabs"
         		 id="@_rightPanelGroupParameter.HtmlIdTabs">
         
                 @{
@@ -376,7 +371,7 @@
                             		@oncontextmenu:preventDefault="true"
                             		@oncontextmenu="e => ManuallyPropagateOnContextMenu(e, localTabViewModel)">
                             
-                            	<span class="di_polymorphic-tab-text">@localTabViewModel.Title</span>
+                            	<span class="di_dynamic-tab-text">@localTabViewModel.Title</span>
                             
                             	@if (ShouldDisplayCloseButton)
                             	{
@@ -445,7 +440,7 @@
          style="@GetElementDimensionsStyleString(bottomPanelGroup)"
     	 id="@_bottomPanelGroupParameter.PanelPositionCss">
         
-        <div class="di_ide_panel-tabs"
+        <div class="di_panel-tabs"
     		 id="@_bottomPanelGroupParameter.HtmlIdTabs">
     
             @{
@@ -476,7 +471,7 @@
                         		@oncontextmenu:preventDefault="true"
                         		@oncontextmenu="e => ManuallyPropagateOnContextMenu(e, localTabViewModel)">
                         
-                        	<span class="di_polymorphic-tab-text">@localTabViewModel.Title</span>
+                        	<span class="di_dynamic-tab-text">@localTabViewModel.Title</span>
                         
                         	@if (ShouldDisplayCloseButton)
                         	{
@@ -491,9 +486,7 @@
                 }
             }
     
-            <div class="di_ide_panel-tabs-justify-end"
-                 style="display: flex;">
-                 
+            <div class="di_panel-tabs-justify-end">
                 <BadgeDisplay @key="_dirtyResourceUriBadge.Key"
         	                  BadgeModel="_dirtyResourceUriBadge"/>
                 <BadgeDisplay @key="_notificationBadge.Key"

@@ -10,13 +10,13 @@ public class TextEditorJsonDecorationMapper : IDecorationMapper
 
         return decoration switch
         {
-            JsonDecorationKind.PropertyKey => "di_te_json-property-key",
-            JsonDecorationKind.String => "di_te_string-literal",
+            JsonDecorationKind.PropertyKey => "di_json-property-key",
+            JsonDecorationKind.String => "di_string",
             JsonDecorationKind.Number => "di_te_number",
             JsonDecorationKind.Integer => "di_te_integer",
-            JsonDecorationKind.Keyword => "di_te_keyword",
-            JsonDecorationKind.LineComment => "di_te_comment",
-            JsonDecorationKind.BlockComment => "di_te_comment",
+            JsonDecorationKind.Keyword => "di_keyword",
+            JsonDecorationKind.LineComment => "di_comment",
+            JsonDecorationKind.BlockComment => "di_comment",
             JsonDecorationKind.None => string.Empty,
             JsonDecorationKind.Null => string.Empty,
             JsonDecorationKind.Document => string.Empty,

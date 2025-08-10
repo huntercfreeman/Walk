@@ -47,7 +47,7 @@ public class TreeViewFindAllGroup : TreeViewWithType<List<TreeViewFindAllTextSpa
     
     
         <div title="@TreeViewFindAllGroup.AbsolutePath.Value">
-            <span class="di_te_keyword">
+            <span class="di_keyword">
                 @(TreeViewFindAllGroup.AbsolutePath.NameWithExtension)
             </span>
             

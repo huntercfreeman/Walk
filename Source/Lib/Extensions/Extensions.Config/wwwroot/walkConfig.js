@@ -60,22 +60,22 @@ window.walkConfig = {
                 case "f":
                     if (!event.altKey)
                         break;
-                    window.walkConfig.clickById("di_ide_header-button-file");
+                    window.walkConfig.clickById("di_header-button-file");
                     break;
                 case "t":
                     if (!event.altKey)
                         break;
-                    window.walkConfig.clickById("di_ide_header-button-tools");
+                    window.walkConfig.clickById("di_header-button-tools");
                     break;
                 case "v":
                     if (!event.altKey)
                         break;
-                    window.walkConfig.clickById("di_ide_header-button-view");
+                    window.walkConfig.clickById("di_header-button-view");
                     break;
                 case "r":
                     if (!event.altKey)
                         break;
-                    window.walkConfig.clickById("di_ide_header-button-run");
+                    window.walkConfig.clickById("di_header-button-run");
                     break;
                 case "Escape":
                     dotNetHelper.invokeMethodAsync("EscapeOnKeyDown");

@@ -178,7 +178,7 @@
     	else if (!string.IsNullOrWhiteSpace(returnTypeClauseNodeText))
     	{
     		// Hacky addition of 'string? returnTypeClauseNodeText' due to a ConstructorSymbol just being the identifier, not a node.
-    		<span class="di_te_type">
+    		<span class="di_type">
     			@returnTypeClauseNodeText
     		</span>
     	}
@@ -189,7 +189,7 @@
     			? string.Empty
     			: "di_te_syntax-onclick";
     	
-    		<span class="@classCssString di_te_method"
+    		<span class="@classCssString di_method"
     			  @onclick="() => syntaxViewModelLocal.HandleOnClick(TextEditorService, SyntaxKind.FunctionDefinitionNode)">
     			@methodName
     		</span>
@@ -264,7 +264,7 @@
     			
     			if (argumentModifierText is not null)
     			{
-    			    <span class="di_te_keyword">
+    			    <span class="di_keyword">
     			        @(argumentModifierText)&nbsp;
     			    </span>
     			}
@@ -293,19 +293,19 @@
     			    switch (argumentEntry.OptionalCompileTimeConstantToken.SyntaxKind)
     			    {
     			        case SyntaxKind.NullTokenKeyword:
-    			            <span class="di_te_keyword">@(GetTextFromTextSpan(argumentEntry.OptionalCompileTimeConstantToken.TextSpan))</span>
+    			            <span class="di_keyword">@(GetTextFromTextSpan(argumentEntry.OptionalCompileTimeConstantToken.TextSpan))</span>
     			            break;
     			        case SyntaxKind.FalseTokenKeyword:
-    			            <span class="di_te_keyword">@(GetTextFromTextSpan(argumentEntry.OptionalCompileTimeConstantToken.TextSpan))</span>
+    			            <span class="di_keyword">@(GetTextFromTextSpan(argumentEntry.OptionalCompileTimeConstantToken.TextSpan))</span>
     			            break;
     			        case SyntaxKind.TrueTokenKeyword:
-    			            <span class="di_te_keyword">@(GetTextFromTextSpan(argumentEntry.OptionalCompileTimeConstantToken.TextSpan))</span>
+    			            <span class="di_keyword">@(GetTextFromTextSpan(argumentEntry.OptionalCompileTimeConstantToken.TextSpan))</span>
     			            break;
     			        case SyntaxKind.StringLiteralToken:
-    			            <span class="di_te_string-literal">@(GetTextFromTextSpan(argumentEntry.OptionalCompileTimeConstantToken.TextSpan))</span>
+    			            <span class="di_string">@(GetTextFromTextSpan(argumentEntry.OptionalCompileTimeConstantToken.TextSpan))</span>
     			            break;
     		            case SyntaxKind.CharLiteralToken:
-    			            <span class="di_te_string-literal">@(GetTextFromTextSpan(argumentEntry.OptionalCompileTimeConstantToken.TextSpan))</span>
+    			            <span class="di_string">@(GetTextFromTextSpan(argumentEntry.OptionalCompileTimeConstantToken.TextSpan))</span>
     			            break;
     		            case SyntaxKind.NumericLiteralToken:
     			            <span class="di_te_numeric-literal">@(GetTextFromTextSpan(argumentEntry.OptionalCompileTimeConstantToken.TextSpan))</span>

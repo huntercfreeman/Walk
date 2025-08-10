@@ -93,7 +93,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
         //var bottomOffsetDueToBottomOffset = BOTTOM_OFFSET_IN_PIXELS * (1 + Index);
 
         // The bottom panel has:
-        //     height="calc(var(--di_ide_panel-tabs-font-size) + var(--di_ide_panel-tabs-margin) + var(--di_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo))"
+        //     height="calc(var(--di_panel-tabs-font-size) + var(--di_panel-tabs-margin) + var(--di_panel-tabs-bug-are-not-aligning-need-to-fix-todo))"
         //
         // The height for the bottom panel might need to change? This is pretty gross.
         // I want to add a notifications counter in the bottom panel on the horizontal end.

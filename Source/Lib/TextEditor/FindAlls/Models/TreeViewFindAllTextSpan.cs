@@ -91,7 +91,7 @@ public class TreeViewFindAllTextSpan : TreeViewWithType<(string SourceText, Reso
     
         <div title="start position index inclusive: @TreeViewFindAllTextSpan.Item.TextSpan.StartInclusiveIndex">
             <span>@TreeViewFindAllTextSpan.PreviewEarlierNearbyText</span><!--
-            --><span class="di_te_keyword-control">@(TreeViewFindAllTextSpan.Item.TextSpan.Text)</span><!--
+            --><span class="di_keyword-control">@(TreeViewFindAllTextSpan.Item.TextSpan.Text)</span><!--
             --><span>@TreeViewFindAllTextSpan.PreviewLaterNearbyText</span>
         </div>
 

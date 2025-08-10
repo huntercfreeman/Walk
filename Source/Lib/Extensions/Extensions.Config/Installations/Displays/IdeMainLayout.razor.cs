@@ -1047,9 +1047,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         if (panelGroup?.ActiveTab is null)
         {
             return "calc(" +
-                   "var(--di_ide_panel-tabs-font-size)" +
-                   " + var(--di_ide_panel-tabs-margin)" +
-                   " + var(--di_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo))";
+                   "var(--di_panel-tabs-font-size)" +
+                   " + var(--di_panel-tabs-margin)" +
+                   " + var(--di_panel-tabs-bug-are-not-aligning-need-to-fix-todo))";
         }
 
         return panelGroup?.ElementDimensions.GetStyleString(DotNetService.CommonService.UiStringBuilder) ?? string.Empty;
@@ -1272,7 +1272,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         var uiStringBuilder = _tabCascadingValueBatch.CommonService.UiStringBuilder;
         
         uiStringBuilder.Clear();
-        uiStringBuilder.Append("di_polymorphic-tab di_button di_unselectable ");
+        uiStringBuilder.Append("di_dynamic-tab di_button di_unselectable ");
         uiStringBuilder.Append(GetIsActiveCssClass(localTabViewModel));
         uiStringBuilder.Append(" ");
         uiStringBuilder.Append(localTabGroup?.GetDynamicCss(localTabViewModel));
