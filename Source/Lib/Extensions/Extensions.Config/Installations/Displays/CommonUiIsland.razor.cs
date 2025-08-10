@@ -105,7 +105,7 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
         }
     }
     
-    protected async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
