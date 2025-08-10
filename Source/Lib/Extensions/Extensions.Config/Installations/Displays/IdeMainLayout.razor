@@ -35,7 +35,7 @@
         0
     </div>
     
-    @{ var dialogList = CommonService.GetDialogState().DialogList; }
+    @{ var dialogList = DotNetService.CommonService.GetDialogState().DialogList; }
     @foreach (var dialog in dialogList)
     {
         <DialogDisplay @key="dialog.DynamicViewModelKey" 
@@ -43,7 +43,7 @@
     }
     
     
-    @{ var widgetState = CommonService.GetWidgetState(); }
+    @{ var widgetState = DotNetService.CommonService.GetWidgetState(); }
     @if (widgetState.Widget is not null)
     {
     	<OutOfBoundsClickDisplay ZIndex="12"
@@ -56,7 +56,7 @@
     }
     
     
-    @{ var notificationState = CommonService.GetNotificationState(); }
+    @{ var notificationState = DotNetService.CommonService.GetNotificationState(); }
     @for (int i = 0; i < notificationState.DefaultList.Count; i++)
     {
         var index = i;
@@ -68,7 +68,7 @@
     }
     
     
-    @{ var dropdownState = CommonService.GetDropdownState(); }
+    @{ var dropdownState = DotNetService.CommonService.GetDropdownState(); }
     @if (dropdownState.DropdownList.Count > 0 && dropdownState.DropdownList.Any(x => x.ShouldShowOutOfBoundsClickDisplay))
     {
     	<OutOfBoundsClickDisplay ZIndex="15"
@@ -81,7 +81,7 @@
     }
     
     
-    @{ var localOutlineState = CommonService.GetOutlineState(); }
+    @{ var localOutlineState = DotNetService.CommonService.GetOutlineState(); }
     @if (localOutlineState.MeasuredHtmlElementDimensions is not null)
     {
     	<div class="di_outline di_outline-left"
@@ -104,7 +104,7 @@
     
     <div class="di_tooltip-initializer"></div>
     @{
-        var tooltipModel = CommonService.GetTooltipState().TooltipModel;
+        var tooltipModel = DotNetService.CommonService.GetTooltipState().TooltipModel;
         
         if (tooltipModel is not null)
     	{
@@ -128,7 +128,7 @@
     {
         <div class="di_te_tooltip di_set-selectable @(tooltipModel.CssClassString ?? string.Empty)"
              style="left: @(TooltipRelativeX)px; top: @(TooltipRelativeY)px;"
-             id="@CommonService.Tooltip_HtmlElementId"
+             id="@DotNetService.CommonService.Tooltip_HtmlElementId"
              @onmouseover="tooltipModel.OnMouseOver"
              @onmousedown:stopPropagation="true"
              @onwheel="x => tooltipModel.OnWheel?.Invoke(tooltipModel, x) ?? Task.CompletedTask"
@@ -177,7 +177,7 @@
                     @onclick="async () => DispatchRegisterDialogRecordAction()">
                     
                 @{
-                	var appOptionsState = IdeService.CommonService.GetAppOptionsState();
+                	var appOptionsState = DotNetService.CommonService.GetAppOptionsState();
                 
                 	var iconDriver = new IconDriver(
             			appOptionsState.Options.IconSizeInPixels,
@@ -227,10 +227,10 @@
     @* End Header *@
     
     @* Start Body *@
-    @{ var panelState = IdeService.CommonService.GetPanelState(); }
+    @{ var panelState = DotNetService.CommonService.GetPanelState(); }
     
     <div class="di_ide_body"
-         style="@_bodyElementDimensions.GetStyleString(IdeService.CommonService.UiStringBuilder)">
+         style="@_bodyElementDimensions.GetStyleString(DotNetService.CommonService.UiStringBuilder)">
     
         <PanelGroupDisplay PanelGroupParameter="_leftPanelGroupParameter"/>
     

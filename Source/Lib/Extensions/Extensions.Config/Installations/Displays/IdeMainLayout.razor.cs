@@ -52,11 +52,9 @@ namespace Walk.Extensions.Config.Installations.Displays;
 public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 {
     [Inject]
-    private IdeService IdeService { get; set; } = null!;
+    private DotNetService DotNetService { get; set; } = null!;
     [Inject]
     private BrowserResizeInterop BrowserResizeInterop { get; set; } = null!;
-    [Inject]
-    private CommonService CommonService { get; set; } = null!;
     
     private bool _previousDragStateWrapShouldDisplay;
     private ElementDimensions _bodyElementDimensions = new();
@@ -107,19 +105,19 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         
         MeasureLineHeight_UiRenderStep();
     
-        CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
+        DotNetService.CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
     
-        CommonService.Enqueue(new CommonWorkArgs
+        DotNetService.CommonService.Enqueue(new CommonWorkArgs
         {
             WorkKind = CommonWorkKind.WalkCommonInitializerWork
         });
         
         ///
     
-        _footerBadgeList.Add(new Walk.TextEditor.RazorLib.Edits.Models.DirtyResourceUriBadge(IdeService.TextEditorService));
-        _footerBadgeList.Add(new Walk.Common.RazorLib.Notifications.Models.NotificationBadge(IdeService.CommonService));
+        _footerBadgeList.Add(new Walk.TextEditor.RazorLib.Edits.Models.DirtyResourceUriBadge(DotNetService.TextEditorService));
+        _footerBadgeList.Add(new Walk.Common.RazorLib.Notifications.Models.NotificationBadge(DotNetService.CommonService));
     
-        var panelState = IdeService.CommonService.GetPanelState();
+        var panelState = DotNetService.CommonService.GetPanelState();
     
         _topLeftResizableColumnParameter = new(
             CommonFacts.GetTopLeftPanelGroup(panelState).ElementDimensions,
@@ -133,7 +131,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             
         _resizableRowParameter = new(
             _bodyElementDimensions,
-            CommonFacts.GetBottomPanelGroup(IdeService.CommonService.GetPanelState()).ElementDimensions,
+            CommonFacts.GetBottomPanelGroup(DotNetService.CommonService.GetPanelState()).ElementDimensions,
             () => InvokeAsync(StateHasChanged));
         
     
@@ -161,13 +159,13 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             reRenderSelfAndAdjacentElementDimensionsFunc: () => InvokeAsync(StateHasChanged),
             badgeList: _footerBadgeList);
     
-        IdeService.TextEditorService.IdeBackgroundTaskApi = IdeService;
+        DotNetService.TextEditorService.IdeBackgroundTaskApi = DotNetService.IdeService;
     
         _bodyElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
         {
             new DimensionUnit(78, DimensionUnitKind.Percentage),
             new DimensionUnit(
-                IdeService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
+                DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract),
             new DimensionUnit(
@@ -182,16 +180,16 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 33.3333,
                 DimensionUnitKind.Percentage),
             new DimensionUnit(
-                IdeService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
+                DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract)
         });
     
-        IdeService.CommonService.CommonUiStateChanged += DragStateWrapOnStateChanged;
-        IdeService.IdeStateChanged += OnIdeMainLayoutStateChanged;
-        IdeService.TextEditorService.SecondaryChanged += TextEditorOptionsStateWrap_StateChanged;
+        DotNetService.CommonService.CommonUiStateChanged += DragStateWrapOnStateChanged;
+        DotNetService.IdeService.IdeStateChanged += OnIdeMainLayoutStateChanged;
+        DotNetService.TextEditorService.SecondaryChanged += TextEditorOptionsStateWrap_StateChanged;
 
-        IdeService.CommonService.Continuous_Enqueue(new BackgroundTask(Key<IBackgroundTaskGroup>.Empty, () =>
+        DotNetService.CommonService.Continuous_Enqueue(new BackgroundTask(Key<IBackgroundTaskGroup>.Empty, () =>
         {
             InitializeMenuFile();
             InitializeMenuTools();
@@ -201,16 +199,16 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             return ValueTask.CompletedTask;
         }));
         
-        IdeService.Enqueue(new IdeWorkArgs
+        DotNetService.IdeService.Enqueue(new IdeWorkArgs
         {
             WorkKind = IdeWorkKind.WalkIdeInitializerOnInit,
         });
         
         _countOfTestCharacters = TEST_STRING_REPEAT_COUNT * TEST_STRING_FOR_MEASUREMENT.Length;
         
-        IdeService.TextEditorService.SecondaryChanged += OnNeedsMeasured;
+        DotNetService.TextEditorService.SecondaryChanged += OnNeedsMeasured;
 
-        IdeService.TextEditorService.Enqueue_TextEditorInitializationBackgroundTaskGroupWorkKind();
+        DotNetService.TextEditorService.Enqueue_TextEditorInitializationBackgroundTaskGroupWorkKind();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -239,16 +237,16 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     _dotNetHelper);
             }
         
-            await IdeService.TextEditorService.Options_SetFromLocalStorageAsync()
+            await DotNetService.TextEditorService.Options_SetFromLocalStorageAsync()
                 .ConfigureAwait(false);
 
-            await IdeService.CommonService.
+            await DotNetService.CommonService.
                 Options_SetFromLocalStorageAsync()
                 .ConfigureAwait(false);
                 
-            if (IdeService.CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
+            if (DotNetService.CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
             {
-                await IdeService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync("walkIde.preventDefaultBrowserKeybindings").ConfigureAwait(false);
+                await DotNetService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeVoidAsync("walkIde.preventDefaultBrowserKeybindings").ConfigureAwait(false);
             }
         }
         
@@ -256,37 +254,37 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         {
             var token = _workerCancellationTokenSource.Token;
 
-            if (IdeService.CommonService.Continuous_StartAsyncTask is null)
+            if (DotNetService.CommonService.Continuous_StartAsyncTask is null)
             {
-                IdeService.CommonService.Continuous_StartAsyncTask = Task.Run(
-                    () => IdeService.CommonService.Continuous_ExecuteAsync(token),
+                DotNetService.CommonService.Continuous_StartAsyncTask = Task.Run(
+                    () => DotNetService.CommonService.Continuous_ExecuteAsync(token),
                     token);
             }
 
-            if (IdeService.CommonService.WalkHostingInformation.WalkPurposeKind == WalkPurposeKind.Ide)
+            if (DotNetService.CommonService.WalkHostingInformation.WalkPurposeKind == WalkPurposeKind.Ide)
             {
-                if (IdeService.CommonService.Indefinite_StartAsyncTask is null)
+                if (DotNetService.CommonService.Indefinite_StartAsyncTask is null)
                 {
-                    IdeService.CommonService.Indefinite_StartAsyncTask = Task.Run(
-                        () => IdeService.CommonService.Indefinite_ExecuteAsync(token),
+                    DotNetService.CommonService.Indefinite_StartAsyncTask = Task.Run(
+                        () => DotNetService.CommonService.Indefinite_ExecuteAsync(token),
                         token);
                 }
             }
 
-            BrowserResizeInterop.SubscribeWindowSizeChanged(CommonService.JsRuntimeCommonApi);
+            BrowserResizeInterop.SubscribeWindowSizeChanged(DotNetService.CommonService.JsRuntimeCommonApi);
         
             await MeasureLineHeight_BackgroundTaskStep();
         }
         
-        var tooltipModel = CommonService.GetTooltipState().TooltipModel;
+        var tooltipModel = DotNetService.CommonService.GetTooltipState().TooltipModel;
         
         if (tooltipModel is not null && !tooltipModel.WasRepositioned && _tooltipModelPrevious != tooltipModel)
         {
             _tooltipModelPrevious = tooltipModel;
             
-            var tooltip_HtmlElementDimensions = await CommonService.JsRuntimeCommonApi.MeasureElementById(
-                CommonService.Tooltip_HtmlElementId);
-            var tooltip_GlobalHtmlElementDimensions = await CommonService.JsRuntimeCommonApi.MeasureElementById(
+            var tooltip_HtmlElementDimensions = await DotNetService.CommonService.JsRuntimeCommonApi.MeasureElementById(
+                DotNetService.CommonService.Tooltip_HtmlElementId);
+            var tooltip_GlobalHtmlElementDimensions = await DotNetService.CommonService.JsRuntimeCommonApi.MeasureElementById(
                 CommonFacts.RootHtmlElementId);
         
             var xLarge = false;
@@ -342,9 +340,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         if (commonUiEventKind != CommonUiEventKind.DragStateChanged)
             return;
             
-        if (_previousDragStateWrapShouldDisplay != IdeService.CommonService.GetDragState().ShouldDisplay)
+        if (_previousDragStateWrapShouldDisplay != DotNetService.CommonService.GetDragState().ShouldDisplay)
         {
-            _previousDragStateWrapShouldDisplay = IdeService.CommonService.GetDragState().ShouldDisplay;
+            _previousDragStateWrapShouldDisplay = DotNetService.CommonService.GetDragState().ShouldDisplay;
             await InvokeAsync(() =>
             {
                 _shouldRecalculateCssStrings = true;
@@ -382,28 +380,28 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         {
             _shouldRecalculateCssStrings = false;
         
-            var uiStringBuilder = IdeService.CommonService.UiStringBuilder;
+            var uiStringBuilder = DotNetService.CommonService.UiStringBuilder;
             
             uiStringBuilder.Clear();
             uiStringBuilder.Append("di_ide_main-layout ");
             uiStringBuilder.Append(UnselectableClassCss);
             uiStringBuilder.Append(" ");
-            uiStringBuilder.Append(IdeService.CommonService.Options_ThemeCssClassString);
+            uiStringBuilder.Append(DotNetService.CommonService.Options_ThemeCssClassString);
             uiStringBuilder.Append(" ");
-            uiStringBuilder.Append(IdeService.TextEditorService.ThemeCssClassString);
+            uiStringBuilder.Append(DotNetService.TextEditorService.ThemeCssClassString);
             _classCssString = uiStringBuilder.ToString();
             
             uiStringBuilder.Clear();
-            uiStringBuilder.Append(IdeService.CommonService.Options_FontSizeCssStyleString);
+            uiStringBuilder.Append(DotNetService.CommonService.Options_FontSizeCssStyleString);
             uiStringBuilder.Append(" ");
-            uiStringBuilder.Append(IdeService.CommonService.Options_FontFamilyCssStyleString);
+            uiStringBuilder.Append(DotNetService.CommonService.Options_FontFamilyCssStyleString);
             uiStringBuilder.Append(" ");
-            uiStringBuilder.Append(IdeService.CommonService.Options_ColorSchemeCssStyleString);
+            uiStringBuilder.Append(DotNetService.CommonService.Options_ColorSchemeCssStyleString);
             _styleCssString = uiStringBuilder.ToString();
             
             uiStringBuilder.Clear();
             uiStringBuilder.Append("display: flex; justify-content: space-between; border-bottom: ");
-            uiStringBuilder.Append(IdeService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels);
+            uiStringBuilder.Append(DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels);
             uiStringBuilder.Append("px solid var(--di_primary-border-color);");
             _headerCssStyle = uiStringBuilder.ToString();
         }
@@ -412,12 +410,12 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public Task RenderFileDropdownOnClick()
     {
         return DropdownHelper.RenderDropdownAsync(
-            IdeService.CommonService,
-            IdeService.CommonService.JsRuntimeCommonApi,
+            DotNetService.CommonService,
+            DotNetService.CommonService.JsRuntimeCommonApi,
             IdeState.ButtonFileId,
             DropdownOrientation.Bottom,
             IdeState.DropdownKeyFile,
-            IdeService.GetIdeState().MenuFile,
+            DotNetService.IdeService.GetIdeState().MenuFile,
             IdeState.ButtonFileId,
             preventScroll: false);
     }
@@ -425,12 +423,12 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public Task RenderToolsDropdownOnClick()
     {
         return DropdownHelper.RenderDropdownAsync(
-            IdeService.CommonService,
-            IdeService.CommonService.JsRuntimeCommonApi,
+            DotNetService.CommonService,
+            DotNetService.CommonService.JsRuntimeCommonApi,
             IdeState.ButtonToolsId,
             DropdownOrientation.Bottom,
             IdeState.DropdownKeyTools,
-            IdeService.GetIdeState().MenuTools,
+            DotNetService.IdeService.GetIdeState().MenuTools,
             IdeState.ButtonToolsId,
             preventScroll: false);
     }
@@ -440,12 +438,12 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         InitializeMenuView();
     
         return DropdownHelper.RenderDropdownAsync(
-            IdeService.CommonService,
-            IdeService.CommonService.JsRuntimeCommonApi,
+            DotNetService.CommonService,
+            DotNetService.CommonService.JsRuntimeCommonApi,
             IdeState.ButtonViewId,
             DropdownOrientation.Bottom,
             IdeState.DropdownKeyView,
-            IdeService.GetIdeState().MenuView,
+            DotNetService.IdeService.GetIdeState().MenuView,
             IdeState.ButtonViewId,
             preventScroll: false);
     }
@@ -453,12 +451,12 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public Task RenderRunDropdownOnClick()
     {
         return DropdownHelper.RenderDropdownAsync(
-            IdeService.CommonService,
-            IdeService.CommonService.JsRuntimeCommonApi,
+            DotNetService.CommonService,
+            DotNetService.CommonService.JsRuntimeCommonApi,
             IdeState.ButtonRunId,
             DropdownOrientation.Bottom,
             IdeState.DropdownKeyRun,
-            IdeService.GetIdeState().MenuRun,
+            DotNetService.IdeService.GetIdeState().MenuRun,
             IdeState.ButtonRunId,
             preventScroll: false);
     }
@@ -466,26 +464,26 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public void InitializeMenuView()
     {
         var menuOptionsList = new List<MenuOptionRecord>();
-        var panelState = IdeService.CommonService.GetPanelState();
-        var dialogState = IdeService.CommonService.GetDialogState();
+        var panelState = DotNetService.CommonService.GetPanelState();
+        var dialogState = DotNetService.CommonService.GetDialogState();
     
         foreach (var panel in panelState.PanelList)
         {
             var menuOptionPanel = new MenuOptionRecord(
                 panel.Title,
                 MenuOptionKind.Delete,
-                () => IdeService.CommonService.ShowOrAddPanelTab(panel));
+                () => DotNetService.CommonService.ShowOrAddPanelTab(panel));
     
             menuOptionsList.Add(menuOptionPanel);
         }
     
         if (menuOptionsList.Count == 0)
         {
-            IdeService.Ide_SetMenuView(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
+            DotNetService.IdeService.Ide_SetMenuView(new MenuRecord(MenuRecord.NoMenuOptionsExistList));
         }
         else
         {
-            IdeService.Ide_SetMenuView(new MenuRecord(menuOptionsList));
+            DotNetService.IdeService.Ide_SetMenuView(new MenuRecord(menuOptionsList));
         }
     }
     
@@ -500,12 +498,12 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             true,
             null);
     
-        IdeService.CommonService.Dialog_ReduceRegisterAction(dialogRecord);
+        DotNetService.CommonService.Dialog_ReduceRegisterAction(dialogRecord);
         return Task.CompletedTask;
     }
 
     public void DispatchRegisterDialogRecordAction() =>
-        IdeService.CommonService.Dialog_ReduceRegisterAction(_dialogRecord);
+        DotNetService.CommonService.Dialog_ReduceRegisterAction(_dialogRecord);
 
     private void InitializeMenuFile()
     {
@@ -517,7 +515,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             MenuOptionKind.Other,
             () =>
             {
-                IdeService.Editor_ShowInputFile();
+                DotNetService.IdeService.Editor_ShowInputFile();
                 return Task.CompletedTask;
             });
 
@@ -526,7 +524,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             MenuOptionKind.Other,
             () =>
             {
-                IdeService.FolderExplorer_ShowInputFile();
+                DotNetService.IdeService.FolderExplorer_ShowInputFile();
                 return Task.CompletedTask;
             });
 
@@ -546,7 +544,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             MenuOptionKind.Other,
             () =>
             {
-                TextEditorCommandDefaultFunctions.TriggerSave_NoTextEditorFocus(IdeService.TextEditorService, Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+                TextEditorCommandDefaultFunctions.TriggerSave_NoTextEditorFocus(DotNetService.TextEditorService, Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
                 return Task.CompletedTask;
             });
         menuOptionsList.Add(menuOptionSave);
@@ -556,7 +554,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             MenuOptionKind.Other,
             () =>
             {
-                TextEditorCommandDefaultFunctions.TriggerSaveAll(IdeService.TextEditorService, Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+                TextEditorCommandDefaultFunctions.TriggerSaveAll(DotNetService.TextEditorService, Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
                 return Task.CompletedTask;
             });
         menuOptionsList.Add(menuOptionSaveAll);
@@ -569,7 +567,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
         menuOptionsList.Add(menuOptionPermissions);
 
-        IdeService.Ide_SetMenuFile(new MenuRecord(menuOptionsList));
+        DotNetService.IdeService.Ide_SetMenuFile(new MenuRecord(menuOptionsList));
     }
 
     private void InitializeMenuTools()
@@ -582,7 +580,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             MenuOptionKind.Delete,
             () =>
             {
-                IdeService.TextEditorService.Options_ShowFindAllDialog();
+                DotNetService.TextEditorService.Options_ShowFindAllDialog();
                 return Task.CompletedTask;
             });
 
@@ -594,7 +592,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             MenuOptionKind.Delete,
             () =>
             {
-                IdeService.CodeSearchDialog ??= new DialogViewModel(
+                DotNetService.IdeService.CodeSearchDialog ??= new DialogViewModel(
                     Key<IDynamicViewModel>.NewKey(),
                     "Code Search",
                     typeof(CodeSearchDisplay),
@@ -603,7 +601,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     true,
                     null);
 
-                IdeService.CommonService.Dialog_ReduceRegisterAction(IdeService.CodeSearchDialog);
+                DotNetService.CommonService.Dialog_ReduceRegisterAction(DotNetService.IdeService.CodeSearchDialog);
                 return Task.CompletedTask;
             });
 
@@ -659,7 +657,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         //    menuOptionsList.Add(menuOptionSolutionVisualization);
         //}
 
-        IdeService.Ide_SetMenuTools(new MenuRecord(menuOptionsList));
+        DotNetService.IdeService.Ide_SetMenuTools(new MenuRecord(menuOptionsList));
     }
 
     private Task ShowPermissionsDialog()
@@ -673,7 +671,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             true,
             null);
 
-        IdeService.CommonService.Dialog_ReduceRegisterAction(dialogRecord);
+        DotNetService.CommonService.Dialog_ReduceRegisterAction(dialogRecord);
         return Task.CompletedTask;
     }
 
@@ -740,9 +738,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private static readonly Key<IDynamicViewModel> _solutionVisualizationDialogKey = Key<IDynamicViewModel>.NewKey();
     
     /* Start WalkConfigInitializer */
-    [Inject]
-    private DotNetService DotNetService { get; set; } = null!;
-    
     private static Key<IDynamicViewModel> _notificationRecordKey = Key<IDynamicViewModel>.NewKey();
     
     private DotNetObjectReference<IdeMainLayout>? _dotNetHelper;
@@ -1089,7 +1084,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private void InitializePanelTabs()
     {
         var panelState = DotNetService.CommonService.GetPanelState();
-        var appOptionsState = DotNetService.IdeService.TextEditorService.CommonService.GetAppOptionsState();
+        var appOptionsState = DotNetService.CommonService.GetAppOptionsState();
     
         // InitializeLeftPanelTabs();
         var leftPanel = CommonFacts.GetTopLeftPanelGroup(panelState);
@@ -1102,7 +1097,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             Key<IDynamicViewModel>.NewKey(),
             typeof(Walk.Extensions.DotNet.DotNetSolutions.Displays.SolutionExplorerDisplay),
             null,
-            DotNetService.IdeService.TextEditorService.CommonService);
+            DotNetService.CommonService);
         ((List<Panel>)panelState.PanelList).Add(solutionExplorerPanel);
         ((List<IPanelTab>)leftPanel.TabList).Add(solutionExplorerPanel);
         
@@ -1160,7 +1155,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             Key<IDynamicViewModel>.NewKey(),
             typeof(Walk.Extensions.DotNet.Outputs.Displays.OutputPanelDisplay),
             null,
-            DotNetService.IdeService.TextEditorService.CommonService);
+            DotNetService.CommonService);
         ((List<Panel>)panelState.PanelList).Add(outputPanel);
         ((List<IPanelTab>)bottomPanel.TabList).Add(outputPanel);
 
@@ -1171,7 +1166,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             Key<IDynamicViewModel>.NewKey(),
             typeof(Walk.Extensions.DotNet.TestExplorers.Displays.TestExplorerDisplay),
             null,
-            DotNetService.IdeService.TextEditorService.CommonService);
+            DotNetService.CommonService);
         ((List<Panel>)panelState.PanelList).Add(testExplorerPanel);
         ((List<IPanelTab>)bottomPanel.TabList).Add(testExplorerPanel);
 
@@ -1182,7 +1177,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             Key<IDynamicViewModel>.NewKey(),
             typeof(Walk.Extensions.DotNet.Nugets.Displays.NuGetPackageManager),
             null,
-            DotNetService.IdeService.TextEditorService.CommonService);
+            DotNetService.CommonService);
         ((List<Panel>)panelState.PanelList).Add(nuGetPanel);
         ((List<IPanelTab>)bottomPanel.TabList).Add(nuGetPanel);
         
@@ -1221,7 +1216,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         DotNetService.CommonService.SetActivePanelTab(leftPanel.Key, solutionExplorerPanel.Key);
         
         // SetActivePanelTabAction
-        DotNetService.IdeService.TextEditorService.CommonService.SetActivePanelTab(bottomPanel.Key, outputPanel.Key);
+        DotNetService.CommonService.SetActivePanelTab(bottomPanel.Key, outputPanel.Key);
     }
 
     public void Panel_InitializeResizeHandleDimensionUnit(Key<PanelGroup> panelGroupKey, DimensionUnit dimensionUnit)
@@ -1407,32 +1402,32 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     private void MeasureLineHeight_UiRenderStep()
     {
-        _lineHeightCssStyle = $"{CommonService.Options_FontFamilyCssStyleString} {CommonService.Options_FontSizeCssStyleString}";
+        _lineHeightCssStyle = $"{DotNetService.CommonService.Options_FontFamilyCssStyleString} {DotNetService.CommonService.Options_FontSizeCssStyleString}";
         StateHasChanged();
     }
     
     private async Task MeasureLineHeight_BackgroundTaskStep()
     {
-        CommonService.Continuous_Enqueue(new BackgroundTask(
+        DotNetService.CommonService.Continuous_Enqueue(new BackgroundTask(
             Key<IBackgroundTaskGroup>.Empty,
             async () =>
             {
-                var lineHeight = await CommonService.JsRuntimeCommonApi.JsRuntime.InvokeAsync<int>(
+                var lineHeight = await DotNetService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeAsync<int>(
                     "walkCommon.getLineHeightInPixelsById",
                     _measureLineHeightElementId);
-                CommonService.Options_SetLineHeight(lineHeight);
+                DotNetService.CommonService.Options_SetLineHeight(lineHeight);
             }));
     }
     
     private Task WIDGET_RemoveWidget()
     {
-        CommonService.SetWidget(null);
+        DotNetService.CommonService.SetWidget(null);
         return Task.CompletedTask;
     }
     
     private async Task DROPDOWN_ClearActiveKeyList()
     {
-        var firstDropdown = CommonService.GetDropdownState().DropdownList.FirstOrDefault();
+        var firstDropdown = DotNetService.CommonService.GetDropdownState().DropdownList.FirstOrDefault();
         
         if (firstDropdown is not null)
         {
@@ -1442,7 +1437,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 await restoreFocusOnCloseFunc.Invoke();
         }
         
-        CommonService.Dropdown_ReduceClearAction();
+        DotNetService.CommonService.Dropdown_ReduceClearAction();
     }
     
     public string OUTLINE_GetStyleCssLeft(OutlineState localOutlineState)
@@ -1590,37 +1585,37 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     /// </summary>
     private async Task Ready()
     {
-        IdeService.TextEditorService.CommonService.UiStringBuilder.Clear();
-        IdeService.TextEditorService.CommonService.UiStringBuilder.Append("di_te_text-editor-css-wrapper ");
-        IdeService.TextEditorService.CommonService.UiStringBuilder.Append(IdeService.TextEditorService.ThemeCssClassString);
-        _wrapperCssClass = IdeService.TextEditorService.CommonService.UiStringBuilder.ToString();
+        DotNetService.CommonService.UiStringBuilder.Clear();
+        DotNetService.CommonService.UiStringBuilder.Append("di_te_text-editor-css-wrapper ");
+        DotNetService.CommonService.UiStringBuilder.Append(DotNetService.TextEditorService.ThemeCssClassString);
+        _wrapperCssClass = DotNetService.CommonService.UiStringBuilder.ToString();
         
-        var options = IdeService.TextEditorService.Options_GetTextEditorOptionsState().Options;
+        var options = DotNetService.TextEditorService.Options_GetTextEditorOptionsState().Options;
         
         var fontSizeInPixels = TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS;
         if (options.CommonOptions?.FontSizeInPixels is not null)
             fontSizeInPixels = options!.CommonOptions.FontSizeInPixels;
-        IdeService.TextEditorService.CommonService.UiStringBuilder.Clear();
-        IdeService.TextEditorService.CommonService.UiStringBuilder.Append("font-size: ");
-        IdeService.TextEditorService.CommonService.UiStringBuilder.Append(fontSizeInPixels.ToCssValue());
-        IdeService.TextEditorService.CommonService.UiStringBuilder.Append("px;");
-        var fontSizeCssStyle = IdeService.TextEditorService.CommonService.UiStringBuilder.ToString();
+        DotNetService.CommonService.UiStringBuilder.Clear();
+        DotNetService.CommonService.UiStringBuilder.Append("font-size: ");
+        DotNetService.CommonService.UiStringBuilder.Append(fontSizeInPixels.ToCssValue());
+        DotNetService.CommonService.UiStringBuilder.Append("px;");
+        var fontSizeCssStyle = DotNetService.CommonService.UiStringBuilder.ToString();
         
         var fontFamily = TextEditorVirtualizationResult.DEFAULT_FONT_FAMILY;
         if (!string.IsNullOrWhiteSpace(options?.CommonOptions?.FontFamily))
             fontFamily = options!.CommonOptions!.FontFamily;
-        IdeService.TextEditorService.CommonService.UiStringBuilder.Clear();
-        IdeService.TextEditorService.CommonService.UiStringBuilder.Append("font-family: ");
-        IdeService.TextEditorService.CommonService.UiStringBuilder.Append(fontFamily);
-        IdeService.TextEditorService.CommonService.UiStringBuilder.Append(";");
-        var fontFamilyCssStyle = IdeService.TextEditorService.CommonService.UiStringBuilder.ToString();
+        DotNetService.CommonService.UiStringBuilder.Clear();
+        DotNetService.CommonService.UiStringBuilder.Append("font-family: ");
+        DotNetService.CommonService.UiStringBuilder.Append(fontFamily);
+        DotNetService.CommonService.UiStringBuilder.Append(";");
+        var fontFamilyCssStyle = DotNetService.CommonService.UiStringBuilder.ToString();
         
-        IdeService.TextEditorService.CommonService.UiStringBuilder.Clear();
-        IdeService.TextEditorService.CommonService.UiStringBuilder.Append(fontSizeCssStyle);
-        IdeService.TextEditorService.CommonService.UiStringBuilder.Append(" ");
-        IdeService.TextEditorService.CommonService.UiStringBuilder.Append(fontFamilyCssStyle);
-        IdeService.TextEditorService.CommonService.UiStringBuilder.Append(" position:absolute;");
-        _wrapperCssStyle = IdeService.TextEditorService.CommonService.UiStringBuilder.ToString();
+        DotNetService.CommonService.UiStringBuilder.Clear();
+        DotNetService.CommonService.UiStringBuilder.Append(fontSizeCssStyle);
+        DotNetService.CommonService.UiStringBuilder.Append(" ");
+        DotNetService.CommonService.UiStringBuilder.Append(fontFamilyCssStyle);
+        DotNetService.CommonService.UiStringBuilder.Append(" position:absolute;");
+        _wrapperCssStyle = DotNetService.CommonService.UiStringBuilder.ToString();
         
         // I said "Only invoke this method from the UI thread due to the usage of the shared UiStringBuilder."
         // But I'm still going to keep this InvokeAsync for the StateHasChanged due to superstituous anxiety.
@@ -1638,43 +1633,43 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     private void QueueRemeasureBackgroundTask()
     {
-        IdeService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
+        DotNetService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
         {
-            var charAndLineMeasurements = await IdeService.TextEditorService.JsRuntimeTextEditorApi
+            var charAndLineMeasurements = await DotNetService.TextEditorService.JsRuntimeTextEditorApi
                 .GetCharAndLineMeasurementsInPixelsById(
                     _measureCharacterWidthAndLineHeightElementId,
                     _countOfTestCharacters)
                 .ConfigureAwait(false);
                 
-            IdeService.TextEditorService.Options_SetCharAndLineMeasurements(editContext, charAndLineMeasurements);
+            DotNetService.TextEditorService.Options_SetCharAndLineMeasurements(editContext, charAndLineMeasurements);
         });
     }
     #endregion
 
     public void Dispose()
     {
-        IdeService.CommonService.CommonUiStateChanged -= DragStateWrapOnStateChanged;
-        IdeService.IdeStateChanged -= OnIdeMainLayoutStateChanged;
-        IdeService.TextEditorService.SecondaryChanged -= TextEditorOptionsStateWrap_StateChanged;
-        IdeService.TextEditorService.SecondaryChanged -= OnNeedsMeasured;
+        DotNetService.CommonService.CommonUiStateChanged -= DragStateWrapOnStateChanged;
+        DotNetService.IdeService.IdeStateChanged -= OnIdeMainLayoutStateChanged;
+        DotNetService.TextEditorService.SecondaryChanged -= TextEditorOptionsStateWrap_StateChanged;
+        DotNetService.TextEditorService.SecondaryChanged -= OnNeedsMeasured;
         
         _dotNetHelper?.Dispose();
         
-        BrowserResizeInterop.DisposeWindowSizeChanged(CommonService.JsRuntimeCommonApi);
+        BrowserResizeInterop.DisposeWindowSizeChanged(DotNetService.CommonService.JsRuntimeCommonApi);
         
         _workerCancellationTokenSource.Cancel();
         _workerCancellationTokenSource.Dispose();
         
-        CommonService.Continuous_StartAsyncTask = null;
-        CommonService.Indefinite_StartAsyncTask = null;
+        DotNetService.CommonService.Continuous_StartAsyncTask = null;
+        DotNetService.CommonService.Indefinite_StartAsyncTask = null;
         
-        CommonService.CommonUiStateChanged -= OnCommonUiStateChanged;
+        DotNetService.CommonService.CommonUiStateChanged -= OnCommonUiStateChanged;
         
-        var notificationState = CommonService.GetNotificationState();
+        var notificationState = DotNetService.CommonService.GetNotificationState();
 
         foreach (var notification in notificationState.DefaultList)
         {
-            CommonService.Notification_ReduceDisposeAction(notification.DynamicViewModelKey);
+            DotNetService.CommonService.Notification_ReduceDisposeAction(notification.DynamicViewModelKey);
         }
     }
 }
