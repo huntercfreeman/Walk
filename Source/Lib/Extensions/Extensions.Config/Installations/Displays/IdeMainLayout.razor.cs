@@ -249,6 +249,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private void MeasureLineHeight_UiRenderStep()
     {
         _lineHeightCssStyle = $"{DotNetService.CommonService.Options_FontFamilyCssStyleString} {DotNetService.CommonService.Options_FontSizeCssStyleString}";
+        _doCommonMeasure = true;
         StateHasChanged();
     }
     #endregion

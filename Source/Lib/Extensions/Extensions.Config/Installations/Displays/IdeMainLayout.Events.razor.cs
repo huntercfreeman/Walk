@@ -43,6 +43,8 @@ public partial class IdeMainLayout
                 await InvokeAsync(StateHasChanged);
                 break;
         }
+
+        Console.WriteLine(commonUiEventKind.ToString());
     }
 
     private async void DragStateWrapOnStateChanged(CommonUiEventKind commonUiEventKind)
