@@ -33,40 +33,78 @@
 .di_method {
     color: var(--di_te_method-foreground-color);
 }
+.di3 {
+    color: var(--di_te_method-foreground-color);
+}
 
 .di_type {
+    color: var(--di_te_type-foreground-color);
+}
+.di2 {
+    /* type */
     color: var(--di_te_type-foreground-color);
 }
 
 .di_variable {
     color: var(--di_te_variable-foreground-color);
 }
+.di1 {
+    /* variable */
+    color: var(--di_te_variable-foreground-color);
+}
 
 .di_string {
+    color: var(--di_te_string-literal-foreground-color);
+}
+.di6 {
+    /* string */
     color: var(--di_te_string-literal-foreground-color);
 }
 
 .di_string-escape {
     color: var(--di_te_string-literal-escape-character-foreground-color);
 }
+.di7 {
+    /* escape */
+    color: var(--di_te_string-literal-escape-character-foreground-color);
+}
 
 .di_string-escape-alt {
+	color: var(--di_te_string-literal-escape-character-secondary-foreground-color);
+}
+.di8 {
+    /* escape alt */
 	color: var(--di_te_string-literal-escape-character-secondary-foreground-color);
 }
 
 .di_keyword {
     color: var(--di_te_keyword-foreground-color);
 }
+.di0 {
+    /* keyword */
+    color: var(--di_te_keyword-foreground-color);
+}
 
 .di_keyword-control {
+    color: var(--di_te_keyword-control-foreground-color);
+}
+.di4 {
+    /* keyword control */
     color: var(--di_te_keyword-control-foreground-color);
 }
 
 .di_preprocessor {
     color: var(--di_te_preprocessor-directive-foreground-color);
 }
+.di9 {
+    color: var(--di_te_preprocessor-directive-foreground-color);
+}
 
 .di_comment {
+    color: var(--di_te_comment-foreground-color);
+}
+.di5 {
+    /* comment */
     color: var(--di_te_comment-foreground-color);
 }
 
