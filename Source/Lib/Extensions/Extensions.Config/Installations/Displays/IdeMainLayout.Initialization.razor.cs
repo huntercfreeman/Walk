@@ -10,6 +10,16 @@ using Walk.Common.RazorLib.Installations.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Panels.Models;
+using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
+using Walk.TextEditor.RazorLib.CompilerServices;
+using Walk.TextEditor.RazorLib.Decorations.Models;
+using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.Ide.RazorLib.BackgroundTasks.Models;
+using Walk.Ide.RazorLib.CodeSearches.Displays;
+using Walk.Ide.RazorLib.FolderExplorers.Displays;
+using Walk.Ide.RazorLib.Shareds.Displays.Internals;
+using Walk.Ide.RazorLib.Shareds.Models;
+using Walk.Ide.RazorLib.Terminals.Models;
 using Walk.CompilerServices.CSharp.CompilerServiceCase;
 using Walk.CompilerServices.CSharpProject.CompilerServiceCase;
 using Walk.CompilerServices.Css;
@@ -22,18 +32,6 @@ using Walk.CompilerServices.Xml;
 using Walk.CompilerServices.Xml.Html.Decoration;
 using Walk.Extensions.DotNet;
 using Walk.Extensions.DotNet.AppDatas.Models;
-using Walk.Ide.RazorLib.BackgroundTasks.Models;
-using Walk.Ide.RazorLib.CodeSearches.Displays;
-using Walk.Ide.RazorLib.FolderExplorers.Displays;
-using Walk.Ide.RazorLib.Shareds.Displays.Internals;
-using Walk.Ide.RazorLib.Shareds.Models;
-using Walk.Ide.RazorLib.Terminals.Models;
-using Walk.TextEditor.RazorLib.Commands.Models.Defaults;
-using Walk.TextEditor.RazorLib.CompilerServices;
-// DecorationMapperRegistry.cs
-using Walk.TextEditor.RazorLib.Decorations.Models;
-// CompilerServiceRegistry.cs
-using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Walk.Extensions.Config.Installations.Displays;
 
