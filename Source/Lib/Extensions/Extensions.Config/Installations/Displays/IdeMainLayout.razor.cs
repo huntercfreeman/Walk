@@ -94,7 +94,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     /// </summary>
     private readonly StringBuilder _styleBuilder = new();
     
-    private readonly string _measureLineHeightElementId = "di_measure-line-height";
+    private readonly string _measureLineHeightElementId = "di_measure-lineHeight";
     
     /// <summary>The unit of measurement is Pixels (px)</summary>
     public const double OUTLINE_THICKNESS = 4;
@@ -441,7 +441,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             var uiStringBuilder = DotNetService.CommonService.UiStringBuilder;
             
             uiStringBuilder.Clear();
-            uiStringBuilder.Append("di_ide_main-layout ");
+            uiStringBuilder.Append("di_main-layout ");
             uiStringBuilder.Append(UnselectableClassCss);
             uiStringBuilder.Append(" ");
             uiStringBuilder.Append(DotNetService.CommonService.Options_ThemeCssClassString);
