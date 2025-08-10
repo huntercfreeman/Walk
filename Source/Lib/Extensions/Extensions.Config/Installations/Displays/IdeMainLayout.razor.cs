@@ -109,8 +109,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     private ITooltipModel? _tooltipModelPrevious = null;
     
-    private int _countOfTestCharacters;
-    private string _measureCharacterWidthAndLineHeightElementId = "di_te_measure-character-width-and-line-height";
+    private string _measureCharacterWidthAndLineHeightElementId = "di_te_measure-charWidth-lineHeight";
     
     private string _wrapperCssClass;
     private string _wrapperCssStyle;
@@ -222,8 +221,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         {
             WorkKind = IdeWorkKind.WalkIdeInitializerOnInit,
         });
-        
-        _countOfTestCharacters = TEST_STRING_REPEAT_COUNT * TEST_STRING_FOR_MEASUREMENT.Length;
         
         DotNetService.TextEditorService.SecondaryChanged += OnNeedsMeasured;
 
@@ -968,11 +965,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         DotNetService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
         {
             var charAndLineMeasurements = await DotNetService.TextEditorService.JsRuntimeTextEditorApi
-                .GetCharAndLineMeasurementsInPixelsById(
-                    _measureCharacterWidthAndLineHeightElementId,
-                    _countOfTestCharacters)
+                .GetCharAndLineMeasurementsInPixelsById(_measureCharacterWidthAndLineHeightElementId)
                 .ConfigureAwait(false);
-                
+            
             DotNetService.TextEditorService.Options_SetCharAndLineMeasurements(editContext, charAndLineMeasurements);
         });
     }
