@@ -27,7 +27,8 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
     private bool _altIsDown;
     private bool _ctrlIsDown;
 
-    private int _eventMatchedCount;
+    private int _countEventReceived;
+    private int _countEventHandled;
     
     private bool _doTextEditorMeasure = true;
     private bool _doCommonMeasure = true;
@@ -62,14 +63,29 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
         MeasureLineHeight_UiRenderStep();
         
         DotNetService.TextEditorService.SecondaryChanged += OnNeedsMeasured;
+        DotNetService.CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
     }
     
     /// <summary>TODO: Thread safety</summary>
     protected override bool ShouldRender()
-    {
-        if (_eventMatchedCount > 0)
+    {    
+        // This is expected to cause "eventual thread safety" due to perspective.
+        //
+        // The '_countEventHandled < _countEventReceived' when true is guaranteed to continue being true
+        // until the increment to '_countEventHandled'.
+        //
+        // The increment to '_countEventHandled' occurs inside this if statement.
+        // 
+        // The closest failure would be the event firing and incrementing '_countEventReceived'
+        // without having fully executed various required code,
+        // and then a cascading render from the parent causes the increment to '_countEventHandled'.
+        //
+        // This is avoided by incrementing '_countEventReceived' at the end of the event handlers
+        // and just prior to the event handler invoking 'await InvokeAsync(StateHasChanged)'.
+        //
+        if (_countEventHandled < _countEventReceived)
         {
-            _eventMatchedCount--;
+            _countEventHandled++;
             return true;
         }
         else
@@ -496,6 +512,7 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
     {
         _dotNetHelper?.Dispose();
         
+        DotNetService.CommonService.CommonUiStateChanged -= OnCommonUiStateChanged;
         DotNetService.TextEditorService.SecondaryChanged -= OnNeedsMeasured;
     }
 }
