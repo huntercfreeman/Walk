@@ -430,17 +430,17 @@ ul.di_indent-child-content {
     display: flex;
 }
 
-button.di_polymorphic-tab.di_drag {
+button.di_dynamic-tab.di_drag {
 	overflow: hidden;
 	cursor: default;
 	background-color: var(--di_button-hover-background-color);
 }
 
-button.di_polymorphic-tab.di_drag.di_active {
+button.di_dynamic-tab.di_drag.di_active {
 	background-color: var(--di_toggled-on-hover-background-color);
 }
 
-.di_polymorphic-tab-list {
+.di_dynamic-tab-list {
 	display: flex;
 }
 
@@ -499,12 +499,12 @@ button.di_polymorphic-tab.di_drag.di_active {
     width: calc(100% - var(--di_panel-tabs-font-size) - var(--di_panel-tabs-margin) - var(--di_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
 }
 
-.di_ide_panel_bottom .di_ide_panel-tabs {
-    height: calc(var(--di_ide_panel-tabs-font-size) + var(--di_ide_panel-tabs-margin) + var(--di_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+.di_ide_panel_bottom .di_panel-tabs {
+    height: calc(var(--di_panel-tabs-font-size) + var(--di_panel-tabs-margin) + var(--di_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
 }
 
 .di_ide_panel_bottom .di_ide_panel-body {
-    height: calc(100% - var(--di_ide_panel-tabs-font-size) - var(--di_ide_panel-tabs-margin) - var(--di_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
+    height: calc(100% - var(--di_panel-tabs-font-size) - var(--di_panel-tabs-margin) - var(--di_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
 }
 
 .di_ide_panel_bottom .di_ide_panel-tab:not(:first-of-type) {
