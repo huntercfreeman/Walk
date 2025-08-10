@@ -430,17 +430,17 @@ ul.di_indent-child-content {
     display: flex;
 }
 
-button.di_polymorphic-tab.di_drag {
+button.di_dynamic-tab.di_drag {
 	overflow: hidden;
 	cursor: default;
 	background-color: var(--di_button-hover-background-color);
 }
 
-button.di_polymorphic-tab.di_drag.di_active {
+button.di_dynamic-tab.di_drag.di_active {
 	background-color: var(--di_toggled-on-hover-background-color);
 }
 
-.di_polymorphic-tab-list {
+.di_dynamic-tab-list {
 	display: flex;
 }
 

@@ -1272,7 +1272,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         var uiStringBuilder = _tabCascadingValueBatch.CommonService.UiStringBuilder;
         
         uiStringBuilder.Clear();
-        uiStringBuilder.Append("di_polymorphic-tab di_button di_unselectable ");
+        uiStringBuilder.Append("di_dynamic-tab di_button di_unselectable ");
         uiStringBuilder.Append(GetIsActiveCssClass(localTabViewModel));
         uiStringBuilder.Append(" ");
         uiStringBuilder.Append(localTabGroup?.GetDynamicCss(localTabViewModel));

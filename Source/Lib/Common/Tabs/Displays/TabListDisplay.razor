@@ -3,7 +3,7 @@
 @using Walk.Common.RazorLib.Notifications.Models
 @using Walk.Common.RazorLib.Notifications.Models;
 
-<div class="di_polymorphic-tab-list">
+<div class="di_dynamic-tab-list">
 
 	@{
 	    var localTabList = TabList;
@@ -38,7 +38,7 @@
             		@oncontextmenu:preventDefault="true"
             		@oncontextmenu="e => ManuallyPropagateOnContextMenu(e, localTabViewModel)">
             
-            	<span class="di_polymorphic-tab-text">@localTabViewModel.Title</span>
+            	<span class="di_dynamic-tab-text">@localTabViewModel.Title</span>
             
         		<button class="di_button di_button-close"
         	            @onclick:stopPropagation="true"

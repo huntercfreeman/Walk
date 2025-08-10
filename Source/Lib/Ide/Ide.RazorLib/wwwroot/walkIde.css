@@ -348,7 +348,7 @@ button.di_ide_input-file-address-hierarchy-entry {
     color: var(--di_tertiary-foreground-color);
 }
 
-.di_ide_panel_left .di_panel-tabs .di_ide_panel-tab .di_polymorphic-tab-text {
+.di_ide_panel_left .di_panel-tabs .di_ide_panel-tab .di_dynamic-tab-text {
     writing-mode: vertical-rl;
     text-orientation: mixed;
     -webkit-transform: rotate(180deg);
@@ -362,7 +362,7 @@ button.di_ide_input-file-address-hierarchy-entry {
     flex-direction: row-reverse;
 }
 
-.di_ide_panel_right .di_panel-tabs .di_ide_panel-tab .di_polymorphic-tab-text {
+.di_ide_panel_right .di_panel-tabs .di_ide_panel-tab .di_dynamic-tab-text {
     writing-mode: vertical-rl;
     text-orientation: mixed;
 }
