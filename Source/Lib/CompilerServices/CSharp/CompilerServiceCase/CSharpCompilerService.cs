@@ -991,7 +991,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
             }
         }
 
-        if (!foundMatch)
+        if (!foundMatch && viewModelModifier.PersistentState.TooltipModel is not null)
         {
             viewModelModifier.PersistentState.TooltipModel = null;
             componentData.TextEditorViewModelSlimDisplay.TextEditorService.CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
