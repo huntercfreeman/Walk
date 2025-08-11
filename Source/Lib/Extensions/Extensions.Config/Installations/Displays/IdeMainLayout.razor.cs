@@ -150,7 +150,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         InitializationHelper.EnqueueOnInitializedSteps(DotNetService);
 
         DotNetService.CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
-        
         DotNetService.TextEditorService.SecondaryChanged += TextEditorOptionsStateWrap_StateChanged;
     }
 
@@ -238,21 +237,16 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         switch (commonUiEventKind)
         {
+            case CommonUiEventKind.AppOptionsStateChanged:
+                await InvokeAsync(() =>
+                {
+                    _shouldRecalculateCssStrings = true;
+                    StateHasChanged();
+                }).ConfigureAwait(false);
+                break;
             case CommonUiEventKind.PanelStateChanged:
                 await InvokeAsync(StateHasChanged);
                 break;
-        }
-    }
-
-    private async void AppOptionsOnStateChanged(CommonUiEventKind commonUiEventKind)
-    {
-        if (commonUiEventKind == CommonUiEventKind.AppOptionsStateChanged)
-        {
-            await InvokeAsync(() =>
-            {
-                _shouldRecalculateCssStrings = true;
-                StateHasChanged();
-            }).ConfigureAwait(false);
         }
     }
 
