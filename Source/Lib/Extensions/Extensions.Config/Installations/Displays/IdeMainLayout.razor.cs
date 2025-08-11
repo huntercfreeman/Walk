@@ -162,7 +162,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
         DotNetService.CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
         DotNetService.TextEditorService.SecondaryChanged += TextEditorOptionsStateWrap_StateChanged;
-        DotNetService.IdeService.IdeStateChanged += Shared_OnStateChanged;
+        DotNetService.IdeService.IdeStateChanged += OnIdeStateChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -802,9 +802,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         }
     }
     
-    private async void Shared_OnStateChanged(IdeStateChangedKind ideStateChangedKind)
+    private async void OnIdeStateChanged(IdeStateChangedKind ideStateChangedKind)
     {
-        if (ideStateChangedKind == IdeStateChangedKind.TerminalStateChanged ||
+        if (ideStateChangedKind == IdeStateChangedKind.TerminalHasExecutingProcessStateChanged ||
             ideStateChangedKind == IdeStateChangedKind.Ide_StartupControlStateChanged)
         {
             await InvokeAsync(StateHasChanged);
@@ -817,7 +817,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         
         DotNetService.CommonService.CommonUiStateChanged -= OnCommonUiStateChanged;
         DotNetService.TextEditorService.SecondaryChanged -= TextEditorOptionsStateWrap_StateChanged;
-        DotNetService.IdeService.IdeStateChanged -= Shared_OnStateChanged;
+        DotNetService.IdeService.IdeStateChanged -= OnIdeStateChanged;
         
         BrowserResizeInterop.DisposeWindowSizeChanged(DotNetService.CommonService.JsRuntimeCommonApi);
         

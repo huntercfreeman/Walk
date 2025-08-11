@@ -12,6 +12,6 @@ public enum IdeStateChangedKind
     FolderExplorerStateChanged,
     Ide_StartupControlStateChanged,
     InputFileStateChanged,
-    TerminalStateChanged,
+    TerminalHasExecutingProcessStateChanged,
     TerminalGroupStateChanged,
 }

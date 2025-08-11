@@ -95,8 +95,8 @@ public partial class IdeService
         };
     }
 
-    public void Terminal_StateHasChanged()
+    public void Terminal_HasExecutingProcess_StateHasChanged()
     {
-        IdeStateChanged?.Invoke(IdeStateChangedKind.TerminalStateChanged);
+        IdeStateChanged?.Invoke(IdeStateChangedKind.TerminalHasExecutingProcessStateChanged);
     }
 }

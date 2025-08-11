@@ -101,6 +101,19 @@ public partial class IdeService
         }
     }
 
+    public void Ide_ClearAllStartupControls()
+    {
+        lock (_stateModificationLock)
+        {
+            _startupControlState = _startupControlState with
+            {
+                StartupControlList = new List<IStartupControlModel>()
+            };
+        }
+
+        IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_StartupControlStateChanged);
+    }
+    
     public void Ide_RegisterStartupControl(IStartupControlModel startupControl)
     {
         lock (_stateModificationLock)

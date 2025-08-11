@@ -207,7 +207,7 @@ EndGlobal
 
     public async void OnTerminalStateChanged(IdeStateChangedKind ideStateChangedKind)
     {
-        if (ideStateChangedKind == IdeStateChangedKind.TerminalStateChanged)
+        if (ideStateChangedKind == IdeStateChangedKind.TerminalHasExecutingProcessStateChanged)
         {
             await InvokeAsync(StateHasChanged);
         }
