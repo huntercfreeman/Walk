@@ -41,7 +41,7 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
     {
     
         if (ideStateChangedKind == IdeStateChangedKind.TerminalGroupStateChanged ||
-            ideStateChangedKind == IdeStateChangedKind.TerminalStateChanged)
+            ideStateChangedKind == IdeStateChangedKind.TerminalHasExecutingProcessStateChanged)
         {
             await InvokeAsync(StateHasChanged);
         }

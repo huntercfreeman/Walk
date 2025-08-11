@@ -142,7 +142,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
     
     private async void OnTerminalStateChanged(IdeStateChangedKind ideStateChangedKind)
     {
-        if (ideStateChangedKind == IdeStateChangedKind.TerminalStateChanged)
+        if (ideStateChangedKind == IdeStateChangedKind.TerminalHasExecutingProcessStateChanged)
         {
             await InvokeAsync(StateHasChanged);
         }

@@ -37,7 +37,7 @@ public class Terminal : ITerminal, IBackgroundTaskGroup
             DelaySetHasExecutingProcess,
             (_, _) =>
             {
-                _ideService.Terminal_StateHasChanged();
+                _ideService.Terminal_HasExecutingProcess_StateHasChanged();
                 return Task.CompletedTask;
             });
     }

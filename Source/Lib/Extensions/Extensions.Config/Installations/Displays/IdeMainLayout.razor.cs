@@ -23,6 +23,12 @@ using Walk.Ide.RazorLib.Shareds.Models;
 using Walk.Extensions.DotNet;
 using Walk.Extensions.DotNet.AppDatas.Models;
 
+using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Dropdowns.Models;
+using Walk.Common.RazorLib.Menus.Models;
+using Walk.Ide.RazorLib.Shareds.Models;
+
 namespace Walk.Extensions.Config.Installations.Displays;
 
 public partial class IdeMainLayout : LayoutComponentBase, IDisposable
@@ -156,6 +162,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
         DotNetService.CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
         DotNetService.TextEditorService.SecondaryChanged += TextEditorOptionsStateWrap_StateChanged;
+        DotNetService.IdeService.IdeStateChanged += OnIdeStateChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -703,11 +710,114 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         DotNetService.CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
     }
     
+    /* Start StartupControlDisplay.razor */
+    private const string _startButtonElementId = "di_ide_startup-controls-display_id";
+
+    private ElementReference? _startButtonElementReference;
+    private Key<DropdownRecord> _startButtonDropdownKey = Key<DropdownRecord>.NewKey();
+    
+    public string? SelectedStartupControlGuidString
+    {
+        get => DotNetService.IdeService.GetIdeStartupControlState().ActiveStartupControlKey.Guid.ToString();
+        set
+        {
+            Key<IStartupControlModel> startupControlKey = Key<IStartupControlModel>.Empty;
+            
+            if (value is not null &&
+                Guid.TryParse(value, out var guid))
+            {
+                startupControlKey = new Key<IStartupControlModel>(guid);
+            }
+            
+            DotNetService.IdeService.Ide_SetActiveStartupControlKey(startupControlKey);
+        }
+    }
+
+    private async Task StartProgramWithoutDebuggingOnClick(bool isExecuting)
+    {
+        var localStartupControlState = DotNetService.IdeService.GetIdeStartupControlState();
+        var activeStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
+            x => x.Key == localStartupControlState.ActiveStartupControlKey);
+        
+        if (activeStartupControl is null)
+            return;
+    
+        if (isExecuting)
+        {
+            var menuOptionList = new List<MenuOptionRecord>();
+            
+            menuOptionList.Add(new MenuOptionRecord(
+                "View Output",
+                MenuOptionKind.Other,
+                onClickFunc: () => 
+                {
+                    var panelState = DotNetService.CommonService.GetPanelState();
+                    var outputPanel = panelState.PanelList.FirstOrDefault(x => x.Title == "Output");
+                    DotNetService.CommonService.ShowOrAddPanelTab(outputPanel);
+                    return Task.CompletedTask;
+                }));
+                
+            menuOptionList.Add(new MenuOptionRecord(
+                "View Terminal",
+                MenuOptionKind.Other,
+                onClickFunc: () => 
+                {
+                    DotNetService.IdeService.TerminalGroup_SetActiveTerminal(IdeFacts.EXECUTION_KEY);
+                    var panelState = DotNetService.CommonService.GetPanelState();
+                    var outputPanel = panelState.PanelList.FirstOrDefault(x => x.Title == "Terminal");
+                    DotNetService.CommonService.ShowOrAddPanelTab(outputPanel);
+                    return Task.CompletedTask;
+                }));
+                
+            menuOptionList.Add(new MenuOptionRecord(
+                "Stop Execution",
+                MenuOptionKind.Other,
+                onClickFunc: () =>
+                {
+                    var localStartupControlState = DotNetService.IdeService.GetIdeStartupControlState();
+                    var activeStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
+                        x => x.Key == localStartupControlState.ActiveStartupControlKey);
+                    
+                    if (activeStartupControl is null)
+                        return Task.CompletedTask;
+                        
+                    return activeStartupControl.StopButtonOnClickTask
+                        .Invoke(activeStartupControl);
+                }));
+                
+            await DropdownHelper.RenderDropdownAsync(
+                DotNetService.CommonService,
+                DotNetService.CommonService.JsRuntimeCommonApi,
+                _startButtonElementId,
+                DropdownOrientation.Bottom,
+                _startButtonDropdownKey,
+                new MenuRecord(menuOptionList),
+                _startButtonElementReference);
+        }
+        else
+        {
+            await activeStartupControl.StartButtonOnClickTask
+                .Invoke(activeStartupControl)
+                .ConfigureAwait(false);
+        }
+    }
+    
+    private async void OnIdeStateChanged(IdeStateChangedKind ideStateChangedKind)
+    {
+        if (ideStateChangedKind == IdeStateChangedKind.TerminalHasExecutingProcessStateChanged ||
+            ideStateChangedKind == IdeStateChangedKind.Ide_StartupControlStateChanged)
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+    /* End StartupControlDisplay.razor */
+    
     public void Dispose()
     {
         
         DotNetService.CommonService.CommonUiStateChanged -= OnCommonUiStateChanged;
         DotNetService.TextEditorService.SecondaryChanged -= TextEditorOptionsStateWrap_StateChanged;
+        DotNetService.IdeService.IdeStateChanged -= OnIdeStateChanged;
         
         BrowserResizeInterop.DisposeWindowSizeChanged(DotNetService.CommonService.JsRuntimeCommonApi);
         

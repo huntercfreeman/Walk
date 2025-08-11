@@ -869,8 +869,15 @@ public partial class DotNetService
             IdeService.TextEditorService.CommonService,
             TimeSpan.FromMilliseconds(-1));
 
+        IStartupControlModel? originallyActiveStartupControl = null;
+        
         try
         {
+            var localStartupControlState = IdeService.GetIdeStartupControlState();
+        	originallyActiveStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
+        	    x => x.Key == localStartupControlState.ActiveStartupControlKey);
+            IdeService.Ide_ClearAllStartupControls();
+        
             foreach (var project in dotNetSolutionModel.DotNetProjectList)
             {
                 RegisterStartupControl(project);
@@ -931,6 +938,22 @@ public partial class DotNetService
 
             progressBarModel.SetProgress(currentProgress, e.ToString());
             progressBarModel.Dispose();
+        }
+        finally
+        {
+            if (originallyActiveStartupControl is not null)
+            {
+                var localStartupControlState = IdeService.GetIdeStartupControlState();
+                
+                foreach (var startupControl in localStartupControlState.StartupControlList)
+                {
+                    if (startupControl.Title == originallyActiveStartupControl.Title  &&
+                        startupControl.StartupProjectAbsolutePath.Value == originallyActiveStartupControl.StartupProjectAbsolutePath.Value)
+                    {
+                        IdeService.Ide_SetActiveStartupControlKey(startupControl.Key);
+                    }
+                }
+            }
         }
     }
 
