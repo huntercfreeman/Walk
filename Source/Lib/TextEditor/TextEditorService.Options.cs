@@ -321,7 +321,10 @@ public partial class TextEditorService
         var optionsJsonString = await CommonService.Storage_GetValue(StorageKey).ConfigureAwait(false) as string;
 
         if (string.IsNullOrWhiteSpace(optionsJsonString))
+        {
+            HandleDefaultOptionsJsonString();
             return;
+        }
 
         TextEditorOptionsJsonDto? optionsJson = null;
         
@@ -336,7 +339,10 @@ public partial class TextEditorService
         }
         
         if (optionsJson is null)
+        {
+            HandleDefaultOptionsJsonString();
             return;
+        }
         
         if (optionsJson.CommonOptionsJsonDto?.ThemeKey is not null)
         {
@@ -369,5 +375,11 @@ public partial class TextEditorService
         Options_SetShowNewlines(optionsJson.ShowNewlines, false);
         Options_SetTabKeyBehavior(optionsJson.TabKeyBehavior, false);
         Options_SetTabWidth(optionsJson.TabWidth, false);
+    }
+    
+    private void HandleDefaultOptionsJsonString()
+    {
+        Options_SetTheme(CommonFacts.VisualStudioDarkThemeClone, updateStorage: false);
+        Options_SetFontSize(TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS, updateStorage: false);
     }
 }
