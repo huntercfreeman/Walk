@@ -119,8 +119,6 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
                     _dotNetHelper);
             }
         }
-        
-        Console.WriteLine("OAR");
     
         var tooltipModel = DotNetService.CommonService.GetTooltipState().TooltipModel;
         if (tooltipModel is not null && !tooltipModel.WasRepositioned && _tooltipModelPrevious != tooltipModel)
