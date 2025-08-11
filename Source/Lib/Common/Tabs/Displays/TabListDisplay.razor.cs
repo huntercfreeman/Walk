@@ -126,9 +126,15 @@ public partial class TabListDisplay : ComponentBase
 
             dragState.DragElementDimensions.DisableHeight();
             
-            dragState.DragElementDimensions.Left_Offset = mouseEventArgs.ClientX;
+            dragState.DragElementDimensions.Left_Offset = dragState.DragElementDimensions.Left_Offset with
+            {
+                Value = mouseEventArgs.ClientX
+            };
             
-            dragState.DragElementDimensions.Top_Offset = mouseEventArgs.ClientY;
+            dragState.DragElementDimensions.Top_Offset = dragState.DragElementDimensions.Top_Offset with
+            {
+                Value = mouseEventArgs.ClientY
+            };
 
             dragState.DragElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
             
