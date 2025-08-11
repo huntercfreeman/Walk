@@ -3,7 +3,7 @@ input[type="checkbox"]{
     height: var(--di_ide_checkbox-size);
 }
 
-.di_ide_main-layout {
+.di_main-layout {
     width: 100vw;
     height: 100vh;
     overflow: hidden;

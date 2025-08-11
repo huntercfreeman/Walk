@@ -10,7 +10,6 @@ public enum IdeStateChangedKind
     CodeSearchStateChanged,
     CommandBarStateChanged,
     FolderExplorerStateChanged,
-    Ide_IdeStateChanged,
     Ide_StartupControlStateChanged,
     InputFileStateChanged,
     TerminalStateChanged,

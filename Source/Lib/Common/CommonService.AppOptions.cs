@@ -219,7 +219,10 @@ public partial class CommonService
         var optionsJsonString = await Storage_GetValue(Options_StorageKey).ConfigureAwait(false) as string;
 
         if (string.IsNullOrWhiteSpace(optionsJsonString))
+        {
+            HandleDefaultOptionsJsonString();
             return;
+        }
 
         CommonOptionsJsonDto? optionsJson = null;
         
@@ -234,7 +237,10 @@ public partial class CommonService
         }
 
         if (optionsJson is null)
+        {
+            HandleDefaultOptionsJsonString();
             return;
+        }
 
         var matchedTheme = GetThemeState().ThemeList.FirstOrDefault(x => x.Key == optionsJson.ThemeKey);
         Options_SetTheme(matchedTheme == default ? CommonFacts.VisualStudioDarkThemeClone : matchedTheme, false);
@@ -256,6 +262,12 @@ public partial class CommonService
             WriteToLocalStorage_Key = Options_StorageKey,
             WriteToLocalStorage_Value = new CommonOptionsJsonDto(GetAppOptionsState().Options)
         });
+    }
+    
+    private void HandleDefaultOptionsJsonString()
+    {
+        Options_SetTheme(CommonFacts.VisualStudioDarkThemeClone, updateStorage: false);
+        Options_SetFontSize(AppOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS, updateStorage: false);
     }
     
     private void HandleThemeChange()

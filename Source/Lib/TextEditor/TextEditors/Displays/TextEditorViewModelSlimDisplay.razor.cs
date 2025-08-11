@@ -439,8 +439,11 @@ public sealed partial class TextEditorViewModelSlimDisplay : ComponentBase, IDis
                             if (viewModelModifier is null)
                                 return ValueTask.CompletedTask;
 
-                            viewModelModifier.PersistentState.TooltipModel = null;
-                            TextEditorService.CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
+                            if (viewModelModifier.PersistentState.TooltipModel is not null)
+                            {
+                                viewModelModifier.PersistentState.TooltipModel = null;
+                                TextEditorService.CommonService.SetTooltipModel(viewModelModifier.PersistentState.TooltipModel);
+                            }
 
                             return ValueTask.CompletedTask;
                         }));

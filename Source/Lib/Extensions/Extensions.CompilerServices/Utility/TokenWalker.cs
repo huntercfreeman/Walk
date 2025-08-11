@@ -1,5 +1,5 @@
-using Walk.TextEditor.RazorLib.Exceptions;
 using Walk.Extensions.CompilerServices.Syntax;
+using Walk.TextEditor.RazorLib.Exceptions;
 
 namespace Walk.Extensions.CompilerServices.Utility;
 

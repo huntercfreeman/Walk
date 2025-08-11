@@ -55,7 +55,7 @@ public static class CommonFacts
     /// <summary>
     /// Used when repositioning a dropdown so that it appears on screen.
     /// </summary>
-    public static string RootHtmlElementId { get; set; } = "di_ide_context-global";
+    public static string RootHtmlElementId { get; set; } = "di_global";
     /* End ContextFacts */
     
     /* Start PanelFacts */

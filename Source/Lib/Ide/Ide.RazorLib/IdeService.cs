@@ -63,8 +63,6 @@ public partial class IdeService : IBackgroundTaskGroup
 
         switch (workArgs.WorkKind)
         {
-            case IdeWorkKind.WalkIdeInitializerOnInit:
-                return Do_WalkIdeInitializerOnInit();
             case IdeWorkKind.FileContentsWereModifiedOnDisk:
                 return Editor_Do_FileContentsWereModifiedOnDisk(
                     workArgs.StringValue, workArgs.TextEditorModel, workArgs.FileLastWriteTime, workArgs.NotificationInformativeKey);
@@ -120,11 +118,6 @@ public partial class IdeService : IBackgroundTaskGroup
         }
     }
 
-    public ValueTask Do_WalkIdeInitializerOnInit()
-    {
-        return ValueTask.CompletedTask;
-    }
-    
     public void Editor_ShowInputFile()
     {
         Enqueue(new IdeWorkArgs
