@@ -115,44 +115,24 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         _leftPanelGroupParameter = new(
             panelGroupKey: CommonFacts.LeftPanelGroupKey,
             adjacentElementDimensions: _editorElementDimensions,
-            dimensionAttributeKind: DimensionAttributeKind.Width,
             cssClassString: null);
 
         _rightPanelGroupParameter = new(
             panelGroupKey: CommonFacts.RightPanelGroupKey,
             adjacentElementDimensions: _editorElementDimensions,
-            dimensionAttributeKind: DimensionAttributeKind.Width,
             cssClassString: null);
 
         _bottomPanelGroupParameter = new(
             panelGroupKey: CommonFacts.BottomPanelGroupKey,
             cssClassString: "di_ide_footer",
-            adjacentElementDimensions: _bodyElementDimensions,
-            dimensionAttributeKind: DimensionAttributeKind.Height);
+            adjacentElementDimensions: _bodyElementDimensions);
 
-        _bodyElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
-        {
-            new DimensionUnit(78, DimensionUnitKind.Percentage),
-            new DimensionUnit(
-                DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
-                DimensionUnitKind.Pixels,
-                DimensionOperatorKind.Subtract),
-            new DimensionUnit(
-                CommonFacts.Ide_Header_Height.Value / 2,
-                CommonFacts.Ide_Header_Height.DimensionUnitKind,
-                DimensionOperatorKind.Subtract)
-        });
+        _bodyElementDimensions.Height_Base_0 = new DimensionUnit(78, DimensionUnitKind.Percentage);
+        _bodyElementDimensions.Height_Base_1 = new DimensionUnit(DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);;
+        _bodyElementDimensions.Height_WildCard = new DimensionUnit(CommonFacts.Ide_Header_Height.Value / 2, CommonFacts.Ide_Header_Height.DimensionUnitKind, DimensionOperatorKind.Subtract);
 
-        _editorElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
-        {
-            new DimensionUnit(
-                33.3333,
-                DimensionUnitKind.Percentage),
-            new DimensionUnit(
-                DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
-                DimensionUnitKind.Pixels,
-                DimensionOperatorKind.Subtract)
-        });
+        _editorElementDimensions.Width_Base_0 = new DimensionUnit(33.3333, DimensionUnitKind.Percentage);
+        _editorElementDimensions.Width_Base_1 = new DimensionUnit(DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
 
         InitPanelGroup(DotNetService, _leftPanelGroupParameter);
         InitPanelGroup(DotNetService, _rightPanelGroupParameter);
@@ -329,6 +309,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     private void PassAlongSizeIfNoActiveTab(PanelGroupParameter panelGroupParameter, PanelGroup panelGroup)
     {
+        /*
         DimensionAttribute adjacentElementSizeDimensionAttribute;
         DimensionAttribute panelGroupSizeDimensionsAttribute;
 
@@ -380,6 +361,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         {
             adjacentElementSizeDimensionAttribute.DimensionUnitList.RemoveAt(indexOfPreviousPassAlong);
         }
+        */
     }
 
     private string GetElementDimensionsStyleString(PanelGroup? panelGroup)
@@ -576,19 +558,13 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             // (only the "UI thread" touches `dragState.DragElementDimensions`).
             var dragState = _tabCascadingValueBatch.CommonService.GetDragState();
 
-            dragState.DragElementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
+            dragState.DragElementDimensions.DisableWidth();
 
-            dragState.DragElementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
+            dragState.DragElementDimensions.DisableHeight();
 
-            dragState.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
-            dragState.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                mouseEventArgs.ClientX,
-                DimensionUnitKind.Pixels));
+            dragState.DragElementDimensions.Left_Offset = new DimensionUnit(mouseEventArgs.ClientX, DimensionUnitKind.Pixels);
 
-            dragState.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
-            dragState.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                mouseEventArgs.ClientY,
-                DimensionUnitKind.Pixels));
+            dragState.DragElementDimensions.Top_Offset = new DimensionUnit(mouseEventArgs.ClientY, DimensionUnitKind.Pixels);
 
             dragState.DragElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
 

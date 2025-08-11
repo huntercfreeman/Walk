@@ -656,7 +656,7 @@ public static class InitializationHelper
             DotNetService,
             rightPanel.Key,
             new DimensionUnit(
-                () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
+                appOptionsState.Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
                 DimensionUnitPurposeKind.ResizableHandleColumn));
@@ -668,7 +668,7 @@ public static class InitializationHelper
             DotNetService,
             bottomPanel.Key,
             new DimensionUnit(
-                () => appOptionsState.Options.ResizeHandleHeightInPixels / 2,
+                appOptionsState.Options.ResizeHandleHeightInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
                 DimensionUnitPurposeKind.ResizableHandleRow));
@@ -723,7 +723,7 @@ public static class InitializationHelper
         CodeSearch_InitializeResizeHandleDimensionUnit(
             DotNetService,
             new DimensionUnit(
-                () => appOptionsState.Options.ResizeHandleHeightInPixels / 2,
+                appOptionsState.Options.ResizeHandleHeightInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
                 DimensionUnitPurposeKind.ResizableHandleRow));
@@ -732,7 +732,7 @@ public static class InitializationHelper
             DotNetService,
             leftPanel.Key,
             new DimensionUnit(
-                () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
+                appOptionsState.Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
                 DimensionUnitPurposeKind.ResizableHandleColumn));
@@ -741,7 +741,7 @@ public static class InitializationHelper
         TerminalGroup_InitializeResizeHandleDimensionUnit(
             DotNetService,
             new DimensionUnit(
-                () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
+                appOptionsState.Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
                 DimensionUnitPurposeKind.ResizableHandleColumn));
@@ -750,7 +750,7 @@ public static class InitializationHelper
         ReduceInitializeResizeHandleDimensionUnitAction(
             DotNetService,
             new DimensionUnit(
-                () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
+                appOptionsState.Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind.Pixels,
                 DimensionOperatorKind.Subtract,
                 DimensionUnitPurposeKind.ResizableHandleColumn));
@@ -764,6 +764,7 @@ public static class InitializationHelper
 
     public static void Panel_InitializeResizeHandleDimensionUnit(DotNetService DotNetService, Key<PanelGroup> panelGroupKey, DimensionUnit dimensionUnit)
     {
+        /*
         var inState = DotNetService.CommonService.GetPanelState();
 
         PanelGroup inPanelGroup;
@@ -814,10 +815,12 @@ public static class InitializationHelper
                 }
             }
         }
+        */
     }
     
     public static void ReduceInitializeResizeHandleDimensionUnitAction(DotNetService DotNetService, DimensionUnit dimensionUnit)
     {
+        /*
         var inState = DotNetService.GetTestExplorerState();
 
         if (dimensionUnit.Purpose != DimensionUnitPurposeKind.ResizableHandleColumn)
@@ -860,10 +863,12 @@ public static class InitializationHelper
 
             inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
         }
+        */
     }
     
     public static void CodeSearch_InitializeResizeHandleDimensionUnit(DotNetService DotNetService, DimensionUnit dimensionUnit)
     {
+        /*
         var codeSearchState = DotNetService.IdeService.GetCodeSearchState();
     
         if (dimensionUnit.Purpose == DimensionUnitPurposeKind.ResizableHandleRow)
@@ -886,10 +891,12 @@ public static class InitializationHelper
                     codeSearchState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
             }
         }
+        */
     }
     
     public static void TerminalGroup_InitializeResizeHandleDimensionUnit(DotNetService DotNetService, DimensionUnit dimensionUnit)
     {
+        /*
         var terminalGroupState = DotNetService.IdeService.GetTerminalGroupState();
     
         if (dimensionUnit.Purpose == DimensionUnitPurposeKind.ResizableHandleColumn)
@@ -912,6 +919,7 @@ public static class InitializationHelper
                     terminalGroupState.TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
             }
         }
+        */
     }
 
     // private const string TEST_STRING_FOR_MEASUREMENT = "abcdefghijklmnopqrstuvwxyz0123456789";
