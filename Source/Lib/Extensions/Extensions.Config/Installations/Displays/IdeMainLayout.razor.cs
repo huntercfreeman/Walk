@@ -277,6 +277,17 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                             x => _dragEventHandler = x,
                             x => _previousDragMouseEventArgs = x);
                     }
+                    else if (_mainLayoutDragEventKind == MainLayoutDragEventKind.BottomResizeRow)
+                    {
+                        await Walk.Common.RazorLib.Resizes.Displays.ResizableRow.Do(
+                            DotNetService.CommonService,
+                            _resizableRowParameter.TopElementDimensions,
+                            _resizableRowParameter.BottomElementDimensions,
+                            _dragEventHandler,
+                            _previousDragMouseEventArgs,
+                            x => _dragEventHandler = x,
+                            x => _previousDragMouseEventArgs = x);
+                    }
                     
                     await InvokeAsync(StateHasChanged);
                 }
@@ -675,7 +686,20 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     public void SubscribeToDragEvent(MainLayoutDragEventKind mainLayoutDragEventKind)
     {
         _mainLayoutDragEventKind = mainLayoutDragEventKind;
-        _dragEventHandler = Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.DragEventHandlerResizeHandleAsync;
+        
+        if (_mainLayoutDragEventKind == MainLayoutDragEventKind.TopLeftResizeColumn)
+        {
+            _dragEventHandler = Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.DragEventHandlerResizeHandleAsync;
+        }
+        else if (_mainLayoutDragEventKind == MainLayoutDragEventKind.TopRightResizeColumn)
+        {
+            _dragEventHandler = Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.DragEventHandlerResizeHandleAsync;
+        }
+        else if (_mainLayoutDragEventKind == MainLayoutDragEventKind.BottomResizeRow)
+        {
+            _dragEventHandler = Walk.Common.RazorLib.Resizes.Displays.ResizableRow.DragEventHandlerResizeHandleAsync;
+        }
+        
         DotNetService.CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
     }
     

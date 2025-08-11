@@ -517,6 +517,12 @@ button.di_dynamic-tab.di_drag.di_active {
     cursor: e-resize;
 }
 
+.di_resize-row {
+    background-color: var(--di_resize-row-background-color);
+    width: 100%;
+    cursor: n-resize;
+}
+
 :root {
     /* Sizes Common */
     --di_tabs-bar-height: 2.6rem;
