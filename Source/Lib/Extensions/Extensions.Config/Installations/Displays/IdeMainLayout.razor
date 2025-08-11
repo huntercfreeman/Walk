@@ -195,7 +195,10 @@
             </div>
         </div>
     
-        <ResizableColumn ResizableColumnParameter="_topLeftResizableColumnParameter" />
+        <div class="di_resize-column"
+             style="@DotNetService.CommonService.Options_ResizeHandleCssWidth"
+             @onmousedown="() => ResizableColumn.SubscribeToDragEvent(DotNetService.CommonService, ResizableColumn.DragEventHandlerResizeHandleAsync, x => _dragEventHandler = x)">
+        </div>
     
         <EditorDisplay EditorElementDimensions="_editorElementDimensions" />
         

@@ -73,6 +73,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     private Walk.TextEditor.RazorLib.Edits.Models.DirtyResourceUriBadge _dirtyResourceUriBadge;
     private Walk.Common.RazorLib.Notifications.Models.NotificationBadge _notificationBadge;
+    
+    private Func<ElementDimensions, ElementDimensions, (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;
+    private MouseEventArgs? _previousDragMouseEventArgs;
 
     protected override void OnInitialized()
     {
@@ -245,6 +248,17 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 }).ConfigureAwait(false);
                 break;
             case CommonUiEventKind.PanelStateChanged:
+                await InvokeAsync(StateHasChanged);
+                break;
+            case CommonUiEventKind.DragStateChanged:
+                await Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.Do(
+                    DotNetService.CommonService,
+                    _topLeftResizableColumnParameter.LeftElementDimensions,
+                    _topLeftResizableColumnParameter.RightElementDimensions,
+                    _dragEventHandler,
+                    _previousDragMouseEventArgs,
+                    x => _dragEventHandler = x,
+                    x => _previousDragMouseEventArgs = x);
                 await InvokeAsync(StateHasChanged);
                 break;
         }
