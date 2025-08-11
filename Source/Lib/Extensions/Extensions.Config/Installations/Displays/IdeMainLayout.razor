@@ -197,12 +197,15 @@
     
         <div class="di_resize-column"
              style="@DotNetService.CommonService.Options_ResizeHandleCssWidth"
-             @onmousedown="() => ResizableColumn.SubscribeToDragEvent(DotNetService.CommonService, ResizableColumn.DragEventHandlerResizeHandleAsync, x => _dragEventHandler = x)">
+             @onmousedown="() => SubscribeToDragEvent(MainLayoutDragEventKind.TopLeftResizeColumn)">
         </div>
     
         <EditorDisplay EditorElementDimensions="_editorElementDimensions" />
         
-        <ResizableColumn ResizableColumnParameter="_topRightResizableColumnParameter" />
+        <div class="di_resize-column"
+             style="@DotNetService.CommonService.Options_ResizeHandleCssWidth"
+             @onmousedown="() => SubscribeToDragEvent(MainLayoutDragEventKind.TopRightResizeColumn)">
+        </div>
     
         <div class="@GetPanelElementCssClass(_rightPanelGroupParameter.PanelPositionCss, _rightPanelGroupParameter.CssClassString)"
              style="@GetElementDimensionsStyleString(rightPanelGroup)"

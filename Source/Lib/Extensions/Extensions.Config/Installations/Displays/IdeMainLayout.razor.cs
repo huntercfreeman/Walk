@@ -76,6 +76,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     private Func<ElementDimensions, ElementDimensions, (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;
     private MouseEventArgs? _previousDragMouseEventArgs;
+    
+    private MainLayoutDragEventKind _mainLayoutDragEventKind;
 
     protected override void OnInitialized()
     {
@@ -251,15 +253,33 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 await InvokeAsync(StateHasChanged);
                 break;
             case CommonUiEventKind.DragStateChanged:
-                await Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.Do(
-                    DotNetService.CommonService,
-                    _topLeftResizableColumnParameter.LeftElementDimensions,
-                    _topLeftResizableColumnParameter.RightElementDimensions,
-                    _dragEventHandler,
-                    _previousDragMouseEventArgs,
-                    x => _dragEventHandler = x,
-                    x => _previousDragMouseEventArgs = x);
-                await InvokeAsync(StateHasChanged);
+                if (_dragEventHandler is not null)
+                {
+                    if (_mainLayoutDragEventKind == MainLayoutDragEventKind.TopLeftResizeColumn)
+                    {
+                        await Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.Do(
+                            DotNetService.CommonService,
+                            _topLeftResizableColumnParameter.LeftElementDimensions,
+                            _topLeftResizableColumnParameter.RightElementDimensions,
+                            _dragEventHandler,
+                            _previousDragMouseEventArgs,
+                            x => _dragEventHandler = x,
+                            x => _previousDragMouseEventArgs = x);
+                    }
+                    else if (_mainLayoutDragEventKind == MainLayoutDragEventKind.TopRightResizeColumn)
+                    {
+                        await Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.Do(
+                            DotNetService.CommonService,
+                            _topRightResizableColumnParameter.LeftElementDimensions,
+                            _topRightResizableColumnParameter.RightElementDimensions,
+                            _dragEventHandler,
+                            _previousDragMouseEventArgs,
+                            x => _dragEventHandler = x,
+                            x => _previousDragMouseEventArgs = x);
+                    }
+                    
+                    await InvokeAsync(StateHasChanged);
+                }
                 break;
         }
     }
@@ -650,6 +670,13 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
         DotNetService.CommonService.Dialog_ReduceRegisterAction(dialogRecord);
         return Task.CompletedTask;
+    }
+    
+    public void SubscribeToDragEvent(MainLayoutDragEventKind mainLayoutDragEventKind)
+    {
+        _mainLayoutDragEventKind = mainLayoutDragEventKind;
+        _dragEventHandler = Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.DragEventHandlerResizeHandleAsync;
+        DotNetService.CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
     }
     
     public void Dispose()
