@@ -437,6 +437,17 @@ button.di_ide_input-file-address-hierarchy-entry {
         margin-left: 15px;
     }
 
+.di_ide_startup-controls-display {
+    display: flex;
+    margin-left: 15px;
+}
+
+.di_ide_startup-controls-display-entry {
+    display: flex;
+    align-items: center;
+    margin-left: 15px;
+}
+
 :root {
     /* Sizes IDE */
     --di_ide_section-title-font-size: 1.25em;
