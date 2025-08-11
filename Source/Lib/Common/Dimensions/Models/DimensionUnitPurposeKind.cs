@@ -9,4 +9,5 @@ public enum DimensionUnitPurposeKind
     take_size_of_adjacent_hidden_panel_left,
     take_size_of_adjacent_hidden_panel_right,
     take_size_of_adjacent_hidden_panel_bottom,
+    Base,
 }

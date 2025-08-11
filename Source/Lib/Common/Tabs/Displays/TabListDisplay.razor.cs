@@ -122,19 +122,13 @@ public partial class TabListDisplay : ComponentBase
             // (only the "UI thread" touches `dragState.DragElementDimensions`).
             var dragState = _tabCascadingValueBatch.CommonService.GetDragState();
 
-            dragState.DragElementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
+            dragState.DragElementDimensions.DisableWidth();
 
-            dragState.DragElementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
-
-            dragState.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
-            dragState.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                mouseEventArgs.ClientX,
-                DimensionUnitKind.Pixels));
-
-            dragState.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
-            dragState.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                mouseEventArgs.ClientY,
-                DimensionUnitKind.Pixels));
+            dragState.DragElementDimensions.DisableHeight();
+            
+            dragState.DragElementDimensions.Left_Offset = mouseEventArgs.ClientX;
+            
+            dragState.DragElementDimensions.Top_Offset = mouseEventArgs.ClientY;
 
             dragState.DragElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
             

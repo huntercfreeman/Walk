@@ -4,14 +4,55 @@ namespace Walk.Common.RazorLib.Dimensions.Models;
 
 public class ElementDimensions
 {
-    public DimensionAttribute WidthDimensionAttribute { get; set; } = new(DimensionAttributeKind.Width);
-    public DimensionAttribute HeightDimensionAttribute { get; set; } = new(DimensionAttributeKind.Height);
-    public DimensionAttribute LeftDimensionAttribute { get; set; } = new(DimensionAttributeKind.Left);
-    public DimensionAttribute RightDimensionAttribute { get; set; } = new(DimensionAttributeKind.Right);
-    public DimensionAttribute TopDimensionAttribute { get; set; } = new(DimensionAttributeKind.Top);
-    public DimensionAttribute BottomDimensionAttribute { get; set; } = new(DimensionAttributeKind.Bottom);
+    public DimensionUnit Width_Base_0 { get; set; }
+    public DimensionUnit Width_Base_1 { get; set; }
+    public DimensionUnit Width_Offset { get; set; }
+    public DimensionUnit Width_WildCard { get; set; }
+    
+    public DimensionUnit Height_Base_0 { get; set; }
+    public DimensionUnit Height_Base_1 { get; set; }
+    public DimensionUnit Height_Offset { get; set; }
+    public DimensionUnit Height_WildCard { get; set; }
+    
+    public DimensionUnit Left_Base_0 { get; set; }
+    public DimensionUnit Left_Base_1 { get; set; }
+    public DimensionUnit Left_Offset { get; set; }
+    
+    public DimensionUnit Top_Base_0 { get; set; }
+    public DimensionUnit Top_Base_1 { get; set; }
+    public DimensionUnit Top_Offset { get; set; }
     
     public ElementPositionKind ElementPositionKind { get; set; } = ElementPositionKind.Static;
+    
+    public void DisableWidth()
+    {
+        Width_Base_0 = Width_Base_0 with { IsUsed = false };
+        Width_Base_1 = Width_Base_1 with { IsUsed = false };
+        Width_Offset = Width_Offset with { IsUsed = false };
+        Width_WildCard = Width_WildCard with { IsUsed = false };
+    }
+    
+    public void DisableHeight()
+    {
+        Height_Base_0 = Height_Base_0 with { IsUsed = false };
+        Height_Base_1 = Height_Base_1 with { IsUsed = false };
+        Height_Offset = Height_Offset with { IsUsed = false };
+        Height_WildCard = Height_WildCard with { IsUsed = false };
+    }
+    
+    public void DisableLeft()
+    {
+        Left_Base_0 = Left_Base_0 with { IsUsed = false };
+        Left_Base_1 = Left_Base_1 with { IsUsed = false };
+        Left_Offset = Left_Offset with { IsUsed = false };
+    }
+    
+    public void DisableTop()
+    {
+        Top_Base_0 = Top_Base_0 with { IsUsed = false };
+        Top_Base_1 = Top_Base_1 with { IsUsed = false };
+        Top_Offset = Top_Offset with { IsUsed = false };
+    }
 
     /// <summary>
     /// This method invokes `styleBuilder.Clear();` immediately.
@@ -24,13 +65,114 @@ public class ElementDimensions
         styleBuilder.Append(ElementPositionKind.GetStyleString());
         styleBuilder.Append("; ");
         
-        WidthDimensionAttribute.AppendStyleString(styleBuilder);
-        HeightDimensionAttribute.AppendStyleString(styleBuilder);
-        LeftDimensionAttribute.AppendStyleString(styleBuilder);
-        RightDimensionAttribute.AppendStyleString(styleBuilder);
-        TopDimensionAttribute.AppendStyleString(styleBuilder);
-        BottomDimensionAttribute.AppendStyleString(styleBuilder);
-
+        // width
+        if (Width_Base_0.IsUsed || Width_Base_1.IsUsed || Width_Offset.IsUsed || Width_WildCard.IsUsed)
+        {
+            styleBuilder.Append("width: calc(");
+            if (Width_Base_0.IsUsed)
+            {
+                styleBuilder.Append(Width_Base_0.Value.ToCssValue());
+                Width_Base_0.DimensionUnitKind.GetStyleString();
+            }
+            if (Width_Base_1.IsUsed)
+            {
+                styleBuilder.Append(Width_Base_1.DimensionOperatorKind.GetStyleString());
+                styleBuilder.Append(Width_Base_1.Value.ToCssValue());
+                Width_Base_1.DimensionUnitKind.GetStyleString();
+            }
+            if (Width_Offset.IsUsed)
+            {
+                styleBuilder.Append(Width_Offset.DimensionOperatorKind.GetStyleString());
+                styleBuilder.Append(Width_Offset.Value.ToCssValue());
+                Width_Offset.DimensionUnitKind.GetStyleString();
+            }
+            if (Width_WildCard.IsUsed)
+            {
+                styleBuilder.Append(Width_WildCard.DimensionOperatorKind.GetStyleString());
+                styleBuilder.Append(Width_WildCard.Value.ToCssValue());
+                Width_WildCard.DimensionUnitKind.GetStyleString();
+            }
+            styleBuilder.Append(");");
+        }
+        
+        // height
+        if (Height_Base_0.IsUsed || Height_Base_1.IsUsed || Height_Offset.IsUsed || Height_WildCard.IsUsed)
+        {
+            styleBuilder.Append("height: calc(");
+            if (Height_Base_0.IsUsed)
+            {
+                styleBuilder.Append(Height_Base_0.Value.ToCssValue());
+                Height_Base_0.DimensionUnitKind.GetStyleString();
+            }
+            if (Height_Base_1.IsUsed)
+            {
+                styleBuilder.Append(Height_Base_1.DimensionOperatorKind.GetStyleString());
+                styleBuilder.Append(Height_Base_1.Value.ToCssValue());
+                Height_Base_1.DimensionUnitKind.GetStyleString();
+            }
+            if (Height_Offset.IsUsed)
+            {
+                styleBuilder.Append(Height_Offset.DimensionOperatorKind.GetStyleString());
+                styleBuilder.Append(Height_Offset.Value.ToCssValue());
+                Height_Offset.DimensionUnitKind.GetStyleString();
+            }
+            if (Height_WildCard.IsUsed)
+            {
+                styleBuilder.Append(Height_WildCard.DimensionOperatorKind.GetStyleString());
+                styleBuilder.Append(Height_WildCard.Value.ToCssValue());
+                Height_WildCard.DimensionUnitKind.GetStyleString();
+            }
+            styleBuilder.Append(");");
+        }
+        
+        // left
+        if (Left_Base_0.IsUsed || Left_Base_1.IsUsed || Left_Offset.IsUsed)
+        {
+            styleBuilder.Append("left: calc(");
+            if (Left_Base_0.IsUsed)
+            {
+                styleBuilder.Append(Left_Base_0.Value.ToCssValue());
+                Left_Base_0.DimensionUnitKind.GetStyleString();
+            }
+            if (Left_Base_1.IsUsed)
+            {
+                styleBuilder.Append(Left_Base_1.DimensionOperatorKind.GetStyleString());
+                styleBuilder.Append(Left_Base_1.Value.ToCssValue());
+                Left_Base_1.DimensionUnitKind.GetStyleString();
+            }
+            if (Left_Offset.IsUsed)
+            {
+                styleBuilder.Append(Left_Offset.DimensionOperatorKind.GetStyleString());
+                styleBuilder.Append(Left_Offset.Value.ToCssValue());
+                Left_Offset.DimensionUnitKind.GetStyleString();
+            }
+            styleBuilder.Append(");");
+        }
+        
+        // top
+        if (Top_Base_0.IsUsed || Top_Base_1.IsUsed || Top_Offset.IsUsed)
+        {
+            styleBuilder.Append("top: calc(");
+            if (Top_Base_0.IsUsed)
+            {
+                styleBuilder.Append(Top_Base_0.Value.ToCssValue());
+                Top_Base_0.DimensionUnitKind.GetStyleString();
+            }
+            if (Top_Base_1.IsUsed)
+            {
+                styleBuilder.Append(Top_Base_1.DimensionOperatorKind.GetStyleString());
+                styleBuilder.Append(Top_Base_1.Value.ToCssValue());
+                Top_Base_1.DimensionUnitKind.GetStyleString();
+            }
+            if (Top_Offset.IsUsed)
+            {
+                styleBuilder.Append(Top_Offset.DimensionOperatorKind.GetStyleString());
+                styleBuilder.Append(Top_Offset.Value.ToCssValue());
+                Top_Offset.DimensionUnitKind.GetStyleString();
+            }
+            styleBuilder.Append(");");
+        }
+        
         return styleBuilder.ToString();
     }
 }

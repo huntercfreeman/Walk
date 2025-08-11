@@ -47,15 +47,8 @@ public partial class DragInitializer : ComponentBase, IDisposable
                 
                 if (dragState.Drag?.DragComponentType is not null)
                 {
-                    dragState.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
-                    dragState.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                        args.MouseEventArgs.ClientX,
-                        DimensionUnitKind.Pixels));
-    
-                    dragState.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
-                    dragState.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                        args.MouseEventArgs.ClientY,
-                        DimensionUnitKind.Pixels));
+                    dragState.DragElementDimensions.Left_Offset = new DimensionUnit(args.MouseEventArgs.ClientX, DimensionUnitKind.Pixels);
+                    dragState.DragElementDimensions.Top_Offset = new DimensionUnit(args.MouseEventArgs.ClientY, DimensionUnitKind.Pixels);
                 }
     
                 return;
