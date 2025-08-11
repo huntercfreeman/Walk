@@ -230,7 +230,6 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
         var lineHeight = await DotNetService.CommonService.JsRuntimeCommonApi.JsRuntime.InvokeAsync<int>(
             "walkCommon.getLineHeightInPixelsById",
             _measureLineHeightElementId);
-        Console.WriteLine($"lineHeight: {lineHeight}");
         
         DotNetService.CommonService.Options_SetLineHeight(lineHeight);
     }
@@ -241,7 +240,6 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
         _doTextEditorMeasure = false;
         var charAndLineMeasurements = await DotNetService.TextEditorService.JsRuntimeTextEditorApi
             .GetCharAndLineMeasurementsInPixelsById(_measureCharacterWidthAndLineHeightElementId);
-        Console.WriteLine($"{charAndLineMeasurements.CharacterWidth} {charAndLineMeasurements.LineHeight}");
 
         DotNetService.TextEditorService.Options_SetCharAndLineMeasurements(new(), charAndLineMeasurements);
     }
