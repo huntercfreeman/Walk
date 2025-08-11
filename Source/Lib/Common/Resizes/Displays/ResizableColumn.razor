@@ -3,6 +3,5 @@
 
 <div class="di_resize-column"
      style="@CommonService.Options_ResizeHandleCssWidth"
-     @onmousedown="() => SubscribeToDragEvent(DragEventHandlerResizeHandleAsync)">
-    
+     @onmousedown="() => SubscribeToDragEvent(CommonService, DragEventHandlerResizeHandleAsync, x => _dragEventHandler = x)">
 </div>

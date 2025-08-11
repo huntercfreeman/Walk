@@ -1205,6 +1205,11 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         
         if (indexPartialTypeDefinition == -1)
         {
+            if (_textEditorService.CommonService.GetTooltipState().TooltipModel is not null)
+            {
+                _textEditorService.CommonService.SetTooltipModel(tooltipModel: null);
+            }
+            
             _textEditorService.WorkerArbitrary.PostUnique(async editContext =>
             {
                 if (category.Value == "CodeSearchService")

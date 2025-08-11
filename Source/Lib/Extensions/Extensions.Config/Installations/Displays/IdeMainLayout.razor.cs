@@ -73,6 +73,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     private Walk.TextEditor.RazorLib.Edits.Models.DirtyResourceUriBadge _dirtyResourceUriBadge;
     private Walk.Common.RazorLib.Notifications.Models.NotificationBadge _notificationBadge;
+    
+    private Func<ElementDimensions, ElementDimensions, (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;
+    private MouseEventArgs? _previousDragMouseEventArgs;
+    
+    private MainLayoutDragEventKind _mainLayoutDragEventKind;
 
     protected override void OnInitialized()
     {
@@ -246,6 +251,46 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 break;
             case CommonUiEventKind.PanelStateChanged:
                 await InvokeAsync(StateHasChanged);
+                break;
+            case CommonUiEventKind.DragStateChanged:
+                if (_dragEventHandler is not null)
+                {
+                    if (_mainLayoutDragEventKind == MainLayoutDragEventKind.TopLeftResizeColumn)
+                    {
+                        await Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.Do(
+                            DotNetService.CommonService,
+                            _topLeftResizableColumnParameter.LeftElementDimensions,
+                            _topLeftResizableColumnParameter.RightElementDimensions,
+                            _dragEventHandler,
+                            _previousDragMouseEventArgs,
+                            x => _dragEventHandler = x,
+                            x => _previousDragMouseEventArgs = x);
+                    }
+                    else if (_mainLayoutDragEventKind == MainLayoutDragEventKind.TopRightResizeColumn)
+                    {
+                        await Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.Do(
+                            DotNetService.CommonService,
+                            _topRightResizableColumnParameter.LeftElementDimensions,
+                            _topRightResizableColumnParameter.RightElementDimensions,
+                            _dragEventHandler,
+                            _previousDragMouseEventArgs,
+                            x => _dragEventHandler = x,
+                            x => _previousDragMouseEventArgs = x);
+                    }
+                    else if (_mainLayoutDragEventKind == MainLayoutDragEventKind.BottomResizeRow)
+                    {
+                        await Walk.Common.RazorLib.Resizes.Displays.ResizableRow.Do(
+                            DotNetService.CommonService,
+                            _resizableRowParameter.TopElementDimensions,
+                            _resizableRowParameter.BottomElementDimensions,
+                            _dragEventHandler,
+                            _previousDragMouseEventArgs,
+                            x => _dragEventHandler = x,
+                            x => _previousDragMouseEventArgs = x);
+                    }
+                    
+                    await InvokeAsync(StateHasChanged);
+                }
                 break;
         }
     }
@@ -636,6 +681,26 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
         DotNetService.CommonService.Dialog_ReduceRegisterAction(dialogRecord);
         return Task.CompletedTask;
+    }
+    
+    public void SubscribeToDragEvent(MainLayoutDragEventKind mainLayoutDragEventKind)
+    {
+        _mainLayoutDragEventKind = mainLayoutDragEventKind;
+        
+        if (_mainLayoutDragEventKind == MainLayoutDragEventKind.TopLeftResizeColumn)
+        {
+            _dragEventHandler = Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.DragEventHandlerResizeHandleAsync;
+        }
+        else if (_mainLayoutDragEventKind == MainLayoutDragEventKind.TopRightResizeColumn)
+        {
+            _dragEventHandler = Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.DragEventHandlerResizeHandleAsync;
+        }
+        else if (_mainLayoutDragEventKind == MainLayoutDragEventKind.BottomResizeRow)
+        {
+            _dragEventHandler = Walk.Common.RazorLib.Resizes.Displays.ResizableRow.DragEventHandlerResizeHandleAsync;
+        }
+        
+        DotNetService.CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
     }
     
     public void Dispose()

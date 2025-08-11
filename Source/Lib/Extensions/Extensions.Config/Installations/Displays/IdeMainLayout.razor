@@ -1,6 +1,5 @@
 @using Walk.Common.RazorLib
 @using Walk.Common.RazorLib.Panels.Models
-@using Walk.Common.RazorLib.Resizes.Displays
 @using Walk.Common.RazorLib.Dimensions.Models
 @using Walk.Common.RazorLib.Dropdowns.Displays
 @using Walk.Common.RazorLib.Dropdowns.Models
@@ -10,13 +9,11 @@
 @using Walk.Ide.RazorLib.Shareds.Displays.Internals
 @using Walk.Ide.RazorLib.Settings.Displays
 @using Walk.Ide.RazorLib.Shareds.Models
-
 @using Walk.Common.RazorLib.Dialogs.Displays
 @using Walk.Common.RazorLib.Widgets.Displays
 @using Walk.Common.RazorLib.Notifications.Displays
 @using Walk.Common.RazorLib.OutOfBoundsClicks.Displays
 @using Walk.Common.RazorLib.Dropdowns.Displays
-
 @using Walk.Common.RazorLib.Panels.Models;
 @using Walk.Common.RazorLib.Tabs.Displays;
 @using Walk.Common.RazorLib.Badges.Displays;
@@ -195,11 +192,17 @@
             </div>
         </div>
     
-        <ResizableColumn ResizableColumnParameter="_topLeftResizableColumnParameter" />
+        <div class="di_resize-column"
+             style="@DotNetService.CommonService.Options_ResizeHandleCssWidth"
+             @onmousedown="() => SubscribeToDragEvent(MainLayoutDragEventKind.TopLeftResizeColumn)">
+        </div>
     
         <EditorDisplay EditorElementDimensions="_editorElementDimensions" />
         
-        <ResizableColumn ResizableColumnParameter="_topRightResizableColumnParameter" />
+        <div class="di_resize-column"
+             style="@DotNetService.CommonService.Options_ResizeHandleCssWidth"
+             @onmousedown="() => SubscribeToDragEvent(MainLayoutDragEventKind.TopRightResizeColumn)">
+        </div>
     
         <div class="@GetPanelElementCssClass(_rightPanelGroupParameter.PanelPositionCss, _rightPanelGroupParameter.CssClassString)"
              style="@GetElementDimensionsStyleString(rightPanelGroup)"
@@ -295,7 +298,10 @@
     </div>
     @* End Body *@
 
-    <ResizableRow ResizableRowParameter="_resizableRowParameter" />
+    <div class="di_resize-row"
+         style="@DotNetService.CommonService.Options_ResizeHandleCssHeight"
+         @onmousedown="() => SubscribeToDragEvent(MainLayoutDragEventKind.BottomResizeRow)">
+    </div>
     
     <div class="@GetPanelElementCssClass(_bottomPanelGroupParameter.PanelPositionCss, _bottomPanelGroupParameter.CssClassString)"
          style="@GetElementDimensionsStyleString(bottomPanelGroup)"
