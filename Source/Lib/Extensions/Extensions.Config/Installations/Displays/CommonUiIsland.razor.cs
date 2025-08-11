@@ -30,8 +30,8 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
     private int _countEventReceived;
     private int _countEventHandled;
     
-    private bool _doTextEditorMeasure = true;
-    private bool _doCommonMeasure = true;
+    private bool _doTextEditorMeasure;
+    private bool _doCommonMeasure;
 
     public double ValueTooltipRelativeX { get; set; }
     public double ValueTooltipRelativeY { get; set; }
@@ -60,6 +60,9 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
         // TODO: Does the object used here matter? Should it be a "smaller" object or is this just reference?
         _dotNetHelper = DotNetObjectReference.Create(this);
         
+        MeasureCommon_GetReady();
+        MeasureTextEditor_GetReady();
+        
         DotNetService.TextEditorService.SecondaryChanged += OnNeedsMeasured;
         DotNetService.CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
     }
@@ -67,7 +70,6 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
     /// <summary>TODO: Thread safety</summary>
     protected override bool ShouldRender()
     {
-        Console.WriteLine($"{_countEventHandled} < {_countEventReceived}");
         // This is expected to cause "eventual thread safety" due to perspective.
         //
         // The '_countEventHandled < _countEventReceived' when true is guaranteed to continue being true
