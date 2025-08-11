@@ -24,34 +24,12 @@ public record struct CodeSearchState(
         Key<TextEditorViewModel>.Empty)
     {
         // topContentHeight
-        {
-            TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
-            {
-                new DimensionUnit(
-                    40,
-                    DimensionUnitKind.Percentage),
-                new DimensionUnit(
-                    0,
-                    DimensionUnitKind.Pixels,
-                    DimensionOperatorKind.Subtract,
-                    DimensionUnitPurposeKind.Offset),
-            });
-        }
+        TopContentElementDimensions.Height_Base_0 = new DimensionUnit(40, DimensionUnitKind.Percentage);
+        TopContentElementDimensions.Height_Offset = new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, DimensionUnitPurposeKind.Offset);
 
         // bottomContentHeight
-        {
-            BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
-            {
-                new DimensionUnit(
-                    60,
-                    DimensionUnitKind.Percentage),
-                new DimensionUnit(
-                    0,
-                    DimensionUnitKind.Pixels,
-                    DimensionOperatorKind.Subtract,
-                    DimensionUnitPurposeKind.Offset),
-            });
-        }
+        BottomContentElementDimensions.Height_Base_0 = new DimensionUnit(60, DimensionUnitKind.Percentage);
+        BottomContentElementDimensions.Height_Offset = new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, DimensionUnitPurposeKind.Offset);
     }
 
     public ElementDimensions TopContentElementDimensions = new();

@@ -620,36 +620,16 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         elementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
 
         // Width
-        {
-            elementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
-            elementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                measuredHtmlElementDimensions.WidthInPixels,
-                DimensionUnitKind.Pixels));
-        }
+        elementDimensions.Width_Base_0 = new DimensionUnit(measuredHtmlElementDimensions.WidthInPixels, DimensionUnitKind.Pixels);
 
         // Height
-        {
-            elementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
-            elementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                measuredHtmlElementDimensions.HeightInPixels,
-                DimensionUnitKind.Pixels));
-        }
+        elementDimensions.Height_Base_0 = new DimensionUnit(measuredHtmlElementDimensions.HeightInPixels, DimensionUnitKind.Pixels);
 
         // Left
-        {
-            elementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
-            elementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                measuredHtmlElementDimensions.LeftInPixels,
-                DimensionUnitKind.Pixels));
-        }
+        elementDimensions.Left_Base_0 = new DimensionUnit(measuredHtmlElementDimensions.LeftInPixels, DimensionUnitKind.Pixels);
 
         // Top
-        {
-            elementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
-            elementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                measuredHtmlElementDimensions.TopInPixels,
-                DimensionUnitKind.Pixels));
-        }
+        elementDimensions.Top_Base_0 = new DimensionUnit(measuredHtmlElementDimensions.TopInPixels, DimensionUnitKind.Pixels);
 
         dropzoneList.Add(new TextEditorGroupDropzone(
             measuredHtmlElementDimensions,
@@ -791,36 +771,16 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
         fallbackElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
 
         // Width
-        {
-            fallbackElementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
-            fallbackElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                100,
-                DimensionUnitKind.ViewportWidth));
-        }
+        fallbackElementDimensions.Width_Base_0 = new DimensionUnit(100, DimensionUnitKind.ViewportWidth);
 
         // Height
-        {
-            fallbackElementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
-            fallbackElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                100,
-                DimensionUnitKind.ViewportHeight));
-        }
+        fallbackElementDimensions.Height_Base_0 = new DimensionUnit(100, DimensionUnitKind.ViewportHeight);
 
         // Left
-        {
-            fallbackElementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
-            fallbackElementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                0,
-                DimensionUnitKind.Pixels));
-        }
+        fallbackElementDimensions.Left_Base_0 = new DimensionUnit(0, DimensionUnitKind.Pixels);
 
         // Top
-        {
-            fallbackElementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
-            fallbackElementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                0,
-                DimensionUnitKind.Pixels));
-        }
+        fallbackElementDimensions.Top_Base_0 = new DimensionUnit(0, DimensionUnitKind.Pixels);
 
         dropzoneList.Add(new TextEditorGroupDropzone(
             new MeasuredHtmlElementDimensions(0, 0, 0, 0, 0),
@@ -856,36 +816,16 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
             elementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
 
             // Width
-            {
-                elementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
-                elementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                    measuredHtmlElementDimensions.WidthInPixels,
-                    DimensionUnitKind.Pixels));
-            }
+            elementDimensions.Width_Base_0 = new DimensionUnit(measuredHtmlElementDimensions.WidthInPixels, DimensionUnitKind.Pixels);
 
             // Height
-            {
-                elementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
-                elementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                    measuredHtmlElementDimensions.HeightInPixels,
-                    DimensionUnitKind.Pixels));
-            }
+            elementDimensions.Height_Base_0 = new DimensionUnit(measuredHtmlElementDimensions.HeightInPixels, DimensionUnitKind.Pixels);
 
             // Left
-            {
-                elementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
-                elementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                    measuredHtmlElementDimensions.LeftInPixels,
-                    DimensionUnitKind.Pixels));
-            }
+            elementDimensions.Left_Base_0 = new DimensionUnit(measuredHtmlElementDimensions.LeftInPixels, DimensionUnitKind.Pixels);
 
             // Top
-            {
-                elementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
-                elementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                    measuredHtmlElementDimensions.TopInPixels,
-                    DimensionUnitKind.Pixels));
-            }
+            elementDimensions.Top_Base_0 = new DimensionUnit(measuredHtmlElementDimensions.TopInPixels, DimensionUnitKind.Pixels);
 
             dropzoneList.Add(new PanelGroupDropzone(
                 measuredHtmlElementDimensions,
