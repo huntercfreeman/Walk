@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.ListExtensions;
 using Walk.Common.RazorLib.Panels.Models;
@@ -10,6 +11,8 @@ public partial class CommonService
     private PanelState _panelState = new();
     
     public PanelState GetPanelState() => _panelState;
+    
+    public MainLayoutDragEventKind MainLayoutDragEventKind { get; set; }
     
     public string BodyElementStyle { get; set; } = "height: 78%;";
     public string BottomPanelStyle { get; set; } = "height: 22%";
@@ -434,5 +437,38 @@ public partial class CommonService
         the pixel size is still known and is still re-calculated as a percentage of the new app size
         just the same as if it had an active tab.
         */
+    }
+    
+    public Task DragEventHandlerResizeHandleAsync(
+        ElementDimensions leftElementDimensions,
+        ElementDimensions rightElementDimensions,
+        (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs) mouseEventArgsTuple)
+    {
+        var diffX = mouseEventArgsTuple.secondMouseEventArgs.ClientX - mouseEventArgsTuple.firstMouseEventArgs.ClientX;
+        var diffY = mouseEventArgsTuple.secondMouseEventArgs.ClientY - mouseEventArgsTuple.firstMouseEventArgs.ClientY;
+    
+        switch (MainLayoutDragEventKind)
+        {
+            case MainLayoutDragEventKind.TopLeftResizeColumn:
+                LeftPanelWidth += diffX;
+                EditorElementWidth -= diffX;
+                LeftPanelStyle = $"width: {LeftPanelWidth}px";
+                EditorElementStyle = $"width: {EditorElementWidth}px";
+                break;
+            case MainLayoutDragEventKind.TopRightResizeColumn:
+                RightPanelWidth -= diffX;
+                EditorElementWidth += diffX;
+                LeftPanelStyle = $"width: {LeftPanelWidth}px";
+                EditorElementStyle = $"width: {EditorElementWidth}px";
+                break;
+            case MainLayoutDragEventKind.BottomResizeRow:
+                BodyElementHeight += diffY;
+                BottomPanelHeight -= diffY;
+                BodyElementStyle = $"height: {BodyElementHeight}px;";
+                BottomPanelStyle = $"height: {BottomPanelHeight}px";
+                break;
+        }
+    
+        return Task.CompletedTask;
     }
 }

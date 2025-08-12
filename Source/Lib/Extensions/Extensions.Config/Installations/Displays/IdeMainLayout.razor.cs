@@ -630,20 +630,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     public void SubscribeToDragEvent(MainLayoutDragEventKind mainLayoutDragEventKind)
     {
-        _mainLayoutDragEventKind = mainLayoutDragEventKind;
-        
-        if (_mainLayoutDragEventKind == MainLayoutDragEventKind.TopLeftResizeColumn)
-        {
-            _dragEventHandler = Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.DragEventHandlerResizeHandleAsync;
-        }
-        else if (_mainLayoutDragEventKind == MainLayoutDragEventKind.TopRightResizeColumn)
-        {
-            _dragEventHandler = Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.DragEventHandlerResizeHandleAsync;
-        }
-        else if (_mainLayoutDragEventKind == MainLayoutDragEventKind.BottomResizeRow)
-        {
-            _dragEventHandler = Walk.Common.RazorLib.Resizes.Displays.ResizableRow.DragEventHandlerResizeHandleAsync;
-        }
+        DotNetService.CommonService.MainLayoutDragEventKind = mainLayoutDragEventKind;
+        _dragEventHandler = DotNetService.CommonService.DragEventHandlerResizeHandleAsync;
         
         DotNetService.CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
     }
