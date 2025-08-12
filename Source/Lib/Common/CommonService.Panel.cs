@@ -458,7 +458,7 @@ public partial class CommonService
             case MainLayoutDragEventKind.TopRightResizeColumn:
                 RightPanelWidth -= diffX;
                 EditorElementWidth += diffX;
-                LeftPanelStyle = $"width: {LeftPanelWidth}px";
+                RightPanelStyle = $"width: {RightPanelWidth}px";
                 EditorElementStyle = $"width: {EditorElementWidth}px";
                 break;
             case MainLayoutDragEventKind.BottomResizeRow:
