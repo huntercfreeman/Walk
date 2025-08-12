@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Resizes.Models;
+using Walk.Common.RazorLib.Resizes.Displays;
 using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.Ide.RazorLib.CodeSearches.Models;
@@ -23,6 +26,9 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
     private TreeViewContainerParameter _treeViewContainerParameter;
     
     private ResizableRowParameter _resizableRowParameter;
+    
+    private Func<ElementDimensions, ElementDimensions, (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;
+    private MouseEventArgs? _previousDragMouseEventArgs;
 
     private string InputValue
     {
@@ -51,7 +57,7 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
             HandleResizableRowReRenderAsync);
     
         IdeService.IdeStateChanged += OnCodeSearchStateChanged;
-        IdeService.CommonService.CommonUiStateChanged += OnTreeViewStateChanged;
+        IdeService.CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
         
         _treeViewContainerParameter = new(
             CodeSearchState.TreeViewCodeSearchContainerKey,
@@ -97,11 +103,25 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
         await InvokeAsync(StateHasChanged);
     }
     
-    public async void OnTreeViewStateChanged(CommonUiEventKind commonUiEventKind)
+    public async void OnCommonUiStateChanged(CommonUiEventKind commonUiEventKind)
     {
         if (commonUiEventKind == CommonUiEventKind.TreeViewStateChanged)
         {
             await InvokeAsync(StateHasChanged);
+        }
+        else if (commonUiEventKind == CommonUiEventKind.DragStateChanged)
+        {
+            if (_dragEventHandler is not null)
+            {
+                await ResizableRow.Do(
+                    IdeService.CommonService,
+                    _resizableRowParameter.TopElementDimensions,
+                    _resizableRowParameter.BottomElementDimensions,
+                    _dragEventHandler,
+                    _previousDragMouseEventArgs,
+                    x => _dragEventHandler = x,
+                    x => _previousDragMouseEventArgs = x);
+            }
         }
     }
     
@@ -113,9 +133,15 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
         }
     }
     
+    public void SubscribeToDragEvent()
+    {
+        _dragEventHandler = ResizableRow.DragEventHandlerResizeHandleAsync;
+        IdeService.CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
+    }
+    
     public void Dispose()
     {
         IdeService.IdeStateChanged -= OnCodeSearchStateChanged;
-        IdeService.CommonService.CommonUiStateChanged -= OnTreeViewStateChanged;
+        IdeService.CommonService.CommonUiStateChanged -= OnCommonUiStateChanged;
     }
 }

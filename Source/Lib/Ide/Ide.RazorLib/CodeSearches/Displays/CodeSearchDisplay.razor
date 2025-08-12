@@ -47,7 +47,10 @@
         <TreeViewContainerDisplay TreeViewContainerParameter="_treeViewContainerParameter"/>
     </div>
 
-    <ResizableRow ResizableRowParameter="_resizableRowParameter"/>
+    <div class="di_resize-row"
+         style="@IdeService.CommonService.Options_ResizeHandleCssHeight"
+         @onmousedown="() => SubscribeToDragEvent()">
+    </div>
     
     <div class="di_ide_find-all-bottom-content"
          style="@codeSearchState.BottomContentElementDimensions.GetStyleString(IdeService.CommonService.UiStringBuilder)">
