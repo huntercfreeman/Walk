@@ -16,20 +16,20 @@ public partial class CommonService
     
     // width: 100%;
     // height: calc(78% - (DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2)px - (CommonFacts.Ide_Header_Height.Value / 2)rem);
-    public double BodyElementSize { get; set; }
+    public double BodyElementHeight { get; set; }
     // width: 33.3333% - ???;
     // height: 100%;
-    public double LeftPanelSize { get; set; }
+    public double LeftPanelWidth { get; set; }
     // width: 33.3333% - (DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2 ??????????? )px;
     // height: 100%;
-    public double EditorElementSize { get; set; }
+    public double EditorElementWidth { get; set; }
     // width: 33.3333% - ???;
     // height: 100%;
-    public double RightPanelSize { get; set; }
+    public double RightPanelWidth { get; set; }
     
     // width: 100%;
     // height: calc(22% - ??? - (CommonFacts.Ide_Header_Height.Value / 2)rem);
-    public double BottomPanelSize { get; set; }
+    public double BottomPanelHeight { get; set; }
     
     public void SetPanelState(PanelState panelState)
     {
@@ -303,13 +303,31 @@ public partial class CommonService
     
     public void Panel_OnUserAgent_AppDimensionStateChanged()
     {
-        WidthAppAtTimeOfCalculations;
-        HeightAppAtTimeOfCalculations;
-        Top;
-        BodyElementSize;
-        LeftPanelSize;
-        EditorElementSize;
-        RightPanelSize;
-        BottomPanelSize;
+        var appDimensionState = _appDimensionState;
+    
+        WidthAppAtTimeOfCalculations = appDimensionState.Width;
+        HeightAppAtTimeOfCalculations = appDimensionState.Height;
+        
+        // DON'T FORGET THE LINEHEIGHT!!!
+        // TABS ALWAYS EXIST
+        //
+        // Why is the header in rem it is just annoying and makes everything 100x more complicated.
+        
+        // width: 100%;
+        // height: calc(78% - (DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2)px - (CommonFacts.Ide_Header_Height.Value / 2)rem);
+        BodyElementHeight = HeightAppAtTimeOfCalculations * 0.78 - (GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2) - ;
+        // width: 33.3333% - ???;
+        // height: 100%;
+        LeftPanelWidth;
+        // width: 33.3333% - (DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2 ??????????? )px;
+        // height: 100%;
+        EditorElementWidth;
+        // width: 33.3333% - ???;
+        // height: 100%;
+        RightPanelWidth;
+        
+        // width: 100%;
+        // height: calc(22% - ??? - (CommonFacts.Ide_Header_Height.Value / 2)rem);
+        BottomPanelHeight;
     }
 }
