@@ -511,18 +511,30 @@ public partial class CommonService
         switch (MainLayoutDragEventKind)
         {
             case MainLayoutDragEventKind.TopLeftResizeColumn:
+                if (_panelState.TopLeftPanelGroup.ActiveTab is null)
+                {
+                    break;
+                }
                 LeftPanelWidth += diffX;
                 EditorElementWidth -= diffX;
                 LeftPanelStyle = $"width: {LeftPanelWidth}px";
                 EditorElementStyle = $"width: {EditorElementWidth}px";
                 break;
             case MainLayoutDragEventKind.TopRightResizeColumn:
+                if (_panelState.TopRightPanelGroup.ActiveTab is null)
+                {
+                    break;
+                }
                 RightPanelWidth -= diffX;
                 EditorElementWidth += diffX;
                 RightPanelStyle = $"width: {RightPanelWidth}px";
                 EditorElementStyle = $"width: {EditorElementWidth}px";
                 break;
             case MainLayoutDragEventKind.BottomResizeRow:
+                if (_panelState.BottomPanelGroup.ActiveTab is null)
+                {
+                    break;
+                }
                 BodyElementHeight += diffY;
                 BottomPanelHeight -= diffY;
                 BodyElementStyle = $"height: {BodyElementHeight}px;";
@@ -663,6 +675,46 @@ public partial class CommonService
     
     private void BottomPanelGroupShowingTabStateChanged()
     {
+        var bottomPanel = _panelState.BottomPanelGroup;
         
+        var localBottomPanelHeight = BottomPanelHeight;
+        var localBodyElementHeight = BodyElementHeight;
+        
+        if (bottomPanel.ActiveTab is null)
+        {
+            localBodyElementHeight += (localBottomPanelHeight - Options_LineHeight);
+        }
+        else
+        {
+            var totalBottomPanelAndEditorHeight = localBodyElementHeight + localBottomPanelHeight;
+            
+            localBodyElementHeight -= (localBottomPanelHeight - Options_LineHeight);
+            
+            if (localBodyElementHeight < 100)
+            {
+                double change = 0;
+                
+                if (localBodyElementHeight < 0)
+                {
+                    change = -1 * localBodyElementHeight;
+                }
+                
+                change += 100 - (localBodyElementHeight + change);
+                
+                localBodyElementHeight += change;
+                localBottomPanelHeight -= change;
+                
+                if (localBottomPanelHeight < 100)
+                {
+                    localBottomPanelHeight = 100;
+                    localBodyElementHeight = HeightAppAtTimeOfCalculations - 100;
+                }
+            }
+        }
+        
+        BottomPanelHeight = localBottomPanelHeight;
+        BodyElementHeight = localBodyElementHeight;
+        
+        Panels_CreateStyleStrings();
     }
 }
