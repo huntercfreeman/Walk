@@ -105,7 +105,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         InitPanelGroup(DotNetService, _rightPanelGroupParameter);
         InitPanelGroup(DotNetService, _bottomPanelGroupParameter);
 
-        InitializationHelper.EnqueueOnInitializedSteps(DotNetService);
+        
 
         DotNetService.CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
         DotNetService.TextEditorService.SecondaryChanged += TextEditorOptionsStateWrap_StateChanged;
@@ -116,6 +116,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         if (firstRender)
         {
+            await InitializationHelper.EnqueueOnInitializedSteps(DotNetService);
             await InitializationHelper.InitializeOnAfterRenderFirstRender(DotNetService, BrowserResizeInterop, _workerCancellationTokenSource);
             DotNetService.CommonService.Panel_OnUserAgent_AppDimensionStateChanged();
             await InvokeAsync(StateHasChanged);
