@@ -20,11 +20,14 @@ public class WalkCommonJavaScriptInteropApi
         JsRuntime = jsRuntime;
     }
 
-    public ValueTask SubscribeWindowSizeChanged(DotNetObjectReference<BrowserResizeInterop> browserResizeInteropDotNetObjectReference)
+    public ValueTask<AppDimensionState> SubscribeWindowSizeChanged(
+        DotNetObjectReference<BrowserResizeInterop> browserResizeInteropDotNetObjectReference,
+        string rootHtmlElementId)
     {
-        return JsRuntime.InvokeVoidAsync(
+        return JsRuntime.InvokeAsync<AppDimensionState>(
             "walkCommon.subscribeWindowSizeChanged",
-            browserResizeInteropDotNetObjectReference);
+            browserResizeInteropDotNetObjectReference,
+            rootHtmlElementId);
     }
 
     public ValueTask DisposeWindowSizeChanged()

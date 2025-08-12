@@ -21,34 +21,12 @@ public record TestExplorerState(
         FailedTestHashSet: new())
     {
         // TreeView ElementDimensions
-        {
-            TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
-            {
-                new DimensionUnit(
-                    50,
-                    DimensionUnitKind.Percentage),
-                new DimensionUnit(
-                    0,
-                    DimensionUnitKind.Pixels,
-                    DimensionOperatorKind.Subtract,
-                    DimensionUnitPurposeKind.Offset),
-            });
-        }
+        TreeViewElementDimensions.Width_Base_0 = new DimensionUnit(50, DimensionUnitKind.Percentage);
+        TreeViewElementDimensions.Width_Offset = new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
 
         // Details ElementDimensions
-        {
-            DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
-            {
-                new DimensionUnit(
-                    50,
-                    DimensionUnitKind.Percentage),
-                new DimensionUnit(
-                    0,
-                    DimensionUnitKind.Pixels,
-                    DimensionOperatorKind.Subtract,
-                    DimensionUnitPurposeKind.Offset),
-            });
-        }
+        DetailsElementDimensions.Width_Base_0 = new DimensionUnit(50, DimensionUnitKind.Percentage);
+        DetailsElementDimensions.Width_Offset = new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
     }
 
     public List<ProjectTestModel> ProjectTestModelList { get; init; } = new();

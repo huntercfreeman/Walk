@@ -3,44 +3,17 @@ using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Resizes.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 
-namespace Walk.Common.RazorLib.Resizes.Displays;
+namespace Walk.Common.RazorLib.Resizes.Models;
 
-public partial class ResizableColumn : ComponentBase, IDisposable
+/// <summary>
+/// TODO: Rename this type
+/// </summary>
+public static class ResizableRow
 {
-    [Inject]
-    private CommonService CommonService { get; set; } = null!;
-
-    [Parameter, EditorRequired]
-    public ResizableColumnParameter ResizableColumnParameter { get; set; }
-
-    private Func<ElementDimensions, ElementDimensions, (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;
-    private MouseEventArgs? _previousDragMouseEventArgs;
-
-    protected override void OnInitialized()
-    {
-        CommonService.CommonUiStateChanged += DragStateWrapOnStateChanged;
-    }
-    
-    public async void DragStateWrapOnStateChanged(CommonUiEventKind commonUiEventKind)
-    {
-        if (commonUiEventKind != CommonUiEventKind.DragStateChanged)
-            return;
-            
-        await Do(
-            CommonService,
-            ResizableColumnParameter.LeftElementDimensions,
-            ResizableColumnParameter.RightElementDimensions,
-            _dragEventHandler,
-            _previousDragMouseEventArgs,
-            x => _dragEventHandler = x,
-            x => _previousDragMouseEventArgs = x);
-        await ResizableColumnParameter.ReRenderFuncAsync.Invoke().ConfigureAwait(false);
-    }
-    
     public static async Task Do(
         CommonService commonService,
-        ElementDimensions leftElementDimensions,
-        ElementDimensions rightElementDimensions,
+        ElementDimensions topElementDimensions,
+        ElementDimensions bottomElementDimensions,
         Func<ElementDimensions, ElementDimensions, (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? dragEventHandler,
         MouseEventArgs? previousDragMouseEventArgs,
         Action<Func<ElementDimensions, ElementDimensions, (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>?> setDragEventHandler,
@@ -65,7 +38,7 @@ public partial class ResizableColumn : ComponentBase, IDisposable
                 if (previousDragMouseEventArgs is not null && mouseEventArgs is not null)
                 {
                     await dragEventHandler
-                        .Invoke(leftElementDimensions, rightElementDimensions, (previousDragMouseEventArgs, mouseEventArgs))
+                        .Invoke(topElementDimensions, bottomElementDimensions, (previousDragMouseEventArgs, mouseEventArgs))
                         .ConfigureAwait(false);
                 }
 
@@ -73,7 +46,7 @@ public partial class ResizableColumn : ComponentBase, IDisposable
             }
         }
     }
-
+    
     public static void SubscribeToDragEvent(
         CommonService commonService,
         Func<ElementDimensions, ElementDimensions, (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task> dragEventHandler,
@@ -84,25 +57,20 @@ public partial class ResizableColumn : ComponentBase, IDisposable
     }
 
     public static Task DragEventHandlerResizeHandleAsync(
-        ElementDimensions leftElementDimensions,
-        ElementDimensions rightElementDimensions,
+        ElementDimensions topElementDimensions,
+        ElementDimensions bottomElementDimensions,
         (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs) mouseEventArgsTuple)
     {
-        ResizeHelper.ResizeWest(
-            leftElementDimensions,
+        ResizeHelper.ResizeNorth(
+            topElementDimensions,
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
 
-        ResizeHelper.ResizeEast(
-            rightElementDimensions,
+        ResizeHelper.ResizeSouth(
+            bottomElementDimensions,
             mouseEventArgsTuple.firstMouseEventArgs,
             mouseEventArgsTuple.secondMouseEventArgs);
-    
+
         return Task.CompletedTask;
-    }
-
-    public void Dispose()
-    {
-        CommonService.CommonUiStateChanged -= DragStateWrapOnStateChanged;
     }
 }

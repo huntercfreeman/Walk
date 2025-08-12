@@ -101,36 +101,32 @@ public record Panel : IPanelTab, IDialog, IDrag
             elementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
 
             // Width
+            elementDimensions.DisableWidth();
+            elementDimensions.Width_Base_0 = elementDimensions.Width_Base_0 with
             {
-                elementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
-                elementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                    measuredHtmlElementDimensions.WidthInPixels,
-                    DimensionUnitKind.Pixels));
-            }
+                Value = measuredHtmlElementDimensions.WidthInPixels
+            };
 
             // Height
+            elementDimensions.DisableHeight();
+            elementDimensions.Height_Base_0 = elementDimensions.Height_Base_0 with
             {
-                elementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
-                elementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                    measuredHtmlElementDimensions.HeightInPixels,
-                    DimensionUnitKind.Pixels));
-            }
+                Value = measuredHtmlElementDimensions.HeightInPixels
+            };
 
             // Left
+            elementDimensions.DisableLeft();
+            elementDimensions.Left_Base_0 = elementDimensions.Left_Base_0 with
             {
-                elementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
-                elementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                    measuredHtmlElementDimensions.LeftInPixels,
-                    DimensionUnitKind.Pixels));
-            }
+                Value = measuredHtmlElementDimensions.LeftInPixels
+            };
 
             // Top
+            elementDimensions.DisableTop();
+            elementDimensions.Top_Base_0 = elementDimensions.Top_Base_0 with
             {
-                elementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
-                elementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                    measuredHtmlElementDimensions.TopInPixels,
-                    DimensionUnitKind.Pixels));
-            }
+                Value = measuredHtmlElementDimensions.TopInPixels
+            };
 
             dropzoneList.Add(new PanelGroupDropzone(
                 measuredHtmlElementDimensions,
@@ -217,28 +213,20 @@ public record Panel : IPanelTab, IDialog, IDrag
         fallbackElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
 
         // Width
-        {
-            fallbackElementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
-            fallbackElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(100, DimensionUnitKind.ViewportWidth));
-        }
+        fallbackElementDimensions.DisableWidth();
+        fallbackElementDimensions.Width_Base_0 = new DimensionUnit(100, DimensionUnitKind.ViewportWidth);
 
         // Height
-        {
-            fallbackElementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
-            fallbackElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(100, DimensionUnitKind.ViewportHeight));
-        }
+        fallbackElementDimensions.DisableHeight();
+        fallbackElementDimensions.Height_Base_0 = new DimensionUnit(100, DimensionUnitKind.ViewportHeight);
 
         // Left
-        {
-            fallbackElementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
-            fallbackElementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(0, DimensionUnitKind.Pixels));
-        }
+        fallbackElementDimensions.DisableLeft();
+        fallbackElementDimensions.Left_Base_0 = new DimensionUnit(0, DimensionUnitKind.Pixels);
 
         // Top
-        {
-            fallbackElementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
-            fallbackElementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(0, DimensionUnitKind.Pixels));
-        }
+        fallbackElementDimensions.DisableTop();
+        fallbackElementDimensions.Top_Base_0 = new DimensionUnit(0, DimensionUnitKind.Pixels);
 
         dropzoneList.Add(new PanelGroupDropzone(
             new MeasuredHtmlElementDimensions(0, 0, 0, 0, 0),

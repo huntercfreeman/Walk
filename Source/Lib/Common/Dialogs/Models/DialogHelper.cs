@@ -11,17 +11,13 @@ public static class DialogHelper
             ElementPositionKind = ElementPositionKind.Fixed
         };
 
-        elementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(
-            new DimensionUnit(60, DimensionUnitKind.ViewportWidth));
+        elementDimensions.Width_Base_0 = new DimensionUnit(60, DimensionUnitKind.ViewportWidth);
 
-        elementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(
-            new DimensionUnit(60, DimensionUnitKind.ViewportHeight));
+        elementDimensions.Height_Base_0 = new DimensionUnit(60, DimensionUnitKind.ViewportHeight);
 
-        elementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(
-            new DimensionUnit(20, DimensionUnitKind.ViewportWidth));
+        elementDimensions.Left_Base_0 = new DimensionUnit(20, DimensionUnitKind.ViewportWidth);
 
-        elementDimensions.TopDimensionAttribute.DimensionUnitList.Add(
-            new DimensionUnit(20, DimensionUnitKind.ViewportHeight));
+        elementDimensions.Top_Base_0 = new DimensionUnit(20, DimensionUnitKind.ViewportHeight);
 
         return elementDimensions;
     }

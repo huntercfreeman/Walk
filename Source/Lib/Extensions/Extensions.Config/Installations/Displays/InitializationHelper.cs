@@ -166,7 +166,7 @@ public static class InitializationHelper
             }
         }
 
-        BrowserResizeInterop.SubscribeWindowSizeChanged(DotNetService.CommonService.JsRuntimeCommonApi);
+        await BrowserResizeInterop.SubscribeWindowSizeChanged(DotNetService.CommonService.JsRuntimeCommonApi);
     }
     
     public static void InitializeMenuRun(DotNetService DotNetService)
@@ -652,26 +652,10 @@ public static class InitializationHelper
         // InitializeRightPanelTabs();
         var rightPanel = panelState.TopRightPanelGroup;
         rightPanel.CommonService = DotNetService.CommonService;
-        Panel_InitializeResizeHandleDimensionUnit(
-            DotNetService,
-            rightPanel.Key,
-            new DimensionUnit(
-                () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
-                DimensionUnitKind.Pixels,
-                DimensionOperatorKind.Subtract,
-                DimensionUnitPurposeKind.ResizableHandleColumn));
         
         // InitializeBottomPanelTabs();
         var bottomPanel = panelState.BottomPanelGroup;
         bottomPanel.CommonService = DotNetService.CommonService;
-        Panel_InitializeResizeHandleDimensionUnit(
-            DotNetService,
-            bottomPanel.Key,
-            new DimensionUnit(
-                () => appOptionsState.Options.ResizeHandleHeightInPixels / 2,
-                DimensionUnitKind.Pixels,
-                DimensionOperatorKind.Subtract,
-                DimensionUnitPurposeKind.ResizableHandleRow));
 
         // terminalGroupPanel
         var terminalGroupPanel = new Panel(
@@ -720,198 +704,11 @@ public static class InitializationHelper
         ((List<Panel>)panelState.PanelList).Add(nuGetPanel);
         ((List<IPanelTab>)bottomPanel.TabList).Add(nuGetPanel);
         
-        CodeSearch_InitializeResizeHandleDimensionUnit(
-            DotNetService,
-            new DimensionUnit(
-                () => appOptionsState.Options.ResizeHandleHeightInPixels / 2,
-                DimensionUnitKind.Pixels,
-                DimensionOperatorKind.Subtract,
-                DimensionUnitPurposeKind.ResizableHandleRow));
-    
-        Panel_InitializeResizeHandleDimensionUnit(
-            DotNetService,
-            leftPanel.Key,
-            new DimensionUnit(
-                () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
-                DimensionUnitKind.Pixels,
-                DimensionOperatorKind.Subtract,
-                DimensionUnitPurposeKind.ResizableHandleColumn));
-        
-        // terminalGroupPanel: This UI has resizable parts that need to be initialized.
-        TerminalGroup_InitializeResizeHandleDimensionUnit(
-            DotNetService,
-            new DimensionUnit(
-                () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
-                DimensionUnitKind.Pixels,
-                DimensionOperatorKind.Subtract,
-                DimensionUnitPurposeKind.ResizableHandleColumn));
-        
-        // testExplorerPanel: This UI has resizable parts that need to be initialized.
-        ReduceInitializeResizeHandleDimensionUnitAction(
-            DotNetService,
-            new DimensionUnit(
-                () => appOptionsState.Options.ResizeHandleWidthInPixels / 2,
-                DimensionUnitKind.Pixels,
-                DimensionOperatorKind.Subtract,
-                DimensionUnitPurposeKind.ResizableHandleColumn));
-    
         // SetActivePanelTabAction
         DotNetService.CommonService.SetActivePanelTab(leftPanel.Key, solutionExplorerPanel.Key);
         
         // SetActivePanelTabAction
         DotNetService.CommonService.SetActivePanelTab(bottomPanel.Key, outputPanel.Key);
-    }
-
-    public static void Panel_InitializeResizeHandleDimensionUnit(DotNetService DotNetService, Key<PanelGroup> panelGroupKey, DimensionUnit dimensionUnit)
-    {
-        var inState = DotNetService.CommonService.GetPanelState();
-
-        PanelGroup inPanelGroup;
-            
-        if (panelGroupKey == inState.TopLeftPanelGroup.Key)
-        {
-            inPanelGroup = inState.TopLeftPanelGroup;
-        }
-        else if (panelGroupKey == inState.TopRightPanelGroup.Key)
-        {
-            inPanelGroup = inState.TopRightPanelGroup;
-        }
-        else if (panelGroupKey == inState.BottomPanelGroup.Key)
-        {
-            inPanelGroup = inState.BottomPanelGroup;
-        }
-        else
-        {
-            return;
-        }
-
-        if (inPanelGroup is not null)
-        {
-            if (dimensionUnit.Purpose == DimensionUnitPurposeKind.ResizableHandleRow ||
-                dimensionUnit.Purpose == DimensionUnitPurposeKind.ResizableHandleColumn)
-            {
-                if (dimensionUnit.Purpose == DimensionUnitPurposeKind.ResizableHandleRow)
-                {
-                    if (inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList is not null)
-                    {
-                        var existingDimensionUnit = inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList
-                            .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-        
-                        if (existingDimensionUnit.Purpose == DimensionUnitPurposeKind.None)
-                            inPanelGroup.ElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-                    }
-                }
-                else if (dimensionUnit.Purpose != DimensionUnitPurposeKind.ResizableHandleColumn)
-                {
-                    if (inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList is not null)
-                    {
-                        var existingDimensionUnit = inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList
-                            .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-        
-                        if (existingDimensionUnit.Purpose == DimensionUnitPurposeKind.None)
-                            inPanelGroup.ElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-                    }
-                }
-            }
-        }
-    }
-    
-    public static void ReduceInitializeResizeHandleDimensionUnitAction(DotNetService DotNetService, DimensionUnit dimensionUnit)
-    {
-        var inState = DotNetService.GetTestExplorerState();
-
-        if (dimensionUnit.Purpose != DimensionUnitPurposeKind.ResizableHandleColumn)
-        {
-            return;
-        }
-
-        // TreeViewElementDimensions
-        {
-            if (inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
-            {
-                return;
-            }
-
-            var existingDimensionUnit = inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList
-                .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-
-            if (existingDimensionUnit.Purpose != DimensionUnitPurposeKind.None)
-            {
-                return;
-            }
-
-            inState.TreeViewElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-        }
-
-        // DetailsElementDimensions
-        {
-            if (inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList is null)
-            {
-                return;
-            }
-
-            var existingDimensionUnit = inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList
-                .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-
-            if (existingDimensionUnit.Purpose != DimensionUnitPurposeKind.None)
-            {
-                return;
-            }
-
-            inState.DetailsElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-        }
-    }
-    
-    public static void CodeSearch_InitializeResizeHandleDimensionUnit(DotNetService DotNetService, DimensionUnit dimensionUnit)
-    {
-        var codeSearchState = DotNetService.IdeService.GetCodeSearchState();
-    
-        if (dimensionUnit.Purpose == DimensionUnitPurposeKind.ResizableHandleRow)
-        {
-            if (codeSearchState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList is not null)
-            {
-                var existingDimensionUnit = codeSearchState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList
-                    .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-
-                if (existingDimensionUnit.Purpose == DimensionUnitPurposeKind.None)
-                    codeSearchState.TopContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-            }
-
-            if (codeSearchState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList is not null)
-            {
-                var existingDimensionUnit = codeSearchState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList
-                    .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-
-                if (existingDimensionUnit.Purpose == DimensionUnitPurposeKind.None)
-                    codeSearchState.BottomContentElementDimensions.HeightDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-            }
-        }
-    }
-    
-    public static void TerminalGroup_InitializeResizeHandleDimensionUnit(DotNetService DotNetService, DimensionUnit dimensionUnit)
-    {
-        var terminalGroupState = DotNetService.IdeService.GetTerminalGroupState();
-    
-        if (dimensionUnit.Purpose == DimensionUnitPurposeKind.ResizableHandleColumn)
-        {
-            if (terminalGroupState.BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList is not null)
-            {
-                var existingDimensionUnit = terminalGroupState.BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList
-                    .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-
-                if (existingDimensionUnit.Purpose == DimensionUnitPurposeKind.None)
-                    terminalGroupState.BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-            }
-
-            if (terminalGroupState.TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList is not null)
-            {
-                var existingDimensionUnit = terminalGroupState.TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList
-                    .FirstOrDefault(x => x.Purpose == dimensionUnit.Purpose);
-
-                if (existingDimensionUnit.Purpose == DimensionUnitPurposeKind.None)
-                    terminalGroupState.TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList.Add(dimensionUnit);
-            }
-        }
     }
 
     // private const string TEST_STRING_FOR_MEASUREMENT = "abcdefghijklmnopqrstuvwxyz0123456789";

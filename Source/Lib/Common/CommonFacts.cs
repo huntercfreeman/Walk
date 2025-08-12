@@ -64,10 +64,6 @@ public static class CommonFacts
     public static readonly Key<PanelGroup> BottomPanelGroupKey = Key<PanelGroup>.NewKey();
     /* End PanelFacts */
     
-    /* Start SizeFacts */
-    public static readonly DimensionUnit Ide_Header_Height = new(3, DimensionUnitKind.RootCharacterHeight);
-    /* End SizeFacts */
-    
     /* Start BackgroundTaskFacts */
     public static int ContinuousQueueKey { get; } = 0;
     public static int IndefiniteQueueKey { get; } = 1;

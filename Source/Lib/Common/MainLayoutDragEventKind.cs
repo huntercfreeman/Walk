@@ -1,4 +1,4 @@
-namespace Walk.Extensions.Config.Installations.Displays;
+namespace Walk.Common.RazorLib;
 
 public enum MainLayoutDragEventKind
 {

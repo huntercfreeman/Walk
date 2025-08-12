@@ -13,20 +13,16 @@ public class ResizeHelper
         var deltaY = secondMouseEventArgs.ClientY - firstMouseEventArgs.ClientY;
 
         // Height
+        elementDimensions.Height_Offset = elementDimensions.Height_Offset with
         {
-            elementDimensions.HeightDimensionAttribute.Decrement(
-                deltaY,
-                DimensionUnitKind.Pixels,
-                new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
-        }
+            Value = elementDimensions.Height_Offset.Value - deltaY
+        };
 
         // Top
+        elementDimensions.Top_Offset = elementDimensions.Top_Offset with
         {
-            elementDimensions.TopDimensionAttribute.Increment(
-                deltaY,
-                DimensionUnitKind.Pixels,
-                new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
-        }
+            Value = elementDimensions.Top_Offset.Value + deltaY
+        };
     }
 
     public static void ResizeEast(
@@ -37,12 +33,10 @@ public class ResizeHelper
         var deltaX = secondMouseEventArgs.ClientX - firstMouseEventArgs.ClientX;
 
         // Width
+        elementDimensions.Width_Offset = elementDimensions.Width_Offset with
         {
-            elementDimensions.WidthDimensionAttribute.Increment(
-                deltaX,
-                DimensionUnitKind.Pixels,
-                new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
-        }
+            Value = elementDimensions.Width_Offset.Value + deltaX
+        };
     }
 
     public static void ResizeSouth(
@@ -53,12 +47,10 @@ public class ResizeHelper
         var deltaY = secondMouseEventArgs.ClientY - firstMouseEventArgs.ClientY;
 
         // Height
+        elementDimensions.Height_Offset = elementDimensions.Height_Offset with
         {
-            elementDimensions.HeightDimensionAttribute.Increment(
-                deltaY,
-                DimensionUnitKind.Pixels,
-                new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
-        }
+            Value = elementDimensions.Height_Offset.Value + deltaY
+        };
     }
 
     public static void ResizeWest(
@@ -69,20 +61,16 @@ public class ResizeHelper
         var deltaX = secondMouseEventArgs.ClientX - firstMouseEventArgs.ClientX;
 
         // Width
+        elementDimensions.Width_Offset = elementDimensions.Width_Offset with
         {
-            elementDimensions.WidthDimensionAttribute.Decrement(
-                deltaX,
-                DimensionUnitKind.Pixels,
-                new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
-        }
+            Value = elementDimensions.Width_Offset.Value - deltaX
+        };
 
         // Left
+        elementDimensions.Left_Offset = elementDimensions.Left_Offset with
         {
-            elementDimensions.LeftDimensionAttribute.Increment(
-                deltaX,
-                DimensionUnitKind.Pixels,
-                new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
-        }
+            Value = elementDimensions.Left_Offset.Value + deltaX
+        };
     }
 
     public static void ResizeNorthEast(
@@ -130,19 +118,15 @@ public class ResizeHelper
         var deltaX = secondMouseEventArgs.ClientX - firstMouseEventArgs.ClientX;
 
         // Top
+        elementDimensions.Top_Offset = elementDimensions.Top_Offset with
         {
-            elementDimensions.TopDimensionAttribute.Increment(
-                deltaY,
-                DimensionUnitKind.Pixels,
-                new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
-        }
+            Value = elementDimensions.Top_Offset.Value + deltaY
+        };
 
         // Left
+        elementDimensions.Left_Offset = elementDimensions.Left_Offset with
         {
-            elementDimensions.LeftDimensionAttribute.Increment(
-                deltaX,
-                DimensionUnitKind.Pixels,
-                new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Add));
-        }
+            Value = elementDimensions.Left_Offset.Value + deltaX
+        };
     }
 }

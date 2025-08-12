@@ -15,22 +15,32 @@ const walkCommonDebounce = (callback, wait) => {
 
 const walkCommonOnWindowSizeChanged = walkCommonDebounce(() => {
     var localBrowserResizeInteropDotNetObjectReference = walkCommon.browserResizeInteropDotNetObjectReference;
+    var localRootHtmlElementId = walkCommon.rootHtmlElementId;
 
-    if (!localBrowserResizeInteropDotNetObjectReference) {
+    if (!localBrowserResizeInteropDotNetObjectReference || !localRootHtmlElementId) {
     	return;
     }
     
 	localBrowserResizeInteropDotNetObjectReference
-		.invokeMethodAsync("OnBrowserResize")
+		.invokeMethodAsync("OnBrowserResize", walkCommon.measureAppDimensionState(localRootHtmlElementId))
 		.then(data => data);
 }, 300);
 
 window.walkCommon = {
+    rootHtmlElementId: null,
 	browserResizeInteropDotNetObjectReference: null,
-    subscribeWindowSizeChanged: function (browserResizeInteropDotNetObjectReference) {
+    subscribeWindowSizeChanged: function (browserResizeInteropDotNetObjectReference, rootHtmlElementId) {
     	// https://github.com/chrissainty/BlazorBrowserResize/blob/master/BrowserResize/BrowserResize/wwwroot/js/browser-resize.js
     	walkCommon.browserResizeInteropDotNetObjectReference = browserResizeInteropDotNetObjectReference;
+    	walkCommon.rootHtmlElementId = rootHtmlElementId;
         window.addEventListener("resize", walkCommonOnWindowSizeChanged);
+        
+        var localBrowserResizeInteropDotNetObjectReference = walkCommon.browserResizeInteropDotNetObjectReference;
+        var localRootHtmlElementId = walkCommon.rootHtmlElementId;
+        if (!localBrowserResizeInteropDotNetObjectReference || !localRootHtmlElementId) {
+        	return;
+        }
+        return walkCommon.measureAppDimensionState(localRootHtmlElementId);
     },
     disposeWindowSizeChanged: function () {
     	walkCommon.browserResizeInteropDotNetObjectReference = null;
@@ -340,6 +350,27 @@ window.walkCommon = {
             ViewHeight: element.offsetHeight,
             BoundingClientRectLeft: boundingClientRect.left,
             BoundingClientRectTop: boundingClientRect.top,
+        };
+    },
+    measureAppDimensionState: function (elementId) {
+        let element = document.getElementById(elementId);
+
+        if (!element) {
+            return {
+                Width: 0,
+                Height: 0,
+                Left: 0,
+                Top: 0,
+            };
+        }
+
+		let boundingClientRect = element.getBoundingClientRect();
+		
+		return {
+            Width: element.offsetWidth,
+            Height: element.offsetHeight,
+            Left: boundingClientRect.left,
+            Top: boundingClientRect.top,
         };
     },
     getLineHeightInPixelsById: function (elementId) {

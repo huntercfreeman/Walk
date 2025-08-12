@@ -42,10 +42,6 @@
     	var iconDriver = new IconDriver(
     		appOptionsState.Options.IconSizeInPixels,
     		appOptionsState.Options.IconSizeInPixels);
-        
-        PassAlongSizeIfNoActiveTab(_leftPanelGroupParameter, leftPanelGroup);
-        PassAlongSizeIfNoActiveTab(_rightPanelGroupParameter, rightPanelGroup);
-        PassAlongSizeIfNoActiveTab(_bottomPanelGroupParameter, bottomPanelGroup);
     }
 
     @* Start Header *@
@@ -153,13 +149,14 @@
     
     @* Start Body *@
     <div class="di_body"
-         style="@_bodyElementDimensions.GetStyleString(DotNetService.CommonService.UiStringBuilder)">
+         style="@DotNetService.CommonService.BodyElementStyle">
     
         <div class="@GetPanelElementCssClass(_leftPanelGroupParameter.PanelPositionCss, _leftPanelGroupParameter.CssClassString)"
-             style="@GetElementDimensionsStyleString(leftPanelGroup)"
+             style="@DotNetService.CommonService.LeftPanelStyle"
         	 id="@_leftPanelGroupParameter.PanelPositionCss">
             
             <div class="di_panel-tabs"
+                 style="@DotNetService.CommonService.Rotate_Options_LineHeight_CssStyle"
         		 id="@_leftPanelGroupParameter.HtmlIdTabs">
         
                 @{
@@ -219,7 +216,7 @@
                 }
             </div>
             
-            <div class="di_ide_panel-body">
+            <div class="di_ide_panel-body" style="@GetTopPanelBodyStyle(leftPanelGroup)">
                 @if (leftPanelGroup.ActiveTab is not null)
                 {
                     if (leftPanelGroup.ActiveTab.ComponentType == typeof(Walk.Extensions.DotNet.DotNetSolutions.Displays.SolutionExplorerDisplay))
@@ -252,7 +249,9 @@
              @onmousedown="() => SubscribeToDragEvent(MainLayoutDragEventKind.TopLeftResizeColumn)">
         </div>
     
-        <EditorDisplay EditorElementDimensions="_editorElementDimensions" />
+        <div class="di_ide_editor-display" style="@DotNetService.CommonService.EditorElementStyle">
+            <EditorDisplay/>
+        </div>
         
         <div class="di_resize-column"
              style="@DotNetService.CommonService.Options_ResizeHandleCssWidth"
@@ -260,10 +259,11 @@
         </div>
     
         <div class="@GetPanelElementCssClass(_rightPanelGroupParameter.PanelPositionCss, _rightPanelGroupParameter.CssClassString)"
-             style="@GetElementDimensionsStyleString(rightPanelGroup)"
+             style="@DotNetService.CommonService.RightPanelStyle"
         	 id="@_rightPanelGroupParameter.PanelPositionCss">
             
             <div class="di_panel-tabs"
+        		 style="@DotNetService.CommonService.Rotate_Options_LineHeight_CssStyle"
         		 id="@_rightPanelGroupParameter.HtmlIdTabs">
         
                 @{
@@ -323,7 +323,7 @@
                 }
             </div>
             
-            <div class="di_ide_panel-body">
+            <div class="di_ide_panel-body" style="@GetTopPanelBodyStyle(rightPanelGroup)">
                 @if (rightPanelGroup.ActiveTab is not null)
                 {
                     if (rightPanelGroup.ActiveTab.ComponentType == typeof(Walk.Extensions.DotNet.DotNetSolutions.Displays.SolutionExplorerDisplay))
@@ -359,10 +359,11 @@
     </div>
     
     <div class="@GetPanelElementCssClass(_bottomPanelGroupParameter.PanelPositionCss, _bottomPanelGroupParameter.CssClassString)"
-         style="@GetElementDimensionsStyleString(bottomPanelGroup)"
+         style="@DotNetService.CommonService.BottomPanelStyle"
     	 id="@_bottomPanelGroupParameter.PanelPositionCss">
         
         <div class="di_panel-tabs"
+    		 style="@DotNetService.CommonService.Options_LineHeight_CssStyle"
     		 id="@_bottomPanelGroupParameter.HtmlIdTabs">
     
             @{
@@ -429,7 +430,7 @@
             }
         </div>
         
-        <div class="di_ide_panel-body">
+        <div class="di_ide_panel-body" style="@GetBottomPanelBodyStyle(bottomPanelGroup)">
             @if (bottomPanelGroup.ActiveTab is not null)
             {
                 if (bottomPanelGroup.ActiveTab.ComponentType == typeof(Walk.Extensions.DotNet.DotNetSolutions.Displays.SolutionExplorerDisplay))

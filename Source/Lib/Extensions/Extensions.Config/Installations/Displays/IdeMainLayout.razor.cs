@@ -38,9 +38,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private BrowserResizeInterop BrowserResizeInterop { get; set; } = null!;
     
-    private ElementDimensions _bodyElementDimensions = new();
-    private ElementDimensions _editorElementDimensions = new();
-    
     // NOTE TO SELF: Don't put an event for Drag that makes the website unselectable,...
     // ...just ensure the drag start target is unselectable.
     // I'm pretty sure this works. If it doesn't make sure it isn't cause you're
@@ -58,11 +55,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private PanelGroupParameter _leftPanelGroupParameter;
     private PanelGroupParameter _rightPanelGroupParameter;
     private PanelGroupParameter _bottomPanelGroupParameter;
-    
-    private ResizableColumnParameter _topLeftResizableColumnParameter;
-    private ResizableColumnParameter _topRightResizableColumnParameter;
-    
-    private ResizableRowParameter _resizableRowParameter;
     
     private TabCascadingValueBatch _tabCascadingValueBatch = new();
     
@@ -97,62 +89,17 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
         var panelState = DotNetService.CommonService.GetPanelState();
 
-        _topLeftResizableColumnParameter = new(
-            panelState.TopLeftPanelGroup.ElementDimensions,
-            _editorElementDimensions,
-            () => InvokeAsync(StateHasChanged));
-
-        _topRightResizableColumnParameter = new(
-            _editorElementDimensions,
-            panelState.TopRightPanelGroup.ElementDimensions,
-            () => InvokeAsync(StateHasChanged));
-
-        _resizableRowParameter = new(
-            _bodyElementDimensions,
-            panelState.BottomPanelGroup.ElementDimensions,
-            () => InvokeAsync(StateHasChanged));
-
         _leftPanelGroupParameter = new(
             panelGroupKey: CommonFacts.LeftPanelGroupKey,
-            adjacentElementDimensions: _editorElementDimensions,
-            dimensionAttributeKind: DimensionAttributeKind.Width,
             cssClassString: null);
 
         _rightPanelGroupParameter = new(
             panelGroupKey: CommonFacts.RightPanelGroupKey,
-            adjacentElementDimensions: _editorElementDimensions,
-            dimensionAttributeKind: DimensionAttributeKind.Width,
             cssClassString: null);
 
         _bottomPanelGroupParameter = new(
             panelGroupKey: CommonFacts.BottomPanelGroupKey,
-            cssClassString: "di_ide_footer",
-            adjacentElementDimensions: _bodyElementDimensions,
-            dimensionAttributeKind: DimensionAttributeKind.Height);
-
-        _bodyElementDimensions.HeightDimensionAttribute.DimensionUnitList.AddRange(new[]
-        {
-            new DimensionUnit(78, DimensionUnitKind.Percentage),
-            new DimensionUnit(
-                DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2,
-                DimensionUnitKind.Pixels,
-                DimensionOperatorKind.Subtract),
-            new DimensionUnit(
-                CommonFacts.Ide_Header_Height.Value / 2,
-                CommonFacts.Ide_Header_Height.DimensionUnitKind,
-                DimensionOperatorKind.Subtract)
-        });
-
-        _editorElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
-        {
-            new DimensionUnit(
-                33.3333,
-                DimensionUnitKind.Percentage),
-            new DimensionUnit(
-                DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2,
-                DimensionUnitKind.Pixels,
-                DimensionOperatorKind.Subtract)
-        });
+            cssClassString: "di_ide_footer");
 
         InitPanelGroup(DotNetService, _leftPanelGroupParameter);
         InitPanelGroup(DotNetService, _rightPanelGroupParameter);
@@ -170,6 +117,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         if (firstRender)
         {
             await InitializationHelper.InitializeOnAfterRenderFirstRender(DotNetService, BrowserResizeInterop, _workerCancellationTokenSource);
+            DotNetService.CommonService.Panel_OnUserAgent_AppDimensionStateChanged();
+            await InvokeAsync(StateHasChanged);
         }
     }
     
@@ -241,6 +190,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             uiStringBuilder.Append("display: flex; justify-content: space-between; border-bottom: ");
             uiStringBuilder.Append(DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels);
             uiStringBuilder.Append("px solid var(--di_primary-border-color);");
+            uiStringBuilder.Append("height: ");
+            uiStringBuilder.Append(DotNetService.CommonService.Options_LineHeight * 2);
+            uiStringBuilder.Append("px;");
             _headerCssStyle = uiStringBuilder.ToString();
         }
     }
@@ -256,6 +208,10 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     StateHasChanged();
                 }).ConfigureAwait(false);
                 break;
+            case CommonUiEventKind.UserAgent_AppDimensionStateChanged:
+                DotNetService.CommonService.Panel_OnUserAgent_AppDimensionStateChanged();
+                await InvokeAsync(StateHasChanged);
+                break;
             case CommonUiEventKind.PanelStateChanged:
                 await InvokeAsync(StateHasChanged);
                 break;
@@ -264,10 +220,10 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 {
                     if (_mainLayoutDragEventKind == MainLayoutDragEventKind.TopLeftResizeColumn)
                     {
-                        await Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.Do(
+                        await Walk.Common.RazorLib.Resizes.Models.ResizableColumn.Do(
                             DotNetService.CommonService,
-                            _topLeftResizableColumnParameter.LeftElementDimensions,
-                            _topLeftResizableColumnParameter.RightElementDimensions,
+                            leftElementDimensions: null,
+                            rightElementDimensions: null,
                             _dragEventHandler,
                             _previousDragMouseEventArgs,
                             x => _dragEventHandler = x,
@@ -275,10 +231,10 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     }
                     else if (_mainLayoutDragEventKind == MainLayoutDragEventKind.TopRightResizeColumn)
                     {
-                        await Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.Do(
+                        await Walk.Common.RazorLib.Resizes.Models.ResizableColumn.Do(
                             DotNetService.CommonService,
-                            _topRightResizableColumnParameter.LeftElementDimensions,
-                            _topRightResizableColumnParameter.RightElementDimensions,
+                            leftElementDimensions: null,
+                            rightElementDimensions: null,
                             _dragEventHandler,
                             _previousDragMouseEventArgs,
                             x => _dragEventHandler = x,
@@ -286,10 +242,10 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     }
                     else if (_mainLayoutDragEventKind == MainLayoutDragEventKind.BottomResizeRow)
                     {
-                        await Walk.Common.RazorLib.Resizes.Displays.ResizableRow.Do(
+                        await Walk.Common.RazorLib.Resizes.Models.ResizableRow.Do(
                             DotNetService.CommonService,
-                            _resizableRowParameter.TopElementDimensions,
-                            _resizableRowParameter.BottomElementDimensions,
+                            topElementDimensions: null,
+                            bottomElementDimensions: null,
                             _dragEventHandler,
                             _previousDragMouseEventArgs,
                             x => _dragEventHandler = x,
@@ -327,72 +283,34 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         return tabList;
     }
 
-    private void PassAlongSizeIfNoActiveTab(PanelGroupParameter panelGroupParameter, PanelGroup panelGroup)
-    {
-        DimensionAttribute adjacentElementSizeDimensionAttribute;
-        DimensionAttribute panelGroupSizeDimensionsAttribute;
-
-        switch (panelGroupParameter.DimensionAttributeKind)
-        {
-            case DimensionAttributeKind.Width:
-                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.WidthDimensionAttribute;
-                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.WidthDimensionAttribute;
-                break;
-            case DimensionAttributeKind.Height:
-                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.HeightDimensionAttribute;
-                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.HeightDimensionAttribute;
-                break;
-            case DimensionAttributeKind.Left:
-                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.LeftDimensionAttribute;
-                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.LeftDimensionAttribute;
-                break;
-            case DimensionAttributeKind.Right:
-                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.RightDimensionAttribute;
-                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.RightDimensionAttribute;
-                break;
-            case DimensionAttributeKind.Top:
-                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.TopDimensionAttribute;
-                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.TopDimensionAttribute;
-                break;
-            case DimensionAttributeKind.Bottom:
-                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.BottomDimensionAttribute;
-                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.BottomDimensionAttribute;
-                break;
-            default:
-                return;
-        }
-
-        var indexOfPreviousPassAlong = adjacentElementSizeDimensionAttribute.DimensionUnitList.FindIndex(
-            x => x.Purpose == panelGroupParameter.DimensionUnitPurposeKind);
-
-        if (panelGroup.ActiveTab is null && indexOfPreviousPassAlong == -1)
-        {
-            var panelGroupPercentageSize = panelGroupSizeDimensionsAttribute.DimensionUnitList.First(
-                x => x.DimensionUnitKind == DimensionUnitKind.Percentage);
-
-            adjacentElementSizeDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                panelGroupPercentageSize.Value,
-                panelGroupPercentageSize.DimensionUnitKind,
-                DimensionOperatorKind.Add,
-                panelGroupParameter.DimensionUnitPurposeKind));
-        }
-        else if (panelGroup.ActiveTab is not null && indexOfPreviousPassAlong != -1)
-        {
-            adjacentElementSizeDimensionAttribute.DimensionUnitList.RemoveAt(indexOfPreviousPassAlong);
-        }
-    }
-
     private string GetElementDimensionsStyleString(PanelGroup? panelGroup)
     {
         if (panelGroup?.ActiveTab is null)
         {
-            return "calc(" +
-                   "var(--di_panel-tabs-font-size)" +
-                   " + var(--di_panel-tabs-margin)" +
-                   " + var(--di_panel-tabs-bug-are-not-aligning-need-to-fix-todo))";
+            return DotNetService.CommonService.Rotate_Options_LineHeight_CssStyle;
         }
-
+    
         return panelGroup?.ElementDimensions.GetStyleString(DotNetService.CommonService.UiStringBuilder) ?? string.Empty;
+    }
+    
+    private string GetTopPanelBodyStyle(PanelGroup? panelGroup)
+    {
+        if (panelGroup?.ActiveTab is null)
+        {
+            return "width: 0;";
+        }
+        
+        return DotNetService.CommonService.TopPanel_Body_Options_LineHeight_CssStyle;
+    }
+    
+    private string GetBottomPanelBodyStyle(PanelGroup? panelGroup)
+    {
+        if (panelGroup?.ActiveTab is null)
+        {
+            return "width: 0;";
+        }
+        
+        return DotNetService.CommonService.BottomPanel_Body_Options_LineHeight_CssStyle;
     }
 
     private Task TopDropzoneOnMouseUp(Key<PanelGroup> panelGroupKey, MouseEventArgs mouseEventArgs)
@@ -576,19 +494,13 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             // (only the "UI thread" touches `dragState.DragElementDimensions`).
             var dragState = _tabCascadingValueBatch.CommonService.GetDragState();
 
-            dragState.DragElementDimensions.WidthDimensionAttribute.DimensionUnitList.Clear();
+            dragState.DragElementDimensions.DisableWidth();
 
-            dragState.DragElementDimensions.HeightDimensionAttribute.DimensionUnitList.Clear();
+            dragState.DragElementDimensions.DisableHeight();
 
-            dragState.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Clear();
-            dragState.DragElementDimensions.LeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                mouseEventArgs.ClientX,
-                DimensionUnitKind.Pixels));
+            dragState.DragElementDimensions.Left_Offset = new DimensionUnit(mouseEventArgs.ClientX, DimensionUnitKind.Pixels);
 
-            dragState.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Clear();
-            dragState.DragElementDimensions.TopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                mouseEventArgs.ClientY,
-                DimensionUnitKind.Pixels));
+            dragState.DragElementDimensions.Top_Offset = new DimensionUnit(mouseEventArgs.ClientY, DimensionUnitKind.Pixels);
 
             dragState.DragElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
 
@@ -692,20 +604,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     public void SubscribeToDragEvent(MainLayoutDragEventKind mainLayoutDragEventKind)
     {
-        _mainLayoutDragEventKind = mainLayoutDragEventKind;
-        
-        if (_mainLayoutDragEventKind == MainLayoutDragEventKind.TopLeftResizeColumn)
-        {
-            _dragEventHandler = Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.DragEventHandlerResizeHandleAsync;
-        }
-        else if (_mainLayoutDragEventKind == MainLayoutDragEventKind.TopRightResizeColumn)
-        {
-            _dragEventHandler = Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.DragEventHandlerResizeHandleAsync;
-        }
-        else if (_mainLayoutDragEventKind == MainLayoutDragEventKind.BottomResizeRow)
-        {
-            _dragEventHandler = Walk.Common.RazorLib.Resizes.Displays.ResizableRow.DragEventHandlerResizeHandleAsync;
-        }
+        DotNetService.CommonService.MainLayoutDragEventKind = mainLayoutDragEventKind;
+        _dragEventHandler = DotNetService.CommonService.DragEventHandlerResizeHandleAsync;
         
         DotNetService.CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
     }

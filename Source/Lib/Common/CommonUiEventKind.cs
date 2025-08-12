@@ -12,7 +12,8 @@ public enum CommonUiEventKind
     TooltipStateChanged,
     TreeViewStateChanged,
     DragStateChanged,
-    AppDimensionStateChanged,
+    Intra_AppDimensionStateChanged,
+    UserAgent_AppDimensionStateChanged,
     AppOptionsStateChanged,
     LineHeightNeedsMeasured,
 }

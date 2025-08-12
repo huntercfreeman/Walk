@@ -16,27 +16,23 @@ public partial class CommonService
     
     public AppDimensionState GetAppDimensionState() => _appDimensionState;
     
-    public void SetAppDimensions(Func<AppDimensionState, AppDimensionState> withFunc)
+    public void SetAppDimensions_Silent_NoEventRaised(AppDimensionState appDimensionState)
     {
-        lock (_stateModificationLock)
-        {
-            _appDimensionState = withFunc.Invoke(_appDimensionState);
-        }
-
-        CommonUiStateChanged?.Invoke(CommonUiEventKind.AppDimensionStateChanged);
+        _appDimensionState = appDimensionState;
     }
 
     public void AppDimension_NotifyIntraAppResize(bool useExtraEvent = true)
     {
-        CommonUiStateChanged?.Invoke(CommonUiEventKind.AppDimensionStateChanged);
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.Intra_AppDimensionStateChanged);
         
         if (useExtraEvent)
             _debounceExtraEvent.Run(default);
     }
 
-    public void AppDimension_NotifyUserAgentResize(bool useExtraEvent = true)
+    public void AppDimension_NotifyUserAgentResize(AppDimensionState appDimensionState, bool useExtraEvent = true)
     {
-        CommonUiStateChanged?.Invoke(CommonUiEventKind.AppDimensionStateChanged);
+        _appDimensionState = appDimensionState;
+        CommonUiStateChanged?.Invoke(CommonUiEventKind.UserAgent_AppDimensionStateChanged);
         
         if (useExtraEvent)
             _debounceExtraEvent.Run(default);

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
@@ -8,6 +9,8 @@ using Walk.Extensions.DotNet.TestExplorers.Displays.Internals;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Resizes.Models;
+using Walk.Common.RazorLib.Dimensions.Models;
+using Walk.Common.RazorLib.Resizes.Displays;
 
 namespace Walk.Extensions.DotNet.TestExplorers.Displays;
 
@@ -16,16 +19,12 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private DotNetService DotNetService { get; set; } = null!;
 
-    private ResizableColumnParameter _resizableColumnParameter;
+    private Func<ElementDimensions, ElementDimensions, (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;
+    private MouseEventArgs? _previousDragMouseEventArgs;
 
     protected override void OnInitialized()
     {
         var testExplorerState = DotNetService.GetTestExplorerState();
-        
-        _resizableColumnParameter = new(
-            testExplorerState.TreeViewElementDimensions,
-            testExplorerState.DetailsElementDimensions,
-            () => InvokeAsync(StateHasChanged));
     
         var model = DotNetService.IdeService.TextEditorService.Model_GetOrDefault(
             ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
@@ -91,7 +90,7 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
         }
     
         DotNetService.DotNetStateChanged += OnTestExplorerStateChanged;
-        DotNetService.IdeService.TextEditorService.CommonService.CommonUiStateChanged += OnTreeViewStateChanged;
+        DotNetService.IdeService.TextEditorService.CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
         DotNetService.IdeService.IdeStateChanged += OnTerminalStateChanged;
 
         _ = Task.Run(async () =>
@@ -132,11 +131,28 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
         }
     }
     
-    private async void OnTreeViewStateChanged(CommonUiEventKind commonUiEventKind)
+    private async void OnCommonUiStateChanged(CommonUiEventKind commonUiEventKind)
     {
         if (commonUiEventKind == CommonUiEventKind.TreeViewStateChanged)
         {
             await InvokeAsync(StateHasChanged);
+        }
+        else if (commonUiEventKind == CommonUiEventKind.DragStateChanged)
+        {
+            if (_dragEventHandler is not null)
+            {
+                var testExplorerState = DotNetService.GetTestExplorerState();
+                await ResizableColumn.Do(
+                    DotNetService.CommonService,
+                    testExplorerState.TreeViewElementDimensions,
+                    testExplorerState.DetailsElementDimensions,
+                    _dragEventHandler,
+                    _previousDragMouseEventArgs,
+                    x => _dragEventHandler = x,
+                    x => _previousDragMouseEventArgs = x);
+                
+                await InvokeAsync(StateHasChanged);
+            }
         }
     }
     
@@ -148,10 +164,16 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
         }
     }
     
+    public void SubscribeToDragEvent()
+    {
+        _dragEventHandler = ResizableColumn.DragEventHandlerResizeHandleAsync;
+        DotNetService.CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
+    }
+    
     public void Dispose()
     {
         DotNetService.DotNetStateChanged -= OnTestExplorerStateChanged;
-        DotNetService.IdeService.TextEditorService.CommonService.CommonUiStateChanged -= OnTreeViewStateChanged;
+        DotNetService.IdeService.TextEditorService.CommonService.CommonUiStateChanged -= OnCommonUiStateChanged;
         DotNetService.IdeService.IdeStateChanged -= OnTerminalStateChanged;
     }
 }

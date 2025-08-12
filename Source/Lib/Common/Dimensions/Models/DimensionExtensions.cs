@@ -32,20 +32,6 @@ public static class DimensionExtensions
         };
     }
     
-    public static string GetStyleString(this DimensionAttributeKind dimensionAttributeKind)
-    {
-        return dimensionAttributeKind switch
-        {
-            DimensionAttributeKind.Width => "width",
-            DimensionAttributeKind.Height => "height",
-            DimensionAttributeKind.Left => "left",
-            DimensionAttributeKind.Right => "right",
-            DimensionAttributeKind.Top => "top",
-            DimensionAttributeKind.Bottom => "bottom",
-            _ => throw new WalkCommonException($"The {nameof(DimensionAttributeKind)}: '{dimensionAttributeKind}' was not recognized.")
-        };
-    }
-    
     public static string GetStyleString(this ElementPositionKind elementPositionKind)
     {
         return elementPositionKind switch

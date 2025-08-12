@@ -8,34 +8,12 @@ public record struct TerminalGroupState(Key<ITerminal> ActiveTerminalKey)
     public TerminalGroupState() : this(IdeFacts.GENERAL_KEY)
     {
         // _bodyElementDimensions
-        {
-            BodyElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
-            {
-                new DimensionUnit(
-                    80,
-                    DimensionUnitKind.Percentage),
-                new DimensionUnit(
-                    0,
-                    DimensionUnitKind.Pixels,
-                    DimensionOperatorKind.Subtract,
-                    DimensionUnitPurposeKind.Offset),
-            });
-        }
+        BodyElementDimensions.Width_Base_0 = new DimensionUnit(80, DimensionUnitKind.Percentage);
+        BodyElementDimensions.Width_Offset = new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
 
         // _tabsElementDimensions
-        {
-            TabsElementDimensions.WidthDimensionAttribute.DimensionUnitList.AddRange(new[]
-            {
-                new DimensionUnit(
-                    20,
-                    DimensionUnitKind.Percentage),
-                new DimensionUnit(
-                    0,
-                    DimensionUnitKind.Pixels,
-                    DimensionOperatorKind.Subtract,
-                    DimensionUnitPurposeKind.Offset),
-            });
-        }
+        TabsElementDimensions.Width_Base_0 = new DimensionUnit(20, DimensionUnitKind.Percentage);
+        TabsElementDimensions.Width_Offset = new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
     }
 
     public ElementDimensions BodyElementDimensions { get; } = new();
