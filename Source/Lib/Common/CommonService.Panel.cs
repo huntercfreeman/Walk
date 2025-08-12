@@ -11,25 +11,22 @@ public partial class CommonService
     
     public PanelState GetPanelState() => _panelState;
     
+    private bool _hadSuccessfullyMeasuredAtLeastOnce;
+    
     public double WidthAppAtTimeOfCalculations { get; set; }
     public double HeightAppAtTimeOfCalculations { get; set; }
     
-    // width: 100%;
-    // height: calc(78% - (DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2)px - (CommonFacts.Ide_Header_Height.Value / 2)rem);
+    // height: 78% - (GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2) - Options_LineHeight;
     public double BodyElementHeight { get; set; }
-    // width: 33.3333% - ???;
-    // height: 100%;
-    public double LeftPanelWidth { get; set; }
-    // width: 33.3333% - (DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2 ??????????? )px;
-    // height: 100%;
-    public double EditorElementWidth { get; set; }
-    // width: 33.3333% - ???;
-    // height: 100%;
-    public double RightPanelWidth { get; set; }
-    
-    // width: 100%;
-    // height: calc(22% - ??? - (CommonFacts.Ide_Header_Height.Value / 2)rem);
+    // height: 22% - (GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2) - Options_LineHeight;
     public double BottomPanelHeight { get; set; }
+    
+    // width: 33.3333% - (GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2);
+    public double LeftPanelWidth { get; set; }
+    // width: 33.3333% - GetAppOptionsState().Options.ResizeHandleWidthInPixels;
+    public double EditorElementWidth { get; set; }
+    // width: 33.3333% - (GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2);
+    public double RightPanelWidth { get; set; }
     
     public void SetPanelState(PanelState panelState)
     {
@@ -304,9 +301,16 @@ public partial class CommonService
     public void Panel_OnUserAgent_AppDimensionStateChanged()
     {
         var appDimensionState = _appDimensionState;
+        
+        if (appDimensionState.Width < 500 || appDimensionState.Height < 500)
+        {
+            return;
+        }
     
         WidthAppAtTimeOfCalculations = appDimensionState.Width;
         HeightAppAtTimeOfCalculations = appDimensionState.Height;
+        
+        
         
         // DON'T FORGET THE LINEHEIGHT!!!
         // TABS ALWAYS EXIST
@@ -326,21 +330,68 @@ public partial class CommonService
         // you just offset with the cursor the sizes directly it doesn't matter then you get the current percents by looking back at the
         // original width/height of app but now you apply those percents to the new size.
         
-        // width: 100%;
-        // height: calc(78% - (DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2)px - (CommonFacts.Ide_Header_Height.Value / 2)rem);
-        BodyElementHeight = HeightAppAtTimeOfCalculations * 0.78 - (GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2) - ;
-        // width: 33.3333% - ???;
-        // height: 100%;
-        LeftPanelWidth;
-        // width: 33.3333% - (DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2 ??????????? )px;
-        // height: 100%;
-        EditorElementWidth;
-        // width: 33.3333% - ???;
-        // height: 100%;
-        RightPanelWidth;
+        double bodyFraction;
+        double bottomPanelFraction;
         
-        // width: 100%;
-        // height: calc(22% - ??? - (CommonFacts.Ide_Header_Height.Value / 2)rem);
-        BottomPanelHeight;
+        double leftPanelFraction;
+        double editorFraction;
+        double rightPanelFraction;
+        
+        if (_hadSuccessfullyMeasuredAtLeastOnce)
+        {
+            
+        }
+        else
+        {
+            _hadSuccessfullyMeasuredAtLeastOnce = true;
+            
+            // Use default percentages
+            
+            bodyFraction = 0.78;
+            bottomPanelFraction = 0.22;
+            
+            leftPanelFraction = 0.333333;
+            editorFraction = 0.333333;
+            rightPanelFraction = 0.333333;
+        }
+        
+        // height: 78% - (GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2) - Options_LineHeight;
+        BodyElementHeight = HeightAppAtTimeOfCalculations * bodyFraction - (GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2) - Options_LineHeight;
+        // height: 22% - (GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2) - Options_LineHeight;
+        BottomPanelHeight = HeightAppAtTimeOfCalculations * bottomPanelFraction - (GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2)- Options_LineHeight;
+        
+        // width: 33.3333% - (GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2);
+        LeftPanelWidth = WidthAppAtTimeOfCalculations * leftPanelFraction - (GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2);
+        // width: 33.3333% - GetAppOptionsState().Options.ResizeHandleWidthInPixels;
+        EditorElementWidth = WidthAppAtTimeOfCalculations * editorFraction - GetAppOptionsState().Options.ResizeHandleWidthInPixels;
+        // width: 33.3333% - (GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2);
+        RightPanelWidth = WidthAppAtTimeOfCalculations * rightPanelFraction - (GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2);
+        
+        /*
+        Each tabs listing is size "(Options_LineHeight)px".
+        When the tabs listing is displayed vertically, then "(Options_LineHeight)px" represents the width, otherwise the height.
+        */
+        
+        /*
+        The panels when there is an active tab do not deal with the size of the tabs listing.
+        
+        They are to have a size > the tabs listing. But it is loosely represented as a % of the application size.
+        
+        "loosely represented as a %" - anytime the app size changes, a percentage calculation is performed
+        to determine the size of each panel.
+        
+        But, by the end this percentage calculation is converted to pixels.
+        
+        You need to remember the apps dimensions at this point in time that you'd calculated the sizes of each panel.
+        
+        The user at this point can freely resize the panels provided they do not go below a min-width.
+        
+        Then, once the app is resized again, you need to determine based on the current
+        pixel sizes of each panel, if they were made a percent of the original app size
+        what percentage would they be?
+        
+        You then apply that percentage to the new app size.
+        And convert it to pixels.
+        */
     }
 }

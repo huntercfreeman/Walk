@@ -214,6 +214,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             uiStringBuilder.Append("display: flex; justify-content: space-between; border-bottom: ");
             uiStringBuilder.Append(DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels);
             uiStringBuilder.Append("px solid var(--di_primary-border-color);");
+            uiStringBuilder.Append("height: ");
+            uiStringBuilder.Append(DotNetService.CommonService.Options_LineHeight * 2);
+            uiStringBuilder.Append("px;");
             _headerCssStyle = uiStringBuilder.ToString();
         }
     }

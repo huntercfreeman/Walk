@@ -12,7 +12,6 @@ input[type="checkbox"]{
 }
 
 .di_header {
-    height: var(--di_header-height);
     background-color: var(--di_header-background-color);
 }
 

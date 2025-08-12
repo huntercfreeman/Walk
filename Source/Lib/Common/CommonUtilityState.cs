@@ -208,7 +208,7 @@ public record struct PanelState(
             new List<IPanelTab>());
 
         bottomPanelGroup.ElementDimensions.Height_Base_0 = new DimensionUnit(22, DimensionUnitKind.Percentage);
-        bottomPanelGroup.ElementDimensions.Height_Base_1 = new DimensionUnit(CommonFacts.Ide_Header_Height.Value / 2, CommonFacts.Ide_Header_Height.DimensionUnitKind, DimensionOperatorKind.Subtract);
+        // bottomPanelGroup.ElementDimensions.Height_Base_1 = new DimensionUnit(CommonFacts.Ide_Header_Height.Value / 2, CommonFacts.Ide_Header_Height.DimensionUnitKind, DimensionOperatorKind.Subtract);
         bottomPanelGroup.ElementDimensions.Height_Offset = new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, DimensionUnitPurposeKind.Offset);
 
         return bottomPanelGroup;
