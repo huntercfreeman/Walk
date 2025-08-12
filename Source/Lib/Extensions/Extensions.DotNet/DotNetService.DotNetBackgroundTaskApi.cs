@@ -875,7 +875,7 @@ public partial class DotNetService
         {
             var localStartupControlState = IdeService.GetIdeStartupControlState();
         	originallyActiveStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
-        	    x => x.Key == localStartupControlState.ActiveStartupControlKey);
+        	    x => x.StartupProjectAbsolutePath.Value == localStartupControlState.ActiveStartupProjectAbsolutePathValue);
             IdeService.Ide_ClearAllStartupControls();
         
             foreach (var project in dotNetSolutionModel.DotNetProjectList)
@@ -950,7 +950,7 @@ public partial class DotNetService
                     if (startupControl.Title == originallyActiveStartupControl.Title  &&
                         startupControl.StartupProjectAbsolutePath.Value == originallyActiveStartupControl.StartupProjectAbsolutePath.Value)
                     {
-                        IdeService.Ide_SetActiveStartupControlKey(startupControl.Key);
+                        IdeService.Ide_SetActiveStartupControlKey(startupControl.StartupProjectAbsolutePath.Value);
                     }
                 }
             }
@@ -1091,7 +1091,6 @@ public partial class DotNetService
     {
         IdeService.Ide_RegisterStartupControl(
             new StartupControlModel(
-                Key<IStartupControlModel>.NewKey(),
                 project.DisplayName,
                 project.AbsolutePath.Value,
                 project.AbsolutePath,

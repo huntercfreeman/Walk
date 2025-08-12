@@ -316,7 +316,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     if (startupControl is null)
                         return Task.CompletedTask;
                     
-                    DotNetService.IdeService.Ide_SetActiveStartupControlKey(startupControl.Key);
+                    DotNetService.IdeService.Ide_SetActiveStartupControlKey(startupControl.StartupProjectAbsolutePath.Value);
                     return Task.CompletedTask;
                 }),
             DotNetService.RemoveCSharpProjectReferenceFromSolution(

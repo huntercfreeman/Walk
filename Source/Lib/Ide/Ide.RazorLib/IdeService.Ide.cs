@@ -119,9 +119,9 @@ public partial class IdeService
         lock (_stateModificationLock)
         {
             var indexOfStartupControl = _startupControlState.StartupControlList.FindIndex(
-                x => x.Key == startupControl.Key);
+                x => x.StartupProjectAbsolutePath.Value == startupControl.StartupProjectAbsolutePath.Value);
 
-            if (indexOfStartupControl == -1)
+            if (indexOfStartupControl == -1 && !string.IsNullOrWhiteSpace(startupControl.StartupProjectAbsolutePath.Value))
             {
                 var outStartupControlList = new List<IStartupControlModel>(_startupControlState.StartupControlList);
                 outStartupControlList.Add(startupControl);
@@ -136,18 +136,18 @@ public partial class IdeService
         IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_StartupControlStateChanged);
     }
 
-    public void Ide_DisposeStartupControl(Key<IStartupControlModel> startupControlKey)
+    public void Ide_DisposeStartupControl(string startupProjectAbsolutePathValue)
     {
         lock (_stateModificationLock)
         {
             var indexOfStartupControl = _startupControlState.StartupControlList.FindIndex(
-                x => x.Key == startupControlKey);
+                x => x.StartupProjectAbsolutePath.Value == startupProjectAbsolutePathValue);
 
             if (indexOfStartupControl != -1)
             {
-                var outActiveStartupControlKey = _startupControlState.ActiveStartupControlKey;
-                if (_startupControlState.ActiveStartupControlKey == startupControlKey)
-                    outActiveStartupControlKey = Key<IStartupControlModel>.Empty;
+                var outActiveStartupProjectAbsolutePathValue = _startupControlState.ActiveStartupProjectAbsolutePathValue;
+                if (_startupControlState.ActiveStartupProjectAbsolutePathValue == startupProjectAbsolutePathValue)
+                    outActiveStartupProjectAbsolutePathValue = string.Empty;
 
                 var outStartupControlList = new List<IStartupControlModel>(_startupControlState.StartupControlList);
                 outStartupControlList.RemoveAt(indexOfStartupControl);
@@ -155,7 +155,7 @@ public partial class IdeService
                 _startupControlState = _startupControlState with
                 {
                     StartupControlList = outStartupControlList,
-                    ActiveStartupControlKey = outActiveStartupControlKey
+                    ActiveStartupProjectAbsolutePathValue = outActiveStartupProjectAbsolutePathValue
                 };
             }
         }
@@ -163,33 +163,33 @@ public partial class IdeService
         IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_StartupControlStateChanged);
     }
 
-    public void Ide_SetActiveStartupControlKey(Key<IStartupControlModel> startupControlKey)
+    public void Ide_SetActiveStartupControlKey(string startupProjectAbsolutePathValue)
     {
         lock (_stateModificationLock)
         {
             var startupControl = _startupControlState.StartupControlList.FirstOrDefault(
-                x => x.Key == startupControlKey);
+                x => x.StartupProjectAbsolutePath.Value == startupProjectAbsolutePathValue);
 
-            if (startupControlKey == Key<IStartupControlModel>.Empty ||
+            if (startupProjectAbsolutePathValue == string.Empty ||
                 startupControl is null)
             {
                 _startupControlState = _startupControlState with
                 {
-                    ActiveStartupControlKey = Key<IStartupControlModel>.Empty
+                    ActiveStartupProjectAbsolutePathValue = string.Empty
                 };
             }
             else
             {
                 _startupControlState = _startupControlState with
                 {
-                    ActiveStartupControlKey = startupControl.Key
+                    ActiveStartupProjectAbsolutePathValue = startupControl.StartupProjectAbsolutePath.Value
                 };
             }
         }
 
         IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_StartupControlStateChanged);
     }
-
+    
     public void Ide_TriggerStartupControlStateChanged()
     {
         IdeStateChanged?.Invoke(IdeStateChangedKind.Ide_StartupControlStateChanged);

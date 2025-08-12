@@ -5,8 +5,6 @@ namespace Walk.Ide.RazorLib.Shareds.Models;
 
 public interface IStartupControlModel
 {
-    public Key<IStartupControlModel> Key { get; }
-    
     /// <summary>
     /// By default, this is used per option html element within the select dropdown.
     /// </summary>

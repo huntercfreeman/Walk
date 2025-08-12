@@ -81,11 +81,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     private MainLayoutDragEventKind _mainLayoutDragEventKind;
     
-    /// <summary>
-    /// The Editor cannot make use of this list when display text editor tabs.
-    /// This is because the Editor uses a TabListDisplay.
-    /// </summary>
-    private List<IPanelTab> _sharedPanelTabList = new();
+    private bool _userInterfaceSawIsExecuting;
 
     protected override void OnInitialized()
     {
@@ -641,33 +637,28 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private ElementReference? _startButtonElementReference;
     private Key<DropdownRecord> _startButtonDropdownKey = Key<DropdownRecord>.NewKey();
     
-    public string? SelectedStartupControlGuidString
+    public string? SelectedStartupControlAbsolutePathValue
     {
-        get => DotNetService.IdeService.GetIdeStartupControlState().ActiveStartupControlKey.Guid.ToString();
+        get
+        {
+            return DotNetService.IdeService.GetIdeStartupControlState().ActiveStartupProjectAbsolutePathValue;
+        }
         set
         {
-            Key<IStartupControlModel> startupControlKey = Key<IStartupControlModel>.Empty;
-            
-            if (value is not null &&
-                Guid.TryParse(value, out var guid))
-            {
-                startupControlKey = new Key<IStartupControlModel>(guid);
-            }
-            
-            DotNetService.IdeService.Ide_SetActiveStartupControlKey(startupControlKey);
+            DotNetService.IdeService.Ide_SetActiveStartupControlKey(value);
         }
     }
 
-    private async Task StartProgramWithoutDebuggingOnClick(bool isExecuting)
+    private async Task StartProgramWithoutDebuggingOnClick()
     {
         var localStartupControlState = DotNetService.IdeService.GetIdeStartupControlState();
         var activeStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
-            x => x.Key == localStartupControlState.ActiveStartupControlKey);
+            x => x.StartupProjectAbsolutePath.Value == localStartupControlState.ActiveStartupProjectAbsolutePathValue);
         
         if (activeStartupControl is null)
             return;
     
-        if (isExecuting)
+        if (_userInterfaceSawIsExecuting)
         {
             var menuOptionList = new List<MenuOptionRecord>();
             
@@ -701,7 +692,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 {
                     var localStartupControlState = DotNetService.IdeService.GetIdeStartupControlState();
                     var activeStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
-                        x => x.Key == localStartupControlState.ActiveStartupControlKey);
+                        x => x.StartupProjectAbsolutePath.Value == localStartupControlState.ActiveStartupProjectAbsolutePathValue);
                     
                     if (activeStartupControl is null)
                         return Task.CompletedTask;
@@ -768,10 +759,12 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     private Key<TextEditorComponentData> _componentDataKey;
 
-    private List<ITab> GetTabList(TextEditorGroup textEditorGroup)
+    private readonly List<ITab> _uiThread_ReUse_GetTabList = new();
+
+    private List<ITab> UiThread_GetTabList(TextEditorGroup textEditorGroup)
     {
         var textEditorState = DotNetService.TextEditorService.TextEditorState;
-        var tabList = new List<ITab>();
+        _uiThread_ReUse_GetTabList.Clear();
 
         foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
         {
@@ -780,11 +773,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             if (viewModel is not null)
             {
                 viewModel.PersistentState.TabGroup = textEditorGroup;
-                tabList.Add(viewModel.PersistentState);
+                _uiThread_ReUse_GetTabList.Add(viewModel.PersistentState);
             }
         }
 
-        return tabList;
+        return _uiThread_ReUse_GetTabList;
     }
     /* End EditorDisplay */
     

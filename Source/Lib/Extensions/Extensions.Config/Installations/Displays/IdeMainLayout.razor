@@ -97,33 +97,39 @@
             @* Start StartupControlDisplay *@
             @{
             	var localStartupControlState = DotNetService.IdeService.GetIdeStartupControlState();
-            	var activeStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
-                	    x => x.Key == localStartupControlState.ActiveStartupControlKey);
-            	bool isExecuting;
-            
+            	
+                IStartupControlModel? activeStartupControl = null;
+                for (int i = 0; i < localStartupControlState.StartupControlList.Count; i++)
+                {
+                    if (localStartupControlState.StartupControlList[i].StartupProjectAbsolutePath.Value == localStartupControlState.ActiveStartupProjectAbsolutePathValue)
+                    {
+                        activeStartupControl = localStartupControlState.StartupControlList[i];
+                        break;
+                    }
+                }
+                
             	if (activeStartupControl is null)
             	{
-            		isExecuting = false;
+            		_userInterfaceSawIsExecuting = false;
             	}
             	else
             	{
-            		isExecuting = activeStartupControl.IsExecuting;
+            		_userInterfaceSawIsExecuting = activeStartupControl.IsExecuting;
             	}
             }
             
             <div class="di_ide_startup-controls-display">
                <div class="di_ide_startup-controls-display-entry">
-                   <select @bind="SelectedStartupControlGuidString"
-                           title="Startup: @(activeStartupControl?.TitleVerbose)">
+                   <select @bind="SelectedStartupControlAbsolutePathValue"
+                           title="@(activeStartupControl?.TitleVerbose ?? "Choose startup project")">
                    	<option title="Choose startup project"
-               			    value="@Guid.Empty.ToString()">
+               			    value="@string.Empty">
                	    	Choose startup project
                	    </option>
                    
                    	@foreach (var startupControl in localStartupControlState.StartupControlList)
                    	{
-                   		<option title="@startupControl.TitleVerbose"
-                   			    value="@startupControl.Key.Guid.ToString()">
+                   		<option value="@startupControl.StartupProjectAbsolutePath.Value">
                    	    	@startupControl.Title
                    	    </option>
                    	}
@@ -132,13 +138,13 @@
               </div>
                <div class="di_ide_startup-controls-display-entry">
                     <button @ref="_startButtonElementReference"
-                    	    @onclick="() => StartProgramWithoutDebuggingOnClick(isExecuting)"
+                    	    @onclick="StartProgramWithoutDebuggingOnClick"
                             class="di_button"
                             id="@_startButtonElementId"
                             disabled=@(activeStartupControl is null)
-                            title="Start without debugging:  @(activeStartupControl?.TitleVerbose)">
+                            title="@(activeStartupControl?.TitleVerbose)">
                         
-                        @if (isExecuting)
+                        @if (_userInterfaceSawIsExecuting)
                         {
             				@IconStopCircleFragment.Render(iconDriver)
                         }
@@ -264,7 +270,7 @@
                 	{
                 		<div class="di_te_text-editor-group-tabs-list">
             				<TabListDisplay @ref="_tabListDisplay"
-            								TabList="@GetTabList(textEditorGroup)"/>
+            								TabList="@UiThread_GetTabList(textEditorGroup)"/>
             			</div>
             	
             			<div class="di_te_text-editor-group-active-view-model">
@@ -314,8 +320,6 @@
         		 id="@_rightPanelGroupParameter.HtmlIdTabs">
         
                 @{
-                    
-        			
         			foreach (var panelTab in rightPanelGroup.TabList)
                     {
                         panelTab.TabGroup = rightPanelGroup;
