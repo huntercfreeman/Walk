@@ -98,6 +98,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
         
         // Width
         _northResizeHandleDimensions.Width_Base_0 = parentElementDimensions.Width_Base_0;
+        _northResizeHandleDimensions.Width_Base_1 = parentElementDimensions.Width_Offset;
         _northResizeHandleDimensions.Width_Offset = new DimensionUnit(RESIZE_HANDLE_SQUARE_PIXELS, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
 
         // Height
@@ -109,7 +110,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
         // Top
         _northResizeHandleDimensions.Top_Base_0 = new DimensionUnit(-1 * RESIZE_HANDLE_SQUARE_PIXELS / 2, DimensionUnitKind.Pixels);
 
-        return _northResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonService.UiStringBuilder);
+        return _northResizeHandleDimensions.GetStyleString(CommonService.UiStringBuilder);
     }
 
     private string GetEastResizeHandleStyleCss()
@@ -123,10 +124,12 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
 
         // Height
         _eastResizeHandleDimensions.Height_Base_0 = parentElementDimensions.Height_Base_0;
+        _eastResizeHandleDimensions.Height_Base_1 = parentElementDimensions.Height_Offset;
         _eastResizeHandleDimensions.Height_Offset = new DimensionUnit(RESIZE_HANDLE_SQUARE_PIXELS, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
 
         // Left
         _eastResizeHandleDimensions.Left_Base_0 = parentElementDimensions.Width_Base_0;
+        _eastResizeHandleDimensions.Left_Base_1 = parentElementDimensions.Width_Offset;
         _eastResizeHandleDimensions.Left_Offset = new DimensionUnit(RESIZE_HANDLE_SQUARE_PIXELS / 2, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
 
         // Top
@@ -143,6 +146,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
 
         // Width
         _southResizeHandleDimensions.Width_Base_0 = parentElementDimensions.Width_Base_0;
+        _southResizeHandleDimensions.Width_Base_1 = parentElementDimensions.Width_Offset;
         _southResizeHandleDimensions.Width_Offset = new DimensionUnit(RESIZE_HANDLE_SQUARE_PIXELS, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
 
         // Height
@@ -153,6 +157,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
                 
         // Top
         _southResizeHandleDimensions.Top_Base_0 = parentElementDimensions.Height_Base_0;
+        _southResizeHandleDimensions.Top_Base_1 = parentElementDimensions.Height_Offset;
         _southResizeHandleDimensions.Top_Offset = new DimensionUnit(RESIZE_HANDLE_SQUARE_PIXELS / 2, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
 
         return _southResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonService.UiStringBuilder);
@@ -169,6 +174,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
 
         // Height
         _westResizeHandleDimensions.Height_Base_0 = parentElementDimensions.Height_Base_0;
+        _westResizeHandleDimensions.Height_Base_1 = parentElementDimensions.Height_Offset;
         _westResizeHandleDimensions.Height_Offset = new DimensionUnit(RESIZE_HANDLE_SQUARE_PIXELS, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
 
         // Left
@@ -194,12 +200,13 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
 
         // Left
         _northEastResizeHandleDimensions.Left_Base_0 = parentElementDimensions.Width_Base_0;
+        _northEastResizeHandleDimensions.Left_Base_1 = parentElementDimensions.Width_Offset;
         _northEastResizeHandleDimensions.Left_Offset = new DimensionUnit(RESIZE_HANDLE_SQUARE_PIXELS / 2, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
 
         // Top
-        _northEastResizeHandleDimensions.Top_Offset = new DimensionUnit(-1 * RESIZE_HANDLE_SQUARE_PIXELS / 2, DimensionUnitKind.Pixels);
+        _northEastResizeHandleDimensions.Top_Base_0 = new DimensionUnit(-1 * RESIZE_HANDLE_SQUARE_PIXELS / 2, DimensionUnitKind.Pixels);
 
-        return _northEastResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonService.UiStringBuilder);
+        return _northEastResizeHandleDimensions.GetStyleString(CommonService.UiStringBuilder, withDebug: true);
     }
 
     private string GetSouthEastResizeHandleStyleCss()
@@ -216,10 +223,12 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
 
         // Left
         _southEastResizeHandleDimensions.Left_Base_0 = parentElementDimensions.Width_Base_0;
+        _southEastResizeHandleDimensions.Left_Base_1 = parentElementDimensions.Width_Offset;
         _southEastResizeHandleDimensions.Left_Offset = new DimensionUnit(RESIZE_HANDLE_SQUARE_PIXELS / 2, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
 
         // Top
         _southEastResizeHandleDimensions.Top_Base_0 = parentElementDimensions.Height_Base_0;
+        _southEastResizeHandleDimensions.Top_Base_1 = parentElementDimensions.Height_Offset;
         _southEastResizeHandleDimensions.Top_Offset = new DimensionUnit(RESIZE_HANDLE_SQUARE_PIXELS / 2, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
 
         return _southEastResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonService.UiStringBuilder);
@@ -242,6 +251,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
 
         // Top
         _southWestResizeHandleDimensions.Top_Base_0 = parentElementDimensions.Height_Base_0;
+        _southWestResizeHandleDimensions.Top_Base_1 = parentElementDimensions.Height_Offset;
         _southWestResizeHandleDimensions.Top_Offset = new DimensionUnit(RESIZE_HANDLE_SQUARE_PIXELS / 2, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
 
         return _southWestResizeHandleDimensions.GetStyleString((System.Text.StringBuilder)CommonService.UiStringBuilder);

@@ -8,35 +8,12 @@ namespace Walk.Common.RazorLib.Dimensions.Models;
 public struct DimensionUnit
 {
     public DimensionUnit(
-        DimensionUnitKind dimensionUnitKind,
-        DimensionOperatorKind dimensionOperatorKind,
-        DimensionUnitPurposeKind purpose)
-    {
-        DimensionUnitKind = dimensionUnitKind;
-        DimensionOperatorKind = dimensionOperatorKind;
-        Purpose = purpose;
-    }
-    
-    public DimensionUnit(
         double value,
         DimensionUnitKind dimensionUnitKind)
     {
         Value = value;
         DimensionUnitKind = dimensionUnitKind;
         DimensionOperatorKind = DimensionOperatorKind.Add;
-        Purpose = DimensionUnitPurposeKind.None;
-    }
-    
-    public DimensionUnit(
-        double value,
-        DimensionUnitKind dimensionUnitKind,
-        DimensionOperatorKind dimensionOperatorKind,
-        DimensionUnitPurposeKind purpose)
-    {
-        Value = value;
-        DimensionUnitKind = dimensionUnitKind;
-        DimensionOperatorKind = dimensionOperatorKind;
-        Purpose = purpose;
     }
     
     public DimensionUnit(
@@ -47,7 +24,6 @@ public struct DimensionUnit
         Value = value;
         DimensionUnitKind = dimensionUnitKind;
         DimensionOperatorKind = dimensionOperatorKind;
-        Purpose = DimensionUnitPurposeKind.None;
     }
 
     private double _value;
@@ -67,6 +43,5 @@ public struct DimensionUnit
     
     public DimensionUnitKind DimensionUnitKind { get; set; }
     public DimensionOperatorKind DimensionOperatorKind { get; set; } = DimensionOperatorKind.Add;
-    public DimensionUnitPurposeKind Purpose { get; set; }
     public bool IsUsed { get; set; } = true;
 }

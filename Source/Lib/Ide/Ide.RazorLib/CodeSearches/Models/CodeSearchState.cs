@@ -25,11 +25,11 @@ public record struct CodeSearchState(
     {
         // topContentHeight
         TopContentElementDimensions.Height_Base_0 = new DimensionUnit(40, DimensionUnitKind.Percentage);
-        TopContentElementDimensions.Height_Offset = new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, DimensionUnitPurposeKind.Offset);
+        TopContentElementDimensions.Height_Offset = new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
 
         // bottomContentHeight
         BottomContentElementDimensions.Height_Base_0 = new DimensionUnit(60, DimensionUnitKind.Percentage);
-        BottomContentElementDimensions.Height_Offset = new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, DimensionUnitPurposeKind.Offset);
+        BottomContentElementDimensions.Height_Offset = new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
     }
 
     public ElementDimensions TopContentElementDimensions = new();

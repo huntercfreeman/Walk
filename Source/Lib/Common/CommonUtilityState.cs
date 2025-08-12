@@ -180,7 +180,7 @@ public record struct PanelState(
             new List<IPanelTab>());
 
         leftPanelGroup.ElementDimensions.Width_Base_0 = new DimensionUnit(33.3333, DimensionUnitKind.Percentage);
-        leftPanelGroup.ElementDimensions.Width_Offset = new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, DimensionUnitPurposeKind.Offset);
+        leftPanelGroup.ElementDimensions.Width_Offset = new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
 
         return leftPanelGroup;
     }
@@ -194,7 +194,7 @@ public record struct PanelState(
             new List<IPanelTab>());
 
         rightPanelGroup.ElementDimensions.Width_Base_0 = new DimensionUnit(33.3333, DimensionUnitKind.Percentage);
-        rightPanelGroup.ElementDimensions.Width_Offset = new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, DimensionUnitPurposeKind.Offset);
+        rightPanelGroup.ElementDimensions.Width_Offset = new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
         
         return rightPanelGroup;
     }
@@ -209,7 +209,7 @@ public record struct PanelState(
 
         bottomPanelGroup.ElementDimensions.Height_Base_0 = new DimensionUnit(22, DimensionUnitKind.Percentage);
         // bottomPanelGroup.ElementDimensions.Height_Base_1 = new DimensionUnit(CommonFacts.Ide_Header_Height.Value / 2, CommonFacts.Ide_Header_Height.DimensionUnitKind, DimensionOperatorKind.Subtract);
-        bottomPanelGroup.ElementDimensions.Height_Offset = new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract, DimensionUnitPurposeKind.Offset);
+        bottomPanelGroup.ElementDimensions.Height_Offset = new DimensionUnit(0, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
 
         return bottomPanelGroup;
     }
