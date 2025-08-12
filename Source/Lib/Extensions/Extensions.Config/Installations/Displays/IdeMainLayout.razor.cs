@@ -29,6 +29,17 @@ using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Ide.RazorLib.Shareds.Models;
 
+using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib.Dimensions.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Tabs.Displays;
+using Walk.Common.RazorLib.Keys.Models;
+using Walk.TextEditor.RazorLib;
+using Walk.TextEditor.RazorLib.Groups.Models;
+using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
+
 namespace Walk.Extensions.Config.Installations.Displays;
 
 public partial class IdeMainLayout : LayoutComponentBase, IDisposable
@@ -58,14 +69,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     private TabCascadingValueBatch _tabCascadingValueBatch = new();
     
-    private IDialog _dialogRecord = new DialogViewModel(
-        Key<IDynamicViewModel>.NewKey(),
-        "Settings",
-        typeof(SettingsDisplay),
-        null,
-        null,
-        true,
-        null);
+    private static readonly Key<IDynamicViewModel> _settingsDialogKey = Key<IDynamicViewModel>.NewKey();
     
     private CancellationTokenSource _workerCancellationTokenSource = new();
     
@@ -76,6 +80,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private MouseEventArgs? _previousDragMouseEventArgs;
     
     private MainLayoutDragEventKind _mainLayoutDragEventKind;
+    
+    private bool _userInterfaceSawIsExecuting;
 
     protected override void OnInitialized()
     {
@@ -101,12 +107,20 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             panelGroupKey: CommonFacts.BottomPanelGroupKey,
             cssClassString: "di_ide_footer");
 
-        InitPanelGroup(DotNetService, _leftPanelGroupParameter);
-        InitPanelGroup(DotNetService, _rightPanelGroupParameter);
-        InitPanelGroup(DotNetService, _bottomPanelGroupParameter);
-
+        InitPanelGroup(_leftPanelGroupParameter);
+        InitPanelGroup(_rightPanelGroupParameter);
+        InitPanelGroup(_bottomPanelGroupParameter);
         
-
+        _viewModelDisplayOptions = new()
+        {
+            TabIndex = 0,
+            HeaderButtonKinds = TextEditorHeaderButtonKindsList,
+            HeaderComponentType = typeof(TextEditorFileExtensionHeaderDisplay),
+            TextEditorHtmlElementId = Guid.NewGuid(),
+        };
+    
+        _componentDataKey = new Key<TextEditorComponentData>(_viewModelDisplayOptions.TextEditorHtmlElementId);
+        
         DotNetService.CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
         DotNetService.TextEditorService.SecondaryChanged += TextEditorOptionsStateWrap_StateChanged;
         DotNetService.IdeService.IdeStateChanged += OnIdeStateChanged;
@@ -123,24 +137,21 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         }
     }
     
-    private void InitPanelGroup(DotNetService DotNetService, PanelGroupParameter panelGroupParameter)
+    private void InitPanelGroup(PanelGroupParameter panelGroupParameter)
     {
         var position = string.Empty;
 
         if (CommonFacts.LeftPanelGroupKey == panelGroupParameter.PanelGroupKey)
         {
             position = "left";
-            panelGroupParameter.DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_left;
         }
         else if (CommonFacts.RightPanelGroupKey == panelGroupParameter.PanelGroupKey)
         {
             position = "right";
-            panelGroupParameter.DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_right;
         }
         else if (CommonFacts.BottomPanelGroupKey == panelGroupParameter.PanelGroupKey)
         {
             position = "bottom";
-            panelGroupParameter.DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_bottom;
         }
 
         panelGroupParameter.PanelPositionCss = $"di_ide_panel_{position}";
@@ -269,19 +280,28 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 StateHasChanged();
             }).ConfigureAwait(false);
         }
-    }
-
-    private List<IPanelTab> GetTabList(PanelGroup panelGroup)
-    {
-        var tabList = new List<IPanelTab>();
-
-        foreach (var panelTab in panelGroup.TabList)
+        else if (secondaryChangedKind == SecondaryChangedKind.DirtyResourceUriStateChanged)
         {
-            panelTab.TabGroup = panelGroup;
-            tabList.Add(panelTab);
+            var localTabListDisplay = _tabListDisplay;
+            
+            if (localTabListDisplay is not null)
+            {
+                await localTabListDisplay.NotifyStateChangedAsync();
+            }
         }
-
-        return tabList;
+        else if (secondaryChangedKind == SecondaryChangedKind.Group_TextEditorGroupStateChanged)
+        {
+            var textEditorGroup = DotNetService.TextEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
+                x => x.GroupKey == IdeService.EditorTextEditorGroupKey);
+                
+            if (_previousActiveViewModelKey != textEditorGroup.ActiveViewModelKey)
+            {
+                _previousActiveViewModelKey = textEditorGroup.ActiveViewModelKey;
+                DotNetService.TextEditorService.ViewModel_StopCursorBlinking();
+            }
+        
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     private string GetElementDimensionsStyleString(PanelGroup? panelGroup)
@@ -617,33 +637,28 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private ElementReference? _startButtonElementReference;
     private Key<DropdownRecord> _startButtonDropdownKey = Key<DropdownRecord>.NewKey();
     
-    public string? SelectedStartupControlGuidString
+    public string? SelectedStartupControlAbsolutePathValue
     {
-        get => DotNetService.IdeService.GetIdeStartupControlState().ActiveStartupControlKey.Guid.ToString();
+        get
+        {
+            return DotNetService.IdeService.GetIdeStartupControlState().ActiveStartupProjectAbsolutePathValue;
+        }
         set
         {
-            Key<IStartupControlModel> startupControlKey = Key<IStartupControlModel>.Empty;
-            
-            if (value is not null &&
-                Guid.TryParse(value, out var guid))
-            {
-                startupControlKey = new Key<IStartupControlModel>(guid);
-            }
-            
-            DotNetService.IdeService.Ide_SetActiveStartupControlKey(startupControlKey);
+            DotNetService.IdeService.Ide_SetActiveStartupControlKey(value);
         }
     }
 
-    private async Task StartProgramWithoutDebuggingOnClick(bool isExecuting)
+    private async Task StartProgramWithoutDebuggingOnClick()
     {
         var localStartupControlState = DotNetService.IdeService.GetIdeStartupControlState();
         var activeStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
-            x => x.Key == localStartupControlState.ActiveStartupControlKey);
+            x => x.StartupProjectAbsolutePath.Value == localStartupControlState.ActiveStartupProjectAbsolutePathValue);
         
         if (activeStartupControl is null)
             return;
     
-        if (isExecuting)
+        if (_userInterfaceSawIsExecuting)
         {
             var menuOptionList = new List<MenuOptionRecord>();
             
@@ -677,7 +692,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 {
                     var localStartupControlState = DotNetService.IdeService.GetIdeStartupControlState();
                     var activeStartupControl = localStartupControlState.StartupControlList.FirstOrDefault(
-                        x => x.Key == localStartupControlState.ActiveStartupControlKey);
+                        x => x.StartupProjectAbsolutePath.Value == localStartupControlState.ActiveStartupProjectAbsolutePathValue);
                     
                     if (activeStartupControl is null)
                         return Task.CompletedTask;
@@ -712,6 +727,59 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         }
     }
     /* End StartupControlDisplay.razor */
+    
+    private void DispatchRegisterDialogRecordAction()
+    {
+        InitializationHelper.DispatchRegisterDialogRecordAction(
+            DotNetService,
+            new DialogViewModel(
+                _settingsDialogKey,
+                "Settings",
+                typeof(SettingsDisplay),
+                null,
+                null,
+                true,
+                null));
+    }
+    
+    /* Start EditorDisplay */
+    private static readonly List<HeaderButtonKind> TextEditorHeaderButtonKindsList =
+        Enum.GetValues(typeof(HeaderButtonKind))
+            .Cast<HeaderButtonKind>()
+            .ToList();
+
+    private ViewModelDisplayOptions _viewModelDisplayOptions = null!;
+
+    private TabListDisplay? _tabListDisplay;
+
+    private string? _htmlId = null;
+    private string HtmlId => _htmlId ??= $"di_te_group_{IdeService.EditorTextEditorGroupKey.Guid}";
+    
+    private Key<TextEditorViewModel> _previousActiveViewModelKey = Key<TextEditorViewModel>.Empty;
+    
+    private Key<TextEditorComponentData> _componentDataKey;
+
+    private readonly List<ITab> _uiThread_ReUse_GetTabList = new();
+
+    private List<ITab> UiThread_GetTabList(TextEditorGroup textEditorGroup)
+    {
+        var textEditorState = DotNetService.TextEditorService.TextEditorState;
+        _uiThread_ReUse_GetTabList.Clear();
+
+        foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
+        {
+            var viewModel = textEditorState.ViewModelGetOrDefault(viewModelKey);
+            
+            if (viewModel is not null)
+            {
+                viewModel.PersistentState.TabGroup = textEditorGroup;
+                _uiThread_ReUse_GetTabList.Add(viewModel.PersistentState);
+            }
+        }
+
+        return _uiThread_ReUse_GetTabList;
+    }
+    /* End EditorDisplay */
     
     public void Dispose()
     {

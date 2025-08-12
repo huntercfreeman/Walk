@@ -32,7 +32,7 @@ public partial class DotNetService : IBackgroundTaskGroup, IDisposable
     public TextEditorService TextEditorService => IdeService.TextEditorService;
     public CommonService CommonService => IdeService.TextEditorService.CommonService;
     public IAppDataService AppDataService { get; }
-
+    
     private readonly ConcurrentQueue<DotNetWorkArgs> _workQueue = new();
     
     public void Enqueue(DotNetWorkArgs workArgs)

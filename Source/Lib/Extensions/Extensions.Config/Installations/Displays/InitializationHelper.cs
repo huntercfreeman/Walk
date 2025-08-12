@@ -181,7 +181,7 @@ public static class InitializationHelper
             {
                 var startupControlState = DotNetService.IdeService.GetIdeStartupControlState();
                 var activeStartupControl = startupControlState.StartupControlList.FirstOrDefault(
-                    x => x.Key == startupControlState.ActiveStartupControlKey);
+                    x => x.StartupProjectAbsolutePath.Value == startupControlState.ActiveStartupProjectAbsolutePathValue);
 
                 if (activeStartupControl?.StartupProjectAbsolutePath is not null)
                     BuildProjectOnClick(DotNetService, activeStartupControl.StartupProjectAbsolutePath.Value);
@@ -198,7 +198,7 @@ public static class InitializationHelper
             {
                 var startupControlState = DotNetService.IdeService.GetIdeStartupControlState();
                 var activeStartupControl = startupControlState.StartupControlList.FirstOrDefault(
-                    x => x.Key == startupControlState.ActiveStartupControlKey);
+                    x => x.StartupProjectAbsolutePath.Value == startupControlState.ActiveStartupProjectAbsolutePathValue);
 
                 if (activeStartupControl?.StartupProjectAbsolutePath is not null)
                     CleanProjectOnClick(DotNetService, activeStartupControl.StartupProjectAbsolutePath.Value);
