@@ -422,6 +422,11 @@ button.di_ide_input-file-address-hierarchy-entry {
     margin-left: 15px;
 }
 
+.di_ide_editor-display {
+    height: 100%;
+	overflow: hidden;
+}
+
 :root {
     /* Sizes IDE */
     --di_ide_section-title-font-size: 1.25em;
