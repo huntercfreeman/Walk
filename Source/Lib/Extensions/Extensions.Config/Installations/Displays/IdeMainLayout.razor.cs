@@ -143,6 +143,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         if (firstRender)
         {
             await InitializationHelper.InitializeOnAfterRenderFirstRender(DotNetService, BrowserResizeInterop, _workerCancellationTokenSource);
+            DotNetService.CommonService.Panel_OnUserAgent_AppDimensionStateChanged();
+            await InvokeAsync(StateHasChanged);
         }
     }
     
