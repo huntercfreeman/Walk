@@ -312,6 +312,16 @@ public partial class CommonService
         // TABS ALWAYS EXIST
         //
         // Why is the header in rem it is just annoying and makes everything 100x more complicated.
+        //
+        // Why are some of the resize handle unaccounted for
+        // editor is bounded on both sides so it is not '/ 2'
+        //
+        // on app resize calculate percent for the current setup given the width/height that was
+        // at that time originally.
+        //
+        // Then apply those percents to the new measurements.
+        //
+        // very "easy".
         
         // width: 100%;
         // height: calc(78% - (DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2)px - (CommonFacts.Ide_Header_Height.Value / 2)rem);
