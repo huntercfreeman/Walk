@@ -246,7 +246,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 {
                     if (_mainLayoutDragEventKind == MainLayoutDragEventKind.TopLeftResizeColumn)
                     {
-                        await Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.Do(
+                        await Walk.Common.RazorLib.Resizes.Models.ResizableColumn.Do(
                             DotNetService.CommonService,
                             _topLeftResizableColumnParameter.LeftElementDimensions,
                             _topLeftResizableColumnParameter.RightElementDimensions,
@@ -257,7 +257,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     }
                     else if (_mainLayoutDragEventKind == MainLayoutDragEventKind.TopRightResizeColumn)
                     {
-                        await Walk.Common.RazorLib.Resizes.Displays.ResizableColumn.Do(
+                        await Walk.Common.RazorLib.Resizes.Models.ResizableColumn.Do(
                             DotNetService.CommonService,
                             _topRightResizableColumnParameter.LeftElementDimensions,
                             _topRightResizableColumnParameter.RightElementDimensions,
@@ -268,7 +268,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     }
                     else if (_mainLayoutDragEventKind == MainLayoutDragEventKind.BottomResizeRow)
                     {
-                        await Walk.Common.RazorLib.Resizes.Displays.ResizableRow.Do(
+                        await Walk.Common.RazorLib.Resizes.Models.ResizableRow.Do(
                             DotNetService.CommonService,
                             _resizableRowParameter.TopElementDimensions,
                             _resizableRowParameter.BottomElementDimensions,

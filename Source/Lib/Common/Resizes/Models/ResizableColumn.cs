@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Resizes.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 
-namespace Walk.Common.RazorLib.Resizes.Displays;
+namespace Walk.Common.RazorLib.Resizes.Models;
 
 /// <summary>
 /// TODO: Rename this type
