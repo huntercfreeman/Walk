@@ -370,9 +370,7 @@ public partial class CommonService
         /*
         Each tabs listing is size "(Options_LineHeight)px".
         When the tabs listing is displayed vertically, then "(Options_LineHeight)px" represents the width, otherwise the height.
-        */
         
-        /*
         The panels when there is an active tab do not deal with the size of the tabs listing.
         
         They are to have a size > the tabs listing. But it is loosely represented as a % of the application size.
@@ -392,6 +390,32 @@ public partial class CommonService
         
         You then apply that percentage to the new app size.
         And convert it to pixels.
+        
+        ========================================================
+        
+        When a panel does not have an active tab, its size is "(Options_LineHeight)px".
+        
+        ========================================================
+        
+        When you stop showing an active tab in a panel, the width of that panel - "(Options_LineHeight)px"
+        is given to the editor.
+        
+        > (or height to body if you interact with the bottom panel)
+        
+        The pixel size that the panel which no longer has an active tab has remains known to the app
+        as if it were showing, but we know that quantity had been given to the editor.
+        
+        Once you re-show a panel tab again then you take that pixel amount back from the editor
+        until you hit the minimum allowed size.
+        
+        Any remainder you take from the opposite panel since this scenario means
+        the user resized the editor and opposite panel after you'd hidden the original panel's tab.
+        
+        ========================================================
+        
+        When the app is resized and a panel has no active tab,
+        the pixel size is still known and is still re-calculated as a percentage of the new app size
+        just the same as if it had an active tab.
         */
     }
 }
