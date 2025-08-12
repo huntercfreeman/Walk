@@ -29,6 +29,17 @@ using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Ide.RazorLib.Shareds.Models;
 
+using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib.Dimensions.Models;
+using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Tabs.Displays;
+using Walk.Common.RazorLib.Keys.Models;
+using Walk.TextEditor.RazorLib;
+using Walk.TextEditor.RazorLib.Groups.Models;
+using Walk.TextEditor.RazorLib.TextEditors.Models;
+using Walk.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals;
+
 namespace Walk.Extensions.Config.Installations.Displays;
 
 public partial class IdeMainLayout : LayoutComponentBase, IDisposable
@@ -58,14 +69,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     private TabCascadingValueBatch _tabCascadingValueBatch = new();
     
-    private IDialog _dialogRecord = new DialogViewModel(
-        Key<IDynamicViewModel>.NewKey(),
-        "Settings",
-        typeof(SettingsDisplay),
-        null,
-        null,
-        true,
-        null);
+    private static readonly Key<IDynamicViewModel> _settingsDialogKey = Key<IDynamicViewModel>.NewKey();
     
     private CancellationTokenSource _workerCancellationTokenSource = new();
     
@@ -76,6 +80,12 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private MouseEventArgs? _previousDragMouseEventArgs;
     
     private MainLayoutDragEventKind _mainLayoutDragEventKind;
+    
+    /// <summary>
+    /// The Editor cannot make use of this list when display text editor tabs.
+    /// This is because the Editor uses a TabListDisplay.
+    /// </summary>
+    private List<IPanelTab> _sharedPanelTabList = new();
 
     protected override void OnInitialized()
     {
@@ -104,6 +114,16 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         InitPanelGroup(_leftPanelGroupParameter);
         InitPanelGroup(_rightPanelGroupParameter);
         InitPanelGroup(_bottomPanelGroupParameter);
+        
+        _viewModelDisplayOptions = new()
+        {
+            TabIndex = 0,
+            HeaderButtonKinds = TextEditorHeaderButtonKindsList,
+            HeaderComponentType = typeof(TextEditorFileExtensionHeaderDisplay),
+            TextEditorHtmlElementId = Guid.NewGuid(),
+        };
+    
+        _componentDataKey = new Key<TextEditorComponentData>(_viewModelDisplayOptions.TextEditorHtmlElementId);
         
         DotNetService.CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
         DotNetService.TextEditorService.SecondaryChanged += TextEditorOptionsStateWrap_StateChanged;
@@ -264,19 +284,28 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 StateHasChanged();
             }).ConfigureAwait(false);
         }
-    }
-
-    private List<IPanelTab> GetTabList(PanelGroup panelGroup)
-    {
-        var tabList = new List<IPanelTab>();
-
-        foreach (var panelTab in panelGroup.TabList)
+        else if (secondaryChangedKind == SecondaryChangedKind.DirtyResourceUriStateChanged)
         {
-            panelTab.TabGroup = panelGroup;
-            tabList.Add(panelTab);
+            var localTabListDisplay = _tabListDisplay;
+            
+            if (localTabListDisplay is not null)
+            {
+                await localTabListDisplay.NotifyStateChangedAsync();
+            }
         }
-
-        return tabList;
+        else if (secondaryChangedKind == SecondaryChangedKind.Group_TextEditorGroupStateChanged)
+        {
+            var textEditorGroup = DotNetService.TextEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
+                x => x.GroupKey == IdeService.EditorTextEditorGroupKey);
+                
+            if (_previousActiveViewModelKey != textEditorGroup.ActiveViewModelKey)
+            {
+                _previousActiveViewModelKey = textEditorGroup.ActiveViewModelKey;
+                DotNetService.TextEditorService.ViewModel_StopCursorBlinking();
+            }
+        
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     private string GetElementDimensionsStyleString(PanelGroup? panelGroup)
@@ -707,6 +736,57 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         }
     }
     /* End StartupControlDisplay.razor */
+    
+    private void DispatchRegisterDialogRecordAction()
+    {
+        InitializationHelper.DispatchRegisterDialogRecordAction(
+            DotNetService,
+            new DialogViewModel(
+                _settingsDialogKey,
+                "Settings",
+                typeof(SettingsDisplay),
+                null,
+                null,
+                true,
+                null));
+    }
+    
+    /* Start EditorDisplay */
+    private static readonly List<HeaderButtonKind> TextEditorHeaderButtonKindsList =
+        Enum.GetValues(typeof(HeaderButtonKind))
+            .Cast<HeaderButtonKind>()
+            .ToList();
+
+    private ViewModelDisplayOptions _viewModelDisplayOptions = null!;
+
+    private TabListDisplay? _tabListDisplay;
+
+    private string? _htmlId = null;
+    private string HtmlId => _htmlId ??= $"di_te_group_{IdeService.EditorTextEditorGroupKey.Guid}";
+    
+    private Key<TextEditorViewModel> _previousActiveViewModelKey = Key<TextEditorViewModel>.Empty;
+    
+    private Key<TextEditorComponentData> _componentDataKey;
+
+    private List<ITab> GetTabList(TextEditorGroup textEditorGroup)
+    {
+        var textEditorState = DotNetService.TextEditorService.TextEditorState;
+        var tabList = new List<ITab>();
+
+        foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
+        {
+            var viewModel = textEditorState.ViewModelGetOrDefault(viewModelKey);
+            
+            if (viewModel is not null)
+            {
+                viewModel.PersistentState.TabGroup = textEditorGroup;
+                tabList.Add(viewModel.PersistentState);
+            }
+        }
+
+        return tabList;
+    }
+    /* End EditorDisplay */
     
     public void Dispose()
     {

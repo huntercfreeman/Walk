@@ -5,7 +5,6 @@
 @using Walk.Common.RazorLib.Dropdowns.Models
 @using Walk.Common.RazorLib.Installations.Models
 @using Walk.Common.RazorLib.Menus.Displays
-@using Walk.Ide.RazorLib.Editors.Displays
 @using Walk.Ide.RazorLib.Shareds.Displays.Internals
 @using Walk.Ide.RazorLib.Settings.Displays
 @using Walk.Ide.RazorLib.Shareds.Models
@@ -18,6 +17,11 @@
 @using Walk.Common.RazorLib.Tabs.Displays;
 @using Walk.Common.RazorLib.Badges.Displays;
 @using Walk.Common.RazorLib.Notifications.Models;
+
+@using Walk.Common.RazorLib.Tabs.Displays
+@using Walk.TextEditor.RazorLib.TextEditors.Displays
+@using Walk.TextEditor.RazorLib.TextEditors.Displays.Internals
+@using Walk.Ide.RazorLib.BackgroundTasks.Models
 
 @inherits LayoutComponentBase
 
@@ -42,6 +46,9 @@
     	var iconDriver = new IconDriver(
     		appOptionsState.Options.IconSizeInPixels,
     		appOptionsState.Options.IconSizeInPixels);
+    
+        _tabCascadingValueBatch.CommonService = DotNetService.CommonService;
+    	_tabCascadingValueBatch.HandleTabButtonOnContextMenu = null;
     }
 
     @* Start Header *@
@@ -52,7 +59,7 @@
             @* Start SettingsDialogEntryPoint *@
             <button class="di_button"
                     style="margin-left: 0;"
-                    @onclick="async () => InitializationHelper.DispatchRegisterDialogRecordAction(DotNetService, _dialogRecord)">
+                    @onclick="DispatchRegisterDialogRecordAction">
                     
                 @IconSettingsGearFragment.Render(iconDriver)
             </button>
@@ -160,13 +167,9 @@
         		 id="@_leftPanelGroupParameter.HtmlIdTabs">
         
                 @{
-        			var tabList = GetTabList(leftPanelGroup);
-        			
-                    _tabCascadingValueBatch.CommonService = DotNetService.CommonService;
-                	_tabCascadingValueBatch.HandleTabButtonOnContextMenu = null;
-        			
-        			foreach (var panelTab in tabList)
+        			foreach (var panelTab in leftPanelGroup.TabList)
                     {
+                        panelTab.TabGroup = leftPanelGroup;
                         var Tab = panelTab;
                         var localTabViewModel = panelTab;
         				var ShouldDisplayCloseButton = false;
@@ -250,7 +253,51 @@
         </div>
     
         <div class="di_ide_editor-display" style="@DotNetService.CommonService.EditorElementStyle">
-            <EditorDisplay/>
+                <div class="di_ide_section-body di_te_text-editor-group di_ide_section-no-title"
+                     id="@HtmlId">
+                	@{
+            	        var textEditorGroup = DotNetService.TextEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
+            	            x => x.GroupKey == Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+            	    }
+                
+                	@if (textEditorGroup is not null)
+                	{
+                		<div class="di_te_text-editor-group-tabs-list">
+            				<TabListDisplay @ref="_tabListDisplay"
+            								TabList="@GetTabList(textEditorGroup)"/>
+            			</div>
+            	
+            			<div class="di_te_text-editor-group-active-view-model">
+            				@{
+            		            var textEditorModel = DotNetService.TextEditorService.ViewModel_GetModelOrDefault(
+            		                textEditorGroup.ActiveViewModelKey);
+            		    
+            		            if (textEditorModel is null)
+            		            {
+            		                <text>No editors are open currently</text>
+            		            }
+            		            else
+            		            {
+            		            	<FindOverlayDisplay ComponentDataKey="_componentDataKey"/>
+            		            
+            						<TextEditorFileExtensionHeaderDisplay ComponentDataKey="_componentDataKey"
+            						                                      TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"/>
+            		            	
+            		                <TextEditorViewModelSlimDisplay TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"
+            		                                                ViewModelDisplayOptions="_viewModelDisplayOptions"/>
+            		                           
+            						<TextEditorDefaultFooterDisplay ComponentDataKey="_componentDataKey"/>
+            		            }
+            	            }
+                        </div>
+            	    }
+            	    else
+            	    {
+            	        <div>
+            	            Group not found
+            	        </div>
+            	    }
+                </div>
         </div>
         
         <div class="di_resize-column"
@@ -267,13 +314,11 @@
         		 id="@_rightPanelGroupParameter.HtmlIdTabs">
         
                 @{
-        			tabList = GetTabList(rightPanelGroup);
+                    
         			
-                    _tabCascadingValueBatch.CommonService = DotNetService.CommonService;
-                	_tabCascadingValueBatch.HandleTabButtonOnContextMenu = null;
-        			
-        			foreach (var panelTab in tabList)
+        			foreach (var panelTab in rightPanelGroup.TabList)
                     {
+                        panelTab.TabGroup = rightPanelGroup;
                         var Tab = panelTab;
                         var localTabViewModel = panelTab;
         				var ShouldDisplayCloseButton = false;
@@ -367,13 +412,9 @@
     		 id="@_bottomPanelGroupParameter.HtmlIdTabs">
     
             @{
-    			tabList = GetTabList(bottomPanelGroup);
-    			
-                _tabCascadingValueBatch.CommonService = DotNetService.CommonService;
-            	_tabCascadingValueBatch.HandleTabButtonOnContextMenu = null;
-    			
-    			foreach (var panelTab in tabList)
+    			foreach (var panelTab in bottomPanelGroup.TabList)
                 {
+                    panelTab.TabGroup = bottomPanelGroup;
                     var Tab = panelTab;
                     var localTabViewModel = panelTab;
     				var ShouldDisplayCloseButton = false;
