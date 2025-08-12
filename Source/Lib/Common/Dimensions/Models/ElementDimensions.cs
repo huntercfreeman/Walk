@@ -65,7 +65,7 @@ public class ElementDimensions
     /// <summary>
     /// This method invokes `styleBuilder.Clear();` immediately.
     /// </summary>
-    public string GetStyleString(StringBuilder styleBuilder, bool withDebug = false)
+    public string GetStyleString(StringBuilder styleBuilder)
     {
         styleBuilder.Clear();
     
@@ -181,30 +181,10 @@ public class ElementDimensions
         {
             styleBuilder.Append("top: calc(");
             
-            if (withDebug)
-            {
-                if (Top_Base_0.IsUsed)
-                {
-                    Console.WriteLine("Top_Base_0.IsUsed");
-                }
-                if (Top_Base_1.IsUsed)
-                {
-                    Console.WriteLine("Top_Base_1.IsUsed");
-                }
-                if (Top_Offset.IsUsed)
-                {
-                    Console.WriteLine("Top_Offset.IsUsed");
-                }
-            }
-            
             if (Top_Base_0.IsUsed)
             {
                 styleBuilder.Append(Top_Base_0.Value.ToCssValue());
                 styleBuilder.Append(Top_Base_0.DimensionUnitKind.GetStyleString());
-                
-                if (withDebug)
-                    Console.WriteLine(styleBuilder.ToString());
-                
                 styleBuilder.Append(" ");
             }
             if (Top_Base_1.IsUsed)
