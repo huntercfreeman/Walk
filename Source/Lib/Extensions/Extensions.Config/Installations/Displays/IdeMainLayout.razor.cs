@@ -101,12 +101,10 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             panelGroupKey: CommonFacts.BottomPanelGroupKey,
             cssClassString: "di_ide_footer");
 
-        InitPanelGroup(DotNetService, _leftPanelGroupParameter);
-        InitPanelGroup(DotNetService, _rightPanelGroupParameter);
-        InitPanelGroup(DotNetService, _bottomPanelGroupParameter);
-
+        InitPanelGroup(_leftPanelGroupParameter);
+        InitPanelGroup(_rightPanelGroupParameter);
+        InitPanelGroup(_bottomPanelGroupParameter);
         
-
         DotNetService.CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
         DotNetService.TextEditorService.SecondaryChanged += TextEditorOptionsStateWrap_StateChanged;
         DotNetService.IdeService.IdeStateChanged += OnIdeStateChanged;
@@ -123,24 +121,21 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         }
     }
     
-    private void InitPanelGroup(DotNetService DotNetService, PanelGroupParameter panelGroupParameter)
+    private void InitPanelGroup(PanelGroupParameter panelGroupParameter)
     {
         var position = string.Empty;
 
         if (CommonFacts.LeftPanelGroupKey == panelGroupParameter.PanelGroupKey)
         {
             position = "left";
-            panelGroupParameter.DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_left;
         }
         else if (CommonFacts.RightPanelGroupKey == panelGroupParameter.PanelGroupKey)
         {
             position = "right";
-            panelGroupParameter.DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_right;
         }
         else if (CommonFacts.BottomPanelGroupKey == panelGroupParameter.PanelGroupKey)
         {
             position = "bottom";
-            panelGroupParameter.DimensionUnitPurposeKind = DimensionUnitPurposeKind.take_size_of_adjacent_hidden_panel_bottom;
         }
 
         panelGroupParameter.PanelPositionCss = $"di_ide_panel_{position}";

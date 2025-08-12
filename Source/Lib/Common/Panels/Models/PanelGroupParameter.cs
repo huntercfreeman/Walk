@@ -16,7 +16,6 @@ public struct PanelGroupParameter
     public Key<PanelGroup> PanelGroupKey { get; set; } = Key<PanelGroup>.Empty;
     public string CssClassString { get; set; } = null!;
     
-    public DimensionUnitPurposeKind DimensionUnitPurposeKind { get; set; }
     public string PanelPositionCss { get; set; }
     public string HtmlIdTabs { get; set; }
 }
