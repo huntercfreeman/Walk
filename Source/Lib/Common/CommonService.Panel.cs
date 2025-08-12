@@ -307,11 +307,6 @@ public partial class CommonService
             return;
         }
     
-        WidthAppAtTimeOfCalculations = appDimensionState.Width;
-        HeightAppAtTimeOfCalculations = appDimensionState.Height;
-        
-        
-        
         // DON'T FORGET THE LINEHEIGHT!!!
         // TABS ALWAYS EXIST
         //
@@ -339,7 +334,12 @@ public partial class CommonService
         
         if (_hadSuccessfullyMeasuredAtLeastOnce)
         {
+            bodyFraction = (BodyElementHeight + (GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2) + Options_LineHeight) / HeightAppAtTimeOfCalculations;
+            bottomPanelFraction = (BottomPanelHeight + (GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2) + Options_LineHeight) / HeightAppAtTimeOfCalculations;
             
+            leftPanelFraction = (LeftPanelWidth + (GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2)) / WidthAppAtTimeOfCalculations;
+            editorFraction = (EditorElementWidth + GetAppOptionsState().Options.ResizeHandleWidthInPixels) / WidthAppAtTimeOfCalculations;
+            rightPanelFraction = (RightPanelWidth + (GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2)) / WidthAppAtTimeOfCalculations;
         }
         else
         {
@@ -355,10 +355,13 @@ public partial class CommonService
             rightPanelFraction = 0.333333;
         }
         
+        WidthAppAtTimeOfCalculations = appDimensionState.Width;
+        HeightAppAtTimeOfCalculations = appDimensionState.Height;
+        
         // height: 78% - (GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2) - Options_LineHeight;
         BodyElementHeight = HeightAppAtTimeOfCalculations * bodyFraction - (GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2) - Options_LineHeight;
         // height: 22% - (GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2) - Options_LineHeight;
-        BottomPanelHeight = HeightAppAtTimeOfCalculations * bottomPanelFraction - (GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2)- Options_LineHeight;
+        BottomPanelHeight = HeightAppAtTimeOfCalculations * bottomPanelFraction - (GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2) - Options_LineHeight;
         
         // width: 33.3333% - (GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2);
         LeftPanelWidth = WidthAppAtTimeOfCalculations * leftPanelFraction - (GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2);
