@@ -322,6 +322,9 @@ public partial class CommonService
         // Then apply those percents to the new measurements.
         //
         // very "easy".
+        //
+        // you just offset with the cursor the sizes directly it doesn't matter then you get the current percents by looking back at the
+        // original width/height of app but now you apply those percents to the new size.
         
         // width: 100%;
         // height: calc(78% - (DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2)px - (CommonFacts.Ide_Header_Height.Value / 2)rem);
