@@ -11,6 +11,13 @@ public partial class CommonService
     
     public PanelState GetPanelState() => _panelState;
     
+    public string BodyElementStyle { get; set; } = "height: 78%;";
+    public string BottomPanelStyle { get; set; } = "height: 22%";
+    
+    public string LeftPanelStyle { get; set; } = "width: 33.3333%";
+    public string EditorElementStyle { get; set; } = "width: 33.3333%";
+    public string RightPanelStyle { get; set; } = "width: 33.3333%";
+    
     private bool _hadSuccessfullyMeasuredAtLeastOnce;
     
     public double WidthAppAtTimeOfCalculations { get; set; }
@@ -369,6 +376,13 @@ public partial class CommonService
         EditorElementWidth = WidthAppAtTimeOfCalculations * editorFraction - GetAppOptionsState().Options.ResizeHandleWidthInPixels;
         // width: 33.3333% - (GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2);
         RightPanelWidth = WidthAppAtTimeOfCalculations * rightPanelFraction - (GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2);
+        
+        BodyElementStyle = $"height: {BodyElementHeight}px;";
+        BottomPanelStyle = $"height: {BottomPanelHeight}px";
+        
+        LeftPanelStyle = $"width: {LeftPanelWidth}px";
+        EditorElementStyle = $"width: {EditorElementWidth}px";
+        RightPanelStyle = $"width: {RightPanelWidth}px";
         
         /*
         Each tabs listing is size "(Options_LineHeight)px".

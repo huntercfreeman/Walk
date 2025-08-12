@@ -149,10 +149,10 @@
     
     @* Start Body *@
     <div class="di_body"
-         style="@_bodyElementDimensions.GetStyleString(DotNetService.CommonService.UiStringBuilder)">
+         style="@DotNetService.CommonService.BodyElementStyle">
     
         <div class="@GetPanelElementCssClass(_leftPanelGroupParameter.PanelPositionCss, _leftPanelGroupParameter.CssClassString)"
-             style="@GetElementDimensionsStyleString(leftPanelGroup)"
+             style="@DotNetService.CommonService.LeftPanelStyle"
         	 id="@_leftPanelGroupParameter.PanelPositionCss">
             
             <div class="di_panel-tabs"
@@ -249,7 +249,7 @@
              @onmousedown="() => SubscribeToDragEvent(MainLayoutDragEventKind.TopLeftResizeColumn)">
         </div>
     
-        <EditorDisplay EditorElementDimensions="_editorElementDimensions" />
+        <EditorDisplay/>
         
         <div class="di_resize-column"
              style="@DotNetService.CommonService.Options_ResizeHandleCssWidth"
@@ -257,7 +257,7 @@
         </div>
     
         <div class="@GetPanelElementCssClass(_rightPanelGroupParameter.PanelPositionCss, _rightPanelGroupParameter.CssClassString)"
-             style="@GetElementDimensionsStyleString(rightPanelGroup)"
+             style="@DotNetService.CommonService.RightPanelStyle"
         	 id="@_rightPanelGroupParameter.PanelPositionCss">
             
             <div class="di_panel-tabs"
@@ -357,7 +357,7 @@
     </div>
     
     <div class="@GetPanelElementCssClass(_bottomPanelGroupParameter.PanelPositionCss, _bottomPanelGroupParameter.CssClassString)"
-         style="@GetElementDimensionsStyleString(bottomPanelGroup)"
+         style="@DotNetService.CommonService.BottomPanelStyle"
     	 id="@_bottomPanelGroupParameter.PanelPositionCss">
         
         <div class="di_panel-tabs"
