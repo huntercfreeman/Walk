@@ -206,7 +206,6 @@ public class ElementDimensions
             styleBuilder.Append(");");
         }
         
-        Console.WriteLine(styleBuilder.ToString());
         return styleBuilder.ToString();
     }
 }

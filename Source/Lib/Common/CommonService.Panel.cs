@@ -425,6 +425,8 @@ public partial class CommonService
             leftPanelFraction = 0.333333;
             editorFraction = 0.333333;
             rightPanelFraction = 0.333333;
+            
+            
         }
         
         WidthAppAtTimeOfCalculations = appDimensionState.Width;
@@ -441,6 +443,8 @@ public partial class CommonService
         EditorElementWidth = WidthAppAtTimeOfCalculations * editorFraction - GetAppOptionsState().Options.ResizeHandleWidthInPixels;
         // width: 33.3333% - (GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2);
         RightPanelWidth = WidthAppAtTimeOfCalculations * rightPanelFraction - (GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2);
+        
+        RightPanelGroupShowingTabStateChanged();
         
         Panels_CreateStyleStrings();
         
@@ -529,6 +533,40 @@ public partial class CommonService
         return Task.CompletedTask;
     }
     
+    private void Panels_CreateStyleStrings()
+    {
+        BodyElementStyle = $"height: {BodyElementHeight}px;";
+        
+        if (_panelState.BottomPanelGroup.ActiveTab is null)
+        {
+            BottomPanelStyle = $"height: {Options_LineHeight}px";
+        }
+        else
+        {
+            BottomPanelStyle = $"height: {BottomPanelHeight}px";
+        }
+        
+        if (_panelState.TopLeftPanelGroup.ActiveTab is null)
+        {
+            LeftPanelStyle = $"width: {Options_LineHeight}px";
+        }
+        else
+        {
+            LeftPanelStyle = $"width: {LeftPanelWidth}px";
+        }
+        
+        EditorElementStyle = $"width: {EditorElementWidth}px";
+        
+        if (_panelState.TopRightPanelGroup.ActiveTab is null)
+        {
+            RightPanelStyle = $"width: {Options_LineHeight}px";
+        }
+        else
+        {
+            RightPanelStyle = $"width: {RightPanelWidth}px";
+        }
+    }
+    
     private void LeftPanelGroupShowingTabStateChanged()
     {
         var leftPanel = _panelState.TopLeftPanelGroup;
@@ -576,45 +614,51 @@ public partial class CommonService
         Panels_CreateStyleStrings();
     }
     
-    private void Panels_CreateStyleStrings()
-    {
-        BodyElementStyle = $"height: {BodyElementHeight}px;";
-        
-        if (_panelState.BottomPanelGroup.ActiveTab is null)
-        {
-            BottomPanelStyle = $"height: {Options_LineHeight}px";
-        }
-        else
-        {
-            BottomPanelStyle = $"height: {BottomPanelHeight}px";
-        }
-        
-        
-        
-        if (_panelState.TopLeftPanelGroup.ActiveTab is null)
-        {
-            LeftPanelStyle = $"width: {Options_LineHeight}px";
-        }
-        else
-        {
-            LeftPanelStyle = $"width: {LeftPanelWidth}px";
-        }
-        
-        EditorElementStyle = $"width: {EditorElementWidth}px";
-        
-        if (_panelState.TopRightPanelGroup.ActiveTab is null)
-        {
-            RightPanelStyle = $"width: {Options_LineHeight}px";
-        }
-        else
-        {
-            RightPanelStyle = $"width: {RightPanelWidth}px";
-        }
-    }
-    
     private void RightPanelGroupShowingTabStateChanged()
     {
+        var rightPanel = _panelState.TopRightPanelGroup;
         
+        var localRightPanelWidth = RightPanelWidth;
+        var localEditorElementWidth = EditorElementWidth;
+        
+        if (rightPanel.ActiveTab is null)
+        {
+            localEditorElementWidth += (localRightPanelWidth - Options_LineHeight);
+        }
+        else
+        {
+            var totalRightPanelAndEditorWidth = localEditorElementWidth + localRightPanelWidth;
+            
+            localEditorElementWidth -= (localRightPanelWidth - Options_LineHeight);
+            
+            if (localEditorElementWidth < 100)
+            {
+                double change = 0;
+                
+                if (localEditorElementWidth < 0)
+                {
+                    change = -1 * localEditorElementWidth;
+                }
+                
+                change += 100 - (localEditorElementWidth + change);
+                
+                localEditorElementWidth += change;
+                localRightPanelWidth -= change;
+                
+                if (localRightPanelWidth < 100)
+                {
+                    LeftPanelWidth = WidthAppAtTimeOfCalculations - 100 - 100;
+                    
+                    localRightPanelWidth = 100;
+                    localEditorElementWidth = 100;
+                }
+            }
+        }
+        
+        RightPanelWidth = localRightPanelWidth;
+        EditorElementWidth = localEditorElementWidth;
+        
+        Panels_CreateStyleStrings();
     }
     
     private void BottomPanelGroupShowingTabStateChanged()
