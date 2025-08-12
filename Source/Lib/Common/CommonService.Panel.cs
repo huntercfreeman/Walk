@@ -87,6 +87,7 @@ public partial class CommonService
                 };
                 
                 outPanelGroup.ActiveTab = outPanelGroup.TabList.FirstOrDefault(x => x.Key == outPanelGroup.ActiveTabKey);
+                var showingTabStateChanged = inPanelGroup.ActiveTab is null != outPanelGroup.ActiveTab is null;
                 
                 if (panelGroupKey == inState.TopLeftPanelGroup.Key)
                 {
@@ -94,6 +95,11 @@ public partial class CommonService
                     {
                         TopLeftPanelGroup = outPanelGroup
                     };
+                    
+                    if (showingTabStateChanged)
+                    {
+                        LeftPanelGroupShowingTabStateChanged();
+                    }
                 }
                 else if (panelGroupKey == inState.TopRightPanelGroup.Key)
                 {
@@ -101,6 +107,11 @@ public partial class CommonService
                     {
                         TopRightPanelGroup = outPanelGroup
                     };
+                    
+                    if (showingTabStateChanged)
+                    {
+                        RightPanelGroupShowingTabStateChanged();
+                    }
                 }
                 else if (panelGroupKey == inState.BottomPanelGroup.Key)
                 {
@@ -108,6 +119,11 @@ public partial class CommonService
                     {
                         BottomPanelGroup = outPanelGroup
                     };
+                    
+                    if (showingTabStateChanged)
+                    {
+                        BottomPanelGroupShowingTabStateChanged();
+                    }
                 }
                 else
                 {
@@ -158,6 +174,7 @@ public partial class CommonService
                 };
                 
                 outPanelGroup.ActiveTab = outPanelGroup.TabList.FirstOrDefault(x => x.Key == outPanelGroup.ActiveTabKey);
+                var showingTabStateChanged = inPanelGroup.ActiveTab is null != outPanelGroup.ActiveTab is null;
 
                 if (panelGroupKey == inState.TopLeftPanelGroup.Key)
                 {
@@ -165,6 +182,11 @@ public partial class CommonService
                     {
                         TopLeftPanelGroup = outPanelGroup
                     };
+                    
+                    if (showingTabStateChanged)
+                    {
+                        LeftPanelGroupShowingTabStateChanged();
+                    }
                 }
                 else if (panelGroupKey == inState.TopRightPanelGroup.Key)
                 {
@@ -172,6 +194,11 @@ public partial class CommonService
                     {
                         TopRightPanelGroup = outPanelGroup
                     };
+                    
+                    if (showingTabStateChanged)
+                    {
+                        RightPanelGroupShowingTabStateChanged();
+                    }
                 }
                 else if (panelGroupKey == inState.BottomPanelGroup.Key)
                 {
@@ -179,6 +206,11 @@ public partial class CommonService
                     {
                         BottomPanelGroup = outPanelGroup
                     };
+                    
+                    if (showingTabStateChanged)
+                    {
+                        BottomPanelGroupShowingTabStateChanged();
+                    }
                 }
                 else
                 {
@@ -223,6 +255,7 @@ public partial class CommonService
             };
                 
             outPanelGroup.ActiveTab = outPanelGroup.TabList.FirstOrDefault(x => x.Key == outPanelGroup.ActiveTabKey);
+            var showingTabStateChanged = inPanelGroup.ActiveTab is null != outPanelGroup.ActiveTab is null;
 
             if (panelGroupKey == inState.TopLeftPanelGroup.Key)
             {
@@ -230,6 +263,11 @@ public partial class CommonService
                 {
                     TopLeftPanelGroup = outPanelGroup
                 };
+                    
+                if (showingTabStateChanged)
+                {
+                    LeftPanelGroupShowingTabStateChanged();
+                }
             }
             else if (panelGroupKey == inState.TopRightPanelGroup.Key)
             {
@@ -237,6 +275,11 @@ public partial class CommonService
                 {
                     TopRightPanelGroup = outPanelGroup
                 };
+                    
+                if (showingTabStateChanged)
+                {
+                    RightPanelGroupShowingTabStateChanged();
+                }
             }
             else if (panelGroupKey == inState.BottomPanelGroup.Key)
             {
@@ -244,6 +287,11 @@ public partial class CommonService
                 {
                     BottomPanelGroup = outPanelGroup
                 };
+                    
+                if (showingTabStateChanged)
+                {
+                    BottomPanelGroupShowingTabStateChanged();
+                }
             }
             else
             {
@@ -344,12 +392,26 @@ public partial class CommonService
         
         if (_hadSuccessfullyMeasuredAtLeastOnce)
         {
+            double sum;
+        
             bodyFraction = (BodyElementHeight + (GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2) + Options_LineHeight) / HeightAppAtTimeOfCalculations;
             bottomPanelFraction = (BottomPanelHeight + (GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2) + Options_LineHeight) / HeightAppAtTimeOfCalculations;
             
             leftPanelFraction = (LeftPanelWidth + (GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2)) / WidthAppAtTimeOfCalculations;
             editorFraction = (EditorElementWidth + GetAppOptionsState().Options.ResizeHandleWidthInPixels) / WidthAppAtTimeOfCalculations;
             rightPanelFraction = (RightPanelWidth + (GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2)) / WidthAppAtTimeOfCalculations;
+            
+            /*sum = bodyFraction + bottomPanelFraction;
+            if (sum < 1)
+            {
+                bodyFraction += (1 - sum);
+            }
+            
+            sum = leftPanelFraction + editorFraction + rightPanelFraction;
+            if (sum < 1)
+            {
+                editorFraction += (1 - sum);
+            }*/
         }
         else
         {
@@ -380,12 +442,7 @@ public partial class CommonService
         // width: 33.3333% - (GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2);
         RightPanelWidth = WidthAppAtTimeOfCalculations * rightPanelFraction - (GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2);
         
-        BodyElementStyle = $"height: {BodyElementHeight}px;";
-        BottomPanelStyle = $"height: {BottomPanelHeight}px";
-        
-        LeftPanelStyle = $"width: {LeftPanelWidth}px";
-        EditorElementStyle = $"width: {EditorElementWidth}px";
-        RightPanelStyle = $"width: {RightPanelWidth}px";
+        Panels_CreateStyleStrings();
         
         /*
         Each tabs listing is size "(Options_LineHeight)px".
@@ -470,5 +527,98 @@ public partial class CommonService
         }
     
         return Task.CompletedTask;
+    }
+    
+    private void LeftPanelGroupShowingTabStateChanged()
+    {
+        var leftPanel = _panelState.TopLeftPanelGroup;
+        
+        var localLeftPanelWidth = LeftPanelWidth;
+        var localEditorElementWidth = EditorElementWidth;
+        
+        if (leftPanel.ActiveTab is null)
+        {
+            localEditorElementWidth += (localLeftPanelWidth - Options_LineHeight);
+        }
+        else
+        {
+            var totalLeftPanelAndEditorWidth = localEditorElementWidth + localLeftPanelWidth;
+            
+            localEditorElementWidth -= (localLeftPanelWidth - Options_LineHeight);
+            
+            if (localEditorElementWidth < 100)
+            {
+                double change = 0;
+                
+                if (localEditorElementWidth < 0)
+                {
+                    change = -1 * localEditorElementWidth;
+                }
+                
+                change += 100 - (localEditorElementWidth + change);
+                
+                localEditorElementWidth += change;
+                localLeftPanelWidth -= change;
+                
+                if (localLeftPanelWidth < 100)
+                {
+                    RightPanelWidth = WidthAppAtTimeOfCalculations - 100 - 100;
+                    
+                    localLeftPanelWidth = 100;
+                    localEditorElementWidth = 100;
+                }
+            }
+        }
+        
+        LeftPanelWidth = localLeftPanelWidth;
+        EditorElementWidth = localEditorElementWidth;
+        
+        Panels_CreateStyleStrings();
+    }
+    
+    private void Panels_CreateStyleStrings()
+    {
+        BodyElementStyle = $"height: {BodyElementHeight}px;";
+        
+        if (_panelState.BottomPanelGroup.ActiveTab is null)
+        {
+            BottomPanelStyle = $"height: {Options_LineHeight}px";
+        }
+        else
+        {
+            BottomPanelStyle = $"height: {BottomPanelHeight}px";
+        }
+        
+        
+        
+        if (_panelState.TopLeftPanelGroup.ActiveTab is null)
+        {
+            LeftPanelStyle = $"width: {Options_LineHeight}px";
+        }
+        else
+        {
+            LeftPanelStyle = $"width: {LeftPanelWidth}px";
+        }
+        
+        EditorElementStyle = $"width: {EditorElementWidth}px";
+        
+        if (_panelState.TopRightPanelGroup.ActiveTab is null)
+        {
+            RightPanelStyle = $"width: {Options_LineHeight}px";
+        }
+        else
+        {
+            RightPanelStyle = $"width: {RightPanelWidth}px";
+        }
+    }
+    
+    private void RightPanelGroupShowingTabStateChanged()
+    {
+        
+    }
+    
+    private void BottomPanelGroupShowingTabStateChanged()
+    {
+        
     }
 }
