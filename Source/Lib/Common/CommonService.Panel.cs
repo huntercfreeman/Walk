@@ -1,6 +1,7 @@
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.ListExtensions;
 using Walk.Common.RazorLib.Panels.Models;
+using Walk.Common.RazorLib.Dimensions.Models;
 
 namespace Walk.Common.RazorLib;
 
@@ -9,6 +10,26 @@ public partial class CommonService
     private PanelState _panelState = new();
     
     public PanelState GetPanelState() => _panelState;
+    
+    public double WidthAppAtTimeOfCalculations { get; set; }
+    public double HeightAppAtTimeOfCalculations { get; set; }
+    
+    // width: 100%;
+    // height: calc(78% - (DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2)px - (CommonFacts.Ide_Header_Height.Value / 2)rem);
+    public double BodyElementSize { get; set; }
+    // width: 33.3333% - ???;
+    // height: 100%;
+    public double LeftPanelSize { get; set; }
+    // width: 33.3333% - (DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2 ??????????? )px;
+    // height: 100%;
+    public double EditorElementSize { get; set; }
+    // width: 33.3333% - ???;
+    // height: 100%;
+    public double RightPanelSize { get; set; }
+    
+    // width: 100%;
+    // height: calc(22% - ??? - (CommonFacts.Ide_Header_Height.Value / 2)rem);
+    public double BottomPanelSize { get; set; }
     
     public void SetPanelState(PanelState panelState)
     {
@@ -278,5 +299,17 @@ public partial class CommonService
                 SetActivePanelTab(CommonFacts.LeftPanelGroupKey, panel.Key);
             }
         }
+    }
+    
+    public void Panel_OnUserAgent_AppDimensionStateChanged()
+    {
+        WidthAppAtTimeOfCalculations;
+        HeightAppAtTimeOfCalculations;
+        Top;
+        BodyElementSize;
+        LeftPanelSize;
+        EditorElementSize;
+        RightPanelSize;
+        BottomPanelSize;
     }
 }

@@ -33,6 +33,10 @@ public partial class CommonService
     
     public int Options_LineHeight { get; set; } = 20;
     public string Options_LineHeight_CssStyle { get; set; } = "height: 20px;";
+    public string Rotate_Options_LineHeight_CssStyle { get; set; } = "width: 20px;";
+    
+    public string TopPanel_Body_Options_LineHeight_CssStyle { get; set; } = "width: calc(100% - 20px);";
+    public string BottomPanel_Body_Options_LineHeight_CssStyle { get; set; } = "height: calc(100% - 20px);";
     
     public AppOptionsState GetAppOptionsState() => _appOptionsState;
 
@@ -143,7 +147,30 @@ public partial class CommonService
     public void Options_SetLineHeight(int lineHeightInPixels)
     {
         Options_LineHeight = lineHeightInPixels;
+        
         Options_LineHeight_CssStyle = $"height: {Options_LineHeight.ToString()}px;";
+        Rotate_Options_LineHeight_CssStyle = $"width: {Options_LineHeight.ToString()}px;";
+        
+        TopPanel_Body_Options_LineHeight_CssStyle = $"width: calc(100% - {Options_LineHeight.ToString()}px);";
+        BottomPanel_Body_Options_LineHeight_CssStyle = $"height: calc(100% - {Options_LineHeight.ToString()}px);";
+        
+        /*var panelState = GetPanelState();
+        
+        panelState.TopLeftPanelGroup.ElementDimensions.Width_Base_1 = new DimensionUnit(
+            Options_LineHeight,
+            DimensionUnitKind.Pixels,
+            DimensionOperatorKind.Subtract);
+            
+        panelState.TopRightPanelGroup.ElementDimensions.Width_Base_1 = new DimensionUnit(
+            Options_LineHeight,
+            DimensionUnitKind.Pixels,
+            DimensionOperatorKind.Subtract);
+        
+        panelState.BottomPanelGroup.ElementDimensions.Height_Base_1 = new DimensionUnit(
+            Options_LineHeight,
+            DimensionUnitKind.Pixels,
+            DimensionOperatorKind.Subtract);*/
+        
         CommonUiStateChanged?.Invoke(CommonUiEventKind.AppOptionsStateChanged);
     }
 

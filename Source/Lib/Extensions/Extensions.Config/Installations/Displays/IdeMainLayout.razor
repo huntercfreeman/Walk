@@ -42,10 +42,6 @@
     	var iconDriver = new IconDriver(
     		appOptionsState.Options.IconSizeInPixels,
     		appOptionsState.Options.IconSizeInPixels);
-        
-        PassAlongSizeIfNoActiveTab(_leftPanelGroupParameter, leftPanelGroup);
-        PassAlongSizeIfNoActiveTab(_rightPanelGroupParameter, rightPanelGroup);
-        PassAlongSizeIfNoActiveTab(_bottomPanelGroupParameter, bottomPanelGroup);
     }
 
     @* Start Header *@
@@ -160,6 +156,7 @@
         	 id="@_leftPanelGroupParameter.PanelPositionCss">
             
             <div class="di_panel-tabs"
+                 style="@DotNetService.CommonService.Rotate_Options_LineHeight_CssStyle"
         		 id="@_leftPanelGroupParameter.HtmlIdTabs">
         
                 @{
@@ -219,7 +216,7 @@
                 }
             </div>
             
-            <div class="di_ide_panel-body">
+            <div class="di_ide_panel-body" style="@GetTopPanelBodyStyle(leftPanelGroup)">
                 @if (leftPanelGroup.ActiveTab is not null)
                 {
                     if (leftPanelGroup.ActiveTab.ComponentType == typeof(Walk.Extensions.DotNet.DotNetSolutions.Displays.SolutionExplorerDisplay))
@@ -264,6 +261,7 @@
         	 id="@_rightPanelGroupParameter.PanelPositionCss">
             
             <div class="di_panel-tabs"
+        		 style="@DotNetService.CommonService.Rotate_Options_LineHeight_CssStyle"
         		 id="@_rightPanelGroupParameter.HtmlIdTabs">
         
                 @{
@@ -323,7 +321,7 @@
                 }
             </div>
             
-            <div class="di_ide_panel-body">
+            <div class="di_ide_panel-body" style="@GetTopPanelBodyStyle(rightPanelGroup)">
                 @if (rightPanelGroup.ActiveTab is not null)
                 {
                     if (rightPanelGroup.ActiveTab.ComponentType == typeof(Walk.Extensions.DotNet.DotNetSolutions.Displays.SolutionExplorerDisplay))
@@ -363,6 +361,7 @@
     	 id="@_bottomPanelGroupParameter.PanelPositionCss">
         
         <div class="di_panel-tabs"
+    		 style="@DotNetService.CommonService.Options_LineHeight_CssStyle"
     		 id="@_bottomPanelGroupParameter.HtmlIdTabs">
     
             @{
@@ -429,7 +428,7 @@
             }
         </div>
         
-        <div class="di_ide_panel-body">
+        <div class="di_ide_panel-body" style="@GetBottomPanelBodyStyle(bottomPanelGroup)">
             @if (bottomPanelGroup.ActiveTab is not null)
             {
                 if (bottomPanelGroup.ActiveTab.ComponentType == typeof(Walk.Extensions.DotNet.DotNetSolutions.Displays.SolutionExplorerDisplay))

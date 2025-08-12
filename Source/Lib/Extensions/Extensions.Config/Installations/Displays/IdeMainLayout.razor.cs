@@ -127,13 +127,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             cssClassString: "di_ide_footer",
             adjacentElementDimensions: _bodyElementDimensions);
 
-        _bodyElementDimensions.Height_Base_0 = new DimensionUnit(78, DimensionUnitKind.Percentage);
-        _bodyElementDimensions.Height_Base_1 = new DimensionUnit(DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleHeightInPixels / 2, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);;
-        _bodyElementDimensions.Height_WildCard = new DimensionUnit(CommonFacts.Ide_Header_Height.Value / 2, CommonFacts.Ide_Header_Height.DimensionUnitKind, DimensionOperatorKind.Subtract);
-
-        _editorElementDimensions.Width_Base_0 = new DimensionUnit(33.3333, DimensionUnitKind.Percentage);
-        _editorElementDimensions.Width_Base_1 = new DimensionUnit(DotNetService.CommonService.GetAppOptionsState().Options.ResizeHandleWidthInPixels / 2, DimensionUnitKind.Pixels, DimensionOperatorKind.Subtract);
-
         InitPanelGroup(DotNetService, _leftPanelGroupParameter);
         InitPanelGroup(DotNetService, _rightPanelGroupParameter);
         InitPanelGroup(DotNetService, _bottomPanelGroupParameter);
@@ -236,6 +229,10 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     StateHasChanged();
                 }).ConfigureAwait(false);
                 break;
+            case CommonUiEventKind.UserAgent_AppDimensionStateChanged:
+                DotNetService.CommonService.Panel_OnUserAgent_AppDimensionStateChanged();
+                await InvokeAsync(StateHasChanged);
+                break;
             case CommonUiEventKind.PanelStateChanged:
                 await InvokeAsync(StateHasChanged);
                 break;
@@ -307,74 +304,34 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         return tabList;
     }
 
-    private void PassAlongSizeIfNoActiveTab(PanelGroupParameter panelGroupParameter, PanelGroup panelGroup)
-    {
-        /*
-        DimensionAttribute adjacentElementSizeDimensionAttribute;
-        DimensionAttribute panelGroupSizeDimensionsAttribute;
-
-        switch (panelGroupParameter.DimensionAttributeKind)
-        {
-            case DimensionAttributeKind.Width:
-                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.WidthDimensionAttribute;
-                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.WidthDimensionAttribute;
-                break;
-            case DimensionAttributeKind.Height:
-                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.HeightDimensionAttribute;
-                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.HeightDimensionAttribute;
-                break;
-            case DimensionAttributeKind.Left:
-                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.LeftDimensionAttribute;
-                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.LeftDimensionAttribute;
-                break;
-            case DimensionAttributeKind.Right:
-                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.RightDimensionAttribute;
-                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.RightDimensionAttribute;
-                break;
-            case DimensionAttributeKind.Top:
-                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.TopDimensionAttribute;
-                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.TopDimensionAttribute;
-                break;
-            case DimensionAttributeKind.Bottom:
-                adjacentElementSizeDimensionAttribute = panelGroupParameter.AdjacentElementDimensions.BottomDimensionAttribute;
-                panelGroupSizeDimensionsAttribute = panelGroup.ElementDimensions.BottomDimensionAttribute;
-                break;
-            default:
-                return;
-        }
-
-        var indexOfPreviousPassAlong = adjacentElementSizeDimensionAttribute.DimensionUnitList.FindIndex(
-            x => x.Purpose == panelGroupParameter.DimensionUnitPurposeKind);
-
-        if (panelGroup.ActiveTab is null && indexOfPreviousPassAlong == -1)
-        {
-            var panelGroupPercentageSize = panelGroupSizeDimensionsAttribute.DimensionUnitList.First(
-                x => x.DimensionUnitKind == DimensionUnitKind.Percentage);
-
-            adjacentElementSizeDimensionAttribute.DimensionUnitList.Add(new DimensionUnit(
-                panelGroupPercentageSize.Value,
-                panelGroupPercentageSize.DimensionUnitKind,
-                DimensionOperatorKind.Add,
-                panelGroupParameter.DimensionUnitPurposeKind));
-        }
-        else if (panelGroup.ActiveTab is not null && indexOfPreviousPassAlong != -1)
-        {
-            adjacentElementSizeDimensionAttribute.DimensionUnitList.RemoveAt(indexOfPreviousPassAlong);
-        }
-        */
-    }
-
     private string GetElementDimensionsStyleString(PanelGroup? panelGroup)
     {
         if (panelGroup?.ActiveTab is null)
         {
-            return "calc(" +
-                   "var(--di_panel-tabs-font-size)" +
-                   " + var(--di_panel-tabs-margin)" +
-                   " + var(--di_panel-tabs-bug-are-not-aligning-need-to-fix-todo))";
+            return DotNetService.CommonService.Rotate_Options_LineHeight_CssStyle;
         }
-
+    
         return panelGroup?.ElementDimensions.GetStyleString(DotNetService.CommonService.UiStringBuilder) ?? string.Empty;
+    }
+    
+    private string GetTopPanelBodyStyle(PanelGroup? panelGroup)
+    {
+        if (panelGroup?.ActiveTab is null)
+        {
+            return "width: 0;";
+        }
+        
+        return DotNetService.CommonService.TopPanel_Body_Options_LineHeight_CssStyle;
+    }
+    
+    private string GetBottomPanelBodyStyle(PanelGroup? panelGroup)
+    {
+        if (panelGroup?.ActiveTab is null)
+        {
+            return "width: 0;";
+        }
+        
+        return DotNetService.CommonService.BottomPanel_Body_Options_LineHeight_CssStyle;
     }
 
     private Task TopDropzoneOnMouseUp(Key<PanelGroup> panelGroupKey, MouseEventArgs mouseEventArgs)

@@ -441,8 +441,11 @@ public class TextEditorViewModelPersistentState : IDisposable, ITab, IPanelTab, 
 
     private void AppDimensionStateWrap_StateChanged(CommonUiEventKind commonUiEventKind)
     {
-        if (commonUiEventKind != CommonUiEventKind.AppDimensionStateChanged)
+        if (commonUiEventKind != CommonUiEventKind.Intra_AppDimensionStateChanged &&
+            commonUiEventKind != CommonUiEventKind.UserAgent_AppDimensionStateChanged)
+        {
             return;
+        }
         
         // The UI was resized, and therefore the text-editor measurements need to be re-measured.
         //

@@ -27,19 +27,13 @@ public class BrowserResizeInterop
     /// in order to access the <see cref="IDispatcher"/>.
     /// </summary>
     [JSInvokable]
-    public void OnBrowserResize()
+    public void OnBrowserResize(AppDimensionState appDimensionState)
     {
-        _commonService.AppDimension_NotifyUserAgentResize();
+        // AppDimensionState(int Width, int Height, int Left, int Top)
+        _commonService.AppDimension_NotifyUserAgentResize(appDimensionState);
     }
     
-    /// <summary>
-    /// The idea here is that one can subscribe/dispose as much as they'd like if they want to stop listening to the
-    /// resize event.
-    ///
-    /// But I'm probably never going to do use this extra logic I wrote with the re-using of the DotNetObjectReference
-    /// when I re-subscribe and such (because I'll only dispose when the app is closed). #YAGNI
-    /// </summary>
-    public void SubscribeWindowSizeChanged(WalkCommonJavaScriptInteropApi walkCommonJavaScriptInteropApi)
+    public async Task SubscribeWindowSizeChanged(WalkCommonJavaScriptInteropApi walkCommonJavaScriptInteropApi)
     {
         if (_browserResizeInteropDotNetObjectReference is null)
         {
@@ -50,8 +44,9 @@ public class BrowserResizeInterop
             }
         }
         
-        walkCommonJavaScriptInteropApi.SubscribeWindowSizeChanged(
-            _browserResizeInteropDotNetObjectReference);
+        _commonService.SetAppDimensions_Silent_NoEventRaised(await walkCommonJavaScriptInteropApi.SubscribeWindowSizeChanged(
+            _browserResizeInteropDotNetObjectReference,
+            CommonFacts.RootHtmlElementId));
     }
     
     public void DisposeWindowSizeChanged(WalkCommonJavaScriptInteropApi walkCommonJavaScriptInteropApi)

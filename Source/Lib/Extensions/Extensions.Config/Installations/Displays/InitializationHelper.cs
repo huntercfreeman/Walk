@@ -166,7 +166,7 @@ public static class InitializationHelper
             }
         }
 
-        BrowserResizeInterop.SubscribeWindowSizeChanged(DotNetService.CommonService.JsRuntimeCommonApi);
+        await BrowserResizeInterop.SubscribeWindowSizeChanged(DotNetService.CommonService.JsRuntimeCommonApi);
     }
     
     public static void InitializeMenuRun(DotNetService DotNetService)
