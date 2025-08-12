@@ -206,7 +206,7 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
         // Top
         _northEastResizeHandleDimensions.Top_Base_0 = new DimensionUnit(-1 * RESIZE_HANDLE_SQUARE_PIXELS / 2, DimensionUnitKind.Pixels);
 
-        return _northEastResizeHandleDimensions.GetStyleString(CommonService.UiStringBuilder, withDebug: true);
+        return _northEastResizeHandleDimensions.GetStyleString(CommonService.UiStringBuilder);
     }
 
     private string GetSouthEastResizeHandleStyleCss()
