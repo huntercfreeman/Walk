@@ -25,8 +25,6 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
     
     private TreeViewContainerParameter _treeViewContainerParameter;
     
-    private ResizableRowParameter _resizableRowParameter;
-    
     private Func<ElementDimensions, ElementDimensions, (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;
     private MouseEventArgs? _previousDragMouseEventArgs;
 
@@ -49,13 +47,6 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
     
     protected override void OnInitialized()
     {
-        var codeSearchState = IdeService.GetCodeSearchState();
-        
-        _resizableRowParameter = new (
-            codeSearchState.TopContentElementDimensions,
-            codeSearchState.BottomContentElementDimensions,
-            HandleResizableRowReRenderAsync);
-    
         IdeService.IdeStateChanged += OnCodeSearchStateChanged;
         IdeService.CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
         
@@ -113,10 +104,12 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
         {
             if (_dragEventHandler is not null)
             {
+                var codeSearchState = IdeService.GetCodeSearchState();
+        
                 await ResizableRow.Do(
                     IdeService.CommonService,
-                    _resizableRowParameter.TopElementDimensions,
-                    _resizableRowParameter.BottomElementDimensions,
+                    codeSearchState.TopContentElementDimensions,
+                    codeSearchState.BottomContentElementDimensions,
                     _dragEventHandler,
                     _previousDragMouseEventArgs,
                     x => _dragEventHandler = x,

@@ -17,20 +17,11 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
 
     private Key<IDynamicViewModel> _addIntegratedTerminalDialogKey = Key<IDynamicViewModel>.NewKey();
     
-    private ResizableColumnParameter _resizableColumnParameter;
-    
     private Func<ElementDimensions, ElementDimensions, (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;
     private MouseEventArgs? _previousDragMouseEventArgs;
 
     protected override void OnInitialized()
     {
-        var terminalGroupDisplayState = IdeService.GetTerminalGroupState();
-    
-        _resizableColumnParameter = new(
-            terminalGroupDisplayState.BodyElementDimensions,
-            terminalGroupDisplayState.TabsElementDimensions,
-            () => InvokeAsync(StateHasChanged));
-    
         IdeService.CommonService.CommonUiStateChanged += OnCommonUiStateChanged;
         IdeService.IdeStateChanged += OnTerminalGroupStateChanged;
     }
@@ -61,10 +52,11 @@ public partial class TerminalGroupDisplay : ComponentBase, IDisposable
         {
             if (_dragEventHandler is not null)
             {
+                var terminalGroupDisplayState = IdeService.GetTerminalGroupState();
                 await ResizableColumn.Do(
                     IdeService.CommonService,
-                    _resizableColumnParameter.LeftElementDimensions,
-                    _resizableColumnParameter.RightElementDimensions,
+                    terminalGroupDisplayState.BodyElementDimensions,
+                    terminalGroupDisplayState.TabsElementDimensions,
                     _dragEventHandler,
                     _previousDragMouseEventArgs,
                     x => _dragEventHandler = x,

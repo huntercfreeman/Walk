@@ -7,16 +7,13 @@ public struct PanelGroupParameter
 {
     public PanelGroupParameter(
         Key<PanelGroup> panelGroupKey,
-        ElementDimensions adjacentElementDimensions,
         string cssClassString)
     {
         PanelGroupKey = panelGroupKey;
-        AdjacentElementDimensions = adjacentElementDimensions;
         CssClassString = cssClassString;
     }
 
     public Key<PanelGroup> PanelGroupKey { get; set; } = Key<PanelGroup>.Empty;
-    public ElementDimensions AdjacentElementDimensions { get; set; }
     public string CssClassString { get; set; } = null!;
     
     public DimensionUnitPurposeKind DimensionUnitPurposeKind { get; set; }

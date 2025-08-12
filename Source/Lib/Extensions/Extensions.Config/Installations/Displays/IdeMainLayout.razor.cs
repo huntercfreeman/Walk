@@ -38,9 +38,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     [Inject]
     private BrowserResizeInterop BrowserResizeInterop { get; set; } = null!;
     
-    private ElementDimensions _bodyElementDimensions = new();
-    private ElementDimensions _editorElementDimensions = new();
-    
     // NOTE TO SELF: Don't put an event for Drag that makes the website unselectable,...
     // ...just ensure the drag start target is unselectable.
     // I'm pretty sure this works. If it doesn't make sure it isn't cause you're
@@ -58,11 +55,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private PanelGroupParameter _leftPanelGroupParameter;
     private PanelGroupParameter _rightPanelGroupParameter;
     private PanelGroupParameter _bottomPanelGroupParameter;
-    
-    private ResizableColumnParameter _topLeftResizableColumnParameter;
-    private ResizableColumnParameter _topRightResizableColumnParameter;
-    
-    private ResizableRowParameter _resizableRowParameter;
     
     private TabCascadingValueBatch _tabCascadingValueBatch = new();
     
@@ -97,35 +89,17 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
         var panelState = DotNetService.CommonService.GetPanelState();
 
-        _topLeftResizableColumnParameter = new(
-            panelState.TopLeftPanelGroup.ElementDimensions,
-            _editorElementDimensions,
-            () => InvokeAsync(StateHasChanged));
-
-        _topRightResizableColumnParameter = new(
-            _editorElementDimensions,
-            panelState.TopRightPanelGroup.ElementDimensions,
-            () => InvokeAsync(StateHasChanged));
-
-        _resizableRowParameter = new(
-            _bodyElementDimensions,
-            panelState.BottomPanelGroup.ElementDimensions,
-            () => InvokeAsync(StateHasChanged));
-
         _leftPanelGroupParameter = new(
             panelGroupKey: CommonFacts.LeftPanelGroupKey,
-            adjacentElementDimensions: _editorElementDimensions,
             cssClassString: null);
 
         _rightPanelGroupParameter = new(
             panelGroupKey: CommonFacts.RightPanelGroupKey,
-            adjacentElementDimensions: _editorElementDimensions,
             cssClassString: null);
 
         _bottomPanelGroupParameter = new(
             panelGroupKey: CommonFacts.BottomPanelGroupKey,
-            cssClassString: "di_ide_footer",
-            adjacentElementDimensions: _bodyElementDimensions);
+            cssClassString: "di_ide_footer");
 
         InitPanelGroup(DotNetService, _leftPanelGroupParameter);
         InitPanelGroup(DotNetService, _rightPanelGroupParameter);
@@ -248,8 +222,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     {
                         await Walk.Common.RazorLib.Resizes.Models.ResizableColumn.Do(
                             DotNetService.CommonService,
-                            _topLeftResizableColumnParameter.LeftElementDimensions,
-                            _topLeftResizableColumnParameter.RightElementDimensions,
+                            leftElementDimensions: null,
+                            rightElementDimensions: null,
                             _dragEventHandler,
                             _previousDragMouseEventArgs,
                             x => _dragEventHandler = x,
@@ -259,8 +233,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     {
                         await Walk.Common.RazorLib.Resizes.Models.ResizableColumn.Do(
                             DotNetService.CommonService,
-                            _topRightResizableColumnParameter.LeftElementDimensions,
-                            _topRightResizableColumnParameter.RightElementDimensions,
+                            leftElementDimensions: null,
+                            rightElementDimensions: null,
                             _dragEventHandler,
                             _previousDragMouseEventArgs,
                             x => _dragEventHandler = x,
@@ -270,8 +244,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     {
                         await Walk.Common.RazorLib.Resizes.Models.ResizableRow.Do(
                             DotNetService.CommonService,
-                            _resizableRowParameter.TopElementDimensions,
-                            _resizableRowParameter.BottomElementDimensions,
+                            topElementDimensions: null,
+                            bottomElementDimensions: null,
                             _dragEventHandler,
                             _previousDragMouseEventArgs,
                             x => _dragEventHandler = x,

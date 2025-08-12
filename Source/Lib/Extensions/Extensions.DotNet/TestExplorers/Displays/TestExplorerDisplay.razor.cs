@@ -19,19 +19,12 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private DotNetService DotNetService { get; set; } = null!;
 
-    private ResizableColumnParameter _resizableColumnParameter;
-    
     private Func<ElementDimensions, ElementDimensions, (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;
     private MouseEventArgs? _previousDragMouseEventArgs;
 
     protected override void OnInitialized()
     {
         var testExplorerState = DotNetService.GetTestExplorerState();
-        
-        _resizableColumnParameter = new(
-            testExplorerState.TreeViewElementDimensions,
-            testExplorerState.DetailsElementDimensions,
-            () => InvokeAsync(StateHasChanged));
     
         var model = DotNetService.IdeService.TextEditorService.Model_GetOrDefault(
             ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri);
@@ -148,10 +141,11 @@ public partial class TestExplorerDisplay : ComponentBase, IDisposable
         {
             if (_dragEventHandler is not null)
             {
+                var testExplorerState = DotNetService.GetTestExplorerState();
                 await ResizableColumn.Do(
                     DotNetService.CommonService,
-                    _resizableColumnParameter.LeftElementDimensions,
-                    _resizableColumnParameter.RightElementDimensions,
+                    testExplorerState.TreeViewElementDimensions,
+                    testExplorerState.DetailsElementDimensions,
                     _dragEventHandler,
                     _previousDragMouseEventArgs,
                     x => _dragEventHandler = x,
