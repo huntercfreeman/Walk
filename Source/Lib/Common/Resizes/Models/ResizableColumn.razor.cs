@@ -5,38 +5,11 @@ using Walk.Common.RazorLib.Dimensions.Models;
 
 namespace Walk.Common.RazorLib.Resizes.Displays;
 
-public partial class ResizableColumn : ComponentBase, IDisposable
+/// <summary>
+/// TODO: Rename this type
+/// </summary>
+public static class ResizableColumn
 {
-    [Inject]
-    private CommonService CommonService { get; set; } = null!;
-
-    [Parameter, EditorRequired]
-    public ResizableColumnParameter ResizableColumnParameter { get; set; }
-
-    private Func<ElementDimensions, ElementDimensions, (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;
-    private MouseEventArgs? _previousDragMouseEventArgs;
-
-    protected override void OnInitialized()
-    {
-        CommonService.CommonUiStateChanged += DragStateWrapOnStateChanged;
-    }
-    
-    public async void DragStateWrapOnStateChanged(CommonUiEventKind commonUiEventKind)
-    {
-        if (commonUiEventKind != CommonUiEventKind.DragStateChanged)
-            return;
-            
-        await Do(
-            CommonService,
-            ResizableColumnParameter.LeftElementDimensions,
-            ResizableColumnParameter.RightElementDimensions,
-            _dragEventHandler,
-            _previousDragMouseEventArgs,
-            x => _dragEventHandler = x,
-            x => _previousDragMouseEventArgs = x);
-        await ResizableColumnParameter.ReRenderFuncAsync.Invoke().ConfigureAwait(false);
-    }
-    
     public static async Task Do(
         CommonService commonService,
         ElementDimensions leftElementDimensions,
@@ -99,10 +72,5 @@ public partial class ResizableColumn : ComponentBase, IDisposable
             mouseEventArgsTuple.secondMouseEventArgs);
     
         return Task.CompletedTask;
-    }
-
-    public void Dispose()
-    {
-        CommonService.CommonUiStateChanged -= DragStateWrapOnStateChanged;
     }
 }

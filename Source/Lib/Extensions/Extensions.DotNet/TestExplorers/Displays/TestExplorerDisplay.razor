@@ -70,7 +70,10 @@
 
 					<TestExplorerTreeViewDisplay ElementDimensions="renderBatchValidated.TestExplorerState.TreeViewElementDimensions"/>
 
-					<ResizableColumn ResizableColumnParameter="_resizableColumnParameter"/>
+					<div class="di_resize-column"
+                         style="@DotNetService.CommonService.Options_ResizeHandleCssWidth"
+                         @onmousedown="() => SubscribeToDragEvent()">
+                    </div>
 
 					<TestExplorerDetailsDisplay ElementDimensions="renderBatchValidated.TestExplorerState.DetailsElementDimensions"/>
 				</div>

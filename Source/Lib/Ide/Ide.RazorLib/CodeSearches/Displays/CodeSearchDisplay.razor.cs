@@ -121,6 +121,8 @@ public partial class CodeSearchDisplay : ComponentBase, IDisposable
                     _previousDragMouseEventArgs,
                     x => _dragEventHandler = x,
                     x => _previousDragMouseEventArgs = x);
+                
+                await InvokeAsync(StateHasChanged);
             }
         }
     }
