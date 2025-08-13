@@ -5,6 +5,8 @@ using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.JavaScriptObjects.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
 using Walk.Common.RazorLib.Drags.Displays;
+using Walk.Common.RazorLib.Tabs.Models;
+using Walk.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Walk.Common.RazorLib.Panels.Models;
 
@@ -66,6 +68,8 @@ public record Panel : IPanelTab, IDialog, IDrag
 
     public string? DragCssClass { get; set; }
     public string? DragCssStyle { get; set; }
+    
+    public TabCascadingValueBatch TabCascadingValueBatch { get; set; }
 
     public IDialog SetDialogIsMaximized(bool isMaximized)
     {
@@ -235,5 +239,77 @@ public record Panel : IPanelTab, IDialog, IDrag
             Key<IDropzone>.NewKey(),
             "di_dropzone-fallback",
             null));
+    }
+    
+    public async Task OnClick(MouseEventArgs mouseEventArgs)
+    {
+        var localTabGroup = TabGroup;
+        if (localTabGroup is null)
+            return;
+
+        await localTabGroup.OnClickAsync(this, mouseEventArgs);
+    }
+    
+    public async Task HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)
+    {
+        if (mouseEventArgs.Button == 0)
+            TabCascadingValueBatch.ThinksLeftMouseButtonIsDown = true;
+        if (mouseEventArgs.Button == 1)
+            await CloseTabOnClickAsync().ConfigureAwait(false);
+        else if (mouseEventArgs.Button == 2)
+            ManuallyPropagateOnContextMenu(mouseEventArgs);
+    }
+    
+    public async Task HandleOnMouseOutAsync(MouseEventArgs mouseEventArgs)
+    {
+        if ((mouseEventArgs.Buttons & 1) == 0)
+            TabCascadingValueBatch.ThinksLeftMouseButtonIsDown = false;
+
+        if (TabCascadingValueBatch.ThinksLeftMouseButtonIsDown && this is IDrag draggable)
+        {
+            TabCascadingValueBatch.ThinksLeftMouseButtonIsDown = false;
+
+            // This needs to run synchronously to guarantee `dragState.DragElementDimensions` is in a threadsafe state
+            // (keep any awaits after it).
+            // (only the "UI thread" touches `dragState.DragElementDimensions`).
+            var dragState = CommonService.GetDragState();
+
+            dragState.DragElementDimensions.DisableWidth();
+
+            dragState.DragElementDimensions.DisableHeight();
+
+            dragState.DragElementDimensions.Left_Offset = new DimensionUnit(mouseEventArgs.ClientX, DimensionUnitKind.Pixels);
+
+            dragState.DragElementDimensions.Top_Offset = new DimensionUnit(mouseEventArgs.ClientY, DimensionUnitKind.Pixels);
+
+            dragState.DragElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
+
+            await draggable.OnDragStartAsync().ConfigureAwait(false);
+
+            TabCascadingValueBatch.SubscribeToDragEventForScrolling.Invoke(draggable);
+        }
+    }
+    
+    public void ManuallyPropagateOnContextMenu(MouseEventArgs mouseEventArgs)
+    {
+        var localHandleTabButtonOnContextMenu = TabCascadingValueBatch?.HandleTabButtonOnContextMenu;
+        if (localHandleTabButtonOnContextMenu is null)
+            return;
+
+        CommonService.Enqueue(new CommonWorkArgs
+        {
+            WorkKind = CommonWorkKind.Tab_ManuallyPropagateOnContextMenu,
+            HandleTabButtonOnContextMenu = localHandleTabButtonOnContextMenu,
+            TabContextMenuEventArgs = new TabContextMenuEventArgs(mouseEventArgs, this, () => Task.CompletedTask),
+        });
+    }
+    
+    public async Task CloseTabOnClickAsync()
+    {
+        var localTabGroup = TabGroup;
+        if (localTabGroup is null)
+            return;
+
+        await localTabGroup.CloseAsync(this).ConfigureAwait(false);
     }
 }

@@ -67,7 +67,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private PanelGroupParameter _rightPanelGroupParameter;
     private PanelGroupParameter _bottomPanelGroupParameter;
     
-    private TabCascadingValueBatch _tabCascadingValueBatch = new();
+    private TabCascadingValueBatch _tabCascadingValueBatch;
     
     private static readonly Key<IDynamicViewModel> _settingsDialogKey = Key<IDynamicViewModel>.NewKey();
     
@@ -85,6 +85,11 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     protected override void OnInitialized()
     {
+        _tabCascadingValueBatch = new()
+        {
+            SubscribeToDragEventForScrolling = SubscribeToDragEventForScrolling,
+        };
+    
         _dirtyResourceUriBadge = new Walk.TextEditor.RazorLib.Edits.Models.DirtyResourceUriBadge(DotNetService.TextEditorService);
         _notificationBadge = new Walk.Common.RazorLib.Notifications.Models.NotificationBadge(DotNetService.CommonService);
     
@@ -442,8 +447,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         return DotNetService.CommonService.UiStringBuilder.ToString();
     }
 
-    private bool _thinksLeftMouseButtonIsDown;
-
     private Key<IDynamicViewModel> _dynamicViewModelKeyPrevious;
 
     private ElementReference? _tabButtonElementReference;
@@ -452,102 +455,28 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         ? "di_active"
         : string.Empty;
 
-    private async Task OnClick(ITab localTabViewModel, MouseEventArgs e)
-    {
-        var localTabGroup = localTabViewModel.TabGroup;
-        if (localTabGroup is null)
-            return;
-
-        await localTabGroup.OnClickAsync(localTabViewModel, e).ConfigureAwait(false);
-    }
-
-    private async Task CloseTabOnClickAsync(ITab localTabViewModel)
-    {
-        var localTabGroup = localTabViewModel.TabGroup;
-        if (localTabGroup is null)
-            return;
-
-        await localTabGroup.CloseAsync(localTabViewModel).ConfigureAwait(false);
-    }
-
-    private async Task HandleOnMouseDownAsync(ITab localTabViewModel, MouseEventArgs mouseEventArgs)
-    {
-        if (mouseEventArgs.Button == 0)
-            _thinksLeftMouseButtonIsDown = true;
-        if (mouseEventArgs.Button == 1)
-            await CloseTabOnClickAsync(localTabViewModel).ConfigureAwait(false);
-        else if (mouseEventArgs.Button == 2)
-            ManuallyPropagateOnContextMenu(mouseEventArgs, localTabViewModel);
-    }
-
-    private void ManuallyPropagateOnContextMenu(
-        MouseEventArgs mouseEventArgs,
-        ITab tab)
-    {
-        var localHandleTabButtonOnContextMenu = _tabCascadingValueBatch.HandleTabButtonOnContextMenu;
-        if (localHandleTabButtonOnContextMenu is null)
-            return;
-
-        _tabCascadingValueBatch.CommonService.Enqueue(new CommonWorkArgs
-        {
-            WorkKind = CommonWorkKind.Tab_ManuallyPropagateOnContextMenu,
-            HandleTabButtonOnContextMenu = localHandleTabButtonOnContextMenu,
-            TabContextMenuEventArgs = new TabContextMenuEventArgs(mouseEventArgs, tab, () => Task.CompletedTask),
-        });
-    }
-
     private void HandleOnMouseUp()
     {
-        _thinksLeftMouseButtonIsDown = false;
-    }
-
-    private async Task HandleOnMouseOutAsync(ITab localTabViewModel, MouseEventArgs mouseEventArgs)
-    {
-        if ((mouseEventArgs.Buttons & 1) == 0)
-            _thinksLeftMouseButtonIsDown = false;
-
-        if (_thinksLeftMouseButtonIsDown && localTabViewModel is IDrag draggable)
-        {
-            _thinksLeftMouseButtonIsDown = false;
-
-            // This needs to run synchronously to guarantee `dragState.DragElementDimensions` is in a threadsafe state
-            // (keep any awaits after it).
-            // (only the "UI thread" touches `dragState.DragElementDimensions`).
-            var dragState = _tabCascadingValueBatch.CommonService.GetDragState();
-
-            dragState.DragElementDimensions.DisableWidth();
-
-            dragState.DragElementDimensions.DisableHeight();
-
-            dragState.DragElementDimensions.Left_Offset = new DimensionUnit(mouseEventArgs.ClientX, DimensionUnitKind.Pixels);
-
-            dragState.DragElementDimensions.Top_Offset = new DimensionUnit(mouseEventArgs.ClientY, DimensionUnitKind.Pixels);
-
-            dragState.DragElementDimensions.ElementPositionKind = ElementPositionKind.Fixed;
-
-            await draggable.OnDragStartAsync().ConfigureAwait(false);
-
-            SubscribeToDragEventForScrolling(draggable);
-        }
+        _tabCascadingValueBatch.ThinksLeftMouseButtonIsDown = false;
     }
 
     public void SubscribeToDragEventForScrolling(IDrag draggable)
     {
-        _tabCascadingValueBatch.CommonService.Drag_ShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, draggable);
+        DotNetService.CommonService.Drag_ShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, draggable);
     }
 
     /// <summary>
     /// This method can only be invoked from the "UI thread" due to the shared `UiStringBuilder` usage.
     /// </summary>
-    private string GetCssClass(ITabGroup localTabGroup, ITab localTabViewModel)
+    private string GetCssClass(ITab localTabViewModel)
     {
-        var uiStringBuilder = _tabCascadingValueBatch.CommonService.UiStringBuilder;
+        var uiStringBuilder = DotNetService.CommonService.UiStringBuilder;
 
         uiStringBuilder.Clear();
         uiStringBuilder.Append("di_dynamic-tab di_button di_unselectable ");
         uiStringBuilder.Append(GetIsActiveCssClass(localTabViewModel));
         uiStringBuilder.Append(" ");
-        uiStringBuilder.Append(localTabGroup?.GetDynamicCss(localTabViewModel));
+        uiStringBuilder.Append(localTabViewModel.TabGroup?.GetDynamicCss(localTabViewModel));
         uiStringBuilder.Append(" ");
         uiStringBuilder.Append("di_ide_panel-tab");
 

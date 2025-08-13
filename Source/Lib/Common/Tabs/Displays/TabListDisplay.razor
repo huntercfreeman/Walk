@@ -8,8 +8,8 @@
 	@{
 	    var localTabList = TabList;
 	    
-        _tabCascadingValueBatch.CommonService = CommonService;
     	_tabCascadingValueBatch.HandleTabButtonOnContextMenu = HandleTabButtonOnContextMenu;
+    	_tabCascadingValueBatch.SubscribeToDragEventForScrolling = SubscribeToDragEventForScrolling;
     
     	var appOptionsState = CommonService.GetAppOptionsState();
     	var iconDriver = new IconDriver(
@@ -44,8 +44,8 @@
         	            @onclick:stopPropagation="true"
         	            @onclick="e => CloseTabOnClickAsync(localTabViewModel)">
         	        @IconCloseFragment.Render(iconDriver)
-            	</button>
-            </button>
+        	    </button>
+    	    </button>
         }
 	}
 </div>

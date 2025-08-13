@@ -58,7 +58,7 @@ public partial class TabListDisplay : ComponentBase
     private string GetIsActiveCssClass(ITab localTabViewModel) => (localTabViewModel.TabGroup?.GetIsActive(localTabViewModel) ?? false)
         ? "di_active"
         : string.Empty;
-
+    
     private async Task OnClick(ITab localTabViewModel, MouseEventArgs e)
     {
         var localTabGroup = localTabViewModel.TabGroup;
@@ -95,7 +95,7 @@ public partial class TabListDisplay : ComponentBase
         if (localHandleTabButtonOnContextMenu is null)
             return;
 
-        _tabCascadingValueBatch.CommonService.Enqueue(new CommonWorkArgs
+        CommonService.Enqueue(new CommonWorkArgs
         {
             WorkKind = CommonWorkKind.Tab_ManuallyPropagateOnContextMenu,
             HandleTabButtonOnContextMenu = localHandleTabButtonOnContextMenu,
@@ -120,7 +120,7 @@ public partial class TabListDisplay : ComponentBase
             // This needs to run synchronously to guarantee `dragState.DragElementDimensions` is in a threadsafe state
             // (keep any awaits after it).
             // (only the "UI thread" touches `dragState.DragElementDimensions`).
-            var dragState = _tabCascadingValueBatch.CommonService.GetDragState();
+            var dragState = CommonService.GetDragState();
 
             dragState.DragElementDimensions.DisableWidth();
 
@@ -146,7 +146,7 @@ public partial class TabListDisplay : ComponentBase
     
     public void SubscribeToDragEventForScrolling(IDrag draggable)
     {
-        _tabCascadingValueBatch.CommonService.Drag_ShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, draggable);
+        CommonService.Drag_ShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, draggable);
     }
 
     /// <summary>
@@ -154,7 +154,7 @@ public partial class TabListDisplay : ComponentBase
     /// </summary>
     private string GetCssClass(ITabGroup localTabGroup, ITab localTabViewModel)
     {
-        var uiStringBuilder = _tabCascadingValueBatch.CommonService.UiStringBuilder;
+        var uiStringBuilder = CommonService.UiStringBuilder;
         
         uiStringBuilder.Clear();
         uiStringBuilder.Append("di_dynamic-tab di_button di_unselectable ");
