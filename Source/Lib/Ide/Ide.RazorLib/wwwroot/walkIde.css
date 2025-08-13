@@ -41,14 +41,10 @@ input[type="checkbox"]{
     height: var(--di_ide_section-title-height);
 }
 
-.di_ide_section-body {
-    padding: var(--di_ide_section-body-padding);
-    height: calc(100% - var(--di_ide_section-title-height));
+.di_section-body {
+    padding: var(--di_section-body-padding);
+    height: 100%;
     overflow: auto;
-}
-
-.di_ide_section-body.di_ide_section-no-title {
-	height: 100%;
 }
 
 .di_header {
@@ -315,7 +311,7 @@ button.di_ide_input-file-address-hierarchy-entry {
     position: relative;
 }
 
-.di_ide_panel-tab-dropzone {
+.di_panel-tab-dropzone {
     width: 100%;
     height: 50%;
     position: absolute;
@@ -325,16 +321,16 @@ button.di_ide_input-file-address-hierarchy-entry {
     opacity: 0.6;
 }
 
-    .di_ide_panel-tab-dropzone:hover {
+    .di_panel-tab-dropzone:hover {
         background-color: var(--di_button-hover-background-color);
         box-shadow: 0 0 2px var(--di_primary-overlay-box-shadow-color);
     }
 
-.di_ide_panel-tab-dropzone-top {
+.di_panel-tab-dropzone-top {
     top: 0;
 }
 
-.di_ide_panel-tab-dropzone-bottom {
+.di_panel-tab-dropzone-bottom {
     top: 50%;
 }
 
@@ -411,18 +407,18 @@ button.di_ide_input-file-address-hierarchy-entry {
         margin-left: 15px;
     }
 
-.di_ide_startup-controls-display {
+.di_startup-controls {
     display: flex;
     margin-left: 15px;
 }
 
-.di_ide_startup-controls-display-entry {
+.di_startup-controls-entry {
     display: flex;
     align-items: center;
     margin-left: 15px;
 }
 
-.di_ide_editor-display {
+.di_editor {
     height: 100%;
 	overflow: hidden;
 }
@@ -432,7 +428,7 @@ button.di_ide_input-file-address-hierarchy-entry {
     --di_ide_section-title-font-size: 1.25em;
     --di_ide_section-title-height: 2rem;
     --di_ide_section-title-padding: 0 5px;
-    --di_ide_section-body-padding: 5px;
+    --di_section-body-padding: 5px;
     --di_ide_input-file-display-top-nav-bar-height: 2.5rem;
     --di_ide_input-file-display-bottom-controls-height: 5.5rem;
     --di_ide_input-file-display-body-height: calc(100% - var(--di_ide_input-file-display-bottom-controls-height));

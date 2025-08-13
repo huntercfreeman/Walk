@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.BackgroundTasks.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.TextEditor.RazorLib;
 using Walk.TextEditor.RazorLib.Lexers.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
@@ -70,59 +71,45 @@ public partial class WalkWebsiteInitializer : ComponentBase
             throw new NotImplementedException();
 
         var ancestorDirectory = parentDirectoryOfProject;
-
+        
         TextEditorModel programCsModel;
         // ProgramCs
         {
-            var absolutePathString = DotNetService.CommonService.EnvironmentProvider.JoinPaths(
-                ancestorDirectory,
-                ConsoleAppFacts.PROGRAM_CS_RELATIVE_FILE_PATH);
-            var absolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(absolutePathString, false, tokenBuilder, formattedBuilder);
-    
-            DotNetService.CommonService.FileSystemProvider.File.WriteAllText(
-                absolutePath.Value,
-                InitialSolutionFacts.PERSON_CS_CONTENTS);
-
-            var resourceUri = new ResourceUri(absolutePath.Value);
-            var fileLastWriteTime = DateTime.UtcNow;
-            var content = InitialSolutionFacts.PERSON_CS_CONTENTS;
+            var absolutePathString = "/BlazorCrudApp/ConsoleApp/Program.cs";
             
-            var decorationMapper = DotNetService.TextEditorService.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
-            var compilerService = DotNetService.TextEditorService.GetCompilerService(absolutePath.ExtensionNoPeriod);
+            Website_WriteAllText(
+                absolutePathString,
+                InitialSolutionFacts.PERSON_CS_CONTENTS,
+                tokenBuilder,
+                formattedBuilder);
 
             programCsModel = new TextEditorModel(
-                resourceUri,
-                fileLastWriteTime,
-                absolutePath.ExtensionNoPeriod,
-                content,
-                decorationMapper,
-                compilerService,
+                new ResourceUri(absolutePathString),
+                DateTime.UtcNow,
+                "cs",
+                InitialSolutionFacts.PERSON_CS_CONTENTS,
+                DotNetService.TextEditorService.GetDecorationMapper("cs"),
+                DotNetService.TextEditorService.GetCompilerService("cs"),
                 DotNetService.TextEditorService);
         }
         
         TextEditorModel csprojModel;
         // Csproj
         {
-            var content = ConsoleAppFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension);
-        
-            DotNetService.CommonService.FileSystemProvider.File.WriteAllText(
+            
+            Website_WriteAllText(
                 InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_CSPROJ_ABSOLUTE_FILE_PATH,
-                content);
-        
-            var absolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_CSPROJ_ABSOLUTE_FILE_PATH, false, tokenBuilder, formattedBuilder);
-            var resourceUri = new ResourceUri(InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_CSPROJ_ABSOLUTE_FILE_PATH);
-            var fileLastWriteTime = DateTime.UtcNow;
-
-            var decorationMapper = DotNetService.TextEditorService.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
-            var compilerService = DotNetService.TextEditorService.GetCompilerService(absolutePath.ExtensionNoPeriod);
-
+                ConsoleAppFacts.CsprojContents,
+                tokenBuilder,
+                formattedBuilder);
+            
             csprojModel = new TextEditorModel(
-                resourceUri,
-                fileLastWriteTime,
-                absolutePath.ExtensionNoPeriod,
-                content,
-                decorationMapper,
-                compilerService,
+                new ResourceUri(InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_CSPROJ_ABSOLUTE_FILE_PATH),
+                DateTime.UtcNow,
+                "csproj",
+                ConsoleAppFacts.CsprojContents,
+                DotNetService.TextEditorService.GetDecorationMapper("csproj"),
+                DotNetService.TextEditorService.GetCompilerService("csproj"),
                 DotNetService.TextEditorService);
         }
         
@@ -135,25 +122,21 @@ public partial class WalkWebsiteInitializer : ComponentBase
         TextEditorModel exampleSolutionModel;
         // ExampleSolution.sln
         {
-            DotNetService.TextEditorService.CommonService.FileSystemProvider.File.WriteAllText(
+            Website_WriteAllText(
                 InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
-                InitialSolutionFacts.SLN_CONTENTS);
+                InitialSolutionFacts.SLN_CONTENTS,
+                tokenBuilder,
+                formattedBuilder);
             
             var absolutePath = solutionAbsolutePath;
-            var resourceUri = new ResourceUri(InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH);
-            var fileLastWriteTime = DateTime.UtcNow;
-            var content = InitialSolutionFacts.SLN_CONTENTS;
-
-            var decorationMapper = DotNetService.TextEditorService.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
-            var compilerService = DotNetService.TextEditorService.GetCompilerService(absolutePath.ExtensionNoPeriod);
 
             exampleSolutionModel = new TextEditorModel(
-                resourceUri,
-                fileLastWriteTime,
+                new ResourceUri(InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH),
+                DateTime.UtcNow,
                 absolutePath.ExtensionNoPeriod,
-                content,
-                decorationMapper,
-                compilerService,
+                InitialSolutionFacts.SLN_CONTENTS,
+                DotNetService.TextEditorService.GetDecorationMapper(absolutePath.ExtensionNoPeriod),
+                DotNetService.TextEditorService.GetCompilerService(absolutePath.ExtensionNoPeriod),
                 DotNetService.TextEditorService);            
         }
 
@@ -262,5 +245,57 @@ public partial class WalkWebsiteInitializer : ComponentBase
                 new Category("main"),
                 Key<TextEditorViewModel>.NewKey());
         });
+    }
+    
+    public void Website_WriteAllText(
+        string absolutePathString,
+        string contents,
+        StringBuilder stringBuilder,
+        StringBuilder formattedBuilder)
+    {
+        InMemoryFileSystemProvider inMemoryFileSystemProvider = (InMemoryFileSystemProvider)DotNetService.CommonService.FileSystemProvider;
+
+        // Ensure Parent Directories Exist
+        {
+            var parentDirectoryList = absolutePathString
+                .Split("/")
+                // The root directory splits into string.Empty
+                .Skip(1)
+                // Skip the file being written to itself
+                .SkipLast(1)
+                .ToArray();
+
+            stringBuilder.Append("/");
+
+            for (int i = 0; i < parentDirectoryList.Length; i++)
+            {
+                stringBuilder.Append(parentDirectoryList[i]);
+                stringBuilder.Append("/");
+
+                ((InMemoryFileSystemProvider.InMemoryDirectoryHandler)inMemoryFileSystemProvider.Directory).UnsafeCreateDirectoryAsync(
+                    stringBuilder.ToString());
+            }
+        
+            stringBuilder.Clear();
+        }
+
+        var absolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(
+            absolutePathString,
+            false,
+            tokenBuilder: stringBuilder,
+            formattedBuilder);
+
+        var outFile = new InMemoryFile(
+            contents,
+            absolutePath,
+            DateTime.UtcNow,
+            false);
+
+        inMemoryFileSystemProvider.__Files.Add(outFile);
+
+        DotNetService.CommonService.EnvironmentProvider.DeletionPermittedRegister(
+            new SimplePath(absolutePathString, isDirectory: false),
+            tokenBuilder: stringBuilder,
+            formattedBuilder);
     }
 }

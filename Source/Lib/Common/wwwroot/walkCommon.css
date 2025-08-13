@@ -503,7 +503,7 @@ button.di_dynamic-tab.di_drag.di_active {
     height: calc(var(--di_panel-tabs-font-size) + var(--di_panel-tabs-margin) + var(--di_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
 }
 
-.di_ide_panel_bottom .di_ide_panel-body {
+.di_ide_panel_bottom .di_panel-body {
     height: calc(100% - var(--di_panel-tabs-font-size) - var(--di_panel-tabs-margin) - var(--di_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
 }
 
@@ -578,6 +578,25 @@ button.di_dynamic-tab.di_drag.di_active {
     height: calc(100% - var(--di_dialog-display-toolbar-height));
     overflow: auto;
     padding: var(--di_dialog-display-body-padding);
+}
+
+.di_web_notifications-interactive-icon {
+    position: relative;
+}
+
+.di_icon-badge {
+    position: absolute;
+	right: 0;
+	bottom: 0;
+	border-radius: 25px;
+	width: 1.2em;
+	height: 1.2em;
+	line-height: 1.4;
+}
+
+.di_icon-badge.di_active {
+    background-color: var(--di_active-button-background-color);
+	color: var(--di_active-button-primary-font-color);
 }
 
 :root {
