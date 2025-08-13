@@ -89,23 +89,31 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         DotNetService.TextEditorService.IdeBackgroundTaskApi = DotNetService.IdeService;
 
         var panelState = DotNetService.CommonService.GetPanelState();
-
+        
         _leftPanelGroupParameter = new(
             panelGroupKey: CommonFacts.LeftPanelGroupKey,
-            cssClassString: null);
+            cssClassString: null)
+        {
+            PanelPositionCss = "di_ide_panel_left",
+            HtmlIdTabs = "di_ide_panel_left_tabs"
+        };
 
         _rightPanelGroupParameter = new(
             panelGroupKey: CommonFacts.RightPanelGroupKey,
-            cssClassString: null);
+            cssClassString: null)
+        {
+            PanelPositionCss = "di_ide_panel_right",
+            HtmlIdTabs = "di_ide_panel_right_tabs"
+        };
 
         _bottomPanelGroupParameter = new(
             panelGroupKey: CommonFacts.BottomPanelGroupKey,
-            cssClassString: "di_ide_footer");
+            cssClassString: "di_ide_footer")
+        {
+            PanelPositionCss = "di_ide_panel_bottom",
+            HtmlIdTabs = "di_ide_panel_bottom_tabs"
+        };
 
-        InitPanelGroup(_leftPanelGroupParameter);
-        InitPanelGroup(_rightPanelGroupParameter);
-        InitPanelGroup(_bottomPanelGroupParameter);
-        
         _viewModelDisplayOptions = new()
         {
             TabIndex = 0,
@@ -125,45 +133,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     {
         if (firstRender)
         {
-            await InitializationHelper.EnqueueOnInitializedSteps(DotNetService);
             await InitializationHelper.InitializeOnAfterRenderFirstRender(DotNetService, BrowserResizeInterop, _workerCancellationTokenSource);
             DotNetService.CommonService.Panel_OnUserAgent_AppDimensionStateChanged();
             await InvokeAsync(StateHasChanged);
-        }
-    }
-    
-    private void InitPanelGroup(PanelGroupParameter panelGroupParameter)
-    {
-        var position = string.Empty;
-
-        if (CommonFacts.LeftPanelGroupKey == panelGroupParameter.PanelGroupKey)
-        {
-            position = "left";
-        }
-        else if (CommonFacts.RightPanelGroupKey == panelGroupParameter.PanelGroupKey)
-        {
-            position = "right";
-        }
-        else if (CommonFacts.BottomPanelGroupKey == panelGroupParameter.PanelGroupKey)
-        {
-            position = "bottom";
-        }
-
-        panelGroupParameter.PanelPositionCss = $"di_ide_panel_{position}";
-
-        panelGroupParameter.HtmlIdTabs = panelGroupParameter.PanelPositionCss + "_tabs";
-
-        if (CommonFacts.LeftPanelGroupKey == panelGroupParameter.PanelGroupKey)
-        {
-            _leftPanelGroupParameter = panelGroupParameter;
-        }
-        else if (CommonFacts.RightPanelGroupKey == panelGroupParameter.PanelGroupKey)
-        {
-            _rightPanelGroupParameter = panelGroupParameter;
-        }
-        else if (CommonFacts.BottomPanelGroupKey == panelGroupParameter.PanelGroupKey)
-        {
-            _bottomPanelGroupParameter = panelGroupParameter;
         }
     }
     
