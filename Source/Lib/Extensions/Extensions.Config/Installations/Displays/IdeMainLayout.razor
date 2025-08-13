@@ -372,12 +372,7 @@
                 </button>
             }
     
-            <div class="di_panel-tabs-justify-end">
-                <BadgeDisplay @key="_dirtyResourceUriBadge.Key"
-        	                  BadgeModel="_dirtyResourceUriBadge"/>
-                <BadgeDisplay @key="_notificationBadge.Key"
-        	                  BadgeModel="_notificationBadge"/>
-        	</div>
+            <MultiBadgeDisplay/>
             
             @if (panelState.DragEventArgs is not null)
             {

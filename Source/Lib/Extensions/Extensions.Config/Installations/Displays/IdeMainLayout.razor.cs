@@ -63,9 +63,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     
     private CancellationTokenSource _workerCancellationTokenSource = new();
     
-    private Walk.TextEditor.RazorLib.Edits.Models.DirtyResourceUriBadge _dirtyResourceUriBadge;
-    private Walk.Common.RazorLib.Notifications.Models.NotificationBadge _notificationBadge;
-    
     private Func<ElementDimensions, ElementDimensions, (MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;
     private MouseEventArgs? _previousDragMouseEventArgs;
     
@@ -79,9 +76,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         {
             SubscribeToDragEventForScrolling = SubscribeToDragEventForScrolling,
         };
-    
-        _dirtyResourceUriBadge = new Walk.TextEditor.RazorLib.Edits.Models.DirtyResourceUriBadge(DotNetService.TextEditorService);
-        _notificationBadge = new Walk.Common.RazorLib.Notifications.Models.NotificationBadge(DotNetService.CommonService);
     
         InitializationHelper.InitializePanelTabs(DotNetService);
         InitializationHelper.HandleCompilerServicesAndDecorationMappers(DotNetService);

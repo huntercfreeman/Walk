@@ -1,0 +1,76 @@
+@using Walk.Common.RazorLib.Badges.Displays
+@using Walk.Common.RazorLib.Badges.Models
+
+<div class="di_panel-tabs-justify-end">
+    @{
+    	var dirtyResourceUri_LocalCount = _dirtyResourceUriBadge.Count;
+    	var dirtyResourceUri_IconBadgeIsActive = dirtyResourceUri_LocalCount > 0;
+    	var dirtyResourceUri_ShowIconBadgeCssClassString = dirtyResourceUri_IconBadgeIsActive ? "di_icon-badge di_active" : "di_icon-badge";
+    	
+    	var dirtyResourceUri_LocalCountCssValue = DirtyResourceUri_GetCountCssValue();
+    }
+    
+    <button class="di_button di_web_notifications-interactive-icon"
+            style="margin-right: 15px;"
+    		title="@dirtyResourceUri_LocalCountCssValue"
+            @onclick="_dirtyResourceUriBadge.OnClick">
+    
+        @* TODO: The icons are annoying because they are an integer value. Might need to make them more responsive. This is the <IconBell/> (2023-09-09) *@
+        @* The: "calc(0.85em + 4px + 0.7em)" comes from the bottom panel height. I modified it slightly to allow the icon to fit. *@
+        <svg width="calc(0.85em + 1px + 0.7em)" height="calc(0.85em + 1px + 0.7em)" viewBox="0 0 16 16" fill="currentColor"><path d="M13.23 1h-1.46L3.52 9.25l-.16.22L1 13.59 2.41 15l4.12-2.36.22-.16L15 4.23V2.77L13.23 1zM2.41 13.59l1.51-3 1.45 1.45-2.96 1.55zm3.83-2.06L4.47 9.76l8-8 1.77 1.77-8 8z" /></svg>
+            
+    
+        <div class="@dirtyResourceUri_ShowIconBadgeCssClassString"
+             style="right: 0; bottom: 0;">
+        
+            @if (dirtyResourceUri_IconBadgeIsActive)
+    		{
+    			if (dirtyResourceUri_LocalCount > 9)
+    	        {
+    	            @: 9+
+    	        }
+    	        else
+    	        {
+    	            @: @dirtyResourceUri_LocalCountCssValue
+    	        }
+    		}
+        </div>
+    </button>
+
+    
+
+    
+    @{
+    	var notification_LocalCount = _notificationBadge.Count;
+    	var notification_IconBadgeIsActive = notification_LocalCount > 0;
+    	var notification_ShowIconBadgeCssClassString = notification_IconBadgeIsActive ? "di_icon-badge di_active" : "di_icon-badge";
+    	
+    	var notification_LocalCountCssValue = DirtyResourceUri_GetCountCssValue();
+    }
+    
+    <button class="di_button di_web_notifications-interactive-icon"
+    		title="@notification_LocalCountCssValue"
+            @onclick="_notificationBadge.OnClick">
+    
+        @* TODO: The icons are annoying because they are an integer value. Might need to make them more responsive. This is the <IconBell/> (2023-09-09) *@
+        @* The: "calc(0.85em + 4px + 0.7em)" comes from the bottom panel height. I modified it slightly to allow the icon to fit. *@
+        <svg width="calc(0.85em + 1px + 0.7em)" height="calc(0.85em + 1px + 0.7em)" viewBox="0 0 16 16" fill="currentColor"><path d="M13.377 10.573a7.63 7.63 0 0 1-.383-2.38V6.195a5.115 5.115 0 0 0-1.268-3.446 5.138 5.138 0 0 0-3.242-1.722c-.694-.072-1.4 0-2.07.227-.67.215-1.28.574-1.794 1.053a4.923 4.923 0 0 0-1.208 1.675 5.067 5.067 0 0 0-.431 2.022v2.2a7.61 7.61 0 0 1-.383 2.37L2 12.343l.479.658h3.505c0 .526.215 1.04.586 1.412.37.37.885.586 1.412.586.526 0 1.04-.215 1.411-.586s.587-.886.587-1.412h3.505l.478-.658-.586-1.77zm-4.69 3.147a.997.997 0 0 1-.705.299.997.997 0 0 1-.706-.3.997.997 0 0 1-.3-.705h1.999a.939.939 0 0 1-.287.706zm-5.515-1.71l.371-1.114a8.633 8.633 0 0 0 .443-2.691V6.004c0-.563.12-1.113.347-1.616.227-.514.55-.969.969-1.34.419-.382.91-.67 1.436-.837.538-.18 1.1-.24 1.65-.18a4.147 4.147 0 0 1 2.597 1.4 4.133 4.133 0 0 1 1.004 2.776v2.01c0 .909.144 1.818.443 2.691l.371 1.113h-9.63v-.012z" /></svg>
+            
+    
+        <div class="@notification_ShowIconBadgeCssClassString"
+             style="right: 0; bottom: 0;">
+        
+            @if (notification_IconBadgeIsActive)
+    		{
+    			if (notification_LocalCount > 9)
+    	        {
+    	            @: 9+
+    	        }
+    	        else
+    	        {
+    	            @: @notification_LocalCountCssValue
+    	        }
+    		}
+        </div>
+    </button>
+</div>
