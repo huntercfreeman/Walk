@@ -59,18 +59,22 @@ public partial class WalkWebsiteInitializer : ComponentBase
         var formattedBuilder = new StringBuilder();
     
         // Create a Blazor Wasm app
-        var cSharpProjectAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(
-            InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_CSPROJ_ABSOLUTE_FILE_PATH,
-            false,
-            tokenBuilder,
-            formattedBuilder);
-            
-        var parentDirectoryOfProject = cSharpProjectAbsolutePath.ParentDirectory;
+        var parentDirectoryOfProject = "/BlazorCrudApp/ConsoleApp/";
 
         if (parentDirectoryOfProject is null)
             throw new NotImplementedException();
 
         var ancestorDirectory = parentDirectoryOfProject;
+        
+        // Ensure Parent Directories Exist
+        {
+            InMemoryFileSystemProvider inMemoryFileSystemProvider = (InMemoryFileSystemProvider)DotNetService.CommonService.FileSystemProvider;
+
+            ((InMemoryFileSystemProvider.InMemoryDirectoryHandler)inMemoryFileSystemProvider.Directory).UnsafeCreateDirectoryAsync(
+                "/BlazorCrudApp/");
+            ((InMemoryFileSystemProvider.InMemoryDirectoryHandler)inMemoryFileSystemProvider.Directory).UnsafeCreateDirectoryAsync(
+                "/BlazorCrudApp/ConsoleApp/");
+        }
         
         TextEditorModel programCsModel;
         // ProgramCs
@@ -254,30 +258,6 @@ public partial class WalkWebsiteInitializer : ComponentBase
         StringBuilder formattedBuilder)
     {
         InMemoryFileSystemProvider inMemoryFileSystemProvider = (InMemoryFileSystemProvider)DotNetService.CommonService.FileSystemProvider;
-
-        // Ensure Parent Directories Exist
-        {
-            var parentDirectoryList = absolutePathString
-                .Split("/")
-                // The root directory splits into string.Empty
-                .Skip(1)
-                // Skip the file being written to itself
-                .SkipLast(1)
-                .ToArray();
-
-            stringBuilder.Append("/");
-
-            for (int i = 0; i < parentDirectoryList.Length; i++)
-            {
-                stringBuilder.Append(parentDirectoryList[i]);
-                stringBuilder.Append("/");
-
-                ((InMemoryFileSystemProvider.InMemoryDirectoryHandler)inMemoryFileSystemProvider.Directory).UnsafeCreateDirectoryAsync(
-                    stringBuilder.ToString());
-            }
-        
-            stringBuilder.Clear();
-        }
 
         var absolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(
             absolutePathString,
