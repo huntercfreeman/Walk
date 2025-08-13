@@ -231,7 +231,7 @@
     
         <div class="di_resize-column"
              style="@DotNetService.CommonService.Options_ResizeHandleCssWidth"
-             @onmousedown="() => SubscribeToDragEvent(MainLayoutDragEventKind.TopLeftResizeColumn)">
+             @onmousedown="SubscribeToDragEventTopLeft">
         </div>
     
         <div class="di_ide_editor-display" style="@DotNetService.CommonService.EditorElementStyle">
@@ -284,7 +284,7 @@
         
         <div class="di_resize-column"
              style="@DotNetService.CommonService.Options_ResizeHandleCssWidth"
-             @onmousedown="() => SubscribeToDragEvent(MainLayoutDragEventKind.TopRightResizeColumn)">
+             @onmousedown="SubscribeToDragEventTopRight">
         </div>
     
         <div class="@GetPanelElementCssClass(_rightPanelGroupParameter.PanelPositionCss, _rightPanelGroupParameter.CssClassString)"
@@ -359,7 +359,7 @@
 
     <div class="di_resize-row"
          style="@DotNetService.CommonService.Options_ResizeHandleCssHeight"
-         @onmousedown="() => SubscribeToDragEvent(MainLayoutDragEventKind.BottomResizeRow)">
+         @onmousedown="SubscribeToDragEventBottom">
     </div>
     
     <div class="@GetPanelElementCssClass(_bottomPanelGroupParameter.PanelPositionCss, _bottomPanelGroupParameter.CssClassString)"

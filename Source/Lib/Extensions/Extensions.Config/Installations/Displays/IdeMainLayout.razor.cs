@@ -560,6 +560,21 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         DotNetService.CommonService.Drag_ShouldDisplayAndMouseEventArgsSetAction(true, null);
     }
     
+    public void SubscribeToDragEventTopLeft()
+    {
+        SubscribeToDragEvent(MainLayoutDragEventKind.TopLeftResizeColumn);
+    }
+    
+    public void SubscribeToDragEventTopRight()
+    {
+        SubscribeToDragEvent(MainLayoutDragEventKind.TopRightResizeColumn);
+    }
+    
+    public void SubscribeToDragEventBottom()
+    {
+        SubscribeToDragEvent(MainLayoutDragEventKind.BottomResizeRow);
+    }
+    
     /* Start StartupControlDisplay.razor */
     private const string _startButtonElementId = "di_ide_startup-controls-display_id";
 
