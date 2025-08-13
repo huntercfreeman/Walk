@@ -126,11 +126,6 @@ public static class InitializationHelper
 
         var compilerService = DotNetService.IdeService.TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
 
-        /*if (compilerService is CSharpCompilerService cSharpCompilerService)
-        {
-            cSharpCompilerService.SetSymbolRendererType(typeof(Walk.Extensions.DotNet.TextEditors.Displays.CSharpSymbolDisplay));
-        }*/
-
         DotNetService.IdeService.TextEditorService.UpsertHeader("cs", typeof(Walk.Extensions.CompilerServices.Displays.TextEditorCompilerServiceHeaderDisplay));
 
         var dotNetAppData = await DotNetService.AppDataService
@@ -139,15 +134,6 @@ public static class InitializationHelper
             .ConfigureAwait(false);
 
         await SetSolution(DotNetService, dotNetAppData).ConfigureAwait(false);
-
-        
-
-        await DotNetService.TextEditorService.Options_SetFromLocalStorageAsync()
-            .ConfigureAwait(false);
-
-        await DotNetService.CommonService.
-            Options_SetFromLocalStorageAsync()
-            .ConfigureAwait(false);
 
         if (DotNetService.CommonService.WalkHostingInformation.WalkHostingKind == WalkHostingKind.Photino)
         {
