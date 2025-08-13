@@ -115,8 +115,8 @@
             	}
             }
             
-            <div class="di_ide_startup-controls-display">
-               <div class="di_ide_startup-controls-display-entry">
+            <div class="di_startup-controls">
+               <div class="di_startup-controls-entry">
                    <select @bind="SelectedStartupControlAbsolutePathValue"
                            title="@(activeStartupControl?.TitleVerbose ?? "Choose startup project")">
                    	<option title="Choose startup project"
@@ -133,7 +133,7 @@
                    </select>
                    &nbsp;
               </div>
-               <div class="di_ide_startup-controls-display-entry">
+               <div class="di_startup-controls-entry">
                     <button @onclick="StartProgramWithoutDebuggingOnClick"
                             class="di_button"
                             id="@_startButtonElementId"
@@ -188,19 +188,19 @@
         
                 @if (panelState.DragEventArgs is not null)
                 {
-                    <div class="di_ide_panel-tab-dropzone di_ide_panel-tab-dropzone-top"
+                    <div class="di_panel-tab-dropzone di_panel-tab-dropzone-top"
                          @onmouseup:stopPropagation="true"
                          @onmouseup="e => TopDropzoneOnMouseUp(_leftPanelGroupParameter.PanelGroupKey, e)">
                     </div>
                     
-                    <div class="di_ide_panel-tab-dropzone di_ide_panel-tab-dropzone-bottom"
+                    <div class="di_panel-tab-dropzone di_panel-tab-dropzone-bottom"
                          @onmouseup:stopPropagation="true"
                          @onmouseup="e => BottomDropzoneOnMouseUp(_leftPanelGroupParameter.PanelGroupKey, e)">
                     </div>
                 }
             </div>
             
-            <div class="di_ide_panel-body" style="@GetTopPanelBodyStyle(leftPanelGroup)">
+            <div class="di_panel-body" style="@GetTopPanelBodyStyle(leftPanelGroup)">
                 @if (leftPanelGroup.ActiveTab is not null)
                 {
                     if (leftPanelGroup.ActiveTab.ComponentType == typeof(Walk.Extensions.DotNet.DotNetSolutions.Displays.SolutionExplorerDisplay))
@@ -233,8 +233,8 @@
              @onmousedown="SubscribeToDragEventTopLeft">
         </div>
     
-        <div class="di_ide_editor-display" style="@DotNetService.CommonService.EditorElementStyle">
-            <div class="di_ide_section-body di_te_text-editor-group di_ide_section-no-title"
+        <div class="di_editor" style="@DotNetService.CommonService.EditorElementStyle">
+            <div class="di_section-body di_text-editor-group"
                  id="@HtmlId">
             	@{
         	        var textEditorGroup = DotNetService.TextEditorService.Group_GetTextEditorGroupState().EditorTextEditorGroup;
@@ -246,12 +246,12 @@
         	    }
                 else
                 {
-            		<div class="di_te_text-editor-group-tabs-list">
+            		<div class="di_text-editor-group-tabs-list">
         				<TabListDisplay @ref="_tabListDisplay"
         								TabList="@UiThread_GetTabList(textEditorGroup)"/>
         			</div>
         	
-        			<div class="di_te_text-editor-group-active-view-model">
+        			<div class="di_text-editor-group-active-view-model">
         				<FindOverlayDisplay ComponentDataKey="_componentDataKey"/>
         		            
     					<TextEditorFileExtensionHeaderDisplay ComponentDataKey="_componentDataKey"
@@ -299,19 +299,19 @@
         
                 @if (panelState.DragEventArgs is not null)
                 {
-                    <div class="di_ide_panel-tab-dropzone di_ide_panel-tab-dropzone-top"
+                    <div class="di_panel-tab-dropzone di_panel-tab-dropzone-top"
                          @onmouseup:stopPropagation="true"
                          @onmouseup="e => TopDropzoneOnMouseUp(_rightPanelGroupParameter.PanelGroupKey, e)">
                     </div>
                     
-                    <div class="di_ide_panel-tab-dropzone di_ide_panel-tab-dropzone-bottom"
+                    <div class="di_panel-tab-dropzone di_panel-tab-dropzone-bottom"
                          @onmouseup:stopPropagation="true"
                          @onmouseup="e => BottomDropzoneOnMouseUp(_rightPanelGroupParameter.PanelGroupKey, e)">
                     </div>
                 }
             </div>
             
-            <div class="di_ide_panel-body" style="@GetTopPanelBodyStyle(rightPanelGroup)">
+            <div class="di_panel-body" style="@GetTopPanelBodyStyle(rightPanelGroup)">
                 @if (rightPanelGroup.ActiveTab is not null)
                 {
                     if (rightPanelGroup.ActiveTab.ComponentType == typeof(Walk.Extensions.DotNet.DotNetSolutions.Displays.SolutionExplorerDisplay))
@@ -381,19 +381,19 @@
             
             @if (panelState.DragEventArgs is not null)
             {
-                <div class="di_ide_panel-tab-dropzone di_ide_panel-tab-dropzone-top"
+                <div class="di_panel-tab-dropzone di_panel-tab-dropzone-top"
                      @onmouseup:stopPropagation="true"
                      @onmouseup="e => TopDropzoneOnMouseUp(_bottomPanelGroupParameter.PanelGroupKey, e)">
                 </div>
                 
-                <div class="di_ide_panel-tab-dropzone di_ide_panel-tab-dropzone-bottom"
+                <div class="di_panel-tab-dropzone di_panel-tab-dropzone-bottom"
                      @onmouseup:stopPropagation="true"
                      @onmouseup="e => BottomDropzoneOnMouseUp(_bottomPanelGroupParameter.PanelGroupKey, e)">
                 </div>
             }
         </div>
         
-        <div class="di_ide_panel-body" style="@GetBottomPanelBodyStyle(bottomPanelGroup)">
+        <div class="di_panel-body" style="@GetBottomPanelBodyStyle(bottomPanelGroup)">
             @if (bottomPanelGroup.ActiveTab is not null)
             {
                 if (bottomPanelGroup.ActiveTab.ComponentType == typeof(Walk.Extensions.DotNet.DotNetSolutions.Displays.SolutionExplorerDisplay))

@@ -536,7 +536,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     }
     
     /* Start StartupControlDisplay.razor */
-    private const string _startButtonElementId = "di_ide_startup-controls-display_id";
+    private const string _startButtonElementId = "di_startup-controls_id";
 
     private Key<DropdownRecord> _startButtonDropdownKey = Key<DropdownRecord>.NewKey();
     

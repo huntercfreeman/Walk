@@ -503,7 +503,7 @@ button.di_dynamic-tab.di_drag.di_active {
     height: calc(var(--di_panel-tabs-font-size) + var(--di_panel-tabs-margin) + var(--di_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
 }
 
-.di_ide_panel_bottom .di_ide_panel-body {
+.di_ide_panel_bottom .di_panel-body {
     height: calc(100% - var(--di_panel-tabs-font-size) - var(--di_panel-tabs-margin) - var(--di_panel-tabs-bug-are-not-aligning-need-to-fix-todo));
 }
 
