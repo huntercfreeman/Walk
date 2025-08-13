@@ -24,6 +24,19 @@ public sealed partial class TextEditorService
         IJSRuntime jsRuntime,
         CommonService commonService)
     {
+        var category = new Category("main");
+
+        var textEditorGroup = new TextEditorGroup(
+            TextEditorService.EditorTextEditorGroupKey,
+            Key<TextEditorViewModel>.Empty,
+            new List<Key<TextEditorViewModel>>(),
+            category,
+            this,
+            CommonService);
+
+        Group_textEditorGroupState.GroupList.Add(textEditorGroup);
+        Group_textEditorGroupState.EditorTextEditorGroup = textEditorGroup;
+    
         __TextEditorViewModelLiason = new(this);
     
         WorkerUi = new(this);

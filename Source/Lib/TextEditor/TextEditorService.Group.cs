@@ -10,6 +10,13 @@ public partial class TextEditorService
     
     // TextEditorGroupService.cs
     private TextEditorGroupState Group_textEditorGroupState = new();
+    
+    /// <summary>
+    /// This somewhat arbitrarily represents the "main" text editor group
+    /// so that the most often seen text editor group doesn't require a search
+    /// but is instead always known to not be null and available.
+    /// </summary>
+    public static readonly Key<TextEditorGroup> EditorTextEditorGroupKey = Key<TextEditorGroup>.NewKey();
 
     public TextEditorGroupState Group_GetTextEditorGroupState() => Group_textEditorGroupState;
 
@@ -128,9 +135,20 @@ public partial class TextEditorService
             var outGroupList = new List<TextEditorGroup>(inState.GroupList);
             outGroupList[inGroupIndex] = outGroup;
 
+            TextEditorGroup editorTextEditorGroup;
+            if (outGroup.GroupKey == TextEditorService.EditorTextEditorGroupKey)
+            {
+                editorTextEditorGroup = outGroup;
+            }
+            else
+            {
+                editorTextEditorGroup = inState.EditorTextEditorGroup;
+            }
+
             Group_textEditorGroupState = new TextEditorGroupState
             {
-                GroupList = outGroupList
+                GroupList = outGroupList,
+                EditorTextEditorGroup = editorTextEditorGroup
             };
 
             goto finalize;
@@ -208,15 +226,28 @@ public partial class TextEditorService
 
             var outGroupList = new List<TextEditorGroup>(inState.GroupList);
 
-            outGroupList[inGroupIndex] = inGroup with
+            var outGroup = inGroup with
             {
                 ViewModelKeyList = nextViewModelKeyList,
                 ActiveViewModelKey = nextActiveTextEditorModelKey
             };
 
+            outGroupList[inGroupIndex] = outGroup;
+
+            TextEditorGroup editorTextEditorGroup;
+            if (outGroup.GroupKey == TextEditorService.EditorTextEditorGroupKey)
+            {
+                editorTextEditorGroup = outGroup;
+            }
+            else
+            {
+                editorTextEditorGroup = inState.EditorTextEditorGroup;
+            }
+
             Group_textEditorGroupState = new TextEditorGroupState
             {
-                GroupList = outGroupList
+                GroupList = outGroupList,
+                EditorTextEditorGroup = editorTextEditorGroup
             };
 
             goto finalize;
@@ -248,14 +279,27 @@ public partial class TextEditorService
 
             var outGroupList = new List<TextEditorGroup>(inState.GroupList);
 
-            outGroupList[inGroupIndex] = inGroup with
+            var outGroup = inGroup with
             {
                 ActiveViewModelKey = viewModelKey
             };
+            
+            outGroupList[inGroupIndex] = outGroup;
+
+            TextEditorGroup editorTextEditorGroup;
+            if (outGroup.GroupKey == TextEditorService.EditorTextEditorGroupKey)
+            {
+                editorTextEditorGroup = outGroup;
+            }
+            else
+            {
+                editorTextEditorGroup = inState.EditorTextEditorGroup;
+            }
 
             Group_textEditorGroupState = new TextEditorGroupState
             {
-                GroupList = outGroupList
+                GroupList = outGroupList,
+                EditorTextEditorGroup = editorTextEditorGroup
             };
 
             goto finalize;
@@ -275,7 +319,7 @@ public partial class TextEditorService
             var inGroup = inState.GroupList.FirstOrDefault(
                 x => x.GroupKey == groupKey);
 
-            if (inGroup is null)
+            if (inGroup is null || inGroup.GroupKey == TextEditorService.EditorTextEditorGroupKey)
                 goto finalize;
 
             var outGroupList = new List<TextEditorGroup>(inState.GroupList);
@@ -283,7 +327,7 @@ public partial class TextEditorService
 
             Group_textEditorGroupState = new TextEditorGroupState
             {
-                GroupList = outGroupList
+                GroupList = outGroupList,
             };
 
             goto finalize;

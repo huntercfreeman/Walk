@@ -24,8 +24,6 @@ namespace Walk.Ide.RazorLib;
 
 public partial class IdeService : IBackgroundTaskGroup
 {
-    public static readonly Key<TextEditorGroup> EditorTextEditorGroupKey = Key<TextEditorGroup>.NewKey();
-
     private readonly IServiceProvider _serviceProvider;
 
     public IdeService(
@@ -319,8 +317,6 @@ public partial class IdeService : IBackgroundTaskGroup
 
     public async Task<bool> Editor_TryShowViewModelFunc(TryShowViewModelArgs showViewModelArgs)
     {
-        TextEditorService.Group_Register(EditorTextEditorGroupKey);
-
         var viewModel = TextEditorService.ViewModel_GetOrDefault(showViewModelArgs.ViewModelKey);
 
         if (viewModel is null)
@@ -331,7 +327,7 @@ public partial class IdeService : IBackgroundTaskGroup
         {
             showViewModelArgs = new TryShowViewModelArgs(
                 showViewModelArgs.ViewModelKey,
-                EditorTextEditorGroupKey,
+                TextEditorService.EditorTextEditorGroupKey,
                 showViewModelArgs.ShouldSetFocusToEditor,
                 showViewModelArgs.CommonService,
                 showViewModelArgs.IdeBackgroundTaskApi);

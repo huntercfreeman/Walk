@@ -184,8 +184,8 @@ public partial class WalkWebsiteInitializer : ComponentBase
             var absolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
                 "/BlazorCrudApp/ConsoleApp/Program.cs",
                 false,
-                tokenBuilder: new StringBuilder(),
-                formattedBuilder: new StringBuilder());
+                tokenBuilder,
+                formattedBuilder);
         
             await DotNetService.TextEditorService.OpenInEditorAsync(
                 editContext,
