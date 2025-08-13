@@ -69,7 +69,47 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private MainLayoutDragEventKind _mainLayoutDragEventKind;
     
     private bool _userInterfaceSawIsExecuting;
+    
+    private static readonly List<HeaderButtonKind> TextEditorHeaderButtonKindsList =
+        Enum.GetValues(typeof(HeaderButtonKind))
+            .Cast<HeaderButtonKind>()
+            .ToList();
 
+    private ViewModelDisplayOptions _viewModelDisplayOptions = null!;
+
+    private TabListDisplay? _tabListDisplay;
+
+    private string? _htmlId = null;
+    private string HtmlId => _htmlId ??= $"di_te_group_{Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey.Guid}";
+    
+    private Key<TextEditorViewModel> _previousActiveViewModelKey = Key<TextEditorViewModel>.Empty;
+    
+    private Key<TextEditorComponentData> _componentDataKey;
+    
+    private const string _startButtonElementId = "di_startup-controls_id";
+
+    private Key<DropdownRecord> _startButtonDropdownKey = Key<DropdownRecord>.NewKey();
+
+    private readonly List<ITab> _uiThread_ReUse_GetTabList = new();
+    
+    private Key<IDynamicViewModel> _dynamicViewModelKeyPrevious;
+
+    private string GetIsActiveCssClass(ITab localTabViewModel) => (localTabViewModel.TabGroup?.GetIsActive(localTabViewModel) ?? false)
+        ? "di_active"
+        : string.Empty;
+
+    public string? SelectedStartupControlAbsolutePathValue
+    {
+        get
+        {
+            return DotNetService.IdeService.GetIdeStartupControlState().ActiveStartupProjectAbsolutePathValue;
+        }
+        set
+        {
+            DotNetService.IdeService.Ide_SetActiveStartupControlKey(value);
+        }
+    }
+    
     protected override void OnInitialized()
     {
         _tabCascadingValueBatch = new()
@@ -403,12 +443,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         return DotNetService.CommonService.UiStringBuilder.ToString();
     }
 
-    private Key<IDynamicViewModel> _dynamicViewModelKeyPrevious;
-
-    private string GetIsActiveCssClass(ITab localTabViewModel) => (localTabViewModel.TabGroup?.GetIsActive(localTabViewModel) ?? false)
-        ? "di_active"
-        : string.Empty;
-
     private void HandleOnMouseUp()
     {
         _tabCascadingValueBatch.ThinksLeftMouseButtonIsDown = false;
@@ -530,22 +564,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     }
     
     /* Start StartupControlDisplay.razor */
-    private const string _startButtonElementId = "di_startup-controls_id";
-
-    private Key<DropdownRecord> _startButtonDropdownKey = Key<DropdownRecord>.NewKey();
-    
-    public string? SelectedStartupControlAbsolutePathValue
-    {
-        get
-        {
-            return DotNetService.IdeService.GetIdeStartupControlState().ActiveStartupProjectAbsolutePathValue;
-        }
-        set
-        {
-            DotNetService.IdeService.Ide_SetActiveStartupControlKey(value);
-        }
-    }
-
     private async Task StartProgramWithoutDebuggingOnClick()
     {
         var localStartupControlState = DotNetService.IdeService.GetIdeStartupControlState();
@@ -641,24 +659,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     }
     
     /* Start EditorDisplay */
-    private static readonly List<HeaderButtonKind> TextEditorHeaderButtonKindsList =
-        Enum.GetValues(typeof(HeaderButtonKind))
-            .Cast<HeaderButtonKind>()
-            .ToList();
-
-    private ViewModelDisplayOptions _viewModelDisplayOptions = null!;
-
-    private TabListDisplay? _tabListDisplay;
-
-    private string? _htmlId = null;
-    private string HtmlId => _htmlId ??= $"di_te_group_{Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey.Guid}";
-    
-    private Key<TextEditorViewModel> _previousActiveViewModelKey = Key<TextEditorViewModel>.Empty;
-    
-    private Key<TextEditorComponentData> _componentDataKey;
-
-    private readonly List<ITab> _uiThread_ReUse_GetTabList = new();
-
     private List<ITab> UiThread_GetTabList(TextEditorGroup textEditorGroup)
     {
         var textEditorState = DotNetService.TextEditorService.TextEditorState;
