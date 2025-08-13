@@ -239,35 +239,30 @@
             	@{
         	        var textEditorGroup = DotNetService.TextEditorService.Group_GetTextEditorGroupState().EditorTextEditorGroup;
         	    }
-            
-        		<div class="di_te_text-editor-group-tabs-list">
-    				<TabListDisplay @ref="_tabListDisplay"
-    								TabList="@UiThread_GetTabList(textEditorGroup)"/>
-    			</div>
-    	
-    			<div class="di_te_text-editor-group-active-view-model">
-    				@{
-    		            var textEditorModel = DotNetService.TextEditorService.ViewModel_GetModelOrDefault(
-    		                textEditorGroup.ActiveViewModelKey);
-    		    
-    		            if (textEditorModel is null)
-    		            {
-    		                <text>No editors are open currently</text>
-    		            }
-    		            else
-    		            {
-    		            	<FindOverlayDisplay ComponentDataKey="_componentDataKey"/>
-    		            
-    						<TextEditorFileExtensionHeaderDisplay ComponentDataKey="_componentDataKey"
-    						                                      TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"/>
-    		            	
-    		                <TextEditorViewModelSlimDisplay TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"
-    		                                                ViewModelDisplayOptions="_viewModelDisplayOptions"/>
-    		                           
-    						<TextEditorDefaultFooterDisplay ComponentDataKey="_componentDataKey"/>
-    		            }
-    	            }
-                </div>
+        	    
+        	    @if (textEditorGroup.ViewModelKeyList.Count == 0)
+        	    {
+        	        <text>No editors are open currently</text>
+        	    }
+                else
+                {
+            		<div class="di_te_text-editor-group-tabs-list">
+        				<TabListDisplay @ref="_tabListDisplay"
+        								TabList="@UiThread_GetTabList(textEditorGroup)"/>
+        			</div>
+        	
+        			<div class="di_te_text-editor-group-active-view-model">
+        				<FindOverlayDisplay ComponentDataKey="_componentDataKey"/>
+        		            
+    					<TextEditorFileExtensionHeaderDisplay ComponentDataKey="_componentDataKey"
+    					                                      TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"/>
+    	            	
+    	                <TextEditorViewModelSlimDisplay TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"
+    	                                                ViewModelDisplayOptions="_viewModelDisplayOptions"/>
+    	                           
+    					<TextEditorDefaultFooterDisplay ComponentDataKey="_componentDataKey"/>
+                    </div>
+                }
             </div>
         </div>
         
