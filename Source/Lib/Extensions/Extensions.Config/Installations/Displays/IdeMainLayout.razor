@@ -234,51 +234,41 @@
         </div>
     
         <div class="di_ide_editor-display" style="@DotNetService.CommonService.EditorElementStyle">
-                <div class="di_ide_section-body di_te_text-editor-group di_ide_section-no-title"
-                     id="@HtmlId">
-                	@{
-            	        var textEditorGroup = DotNetService.TextEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
-            	            x => x.GroupKey == Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
-            	    }
-                
-                	@if (textEditorGroup is not null)
-                	{
-                		<div class="di_te_text-editor-group-tabs-list">
-            				<TabListDisplay @ref="_tabListDisplay"
-            								TabList="@UiThread_GetTabList(textEditorGroup)"/>
-            			</div>
-            	
-            			<div class="di_te_text-editor-group-active-view-model">
-            				@{
-            		            var textEditorModel = DotNetService.TextEditorService.ViewModel_GetModelOrDefault(
-            		                textEditorGroup.ActiveViewModelKey);
-            		    
-            		            if (textEditorModel is null)
-            		            {
-            		                <text>No editors are open currently</text>
-            		            }
-            		            else
-            		            {
-            		            	<FindOverlayDisplay ComponentDataKey="_componentDataKey"/>
-            		            
-            						<TextEditorFileExtensionHeaderDisplay ComponentDataKey="_componentDataKey"
-            						                                      TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"/>
-            		            	
-            		                <TextEditorViewModelSlimDisplay TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"
-            		                                                ViewModelDisplayOptions="_viewModelDisplayOptions"/>
-            		                           
-            						<TextEditorDefaultFooterDisplay ComponentDataKey="_componentDataKey"/>
-            		            }
-            	            }
-                        </div>
-            	    }
-            	    else
-            	    {
-            	        <div>
-            	            Group not found
-            	        </div>
-            	    }
+            <div class="di_ide_section-body di_te_text-editor-group di_ide_section-no-title"
+                 id="@HtmlId">
+            	@{
+        	        var textEditorGroup = DotNetService.TextEditorService.Group_GetTextEditorGroupState().EditorTextEditorGroup;
+        	    }
+            
+        		<div class="di_te_text-editor-group-tabs-list">
+    				<TabListDisplay @ref="_tabListDisplay"
+    								TabList="@UiThread_GetTabList(textEditorGroup)"/>
+    			</div>
+    	
+    			<div class="di_te_text-editor-group-active-view-model">
+    				@{
+    		            var textEditorModel = DotNetService.TextEditorService.ViewModel_GetModelOrDefault(
+    		                textEditorGroup.ActiveViewModelKey);
+    		    
+    		            if (textEditorModel is null)
+    		            {
+    		                <text>No editors are open currently</text>
+    		            }
+    		            else
+    		            {
+    		            	<FindOverlayDisplay ComponentDataKey="_componentDataKey"/>
+    		            
+    						<TextEditorFileExtensionHeaderDisplay ComponentDataKey="_componentDataKey"
+    						                                      TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"/>
+    		            	
+    		                <TextEditorViewModelSlimDisplay TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"
+    		                                                ViewModelDisplayOptions="_viewModelDisplayOptions"/>
+    		                           
+    						<TextEditorDefaultFooterDisplay ComponentDataKey="_componentDataKey"/>
+    		            }
+    	            }
                 </div>
+            </div>
         </div>
         
         <div class="di_resize-column"

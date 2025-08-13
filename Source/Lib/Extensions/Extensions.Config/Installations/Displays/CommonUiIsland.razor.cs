@@ -348,7 +348,7 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
                 {
                     if (_index >= DotNetService.CommonService.GetDialogState().DialogList.Count - 1)
                     {
-                        var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+                        var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey);
                         if ((textEditorGroup?.ViewModelKeyList.Count ?? 0) > 0)
                         {
                             _ctrlTabKind = CtrlTabKind.TextEditors;
@@ -366,7 +366,7 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
                 }
                 else if (_ctrlTabKind == CtrlTabKind.TextEditors)
                 {
-                    var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+                    var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey);
                     if (_index >= textEditorGroup.ViewModelKeyList.Count - 1)
                     {
                         if (DotNetService.CommonService.GetDialogState().DialogList.Count > 0)
@@ -391,7 +391,7 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
                 {
                     if (_index <= 0)
                     {
-                        var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+                        var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey);
                         if (textEditorGroup.ViewModelKeyList.Count >= 0)
                         {
                             _ctrlTabKind = CtrlTabKind.TextEditors;
@@ -409,7 +409,7 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
                 }
                 else if (_ctrlTabKind == CtrlTabKind.TextEditors)
                 {
-                    var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+                    var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey);
                     if (_index <= 0)
                     {
                         if (DotNetService.CommonService.GetDialogState().DialogList.Count > 0)
@@ -461,7 +461,7 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
             }
             else if (_ctrlTabKind == CtrlTabKind.TextEditors)
             {
-                var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+                var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey);
                 if (_index < textEditorGroup.ViewModelKeyList.Count)
                 {
                     var viewModelKey = textEditorGroup.ViewModelKeyList[_index];
@@ -470,7 +470,7 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
                         var activeViewModel = editContext.GetViewModelModifier(textEditorGroup.ActiveViewModelKey);
                         await activeViewModel.FocusAsync();
                         DotNetService.TextEditorService.Group_SetActiveViewModel(
-                            Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey,
+                            Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey,
                             viewModelKey);
                     });
                 }
@@ -507,13 +507,13 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
     [JSInvokable]
     public async Task SaveFileOnKeyDown()
     {
-        TextEditorCommandDefaultFunctions.TriggerSave_NoTextEditorFocus(DotNetService.TextEditorService, Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+        TextEditorCommandDefaultFunctions.TriggerSave_NoTextEditorFocus(DotNetService.TextEditorService, Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey);
     }
 
     [JSInvokable]
     public async Task SaveAllFileOnKeyDown()
     {
-        TextEditorCommandDefaultFunctions.TriggerSaveAll(DotNetService.TextEditorService, Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+        TextEditorCommandDefaultFunctions.TriggerSaveAll(DotNetService.TextEditorService, Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey);
     }
 
     [JSInvokable]
@@ -538,7 +538,7 @@ public partial class CommonUiIsland : ComponentBase, IDisposable
     [JSInvokable]
     public async Task EscapeOnKeyDown()
     {
-        var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+        var textEditorGroup = DotNetService.TextEditorService.Group_GetOrDefault(Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey);
         var viewModelKey = textEditorGroup.ActiveViewModelKey;
 
         DotNetService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>

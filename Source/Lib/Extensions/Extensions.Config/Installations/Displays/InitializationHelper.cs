@@ -477,7 +477,7 @@ public static class InitializationHelper
             MenuOptionKind.Other,
             () =>
             {
-                TextEditorCommandDefaultFunctions.TriggerSave_NoTextEditorFocus(DotNetService.TextEditorService, Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+                TextEditorCommandDefaultFunctions.TriggerSave_NoTextEditorFocus(DotNetService.TextEditorService, Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey);
                 return Task.CompletedTask;
             });
         menuOptionsList.Add(menuOptionSave);
@@ -487,7 +487,7 @@ public static class InitializationHelper
             MenuOptionKind.Other,
             () =>
             {
-                TextEditorCommandDefaultFunctions.TriggerSaveAll(DotNetService.TextEditorService, Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+                TextEditorCommandDefaultFunctions.TriggerSaveAll(DotNetService.TextEditorService, Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey);
                 return Task.CompletedTask;
             });
         menuOptionsList.Add(menuOptionSaveAll);

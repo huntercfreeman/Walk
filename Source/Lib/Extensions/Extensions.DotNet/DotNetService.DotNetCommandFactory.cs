@@ -112,7 +112,7 @@ public partial class DotNetService
     {
         _nodeList.Clear();
 
-        var group = TextEditorService.Group_GetOrDefault(Walk.Ide.RazorLib.IdeService.EditorTextEditorGroupKey);
+        var group = TextEditorService.Group_GetOrDefault(Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey);
 
         if (group is not null)
         {

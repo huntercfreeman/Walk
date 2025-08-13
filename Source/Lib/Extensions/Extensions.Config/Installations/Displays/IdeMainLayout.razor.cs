@@ -297,7 +297,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
         else if (secondaryChangedKind == SecondaryChangedKind.Group_TextEditorGroupStateChanged)
         {
             var textEditorGroup = DotNetService.TextEditorService.Group_GetTextEditorGroupState().GroupList.FirstOrDefault(
-                x => x.GroupKey == IdeService.EditorTextEditorGroupKey);
+                x => x.GroupKey == Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey);
                 
             if (_previousActiveViewModelKey != textEditorGroup.ActiveViewModelKey)
             {
@@ -695,7 +695,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     private TabListDisplay? _tabListDisplay;
 
     private string? _htmlId = null;
-    private string HtmlId => _htmlId ??= $"di_te_group_{IdeService.EditorTextEditorGroupKey.Guid}";
+    private string HtmlId => _htmlId ??= $"di_te_group_{Walk.TextEditor.RazorLib.TextEditorService.EditorTextEditorGroupKey.Guid}";
     
     private Key<TextEditorViewModel> _previousActiveViewModelKey = Key<TextEditorViewModel>.Empty;
     
