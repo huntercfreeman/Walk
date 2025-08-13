@@ -2,7 +2,7 @@ namespace Walk.Website.RazorLib.Websites.ProjectTemplates.Models;
 
 public partial class ConsoleAppFacts
 {
-    public static string GetCsprojContents(string projectName) => @$"<Project Sdk=""Microsoft.NET.Sdk"">
+    public const string CsprojContents = @"<Project Sdk=""Microsoft.NET.Sdk"">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
