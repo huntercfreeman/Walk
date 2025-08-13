@@ -31,8 +31,6 @@ public partial class WalkWebsiteInitializer : ComponentBase
     
     public async ValueTask Do_WalkWebsiteInitializerOnAfterRenderAsync()
     {
-        await WriteFileSystemInMemoryAsync().ConfigureAwait(false);
-
         await ParseSolutionAsync().ConfigureAwait(false);
 
         // This code block is hacky. I want the Solution Explorer to from the get-go be fully expanded, so the user can see 'Program.cs'
@@ -54,46 +52,110 @@ public partial class WalkWebsiteInitializer : ComponentBase
         }
     }
 
-    private async Task WriteFileSystemInMemoryAsync()
+    private async Task ParseSolutionAsync()
     {
+        var tokenBuilder = new StringBuilder();
+        var formattedBuilder = new StringBuilder();
+    
         // Create a Blazor Wasm app
-        await WebsiteProjectTemplateFacts.HandleNewCSharpProjectAsync(
-                WebsiteProjectTemplateFacts.ConsoleAppProjectTemplate.ShortName!,
+        var cSharpProjectAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(
+            InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_CSPROJ_ABSOLUTE_FILE_PATH,
+            false,
+            tokenBuilder,
+            formattedBuilder);
+            
+        var parentDirectoryOfProject = cSharpProjectAbsolutePath.ParentDirectory;
+
+        if (parentDirectoryOfProject is null)
+            throw new NotImplementedException();
+
+        var ancestorDirectory = parentDirectoryOfProject;
+
+        TextEditorModel programCsModel;
+        // ProgramCs
+        {
+            var absolutePathString = DotNetService.CommonService.EnvironmentProvider.JoinPaths(
+                ancestorDirectory,
+                ConsoleAppFacts.PROGRAM_CS_RELATIVE_FILE_PATH);
+            var absolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(absolutePathString, false, tokenBuilder, formattedBuilder);
+    
+            DotNetService.CommonService.FileSystemProvider.File.WriteAllText(
+                absolutePath.Value,
+                InitialSolutionFacts.PERSON_CS_CONTENTS);
+
+            var resourceUri = new ResourceUri(absolutePath.Value);
+            var fileLastWriteTime = DateTime.UtcNow;
+            var content = InitialSolutionFacts.PERSON_CS_CONTENTS;
+            
+            var decorationMapper = DotNetService.TextEditorService.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
+            var compilerService = DotNetService.TextEditorService.GetCompilerService(absolutePath.ExtensionNoPeriod);
+
+            programCsModel = new TextEditorModel(
+                resourceUri,
+                fileLastWriteTime,
+                absolutePath.ExtensionNoPeriod,
+                content,
+                decorationMapper,
+                compilerService,
+                DotNetService.TextEditorService);
+        }
+        
+        TextEditorModel csprojModel;
+        // Csproj
+        {
+            var content = ConsoleAppFacts.GetCsprojContents(cSharpProjectAbsolutePath.NameNoExtension);
+        
+            DotNetService.CommonService.FileSystemProvider.File.WriteAllText(
                 InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_CSPROJ_ABSOLUTE_FILE_PATH,
-                DotNetService.TextEditorService.CommonService)
-            .ConfigureAwait(false);
+                content);
+        
+            var absolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_CSPROJ_ABSOLUTE_FILE_PATH, false, tokenBuilder, formattedBuilder);
+            var resourceUri = new ResourceUri(InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_CSPROJ_ABSOLUTE_FILE_PATH);
+            var fileLastWriteTime = DateTime.UtcNow;
 
-        /*await DotNetService.TextEditorService.CommonService.FileSystemProvider.File.WriteAllTextAsync(
-                InitialSolutionFacts.PERSON_CS_ABSOLUTE_FILE_PATH,
-                InitialSolutionFacts.PERSON_CS_CONTENTS)
-            .ConfigureAwait(false);
+            var decorationMapper = DotNetService.TextEditorService.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
+            var compilerService = DotNetService.TextEditorService.GetCompilerService(absolutePath.ExtensionNoPeriod);
 
-        await DotNetService.TextEditorService.CommonService.FileSystemProvider.File.WriteAllTextAsync(
-                InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CS_ABSOLUTE_FILE_PATH,
-                InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CS_CONTENTS)
-            .ConfigureAwait(false);
-
-        await DotNetService.TextEditorService.CommonService.FileSystemProvider.File.WriteAllTextAsync(
-                InitialSolutionFacts.PERSON_DISPLAY_RAZOR_ABSOLUTE_FILE_PATH,
-                InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CONTENTS)
-            .ConfigureAwait(false);*/
-
-        /*await _fileSystemProvider.File.WriteAllTextAsync(
-                InitialSolutionFacts.BLAZOR_CRUD_APP_ALL_C_SHARP_SYNTAX_ABSOLUTE_FILE_PATH,
-                InitialSolutionFacts.BLAZOR_CRUD_APP_ALL_C_SHARP_SYNTAX_CONTENTS)
-            .ConfigureAwait(false);*/
-
-        // ExampleSolution.sln
-        await DotNetService.TextEditorService.CommonService.FileSystemProvider.File.WriteAllTextAsync(
-                InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
-                InitialSolutionFacts.SLN_CONTENTS)
-            .ConfigureAwait(false);
-
+            csprojModel = new TextEditorModel(
+                resourceUri,
+                fileLastWriteTime,
+                absolutePath.ExtensionNoPeriod,
+                content,
+                decorationMapper,
+                compilerService,
+                DotNetService.TextEditorService);
+        }
+        
         var solutionAbsolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
             InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
             false,
-            tokenBuilder: new StringBuilder(),
-            formattedBuilder: new StringBuilder());
+            tokenBuilder,
+            formattedBuilder);
+        
+        TextEditorModel exampleSolutionModel;
+        // ExampleSolution.sln
+        {
+            DotNetService.TextEditorService.CommonService.FileSystemProvider.File.WriteAllText(
+                InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
+                InitialSolutionFacts.SLN_CONTENTS);
+            
+            var absolutePath = solutionAbsolutePath;
+            var resourceUri = new ResourceUri(InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH);
+            var fileLastWriteTime = DateTime.UtcNow;
+            var content = InitialSolutionFacts.SLN_CONTENTS;
+
+            var decorationMapper = DotNetService.TextEditorService.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
+            var compilerService = DotNetService.TextEditorService.GetCompilerService(absolutePath.ExtensionNoPeriod);
+
+            exampleSolutionModel = new TextEditorModel(
+                resourceUri,
+                fileLastWriteTime,
+                absolutePath.ExtensionNoPeriod,
+                content,
+                decorationMapper,
+                compilerService,
+                DotNetService.TextEditorService);            
+        }
 
         // This line is also in WalkExtensionsDotNetInitializer,
         // but its duplicated here because the website
@@ -105,78 +167,83 @@ public partial class WalkWebsiteInitializer : ComponentBase
             WorkKind = DotNetWorkKind.SetDotNetSolution,
             DotNetSolutionAbsolutePath = solutionAbsolutePath,
         });
-    }
-
-    private async Task ParseSolutionAsync()
-    {
-        var allFiles = new List<string>();
-
-        await RecursiveStep(
-                new List<string> { "/" },
-        allFiles)
-        .ConfigureAwait(false);
-
-        async Task RecursiveStep(IEnumerable<string> directories, List<string> allFiles)
-        {
-            foreach (var directory in directories)
-            {
-                var childDirectories = await DotNetService.TextEditorService.CommonService.FileSystemProvider.Directory
-                    .GetDirectoriesAsync(directory)
-                    .ConfigureAwait(false);
-                allFiles.AddRange(
-                    await DotNetService.TextEditorService.CommonService.FileSystemProvider.Directory.GetFilesAsync(directory).ConfigureAwait(false));
-
-                await RecursiveStep(childDirectories, allFiles).ConfigureAwait(false);
-            }
-        }
         
-        var tokenBuilder = new StringBuilder();
-        var formattedBuilder = new StringBuilder();
-
-        foreach (var file in allFiles)
+        DotNetService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
         {
-            var absolutePath = DotNetService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(file, false, tokenBuilder, formattedBuilder);
-            var resourceUri = new ResourceUri(file);
-            var fileLastWriteTime = await DotNetService.TextEditorService.CommonService.FileSystemProvider.File.GetLastWriteTimeAsync(file).ConfigureAwait(false);
-            var content = await DotNetService.TextEditorService.CommonService.FileSystemProvider.File.ReadAllTextAsync(file).ConfigureAwait(false);
-
-            var decorationMapper = DotNetService.TextEditorService.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
-            var compilerService = DotNetService.TextEditorService.GetCompilerService(absolutePath.ExtensionNoPeriod);
-
-            var textEditorModel = new TextEditorModel(
-                resourceUri,
-                fileLastWriteTime,
-                absolutePath.ExtensionNoPeriod,
-                content,
-                decorationMapper,
-                compilerService,
-                DotNetService.TextEditorService);
-
-            DotNetService.TextEditorService.WorkerArbitrary.PostUnique(editContext =>
+            // programCsModel
             {
-                DotNetService.TextEditorService.Model_RegisterCustom(editContext, textEditorModel);
+                DotNetService.TextEditorService.Model_RegisterCustom(editContext, programCsModel);
                 
-                var modelModifier = editContext.GetModelModifier(textEditorModel.PersistentState.ResourceUri);
-
+                var modelModifier = editContext.GetModelModifier(programCsModel.PersistentState.ResourceUri);
+    
                 if (modelModifier is null)
                     return ValueTask.CompletedTask;
-
+    
                 DotNetService.TextEditorService.Model_AddPresentationModel(
                     editContext,
                     modelModifier,
                     TextEditorFacts.CompilerServiceDiagnosticPresentation_EmptyPresentationModel);
-
+    
                 DotNetService.TextEditorService.Model_AddPresentationModel(
                     editContext,
                     modelModifier,
                     TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel);
-
-                textEditorModel.PersistentState.CompilerService.RegisterResource(
-                    textEditorModel.PersistentState.ResourceUri,
+    
+                programCsModel.PersistentState.CompilerService.RegisterResource(
+                    programCsModel.PersistentState.ResourceUri,
                     shouldTriggerResourceWasModified: true);
-                return ValueTask.CompletedTask;
-            });
-        }
+            }
+            
+            // csprojModel
+            {
+                DotNetService.TextEditorService.Model_RegisterCustom(editContext, csprojModel);
+                
+                var modelModifier = editContext.GetModelModifier(csprojModel.PersistentState.ResourceUri);
+    
+                if (modelModifier is null)
+                    return ValueTask.CompletedTask;
+    
+                DotNetService.TextEditorService.Model_AddPresentationModel(
+                    editContext,
+                    modelModifier,
+                    TextEditorFacts.CompilerServiceDiagnosticPresentation_EmptyPresentationModel);
+    
+                DotNetService.TextEditorService.Model_AddPresentationModel(
+                    editContext,
+                    modelModifier,
+                    TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel);
+    
+                csprojModel.PersistentState.CompilerService.RegisterResource(
+                    csprojModel.PersistentState.ResourceUri,
+                    shouldTriggerResourceWasModified: true);
+            }
+            
+            // exampleSolutionModel
+            {
+                DotNetService.TextEditorService.Model_RegisterCustom(editContext, exampleSolutionModel);
+                
+                var modelModifier = editContext.GetModelModifier(exampleSolutionModel.PersistentState.ResourceUri);
+    
+                if (modelModifier is null)
+                    return ValueTask.CompletedTask;
+    
+                DotNetService.TextEditorService.Model_AddPresentationModel(
+                    editContext,
+                    modelModifier,
+                    TextEditorFacts.CompilerServiceDiagnosticPresentation_EmptyPresentationModel);
+    
+                DotNetService.TextEditorService.Model_AddPresentationModel(
+                    editContext,
+                    modelModifier,
+                    TextEditorFacts.FindOverlayPresentation_EmptyPresentationModel);
+    
+                exampleSolutionModel.PersistentState.CompilerService.RegisterResource(
+                    exampleSolutionModel.PersistentState.ResourceUri,
+                    shouldTriggerResourceWasModified: true);
+            }
+            
+            return ValueTask.CompletedTask;
+        });
         
         DotNetService.TextEditorService.WorkerArbitrary.PostUnique(async editContext =>
         {

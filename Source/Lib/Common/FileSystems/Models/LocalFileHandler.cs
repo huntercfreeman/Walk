@@ -141,6 +141,29 @@ public class LocalFileHandler : IFileHandler
             throw;
         }
     }
+    
+    public void WriteAllText(
+        string absolutePathString,
+        string contents)
+    {
+        try
+        {
+            if (Exists(absolutePathString))
+                _commonService.EnvironmentProvider.AssertDeletionPermitted(absolutePathString, IS_DIRECTORY_RESPONSE);
+
+            File.WriteAllText(absolutePathString, contents);
+
+            _commonService.EnvironmentProvider.DeletionPermittedRegister(
+                new SimplePath(absolutePathString, IS_DIRECTORY_RESPONSE),
+                tokenBuilder: new StringBuilder(),
+                formattedBuilder: new StringBuilder());
+        }
+        catch (Exception exception)
+        {
+            NotifyUserOfException(exception);
+            throw;
+        }
+    }
 
     private void NotifyUserOfException(Exception exception)
     {

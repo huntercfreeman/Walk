@@ -55,6 +55,13 @@ public static class InitializationHelper
         BrowserResizeInterop BrowserResizeInterop,
         CancellationTokenSource _workerCancellationTokenSource)
     {
+        await DotNetService.CommonService.Options_SetFromLocalStorageAsync();
+        await DotNetService.TextEditorService.Options_SetFromLocalStorageAsync();
+
+        InitializeMenuFile(DotNetService);
+        InitializeMenuTools(DotNetService);
+        InitializeMenuView(DotNetService);
+    
         var menuOptionOpenDotNetSolution = new MenuOptionRecord(
             ".NET Solution",
             MenuOptionKind.Other,
@@ -377,16 +384,6 @@ public static class InitializationHelper
         };
 
         DotNetService.IdeService.GetTerminalState().TerminalMap[IdeFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
-    }
-
-    public static async Task EnqueueOnInitializedSteps(DotNetService DotNetService)
-    {
-        await DotNetService.CommonService.Options_SetFromLocalStorageAsync();
-        await DotNetService.TextEditorService.Options_SetFromLocalStorageAsync();
-
-        InitializeMenuFile(DotNetService);
-        InitializeMenuTools(DotNetService);
-        InitializeMenuView(DotNetService);
     }
 
     public static async Task SetSolution(DotNetService DotNetService, DotNetAppData dotNetAppData)

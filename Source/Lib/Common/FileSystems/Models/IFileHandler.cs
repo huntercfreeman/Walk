@@ -32,6 +32,10 @@ public interface IFileHandler
         string absolutePathString,
         CancellationToken cancellationToken = default);
 
+    public void WriteAllText(
+        string absolutePathString,
+        string contents);
+    
     public Task WriteAllTextAsync(
         string absolutePathString,
         string contents,

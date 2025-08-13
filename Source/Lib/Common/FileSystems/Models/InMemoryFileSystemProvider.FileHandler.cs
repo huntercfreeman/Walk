@@ -150,6 +150,13 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             }
         }
         
+        public void WriteAllText(
+            string absolutePathString,
+            string contents)
+        {
+            UnsafeWriteAllText(absolutePathString, contents);
+        }
+        
         public bool UnsafeExists(string absolutePathString)
         {
             // System.InvalidOperationException: Collection was modified; enumeration operation may not execute.
@@ -289,6 +296,14 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
             string contents,
             CancellationToken cancellationToken = default)
         {
+            UnsafeWriteAllText(absolutePathString, contents);
+            return Task.CompletedTask;
+        }
+        
+        public void UnsafeWriteAllText(
+            string absolutePathString,
+            string contents)
+        {
             var indexOfExistingFile = _inMemoryFileSystemProvider._files.FindIndex(f =>
                 f.AbsolutePath.Value == absolutePathString &&
                 !f.IsDirectory);
@@ -304,7 +319,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                     Data = contents
                 };
 
-                return Task.CompletedTask;
+                return;
             }
 
             // Ensure Parent Directories Exist
@@ -347,8 +362,6 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 new SimplePath(absolutePathString, IS_DIRECTORY_RESPONSE),
                 tokenBuilder: new StringBuilder(),
                 formattedBuilder: new StringBuilder());
-
-            return Task.CompletedTask;
         }
 
         private void NotifyUserOfException(Exception exception)
