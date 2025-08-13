@@ -449,8 +449,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
 
     private Key<IDynamicViewModel> _dynamicViewModelKeyPrevious;
 
-    private ElementReference? _tabButtonElementReference;
-
     private string GetIsActiveCssClass(ITab localTabViewModel) => (localTabViewModel.TabGroup?.GetIsActive(localTabViewModel) ?? false)
         ? "di_active"
         : string.Empty;
@@ -578,7 +576,6 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     /* Start StartupControlDisplay.razor */
     private const string _startButtonElementId = "di_ide_startup-controls-display_id";
 
-    private ElementReference? _startButtonElementReference;
     private Key<DropdownRecord> _startButtonDropdownKey = Key<DropdownRecord>.NewKey();
     
     public string? SelectedStartupControlAbsolutePathValue
@@ -652,7 +649,8 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                 DropdownOrientation.Bottom,
                 _startButtonDropdownKey,
                 new MenuRecord(menuOptionList),
-                _startButtonElementReference);
+                _startButtonElementId,
+                preventScroll: false);
         }
         else
         {

@@ -134,8 +134,7 @@
                    &nbsp;
               </div>
                <div class="di_ide_startup-controls-display-entry">
-                    <button @ref="_startButtonElementReference"
-                    	    @onclick="StartProgramWithoutDebuggingOnClick"
+                    <button @onclick="StartProgramWithoutDebuggingOnClick"
                             class="di_button"
                             id="@_startButtonElementId"
                             disabled=@(activeStartupControl is null)
