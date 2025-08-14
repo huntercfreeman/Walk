@@ -114,6 +114,12 @@
                                                    OnAfterSubmitFunc="menuOption.WidgetParameterMap[nameof(DeleteFileFormDisplay.OnAfterSubmitFunc)]"/>
                             break;
                         }
+                        case SimpleWidgetKind.RemoveCSharpProjectFromSolution:
+                        {
+                            <RemoveCSharpProjectFromSolutionDisplay AbsolutePath="((AbsolutePath?)menuOption.WidgetParameterMap[nameof(DeleteFileFormDisplay.AbsolutePath)]) ?? default"
+                                                                    OnAfterSubmitFunc="menuOption.WidgetParameterMap[nameof(DeleteFileFormDisplay.OnAfterSubmitFunc)]"/>
+                            break;
+                        }
                     }
                 </div>
             </CascadingValue>
