@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Commands.Models;
@@ -151,7 +152,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
             menuOptionList.Add(new MenuOptionRecord(
                 "Delete",
                 MenuOptionKind.Delete,
-                widgetRendererType: typeof(Walk.Ide.RazorLib.FormsGenerics.Displays.BooleanPromptOrCancelDisplay),
+                simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.BooleanPromptOrCancel,
                 widgetParameterMap: new Dictionary<string, object?>
                 {
                     { nameof(BooleanPromptOrCancelDisplay.IncludeCancelOption), false },

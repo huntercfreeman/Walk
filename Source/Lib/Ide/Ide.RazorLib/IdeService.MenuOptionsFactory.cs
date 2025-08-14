@@ -41,7 +41,7 @@ public partial class IdeService
     public MenuOptionRecord NewTemplatedFile(NamespacePath parentDirectory, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("New Templated File", MenuOptionKind.Create,
-            widgetRendererType: typeof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay),
+            simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.FileForm,
             widgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.FileName), string.Empty },
@@ -67,7 +67,7 @@ public partial class IdeService
     public MenuOptionRecord NewDirectory(AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("New Directory", MenuOptionKind.Create,
-            widgetRendererType: typeof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay),
+            simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.FileForm,
             widgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.FileName), string.Empty },
@@ -87,7 +87,7 @@ public partial class IdeService
     public MenuOptionRecord DeleteFile(AbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Delete", MenuOptionKind.Delete,
-            widgetRendererType: typeof(Walk.Common.RazorLib.FileSystems.Displays.DeleteFileFormDisplay),
+            simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.DeleteFileForm,
             widgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(Walk.Common.RazorLib.FileSystems.Displays.DeleteFileFormDisplay.AbsolutePath), absolutePath },
@@ -107,7 +107,7 @@ public partial class IdeService
     public MenuOptionRecord RenameFile(AbsolutePath sourceAbsolutePath, CommonService commonService, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Rename", MenuOptionKind.Update,
-            widgetRendererType: typeof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay),
+            simpleWidgetKind: Walk.Common.RazorLib.Widgets.Models.SimpleWidgetKind.FileForm,
             widgetParameterMap: new Dictionary<string, object?>
             {
                 {

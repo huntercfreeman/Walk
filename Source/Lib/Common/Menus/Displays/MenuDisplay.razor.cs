@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Dropdowns.Models;
 using Walk.Common.RazorLib.Keys.Models;
+using Walk.Common.RazorLib.Widgets.Models;
 
 namespace Walk.Common.RazorLib.Menus.Displays;
 
@@ -170,7 +171,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
                     await option.OnClickFunc.Invoke();
                     await Close();
                 }
-                else if (option.WidgetRendererType is not null)
+                else if (option.SimpleWidgetKind != SimpleWidgetKind.None)
                 {
                     _indexMenuOptionShouldDisplayWidget = _activeIndex;
                 }
@@ -233,7 +234,7 @@ public partial class MenuDisplay : ComponentBase, IDisposable
             await option.OnClickFunc.Invoke();
             await Close();
         }
-        else if (option.WidgetRendererType is not null)
+        else if (option.SimpleWidgetKind != SimpleWidgetKind.None)
         {
             _indexMenuOptionShouldDisplayWidget = indexClicked;
             StateHasChanged();

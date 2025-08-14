@@ -4,7 +4,7 @@ using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Menus.Models;
 
-namespace Walk.Extensions.DotNet.CSharpProjects.Displays;
+namespace Walk.Common.RazorLib.FileSystems.Displays;
 
 public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase
 {
