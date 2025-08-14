@@ -28,5 +28,7 @@ namespace Walk.Common.RazorLib.Widgets.Models;
 /// </summary>
 public enum SimpleWidgetKind
 {
+    None,
+    FileForm,
     
 }

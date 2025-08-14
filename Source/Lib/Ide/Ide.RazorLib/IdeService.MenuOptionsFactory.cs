@@ -4,6 +4,7 @@ using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Menus.Models;
 using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.Notifications.Models;
+using Walk.Common.RazorLib.Widgets.Models;
 using Walk.Ide.RazorLib.BackgroundTasks.Models;
 using Walk.Ide.RazorLib.FileSystems.Models;
 
@@ -14,7 +15,7 @@ public partial class IdeService
     public MenuOptionRecord NewEmptyFile(AbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("New Empty File", MenuOptionKind.Create,
-            widgetRendererType: typeof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay),
+            simpleWidgetKind: SimpleWidgetKind.FileForm,
             widgetParameterMap: new Dictionary<string, object?>
             {
                 { nameof(Walk.Common.RazorLib.FileSystems.Displays.FileFormDisplay.FileName), string.Empty },
