@@ -1,6 +1,7 @@
 using CliWrap.EventStream;
 using System.Runtime.InteropServices;
 using System.Text;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Commands.Models;
 using Walk.Common.RazorLib.Dialogs.Models;
 using Walk.Common.RazorLib.Dynamics.Models;

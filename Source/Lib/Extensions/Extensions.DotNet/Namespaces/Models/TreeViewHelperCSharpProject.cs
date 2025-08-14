@@ -1,4 +1,5 @@
 using System.Text;
+using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;

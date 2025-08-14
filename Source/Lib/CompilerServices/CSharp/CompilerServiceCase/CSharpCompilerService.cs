@@ -584,14 +584,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                                     var menuOptionRecord = new MenuOptionRecord(
                                         entry.DisplayName,
                                         MenuOptionKind.Other,
-                                        () => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask,
-                                        widgetParameterMap: new Dictionary<string, object?>
-                                        {
-                                            {
-                                                nameof(AutocompleteEntry),
-                                                entry
-                                            }
-                                        });
+                                        () => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask);
                                     menuOptionRecord.IconKind = entry.AutocompleteEntryKind;
                                     return menuOptionRecord;
                                 })
@@ -748,14 +741,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                     var menuOptionRecord = new MenuOptionRecord(
                         entry.DisplayName,
                         MenuOptionKind.Other,
-                        () => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask,
-                        widgetParameterMap: new Dictionary<string, object?>
-                        {
-                            {
-                                nameof(AutocompleteEntry),
-                                entry
-                            }
-                        });
+                        () => entry.SideEffectFunc?.Invoke() ?? Task.CompletedTask);
                     
                     menuOptionRecord.IconKind = entry.AutocompleteEntryKind;
                     return menuOptionRecord;

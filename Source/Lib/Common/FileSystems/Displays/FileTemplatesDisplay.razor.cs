@@ -1,12 +1,12 @@
-using Walk.Ide.RazorLib.FileSystems.Models;
 using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib.FileSystems.Models;
 
-namespace Walk.Ide.RazorLib.FileSystems.Displays;
+namespace Walk.Common.RazorLib.FileSystems.Displays;
 
 public partial class FileTemplatesDisplay : ComponentBase
 {
     [Inject]
-    private IdeService IdeService { get; set; } = null!;
+    private CommonService CommonService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public string FileName { get; set; } = null!;
@@ -23,7 +23,7 @@ public partial class FileTemplatesDisplay : ComponentBase
 
     protected override void OnInitialized()
     {
-        _fileTemplatesFormWrappersList = IdeService.FileTemplatesList
+        _fileTemplatesFormWrappersList = CommonService.FileTemplatesList
             .Select(x => new FileTemplatesFormWrapper(x, true))
             .ToList();
     }

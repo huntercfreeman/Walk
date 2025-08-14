@@ -1,11 +1,14 @@
+using System.Text;
 using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib.Exceptions;
 using Walk.Common.RazorLib.Panels.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.Keymaps.Models;
 using Walk.Common.RazorLib.Themes.Models;
 using Walk.Common.RazorLib.Dimensions.Models;
 using Walk.Common.RazorLib.Dynamics.Models;
+using Walk.Common.RazorLib.Namespaces.Models;
 
 namespace Walk.Common.RazorLib;
 
@@ -453,6 +456,208 @@ public static class CommonFacts
     public const string ARROW_UP_ALTCODE = "KeyK";
     public const string ARROW_RIGHT_ALTCODE = "KeyL";
     /* End KeyboardKeyFacts */
+    
+    /* Start FileTemplateFacts */
+    private static readonly List<IFileTemplate> _emptyFileTemplateList = new();
+
+    public static readonly IFileTemplate CSharpClass = new FileTemplate(
+        "C# Class",
+        "di_ide_c-sharp-class",
+        FileTemplateKind.CSharp,
+        filename => filename.EndsWith('.' + ExtensionNoPeriodFacts.C_SHARP_CLASS),
+        _ => _emptyFileTemplateList,
+        true,
+        CSharpClassCreateFileFunc);
+
+    public static readonly IFileTemplate RazorCodebehind = new FileTemplate(
+        "Razor codebehind",
+        "di_ide_razor-codebehind-class",
+        FileTemplateKind.Razor,
+        filename => filename.EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_CODEBEHIND),
+        _ => _emptyFileTemplateList,
+        true,
+        RazorCodebehindCreateFileFunc);
+
+    public static readonly IFileTemplate RazorMarkup = new FileTemplate(
+        "Razor markup",
+        "di_ide_razor-markup-class",
+        FileTemplateKind.Razor,
+        filename => filename.EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP),
+        fileName => new List<IFileTemplate>
+        {
+            RazorCodebehind
+        },
+        true,
+        RazorMarkupCreateFileFunc);
+
+    /// <summary>
+    /// Template should be:
+    /// -------------------
+    /// namespace Walk.Ide.ClassLib.FileTemplates;
+    ///
+    /// public class Asdf
+    /// {
+    ///     
+    /// }
+    /// 
+    /// </summary>
+    private static FileTemplateResult CSharpClassCreateFileFunc(FileTemplateParameter templateParameter)
+    {
+        var emptyFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.Value +
+            templateParameter.Filename;
+
+        // Create AbsolutePath as to leverage it for knowing the file extension and other details
+        var emptyFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
+            emptyFileAbsolutePathString,
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
+
+        var templatedFileContent = GetContent(
+            emptyFileAbsolutePath.NameNoExtension,
+            templateParameter.ParentDirectory.Namespace);
+
+        var templatedFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.Value +
+            emptyFileAbsolutePath.NameNoExtension +
+            '.' +
+            ExtensionNoPeriodFacts.C_SHARP_CLASS;
+
+        var templatedFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
+            templatedFileAbsolutePathString,
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
+
+        var templatedFileNamespacePath = new NamespacePath(
+            templateParameter.ParentDirectory.Namespace,
+            templatedFileAbsolutePath);
+
+        return new FileTemplateResult(templatedFileNamespacePath, templatedFileContent);
+
+        string GetContent(string fileNameNoExtension, string namespaceString) =>
+            $@"namespace {namespaceString};
+
+public class {fileNameNoExtension}
+{{
+    
+}}
+".ReplaceLineEndings();
+    }
+
+    /// <summary>
+    /// Template should be:
+    /// -------------------
+    /// <h3>Asdf</h3>
+    /// 
+    /// @code {
+    ///     
+    /// }
+    /// 
+    /// </summary>
+    private static FileTemplateResult RazorMarkupCreateFileFunc(FileTemplateParameter templateParameter)
+    {
+        var emptyFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.Value +
+            templateParameter.Filename;
+
+        // Create AbsolutePath as to leverage it for knowing the file extension and other details
+        var emptyFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
+            emptyFileAbsolutePathString,
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
+
+        var templatedFileContent = GetContent(emptyFileAbsolutePath.NameNoExtension);
+
+        var templatedFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.Value +
+            emptyFileAbsolutePath.NameNoExtension +
+            '.' +
+            ExtensionNoPeriodFacts.RAZOR_MARKUP;
+
+        var templatedFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
+            templatedFileAbsolutePathString,
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
+
+        var templatedFileNamespacePath = new NamespacePath(
+            templateParameter.ParentDirectory.Namespace,
+            templatedFileAbsolutePath);
+
+        return new FileTemplateResult(templatedFileNamespacePath, templatedFileContent);
+
+        string GetContent(string fileNameNoExtension) =>
+            $@"<h3>{fileNameNoExtension}</h3>
+
+@code {{
+    
+}}".ReplaceLineEndings();
+    }
+
+    /// <summary>
+    /// Template should be:
+    /// -------------------
+    /// using Microsoft.AspNetCore.Components;
+    /// 
+    /// namespace Walk.Ide.RazorLib.Menu;
+    /// 
+    /// public partial class Asdf : ComponentBase
+    /// {
+    ///     
+    /// }
+    /// </summary>
+    private static FileTemplateResult RazorCodebehindCreateFileFunc(FileTemplateParameter templateParameter)
+    {
+        string GetContent(string fileNameNoExtension, string namespaceString)
+        {
+            var className = fileNameNoExtension.Replace('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP, string.Empty);
+
+            var interpolatedResult = $@"using Microsoft.AspNetCore.Components;
+
+namespace {namespaceString};
+
+public partial class {className} : ComponentBase
+{{
+    
+}}".ReplaceLineEndings();
+
+            return interpolatedResult;
+        }
+
+        var emptyFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.Value +
+            templateParameter.Filename;
+
+        // Create AbsolutePath as to leverage it for knowing the file extension and other details
+        var emptyFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
+            emptyFileAbsolutePathString,
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
+
+        var templatedFileContent = GetContent(
+            emptyFileAbsolutePath.NameNoExtension,
+            templateParameter.ParentDirectory.Namespace);
+
+        var templatedFileAbsolutePathString = templateParameter.ParentDirectory.AbsolutePath.Value +
+            emptyFileAbsolutePath.NameNoExtension;
+
+        if (templatedFileAbsolutePathString.EndsWith('.' + ExtensionNoPeriodFacts.RAZOR_MARKUP))
+            templatedFileAbsolutePathString += '.' + ExtensionNoPeriodFacts.C_SHARP_CLASS;
+        else
+            templatedFileAbsolutePathString += '.' + ExtensionNoPeriodFacts.RAZOR_CODEBEHIND;
+
+        var templatedFileAbsolutePath = templateParameter.EnvironmentProvider.AbsolutePathFactory(
+            templatedFileAbsolutePathString,
+            false,
+            tokenBuilder: new StringBuilder(),
+            formattedBuilder: new StringBuilder());
+
+        var templatedFileNamespacePath = new NamespacePath(
+            templateParameter.ParentDirectory.Namespace,
+            templatedFileAbsolutePath);
+
+        return new FileTemplateResult(templatedFileNamespacePath, templatedFileContent);
+    }
+    /* End FileTemplateFacts */
     
     /* Start HtmlFacts */
     public const int HtmlFacts_Button_PADDING_IN_PIXELS = 6;

@@ -1,4 +1,7 @@
 @using Walk.Common.RazorLib.Menus.Models;
+@using Walk.Common.RazorLib.FileSystems.Models
+@using Walk.Common.RazorLib.FileSystems.Displays
+@using Walk.Common.RazorLib.Widgets.Models
 
 <div id="@_htmlId" class="di_menu-display" tabindex="0">
     @{
@@ -10,11 +13,7 @@
     
         _horizontalRuleElementIndexHashSet.Clear();
     
-        var menuOptionsGroupedByKindList = Menu.MenuOptionList
-            .GroupBy(x => x.MenuOptionKind)
-            .SelectMany(x => x);
-    
-        var previousKind = menuOptionsGroupedByKindList.FirstOrDefault()?.MenuOptionKind ?? Walk.Common.RazorLib.Menus.Models.MenuOptionKind.Create;
+        var previousKind = Menu.MenuOptionList.FirstOrDefault().MenuOptionKind;
         
         var appOptionsState = CommonService.GetAppOptionsState();
     
@@ -87,8 +86,37 @@
                      @onkeydownwithpreventscroll:stopPropagation="true"
                      @oncontextmenu:stopPropagation="true">
         
-                    <DynamicComponent Type="menuOption.WidgetRendererType"
-                                      Parameters="menuOption.WidgetParameterMap"/>
+                    @switch (menuOption.SimpleWidgetKind)
+                    {
+                        case SimpleWidgetKind.FileForm:
+                        {
+                            // Optional Blazor parameters
+                            _ = menuOption.WidgetParameterMap.TryGetValue(nameof(FileFormDisplay.IsDirectory), out var isDirectoryObject);
+                            var isDirectoryNullable = (bool?)isDirectoryObject;
+                            
+                            _ = menuOption.WidgetParameterMap.TryGetValue(nameof(FileFormDisplay.CheckForTemplates), out var checkForTemplatesObject);
+                            var checkForTemplatesNullable = (bool?)checkForTemplatesObject;
+                            
+                            <FileFormDisplay FileName="@((string?)menuOption.WidgetParameterMap[nameof(FileFormDisplay.FileName)])"
+                                             OnAfterSubmitFunc="menuOption.WidgetParameterMap[nameof(FileFormDisplay.OnAfterSubmitFunc)]"
+                                             IsDirectory="isDirectoryNullable ?? false"
+                                             CheckForTemplates="checkForTemplatesNullable ?? false"/>
+                            break;
+                        }
+                        case SimpleWidgetKind.DeleteFileForm:
+                        {
+                            <DeleteFileFormDisplay AbsolutePath="((AbsolutePath?)menuOption.WidgetParameterMap[nameof(DeleteFileFormDisplay.AbsolutePath)]) ?? default"
+                                                   IsDirectory="((bool?)menuOption.WidgetParameterMap[nameof(DeleteFileFormDisplay.IsDirectory)]) ?? false"
+                                                   OnAfterSubmitFunc="menuOption.WidgetParameterMap[nameof(DeleteFileFormDisplay.OnAfterSubmitFunc)]"/>
+                            break;
+                        }
+                        case SimpleWidgetKind.RemoveCSharpProjectFromSolution:
+                        {
+                            <RemoveCSharpProjectFromSolutionDisplay AbsolutePath="((AbsolutePath?)menuOption.WidgetParameterMap[nameof(DeleteFileFormDisplay.AbsolutePath)]) ?? default"
+                                                                    OnAfterSubmitFunc="menuOption.WidgetParameterMap[nameof(DeleteFileFormDisplay.OnAfterSubmitFunc)]"/>
+                            break;
+                        }
+                    }
                 </div>
             </CascadingValue>
         }

@@ -1,60 +1,40 @@
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Menus.Models;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 
-namespace Walk.Ide.RazorLib.FileSystems.Displays;
+namespace Walk.Common.RazorLib.FileSystems.Displays;
 
-public partial class DeleteFileFormDisplay : ComponentBase
+public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase
 {
-    [Inject]
-    private CommonService CommonService { get; set; } = null!;
-
     [CascadingParameter]
     public MenuOptionCallbacks? MenuOptionCallbacks { get; set; }
 
     [Parameter, EditorRequired]
     public AbsolutePath AbsolutePath { get; set; }
     [Parameter, EditorRequired]
-    public bool IsDirectory { get; set; }
-    [Parameter, EditorRequired]
     public Func<AbsolutePath, Task> OnAfterSubmitFunc { get; set; } = null!;
 
     private AbsolutePath _previousAbsolutePath = default;
-
-    private int? _countOfImmediateChildren;
     private ElementReference? _cancelButtonElementReference;
 
-    protected override async Task OnParametersSetAsync()
+    protected override Task OnParametersSetAsync()
     {
         if (_previousAbsolutePath.ExactInput is null ||
-            _previousAbsolutePath.Value !=
-            AbsolutePath.Value)
+            _previousAbsolutePath.Value != AbsolutePath.Value)
         {
-            _countOfImmediateChildren = null;
-
             _previousAbsolutePath = AbsolutePath;
-
-            if (AbsolutePath.IsDirectory)
-            {
-                var fileSystemEntryList = await CommonService.FileSystemProvider.Directory
-                    .EnumerateFileSystemEntriesAsync(AbsolutePath.Value)
-                    .ConfigureAwait(false);
-
-                _countOfImmediateChildren = fileSystemEntryList.Count();
-            }
         }
 
-        await base.OnParametersSetAsync();
+        return base.OnParametersSetAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            if (MenuOptionCallbacks is not null &&
-                _cancelButtonElementReference is not null)
+            if (MenuOptionCallbacks is not null && _cancelButtonElementReference is not null)
             {
                 try
                 {
@@ -84,14 +64,14 @@ public partial class DeleteFileFormDisplay : ComponentBase
         }
     }
 
-    private async Task DeleteFileOnClick()
+    private async Task RemoveCSharpProjectFromSolutionOnClick()
     {
         var localAbsolutePath = AbsolutePath;
 
         if (MenuOptionCallbacks is not null)
         {
-            await MenuOptionCallbacks.CompleteWidgetAsync
-                .Invoke(async () => await OnAfterSubmitFunc.Invoke(localAbsolutePath))
+            await MenuOptionCallbacks.CompleteWidgetAsync.Invoke(
+                    () => OnAfterSubmitFunc.Invoke(localAbsolutePath))
                 .ConfigureAwait(false);
         }
     }
