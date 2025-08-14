@@ -13,7 +13,7 @@
     
         _horizontalRuleElementIndexHashSet.Clear();
     
-        var previousKind = Menu.MenuOptionList.FirstOrDefault()?.MenuOptionKind ?? Walk.Common.RazorLib.Menus.Models.MenuOptionKind.Create;
+        var previousKind = Menu.MenuOptionList.FirstOrDefault().MenuOptionKind;
         
         var appOptionsState = CommonService.GetAppOptionsState();
     

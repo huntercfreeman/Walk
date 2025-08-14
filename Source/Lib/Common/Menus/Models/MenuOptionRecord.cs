@@ -2,7 +2,7 @@ using Walk.Common.RazorLib.Widgets.Models;
 
 namespace Walk.Common.RazorLib.Menus.Models;
 
-public record MenuOptionRecord
+public struct MenuOptionRecord
 {
     public MenuOptionRecord(
         string displayName,
