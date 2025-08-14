@@ -22,9 +22,9 @@ namespace Walk.Common.RazorLib.Widgets.Models;
 ///  these widgets are fixed position with respect to them floating ontop of the existing UI, but furthermore
 ///  you cannot move the widgets nor resize them.
 ///
-/// Dialog: the dialogs exist whether the user is focused on them or not.
-/// They are fixed position with respect to them floating ontop of the existing UI.
-/// If marked as resizable, then you can move and resize the dialogs.
+///  Dialog: the dialogs exist whether the user is focused on them or not.
+///  They are fixed position with respect to them floating ontop of the existing UI.
+///  If marked as resizable, then you can move and resize the dialogs.
 /// </summary>
 public enum SimpleWidgetKind
 {
