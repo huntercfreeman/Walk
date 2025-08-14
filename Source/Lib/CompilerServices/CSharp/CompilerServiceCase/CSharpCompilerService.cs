@@ -159,7 +159,7 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
         {
             return textSpan.GetText(model.AllText, _textEditorService);
         }
-        else
+        else if (File.Exists(absolutePathString))
         {
             using (StreamReader sr = new StreamReader(absolutePathString))
             {
@@ -181,6 +181,8 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
                 return _unsafeGetTextStringBuilder.ToString();
             }
         }
+        
+        return null;
     }
 
     /// <summary>
@@ -219,6 +221,9 @@ public sealed class CSharpCompilerService : IExtendedCompilerService
 
         if (!StreamReaderTupleCache.TryGetValue(absolutePathString, out sr))
         {
+            if (!File.Exists(absolutePathString))
+                return null;
+        
             sr = new StreamReader(absolutePathString);
             // Solution wide parse on Walk.sln
             //
