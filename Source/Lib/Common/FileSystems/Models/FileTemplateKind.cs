@@ -1,4 +1,4 @@
-namespace Walk.Ide.RazorLib.FileSystems.Models;
+namespace Walk.Common.RazorLib.FileSystems.Models;
 
 /// <summary>
 /// Use <see cref="FileTemplateKind"/> to search

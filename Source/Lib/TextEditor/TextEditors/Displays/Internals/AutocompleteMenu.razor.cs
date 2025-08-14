@@ -150,14 +150,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
                                     InsertAutocompleteMenuOption(word, entry, virtualizationResult.ViewModel);
                                     
                                 return entry.SideEffectFunc?.Invoke();
-                            }),
-                            widgetParameterMap: new Dictionary<string, object?>
-                            {
-                                {
-                                    nameof(AutocompleteEntry),
-                                    entry
-                                }
-                            });
+                            }));
                         
                         menuOptionRecord.IconKind = entry.AutocompleteEntryKind;
                         return menuOptionRecord;

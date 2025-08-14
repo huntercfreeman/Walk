@@ -1,4 +1,4 @@
-namespace Walk.TextEditor.RazorLib.TextEditors.Models;
+namespace Walk.Common.RazorLib;
 
 /// <summary>The constants do not start with a period</summary>
 public static class ExtensionNoPeriodFacts

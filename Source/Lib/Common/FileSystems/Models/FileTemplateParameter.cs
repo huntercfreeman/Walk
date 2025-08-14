@@ -1,7 +1,7 @@
 using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Common.RazorLib.Namespaces.Models;
 
-namespace Walk.Ide.RazorLib.FileSystems.Models;
+namespace Walk.Common.RazorLib.FileSystems.Models;
 
 public class FileTemplateParameter
 {

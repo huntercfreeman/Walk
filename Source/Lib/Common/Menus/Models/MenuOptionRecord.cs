@@ -6,16 +6,12 @@ public record MenuOptionRecord
         string displayName,
         MenuOptionKind menuOptionKind,
         Func<Task>? onClickFunc = null,
-        MenuRecord? subMenu = null,
-        Type? widgetRendererType = null,
-        Dictionary<string, object?>? widgetParameterMap = null)
+        MenuRecord? subMenu = null)
     {
         DisplayName = displayName;
         MenuOptionKind = menuOptionKind;
         OnClickFunc = onClickFunc;
         SubMenu = subMenu;
-        WidgetRendererType = widgetRendererType;
-        WidgetParameterMap = widgetParameterMap;
     }
     
     public string DisplayName { get; init; }

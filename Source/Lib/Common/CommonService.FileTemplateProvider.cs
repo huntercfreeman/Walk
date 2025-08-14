@@ -1,8 +1,8 @@
-using Walk.Ide.RazorLib.FileSystems.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 
-namespace Walk.Ide.RazorLib;
+namespace Walk.Common.RazorLib;
 
-public partial class IdeService
+public partial class CommonService
 {
     /// <summary>
     /// The order of the entries in <see cref="_fileTemplatesList"/> is important
@@ -10,9 +10,9 @@ public partial class IdeService
     /// </summary>
     private List<IFileTemplate> _fileTemplatesList = new()
     {
-        IdeFacts.RazorCodebehind,
-        IdeFacts.RazorMarkup,
-        IdeFacts.CSharpClass
+        CommonFacts.RazorCodebehind,
+        CommonFacts.RazorMarkup,
+        CommonFacts.CSharpClass
     };
 
     public List<IFileTemplate> FileTemplatesList => _fileTemplatesList;

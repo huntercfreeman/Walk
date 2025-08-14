@@ -1,10 +1,10 @@
-using Walk.Common.RazorLib;
-using Walk.Common.RazorLib.Menus.Models;
-using Walk.Ide.RazorLib.FileSystems.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Walk.Common.RazorLib;
+using Walk.Common.RazorLib.Menus.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 
-namespace Walk.Ide.RazorLib.FileSystems.Displays;
+namespace Walk.Common.RazorLib.FileSystems.Displays;
 
 public partial class FileFormDisplay : ComponentBase
 {
