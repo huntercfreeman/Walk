@@ -143,7 +143,7 @@ public struct SyntaxViewModel
             
             if (compilationUnit is IExtendedCompilationUnit extendedCompilationUnit)
             {
-                return ExtendedCompilerService.UnsafeGetText(ResourceUri.Value, textSpan);
+                return ExtendedCompilerService.UnsafeGetText(ResourceUri.Value, textSpan) ?? string.Empty;
             }
         }
         

@@ -3513,7 +3513,7 @@ public static class ParseExpressions
                 if (firstNamespacePrefixNode is null)
                 {
                     if(parserModel.Binder.NamespacePrefixTree.__Root.Children.TryGetValue(
-                        parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, firstNamespaceClauseNode.IdentifierToken.TextSpan),
+                        parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, firstNamespaceClauseNode.IdentifierToken.TextSpan) ?? string.Empty,
                         out firstNamespacePrefixNode))
                     {
                         firstNamespaceClauseNode.NamespacePrefixNode = firstNamespacePrefixNode;
@@ -3521,7 +3521,7 @@ public static class ParseExpressions
                     }
                 }
                 
-                var memberIdentifierText = parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, memberIdentifierToken.TextSpan);
+                var memberIdentifierText = parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, memberIdentifierToken.TextSpan) ?? string.Empty;
                 
                 if (firstNamespacePrefixNode is not null)
                 {
@@ -3551,7 +3551,7 @@ public static class ParseExpressions
                     }
                 }
                 
-                if (parserModel.Binder.NamespaceGroupMap.TryGetValue(parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, firstNamespaceClauseNode.IdentifierToken.TextSpan), out var namespaceGroup))
+                if (parserModel.Binder.NamespaceGroupMap.TryGetValue(parserModel.Binder.CSharpCompilerService.SafeGetText(parserModel.ResourceUri.Value, firstNamespaceClauseNode.IdentifierToken.TextSpan) ?? string.Empty, out var namespaceGroup))
                 {
                     var innerCompilationUnit = parserModel.Compilation;
                     var innerResourceUri = parserModel.ResourceUri;
