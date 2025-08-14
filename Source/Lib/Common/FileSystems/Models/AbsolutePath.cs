@@ -17,8 +17,8 @@ public struct AbsolutePath
         string absolutePathString,
         bool isDirectory,
         IEnvironmentProvider environmentProvider,
-        StringBuilder? tokenBuilder,
-        StringBuilder? formattedBuilder,
+        StringBuilder tokenBuilder,
+        StringBuilder formattedBuilder,
         List<string>? ancestorDirectoryList = null)
     {
         ExactInput = absolutePathString;
@@ -33,16 +33,6 @@ public struct AbsolutePath
             //
             if (environmentProvider.IsDirectorySeparator(absolutePathString[^1]))
                 lengthAbsolutePathString--;
-        }
-        
-        if (tokenBuilder is null)
-        {
-            tokenBuilder = new StringBuilder();
-        }
-        
-        if (formattedBuilder is null)
-        {
-            formattedBuilder = new StringBuilder();
         }
         
         int position = 0;
@@ -182,19 +172,9 @@ public struct AbsolutePath
     /// </summary>
     public List<string> GetAncestorDirectoryList(
         IEnvironmentProvider environmentProvider,
-        StringBuilder? tokenBuilder,
-        StringBuilder? formattedBuilder)
+        StringBuilder tokenBuilder,
+        StringBuilder formattedBuilder)
     {
-        if (tokenBuilder is null)
-        {
-            tokenBuilder = new StringBuilder();
-        }
-        
-        if (formattedBuilder is null)
-        {
-            formattedBuilder = new StringBuilder();
-        }
-        
         var ancestorDirectoryList = new List<string>();
         
         _ = new AbsolutePath(
