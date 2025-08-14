@@ -17,6 +17,7 @@ public record MenuOptionRecord
         OnClickFunc = onClickFunc;
         SubMenu = subMenu;
         SimpleWidgetKind = simpleWidgetKind;
+        WidgetParameterMap = widgetParameterMap;
     }
     
     public string DisplayName { get; init; }

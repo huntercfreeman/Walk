@@ -95,18 +95,22 @@
                         case SimpleWidgetKind.FileForm:
                         {
                             // Optional Blazor parameters
-                            _ = menuOption.WidgetParameterMap.TryGetValue(nameof(FileFormDisplay.IsDirectory), out var isDirectory);
-                            _ = menuOption.WidgetParameterMap.TryGetValue(nameof(FileFormDisplay.CheckForTemplates), out var checkForTemplates);
-                            <FileFormDisplay FileName="menuOption.WidgetParameterMap[nameof(FileFormDisplay.FileName)]"
+                            _ = menuOption.WidgetParameterMap.TryGetValue(nameof(FileFormDisplay.IsDirectory), out var isDirectoryObject);
+                            var isDirectoryNullable = (bool?)isDirectoryObject;
+                            
+                            _ = menuOption.WidgetParameterMap.TryGetValue(nameof(FileFormDisplay.CheckForTemplates), out var checkForTemplatesObject);
+                            var checkForTemplatesNullable = (bool?)checkForTemplatesObject;
+                            
+                            <FileFormDisplay FileName="@((string?)menuOption.WidgetParameterMap[nameof(FileFormDisplay.FileName)])"
                                              OnAfterSubmitFunc="menuOption.WidgetParameterMap[nameof(FileFormDisplay.OnAfterSubmitFunc)]"
-                                             IsDirectory="isDirectory is null ? false : (bool)isDirectory"
-                                             CheckForTemplates="checkForTemplates is null ? false : (bool)isDirectory"/>
+                                             IsDirectory="isDirectoryNullable ?? false"
+                                             CheckForTemplates="checkForTemplatesNullable ?? false"/>
                             break;
                         }
                         case SimpleWidgetKind.DeleteFileForm:
                         {
-                            <DeleteFileFormDisplay AbsolutePath="(AbsolutePath)menuOption.WidgetParameterMap[nameof(DeleteFileFormDisplay.AbsolutePath)]"
-                                                   IsDirectory="(bool)menuOption.WidgetParameterMap[nameof(DeleteFileFormDisplay.IsDirectory)]"
+                            <DeleteFileFormDisplay AbsolutePath="((AbsolutePath?)menuOption.WidgetParameterMap[nameof(DeleteFileFormDisplay.AbsolutePath)]) ?? default"
+                                                   IsDirectory="((bool?)menuOption.WidgetParameterMap[nameof(DeleteFileFormDisplay.IsDirectory)]) ?? false"
                                                    OnAfterSubmitFunc="menuOption.WidgetParameterMap[nameof(DeleteFileFormDisplay.OnAfterSubmitFunc)]"/>
                             break;
                         }
