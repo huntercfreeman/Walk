@@ -161,7 +161,15 @@
                 <div>v <em class="di_em">65.0.0 </em> (2025-08-14)</div>
                 <ul>
                     <li>
-                        Draft PR
+                        StreamReader checks File.Exists(...)
+                        One example of this being needed was
+                         when you deleted a file.
+                         
+                         If you went to some other file that referenced the deleted file.
+                         Then that other file would throw a not found exception everytime
+                         it tried to parse. So you'd end up with only Lexer syntax highlighting.
+                         
+                         The demo still starts off with two exception notifications
                     </li>
                     <li>
                         Some MenuOptionRecord optimizations
