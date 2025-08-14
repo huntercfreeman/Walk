@@ -959,38 +959,43 @@ public class ParseDefaultKeywords
                         var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.IndexCodeBlockOwnerList + typeDefinitionNode.Unsafe_ParentIndexKey];
                         var currentParent = parserModel.GetParent(typeDefinitionNode, parserModel.Compilation);
                         
-                        if (currentParent.SyntaxKind == previousParent.SyntaxKind &&
-                            parserModel.Binder.GetIdentifierText(currentParent, parserModel.ResourceUri, parserModel.Compilation) == parserModel.Binder.GetIdentifierText(previousParent, parserModel.ResourceUri, previousCompilationUnit))
+                        if (currentParent.SyntaxKind == previousParent.SyntaxKind)
                         {
-                            // All the existing entires will be "emptied"
-                            // so don't both with checking whether the arguments are the same here.
-                            //
-                            // All that matters is that they're put in the same "method group".
-                            //
-                            var binder = parserModel.Binder;
+                            var currentParentIdentifierText = parserModel.Binder.GetIdentifierText(currentParent, parserModel.ResourceUri, parserModel.Compilation);
                             
-                            // TODO: Cannot use ref, out, or in...
-                            var compilation = parserModel.Compilation;
-                            
-                            ISyntaxNode? previousNode = null;
-                            
-                            for (int i = previousCompilationUnit.IndexCodeBlockOwnerList; i < previousCompilationUnit.IndexCodeBlockOwnerList + previousCompilationUnit.CountCodeBlockOwnerList; i++)
+                            if (currentParentIdentifierText is not null &&
+                                currentParentIdentifierText == parserModel.Binder.GetIdentifierText(previousParent, parserModel.ResourceUri, previousCompilationUnit))
                             {
-                                var x = parserModel.Binder.CodeBlockOwnerList[i];
+                                // All the existing entires will be "emptied"
+                                // so don't both with checking whether the arguments are the same here.
+                                //
+                                // All that matters is that they're put in the same "method group".
+                                //
+                                var binder = parserModel.Binder;
                                 
-                                if (x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
-                                    x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
-                                    binder.GetIdentifierText(x, parserModel.ResourceUri, previousCompilationUnit) == binder.GetIdentifierText(typeDefinitionNode, parserModel.ResourceUri, compilation))
+                                // TODO: Cannot use ref, out, or in...
+                                var compilation = parserModel.Compilation;
+                                
+                                ISyntaxNode? previousNode = null;
+                                
+                                for (int i = previousCompilationUnit.IndexCodeBlockOwnerList; i < previousCompilationUnit.IndexCodeBlockOwnerList + previousCompilationUnit.CountCodeBlockOwnerList; i++)
                                 {
-                                    previousNode = x;
-                                    break;
+                                    var x = parserModel.Binder.CodeBlockOwnerList[i];
+                                    
+                                    if (x.Unsafe_ParentIndexKey == previousParent.Unsafe_SelfIndexKey &&
+                                        x.SyntaxKind == SyntaxKind.TypeDefinitionNode &&
+                                        binder.GetIdentifierText(x, parserModel.ResourceUri, previousCompilationUnit) == binder.GetIdentifierText(typeDefinitionNode, parserModel.ResourceUri, compilation))
+                                    {
+                                        previousNode = x;
+                                        break;
+                                    }
                                 }
-                            }
-                            
-                            if (previousNode is not null)
-                            {
-                                var previousTypeDefinitionNode = (TypeDefinitionNode)previousNode;
-                                typeDefinitionNode.IndexPartialTypeDefinition = previousTypeDefinitionNode.IndexPartialTypeDefinition;
+                                
+                                if (previousNode is not null)
+                                {
+                                    var previousTypeDefinitionNode = (TypeDefinitionNode)previousNode;
+                                    typeDefinitionNode.IndexPartialTypeDefinition = previousTypeDefinitionNode.IndexPartialTypeDefinition;
+                                }
                             }
                         }
                     }

@@ -909,11 +909,14 @@ public class CSharpBinder
             case SyntaxKind.FieldSymbol:
             case SyntaxKind.EnumMemberSymbol:
             {
-                if (TryGetVariableDeclarationHierarchically(
+                var text = getTextResult ?? CSharpCompilerService.UnsafeGetText(resourceUri.Value, textSpan);
+            
+                if (text is not null &&
+                    TryGetVariableDeclarationHierarchically(
                         resourceUri,
                         compilationUnit,
                         scope.Unsafe_SelfIndexKey,
-                        getTextResult ?? CSharpCompilerService.UnsafeGetText(resourceUri.Value, textSpan),
+                        text,
                         out var variableDeclarationStatementNode)
                     && variableDeclarationStatementNode is not null)
                 {
@@ -927,11 +930,14 @@ public class CSharpBinder
             case SyntaxKind.FunctionDefinitionNode:
             case SyntaxKind.FunctionSymbol:
             {
-                if (TryGetFunctionHierarchically(
+                var text = getTextResult ?? CSharpCompilerService.UnsafeGetText(resourceUri.Value, textSpan);
+                
+                if (text is not null && 
+                    TryGetFunctionHierarchically(
                              resourceUri,
                              compilationUnit,
                              scope.Unsafe_SelfIndexKey,
-                             getTextResult ?? CSharpCompilerService.UnsafeGetText(resourceUri.Value, textSpan),
+                             text,
                              out var functionDefinitionNode)
                          && functionDefinitionNode is not null)
                 {
@@ -967,7 +973,7 @@ public class CSharpBinder
                                         var argument = FunctionArgumentEntryList[parameterIndex];
                                         var parameter = functionParameterList[parameterIndex];
                                         
-                                        string parameterTypeText;
+                                        string? parameterTypeText;
                                         
                                         if (parameter.TypeReference.ExplicitDefinitionTextSpan != default &&
                                             __CompilationUnitMap.TryGetValue(parameter.TypeReference.ExplicitDefinitionResourceUri, out var parameterCompilationUnit))
@@ -983,7 +989,8 @@ public class CSharpBinder
                                                 parameter.TypeReference.TypeIdentifierToken.TextSpan);
                                         }
                                         
-                                        if (ArgumentModifierEqualsParameterModifier(argument.ArgumentModifierKind, parameter.ParameterModifierKind) &&
+                                        if (parameterTypeText is not null &&
+                                            ArgumentModifierEqualsParameterModifier(argument.ArgumentModifierKind, parameter.ParameterModifierKind) &&
                                             CSharpCompilerService.UnsafeGetText(entry.ResourceUri.Value, argument.TypeReference.TypeIdentifierToken.TextSpan) ==
                                                 parameterTypeText)
                                         {
@@ -1006,11 +1013,13 @@ public class CSharpBinder
             case SyntaxKind.TypeSymbol:
             case SyntaxKind.ConstructorSymbol:
             {
+                var text = getTextResult ?? CSharpCompilerService.UnsafeGetText(resourceUri.Value, textSpan);
+            
                 if (TryGetTypeDefinitionHierarchically(
                              resourceUri,
                              compilationUnit,
                              scope.Unsafe_SelfIndexKey,
-                             getTextResult ?? CSharpCompilerService.UnsafeGetText(resourceUri.Value, textSpan),
+                             text,
                              out var typeDefinitionNode) &&
                          typeDefinitionNode is not null)
                 {
@@ -1022,9 +1031,11 @@ public class CSharpBinder
             }
             case SyntaxKind.NamespaceSymbol:
             {
-                    if (NamespacePrefixTree.__Root.Children.TryGetValue(
-                        CSharpCompilerService.UnsafeGetText(resourceUri.Value, textSpan),
-                        out var namespacePrefixNode))
+                var text = CSharpCompilerService.UnsafeGetText(resourceUri.Value, textSpan);
+                
+                if (text is not null && NamespacePrefixTree.__Root.Children.TryGetValue(
+                    text,
+                    out var namespacePrefixNode))
                 {
                     return new NamespaceClauseNode(new SyntaxToken(SyntaxKind.IdentifierToken, textSpan));
                 }
@@ -1032,29 +1043,32 @@ public class CSharpBinder
                 if (symbol is not null)
                 {
                     var fullNamespaceName = CSharpCompilerService.UnsafeGetText(resourceUri.Value, symbol.Value.TextSpan);
-                    var splitResult = fullNamespaceName.Split('.');
-                    
-                    int position = 0;
-                    
-                    namespacePrefixNode = NamespacePrefixTree.__Root;
-                    
-                    var success = true;
-                    
-                    while (position < splitResult.Length)
+                    if (fullNamespaceName is not null)
                     {
-                        if (!namespacePrefixNode.Children.TryGetValue(splitResult[position++], out namespacePrefixNode))
+                        var splitResult = fullNamespaceName.Split('.');
+                        
+                        int position = 0;
+                        
+                        namespacePrefixNode = NamespacePrefixTree.__Root;
+                        
+                        var success = true;
+                        
+                        while (position < splitResult.Length)
                         {
-                            success = false;
-                            break;
+                            if (!namespacePrefixNode.Children.TryGetValue(splitResult[position++], out namespacePrefixNode))
+                            {
+                                success = false;
+                                break;
+                            }
                         }
-                    }
-                    
-                    if (success)
-                    {
-                        return new NamespaceClauseNode(
-                            new SyntaxToken(SyntaxKind.IdentifierToken, textSpan),
-                            namespacePrefixNode,
-                            startOfMemberAccessChainPositionIndex: textSpan.StartInclusiveIndex);
+                        
+                        if (success)
+                        {
+                            return new NamespaceClauseNode(
+                                new SyntaxToken(SyntaxKind.IdentifierToken, textSpan),
+                                namespacePrefixNode,
+                                startOfMemberAccessChainPositionIndex: textSpan.StartInclusiveIndex);
+                        }
                     }
                 }
                 break;
