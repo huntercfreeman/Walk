@@ -161,7 +161,14 @@
                 <div>v <em class="di_em">65.0.0 </em> (2025-08-14)</div>
                 <ul>
                     <li>
-                        Draft PR
+                        Some better null checks.
+                        
+                        I opened Visual Studio since the StreamReader change meant I return a null.
+                        I wanted to see the nullability warnings.
+                        
+                        And they're just all over the place.
+                        
+                        These cover the StreamReader change so that it doesn't NRE.
                     </li>
                     <li>
                         StreamReader checks File.Exists(...)

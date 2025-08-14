@@ -1184,7 +1184,7 @@ public static class CSharpLexer
             (byte)GenericDecorationKind.None,
             byteEntryIndex);
         
-        switch (binder.CSharpCompilerService.SafeGetText(lexerOutput.ResourceUri.Value, textSpan))
+        switch (binder.CSharpCompilerService.SafeGetText(lexerOutput.ResourceUri.Value, textSpan) ?? string.Empty)
         {
             // NonContextualKeywords-NonControl
             // ================================

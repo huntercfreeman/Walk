@@ -127,7 +127,7 @@ public class ParseFunctions
                     var previousParent = parserModel.Binder.CodeBlockOwnerList[previousCompilationUnit.IndexCodeBlockOwnerList + existingNode.Unsafe_ParentIndexKey];
                     var currentParent = parserModel.GetParent(newNode, parserModel.Compilation);
                     
-                    if (currentParent.SyntaxKind == previousParent.SyntaxKind))
+                    if (currentParent.SyntaxKind == previousParent.SyntaxKind)
                     {
                         var currentParentIdentifierText = parserModel.Binder.GetIdentifierText(currentParent, parserModel.ResourceUri, parserModel.Compilation);
                         
