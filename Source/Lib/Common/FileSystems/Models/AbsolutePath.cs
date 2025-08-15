@@ -9,6 +9,18 @@ public struct AbsolutePath
 {
     private string? _nameWithExtension;
     
+    public static int _countConsumeTokenAsDirectory;
+    public static int _countAncestorDirectoryAdd;
+    public static int _countConsumeTokenAsRootDrive;
+    public static int _countFileNameAmbiguous;
+    public static int _countSplitFileNameAmbiguous;
+    public static int _countFileNameBuilder;
+    public static int _countSplitFileNameBuilder;
+    public static int _countNameNoExtension;
+    public static int _countDirectorySeparatorCharToString;
+    public static int _countFormattedBuilderToString;
+    public static int _countParentDirectory;
+    
     /// <summary>
     /// If providing tokenBuilder or formattedBuilder, ensure they are '.Clear()'ed prior to invoking the constructor.
     /// Prior to returning from the constructor, tokenBuilder and formattedBuilder will be '.Clear()'ed.
@@ -23,7 +35,7 @@ public struct AbsolutePath
     {
         ExactInput = absolutePathString;
         IsDirectory = isDirectory;
-
+    
         var lengthAbsolutePathString = absolutePathString.Length;
         
         if (IsDirectory && lengthAbsolutePathString > 1)
@@ -37,16 +49,16 @@ public struct AbsolutePath
         
         int position = 0;
         int parentDirectoryEndExclusiveIndex = -1;
-
+    
         while (position < lengthAbsolutePathString)
         {
             char currentCharacter = absolutePathString[position++];
-
+    
             if (environmentProvider.IsDirectorySeparator(currentCharacter))
             {
+                // ++_countConsumeTokenAsDirectory;
                 // ConsumeTokenAsDirectory
                 formattedBuilder
-                    .Append(tokenBuilder.ToString())
                     .Append(environmentProvider.DirectorySeparatorChar);
                 
                 tokenBuilder.Clear();
@@ -54,26 +66,35 @@ public struct AbsolutePath
                 parentDirectoryEndExclusiveIndex = formattedBuilder.Length;
                 
                 if (ancestorDirectoryList is not null)
+                {
+                    // ++_countAncestorDirectoryAdd;
                     ancestorDirectoryList.Add(formattedBuilder.ToString());
+                }
             }
             else if (currentCharacter == ':' && RootDrive.DriveNameAsIdentifier is null && ParentDirectory is null)
             {
                 // ConsumeTokenAsRootDrive
+                // ++_countConsumeTokenAsRootDrive;
                 RootDrive = new FileSystemDrive(tokenBuilder.ToString());
                 tokenBuilder.Clear();
+                formattedBuilder.Clear();
             }
             else
             {
+                formattedBuilder.Append(currentCharacter);
                 tokenBuilder.Append(currentCharacter);
             }
         }
-
+    
+        // ++_countFileNameAmbiguous;
         var fileNameAmbiguous = tokenBuilder.ToString();
-
+        tokenBuilder.Clear();
+    
         if (!IsDirectory)
         {
+            // ++_countSplitFileNameAmbiguous;
             var splitFileNameAmbiguous = fileNameAmbiguous.Split('.');
-
+    
             if (splitFileNameAmbiguous.Length == 2)
             {
                 NameNoExtension = splitFileNameAmbiguous[0];
@@ -86,64 +107,55 @@ public struct AbsolutePath
             }
             else
             {
-                var fileNameBuilder = new StringBuilder();
-
                 foreach (var split in splitFileNameAmbiguous.SkipLast(1))
                 {
-                    fileNameBuilder.Append($"{split}.");
+                    tokenBuilder.Append(split);
+                    tokenBuilder.Append(".");
                 }
-
-                fileNameBuilder.Remove(fileNameBuilder.Length - 1, 1);
-
-                NameNoExtension = fileNameBuilder.ToString();
+    
+                tokenBuilder.Remove(tokenBuilder.Length - 1, 1);
+    
+                // ++_countNameNoExtension;
+                NameNoExtension = tokenBuilder.ToString();
                 ExtensionNoPeriod = splitFileNameAmbiguous.Last();
             }
         }
         else
         {
             NameNoExtension = fileNameAmbiguous;
+            
+            // ++_countDirectorySeparatorCharToString;
             ExtensionNoPeriod = environmentProvider.DirectorySeparatorChar.ToString();
         }
         
         if (IsDirectory)
         {
-            formattedBuilder
-                .Append(NameNoExtension)
-                .Append(ExtensionNoPeriod);
+            formattedBuilder.Append(ExtensionNoPeriod);
         }
-        else
-        {
-            if (string.IsNullOrWhiteSpace(ExtensionNoPeriod))
-            {
-                formattedBuilder.Append(NameNoExtension);
-            }
-            else
-            {
-                formattedBuilder
-                    .Append(NameNoExtension)
-                    .Append('.')
-                    .Append(ExtensionNoPeriod);
-            }
-        }
-
+    
+        // ++_countFormattedBuilderToString;
         var formattedString = formattedBuilder.ToString();
         
         tokenBuilder.Clear();
         formattedBuilder.Clear();
-
+    
         if (formattedString.Length == 2)
         {
             // If two directory separators chars are one after another and that is the only text in the string.
             if ((formattedString[0] == environmentProvider.DirectorySeparatorChar && formattedString[1] == environmentProvider.DirectorySeparatorChar) ||
                 (formattedString[0] == environmentProvider.AltDirectorySeparatorChar && formattedString[1] == environmentProvider.AltDirectorySeparatorChar))
             {
+                // ++_countDirectorySeparatorCharToString;
                 Value = environmentProvider.DirectorySeparatorChar.ToString();
                 return;
             }
         }
-
+    
         if (parentDirectoryEndExclusiveIndex != -1)
+        {
+            // ++_countParentDirectory;
             ParentDirectory = formattedString[..parentDirectoryEndExclusiveIndex];
+        }
         
         Value = formattedString;
     }
