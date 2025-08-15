@@ -62,67 +62,6 @@ public static class InitializationHelper
         InitializeMenuFile(DotNetService);
         InitializeMenuTools(DotNetService);
         InitializeMenuView(DotNetService);
-    
-        var menuOptionOpenDotNetSolution = new MenuOptionRecord(
-            ".NET Solution",
-            MenuOptionKind.Other,
-            () =>
-            {
-                DotNetSolutionState.ShowInputFile(DotNetService.IdeService, DotNetService);
-                return Task.CompletedTask;
-            });
-
-        DotNetService.IdeService.Ide_ModifyMenuFile(
-            inMenu =>
-            {
-                var indexMenuOptionOpen = inMenu.MenuOptionList.FindIndex(x => x.DisplayName == "Open");
-
-                if (indexMenuOptionOpen == -1)
-                {
-                    var copyList = new List<MenuOptionRecord>(inMenu.MenuOptionList);
-                    copyList.Add(menuOptionOpenDotNetSolution);
-                    return inMenu with
-                    {
-                        MenuOptionList = copyList
-                    };
-                }
-
-                var menuOptionOpen = inMenu.MenuOptionList[indexMenuOptionOpen];
-
-                if (menuOptionOpen.SubMenu is null)
-                    menuOptionOpen.SubMenu = new MenuRecord(new List<MenuOptionRecord>());
-
-                // UI foreach enumeration was modified nightmare. (2025-02-07)
-                var copySubMenuList = new List<MenuOptionRecord>(menuOptionOpen.SubMenu.MenuOptionList);
-                copySubMenuList.Add(menuOptionOpenDotNetSolution);
-
-                menuOptionOpen.SubMenu = menuOptionOpen.SubMenu with
-                {
-                    MenuOptionList = copySubMenuList
-                };
-
-                // Menu Option New
-                {
-                    var menuOptionNewDotNetSolution = new MenuOptionRecord(
-                        ".NET Solution",
-                        MenuOptionKind.Other,
-                        DotNetService.OpenNewDotNetSolutionDialog);
-
-                    var menuOptionNew = new MenuOptionRecord(
-                        "New",
-                        MenuOptionKind.Other,
-                        subMenu: new MenuRecord(new List<MenuOptionRecord> { menuOptionNewDotNetSolution }));
-
-                    var copyMenuOptionList = new List<MenuOptionRecord>(inMenu.MenuOptionList);
-                    copyMenuOptionList.Insert(0, menuOptionNew);
-
-                    return inMenu with
-                    {
-                        MenuOptionList = copyMenuOptionList
-                    };
-                }
-            });
-
         InitializeMenuRun(DotNetService);
 
         var compilerService = DotNetService.IdeService.TextEditorService.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
@@ -432,7 +371,29 @@ public static class InitializationHelper
     {
         var menuOptionsList = new List<MenuOptionRecord>();
 
+        // Menu Option New
+        var menuOptionNewDotNetSolution = new MenuOptionRecord(
+            ".NET Solution",
+            MenuOptionKind.Other,
+            DotNetService.OpenNewDotNetSolutionDialog);
+
+        var menuOptionNew = new MenuOptionRecord(
+            "New",
+            MenuOptionKind.Other,
+            subMenu: new MenuRecord(new List<MenuOptionRecord> { menuOptionNewDotNetSolution }));
+
+        menuOptionsList.Add(menuOptionNew);
+        
         // Menu Option Open
+        var menuOptionOpenDotNetSolution = new MenuOptionRecord(
+            ".NET Solution",
+            MenuOptionKind.Other,
+            () =>
+            {
+                DotNetSolutionState.ShowInputFile(DotNetService.IdeService, DotNetService);
+                return Task.CompletedTask;
+            });
+        
         var menuOptionOpenFile = new MenuOptionRecord(
             "File",
             MenuOptionKind.Other,
@@ -456,6 +417,7 @@ public static class InitializationHelper
             MenuOptionKind.Other,
             subMenu: new MenuRecord(new List<MenuOptionRecord>()
             {
+                menuOptionOpenDotNetSolution,
                 menuOptionOpenFile,
                 menuOptionOpenDirectory,
             }));
