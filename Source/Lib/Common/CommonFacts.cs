@@ -512,7 +512,7 @@ public static class CommonFacts
             false,
             tokenBuilder: new StringBuilder(),
             formattedBuilder: new StringBuilder(),
-            shouldNameContainsExtension: false);
+            AbsolutePathNameKind.NameNoExtension);
 
         var templatedFileContent = GetContent(
             emptyFileAbsolutePath.Name,
@@ -567,7 +567,7 @@ public class {fileNameNoExtension}
             false,
             tokenBuilder: new StringBuilder(),
             formattedBuilder: new StringBuilder(),
-            shouldNameContainsExtension: false);
+            AbsolutePathNameKind.NameNoExtension);
 
         var templatedFileContent = GetContent(emptyFileAbsolutePath.Name);
 
@@ -636,7 +636,7 @@ public partial class {className} : ComponentBase
             false,
             tokenBuilder: new StringBuilder(),
             formattedBuilder: new StringBuilder(),
-            shouldNameContainsExtension: false);
+            AbsolutePathNameKind.NameNoExtension);
 
         var templatedFileContent = GetContent(
             emptyFileAbsolutePath.Name,

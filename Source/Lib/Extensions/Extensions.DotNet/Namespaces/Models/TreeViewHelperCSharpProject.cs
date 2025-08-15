@@ -2,6 +2,7 @@ using System.Text;
 using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 using Walk.CompilerServices.DotNetSolution.Models.Project;
 using Walk.Extensions.DotNet.CSharpProjects.Models;
@@ -30,7 +31,7 @@ public class TreeViewHelperCSharpProject
             .Where(x => hiddenFiles.All(hidden => !x.EndsWith(hidden)))
             .Select(x =>
             {
-                var absolutePath = cSharpProjectTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder, formattedBuilder, shouldNameContainsExtension: false);
+                var absolutePath = cSharpProjectTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameNoExtension);
 
                 var namespaceString = cSharpProjectTreeView.Item.Namespace +
                     TreeViewNamespaceHelper.NAMESPACE_DELIMITER +

@@ -75,7 +75,7 @@ public partial interface IEnvironmentProvider
 
     public bool IsDirectorySeparator(char input);
     public string GetRandomFileName();
-    public AbsolutePath AbsolutePathFactory(string path, bool isDirectory, StringBuilder tokenBuilder, StringBuilder formattedBuilder, bool shouldNameContainsExtension);
+    public AbsolutePath AbsolutePathFactory(string path, bool isDirectory, StringBuilder tokenBuilder, StringBuilder formattedBuilder, AbsolutePathNameKind nameKind);
     public RelativePath RelativePathFactory(string path, bool isDirectory);
     /// <summary>
     /// Takes two absolute file path strings and makes

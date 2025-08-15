@@ -1,6 +1,7 @@
 using System.Text;
 using Walk.Common.RazorLib.Keys.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 
 namespace Walk.Ide.RazorLib.FileSystems.Models;
 

@@ -218,9 +218,9 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
         }
     }
 
-    public AbsolutePath AbsolutePathFactory(string path, bool isDirectory, StringBuilder tokenBuilder, StringBuilder formattedBuilder, bool shouldNameContainsExtension)
+    public AbsolutePath AbsolutePathFactory(string path, bool isDirectory, StringBuilder tokenBuilder, StringBuilder formattedBuilder, AbsolutePathNameKind nameKind)
     {
-        return new AbsolutePath(path, isDirectory, this, tokenBuilder, formattedBuilder, shouldNameContainsExtension);
+        return new AbsolutePath(path, isDirectory, this, tokenBuilder, formattedBuilder, nameKind);
     }
 
     public RelativePath RelativePathFactory(string path, bool isDirectory)

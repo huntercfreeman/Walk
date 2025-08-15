@@ -1,6 +1,7 @@
 using System.Text;
 using Walk.Common.RazorLib.Namespaces.Models;
 using Walk.Common.RazorLib.TreeViews.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;
 
 namespace Walk.Ide.RazorLib.Namespaces.Models;

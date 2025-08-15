@@ -562,7 +562,7 @@ public partial class DotNetService
                 IdeService.TextEditorService.CommonService.EnvironmentProvider,
                 tokenBuilder,
                 formattedBuilder,
-                shouldNameContainsExtension: false);
+                AbsolutePathNameKind.NameNoExtension);
 
             solutionFolderList.Add(new SolutionFolder(
                 absolutePath.Name,

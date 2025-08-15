@@ -3,6 +3,7 @@ using Walk.Common.RazorLib;
 using Walk.Common.RazorLib.TreeViews.Models;
 using Walk.Extensions.DotNet.DotNetSolutions.Models;
 using Walk.Extensions.DotNet.Namespaces.Models;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Walk.Extensions.DotNet;

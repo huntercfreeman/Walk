@@ -138,7 +138,7 @@ public struct AbsolutePath
         {
             Name = extensionNoPeriod;
         }
-        else if (nameKind == NameKind.NameNoExtension)
+        else if (nameKind == AbsolutePathNameKind.NameNoExtension)
         {
             Name = nameNoExtension;
         }
@@ -208,7 +208,7 @@ public struct AbsolutePath
         IEnvironmentProvider environmentProvider,
         StringBuilder tokenBuilder,
         StringBuilder formattedBuilder,
-        bool shouldNameContainsExtension)
+        AbsolutePathNameKind nameKind)
     {
         var ancestorDirectoryList = new List<string>();
         
@@ -218,7 +218,7 @@ public struct AbsolutePath
             environmentProvider,
             tokenBuilder,
             formattedBuilder,
-            shouldNameContainsExtension,
+            nameKind,
             ancestorDirectoryList: ancestorDirectoryList);
     
         return ancestorDirectoryList;

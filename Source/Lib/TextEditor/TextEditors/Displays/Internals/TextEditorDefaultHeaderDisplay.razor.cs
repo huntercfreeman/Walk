@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Components;
+using Walk.Common.RazorLib.FileSystems.Models;
 using Walk.TextEditor.RazorLib.TextEditors.Models;
 
 // HeaderDriver.cs
