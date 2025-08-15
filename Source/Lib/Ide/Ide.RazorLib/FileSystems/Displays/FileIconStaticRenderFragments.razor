@@ -23,44 +23,43 @@
     }
     else
     {
-        if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION))
-        {
-            @IconDotNetSolutionFragment.Render(tuple.IconDriver)
-        }
-		if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
-        {
-            @IconDotNetSolutionFragment.Render(tuple.IconDriver)
-        }
-        if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
-        {
-            @IconCSharpProjectFragment.Render(tuple.IconDriver)
-        }
-        if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_CLASS) ||
-            tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.RAZOR_CODEBEHIND))
+        if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_CLASS))
         {
             @IconCSharpClassFragment.Render(tuple.IconDriver)
         }
-        if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.CSHTML_CLASS))
-        {
-            @IconCshtmlFragment.Render(tuple.IconDriver)
-        }
-        if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
+        else if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
         {
             @IconRazorFragment.Render(tuple.IconDriver)
         }
-        if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.JSON))
+        else if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.CSHTML_CLASS))
         {
-            @IconJsonFragment.Render(tuple.IconDriver)
+            @IconCshtmlFragment.Render(tuple.IconDriver)
         }
-        if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.CSS))
+        else if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
+        {
+            @IconCSharpProjectFragment.Render(tuple.IconDriver)
+        }
+        else if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.CSS))
         {
             @IconCssFragment.Render(tuple.IconDriver)
         }
-        if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.JAVA_SCRIPT))
+        else if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.JSON))
+        {
+            @IconJsonFragment.Render(tuple.IconDriver)
+        }
+        else if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION))
+        {
+            @IconDotNetSolutionFragment.Render(tuple.IconDriver)
+        }
+		else if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.DOT_NET_SOLUTION_X))
+        {
+            @IconDotNetSolutionFragment.Render(tuple.IconDriver)
+        }
+        else if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.JAVA_SCRIPT))
         {
             @IconJsFragment.Render(tuple.IconDriver)
         }
-        if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.TYPE_SCRIPT))
+        else if (tuple.AbsolutePath.Name.EndsWith(ExtensionNoPeriodFacts.TYPE_SCRIPT))
         {
             @IconTsFragment.Render(tuple.IconDriver)
         }
