@@ -97,14 +97,11 @@ public static class PathHelper
             }
             else
             {
-                if (absolutePath.IsRootDirectory)
-                {
+                var parentDirectory = absolutePath.CreateSubstringParentDirectory();
+                if (parentDirectory is null)
                     throw new NotImplementedException();
-                }
                 else
-                {
-                    return absolutePath.CreateSubstringParentDirectory() + relativePathString;
-                }
+                    return parentDirectory + relativePathString;
             }
         }
     }

@@ -841,7 +841,11 @@ public class TextEditorCommandDefaultFunctions
             formattedBuilder: new StringBuilder(),
             AbsolutePathNameKind.NameWithExtension);
         
-        var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(resourceAbsolutePath.CreateSubstringParentDirectory(), true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
+        var parentDirectory = resourceAbsolutePath.CreateSubstringParentDirectory();
+        if (parentDirectory is null)
+            return;
+            
+        var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(parentDirectory, true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
     
         var siblingFileStringList = Array.Empty<string>();
         

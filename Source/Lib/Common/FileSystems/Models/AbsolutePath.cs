@@ -180,10 +180,10 @@ public struct AbsolutePath
     
     public bool IsRootDirectory => ParentDirectoryEndExclusiveIndex == -1;
 
-    public string CreateSubstringParentDirectory()
+    public string? CreateSubstringParentDirectory()
     {
-        if (IsRootDirectory)
-            return string.Empty;
+        if (ParentDirectoryEndExclusiveIndex == -1)
+            return null;
         
         return Value[..ParentDirectoryEndExclusiveIndex];
     }

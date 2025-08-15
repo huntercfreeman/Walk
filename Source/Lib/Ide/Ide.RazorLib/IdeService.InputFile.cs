@@ -108,6 +108,8 @@ public partial class IdeService
             if (!currentSelection.Item.IsRootDirectory)
             {
                 var parentDirectory = currentSelection.Item.CreateSubstringParentDirectory();
+                if (parentDirectory is null)
+                    return;
 
                 var parentDirectoryAbsolutePath = commonService.EnvironmentProvider.AbsolutePathFactory(
                     parentDirectory,

@@ -76,12 +76,7 @@ public partial class DotNetService
                 .Append(warningCount)
                 .Append(" warnings)");
 
-            string titleText;
-
-            if (absolutePath.ParentDirectoryEndExclusiveIndex == -1)
-                titleText = $"{nameof(absolutePath.ParentDirectoryEndExclusiveIndex)} was equal to -1";
-            else
-                titleText = absolutePath.CreateSubstringParentDirectory();
+            var titleText = absolutePath.CreateSubstringParentDirectory() ?? $"{nameof(absolutePath.CreateSubstringParentDirectory)} was null.";
             
             var treeViewGroup = new TreeViewGroup(
                 groupNameBuilder.ToString(),

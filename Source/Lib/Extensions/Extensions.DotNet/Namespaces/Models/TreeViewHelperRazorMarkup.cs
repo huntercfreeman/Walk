@@ -18,6 +18,8 @@ public class TreeViewHelperRazorMarkup
     public static async Task<List<TreeViewNoType>> LoadChildrenAsync(TreeViewNamespacePath razorMarkupTreeView)
     {
         var parentDirectoryOfRazorMarkup = razorMarkupTreeView.Item.CreateSubstringParentDirectory();
+        if (parentDirectoryOfRazorMarkup is null)
+            return;
         
         var ancestorDirectory = parentDirectoryOfRazorMarkup;
 

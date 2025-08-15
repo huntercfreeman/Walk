@@ -440,7 +440,11 @@ public partial class IdeService
         }
 
         var sourceAbsolutePathString = sourceAbsolutePath.Value;
+        
         var parentOfSource = sourceAbsolutePath.CreateSubstringParentDirectory();
+        if (parentOfSource is null)
+            return default;
+        
         var destinationAbsolutePathString = parentOfSource + nextName;
 
         try

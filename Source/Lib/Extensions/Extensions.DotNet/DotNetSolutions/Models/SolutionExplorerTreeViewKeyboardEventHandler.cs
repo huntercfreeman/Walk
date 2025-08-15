@@ -135,6 +135,9 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
         else
         {
             var parentDirectory = treeViewNamespacePath.Item.CreateSubstringParentDirectory();
+            if (parentDirectory is null)
+                return Task.CompletedTask;
+            
             var parentDirectoryAbsolutePath = _ideService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(
                 parentDirectory,
                 true,

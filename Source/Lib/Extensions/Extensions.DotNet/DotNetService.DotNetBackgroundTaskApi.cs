@@ -108,10 +108,14 @@ public partial class DotNetService
 
     public ValueTask Do_RunTestByFullyQualifiedName(TreeViewStringFragment treeViewStringFragment, string fullyQualifiedName, TreeViewProjectTestModel treeViewProjectTestModel)
     {
+        var parentDirectory = treeViewProjectTestModel.Item.AbsolutePath.CreateSubstringParentDirectory();
+        if (parentDirectory is null)
+            return ValueTask.CompletedTask;
+    
         RunTestByFullyQualifiedName(
             treeViewStringFragment,
             fullyQualifiedName,
-            treeViewProjectTestModel.Item.AbsolutePath.CreateSubstringParentDirectory());
+            parentDirectory);
 
         return ValueTask.CompletedTask;
     }
@@ -288,9 +292,9 @@ public partial class DotNetService
             new ResourceUri(solutionAbsolutePath.Value),
             Array.Empty<TextEditorTextSpan>());
 
-        if (!solutionAbsolutePath.IsRootDirectory)
+        var parentDirectory = solutionAbsolutePath.CreateSubstringParentDirectory();
+        if (parentDirectory is not null)
         {
-            var parentDirectory = solutionAbsolutePath.CreateSubstringParentDirectory();
             IdeService.TextEditorService.CommonService.EnvironmentProvider.DeletionPermittedRegister(new(parentDirectory, true), tokenBuilder, formattedBuilder);
 
             IdeService.TextEditorService.SetStartingDirectoryPath(parentDirectory);
@@ -714,9 +718,9 @@ public partial class DotNetService
 
             projectTuple.ReferencedAbsolutePathList = new List<AbsolutePath>();
 
-            if (!projectTuple.AbsolutePath.IsRootDirectory)
+            var innerParentDirectory = projectTuple.AbsolutePath.CreateSubstringParentDirectory();
+            if (innerParentDirectory is not null)
             {
-                var innerParentDirectory = projectTuple.AbsolutePath.CreateSubstringParentDirectory();
                 IdeService.TextEditorService.CommonService.EnvironmentProvider.DeletionPermittedRegister(new(innerParentDirectory, true), tokenBuilder, formattedBuilder);
             }
 
@@ -973,10 +977,9 @@ public partial class DotNetService
         if (!IdeService.TextEditorService.CommonService.FileSystemProvider.File.Exists(dotNetProject.AbsolutePath.Value))
             return; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
 
-        if (dotNetProject.AbsolutePath.ParentDirectoryEndExclusiveIndex == -1)
-            return;
-    
         var parentDirectory = dotNetProject.AbsolutePath.CreateSubstringParentDirectory();
+        if (parentDirectory is null)
+            return;
 
         var startingAbsolutePathForSearch = parentDirectory;
         var discoveredFileList = new List<string>();
@@ -1107,10 +1110,11 @@ public partial class DotNetService
     {
         var startupControlModel = (StartupControlModel)interfaceStartupControlModel;
 
-        if (project.AbsolutePath.ParentDirectoryEndExclusiveIndex == -1)
-            return Task.CompletedTask;
-
         var ancestorDirectory = project.AbsolutePath.CreateSubstringParentDirectory();
+        if (ancestorDirectory is null)
+        {
+            return Task.CompletedTask;
+        }
 
         var formattedCommand = DotNetCliCommandFormatter.FormatStartProjectWithoutDebugging(
             project.AbsolutePath);
