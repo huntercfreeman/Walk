@@ -1,4 +1,5 @@
 using System.Text;
+using Walk.Common.RazorLib.FileSystems.Models;
 
 namespace Walk.Common.RazorLib.Installations.Models;
 
@@ -248,6 +249,34 @@ public static class WalkDebugSomething
         builder.AppendLine($"{nameof(NamespacePrefixNode)}: {NamespacePrefixNode:N0}");
         
         builder.AppendLine();
+        
+        builder.AppendLine($"_countFileNameBuilder: {AbsolutePath._countFileNameBuilder}");
+        builder.AppendLine($"_countConsumeTokenAsDirectory: {AbsolutePath._countConsumeTokenAsDirectory}");
+        builder.AppendLine($"_countAncestorDirectoryAdd: {AbsolutePath._countAncestorDirectoryAdd}");
+        builder.AppendLine($"_countParentDirectory: {AbsolutePath._countParentDirectory}");
+        builder.AppendLine($"_countDirectorySeparatorCharToString: {AbsolutePath._countDirectorySeparatorCharToString}");
+        builder.AppendLine($"_formattedBuilderToString: {AbsolutePath._countFormattedBuilderToString}");
+        builder.AppendLine($"_countNameNoExtension: {AbsolutePath._countNameNoExtension}");
+        builder.AppendLine($"_countSplitFileNameBuilder: {AbsolutePath._countSplitFileNameBuilder}");
+        builder.AppendLine($"_countSplitFileNameAmbiguous: {AbsolutePath._countSplitFileNameAmbiguous}");
+        builder.AppendLine($"_countFileNameAmbiguous: {AbsolutePath._countFileNameAmbiguous}");
+        builder.AppendLine($"_countConsumeTokenAsRootDrive: {AbsolutePath._countConsumeTokenAsRootDrive}");
+        
+        builder.AppendLine("----------------");
+        var absolutePathTotalCount = 
+            AbsolutePath._countFileNameBuilder +
+            AbsolutePath._countConsumeTokenAsDirectory +
+            AbsolutePath._countAncestorDirectoryAdd +
+            AbsolutePath._countParentDirectory +
+            AbsolutePath._countDirectorySeparatorCharToString +
+            AbsolutePath._countFormattedBuilderToString +
+            AbsolutePath._countNameNoExtension +
+            AbsolutePath._countSplitFileNameBuilder +
+            AbsolutePath._countSplitFileNameAmbiguous +
+            AbsolutePath._countFileNameAmbiguous +
+            AbsolutePath._countConsumeTokenAsRootDrive;
+        
+        builder.AppendLine($"AbsolutePathTotalCount: {absolutePathTotalCount:N0}");
         
         return builder.ToString();
     }
