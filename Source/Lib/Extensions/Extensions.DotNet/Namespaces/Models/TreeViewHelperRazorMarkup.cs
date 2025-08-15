@@ -19,7 +19,7 @@ public class TreeViewHelperRazorMarkup
     {
         var parentDirectoryOfRazorMarkup = razorMarkupTreeView.Item.CreateSubstringParentDirectory();
         if (parentDirectoryOfRazorMarkup is null)
-            return;
+            return razorMarkupTreeView.ChildList;
         
         var ancestorDirectory = parentDirectoryOfRazorMarkup;
 

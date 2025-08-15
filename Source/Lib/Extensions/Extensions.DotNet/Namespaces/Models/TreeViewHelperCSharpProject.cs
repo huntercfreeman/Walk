@@ -16,7 +16,7 @@ public class TreeViewHelperCSharpProject
     {
         var parentDirectoryOfCSharpProject = cSharpProjectTreeView.Item.CreateSubstringParentDirectory();
         if (parentDirectoryOfCSharpProject is null)
-            return;
+            return cSharpProjectTreeView.ChildList;
         
         var ancestorDirectory = parentDirectoryOfCSharpProject;
         var hiddenFiles = IdeFacts.GetHiddenFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
