@@ -66,7 +66,7 @@ public class TreeViewHelperCSharpProject
             .Where(x => !x.EndsWith(ExtensionNoPeriodFacts.C_SHARP_PROJECT))
             .Select(x =>
             {
-                var absolutePath = cSharpProjectTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true);
+                var absolutePath = cSharpProjectTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
                 var namespaceString = cSharpProjectTreeView.Item.Namespace;
 
                 return (TreeViewNoType)new TreeViewNamespacePath(new NamespacePath(namespaceString, absolutePath),

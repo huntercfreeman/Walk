@@ -66,7 +66,7 @@ public static class PermittanceChecker
             simplePath.IsDirectory,
             tokenBuilder,
             formattedBuilder,
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
 
         if (absolutePath.Value == environmentProvider.RootDirectoryAbsolutePath.Value ||
             absolutePath.Value == environmentProvider.HomeDirectoryAbsolutePath.Value)

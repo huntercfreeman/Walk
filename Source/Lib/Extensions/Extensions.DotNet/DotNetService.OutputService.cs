@@ -57,7 +57,7 @@ public partial class DotNetService
 
         foreach (var group in filePathGrouping)
         {
-            var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(group.Key, false, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true);
+            var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(group.Key, false, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
             var groupEnumerated = group.ToList();
             var groupNameBuilder = new StringBuilder();
 
@@ -92,7 +92,7 @@ public partial class DotNetService
             if (firstEntry is not null)
             {
                 var projectText = ((TreeViewDiagnosticLine)firstEntry).Item.ProjectTextSpan.Text;
-                var projectAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(projectText, false, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true);
+                var projectAbsolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(projectText, false, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
 
                 if (!projectManualGrouping.ContainsKey(projectText))
                 {

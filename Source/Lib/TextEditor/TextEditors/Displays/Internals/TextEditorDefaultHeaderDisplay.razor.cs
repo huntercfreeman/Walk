@@ -241,7 +241,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
             
         var menuOptionList = new List<MenuOptionRecord>();
         
-        var absolutePath = TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(virtualizationResult.Model.PersistentState.ResourceUri.Value, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), shouldNameContainsExtension: true);
+        var absolutePath = TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(virtualizationResult.Model.PersistentState.ResourceUri.Value, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
 
         menuOptionList.Add(new MenuOptionRecord(
             "Cancel",

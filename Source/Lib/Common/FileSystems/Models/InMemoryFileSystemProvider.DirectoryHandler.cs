@@ -184,7 +184,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 true,
                 tokenBuilder: new StringBuilder(),
                 formattedBuilder: new StringBuilder(),
-                shouldNameContainsExtension: true);
+                AbsolutePathNameKind.NameWithExtension);
 
             var outDirectory = new InMemoryFile(
                 string.Empty,
@@ -262,14 +262,14 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 true,
                 tokenBuilder: new StringBuilder(),
                 formattedBuilder: new StringBuilder(),
-                shouldNameContainsExtension: true);
+                AbsolutePathNameKind.NameWithExtension);
 
             var childDirectories = (await GetDirectoriesAsync(sourceAbsolutePathString, cancellationToken).ConfigureAwait(false))
-                .Select(x => _commonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), shouldNameContainsExtension: true))
+                .Select(x => _commonService.EnvironmentProvider.AbsolutePathFactory(x, true, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension))
                 .ToArray();
 
             var childFiles = (await GetFilesAsync(sourceAbsolutePathString, cancellationToken).ConfigureAwait(false))
-                .Select(x => _commonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), shouldNameContainsExtension: true))
+                .Select(x => _commonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension))
                 .ToArray();
 
             var children = childDirectories.Union(childFiles);
@@ -287,7 +287,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                     true,
                     tokenBuilder: new StringBuilder(),
                     formattedBuilder: new StringBuilder(),
-                    shouldNameContainsExtension: true);
+                    AbsolutePathNameKind.NameWithExtension);
 
                 var destinationFile = new InMemoryFile(
                     string.Empty,

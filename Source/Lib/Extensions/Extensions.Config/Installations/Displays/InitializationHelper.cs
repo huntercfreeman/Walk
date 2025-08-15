@@ -252,7 +252,7 @@ public static class InitializationHelper
             false,
             tokenBuilder: new StringBuilder(),
             formattedBuilder: new StringBuilder(),
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
 
         var localParentDirectory = solutionAbsolutePath.ParentDirectory;
         if (localParentDirectory is null)
@@ -284,7 +284,7 @@ public static class InitializationHelper
     public static void CleanProjectOnClick(DotNetService DotNetService, string projectAbsolutePathString)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanProject(projectAbsolutePathString);
-        var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), shouldNameContainsExtension: true);
+        var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
 
         var localParentDirectory = solutionAbsolutePath.ParentDirectory;
         if (localParentDirectory is null)
@@ -316,7 +316,7 @@ public static class InitializationHelper
     public static void BuildSolutionOnClick(DotNetService DotNetService, string solutionAbsolutePathString)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuildSolution(solutionAbsolutePathString);
-        var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), shouldNameContainsExtension: true);
+        var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
 
         var localParentDirectory = solutionAbsolutePath.ParentDirectory;
         if (localParentDirectory is null)
@@ -348,7 +348,7 @@ public static class InitializationHelper
     public static void CleanSolutionOnClick(DotNetService DotNetService, string solutionAbsolutePathString)
     {
         var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanSolution(solutionAbsolutePathString);
-        var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), shouldNameContainsExtension: true);
+        var solutionAbsolutePath = DotNetService.CommonService.EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.NameWithExtension);
 
         var localParentDirectory = solutionAbsolutePath.ParentDirectory;
         if (localParentDirectory is null)
@@ -389,7 +389,7 @@ public static class InitializationHelper
             false,
             tokenBuilder: new StringBuilder(),
             formattedBuilder: new StringBuilder(),
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
 
         DotNetService.Enqueue(new DotNetWorkArgs
         {

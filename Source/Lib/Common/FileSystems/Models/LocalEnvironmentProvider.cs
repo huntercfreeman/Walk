@@ -25,7 +25,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
             this,
             tokenBuilder,
             formattedBuilder,
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
 
         HomeDirectoryAbsolutePath = new AbsolutePath(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
@@ -33,7 +33,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
             this,
             tokenBuilder,
             formattedBuilder,
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
             
         ActualRoamingApplicationDataDirectoryAbsolutePath = new AbsolutePath(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -41,7 +41,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
             this,
             tokenBuilder,
             formattedBuilder,
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
             
         SafeRoamingApplicationDataDirectoryAbsolutePath = new AbsolutePath(
             JoinPaths(ActualRoamingApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
@@ -49,7 +49,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
             this,
             tokenBuilder,
             formattedBuilder,
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
             
         ActualLocalApplicationDataDirectoryAbsolutePath = new AbsolutePath(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -57,7 +57,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
             this,
             tokenBuilder,
             formattedBuilder,
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
         
         SafeLocalApplicationDataDirectoryAbsolutePath = new AbsolutePath(
             JoinPaths(ActualLocalApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
@@ -65,7 +65,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
             this,
             tokenBuilder,
             formattedBuilder,
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
 
         ProtectedPathList.Add(new(
             RootDirectoryAbsolutePath.Value,

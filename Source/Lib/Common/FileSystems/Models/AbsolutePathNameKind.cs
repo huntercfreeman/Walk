@@ -1,6 +1,8 @@
-namespace Walk.Common.RazorLib.csproj.FileSystems.Models\;
+namespace Walk.Common.RazorLib.FileSystems.Models;
 
-public class AbsolutePathNameKind
+public enum AbsolutePathNameKind
 {
-    
+    NameWithExtension,
+    NameNoExtension,
+    ExtensionNoPeriod,
 }

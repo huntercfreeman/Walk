@@ -112,7 +112,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
             CommonService.EnvironmentProvider,
             tokenBuilder,
             formattedBuilder,
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
         
         foreach (var projectReference in projectReferences)
         {
@@ -146,7 +146,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
                 false,
                 tokenBuilder,
                 formattedBuilder,
-                shouldNameContainsExtension: true);
+                AbsolutePathNameKind.NameWithExtension);
 
             var cSharpProjectToProjectReference = new CSharpProjectToProjectReference(
                 Item.CSharpProjectNamespacePath,

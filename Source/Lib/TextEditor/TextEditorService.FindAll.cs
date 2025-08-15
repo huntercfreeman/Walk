@@ -322,7 +322,7 @@ public partial class TextEditorService
                 false,
                 tokenBuilder,
                 formattedBuilder,
-                shouldNameContainsExtension: true);
+                AbsolutePathNameKind.NameWithExtension);
 
             return (TreeViewNoType)new TreeViewFindAllGroup(
                 group.Select(textSpan => new TreeViewFindAllTextSpan(

@@ -139,7 +139,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
                 true,
                 tokenBuilder: new StringBuilder(),
                 formattedBuilder: new StringBuilder(),
-                shouldNameContainsExtension: true);
+                AbsolutePathNameKind.NameWithExtension);
 
             pasteMenuOptionRecord = _ideService.PasteClipboard(
                 parentDirectoryAbsolutePath,

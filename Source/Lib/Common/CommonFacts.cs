@@ -528,7 +528,7 @@ public static class CommonFacts
             false,
             tokenBuilder: new StringBuilder(),
             formattedBuilder: new StringBuilder(),
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
 
         var templatedFileNamespacePath = new NamespacePath(
             templateParameter.ParentDirectory.Namespace,
@@ -581,7 +581,7 @@ public class {fileNameNoExtension}
             false,
             tokenBuilder: new StringBuilder(),
             formattedBuilder: new StringBuilder(),
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
 
         var templatedFileNamespacePath = new NamespacePath(
             templateParameter.ParentDirectory.Namespace,
@@ -655,7 +655,7 @@ public partial class {className} : ComponentBase
             false,
             tokenBuilder: new StringBuilder(),
             formattedBuilder: new StringBuilder(),
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
 
         var templatedFileNamespacePath = new NamespacePath(
             templateParameter.ParentDirectory.Namespace,

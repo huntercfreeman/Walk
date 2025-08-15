@@ -217,7 +217,7 @@ public partial class DotNetService
             false,
             tokenBuilder,
             formattedBuilder,
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
 
         var solutionNamespacePath = new NamespacePath(
             string.Empty,
@@ -506,7 +506,7 @@ public partial class DotNetService
                 IdeService.TextEditorService.CommonService.EnvironmentProvider,
                 tokenBuilder,
                 formattedBuilder,
-                shouldNameContainsExtension: true,
+                AbsolutePathNameKind.NameWithExtension,
                 ancestorDirectoryList: ancestorDirectoryList);
 
             solutionFolderPathHashSet.Add(absolutePath.Value);
@@ -681,7 +681,7 @@ public partial class DotNetService
             IdeService.TextEditorService.CommonService.EnvironmentProvider,
             tokenBuilder,
             formattedBuilder,
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
     
         for (int i = dotNetSolutionModel.DotNetProjectList.Count - 1; i >= 0; i--)
         {
@@ -710,7 +710,7 @@ public partial class DotNetService
                 moveUpDirectoryToken: moveUpDirectoryToken,
                 sameDirectoryToken: sameDirectoryToken,
                 dotNetSolutionAncestorDirectoryList);
-            projectTuple.AbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(absolutePathString, false, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true);
+            projectTuple.AbsolutePath = IdeService.TextEditorService.CommonService.EnvironmentProvider.AbsolutePathFactory(absolutePathString, false, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
 
             if (!IdeService.TextEditorService.CommonService.FileSystemProvider.File.Exists(projectTuple.AbsolutePath.Value))
             {
@@ -745,7 +745,7 @@ public partial class DotNetService
                 IdeService.TextEditorService.CommonService.EnvironmentProvider,
                 tokenBuilder,
                 formattedBuilder,
-                shouldNameContainsExtension: true);
+                AbsolutePathNameKind.NameWithExtension);
             
             foreach (var projectReference in projectReferences)
             {
@@ -779,7 +779,7 @@ public partial class DotNetService
                     false,
                     tokenBuilder,
                     formattedBuilder,
-                    shouldNameContainsExtension: true);
+                    AbsolutePathNameKind.NameWithExtension);
 
                 projectTuple.ReferencedAbsolutePathList.Add(referenceProjectAbsolutePath);
             }

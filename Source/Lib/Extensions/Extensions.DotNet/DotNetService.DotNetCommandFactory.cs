@@ -146,7 +146,7 @@ public partial class DotNetService
                     false,
                     tokenBuilder: new StringBuilder(),
                     formattedBuilder: new StringBuilder(),
-                    shouldNameContainsExtension: true);
+                    AbsolutePathNameKind.NameWithExtension);
 
                 if (viewModelAbsolutePath.Value ==
                         treeViewNamespacePath.Item.AbsolutePath.Value)

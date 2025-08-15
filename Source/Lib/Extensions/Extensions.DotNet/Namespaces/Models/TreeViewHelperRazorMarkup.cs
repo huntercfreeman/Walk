@@ -33,7 +33,7 @@ public class TreeViewHelperRazorMarkup
         var childFileTreeViewModels = filePathStringsList
             .Select(x =>
             {
-                var absolutePath = razorMarkupTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true);
+                var absolutePath = razorMarkupTreeView.CommonService.EnvironmentProvider.AbsolutePathFactory(x, false, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
                 var namespaceString = razorMarkupTreeView.Item.Namespace;
 
                 return (TreeViewNoType)new TreeViewNamespacePath(

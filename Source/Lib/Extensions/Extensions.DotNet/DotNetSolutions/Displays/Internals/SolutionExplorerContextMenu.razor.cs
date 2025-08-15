@@ -82,11 +82,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     menuOptionList.AddRange(GetCSharpProjectMenuOptions(treeViewNamespacePath)
                         .Union(GetDebugMenuOptions(treeViewNamespacePath)));
                 }
-                else
-                {
-                    menuOptionList.AddRange(GetFileMenuOptions(treeViewNamespacePath, parentTreeViewNamespacePath)
-                        .Union(GetDebugMenuOptions(treeViewNamespacePath)));
-                }
+                else                {                    menuOptionList.AddRange(GetFileMenuOptions(treeViewNamespacePath, parentTreeViewNamespacePath)
+                        .Union(GetDebugMenuOptions(treeViewNamespacePath)));                }
             }
         }
         else if (treeViewModel is TreeViewSolution treeViewSolution)
@@ -266,7 +263,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 true,
                 tokenBuilder: new StringBuilder(),
                 formattedBuilder: new StringBuilder(),
-                shouldNameContainsExtension: true);
+                AbsolutePathNameKind.NameWithExtension);
 
         return new[]
         {

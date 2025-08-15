@@ -109,7 +109,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
                         true,
                         tokenBuilder: new StringBuilder(),
                         formattedBuilder: new StringBuilder(),
-                        shouldNameContainsExtension: true);
+                        AbsolutePathNameKind.NameWithExtension);
 
                     var solutionAbsolutePathString =
                         parentDirectoryAbsolutePath.Value +
@@ -124,7 +124,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
                         false,
                         tokenBuilder: new StringBuilder(),
                         formattedBuilder: new StringBuilder(),
-                        shouldNameContainsExtension: true);
+                        AbsolutePathNameKind.NameWithExtension);
 
                     DotNetService.Enqueue(new DotNetWorkArgs
                     {
@@ -175,7 +175,7 @@ public partial class DotNetSolutionFormDisplay : ComponentBase, IDisposable
             false,
             tokenBuilder: new StringBuilder(),
             formattedBuilder: new StringBuilder(),
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
 
         DotNetService.Enqueue(new DotNetWorkArgs
         {

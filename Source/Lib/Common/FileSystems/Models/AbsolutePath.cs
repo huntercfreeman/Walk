@@ -7,8 +7,6 @@ namespace Walk.Common.RazorLib.FileSystems.Models;
 /// </summary>
 public struct AbsolutePath
 {
-    private string? _nameWithExtension;
-    
     public static int _countAncestorDirectoryAdd;
     public static int _countConsumeTokenAsRootDrive;
     public static int _countFileNameAmbiguous;
@@ -136,17 +134,17 @@ public struct AbsolutePath
             extensionNoPeriod = environmentProvider.DirectorySeparatorCharToStringResult;
         }
 
-        if (nameKind == NameKind.)
+        if (nameKind == AbsolutePathNameKind.ExtensionNoPeriod)
         {
             Name = extensionNoPeriod;
         }
-        else if (nameKind == NameKind.) 
+        else if (nameKind == NameKind.NameNoExtension)
         {
             Name = nameNoExtension;
         }
         else
         {
-            Name = _nameWithExtension ??= PathHelper.CalculateNameWithExtension(nameNoExtension, extensionNoPeriod, IsDirectory);
+            Name = PathHelper.CalculateNameWithExtension(nameNoExtension, extensionNoPeriod, IsDirectory);
         }
 
         if (IsDirectory)

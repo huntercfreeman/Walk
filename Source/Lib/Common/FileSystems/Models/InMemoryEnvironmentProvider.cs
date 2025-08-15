@@ -13,10 +13,10 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
         var tokenBuilder = new StringBuilder();
         var formattedBuilder = new StringBuilder();
     
-        RootDirectoryAbsolutePath = new AbsolutePath("/", true, this, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true);
-        HomeDirectoryAbsolutePath = new AbsolutePath("/Repos/", true, this, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true);
-        ActualRoamingApplicationDataDirectoryAbsolutePath = new AbsolutePath("/AppData/Roaming/", true, this, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true);
-        ActualLocalApplicationDataDirectoryAbsolutePath = new AbsolutePath("/AppData/Local/", true, this, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true);
+        RootDirectoryAbsolutePath = new AbsolutePath("/", true, this, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
+        HomeDirectoryAbsolutePath = new AbsolutePath("/Repos/", true, this, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
+        ActualRoamingApplicationDataDirectoryAbsolutePath = new AbsolutePath("/AppData/Roaming/", true, this, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
+        ActualLocalApplicationDataDirectoryAbsolutePath = new AbsolutePath("/AppData/Local/", true, this, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
         
         SafeRoamingApplicationDataDirectoryAbsolutePath = new AbsolutePath(
             JoinPaths(ActualRoamingApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
@@ -24,7 +24,7 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
             this,
             tokenBuilder,
             formattedBuilder,
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
             
         SafeLocalApplicationDataDirectoryAbsolutePath = new AbsolutePath(
             JoinPaths(ActualLocalApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
@@ -32,7 +32,7 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
             this,
             tokenBuilder,
             formattedBuilder,
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
         
         ProtectedPathList.Add(new(
             RootDirectoryAbsolutePath.Value,

@@ -142,7 +142,7 @@ public partial class IdeService
 
                 foreach (var filePathChild in filePathChildList)
                 {
-                    var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(filePathChild, false, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true);
+                    var absolutePath = CommonService.EnvironmentProvider.AbsolutePathFactory(filePathChild, false, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension);
 
                     if (absolutePath.Name.Contains(codeSearchState.Query))
                         CodeSearch_AddResult(filePathChild);
@@ -175,7 +175,7 @@ public partial class IdeService
                     0,
                     0,
                     (byte)GenericDecorationKind.None),
-                new AbsolutePath(x, false, CommonService.EnvironmentProvider, tokenBuilder, formattedBuilder, shouldNameContainsExtension: true),
+                new AbsolutePath(x, false, CommonService.EnvironmentProvider, tokenBuilder, formattedBuilder, AbsolutePathNameKind.NameWithExtension),
                 CommonService.EnvironmentProvider,
                 CommonService.FileSystemProvider,
                 false,

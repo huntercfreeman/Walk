@@ -114,7 +114,7 @@ public partial class IdeService
                     true,
                     tokenBuilder: new StringBuilder(),
                     formattedBuilder: new StringBuilder(),
-                    shouldNameContainsExtension: true);
+                    AbsolutePathNameKind.NameWithExtension);
 
                 parentDirectoryTreeViewModel = new TreeViewAbsolutePath(
                     parentDirectoryAbsolutePath,

@@ -192,7 +192,7 @@ public partial class IdeService : IBackgroundTaskGroup
             .ReadAllTextAsync(resourceUri.Value)
             .ConfigureAwait(false);
 
-        var absolutePath = new AbsolutePath(resourceUri.Value, false, CommonService.EnvironmentProvider, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), shouldNameContainsExtension: true, nameShouldBeExtensionNoPeriod: true);
+        var absolutePath = new AbsolutePath(resourceUri.Value, false, CommonService.EnvironmentProvider, tokenBuilder: new StringBuilder(), formattedBuilder: new StringBuilder(), AbsolutePathNameKind.ExtensionNoPeriod);
         var decorationMapper = TextEditorService.GetDecorationMapper(absolutePath.Name);
         var compilerService = TextEditorService.GetCompilerService(absolutePath.Name);
 
@@ -267,7 +267,7 @@ public partial class IdeService : IBackgroundTaskGroup
             false,
             tokenBuilder: new StringBuilder(),
             formattedBuilder: new StringBuilder(),
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
 
         viewModel.PersistentState.OnSaveRequested = Editor_HandleOnSaveRequested;
         viewModel.PersistentState.GetTabDisplayNameFunc = _ => absolutePath.Name;
@@ -286,7 +286,7 @@ public partial class IdeService : IBackgroundTaskGroup
             false,
             tokenBuilder: new StringBuilder(),
             formattedBuilder: new StringBuilder(),
-            shouldNameContainsExtension: true);
+            AbsolutePathNameKind.NameWithExtension);
 
         Enqueue(new IdeWorkArgs
         {
